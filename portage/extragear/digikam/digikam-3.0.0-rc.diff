@@ -1,0 +1,520 @@
+diff -Nru a/core/libs/dimg/filters/lens/lensfuncameraselector.cpp b/core/libs/dimg/filters/lens/lensfuncameraselector.cpp
+--- a/core/libs/dimg/filters/lens/lensfuncameraselector.cpp
++++ b/core/libs/dimg/filters/lens/lensfuncameraselector.cpp
+@@ -636,7 +636,7 @@
+         return;
+     }
+ 
+-    kDebug() << "dev: " << dev->Maker << " :: " << dev->Model;
++    kDebug() << "dev: " << dev->Maker << " :: " << dev->Model << " :: " << dev->CropFactor;
+ 
+     d->lens->blockSignals(true);
+     const lfLens** lenses     = d->iface->lensFunDataBase()->FindLenses(dev, 0, 0);
+@@ -685,12 +685,9 @@
+     if (d->iface->usedLens() &&
+         settings.cropFactor <= 0.0) // this should not happen
+     {
++        kDebug() << "No crop factor is set for camera, using lens calibration data: " << d->iface->usedLens()->CropFactor;
+         settings.cropFactor = d->iface->usedLens()->CropFactor;
+     }
+-    else
+-    {
+-        settings.cropFactor = -1.0;
+-    }
+ 
+     d->iface->setSettings(settings);
+     emit signalLensSettingsChanged();
+diff -Nru a/core/libs/dimg/filters/lens/lensfunfilter.cpp b/core/libs/dimg/filters/lens/lensfunfilter.cpp
+--- a/core/libs/dimg/filters/lens/lensfunfilter.cpp
++++ b/core/libs/dimg/filters/lens/lensfunfilter.cpp
+@@ -142,7 +142,7 @@
+                                            d->iface->settings().focalLength,
+                                            d->iface->settings().aperture,
+                                            d->iface->settings().subjectDistance,
+-                                           d->iface->settings().cropFactor,
++                                           1.0, /* no scaling */
+                                            LF_RECTILINEAR,
+                                            modifyFlags,
+                                            0/*no inverse*/);
+diff -Nru a/core/libs/dimg/filters/lens/lensfuniface.cpp b/core/libs/dimg/filters/lens/lensfuniface.cpp
+--- a/core/libs/dimg/filters/lens/lensfuniface.cpp
++++ b/core/libs/dimg/filters/lens/lensfuniface.cpp
+@@ -90,6 +90,7 @@
+     d->usedCamera           = cam;
+     d->settings.cameraMake  = d->usedCamera ? d->usedCamera->Maker : QString();
+     d->settings.cameraModel = d->usedCamera ? d->usedCamera->Model : QString();
++    d->settings.cropFactor  = d->usedCamera ? d->usedCamera->CropFactor : -1.0;
+ }
+ 
+ LensFunIface::LensPtr LensFunIface::usedLens() const
+@@ -101,7 +102,6 @@
+ {
+     d->usedLens            = lens;
+     d->settings.lensModel  = d->usedLens ? d->usedLens->Model : QString();
+-    d->settings.cropFactor = d->usedLens ? d->usedLens->CropFactor : -1.0;
+ }
+ 
+ lfDatabase* LensFunIface::lensFunDataBase() const
+diff -Nru a/core/libs/dimg/filters/nr/nrestimate.cpp b/core/libs/dimg/filters/nr/nrestimate.cpp
+--- a/core/libs/dimg/filters/nr/nrestimate.cpp
++++ b/core/libs/dimg/filters/nr/nrestimate.cpp
+@@ -168,7 +168,7 @@
+ 
+     //-- Divide into cluster->columns, sample->rows, in matrix standard deviation ---------------------------
+ 
+-    int rowPosition[d->clusterCount];
++    QScopedArrayPointer<int> rowPosition(new int[d->clusterCount]);
+ 
+     //the row position array would just make the hold the number of elements in each cluster
+ 
+@@ -229,7 +229,7 @@
+ 
+     //-- Initialize the rowPosition array -------------------------------------------------------------------
+ 
+-    int rPosition[d->clusterCount];
++    QScopedArrayPointer<int> rPosition(new int[d->clusterCount]);
+ 
+     for (uint i=0 ; runningFlag() && (i < d->clusterCount) ; i++)
+     {
+@@ -439,7 +439,7 @@
+ 
+     // -- adaptation ---------------------------------------------------------------------------------------
+ 
+-    float L, LSoft = 0.6, Cr, CrSoft = 0.6, Cb, CbSoft = 0.6;
++    double L = 1.2, LSoft = 0.9, Cr = 1.2, CrSoft = 0.9, Cb = 1.2, CbSoft = 0.9;
+ 
+     if (runningFlag())
+     {
+@@ -469,8 +469,8 @@
+         if (L > 9)
+             L = 9;
+ 
+-        Cr = datasd[2] / 2;
+-        Cb = datasd[1] / 2;
++        Cr = datasd[2] * 0.8;
++        Cb = datasd[1] * 0.8;
+ 
+         if (Cr > 7)
+             Cr = 7;
+@@ -481,6 +481,15 @@
+         L  = floorf(L  * 100) / 100;
+         Cb = floorf(Cb * 100) / 100;
+         Cr = floorf(Cr * 100) / 100;
++
++        if ( L > 9 )
++            LSoft = CrSoft = CbSoft = 0.8;
++
++        else if ( L > 3)
++            LSoft = CrSoft = CbSoft = 0.7;
++
++        else
++            LSoft = CrSoft = CbSoft = 0.6;
+     }
+ 
+     d->prm.thresholds[0] = L;
+diff -Nru a/core/libs/jpegutils/jpegutils.cpp b/core/libs/jpegutils/jpegutils.cpp
+--- a/core/libs/jpegutils/jpegutils.cpp
++++ b/core/libs/jpegutils/jpegutils.cpp
+@@ -478,7 +478,7 @@
+     }
+     #else
+     QFile::Permissions permissions = QFile::permissions(m_file);
+-    QFile::setPermissions(fileName);
++    QFile::setPermissions(fileName, permissions);
+     #endif
+ }
+ 
+diff -Nru a/extra/kipi-plugins/panorama/CMakeLists.txt b/extra/kipi-plugins/panorama/CMakeLists.txt
+--- a/extra/kipi-plugins/panorama/CMakeLists.txt
++++ b/extra/kipi-plugins/panorama/CMakeLists.txt
+@@ -7,16 +7,16 @@
+                     ${CMAKE_CURRENT_SOURCE_DIR}/tasks
+                    )
+ 
+-IF(BUILD_PARSER AND FLEX_FOUND AND BISON_FOUND)
++IF(FLEX_FOUND AND BISON_FOUND)
+     FLEX_TARGET(PTOScanner ptoparser/panoScanner.l ${CMAKE_CURRENT_BINARY_DIR}/panoScanner.c)
+     BISON_TARGET(PTOParser ptoparser/panoParser.y ${CMAKE_CURRENT_BINARY_DIR}/panoParser.c)
+     ADD_FLEX_BISON_DEPENDENCY(PTOScanner PTOParser)
+     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+-ELSE(BUILD_PARSER AND FLEX_FOUND AND BISON_FOUND)
++ELSE(FLEX_FOUND AND BISON_FOUND)
+     SET(FLEX_PTOScanner_OUTPUTS ptoparser/precompiled/panoScanner.c)
+     SET(BISON_PTOParser_OUTPUTS ptoparser/precompiled/panoParser.c)
+     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/ptoparser/precompiled)
+-ENDIF(BUILD_PARSER AND FLEX_FOUND AND BISON_FOUND)
++ENDIF(FLEX_FOUND AND BISON_FOUND)
+ 
+ INSTALL(DIRECTORY pics
+         DESTINATION ${DATA_INSTALL_DIR}/kipiplugin_panorama)
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/panoParser.y b/extra/kipi-plugins/panorama/ptoparser/panoParser.y
+--- a/extra/kipi-plugins/panorama/ptoparser/panoParser.y
++++ b/extra/kipi-plugins/panorama/ptoparser/panoParser.y
+@@ -147,6 +147,9 @@
+         int* curImageCommentsCount = (int*) panoScriptReAlloc((void**) &(script.iImage_prevCommentsCount),
+                                                               sizeof(int),
+                                                               &prevNbImages);
++
++        char*** curImageComments = NULL;
++
+         if (curImageCommentsCount == NULL) {
+             yyerror("Not enough memory");
+             return -1;
+@@ -154,9 +157,9 @@
+         *curImageCommentsCount = nbCommentLine;
+ 
+         prevNbImages--;
+-        char*** curImageComments = (char***) panoScriptReAlloc((void**) &(script.image_prevComments),
+-                                                               sizeof(char**),
+-                                                               &prevNbImages);
++        curImageComments = (char***) panoScriptReAlloc((void**) &(script.image_prevComments),
++                                                       sizeof(char**),
++                                                       &prevNbImages);
+         if (curImageComments == NULL) {
+             yyerror("Not enough memory");
+             return -1;
+@@ -179,12 +182,15 @@
+         int* curVarCommentsCount = (int*) panoScriptReAlloc((void**) &(script.iVarsToOptimize_prevCommentsCount),
+                                                             sizeof(int),
+                                                             &prevNbVars);
++
++        char*** curVarComments = NULL;
++
+         *curVarCommentsCount = nbCommentLine;
+ 
+         prevNbVars--;
+-        char*** curVarComments = (char***) panoScriptReAlloc((void**) &(script.varsToOptimize_prevComments),
+-                                                             sizeof(char**),
+-                                                             &prevNbVars);
++        curVarComments = (char***) panoScriptReAlloc((void**) &(script.varsToOptimize_prevComments),
++                                                     sizeof(char**),
++                                                     &prevNbVars);
+         *curVarComments = commentLines;
+     }
+     | optimizeVarslineEmpty eoln /* Prev comments go to the next line entry */
+@@ -194,26 +200,32 @@
+         int* curCPCommentsCount = (int*) panoScriptReAlloc((void**) &(script.iCtrlPoints_prevCommentsCount),
+                                                            sizeof(int),
+                                                            &prevNbCP);
++
++        char*** curCPComments = NULL;
++
+         *curCPCommentsCount = nbCommentLine;
+ 
+         prevNbCP--;
+-        char*** curCPComments = (char***) panoScriptReAlloc((void**) &(script.ctrlPoints_prevComments),
+-                                                            sizeof(char**),
+-                                                            &prevNbCP);
++        curCPComments = (char***) panoScriptReAlloc((void**) &(script.ctrlPoints_prevComments),
++                                                    sizeof(char**),
++                                                    &prevNbCP);
+         *curCPComments = commentLines;
+     }
+     | maskPtsLine eoln
+     {
+         int prevNbMasks = script.iMasksCount - 1;
+         int* curMaskCommentsCount = (int*) panoScriptReAlloc((void**) &(script.iMasks_prevCommentsCount),
+-                                                           sizeof(int),
+-                                                           &prevNbMasks);
++                                                             sizeof(int),
++                                                             &prevNbMasks);
++
++        char*** curMaskComments = NULL;
++
+         *curMaskCommentsCount = nbCommentLine;
+ 
+         prevNbMasks--;
+-        char*** curMaskComments = (char***) panoScriptReAlloc((void**) &(script.masks_prevComments),
+-                                                            sizeof(char**),
+-                                                            &prevNbMasks);
++        curMaskComments = (char***) panoScriptReAlloc((void**) &(script.masks_prevComments),
++                                                      sizeof(char**),
++                                                      &prevNbMasks);
+         *curMaskComments = commentLines;
+     }
+ 
+@@ -297,6 +309,7 @@
+     }
+     varsparmsmask
+     {
++        pt_script_mask** maskPtr = NULL;
+         if ($4 == -1) {
+             yyerror("Mask line without an image reference");
+             return -1;
+@@ -305,9 +318,9 @@
+             yyerror("Mask line referencing a missing input image");
+             return -1;
+         }
+-        pt_script_mask** maskPtr = (pt_script_mask**) panoScriptReAlloc((void**) &script.masks,
+-                                                                        sizeof(pt_script_mask*),
+-                                                                        &script.iMasksCount);
++        maskPtr = (pt_script_mask**) panoScriptReAlloc((void**) &script.masks,
++                                                       sizeof(pt_script_mask*),
++                                                       &script.iMasksCount);
+ 
+         if (maskPtr == NULL) {
+             yyerror("Not enough memory");
+@@ -346,6 +359,7 @@
+     }
+     | PT_TOKEN_KEYWORD int
+     {
++        char keyword[2];
+         pt_script_optimize_var* varToOptimize = (pt_script_optimize_var*) panoScriptReAlloc((void**) &script.varsToOptimize,
+                                                                                             sizeof(pt_script_optimize_var),
+                                                                                             &script.iVarsToOptimizeCount);
+@@ -354,7 +368,6 @@
+             return -1;
+         }
+ 
+-        char keyword[2];
+         keyword[0] = $1;
+         keyword[1] = 0;
+ 
+@@ -436,12 +449,13 @@
+ /* Rule for [CS]<x>,<x>,<x>,<x> */
+ varcropping: PT_TOKEN_KEYWORD_CROPPING int PT_TOKEN_COMMA int PT_TOKEN_COMMA int PT_TOKEN_COMMA int
+     {
++        int* cropArea = NULL;
++
+         if (currentLine != PT_TOKEN_PANO_LINE && currentLine != PT_TOKEN_INPUT_LINE) {
+             panoScriptParserError("Error: There shouldn't be any cropping parameter here!\n");
+             return -1;
+         }
+ 
+-        int* cropArea = NULL;
+         if (currentLine == PT_TOKEN_PANO_LINE) {
+             cropArea = script.pano.cropArea;
+         } else {
+@@ -464,12 +478,15 @@
+ /* Rule for input image field references <var>=<index> */
+ varreference: PT_TOKEN_KEYWORD_MULTICHAR PT_TOKEN_REFERENCE int
+     {
++        int imageRef = 0;
++        char *keyword = NULL;
++
+         if (currentLine != PT_TOKEN_INPUT_LINE) {
+             panoScriptParserError("Error: References should only be present on i lines!\n");
+             return -1;
+         }
+-        int imageRef = $3;
+-        char *keyword = $1;
++        imageRef = $3;
++        keyword = $1;
+ 
+         switch (*keyword) {
+         case 'R':
+@@ -608,15 +625,15 @@
+             case 'T':
+                 if (strncmp($2, "UINT", 4) == 0) {
+                     if (strcmp($2 + 4, "8") == 0) {
+-                        script.pano.bitDepthOutput = UINT8;
++                        script.pano.bitDepthOutput = BD_UINT8;
+                     } else if (strcmp($2 + 4, "16") == 0) {
+-                        script.pano.bitDepthOutput = UINT16;
++                        script.pano.bitDepthOutput = BD_UINT16;
+                     } else {
+                         panoScriptParserError("Invalid bitdepth [%s] in pano line\n", $2);
+                         return -1;
+                     }
+                 } else if (strcmp($2, "FLOAT") == 0) {
+-                        script.pano.bitDepthOutput = FLOAT;
++                        script.pano.bitDepthOutput = BD_FLOAT;
+                 } else {
+                     panoScriptParserError("Invalid bitdepth [%s] in pano line\n", $2);
+                     return -1;
+@@ -998,7 +1015,7 @@
+                 panoScriptParserError("Invalid variable name [%c] in pano line\n", $1);
+                 return -1;
+             }
+-            script.pano.bitDepthOutput = UINT8;
++            script.pano.bitDepthOutput = BD_UINT8;
+             break;
+         case PT_TOKEN_INPUT_LINE:
+             panoScriptParserError("Invalid variable name [%c] in image line....\n", $1);
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/ptofile.cpp b/extra/kipi-plugins/panorama/ptoparser/ptofile.cpp
+--- a/extra/kipi-plugins/panorama/ptoparser/ptofile.cpp
++++ b/extra/kipi-plugins/panorama/ptoparser/ptofile.cpp
+@@ -28,7 +28,7 @@
+ #include <string>
+ #include <iostream>
+ 
+-#include <mcheck.h>
++//#include <mcheck.h>
+ 
+ // Qt includes
+ 
+@@ -71,7 +71,7 @@
+ 
+ bool PTOFile::openFile(const QString& path)
+ {
+-    mtrace();
++    //mtrace();
+     char* tmp = path.toUtf8().data();
+ 
+     if (d->script != NULL)
+@@ -87,7 +87,7 @@
+         return false;
+     }
+ 
+-    muntrace();
++    //muntrace();
+ 
+     return true;
+ }
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/tparser.c b/extra/kipi-plugins/panorama/ptoparser/tparser.c
+--- a/extra/kipi-plugins/panorama/ptoparser/tparser.c
++++ b/extra/kipi-plugins/panorama/ptoparser/tparser.c
+@@ -62,7 +62,7 @@
+ {
+     /* This is where the defaults will be
+      * At this point. Just clear the data structure. */
+-    bzero(ptr, sizeof(*ptr));
++    memset(ptr, 0, sizeof(*ptr));
+ 
+     /* but some parameters are meaningful when zero */
+     script.pano.projection = -1;
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/tparser.h b/extra/kipi-plugins/panorama/ptoparser/tparser.h
+--- a/extra/kipi-plugins/panorama/ptoparser/tparser.h
++++ b/extra/kipi-plugins/panorama/ptoparser/tparser.h
+@@ -95,9 +95,9 @@
+ 
+ typedef enum
+ {
+-    UINT8 = 0,
+-    UINT16 = 1,
+-    FLOAT = 2
++    BD_UINT8 = 0,
++    BD_UINT16 = 1,
++    BD_FLOAT = 2
+ } pt_bitdepthoutput;
+ 
+ typedef struct
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/tparsergetters.c b/extra/kipi-plugins/panorama/ptoparser/tparsergetters.c
+--- a/extra/kipi-plugins/panorama/ptoparser/tparsergetters.c
++++ b/extra/kipi-plugins/panorama/ptoparser/tparsergetters.c
+@@ -506,9 +506,11 @@
+ 
+ int panoScriptGetPanoOutputFormat(pt_script* script)
+ {
++    char* str = NULL;
++    
+     assert(script != NULL);
+ 
+-    char* str = script->pano.outputFormat;
++    str = script->pano.outputFormat;
+     switch (str[0]) {
+         case 'P':
+             if (strncmp("NG", str + 1, 2) == 0)
+@@ -536,8 +538,9 @@
+ 
+ int panoScriptGetPanoOutputCompression(pt_script* script)
+ {
++    char* str = NULL;
+     assert(script != NULL && panoScriptGetPanoOutputFormat(script) > 0 && panoScriptGetPanoOutputFormat(script) < 4);
+-    char* str = script->pano.outputFormat;
++    str = script->pano.outputFormat;
+     while (str != NULL) {
+         str = strchr(str, ' ');
+         if (str != NULL) {
+@@ -569,8 +572,9 @@
+ 
+ int panoScriptGetPanoOutputSaveCoordinates(pt_script* script)
+ {
++    char* str = NULL;
+     assert(script != NULL && panoScriptGetPanoOutputFormat(script) > 1 && panoScriptGetPanoOutputFormat(script) < 4);
+-    char* str = script->pano.outputFormat;
++    str = script->pano.outputFormat;
+     while (str != NULL) {
+         str = strchr(str, ' ');
+         if (str != NULL) {
+@@ -587,8 +591,9 @@
+ 
+ int panoScriptGetPanoOutputCropped(pt_script* script)
+ {
++    char* str = NULL;
+     assert(script != NULL && panoScriptGetPanoOutputFormat(script) > 1 && panoScriptGetPanoOutputFormat(script) < 4);
+-    char* str = script->pano.outputFormat;
++    str = script->pano.outputFormat;
+     while (str != NULL) {
+         str = strchr(str, ' ');
+         if (str != NULL) {
+@@ -605,8 +610,9 @@
+ 
+ int panoScriptGetPanoOutputQuality(pt_script* script)
+ {
++    char* str = NULL;
+     assert(script != NULL && panoScriptGetPanoOutputFormat(script) == 4);
+-    char* str = script->pano.outputFormat;
++    str = script->pano.outputFormat;
+     while (str != NULL) {
+         str = strchr(str, ' ');
+         if (str != NULL) {
+@@ -727,8 +733,9 @@
+ 
+ int panoScriptGetVarsToOptimizeName(pt_script* script, int v)
+ {
++    char* var = NULL;
+     assert(script != NULL && v >= 0 && v < script->iVarsToOptimizeCount);
+-    char* var = script->varsToOptimize[v].varName;
++    var = script->varsToOptimize[v].varName;
+     switch (var[0]) {
+         case 'a':
+         case 'b':
+diff -Nru a/extra/kipi-plugins/panorama/ptoparser/tparserprivate.c b/extra/kipi-plugins/panorama/ptoparser/tparserprivate.c
+--- a/extra/kipi-plugins/panorama/ptoparser/tparserprivate.c
++++ b/extra/kipi-plugins/panorama/ptoparser/tparserprivate.c
+@@ -220,7 +220,7 @@
+  */
+ void* panoScriptReAlloc(void** ptr, size_t size, int* count)
+ {
+-    void* temp;
++    char* temp;
+ 
+     void* new_ptr = realloc(*ptr, ((*count) + 1) * size);
+ 
+@@ -235,9 +235,9 @@
+     *ptr = new_ptr;
+ 
+     /* point to the newly allocated record */
+-    temp = (void*) *ptr;
++    temp = (char*) *ptr;
+     temp += size * ((*count) - 1);
+     /* clear the area */
+-    bzero(temp, size);
+-    return temp;
++    memset(temp, 0, size);
++    return (void*) temp;
+ }
+diff -Nru a/extra/libkdcraw/libraw/CMakeLists.txt b/extra/libkdcraw/libraw/CMakeLists.txt
+--- a/extra/libkdcraw/libraw/CMakeLists.txt
++++ b/extra/libkdcraw/libraw/CMakeLists.txt
+@@ -97,7 +97,6 @@
+ 
+     TRY_COMPILE(_jpeglib_version_compile_result ${CMAKE_BINARY_DIR} ${_jpeglib_version_source_file}
+                 CMAKE_FLAGS "${_jpeglib_version_include_dirs}"
+-                COMPILE_OUTPUT_VARIABLE _jpeglib_version_compile_output_var
+                )
+     IF(_jpeglib_version_compile_result)
+         MESSAGE(STATUS "Identified libjpeg version less than 80 (too low)")
+@@ -109,7 +108,6 @@
+ 
+ # Flag to use libjpeg with LibRaw DNG lossy codec
+ IF(JPEG_FOUND)
+-    ADD_DEFINITIONS(-DUSE_JPEG)
+     ADD_DEFINITIONS(-DUSE_JPEG8)
+     INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR})
+ ENDIF()
+diff -Nru a/extra/libkdcraw/libraw/internal/dcraw_common.cpp b/extra/libkdcraw/libraw/internal/dcraw_common.cpp
+--- a/extra/libkdcraw/libraw/internal/dcraw_common.cpp
++++ b/extra/libkdcraw/libraw/internal/dcraw_common.cpp
+@@ -5844,8 +5844,8 @@
+       thumb_length = len;
+     }
+     if (type == 0x1818) {
+-      shutter = pow (2, -int_to_float((get4(),get4())));
+-      aperture = pow (2, int_to_float(get4())/2);
++      shutter = pow (2, (double)(-int_to_float((get4(),get4()))));
++      aperture = pow (2, (double)(int_to_float(get4())/2));
+     }
+     if (type == 0x102a) {
+       iso_speed = pow (2, (get4(),get2())/32.0 - 4) * 50;

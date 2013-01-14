@@ -1,0 +1,24 @@
+diff -Nru a/extra/kipi-plugins/expoblending/CMakeLists.txt b/extra/kipi-plugins/expoblending/CMakeLists.txt
+--- a/extra/kipi-plugins/expoblending/CMakeLists.txt
++++ b/extra/kipi-plugins/expoblending/CMakeLists.txt
+@@ -8,7 +8,7 @@
+ 
+ # NOTE: OpenMP under MacOSX do not support multithreading.
+ IF(OPENMP_FOUND AND NOT APPLE)
+-    ADD_DEFINITIONS(${OpenMP_CXX_FLAGS})
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+     IF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp" )
+         SET(OPENMP_LDFLAGS "-lgomp")
+     ENDIF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp" )
+diff -Nru a/extra/libkdcraw/CMakeLists.txt b/extra/libkdcraw/CMakeLists.txt
+--- a/extra/libkdcraw/CMakeLists.txt
++++ b/extra/libkdcraw/CMakeLists.txt
+@@ -162,7 +162,7 @@
+     MACRO_OPTIONAL_FIND_PACKAGE(OpenMP)
+ 
+     IF(OPENMP_FOUND)
+-        ADD_DEFINITIONS(${OpenMP_CXX_FLAGS})
++        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+         IF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp")
+             SET(OPENMP_LDFLAGS "-lgomp")
+         ENDIF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp")
