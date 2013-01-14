@@ -56,15 +56,15 @@ class subinfo(info.infoclass):
         #self.dependencies['kdesupport/libkface'] = 'default'
         #self.dependencies['kdesupport/libkgeomap'] = 'default'
         for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0', '2.0.0', '2.1.1', '2.3.0', '2.5.0']:
-            self.dependencies['win32libs-bin/lcms'] = 'default'
+            self.dependencies['win32libs/lcms'] = 'default'
         for ver in ['2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0-beta1a', '3.0.0-beta2', '3.0.0-rc']:
-            self.dependencies['win32libs-bin/lcms2'] = 'default'
+            self.dependencies['win32libs/lcms2'] = 'default'
         for ver in ['gitHEAD', '3.0.0']:
-            self.dependencies['win32libs-sources/lensfun-src'] = 'default'
-        self.dependencies['win32libs-bin/tiff'] = 'default'
-        self.dependencies['win32libs-bin/gettext'] = 'default'
-        self.dependencies['win32libs-bin/opencv'] = 'default'
-        self.buildDependencies['win32libs-bin/boost-headers'] = 'default'
+            self.dependencies['win32libs/lensfun'] = 'default'
+        self.dependencies['win32libs/tiff'] = 'default'
+        self.dependencies['win32libs/gettext'] = 'default'
+        self.dependencies['win32libs/opencv'] = 'default'
+        self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default' #required for panorama plug-in support
         if self.defaultTarget == 'gitHEAD':
