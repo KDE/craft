@@ -3,8 +3,10 @@ import os
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'svnHEAD' ] = 'http://rkward.svn.sourceforge.net/svnroot/rkward/trunk/rkward'
-        # no "release" targets defined, yet. Releases up to RKWard 0.5.2 (current) had an additional dependency on PHP, which we do not provide
+        self.svnTargets[ 'svnHEAD' ] = 'http://svn.code.sf.net/p/rkward/code/trunk/rkward'
+        for ver in ['0.5.7', '0.6.0']:
+            self.targets[ver] = 'http://downloads.sourceforge.net/rkward/rkward-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver] = 'rkward-' + ver
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
