@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         # will be moved to kdewin-qt
-        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
         # will be moved to kdewin-tools
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/libpng'] = 'default'
