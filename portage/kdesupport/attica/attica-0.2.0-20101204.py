@@ -3,7 +3,8 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qt'] = 'default'
+        self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:attica'
@@ -25,13 +26,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
-        self.subinfo.options.configure.defines = ""
-        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
-        if not os.path.exists(qmake):
-            utils.warning("could not find qmake in <%s>" % qmake)
-        ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
-            % qmake.replace('\\', '/')
 
 if __name__ == '__main__':
     Package().execute()
