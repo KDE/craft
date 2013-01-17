@@ -16,10 +16,33 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
 
 
-class Package(CMakePackageBase):
+class PackageMSVC(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
+from Package.AutoToolsPackageBase import *
+
+class PackageMinGW( AutoToolsPackageBase):
+    def __init__( self ):
+        self.subinfo = subinfo()
+        AutoToolsPackageBase.__init__(self)
+        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+            target = "x86_64-w64-mingw32"
+        else:
+            target = "i686-w64-mingw32"
+        self.subinfo.options.configure.defines = " --enable-static=no --enable-shared=yes --host=%s" % target 
+        
+        
+if compiler.isMinGW():
+    class Package(PackageMinGW):
+        def __init__( self ):
+            PackageMinGW.__init__( self )
+else:
+    class Package(PackageMSVC):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            PackageMSVC.__init__( self )
+
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()
