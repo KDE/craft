@@ -1,0 +1,68 @@
+diff -Nru a/core/CMakeLists.txt b/core/CMakeLists.txt
+--- a/core/CMakeLists.txt
++++ b/core/CMakeLists.txt
+@@ -232,7 +232,7 @@
+     MACRO_OPTIONAL_FIND_PACKAGE(OpenMP)
+ 
+     IF(OPENMP_FOUND)
+-        ADD_DEFINITIONS(${OpenMP_CXX_FLAGS})
++        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+ 
+         # OpenMP defintions ${OpenMP_CXX_FLAGS} is set on right digiKam components through sub-cmake scripts.
+         IF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp" )
+diff -Nru a/extra/kipi-plugins/expoblending/CMakeLists.txt b/extra/kipi-plugins/expoblending/CMakeLists.txt
+--- a/extra/kipi-plugins/expoblending/CMakeLists.txt
++++ b/extra/kipi-plugins/expoblending/CMakeLists.txt
+@@ -8,7 +8,7 @@
+ 
+ # NOTE: OpenMP under MacOSX do not support multithreading.
+ IF(OPENMP_FOUND AND NOT APPLE)
+-    ADD_DEFINITIONS(${OpenMP_CXX_FLAGS})
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+     IF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp" )
+         SET(OPENMP_LDFLAGS "-lgomp")
+     ENDIF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp" )
+diff -Nru a/extra/libkdcraw/CMakeLists.txt b/extra/libkdcraw/CMakeLists.txt
+--- a/extra/libkdcraw/CMakeLists.txt
++++ b/extra/libkdcraw/CMakeLists.txt
+@@ -162,7 +162,7 @@
+     MACRO_OPTIONAL_FIND_PACKAGE(OpenMP)
+ 
+     IF(OPENMP_FOUND)
+-        ADD_DEFINITIONS(${OpenMP_CXX_FLAGS})
++        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+         IF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp")
+             SET(OPENMP_LDFLAGS "-lgomp")
+         ENDIF("${OpenMP_CXX_FLAGS}" STREQUAL "-fopenmp")
+diff -Nru a/core/libs/dimg/loaders/jpegloader.cpp b/core/libs/dimg/loaders/jpegloader.cpp
+--- a/core/libs/dimg/loaders/jpegloader.cpp
++++ b/core/libs/dimg/loaders/jpegloader.cpp
+@@ -228,7 +228,7 @@
+         inFile.close();
+     }
+ 
+-    jpeg_memory_src(&cinfo, (JOCTET*)buffer.data(), buffer.size());
++    JPEGUtils::jpeg_memory_src(&cinfo, (JOCTET*)buffer.data(), buffer.size());
+ #else
+     jpeg_stdio_src(&cinfo, file);
+ #endif
+diff -Nru a/core/libs/jpegutils/jpegwin.cpp b/core/libs/jpegutils/jpegwin.cpp
+--- a/core/libs/jpegutils/jpegwin.cpp
++++ b/core/libs/jpegutils/jpegwin.cpp
+@@ -43,6 +43,9 @@
+ namespace Digikam
+ {
+ 
++namespace JPEGUtils
++{
++
+ void init_source (j_decompress_ptr /*cinfo*/)
+ {
+ }
+@@ -101,4 +104,6 @@
+     src->pub.bytes_in_buffer   = bufsize;
+ }
+ 
++} // namespace JPEGUtils
++
+ } // namespace Digikam

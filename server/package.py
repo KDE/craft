@@ -41,7 +41,7 @@ class BuildError( Exception ):
         log.close()
         return "Error:" + "".join( logtext )
 
-class package:
+class package(object):
     """ one object for each package to be build
         it contains all the information needed to build """
 

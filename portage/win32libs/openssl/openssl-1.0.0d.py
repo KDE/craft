@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.0d'] = ('openssl-1.0.0d.diff', 1)
         self.targetDigests['1.0.0d'] = '5c8472d09958c630eeb7548a1aeccb78fbd5cd10'
 
-        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
+        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c', '1.0.1c'  ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
             if ver != '1.0.0a':
@@ -31,7 +31,7 @@ class subinfo( info.infoclass ):
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.0.0'
         else:
-            self.defaultTarget = '1.0.0d'
+            self.defaultTarget = '1.0.1c'
 
         if compiler.isMinGW_W64():
             self.patchToApply[ '1.0.0' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)

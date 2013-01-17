@@ -24,7 +24,11 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx --build=x86_64-w64-mingw32"
+        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+            target = "x86_64-w64-mingw32"
+        else:
+            target = "i686-w64-mingw32"
+        self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx --build=%s" % target
         self.buildInSource = True
         
     def configure( self):

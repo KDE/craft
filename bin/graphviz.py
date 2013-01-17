@@ -38,7 +38,7 @@ def getWindowsInstalledDot():
     return os.path.join(QueryValueEx(key, "InstallPath")[0], 'bin', 'dot.exe')
 
 
-class GraphViz:
+class GraphViz(object):
     def __init__( self, parent=None ):
         self.parent = self
         if parent:
