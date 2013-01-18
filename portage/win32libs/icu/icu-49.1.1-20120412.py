@@ -9,10 +9,10 @@ import shutil
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['49.1.1'] = 'http://download.icu-project.org/files/icu4c/49.1.1/icu4c-49_1_1-src.tgz'
-        self.targetInstSrc['49.1.1'] = "icu/source"
+        self.targetInstSrc['49.1.1'] = "icu\\source"
         self.targetDigests['49.1.1'] = 'f407d7e2808b76e3a6ca316aab896aef74bf6722'
         self.patchToApply[ '49.1.1' ] = [('icu-20120702.diff', 1)]
-        if compiler.isMSVC2012():   
+        if compiler.isMSVC2012():
             self.patchToApply[ '49.1.1' ].append(('msvc2011.diff', 1))
         self.defaultTarget = '49.1.1'
 
@@ -32,22 +32,27 @@ class PackageCMake(CMakePackageBase):
         return True
 
     def make(self):
-        utils.system("devenv %s /build Release" % os.path.join(self.sourceDir(),"allinone","allinone.sln" ))
+        self.enterSourceDir()
+        if self.buildType() == "Debug":
+          bt = "Debug"
+        else:
+          bt = "Release"
+        utils.system("msbuild /t:Rebuild %s /p:Configuration=%s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
         return True
 
     def install(self):
-        utils.copyDir(os.path.join(self.sourceDir(),"..","bin") , os.path.join(self.imageDir(),"bin"))
-        utils.copyDir(os.path.join(self.sourceDir(),"..","include") , os.path.join(self.imageDir(),"include"))
-        utils.copyDir(os.path.join(self.sourceDir(),"..","lib") , os.path.join(self.imageDir(),"lib"))
+        utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
+        utils.copyDir(os.path.join(self.sourceDir(), "..", "include"), os.path.join(self.imageDir(), "include"))
+        utils.copyDir(os.path.join(self.sourceDir(), "..", "lib"), os.path.join(self.imageDir(), "lib"))
         return True
-        
+
 from Package.AutoToolsPackageBase import *
 
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
-        
+
     def install(self):
         if not AutoToolsPackageBase.install(self):
             return False
@@ -56,7 +61,7 @@ class PackageMSys(AutoToolsPackageBase):
             if dll.endswith(".dll"):
                 utils.copyFile( os.path.join( self.installDir() , "lib" ,dll) , os.path.join( self.installDir(), "bin" ,dll) )
         return True
-        
+
 if compiler.isMinGW():
     class Package(PackageMSys):
         def __init__( self ):
