@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qimageblitz'

@@ -4,7 +4,7 @@ import emergePlatform
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base']            = 'default'
-        self.dependencies['libs/qt']                 = 'default'
+        self.dependencies['libs/qtbase']                 = 'default'
         self.dependencies['win32libs/librdf']   = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.buildDependencies['win32libs/clucene-core'] = 'default'
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/soprano'
-        self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
+        self.svnTargets['gitHEAD'] = '[git]kde:soprano.git|qt5-port'
 
         for ver in ['2.5.63', '2.6.0', '2.6.0', '2.0.0', '2.0.1', '2.0.2',
                     '2.0.3', '2.0.99', '2.1', '2.1.1', '2.1.64', '2.1.65',
