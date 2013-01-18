@@ -1,10 +1,5 @@
-# uactools : Binary package of the tools to handle UAC from kde-windows.
-# mt.exe can be used to embed manifest files to disable heuristic UAC raise
-# requests, setuac.exe can be used to enable raise the privileges of a program.
-# The according source package is uactools-pkg
-
-
 import info
+import shutil
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -24,6 +19,15 @@ class Package( BinaryPackageBase ):
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.install.installPath = "bin"
         BinaryPackageBase.__init__( self )
+
+    def install( self ):
+        if not BinaryPackageBase.install( self ): return False
+
+        shutil.copy( os.path.join( self.imageDir(), "bin", "win_flex.exe" ) , os.path.join( self.imageDir(), "bin", "flex.exe" ) )
+        shutil.copy( os.path.join( self.imageDir(), "bin", "win_bison.exe" ) , os.path.join( self.imageDir(), "bin", "bison.exe" ) )
+
+        return True
+
 
 if __name__ == '__main__':
     Package().execute()
