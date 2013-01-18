@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtdeclarative'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *

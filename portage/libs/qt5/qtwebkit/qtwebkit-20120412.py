@@ -11,15 +11,11 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['libs/qtsvg'] = 'default' 
-        self.dependencies['win32libs/pthreads'] = 'default'
-        self.dependencies['win32libs/sqlite'] = 'default'
-        self.buildDependencies['gnuwin32/flex'] = 'default'
-        self.buildDependencies['gnuwin32/bison'] = 'default'
-        self.buildDependencies['gnuwin32/gperf'] = 'default'
+        self.dependencies['libs/qtquick1'] = 'default'
+        self.dependencies['libs/qtlocation'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
-        self.buildDependencies['dev-util/pkg-config'] = 'default'
         
 
 from Package.Qt5CorePackageBase import *

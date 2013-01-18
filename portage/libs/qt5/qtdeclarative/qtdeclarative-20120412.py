@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtxmlpatterns'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['libs/qtjsbackend'] ='default'
 
