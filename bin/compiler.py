@@ -7,6 +7,7 @@ import os
 import utils
 import subprocess
 import emergePlatform
+import re
 
 COMPILER = os.getenv("KDECOMPILER")
 
@@ -94,7 +95,7 @@ def getMinGWVersion():
     if not MINGW_VERSION:
         try:
             result = str(subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
-            result = result.split()[2]
+            result = re.findall("\d+\.\d+\.?\d*",result)[0]
             utils.debug("GCC Version:%s" % result, 1 )
             MINGW_VERSION = result.strip()
         except OSError:
