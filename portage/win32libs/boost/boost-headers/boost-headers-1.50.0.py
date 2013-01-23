@@ -1,12 +1,12 @@
 import info
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ['1.44.0', '1.47.0', '1.48.0', '1.49.0', '1.50.0']:
+        for ver in ['1.44.0', '1.47.0', '1.48.0', '1.49.0', '1.50.0', '1.52.0']:
             verString = ver.replace('.','_')
             self.targets[ver] = 'http://downloads.sourceforge.net/boost/boost_%s.7z' % verString
             self.targetInstSrc[ver] = 'boost_%s' % verString
 
-        self.defaultTarget = '1.50.0'
+        self.defaultTarget = '1.52.0'
 
         self.targetDigests['1.48.0'] = 'f221f067620e5af137e415869bd96ad667db9830'
         self.targetDigests['1.49.0'] = '406903ce4f946f44b126d6c8bfefafed2fc9fdc4'
