@@ -10,11 +10,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = "gitHEAD"
 
     def setDependencies( self ):
+        self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
+        self.buildDependencies['gnuwin32/gperf'] = 'default'
         
 
 from Package.Qt5CorePackageBase import *
