@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtlocation.git|stable"
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtlocation.git"
 
         self.defaultTarget = "gitHEAD"
 
@@ -12,7 +12,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qt3d'] = 'default'
-        self.dependencies['libs/qtjsondb'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *

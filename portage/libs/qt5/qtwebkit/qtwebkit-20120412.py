@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
-        self.dependencies['libs/qtlocation'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
         
 
