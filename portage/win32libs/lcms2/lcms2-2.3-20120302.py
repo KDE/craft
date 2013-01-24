@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.3'] = '67d5fabda2f5777ca8387766539b9c871d993133'
         self.targetDigests['2.4'] = '9944902864283af49e4e21a1ca456db4e04ea7c2'
         self.shortDescription = "A small-footprint, speed optimized color management engine"
-        self.defaultTarget = '2.3'
+        self.defaultTarget = '2.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
