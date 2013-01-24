@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.4.4'] = '245490b22086a6aff8964b7d32383a17814d8ebf'
 
         self.shortDescription = 'A library to display png images'
-        self.defaultTarget = '1.4.4'
+        self.defaultTarget = '1.5.14'
 
 
     def setDependencies( self ):
