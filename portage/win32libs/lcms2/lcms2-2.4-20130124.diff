@@ -124,7 +124,7 @@ diff -Nru -x '*~' lcms2-2.4.orig/src/CMakeLists.txt lcms2-2.4/src/CMakeLists.txt
 +include_directories(${CMAKE_BINARY_DIR})
 +
 +add_library(lcms SHARED ${lcms_SRCS})
-+set_target_properties(lcms PROPERTIES OUTPUT_NAME "lcms-2"
++set_target_properties(lcms PROPERTIES OUTPUT_NAME "lcms2"
 +                                      DEFINE_SYMBOL CMS_DLL_BUILD)
 +
 +if(BUILD_TESTS OR BUILD_UTILS OR BUILD_STATIC)
