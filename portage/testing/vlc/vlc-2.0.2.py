@@ -23,10 +23,12 @@ class subinfo(info.infoclass):
 
     self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
     self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
-    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2']:
+    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5' ]:
         self.targets[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-%s-win%s.7z" % ( releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
         self.targetDigestUrls[ releaseTag ] = "http://downloads.sourceforge.net/sourceforge/vlc/vlc-%s-win%s.7z.sha1" % ( releaseTag , self.vlcArch )
+    for releaseTag in [ '2.0.2','2.0.5' ]:
+        self.patchToApply[ releaseTag ] = [("vlc-%s.diff" % (releaseTag),1)]
     self.shortDescription = "an open-source multimedia framework"
 
     self.defaultTarget = releaseTag
