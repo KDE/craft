@@ -66,7 +66,7 @@ class HgSource ( VersionSystemSourceBase ):
         if fileName and self.enableHg:
             patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
-            return self.system( "%s import -p %s %s" % (self.hgExecutable, patchdepth, patchfile) )
+            return self.system( '"%s" import -p %s "%s"' % (self.hgExecutable, patchdepth, patchfile) )
         return True
 
     def createPatch( self ):
