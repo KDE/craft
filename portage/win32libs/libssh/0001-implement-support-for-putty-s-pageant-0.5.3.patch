@@ -1,0 +1,456 @@
+diff -Nru -x '*~' libssh-0.5.3.orig/include/libssh/agent.h libssh-0.5.3/include/libssh/agent.h
+--- libssh-0.5.3.orig/include/libssh/agent.h	2012-11-20 12:41:49.000000000 +0100
++++ libssh-0.5.3/include/libssh/agent.h	2013-01-24 14:46:49.036724900 +0100
+@@ -53,7 +53,6 @@
+   unsigned int count;
+ };
+ 
+-#ifndef _WIN32
+ /* agent.c */
+ /**
+  * @brief Create a new ssh agent structure.
+@@ -91,7 +90,6 @@
+ ssh_string agent_sign_data(struct ssh_session_struct *session,
+     struct ssh_buffer_struct *data,
+     struct ssh_public_key_struct *pubkey);
+-#endif
+ 
+ #endif /* __AGENT_H */
+ /* vim: set ts=2 sw=2 et cindent: */
+diff -Nru -x '*~' libssh-0.5.3.orig/src/agent.c libssh-0.5.3/src/agent.c
+--- libssh-0.5.3.orig/src/agent.c	2012-11-20 12:42:02.000000000 +0100
++++ libssh-0.5.3/src/agent.c	2013-01-24 14:51:16.279527200 +0100
+@@ -34,16 +34,16 @@
+  *    the agent returns the signed data
+  */
+ 
+-#ifndef _WIN32
+-
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
+ #include <stdio.h>
+ 
++#ifdef _WIN32
++#include <winsock2.h>
++#include <windows.h>
++#else
+ #include <unistd.h>
+-
+-#ifndef _WIN32
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+ #endif
+@@ -54,13 +54,23 @@
+ #include "libssh/buffer.h"
+ #include "libssh/session.h"
+ #include "libssh/keys.h"
++#ifndef _WIN32
++#include "libssh/priv.h"
++#include "libssh/socket.h"
+ #include "libssh/poll.h"
++#else
++#include "winpgntc.h"
++#endif
+ 
+ /* macro to check for "agent failure" message */
+ #define agent_failed(x) \
+   (((x) == SSH_AGENT_FAILURE) || ((x) == SSH_COM_AGENT2_FAILURE) || \
+    ((x) == SSH2_AGENT_FAILURE))
+ 
++#ifdef _WIN32
++#define AGENT_COPYDATA_ID 0x804e50ba   /* random goop */
++#endif
++
+ static uint32_t agent_get_u32(const void *vp) {
+   const uint8_t *p = (const uint8_t *)vp;
+   uint32_t v;
+@@ -82,6 +92,7 @@
+   p[3] = (uint8_t)v & 0xff;
+ }
+ 
++#ifndef _WIN32
+ static size_t atomicio(ssh_socket s, void *buf, size_t n, int do_read) {
+   char *b = buf;
+   size_t pos = 0;
+@@ -122,6 +133,7 @@
+ 
+   return pos;
+ }
++#endif
+ 
+ ssh_agent agent_new(struct ssh_session_struct *session) {
+   ssh_agent agent = NULL;
+@@ -133,16 +145,19 @@
+   ZERO_STRUCTP(agent);
+ 
+   agent->count = 0;
++#ifndef _WIN32
+   agent->sock = ssh_socket_new(session);
+   if (agent->sock == NULL) {
+     SAFE_FREE(agent);
+     return NULL;
+   }
++#endif
+ 
+   return agent;
+ }
+ 
+ void agent_close(struct ssh_agent_struct *agent) {
++#ifndef _WIN32
+   if (agent == NULL) {
+     return;
+   }
+@@ -150,6 +165,7 @@
+   if (getenv("SSH_AUTH_SOCK")) {
+     ssh_socket_close(agent->sock);
+   }
++#endif
+ }
+ 
+ void agent_free(ssh_agent agent) {
+@@ -157,15 +173,18 @@
+     if (agent->ident) {
+       ssh_buffer_free(agent->ident);
+     }
++#ifndef _WIN32
+     if (agent->sock) {
+       agent_close(agent);
+       ssh_socket_free(agent->sock);
+     }
++#endif
+     SAFE_FREE(agent);
+   }
+ }
+ 
+ static int agent_connect(ssh_session session) {
++#ifndef _WIN32
+   const char *auth_sock = NULL;
+ 
+   if (session == NULL || session->agent == NULL) {
+@@ -182,6 +201,9 @@
+   }
+ 
+   return -1;
++#else
++  return 0;
++#endif
+ }
+ 
+ #if 0
+@@ -206,6 +228,7 @@
+ 
+ static int agent_talk(struct ssh_session_struct *session,
+     struct ssh_buffer_struct *request, struct ssh_buffer_struct *reply) {
++#ifndef _WIN32
+   uint32_t len = 0;
+   uint8_t payload[1024] = {0};
+ 
+@@ -260,7 +283,39 @@
+     }
+     len -= n;
+   }
++#else
++  uint32_t inlen = 0, outlen = 0, i = 0;
++  uint8_t payload[1024] = {0};
++  uint8_t outload[1024] = {0};
++  uint8_t *t = outload;
++
++  inlen = buffer_get_len(request);
++  ssh_log(session, SSH_LOG_PACKET, "agent_talk - len of request: %u", inlen);
++  agent_put_u32(payload, inlen);
++
++  /* FIXME: make a clean copy here */
++  for(i = 0; i < inlen; i++) {
++    if(i == 1024) exit(1);
++    payload[i+4] = request->data[i];
++  }
++
++  agent_query((void*)payload, inlen + 4, &t, &outlen);
++
++  if (outlen > 256 * 1024) {
++    ssh_set_error(session, SSH_FATAL,
++        "Authentication response too long: %u", outlen);
++    return -1;
++  }
++  ssh_log(session, SSH_LOG_PACKET, "agent_talk - response length: %u", outlen);
+ 
++  outlen = outlen + 4;
++  /* the first 4 bytes are the size of the buffer */
++  if (buffer_add_data(reply, (t + 4), outlen) < 0) {
++    ssh_log(session, SSH_LOG_FUNCTIONS,
++        "Not enough space");
++    return -1;
++  }
++#endif
+   return 0;
+ }
+ 
+@@ -486,7 +541,7 @@
+   if (session == NULL || session->agent == NULL) {
+     return 0;
+   }
+-
++#ifndef _WIN32
+   if (ssh_socket_is_open(session->agent->sock)) {
+     return 1;
+   } else {
+@@ -497,9 +552,11 @@
+     }
+   }
+ 
++#else
++  if(FindWindow(TEXT("Pageant"), TEXT("Pageant")))
++    return 1;
++#endif
+   return 0;
+ }
+ 
+-#endif /* _WIN32 */
+-
+ /* vim: set ts=2 sw=2 et cindent: */
+diff -Nru -x '*~' libssh-0.5.3.orig/src/auth.c libssh-0.5.3/src/auth.c
+--- libssh-0.5.3.orig/src/auth.c	2012-11-20 12:41:49.000000000 +0100
++++ libssh-0.5.3/src/auth.c	2013-01-24 14:46:49.091724900 +0100
+@@ -813,7 +813,6 @@
+   return rc;
+ }
+ 
+-#ifndef _WIN32
+ /**
+  * @brief Try to authenticate through public key with an ssh agent.
+  *
+@@ -946,7 +945,6 @@
+   leave_function();
+   return rc;
+ }
+-#endif /* _WIN32 */
+ 
+ /**
+  * @brief Try to authenticate by password.
+@@ -1128,7 +1126,6 @@
+   }
+ 
+   /* Try authentication with ssh-agent first */
+-#ifndef _WIN32
+   if (agent_is_running(session)) {
+     char *privkey_file = NULL;
+ 
+@@ -1189,7 +1186,6 @@
+       publickey_free(pubkey);
+     } /* for each privkey */
+   } /* if agent is running */
+-#endif
+ 
+ 
+   for (it = ssh_list_get_iterator(session->identity);
+diff -Nru -x '*~' libssh-0.5.3.orig/src/CMakeLists.txt libssh-0.5.3/src/CMakeLists.txt
+--- libssh-0.5.3.orig/src/CMakeLists.txt	2012-11-20 12:41:49.000000000 +0100
++++ libssh-0.5.3/src/CMakeLists.txt	2013-01-24 14:46:49.046724900 +0100
+@@ -113,6 +113,12 @@
+   threads.c
+   wrapper.c
+ )
++if (WIN32)
++  set(libssh_SRCS
++    ${libssh_SRCS}
++    winpgntc.c
++  )
++endif (WIN32)
+ 
+ if (WITH_SFTP)
+   set(libssh_SRCS
+diff -Nru -x '*~' libssh-0.5.3.orig/src/keys.c libssh-0.5.3/src/keys.c
+--- libssh-0.5.3.orig/src/keys.c	2012-11-20 12:42:02.000000000 +0100
++++ libssh-0.5.3/src/keys.c	2013-01-24 14:46:49.096724900 +0100
+@@ -1128,7 +1128,6 @@
+ }
+ #endif
+ 
+-#ifndef _WIN32
+ ssh_string ssh_do_sign_with_agent(ssh_session session,
+     struct ssh_buffer_struct *buf, struct ssh_public_key_struct *publickey) {
+   struct ssh_buffer_struct *sigbuf = NULL;
+@@ -1175,7 +1174,6 @@
+ 
+   return signature;
+ }
+-#endif /* _WIN32 */
+ 
+ /*
+  * This function concats in a buffer the values needed to do a signature
+diff -Nru -x '*~' libssh-0.5.3.orig/src/session.c libssh-0.5.3/src/session.c
+--- libssh-0.5.3.orig/src/session.c	2012-11-20 12:41:50.000000000 +0100
++++ libssh-0.5.3/src/session.c	2013-01-24 14:53:22.098355300 +0100
+@@ -101,12 +101,10 @@
+   session->ssh1 = 0;
+ #endif
+ 
+-#ifndef _WIN32
+     session->agent = agent_new(session);
+     if (session->agent == NULL) {
+       goto err;
+     }
+-#endif /* _WIN32 */
+ 
+     session->identity = ssh_list_new();
+     if (session->identity == NULL) {
+@@ -193,9 +191,7 @@
+   session->in_buffer=session->out_buffer=NULL;
+   crypto_free(session->current_crypto);
+   crypto_free(session->next_crypto);
+-#ifndef _WIN32
+   agent_free(session->agent);
+-#endif /* _WIN32 */
+   if (session->client_kex.methods) {
+     for (i = 0; i < 10; i++) {
+       SAFE_FREE(session->client_kex.methods[i]);
+diff -Nru -x '*~' libssh-0.5.3.orig/src/winpgntc.c libssh-0.5.3/src/winpgntc.c
+--- libssh-0.5.3.orig/src/winpgntc.c	1970-01-01 01:00:00.000000000 +0100
++++ libssh-0.5.3/src/winpgntc.c	2013-01-24 14:46:49.121725000 +0100
+@@ -0,0 +1,107 @@
++/*
++ * winpgntc.c - interact with pageant on windows
++ *
++ * This file is part of the SSH Library
++ *
++ * Copyright (c) 2012 Patrick Spendrin <ps_ml@gmx.de>
++ *
++ * The SSH Library is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation; either version 2.1 of the License, or (at your
++ * option) any later version.
++ *
++ * The SSH Library is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
++ * License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with the SSH Library; see the file COPYING.  If not, write to
++ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
++ * MA 02111-1307, USA.
++ */
++
++/* This file is based on the winpgntc.c from Putty sources:
++    PuTTY is copyright 1997-2012 Simon Tatham.
++
++    Portions copyright Robert de Bath, Joris van Rantwijk, Delian Delchev, 
++    Andreas Schultz, Jeroen Massar, Wez Furlong, Nicolas Barry, Justin 
++    Bradford, Ben Harris, Malcolm Smith, Ahmad Khalifa, Markus Kuhn, Colin 
++    Watson, and CORE SDI S.A.
++
++    Permission is hereby granted, free of charge, to any person obtaining a 
++    copy of this software and associated documentation files (the "Software"), 
++    to deal in the Software without restriction, including without limitation 
++    the rights to use, copy, modify, merge, publish, distribute, sublicense, 
++    and/or sell copies of the Software, and to permit persons to whom the 
++    Software is furnished to do so, subject to the following conditions:
++
++    The above copyright notice and this permission notice shall be included in 
++    all copies or substantial portions of the Software.
++
++    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
++    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
++    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
++    SIMON TATHAM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
++    IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
++    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
++
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "libssh/agent.h"
++
++#define AGENT_COPYDATA_ID 0x804e50ba   /* random goop */
++#define AGENT_MAX_MSGLEN  8192
++
++#define GET_32BIT(cp) \
++  (((unsigned long)(unsigned char)(cp)[0] << 24) | \
++  ((unsigned long)(unsigned char)(cp)[1] << 16) | \
++  ((unsigned long)(unsigned char)(cp)[2] << 8) | \
++  ((unsigned long)(unsigned char)(cp)[3]))
++
++int agent_query(void *in, int inlen, void **out, int *outlen)
++{
++    HWND hwnd;
++    char mapname[25];
++    HANDLE filemap;
++    unsigned char *p, *ret;
++    int id, retlen;
++    COPYDATASTRUCT cds;
++
++    *out = NULL;
++    *outlen = 0;
++
++    hwnd = FindWindow("Pageant", "Pageant");
++    if (!hwnd)
++        return 1;           /* *out == NULL, so failure */
++    sprintf(mapname, "PageantRequest%08x", (unsigned)GetCurrentThreadId());
++    filemap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
++                                0, AGENT_MAX_MSGLEN, mapname);
++    if (filemap == NULL || filemap == INVALID_HANDLE_VALUE)
++        return 1;            /* *out == NULL, so failure */
++    p = MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0, 0);
++    memcpy(p, in, inlen);
++    cds.dwData = AGENT_COPYDATA_ID;
++    cds.cbData = 1 + strlen(mapname);
++    cds.lpData = mapname;
++
++    /*
++     * The user either passed a null callback (indicating that the
++     * query is required to be synchronous) or CreateThread failed.
++     * Either way, we need a synchronous request.
++     */
++    id = SendMessage(hwnd, WM_COPYDATA, (WPARAM) NULL, (LPARAM) &cds);
++    if (id > 0) {
++    retlen = 4 + GET_32BIT(p);
++    ret = (unsigned char *)malloc(retlen*sizeof(unsigned char));
++    if (ret) {
++        memcpy(ret, p, retlen);
++        *out = ret;
++        *outlen = retlen;
++    }
++    }
++    UnmapViewOfFile(p);
++    CloseHandle(filemap);
++    return 1;
++}
+diff -Nru -x '*~' libssh-0.5.3.orig/src/winpgntc.h libssh-0.5.3/src/winpgntc.h
+--- libssh-0.5.3.orig/src/winpgntc.h	1970-01-01 01:00:00.000000000 +0100
++++ libssh-0.5.3/src/winpgntc.h	2013-01-24 14:46:49.126725000 +0100
+@@ -0,0 +1,34 @@
++/*
++ * winpgntc.h - interact with pageant on windows
++ *
++ * This file is part of the SSH Library
++ *
++ * Copyright (c) 2012 Patrick Spendrin <ps_ml@gmx.de>
++ *
++ * The SSH Library is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation; either version 2.1 of the License, or (at your
++ * option) any later version.
++ *
++ * The SSH Library is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
++ * License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with the SSH Library; see the file COPYING.  If not, write to
++ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
++ * MA 02111-1307, USA.
++ */
++
++
++#ifndef __WINPGNTC_H
++#define __WINPGNTC_H
++
++#ifdef _WIN32
++#include "libssh/agent.h"
++
++int agent_query(void *in, int inlen, void **out, int *outlen);
++
++#endif
++#endif /* __WINPGNTC_H */
