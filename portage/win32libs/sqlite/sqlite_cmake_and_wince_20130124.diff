@@ -1,0 +1,154 @@
+diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/cmake/modules/FindWcecompat.cmake sqlite-amalgamation-3071502/cmake/modules/FindWcecompat.cmake
+--- sqlite-amalgamation-3071502.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ sqlite-amalgamation-3071502/cmake/modules/FindWcecompat.cmake	2013-01-24 23:01:34.393066600 +0100
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/CMakeLists.txt sqlite-amalgamation-3071502/CMakeLists.txt
+--- sqlite-amalgamation-3071502.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ sqlite-amalgamation-3071502/CMakeLists.txt	2013-01-24 23:01:34.388066300 +0100
+@@ -0,0 +1,42 @@
++project( Sqlite )
++cmake_minimum_required( VERSION 2.6 )
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++
++if(STATIC_LIBRARY)
++    set(SQLITE3_STATIC 1)
++    set(LIBRARY_TYPE STATIC)
++    add_definitions(-DSQLITE3_STATIC_LIBS)
++else(STATIC_LIBRARY)
++    set(LIBRARY_TYPE SHARED)
++endif(STATIC_LIBRARY)
++
++configure_file(sqlite3.h ${CMAKE_CURRENT_BINARY_DIR}/sqlite3.h)
++configure_file(sqlite3.c ${CMAKE_CURRENT_BINARY_DIR}/sqlite3.c)
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
++
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++endif(WINCE)
++
++set( sqlite_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sqlite3.h sqlite3ext.h )
++
++set( libsqlite_SRC ${CMAKE_CURRENT_BINARY_DIR}/sqlite3.c  )
++set( sqlite_SRC shell.c )
++
++add_library( libsqlite3 ${LIBRARY_TYPE}  ${libsqlite_SRC} )
++set_target_properties( libsqlite3 PROPERTIES OUTPUT_NAME "sqlite3" )
++
++if(WINCE)
++    target_link_libraries(libsqlite3 ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
++
++install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++add_executable( sqlite3 ${sqlite_SRC} )
++target_link_libraries( sqlite3 libsqlite3 )
++
++install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++install( FILES ${sqlite_HEADER} DESTINATION include )
+diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/shell.c sqlite-amalgamation-3071502/shell.c
+--- sqlite-amalgamation-3071502.orig/shell.c	2013-01-24 23:09:23.737811200 +0100
++++ sqlite-amalgamation-3071502/shell.c	2013-01-24 23:01:34.403067200 +0100
+@@ -32,7 +32,7 @@
+ #include <string.h>
+ #include <stdio.h>
+ #include <assert.h>
+-#include "sqlite3.h"
++#include <sqlite3.h>
+ #include <ctype.h>
+ #include <stdarg.h>
+ 
+diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/sqlite3.c sqlite-amalgamation-3071502/sqlite3.c
+--- sqlite-amalgamation-3071502.orig/sqlite3.c	2013-01-24 23:09:23.819815800 +0100
++++ sqlite-amalgamation-3071502/sqlite3.c	2013-01-24 23:01:34.564076400 +0100
+@@ -23,7 +23,19 @@
+ # define SQLITE_PRIVATE static
+ #endif
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#cmakedefine SQLITE3_STATIC 1
++#  if defined(SQLITE3_STATIC)
++    /* No export/import for static libraries */
++#   define SQLITE_API
++#  elif defined(libsqlite3_EXPORTS)
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ /************** Begin file sqliteInt.h ***************************************/
+ /*
+@@ -14204,7 +14216,7 @@
+ ** localtime_s().
+ */
+ #if !defined(HAVE_LOCALTIME_R) && !defined(HAVE_LOCALTIME_S) && \
+-     defined(_MSC_VER) && defined(_CRT_INSECURE_DEPRECATE)
++     defined(_MSC_VER) && defined(_CRT_INSECURE_DEPRECATE) && !defined(_WIN32_WCE)
+ #define HAVE_LOCALTIME_S 1
+ #endif
+ 
+diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/sqlite3.h sqlite-amalgamation-3071502/sqlite3.h
+--- sqlite-amalgamation-3071502.orig/sqlite3.h	2013-01-24 23:09:23.731810800 +0100
++++ sqlite-amalgamation-3071502/sqlite3.h	2013-01-24 23:01:34.590077900 +0100
+@@ -49,8 +49,21 @@
+ # define SQLITE_EXTERN extern
+ #endif
+ 
++#cmakedefine SQLITE3_STATIC 1
++
+ #ifndef SQLITE_API
+-# define SQLITE_API
++# ifdef _MSC_VER
++#  if defined(SQLITE3_STATIC)
++    /* No export/import for static libraries */
++#   define SQLITE_API
++#  elif defined(libsqlite3_EXPORTS)
++#   define SQLITE_API __declspec(dllexport)
++#  else
++#   define SQLITE_API __declspec(dllimport)
++#  endif
++# else
++#  define SQLITE_API
++# endif
+ #endif
+ 
+ 
