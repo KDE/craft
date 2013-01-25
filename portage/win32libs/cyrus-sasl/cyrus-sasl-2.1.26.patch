@@ -1,6 +1,6 @@
-diff -Nru cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake
---- cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/cmake/modules/FindWcecompat.cmake	2010-10-06 18:51:42.109171900 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.1.26/cmake/modules/FindWcecompat.cmake
+--- cyrus-sasl-2.1.26.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.26/cmake/modules/FindWcecompat.cmake	2013-01-23 11:54:43.877866100 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -35,14 +35,14 @@ diff -Nru cyrus-sasl-2.1.22.orig/cmake/modules/FindWcecompat.cmake cyrus-sasl-2.
 +find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
-diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
---- cyrus-sasl-2.1.22.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/CMakeLists.txt	2010-08-31 14:41:46.271660000 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/CMakeLists.txt cyrus-sasl-2.1.26/CMakeLists.txt
+--- cyrus-sasl-2.1.26.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.26/CMakeLists.txt	2013-01-23 11:54:43.882866100 +0100
 @@ -0,0 +1,276 @@
 +project(cyrus-sasl)
 +cmake_minimum_required(VERSION 2.6.2)
 +set(PACKAGE "cyrus-sasl")
-+set(VERSION "2.1.22")
++set(VERSION "2.1.26")
 +set(PLUGINDESTINATION lib/sasl2)
 +set(PLUGINDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
 +set(CONFIGDIR ${CMAKE_INSTALL_PREFIX}/${PLUGINDESTINATION})
@@ -315,9 +315,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/CMakeLists.txt cyrus-sasl-2.1.22/CMakeLists.txt
 +add_executable(sasl2_pluginviewer utils/pluginviewer.c)
 +target_link_libraries(sasl2_pluginviewer sasl2 ${additional_link_libs})
 +install(TARGETS sasl2_pluginviewer DESTINATION bin)
-diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
---- cyrus-sasl-2.1.22.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/config.h.cmake	2010-10-06 18:51:42.114171900 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/config.h.cmake cyrus-sasl-2.1.26/config.h.cmake
+--- cyrus-sasl-2.1.26.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.26/config.h.cmake	2013-01-23 11:54:43.887866100 +0100
 @@ -0,0 +1,210 @@
 +#ifndef CONFIG_H
 +#define CONFIG_H
@@ -529,9 +529,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/config.h.cmake cyrus-sasl-2.1.22/config.h.cmake
 +# define HIER_DELIMITER @HIER_DELIMITER@
 +#endif
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
---- cyrus-sasl-2.1.22.orig/include/gai.h	2006-04-10 15:36:20.000000000 +0200
-+++ cyrus-sasl-2.1.22/include/gai.h	2010-07-25 20:43:51.977312400 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/include/gai.h cyrus-sasl-2.1.26/include/gai.h
+--- cyrus-sasl-2.1.26.orig/include/gai.h	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/include/gai.h	2013-01-23 11:54:43.892866100 +0100
 @@ -54,6 +54,8 @@
  #ifndef _GAI_H_
  #define _GAI_H_
@@ -576,17 +576,17 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/gai.h cyrus-sasl-2.1.22/include/gai.h
  #endif
  
  #ifdef __cplusplus
-diff -Nru cyrus-sasl-2.1.22.orig/include/prop.h cyrus-sasl-2.1.22/include/prop.h
---- cyrus-sasl-2.1.22.orig/include/prop.h	2003-12-12 01:47:22.000000000 +0100
-+++ cyrus-sasl-2.1.22/include/prop.h	2010-08-31 11:40:06.383222000 +0200
-@@ -33,18 +33,22 @@
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/include/prop.h cyrus-sasl-2.1.26/include/prop.h
+--- cyrus-sasl-2.1.26.orig/include/prop.h	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/include/prop.h	2013-01-23 11:57:52.923646500 +0100
+@@ -33,17 +33,21 @@
  /* Under Unix, life is simpler: we just need to mark library functions
   * as extern.  (Technically, we don't even have to do that.) */
  #ifdef WIN32
 -# ifdef LIBSASL_EXPORTS
--#  define LIBSASL_API  __declspec(dllexport)
+-#  define LIBSASL_API  extern __declspec(dllexport)
 -# else /* LIBSASL_EXPORTS */
--#  define LIBSASL_API  __declspec(dllimport)
+-#  define LIBSASL_API  extern __declspec(dllimport)
 -# endif /* LIBSASL_EXPORTS */
 +# ifndef LIBSASL_STATIC
 +#  ifdef LIBSASL_EXPORTS
@@ -601,16 +601,15 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/prop.h cyrus-sasl-2.1.22/include/prop.h
  # define LIBSASL_API extern
  #endif /* WIN32 */
  
- /* Same as above, but used during a variable declaration. Only Unix definition
-  * is different, as we can't assign an initial value to an extern variable */ 
+ /* Same as above, but used during a variable declaration. */
 -#ifdef WIN32
-+#if defined(WIN32) && !defined(LIBSASL_STATIC)
++#if defined(_WIN32) && !defined(LIBSASL_STATIC)
  # ifdef LIBSASL_EXPORTS
- #  define LIBSASL_VAR  __declspec(dllexport)
+ #  define LIBSASL_VAR  extern __declspec(dllexport)
  # else /* LIBSASL_EXPORTS */
-diff -Nru cyrus-sasl-2.1.22.orig/include/prop.h.cmake cyrus-sasl-2.1.22/include/prop.h.cmake
---- cyrus-sasl-2.1.22.orig/include/prop.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ cyrus-sasl-2.1.22/include/prop.h.cmake	2010-08-31 14:42:13.475216000 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/include/prop.h.cmake cyrus-sasl-2.1.26/include/prop.h.cmake
+--- cyrus-sasl-2.1.26.orig/include/prop.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-sasl-2.1.26/include/prop.h.cmake	2013-01-23 11:54:43.917866100 +0100
 @@ -0,0 +1,193 @@
 +/* prop.h -- property request/response management routines
 + *
@@ -805,10 +804,10 @@ diff -Nru cyrus-sasl-2.1.22.orig/include/prop.h.cmake cyrus-sasl-2.1.22/include/
 +#endif
 +
 +#endif /* PROP_H */
-diff -Nru cyrus-sasl-2.1.22.orig/lib/auxprop.c cyrus-sasl-2.1.22/lib/auxprop.c
---- cyrus-sasl-2.1.22.orig/lib/auxprop.c	2006-03-14 15:23:55.000000000 +0100
-+++ cyrus-sasl-2.1.22/lib/auxprop.c	2010-08-31 15:58:57.386544600 +0200
-@@ -851,15 +851,15 @@
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/auxprop.c cyrus-sasl-2.1.26/lib/auxprop.c
+--- cyrus-sasl-2.1.26.orig/lib/auxprop.c	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/lib/auxprop.c	2013-01-23 12:01:53.085666700 +0100
+@@ -905,7 +905,7 @@
  			  unsigned flags,
  			  const char *user, unsigned ulen) 
  {
@@ -817,42 +816,42 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/auxprop.c cyrus-sasl-2.1.22/lib/auxprop.c
      int ret, found = 0;
      void *context;
      const char *plist = NULL;
-     auxprop_plug_list_t *ptr;
+@@ -914,9 +914,9 @@
  
      if(_sasl_getcallback(sparams->utils->conn,
--			 SASL_CB_GETOPT, &getopt, &context) == SASL_OK) {
+ 			 SASL_CB_GETOPT,
+-			 (sasl_callback_ft *)&getopt,
++			 (sasl_callback_ft *)&_getopt,
+ 			 &context) == SASL_OK) {
 -	ret = getopt(context, NULL, "auxprop_plugin", &plist, NULL);
-+			 SASL_CB_GETOPT, &_getopt, &context) == SASL_OK) {
 +	ret = _getopt(context, NULL, "auxprop_plugin", &plist, NULL);
  	if(ret != SASL_OK) plist = NULL;
      }
  
-@@ -917,7 +917,7 @@
+@@ -982,7 +982,7 @@
  int sasl_auxprop_store(sasl_conn_t *conn,
  		       struct propctx *ctx, const char *user)
  {
 -    sasl_getopt_t *getopt;
 +    sasl_getopt_t *_getopt;
-     int ret, found = 0;
+     int ret;
      void *context;
      const char *plist = NULL;
-@@ -933,9 +933,9 @@
- 	userlen = (unsigned) strlen(user);
+@@ -1001,8 +1001,8 @@
      }
      
--    /* Pickup getopt callback from the connection, if conn is not NULL */
--    if(_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context) == SASL_OK) {
+     /* Pickup getopt callback from the connection, if conn is not NULL */
+-    if(_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context) == SASL_OK) {
 -	ret = getopt(context, NULL, "auxprop_plugin", &plist, NULL);
-+    /* Pickup _getopt callback from the connection, if conn is not NULL */
-+    if(_sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context) == SASL_OK) {
++    if(_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context) == SASL_OK) {
 +	ret = _getopt(context, NULL, "auxprop_plugin", &plist, NULL);
  	if(ret != SASL_OK) plist = NULL;
      }
  
-diff -Nru cyrus-sasl-2.1.22.orig/lib/canonusr.c cyrus-sasl-2.1.22/lib/canonusr.c
---- cyrus-sasl-2.1.22.orig/lib/canonusr.c	2004-02-21 00:54:51.000000000 +0100
-+++ cyrus-sasl-2.1.22/lib/canonusr.c	2010-08-31 15:59:38.610902500 +0200
-@@ -76,7 +76,7 @@
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/canonusr.c cyrus-sasl-2.1.26/lib/canonusr.c
+--- cyrus-sasl-2.1.26.orig/lib/canonusr.c	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/lib/canonusr.c	2013-01-23 12:04:00.390846000 +0100
+@@ -74,7 +74,7 @@
      sasl_server_conn_t *sconn = NULL;
      sasl_client_conn_t *cconn = NULL;
      sasl_canon_user_t *cuser_cb;
@@ -861,23 +860,24 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/canonusr.c cyrus-sasl-2.1.22/lib/canonusr.c
      void *context;
      int result;
      const char *plugin_name = NULL;
-@@ -123,9 +123,9 @@
- 
+@@ -129,10 +129,10 @@
      /* which plugin are we supposed to use? */
-     result = _sasl_getcallback(conn, SASL_CB_GETOPT,
--			       &getopt, &context);
--    if(result == SASL_OK && getopt) {
+     result = _sasl_getcallback(conn,
+ 			       SASL_CB_GETOPT,
+-			       (sasl_callback_ft *)&getopt,
++			       (sasl_callback_ft *)&_getopt,
+ 			       &context);
+-    if (result == SASL_OK && getopt) {
 -	getopt(context, NULL, "canon_user_plugin", &plugin_name, NULL);
-+			       &_getopt, &context);
-+    if(result == SASL_OK && _getopt) {
++    if (result == SASL_OK && _getopt) {
 +	_getopt(context, NULL, "canon_user_plugin", &plugin_name, NULL);
      }
  
-     if(!plugin_name) {
-diff -Nru cyrus-sasl-2.1.22.orig/lib/checkpw.c cyrus-sasl-2.1.22/lib/checkpw.c
---- cyrus-sasl-2.1.22.orig/lib/checkpw.c	2006-03-13 19:30:41.000000000 +0100
-+++ cyrus-sasl-2.1.22/lib/checkpw.c	2010-08-31 16:00:17.434123100 +0200
-@@ -548,7 +548,7 @@
+     if (!plugin_name) {
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/checkpw.c cyrus-sasl-2.1.26/lib/checkpw.c
+--- cyrus-sasl-2.1.26.orig/lib/checkpw.c	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/lib/checkpw.c	2013-01-23 11:54:43.952866200 +0100
+@@ -649,7 +649,7 @@
      char *query_end = query;
      int s;
      struct sockaddr_un srvaddr;
@@ -886,7 +886,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/checkpw.c cyrus-sasl-2.1.22/lib/checkpw.c
      void *context;
      char pwpath[sizeof(srvaddr.sun_path)];
      const char *p = NULL;
-@@ -558,8 +558,8 @@
+@@ -659,8 +659,8 @@
  #endif
  
      /* check to see if the user configured a rundir */
@@ -897,7 +897,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/checkpw.c cyrus-sasl-2.1.22/lib/checkpw.c
      }
      if (p) {
  	strncpy(pwpath, p, sizeof(pwpath));
-@@ -915,15 +915,15 @@
+@@ -1034,15 +1034,15 @@
  				      const char *user_realm __attribute__((unused)))
  {
      const char *p = NULL;
@@ -916,10 +916,10 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/checkpw.c cyrus-sasl-2.1.22/lib/checkpw.c
      }
      if (!p) {
  	/*
-diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
---- cyrus-sasl-2.1.22.orig/lib/common.c	Wed Apr 19 18:39:59 2006
-+++ cyrus-sasl-2.1.22/lib/common.c	2010-08-31 16:01:15.441440900 +0200
-@@ -850,7 +850,7 @@
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/common.c cyrus-sasl-2.1.26/lib/common.c
+--- cyrus-sasl-2.1.26.orig/lib/common.c	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/lib/common.c	2013-01-23 12:04:59.114526800 +0100
+@@ -902,7 +902,7 @@
  int sasl_getprop(sasl_conn_t *conn, int propnum, const void **pvalue)
  {
    int result = SASL_OK;
@@ -928,16 +928,16 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
    void *context;
    
    if (! conn) return SASL_BADPARAM;
-@@ -865,7 +865,7 @@
+@@ -917,7 +917,7 @@
        *(unsigned **)pvalue = &conn->oparams.maxoutbuf;
        break;
    case SASL_GETOPTCTX:
--      result = _sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context);
-+      result = _sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context);
+-      result = _sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context);
++      result = _sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context);
        if(result != SASL_OK) break;
        
        *(void **)pvalue = context;
-@@ -1435,6 +1435,7 @@
+@@ -1548,6 +1548,7 @@
  #ifdef WIN32
      /* for win32, try using the GetUserName standard call */
      {
@@ -945,7 +945,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
  	DWORD i;
  	BOOL rval;
  	static char sender[128];
-@@ -1446,6 +1447,11 @@
+@@ -1559,6 +1560,11 @@
  		if (len) *len = strlen(sender);
  		return SASL_OK;
  	}
@@ -957,7 +957,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
      }
  #endif /* WIN32 */
      return SASL_FAIL;
-@@ -2399,6 +2405,8 @@
+@@ -2531,6 +2537,8 @@
  		     &cbData);
  
      switch (ValueType) {
@@ -966,7 +966,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
      case REG_EXPAND_SZ:
          /* : A random starting guess */
          cbExpandedData = cbData + 1024;
-@@ -2447,7 +2455,7 @@
+@@ -2579,7 +2587,7 @@
          ExpandedValueData = NULL;
  
          break;
@@ -975,9 +975,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/common.c cyrus-sasl-2.1.22/lib/common.c
      case REG_MULTI_SZ:
          tmp = ValueData;
  
-diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
---- cyrus-sasl-2.1.22.orig/lib/dlopen.c	2005-03-15 14:33:30.000000000 +0100
-+++ cyrus-sasl-2.1.22/lib/dlopen.c	2010-08-31 11:18:47.142053600 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/dlopen.c cyrus-sasl-2.1.26/lib/dlopen.c
+--- cyrus-sasl-2.1.26.orig/lib/dlopen.c	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/lib/dlopen.c	2013-01-23 11:54:43.992866200 +0100
 @@ -56,7 +56,7 @@
  #include <sasl.h>
  #include "saslint.h"
@@ -987,7 +987,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
  #include <saslplug.h>
  #include "staticopen.h"
  #endif
-@@ -393,7 +393,7 @@
+@@ -407,7 +407,7 @@
      DIR *dp;
      struct dirent *dir;
  #endif
@@ -996,7 +996,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
      add_plugin_t *add_plugin;
      _sasl_plug_type type;
      _sasl_plug_rec *p;
-@@ -408,7 +408,7 @@
+@@ -422,7 +422,7 @@
  	|| ! verifyfile_cb->proc)
  	return SASL_BADPARAM;
  
@@ -1005,7 +1005,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
      /* do all the static plugins first */
  
      for(cur_ep = entrypoints; cur_ep->entryname; cur_ep++) {
-@@ -435,7 +435,7 @@
+@@ -449,7 +449,7 @@
  	    	result = add_plugin(p->name, p->plug);
  	}
      }
@@ -1014,11 +1014,11 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/dlopen.c cyrus-sasl-2.1.22/lib/dlopen.c
  
  /* only do the following if:
   * 
-diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
---- cyrus-sasl-2.1.22.orig/lib/saslutil.c	Mon Mar 13 18:26:36 2006
-+++ cyrus-sasl-2.1.22/lib/saslutil.c	Mon Jul  5 16:13:56 2010
-@@ -469,7 +469,7 @@
-     memset(buf, 0, len);
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/saslutil.c cyrus-sasl-2.1.26/lib/saslutil.c
+--- cyrus-sasl-2.1.26.orig/lib/saslutil.c	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/lib/saslutil.c	2013-01-23 11:54:44.012866200 +0100
+@@ -607,7 +607,7 @@
+     return (0);
  }
  
 -#ifdef WIN32
@@ -1026,7 +1026,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  /***************************************************************************** 
   * 
   *  MODULE NAME : GETOPT.C 
-@@ -515,11 +515,11 @@
+@@ -653,11 +653,11 @@
   * The opstring argument points to a string of option characters; if an 
   * option character is followed by a colon, the option is expected to have 
   * an argument that may or may not be separated from it by white space. 
@@ -1041,7 +1041,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
   * 1 before the first call to getopt(). 
   * 
   * When all options have been processed (that is, up to the first nonoption 
-@@ -529,7 +529,7 @@
+@@ -667,7 +667,7 @@
   * 
   * The getopt() function returns a question mark (?) when it encounters an 
   * option character not included in opstring.  This error message can be 
@@ -1050,7 +1050,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
   * character that was detected. 
   * 
   * If the special option "--" is detected, or all options have been 
-@@ -543,15 +543,19 @@
+@@ -681,15 +681,19 @@
  #include <string.h>                 /* for strchr() */ 
   
  /* static (global) variables that are specified as exported by getopt() */ 
@@ -1075,7 +1075,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  { 
      static char *pIndexPosition = NULL; /* place inside current argv string */ 
      char *pArgString = NULL;        /* where to start from next */ 
-@@ -568,7 +572,7 @@
+@@ -706,7 +710,7 @@
   
      if (pArgString == NULL) { 
          /* we didn't leave off in the middle of an argv string */ 
@@ -1084,7 +1084,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              /* more command-line arguments than the argument count */ 
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* used up all command-line arguments */ 
-@@ -577,12 +581,12 @@
+@@ -715,12 +719,12 @@
          /*--------------------------------------------------------------------- 
           * If the next argv[] is not an option, there can be no more options. 
           *-------------------------------------------------------------------*/ 
@@ -1100,7 +1100,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* used up all the command-line flags */ 
          } 
-@@ -590,7 +594,7 @@
+@@ -728,7 +732,7 @@
          /* check for special end-of-flags markers */ 
          if ((strcmp(pArgString, "-") == 0) || 
              (strcmp(pArgString, "--") == 0)) { 
@@ -1109,7 +1109,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = NULL;  /* not in the middle of anything */ 
              return EOF;             /* encountered the special flag */ 
          } 
-@@ -600,18 +604,18 @@
+@@ -738,18 +742,18 @@
   
      if (':' == *pArgString) {       /* is it a colon? */ 
          /*--------------------------------------------------------------------- 
@@ -1132,7 +1132,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
      } 
      else { 
          /*--------------------------------------------------------------------- 
-@@ -620,26 +624,26 @@
+@@ -758,26 +762,26 @@
          if (':' == _next_char(pOptString)) { /* is the next letter a colon? */ 
              /* It is a colon.  Look for an argument string. */ 
              if ('\0' != _next_char(pArgString)) {  /* argument in this argv? */ 
@@ -1166,8 +1166,8 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
              pIndexPosition = pArgString;    /* point to the letter we're on */ 
          } 
          return (int)*pArgString;    /* return the letter that matched */ 
-@@ -659,6 +663,8 @@
- 	register c;
+@@ -797,6 +801,8 @@
+ 	register int c;
  	static char pbuf[PASSWORD_MAX];
  
 +//There is no console under wince
@@ -1175,7 +1175,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  	fprintf(stderr, "%s", prompt); (void) fflush(stderr);
  	for (p=pbuf; (c = _getch())!=13 && c!=EOF;) {
  		if (p < &pbuf[sizeof(pbuf)-1])
-@@ -666,6 +672,9 @@
+@@ -804,6 +810,9 @@
  	}
  	*p = '\0';
  	fprintf(stderr, "\n"); (void) fflush(stderr);
@@ -1185,10 +1185,10 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/saslutil.c cyrus-sasl-2.1.22/lib/saslutil.c
  	return(pbuf);
  }
  
-diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
---- cyrus-sasl-2.1.22.orig/lib/server.c	2006-05-17 18:46:13.000000000 +0200
-+++ cyrus-sasl-2.1.22/lib/server.c	2010-08-31 16:04:08.025312100 +0200
-@@ -687,7 +687,7 @@
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/server.c cyrus-sasl-2.1.26/lib/server.c
+--- cyrus-sasl-2.1.26.orig/lib/server.c	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/lib/server.c	2013-01-23 12:07:57.405969100 +0100
+@@ -820,7 +820,7 @@
      const sasl_callback_t *vf;
      const char *pluginfile = NULL;
  #ifdef PIC
@@ -1197,12 +1197,12 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
      void *context;
  #endif
  
-@@ -757,11 +757,11 @@
+@@ -893,11 +893,11 @@
  #ifdef PIC
      /* delayed loading of plugins? (DSO only, as it doesn't
       * make much [any] sense to delay in the static library case) */
--    if (_sasl_getcallback(NULL, SASL_CB_GETOPT, &getopt, &context) 
-+    if (_sasl_getcallback(NULL, SASL_CB_GETOPT, &_getopt, &context) 
+-    if (_sasl_getcallback(NULL, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context) 
++    if (_sasl_getcallback(NULL, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context) 
  	   == SASL_OK) {
  	/* No sasl_conn_t was given to getcallback, so we provide the
  	 * global callbacks structure */
@@ -1211,7 +1211,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
      }
  #endif
      
-@@ -814,7 +814,7 @@
+@@ -950,7 +950,7 @@
  		 unsigned passlen)
  {
      const char *dotrans = "n";
@@ -1220,19 +1220,19 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
      int result = SASL_OK;
      void *context;
      unsigned flags = 0;
-@@ -826,9 +826,9 @@
+@@ -962,9 +962,9 @@
  	PARAMERROR(conn);
  
      /* check if this is enabled: default to false */
--    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context) == SASL_OK)
-+    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context) == SASL_OK)
+-    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context) == SASL_OK)
++    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context) == SASL_OK)
      {
 -	getopt(context, NULL, "auto_transition", &dotrans, NULL);
 +	_getopt(context, NULL, "auto_transition", &dotrans, NULL);
  	if (dotrans == NULL) dotrans = "n";
      }
  
-@@ -884,7 +884,7 @@
+@@ -1020,7 +1020,7 @@
    int result;
    sasl_server_conn_t *serverconn;
    sasl_utils_t *utils;
@@ -1240,44 +1240,23 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
 +  sasl_getopt_t *_getopt;
    void *context;
    const char *log_level, *auto_trans;
- 
-@@ -965,9 +965,9 @@
+   const char *mlist = NULL;
+@@ -1103,10 +1103,10 @@
    serverconn->sparams->callbacks = callbacks;
  
    log_level = auto_trans = NULL;
--  if(_sasl_getcallback(*pconn, SASL_CB_GETOPT, &getopt, &context) == SASL_OK) {
+-  if(_sasl_getcallback(*pconn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context) == SASL_OK) {
 -    getopt(context, NULL, "log_level", &log_level, NULL);
 -    getopt(context, NULL, "auto_transition", &auto_trans, NULL);
-+  if(_sasl_getcallback(*pconn, SASL_CB_GETOPT, &_getopt, &context) == SASL_OK) {
+-    getopt(context, NULL, "mech_list", &mlist, NULL);
++  if(_sasl_getcallback(*pconn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context) == SASL_OK) {
 +    _getopt(context, NULL, "log_level", &log_level, NULL);
 +    _getopt(context, NULL, "auto_transition", &auto_trans, NULL);
++    _getopt(context, NULL, "mech_list", &mlist, NULL);
    }
    serverconn->sparams->log_level = log_level ? atoi(log_level) : SASL_LOG_ERR;
  
-@@ -1008,7 +1008,7 @@
-     int ret;
-     int myflags;
-     context_list_t *cur;
--    sasl_getopt_t *getopt;
-+    sasl_getopt_t *_getopt;
-     void *context;
-     sasl_ssf_t minssf = 0;
- 
-@@ -1022,11 +1022,11 @@
-     plug = mech->m.plug;
- 
-     /* get the list of allowed mechanisms (default = all) */
--    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context)
-+    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context)
-             == SASL_OK) {
- 	const char *mlist = NULL;
- 
--	getopt(context, NULL, "mech_list", &mlist, NULL);
-+	_getopt(context, NULL, "mech_list", &mlist, NULL);
- 
- 	/* if we have a list, check the plugin against it */
- 	if (mlist) {
-@@ -1635,7 +1635,7 @@
+@@ -1885,7 +1885,7 @@
  {
      sasl_server_conn_t *s_conn = (sasl_server_conn_t *) conn;
      int result;
@@ -1286,19 +1265,19 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
      sasl_server_userdb_checkpass_t *checkpass_cb;
      void *context;
      const char *mlist = NULL, *mech = NULL;
-@@ -1656,9 +1656,9 @@
+@@ -1906,9 +1906,9 @@
      }
  
      /* figure out how to check (i.e. auxprop or saslauthd or pwcheck) */
--    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context)
-+    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context)
+-    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context)
++    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context)
              == SASL_OK) {
 -        getopt(context, NULL, "pwcheck_method", &mlist, NULL);
 +        _getopt(context, NULL, "pwcheck_method", &mlist, NULL);
      }
  
      if(!mlist) mlist = DEFAULT_CHECKPASS_MECH;
-@@ -1767,7 +1767,7 @@
+@@ -2018,7 +2018,7 @@
      int result=SASL_NOMECH;
      const char *mlist = NULL, *mech = NULL;
      void *context;
@@ -1307,21 +1286,21 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/server.c cyrus-sasl-2.1.22/lib/server.c
      struct sasl_verify_password_s *v;
      
      /* check params */
-@@ -1779,9 +1779,9 @@
+@@ -2030,9 +2030,9 @@
      if(!service) service = conn->service;
      
      /* figure out how to check (i.e. auxprop or saslauthd or pwcheck) */
--    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context)
-+    if (_sasl_getcallback(conn, SASL_CB_GETOPT, &_getopt, &context)
+-    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&getopt, &context)
++    if (_sasl_getcallback(conn, SASL_CB_GETOPT, (sasl_callback_ft *)&_getopt, &context)
              == SASL_OK) {
 -        getopt(context, NULL, "pwcheck_method", &mlist, NULL);
 +        _getopt(context, NULL, "pwcheck_method", &mlist, NULL);
      }
  
      if(!mlist) mlist = DEFAULT_CHECKPASS_MECH;
-diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen.c
---- cyrus-sasl-2.1.22.orig/lib/windlopen.c	Mon Oct 20 15:19:59 2003
-+++ cyrus-sasl-2.1.22/lib/windlopen.c	2010-08-31 11:18:47.144053700 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/lib/windlopen.c cyrus-sasl-2.1.26/lib/windlopen.c
+--- cyrus-sasl-2.1.26.orig/lib/windlopen.c	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/lib/windlopen.c	2013-01-23 11:54:44.057866300 +0100
 @@ -50,6 +50,11 @@
  #include <sasl.h>
  #include "saslint.h"
@@ -1360,7 +1339,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
      if (*entry_point == NULL) {
  #if 0 /* This message appears to confuse people */
-@@ -159,19 +173,27 @@
+@@ -168,19 +182,27 @@
  		       const sasl_callback_t *verifyfile_cb)
  {
      int result;
@@ -1390,7 +1369,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
      if (! entrypoints
  	|| ! getpath_cb
  	|| getpath_cb->id != SASL_CB_GETPATH
-@@ -181,6 +203,33 @@
+@@ -190,6 +212,33 @@
  	|| ! verifyfile_cb->proc)
  	return SASL_BADPARAM;
  
@@ -1424,7 +1403,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
      /* get the path to the plugins */
      result = ((sasl_getpath_t *)(getpath_cb->proc))(getpath_cb->context,
  						    &path);
-@@ -257,9 +306,12 @@
+@@ -267,9 +316,12 @@
  	    }
  
  /* : Check that it is not a directory */
@@ -1437,7 +1416,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
  /* : Construct full name from prefix and name */
  
-@@ -287,6 +339,7 @@
+@@ -307,6 +359,7 @@
  	_findclose (fhandle);
  
      } while ((c!='=') && (c!=0));
@@ -1445,9 +1424,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/lib/windlopen.c cyrus-sasl-2.1.22/lib/windlopen
  
      return SASL_OK;
  }
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/anonymous_init.c cyrus-sasl-2.1.22/plugins/anonymous_init.c
---- cyrus-sasl-2.1.22.orig/plugins/anonymous_init.c	2006-05-19 16:49:30.000000000 +0200
-+++ cyrus-sasl-2.1.22/plugins/anonymous_init.c	2010-08-31 14:12:01.252562700 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/anonymous_init.c cyrus-sasl-2.1.26/plugins/anonymous_init.c
+--- cyrus-sasl-2.1.26.orig/plugins/anonymous_init.c	2012-11-06 20:32:19.000000000 +0100
++++ cyrus-sasl-2.1.26/plugins/anonymous_init.c	2013-01-23 11:54:44.062866300 +0100
 @@ -20,7 +20,7 @@
  #include <sasl_anonymous_plugin_decl.h>
  #endif
@@ -1467,9 +1446,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/anonymous_init.c cyrus-sasl-2.1.22/plug
  SASL_SERVER_PLUG_INIT( anonymous )
 -
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/crammd5_init.c cyrus-sasl-2.1.22/plugins/crammd5_init.c
---- cyrus-sasl-2.1.22.orig/plugins/crammd5_init.c	2006-05-19 16:49:30.000000000 +0200
-+++ cyrus-sasl-2.1.22/plugins/crammd5_init.c	2010-08-31 14:11:48.820851700 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/crammd5_init.c cyrus-sasl-2.1.26/plugins/crammd5_init.c
+--- cyrus-sasl-2.1.26.orig/plugins/crammd5_init.c	2012-11-06 20:32:19.000000000 +0100
++++ cyrus-sasl-2.1.26/plugins/crammd5_init.c	2013-01-23 11:54:44.067866300 +0100
 @@ -20,7 +20,7 @@
  #include <sasl_crammd5_plugin_decl.h>
  #endif
@@ -1489,9 +1468,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/crammd5_init.c cyrus-sasl-2.1.22/plugin
  SASL_SERVER_PLUG_INIT( crammd5 )
 -
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/digestmd5_init.c cyrus-sasl-2.1.22/plugins/digestmd5_init.c
---- cyrus-sasl-2.1.22.orig/plugins/digestmd5_init.c	2006-05-19 16:49:30.000000000 +0200
-+++ cyrus-sasl-2.1.22/plugins/digestmd5_init.c	2010-08-31 14:11:33.662984700 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/digestmd5_init.c cyrus-sasl-2.1.26/plugins/digestmd5_init.c
+--- cyrus-sasl-2.1.26.orig/plugins/digestmd5_init.c	2012-11-06 20:32:19.000000000 +0100
++++ cyrus-sasl-2.1.26/plugins/digestmd5_init.c	2013-01-23 11:54:44.072866300 +0100
 @@ -20,7 +20,7 @@
  #include <sasl_digestmd5_plugin_decl.h>
  #endif
@@ -1511,9 +1490,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/digestmd5_init.c cyrus-sasl-2.1.22/plug
  SASL_SERVER_PLUG_INIT( digestmd5 )
 -
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/login_init.c cyrus-sasl-2.1.22/plugins/login_init.c
---- cyrus-sasl-2.1.22.orig/plugins/login_init.c	2006-05-19 16:49:30.000000000 +0200
-+++ cyrus-sasl-2.1.22/plugins/login_init.c	2010-08-31 14:12:24.362884600 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/login_init.c cyrus-sasl-2.1.26/plugins/login_init.c
+--- cyrus-sasl-2.1.26.orig/plugins/login_init.c	2012-11-06 20:32:19.000000000 +0100
++++ cyrus-sasl-2.1.26/plugins/login_init.c	2013-01-23 11:54:44.072866300 +0100
 @@ -20,7 +20,7 @@
  #include <sasl_login_plugin_decl.h>
  #endif
@@ -1533,9 +1512,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/login_init.c cyrus-sasl-2.1.22/plugins/
  SASL_SERVER_PLUG_INIT( login )
 -
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/plain_init.c cyrus-sasl-2.1.22/plugins/plain_init.c
---- cyrus-sasl-2.1.22.orig/plugins/plain_init.c	2006-05-19 16:49:30.000000000 +0200
-+++ cyrus-sasl-2.1.22/plugins/plain_init.c	2010-08-31 14:12:09.585039300 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/plain_init.c cyrus-sasl-2.1.26/plugins/plain_init.c
+--- cyrus-sasl-2.1.26.orig/plugins/plain_init.c	2012-11-06 20:32:19.000000000 +0100
++++ cyrus-sasl-2.1.26/plugins/plain_init.c	2013-01-23 11:54:44.077866300 +0100
 @@ -20,7 +20,7 @@
  #include <sasl_plain_plugin_decl.h>
  #endif
@@ -1555,9 +1534,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/plain_init.c cyrus-sasl-2.1.22/plugins/
  SASL_SERVER_PLUG_INIT( plain )
 -
 +#endif
-diff -Nru cyrus-sasl-2.1.22.orig/plugins/plugin_common.c cyrus-sasl-2.1.22/plugins/plugin_common.c
---- cyrus-sasl-2.1.22.orig/plugins/plugin_common.c	Wed Jun 23 18:43:37 2004
-+++ cyrus-sasl-2.1.22/plugins/plugin_common.c	2010-08-31 11:12:40.213066500 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/plugins/plugin_common.c cyrus-sasl-2.1.26/plugins/plugin_common.c
+--- cyrus-sasl-2.1.26.orig/plugins/plugin_common.c	2012-10-12 16:05:48.000000000 +0200
++++ cyrus-sasl-2.1.26/plugins/plugin_common.c	2013-01-23 11:54:44.087866300 +0100
 @@ -819,7 +819,7 @@
  
  void _plug_snprintf_os_info (char * osbuf, int osbuf_len)
@@ -1613,9 +1592,9 @@ diff -Nru cyrus-sasl-2.1.22.orig/plugins/plugin_common.c cyrus-sasl-2.1.22/plugi
  #else /* !WIN32 */
      struct utsname os;
  
-diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pluginviewer.c
---- cyrus-sasl-2.1.22.orig/utils/pluginviewer.c	Wed May 17 16:46:17 2006
-+++ cyrus-sasl-2.1.22/utils/pluginviewer.c	2010-08-31 11:57:28.282815300 +0200
+diff -Nru -x '*~' cyrus-sasl-2.1.26.orig/utils/pluginviewer.c cyrus-sasl-2.1.26/utils/pluginviewer.c
+--- cyrus-sasl-2.1.26.orig/utils/pluginviewer.c	2012-01-28 00:31:36.000000000 +0100
++++ cyrus-sasl-2.1.26/utils/pluginviewer.c	2013-01-23 12:11:11.847318300 +0100
 @@ -49,9 +49,16 @@
  #include <stdlib.h>
  #ifdef WIN32
@@ -1727,7 +1706,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
  #ifndef HAVE_GETSUBOPT
  int getsubopt(char **optionp, const char * const *tokens, char **valuep);
  #endif
-@@ -413,7 +509,7 @@
+@@ -398,7 +490,7 @@
      secprops.maxbufsize = SAMPLE_SEC_BUF_SIZE;
      secprops.max_ssf = UINT_MAX;
  
@@ -1736,7 +1715,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
          switch (c) {
          case 'a':
  	    list_auxprop_plugins = 1;
-@@ -421,7 +517,7 @@
+@@ -406,7 +498,7 @@
  	    break;
  
          case 'x':
@@ -1745,7 +1724,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              break;
  
          case 'c':
-@@ -435,7 +531,7 @@
+@@ -420,7 +512,7 @@
  	    break;
  
          case 'b':
@@ -1754,7 +1733,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)bit_subopts, &value)) {
  	        case OPT_MIN:
-@@ -460,7 +556,7 @@
+@@ -445,7 +537,7 @@
              break;
  
          case 'e':
@@ -1763,12 +1742,12 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)ext_subopts, &value)) {
  	        case OPT_EXT_SSF:
-@@ -485,11 +581,11 @@
+@@ -470,11 +562,11 @@
              break;
  
          case 'm':
--            mech = optarg;
-+            mech = sasl_optarg;
+-            sasl_mech = optarg;
++            sasl_mech = sasl_optarg;
              break;
  
          case 'f':
@@ -1777,7 +1756,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              while (*options != '\0') {
  	        switch(getsubopt(&options, (const char * const *)flag_subopts, &value)) {
  	        case OPT_NOPLAIN:
-@@ -519,7 +615,7 @@
+@@ -504,7 +596,7 @@
              break;
  
          case 'p':
@@ -1786,7 +1765,7 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
              break;
  
          default:			/* unknown flag */
-@@ -527,7 +623,7 @@
+@@ -512,7 +604,7 @@
              break;
          }
  
@@ -1795,30 +1774,12 @@ diff -Nru cyrus-sasl-2.1.22.orig/utils/pluginviewer.c cyrus-sasl-2.1.22/utils/pl
          /* We don't *have* extra arguments */
          errflag = 1;
      }
-@@ -578,7 +674,7 @@
+@@ -563,7 +655,7 @@
          ++callback;
      }
  
 -    /* getopt */
-+    /*_sasl_getopt */
++    /* _sasl_getopt */
+     /* NOTE: this will return "sasl_mech" option, however this HAS NO EFFECT
+        on client side SASL plugins, which just never query this option */
      callback->id = SASL_CB_GETOPT;
-     callback->proc = &sasl_getopt;
-     callback->context = NULL;
-@@ -665,7 +761,7 @@
-             saslfail(result, "Setting security properties", NULL);
-         }
- 
--        /* This will use getopt callback, which is using the "mech" global variable */
-+        /* This will use_sasl_getopt callback, which is using the "mech" global variable */
-         result = sasl_listmech(server_conn,
- 			    ext_authid,
- 			    NULL,
-@@ -758,7 +854,7 @@
-             saslfail(result, "Setting security properties", NULL);
-         }
- 
--        /* This will use getopt callback, which is using the "mech" global variable */
-+        /* This will use_sasl_getopt callback, which is using the "mech" global variable */
-         result = sasl_listmech(client_conn,
- 			    ext_authid,
- 			    NULL,

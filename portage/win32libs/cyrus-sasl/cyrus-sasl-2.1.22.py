@@ -6,12 +6,13 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.1.22'] = 'ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/cyrus-sasl-2.1.22.tar.gz'
-        self.targetDigests['2.1.22'] = 'd23454ab12054714ab97d229c86cb934ce63fbb1'
-        self.targetInstSrc['2.1.22'] = 'cyrus-sasl-2.1.22'
-        self.patchToApply['2.1.22'] = ( 'cyrus-sasl-2.1.22.patch', 1 )
+        for ver in [ '2.1.26' ]:
+            self.targets[ ver ] = 'ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver ] = 'cyrus-sasl-' + ver
+        self.patchToApply['2.1.26'] = [( 'cyrus-sasl-2.1.26.patch', 1 )]
+        self.targetDigests['2.1.26'] = 'd6669fb91434192529bd13ee95737a8a5040241c'
         self.shortDescription = "Cyrus SASL implementation"
-        self.defaultTarget = '2.1.22'
+        self.defaultTarget = '2.1.26'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
