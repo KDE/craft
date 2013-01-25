@@ -22,6 +22,7 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.supportsNinja = False
 
 
 if __name__ == '__main__':
