@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
             self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/kdepimlibs-4.9.' + ver + '.tar.xz'
             self.targetInstSrc['4.9.' + ver] = 'kdepimlibs-4.9.' + ver
         self.shortDescription = "the base libraries for PIM related services"
+        self.patchToApply['gitHEAD'] = [("kdepimlibs-4.9.diff", 1)]
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
