@@ -1,0 +1,111 @@
+diff --git a/autotests/test/querytests.cpp b/autotests/test/querytests.cpp
+index 8417599..7742611 100644
+--- a/autotests/test/querytests.cpp
++++ b/autotests/test/querytests.cpp
+@@ -295,7 +295,7 @@ void QueryTests::resourceTypeTerm_data()
+ 
+     // Resource Type Term
+     {
+-        Query::Query query( ResourceTypeTerm( NAO::Tag() ) );
++        Query::Query query( ResourceTypeTerm( ( ( QUrl ) NAO::Tag() ) ) );
+ 
+         QSet<QUrl> uris;
+         NepomukStatementIterator it( RDF::type() );
+diff --git a/services/backupsync/lib/syncresource.h b/services/backupsync/lib/syncresource.h
+index d19463c..0675ce2 100644
+--- a/services/backupsync/lib/syncresource.h
++++ b/services/backupsync/lib/syncresource.h
+@@ -51,13 +51,13 @@ namespace Nepomuk2 {
+          *
+          * \author Vishesh Handa <handa.vish@gmail.com>
+          */
+-        class NEPOMUKSYNC_EXPORT SyncResource : public QMultiHash<KUrl, Soprano::Node>
++        class SyncResource : public QMultiHash<KUrl, Soprano::Node>
+         {
+         public :
+-            SyncResource();
+-            SyncResource( const KUrl & uri );
+-            SyncResource( const SyncResource & rhs );
+-            virtual ~SyncResource();
++            NEPOMUKSYNC_EXPORT SyncResource();
++            NEPOMUKSYNC_EXPORT SyncResource( const KUrl & uri );
++            NEPOMUKSYNC_EXPORT SyncResource( const SyncResource & rhs );
++            NEPOMUKSYNC_EXPORT virtual ~SyncResource();
+ 
+             /**
+              * It uses the the first element's subject as the uri and ignores all further subjects.
+@@ -65,32 +65,32 @@ namespace Nepomuk2 {
+              */
+             static SyncResource fromStatementList(const QList<Soprano::Statement> & list);
+ 
+-            QList<Soprano::Statement> toStatementList() const;
++            NEPOMUKSYNC_EXPORT QList<Soprano::Statement> toStatementList() const;
+ 
+-            bool isFileDataObject() const;
+-            bool isFolder() const;
+-            KUrl nieUrl() const;
++            NEPOMUKSYNC_EXPORT bool isFileDataObject() const;
++            NEPOMUKSYNC_EXPORT bool isFolder() const;
++            NEPOMUKSYNC_EXPORT KUrl nieUrl() const;
+ 
+-            KUrl uri() const;
++            NEPOMUKSYNC_EXPORT KUrl uri() const;
+ 
+             /**
+              * If \p node is resource node the uri is set to the node's uri
+              * Otherwise if \p node is a blank node then the uri
+              * is set to its identifier
+              */
+-            void setUri( const Soprano::Node & node );
++            NEPOMUKSYNC_EXPORT void setUri( const Soprano::Node & node );
+ 
+-            QList<Soprano::Node> property( const KUrl & url ) const;
++            NEPOMUKSYNC_EXPORT QList<Soprano::Node> property( const KUrl & url ) const;
+ 
+             /**
+              * Removes all the statements whose object is \p uri
+              */
+-            void removeObject( const KUrl & uri );
++            NEPOMUKSYNC_EXPORT void removeObject( const KUrl & uri );
+ 
+-            SyncResource& operator=( const SyncResource & rhs );
+-            bool operator==( const SyncResource & res ) const;
++            NEPOMUKSYNC_EXPORT SyncResource& operator=( const SyncResource & rhs );
++            NEPOMUKSYNC_EXPORT bool operator==( const SyncResource & res ) const;
+ 
+-            bool isValid() const;
++            NEPOMUKSYNC_EXPORT bool isValid() const;
+         private:
+             class Private;
+             QSharedDataPointer<Private> d;
+diff --git a/services/storage/removablemediamodel.h b/services/storage/removablemediamodel.h
+index 8c6d0ab..fe292f8 100644
+--- a/services/storage/removablemediamodel.h
++++ b/services/storage/removablemediamodel.h
+@@ -116,6 +116,8 @@ private:
+ 
+     class StatementIteratorBackend;
+     class QueryResultIteratorBackend;
++
++    friend class RemovableMediaModelTest;
+ };
+ }
+ 
+diff --git a/services/storage/test/removablemediamodeltest.cpp b/services/storage/test/removablemediamodeltest.cpp
+index fb32d32..6328d7c 100644
+--- a/services/storage/test/removablemediamodeltest.cpp
++++ b/services/storage/test/removablemediamodeltest.cpp
+@@ -21,9 +21,13 @@
+ 
+ #include "removablemediamodeltest.h"
+ 
++#ifdef __GNUC__
+ #define private public
++#endif
+ #include "../removablemediamodel.h"
++#ifdef __GNUC__
+ #undef private
++#endif
+ 
+ #include <QtTest>
+ #include "qtest_kde.h"

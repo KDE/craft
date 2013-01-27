@@ -5,9 +5,11 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:nepomuk-core|KDE/4.9|'
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/nepomuk-core-4.9.' + ver + '.tar.xz'
+            self.patchToApply['4.9.' + ver] = [("nepomuk-core-4.9.diff",1)]
             self.targetInstSrc['4.9.' + ver] = 'nepomuk-core-4.9.' + ver
-            
-        self.patchToApply[ '4.9.0' ] = [("qtest.diff",1)]
+        
+        self.patchToApply[ '4.9.0' ] = [("qtest.diff",1),("nepomuk-core-4.9.diff",1)]
+        self.patchToApply['gitHEAD'] = [("nepomuk-core-4.9.diff",1)]
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
