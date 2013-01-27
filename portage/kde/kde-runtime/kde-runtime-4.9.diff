@@ -1,0 +1,72 @@
+diff --git a/nepomuk/controller/CMakeLists.txt b/nepomuk/controller/CMakeLists.txt
+index 25f8dd0..35f276a 100644
+--- a/nepomuk/controller/CMakeLists.txt
++++ b/nepomuk/controller/CMakeLists.txt
+@@ -15,8 +15,8 @@ set(controller_SRCS
+   ../kcm/statuswidget.cpp
+   )
+ 
+-qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+-qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
++qt4_add_dbus_interface(controller_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
++qt4_add_dbus_interface(controller_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
+ 
+ kde4_add_ui_files(controller_SRCS ../kcm/statuswidget.ui)
+ 
+diff --git a/nepomuk/kcm/CMakeLists.txt b/nepomuk/kcm/CMakeLists.txt
+index 9d94650..580b291 100644
+--- a/nepomuk/kcm/CMakeLists.txt
++++ b/nepomuk/kcm/CMakeLists.txt
+@@ -16,9 +16,9 @@ set(kcmnepomuk_SRCS
+   statuswidget.cpp
+   )
+ 
+-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
+-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
+-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
++qt4_add_dbus_interface(kcmnepomuk_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
++qt4_add_dbus_interface(kcmnepomuk_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
++qt4_add_dbus_interface(kcmnepomuk_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+ 
+ kde4_add_ui_files(kcmnepomuk_SRCS
+   nepomukconfigwidget.ui
+diff --git a/nepomuk/kioslaves/search/kdedmodule/CMakeLists.txt b/nepomuk/kioslaves/search/kdedmodule/CMakeLists.txt
+index fff309d..df08bf6 100644
+--- a/nepomuk/kioslaves/search/kdedmodule/CMakeLists.txt
++++ b/nepomuk/kioslaves/search/kdedmodule/CMakeLists.txt
+@@ -17,18 +17,18 @@ set(nepomuksearchmodule_SRCS
+ soprano_add_ontology(nepomuksearchmodule_SRCS ${NEPOMUK_CORE_ONTOLOGY_DIR}/kde/kext.trig "KExt" "Nepomuk2::Vocabulary" "trig")
+ 
+ set_source_files_properties(
+-  ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.Query.xml
++  ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.Query.xml
+   PROPERTIES INCLUDE "nepomuk2/result.h")
+ 
+ set_source_files_properties(
+-  ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.QueryService.xml
++  ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.QueryService.xml
+   PROPERTIES INCLUDE "dbusoperators_p.h")
+ 
+ qt4_add_dbus_interface(nepomuksearchmodule_SRCS
+-  ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.QueryService.xml
++  ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.QueryService.xml
+   queryserviceinterface)
+ qt4_add_dbus_interface(nepomuksearchmodule_SRCS
+-  ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.Query.xml
++  ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.Query.xml
+   queryinterface)
+ 
+ kde4_add_plugin(kded_nepomuksearchmodule ${nepomuksearchmodule_SRCS})
+diff --git a/nepomuk/kioslaves/timeline/CMakeLists.txt b/nepomuk/kioslaves/timeline/CMakeLists.txt
+index b465110..ccc766a 100644
+--- a/nepomuk/kioslaves/timeline/CMakeLists.txt
++++ b/nepomuk/kioslaves/timeline/CMakeLists.txt
+@@ -15,7 +15,7 @@ set(kio_timeline_PART_SRCS
+   kio_timeline.cpp
+   ../common/timelinetools.cpp)
+ 
+-qt4_add_dbus_interface(kio_timeline_PART_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml nepomukservicecontrolinterface)
++qt4_add_dbus_interface(kio_timeline_PART_SRCS ${CMAKE_INSTALL_PREFIX}/${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml nepomukservicecontrolinterface)
+ 
+ kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
+ 

@@ -5,9 +5,11 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.9|'
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/kde-runtime-4.9." + ver + ".tar.xz"
+            self.patchToApply['4.9.' + ver] = [("kde-runtime-4.9.diff",1)]
             self.targetInstSrc['4.9.' + ver] = 'kde-runtime-4.9.' + ver
         self.shortDescription = "Plugins and applications necessary for the running of KDE applications"
-        self.patchToApply[ '4.9.0' ] = [("kde-runtime-4.9.0-20120804.diff",1)]
+        self.patchToApply[ '4.9.0' ] = [("kde-runtime-4.9.0-20120804.diff",1),("kde-runtime-4.9.diff",1)]
+        self.patchToApply[ 'gitHEAD' ] = [("kde-runtime-4.9.diff",1)]
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
