@@ -3,7 +3,7 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kde-runtime|KDE/4.9|'
-        for ver in ['0', '1', '2', '3', '4']:
+        for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/kde-runtime-4.9." + ver + ".tar.xz"
             self.targetInstSrc['4.9.' + ver] = 'kde-runtime-4.9.' + ver
         self.shortDescription = "Plugins and applications necessary for the running of KDE applications"

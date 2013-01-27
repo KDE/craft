@@ -3,9 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'branches/KDE/4.9/kdenetwork'
-        self.targets['4.9.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.0/src/kdenetwork-4.9.0.tar.xz'
-        self.targetInstSrc['4.9.0'] = 'kdenetwork-4.9.0'
-        for ver in ['1', '2', '3', '4']:
+        for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = 'ftp://ftp.kde.org/pub/kde/stable/4.9.' + ver + '/src/kdenetwork-4.9.' + ver + '.tar.xz'
             self.targetInstSrc['4.9.' + ver] = 'kdenetwork-4.9.' + ver
             self.patchToApply['4.9.'+ver] = [("kdenetwork-4.9.0-20120125.diff", 1)]

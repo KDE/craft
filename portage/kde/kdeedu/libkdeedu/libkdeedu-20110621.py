@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:libkdeedu|KDE/4.9|'
-        for ver in ['0', '1', '2', '3', '4']:
+        for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/libkdeedu-4.9." + ver + ".tar.xz"
             self.targetInstSrc['4.9.' + ver] = 'libkdeedu-4.9.' + ver
         self.shortDescription = 'the educational support libraries'

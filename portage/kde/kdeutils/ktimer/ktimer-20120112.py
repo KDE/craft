@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:ktimer|KDE/4.9|'
-        for ver in ['0', '1', '2', '3', '4']:
+        for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/ktimer-4.9." + ver + ".tar.xz"
             self.targetInstSrc['4.9.' + ver] = 'ktimer-4.9.' + ver
         self.shortDescription = "a little tool to execute programs after some time"

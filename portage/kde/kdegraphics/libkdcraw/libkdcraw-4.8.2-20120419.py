@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw|KDE/4.9|'
-        for ver in ['0', '1', '2', '3', '4']:
+        for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/libkdcraw-4.9." + ver + ".tar.xz"
             self.targetInstSrc['4.9.' + ver] = 'libkdcraw-4.9.' + ver
         self.shortDescription = 'libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.'
