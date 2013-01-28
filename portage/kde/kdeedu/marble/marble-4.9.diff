@@ -1,0 +1,10 @@
+diff --git a/src/lib/global.h b/src/lib/global.h
+index f3c3dc4..e2fecb6 100644
+--- a/src/lib/global.h
++++ b/src/lib/global.h
+@@ -1,2 +1,4 @@
+ #include "MarbleGlobal.h"
++#ifndef _MSC_VER
+ #warning global.h is deprecated. Please #include <marble/MarbleGlobal.h> instead (no further changes needed).
++#endif
+\ No newline at end of file

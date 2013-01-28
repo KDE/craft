@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:marble|KDE/4.9|'
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/marble-4.9." + ver + ".tar.xz"
+            self.patchToApply['4.9.' + ver] = [( 'marble-4.9.diff', 1 )]
             self.targetInstSrc['4.9.' + ver] = 'marble-4.9.' + ver
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
