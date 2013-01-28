@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.options.configure.defines = "-DENABLE_INTERNALMYSQL=OFF"
         for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0', '2.0.0', '2.1.1', '2.3.0', '2.5.0']:
             self.options.configure.defines += " -DENABLE_GPHOTO2=OFF"
-        for ver in ['2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0-beta1a', '3.0.0-beta2']:
+        for ver in ['2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0-beta1a', '3.0.0-beta2', '3.0.0-rc']:
             self.options.configure.defines += " -DENABLE_NEPOMUKSUPPORT=OFF"
             self.options.configure.defines += " -DENABLE_LCMS2=ON"
             self.options.configure.defines += " -DDIGIKAMSC_CHECKOUT_PO=OFF"
@@ -57,7 +57,7 @@ class subinfo(info.infoclass):
         #self.dependencies['kdesupport/libkgeomap'] = 'default'
         for ver in ['1.0.0', '1.1.0', '1.6.0', '1.7.0', '2.0.0', '2.1.1', '2.3.0', '2.5.0']:
             self.dependencies['win32libs/lcms'] = 'default'
-        for ver in ['2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0-beta1a', '3.0.0-beta2', '3.0.0-rc']:
+        for ver in ['gitHEAD', '2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0-beta1a', '3.0.0-beta2', '3.0.0-rc']:
             self.dependencies['win32libs/lcms2'] = 'default'
         for ver in ['gitHEAD', '3.0.0']:
             self.dependencies['win32libs/lensfun'] = 'default'
