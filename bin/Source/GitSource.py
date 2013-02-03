@@ -268,17 +268,6 @@ class GitSource ( VersionSystemSourceBase ):
         utils.debug("using sourcedir: %s" % sourcedir, 2)
         return sourcedir
 
-    def getUrls( self ):
-        """print the url where to clone from and the branch/tag/hash"""
-        # in case you need to move from a read only Url to a writeable one, here it gets replaced
-        repopath = self.repositoryUrl().replace( "[git]", "" )
-        repoString = utils.replaceVCSUrl( repopath )
-        [ repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
-        if not repoBranch and not repoTag:
-            repoBranch = "master"
-        print('|'.join([repoUrl, repoBranch, repoTag]))
-        return True
-
     def currentRevision(self):
         """return the name or number of the current revision"""
         return self.__getCurrentRevision()

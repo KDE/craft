@@ -106,8 +106,6 @@ Commands (must have a packagename):
                         the specified package.
 --checkdigest           Check digest for the specified package. If no digest is
                         available calculate and print digests.
---geturls               Prints the required urls for the source(s) of this
-                        package. 
 --cleanimage            Clean image directory for the specified package and
                         target.
 --createpatch           Create source patch file for the specific package based
