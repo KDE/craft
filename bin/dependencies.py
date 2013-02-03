@@ -457,14 +457,6 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
 
-        if portage.emergePlatform.isCrossCompilingEnabled():
-            sp = pi.getCorrespondingSourcePackage(package)
-            if sp:
-                # we found such a package and we're allowed to replace it
-                category = sp[0]
-                package = sp[1]
-                version = pi.getNewestVersion(category, package)
-
         if category == "":
             category = pi.getCategory(package)
 

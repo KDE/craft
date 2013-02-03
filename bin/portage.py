@@ -78,14 +78,6 @@ class DependencyPackage(object):
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                if emergePlatform.isCrossCompilingEnabled():
-                    sp = PortageInstance.getCorrespondingSourcePackage( package )
-                    if sp:
-                        # we found such a package and we're allowed to replace it
-                        category = sp[ 0 ]
-                        package = sp[ 1 ]
-                        line = "%s/%s" % ( category, package )
-
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in list(packageDict.keys()):
@@ -299,12 +291,6 @@ class Portage(object):
 
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
-        if emergePlatform.isCrossCompilingEnabled():
-            sp = self.getCorrespondingSourcePackage( package )
-            if sp:
-                category = sp[0]
-                package = sp[1]
-
         version = self.getNewestVersion( category, package )
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
@@ -437,26 +423,6 @@ class Portage(object):
                         version = script.replace('.py', '').replace(package + '-', '')
                         instList.append([category, package, version])
         return instList
-
-    def getCorrespondingSourcePackage( self, package ):
-        category = self.getCategory( package + "-src" )
-        if category:
-            # we found a corresponding package
-            utils.debug( "replacing package %s with its source package" % ( package ), 1 )
-            return [ category, package + "-src" ]
-        else:
-            return False
-
-    def getCorrespondingBinaryPackage( self, package ):
-        if not package.endswith( "-src" ):
-            return [ None, None ]
-        category = self.getCategory( package[ :-4 ] )
-        if category:
-            # we found a corresponding package
-            utils.debug( "replacing package %s with its binary package" % ( package ), 1 )
-            return [ category, package[ :-4 ] ]
-        else:
-            return [ None, None ]
 
 # when importing this, this static Object should get added
 PortageInstance = Portage()
