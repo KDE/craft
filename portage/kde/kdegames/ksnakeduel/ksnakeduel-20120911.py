@@ -1,8 +1,13 @@
 import info
+import kdedefaults as kd
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:ksnakeduel'
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+
         self.shortDescription = 'a simple snake duel game'
         self.defaultTarget = 'gitHEAD'
 

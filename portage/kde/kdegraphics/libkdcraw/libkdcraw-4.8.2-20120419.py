@@ -1,20 +1,18 @@
-import os
-import sys
 import info
+import kdedefaults as kd
+
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:libkdcraw'
-        self.targets['4.8.0'] = 'ftp://ftp.kde.org/pub/kde/stable/4.8.0/src/libkdcraw-4.8.0.tar.bz2'
-        self.targetInstSrc['4.8.0'] = 'libkdcraw-4.8.0'
-        for ver in ['4.8.1', '4.8.2', '4.8.3']:
-            self.targets[ver] = "ftp://ftp.kde.org/pub/kde/stable/" + ver + "/src/libkdcraw-" + ver + ".tar.xz"
-            self.targetInstSrc[ver] = 'libkdcraw-' + ver
-        
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+
         for ver in ['4.8.0', '4.8.1', '4.8.2', '4.8.3']:
             self.patchToApply[ver] = [('libkdcraw-4.8.0-20120125.diff',1)]
-        
+
         self.defaultTarget = '4.8.2'
-        
+
         self.shortDescription = 'libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.'
 
     def setDependencies( self ):

@@ -1,17 +1,12 @@
 import info
-from os.path import dirname as dn, join as j
+import kdedefaults as kd
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        kdepath = j(dn(__file__), '..', '..')
-        kdebranch = open(j(kdepath, 'kdebranch')).read()
-        kdeversion = open(j(kdepath, 'kdeversion')).read() + '.'
-        package = 'sweeper'
-
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (package, kdebranch)
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
         for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kdeversion + ver + "/src/" + package + "-" + kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kdeversion + ver] = package + '-' + kdeversion + ver
+            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
         self.shortDescription = "a tool to clean unwanted traces"
         self.defaultTarget = 'gitHEAD'

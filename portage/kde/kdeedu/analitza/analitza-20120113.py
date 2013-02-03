@@ -1,11 +1,13 @@
 import info
+import kdedefaults as kd
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:analitza|KDE/4.9|'
-        for ver in ['0', '1', '2', '3', '4']:
-            self.targets['4.9.' + ver] = "ftp://ftp.kde.org/pub/kde/stable/4.9." + ver + "/src/analitza-4.9." + ver + ".tar.bz2"
-            self.targetInstSrc['4.9.' + ver] = 'analitza-4.9.' + ver
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+
         self.shortDescription = 'a library for mathematical features'
         self.defaultTarget = 'gitHEAD'
 
