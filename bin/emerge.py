@@ -135,6 +135,7 @@ Flags:
                                 is appended to existing logs.
 --dump-deps-file=[filename]     Output the dependencies of this package as a
                                 csv file suitable for emerge server.
+--list-file=[filename]          Build all packages from the csv file provided
 
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
@@ -336,6 +337,7 @@ ignoreInstalled = False
 updateAll = False
 continueFlag = False
 dumpDepsFile = None
+listFile = None
 
 if len( sys.argv ) < 2:
     usage()
@@ -367,6 +369,9 @@ for i in sys.argv:
     nextArguments.pop(0)
     if ( i == "-p" or i == "--probe" ):
         doPretend = True
+    elif ( i.startswith( "--list-file=" ) ):
+        listFile = i.replace( "--list-file=", "" )
+        
     elif ( i.startswith("--options=") ):
         # @todo how to add -o <parameter> option
         options = i.replace( "--options=", "" )
@@ -500,6 +505,7 @@ _deplist = []
 deplist = []
 packageList = []
 categoryList = []
+targetDict = dict()
 
 
 buildType = os.getenv("EMERGE_BUILDTYPE")
@@ -523,6 +529,14 @@ if updateAll:
             categoryList.append( mainCategory )
             packageList.append( mainPackage )
     utils.debug( "Will update packages: " + str (packageList), 1 )
+elif listFile:
+    listFileObject = open( listFile, 'r' )
+    for line in listFileObject:
+        if line.strip().startswith('#'): continue
+        cat, pac, tar, _ = line.split( ',' )
+        categoryList.append( cat )
+        packageList.append( pac )
+        targetDict[ cat + "/" + pac ] = tar
 elif packageName:
     packageList, categoryList = portage.getPackagesCategories(packageName)
 
@@ -540,7 +554,8 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( ignoreInstalled )
     else:
         deplist[ item ].append( False )
-
+    if deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] in targetDict:
+        deplist[ item ][ 3 ] = targetDict[ deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] ]
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 #for item in deplist:
