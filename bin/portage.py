@@ -535,15 +535,6 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
 def solveDependencies( category, package, version, depList, dep_type='both' ):
     depList.reverse()
-    if emergePlatform.isCrossCompilingEnabled():
-        sp = PortageInstance.getCorrespondingSourcePackage( package )
-        if sp:
-            # we found such a package and we're allowed to replace it
-            category = sp[ 0 ]
-            package = sp[ 1 ]
-            version = PortageInstance.getNewestVersion( category, package )
-            utils.debug( "found corresponding source package for %s" % package, 1 )
-
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         utils.debug( "found package in category %s" % category, 2 )
