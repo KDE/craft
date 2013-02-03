@@ -43,6 +43,10 @@ def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
+def getCallerFilename():
+    """ returns the file name of the """
+    return inspect.getouterframes(inspect.currentframe())[2][1]
+
 def varAsBool(var):
     return var.lower() in ['true', '1']
 
