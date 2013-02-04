@@ -79,17 +79,12 @@ class SvnSource (VersionSystemSourceBase):
         if not os.path.exists(self.svnInstallDir):
             utils.die("required subversion package not installed in %s" % self.svnInstallDir)
 
-        for i in range(0, self.repositoryUrlCount()):
+        for i in range(self.repositoryUrlCount()):
             if repopath:
                 url = repopath
             else:
                 url = self.repositoryUrl(i)
-            sourcedir = self.checkoutDir(i)
-            if self.repositoryUrlOptions(i) == 'norecursive':
-                self.__tryCheckoutFromRoot(url, sourcedir, False)
-            else:
-                self.__tryCheckoutFromRoot(url, sourcedir, True)
-            i += 1
+            self.__tryCheckoutFromRoot(url, self.checkoutDir(i), self.repositoryUrlOptions(i) != 'norecursive')
         return True
 
     def __getCurrentRevision( self ):
@@ -231,6 +226,14 @@ class SvnSource (VersionSystemSourceBase):
 
     def sourceVersion( self ):
         """ print the revision returned by svn info """
+        return True
+
+    def getUrls( self ):
+        """print the url where to check out from"""
+        for i in range(self.repositoryUrlCount()):
+            url = self.repositoryUrl(i)
+            if self.repositoryUrlOptions(i) == 'norecursive': url = '--depth=files ' + url
+            print(url)
         return True
 
     def currentRevision(self):

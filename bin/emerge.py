@@ -106,6 +106,8 @@ Commands (must have a packagename):
                         the specified package.
 --checkdigest           Check digest for the specified package. If no digest is
                         available calculate and print digests.
+--geturls               Prints the required urls for the source(s) of this
+                        package. 
 --cleanimage            Clean image directory for the specified package and
                         target.
 --createpatch           Create source patch file for the specific package based
@@ -131,6 +133,9 @@ Flags:
 --log-dir=[LOG_DIR]             This will log the build output to a logfile in
                                 LOG_DIR for each package. Logging information
                                 is appended to existing logs.
+--dump-deps-file=[filename]     Output the dependencies of this package as a
+                                csv file suitable for emerge server.
+--list-file=[filename]          Build all packages from the csv file provided
 
 -i          ignore install: using this option will install a package over an
             existing install. This can be useful if you want to check some
@@ -331,6 +336,8 @@ disableTargetBuild = False
 ignoreInstalled = False
 updateAll = False
 continueFlag = False
+dumpDepsFile = None
+listFile = None
 
 if len( sys.argv ) < 2:
     usage()
@@ -362,6 +369,9 @@ for i in sys.argv:
     nextArguments.pop(0)
     if ( i == "-p" or i == "--probe" ):
         doPretend = True
+    elif ( i.startswith( "--list-file=" ) ):
+        listFile = i.replace( "--list-file=", "" )
+        
     elif ( i.startswith("--options=") ):
         # @todo how to add -o <parameter> option
         options = i.replace( "--options=", "" )
@@ -392,6 +402,8 @@ for i in sys.argv:
         os.environ["EMERGE_PKGPATCHLVL"] = i.replace( "--patchlevel=", "" )
     elif ( i.startswith( "--log-dir=" ) ):
         os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
+    elif ( i.startswith( "--dump-deps-file=" ) ):
+        dumpDepsFile = i.replace( "--dump-deps-file=", "" )
     elif ( i == "-v" ):
         utils.Verbose.increase()
     elif ( i == "--trace" ):
@@ -493,6 +505,7 @@ _deplist = []
 deplist = []
 packageList = []
 categoryList = []
+targetDict = dict()
 
 
 buildType = os.getenv("EMERGE_BUILDTYPE")
@@ -516,6 +529,14 @@ if updateAll:
             categoryList.append( mainCategory )
             packageList.append( mainPackage )
     utils.debug( "Will update packages: " + str (packageList), 1 )
+elif listFile:
+    listFileObject = open( listFile, 'r' )
+    for line in listFileObject:
+        if line.strip().startswith('#'): continue
+        cat, pac, tar, _ = line.split( ',' )
+        categoryList.append( cat )
+        packageList.append( pac )
+        targetDict[ cat + "/" + pac ] = tar
 elif packageName:
     packageList, categoryList = portage.getPackagesCategories(packageName)
 
@@ -533,7 +554,8 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( ignoreInstalled )
     else:
         deplist[ item ].append( False )
-
+    if deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] in targetDict:
+        deplist[ item ][ 3 ] = targetDict[ deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] ]
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 #for item in deplist:
@@ -573,9 +595,16 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
     utils.notify("Emerge %s finished"% mainBuildAction, "%s of %s/%s-%s finished" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
 
 else:
+    if dumpDepsFile:
+        dumpDepsFileObject = open( dumpDepsFile, 'w+' )
+        dumpDepsFileObject.write( "# dependency dump of package %s" % ( packageName ) )
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
         target = ""
         targetList = []
+
+        if dumpDepsFile:
+            dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
+
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
             target = os.getenv( "EMERGE_TARGET" )

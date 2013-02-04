@@ -7,8 +7,10 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['1.75.2'] = 'http://downloads.sourceforge.net/docbook/docbook-xsl-1.75.2.tar.bz2'
+        for ver in ['1.75.2', '1.78.0']:
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/docbook/docbook-xsl-' + ver + '.tar.bz2'
         self.targetDigests['1.75.2'] = 'cd146012c07f3c2c79c1cd927ad1faf5bee6cc74'
+        self.targetDigests['1.78.0'] = '39a62791e7c1479e22d13d12a9ecbb2273d66229'
         self.shortDescription = "document translation defintions for docbook format"
         self.options.package.withCompiler = False
         self.options.package.packSources = False

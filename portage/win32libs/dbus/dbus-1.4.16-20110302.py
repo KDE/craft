@@ -30,14 +30,19 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
         self.targetConfigurePath['1.4.0'] = 'cmake'
 
-        for ver in ['1.4.1','1.4.16','1.6.8']:
+        for ver in ['1.4.1','1.4.16','1.4.24','1.6.8']:
             self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'dbus-%s' % ver
             self.targetConfigurePath[ver] = 'cmake'
         self.targetDigests['1.4.1'] = '112279ff58305027294fe0eb5bee600f68cf0b50'
+        self.targetDigests['1.4.24'] = '02de59fe8a05a04b81e96acbac7d88c9513d1a0b'
         self.targetDigests['1.4.16'] = 'd6e6538cfc1ed71992f6786a6da55d815d995b5b'
         self.targetDigests['1.6.8'] = 'd9634807d1de9b64727ae2178e3af2227fca0fca'
        
+        for ver in ['1.6.8']:
+            self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
+            self.targetInstSrc[ver] = 'dbus-%s' % ver
+            self.targetConfigurePath[ver] = 'cmake'
 
         for ver in ['1.4.6', '1.4.8', '1.4.10', '1.4.12', '1.4.14']:
             self.svnTargets[ver] = 'git://anongit.freedesktop.org/git/dbus/dbus||dbus-' + ver
@@ -83,7 +88,7 @@ class subinfo(info.infoclass):
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.4.0'
         else:
-            self.defaultTarget = '1.4.16'
+            self.defaultTarget = '1.4.24'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

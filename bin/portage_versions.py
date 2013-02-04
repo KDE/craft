@@ -181,7 +181,7 @@ def pkgcmp(pkg1, pkg2):
         4. 0 if pkg1 equals pkg2
     """
     if pkg1 == None or pkg2 == None:
-        print("warning: no package names provided in portage_versions.pkgcmp()")
+#        print("warning: no package names provided in portage_versions.pkgcmp()")
         return None
     if pkg1[0] != pkg2[0]:
         return None

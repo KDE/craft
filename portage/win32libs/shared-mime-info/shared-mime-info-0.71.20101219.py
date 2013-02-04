@@ -8,18 +8,24 @@ import compiler
 
 from Package.CMakePackageBase import *
 # do not forget to update CMakeLists.txt!
-SRC_URI= """
+SRC_URI={'0.71': """
 http://people.freedesktop.org/~hadess/shared-mime-info-0.71.tar.bz2
 http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.0.tar.bz2
-"""
+""", '1.0': """
+http://people.freedesktop.org/~hadess/shared-mime-info-1.0.tar.xz
+http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.0.tar.bz2
+"""}
 GLIB_VER = "2.24.0"
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.71'] = SRC_URI
-        self.targetInstSrc['0.71'] = "shared-mime-info-0.71"
+        for ver in ['0.71', '1.0']:
+            self.targets[ ver ] = SRC_URI[ver]
+        self.targetInstSrc[ ver ] = "shared-mime-info-" + ver
         self.targetDigests['0.71'] = ['6f3d3379662857646b0c5b95d5d26e47c0b6250a',
                                       '32714e64fff52d18db5f077732910215790e0c5b']
+        self.targetDigests['1.0'] = ['146dbad62f5450116b0353f88bb8e700f0034013',
+                                     '32714e64fff52d18db5f077732910215790e0c5b']
         self.shortDescription = "common mimetype library"
         self.defaultTarget = '0.71'
 

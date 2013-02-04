@@ -1,0 +1,41 @@
+diff -Nru -x '*~' curl-7.28.1.orig/CMakeLists.txt curl-7.28.1/CMakeLists.txt
+--- curl-7.28.1.orig/CMakeLists.txt	2012-04-25 17:29:20.000000000 +0200
++++ curl-7.28.1/CMakeLists.txt	2013-02-02 00:32:05.523855100 +0100
+@@ -227,8 +227,10 @@
+ # Check for idn
+ check_library_exists_concat("idn" idna_to_ascii_lz HAVE_LIBIDN)
+ 
++if(NOT CURL_LDAP_WIN)
+ # Check for LDAP
+ check_library_exists_concat("ldap" ldap_init HAVE_LIBLDAP)
++endif()
+ # if(NOT HAVE_LIBLDAP)
+ # SET(CURL_DISABLE_LDAP ON)
+ # endif(NOT HAVE_LIBLDAP)
+@@ -261,6 +263,7 @@
+       set(USE_SSLEAY TRUE)
+       set(USE_OPENSSL TRUE)
+       list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} )
++      list(APPEND CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
+     else()
+       set(CMAKE_USE_OPENSSL FALSE)
+       message(STATUS "OpenSSL NOT Found, disabling CMAKE_USE_OPENSSL")
+@@ -293,6 +296,7 @@
+ if(NOT UNIX)
+   check_include_file_concat("windows.h"      HAVE_WINDOWS_H)
+   check_include_file_concat("winsock.h"      HAVE_WINSOCK_H)
++  check_include_file_concat("winldap.h"      HAVE_WINLDAP_H)
+ endif(NOT UNIX)
+ 
+ check_include_file_concat("inttypes.h"       HAVE_INTTYPES_H)
+@@ -381,8 +385,8 @@
+   check_include_file_concat("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
+ endif(CMAKE_USE_OPENSSL)
+ 
+-if(NOT HAVE_LDAP_H)
+-  message(STATUS "LDAP_H not found CURL_DISABLE_LDAP set ON")
++if(NOT HAVE_LDAP_H AND NOT HAVE_WINLDAP_H)
++  message(STATUS "Neither LDAP_H nor WINLDAP_H found CURL_DISABLE_LDAP set ON")
+   set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
+ endif()
+ 

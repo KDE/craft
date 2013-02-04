@@ -67,6 +67,7 @@ class infoclass(object):
         self.buildTarget = 'svnHEAD'
         self.disableHostBuild = False
         self.disableTargetBuild = False
+        self.package = utils.packageSplit(os.path.basename(utils.getCallerFilename()))[0]
 
         for x in RAW.splitlines():
             if not x == '':

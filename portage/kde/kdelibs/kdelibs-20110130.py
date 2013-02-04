@@ -1,11 +1,13 @@
 import info
+import kdedefaults as kd
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdelibs'
-        self.svnTargets['frameworks'] = '[git]kde:kdelibs|frameworks|'
-        for version in ['4.4', '4.5', '4.6', '4.7', '4.8', '4.9']:
-            self.svnTargets[version] = '[git]kde:kdelibs|KDE/%s|' % version
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'frameworks'
 

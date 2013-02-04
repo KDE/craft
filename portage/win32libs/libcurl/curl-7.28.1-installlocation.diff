@@ -1,0 +1,31 @@
+diff -Nru -x '*~' curl-7.28.1.orig/CMakeLists.txt curl-7.28.1/CMakeLists.txt
+--- curl-7.28.1.orig/CMakeLists.txt	2013-02-02 00:57:04.198542900 +0100
++++ curl-7.28.1/CMakeLists.txt	2013-02-02 00:56:47.073563400 +0100
+@@ -132,6 +132,16 @@
+ option(ENABLE_IPV6 "Define if you want to enable IPv6 support" OFF)
+ mark_as_advanced(ENABLE_IPV6)
+ 
++if(NOT CURL_RUNTIME_INSTALL_DESTINATION)
++  set(CURL_RUNTIME_INSTALL_DESTINATION lib)
++endif()
++if(NOT CURL_LIBRARY_INSTALL_DESTINATION)
++  set(CURL_LIBRARY_INSTALL_DESTINATION lib)
++endif()
++if(NOT CURL_ARCHIVE_INSTALL_DESTINATION)
++  set(CURL_ARCHIVE_INSTALL_DESTINATION lib)
++endif()
++
+ if(WIN32)
+   # Windows standard libraries are located in C:/Program Files/Microsoft SDKs/[...]
+   # They are already included in the default MSVC LIBPATH => no find_library is needed!
+diff -Nru -x '*~' curl-7.28.1.orig/lib/CMakeLists.txt curl-7.28.1/lib/CMakeLists.txt
+--- curl-7.28.1.orig/lib/CMakeLists.txt	2011-11-04 23:32:55.000000000 +0100
++++ curl-7.28.1/lib/CMakeLists.txt	2013-02-02 00:51:37.279851400 +0100
+@@ -123,4 +123,6 @@
+   endif()
+ endif()
+ 
+-install(TARGETS ${LIB_NAME} DESTINATION lib)
++install(TARGETS ${LIB_NAME} RUNTIME DESTINATION ${CURL_RUNTIME_INSTALL_DESTINATION}
++                            LIBRARY DESTINATION ${CURL_LIBRARY_INSTALL_DESTINATION}
++                            ARCHIVE DESTINATION ${CURL_ARCHIVE_INSTALL_DESTINATION})
