@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.0.1'] = '663548c37b996082db1f2f2c32af060d7aa15c2d'
         self.targetDigests['2.1.0'] = 'b08197d146930a5543a7b99e871cba3da614f6f0'
         self.shortDescription = "XML parser library written in C"
-        self.defaultTarget = '2.0.1'
+        self.defaultTarget = '2.1.0'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
