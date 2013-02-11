@@ -558,6 +558,7 @@ for mainCategory, entry in zip (categoryList, packageList):
     _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType )
 
 deplist = [p.ident() for p in _deplist]
+target = os.getenv( "EMERGE_TARGET" )
 
 for item in range( len( deplist ) ):
     if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
@@ -566,6 +567,11 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( False )
     if deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] in targetDict:
         deplist[ item ][ 3 ] = targetDict[ deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] ]
+
+    if target in list( portage.PortageInstance.getAllTargets( deplist[ item ][ 0 ], deplist[ item ][ 1 ], deplist[ item ][ 2 ] ).keys()):
+        # if no target or a wrong one is defined, simply set the default target here
+        deplist[ item ][ 3 ] = target
+
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 #for item in deplist:
@@ -617,10 +623,6 @@ else:
 
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
-            target = os.getenv( "EMERGE_TARGET" )
-            if not target or target not in list(portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys()):
-                # if no target or a wrong one is defined, simply set the default target here
-                target = defaultTarget
             targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )
         if isDBEnabled():
             if emergePlatform.isCrossCompilingEnabled():
