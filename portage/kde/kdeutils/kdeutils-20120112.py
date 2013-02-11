@@ -15,7 +15,6 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kfloppy'] = 'default'
         self.dependencies['kde/kgpg'] = 'default'
         self.dependencies['kde/kremotecontrol'] = 'default'
-        self.dependencies['kde/ksecretsservice'] = 'default'
         self.dependencies['kde/ktimer'] = 'default'
         self.dependencies['kde/kwallet'] = 'default'
         self.dependencies['kde/printer-applet'] = 'default'
