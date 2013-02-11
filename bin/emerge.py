@@ -597,7 +597,7 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
 else:
     if dumpDepsFile:
         dumpDepsFileObject = open( dumpDepsFile, 'w+' )
-        dumpDepsFileObject.write( "# dependency dump of package %s" % ( packageName ) )
+        dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
         target = ""
         targetList = []
