@@ -14,8 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['binary/ghostscript'] = 'default'
-        self.dependencies['dev-util/cmake'] = 'default'
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
 
