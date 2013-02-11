@@ -176,10 +176,14 @@ Flags:
 --cleanup   Clean your portage directory, to prevent emerge errors, removes
             empty directories and *.pyc files
 
-Internal options or options that aren't fully implemented yet:
+Internal options:
 PLEASE DO NOT USE!
 --version-dir
 --version-package
+--dt=[both|runtime|buildtime]   sets the way how dependencies are evaluated
+                                default is both, but for generation of dependency lists
+                                with -p or --dump-deps-file this can be used to adapt
+                                the output to only include some dependencies
 
 More information see the README or http://windows.kde.org/.
 Send feedback to <kde-windows@kde.org>.
@@ -338,6 +342,7 @@ updateAll = False
 continueFlag = False
 dumpDepsFile = None
 listFile = None
+dependencyType = 'both'
 
 if len( sys.argv ) < 2:
     usage()
@@ -404,6 +409,10 @@ for i in sys.argv:
         os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
     elif ( i.startswith( "--dump-deps-file=" ) ):
         dumpDepsFile = i.replace( "--dump-deps-file=", "" )
+    elif ( i.startswith( "--dt=" ) ):
+        dependencyType = i.replace( "--dt=", "" )
+        if dependencyType not in ['both', 'runtime', 'buildtime']:
+            dependencyType = 'both'
     elif ( i == "-v" ):
         utils.Verbose.increase()
     elif ( i == "--trace" ):
@@ -544,8 +553,9 @@ for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
 
+print( "dependencyType: %s" % dependencyType )
 for mainCategory, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist )
+    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType )
 
 deplist = [p.ident() for p in _deplist]
 
