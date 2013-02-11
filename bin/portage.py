@@ -278,6 +278,12 @@ class Portage(object):
         in case the category doesn't exist, nothing is returned"""
         if self.isCategory( category ):
             plist = copy.copy(self.categories[ category ])
+            try:
+                plist.remove( "__pycache__" )
+                plist.remove( ".git" )
+            except ValueError:
+                pass
+
             if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
                 with open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" ) as f:
                     for line in f:
