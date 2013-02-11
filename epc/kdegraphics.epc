@@ -111,7 +111,7 @@
           "kdesupport/strigi"
         ], 
         "description": "A collection of plugins to handle mobipocket files", 
-        "name": "mobipocket"
+        "name": "kdegraphics-mobipocket"
       }, 
       {
         "buildtime-dependencies": [
