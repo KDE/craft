@@ -28,7 +28,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.staticDefine = "-DBUILD_SHARED_LIBS=OFF"
 
 if __name__ == '__main__':
     Package().execute()
