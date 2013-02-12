@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1_0_09'] = '6d58c5353dca65ca9ec4843ef394876ab4db179d'
         self.targetDigests['1_0_11'] = '089a6cc6a0366d480731be2d5cb608f7a54b8104'
         self.targetDigests['1_0_12'] = '751acb5f71c022948553e006edd1aff2662c0b03'
-	self.targetDigests['1_0_13'] = 'e4059a58be58d04e70a1935b6886e28b69be7b82'
+        self.targetDigests['1_0_13'] = 'e4059a58be58d04e70a1935b6886e28b69be7b82'
         self.targets['1_0_1-patched'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/jom101-patched.7z'
         self.targetDigests['1_0_1-patched'] = '5f878e50cdd05f390b2737d4050a740edd48337f'
         self.targetDigests['unstable'] = '04feebc828bd30b3490890f04dc6b8ed7949e070'
