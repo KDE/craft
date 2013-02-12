@@ -553,7 +553,6 @@ for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
 
-print( "dependencyType: %s" % dependencyType )
 for mainCategory, entry in zip (categoryList, packageList):
     _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType )
 
