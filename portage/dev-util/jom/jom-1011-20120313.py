@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
         for ver in ['0_9_04', '1_0_00', '1_0_01', '1_0_02', '1_0_03', '1_0_04',
                     '1_0_05', '1_0_06', '1_0_07', '1_0_08', '1_0_09', '1_0_10',
-                    '1_0_11','1_0_12']:
+                    '1_0_11', '1_0_12', '1_0_13']:
             self.targets[ver] = 'http://releases.qt-project.org/jom/jom_' + ver + '.zip'
         self.targets['unstable'] = 'ftp://ftp.qt.nokia.com/jom/unstable-jom.zip'
         self.targetDigests['0_9_04'] = '1f946283866cd6f40a5888088f6c7d840b62af2d'
@@ -25,10 +25,11 @@ class subinfo(info.infoclass):
         self.targetDigests['1_0_09'] = '6d58c5353dca65ca9ec4843ef394876ab4db179d'
         self.targetDigests['1_0_11'] = '089a6cc6a0366d480731be2d5cb608f7a54b8104'
         self.targetDigests['1_0_12'] = '751acb5f71c022948553e006edd1aff2662c0b03'
+	self.targetDigests['1_0_13'] = 'e4059a58be58d04e70a1935b6886e28b69be7b82'
         self.targets['1_0_1-patched'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/jom101-patched.7z'
         self.targetDigests['1_0_1-patched'] = '5f878e50cdd05f390b2737d4050a740edd48337f'
         self.targetDigests['unstable'] = '04feebc828bd30b3490890f04dc6b8ed7949e070'
-        self.defaultTarget = '1_0_12'
+        self.defaultTarget = '1_0_13'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
