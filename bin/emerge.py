@@ -176,10 +176,14 @@ Flags:
 --cleanup   Clean your portage directory, to prevent emerge errors, removes
             empty directories and *.pyc files
 
-Internal options or options that aren't fully implemented yet:
+Internal options:
 PLEASE DO NOT USE!
 --version-dir
 --version-package
+--dt=[both|runtime|buildtime]   sets the way how dependencies are evaluated
+                                default is both, but for generation of dependency lists
+                                with -p or --dump-deps-file this can be used to adapt
+                                the output to only include some dependencies
 
 More information see the README or http://windows.kde.org/.
 Send feedback to <kde-windows@kde.org>.
@@ -338,6 +342,7 @@ updateAll = False
 continueFlag = False
 dumpDepsFile = None
 listFile = None
+dependencyType = 'both'
 
 if len( sys.argv ) < 2:
     usage()
@@ -404,6 +409,10 @@ for i in sys.argv:
         os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
     elif ( i.startswith( "--dump-deps-file=" ) ):
         dumpDepsFile = i.replace( "--dump-deps-file=", "" )
+    elif ( i.startswith( "--dt=" ) ):
+        dependencyType = i.replace( "--dt=", "" )
+        if dependencyType not in ['both', 'runtime', 'buildtime']:
+            dependencyType = 'both'
     elif ( i == "-v" ):
         utils.Verbose.increase()
     elif ( i == "--trace" ):
@@ -544,10 +553,12 @@ for entry in packageList:
     utils.debug( "%s" % entry, 1 )
 utils.debug_line( 1 )
 
+print( "dependencyType: %s" % dependencyType )
 for mainCategory, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist )
+    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType )
 
 deplist = [p.ident() for p in _deplist]
+target = os.getenv( "EMERGE_TARGET" )
 
 for item in range( len( deplist ) ):
     if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
@@ -556,6 +567,11 @@ for item in range( len( deplist ) ):
         deplist[ item ].append( False )
     if deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] in targetDict:
         deplist[ item ][ 3 ] = targetDict[ deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] ]
+
+    if target in list( portage.PortageInstance.getAllTargets( deplist[ item ][ 0 ], deplist[ item ][ 1 ], deplist[ item ][ 2 ] ).keys()):
+        # if no target or a wrong one is defined, simply set the default target here
+        deplist[ item ][ 3 ] = target
+
     utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 #for item in deplist:
@@ -597,7 +613,7 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
 else:
     if dumpDepsFile:
         dumpDepsFileObject = open( dumpDepsFile, 'w+' )
-        dumpDepsFileObject.write( "# dependency dump of package %s" % ( packageName ) )
+        dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
         target = ""
         targetList = []
@@ -607,10 +623,6 @@ else:
 
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
-            target = os.getenv( "EMERGE_TARGET" )
-            if not target or target not in list(portage.PortageInstance.getAllTargets( mainCategory, mainPackage, mainVersion ).keys()):
-                # if no target or a wrong one is defined, simply set the default target here
-                target = defaultTarget
             targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )
         if isDBEnabled():
             if emergePlatform.isCrossCompilingEnabled():

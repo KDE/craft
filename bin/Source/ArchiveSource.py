@@ -211,17 +211,14 @@ class ArchiveSource(SourceBase):
         patchName = None
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
-            if type(patches) == list:
-                # TODO: I seem to remember this is not good, prefer isinstance(patches, list)
-                # have to check back. Maybe because this does not work with derived classes
-                for fileName, patchdepth in patches[:-1]:
-                    utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
-                    if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
-                        return False
-                if patches[-1][0]:
-                    patchName = os.path.join( self.buildRoot(), patches[-1][0] )
-            elif patches[-1]:
-                patchName = os.path.join( self.buildRoot(), patches[-1] )
+            if not isinstance(patches, list):
+                patches = list([patches])
+            for fileName, patchdepth in patches[:-1]:
+                utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
+                if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
+                    return False
+            if patches[-1][0]:
+                patchName = os.path.join( self.buildRoot(), patches[-1][0] )
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
