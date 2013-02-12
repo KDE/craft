@@ -5,10 +5,10 @@ import emergePlatform
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "git://gitorious.org/grantlee/grantlee.git"
-        self.svnTargets['0.1'] = "git://gitorious.org/grantlee/grantlee.git|0.1"
-        self.svnTargets['0.2'] = "git://gitorious.org/grantlee/grantlee.git|0.2"
+        for ver in ['0.1', '0.2', '0.3']:
+            self.svnTargets[ ver ] = "git://gitorious.org/grantlee/grantlee.git|%s" % ver
         self.shortDescription = 'libraries for a template system similar to django\'s'
-        self.defaultTarget = '0.2'
+        self.defaultTarget = '0.3'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
