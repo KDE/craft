@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in ['0.71', '1.0']:
             self.targets[ ver ] = SRC_URI[ver]
-        self.targetInstSrc[ ver ] = "shared-mime-info-" + ver
+            self.targetInstSrc[ ver ] = "shared-mime-info-" + ver
         self.targetDigests['0.71'] = ['6f3d3379662857646b0c5b95d5d26e47c0b6250a',
                                       '32714e64fff52d18db5f077732910215790e0c5b']
         self.targetDigests['1.0'] = ['146dbad62f5450116b0353f88bb8e700f0034013',
