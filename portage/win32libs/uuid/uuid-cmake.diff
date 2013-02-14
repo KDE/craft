@@ -1,0 +1,524 @@
+diff -Nru -x '*~' uuid-1.6.2.orig/CMakeLists.txt uuid-1.6.2/CMakeLists.txt
+--- uuid-1.6.2.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ uuid-1.6.2/CMakeLists.txt	2013-02-15 00:22:08.680444900 +0100
+@@ -0,0 +1,158 @@
++project(uuid)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(UUID_VERSION_HEX "0x106202")
++
++option(WITH_CXX "whether to build C++ bindings to C API" ON)
++option(WITH_DCE "whether to build DCE 1.1 backward compatibility API" ON)
++option(WITH_EXEC "build uuid executable" ON)
++
++set(WITH_DMALLOC OFF)
++set(WITH_PERL OFF)
++set(WITH_PERL_COMPAT OFF)
++set(WITH_PGSQL OFF)
++set(WITH_PHP OFF)
++
++#option(WITH_DMALLOC "define if building with Dmalloc" OFF)
++#option(WITH_PERL "whether to build Perl bindings to C API" OFF)
++#option(WITH_PERL_COMPAT "whether to build Perl compatibility API" OFF)
++#option(WITH_PGSQL "whether to build PostgreSQL bindings to C API" OFF)
++#option(WITH_PHP "whether to build PHP bindings to C API" OFF)
++
++include(CheckIncludeFile)
++include(CheckFunctionExists)
++include(CheckTypeSize)
++
++check_type_size("char" SIZEOF_CHAR)
++check_type_size("int" SIZEOF_INT)
++check_type_size("long" SIZEOF_LONG)
++check_type_size("long long" SIZEOF_LONG_LONG)
++check_type_size("short" SIZEOF_SHORT)
++check_type_size("unsigned char" SIZEOF_UNSIGNED_CHAR)
++check_type_size("unsigned int" SIZEOF_UNSIGNED_INT)
++check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
++check_type_size("unsigned long long" SIZEOF_UNSIGNED_LONG_LONG)
++check_type_size("unsigned short" SIZEOF_UNSIGNED_SHORT)
++
++
++check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
++check_function_exists("clock_gettime" HAVE_CLOCK_GETTIME)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("dmalloc.h" HAVE_DMALLOC_H)
++check_function_exists("getifaddrs" HAVE_GETIFADDRS)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_include_file("ifaddrs.h" HAVE_IFADDRS_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++#/* Define to 1 if you have the `dmalloc' library (-ldmalloc). */
++#undef HAVE_LIBDMALLOC
++
++#/* Define to 1 if you have the `nsl' library (-lnsl). */
++#undef HAVE_LIBNSL
++
++#/* Define to 1 if you have the `socket' library (-lsocket). */
++#undef HAVE_LIBSOCKET
++
++#/* Define to 1 if the system has the type `long double'. */
++#undef HAVE_LONG_DOUBLE
++set(HAVE_LONG_DOUBLE 1)
++
++#/* Define to 1 if the system has the type `long long'. */
++#undef HAVE_LONG_LONG
++set(HAVE_LONG_LONG 1)
++
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_function_exists("nanosleep" HAVE_NANOSLEEP)
++check_include_file("netdb.h" HAVE_NETDB_H)
++check_include_file("netinet/in.h" HAVE_NETINET_IN_H)
++check_include_file("net/if_arp.h" HAVE_NET_IF_ARP_H)
++check_include_file("net/if_dl.h" HAVE_NET_IF_DL_H)
++check_include_file("net/if.h" HAVE_NET_IF_H)
++check_function_exists("Sleep" HAVE_SLEEP)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++# exists in winsock2.h!!!
++#/* define if exists "struct timeval" */
++set(HAVE_STRUCT_TIMEVAL ON)
++check_include_file("sys/ioctl.h" HAVE_SYS_IOCTL_H)
++check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
++check_include_file("sys/sockio.h" HAVE_SYS_SOCKIO_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
++check_include_file("unistd.h" HAVE_UNISTD_H)
++
++if(MSVC)
++    set(__VA_COPY_USE "((d) = (s))")
++endif(MSVC)
++
++configure_file(uuid.h.in uuid.h @ONLY)
++configure_file(config.h.cmake config.h)
++
++if(MSVC)
++    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996 -Dstrcasecmp=stricmp)
++endif(MSVC)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
++
++set(uuid_SRCS
++    uuid.c
++    uuid_md5.c
++    uuid_sha1.c
++    uuid_prng.c
++    uuid_mac.c
++    uuid_time.c
++    uuid_ui64.c
++    uuid_ui128.c
++    uuid_str.c
++)
++
++add_library(uuid ${uuid_SRCS})
++set(_TARGETS uuid)
++
++
++if(WITH_CXX)
++    set(uuidpp_SRCS
++        uuid++.cc
++    )
++    add_library(uuidpp ${uuid_SRCS} ${uuidpp_SRCS})
++    set_target_properties(uuidpp PROPERTIES OUTPUT_NAME "uuid++")
++
++    list(APPEND _TARGETS uuidpp)
++    install(FILES uuid++.hh DESTINATION include/ossp)
++    install(FILES uuid++.3 DESTINATION share/man/man3)
++endif(WITH_CXX)
++
++if(WITH_EXEC)
++    set(uuid_cli_SRCS
++        uuid_cli.c
++    )
++    if(MSVC)
++        list(APPEND uuid_cli_SRCS getopt.c)
++    endif(MSVC)
++    add_executable(uuid_cli ${uuid_cli_SRCS})
++    target_link_libraries(uuid_cli uuid)
++    set_target_properties(uuid_cli PROPERTIES OUTPUT_NAME "uuid")
++    list(APPEND _TARGETS uuid_cli)
++    install(FILES uuid.1 DESTINATION share/man/man1)
++endif(WITH_EXEC)
++
++if(WITH_DCE)
++    set(uuid_dce_SRCS
++        uuid_dce.c
++    )
++    add_library(uuid_dce ${uuid_SRCS} ${uuid_dce_SRCS})
++    list(APPEND _TARGETS uuid_dce)
++endif(WITH_DCE)
++
++install(TARGETS ${_TARGETS} RUNTIME DESTINATION bin
++                            LIBRARY DESTINATION lib
++                            ARCHIVE DESTINATION lib)
++
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uuid.h DESTINATION include/ossp)
++install(FILES uuid.3 DESTINATION share/man/man3)
+diff -Nru -x '*~' uuid-1.6.2.orig/config.h.cmake uuid-1.6.2/config.h.cmake
+--- uuid-1.6.2.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ uuid-1.6.2/config.h.cmake	2013-02-15 00:20:24.508280800 +0100
+@@ -0,0 +1,220 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Predefined possible va_copy() implementation (id: ASP) */
++#define __VA_COPY_USE_ASP(d, s) do { *(d) = *(s); } while (0)
++
++/* Predefined possible va_copy() implementation (id: ASS) */
++#define __VA_COPY_USE_ASS(d, s) do { (d) = (s); } while (0)
++
++/* Predefined possible va_copy() implementation (id: C99) */
++#define __VA_COPY_USE_C99(d, s) va_copy((d), (s))
++
++/* Predefined possible va_copy() implementation (id: CPP) */
++#define __VA_COPY_USE_CPP(d, s) memcpy((void *)(d), (void *)(s), sizeof(*(s)))
++
++/* Predefined possible va_copy() implementation (id: CPS) */
++#define __VA_COPY_USE_CPS(d, s) memcpy((void *)&(d), (void *)&(s), sizeof((s)))
++
++/* Predefined possible va_copy() implementation (id: GCB) */
++#define __VA_COPY_USE_GCB(d, s) __builtin_va_copy((d), (s))
++
++/* Predefined possible va_copy() implementation (id: GCH) */
++#define __VA_COPY_USE_GCH(d, s) __va_copy((d), (s))
++
++/* Predefined possible va_copy() implementation (id: GCM) */
++#define __VA_COPY_USE_GCM(d, s) VA_COPY((d), (s))
++
++/* Define to 1 if you have the <arpa/inet.h> header file. */
++#cmakedefine HAVE_ARPA_INET_H @HAVE_ARPA_INET_H@
++
++/* Define to 1 if you have the `clock_gettime' function. */
++#cmakedefine HAVE_CLOCK_GETTIME @HAVE_CLOCK_GETTIME@
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
++
++/* Define to 1 if you have the <dmalloc.h> header file. */
++#cmakedefine HAVE_DMALLOC_H @HAVE_DMALLOC_H@
++
++/* Define to 1 if you have the `getifaddrs' function. */
++#cmakedefine HAVE_GETIFADDRS @HAVE_GETIFADDRS@
++
++/* Define to 1 if you have the `gettimeofday' function. */
++#cmakedefine HAVE_GETTIMEOFDAY @HAVE_GETTIMEOFDAY@
++
++/* Define to 1 if you have the <ifaddrs.h> header file. */
++#cmakedefine HAVE_IFADDRS_H @HAVE_IFADDRS_H@
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
++
++/* Define to 1 if you have the `dmalloc' library (-ldmalloc). */
++#cmakedefine HAVE_LIBDMALLOC @HAVE_LIBDMALLOC@
++
++/* Define to 1 if you have the `nsl' library (-lnsl). */
++#cmakedefine HAVE_LIBNSL @HAVE_LIBNSL@
++
++/* Define to 1 if you have the `socket' library (-lsocket). */
++#cmakedefine HAVE_LIBSOCKET @HAVE_LIBSOCKET@
++
++/* Define to 1 if the system has the type `long double'. */
++#cmakedefine HAVE_LONG_DOUBLE @HAVE_LONG_DOUBLE@
++
++/* Define to 1 if the system has the type `long long'. */
++#cmakedefine HAVE_LONG_LONG @HAVE_LONG_LONG@
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
++
++/* Define to 1 if you have the `nanosleep' function. */
++#cmakedefine HAVE_NANOSLEEP @HAVE_NANOSLEEP@
++
++/* Define to 1 if you have the <netdb.h> header file. */
++#cmakedefine HAVE_NETDB_H @HAVE_NETDB_H@
++
++/* Define to 1 if you have the <netinet/in.h> header file. */
++#cmakedefine HAVE_NETINET_IN_H @HAVE_NETINET_IN_H@
++
++/* Define to 1 if you have the <net/if_arp.h> header file. */
++#cmakedefine HAVE_NET_IF_ARP_H @HAVE_NET_IF_ARP_H@
++
++/* Define to 1 if you have the <net/if_dl.h> header file. */
++#cmakedefine HAVE_NET_IF_DL_H @HAVE_NET_IF_DL_H@
++
++/* Define to 1 if you have the <net/if.h> header file. */
++#cmakedefine HAVE_NET_IF_H @HAVE_NET_IF_H@
++
++/* Define to 1 if you have the `Sleep' function. */
++#cmakedefine HAVE_SLEEP @HAVE_SLEEP@
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
++
++/* define if exists "struct timeval" */
++#cmakedefine HAVE_STRUCT_TIMEVAL @HAVE_STRUCT_TIMEVAL@
++
++/* Define to 1 if you have the <sys/ioctl.h> header file. */
++#cmakedefine HAVE_SYS_IOCTL_H @HAVE_SYS_IOCTL_H@
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#cmakedefine HAVE_SYS_PARAM_H @HAVE_SYS_PARAM_H@
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++#cmakedefine HAVE_SYS_SELECT_H @HAVE_SYS_SELECT_H@
++
++/* Define to 1 if you have the <sys/socket.h> header file. */
++#cmakedefine HAVE_SYS_SOCKET_H @HAVE_SYS_SOCKET_H@
++
++/* Define to 1 if you have the <sys/sockio.h> header file. */
++#cmakedefine HAVE_SYS_SOCKIO_H @HAVE_SYS_SOCKIO_H@
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H @HAVE_SYS_TIME_H@
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
++
++/* Define if va_copy() macro exists (and no fallback implementation is
++   required) */
++#cmakedefine HAVE_VA_COPY @HAVE_VA_COPY@
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#cmakedefine LT_OBJDIR
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
++
++/* Define to the full name of this package. */
++#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
++
++/* Define to the full name and version of this package. */
++#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
++
++/* Define to the version of this package. */
++#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
++
++/* The size of `char', as computed by sizeof. */
++#cmakedefine SIZEOF_CHAR @SIZEOF_CHAR@
++
++/* The size of `int', as computed by sizeof. */
++#cmakedefine SIZEOF_INT @SIZEOF_INT@
++
++/* The size of `long', as computed by sizeof. */
++#cmakedefine SIZEOF_LONG @SIZEOF_LONG@
++
++/* The size of `long long', as computed by sizeof. */
++#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
++
++/* The size of `short', as computed by sizeof. */
++#cmakedefine SIZEOF_SHORT @SIZEOF_SHORT@
++
++/* The size of `unsigned char', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_CHAR @SIZEOF_UNSIGNED_CHAR@
++
++/* The size of `unsigned int', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_INT @SIZEOF_UNSIGNED_INT@
++
++/* The size of `unsigned long', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_LONG @SIZEOF_UNSIGNED_LONG@
++
++/* The size of `unsigned long long', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_LONG_LONG @SIZEOF_UNSIGNED_LONG_LONG@
++
++/* The size of `unsigned short', as computed by sizeof. */
++#cmakedefine SIZEOF_UNSIGNED_SHORT @SIZEOF_UNSIGNED_SHORT@
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS @STDC_HEADERS@
++
++/* whether to build C++ bindings to C API */
++#cmakedefine WITH_CXX @WITH_CXX@
++
++/* whether to build DCE 1.1 backward compatibility API */
++#cmakedefine WITH_DCE @WITH_DCE@
++
++/* define if building with Dmalloc */
++#cmakedefine WITH_DMALLOC
++
++/* whether to build Perl bindings to C API */
++#cmakedefine WITH_PERL
++
++/* whether to build Perl compatibility API */
++#cmakedefine WITH_PERL_COMPAT
++
++/* whether to build PostgreSQL bindings to C API */
++#cmakedefine WITH_PGSQL
++
++/* whether to build PHP bindings to C API */
++#cmakedefine WITH_PHP
++
++/* Optional va_copy() implementation activation */
++#ifndef HAVE_VA_COPY
++#define va_copy(d, s) __VA_COPY_USE(d, s)
++#endif
++
++#ifdef _MSC_VER
++typedef int pid_t;
++#endif
++
++
++/* Define to id of used va_copy() implementation */
++#cmakedefine __VA_COPY_USE(d, s) @__VA_COPY_USE@
+diff -Nru -x '*~' uuid-1.6.2.orig/getopt.c uuid-1.6.2/getopt.c
+--- uuid-1.6.2.orig/getopt.c	1970-01-01 01:00:00.000000000 +0100
++++ uuid-1.6.2/getopt.c	2013-02-15 00:20:24.508280800 +0100
+@@ -0,0 +1,81 @@
++#include <limits.h>
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++#include <winsock.h>
++
++char *optarg;
++int optind;
++int opterr = 1; /* if error message should be printed */
++int optopt,            /* character checked for validity */
++    optreset;        /* reset_getopt */
++
++#define    BADCH    (int)'?'
++#define    BADARG    (int)':'
++#define    EMSG    ""
++
++/*
++ *getopt --
++ *    Parse argc/argv argument vector.
++ */
++int
++getopt(nargc, nargv, ostr)
++    int nargc;
++    char * const *nargv;
++    const char *ostr;
++{
++    static char *place = EMSG;        /* option letter processing */
++    char *oli;                /* option letter list index */
++
++    if (optreset || !*place) {        /* update scanning pointer */
++        optreset = 0;
++        if (optind >= nargc || *(place = nargv[optind]) != '-') {
++            place = EMSG;
++            return (-1);
++        }
++        if (place[1] && *++place == '-') {    /* found "--" */
++            ++optind;
++            place = EMSG;
++            return (-1);
++        }
++    }                    /* option letter okay? */
++    if ((optopt = (int)*place++) == (int)':' ||
++        !(oli = strchr(ostr, optopt))) {
++        /*
++         * if the user didn't specify '-' as an option,
++         * assume it means -1.
++         */
++        if (optopt == (int)'-')
++            return (-1);
++        if (!*place)
++            ++optind;
++        if (opterr && *ostr != ':')
++            (void)fprintf(stderr,
++                "%s: illegal option -- %c\n", nargv[0], optopt);
++        return (BADCH);
++    }
++    if (*++oli != ':') {            /* don't need argument */
++        optarg = NULL;
++        if (!*place)
++            ++optind;
++    }
++    else {                    /* need an argument */
++        if (*place)            /* no white space */
++            optarg = place;
++        else if (nargc <= ++optind) {    /* no arg */
++            place = EMSG;
++            if (*ostr == ':')
++                return (BADARG);
++            if (opterr)
++                (void)fprintf(stderr,
++                    "%s: option requires an argument -- %c\n",
++                    nargv[0], optopt);
++            return (BADCH);
++        }
++         else                /* white space */
++            optarg = nargv[optind];
++        place = EMSG;
++        ++optind;
++    }
++    return (optopt);            /* dump back option letter */
++}
+diff -Nru -x '*~' uuid-1.6.2.orig/unistd.h uuid-1.6.2/unistd.h
+--- uuid-1.6.2.orig/unistd.h	1970-01-01 01:00:00.000000000 +0100
++++ uuid-1.6.2/unistd.h	2013-02-15 00:20:24.513280800 +0100
+@@ -0,0 +1,10 @@
++#ifndef _UUID_UNISTD_H
++#define _UUID_UNISTD_H
++
++extern int optind;
++extern char *optarg;
++extern int opterr; /* if error message should be printed */
++extern int optopt,            /* character checked for validity */
++           optreset;        /* reset_getopt */
++
++#endif /* _UUID_UNISTD_H */
+diff -Nru -x '*~' uuid-1.6.2.orig/uuid.c uuid-1.6.2/uuid.c
+--- uuid-1.6.2.orig/uuid.c	2008-03-07 11:49:59.000000000 +0100
++++ uuid-1.6.2/uuid.c	2013-02-15 00:20:24.523280800 +0100
+@@ -40,7 +40,9 @@
+ #include <ctype.h>
+ #include <fcntl.h>
+ #include <time.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ #include <sys/types.h>
+ 
+ /* own headers (part 2/2) */
+diff -Nru -x '*~' uuid-1.6.2.orig/uuid_ac.h uuid-1.6.2/uuid_ac.h
+--- uuid-1.6.2.orig/uuid_ac.h	2008-03-07 11:49:59.000000000 +0100
++++ uuid-1.6.2/uuid_ac.h	2013-02-15 00:20:24.533280800 +0100
+@@ -40,6 +40,9 @@
+ #include <string.h>           /* size_t, strlen, etc. */
+ #include <unistd.h>           /* dmalloc pre-loading */
+ 
++#define WIN32_LEAN_AND_MEAN
++#include <winsock2.h>
++
+ /* enable optional "dmalloc" support */
+ #ifdef WITH_DMALLOC
+ #include <dmalloc.h>          /* malloc override, etc */
+diff -Nru -x '*~' uuid-1.6.2.orig/uuid_prng.c uuid-1.6.2/uuid_prng.c
+--- uuid-1.6.2.orig/uuid_prng.c	2008-06-03 07:59:53.000000000 +0200
++++ uuid-1.6.2/uuid_prng.c	2013-02-15 00:20:24.543280900 +0100
+@@ -35,7 +35,9 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <time.h>
++#ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
++#endif
+ #include <fcntl.h>
+ #if defined(WIN32)
+ #define WINVER 0x0500
