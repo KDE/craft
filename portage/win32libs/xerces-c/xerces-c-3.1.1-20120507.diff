@@ -201,13 +201,13 @@ diff -Nru xerces-c-3.1.1.orig/src/CMakeLists.txt xerces-c-3.1.1/src/CMakeLists.t
 +    set(xerces_HDRS ${xerces_HDRS} ${winfmgr_HDRS})
 +endif()
 +
-+add_library(xerces ${_SHARED} ${xerces_SRCS})
++add_library(xerces-c ${_SHARED} ${xerces_SRCS})
 +
-+set_target_properties(xerces PROPERTIES DEFINE_SYMBOL XERCES_BUILDING_LIBRARY)
++set_target_properties(xerces-c PROPERTIES DEFINE_SYMBOL XERCES_BUILDING_LIBRARY)
 +
-+install(TARGETS xerces RUNTIME DESTINATION bin
-+                       LIBRARY DESTINATION lib
-+                       ARCHIVE DESTINATION lib)
++install(TARGETS xerces-c RUNTIME DESTINATION bin
++                         LIBRARY DESTINATION lib
++                         ARCHIVE DESTINATION lib)
 +
 +# mimic nobase from autotools
 +foreach(_hdr ${xerces_HDRS})
