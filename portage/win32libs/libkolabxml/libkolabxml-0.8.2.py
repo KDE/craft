@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
             self.targets[ ver ] = 'http://git.kolab.org/libkolabxml/snapshot/libkolabxml-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = "libkolabxml-" + ver
         self.patchToApply['0.8.2'] = [("libkolabxml-fixes.diff", 1)]
-        self.targetDigests['0.8.2'] = '4596c0406abb930083e4150f4054ba3a6f83d75e'
 
         self.shortDescription = ''
         self.defaultTarget = '0.8.2'
