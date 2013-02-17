@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/attica'] = 'default'
         # self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
         # self.dependencies['kdesupport/qca'] = 'default'
-        # self.dependencies['kdesupport/qimageblitz'] = 'default'
+        self.dependencies['kdesupport/qimageblitz'] = 'default'
         # needed for nepomuk
         # self.dependencies['kdesupport/soprano'] = 'default'
         # unneeded in the future?
