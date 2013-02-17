@@ -27,6 +27,7 @@ class Package(CMakePackageBase):
     self.subinfo = subinfo()
     CMakePackageBase.__init__(self)
     self.subinfo.options.package.packageName = 'libbzip2'
+    self.supportsNinja = False
 
 
 if __name__ == '__main__':
