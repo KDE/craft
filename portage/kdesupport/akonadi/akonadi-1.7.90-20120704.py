@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/shared-mime-info'] = 'default'
 
     def setTargets( self ):
-        baseurl = 'ftp://ftp.kde.org/pub/kde/stable/akonadi/src/akonadi-%s.tar.bz2'
+        baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
         for ver in ['1.4.80', '1.4.90', '1.6.0','1.6.2', '1.7.90']:
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver

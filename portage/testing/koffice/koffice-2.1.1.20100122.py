@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
 	self.svnTargets['gitHEAD'] = "[git]kde:kate"
         for ver in ['2.0.82', '2.0.83', '2.0.91']:
-            self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/unstable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
+            self.targets[ver] = 'http://download.kde.org/unstable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'koffice-' + ver
         for ver in ['2.1.0', '2.1.1', '2.3.0']:
-            self.targets[ver] = 'ftp://ftp.kde.org/pub/kde/stable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
+            self.targets[ver] = 'http://download.kde.org/stable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'koffice-' + ver
         self.patchToApply['2.0.0'] = ('koffice-2.0.0.diff', 0)
         self.patchToApply['2.0.82'] = ('koffice-2.0.82.diff', 0)
