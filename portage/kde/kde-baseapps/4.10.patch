@@ -1,0 +1,24 @@
+From: Patrick von Reth <vonreth@kde.org>
+Date: Sun, 13 Jan 2013 13:23:55 +0000
+Subject: fixed build on non x11 systems
+X-Git-Url: http://quickgit.kde.org/?p=kde-baseapps.git&a=commitdiff&h=8e6d6a0f2d16f0c34267f118b5e07de6451aabf4
+---
+fixed build on non x11 systems
+---
+
+
+--- a/plasma/applets/folderview/dialogshadows.cpp
++++ b/plasma/applets/folderview/dialogshadows.cpp
+@@ -161,8 +161,12 @@
+ 
+ QPixmap DialogShadows::Private::initEmptyPixmap(const QSize &size)
+ {
++#ifdef Q_WS_X11
+     Pixmap emptyXPix = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), size.width(), size.height(), 32);
+     QPixmap tempEmptyPix = QPixmap::fromX11Pixmap(emptyXPix, QPixmap::ExplicitlyShared);
++#else
++    QPixmap tempEmptyPix(size.width(), size.height());
++#endif
+     tempEmptyPix.fill(Qt::transparent);
+     return tempEmptyPix;
+ }
