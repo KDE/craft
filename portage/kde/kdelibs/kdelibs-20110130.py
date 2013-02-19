@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
-#        self.patchToApply["4.10.0"] = ("kdelibs-4.10.0-20130219.diff",1)
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
@@ -38,6 +37,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.supportsNinja = False
         self.subinfo.options.configure.defines = ""
         if compiler.isMinGW():
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()
