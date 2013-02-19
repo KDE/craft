@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.0.3'] = '4c6dc0eb2a32049fed72f8d713489edfad7b4eff'
         
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '1.0.3'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
