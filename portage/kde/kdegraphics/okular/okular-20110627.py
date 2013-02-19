@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/freetype'] = 'default'
         self.dependencies['win32libs/libspectre'] = 'default'
+        self.runtimeDependencies['extragear/kate'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
