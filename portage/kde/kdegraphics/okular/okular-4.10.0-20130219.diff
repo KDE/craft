@@ -1,0 +1,10 @@
+diff -Nru -x '*~' okular-4.10.0.orig/conf/settings.kcfgc okular-4.10.0/conf/settings.kcfgc
+--- okular-4.10.0.orig/conf/settings.kcfgc	2013-01-23 23:01:55.000000000 +0100
++++ okular-4.10.0/conf/settings.kcfgc	2013-02-19 11:21:09.670881100 +0100
+@@ -4,6 +4,5 @@
+ Inherits=SettingsCore
+ Mutators=true
+ Singleton=true
+-Visibility=OKULAR_EXPORT
+ IncludeFiles=core/okular_export.h, settings_core.h
+ MemberVariables=dpointer
