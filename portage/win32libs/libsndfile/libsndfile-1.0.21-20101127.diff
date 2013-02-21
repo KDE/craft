@@ -1,6 +1,6 @@
 diff -Nru -x '*~' libsndfile-1.0.24.orig/cmake/modules/FindOggVorbis.cmake libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake
 --- libsndfile-1.0.24.orig/cmake/modules/FindOggVorbis.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake	2012-07-25 11:03:09.682717900 +0200
++++ libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake	2013-02-19 11:38:56.239725600 +0100
 @@ -0,0 +1,89 @@
 +# - Try to find the OggVorbis libraries
 +# Once done this will define
@@ -93,7 +93,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/cmake/modules/FindOggVorbis.cmake libsn
 +#endif (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
 diff -Nru -x '*~' libsndfile-1.0.24.orig/CMakeLists.txt libsndfile-1.0.24/CMakeLists.txt
 --- libsndfile-1.0.24.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/CMakeLists.txt	2012-07-25 11:03:09.686718100 +0200
++++ libsndfile-1.0.24/CMakeLists.txt	2013-02-19 11:38:56.243724300 +0100
 @@ -0,0 +1,25 @@
 +project (libsndfile)
 +
@@ -122,7 +122,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/CMakeLists.txt libsndfile-1.0.24/CMakeL
 +add_subdirectory(src)
 diff -Nru -x '*~' libsndfile-1.0.24.orig/ConfigureChecks.cmake libsndfile-1.0.24/ConfigureChecks.cmake
 --- libsndfile-1.0.24.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/ConfigureChecks.cmake	2012-07-25 11:03:09.689718300 +0200
++++ libsndfile-1.0.24/ConfigureChecks.cmake	2013-02-19 11:38:56.248729000 +0100
 @@ -0,0 +1,72 @@
 +if(MINGW)
 +    set(__USE_MINGW_ANSI_STDIO 1)
@@ -198,7 +198,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/ConfigureChecks.cmake libsndfile-1.0.24
 +configure_file(src/sndfile.h.in   sndfile.h)
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/aiff.c libsndfile-1.0.24/src/aiff.c
 --- libsndfile-1.0.24.orig/src/aiff.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/aiff.c	2012-07-25 11:03:09.695718600 +0200
++++ libsndfile-1.0.24/src/aiff.c	2013-02-19 11:38:56.254728200 +0100
 @@ -24,7 +24,9 @@
  #include <string.h>
  #include <time.h>
@@ -220,7 +220,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/aiff.c libsndfile-1.0.24/src/aiff.c
  						psf_log_printf (psf, "%s", cptr) ;
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/caf.c libsndfile-1.0.24/src/caf.c
 --- libsndfile-1.0.24.orig/src/caf.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/caf.c	2012-07-25 11:03:09.701719000 +0200
++++ libsndfile-1.0.24/src/caf.c	2013-02-19 11:38:56.259730000 +0100
 @@ -23,7 +23,9 @@
  #include	<string.h>
  #include	<ctype.h>
@@ -242,7 +242,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/caf.c libsndfile-1.0.24/src/caf.c
  
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/CMakeLists.txt libsndfile-1.0.24/src/CMakeLists.txt
 --- libsndfile-1.0.24.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/CMakeLists.txt	2012-07-25 11:05:00.190038600 +0200
++++ libsndfile-1.0.24/src/CMakeLists.txt	2013-02-19 11:38:56.264729400 +0100
 @@ -0,0 +1,85 @@
 +set(sndfile_SRCS
 +audio_detect.c
@@ -331,7 +331,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/CMakeLists.txt libsndfile-1.0.24/sr
 +install(FILES ${CMAKE_BINARY_DIR}/sndfile.h ${CMAKE_CURRENT_SOURCE_DIR}/sndfile.hh DESTINATION include)
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/common.c libsndfile-1.0.24/src/common.c
 --- libsndfile-1.0.24.orig/src/common.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/common.c	2012-07-25 11:03:09.711719600 +0200
++++ libsndfile-1.0.24/src/common.c	2013-02-19 11:38:56.269728300 +0100
 @@ -23,12 +23,26 @@
  #include	<ctype.h>
  #include	<math.h>
@@ -361,7 +361,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/common.c libsndfile-1.0.24/src/comm
  ** can later be displayed.
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/common.h libsndfile-1.0.24/src/common.h
 --- libsndfile-1.0.24.orig/src/common.h	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/common.h	2012-07-25 11:03:09.718720000 +0200
++++ libsndfile-1.0.24/src/common.h	2013-02-19 11:38:56.275730300 +0100
 @@ -21,6 +21,7 @@
  
  #include "sfconfig.h"
@@ -393,7 +393,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/common.h libsndfile-1.0.24/src/comm
  #elif (SIZEOF_LONG_LONG == 8)
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/config.h.cmake libsndfile-1.0.24/src/config.h.cmake
 --- libsndfile-1.0.24.orig/src/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/config.h.cmake	2012-07-25 11:03:09.734720900 +0200
++++ libsndfile-1.0.24/src/config.h.cmake	2013-02-19 11:38:56.281732400 +0100
 @@ -0,0 +1,288 @@
 +/* src/config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -685,7 +685,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/config.h.cmake libsndfile-1.0.24/sr
 +#endif
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/file_io.c libsndfile-1.0.24/src/file_io.c
 --- libsndfile-1.0.24.orig/src/file_io.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/file_io.c	2012-07-25 11:03:09.740721200 +0200
++++ libsndfile-1.0.24/src/file_io.c	2013-02-19 11:38:56.286731800 +0100
 @@ -55,6 +55,10 @@
  
  #define	SENSIBLE_SIZE	(0x40000000)
@@ -699,7 +699,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/file_io.c libsndfile-1.0.24/src/fil
  **	If O_BINARY isn't already defined by the inclusion of the system
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/flac.c libsndfile-1.0.24/src/flac.c
 --- libsndfile-1.0.24.orig/src/flac.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/flac.c	2012-07-25 11:03:09.747721600 +0200
++++ libsndfile-1.0.24/src/flac.c	2013-02-19 11:38:56.292730500 +0100
 @@ -29,7 +29,7 @@
  #include	"sndfile.h"
  #include	"common.h"
@@ -711,7 +711,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/flac.c libsndfile-1.0.24/src/flac.c
  #include	<FLAC/stream_encoder.h>
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/GSM610/gsm610_priv.h libsndfile-1.0.24/src/GSM610/gsm610_priv.h
 --- libsndfile-1.0.24.orig/src/GSM610/gsm610_priv.h	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/GSM610/gsm610_priv.h	2012-07-25 11:03:09.752721900 +0200
++++ libsndfile-1.0.24/src/GSM610/gsm610_priv.h	2013-02-19 11:38:56.297735700 +0100
 @@ -18,6 +18,10 @@
  /* Added by Erik de Castro Lopo */
  
@@ -725,7 +725,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/GSM610/gsm610_priv.h libsndfile-1.0
  typedef int					longword;	/* 32 bit signed int	*/
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/libsndfile-1.def libsndfile-1.0.24/src/libsndfile-1.def
 --- libsndfile-1.0.24.orig/src/libsndfile-1.def	2011-03-23 10:29:08.000000000 +0100
-+++ libsndfile-1.0.24/src/libsndfile-1.def	2012-07-25 11:03:09.756722100 +0200
++++ libsndfile-1.0.24/src/libsndfile-1.def	2013-02-19 11:38:56.302734100 +0100
 @@ -38,4 +38,5 @@
  sf_wchar_open        @71
  sf_open_virtual      @80
@@ -734,13 +734,13 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/libsndfile-1.def libsndfile-1.0.24/
  
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/libsndfile.rc libsndfile-1.0.24/src/libsndfile.rc
 --- libsndfile-1.0.24.orig/src/libsndfile.rc	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/libsndfile.rc	2012-07-25 11:03:09.759722300 +0200
++++ libsndfile-1.0.24/src/libsndfile.rc	2013-02-19 11:41:54.317575900 +0100
 @@ -0,0 +1,32 @@
 +#include <winver.h>
 +
 +VS_VERSION_INFO	VERSIONINFO
-+FILEVERSION 	1,0,17
-+PRODUCTVERSION	1,0,17
++FILEVERSION 	0,1,0,17
++PRODUCTVERSION	0,1,0,17
 +#ifdef DEBUG
 +FILEFLAGS	(VS_FF_DEBUG | VS_FF_PRERELEASE)
 +#else
@@ -770,7 +770,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/libsndfile.rc libsndfile-1.0.24/src
 +
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/sndfile.def libsndfile-1.0.24/src/sndfile.def
 --- libsndfile-1.0.24.orig/src/sndfile.def	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/sndfile.def	2012-07-25 11:03:09.763722500 +0200
++++ libsndfile-1.0.24/src/sndfile.def	2013-02-19 11:38:56.311733600 +0100
 @@ -0,0 +1,39 @@
 +; Auto-generated by create_symbols_file.py
 +
@@ -813,7 +813,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/sndfile.def libsndfile-1.0.24/src/s
 +id3_skip             @100
 diff -Nru -x '*~' libsndfile-1.0.24.orig/src/wav.c libsndfile-1.0.24/src/wav.c
 --- libsndfile-1.0.24.orig/src/wav.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/wav.c	2012-07-25 11:03:09.768722800 +0200
++++ libsndfile-1.0.24/src/wav.c	2013-02-19 11:38:56.316736900 +0100
 @@ -24,7 +24,9 @@
  #include	<string.h>
  #include	<ctype.h>

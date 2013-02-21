@@ -5,9 +5,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
         for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "ftp://ftp.kde.org/pub/kde/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
+        self.patchToApply["4.10.0"] = ("kdelibs-4.10.0-20130219.diff",1)
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'frameworks'
 
@@ -40,7 +41,6 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.supportsNinja = False
         self.subinfo.options.configure.defines = ""
         if compiler.isMinGW():
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()

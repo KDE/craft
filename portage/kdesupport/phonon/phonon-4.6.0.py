@@ -9,8 +9,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qttools'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:phonon|phonon4qt5'
-        
+        self.svnTargets['gitHEAD'] = '[git]kde:phonon|phonon4qt5'        
         self.shortDescription = "a Qt based multimedia framework"
         self.defaultTarget = 'gitHEAD'
 

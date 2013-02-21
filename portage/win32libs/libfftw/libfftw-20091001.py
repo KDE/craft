@@ -20,6 +20,7 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.supportsNinja = False
         self.subinfo.options.configure.defines = "-DFFTW_SINGLE=ON -DFFTW_DOUBLE=OFF -DBUILD_BENCHMARKS=OFF"
 
 if __name__ == '__main__':
