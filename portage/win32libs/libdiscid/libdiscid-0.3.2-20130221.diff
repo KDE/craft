@@ -1,0 +1,33 @@
+diff -Nru -x '*~' libdiscid-0.3.2.orig/CMakeLists.txt libdiscid-0.3.2/CMakeLists.txt
+--- libdiscid-0.3.2.orig/CMakeLists.txt	2013-02-11 13:31:46.000000000 +0100
++++ libdiscid-0.3.2/CMakeLists.txt	2013-02-21 14:46:44.146146800 +0100
+@@ -72,7 +72,8 @@
+ ADD_EXECUTABLE(test_discid test/test_discid.c)
+ TARGET_LINK_LIBRARIES(test_discid libdiscid)
+ 
+-INSTALL(TARGETS libdiscid DESTINATION ${LIB_INSTALL_DIR})
++INSTALL(TARGETS libdiscid RUNTIME DESTINATION ${BIN_INSTALL_DIR}
++                          ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
+ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libdiscid.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+ INSTALL(FILES include/discid/discid.h DESTINATION ${INCLUDE_INSTALL_DIR}/discid)
+ 
+diff -Nru -x '*~' libdiscid-0.3.2.orig/Doxyfile libdiscid-0.3.2/Doxyfile
+--- libdiscid-0.3.2.orig/Doxyfile	1970-01-01 01:00:00.000000000 +0100
++++ libdiscid-0.3.2/Doxyfile	2013-02-21 14:44:36.493903800 +0100
+@@ -0,0 +1,16 @@
++PROJECT_NAME        = "libdiscid"
++PROJECT_NUMBER      = 0.3.2
++HTML_OUTPUT         = docs
++GENERATE_LATEX      = NO
++GENERATE_MAN        = NO
++GENERATE_RTF        = NO
++CASE_SENSE_NAMES    = NO
++INPUT               = include/discid/discid.h
++JAVADOC_AUTOBRIEF   = YES
++EXTRACT_ALL         = YES
++EXTRACT_STATIC      = YES
++SHOW_USED_FILES     = NO
++SHOW_INCLUDE_FILES  = NO
++FULL_PATH_NAMES     = NO
++MACRO_EXPANSION     = YES
++EXPAND_ONLY_PREDEF  = YES
