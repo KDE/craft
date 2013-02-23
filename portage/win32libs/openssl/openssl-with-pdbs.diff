@@ -1,0 +1,194 @@
+diff -Nru -x '*~' openssl-1.0.1c.orig/util/mk1mf.pl openssl-1.0.1c/util/mk1mf.pl
+--- openssl-1.0.1c.orig/util/mk1mf.pl	2012-02-13 00:20:21.000000000 +0100
++++ openssl-1.0.1c/util/mk1mf.pl	2013-02-23 01:36:12.752945800 +0100
+@@ -654,7 +654,7 @@
+ $rules.=&do_compile_rule("\$(OBJ_D)",$test,"\$(APP_CFLAGS)");
+ 
+ $defs.=&do_defs("E_OBJ",$e_exe,"\$(OBJ_D)",$obj);
+-$rules.=&do_compile_rule("\$(OBJ_D)",$e_exe,'-DMONOLITH $(APP_CFLAGS)');
++$rules.=&do_compile_rule("\$(OBJ_D)",$e_exe,"-DMONOLITH \$(APP_CFLAGS)", "\$(BIN_D)/\$(E_EXE).pdb");
+ 
+ # Special case rule for fips_premain_dso
+ 
+@@ -670,16 +670,24 @@
+ 	{
+ 	$lib_obj=$lib_obj{$_};
+ 	local($slib)=$shlib;
+-
++    local($pdbname);
+ 	if (($_ eq "SSL") && $no_ssl2 && $no_ssl3)
+ 		{
+ 		$rules.="\$(O_SSL):\n\n"; 
+ 		next;
+ 		}
+ 
++    if ($_ eq "GOST")
++        {
++            $pdbname="gost.pdb";
++        }
++    else
++        {
++            $pdbname="\$($_).pdb";
++        }
+ 	$defs.=&do_defs(${_}."OBJ",$lib_obj,"\$(OBJ_D)",$obj);
+ 	$lib=($slib)?" \$(SHLIB_CFLAGS)".$shlib_ex_cflags{$_}:" \$(LIB_CFLAGS)";
+-	$rules.=&do_compile_rule("\$(OBJ_D)",$lib_obj{$_},$lib);
++	$rules.=&do_compile_rule("\$(OBJ_D)",$lib_obj{$_},$lib, "\$(LIB_D)/$pdbname");
+ 	}
+ 
+ # hack to add version info on MSVC
+@@ -700,28 +708,28 @@
+ 	{
+ 	$t=&bname($_);
+ 	$tt="\$(OBJ_D)${o}$t${obj}";
+-	$rules.=&do_link_rule("\$(TEST_D)$o$t$exep",$tt,"\$(LIBS_DEP)","\$(L_LIBS) \$(EX_LIBS)");
++	$rules.=&do_link_rule("\$(TEST_D)$o$t$exep",$tt,"\$(LIBS_DEP)","\$(L_LIBS) \$(EX_LIBS) /PDB:\$(TEST_D)/$t.pdb");
+ 	}
+ 
+ $defs.=&do_defs("E_SHLIB",$engines . $otherlibs,"\$(ENG_D)",$shlibp);
+ 
+ foreach (split(/\s+/,$engines))
+ 	{
+-	$rules.=&do_compile_rule("\$(OBJ_D)","engines${o}e_$_",$lib);
+-	$rules.= &do_lib_rule("\$(OBJ_D)${o}e_${_}.obj","\$(ENG_D)$o$_$shlibp","",$shlib,"");
++	$rules.=&do_compile_rule("\$(OBJ_D)","engines${o}e_$_",$lib, "\$(ENG_D)/${_}.pdb");
++	$rules.= &do_lib_rule("\$(OBJ_D)${o}e_${_}.obj","\$(ENG_D)$o$_$shlibp","",$shlib,"","\$(ENG_D)/$_.pdb");
+ 	}
+ 
+ 
+ 
+-$rules.= &do_lib_rule("\$(SSLOBJ)","\$(O_SSL)",$ssl,$shlib,"\$(SO_SSL)");
++$rules.= &do_lib_rule("\$(SSLOBJ)","\$(O_SSL)",$ssl,$shlib,"\$(SO_SSL)","\$(LIB_D)/\$(SSL).pdb");
+ 
+ if ($fips)
+-	{
++    {
+ 	if ($shlib)
+ 		{
+ 		$rules.= &do_lib_rule("\$(CRYPTOOBJ) \$(O_FIPSCANISTER)",
+ 				"\$(O_CRYPTO)", "$crypto",
+-				$shlib, "\$(SO_CRYPTO)", "\$(BASEADDR)");
++				$shlib, "\$(SO_CRYPTO)", "\$(BASEADDR)", "");
+ 		}
+ 	else
+ 		{
+@@ -731,21 +739,21 @@
+ 			"\$(LIB_D)$o$crypto_compat",$crypto,$shlib,"\$(SO_CRYPTO)", "");
+ 		}
+ 	}
+-	else
++else
+ 	{
+ 	$rules.= &do_lib_rule("\$(CRYPTOOBJ)","\$(O_CRYPTO)",$crypto,$shlib,
+-							"\$(SO_CRYPTO)");
++							"\$(SO_CRYPTO)","\$(LIB_D)/\$(CRYPTO).pdb");
+ 	}
+ 
+ foreach (split(" ",$otherlibs))
+ 	{
+ 	my $uc = $_;
+ 	$uc =~ tr /a-z/A-Z/;	
+-	$rules.= &do_lib_rule("\$(${uc}OBJ)","\$(ENG_D)$o$_$shlibp", "", $shlib, "");
++	$rules.= &do_lib_rule("\$(${uc}OBJ)","\$(ENG_D)$o$_$shlibp", "", $shlib, "","\$(ENG_D)/$_.pdb");
+ 
+ 	}
+ 
+-$rules.=&do_link_rule("\$(BIN_D)$o\$(E_EXE)$exep","\$(E_OBJ)","\$(LIBS_DEP)","\$(L_LIBS) \$(EX_LIBS)", ($fips && !$shlib) ? 2 : 0);
++$rules.=&do_link_rule("\$(BIN_D)$o\$(E_EXE)$exep","\$(E_OBJ)","\$(LIBS_DEP)","\$(L_LIBS) \$(EX_LIBS) /PDB:\$(BIN_D)/\$(E_EXE).pdb", ($fips && !$shlib) ? 2 : 0);
+ 
+ print $defs;
+ 
+@@ -941,17 +949,25 @@
+ # compile the files in '$files' into $to
+ sub do_compile_rule
+ 	{
+-	local($to,$files,$ex)=@_;
+-	local($ret,$_,$n,$d,$s);
++	local($to,$files,$ex,$pdbflag)=@_;
++	local($ret,$_,$n,$d,$s,$ex2);
+ 
+ 	$files =~ s/\//$o/g if $o ne '/';
+ 	foreach (split(/\s+/,$files))
+ 		{
+ 		$n=&bname($_);
+ 		$d=&dname($_);
++        if ($pdbflag eq "")
++            {
++                $ex2=" /Fd\$(TEST_D)/".&bname($_).".pdb";
++            }
++        else
++            {
++                $ex2=" /Fd$pdbflag";
++            }
+ 		if (-f "${_}.c")
+ 			{
+-			$ret.=&cc_compile_target("$to${o}$n$obj","${_}.c",$ex)
++			$ret.=&cc_compile_target("$to${o}$n$obj","${_}.c","$ex$ex2")
+ 			}
+ 		elsif (-f ($s="${d}${o}asm${o}${n}.pl") or
+ 		       ($s=~s/sha256/sha512/ and -f $s) or
+diff -Nru -x '*~' openssl-1.0.1c.orig/util/pl/VC-32.pl openssl-1.0.1c/util/pl/VC-32.pl
+--- openssl-1.0.1c.orig/util/pl/VC-32.pl	2013-02-23 01:38:57.965023900 +0100
++++ openssl-1.0.1c/util/pl/VC-32.pl	2013-02-23 01:25:02.927472900 +0100
+@@ -5,6 +5,7 @@
+ 
+ $ssl=	"ssleay32";
+ $crypto="libeay32";
++$pdb=	"ssleay32.pdb";
+ 
+ if ($fips && !$shlib)
+ 	{
+@@ -148,8 +149,8 @@
+ 	}
+ 
+ # generate symbols.pdb unconditionally
+-$app_cflag.=" /Zi /Fd\$(TMP_D)/app";
+-$lib_cflag.=" /Zi /Fd\$(TMP_D)/lib";
++$app_cflag.=" /Zi";
++$lib_cflag.=" /Zi";
+ $lflags.=" /debug";
+ 
+ $obj='.obj';
+@@ -254,7 +255,7 @@
+ $(OBJ_D)\applink.obj:	ms\applink.c
+ 	$(CC) /Fo$(OBJ_D)\applink.obj $(APP_CFLAGS) -c ms\applink.c
+ $(OBJ_D)\uplink.obj:	ms\uplink.c ms\applink.c
+-	$(CC) /Fo$(OBJ_D)\uplink.obj $(SHLIB_CFLAGS) -c ms\uplink.c
++	$(CC) /Fo$(OBJ_D)\uplink.obj $(SHLIB_CFLAGS) /Fd$(LIB_D)\$(CRYPTO).pdb -c ms\uplink.c
+ $(INCO_D)\applink.c:	ms\applink.c
+ 	$(CP) ms\applink.c $(INCO_D)\applink.c
+ 
+@@ -281,19 +282,14 @@
+ 
+ sub do_lib_rule
+ 	{
+-	my($objs,$target,$name,$shlib,$ign,$base_addr) = @_;
++	my($objs,$target,$name,$shlib,$ign,$pdbname) = @_;
+ 	local($ret);
++    local($pdbflag);
+ 
+-	$taget =~ s/\//$o/g if $o ne '/';
++    $pdbflag = " /PDB:$pdbname";
++	$target =~ s/\//$o/g if $o ne '/';
+ 	my $base_arg;
+-	if ($base_addr ne "")
+-		{
+-		$base_arg= " /base:$base_addr";
+-		}
+-	else
+-		{
+-		$base_arg = "";
+-		}
++    $base_arg = "";
+ 	if ($name ne "")
+ 		{
+ 		$name =~ tr/a-z/A-Z/;
+@@ -330,7 +326,7 @@
+ 		else
+ 			{
+ 			$ret.="$target: $objs";
+-			$ret.="\n\t\$(LINK) \$(MLFLAGS) $efile$target $name @<<\n  \$(SHLIB_EX_OBJ) $objs $ex \$(EX_LIBS)\n<<\n";
++			$ret.="\n\t\$(LINK) \$(MLFLAGS) $efile$target $name @<<\n  $pdbflag \$(SHLIB_EX_OBJ) $objs $ex \$(EX_LIBS)\n<<\n";
+ 			}
+ 		$ret.="\tIF EXIST \$@.manifest mt -nologo -manifest \$@.manifest -outputresource:\$@;2\n\n";
+ 		}
