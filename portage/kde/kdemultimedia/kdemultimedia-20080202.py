@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/audiocd-kio'] = 'default'
+        #self.dependencies['kde/audiocd-kio'] = 'default'#missing dep cdparanoia
         self.dependencies['kde/dragon'] = 'default'
         self.dependencies['kde/ffmpegthumbs'] = 'default'
         self.dependencies['kde/juk'] = 'default'
-        self.dependencies['kde/kmix'] = 'default'
+        #self.dependencies['kde/kmix'] = 'default'#kmix on windows?
         self.dependencies['kde/kscd'] = 'default'
         self.dependencies['kde/libkcddb'] = 'default'
         self.dependencies['kde/libkcompactdisc'] = 'default'

@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['win32libs/ffmpeg'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.shortDescription = "ffmpeg-based thumbnail creator for video files."
 
