@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
         for ver in ['v2.8.0', 'v2.9.0']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/soprano/soprano-' + ver.replace('v', '') + '.tar.bz2'
-            self.targetInstSrc[ ver ] = 'soprano-' + ver
+            self.targetInstSrc[ ver ] = 'soprano-' + ver[1:]
         self.shortDescription = "a RDF storage solutions library"
         self.defaultTarget = 'gitHEAD'
 
