@@ -7,8 +7,11 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = "git://gitorious.org/grantlee/grantlee.git"
         for ver in ['0.1', '0.2', '0.3']:
             self.svnTargets[ ver ] = "git://gitorious.org/grantlee/grantlee.git|%s" % ver
+        for ver in ['0.3.0']:
+            self.targets[ ver ] = "http://downloads.grantlee.org/grantlee-%s.tar.gz" % ver
+            self.targetInstSrc[ ver ] = "grantlee-%s" % ver
         self.shortDescription = 'libraries for a template system similar to django\'s'
-        self.defaultTarget = '0.3'
+        self.defaultTarget = '0.3.0'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

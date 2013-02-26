@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '5.0.1'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'        
+        self.dependencies['win32libs/neon'] = 'default'
 
 from Package.CMakePackageBase import *
 

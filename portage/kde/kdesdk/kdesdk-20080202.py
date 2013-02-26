@@ -3,29 +3,35 @@ import kdedefaults as kd
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-
-        if kd.kdebranch == 'master':
-            self.svnTargets['svnHEAD'] = 'trunk/KDE/%s' % self.package
-        else:
-            self.svnTargets['svnHEAD'] = 'branches/KDE/%s/%s' % (kd.kdeversion[:-1], self.package)
-
-        self.defaultTarget = 'svnHEAD'
+        self.targets['gitHEAD'] = ''
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-baseapps'] = 'default'
-        self.dependencies['win32libs/boost'] = 'default'
-        self.dependencies['dev-util/zip'] = 'default'
+        #self.dependencies['kde/cervisia'] = 'default'#only builds on unix
+        self.dependencies['kde/dolphin-plugins'] = 'default'
+        self.dependencies['kde/kapptemplate'] = 'default'
+        self.dependencies['kde/kcachegrind'] = 'default'
+        self.dependencies['kde/kde-dev-scripts'] = 'default'
+        self.dependencies['kde/kde-dev-utils'] = 'default'
+        self.dependencies['kde/kdesdk-kioslaves'] = 'default'
+        self.dependencies['kde/kdesdk-strigi-analyzers'] = 'default'
+        #self.dependencies['kde/kdesdk-thumbnailers'] = 'default' # only po thumbnailers which dont build
+        self.dependencies['kde/kompare'] = 'default'
+        self.dependencies['kde/lokalize'] = 'default'
+        self.dependencies['kde/okteta'] = 'default'
+        self.dependencies['kde/poxml'] = 'default'
+        self.dependencies['kde/umbrello'] = 'default'
+
+#        self.dependencies['kde/kde-baseapps'] = 'default'
+#        self.dependencies['win32libs/boost'] = 'default'
         self.shortDescription = "KDE software development package (umbrello, okteta)"
 
-from Package.CMakePackageBase import *
+from Package.VirtualPackageBase import *
 
-class Package(CMakePackageBase):
+class Package(VirtualPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
+        VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()
