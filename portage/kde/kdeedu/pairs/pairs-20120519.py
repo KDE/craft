@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.buildDependencies['dev-utils/zip'] = 'default'
 
 from Package.CMakePackageBase import *
 
