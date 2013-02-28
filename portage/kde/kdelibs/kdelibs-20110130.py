@@ -22,6 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'
         self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
+        self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.dependencies['kdesupport/soprano'] = 'default'
