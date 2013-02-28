@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/ffmpegthumbs'] = 'default'
         self.dependencies['kde/juk'] = 'default'
         #self.dependencies['kde/kmix'] = 'default'#kmix on windows?
-        self.dependencies['kde/kscd'] = 'default'
+        #self.dependencies['kde/kscd'] = 'default'
         self.dependencies['kde/libkcddb'] = 'default'
         self.dependencies['kde/libkcompactdisc'] = 'default'
         self.dependencies['kde/mplayerthumbs'] = 'default'
