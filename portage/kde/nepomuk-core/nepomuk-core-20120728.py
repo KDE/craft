@@ -14,6 +14,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kdesupport/soprano'] = 'default'
         self.dependencies['kdesupport/strigi'] = 'default'
+        self.dependencies['kdesupport/poppler'] = 'default'
+        self.dependencies['win32libs/taglib'] = 'default'
+        self.dependencies['win32libs/exiv2'] = 'default'
+        self.dependencies['win32libs/ffmpeg'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
         self.shortDescription = "Nepomuk core libraries"
