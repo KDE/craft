@@ -47,7 +47,7 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +
 +add_library(bzip2 SHARED ${bzip2_lib_SRCS})
 +if(WIN32)
-+  set_target_properties(bzip2 PROPERTIES PREFIX "")
++  set_target_properties(bzip2 PROPERTIES PREFIX "" RUNTIME_OUTPUT_NAME libbzip2)
 +endif(WIN32)
 +
 +if(WINCE)
@@ -62,7 +62,7 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +if(NOT WINCE)
 +add_executable(bzip2_bin bzip2.c)
 +target_link_libraries(bzip2_bin bzip2)
-+set_target_properties(bzip2_bin PROPERTIES OUTPUT_NAME bzip2)
++set_target_properties(bzip2_bin PROPERTIES RUNTIME_OUTPUT_NAME bzip2)
 +endif(NOT WINCE)
 +
 +file(GLOB man1 ${bzip2_SOURCE_DIR}/*.1)

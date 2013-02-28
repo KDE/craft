@@ -73,7 +73,7 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
-        if self.category in [ "win32libs", "virtual", "dev-util", "gnuwin32" ]:
+        if self.category in [ "virtual", "dev-util", "gnuwin32" ]:
             self.ignoreNotifications = True
 
     def __str__( self ):

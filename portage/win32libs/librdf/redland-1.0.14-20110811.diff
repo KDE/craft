@@ -1,6 +1,6 @@
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/config.cpp.in redland-1.0.14/cmake/config.cpp.in
 --- redland-1.0.14.orig/cmake/config.cpp.in	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/config.cpp.in	2013-01-03 16:21:04.043867200 +0100
++++ redland-1.0.14/cmake/config.cpp.in	2013-02-13 15:20:27.491761400 +0100
 @@ -0,0 +1,27 @@
 +#include <stdio.h>
 +#include <string.h>
@@ -31,7 +31,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/config.cpp.in redland-1.0.14/cmake/c
 +
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake
 --- redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake	2013-01-03 16:21:04.047872600 +0100
++++ redland-1.0.14/cmake/modules/FindLibraryWithDebug.cmake	2013-02-13 15:20:27.491761400 +0100
 @@ -0,0 +1,112 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -147,7 +147,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindLibraryWithDebug.cmake r
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake
 --- redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake	2013-01-03 17:06:25.752763700 +0100
++++ redland-1.0.14/cmake/modules/FindPThreadsWin32.cmake	2013-02-13 15:20:27.491761400 +0100
 @@ -0,0 +1,18 @@
 +# - Find the native PThreadsWin32 includes and library
 +#
@@ -169,7 +169,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindPThreadsWin32.cmake redl
 +mark_as_advanced(PTHREADS_WIN32_INCLUDE_DIR PTHREADS_WIN32_LIBRARIES)
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindRaptor.cmake redland-1.0.14/cmake/modules/FindRaptor.cmake
 --- redland-1.0.14.orig/cmake/modules/FindRaptor.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindRaptor.cmake	2013-01-03 16:21:04.056866200 +0100
++++ redland-1.0.14/cmake/modules/FindRaptor.cmake	2013-02-13 15:20:27.491761400 +0100
 @@ -0,0 +1,100 @@
 +# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
 +# Once done this will define
@@ -273,7 +273,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindRaptor.cmake redland-1.0
 +
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindRasqal.cmake redland-1.0.14/cmake/modules/FindRasqal.cmake
 --- redland-1.0.14.orig/cmake/modules/FindRasqal.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindRasqal.cmake	2013-01-03 16:21:04.064869400 +0100
++++ redland-1.0.14/cmake/modules/FindRasqal.cmake	2013-02-13 15:20:27.507361400 +0100
 @@ -0,0 +1,18 @@
 +# - Find the native Rasqal includes and library
 +#
@@ -295,7 +295,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindRasqal.cmake redland-1.0
 +mark_as_advanced(RASQAL_INCLUDE_DIR RASQAL_LIBRARIES)
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindSqlite.cmake redland-1.0.14/cmake/modules/FindSqlite.cmake
 --- redland-1.0.14.orig/cmake/modules/FindSqlite.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/FindSqlite.cmake	2013-01-03 16:21:04.068869400 +0100
++++ redland-1.0.14/cmake/modules/FindSqlite.cmake	2013-02-13 15:20:27.507361400 +0100
 @@ -0,0 +1,50 @@
 +# - Try to find Sqlite
 +# Once done this will define
@@ -349,7 +349,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/FindSqlite.cmake redland-1.0
 +
 diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake
 --- redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake	2013-01-03 16:21:04.072870500 +0100
++++ redland-1.0.14/cmake/modules/MacroEnsureVersion.cmake	2013-02-13 15:20:27.507361400 +0100
 @@ -0,0 +1,71 @@
 +# This macro compares version numbers of the form "x.y.z"
 +# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
@@ -424,8 +424,8 @@ diff -Nru -x '*~' redland-1.0.14.orig/cmake/modules/MacroEnsureVersion.cmake red
 +ENDMACRO(MACRO_ENSURE_VERSION2)
 diff -Nru -x '*~' redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.txt
 --- redland-1.0.14.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/CMakeLists.txt	2013-01-03 17:10:05.725235500 +0100
-@@ -0,0 +1,196 @@
++++ redland-1.0.14/CMakeLists.txt	2013-02-27 00:18:45.257868500 +0100
+@@ -0,0 +1,199 @@
 +project(librdf)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -460,6 +460,9 @@ diff -Nru -x '*~' redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.t
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
 +endif(MSVC)
++
++add_definitions(-DSTORAGE_FILE=1 -DSTORAGE_HASHES=1 -DSTORAGE_TREES=1 -DSTORAGE_MEMORY=1)
++
 +include_directories(
 +    src
 +    utils
@@ -622,21 +625,21 @@ diff -Nru -x '*~' redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.t
 +                            LIBRARY DESTINATION lib
 +                            ARCHIVE DESTINATION lib)
 +install(FILES ${rdf_HDRS} DESTINATION include/redland)
-diff -Nru -x '*~' redland-1.0.14.orig/src/CMakeLists.txt redland-1.0.14/src/CMakeLists.txt
---- redland-1.0.14.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ redland-1.0.14/src/CMakeLists.txt	2013-01-03 16:21:04.088872300 +0100
-@@ -0,0 +1,6 @@
-+set(teststr "teststr")
-+if(${teststr} STREQUAL "test" OR MSVC)
-+message(STATUS "ok")
-+else()
-+message(STATUS "failed")
-+endif()
-\ No newline at end of file
 diff -Nru -x '*~' redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
 --- redland-1.0.14.orig/src/librdf.h	2011-07-24 00:15:31.000000000 +0200
-+++ redland-1.0.14/src/librdf.h	2013-01-03 16:21:04.092870500 +0100
-@@ -52,7 +52,7 @@
++++ redland-1.0.14/src/librdf.h	2013-02-26 23:55:11.129213400 +0100
+@@ -43,6 +43,10 @@
+ 
+ #include <stdio.h>
+ 
++#ifdef WIN32
++#define USE_STDCALL_CALLBACKS 1
++#endif
++
+ #ifndef REDLAND_API
+ #  ifdef WIN32
+ #    ifdef __GNUC__
+@@ -52,7 +56,7 @@
  #    ifdef REDLAND_STATIC
  #      define REDLAND_API
  #    else
@@ -647,7 +650,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/src/librdf.h redland-1.0.14/src/librdf.h
  #        define REDLAND_API _declspec(dllimport)
 diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_model.c
 --- redland-1.0.14.orig/src/rdf_model.c	2011-07-23 09:18:52.000000000 +0200
-+++ redland-1.0.14/src/rdf_model.c	2013-01-03 16:21:04.098873500 +0100
++++ redland-1.0.14/src/rdf_model.c	2013-02-13 15:20:27.522961500 +0100
 @@ -2028,6 +2028,8 @@
    int remove_count=0;
    int status=0;
@@ -668,7 +671,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_model.c redland-1.0.14/src/rdf_mod
    literal[4]='0';
 diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_query.c redland-1.0.14/src/rdf_query.c
 --- redland-1.0.14.orig/src/rdf_query.c	2011-07-19 04:09:30.000000000 +0200
-+++ redland-1.0.14/src/rdf_query.c	2013-01-03 16:21:04.107873000 +0100
++++ redland-1.0.14/src/rdf_query.c	2013-02-13 15:20:27.522961500 +0100
 @@ -656,7 +656,7 @@
  "
  #define DATA_LANGUAGE "turtle"
@@ -680,7 +683,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_query.c redland-1.0.14/src/rdf_que
  
 diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_serializer.c redland-1.0.14/src/rdf_serializer.c
 --- redland-1.0.14.orig/src/rdf_serializer.c	2011-01-25 05:26:00.000000000 +0100
-+++ redland-1.0.14/src/rdf_serializer.c	2013-01-03 16:21:04.124875100 +0100
++++ redland-1.0.14/src/rdf_serializer.c	2013-02-13 15:20:27.522961500 +0100
 @@ -915,7 +915,7 @@
  } LogData;
  
@@ -690,21 +693,21 @@ diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_serializer.c redland-1.0.14/src/rd
  log_handler(void *user_data, librdf_log_message *message) 
  {
    struct log_data* ld=(struct log_data*)user_data;
-diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_storage_sql.c redland-1.0.14/src/rdf_storage_sql.c
---- redland-1.0.14.orig/src/rdf_storage_sql.c	2011-01-21 16:56:38.000000000 +0100
-+++ redland-1.0.14/src/rdf_storage_sql.c	2013-01-03 16:21:04.129875900 +0100
-@@ -200,7 +200,7 @@
+diff -Nru -x '*~' redland-1.0.14.orig/src/rdf_storage.c redland-1.0.14/src/rdf_storage.c
+--- redland-1.0.14.orig/src/rdf_storage.c	2011-07-21 05:34:29.000000000 +0200
++++ redland-1.0.14/src/rdf_storage.c	2013-02-27 00:11:25.369029500 +0100
+@@ -172,7 +172,7 @@
+ 
+ #ifdef MODULAR_LIBRDF
+ 
+-static int
++static int REDLAND_CALLBACK_STDCALL
+ ltdl_module_callback(const char* filename, void* data)
  {
-   if(!dir)
-     dir=PKGDATADIR;
--  
-+
-   return librdf_new_sql_config(storage->world, storage->factory->name,
-                                layout, dir,
-                                librdf_storage_sql_dbconfig_predicates);
+   librdf_world* world = (librdf_world*)data;
 diff -Nru -x '*~' redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/win32_rdf_config.h
 --- redland-1.0.14.orig/src/win32_rdf_config.h	2011-07-24 00:15:31.000000000 +0200
-+++ redland-1.0.14/src/win32_rdf_config.h	2013-01-03 16:21:04.135878500 +0100
++++ redland-1.0.14/src/win32_rdf_config.h	2013-02-13 15:20:27.538561500 +0100
 @@ -75,40 +75,44 @@
   */
  
@@ -784,7 +787,7 @@ diff -Nru -x '*~' redland-1.0.14.orig/src/win32_rdf_config.h redland-1.0.14/src/
  /* #undef HAVE_OPENSSL_CRYPTO_H */
 diff -Nru -x '*~' redland-1.0.14.orig/utils/rdfproc.c redland-1.0.14/utils/rdfproc.c
 --- redland-1.0.14.orig/utils/rdfproc.c	2011-07-19 04:09:30.000000000 +0200
-+++ redland-1.0.14/utils/rdfproc.c	2013-01-03 16:21:04.143877200 +0100
++++ redland-1.0.14/utils/rdfproc.c	2013-02-13 15:20:27.538561500 +0100
 @@ -28,7 +28,7 @@
  #endif
  
