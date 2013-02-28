@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/nepomuk-widgets'] = 'default'
         self.shortDescription = "KDE base applications (Konqueror, Dolphin)"
 
 from Package.CMakePackageBase import *
