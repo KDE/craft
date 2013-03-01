@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default' # this is only a dependency for kile > 2.1, but we keep it like that for now
         self.dependencies['kde/okular'] = 'default'         # this is only a dependency for kile > 2.1, but we keep it like that for now
-        self.runtimeDependencies['extragear/kate'] = 'default'
+        self.runtimeDependencies['kde/kate'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
