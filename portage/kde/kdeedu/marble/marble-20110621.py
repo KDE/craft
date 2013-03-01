@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
         self.patchToApply[ 'gitHEAD' ] = [("0004-listen-on-any-address-to-support-mapping-over-networ.patch_", 1)]
+        self.patchToApply[ '4.10.0' ] = [("marble-4.10.0-20130301.diff", 1)]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 
