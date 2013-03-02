@@ -125,7 +125,7 @@ class package(object):
             correctly before they are used """
         self.timestamp()
         if not utils.envAsBool( "EMERGE_OFFLINE" ):
-	    self.emerge( "fetch" )
+            self.emerge( "fetch" )
 
     def build( self ):
         """ builds and installs packages locally """
