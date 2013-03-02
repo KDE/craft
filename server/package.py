@@ -124,7 +124,8 @@ class package(object):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked
             correctly before they are used """
         self.timestamp()
-        self.emerge( "fetch" )
+        if not utils.envAsBool( "EMERGE_OFFLINE" ):
+	    self.emerge( "fetch" )
 
     def build( self ):
         """ builds and installs packages locally """
