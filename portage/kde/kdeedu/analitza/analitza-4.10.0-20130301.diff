@@ -1,0 +1,68 @@
+diff -Nru -x '*~' analitza-4.10.0.orig/analitzagui/plotsview3d.h analitza-4.10.0/analitzagui/plotsview3d.h
+--- analitza-4.10.0.orig/analitzagui/plotsview3d.h	2013-01-23 22:50:45.000000000 +0100
++++ analitza-4.10.0/analitzagui/plotsview3d.h	2013-03-01 22:50:28.343597500 +0100
+@@ -21,6 +21,10 @@
+ #ifndef PLOTSVIEW3D_H
+ #define PLOTSVIEW3D_H
+ 
++#ifdef _WIN32
++#include <GL/glew.h>
++#endif
++
+ #include <QGLWidget>
+ #include <QMouseEvent>
+ 
+diff -Nru -x '*~' analitza-4.10.0.orig/analitzaplot/CMakeLists.txt analitza-4.10.0/analitzaplot/CMakeLists.txt
+--- analitza-4.10.0.orig/analitzaplot/CMakeLists.txt	2013-01-23 22:50:45.000000000 +0100
++++ analitza-4.10.0/analitzaplot/CMakeLists.txt	2013-03-01 22:46:45.119829800 +0100
+@@ -4,6 +4,11 @@
+     message(FATAL_ERROR "GLU was not found")
+ endif(OPENGL_FOUND AND NOT OPENGL_GLU_FOUND)
+ 
++if(WIN32)
++    find_package(GLEW REQUIRED)
++    include_directories(${GLEW_INCLUDE_DIRS})
++endif(WIN32)
++
+ find_path(IEEEFP_DIR ieeefp.h)
+ if(IEEEFP_DIR)
+     include_directories(${IEEEFP_DIR})
+@@ -76,6 +81,10 @@
+     )
+ endif(HAVE_OPENGL)
+ 
++if(WIN32)
++    target_link_libraries(analitzaplot ${GLEW_LIBRARIES})
++endif(WIN32)
++
+ set_target_properties(analitzaplot PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ 
+ install(TARGETS analitzaplot EXPORT AnalitzaTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' analitza-4.10.0.orig/analitzaplot/examples/CMakeLists.txt analitza-4.10.0/analitzaplot/examples/CMakeLists.txt
+--- analitza-4.10.0.orig/analitzaplot/examples/CMakeLists.txt	2013-01-23 22:50:45.000000000 +0100
++++ analitza-4.10.0/analitzaplot/examples/CMakeLists.txt	2013-03-01 22:52:48.706625800 +0100
+@@ -8,7 +8,7 @@
+ 
+ if(HAVE_OPENGL)
+     kde4_add_executable(plots3ddemo plots3ddemo.cpp)
+-    target_link_libraries(plots3ddemo ${testLibs})
++    target_link_libraries(plots3ddemo  ${QT_QTOPENGL_LIBRARY} ${testLibs})
+ else(HAVE_OPENGL)
+     message(STATUS "disabling plots3ddemo because OpenGL is not available")
+ endif(HAVE_OPENGL)
+\ No newline at end of file
+diff -Nru -x '*~' analitza-4.10.0.orig/analitzaplot/plotter3d.h analitza-4.10.0/analitzaplot/plotter3d.h
+--- analitza-4.10.0.orig/analitzaplot/plotter3d.h	2013-01-23 22:50:45.000000000 +0100
++++ analitza-4.10.0/analitzaplot/plotter3d.h	2013-03-01 22:49:21.390768000 +0100
+@@ -30,7 +30,11 @@
+ #include <QMatrix4x4>
+ 
+ #define GL_GLEXT_PROTOTYPES
++#ifdef Q_OS_WIN
++#include <windows.h>
++#include <GL/glew.h>
+ #include <GL/glu.h>
++#endif
+ 
+ class QAbstractItemModel;
+ class QPainter;

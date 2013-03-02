@@ -1,0 +1,13 @@
+diff -Nru -x '*~' kalgebra-4.10.0.orig/src/kalgebra.cpp kalgebra-4.10.0/src/kalgebra.cpp
+--- kalgebra-4.10.0.orig/src/kalgebra.cpp	2013-01-23 22:51:21.000000000 +0100
++++ kalgebra-4.10.0/src/kalgebra.cpp	2013-03-01 23:00:14.044097600 +0100
+@@ -351,7 +351,9 @@
+ 	KHelpMenu* help = new KHelpMenu(this, KGlobal::mainComponent().aboutData());
+ 	menuBar()->addMenu(help->menu());
+ 
++#ifdef __GNUC__
+ #warning TODO: Port to PlotsModel
++#endif
+ // 	connect(b_funcsModel, SIGNAL(functionModified(QString,Analitza::Expression)),
+ // 			c_results, SLOT(modifyVariable(QString,Analitza::Expression)));
+ // 	connect(b_funcsModel, SIGNAL(functionRemoved(QString)),

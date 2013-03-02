@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['win32libs/libmusicbrainz'] = 'default'
         self.shortDescription = "KDE CDDB library"
 
 from Package.CMakePackageBase import *

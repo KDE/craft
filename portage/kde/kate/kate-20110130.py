@@ -1,4 +1,5 @@
 import info
+import kdedefaults as kd
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

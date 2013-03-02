@@ -1,0 +1,70 @@
+diff --git a/archivemailagent/archivemailagent.cpp b/archivemailagent/archivemailagent.cpp
+index 6937a7e..1739358 100644
+--- a/archivemailagent/archivemailagent.cpp
++++ b/archivemailagent/archivemailagent.cpp
+@@ -95,7 +95,7 @@ void ArchiveMailAgent::reload()
+ 
+ void ArchiveMailAgent::configure( WId windowId )
+ {
+-  showConfigureDialog(windowId);
++  showConfigureDialog((qulonglong)windowId);
+ }
+ 
+ void ArchiveMailAgent::pause()
+diff --git a/kontact/src/mainwindow.cpp b/kontact/src/mainwindow.cpp
+index a8b7d7b..3c48f3d 100644
+--- a/kontact/src/mainwindow.cpp
++++ b/kontact/src/mainwindow.cpp
+@@ -387,12 +387,12 @@ void MainWindow::paintAboutScreen( const QString &msg )
+ {
+   QString location = KStandardDirs::locate( "data", "kontact/about/main.html" );
+   QString content = KPIMUtils::kFileToByteArray( location );
+-  content = content.arg( "file:" + KStandardDirs::locate(
++  content = content.arg( "file:/" + KStandardDirs::locate(
+                            "data", "kdeui/about/kde_infopage.css" ) );
+   if ( QApplication::isRightToLeft() ) {
+     content =
+       content.arg( "@import \"%1\";" ).
+-              arg( "file:" + KStandardDirs::locate(
++              arg( "file:/" + KStandardDirs::locate(
+                      "data", "kdeui/about/kde_infopage_rtl.css" ) );
+   } else {
+     content = content.arg( "" );
+@@ -1240,21 +1240,21 @@ QString MainWindow::introductionString()
+     subs( "exec:/help?kontact" ).
+     subs( iconSize ).
+     subs( iconSize ).
+-    subs( "file:" + handbook_icon_path ).
++    subs( "file:/" + handbook_icon_path ).
+     subs( "exec:/help?kontact" ).
+     subs( i18nc( "@item:intext", "Read Manual" ) ).
+     subs( i18nc( "@item:intext", "Learn more about Kontact and its components" ) ).
+     subs( "http://kontact.org" ).
+     subs( iconSize ).
+     subs( iconSize ).
+-    subs( "file:" + html_icon_path ).
++    subs( "file:/" + html_icon_path ).
+     subs( "http://kontact.org" ).
+     subs( i18nc( "@item:intext", "Visit Kontact Website" ) ).
+     subs( i18nc( "@item:intext", "Access online resources and tutorials" ) ).
+     subs( "exec:/accountwizard" ).
+     subs( iconSize ).
+     subs( iconSize ).
+-    subs( "file:" + wizard_icon_path ).
++    subs( "file:/" + wizard_icon_path ).
+     subs( "exec:/accountwizard" ).
+     subs( i18nc( "@item:intext", "Setup your Accounts" ) ).
+     subs( i18nc( "@item:intext", "Prepare Kontact for use" ) ).
+diff --git a/messagecomposer/kmeditor.cpp b/messagecomposer/kmeditor.cpp
+index 640beb4..56788d7 100644
+--- a/messagecomposer/kmeditor.cpp
++++ b/messagecomposer/kmeditor.cpp
+@@ -185,7 +185,7 @@ void KMeditorPrivate::startExternalEditor()
+         } else if( nextChar == QLatin1Char('l') ) {
+           command<<QString::number(q->textCursor().blockNumber() + 1);  // line number
+         } else if( nextChar == QLatin1Char('w') ) { //Window id
+-          command<<QString::number(q->winId());
++          command<<QString::number((qulonglong)q->winId());
+         } else {
+           arg.append( letter );
+           arg.append( commandLine.at(i) );
