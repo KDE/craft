@@ -14,12 +14,12 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kgpg'] = 'default'
         self.dependencies['kde/ktimer'] = 'default'
         self.dependencies['kde/kwallet'] = 'default'
-        self.dependencies['kde/printer-applet'] = 'default'
         self.dependencies['kde/sweeper'] = 'default'
 #        self.dependencies['kde/kdf'] = 'default'
 #        self.dependencies['kde/kfloppy'] = 'default'
 #        self.dependencies['kde/kremotecontrol'] = 'default'
 #        self.dependencies['kde/superkaramba'] = 'default'
+#        self.dependencies['kde/printer-manager'] = 'default'
 
 from Package.VirtualPackageBase import *
 
