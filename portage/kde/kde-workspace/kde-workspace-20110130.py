@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+        self.patchToApply['4.10.0'] = [("kde-workspace-4.10.0-20130302.diff", 1)]
 
         self.shortDescription = 'the KDE workspace including the oxygen style'
         self.defaultTarget = 'gitHEAD'
