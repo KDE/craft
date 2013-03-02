@@ -1,0 +1,13 @@
+diff --git a/App/CMakeLists.txt b/App/CMakeLists.txt
+index cc4301b..9522e46 100644
+--- a/App/CMakeLists.txt
++++ b/App/CMakeLists.txt
+@@ -87,7 +87,7 @@ kde4_add_kcfg_files( rocs_Settings_SRCS ${rocs_KCFGS} )
+ 
+ # needed to get icon on windows
+ kde4_add_app_icon( rocs_SRCS
+-    ${CMAKE_CURRENT_SOURCE_DIR}/../graphics/hi16-app-rocs.png
++    ${CMAKE_CURRENT_SOURCE_DIR}/../graphics/hi*-app-rocs.png
+ )
+ 
+ kde4_add_executable( rocs
