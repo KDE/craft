@@ -74,7 +74,7 @@ diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/CMakeLists.txt sqlite-amalgam
 +install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 +add_executable( sqlite3_bin ${sqlite_SRC} )
-+target_link_libraries( sqlite3_bin sqlite3 )
++target_link_libraries( sqlite3_bin libsqlite3 )
 +set_target_properties( sqlite3_bin PROPERTIES RUNTIME_OUTPUT_NAME sqlite3 ARCHIVE_OUTPUT_NAME sqlite3_bin )
 +
 +install( TARGETS sqlite3_bin RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
