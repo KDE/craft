@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         self.dependencies['kde/dolphin-plugins'] = 'default'
         self.dependencies['kde/kapptemplate'] = 'default'
         self.dependencies['kde/kcachegrind'] = 'default'
-        self.dependencies['kde/kde-dev-scripts'] = 'default'
-        self.dependencies['kde/kde-dev-utils'] = 'default'
+#        self.dependencies['kde/kde-dev-scripts'] = 'default'
+#        self.dependencies['kde/kde-dev-utils'] = 'default'
         self.dependencies['kde/kdesdk-kioslaves'] = 'default'
         self.dependencies['kde/kdesdk-strigi-analyzers'] = 'default'
         #self.dependencies['kde/kdesdk-thumbnailers'] = 'default' # only po thumbnailers which dont build
