@@ -1,8 +1,7 @@
-diff --git a/App/CMakeLists.txt b/App/CMakeLists.txt
-index cc4301b..9522e46 100644
---- a/App/CMakeLists.txt
-+++ b/App/CMakeLists.txt
-@@ -87,7 +87,7 @@ kde4_add_kcfg_files( rocs_Settings_SRCS ${rocs_KCFGS} )
+diff -Nru -x '*~' rocs-4.10.1.orig/App/CMakeLists.txt rocs-4.10.1/App/CMakeLists.txt
+--- rocs-4.10.1.orig/App/CMakeLists.txt	2013-03-01 07:51:29.444091000 +0100
++++ rocs-4.10.1/App/CMakeLists.txt	2013-03-05 20:10:41.115512800 +0100
+@@ -87,7 +87,7 @@
  
  # needed to get icon on windows
  kde4_add_app_icon( rocs_SRCS
@@ -11,3 +10,27 @@ index cc4301b..9522e46 100644
  )
  
  kde4_add_executable( rocs
+diff -Nru -x '*~' rocs-4.10.1.orig/RocsCore/RocsCoreExport.h rocs-4.10.1/RocsCore/RocsCoreExport.h
+--- rocs-4.10.1.orig/RocsCore/RocsCoreExport.h	2013-03-01 07:51:29.504090000 +0100
++++ rocs-4.10.1/RocsCore/RocsCoreExport.h	2013-03-06 00:01:37.811792000 +0100
+@@ -24,7 +24,7 @@
+ #include <kdemacros.h>
+ 
+ #ifndef ROCSLIB_EXPORT
+-# if defined(MAKE_ROCSLIB_LIB)
++# if defined(MAKE_ROCSCORE_LIB)
+ // We are building this library
+ #  define ROCSLIB_EXPORT KDE_EXPORT
+ # else
+diff -Nru -x '*~' rocs-4.10.1.orig/VisualEditor/VisualEditorExport.h rocs-4.10.1/VisualEditor/VisualEditorExport.h
+--- rocs-4.10.1.orig/VisualEditor/VisualEditorExport.h	2013-03-01 07:51:29.524090000 +0100
++++ rocs-4.10.1/VisualEditor/VisualEditorExport.h	2013-03-06 00:03:54.336600800 +0100
+@@ -23,7 +23,7 @@
+ #include <kdemacros.h>
+ 
+ #ifndef VISUALEDITOR_EXPORT
+-# if defined(MAKE_VISUALEDITOR_LIB)
++# if defined(MAKE_ROCSVISUALEDITOR_LIB)
+ // We are building this library
+ #  define VISUALEDITOR_EXPORT KDE_EXPORT
+ # else
