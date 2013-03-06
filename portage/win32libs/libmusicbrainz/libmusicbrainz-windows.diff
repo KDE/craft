@@ -1,6 +1,17 @@
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/config.h libmusicbrainz-5.0.1/config.h
+--- libmusicbrainz-5.0.1.orig/config.h	1970-01-01 01:00:00.000000000 +0100
++++ libmusicbrainz-5.0.1/config.h	2013-03-06 00:30:01.205177500 +0100
+@@ -0,0 +1,7 @@
++#ifndef __CONFIG_H__
++#define __CONFIG_H__
++
++#define PACKAGE "libmusicbrainz5"
++#define VERSION "5.0.1"
++
++#endif
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/examples/cdlookup.cc libmusicbrainz-5.0.1/examples/cdlookup.cc
 --- libmusicbrainz-5.0.1.orig/examples/cdlookup.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/examples/cdlookup.cc	2013-02-21 15:11:04.559529000 +0100
++++ libmusicbrainz-5.0.1/examples/cdlookup.cc	2013-03-06 00:29:56.422904000 +0100
 @@ -34,6 +34,7 @@
  #include "musicbrainz5/Disc.h"
  #include "musicbrainz5/HTTPFetch.h"
@@ -11,7 +22,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/examples/cdlookup.cc libmusicbrainz-
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Alias.h libmusicbrainz-5.0.1/include/musicbrainz5/Alias.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Alias.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Alias.h	2013-02-21 15:11:04.564529000 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Alias.h	2013-03-06 00:29:56.426904200 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -29,7 +40,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Alias.h libmusi
  		CAlias(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Annotation.h libmusicbrainz-5.0.1/include/musicbrainz5/Annotation.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Annotation.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Annotation.h	2013-02-21 15:11:04.574529000 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Annotation.h	2013-03-06 00:29:56.430904400 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -47,7 +58,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Annotation.h li
  		CAnnotation(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Artist.h libmusicbrainz-5.0.1/include/musicbrainz5/Artist.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Artist.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Artist.h	2013-02-21 15:11:04.584529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Artist.h	2013-03-06 00:29:56.434904700 +0100
 @@ -41,6 +41,7 @@
  #include "musicbrainz5/UserTagList.h"
  
@@ -67,7 +78,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Artist.h libmus
  		CArtist(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ArtistCredit.h libmusicbrainz-5.0.1/include/musicbrainz5/ArtistCredit.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ArtistCredit.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/ArtistCredit.h	2013-02-21 15:11:04.589529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ArtistCredit.h	2013-03-06 00:29:56.439904900 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/NameCreditList.h"
  
@@ -85,7 +96,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ArtistCredit.h 
  		CArtistCredit(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Attribute.h libmusicbrainz-5.0.1/include/musicbrainz5/Attribute.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Attribute.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Attribute.h	2013-02-21 15:11:04.599529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Attribute.h	2013-03-06 00:29:56.444905200 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -103,7 +114,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Attribute.h lib
  		CAttribute(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/CDStub.h libmusicbrainz-5.0.1/include/musicbrainz5/CDStub.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/CDStub.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/CDStub.h	2013-02-21 15:11:04.609529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/CDStub.h	2013-03-06 00:29:56.448905500 +0100
 @@ -32,12 +32,13 @@
  #include "musicbrainz5/NonMBTrackList.h"
  
@@ -121,7 +132,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/CDStub.h libmus
  		CCDStub(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Collection.h libmusicbrainz-5.0.1/include/musicbrainz5/Collection.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Collection.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Collection.h	2013-02-21 15:11:04.614529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Collection.h	2013-03-06 00:29:56.452905700 +0100
 @@ -29,12 +29,13 @@
  #include "musicbrainz5/ReleaseList.h"
  
@@ -139,7 +150,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Collection.h li
  		CCollection(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Disc.h libmusicbrainz-5.0.1/include/musicbrainz5/Disc.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Disc.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Disc.h	2013-02-21 15:11:04.624529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Disc.h	2013-03-06 00:29:56.456905900 +0100
 @@ -34,12 +34,13 @@
  #include <iostream>
  
@@ -157,7 +168,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Disc.h libmusic
  		CDisc(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Entity.h libmusicbrainz-5.0.1/include/musicbrainz5/Entity.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Entity.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Entity.h	2013-02-21 15:11:04.634529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Entity.h	2013-03-06 00:29:56.463906300 +0100
 @@ -31,6 +31,7 @@
  #include <map>
  
@@ -185,7 +196,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Entity.h libmus
  #endif
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/FreeDBDisc.h libmusicbrainz-5.0.1/include/musicbrainz5/FreeDBDisc.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/FreeDBDisc.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/FreeDBDisc.h	2013-02-21 15:11:04.639529100 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/FreeDBDisc.h	2013-03-06 00:29:56.469906700 +0100
 @@ -32,12 +32,13 @@
  #include "musicbrainz5/NonMBTrackList.h"
  
@@ -203,7 +214,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/FreeDBDisc.h li
  		CFreeDBDisc(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/HTTPFetch.h libmusicbrainz-5.0.1/include/musicbrainz5/HTTPFetch.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/HTTPFetch.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/HTTPFetch.h	2013-02-21 15:11:04.649529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/HTTPFetch.h	2013-03-06 00:29:56.474906900 +0100
 @@ -28,6 +28,8 @@
  #include <string>
  #include <vector>
@@ -224,7 +235,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/HTTPFetch.h lib
  		/**
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/IPI.h libmusicbrainz-5.0.1/include/musicbrainz5/IPI.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/IPI.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/IPI.h	2013-02-21 15:11:04.659529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/IPI.h	2013-03-06 00:29:56.482907400 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -242,7 +253,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/IPI.h libmusicb
  		CIPI(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISRC.h libmusicbrainz-5.0.1/include/musicbrainz5/ISRC.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISRC.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/ISRC.h	2013-02-21 15:11:04.664529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISRC.h	2013-03-06 00:29:56.488907700 +0100
 @@ -29,12 +29,13 @@
  #include "musicbrainz5/RecordingList.h"
  
@@ -260,7 +271,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISRC.h libmusic
  		CISRC(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWC.h libmusicbrainz-5.0.1/include/musicbrainz5/ISWC.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWC.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWC.h	2013-02-21 15:11:04.674529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWC.h	2013-03-06 00:29:56.492908000 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -278,7 +289,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWC.h libmusic
  		CISWC(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWCList.h libmusicbrainz-5.0.1/include/musicbrainz5/ISWCList.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWCList.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWCList.h	2013-02-21 15:11:04.679529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWCList.h	2013-03-06 00:29:56.496908200 +0100
 @@ -31,13 +31,14 @@
  #include "musicbrainz5/ListImpl.h"
  
@@ -297,7 +308,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWCList.h libm
  		CISWCList(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Label.h libmusicbrainz-5.0.1/include/musicbrainz5/Label.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Label.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Label.h	2013-02-21 15:11:04.689529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Label.h	2013-03-06 00:29:56.501908500 +0100
 @@ -37,6 +37,7 @@
  #include "musicbrainz5/UserTagList.h"
  
@@ -317,7 +328,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Label.h libmusi
  		CLabel(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/LabelInfo.h libmusicbrainz-5.0.1/include/musicbrainz5/LabelInfo.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/LabelInfo.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/LabelInfo.h	2013-02-21 15:11:04.699529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/LabelInfo.h	2013-03-06 00:29:56.507908800 +0100
 @@ -31,6 +31,7 @@
  #include "musicbrainz5/Entity.h"
  
@@ -337,7 +348,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/LabelInfo.h lib
  		CLabelInfo(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Lifespan.h libmusicbrainz-5.0.1/include/musicbrainz5/Lifespan.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Lifespan.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Lifespan.h	2013-02-21 15:11:04.704529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Lifespan.h	2013-03-06 00:29:56.513909200 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -355,7 +366,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Lifespan.h libm
  		CLifespan(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/List.h libmusicbrainz-5.0.1/include/musicbrainz5/List.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/List.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/List.h	2013-02-21 15:11:04.714529200 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/List.h	2013-03-06 00:29:56.522909700 +0100
 @@ -28,12 +28,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -373,7 +384,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/List.h libmusic
  		CList();
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Medium.h libmusicbrainz-5.0.1/include/musicbrainz5/Medium.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Medium.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Medium.h	2013-02-21 15:11:04.724529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Medium.h	2013-03-06 00:29:56.529910100 +0100
 @@ -33,12 +33,13 @@
  #include "musicbrainz5/TrackList.h"
  
@@ -391,7 +402,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Medium.h libmus
  		CMedium(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/MediumList.h libmusicbrainz-5.0.1/include/musicbrainz5/MediumList.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/MediumList.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/MediumList.h	2013-02-21 15:11:04.729529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/MediumList.h	2013-03-06 00:29:56.536910500 +0100
 @@ -31,13 +31,14 @@
  #include "musicbrainz5/ListImpl.h"
  
@@ -410,7 +421,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/MediumList.h li
  		CMediumList(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Message.h libmusicbrainz-5.0.1/include/musicbrainz5/Message.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Message.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Message.h	2013-02-21 15:11:04.739529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Message.h	2013-03-06 00:29:56.542910800 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -428,7 +439,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Message.h libmu
  		CMessage(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Metadata.h libmusicbrainz-5.0.1/include/musicbrainz5/Metadata.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Metadata.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Metadata.h	2013-02-21 15:11:04.749529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Metadata.h	2013-03-06 00:29:56.548911200 +0100
 @@ -42,6 +42,7 @@
  #include "musicbrainz5/CollectionList.h"
  
@@ -448,7 +459,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Metadata.h libm
  		CMetadata(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/musicbrainz5_export.h libmusicbrainz-5.0.1/include/musicbrainz5/musicbrainz5_export.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/musicbrainz5_export.h	1970-01-01 01:00:00.000000000 +0100
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/musicbrainz5_export.h	2013-02-21 15:11:04.914529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/musicbrainz5_export.h	2013-03-06 00:29:56.553911500 +0100
 @@ -0,0 +1,36 @@
 +/* --------------------------------------------------------------------------
 +
@@ -488,7 +499,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/musicbrainz5_ex
 +#endif
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NameCredit.h libmusicbrainz-5.0.1/include/musicbrainz5/NameCredit.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/NameCredit.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/NameCredit.h	2013-02-21 15:11:04.759529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/NameCredit.h	2013-03-06 00:29:56.556911600 +0100
 @@ -31,6 +31,7 @@
  #include "musicbrainz5/Entity.h"
  
@@ -508,7 +519,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NameCredit.h li
  		CNameCredit(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NonMBTrack.h libmusicbrainz-5.0.1/include/musicbrainz5/NonMBTrack.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/NonMBTrack.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/NonMBTrack.h	2013-02-21 15:11:04.764529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/NonMBTrack.h	2013-03-06 00:29:56.561911900 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -526,7 +537,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NonMBTrack.h li
  		CNonMBTrack(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/PUID.h libmusicbrainz-5.0.1/include/musicbrainz5/PUID.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/PUID.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/PUID.h	2013-02-21 15:11:04.774529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/PUID.h	2013-03-06 00:29:56.565912100 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/RecordingList.h"
  
@@ -544,7 +555,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/PUID.h libmusic
  		CPUID(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Query.h libmusicbrainz-5.0.1/include/musicbrainz5/Query.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Query.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Query.h	2013-02-21 15:11:04.784529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Query.h	2013-03-06 00:29:56.572912500 +0100
 @@ -33,6 +33,7 @@
  #include "musicbrainz5/Metadata.h"
  
@@ -564,7 +575,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Query.h libmusi
  		typedef std::map<std::string,std::string> tParamMap;
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Rating.h libmusicbrainz-5.0.1/include/musicbrainz5/Rating.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Rating.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Rating.h	2013-02-21 15:11:04.789529300 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Rating.h	2013-03-06 00:29:56.578912900 +0100
 @@ -30,12 +30,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -582,7 +593,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Rating.h libmus
  		CRating(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Recording.h libmusicbrainz-5.0.1/include/musicbrainz5/Recording.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Recording.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Recording.h	2013-02-21 15:11:04.799529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Recording.h	2013-03-06 00:29:56.584913200 +0100
 @@ -42,6 +42,7 @@
  #include "musicbrainz5/UserTagList.h"
  
@@ -602,7 +613,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Recording.h lib
  		CRecording(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Relation.h libmusicbrainz-5.0.1/include/musicbrainz5/Relation.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Relation.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Relation.h	2013-02-21 15:11:04.809529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Relation.h	2013-03-06 00:29:56.589913500 +0100
 @@ -32,6 +32,7 @@
  #include "musicbrainz5/AttributeList.h"
  
@@ -622,7 +633,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Relation.h libm
  		CRelation(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationList.h libmusicbrainz-5.0.1/include/musicbrainz5/RelationList.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationList.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationList.h	2013-02-21 15:11:04.814529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationList.h	2013-03-06 00:29:56.593913800 +0100
 @@ -31,13 +31,14 @@
  #include "musicbrainz5/ListImpl.h"
  
@@ -641,7 +652,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationList.h 
  		CRelationList(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationListList.h libmusicbrainz-5.0.1/include/musicbrainz5/RelationListList.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationListList.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationListList.h	2013-02-21 15:11:04.824529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationListList.h	2013-03-06 00:29:56.597914000 +0100
 @@ -28,6 +28,7 @@
  #include <iostream>
  
@@ -669,7 +680,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationListLis
  #endif
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Release.h libmusicbrainz-5.0.1/include/musicbrainz5/Release.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Release.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Release.h	2013-02-21 15:11:04.834529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Release.h	2013-03-06 00:29:56.602914300 +0100
 @@ -30,8 +30,11 @@
  #include "musicbrainz5/RelationList.h"
  #include "musicbrainz5/MediumList.h"
@@ -693,7 +704,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Release.h libmu
  		CRelease(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ReleaseGroup.h libmusicbrainz-5.0.1/include/musicbrainz5/ReleaseGroup.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ReleaseGroup.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/ReleaseGroup.h	2013-02-21 15:11:04.839529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ReleaseGroup.h	2013-03-06 00:29:56.608914600 +0100
 @@ -36,6 +36,7 @@
  #include "musicbrainz5/SecondaryTypeList.h"
  
@@ -713,7 +724,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ReleaseGroup.h 
  		CReleaseGroup(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryType.h libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryType.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryType.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryType.h	2013-02-21 15:11:04.849529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryType.h	2013-03-06 00:29:56.613914900 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -731,7 +742,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryType.h
  		CSecondaryType(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryTypeList.h libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryTypeList.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryTypeList.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryTypeList.h	2013-02-21 15:11:04.859529400 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryTypeList.h	2013-03-06 00:29:56.618915200 +0100
 @@ -31,13 +31,14 @@
  #include "musicbrainz5/ListImpl.h"
  
@@ -750,7 +761,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryTypeLi
  		CSecondaryTypeList(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Tag.h libmusicbrainz-5.0.1/include/musicbrainz5/Tag.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Tag.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Tag.h	2013-02-21 15:11:04.869529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Tag.h	2013-03-06 00:29:56.624915500 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -768,7 +779,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Tag.h libmusicb
  		CTag(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/TextRepresentation.h libmusicbrainz-5.0.1/include/musicbrainz5/TextRepresentation.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/TextRepresentation.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/TextRepresentation.h	2013-02-21 15:11:04.874529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/TextRepresentation.h	2013-03-06 00:29:56.629915800 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -786,7 +797,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/TextRepresentat
  		CTextRepresentation(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Track.h libmusicbrainz-5.0.1/include/musicbrainz5/Track.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Track.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Track.h	2013-02-21 15:11:04.884529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Track.h	2013-03-06 00:29:56.636916200 +0100
 @@ -31,6 +31,7 @@
  #include "musicbrainz5/Entity.h"
  
@@ -806,7 +817,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Track.h libmusi
  		CTrack(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserRating.h libmusicbrainz-5.0.1/include/musicbrainz5/UserRating.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserRating.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/UserRating.h	2013-02-21 15:11:04.894529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/UserRating.h	2013-03-06 00:29:56.640916400 +0100
 @@ -30,12 +30,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -824,7 +835,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserRating.h li
  		CUserRating(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserTag.h libmusicbrainz-5.0.1/include/musicbrainz5/UserTag.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserTag.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/UserTag.h	2013-02-21 15:11:04.899529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/UserTag.h	2013-03-06 00:29:56.647916800 +0100
 @@ -31,12 +31,13 @@
  #include "musicbrainz5/Entity.h"
  
@@ -842,7 +853,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserTag.h libmu
  		CUserTag(const XMLNode& Node);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Work.h libmusicbrainz-5.0.1/include/musicbrainz5/Work.h
 --- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Work.h	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/include/musicbrainz5/Work.h	2013-02-21 15:11:04.909529500 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Work.h	2013-03-06 00:29:56.651917100 +0100
 @@ -35,6 +35,7 @@
  #include "musicbrainz5/ISWCList.h"
  
@@ -862,7 +873,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Work.h libmusic
  		CWork(const XMLNode& Node=XMLNode::emptyNode());
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Artist.cc libmusicbrainz-5.0.1/src/Artist.cc
 --- libmusicbrainz-5.0.1.orig/src/Artist.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Artist.cc	2013-02-21 15:11:04.924529500 +0100
++++ libmusicbrainz-5.0.1/src/Artist.cc	2013-03-06 00:29:56.657917400 +0100
 @@ -50,6 +50,8 @@
  #include "musicbrainz5/Tag.h"
  #include "musicbrainz5/UserTagList.h"
@@ -874,7 +885,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Artist.cc libmusicbrainz-5.0.1/s
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-medium-defines.inc libmusicbrainz-5.0.1/src/c-int-medium-defines.inc
 --- libmusicbrainz-5.0.1.orig/src/c-int-medium-defines.inc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/c-int-medium-defines.inc	2013-02-21 15:11:05.039529700 +0100
++++ libmusicbrainz-5.0.1/src/c-int-medium-defines.inc	2013-03-06 00:29:56.663917800 +0100
 @@ -22,6 +22,8 @@
  
  ----------------------------------------------------------------------------*/
@@ -892,7 +903,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-medium-defines.inc libmusi
 +MUSICBRAINZ5_EXPORT unsigned char mb5_medium_contains_discid(Mb5Medium Medium, const char *DiscID);
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-query-defines.inc libmusicbrainz-5.0.1/src/c-int-query-defines.inc
 --- libmusicbrainz-5.0.1.orig/src/c-int-query-defines.inc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/c-int-query-defines.inc	2013-02-21 15:11:05.054529700 +0100
++++ libmusicbrainz-5.0.1/src/c-int-query-defines.inc	2013-03-06 00:29:56.670918200 +0100
 @@ -34,8 +34,11 @@
   * @return The newly created #Mb5Query object. This object <b>must</b> be deleted once
   *				finished with.
@@ -1014,7 +1025,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-query-defines.inc libmusic
  
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-release-defines.inc libmusicbrainz-5.0.1/src/c-int-release-defines.inc
 --- libmusicbrainz-5.0.1.orig/src/c-int-release-defines.inc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/c-int-release-defines.inc	2013-02-21 15:11:05.064529700 +0100
++++ libmusicbrainz-5.0.1/src/c-int-release-defines.inc	2013-03-06 00:29:56.675918400 +0100
 @@ -22,6 +22,8 @@
  
  ----------------------------------------------------------------------------*/
@@ -1033,7 +1044,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-release-defines.inc libmus
  
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/cinterface.xml libmusicbrainz-5.0.1/src/cinterface.xml
 --- libmusicbrainz-5.0.1.orig/src/cinterface.xml	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/cinterface.xml	2013-02-21 15:11:05.079529800 +0100
++++ libmusicbrainz-5.0.1/src/cinterface.xml	2013-03-06 00:29:56.682918800 +0100
 @@ -46,6 +46,7 @@
  #define _MUSICBRAINZ5_MB_C_H
  
@@ -1043,9 +1054,23 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/cinterface.xml libmusicbrainz-5.
  #ifdef __cplusplus
  extern "C"
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/CMakeLists.txt libmusicbrainz-5.0.1/src/CMakeLists.txt
---- libmusicbrainz-5.0.1.orig/src/CMakeLists.txt	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/CMakeLists.txt	2013-02-21 15:11:04.929529500 +0100
-@@ -24,12 +24,12 @@
+--- libmusicbrainz-5.0.1.orig/src/CMakeLists.txt	2013-03-06 00:48:36.185999100 +0100
++++ libmusicbrainz-5.0.1/src/CMakeLists.txt	2013-03-06 00:37:58.957408300 +0100
+@@ -15,11 +15,12 @@
+ 
+ ADD_EXECUTABLE(make-c-interface make-c-interface.cc xmlParser.cpp)
+ 
++FILE(GLOB _includes "*.inc")
+ ADD_CUSTOM_COMMAND(
+ 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.cc ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+ 	COMMAND make-c-interface ${CMAKE_CURRENT_SOURCE_DIR} cinterface.xml ${CMAKE_CURRENT_BINARY_DIR} mb5_c.cc mb5_c.h
+ 	COMMAND ${CMAKE_COMMAND} -E copy_if_different 	${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+-	DEPENDS make-c-interface cinterface.xml *.inc
++	DEPENDS make-c-interface cinterface.xml ${_includes}
+ )
+ 
+ ADD_CUSTOM_TARGET(src_gen DEPENDS mb5_c.h)
+@@ -29,12 +30,12 @@
  SET_TARGET_PROPERTIES(musicbrainz5 PROPERTIES
      VERSION ${musicbrainz5_VERSION}
      SOVERSION ${musicbrainz5_SOVERSION}
@@ -1060,7 +1085,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/CMakeLists.txt libmusicbrainz-5.
  	)
  	IF(CMAKE_COMPILER_IS_GNUCXX)
  		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -ggdb -O0")
-@@ -50,4 +50,5 @@
+@@ -55,4 +56,5 @@
  		set_source_files_properties(mb5_c.cc PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
  
@@ -1069,7 +1094,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/CMakeLists.txt libmusicbrainz-5.
 +                             ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Entity.cc libmusicbrainz-5.0.1/src/Entity.cc
 --- libmusicbrainz-5.0.1.orig/src/Entity.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Entity.cc	2013-02-21 15:11:04.939529600 +0100
++++ libmusicbrainz-5.0.1/src/Entity.cc	2013-03-06 00:29:56.693919500 +0100
 @@ -29,6 +29,7 @@
  
  #include "musicbrainz5/RelationList.h"
@@ -1080,7 +1105,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Entity.cc libmusicbrainz-5.0.1/s
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/ISRC.cc libmusicbrainz-5.0.1/src/ISRC.cc
 --- libmusicbrainz-5.0.1.orig/src/ISRC.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/ISRC.cc	2013-02-21 15:11:04.949529600 +0100
++++ libmusicbrainz-5.0.1/src/ISRC.cc	2013-03-06 00:29:56.699919800 +0100
 @@ -29,6 +29,7 @@
  
  #include "musicbrainz5/RecordingList.h"
@@ -1091,7 +1116,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/ISRC.cc libmusicbrainz-5.0.1/src
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/LabelInfo.cc libmusicbrainz-5.0.1/src/LabelInfo.cc
 --- libmusicbrainz-5.0.1.orig/src/LabelInfo.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/LabelInfo.cc	2013-02-21 15:11:04.954529600 +0100
++++ libmusicbrainz-5.0.1/src/LabelInfo.cc	2013-03-06 00:29:56.704920100 +0100
 @@ -28,6 +28,7 @@
  #include "musicbrainz5/LabelInfo.h"
  
@@ -1101,8 +1126,8 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/LabelInfo.cc libmusicbrainz-5.0.
  class MusicBrainz5::CLabelInfoPrivate
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/make-c-interface.cc libmusicbrainz-5.0.1/src/make-c-interface.cc
---- libmusicbrainz-5.0.1.orig/src/make-c-interface.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/make-c-interface.cc	2013-02-21 15:11:05.099529800 +0100
+--- libmusicbrainz-5.0.1.orig/src/make-c-interface.cc	2013-03-06 00:48:36.200999100 +0100
++++ libmusicbrainz-5.0.1/src/make-c-interface.cc	2013-03-06 00:29:56.712920600 +0100
 @@ -189,7 +189,7 @@
  	Include << " *" << std::endl;
  	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
@@ -1327,7 +1352,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/make-c-interface.cc libmusicbrai
  						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "List," << LowerName << "_list," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Metadata.cc libmusicbrainz-5.0.1/src/Metadata.cc
 --- libmusicbrainz-5.0.1.orig/src/Metadata.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Metadata.cc	2013-02-21 15:11:04.964529600 +0100
++++ libmusicbrainz-5.0.1/src/Metadata.cc	2013-03-06 00:29:56.719921000 +0100
 @@ -60,6 +60,8 @@
  #include "musicbrainz5/LabelInfo.h"
  #include "musicbrainz5/LabelInfoList.h"
@@ -1339,7 +1364,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Metadata.cc libmusicbrainz-5.0.1
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/NameCredit.cc libmusicbrainz-5.0.1/src/NameCredit.cc
 --- libmusicbrainz-5.0.1.orig/src/NameCredit.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/NameCredit.cc	2013-02-21 15:11:04.974529600 +0100
++++ libmusicbrainz-5.0.1/src/NameCredit.cc	2013-03-06 00:29:56.731921600 +0100
 @@ -28,6 +28,7 @@
  #include "musicbrainz5/NameCredit.h"
  
@@ -1350,7 +1375,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/NameCredit.cc libmusicbrainz-5.0
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/PUID.cc libmusicbrainz-5.0.1/src/PUID.cc
 --- libmusicbrainz-5.0.1.orig/src/PUID.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/PUID.cc	2013-02-21 15:11:04.984529600 +0100
++++ libmusicbrainz-5.0.1/src/PUID.cc	2013-03-06 00:29:56.739922100 +0100
 @@ -29,6 +29,7 @@
  
  #include "musicbrainz5/RecordingList.h"
@@ -1361,7 +1386,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/PUID.cc libmusicbrainz-5.0.1/src
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Query.cc libmusicbrainz-5.0.1/src/Query.cc
 --- libmusicbrainz-5.0.1.orig/src/Query.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Query.cc	2013-02-21 15:11:04.994529600 +0100
++++ libmusicbrainz-5.0.1/src/Query.cc	2013-03-06 00:29:56.751922800 +0100
 @@ -35,8 +35,13 @@
  #include <iostream>
  
@@ -1502,7 +1527,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Query.cc libmusicbrainz-5.0.1/sr
  			m_d->m_LastHTTPCode=Fetch.Status();
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Relation.cc libmusicbrainz-5.0.1/src/Relation.cc
 --- libmusicbrainz-5.0.1.orig/src/Relation.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Relation.cc	2013-02-21 15:11:05.004529700 +0100
++++ libmusicbrainz-5.0.1/src/Relation.cc	2013-03-06 00:29:56.757923100 +0100
 @@ -35,6 +35,8 @@
  #include "musicbrainz5/Work.h"
  #include "musicbrainz5/AttributeList.h"
@@ -1514,7 +1539,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Relation.cc libmusicbrainz-5.0.1
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Release.cc libmusicbrainz-5.0.1/src/Release.cc
 --- libmusicbrainz-5.0.1.orig/src/Release.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Release.cc	2013-02-21 15:11:05.014529700 +0100
++++ libmusicbrainz-5.0.1/src/Release.cc	2013-03-06 00:29:56.766923600 +0100
 @@ -42,6 +42,7 @@
  #include "musicbrainz5/Medium.h"
  #include "musicbrainz5/Collection.h"
@@ -1525,7 +1550,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Release.cc libmusicbrainz-5.0.1/
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Track.cc libmusicbrainz-5.0.1/src/Track.cc
 --- libmusicbrainz-5.0.1.orig/src/Track.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Track.cc	2013-02-21 15:11:05.019529700 +0100
++++ libmusicbrainz-5.0.1/src/Track.cc	2013-03-06 00:29:56.775924200 +0100
 @@ -29,6 +29,7 @@
  
  #include "musicbrainz5/Recording.h"
@@ -1536,7 +1561,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Track.cc libmusicbrainz-5.0.1/sr
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Work.cc libmusicbrainz-5.0.1/src/Work.cc
 --- libmusicbrainz-5.0.1.orig/src/Work.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/src/Work.cc	2013-02-21 15:11:05.029529700 +0100
++++ libmusicbrainz-5.0.1/src/Work.cc	2013-03-06 00:29:56.785924700 +0100
 @@ -40,6 +40,7 @@
  #include "musicbrainz5/UserRating.h"
  #include "musicbrainz5/ISWC.h"
@@ -1547,7 +1572,7 @@ diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Work.cc libmusicbrainz-5.0.1/src
  {
 diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/tests/mbtest.cc libmusicbrainz-5.0.1/tests/mbtest.cc
 --- libmusicbrainz-5.0.1.orig/tests/mbtest.cc	2012-05-16 21:48:34.000000000 +0200
-+++ libmusicbrainz-5.0.1/tests/mbtest.cc	2013-02-21 15:11:05.114529800 +0100
++++ libmusicbrainz-5.0.1/tests/mbtest.cc	2013-03-06 00:29:56.793925200 +0100
 @@ -24,7 +24,9 @@
  
  #include <iostream>
