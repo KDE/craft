@@ -123,8 +123,8 @@ class package(object):
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked
             correctly before they are used """
-        self.timestamp()
         if not utils.envAsBool( "EMERGE_OFFLINE" ):
+            self.timestamp()
             self.emerge( "fetch" )
 
     def build( self ):
