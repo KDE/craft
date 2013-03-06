@@ -3,7 +3,11 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:libkgapi'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['0.4'] = '[git]kde:libkgapi|LibKGAPI/0.4|'
+        for ver in ['0.4.4']:
+            self.targets[ ver ] = "http://download.kde.org/stable/libkgapi/" + ver + "/src/libkgapi-" + ver + ".tar.bz2"
+            self.targetInstSrc[ ver ] = "libkgapi-" + ver
+        self.defaultTarget = '0.4'
 
     def setDependencies( self ):
         self.dependencies['kde/kdepimlibs'] = 'default'
