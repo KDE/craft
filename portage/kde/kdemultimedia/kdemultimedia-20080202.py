@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         #self.dependencies['kde/audiocd-kio'] = 'default'#missing dep cdparanoia
         self.dependencies['kde/dragon'] = 'default'
-        self.dependencies['kde/ffmpegthumbs'] = 'default'
+        #self.dependencies['kde/ffmpegthumbs'] = 'default'
         self.dependencies['kde/juk'] = 'default'
         #self.dependencies['kde/kmix'] = 'default'#kmix on windows?
         #self.dependencies['kde/kscd'] = 'default'

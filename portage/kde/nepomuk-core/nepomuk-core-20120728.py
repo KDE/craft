@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'
-        self.dependencies['win32libs/ffmpeg'] = 'default'
+        #self.dependencies['win32libs/ffmpeg'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
         self.shortDescription = "Nepomuk core libraries"
