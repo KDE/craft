@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
         self.dependencies['binary/xerces-c-bin'] = 'default'
         self.dependencies['win32libs/boost-thread'] = 'default'
         self.dependencies['win32libs/boost-system'] = 'default'
+        self.dependencies['win32libs/libcurl'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
