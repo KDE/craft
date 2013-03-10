@@ -1,0 +1,15 @@
+diff -Nru -x '*~' kdeplasma-addons-4.10.1.orig/applets/CMakeLists.txt kdeplasma-addons-4.10.1/applets/CMakeLists.txt
+--- kdeplasma-addons-4.10.1.orig/applets/CMakeLists.txt	2013-03-01 08:04:20.312523000 +0100
++++ kdeplasma-addons-4.10.1/applets/CMakeLists.txt	2013-03-10 09:20:40.127272000 +0100
+@@ -13,9 +13,9 @@
+   add_subdirectory(binary-clock)
+   add_subdirectory(fuzzy-clock)
+   add_subdirectory(weather)
+-  if(DBUSMENUQT_FOUND)
++  if(NOT WIN32 AND DBUSMENUQT_FOUND)
+     add_subdirectory(icontasks)
+- endif(DBUSMENUQT_FOUND)
++ endif(NOT WIN32 AND DBUSMENUQT_FOUND)
+ endif(KDE4WORKSPACE_FOUND)
+ add_subdirectory(blackboard)
+ add_subdirectory(bookmarks)
