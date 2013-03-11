@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
           self.targetInstSrc[ v ] = 'taglib-%s' % v
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
         self.patchToApply[ '1.6.3' ] = [("taglib-1.6.3-20101213.diff", 1)]
+        self.patchToApply['1.8'] = [("taglib-1.8-20130307.diff", 1)]
         self.targetDigests['1.7'] = '5138e1665182bc2171e298ff31518c9ad72ddf23'
         self.targetDigests['1.8'] = 'bdbfd746fde42401d3a77cd930c7802d374a692d'
         self.shortDescription = "audio metadata library"

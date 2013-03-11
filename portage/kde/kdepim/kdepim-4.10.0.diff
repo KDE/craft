@@ -1,8 +1,7 @@
-diff --git a/archivemailagent/archivemailagent.cpp b/archivemailagent/archivemailagent.cpp
-index 6937a7e..1739358 100644
---- a/archivemailagent/archivemailagent.cpp
-+++ b/archivemailagent/archivemailagent.cpp
-@@ -95,7 +95,7 @@ void ArchiveMailAgent::reload()
+diff -Nru -x '*~' kdepim-4.10.1.orig/archivemailagent/archivemailagent.cpp kdepim-4.10.1/archivemailagent/archivemailagent.cpp
+--- kdepim-4.10.1.orig/archivemailagent/archivemailagent.cpp	2013-03-01 07:57:28.223637000 +0100
++++ kdepim-4.10.1/archivemailagent/archivemailagent.cpp	2013-03-05 21:46:54.359053000 +0100
+@@ -95,7 +95,7 @@
  
  void ArchiveMailAgent::configure( WId windowId )
  {
@@ -11,11 +10,10 @@ index 6937a7e..1739358 100644
  }
  
  void ArchiveMailAgent::pause()
-diff --git a/kontact/src/mainwindow.cpp b/kontact/src/mainwindow.cpp
-index a8b7d7b..3c48f3d 100644
---- a/kontact/src/mainwindow.cpp
-+++ b/kontact/src/mainwindow.cpp
-@@ -387,12 +387,12 @@ void MainWindow::paintAboutScreen( const QString &msg )
+diff -Nru -x '*~' kdepim-4.10.1.orig/kontact/src/mainwindow.cpp kdepim-4.10.1/kontact/src/mainwindow.cpp
+--- kdepim-4.10.1.orig/kontact/src/mainwindow.cpp	2013-03-01 07:57:28.299636000 +0100
++++ kdepim-4.10.1/kontact/src/mainwindow.cpp	2013-03-05 21:46:54.359053000 +0100
+@@ -387,12 +387,12 @@
  {
    QString location = KStandardDirs::locate( "data", "kontact/about/main.html" );
    QString content = KPIMUtils::kFileToByteArray( location );
@@ -30,7 +28,7 @@ index a8b7d7b..3c48f3d 100644
                       "data", "kdeui/about/kde_infopage_rtl.css" ) );
    } else {
      content = content.arg( "" );
-@@ -1240,21 +1240,21 @@ QString MainWindow::introductionString()
+@@ -1240,21 +1240,21 @@
      subs( "exec:/help?kontact" ).
      subs( iconSize ).
      subs( iconSize ).
@@ -55,11 +53,22 @@ index a8b7d7b..3c48f3d 100644
      subs( "exec:/accountwizard" ).
      subs( i18nc( "@item:intext", "Setup your Accounts" ) ).
      subs( i18nc( "@item:intext", "Prepare Kontact for use" ) ).
-diff --git a/messagecomposer/kmeditor.cpp b/messagecomposer/kmeditor.cpp
-index 640beb4..56788d7 100644
---- a/messagecomposer/kmeditor.cpp
-+++ b/messagecomposer/kmeditor.cpp
-@@ -185,7 +185,7 @@ void KMeditorPrivate::startExternalEditor()
+diff -Nru -x '*~' kdepim-4.10.1.orig/korganizer/views/todoview/incidencetreemodel.cpp kdepim-4.10.1/korganizer/views/todoview/incidencetreemodel.cpp
+--- kdepim-4.10.1.orig/korganizer/views/todoview/incidencetreemodel.cpp	2013-03-01 07:57:28.303636000 +0100
++++ kdepim-4.10.1/korganizer/views/todoview/incidencetreemodel.cpp	2013-03-06 00:32:58.916645400 +0100
+@@ -586,7 +586,7 @@
+     Node *parentNode = reinterpret_cast<Node*>( parent.internalPointer() );
+     Q_ASSERT( parentNode );
+     d->assert_and_dump( !d->m_removedNodes.contains( parentNode ),
+-                        QString::number( (long)parentNode, 16 ) + " was already deleted" );
++                        QString::number( (quintptr)parentNode, 16 ) + " was already deleted" );
+ 
+     const int count = parentNode->directChilds.count();
+     return count;
+diff -Nru -x '*~' kdepim-4.10.1.orig/messagecomposer/kmeditor.cpp kdepim-4.10.1/messagecomposer/kmeditor.cpp
+--- kdepim-4.10.1.orig/messagecomposer/kmeditor.cpp	2013-03-01 07:57:28.331636000 +0100
++++ kdepim-4.10.1/messagecomposer/kmeditor.cpp	2013-03-05 21:46:54.374653000 +0100
+@@ -185,7 +185,7 @@
          } else if( nextChar == QLatin1Char('l') ) {
            command<<QString::number(q->textCursor().blockNumber() + 1);  // line number
          } else if( nextChar == QLatin1Char('w') ) { //Window id

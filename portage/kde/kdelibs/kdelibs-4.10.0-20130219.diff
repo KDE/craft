@@ -38,3 +38,31 @@ diff -Nru -x '*~' kdelibs-4.10.0.orig/kjs/CMakeLists.txt kdelibs-4.10.0/kjs/CMak
  
  target_link_libraries(kjs_bin ${KJSLIBNAME})
  
+diff -Nru -x '*~' kdelibs-4.10.1.orig/kdecore/io/kurl.cpp kdelibs-4.10.1/kdecore/io/kurl.cpp
+--- kdelibs-4.10.1.orig/kdecore/io/kurl.cpp	2013-03-01 07:26:13.643785000 +0100
++++ kdelibs-4.10.1/kdecore/io/kurl.cpp	2013-03-04 14:52:45.501009000 +0100
+@@ -1686,7 +1686,7 @@
+ static QString _relativePath(const QString &base_dir, const QString &path, bool &isParent)
+ {
+    QString _base_dir(QDir::cleanPath(base_dir));
+-   QString _path(QDir::cleanPath(path.isEmpty() || (path[0] != QLatin1Char('/')) ? _base_dir+QLatin1Char('/')+path : path));
++   QString _path(QDir::cleanPath(path.isEmpty() || QDir::isRelativePath(path) ? _base_dir+QLatin1Char('/')+path : path));
+ 
+    if (_base_dir.isEmpty())
+       return _path;
+diff -Nru -x '*~' kdelibs-4.10.1.orig/kdeui/actions/krecentfilesaction.cpp kdelibs-4.10.1/kdeui/actions/krecentfilesaction.cpp
+--- kdelibs-4.10.1.orig/kdeui/actions/krecentfilesaction.cpp	2013-03-01 07:26:13.759783000 +0100
++++ kdelibs-4.10.1/kdeui/actions/krecentfilesaction.cpp	2013-03-05 01:27:02.932139300 +0100
+@@ -169,7 +169,12 @@
+     // remove file if already in list
+     foreach (QAction* action, selectableActionGroup()->actions())
+     {
++#ifdef Q_OS_WIN
++      const QString tmpFile = url.isLocalFile() ? QDir::toNativeSeparators( d->m_urls[action].pathOrUrl() ) : d->m_urls[action].pathOrUrl();
++      if ( tmpFile.endsWith(file) )
++#else
+       if ( d->m_urls[action].pathOrUrl().endsWith(file) )
++#endif
+       {
+         removeAction(action)->deleteLater();
+         break;

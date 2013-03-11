@@ -1,0 +1,55 @@
+diff -Nru -x '*~' skrooge-1.6.0.orig/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp skrooge-1.6.0/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp
+--- skrooge-1.6.0.orig/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp	2013-02-25 18:11:38.000000000 +0100
++++ skrooge-1.6.0/plugins/applet/incomeexpenditure/incomeexpenditurewidget.cpp	2013-03-07 02:50:35.909695200 +0100
+@@ -62,7 +62,7 @@
+     double max = 0;
+     for (int i = 0 ; i < listData.count() ; i++) {
+         QStringList values = listData.values().at(i);
+-        double amount = abs(SKGServices::stringToDouble(values.at(2)));
++        double amount = qAbs(SKGServices::stringToDouble(values.at(2)));
+         if (amount > max) {
+             max = amount;
+         }
+@@ -106,7 +106,7 @@
+ 
+ 
+         Plasma::Frame* monthFrame;
+-        if (not frames.keys().contains(date)) {
++        if (!frames.keys().contains(date)) {
+             // If the frame does not exist yet for this date we create it
+             // and we store it in the hash
+             monthFrame = new Plasma::Frame();
+@@ -149,7 +149,7 @@
+         amountMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+         amountMeter->setMinimum(0);
+         amountMeter->setMaximum(max);
+-        amountMeter->setValue(abs(int(amount)));
++        amountMeter->setValue(qAbs(int(amount)));
+         amountMeter->setMeterType(Plasma::Meter::BarMeterVertical);
+         amountMeter->setToolTip(SKGServices::doubleToString(amount));
+     }
+diff -Nru -x '*~' skrooge-1.6.0.orig/plugins/generic/skg_monthly/grantlee_filters/CMakeLists.txt skrooge-1.6.0/plugins/generic/skg_monthly/grantlee_filters/CMakeLists.txt
+--- skrooge-1.6.0.orig/plugins/generic/skg_monthly/grantlee_filters/CMakeLists.txt	2013-02-25 18:11:38.000000000 +0100
++++ skrooge-1.6.0/plugins/generic/skg_monthly/grantlee_filters/CMakeLists.txt	2013-03-07 02:34:41.700117500 +0100
+@@ -28,8 +28,4 @@
+ TARGET_LINK_LIBRARIES(grantlee_skgfilters skgbasemodeler skgbankmodeler skgbasegui)
+ 
+ ########### install files ###############
+-IF(WIN32)
+-  INSTALL(TARGETS grantlee_skgfilters ARCHIVE DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
+-ELSE(WIN32)
+-  INSTALL(TARGETS grantlee_skgfilters LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
+-ENDIF(WIN32)
++INSTALL(TARGETS grantlee_skgfilters LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/grantlee/${Grantlee_VERSION_MAJOR}.${Grantlee_VERSION_MINOR} )
+diff -Nru -x '*~' skrooge-1.6.0.orig/skgbankgui/skgobjectmodel.cpp skrooge-1.6.0/skgbankgui/skgobjectmodel.cpp
+--- skrooge-1.6.0.orig/skgbankgui/skgobjectmodel.cpp	2013-02-25 18:11:38.000000000 +0100
++++ skrooge-1.6.0/skgbankgui/skgobjectmodel.cpp	2013-03-07 02:41:21.984012400 +0100
+@@ -660,7 +660,7 @@
+                 SKGAccountObject obj(getObject(index));
+                 SKGBEGINLIGHTTRANSACTION(*getDocument(),
+                                          ((Qt::CheckState) value.toInt() == Qt::Checked ? i18nc("Noun, name of the user action", "Close account '%1'", obj.getName()) : i18nc("Noun, name of the user action", "Open account '%1'", obj.getName())), err);
+-                if (abs(obj.getCurrentAmount()) > 0.01) err = getDocument()->sendMessage(i18nc("An information message",  "Warning, you closed an account with money"));
++                if (qAbs(obj.getCurrentAmount()) > 0.01) err = getDocument()->sendMessage(i18nc("An information message",  "Warning, you closed an account with money"));
+                 if (!err) err = obj.setClosed((Qt::CheckState) value.toInt() == Qt::Checked);
+                 if (!err) err = obj.save();
+             } else if (m_trackerTable) {

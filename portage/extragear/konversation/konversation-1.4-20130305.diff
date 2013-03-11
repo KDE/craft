@@ -1,0 +1,15 @@
+diff -Nru -x '*~' konversation-1.4.orig/src/irc/outputfilter.cpp konversation-1.4/src/irc/outputfilter.cpp
+--- konversation-1.4.orig/src/irc/outputfilter.cpp	2011-12-04 08:51:12.000000000 +0100
++++ konversation-1.4/src/irc/outputfilter.cpp	2013-03-05 23:46:08.935906900 +0100
+@@ -1946,9 +1946,9 @@
+         if (input.context && input.context->getTextView())
+         {
+ #if KDE_IS_VERSION(4,6,0)
+-            KDebug::Block myBlock(qPrintable(QString::number((ulong)(input.context->getTextView()), 16)));
++            KDebug::Block myBlock(qPrintable(QString::number((quintptr)(input.context->getTextView()), 16)));
+ #else
+-            kDebug() << "view =" << qPrintable(QString::number((ulong)(input.context->getTextView()), 16));
++            kDebug() << "view =" << qPrintable(QString::number((quintptr)(input.context->getTextView()), 16));
+ #endif
+             kDebug() << input.context->getTextView()->document();
+         }

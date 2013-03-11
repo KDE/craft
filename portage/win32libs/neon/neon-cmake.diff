@@ -1,7 +1,7 @@
 diff -Nru -x '*~' neon-0.29.6.orig/CMakeLists.txt neon-0.29.6/CMakeLists.txt
 --- neon-0.29.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ neon-0.29.6/CMakeLists.txt	2013-02-21 00:09:36.852084600 +0100
-@@ -0,0 +1,133 @@
++++ neon-0.29.6/CMakeLists.txt	2013-03-08 11:20:11.317918500 +0100
+@@ -0,0 +1,136 @@
 +project(neon)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -38,7 +38,10 @@ diff -Nru -x '*~' neon-0.29.6.orig/CMakeLists.txt neon-0.29.6/CMakeLists.txt
 +endif(ZLIB_FOUND)
 +
 +if(WIN32)
-+    add_definitions(-DWIN32_LEAN_AND_MEAN -DNOUSER -DNOGDI -DNONLS -DNOCRYPT -D_CRT_SECURE_NO_WARNING -wd4996)
++    add_definitions(-DWIN32_LEAN_AND_MEAN -DNOUSER -DNOGDI -DNONLS -DNOCRYPT)
++    if(MSVC)
++        add_definitions(-D_CRT_SECURE_NO_WARNING -wd4996)
++    endif(MSVC)
 +endif(WIN32)
 +
 +set(neon_SRCS
@@ -136,3 +139,27 @@ diff -Nru -x '*~' neon-0.29.6.orig/CMakeLists.txt neon-0.29.6/CMakeLists.txt
 +    install(FILES ${neon_man3_DOCS} DESTINATION share/man/man3)
 +endif(INSTALL_DOCS)
 \ No newline at end of file
+diff -Nru -x '*~' neon-0.29.6.orig/config.hw neon-0.29.6/config.hw
+--- neon-0.29.6.orig/config.hw	2011-05-03 14:24:49.000000000 +0200
++++ neon-0.29.6/config.hw	2013-03-08 11:22:28.506006000 +0100
+@@ -65,10 +65,12 @@
+ #if defined(_MSC_VER) && _MSC_VER >= 1400
+ #define strcasecmp			_strcmpi
+ #define strncasecmp			_strnicmp
++typedef int socklen_t;
+ #else
+ #define strcasecmp			strcmpi
+ #define strncasecmp			strnicmp
+ #endif
++
+ #define ssize_t				int
+ #define inline                          __inline
+ #define off_t                           _off_t
+@@ -77,7 +79,6 @@
+ #define in_addr_t                       unsigned int
+ #endif
+ 
+-typedef int socklen_t;
+ 
+ #include <io.h>
+ #define read _read
