@@ -1,0 +1,82 @@
+diff -Nru vym-2.0.10.orig/main.cpp vym-2.0.10/main.cpp
+--- vym-2.0.10.orig/main.cpp	2012-03-30 09:32:50.000000000 +0200
++++ vym-2.0.10/main.cpp	2012-04-04 00:31:26.013929900 +0200
+@@ -18,10 +18,12 @@
+ #if defined(Q_OS_WIN32)
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
++#define getpid GetCurrentProcessId
++#else
++#include <unistd.h>
+ #endif
+ 
+ #include <sys/types.h>		// To retrieve PID for use in DBUS
+-#include <unistd.h>
+ 
+ QString vymName;
+ QString vymVersion;
+@@ -174,7 +176,7 @@
+             }
+ 
+             if (basePath.isEmpty())
+-                basePath = vymBaseDir.currentDirPath();
++                basePath = vymBaseDir.currentPath();
+ 
+             vymInstallDir.setPath(basePath);
+             vymBaseDir.setPath(basePath + "/share/vym");
+diff -Nru vym-2.0.10.orig/mainwindow.cpp vym-2.0.10/mainwindow.cpp
+--- vym-2.0.10.orig/mainwindow.cpp	2012-03-30 09:32:50.000000000 +0200
++++ vym-2.0.10/mainwindow.cpp	2012-04-04 00:31:26.022930400 +0200
+@@ -4,7 +4,9 @@
+ 
+ #include <iostream>
+ #include <typeinfo>
++#ifndef Q_OS_WIN
+ #include <unistd.h>
++#endif
+ 
+ #include "aboutdialog.h"
+ #include "branchpropwindow.h"
+diff -Nru vym-2.0.10.orig/mapeditor.cpp vym-2.0.10/mapeditor.cpp
+--- vym-2.0.10.orig/mapeditor.cpp	2012-03-30 09:32:50.000000000 +0200
++++ vym-2.0.10/mapeditor.cpp	2012-04-04 00:31:26.030930900 +0200
+@@ -586,7 +586,7 @@
+ 			// Add random direction, if only two polygons with identical y or x
+ 			if (v.x()==0 || v.y()==0) 
+ 			{
+-			    Vector w (cos (rand()%1000),sin(rand()%1000));
++			    Vector w (cos (double((int)rand()%1000)),sin(double((int)rand()%1000)));
+ 			    w.normalize();
+ 			    v=v+w;
+ 			}
+@@ -1094,7 +1094,7 @@
+ void MapEditor::mousePressEvent(QMouseEvent* e)
+ {
+     // Ignore right clicks or wile editing heading
+-    if (e->button() == Qt::RightButton or model->isSelectionBlocked() )
++    if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
+     {
+ 	//qDebug() << "  ME::ignoring right mouse event...\n";
+ 	e->ignore();
+diff -Nru vym-2.0.10.orig/mkdtemp.cpp vym-2.0.10/mkdtemp.cpp
+--- vym-2.0.10.orig/mkdtemp.cpp	2012-03-30 09:32:50.000000000 +0200
++++ vym-2.0.10/mkdtemp.cpp	2012-04-04 00:31:26.038931400 +0200
+@@ -2,11 +2,18 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <io.h>
++#ifndef _WIN32
+ #include <sys/time.h>
+ 
+ extern "C" {
+ pid_t getpid (void);
+ }
++#else
++#include <windows.h>
++#define getpid GetCurrentProcessId
++#include <time.h>
++#include <direct.h>
++#endif
+ 
+ char *
+ mkdtemp(char *tmpl)
