@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'testing/r-base' ] = 'default'
-        self.dependencies[ 'extragear/kate' ] = 'default'  # provides katepart
+        self.dependencies[ 'kde/kate' ] = 'default'  # provides katepart
 
 from Package.CMakePackageBase import *
 

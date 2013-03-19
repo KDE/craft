@@ -1,0 +1,13 @@
+diff --git a/kasten/gui/system/bytearrayviewprofilelock.cpp b/kasten/gui/system/bytearrayviewprofilelock.cpp
+index 704d6be..ea6be29 100644
+--- a/kasten/gui/system/bytearrayviewprofilelock.cpp
++++ b/kasten/gui/system/bytearrayviewprofilelock.cpp
+@@ -52,7 +52,7 @@ ByteArrayViewProfileLockPrivate::ByteArrayViewProfileLockPrivate( const QString&
+   : lockFile(fileName.isEmpty() ? fileName : viewProfileFileLockPath(fileName)),
+     viewProfileId( id )
+ {
+-    if( not fileName.isEmpty() )
++    if( !fileName.isEmpty() )
+         lockFile.lock( KLockFile::NoBlockFlag | KLockFile::ForceFlag );
+ }
+ 

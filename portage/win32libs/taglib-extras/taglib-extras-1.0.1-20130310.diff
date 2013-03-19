@@ -1,0 +1,42 @@
+diff -Nru -x '*~' taglib-extras-1.0.1.orig/taglib-extras/audible/audibleproperties.cpp taglib-extras-1.0.1/taglib-extras/audible/audibleproperties.cpp
+--- taglib-extras-1.0.1.orig/taglib-extras/audible/audibleproperties.cpp	2009-09-17 17:38:07.000000000 +0200
++++ taglib-extras-1.0.1/taglib-extras/audible/audibleproperties.cpp	2013-03-10 10:12:52.608179300 +0100
+@@ -23,6 +23,10 @@
+  *   MA  02110-1301  USA                                                   *
+  ***************************************************************************/
+ 
++#if defined(_WIN32) || defined(_WIN64)
++#include <winsock2.h>
++#endif
++
+ #include "audibleproperties.h"
+ 
+ #include <tstring.h>
+diff -Nru -x '*~' taglib-extras-1.0.1.orig/taglib-extras/audible/audibletag.cpp taglib-extras-1.0.1/taglib-extras/audible/audibletag.cpp
+--- taglib-extras-1.0.1.orig/taglib-extras/audible/audibletag.cpp	2009-09-17 17:38:07.000000000 +0200
++++ taglib-extras-1.0.1/taglib-extras/audible/audibletag.cpp	2013-03-10 10:13:07.957057200 +0100
+@@ -23,6 +23,10 @@
+  *   MA  02110-1301  USA                                                   *
+  ***************************************************************************/
+ 
++#if defined(_WIN32) || defined(_WIN64)
++#include <winsock2.h>
++#endif
++
+ #include "audibletag.h"
+ 
+ #include <tag.h>
+diff -Nru -x '*~' taglib-extras-1.0.1.orig/taglib-extras/rmff/rmff.cpp taglib-extras-1.0.1/taglib-extras/rmff/rmff.cpp
+--- taglib-extras-1.0.1.orig/taglib-extras/rmff/rmff.cpp	2009-09-17 17:38:07.000000000 +0200
++++ taglib-extras-1.0.1/taglib-extras/rmff/rmff.cpp	2013-03-10 10:11:41.360104200 +0100
+@@ -26,6 +26,10 @@
+  *   USA, or check http://www.fsf.org/about/contact.html                   *
+  ***************************************************************************/
+ 
++#if defined(_WIN32) || defined(_WIN64)
++#include <winsock2.h>
++#endif
++
+ #include "rmff.h"
+ 
+ #include <sys/types.h>

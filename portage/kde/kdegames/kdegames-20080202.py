@@ -42,7 +42,6 @@ class subinfo(info.infoclass):
         self.dependencies['kde/ktuberling'] = 'default'
         self.dependencies['kde/kubrick'] = 'default'
         self.dependencies['kde/libkdegames'] = 'default'
-        #self.dependencies['kde/libkmahjongg'] = 'default'
         self.dependencies['kde/lskat'] = 'default'
         self.dependencies['kde/palapeli'] = 'default'
         self.dependencies['kde/picmi'] = 'default'

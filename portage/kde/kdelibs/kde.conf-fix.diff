@@ -98,7 +98,7 @@ index 1a5cc32..582c3ba 100644
 +        {
 +            kdeconf->beginGroup(QLatin1String("XDG"));
 +            if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_DIRS")))
-+                xdgdirList.append(kdeconf->value(QLatin1String("XDG_CONFIG_DIRS")).toString());
++                xdgdirList.append(expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_DIRS")).toString()));
 +            kdeconf->endGroup();
 +        }
  #else
@@ -112,7 +112,7 @@ index 1a5cc32..582c3ba 100644
 +        {
 +            kdeconf->beginGroup(QLatin1String("XDG"));
 +            if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_HOME")))
-+                localXdgDir = kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString();
++                localXdgDir = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString());
 +            kdeconf->endGroup();
 +        }
  #endif
@@ -127,7 +127,7 @@ index 1a5cc32..582c3ba 100644
 +        {
 +            kdeconf->beginGroup(QLatin1String("XDG"));
 +            if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_DIRS")))
-+                xdgdirList.append(kdeconf->value(QLatin1String("XDG_DATA_DIRS")).toString());
++                xdgdirList.append(expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_DIRS")).toString()));
 +            kdeconf->endGroup();
 +        }
  #endif
@@ -141,7 +141,7 @@ index 1a5cc32..582c3ba 100644
 +        {
 +            kdeconf->beginGroup(QLatin1String("XDG"));
 +            if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_HOME")))
-+                localXdgDir = kdeconf->value(QLatin1String("XDG_DATA_HOME")).toString();
++                localXdgDir = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_HOME")).toString());
 +            kdeconf->endGroup();
 +        }
      }

@@ -73,7 +73,7 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
-        if self.category in [ "win32libs", "virtual", "dev-util", "gnuwin32" ]:
+        if self.category in [ "virtual", "dev-util", "gnuwin32" ]:
             self.ignoreNotifications = True
 
     def __str__( self ):
@@ -123,8 +123,9 @@ class package(object):
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked
             correctly before they are used """
-        self.timestamp()
-        self.emerge( "fetch" )
+        if not utils.envAsBool( "EMERGE_OFFLINE" ):
+            self.timestamp()
+            self.emerge( "fetch" )
 
     def build( self ):
         """ builds and installs packages locally """

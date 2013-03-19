@@ -1,0 +1,24 @@
+diff -Nru -x '*~' kcalc-4.10.1.orig/knumber/knumber_float.cpp kcalc-4.10.1/knumber/knumber_float.cpp
+--- kcalc-4.10.1.orig/knumber/knumber_float.cpp	2013-03-01 08:05:02.415998000 +0100
++++ kcalc-4.10.1/knumber/knumber_float.cpp	2013-03-10 10:03:55.083625800 +0100
+@@ -23,7 +23,19 @@
+ #include "knumber_error.h"
+ #include <QScopedArrayPointer>
+ #include <QDebug>
+-#include <cmath>
++#include <math.h>
++
++#ifdef _MSC_VER
++double log2(double x) { return log(x) / log(2); }
++double exp2(double x) { return exp(x * log(2)); }
++double exp10(double x) { return exp(x * log(10)); }
++#endif
++
++#ifdef __MINGW32__
++#define HAVE_FUNC_ISINF 1
++#define HAVE_FUNC_ISNAN 1
++double exp10(double x) { return exp(x * log(10)); }
++#endif
+ 
+ // NOTE: these assume IEEE floats..
+ #ifndef HAVE_FUNC_ISINF

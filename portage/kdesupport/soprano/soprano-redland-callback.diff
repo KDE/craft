@@ -1,0 +1,13 @@
+diff --git a/backends/redland/redlandworld.cpp b/backends/redland/redlandworld.cpp
+index 3c6facd..b9b4362 100644
+--- a/backends/redland/redlandworld.cpp
++++ b/backends/redland/redlandworld.cpp
+@@ -96,7 +96,7 @@ static QString redlandLogLevelToString( int level )
+ }
+ 
+ 
+-int redlandLogHandler( void* user, librdf_log_message* msg )
++int REDLAND_CALLBACK_STDCALL redlandLogHandler( void* user, librdf_log_message* msg )
+ {
+     Soprano::Redland::World* w = reinterpret_cast<Soprano::Redland::World*>( user );
+ 

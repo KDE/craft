@@ -7,12 +7,21 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+        self.patchToApply['4.10.1'] = [("kdeplasma-addons-4.10.1-20130310.diff", 1)]
 
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kde-workspace'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['kde/marble'] = 'default'
+        self.dependencies['kde/libkexiv2'] = 'default'
+        self.dependencies['kdesupport/attica'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['kdesupport/qjson'] = 'default'
+        self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
+        self.dependencies['kdesupport/eigen2'] = 'default'
         self.shortDescription = "All kind of addons to improve your Plasma experience"
 
 from Package.CMakePackageBase import *

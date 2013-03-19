@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/libkdegames'] = 'default'
+        self.dependencies['kde/libkmahjongg'] = 'default'
 
 from Package.CMakePackageBase import *
 

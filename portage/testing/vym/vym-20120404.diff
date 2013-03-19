@@ -1,0 +1,97 @@
+diff --git a/main.cpp b/main.cpp
+index b0813e4..4fa42fd 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -20,10 +20,12 @@ using namespace std;
+ #if defined(Q_OS_WIN32)
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
++#define getpid GetCurrentProcessId
++#else
++#include <unistd.h>
+ #endif
+ 
+ #include <sys/types.h>		// To retrieve PID for use in DBUS
+-#include <unistd.h>
+ 
+ QString vymName;
+ QString vymVersion;
+@@ -215,7 +217,7 @@ int main(int argc, char* argv[])
+             }
+ 
+             if (basePath.isEmpty())
+-                basePath = vymBaseDir.currentDirPath();
++                basePath = vymBaseDir.currentPath();
+ 
+             vymInstallDir.setPath(basePath);
+             vymBaseDir.setPath(basePath + "/share/vym");
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+index 42c96ca..91d9963 100644
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -4,7 +4,9 @@
+ 
+ #include <iostream>
+ #include <typeinfo>
++#ifndef Q_OS_WIN
+ #include <unistd.h>
++#endif
+ 
+ #include "aboutdialog.h"
+ #include "adaptorvym.h"
+diff --git a/mapeditor.cpp b/mapeditor.cpp
+index 3a82fe0..013078f 100644
+--- a/mapeditor.cpp
++++ b/mapeditor.cpp
+@@ -466,8 +466,8 @@ QPointF MapEditor::getViewCenter()
+ void MapEditor::updateMatrix()
+ {
+     double a    = M_PI/180 * angle;
+-    double sina = sin(a);
+-    double cosa = cos(a);
++    double sina = sin((double)a);
++    double cosa = cos((double)a);
+ 
+     QMatrix zm(zoomFactor, 0, 0, zoomFactor, 0, 0);
+     //QMatrix translationMatrix(1, 0, 0, 1, 50.0, 50.0);
+@@ -697,7 +697,7 @@ void MapEditor::autoLayout()
+ 			// Add random direction, if only two polygons with identical y or x
+ 			if (v.x()==0 || v.y()==0) 
+ 			{
+-			    Vector w (cos (rand()%1000),sin(rand()%1000));
++			    Vector w (cos (double((int)rand()%1000)),sin(double((int)rand()%1000)));
+ 			    w.normalize();
+ 			    v=v+w;
+ 			}
+@@ -1161,7 +1161,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
+     */	
+ 
+     // Ignore right clicks or wile editing heading
+-    if (e->button() == Qt::RightButton or model->isSelectionBlocked() )
++    if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
+     {
+ 	e->ignore();
+ 	QGraphicsView::mousePressEvent(e);
+diff --git a/mkdtemp.cpp b/mkdtemp.cpp
+index 6e8cfcc..556227d 100644
+--- a/mkdtemp.cpp
++++ b/mkdtemp.cpp
+@@ -2,11 +2,18 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <io.h>
++#ifndef _WIN32
+ #include <sys/time.h>
+ 
+ extern "C" {
+ pid_t getpid (void);
+ }
++#else
++#include <windows.h>
++#define getpid GetCurrentProcessId
++#include <time.h>
++#include <direct.h>
++#endif
+ 
+ char *
+ mkdtemp(char *tmpl)

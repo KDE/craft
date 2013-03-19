@@ -15,10 +15,9 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0.1-3'] = 'tags/qca/2.0.1'
         self.svnTargets['2.0.2-1'] = 'tags/qca/2.0.2'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
-        for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qca'
-        for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/qca'
+        self.targets['20130212'] = "http://downloads.sourceforge.net/kde-windows/qca-20130212.tar.xz"
+        self.targetInstSrc['20130212'] = "qca-20130212"
+        self.targetDigests['20130212'] = 'c87ef3cfe920fe331de156cf5dda297e835a1dfc'
         self.shortDescription = "Qt Cryptographic Architecture (QCA)"
         self.defaultTarget = 'svnHEAD'
 
@@ -28,7 +27,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.onlyBuildTargets = 'umbrello'
 
 if __name__ == '__main__':
     Package().execute()

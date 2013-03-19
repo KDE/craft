@@ -1,0 +1,30 @@
+diff -Nru -x '*~' taglib-1.8.orig/CMakeLists.txt taglib-1.8/CMakeLists.txt
+--- taglib-1.8.orig/CMakeLists.txt	2012-09-06 20:03:15.000000000 +0200
++++ taglib-1.8/CMakeLists.txt	2013-03-07 01:03:38.906648300 +0100
+@@ -40,9 +40,12 @@
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+ endif()
+-if (MSVC AND ENABLE_STATIC_RUNTIME)
++if (MSVC)
+   foreach(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+-    string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
++    if(ENABLE_STATIC_RUNTIME)
++        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
++    endif()
++    set(${flag_var} "${${flag_var}} /Zc:wchar_t-")
+   endforeach(flag_var)
+ endif()
+ 
+diff -Nru -x '*~' taglib-1.8.orig/taglib/toolkit/tiostream.h taglib-1.8/taglib/toolkit/tiostream.h
+--- taglib-1.8.orig/taglib/toolkit/tiostream.h	2012-09-06 20:03:15.000000000 +0200
++++ taglib-1.8/taglib/toolkit/tiostream.h	2013-03-07 01:05:33.636841800 +0100
+@@ -33,7 +33,7 @@
+ namespace TagLib {
+ 
+ #ifdef _WIN32
+-  class TAGLIB_EXPORT FileName
++  class FileName
+   {
+   public:
+     FileName(const wchar_t *name) : m_wname(name) {}

@@ -1,0 +1,69 @@
+diff -Nru -x '*~' rocs-4.10.1.orig/App/CMakeLists.txt rocs-4.10.1/App/CMakeLists.txt
+--- rocs-4.10.1.orig/App/CMakeLists.txt	2013-03-01 07:51:29.444091000 +0100
++++ rocs-4.10.1/App/CMakeLists.txt	2013-03-07 02:29:25.496387200 +0100
+@@ -87,7 +87,7 @@
+ 
+ # needed to get icon on windows
+ kde4_add_app_icon( rocs_SRCS
+-    ${CMAKE_CURRENT_SOURCE_DIR}/../graphics/hi16-app-rocs.png
++    ${CMAKE_CURRENT_SOURCE_DIR}/../graphics/hi*-app-rocs.png
+ )
+ 
+ kde4_add_executable( rocs
+diff -Nru -x '*~' rocs-4.10.1.orig/RocsCore/LoadSave/Plugins/dotFileFormat/DotGrammar.cpp rocs-4.10.1/RocsCore/LoadSave/Plugins/dotFileFormat/DotGrammar.cpp
+--- rocs-4.10.1.orig/RocsCore/LoadSave/Plugins/dotFileFormat/DotGrammar.cpp	2013-03-01 07:51:29.612089000 +0100
++++ rocs-4.10.1/RocsCore/LoadSave/Plugins/dotFileFormat/DotGrammar.cpp	2013-03-10 00:39:59.678479000 +0100
+@@ -177,9 +177,9 @@
+                     | subgraph
+                 );
+ 
+-        attr_stmt = ( (distinct::keyword["graph"][ref(phelper->attributed)="graph"] >> attr_list[&applyAttributeList])[&setDataStructureAttributes]
+-                    | (distinct::keyword["node"][ref(phelper->attributed)="node"] >> attr_list[&applyAttributeList])
+-                    | (distinct::keyword["edge"][ref(phelper->attributed)="edge"] >> attr_list[&applyAttributeList])
++        attr_stmt = ( (distinct::keyword["graph"][phx::ref(phelper->attributed)="graph"] >> attr_list[&applyAttributeList])[&setDataStructureAttributes]
++                    | (distinct::keyword["node"][phx::ref(phelper->attributed)="node"] >> attr_list[&applyAttributeList])
++                    | (distinct::keyword["edge"][phx::ref(phelper->attributed)="edge"] >> attr_list[&applyAttributeList])
+                     );
+ 
+         attr_list = '[' >> -a_list >>']';
+@@ -188,14 +188,14 @@
+                  >> -char_(',') >> -a_list;
+ 
+         edge_stmt = (
+-                        (node_id[&edgebound] | subgraph) >> edgeRHS >> -(attr_list[ref(phelper->attributed)="edge"])
++                        (node_id[&edgebound] | subgraph) >> edgeRHS >> -(attr_list[phx::ref(phelper->attributed)="edge"])
+                     )[&createAttributeList][&applyAttributeList][&createPointers][&removeAttributeList];
+ 
+         edgeRHS = edgeop[&checkEdgeOperator] >> (node_id[&edgebound] | subgraph) >> -edgeRHS;
+ 
+         node_stmt  = (
+                          node_id[&createData] >> -attr_list
+-                     )[ref(phelper->attributed)="node"][&createAttributeList][&applyAttributeList][&setDataAttributes][&removeAttributeList];
++                     )[phx::ref(phelper->attributed)="node"][&createAttributeList][&applyAttributeList][&setDataAttributes][&removeAttributeList];
+ 
+         node_id = ID >> -port;
+ 
+diff -Nru -x '*~' rocs-4.10.1.orig/RocsCore/RocsCoreExport.h rocs-4.10.1/RocsCore/RocsCoreExport.h
+--- rocs-4.10.1.orig/RocsCore/RocsCoreExport.h	2013-03-01 07:51:29.504090000 +0100
++++ rocs-4.10.1/RocsCore/RocsCoreExport.h	2013-03-07 02:29:25.511987300 +0100
+@@ -24,7 +24,7 @@
+ #include <kdemacros.h>
+ 
+ #ifndef ROCSLIB_EXPORT
+-# if defined(MAKE_ROCSLIB_LIB)
++# if defined(MAKE_ROCSCORE_LIB)
+ // We are building this library
+ #  define ROCSLIB_EXPORT KDE_EXPORT
+ # else
+diff -Nru -x '*~' rocs-4.10.1.orig/VisualEditor/VisualEditorExport.h rocs-4.10.1/VisualEditor/VisualEditorExport.h
+--- rocs-4.10.1.orig/VisualEditor/VisualEditorExport.h	2013-03-01 07:51:29.524090000 +0100
++++ rocs-4.10.1/VisualEditor/VisualEditorExport.h	2013-03-07 02:29:25.511987300 +0100
+@@ -23,7 +23,7 @@
+ #include <kdemacros.h>
+ 
+ #ifndef VISUALEDITOR_EXPORT
+-# if defined(MAKE_VISUALEDITOR_LIB)
++# if defined(MAKE_ROCSVISUALEDITOR_LIB)
+ // We are building this library
+ #  define VISUALEDITOR_EXPORT KDE_EXPORT
+ # else

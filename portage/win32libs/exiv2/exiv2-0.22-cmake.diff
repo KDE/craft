@@ -1036,7 +1036,7 @@ diff -Nru -x '*~' exiv2-0.22.orig/src/CMakeLists.txt exiv2-0.22/src/CMakeLists.t
 +# ******************************************************************************
 +# Binary
 +add_executable( exiv2bin ${EXIV2_SRC} )
-+set_target_properties( exiv2bin PROPERTIES OUTPUT_NAME exiv2 )
++set_target_properties( exiv2bin PROPERTIES RUNTIME_OUTPUT_NAME exiv2 )
 +target_link_libraries( exiv2bin exiv2 )
 +install( TARGETS exiv2bin ${INSTALL_TARGET_STANDARD_ARGS} )
 +

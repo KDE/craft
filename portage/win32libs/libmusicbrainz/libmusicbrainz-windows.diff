@@ -1,0 +1,1585 @@
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/config.h libmusicbrainz-5.0.1/config.h
+--- libmusicbrainz-5.0.1.orig/config.h	1970-01-01 01:00:00.000000000 +0100
++++ libmusicbrainz-5.0.1/config.h	2013-03-06 00:30:01.205177500 +0100
+@@ -0,0 +1,7 @@
++#ifndef __CONFIG_H__
++#define __CONFIG_H__
++
++#define PACKAGE "libmusicbrainz5"
++#define VERSION "5.0.1"
++
++#endif
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/examples/cdlookup.cc libmusicbrainz-5.0.1/examples/cdlookup.cc
+--- libmusicbrainz-5.0.1.orig/examples/cdlookup.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/examples/cdlookup.cc	2013-03-06 00:29:56.422904000 +0100
+@@ -34,6 +34,7 @@
+ #include "musicbrainz5/Disc.h"
+ #include "musicbrainz5/HTTPFetch.h"
+ #include "musicbrainz5/Release.h"
++#include "musicbrainz5/SecondaryType.h"
+ 
+ int main(int argc, const char *argv[])
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Alias.h libmusicbrainz-5.0.1/include/musicbrainz5/Alias.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Alias.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Alias.h	2013-03-06 00:29:56.426904200 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CAliasPrivate;
+ 
+-	class CAlias: public CEntity
++	class MUSICBRAINZ5_EXPORT CAlias: public CEntity
+ 	{
+ 	public:
+ 		CAlias(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Annotation.h libmusicbrainz-5.0.1/include/musicbrainz5/Annotation.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Annotation.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Annotation.h	2013-03-06 00:29:56.430904400 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CAnnotationPrivate;
+ 
+-	class CAnnotation: public CEntity
++	class MUSICBRAINZ5_EXPORT CAnnotation: public CEntity
+ 	{
+ 	public:
+ 		CAnnotation(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Artist.h libmusicbrainz-5.0.1/include/musicbrainz5/Artist.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Artist.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Artist.h	2013-03-06 00:29:56.434904700 +0100
+@@ -41,6 +41,7 @@
+ #include "musicbrainz5/UserTagList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -49,7 +50,7 @@
+ 	class CRating;
+ 	class CUserRating;
+ 
+-	class CArtist: public CEntity
++	class MUSICBRAINZ5_EXPORT CArtist: public CEntity
+ 	{
+ 	public:
+ 		CArtist(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ArtistCredit.h libmusicbrainz-5.0.1/include/musicbrainz5/ArtistCredit.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ArtistCredit.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ArtistCredit.h	2013-03-06 00:29:56.439904900 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/NameCreditList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CArtistCreditPrivate;
+ 
+-	class CArtistCredit: public CEntity
++	class MUSICBRAINZ5_EXPORT CArtistCredit: public CEntity
+ 	{
+ 	public:
+ 		CArtistCredit(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Attribute.h libmusicbrainz-5.0.1/include/musicbrainz5/Attribute.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Attribute.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Attribute.h	2013-03-06 00:29:56.444905200 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CAttributePrivate;
+ 
+-	class CAttribute: public CEntity
++	class MUSICBRAINZ5_EXPORT CAttribute: public CEntity
+ 	{
+ 	public:
+ 		CAttribute(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/CDStub.h libmusicbrainz-5.0.1/include/musicbrainz5/CDStub.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/CDStub.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/CDStub.h	2013-03-06 00:29:56.448905500 +0100
+@@ -32,12 +32,13 @@
+ #include "musicbrainz5/NonMBTrackList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CCDStubPrivate;
+ 
+-	class CCDStub: public CEntity
++	class MUSICBRAINZ5_EXPORT CCDStub: public CEntity
+ 	{
+ 	public:
+ 		CCDStub(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Collection.h libmusicbrainz-5.0.1/include/musicbrainz5/Collection.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Collection.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Collection.h	2013-03-06 00:29:56.452905700 +0100
+@@ -29,12 +29,13 @@
+ #include "musicbrainz5/ReleaseList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CCollectionPrivate;
+ 
+-	class CCollection: public CEntity
++	class MUSICBRAINZ5_EXPORT CCollection: public CEntity
+ 	{
+ 	public:
+ 		CCollection(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Disc.h libmusicbrainz-5.0.1/include/musicbrainz5/Disc.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Disc.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Disc.h	2013-03-06 00:29:56.456905900 +0100
+@@ -34,12 +34,13 @@
+ #include <iostream>
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CDiscPrivate;
+ 
+-	class CDisc: public CEntity
++	class MUSICBRAINZ5_EXPORT CDisc: public CEntity
+ 	{
+ 	public:
+ 		CDisc(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Entity.h libmusicbrainz-5.0.1/include/musicbrainz5/Entity.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Entity.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Entity.h	2013-03-06 00:29:56.463906300 +0100
+@@ -31,6 +31,7 @@
+ #include <map>
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -38,7 +39,7 @@
+ 
+ 	class CRelationListList;
+ 
+-	class CEntity
++	class MUSICBRAINZ5_EXPORT CEntity
+ 	{
+ 	public:
+ 		CEntity();
+@@ -111,6 +112,6 @@
+ 	};
+ }
+ 
+-std::ostream& operator << (std::ostream& os, const MusicBrainz5::CEntity& Entity);
++MUSICBRAINZ5_EXPORT std::ostream& operator << (std::ostream& os, const MusicBrainz5::CEntity& Entity);
+ 
+ #endif
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/FreeDBDisc.h libmusicbrainz-5.0.1/include/musicbrainz5/FreeDBDisc.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/FreeDBDisc.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/FreeDBDisc.h	2013-03-06 00:29:56.469906700 +0100
+@@ -32,12 +32,13 @@
+ #include "musicbrainz5/NonMBTrackList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CFreeDBDiscPrivate;
+ 
+-	class CFreeDBDisc: public CEntity
++	class MUSICBRAINZ5_EXPORT CFreeDBDisc: public CEntity
+ 	{
+ 	public:
+ 		CFreeDBDisc(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/HTTPFetch.h libmusicbrainz-5.0.1/include/musicbrainz5/HTTPFetch.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/HTTPFetch.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/HTTPFetch.h	2013-03-06 00:29:56.474906900 +0100
+@@ -28,6 +28,8 @@
+ #include <string>
+ #include <vector>
+ 
++#include "musicbrainz5/musicbrainz5_export.h"
++
+ namespace MusicBrainz5
+ {
+ 	class CHTTPFetchPrivate;
+@@ -139,7 +141,7 @@
+ 	 * Object to be used to make HTTP requests
+ 	 *
+ 	 */
+-	class CHTTPFetch
++	class MUSICBRAINZ5_EXPORT CHTTPFetch
+ 	{
+ 	public:
+ 		/**
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/IPI.h libmusicbrainz-5.0.1/include/musicbrainz5/IPI.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/IPI.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/IPI.h	2013-03-06 00:29:56.482907400 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CIPIPrivate;
+ 
+-	class CIPI: public CEntity
++	class MUSICBRAINZ5_EXPORT CIPI: public CEntity
+ 	{
+ 	public:
+ 		CIPI(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISRC.h libmusicbrainz-5.0.1/include/musicbrainz5/ISRC.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISRC.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISRC.h	2013-03-06 00:29:56.488907700 +0100
+@@ -29,12 +29,13 @@
+ #include "musicbrainz5/RecordingList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CISRCPrivate;
+ 
+-	class CISRC: public CEntity
++	class MUSICBRAINZ5_EXPORT CISRC: public CEntity
+ 	{
+ 	public:
+ 		CISRC(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWC.h libmusicbrainz-5.0.1/include/musicbrainz5/ISWC.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWC.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWC.h	2013-03-06 00:29:56.492908000 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CISWCPrivate;
+ 
+-	class CISWC: public CEntity
++	class MUSICBRAINZ5_EXPORT CISWC: public CEntity
+ 	{
+ 	public:
+ 		CISWC(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWCList.h libmusicbrainz-5.0.1/include/musicbrainz5/ISWCList.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ISWCList.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ISWCList.h	2013-03-06 00:29:56.496908200 +0100
+@@ -31,13 +31,14 @@
+ #include "musicbrainz5/ListImpl.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CISWC;
+ 	class CISWCListPrivate;
+ 
+-	class CISWCList: public CListImpl<CISWC>
++	class MUSICBRAINZ5_EXPORT CISWCList: public CListImpl<CISWC>
+ 	{
+ 	public:
+ 		CISWCList(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Label.h libmusicbrainz-5.0.1/include/musicbrainz5/Label.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Label.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Label.h	2013-03-06 00:29:56.501908500 +0100
+@@ -37,6 +37,7 @@
+ #include "musicbrainz5/UserTagList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -46,7 +47,7 @@
+ 	class CRating;
+ 	class CUserRating;
+ 
+-	class CLabel: public CEntity
++	class MUSICBRAINZ5_EXPORT CLabel: public CEntity
+ 	{
+ 	public:
+ 		CLabel(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/LabelInfo.h libmusicbrainz-5.0.1/include/musicbrainz5/LabelInfo.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/LabelInfo.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/LabelInfo.h	2013-03-06 00:29:56.507908800 +0100
+@@ -31,6 +31,7 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -38,7 +39,7 @@
+ 
+ 	class CLabel;
+ 
+-	class CLabelInfo: public CEntity
++	class MUSICBRAINZ5_EXPORT CLabelInfo: public CEntity
+ 	{
+ 	public:
+ 		CLabelInfo(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Lifespan.h libmusicbrainz-5.0.1/include/musicbrainz5/Lifespan.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Lifespan.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Lifespan.h	2013-03-06 00:29:56.513909200 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CLifespanPrivate;
+ 
+-	class CLifespan: public CEntity
++	class MUSICBRAINZ5_EXPORT CLifespan: public CEntity
+ 	{
+ 	public:
+ 		CLifespan(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/List.h libmusicbrainz-5.0.1/include/musicbrainz5/List.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/List.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/List.h	2013-03-06 00:29:56.522909700 +0100
+@@ -28,12 +28,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CListPrivate;
+ 
+-	class CList: public CEntity
++	class MUSICBRAINZ5_EXPORT CList: public CEntity
+ 	{
+ 	public:
+ 		CList();
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Medium.h libmusicbrainz-5.0.1/include/musicbrainz5/Medium.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Medium.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Medium.h	2013-03-06 00:29:56.529910100 +0100
+@@ -33,12 +33,13 @@
+ #include "musicbrainz5/TrackList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CMediumPrivate;
+ 
+-	class CMedium: public CEntity
++	class MUSICBRAINZ5_EXPORT CMedium: public CEntity
+ 	{
+ 	public:
+ 		CMedium(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/MediumList.h libmusicbrainz-5.0.1/include/musicbrainz5/MediumList.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/MediumList.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/MediumList.h	2013-03-06 00:29:56.536910500 +0100
+@@ -31,13 +31,14 @@
+ #include "musicbrainz5/ListImpl.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CMedium;
+ 	class CMediumListPrivate;
+ 
+-	class CMediumList: public CListImpl<CMedium>
++	class MUSICBRAINZ5_EXPORT CMediumList: public CListImpl<CMedium>
+ 	{
+ 	public:
+ 		CMediumList(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Message.h libmusicbrainz-5.0.1/include/musicbrainz5/Message.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Message.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Message.h	2013-03-06 00:29:56.542910800 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CMessagePrivate;
+ 
+-	class CMessage: public CEntity
++	class MUSICBRAINZ5_EXPORT CMessage: public CEntity
+ 	{
+ 	public:
+ 		CMessage(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Metadata.h libmusicbrainz-5.0.1/include/musicbrainz5/Metadata.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Metadata.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Metadata.h	2013-03-06 00:29:56.548911200 +0100
+@@ -42,6 +42,7 @@
+ #include "musicbrainz5/CollectionList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ #include <string>
+ 
+@@ -65,7 +66,7 @@
+ 	class CCDStub;
+ 	class CMessage;
+ 
+-	class CMetadata: public CEntity
++	class MUSICBRAINZ5_EXPORT CMetadata: public CEntity
+ 	{
+ 	public:
+ 		CMetadata(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/musicbrainz5_export.h libmusicbrainz-5.0.1/include/musicbrainz5/musicbrainz5_export.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/musicbrainz5_export.h	1970-01-01 01:00:00.000000000 +0100
++++ libmusicbrainz-5.0.1/include/musicbrainz5/musicbrainz5_export.h	2013-03-06 00:29:56.553911500 +0100
+@@ -0,0 +1,36 @@
++/* --------------------------------------------------------------------------
++
++   libmusicbrainz5 - Client library to access MusicBrainz
++
++   Copyright (C) 2013 Patrick Spendrin
++
++   This file is part of libmusicbrainz5.
++
++   This library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   libmusicbrainz5 is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this library.  If not, see <http://www.gnu.org/licenses/>.
++
++     $Id$
++
++----------------------------------------------------------------------------*/
++
++#ifndef _MUSICBRAINZ5_EXPORT_H
++#define _MUSICBRAINZ5_EXPORT_H
++
++#ifndef MUSICBRAINZ5_EXPORT
++# ifdef musicbrainz5_EXPORTS
++#  define MUSICBRAINZ5_EXPORT __declspec(dllexport)
++# else
++#  define MUSICBRAINZ5_EXPORT __declspec(dllimport)
++# endif
++#endif
++#endif
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NameCredit.h libmusicbrainz-5.0.1/include/musicbrainz5/NameCredit.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/NameCredit.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/NameCredit.h	2013-03-06 00:29:56.556911600 +0100
+@@ -31,6 +31,7 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -38,7 +39,7 @@
+ 
+ 	class CArtist;
+ 
+-	class CNameCredit: public CEntity
++	class MUSICBRAINZ5_EXPORT CNameCredit: public CEntity
+ 	{
+ 	public:
+ 		CNameCredit(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/NonMBTrack.h libmusicbrainz-5.0.1/include/musicbrainz5/NonMBTrack.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/NonMBTrack.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/NonMBTrack.h	2013-03-06 00:29:56.561911900 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CNonMBTrackPrivate;
+ 
+-	class CNonMBTrack: public CEntity
++	class MUSICBRAINZ5_EXPORT CNonMBTrack: public CEntity
+ 	{
+ 	public:
+ 		CNonMBTrack(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/PUID.h libmusicbrainz-5.0.1/include/musicbrainz5/PUID.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/PUID.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/PUID.h	2013-03-06 00:29:56.565912100 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/RecordingList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CPUIDPrivate;
+ 
+-	class CPUID: public CEntity
++	class MUSICBRAINZ5_EXPORT CPUID: public CEntity
+ 	{
+ 	public:
+ 		CPUID(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Query.h libmusicbrainz-5.0.1/include/musicbrainz5/Query.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Query.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Query.h	2013-03-06 00:29:56.572912500 +0100
+@@ -33,6 +33,7 @@
+ #include "musicbrainz5/Metadata.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ #include <string>
+ #include <map>
+@@ -181,7 +182,7 @@
+ 	 * library. Users of the C library should take note of the documentation for each
+ 	 * individual function in mb5_c.h
+ 	 */
+-	class CQuery
++	class MUSICBRAINZ5_EXPORT CQuery
+ 	{
+ 	public:
+ 		typedef std::map<std::string,std::string> tParamMap;
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Rating.h libmusicbrainz-5.0.1/include/musicbrainz5/Rating.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Rating.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Rating.h	2013-03-06 00:29:56.578912900 +0100
+@@ -30,12 +30,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CRatingPrivate;
+ 
+-	class CRating: public CEntity
++	class MUSICBRAINZ5_EXPORT CRating: public CEntity
+ 	{
+ 	public:
+ 		CRating(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Recording.h libmusicbrainz-5.0.1/include/musicbrainz5/Recording.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Recording.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Recording.h	2013-03-06 00:29:56.584913200 +0100
+@@ -42,6 +42,7 @@
+ #include "musicbrainz5/UserTagList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -51,7 +52,7 @@
+ 	class CRating;
+ 	class CUserRating;
+ 
+-	class CRecording: public CEntity
++	class MUSICBRAINZ5_EXPORT CRecording: public CEntity
+ 	{
+ 	public:
+ 		CRecording(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Relation.h libmusicbrainz-5.0.1/include/musicbrainz5/Relation.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Relation.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Relation.h	2013-03-06 00:29:56.589913500 +0100
+@@ -32,6 +32,7 @@
+ #include "musicbrainz5/AttributeList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -44,7 +45,7 @@
+ 	class CLabel;
+ 	class CWork;
+ 
+-	class CRelation: public CEntity
++	class MUSICBRAINZ5_EXPORT CRelation: public CEntity
+ 	{
+ 	public:
+ 		CRelation(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationList.h libmusicbrainz-5.0.1/include/musicbrainz5/RelationList.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationList.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationList.h	2013-03-06 00:29:56.593913800 +0100
+@@ -31,13 +31,14 @@
+ #include "musicbrainz5/ListImpl.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CRelation;
+ 	class CRelationListPrivate;
+ 
+-	class CRelationList: public CListImpl<CRelation>
++	class MUSICBRAINZ5_EXPORT CRelationList: public CListImpl<CRelation>
+ 	{
+ 	public:
+ 		CRelationList(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationListList.h libmusicbrainz-5.0.1/include/musicbrainz5/RelationListList.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/RelationListList.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/RelationListList.h	2013-03-06 00:29:56.597914000 +0100
+@@ -28,6 +28,7 @@
+ #include <iostream>
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -35,7 +36,7 @@
+ 
+ 	class CRelationList;
+ 
+-	class CRelationListList
++	class MUSICBRAINZ5_EXPORT CRelationListList
+ 	{
+ 	public:
+ 		CRelationListList();
+@@ -58,6 +59,6 @@
+ 	};
+ }
+ 
+-std::ostream& operator << (std::ostream& os, const MusicBrainz5::CRelationListList& RelationListList);
++MUSICBRAINZ5_EXPORT std::ostream& operator << (std::ostream& os, const MusicBrainz5::CRelationListList& RelationListList);
+ 
+ #endif
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Release.h libmusicbrainz-5.0.1/include/musicbrainz5/Release.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Release.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Release.h	2013-03-06 00:29:56.602914300 +0100
+@@ -30,8 +30,11 @@
+ #include "musicbrainz5/RelationList.h"
+ #include "musicbrainz5/MediumList.h"
+ #include "musicbrainz5/CollectionList.h"
++#include "musicbrainz5/Relation.h"
++#include "musicbrainz5/Medium.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ #include <string>
+ #include <iostream>
+@@ -45,7 +48,7 @@
+ 	class CReleaseGroup;
+ 	class CMedium;
+ 
+-	class CRelease: public CEntity
++	class MUSICBRAINZ5_EXPORT CRelease: public CEntity
+ 	{
+ 	public:
+ 		CRelease(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/ReleaseGroup.h libmusicbrainz-5.0.1/include/musicbrainz5/ReleaseGroup.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/ReleaseGroup.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/ReleaseGroup.h	2013-03-06 00:29:56.608914600 +0100
+@@ -36,6 +36,7 @@
+ #include "musicbrainz5/SecondaryTypeList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -46,7 +47,7 @@
+ 	class CUserRating;
+ 	class CSecondaryType;
+ 
+-	class CReleaseGroup: public CEntity
++	class MUSICBRAINZ5_EXPORT CReleaseGroup: public CEntity
+ 	{
+ 	public:
+ 		CReleaseGroup(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryType.h libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryType.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryType.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryType.h	2013-03-06 00:29:56.613914900 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CSecondaryTypePrivate;
+ 
+-	class CSecondaryType: public CEntity
++	class MUSICBRAINZ5_EXPORT CSecondaryType: public CEntity
+ 	{
+ 	public:
+ 		CSecondaryType(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryTypeList.h libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryTypeList.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/SecondaryTypeList.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/SecondaryTypeList.h	2013-03-06 00:29:56.618915200 +0100
+@@ -31,13 +31,14 @@
+ #include "musicbrainz5/ListImpl.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CSecondaryType;
+ 	class CSecondaryTypeListPrivate;
+ 
+-	class CSecondaryTypeList: public CListImpl<CSecondaryType>
++	class MUSICBRAINZ5_EXPORT CSecondaryTypeList: public CListImpl<CSecondaryType>
+ 	{
+ 	public:
+ 		CSecondaryTypeList(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Tag.h libmusicbrainz-5.0.1/include/musicbrainz5/Tag.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Tag.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Tag.h	2013-03-06 00:29:56.624915500 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CTagPrivate;
+ 
+-	class CTag: public CEntity
++	class MUSICBRAINZ5_EXPORT CTag: public CEntity
+ 	{
+ 	public:
+ 		CTag(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/TextRepresentation.h libmusicbrainz-5.0.1/include/musicbrainz5/TextRepresentation.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/TextRepresentation.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/TextRepresentation.h	2013-03-06 00:29:56.629915800 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CTextRepresentationPrivate;
+ 
+-	class CTextRepresentation: public CEntity
++	class MUSICBRAINZ5_EXPORT CTextRepresentation: public CEntity
+ 	{
+ 	public:
+ 		CTextRepresentation(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Track.h libmusicbrainz-5.0.1/include/musicbrainz5/Track.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Track.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Track.h	2013-03-06 00:29:56.636916200 +0100
+@@ -31,6 +31,7 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -39,7 +40,7 @@
+ 	class CRecording;
+ 	class CArtistCredit;
+ 
+-	class CTrack: public CEntity
++	class MUSICBRAINZ5_EXPORT CTrack: public CEntity
+ 	{
+ 	public:
+ 		CTrack(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserRating.h libmusicbrainz-5.0.1/include/musicbrainz5/UserRating.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserRating.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/UserRating.h	2013-03-06 00:29:56.640916400 +0100
+@@ -30,12 +30,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CUserRatingPrivate;
+ 
+-	class CUserRating: public CEntity
++	class MUSICBRAINZ5_EXPORT CUserRating: public CEntity
+ 	{
+ 	public:
+ 		CUserRating(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserTag.h libmusicbrainz-5.0.1/include/musicbrainz5/UserTag.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/UserTag.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/UserTag.h	2013-03-06 00:29:56.647916800 +0100
+@@ -31,12 +31,13 @@
+ #include "musicbrainz5/Entity.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+ 	class CUserTagPrivate;
+ 
+-	class CUserTag: public CEntity
++	class MUSICBRAINZ5_EXPORT CUserTag: public CEntity
+ 	{
+ 	public:
+ 		CUserTag(const XMLNode& Node);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/include/musicbrainz5/Work.h libmusicbrainz-5.0.1/include/musicbrainz5/Work.h
+--- libmusicbrainz-5.0.1.orig/include/musicbrainz5/Work.h	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/include/musicbrainz5/Work.h	2013-03-06 00:29:56.651917100 +0100
+@@ -35,6 +35,7 @@
+ #include "musicbrainz5/ISWCList.h"
+ 
+ #include "musicbrainz5/xmlParser.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ namespace MusicBrainz5
+ {
+@@ -45,7 +46,7 @@
+ 	class CRating;
+ 	class CUserRating;
+ 
+-	class CWork: public CEntity
++	class MUSICBRAINZ5_EXPORT CWork: public CEntity
+ 	{
+ 	public:
+ 		CWork(const XMLNode& Node=XMLNode::emptyNode());
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Artist.cc libmusicbrainz-5.0.1/src/Artist.cc
+--- libmusicbrainz-5.0.1.orig/src/Artist.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Artist.cc	2013-03-06 00:29:56.657917400 +0100
+@@ -50,6 +50,8 @@
+ #include "musicbrainz5/Tag.h"
+ #include "musicbrainz5/UserTagList.h"
+ #include "musicbrainz5/UserTag.h"
++#include "musicbrainz5/SecondaryType.h"
++#include "musicbrainz5/ISWC.h"
+ 
+ class MusicBrainz5::CArtistPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-medium-defines.inc libmusicbrainz-5.0.1/src/c-int-medium-defines.inc
+--- libmusicbrainz-5.0.1.orig/src/c-int-medium-defines.inc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/c-int-medium-defines.inc	2013-03-06 00:29:56.663917800 +0100
+@@ -22,6 +22,8 @@
+ 
+ ----------------------------------------------------------------------------*/
+ 
++#include "musicbrainz5/musicbrainz5_export.h"
++
+ /**
+  * @see MusicBrainz5::CMedium::ContainsDiscID
+  *
+@@ -30,4 +32,4 @@
+  *
+  * @return 1 if DiscID found, 0 otherwise
+  */
+-	unsigned char mb5_medium_contains_discid(Mb5Medium Medium, const char *DiscID);
++MUSICBRAINZ5_EXPORT unsigned char mb5_medium_contains_discid(Mb5Medium Medium, const char *DiscID);
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-query-defines.inc libmusicbrainz-5.0.1/src/c-int-query-defines.inc
+--- libmusicbrainz-5.0.1.orig/src/c-int-query-defines.inc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/c-int-query-defines.inc	2013-03-06 00:29:56.670918200 +0100
+@@ -34,8 +34,11 @@
+  * @return The newly created #Mb5Query object. This object <b>must</b> be deleted once
+  *				finished with.
+  */
++ 
++ #include "musicbrainz5/musicbrainz5_export.h"
+ 
+-	Mb5Query mb5_query_new(const char *UserAgent, const char *Server, int Port);
++
++ MUSICBRAINZ5_EXPORT Mb5Query mb5_query_new(const char *UserAgent, const char *Server, int Port);
+ 
+ /**
+  * Set the username for authenticating to MusicBrainz
+@@ -45,7 +48,7 @@
+  * @param Query #Mb5Query object
+  * @param UserName Username to use
+  */
+-	void mb5_query_set_username(Mb5Query Query, const char *UserName);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_username(Mb5Query Query, const char *UserName);
+ 
+ /**
+  * Set the password for authenticating to MusicBrainz
+@@ -55,7 +58,7 @@
+  * @param Query #Mb5Query object
+  * @param Password Password to use
+  */
+-	void mb5_query_set_password(Mb5Query Query, const char *Password);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_password(Mb5Query Query, const char *Password);
+ 
+ /**
+  * Set the proxy server
+@@ -65,7 +68,7 @@
+  * @param Query #Mb5Query object
+  * @param ProxyHost Proxy server to use
+  */
+-	void mb5_query_set_proxyhost(Mb5Query Query, const char *ProxyHost);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_proxyhost(Mb5Query Query, const char *ProxyHost);
+ 
+ /**
+  *	Set the port to use on the proxy server
+@@ -75,7 +78,7 @@
+  * @param Query #Mb5Query object
+  * @param ProxyPort Port to use on proxy server
+  */
+-	void mb5_query_set_proxyport(Mb5Query Query, int ProxyPort);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_proxyport(Mb5Query Query, int ProxyPort);
+ 
+ /**
+  *	Set the username to use to authenticate to the proxy server
+@@ -85,7 +88,7 @@
+  * @param Query #Mb5Query object
+  * @param	ProxyUserName User name to use
+  */
+-	void mb5_query_set_proxyusername(Mb5Query Query, const char *ProxyUserName);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_proxyusername(Mb5Query Query, const char *ProxyUserName);
+ 
+ /**
+  * Set the password to use to authenticate to the proxy server
+@@ -95,7 +98,7 @@
+  * @param Query #Mb5Query object
+  * @param ProxyPassword Password to use
+  */
+-	void mb5_query_set_proxypassword(Mb5Query Query, const char *ProxyPassword);
++ MUSICBRAINZ5_EXPORT void mb5_query_set_proxypassword(Mb5Query Query, const char *ProxyPassword);
+ 
+ /**
+  *	Return a list of releases that match the specified Disc ID
+@@ -108,7 +111,7 @@
+  * @return A #Mb5ReleaseList object. This object <b>must</b> be deleted once
+  *				finished with.
+  */
+-	Mb5ReleaseList mb5_query_lookup_discid(Mb5Query Query, const char *DiscID);
++ MUSICBRAINZ5_EXPORT Mb5ReleaseList mb5_query_lookup_discid(Mb5Query Query, const char *DiscID);
+ 
+ /**
+  * Return full information about a specific release
+@@ -121,7 +124,7 @@
+  * @return A #Mb5Release object. This object <b>must</b> be deleted once
+  *				finished with.
+  */
+-	Mb5Release mb5_query_lookup_release(Mb5Query Query, const char *Release);
++ MUSICBRAINZ5_EXPORT Mb5Release mb5_query_lookup_release(Mb5Query Query, const char *Release);
+ 
+ /**
+  *	Perform a generic query
+@@ -139,7 +142,7 @@
+  * @return A #Mb5Metadata object. This object <b>must</b> be deleted once
+  *				finished with.
+  */
+-	Mb5Metadata mb5_query_query(Mb5Query Query, const char *Entity, const char *ID, const char *Resource, int NumParams, char **ParamNames, char **ParamValues);
++ MUSICBRAINZ5_EXPORT Mb5Metadata mb5_query_query(Mb5Query Query, const char *Entity, const char *ID, const char *Resource, int NumParams, char **ParamNames, char **ParamValues);
+ 
+ /**
+  *	Add a list of releases to a collection
+@@ -153,7 +156,7 @@
+  *
+  * @return 0 on failure, 1 on success
+  */
+-	unsigned char mb5_query_add_collection_entries(Mb5Query Query, const char *Collection, int NumEntries, const char **Entries);
++ MUSICBRAINZ5_EXPORT unsigned char mb5_query_add_collection_entries(Mb5Query Query, const char *Collection, int NumEntries, const char **Entries);
+ 
+ /**
+  *	Delete a list of releases from a collection
+@@ -167,7 +170,7 @@
+  *
+  * @return 0 on failure, 1 on success
+  */
+-	unsigned char mb5_query_delete_collection_entries(Mb5Query Query, const char *Collection, int NumEntries, const char **Entries);
++ MUSICBRAINZ5_EXPORT unsigned char mb5_query_delete_collection_entries(Mb5Query Query, const char *Collection, int NumEntries, const char **Entries);
+ 
+ /**
+  * @see MusicBrainz5::CQuery::tQueryResult
+@@ -191,5 +194,5 @@
+  *
+  * @return Last query result code
+  */
+-	tQueryResult mb5_query_get_lastresult(Mb5Query Query);
++ MUSICBRAINZ5_EXPORT tQueryResult mb5_query_get_lastresult(Mb5Query Query);
+ 
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/c-int-release-defines.inc libmusicbrainz-5.0.1/src/c-int-release-defines.inc
+--- libmusicbrainz-5.0.1.orig/src/c-int-release-defines.inc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/c-int-release-defines.inc	2013-03-06 00:29:56.675918400 +0100
+@@ -22,6 +22,8 @@
+ 
+ ----------------------------------------------------------------------------*/
+ 
++#include "musicbrainz5/musicbrainz5_export.h"
++
+ /**
+  * @see MusicBrainz5::CRelease::MediaMatchingDiscID
+  *
+@@ -31,5 +33,5 @@
+  * @return #Mb5MediumList.  This object <b>must</b> be deleted once
+  *				finished with.
+  */
+-	Mb5MediumList mb5_release_media_matching_discid(Mb5Release Release, const char *DiscID);
++ MUSICBRAINZ5_EXPORT Mb5MediumList mb5_release_media_matching_discid(Mb5Release Release, const char *DiscID);
+ 
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/cinterface.xml libmusicbrainz-5.0.1/src/cinterface.xml
+--- libmusicbrainz-5.0.1.orig/src/cinterface.xml	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/cinterface.xml	2013-03-06 00:29:56.682918800 +0100
+@@ -46,6 +46,7 @@
+ #define _MUSICBRAINZ5_MB_C_H
+ 
+ #include "musicbrainz5/defines.h"
++#include "musicbrainz5/musicbrainz5_export.h"
+ 
+ #ifdef __cplusplus
+ extern "C"
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/CMakeLists.txt libmusicbrainz-5.0.1/src/CMakeLists.txt
+--- libmusicbrainz-5.0.1.orig/src/CMakeLists.txt	2013-03-06 00:48:36.185999100 +0100
++++ libmusicbrainz-5.0.1/src/CMakeLists.txt	2013-03-06 00:37:58.957408300 +0100
+@@ -15,11 +15,12 @@
+ 
+ ADD_EXECUTABLE(make-c-interface make-c-interface.cc xmlParser.cpp)
+ 
++FILE(GLOB _includes "*.inc")
+ ADD_CUSTOM_COMMAND(
+ 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.cc ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+ 	COMMAND make-c-interface ${CMAKE_CURRENT_SOURCE_DIR} cinterface.xml ${CMAKE_CURRENT_BINARY_DIR} mb5_c.cc mb5_c.h
+ 	COMMAND ${CMAKE_COMMAND} -E copy_if_different 	${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+-	DEPENDS make-c-interface cinterface.xml *.inc
++	DEPENDS make-c-interface cinterface.xml ${_includes}
+ )
+ 
+ ADD_CUSTOM_TARGET(src_gen DEPENDS mb5_c.h)
+@@ -29,12 +30,12 @@
+ SET_TARGET_PROPERTIES(musicbrainz5 PROPERTIES
+     VERSION ${musicbrainz5_VERSION}
+     SOVERSION ${musicbrainz5_SOVERSION}
+-    DEFINE_SYMBOL MB_API_EXPORTS
++    COMPILE_FLAGS "-D_USE_XMLPARSER_DLL -D_DLL_EXPORTS_"
+ )
+ 
+ if(CMAKE_BUILD_TYPE STREQUAL Debug)
+ 	SET_TARGET_PROPERTIES(musicbrainz5 PROPERTIES
+-		DEFINE_SYMBOL _MB5_DEBUG_
++		COMPILE_FLAGS "-D_USE_XMLPARSER_DLL -D_DLL_EXPORTS_ -D_MB5_DEBUG_"
+ 	)
+ 	IF(CMAKE_COMPILER_IS_GNUCXX)
+ 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -ggdb -O0")
+@@ -55,4 +56,5 @@
+ 		set_source_files_properties(mb5_c.cc PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+ 
+-INSTALL(TARGETS musicbrainz5 DESTINATION ${LIB_INSTALL_DIR})
++INSTALL(TARGETS musicbrainz5 RUNTIME DESTINATION ${BIN_INSTALL_DIR}
++                             ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Entity.cc libmusicbrainz-5.0.1/src/Entity.cc
+--- libmusicbrainz-5.0.1.orig/src/Entity.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Entity.cc	2013-03-06 00:29:56.693919500 +0100
+@@ -29,6 +29,7 @@
+ 
+ #include "musicbrainz5/RelationList.h"
+ #include "musicbrainz5/RelationListList.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CEntityPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/ISRC.cc libmusicbrainz-5.0.1/src/ISRC.cc
+--- libmusicbrainz-5.0.1.orig/src/ISRC.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/ISRC.cc	2013-03-06 00:29:56.699919800 +0100
+@@ -29,6 +29,7 @@
+ 
+ #include "musicbrainz5/RecordingList.h"
+ #include "musicbrainz5/Recording.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CISRCPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/LabelInfo.cc libmusicbrainz-5.0.1/src/LabelInfo.cc
+--- libmusicbrainz-5.0.1.orig/src/LabelInfo.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/LabelInfo.cc	2013-03-06 00:29:56.704920100 +0100
+@@ -28,6 +28,7 @@
+ #include "musicbrainz5/LabelInfo.h"
+ 
+ #include "musicbrainz5/Label.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CLabelInfoPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/make-c-interface.cc libmusicbrainz-5.0.1/src/make-c-interface.cc
+--- libmusicbrainz-5.0.1.orig/src/make-c-interface.cc	2013-03-06 00:48:36.200999100 +0100
++++ libmusicbrainz-5.0.1/src/make-c-interface.cc	2013-03-06 00:29:56.712920600 +0100
+@@ -189,7 +189,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_attributes_size(Mb5Entity Entity);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_attributes_size(Mb5Entity Entity);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Include << "/**" << std::endl;
+@@ -202,7 +202,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_attribute_name(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_attribute_name(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Include << "/**" << std::endl;
+@@ -215,7 +215,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_attribute_value(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_attribute_value(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Include << "/**" << std::endl;
+@@ -225,7 +225,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_elements_size(Mb5Entity Entity);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_elements_size(Mb5Entity Entity);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Include << "/**" << std::endl;
+@@ -238,7 +238,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_element_name(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_element_name(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Include << "/**" << std::endl;
+@@ -251,7 +251,7 @@
+ 	Include << " *" << std::endl;
+ 	Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 	Include << " */" << std::endl;
+-	Include << "  int mb5_entity_ext_element_value(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
++	Include << " MUSICBRAINZ5_EXPORT int mb5_entity_ext_element_value(Mb5Entity Entity, int Item, char *str, int len);" << std::endl;
+ 	Include << std::endl;
+ 
+ 	Source << "  MB5_C_EXT_GETTER(Attribute,attribute)" << std::endl;
+@@ -276,7 +276,7 @@
+ 		Include << "*" << std::endl;
+ 		Include << "* @param " << UpperName << " Object to delete" << std::endl;
+ 		Include << "*/" << std::endl;
+-		Include << "  void mb5_" << LowerName << "_delete(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT void mb5_" << LowerName << "_delete(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 		Include << std::endl;
+ 
+ 		Source << "  MB5_C_DELETE(" << UpperName << "," << LowerName << ")" << std::endl;
+@@ -289,7 +289,7 @@
+ 		Include << "* @return Cloned object. This object <b>must</b> be deleted once" << std::endl;
+ 		Include << "*				finished with." << std::endl;
+ 		Include << "*/" << std::endl;
+-		Include << "  Mb5" << UpperName << " mb5_" << LowerName << "_clone(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT Mb5" << UpperName << " mb5_" << LowerName << "_clone(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 		Include << std::endl;
+ 
+ 		Source << "  MB5_C_CLONE(" << UpperName << "," << LowerName << ")" << std::endl;
+@@ -354,7 +354,7 @@
+ 						if (Deprecated)
+ 							Include << "LIBMB5_DEPRECATED(" << Replacement << ") ";
+ 
+-						Include << "int mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ", char *str, int len);" << std::endl;
++						Include << "MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ", char *str, int len);" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_STR_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -368,7 +368,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return Returned value" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  int mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_INT_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -382,7 +382,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return Returned value" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  double mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT double mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_DOUBLE_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -396,7 +396,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return #Mb5" << PropertyUpperName << " object" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  Mb5" << PropertyUpperName << " mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT Mb5" << PropertyUpperName << " mb5_" << LowerName << "_get_" << PropertyLowerName << "(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -410,7 +410,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return #Mb5" << PropertyUpperName << "List object" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "List," << PropertyLowerName << "list)" << std::endl;
+@@ -424,7 +424,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return #Mb5" << PropertyUpperName << "List object" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "List," << PropertyLowerName << "list)" << std::endl;
+@@ -438,7 +438,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return #Mb5" << PropertyUpperName << "List object" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT Mb5" << PropertyUpperName << "List mb5_" << LowerName << "_get_" << PropertyLowerName << "list(Mb5" << UpperName << " " << UpperName << ");" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "," << LowerName << "," << PropertyUpperName << "List," << PropertyLowerName << "list)" << std::endl;
+@@ -483,14 +483,14 @@
+ 		Include << " *" << std::endl;
+ 		Include << " * @param List List to delete" << std::endl;
+ 		Include << " */" << std::endl;
+-		Include << "  void mb5_" << LowerName << "_list_delete(Mb5" << UpperName << "List List);" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT void mb5_" << LowerName << "_list_delete(Mb5" << UpperName << "List List);" << std::endl;
+ 		Include << std::endl;
+ 		Include << "/**" << std::endl;
+ 		Include << " * Return the number of entries in a #Mb5" << UpperName << "List" << std::endl;
+ 		Include << " *" << std::endl;
+ 		Include << " * @param	List List to use" << std::endl;
+ 		Include << " */" << std::endl;
+-		Include << "  int mb5_" << LowerName << "_list_size(Mb5" << UpperName << "List List);" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_size(Mb5" << UpperName << "List List);" << std::endl;
+ 		Include << std::endl;
+ 		Include << "/**" << std::endl;
+ 		Include << " * Returns an entry from a #Mb5" << UpperName << "List" << std::endl;
+@@ -500,21 +500,21 @@
+ 		Include << " *" << std::endl;
+ 		Include << " * @return A #Mb5" << UpperName << " object." << std::endl;
+ 		Include << " */" << std::endl;
+-		Include << "  Mb5" << UpperName << " mb5_" << LowerName << "_list_item(Mb5" << UpperName << "List List, int Item);" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT Mb5" << UpperName << " mb5_" << LowerName << "_list_item(Mb5" << UpperName << "List List, int Item);" << std::endl;
+ 		Include << std::endl;
+ 		Include << "/**" << std::endl;
+ 		Include << " *	Return the count of entries in an #Mb5" << UpperName << "List" << std::endl;
+ 		Include << " *" << std::endl;
+ 		Include << " * @param	List List to use" << std::endl;
+ 		Include << " */" << std::endl;
+-		Include << "	int mb5_" << LowerName << "_list_get_count(Mb5" << UpperName << "List List);" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_get_count(Mb5" << UpperName << "List List);" << std::endl;
+ 		Include << std::endl;
+ 		Include << "/**" << std::endl;
+ 		Include << " *	Return the offset of entries in an #Mb5" << UpperName << "List" << std::endl;
+ 		Include << " *" << std::endl;
+ 		Include << " * @param	List List to use" << std::endl;
+ 		Include << " */" << std::endl;
+-		Include << "	int mb5_" << LowerName << "_list_get_offset(Mb5" << UpperName << "List List);" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_get_offset(Mb5" << UpperName << "List List);" << std::endl;
+ 		Include << std::endl;
+ 
+ 		Source << "  MB5_C_LIST_GETTER(" << UpperName << "," << LowerName << ")" << std::endl;
+@@ -527,7 +527,7 @@
+ 		Include << "* @return Cloned list. This list <b>must</b> be deleted once" << std::endl;
+ 		Include << "*				finished with." << std::endl;
+ 		Include << "*/" << std::endl;
+-		Include << "  Mb5" << UpperName << "List mb5_" << LowerName << "_list_clone(Mb5" << UpperName << "List " << UpperName << "List" << ");" << std::endl;
++		Include << " MUSICBRAINZ5_EXPORT Mb5" << UpperName << "List mb5_" << LowerName << "_list_clone(Mb5" << UpperName << "List " << UpperName << "List" << ");" << std::endl;
+ 		Include << std::endl;
+ 
+ 		Source << "  MB5_C_CLONE(" << UpperName << "List," << LowerName << "_list)" << std::endl;
+@@ -562,7 +562,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return The number of characters in the string to copy (not including terminating NULL)" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List, char *str, int len);" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List, char *str, int len);" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_STR_GETTER(" << UpperName << "List," << LowerName << "_list," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -576,7 +576,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return Returned value" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_INT_GETTER(" << UpperName << "List," << LowerName << "_list," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -590,7 +590,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return Returned value" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  double mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT double mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_DOUBLE_GETTER(" << UpperName << "List," << LowerName << "_list," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+@@ -604,7 +604,7 @@
+ 						Include << " *" << std::endl;
+ 						Include << " * @return #Mb5" << PropertyUpperName << " object" << std::endl;
+ 						Include << " */" << std::endl;
+-						Include << "  int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
++						Include << " MUSICBRAINZ5_EXPORT int mb5_" << LowerName << "_list_get_" << PropertyLowerName << "(Mb5" << UpperName << "List List);" << std::endl;
+ 						Include << std::endl;
+ 
+ 						Source << "  MB5_C_OBJ_GETTER(" << UpperName << "List," << LowerName << "_list," << PropertyUpperName << "," << PropertyLowerName << ")" << std::endl;
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Metadata.cc libmusicbrainz-5.0.1/src/Metadata.cc
+--- libmusicbrainz-5.0.1.orig/src/Metadata.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Metadata.cc	2013-03-06 00:29:56.719921000 +0100
+@@ -60,6 +60,8 @@
+ #include "musicbrainz5/LabelInfo.h"
+ #include "musicbrainz5/LabelInfoList.h"
+ #include "musicbrainz5/Message.h"
++#include "musicbrainz5/SecondaryType.h"
++#include "musicbrainz5/ISWC.h"
+ 
+ class MusicBrainz5::CMetadataPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/NameCredit.cc libmusicbrainz-5.0.1/src/NameCredit.cc
+--- libmusicbrainz-5.0.1.orig/src/NameCredit.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/NameCredit.cc	2013-03-06 00:29:56.731921600 +0100
+@@ -28,6 +28,7 @@
+ #include "musicbrainz5/NameCredit.h"
+ 
+ #include "musicbrainz5/Artist.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CNameCreditPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/PUID.cc libmusicbrainz-5.0.1/src/PUID.cc
+--- libmusicbrainz-5.0.1.orig/src/PUID.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/PUID.cc	2013-03-06 00:29:56.739922100 +0100
+@@ -29,6 +29,7 @@
+ 
+ #include "musicbrainz5/RecordingList.h"
+ #include "musicbrainz5/Recording.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CPUIDPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Query.cc libmusicbrainz-5.0.1/src/Query.cc
+--- libmusicbrainz-5.0.1.orig/src/Query.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Query.cc	2013-03-06 00:29:56.751922800 +0100
+@@ -35,8 +35,13 @@
+ #include <iostream>
+ 
+ #include <string.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#include <windows.h>
++#else
+ #include <unistd.h>
+ #include <sys/time.h>
++#endif
+ 
+ #include <ne_uri.h>
+ 
+@@ -170,7 +175,7 @@
+ 		}
+ 	}
+ 
+-	catch (CConnectionError& Error)
++	catch (CConnectionError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_ConnectionError;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -179,7 +184,7 @@
+ 		throw;
+ 	}
+ 
+-	catch (CTimeoutError& Error)
++	catch (CTimeoutError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_Timeout;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -188,7 +193,7 @@
+ 		throw;
+ 	}
+ 
+-	catch (CAuthenticationError& Error)
++	catch (CAuthenticationError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_AuthenticationError;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -197,7 +202,7 @@
+ 		throw;
+ 	}
+ 
+-	catch (CFetchError& Error)
++	catch (CFetchError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_FetchError;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -206,7 +211,7 @@
+ 		throw;
+ 	}
+ 
+-	catch (CRequestError& Error)
++	catch (CRequestError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_RequestError;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -215,7 +220,7 @@
+ 		throw;
+ 	}
+ 
+-	catch (CResourceNotFoundError& Error)
++	catch (CResourceNotFoundError& _Error)
+ 	{
+ 		m_d->m_LastResult=CQuery::eQuery_ResourceNotFound;
+ 		m_d->m_LastHTTPCode=Fetch.Status();
+@@ -283,6 +288,7 @@
+ 
+ void MusicBrainz5::CQuery::WaitRequest() const
+ {
++#ifndef _WIN32
+ 	if (m_d->m_Server.find("musicbrainz.org")!=std::string::npos)
+ 	{
+ 		static struct timeval LastRequest;
+@@ -307,6 +313,7 @@
+ 
+ 		memcpy(&LastRequest,&TimeNow,sizeof(LastRequest));
+ 	}
++#endif
+ }
+ 
+ bool MusicBrainz5::CQuery::AddCollectionEntries(const std::string& CollectionID, const std::vector<std::string>& Entries)
+@@ -408,7 +415,7 @@
+ 			}
+ 		}
+ 
+-		catch (CConnectionError& Error)
++		catch (CConnectionError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_ConnectionError;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+@@ -417,7 +424,7 @@
+ 			throw;
+ 		}
+ 
+-		catch (CTimeoutError& Error)
++		catch (CTimeoutError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_Timeout;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+@@ -426,7 +433,7 @@
+ 			throw;
+ 		}
+ 
+-		catch (CAuthenticationError& Error)
++		catch (CAuthenticationError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_AuthenticationError;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+@@ -435,7 +442,7 @@
+ 			throw;
+ 		}
+ 
+-		catch (CFetchError& Error)
++		catch (CFetchError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_FetchError;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+@@ -444,7 +451,7 @@
+ 			throw;
+ 		}
+ 
+-		catch (CRequestError& Error)
++		catch (CRequestError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_RequestError;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+@@ -453,7 +460,7 @@
+ 			throw;
+ 		}
+ 
+-		catch (CResourceNotFoundError& Error)
++		catch (CResourceNotFoundError& _Error)
+ 		{
+ 			m_d->m_LastResult=CQuery::eQuery_ResourceNotFound;
+ 			m_d->m_LastHTTPCode=Fetch.Status();
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Relation.cc libmusicbrainz-5.0.1/src/Relation.cc
+--- libmusicbrainz-5.0.1.orig/src/Relation.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Relation.cc	2013-03-06 00:29:56.757923100 +0100
+@@ -35,6 +35,8 @@
+ #include "musicbrainz5/Work.h"
+ #include "musicbrainz5/AttributeList.h"
+ #include "musicbrainz5/Attribute.h"
++#include "musicbrainz5/SecondaryType.h"
++#include "musicbrainz5/ISWC.h"
+ 
+ class MusicBrainz5::CRelationPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Release.cc libmusicbrainz-5.0.1/src/Release.cc
+--- libmusicbrainz-5.0.1.orig/src/Release.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Release.cc	2013-03-06 00:29:56.766923600 +0100
+@@ -42,6 +42,7 @@
+ #include "musicbrainz5/Medium.h"
+ #include "musicbrainz5/Collection.h"
+ #include "musicbrainz5/CollectionList.h"
++#include "musicbrainz5/SecondaryType.h"
+ 
+ class MusicBrainz5::CReleasePrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Track.cc libmusicbrainz-5.0.1/src/Track.cc
+--- libmusicbrainz-5.0.1.orig/src/Track.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Track.cc	2013-03-06 00:29:56.775924200 +0100
+@@ -29,6 +29,7 @@
+ 
+ #include "musicbrainz5/Recording.h"
+ #include "musicbrainz5/ArtistCredit.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CTrackPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/src/Work.cc libmusicbrainz-5.0.1/src/Work.cc
+--- libmusicbrainz-5.0.1.orig/src/Work.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/src/Work.cc	2013-03-06 00:29:56.785924700 +0100
+@@ -40,6 +40,7 @@
+ #include "musicbrainz5/UserRating.h"
+ #include "musicbrainz5/ISWC.h"
+ #include "musicbrainz5/ISWCList.h"
++#include "musicbrainz5/Relation.h"
+ 
+ class MusicBrainz5::CWorkPrivate
+ {
+diff -Nru -x '*~' libmusicbrainz-5.0.1.orig/tests/mbtest.cc libmusicbrainz-5.0.1/tests/mbtest.cc
+--- libmusicbrainz-5.0.1.orig/tests/mbtest.cc	2012-05-16 21:48:34.000000000 +0200
++++ libmusicbrainz-5.0.1/tests/mbtest.cc	2013-03-06 00:29:56.793925200 +0100
+@@ -24,7 +24,9 @@
+ 
+ #include <iostream>
+ 
++#ifndef _WIN32
+ #include <strings.h>
++#endif
+ 
+ #include "musicbrainz5/Query.h"
+ #include "musicbrainz5/Release.h"

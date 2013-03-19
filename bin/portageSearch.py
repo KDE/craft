@@ -15,7 +15,7 @@ def printSearch(search_category, search_package,maxDist = 3):
                     break;
                 elif package_re.match(package):
                     similar.append((levDist-maxDist,category,package,version))
-                elif levDist <= maxDist:
+                elif len(package)>maxDist and levDist <= maxDist:
                     similar.append((levDist,category,package,version))
                 
         if match == None:

@@ -1,0 +1,165 @@
+diff -Nru -x '*~' neon-0.29.6.orig/CMakeLists.txt neon-0.29.6/CMakeLists.txt
+--- neon-0.29.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ neon-0.29.6/CMakeLists.txt	2013-03-08 11:20:11.317918500 +0100
+@@ -0,0 +1,136 @@
++project(neon)
++
++cmake_minimum_required(VERSION 2.8)
++
++find_package(ZLIB)
++find_package(OpenSSL)
++find_package(EXPAT)
++
++option(ENABLE_IPV6 "Support for IPv6" ON)
++option(INSTALL_DOCS "install documentation for neon" ON)
++
++set(NEON_REQUIRED_LIBS)
++
++if(${ENABLE_IPV6})
++    add_definitions(-DUSE_GETADDRINFO)
++endif(${ENABLE_IPV6})
++
++if(EXPAT_FOUND)
++    add_definitions(-DHAVE_EXPAT -DHAVE_EXPAT_H -DNE_HAVE_DAV)
++    include_directories(${EXPAT_INCLUDE_DIRS})
++    list(APPEND NEON_REQUIRED_LIBS ${EXPAT_LIBRARIES})
++endif(EXPAT_FOUND)
++
++if(OpenSSL_FOUND)
++    add_definitions()
++    include_directories(${OPENSSL_INCLUDE_DIR})
++    list(APPEND NEON_REQUIRED_LIBS ${OPENSSL_LIBRARIES})
++endif(OpenSSL_FOUND)
++
++if(ZLIB_FOUND)
++    add_definitions(-DNE_HAVE_ZLIB)
++    include_directories(${ZLIB_INCLUDE_DIRS})
++    list(APPEND NEON_REQUIRED_LIBS ${ZLIB_LIBRARIES})
++endif(ZLIB_FOUND)
++
++if(WIN32)
++    add_definitions(-DWIN32_LEAN_AND_MEAN -DNOUSER -DNOGDI -DNONLS -DNOCRYPT)
++    if(MSVC)
++        add_definitions(-D_CRT_SECURE_NO_WARNING -wd4996)
++    endif(MSVC)
++endif(WIN32)
++
++set(neon_SRCS
++    src/ne_alloc.c
++    src/ne_auth.c
++    src/ne_basic.c
++    src/ne_compress.c
++    src/ne_dates.c
++    src/ne_i18n.c
++    src/ne_md5.c
++    src/ne_pkcs11.c
++    src/ne_redirect.c
++    src/ne_request.c
++    src/ne_session.c
++    src/ne_socket.c
++    src/ne_socks.c
++    src/ne_sspi.c
++    src/ne_string.c
++    src/ne_uri.c
++    src/ne_utils.c
++)
++
++if(EXPAT_FOUND)
++    list(APPEND neon_SRCS
++        src/ne_207.c
++        src/ne_xml.c
++        src/ne_xmlreq.c
++        src/ne_oldacl.c
++        src/ne_acl3744.c
++        src/ne_props.c
++        src/ne_locks.c
++    )
++endif(EXPAT_FOUND)
++
++if(OpenSSL_FOUND)
++    list(APPEND neon_SRCS
++        src/ne_openssl.c
++    )
++else(OpenSSL_FOUND)
++    list(APPEND neon_SRCS
++        src/ne_stubssl.c
++    )
++endif(OpenSSL_FOUND)
++
++if(WIN32)
++    configure_file(config.hw config.h COPYONLY)
++    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
++endif(WIN32)
++
++add_library(neon STATIC ${neon_SRCS})
++target_link_libraries(neon ${NEON_REQUIRED_LIBS})
++
++install(TARGETS neon RUNTIME DESTINATION bin
++                     LIBRARY DESTINATION lib
++                     ARCHIVE DESTINATION lib)
++
++set(neon_HDRS
++    src/ne_request.h
++    src/ne_session.h
++    src/ne_utils.h
++    src/ne_uri.h
++    src/ne_socket.h
++    src/ne_basic.h
++    src/ne_207.h
++    src/ne_props.h
++    src/ne_xml.h
++    src/ne_dates.h
++    src/ne_string.h
++    src/ne_defs.h
++    src/ne_locks.h
++    src/ne_alloc.h
++    src/ne_md5.h
++    src/ne_i18n.h
++    src/ne_redirect.h
++    src/ne_auth.h
++    src/ne_compress.h
++    src/ne_acl.h
++    src/ne_ssl.h
++    src/ne_xmlreq.h
++    src/ne_pkcs11.h
++    src/ne_acl3744.h
++)
++
++install(FILES ${neon_HDRS} DESTINATION include/neon)
++
++if(INSTALL_DOCS)
++    file(GLOB neon_html_DOCS "${CMAKE_CURRENT_SOURCE_DIR}/doc/html/*")
++
++    install(FILES ${neon_html_DOCS} DESTINATION share/doc/neon/html)
++
++    file(GLOB neon_man1_DOCS "${CMAKE_CURRENT_SOURCE_DIR}/doc/man/*.1")
++    file(GLOB neon_man3_DOCS "${CMAKE_CURRENT_SOURCE_DIR}/doc/man/*.3")
++
++    install(FILES ${neon_man1_DOCS} DESTINATION share/man/man1)
++    install(FILES ${neon_man3_DOCS} DESTINATION share/man/man3)
++endif(INSTALL_DOCS)
+\ No newline at end of file
+diff -Nru -x '*~' neon-0.29.6.orig/config.hw neon-0.29.6/config.hw
+--- neon-0.29.6.orig/config.hw	2011-05-03 14:24:49.000000000 +0200
++++ neon-0.29.6/config.hw	2013-03-08 11:22:28.506006000 +0100
+@@ -65,10 +65,12 @@
+ #if defined(_MSC_VER) && _MSC_VER >= 1400
+ #define strcasecmp			_strcmpi
+ #define strncasecmp			_strnicmp
++typedef int socklen_t;
+ #else
+ #define strcasecmp			strcmpi
+ #define strncasecmp			strnicmp
+ #endif
++
+ #define ssize_t				int
+ #define inline                          __inline
+ #define off_t                           _off_t
+@@ -77,7 +79,6 @@
+ #define in_addr_t                       unsigned int
+ #endif
+ 
+-typedef int socklen_t;
+ 
+ #include <io.h>
+ #define read _read

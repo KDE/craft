@@ -33,6 +33,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
+        self.dependencies['gnuwin32/sed'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

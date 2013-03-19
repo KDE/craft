@@ -1,6 +1,6 @@
 diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/cmake/modules/FindWcecompat.cmake sqlite-amalgamation-3071502/cmake/modules/FindWcecompat.cmake
 --- sqlite-amalgamation-3071502.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3071502/cmake/modules/FindWcecompat.cmake	2013-02-04 01:26:50.852770900 +0100
++++ sqlite-amalgamation-3071502/cmake/modules/FindWcecompat.cmake	2013-02-28 14:13:57.851137000 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -37,8 +37,8 @@ diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/cmake/modules/FindWcecompat.c
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/CMakeLists.txt sqlite-amalgamation-3071502/CMakeLists.txt
 --- sqlite-amalgamation-3071502.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3071502/CMakeLists.txt	2013-02-18 14:36:50.906378500 +0100
-@@ -0,0 +1,40 @@
++++ sqlite-amalgamation-3071502/CMakeLists.txt	2013-02-28 20:45:28.060941400 +0100
+@@ -0,0 +1,41 @@
 +project( Sqlite )
 +cmake_minimum_required( VERSION 2.6 )
 +
@@ -66,22 +66,23 @@ diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/CMakeLists.txt sqlite-amalgam
 +set( libsqlite_SRC ${CMAKE_CURRENT_BINARY_DIR}/sqlite3.c  )
 +set( sqlite_SRC shell.c )
 +
-+add_library( sqlite3 ${LIBRARY_TYPE}  ${libsqlite_SRC} )
++add_library( libsqlite3 ${LIBRARY_TYPE}  ${libsqlite_SRC} )
 +if(WINCE)
-+    target_link_libraries(sqlite3 ${WCECOMPAT_LIBRARIES})
++    target_link_libraries(libsqlite3 ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
-+install( TARGETS sqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++set_target_properties( libsqlite3 PROPERTIES RUNTIME_OUTPUT_NAME libsqlite ARCHIVE_OUTPUT_NAME sqlite3 )
++install( TARGETS libsqlite3 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 +add_executable( sqlite3_bin ${sqlite_SRC} )
-+target_link_libraries( sqlite3_bin sqlite3 )
-+set_target_properties( sqlite3_bin PROPERTIES RUNTIME_OUTPUT_NAME sqlite3 )
++target_link_libraries( sqlite3_bin libsqlite3 )
++set_target_properties( sqlite3_bin PROPERTIES RUNTIME_OUTPUT_NAME sqlite3 ARCHIVE_OUTPUT_NAME sqlite3_bin )
 +
 +install( TARGETS sqlite3_bin RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
 +install( FILES ${sqlite_HEADER} DESTINATION include )
 diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/shell.c sqlite-amalgamation-3071502/shell.c
---- sqlite-amalgamation-3071502.orig/shell.c	2013-02-18 14:37:04.416397400 +0100
-+++ sqlite-amalgamation-3071502/shell.c	2013-02-04 01:26:50.864771600 +0100
+--- sqlite-amalgamation-3071502.orig/shell.c	2013-02-28 20:46:13.176521800 +0100
++++ sqlite-amalgamation-3071502/shell.c	2013-02-28 14:13:57.858137400 +0100
 @@ -32,7 +32,7 @@
  #include <string.h>
  #include <stdio.h>
@@ -92,8 +93,8 @@ diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/shell.c sqlite-amalgamation-3
  #include <stdarg.h>
  
 diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/sqlite3.c sqlite-amalgamation-3071502/sqlite3.c
---- sqlite-amalgamation-3071502.orig/sqlite3.c	2013-02-18 14:37:04.486397500 +0100
-+++ sqlite-amalgamation-3071502/sqlite3.c	2013-02-04 01:26:50.965777400 +0100
+--- sqlite-amalgamation-3071502.orig/sqlite3.c	2013-02-28 20:46:13.224524600 +0100
++++ sqlite-amalgamation-3071502/sqlite3.c	2013-02-28 14:13:57.939142000 +0100
 @@ -23,7 +23,19 @@
  # define SQLITE_PRIVATE static
  #endif
@@ -125,8 +126,8 @@ diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/sqlite3.c sqlite-amalgamation
  #endif
  
 diff -Nru -x '*~' sqlite-amalgamation-3071502.orig/sqlite3.h sqlite-amalgamation-3071502/sqlite3.h
---- sqlite-amalgamation-3071502.orig/sqlite3.h	2013-02-18 14:37:04.411397400 +0100
-+++ sqlite-amalgamation-3071502/sqlite3.h	2013-02-04 01:26:50.983778400 +0100
+--- sqlite-amalgamation-3071502.orig/sqlite3.h	2013-02-28 20:46:13.173521600 +0100
++++ sqlite-amalgamation-3071502/sqlite3.h	2013-02-28 14:30:31.350457100 +0100
 @@ -49,8 +49,21 @@
  # define SQLITE_EXTERN extern
  #endif
