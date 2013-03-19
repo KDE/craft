@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
         self.targetDigests['1.48.0'] = 'f221f067620e5af137e415869bd96ad667db9830'
         self.targetDigests['1.49.0'] = '406903ce4f946f44b126d6c8bfefafed2fc9fdc4'
+        self.targetDigests['1.52.0'] = 'c3b2ef5633d4a6c30fece86ed9116be853695f82'
 
         self.patchToApply['1.48.0'] = [('boost_1_47_0-20110815.diff',1)]
         self.patchToApply['1.47.0'] = [('boost_1_47_0-20110815.diff',1)]

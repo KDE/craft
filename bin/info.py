@@ -107,7 +107,7 @@ class infoclass(object):
         self.disableHostBuild = False
         self.disableTargetBuild = False
 
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None ):
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None ):
         """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
@@ -129,8 +129,13 @@ class infoclass(object):
             compilerName = "vc100"
         ret = ''
         # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
-        for packageType in packagetypes:
-            ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
+        if scheme == 'sf':
+            for packageType in packagetypes:
+                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
+        else:
+            for packageType in packagetypes:
+                ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
+
         return ret
 
     def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=None ): # pylint: disable=W0613
@@ -192,6 +197,11 @@ example:
         for packageType in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
         return ret
+
+    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None):
+        """return full url of a package provided by the kdewin mirrors"""
+        repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
+        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf' )
 
     def getPackageList( self, baseUrl, files ):
         """returns a package url for multiple files from the same base url"""
