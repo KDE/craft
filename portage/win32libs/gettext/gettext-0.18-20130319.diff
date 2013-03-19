@@ -1,6 +1,6 @@
 diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/cmake/Modules/Findiconv.cmake
 --- gettext-0.18.orig/cmake/Modules/Findiconv.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/cmake/Modules/Findiconv.cmake	2012-04-21 23:16:04.131271700 +0200
++++ gettext-0.18/cmake/Modules/Findiconv.cmake	2013-03-19 08:59:56.985779000 +0100
 @@ -0,0 +1,60 @@
 +# - Try to find Iconv 
 +# Once done this will define 
@@ -64,7 +64,7 @@ diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/Findiconv.cmake gettext-0.18/c
 +)
 diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake gettext-0.18/cmake/Modules/FindWcecompat.cmake
 --- gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/cmake/Modules/FindWcecompat.cmake	2012-04-21 23:16:04.125271400 +0200
++++ gettext-0.18/cmake/Modules/FindWcecompat.cmake	2013-03-19 08:59:56.997779700 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -101,7 +101,7 @@ diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/FindWcecompat.cmake gettext-0.
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake gettext-0.18/cmake/Modules/MacroBoolTo01.cmake
 --- gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/cmake/Modules/MacroBoolTo01.cmake	2012-04-21 23:16:04.134271900 +0200
++++ gettext-0.18/cmake/Modules/MacroBoolTo01.cmake	2013-03-19 08:59:57.000779900 +0100
 @@ -0,0 +1,20 @@
 +# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
 +# This macro evaluates its first argument
@@ -125,7 +125,7 @@ diff -Nru -x '*~' gettext-0.18.orig/cmake/Modules/MacroBoolTo01.cmake gettext-0.
 +ENDMACRO(MACRO_BOOL_TO_01)
 diff -Nru -x '*~' gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 --- gettext-0.18.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/CMakeLists.txt	2012-04-22 00:00:31.473835000 +0200
++++ gettext-0.18/CMakeLists.txt	2013-03-19 09:08:26.381914800 +0100
 @@ -0,0 +1,39 @@
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -168,7 +168,7 @@ diff -Nru -x '*~' gettext-0.18.orig/CMakeLists.txt gettext-0.18/CMakeLists.txt
 +#add_subdirectory(gettext-tools)
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/gettext-runtime/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/CMakeLists.txt	2012-04-21 23:16:04.138272100 +0200
++++ gettext-0.18/gettext-runtime/CMakeLists.txt	2013-03-19 08:59:57.007780300 +0100
 @@ -0,0 +1,23 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
@@ -195,8 +195,8 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/CMakeLists.txt gettext-0.18/
 +
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/gettext-runtime/config.h.cmake
 --- gettext-0.18.orig/gettext-runtime/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/config.h.cmake	2012-04-21 23:16:04.150272800 +0200
-@@ -0,0 +1,1270 @@
++++ gettext-0.18/gettext-runtime/config.h.cmake	2013-03-19 09:28:16.508986200 +0100
+@@ -0,0 +1,1276 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define if the compiler is building for multiple architectures of Apple
@@ -1143,7 +1143,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/
 +#cmakedefine HAVE___FSETLOCKING 1
 +
 +/* Define as const if the declaration of iconv() needs const. */
-+#cmakedefine ICONV_CONST @ICONV_CONST@
++#cmakedefine HAVE_ICONV_CONST @HAVE_ICONV_CONST@
 +
 +/* Define to a symbolic name denoting the flavor of iconv_open()
 +   implementation. */
@@ -1467,9 +1467,16 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/config.h.cmake gettext-0.18/
 +#ifdef _MSC_VER
 +#define inline __inline
 +#endif
++
++#ifdef HAVE_ICONV_CONST
++#define ICONV_CONST const
++#else
++#define ICONV_CONST
++#endif
+\ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettext-0.18/gettext-runtime/ConfigureChecks.cmake
 --- gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	2012-04-21 23:16:04.145272500 +0200
++++ gettext-0.18/gettext-runtime/ConfigureChecks.cmake	2013-03-19 09:27:52.972640000 +0100
 @@ -0,0 +1,161 @@
 +include(CheckFunctionExists)
 +include(CheckIncludeFile)
@@ -1608,7 +1615,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettex
 +endif(HAVE_UINTMAX_T)
 +
 +if(ICONV_SECOND_ARGUMENT_IS_CONST)
-+    set(ICONV_CONST const)
++    set(HAVE_ICONV_CONST 1)
 +endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 +
 +if(NOT HAVE_UINTMAX_T)
@@ -1632,10 +1639,10 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/ConfigureChecks.cmake gettex
 +configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 +
 +add_definitions(-DHAVE_CONFIG_H -DLIBDIR)
-\ No newline at end of file
+\ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-0.18/gettext-runtime/intl/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	2012-04-21 23:20:32.625628700 +0200
++++ gettext-0.18/gettext-runtime/intl/CMakeLists.txt	2013-03-19 08:59:57.015780700 +0100
 @@ -0,0 +1,70 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
@@ -1709,7 +1716,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-
 +install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libgnuintl.h DESTINATION include RENAME libintl.h)
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.18/gettext-runtime/intl/dcigettext.c
 --- gettext-0.18.orig/gettext-runtime/intl/dcigettext.c	2009-12-26 14:42:37.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/dcigettext.c	2012-04-21 23:16:04.159273300 +0200
++++ gettext-0.18/gettext-runtime/intl/dcigettext.c	2013-03-19 08:59:57.017780800 +0100
 @@ -140,8 +140,12 @@
  # define tfind __tfind
  #else
@@ -1726,7 +1733,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/dcigettext.c gettext-0.
  #   define getcwd(buf, max) (getcwd) (buf, max, 0)
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/gettext-runtime/intl/intl.def
 --- gettext-0.18.orig/gettext-runtime/intl/intl.def	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/intl.def	2012-04-21 23:16:04.164273600 +0200
++++ gettext-0.18/gettext-runtime/intl/intl.def	2013-03-19 08:59:57.019781000 +0100
 @@ -0,0 +1,52 @@
 +LIBRARY libintl.DLL
 +EXPORTS
@@ -1782,7 +1789,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/intl.def gettext-0.18/g
 +locale_charset
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.18/gettext-runtime/intl/langprefs.c
 --- gettext-0.18.orig/gettext-runtime/intl/langprefs.c	2009-12-12 16:08:01.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/langprefs.c	2012-04-21 23:16:04.168273900 +0200
++++ gettext-0.18/gettext-runtime/intl/langprefs.c	2013-03-19 08:59:57.020781000 +0100
 @@ -53,6 +53,8 @@
  extern const char *_nl_locale_name_from_win32_LANGID (LANGID langid);
  extern const char *_nl_locale_name_from_win32_LCID (LCID lcid);
@@ -1843,7 +1850,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/langprefs.c gettext-0.1
  }
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext-0.18/gettext-runtime/intl/libgnuintl.h.in
 --- gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in	2010-05-09 20:54:29.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	2012-04-21 23:16:04.172274100 +0200
++++ gettext-0.18/gettext-runtime/intl/libgnuintl.h.in	2013-03-19 08:59:57.023781200 +0100
 @@ -19,6 +19,10 @@
  #ifndef _LIBINTL_H
  #define _LIBINTL_H 1
@@ -1857,7 +1864,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libgnuintl.h.in gettext
  # include <xlocale.h>
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libintl.rc gettext-0.18/gettext-runtime/intl/libintl.rc
 --- gettext-0.18.orig/gettext-runtime/intl/libintl.rc	2010-05-09 20:54:29.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/libintl.rc	2012-04-21 23:58:54.528290000 +0200
++++ gettext-0.18/gettext-runtime/intl/libintl.rc	2013-03-19 08:59:57.024781200 +0100
 @@ -22,13 +22,13 @@
              VALUE "Comments", "This library is free software; you can redistribute it and/or modify it under the terms of the GNU Library General Public License. You should have received a copy of the GNU Library General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA\0"
              VALUE "CompanyName", "Free Software Foundation\0"
@@ -1876,7 +1883,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/libintl.rc gettext-0.18
      BLOCK "VarFileInfo"
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.18/gettext-runtime/intl/loadmsgcat.c
 --- gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c	2009-06-28 21:44:04.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	2012-04-21 23:16:04.178274400 +0200
++++ gettext-0.18/gettext-runtime/intl/loadmsgcat.c	2013-03-19 08:59:57.027781400 +0100
 @@ -33,6 +33,11 @@
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -1969,7 +1976,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/loadmsgcat.c gettext-0.
  
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.18/gettext-runtime/intl/localename.c
 --- gettext-0.18.orig/gettext-runtime/intl/localename.c	2010-05-09 04:27:13.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/localename.c	2012-04-21 23:16:04.185274800 +0200
++++ gettext-0.18/gettext-runtime/intl/localename.c	2013-03-19 08:59:57.030781600 +0100
 @@ -1128,6 +1128,10 @@
  # endif
  #endif
@@ -1999,7 +2006,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/localename.c gettext-0.
       since IE's i18n subsystem is known to be inconsistent with the Win32 base
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.18/gettext-runtime/intl/os2compat.c
 --- gettext-0.18.orig/gettext-runtime/intl/os2compat.c	2009-06-28 21:44:04.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/os2compat.c	2012-04-21 23:16:04.189275100 +0200
++++ gettext-0.18/gettext-runtime/intl/os2compat.c	2013-03-19 08:59:57.032781700 +0100
 @@ -23,7 +23,9 @@
  
  #include <stdlib.h>
@@ -2012,7 +2019,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/os2compat.c gettext-0.1
  extern unsigned long DosScanEnv (const unsigned char *pszName, unsigned char **ppszValue);
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-0.18/gettext-runtime/intl/printf-parse.c
 --- gettext-0.18.orig/gettext-runtime/intl/printf-parse.c	2009-12-12 16:08:01.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/printf-parse.c	2012-04-21 23:16:04.194275400 +0200
++++ gettext-0.18/gettext-runtime/intl/printf-parse.c	2013-03-19 08:59:57.034781800 +0100
 @@ -75,6 +75,11 @@
  # include "c-ctype.h"
  #endif
@@ -2027,7 +2034,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/printf-parse.c gettext-
  #endif
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.18/gettext-runtime/intl/setlocale.c
 --- gettext-0.18.orig/gettext-runtime/intl/setlocale.c	2009-12-26 04:15:07.000000000 +0100
-+++ gettext-0.18/gettext-runtime/intl/setlocale.c	2012-04-21 23:16:04.199275600 +0200
++++ gettext-0.18/gettext-runtime/intl/setlocale.c	2013-03-19 08:59:57.037782000 +0100
 @@ -16,6 +16,7 @@
     License along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
@@ -2072,7 +2079,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/setlocale.c gettext-0.1
  # if HAVE_NEWLOCALE
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.18/gettext-runtime/intl/vasnprintf.c
 --- gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c	2010-05-09 12:54:20.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/vasnprintf.c	2012-04-21 23:16:04.207276100 +0200
++++ gettext-0.18/gettext-runtime/intl/vasnprintf.c	2013-03-19 08:59:57.042782300 +0100
 @@ -86,6 +86,10 @@
  # endif
  #endif
@@ -2086,7 +2093,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/vasnprintf.c gettext-0.
  
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/gettext-runtime/intl/xsize.h
 --- gettext-0.18.orig/gettext-runtime/intl/xsize.h	2009-06-28 21:44:04.000000000 +0200
-+++ gettext-0.18/gettext-runtime/intl/xsize.h	2012-04-21 23:16:04.212276400 +0200
++++ gettext-0.18/gettext-runtime/intl/xsize.h	2013-03-19 08:59:57.044782400 +0100
 @@ -25,6 +25,9 @@
  
  /* Get SIZE_MAX.  */
@@ -2099,7 +2106,7 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/xsize.h gettext-0.18/ge
  #endif
 diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt gettext-0.18/gettext-runtime/src/CMakeLists.txt
 --- gettext-0.18.orig/gettext-runtime/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gettext-0.18/gettext-runtime/src/CMakeLists.txt	2012-04-21 23:16:04.216276600 +0200
++++ gettext-0.18/gettext-runtime/src/CMakeLists.txt	2013-03-19 08:59:57.046782500 +0100
 @@ -0,0 +1,22 @@
 +cmake_minimum_required(VERSION 2.6)
 +set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
