@@ -25,15 +25,37 @@ index e5201ce..1432854 100644
  #include <wtf/MathExtras.h>
  #include <wtf/text/AtomicString.h>
 diff --git a/Tools/qmake/mkspecs/features/default_post.prf b/Tools/qmake/mkspecs/features/default_post.prf
-index 7c92a7d..b67969c 100644
+index 603d978..44134d1 100644
 --- a/Tools/qmake/mkspecs/features/default_post.prf
 +++ b/Tools/qmake/mkspecs/features/default_post.prf
-@@ -84,7 +84,7 @@ contains(TEMPLATE, derived) {
-     # Qt5's top-level repository, so let's add that to the PATH if we can
-     # find it.
-     win32 {
+@@ -77,16 +77,6 @@ contains(TEMPLATE, derived) {
+     fake_release.depends = first
+     QMAKE_EXTRA_TARGETS += fake_release
+ 
+-    # A lot of our code generators require GNU tools, readily available
+-    # on Linux and Mac OS X. On Windows we do have a convenience copy in
+-    # Qt5's top-level repository, so let's add that to the PATH if we can
+-    # find it.
+-    win32 {
 -        GNUTOOLS_DIR=$$[QT_HOST_DATA]/../gnuwin32/bin
-+        GNUTOOLS_DIR=$$[QT_HOST_DATA]/dev-utils/bin
-         exists($$GNUTOOLS_DIR/gperf.exe) {
-             GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS_DIR);%PATH%$$escape_expand(\\\"))"
-         }
+-        exists($$GNUTOOLS_DIR/gperf.exe) {
+-            GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS_DIR);%PATH%$$escape_expand(\\\"))"
+-        }
+-    }
+ 
+     for(generator, GENERATORS) {
+         eval($${generator}.CONFIG = target_predeps no_link)
+diff --git a/Tools/qmake/mkspecs/features/functions.prf b/Tools/qmake/mkspecs/features/functions.prf
+index f9d2def..67dea7a 100644
+--- a/Tools/qmake/mkspecs/features/functions.prf
++++ b/Tools/qmake/mkspecs/features/functions.prf
+@@ -206,9 +206,6 @@ defineTest(programExistsInPath) {
+     PATH = "$$(PATH)"
+     paths=$$split(PATH, $$QMAKE_DIRLIST_SEP)
+ 
+-    GNUTOOLS_DIR=$$[QT_HOST_DATA]/../gnuwin32/bin
+-    exists($$GNUTOOLS_DIR): paths += $$GNUTOOLS_DIR
+-
+     for(p, paths): exists($$p/$$program):return(true)
+     return(false)
+ }
