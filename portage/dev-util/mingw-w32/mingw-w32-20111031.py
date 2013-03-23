@@ -10,8 +10,9 @@ class subinfo(info.infoclass):
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
         self.defaultTarget = ver
         
-        for ver in [ "4.7.2" ]:
-            self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.7.2-release-win32_rubenvb.7z"
+        
+        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture()
+        self.targets["4.8.0"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.0-release-posix-seh-rev0.7z" % emergePlatform.buildArchitecture()
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
