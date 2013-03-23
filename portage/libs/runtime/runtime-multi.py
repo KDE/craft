@@ -36,19 +36,14 @@ class Package( BinaryPackageBase ):
             postfix = "d"
 
         files = []
-        if compiler.isMinGW():
-            if compiler.getMinGWVersion() == "4.4.7":
+        if compiler.isMinGW():                
+                files = [ 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
                 if compiler.isMinGW_W32():
-                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )
+                    files.append('libgcc_s_sjlj-1.dll')
+                    srcdir = os.path.join( self.rootdir, "mingw32", "bin" )                    
                 elif compiler.isMinGW_W64():
+                    files.append('libgcc_s_seh-1.dll')
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
-                files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll' ]
-            else:
-                if compiler.isMinGW_W32():
-                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )                    
-                elif compiler.isMinGW_W64():
-                    srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
-                files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
                 
         elif compiler.isMSVC2010():
             if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
@@ -58,25 +53,7 @@ class Package( BinaryPackageBase ):
             files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix ]
 
         for file in files:
-            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)
-
-        # extract pthread package.
-        if compiler.isMinGW_WXX() and compiler.getMinGWVersion() == "4.4.7":
-            tmpdir = os.getenv( "TEMP" )
-
-            if compiler.isMinGW_W32(): _ext = 32
-            elif compiler.isMinGW_W64(): _ext = 64
-            else: utils.die( "unknown flavor of mingw-wXX" )
-
-            pthreadPackageName = os.path.join( self.rootdir, "mingw", "pthreads-w%s.zip" ) % _ext
-            pthreadDll = "pthreadGC2-w%s.dll" % _ext
-
-            utils.unZip( pthreadPackageName, tmpdir )
-
-            srcdir = os.path.join( tmpdir, "bin" )
-            files = [ pthreadDll ]
-            for file in files:
-                utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)       
 
         return True
 
