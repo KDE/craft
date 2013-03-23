@@ -15,6 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'win32libs/boost' ] = 'default'
         self.dependencies[ 'kdesupport/qjson' ] = 'default'
         self.buildDependencies[ 'dev-util/gettext-tools' ] = 'default'
+        self.buildDependencies[ 'dev-util/zip' ] = 'default'
 
 from Package.CMakePackageBase import *
 

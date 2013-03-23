@@ -2,18 +2,22 @@ This directory contains the main portage tree.
 Third Party in this Context means "Not KDE"
 
 It is divided into several subcategories:
-data : Raw data from third party sources (Dictonaries, Maps, etc.)
-dev-util: Neccessary and optional tools for developers and to build on Windows
-extragear: Portage files for KDE extragear Software
-gnuwin32: Tools from the gnuwin32 initiative (http://gnuwin32.sourceforge.net/)
-internal: Internal dependencies of the Emerge Build System
-kde: The core parts of the KDE Software Compilation
-kdeapps: Additional KDE applications
-kdesupport: Libraries from the greater KDE Community but not really core KDE
-libs: Qt is so fat it even got it's own category ;)
-binary: Binary packages that we do not build with emerge
-templates: Templates for new portage files
-testing: Instable / under development portage that is not generic or untested
-virtual: Metapackages used to define a group of dependencies
-win32libs-bin: Binary versions of win32libs-sources
-win32libs-sources: The main category for third party libraries we can compile
+
+binary:         Binary packages that we do not build with emerge
+contributed:    .... [not sure how to describe]
+data:           Raw data from third party sources (Dictonaries, Maps, etc.)
+dev-util:       Neccessary and optional tools for developers and to build on Windows
+extragear:      Portage files for KDE extragear Software
+gnuwin32:       Tools from the gnuwin32 initiative (http://gnuwin32.sourceforge.net/)
+internal:       Internal dependencies of the Emerge Build System
+kde:            The core parts of the KDE Software Compilation
+kdeapps:        Additional KDE applications
+kdesupport:     Libraries from the greater KDE Community but not really core KDE
+libs:           common and Qt shared/static library
+packages:       single package installers
+qt-apps:        applications based on qt only
+qt-libs:        libraries based on qt only
+templates:      Templates for new portage files
+testing:        Instable / under development portage that is not generic or untested
+virtual:        Metapackages used to define a group of dependencies
+win32libs:      The main category for third party libraries we can compile
