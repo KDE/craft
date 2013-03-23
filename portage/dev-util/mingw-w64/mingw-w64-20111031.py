@@ -7,9 +7,10 @@ import emergePlatform
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture() 
-        if( emergePlatform.buildArchitecture() == 'x64' ):
+        self.targets["4.8.0"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.0-release-posix-seh-rev0.7z" % emergePlatform.buildArchitecture()
+        if emergePlatform.buildArchitecture() == 'x64':
             self.targetDigests['4.7.2'] = 'e4cc0963bbfe632fd4f7170767f5654ee6adb3c9'
-        self.defaultTarget = "4.7.2"
+        self.defaultTarget = "4.8.0"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
