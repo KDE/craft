@@ -45,7 +45,20 @@ def abstract():
 
 def getCallerFilename():
     """ returns the file name of the """
-    return inspect.getouterframes(inspect.currentframe())[2][1]
+    filename = None
+    try:
+        frame=inspect.currentframe()
+        count = 2
+        while count > 0 and frame:
+            frame = frame.f_back
+            # python 3.3 includes unnecessary importlib frames, skip them
+            if frame and frame.f_code.co_filename != '<frozen importlib._bootstrap>':
+                count -= 1
+    finally:
+        if frame:
+            filename = frame.f_code.co_filename
+            del frame
+    return filename
 
 def varAsBool(var):
     return var.lower() in ['true', '1']
