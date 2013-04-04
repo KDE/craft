@@ -15,16 +15,6 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = svnurl + 'trunk'
         self.targetConfigurePath['svnHEAD'] = 'cmake'
 
-        # dbus-1.3.1.tar.gz is missing the cmake sub dir and because
-        # emerge is not able yet to apply more than one patch we the
-        # 1.3.1 snapshot took for now
-        #self.targets['1.3.1'] = 'http://dbus.freedesktop.org/releases/dbus/dbus-1.3.1.tar.gz'
-        #self.targetDigests['1.3.1'] = '83c27e15ba79d4a84a10b123ff382233cc77773b'
-        self.targets['1.3.1'] = 'http://cgit.freedesktop.org/dbus/dbus/snapshot/dbus-1.3.1.tar.bz2'
-        self.targetDigests['1.3.1'] = 'e8fa74ad6f2294bdf7d22aed25896d8943287c32'
-        self.targetInstSrc['1.3.1'] = 'dbus-1.3.1'
-        self.targetConfigurePath['1.3.1'] = 'cmake'
-
         self.targets['1.4.0'] = 'http://cgit.freedesktop.org/dbus/dbus/snapshot/dbus-1.4.0.tar.bz2'
         self.targetDigests['1.4.0'] = '3983d9a1456e5772fa4cb5e2818ed015b2f6131b'
         self.targetInstSrc['1.4.0'] = 'dbus-1.4.0'
@@ -131,16 +121,6 @@ class Package(CMakePackageBase):
             # not sure if this works for wince too, so limited to win32
             self.subinfo.options.configure.defines += (
                     "-DDBUS_USE_OUTPUT_DEBUG_STRING=ON ")
-
-    def unpack(self):
-        if not CMakePackageBase.unpack(self):
-            return False
-        if compiler.isMinGW32():
-          if self.buildTarget in ['1.2.1', '1.2.3', '1.2.4', 'svnHEAD']:
-              utils.copyFile( os.path.join(self.packageDir(), "wspiapi.h"),
-                      os.path.join(self.buildDir(), "wspiapi.h") )
-        return True
-
 
 if __name__ == '__main__':
     Package().execute()
