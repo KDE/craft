@@ -114,6 +114,13 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += (
                     "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
                     "STRING=tcp:host=localhost,port=12434 ")
+        elif self.buildTarget == "gitHEAD":
+            self.subinfo.options.configure.defines += (
+                "-DDBUS_SESSION_BUS_LISTEN_ADDRESS:STRING=autolaunch:scope=*install-path "
+                "-DDBUS_SESSION_BUS_CONNECT_ADDRESS:STRING=autolaunch:scope=*install-path ")
+            # kde uses debugger output, so dbus should do too
+            self.subinfo.options.configure.defines += (
+                    "-DDBUS_USE_OUTPUT_DEBUG_STRING=ON ")
         else:
             # for 1.4.1 and greater switch to official
             # supported scopes -> autolaunch:scope=*install-path
