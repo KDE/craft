@@ -107,26 +107,33 @@ class infoclass(object):
         self.disableHostBuild = False
         self.disableTargetBuild = False
 
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None ):
-        """return archive file based package url"""
-        if packagetypes is None:
-            packagetypes = ['bin', 'lib']
-        if not os.getenv("EMERGE_PACKAGETYPES") is None:
-            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
+    def getArchitecture(self):
         arch = ""
         if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
             arch = "-x64"
         if compiler.isMinGW_W32():
             arch = "-x86"
-        compilerName = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compilerName = "mingw"
-        elif os.getenv("KDECOMPILER") == "mingw4":
-            compilerName = "mingw4"
-        elif os.getenv("KDECOMPILER") == "msvc2008":
-            compilerName = "vc90"
-        elif os.getenv("KDECOMPILER") == "msvc2010":
-            compilerName = "vc100"
+        return arch
+
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler=None):
+        """return archive file based package url"""
+        if packagetypes is None:
+            packagetypes = ['bin', 'lib']
+        if not os.getenv("EMERGE_PACKAGETYPES") is None:
+            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
+        arch = self.getArchitecture();
+        if compiler == None:
+            compilerName = "msvc"
+            if os.getenv("KDECOMPILER") == "mingw":
+                compilerName = "mingw"
+            elif os.getenv("KDECOMPILER") == "mingw4":
+                compilerName = "mingw4"
+            elif os.getenv("KDECOMPILER") == "msvc2008":
+                compilerName = "vc90"
+            elif os.getenv("KDECOMPILER") == "msvc2010":
+                compilerName = "vc100"
+        else:
+            compilerName = compiler
         ret = ''
         # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
         if scheme == 'sf':
@@ -198,10 +205,10 @@ example:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
-    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None):
+    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler=None):
         """return full url of a package provided by the kdewin mirrors"""
         repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
-        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf' )
+        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler=compiler )
 
     def getPackageList( self, baseUrl, files ):
         """returns a package url for multiple files from the same base url"""
