@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.6', '4.7', '4.8']:
+        for ver in ['4.6', '4.7', '4.8', '4.9', '4.10']:
             self.svnTargets[ver] = '[git]kde:emerge|kde-' + ver + '|'
         self.svnTargets['gitHEAD'] = '[git]kde:emerge'
         self.defaultTarget = 'gitHEAD'
