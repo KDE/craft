@@ -25,7 +25,7 @@ diff -Nru -x '*~' raptor2-2.0.8.orig/cmake/modules/FindYajl.cmake raptor2-2.0.8/
 +find_library(YAJL_LIBRARIES NAMES yajl yajl_s)
 +
 +include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Yajl  DEFAULT_MSG  YAJL_LIBRARIES  YAJL_FOUND)
++find_package_handle_standard_args(Yajl  DEFAULT_MSG  YAJL_LIBRARIES  YAJL_INCLUDE_DIR)
 +
 +mark_as_advanced(YAJL_INCLUDE_DIR YAJL_LIBRARIES YAJL_FOUND)
 diff -Nru -x '*~' raptor2-2.0.8.orig/CMakeLists.txt raptor2-2.0.8/CMakeLists.txt

@@ -49,12 +49,19 @@ if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 rem use local python installation if present
 rem when in kderoot/emerge
 if exist %~dp0python (
-    set PYTHONPATH=%~dp0python
+    set EMERGE_PYTHON_PATH=%~dp0python
 )
 
 rem in case we are in kderoot 
 if exist %~dp0emerge\python (
-    set PYTHONPATH=%~dp0emerge\python
+    set EMERGE_PYTHON_PATH=%~dp0emerge\python
+)
+
+rem fall back to global python install if present
+if "%EMERGE_PYTHON_PATH%" == "" (
+    if NOT "%PYTHONPATH%" == "" (
+        set EMERGE_PYTHON_PATH=%PYTHONPATH%
+    )
 )
 
 rem call kdesettings.bat 
@@ -135,7 +142,7 @@ if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
     echo KDECOMPILER : %KDECOMPILER%
     echo KDESVNDIR   : %KDESVNDIR%
     echo KDEGITDIR   : %KDEGITDIR%
-    echo PYTHONPATH  : %PYTHONPATH%
+    echo EMERGE_PYTHON_PATH  : %EMERGE_PYTHON_PATH%
     echo DOWNLOADDIR : %DOWNLOADDIR%
     title %KDEROOT% %KDECOMPILER%
 )
@@ -168,10 +175,10 @@ rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
 rem for python
-if NOT "!PYTHONPATH!" == "" ( 
-   set PATH=!PYTHONPATH!;!PATH!
-   if exist "!PYTHONPATH!\Scripts" ( 
-        set PATH=!PYTHONPATH!\Scripts;!PATH!
+if NOT "!EMERGE_PYTHON_PATH!" == "" ( 
+   set PATH=!EMERGE_PYTHON_PATH!;!PATH!
+   if exist "!EMERGE_PYTHON_PATH!\Scripts" ( 
+        set PATH=!EMERGE_PYTHON_PATH!\Scripts;!PATH!
    )
 )
 

@@ -57,15 +57,22 @@ class PackageBase (EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
         ignoreInstalled = False
-        if self.isTargetBuild():
-            if installdb.isInstalled( category=None, package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
-                ignoreInstalled = True
-                self.unmerge()
+        if isDBEnabled():
+            if self.isTargetBuild():
+                if installdb.isInstalled( category=None, package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
+                    ignoreInstalled = True
+                    self.unmerge()
+            else:
+                prefixPath = self._installedDBPrefix( self.buildType() )
+                if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
+                    ignoreInstalled = True
+                    self.unmerge()
         else:
-            prefixPath = self._installedDBPrefix( self.buildType() )
-            if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
+            if portage.isInstalled( '', self.package, '', self.buildType() ):
                 ignoreInstalled = True
                 self.unmerge()
+
+        
 
         utils.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() ,utils.envAsBool("EMERGE_USE_SYMLINKS"))

@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         """ """
         self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"        
         self.patchToApply['gitHEAD'] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
-        for ver in ["1.1.0"]:
+        for ver in ["1.1.0","1.2.0"]:
             self.svnTargets[ ver ] = "git://github.com/martine/ninja.git||v%s" % ver
-            self.patchToApply[ ver ] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
-        self.defaultTarget = '1.1.0'
+        self.patchToApply[ "1.1.0" ] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
+        self.defaultTarget = '1.2.0'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
