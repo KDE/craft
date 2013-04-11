@@ -161,6 +161,52 @@ rem set GIT_AUTHOR_EMAIL=email
 rem set GIT_COMMITTER_NAME=username
 rem set GIT_COMMITTER_EMAIL=email
 
+rem ####### Python Settings #######
+
+rem Here you set the path to your Python installation,
+rem so that Python will be found, when Python scripts are be executed.
+rem By setting this here, you don't have to change the global environment
+rem settings of Windows. In case python is distributed with emerge the
+rem following setting is not used.
+if "%EMERGE_PYTHON_PATH%" == "" (
+    set EMERGE_PYTHON_PATH="%PROGRAM_FILES%\python32"
+)
+
+rem ####### Proxy Settings #######
+
+rem proxy settings - in case a proxy is required uncomment the following variables 
+rem set EMERGE_PROXY_HOST=
+rem set EMERGE_PROXY_PORT=8080
+rem set EMERGE_PROXY_USERNAME=
+rem set EMERGE_PROXY_PASSWORD=
+
+rem Here you can set if emerge should not try to download files in passive mode
+rem set EMERGE_NO_PASSIVE_FTP=True
+
+rem ####### Visual Studio Settings #######
+
+rem Here you can adjust the path to your Visual Studio installation if needed
+rem This is used to set up the build environment automatically
+if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
+if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
+if %KDECOMPILER% == msvc2012 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 11.0
+
+rem Here you can adjust the path to the Windows Mobile SDK installation
+rem This is used to set up the cross-compilation environment automatically
+if "%EMERGE_TARGET_PLATFORM%" == "WM50" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 5.0 SDK R2\PocketPC
+if "%EMERGE_TARGET_PLATFORM%" == "WM60" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
+if "%EMERGE_TARGET_PLATFORM%" == "WM65" set TARGET_SDKDIR=%PROGRAM_FILES%\Windows Mobile 6 Professional SDK\PocketPC
+
+rem Here you can set a specific platform SDK to use with the Visual Studio toolchain
+rem Normally this is not needed as a default platform SDK is set by the build environment script
+rem set PSDKDIR=%PROGRAM_FILES%\Microsoft SDKs\Windows\v6.0A
+
+rem Here you can set the path to your Microsoft DirectX SDK installation
+rem This is not needed if you use MinGW or won't use the directx backend for Phonon
+rem set MSDXSDKDIR=%PROGRAM_FILES%\Microsoft DirectX SDK (August 2009)
+
+rem ####### Build Type Settings #######
+
 rem Here you can set type of the emerge build. 
 rem There are two standard build types: Debug and Release.
 rem Both are used if no EMERGE_BUILDTYPE is set.

@@ -46,24 +46,6 @@ rem     the variable being interpreted as the closing block parenthesis...
 if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
-rem use local python installation if present
-rem when in kderoot/emerge
-if exist %~dp0python (
-    set EMERGE_PYTHON_PATH=%~dp0python
-)
-
-rem in case we are in kderoot 
-if exist %~dp0emerge\python (
-    set EMERGE_PYTHON_PATH=%~dp0emerge\python
-)
-
-rem fall back to global python install if present
-if "%EMERGE_PYTHON_PATH%" == "" (
-    if NOT "%PYTHONPATH%" == "" (
-        set EMERGE_PYTHON_PATH=%PYTHONPATH%
-    )
-)
-
 rem call kdesettings.bat 
 rem in case we are in kderoot/emerge 
 if exist %~dp0..\etc\kdesettings.bat (
@@ -73,6 +55,26 @@ call %~dp0..\etc\kdesettings.bat %BUILDTYPE%
 rem in case we are in kderoot 
 if exist %~dp0etc\kdesettings.bat (
 call %~dp0etc\kdesettings.bat %BUILDTYPE%
+)
+
+rem use local python installation if present
+rem when in kderoot/emerge
+if exist %~dp0python (
+    set EMERGE_PYTHON_PATH=%~dp0python
+    echo "Using Python from: %EMERGE_PYTHON_PATH%
+)
+
+rem in case we are in kderoot 
+if exist %~dp0emerge\python (
+    set EMERGE_PYTHON_PATH=%~dp0emerge\python
+    echo "Using Python from: %EMERGE_PYTHON_PATH%
+)
+
+rem fall back to global python install if present
+if "%EMERGE_PYTHON_PATH%" == "" (
+    if NOT "%PYTHONPATH%" == "" (
+        set EMERGE_PYTHON_PATH=%PYTHONPATH%
+    )
 )
 
 rem handle drive substitution
@@ -142,7 +144,6 @@ if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
     echo KDECOMPILER : %KDECOMPILER%
     echo KDESVNDIR   : %KDESVNDIR%
     echo KDEGITDIR   : %KDEGITDIR%
-    echo EMERGE_PYTHON_PATH  : %EMERGE_PYTHON_PATH%
     echo DOWNLOADDIR : %DOWNLOADDIR%
     title %KDEROOT% %KDECOMPILER%
 )
