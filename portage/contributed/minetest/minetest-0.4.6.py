@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/minetest/minetest.git'
+        self.patchToApply['gitHEAD'] = ('minetest-20130413.patch', 1)
         self.defaultTarget = 'gitHEAD'
 
 
