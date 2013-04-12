@@ -1,0 +1,63 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 62bb42b..141468c 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -113,27 +113,9 @@ if(WIN32)
+ 		# Surpress some useless warnings
+ 		add_definitions ( /D "_CRT_SECURE_NO_DEPRECATE" /W1 )
+ 	else() # Probably MinGW = GCC
++		set(MINGWM10_DLL "" CACHE FILEPATH "Path to mingwm10.dll (for installation)")
+ 		set(PLATFORM_LIBS ws2_32.lib)
+ 	endif()
+-	# Zlib stuff
+-	set(ZLIB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../../zlib/zlib-1.2.5"
+-			CACHE PATH "Zlib include directory")
+-	set(ZLIB_LIBRARIES "${PROJECT_SOURCE_DIR}/../../zlib125dll/dll32/zlibwapi.lib"
+-			CACHE FILEPATH "Path to zlibwapi.lib")
+-	set(ZLIB_DLL "${PROJECT_SOURCE_DIR}/../../zlib125dll/dll32/zlibwapi.dll"
+-			CACHE FILEPATH "Path to zlibwapi.dll (for installation)")
+-	set(IRRLICHT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../../irrlicht-1.7.2"
+-			CACHE PATH "irrlicht dir")
+-	if(USE_FREETYPE)
+-		set(FREETYPE_INCLUDE_DIR_ft2build "${PROJECT_SOURCE_DIR}/../../freetype2/include/"
+-				CACHE PATH "freetype include dir")
+-		set(FREETYPE_INCLUDE_DIR_freetype2 "${PROJECT_SOURCE_DIR}/../../freetype2/include/freetype"
+-				CACHE PATH "freetype include dir")
+-		set(FREETYPE_LIBRARY "${PROJECT_SOURCE_DIR}/../../freetype2/objs/win32/vc2005/freetype247.lib"
+-				CACHE FILEPATH "Path to freetype247.lib")
+-	endif(USE_FREETYPE)
+-	set(MINGWM10_DLL ""
+-			CACHE FILEPATH "Path to mingwm10.dll (for installation)")
+ 	if(ENABLE_SOUND)
+ 		set(OPENAL_DLL "" CACHE FILEPATH "Path to OpenAL32.dll for installation (optional)")
+ 		set(OGG_DLL "" CACHE FILEPATH "Path to libogg.dll for installation (optional)")
+@@ -160,7 +142,6 @@ else()
+ 			SET(CLIENT_PLATFORM_LIBS ${CLIENT_PLATFORM_LIBS} ${CARBON_LIB} ${COCOA_LIB} ${IOKIT_LIB})
+ 		endif(APPLE)
+ 	endif(BUILD_CLIENT)
+-	find_package(ZLIB REQUIRED)
+ 	set(PLATFORM_LIBS -lpthread -lrt ${CMAKE_DL_LIBS})
+ 	#set(CLIENT_PLATFORM_LIBS -lXxf86vm)
+ 	# This way Xxf86vm is found on OpenBSD too
+@@ -169,6 +150,7 @@ else()
+ 	set(CLIENT_PLATFORM_LIBS ${CLIENT_PLATFORM_LIBS} ${XXF86VM_LIBRARY})
+ endif()
+ 
++find_package(ZLIB REQUIRED)
+ find_package(Jthread REQUIRED)
+ find_package(Sqlite3 REQUIRED)
+ find_package(Json REQUIRED)
+diff --git a/src/serialization.cpp b/src/serialization.cpp
+index 118bad4..59fd8df 100644
+--- a/src/serialization.cpp
++++ b/src/serialization.cpp
+@@ -20,9 +20,6 @@
+ #include "serialization.h"
+ 
+ #include "util/serialize.h"
+-#ifdef _WIN32
+-	#define ZLIB_WINAPI
+-#endif
+ #include "zlib.h"
+ 
+ /* report a zlib or i/o error */
