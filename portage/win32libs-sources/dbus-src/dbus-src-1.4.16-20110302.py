@@ -87,7 +87,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs-bin/expat'] = 'default'
+        self.dependencies['win32libs-sources/expat-src'] = 'default'
 
 from Package.CMakePackageBase import *
 
