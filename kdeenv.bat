@@ -61,13 +61,13 @@ rem use local python installation if present
 rem when in kderoot/emerge
 if exist %~dp0python (
     set EMERGE_PYTHON_PATH=%~dp0python
-    echo "Using Python from: %EMERGE_PYTHON_PATH%
+    echo "Using Python from: !EMERGE_PYTHON_PATH!
 )
 
 rem in case we are in kderoot 
 if exist %~dp0emerge\python (
     set EMERGE_PYTHON_PATH=%~dp0emerge\python
-    echo "Using Python from: %EMERGE_PYTHON_PATH%
+    echo "Using Python from: !EMERGE_PYTHON_PATH!
 )
 
 rem fall back to global python install if present
