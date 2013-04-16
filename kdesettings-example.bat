@@ -249,7 +249,7 @@ rem with the same name. They provide a standardized way to define runtime depend
 rem for emerge itself. 
 rem note: After finishing the testing phase this feature will be enabled by default 
 rem and this option removed. 
-rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
+set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
 
 rem The following option makes the emerge run fail if applying patches fails
 rem the default is that failing patches do not result in a stop
