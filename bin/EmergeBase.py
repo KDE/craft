@@ -121,15 +121,15 @@ class EmergeBase(object):
         """return adjusted path"""
         if not self.subinfo.options.useShortPathes:
             return directory
-        path = c_char_p(directory)
+        path = c_char_p(bytes(directory, 'latin1'))
         length = windll.kernel32.GetShortPathNameA(path, 0, 0)
         if length == 0:
             return directory
-        buf = create_string_buffer('\000' * (length + 1))
+        buf = create_string_buffer(length + 1)
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
         if utils.verbose() > 0:
-            print("converting " + directory + " to " + buf.value)
-        return buf.value
+            print("converting " + directory + " to " + str(buf.value, encoding='latin1'))
+        return str(buf.value, encoding='latin1')
 
     def buildType(self):
         """return currently selected build type"""
