@@ -8,8 +8,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "20111031"
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
+        self.targetDigests[ver] = '4b06cfc21ccfd335e42a455f28a1368d748f862f'
         self.defaultTarget = ver
-        
+
         for ver in [ "4.7.1" ]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-w64-mingw32-gcc-4.7.1-release-win32_rubenvb.7z"
 
