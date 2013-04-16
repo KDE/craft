@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
         else:
           self.targets[ '5.5.25a'] = self.baseURL+"mysql-5.5.25a-win32.zip"
           self.targetInstSrc[ '5.5.25a' ] = "mysql-5.5.25a-win32"
+          self.targetDigests['5.5.25a'] = '7448e8ebc7cd8d141b53eaa984884991f41340ee'
         self.shortDescription = "MySql database server and embedded library"
         self.defaultTarget = '5.5.25a'
 
