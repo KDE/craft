@@ -51,14 +51,6 @@ rem * ARMV4I (all platforms)
 rem set EMERGE_TARGET_PLATFORM=WM60
 rem set EMERGE_TARGET_ARCHITECTURE=ARMV4I
 
-rem Here you set the path to your Python installation,
-rem so that Python will be found, when Python scripts are be executed.
-rem By setting this here, you don't have to change the global environment
-rem settings of Windows. In case python is distributed with emerge the 
-rem following setting is not used. 
-if "%PYTHONPATH%" == "" ( 
-    set PYTHONPATH="%PROGRAM_FILES%\python32"
-)
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
 set MSYSDIR=%KDEROOT%\msys
