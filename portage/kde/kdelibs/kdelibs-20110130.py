@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
         self.patchToApply["4.10.0"] = [("kdelibs-4.10.0-20130219.diff", 1)]
         self.patchToApply["4.10.1"] = [("kdelibs-4.10.0-20130219.diff", 1)]
+        self.patchToApply["gitHEAD"] = [("kde.conf-fix.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
@@ -18,21 +19,21 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['win32libs/automoc'] = 'default'
-        self.dependencies['kdesupport/hupnp'] = 'default'
+#        self.dependencies['kdesupport/hupnp'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
-        self.dependencies['kdesupport/phonon'] = 'default'
-        self.dependencies['kdesupport/attica'] = 'default'
-        self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
-        self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['kdesupport/qimageblitz'] = 'default'
-        self.dependencies['kdesupport/soprano'] = 'default'
-        self.dependencies['kdesupport/strigi'] = 'default'
+#        self.dependencies['kdesupport/phonon'] = 'default'
+#        self.dependencies['kdesupport/attica'] = 'default'
+#        self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
+#        self.dependencies['kdesupport/grantlee'] = 'default'
+#        self.dependencies['kdesupport/qca'] = 'default'
+#        self.dependencies['kdesupport/qimageblitz'] = 'default'
+#        self.dependencies['kdesupport/soprano'] = 'default'
+#        self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
-        self.dependencies['data/shared-desktop-ontologies'] = 'default'
-        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+#        self.dependencies['data/shared-desktop-ontologies'] = 'default'
+#        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -42,7 +43,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
         if compiler.isMinGW():
-          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"Gpg4Win MinGW %s\" " % compiler.getMinGWVersion()
         elif compiler.isMSVC():
           self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
 

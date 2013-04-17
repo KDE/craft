@@ -14,10 +14,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kde/nepomuk-core'] = 'default'
-        self.dependencies['kdesupport/akonadi'] = 'default'
-        self.dependencies['win32libs/cyrus-sasl'] = 'default'
-        self.dependencies['win32libs/libical'] = 'default'
+#        self.dependencies['kde/nepomuk-core'] = 'default'
+#        self.dependencies['kdesupport/akonadi'] = 'default'
+#        self.dependencies['win32libs/cyrus-sasl'] = 'default'
+#        self.dependencies['win32libs/libical'] = 'default'
         self.dependencies['win32libs/gpgme'] = 'default'
         self.dependencies['win32libs/openldap'] = 'default'
         self.dependencies['win32libs/boost-graph'] = 'default'
@@ -33,6 +33,7 @@ class Package(CMakePackageBase):
         self.boost = portage.getPackageInstance('win32libs','boost')
         path = self.boost.installDir()
         os.putenv( "BOOST_ROOT", path )
+        self.subinfo.options.configure.defines = " -DKDEPIM_ONLY_KLEO=True"
 
 if __name__ == '__main__':
     Package().execute()
