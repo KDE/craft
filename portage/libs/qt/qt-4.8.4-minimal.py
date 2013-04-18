@@ -63,28 +63,24 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        if self.isTargetBuild():
-            incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
-            libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         # Build options
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         command += "-no-qt3support -no-multimedia -no-declarative -no-scripttools -no-webkit "
-        command += "-plugin-sql-odbc -plugin-sql-mysql "
         command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         command += "-no-phonon "
-        command += "-qdbus -dbus-linked -openssl "
+        command += "-qdbus -dbus-linked -no-openssl "
         command += "-no-fast -no-vcproj -no-dsp "
-        command += "-nomake demos -nomake examples "
+        command += "-nomake demos -nomake examples -nomake tools "
         command += "%s %s" % ( incdirs, libdirs )
 
         # WebKit won't link properly with LTCG in a 32-bit MSVC environment
         if emergePlatform.buildArchitecture() == "x86" and compiler.isMSVC2008():
-            command += "-no-ltcg "
+            command += " -no-ltcg "
         else:
-            command += "-ltcg "
+            command += " -ltcg "
 
         if self.buildType() == "Debug":
           command += " -debug "
