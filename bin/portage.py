@@ -11,6 +11,7 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
+import portageSearch
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
@@ -810,19 +811,20 @@ def getPackagesCategories(packageName, defaultCategory = None):
                     packageList = [ packageName ]
                     categoryList = [ PortageInstance.getCategory( packageName ) ]
                 else:
-                    utils.warning( "unknown category or package: %s" % packageName )
+                    portageSearch.printSearch("",packageName)
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         if PortageInstance.isCategory( cat ):
             categoryList = [ cat ]
         else:
-            utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
+            portageSearch.printSearch(cat,pac)
+            return packageList, categoryList
         if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
             utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
         else:
-            utils.debug( "ignoring package %s" % packageName )
+            portageSearch.printSearch(cat,pac)
     else:
         utils.error( "unknown packageName" )
 

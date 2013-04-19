@@ -2,6 +2,7 @@ import portage
 import re
 import utils
 import InstallDB
+
 def printSearch(search_category, search_package,maxDist = 3):
         installable = portage.PortageInstance.getInstallables()
         similar = []
@@ -19,8 +20,11 @@ def printSearch(search_category, search_package,maxDist = 3):
                     similar.append((levDist,category,package,version))
                 
         if match == None:
-            print("Package %s not found, similar packages are:" % search_package)
-            similar.sort()
+            if len(similar)>0:
+                print("Emerge was unable to find %s, similar packages are:" % search_package) 
+                similar.sort()
+            else:
+                print("Emerge was unable to find %s" % search_package)
         else:
             print("Package %s found:" % search_package)
             similar = [match]
