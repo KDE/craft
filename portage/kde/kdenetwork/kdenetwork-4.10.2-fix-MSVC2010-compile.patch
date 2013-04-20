@@ -1,0 +1,14 @@
+diff -Nru -x '*~' kdenetwork-4.10.2.orig/kget/core/transferhistorystore.cpp kdenetwork-4.10.2/kget/core/transferhistorystore.cpp
+--- kdenetwork-4.10.2.orig/kget/core/transferhistorystore.cpp	2013-03-29 08:11:01.565524300 +0100
++++ kdenetwork-4.10.2/kget/core/transferhistorystore.cpp	2013-04-20 16:50:01.378485100 +0200
+@@ -554,7 +554,9 @@
+ void NepomukStore::load()
+ {
+     Nepomuk::Query::QueryServiceClient * queryService = new Nepomuk::Query::QueryServiceClient(this);
+-    Nepomuk::Query::ResourceTypeTerm historyTypeTerm(Nepomuk::Types::Class(Nepomuk::HistoryItem::resourceTypeUri()));
++    const QUrl& resourceTypeUri = Nepomuk::HistoryItem::resourceTypeUri();
++    Nepomuk::Types::Class resourceTypeClass(resourceTypeUri); // attention: do not place inline - or MSVC 2010 (maybe more versions) fails
++    Nepomuk::Query::ResourceTypeTerm historyTypeTerm(resourceTypeClass);
+     Nepomuk::Query::Query historyQuery(historyTypeTerm);
+ 
+     connect(queryService, SIGNAL(newEntries(const QList<Nepomuk::Query::Result>&)), this, SLOT(loadResult(const QList<Nepomuk::Query::Result>&)));
