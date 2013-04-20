@@ -1,0 +1,11 @@
+diff -Nru -x '*~' libkdcraw-4.10.2.orig/libraw/src/libraw_datastream.cpp libkdcraw-4.10.2/libraw/src/libraw_datastream.cpp
+--- libkdcraw-4.10.2.orig/libraw/src/libraw_datastream.cpp	2013-03-01 08:01:46.026448000 +0100
++++ libkdcraw-4.10.2/libraw/src/libraw_datastream.cpp	2013-04-20 16:45:12.105912400 +0200
+@@ -3,6 +3,7 @@
+     #define _WIN32_WINNT 0x0500
+     #include <stdexcept>
+ #endif
++#include <cmath>
+ #endif
+ 
+ #define LIBRAW_LIBRARY_BUILD
