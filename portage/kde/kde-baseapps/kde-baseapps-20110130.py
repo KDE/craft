@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply["4.10.0"] = ("4.10.patch",1)
         self.patchToApply["4.10.1"] = ("4.10.patch",1)
+        self.patchToApply["4.10.2"] = ("4.10.patch",1)
 
         self.defaultTarget = 'gitHEAD'
 

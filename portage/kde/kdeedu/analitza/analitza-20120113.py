@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.0'] = [("analitza-4.10.0-20130301.diff", 1)]
         self.patchToApply['4.10.1'] = [("analitza-4.10.0-20130301.diff", 1)]
+        self.patchToApply['4.10.2'] = [("analitza-4.10.0-20130301.diff", 1)]
 
         self.shortDescription = 'a library for mathematical features'
         self.defaultTarget = 'gitHEAD'
