@@ -1,8 +1,7 @@
-diff --git a/importer/fileutils.cpp b/importer/fileutils.cpp
-index 2aa18b4..1dbaa23 100644
---- a/importer/fileutils.cpp
-+++ b/importer/fileutils.cpp
-@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Cambridge, MA 02110-1301, USA
+diff -Nru -x '*~' gwenview-4.10.2.orig/importer/fileutils.cpp gwenview-4.10.2/importer/fileutils.cpp
+--- gwenview-4.10.2.orig/importer/fileutils.cpp	2013-03-01 08:00:12.919609000 +0100
++++ gwenview-4.10.2/importer/fileutils.cpp	2013-04-20 21:49:16.562133400 +0200
+@@ -28,6 +28,7 @@
  // KDE
  #include <KDebug>
  #include <KFileItem>
@@ -10,11 +9,11 @@ index 2aa18b4..1dbaa23 100644
  #include <KIO/CopyJob>
  #include <KIO/Job>
  #include <KIO/JobClasses>
-@@ -128,14 +129,13 @@ QString createTempDir(const QString& baseDir, const QString& prefix, QString* er
+@@ -128,14 +129,13 @@
  {
      Q_ASSERT(errorMessage);
  
--    QByteArray name = QFile::encodeName(baseDir + "/" + prefix + "XXXXXX");
+-    QByteArray name = QFile::encodeName(baseDir + '/' + prefix + "XXXXXX");
 -
 -    if (!mkdtemp(name.data())) {
 -        // Failure
