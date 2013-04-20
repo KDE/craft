@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         for ver in ['1.4', '1.5']:
             self.targets[ver] = 'http://download.kde.org/stable/konversation/' + ver + '/src/konversation-' + ver + '.tar.xz'
             self.targetInstSrc[ver] = 'konversation-' + ver
-        for ver in ['1.5-rc1']:
-            self.targets[ver] = 'http://download.kde.org/unstable/konversation/' + ver + '/src/konversation-' + ver + '.tar.xz'
+        for ver in ['1.5-d938500c']:
+            self.targets[ver] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/' + ver + '/src/konversation-' + ver + '.tar.xz'
             self.targetInstSrc[ver] = 'konversation-' + ver
         self.patchToApply['1.3.1'] = ("konversation-1.3.1-20110822.diff", 1)
         self.patchToApply['1.4'] = [("konversation-1.4-20130305.diff", 1)]
