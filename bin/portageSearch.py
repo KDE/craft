@@ -3,7 +3,7 @@ import re
 import utils
 import InstallDB
 
-def printSearch(search_category, search_package,maxDist = 3):
+def printSearch(search_category, search_package,maxDist = 2):
         installable = portage.PortageInstance.getInstallables()
         similar = []
         match = None
