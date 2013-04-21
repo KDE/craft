@@ -3,9 +3,9 @@
     "buildtime-dependencies": [], 
     "default-target": "4.9.0", 
     "dependencies": [
-      "kde/kde4-l10n-${EPC_PACKAGE-NAME}"
+      "kde/kde-l10n-${EPC_PACKAGE-NAME}"
     ], 
-    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.PortablePackager import *\nclass Package( PortablePackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde4-l10n-package','whitelist.txt')] )\n        VirtualPackageBase.__init__( self )", 
+    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.PortablePackager import *\nclass Package( PortablePackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )\n        VirtualPackageBase.__init__( self )", 
     "packages": [
       {
         "name": "ar"
@@ -161,15 +161,17 @@
         "name": "zh_TW"
       }
     ], 
-    "portage-dir": "package/kde4-l10n-package", 
-    "prefix": "kde4-l10n", 
-    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ ver ] = ''\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "portage-dir": "package/kde-l10n-package", 
+    "prefix": "kde-l10n", 
+    "subinfo-template": "import os\nimport info\nimport kdedefaults as kd\n\nkd.setKDEPath(os.path.join(os.getenv('KDEROOT'),'emerge','portage','kde'))\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ kd.kdeversion + ver ] = ''\n\n        self.defaultTarget = kd.kdeversion + '0'", 
     "suffix": "package", 
     "versions": [
-      "4.9.1", 
-      "4.9.2", 
-      "4.9.3", 
-      "4.9.4"
+      "0", 
+      "1", 
+      "2", 
+      "3",
+      "4",
+      "5"
     ]
   }, 
   "vars": {}
