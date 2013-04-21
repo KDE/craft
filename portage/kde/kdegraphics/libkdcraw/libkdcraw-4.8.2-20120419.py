@@ -8,10 +8,12 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
-        for ver in ['4.8.0', '4.8.1', '4.8.2', '4.8.3']:
-            self.patchToApply[ver] = [('libkdcraw-4.8.0-20120125.diff',1)]
+        for ver in ['4.10.0', '4.10.1']:
+            self.patchToApply[ver] = [('libkdcraw-4.8.0-20120125.diff', 1)]
+        for ver in ['4.10.2', '4.10.3']:
+            self.patchToApply[ver] = [('libkdcraw-4.10.2-20130420.diff', 1)]
 
-        self.defaultTarget = '4.8.2'
+        self.defaultTarget = 'gitHEAD'
 
         self.shortDescription = 'libkdcraw is a C++ interface around LibRaw library used to decode RAW picture files.'
 

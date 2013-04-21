@@ -17,8 +17,11 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
+        for ver in ['0.5.6']:
+            self.targets[ver] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/kdewin-' + ver + 'tar.xz'
+            self.targetInstSrc[ver] = 'kdewin-' + ver + 'tar.xz'
         self.shortDescription = "kde supplementary package for win32"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '0.5.6'
 
 from Package.CMakePackageBase import *
 

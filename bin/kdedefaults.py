@@ -1,7 +1,7 @@
 ## add some default functionality for KDE packages.
 import utils
 from portage import rootDirectories
-from os.path import dirname as dn, join as j, normcase, relpath, sep
+from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
 
 def __kdepath(name):
     """ return the path of the kde category directory. If multiple portages are used,
@@ -21,14 +21,34 @@ def __kdepath(name):
 
 kdepath = __kdepath(utils.getCallerFilename())
 
+def __readFile(name):
+    path = j(kdepath, name)
+    out = None
+    if exists(path):
+        f = open(path)
+        out = f.read()
+        f.close()
+    return out
+    
 def __kdebranch():
-    return open(j(kdepath, 'kdebranch')).read()
-
+    return __readFile('kdebranch')
+ 
+    
 kdebranch = __kdebranch()
     
 def __kdeversion():
-    return open(j(kdepath, 'kdeversion')).read() + "."
+    return __readFile('kdeversion')
 
 kdeversion = __kdeversion()
+
+
+def setKDEPath(name):
+    global kdepath    
+    global kdebranch    
+    global kdeversion 
+    kdepath = name
+    kdebranch = __kdebranch()
+    kdeversion = __kdeversion()
+
 
 

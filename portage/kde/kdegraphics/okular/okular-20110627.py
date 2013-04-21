@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             
         self.patchToApply["4.10.0"] = [("okular-4.10.0-20130219.diff", 1)]
         self.patchToApply["4.10.1"] = [("okular-4.10.0-20130219.diff", 1)]
+        self.patchToApply["4.10.2"] = [("okular-4.10.0-20130219.diff", 1)]
 
         self.shortDescription = "KDE document viewer"
         self.defaultTarget = 'gitHEAD'
