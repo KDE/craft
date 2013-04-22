@@ -23,6 +23,7 @@ class Package( PortablePackager, VirtualPackageBase ):
         self.subinfo = subinfo()
         PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )
         VirtualPackageBase.__init__( self )
+        self.subinfo.options.package.withArchitecture=False
 
 
 if __name__ == '__main__':
