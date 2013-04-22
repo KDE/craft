@@ -30,8 +30,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
         self.defines[ "amarok-root" ] = self.subinfo.amarok.sourceDir()
-        self.defines[ "amarok-icon" ] = os.path.join(self.packageDir(),"amarok.ico")
-        self.defines[ "kde-version" ] = "4.8.2"
+        self.defines[ "kde-version" ] = "4.10.2"
 
 if __name__ == '__main__':
     Package().execute()
