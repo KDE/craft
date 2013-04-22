@@ -37,7 +37,10 @@ def __kdebranch():
 kdebranch = __kdebranch()
     
 def __kdeversion():
-    return __readFile('kdeversion')+"."
+    out = __readFile('kdeversion')
+    if out:
+        out += "."
+    return out
 
 kdeversion = __kdeversion()
 
