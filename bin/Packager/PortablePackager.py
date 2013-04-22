@@ -16,6 +16,7 @@ Packager for portal 7zip archives
         CollectionPackagerBase.__init__( self, whitelists, blacklists )
         self.scriptnames = []
         self.packagerExe = None
+        self.subinfo.options.package.withArchitecture = True
         fileName = "bin\\7za.exe"
         for directory in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, directory, fileName )
