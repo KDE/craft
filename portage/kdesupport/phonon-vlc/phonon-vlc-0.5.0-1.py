@@ -26,6 +26,10 @@ class subinfo(info.infoclass):
         self.targets[ ver ] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
         self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
         
+      for ver in ['0.6.2']:
+        self.targets[ ver ] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
+        self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
+        
       self.targetDigests['0.6.0'] = 'f66a70cd27ad49dc98eb6526d0566cfe0802774b'
       self.targetDigests['0.6.1'] = '2c17bd124a2f6543efc6af0e6a79bf37f8f5cd37'
       
@@ -35,7 +39,7 @@ class subinfo(info.infoclass):
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.6.1'
+      self.defaultTarget = '0.6.2'
 
 
 class Package( CMakePackageBase ):
