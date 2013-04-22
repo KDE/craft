@@ -11,7 +11,8 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
-import portageSearch
+#a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
+
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
@@ -785,6 +786,8 @@ def remInstalled( category, package, version, buildtype='' ):
         os.remove( dbFileName )
         os.rename( tmpdbfile, dbFileName )
     return found
+
+import portageSearch
 
 def getPackagesCategories(packageName, defaultCategory = None):
     utils.debug( "getPackagesCategories for package name %s" % packageName, 1 )
