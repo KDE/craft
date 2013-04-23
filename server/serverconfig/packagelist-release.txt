@@ -210,7 +210,7 @@ kde,kgpg,4.10.2,
 kde,ktimer,4.10.2,
 kde,kdeutils,gitHEAD,
 
-extragear,amarok,2.7,
+extragear,amarok,2.7.0,
 extragear,kile,2.1.3,
 extragear,konversation,1.5-d938500c,
 extragear,quassel,0.8.0,
