@@ -1,12 +1,14 @@
 import info
+import kdedefaults as kd
 
 class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/oxygen-icons'
-        for ver in ['4.5.4']:
-          self.targets[ver] = 'http://download.kde.org/download.php?url=stable/' + ver + '/src/oxygen-icons-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'oxygen-icons-' + ver
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
+            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+
         self.shortDescription = "icons and bitmaps for the oxygen style"
         self.defaultTarget = 'svnHEAD'
 
