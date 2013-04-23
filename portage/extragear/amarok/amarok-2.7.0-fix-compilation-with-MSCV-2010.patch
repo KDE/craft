@@ -1,13 +1,38 @@
- .../collections/db/sql/mysqlecollection/CMakeLists.txt       |  1 +
- .../db/sql/mysqlecollection/MySqlEmbeddedStorage.h           | 12 +++++++++++-
- src/core-impl/playlists/types/file/PlaylistFile.h            |  2 +-
- 3 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt b/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
-index e000d50..7169c3e 100644
---- a/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
-+++ b/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
-@@ -8,6 +8,7 @@ set( amarok_collection-mysqlecollection_PART_SRCS
+diff -Nru -x '*~' amarok-2.7.0.orig/shared/collectionscanner/ScanningState.cpp amarok-2.7.0/shared/collectionscanner/ScanningState.cpp
+--- amarok-2.7.0.orig/shared/collectionscanner/ScanningState.cpp	2013-01-17 13:53:54.000000000 +0100
++++ amarok-2.7.0/shared/collectionscanner/ScanningState.cpp	2013-04-24 01:16:56.322509600 +0200
+@@ -19,6 +19,8 @@
+ 
+ #include "ScanningState.h"
+ 
++#include "../src/core/support/Debug.h"
++
+ #include <QBuffer>
+ #include <QtDebug>
+ 
+diff -Nru -x '*~' amarok-2.7.0.orig/src/core-impl/collections/db/sql/amarok_sqlcollection_export.h amarok-2.7.0/src/core-impl/collections/db/sql/amarok_sqlcollection_export.h
+--- amarok-2.7.0.orig/src/core-impl/collections/db/sql/amarok_sqlcollection_export.h	2013-01-17 13:53:55.000000000 +0100
++++ amarok-2.7.0/src/core-impl/collections/db/sql/amarok_sqlcollection_export.h	2013-04-24 01:43:55.483120300 +0200
+@@ -38,8 +38,15 @@
+ 
+ #   if defined(DEBUG)
+ #       define AMAROK_SQLCOLLECTION_EXPORT_TESTS KDE_IMPORT
++        /* We are using this library but building mysqlecollection */
++#       if defined(MAKE_AMAROK_SQLCOLLECTION_MYSQLE_LIB)
++#           define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS KDE_EXPORT
++#       else
++#           define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS
++#       endif
+ #   else
+ #       define AMAROK_SQLCOLLECTION_EXPORT_TESTS
++#       define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS
+ #   endif
+ 
+ # endif
+diff -Nru -x '*~' amarok-2.7.0.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt amarok-2.7.0/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt
+--- amarok-2.7.0.orig/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2013-01-17 13:53:55.000000000 +0100
++++ amarok-2.7.0/src/core-impl/collections/db/sql/mysqlecollection/CMakeLists.txt	2013-04-24 01:41:36.323160800 +0200
+@@ -8,6 +8,7 @@
       MySqlEmbeddedStorage.cpp
  )
  
@@ -15,48 +40,31 @@ index e000d50..7169c3e 100644
  kde4_add_plugin(amarok_collection-mysqlecollection ${amarok_collection-mysqlecollection_PART_SRCS})
  
  STRING(REPLACE "-Wl,--fatal-warnings" "" CMAKE_SHARED_LINKER_FLAGS_NOFATALWARN "${CMAKE_SHARED_LINKER_FLAGS}")
-diff --git a/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h b/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h
-index 4839129..5fef1cb 100644
---- a/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h
-+++ b/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h
-@@ -22,11 +22,21 @@
- #include <core/collections/support/SqlStorage.h>
- #include <core-impl/collections/db/sql/mysql-shared/MySqlStorage.h>
- 
-+#ifndef AMAROK_SQLCOLLECTION_MYSQLE_EXPORT
-+# if defined(MAKE_AMAROK_SQLCOLLECTION_MYSQLE_LIB)
-+   /* We are building this library */
-+#   define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT KDE_EXPORT
-+# else
-+   /* We are using this library */
-+#   define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT KDE_IMPORT
-+# endif
-+#endif
-+
- /**
+diff -Nru -x '*~' amarok-2.7.0.orig/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h amarok-2.7.0/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h
+--- amarok-2.7.0.orig/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h	2013-01-17 13:53:55.000000000 +0100
++++ amarok-2.7.0/src/core-impl/collections/db/sql/mysqlecollection/MySqlEmbeddedStorage.h	2013-04-24 01:35:37.525638800 +0200
+@@ -26,7 +26,7 @@
   * Implements a MySqlCollection using a MySQL Embedded Server
   */
  
--class AMAROK_SQLCOLLECTION_EXPORT MySqlEmbeddedStorage : public MySqlStorage
-+class AMAROK_SQLCOLLECTION_MYSQLE_EXPORT MySqlEmbeddedStorage : public MySqlStorage
+-class AMAROK_SQLCOLLECTION_EXPORT_TESTS MySqlEmbeddedStorage : public MySqlStorage
++class AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS MySqlEmbeddedStorage : public MySqlStorage
  {
      public:
          /** Creates a new SqlStorage.
-diff --git a/src/core-impl/playlists/types/file/PlaylistFile.h b/src/core-impl/playlists/types/file/PlaylistFile.h
-index 0358196..b04670a 100644
---- a/src/core-impl/playlists/types/file/PlaylistFile.h
-+++ b/src/core-impl/playlists/types/file/PlaylistFile.h
-@@ -25,13 +25,13 @@
- #include <QMutex>
- #include <QSemaphore>
+diff -Nru -x '*~' amarok-2.7.0.orig/src/core-impl/playlists/types/file/PlaylistFile.h amarok-2.7.0/src/core-impl/playlists/types/file/PlaylistFile.h
+--- amarok-2.7.0.orig/src/core-impl/playlists/types/file/PlaylistFile.h	2013-01-17 13:53:55.000000000 +0100
++++ amarok-2.7.0/src/core-impl/playlists/types/file/PlaylistFile.h	2013-04-24 00:46:19.898472200 +0200
+@@ -20,12 +20,11 @@
+ #include "core/playlists/Playlist.h"
+ #include "core/meta/Meta.h"
  
 -class PlaylistProvider;
- class QFile;
- 
+-
  namespace Playlists
  {
+ 
      class PlaylistFile;
-     class PlaylistFileLoaderJob;
 +    class PlaylistProvider;
  
      typedef KSharedPtr<PlaylistFile> PlaylistFilePtr;
