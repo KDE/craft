@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ '2.3.1', '2.3.2' , '2.4.3' ,'2.5.0','2.6.0','2.7.0' ]:
+        for ver in [ '2.3.1', '2.3.2', '2.4.3', '2.5.0', '2.6.0', '2.7.0' ]:
             self.targets[ver] = 'http://download.kde.org/download.php?url=stable/amarok/' + ver + '/src/amarok-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'amarok-' + ver
         self.patchToApply[ '2.3.2' ] = [ ( 'amarok-2.3.2-20110110.diff', 1 ) ]
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.4.3'] = '8a46fca6a550a4ca403a9be7f595728c819641c4'
         self.patchToApply[ '2.5.0' ] = [ ( 'amarok-2.4.90-20111208.diff', 1 )]
         self.targetDigests['2.5.0'] = '9849900d20225e703c43d242650a8fa211cf15f2'
-        self.patchToApply[ '2.7.0' ] = [ ( 'no_cd_collection.patch', 1)]
+        self.patchToApply[ '2.7.0' ] = [ ( 'no_cd_collection.patch', 1), ( 'amarok-2.7.0-fix-compilation-with-MSCV-2010.patch', 1 ) ]
         self.targetDigests['2.7.0'] = 'd0ae4a2cb81a54ae94ca24fdb3aed88d7f3a921e'
 
         self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
