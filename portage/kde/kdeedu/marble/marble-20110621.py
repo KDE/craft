@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ 'gitHEAD' ] = [("0004-listen-on-any-address-to-support-mapping-over-networ.patch_", 1)]
         self.patchToApply[ '4.10.0' ] = [("marble-4.10.0-20130301.diff", 1)]
         self.patchToApply[ '4.10.1' ] = [("marble-4.10.0-20130301.diff", 1)]
-        self.patchToApply[ '4.10.2' ] = [("marble-4.10.2-20130420.diff", 1)]
+        self.patchToApply[ '4.10.2' ] = [("marble-4.10.0-20130301.diff", 1)]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 
