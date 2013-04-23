@@ -1,0 +1,12 @@
+diff -Nru -x '*~' konversation-1.5-d938500c.orig/src/viewer/ircview.cpp konversation-1.5-d938500c/src/viewer/ircview.cpp
+--- konversation-1.5-d938500c.orig/src/viewer/ircview.cpp	2013-04-18 19:39:58.000000000 +0200
++++ konversation-1.5-d938500c/src/viewer/ircview.cpp	2013-04-21 11:55:02.214046000 +0200
+@@ -262,7 +262,7 @@
+ 
+ #define _S(x) #x << (x)
+ 
+-#define DebugBanner KDebug::Block myBlock(qPrintable(QString("%1 %2").arg(m_chatWin->getName()).arg(QString::number((ulong)this, 16))))
++#define DebugBanner KDebug::Block myBlock(qPrintable(QString("%1 %2").arg(m_chatWin->getName()).arg(QString::number((quintptr)this, 16))))
+ 
+ QDebug operator<<(QDebug dbg, QTextBlockUserData *bd);
+ QDebug operator<<(QDebug d, QTextFrame* feed);
