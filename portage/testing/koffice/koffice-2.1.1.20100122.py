@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-	self.svnTargets['gitHEAD'] = "[git]kde:kate"
+        self.svnTargets['gitHEAD'] = "[git]kde:kate"
         for ver in ['2.0.82', '2.0.83', '2.0.91']:
             self.targets[ver] = 'http://download.kde.org/unstable/koffice-' + ver + '/src/koffice-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'koffice-' + ver

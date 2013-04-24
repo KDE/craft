@@ -1,0 +1,14 @@
+diff -Nru -x '*~' libechonest-2.0.3.orig/CMakeLists.txt libechonest-2.0.3/CMakeLists.txt
+--- libechonest-2.0.3.orig/CMakeLists.txt	2013-02-16 16:17:33.000000000 +0100
++++ libechonest-2.0.3/CMakeLists.txt	2013-04-19 15:06:06.427184600 +0200
+@@ -31,8 +31,8 @@
+         add_definitions( -fvisibility=hidden )
+     endif()
+ 
+-    # disable -Werror on ARM since Qt containers cause a lot of alignment warnings
+-    if ( NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" )
++    # disable -Werror on ARM and Windows since Qt containers cause a lot of alignment warnings
++    if ( NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND NOT WIN32 )
+         add_definitions( -Werror )
+     endif()
+ 

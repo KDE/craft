@@ -1,0 +1,8 @@
+diff -Nru -x '*~' marble-4.10.2.orig/src/lib/global.h marble-4.10.2/src/lib/global.h
+--- marble-4.10.2.orig/src/lib/global.h	2013-03-01 07:49:41.937428000 +0100
++++ marble-4.10.2/src/lib/global.h	2013-04-20 20:17:55.219400800 +0200
+@@ -1,2 +1,4 @@
+ #include "MarbleGlobal.h"
++#ifdef __GNUC__
+ #warning global.h is deprecated. Please #include <marble/MarbleGlobal.h> instead (no further changes needed).
++#endif

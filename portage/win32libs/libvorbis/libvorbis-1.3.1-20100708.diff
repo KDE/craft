@@ -1,6 +1,6 @@
-diff -Nru libvorbis-1.3.1.orig/CMakeLists.txt libvorbis-1.3.1/CMakeLists.txt
---- libvorbis-1.3.1.orig/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libvorbis-1.3.1/CMakeLists.txt	Thu Jul  8 10:17:49 2010
+diff -Nru -x '*~' libvorbis-1.3.1.orig/CMakeLists.txt libvorbis-1.3.1/CMakeLists.txt
+--- libvorbis-1.3.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libvorbis-1.3.1/CMakeLists.txt	2013-04-19 14:41:47.333136500 +0200
 @@ -0,0 +1,6 @@
 +project (libvorbis)
 +
@@ -8,15 +8,48 @@ diff -Nru libvorbis-1.3.1.orig/CMakeLists.txt libvorbis-1.3.1/CMakeLists.txt
 +
 +add_subdirectory(include)
 +add_subdirectory(lib)
-diff -Nru libvorbis-1.3.1.orig/include/CMakeLists.txt libvorbis-1.3.1/include/CMakeLists.txt
---- libvorbis-1.3.1.orig/include/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libvorbis-1.3.1/include/CMakeLists.txt	Thu Jul  8 09:31:25 2010
+diff -Nru -x '*~' libvorbis-1.3.1.orig/include/CMakeLists.txt libvorbis-1.3.1/include/CMakeLists.txt
+--- libvorbis-1.3.1.orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libvorbis-1.3.1/include/CMakeLists.txt	2013-04-19 14:41:47.337138100 +0200
 @@ -0,0 +1 @@
 +install(FILES vorbis/codec.h vorbis/vorbisenc.h vorbis/vorbisfile.h DESTINATION include/vorbis)
 \ No newline at end of file
-diff -Nru libvorbis-1.3.1.orig/lib/CMakeLists.txt libvorbis-1.3.1/lib/CMakeLists.txt
---- libvorbis-1.3.1.orig/lib/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libvorbis-1.3.1/lib/CMakeLists.txt	Thu Jul  8 10:24:39 2010
+diff -Nru -x '*~' libvorbis-1.3.1.orig/lib/cmake/modules/FindOgg.cmake libvorbis-1.3.1/lib/cmake/modules/FindOgg.cmake
+--- libvorbis-1.3.1.orig/lib/cmake/modules/FindOgg.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libvorbis-1.3.1/lib/cmake/modules/FindOgg.cmake	2013-04-19 14:41:47.344140900 +0200
+@@ -0,0 +1,28 @@
++# - Try to find the Ogg library
++# This will define
++#
++#  OGG_FOUND
++#  OGG_INCLUDE_DIR
++#  OGG_LIBRARY
++
++
++IF (OGG_INCLUDE_DIR)
++    SET(OGG_FIND_QUIETLY TRUE)
++ENDIF (OGG_INCLUDE_DIR)
++
++find_path(OGG_INCLUDE_DIR ogg/ogg.h)
++
++find_library(OGG_LIBRARY NAMES ogg)
++
++mark_as_advanced(OGG_INCLUDE_DIR OGG_LIBRARY)
++
++
++if (OGG_LIBRARY)
++   set(OGG_FOUND TRUE)
++endif (OGG_LIBRARY)
++
++   set(_CMAKE_REQUIRED_LIBRARIES_TMP ${CMAKE_REQUIRED_LIBRARIES})
++   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${OGG_LIBRARY})
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(OGG DEFAULT_MSG OGG_LIBRARY OGG_INCLUDE_DIR)
+\ No newline at end of file
+diff -Nru -x '*~' libvorbis-1.3.1.orig/lib/CMakeLists.txt libvorbis-1.3.1/lib/CMakeLists.txt
+--- libvorbis-1.3.1.orig/lib/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libvorbis-1.3.1/lib/CMakeLists.txt	2013-04-19 14:41:47.340138900 +0200
 @@ -0,0 +1,51 @@
 +set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
@@ -70,36 +103,36 @@ diff -Nru libvorbis-1.3.1.orig/lib/CMakeLists.txt libvorbis-1.3.1/lib/CMakeLists
 +                           LIBRARY DESTINATION lib
 +                           ARCHIVE DESTINATION lib)
 \ No newline at end of file
-diff -Nru libvorbis-1.3.1.orig/lib/cmake/modules/FindOgg.cmake libvorbis-1.3.1/lib/cmake/modules/FindOgg.cmake
---- libvorbis-1.3.1.orig/lib/cmake/modules/FindOgg.cmake	Thu Jan  1 02:00:00 1970
-+++ libvorbis-1.3.1/lib/cmake/modules/FindOgg.cmake	Thu Jul  8 10:22:37 2010
-@@ -0,0 +1,28 @@
-+# - Try to find the Ogg library
-+# This will define
-+#
-+#  OGG_FOUND
-+#  OGG_INCLUDE_DIR
-+#  OGG_LIBRARY
-+
-+
-+IF (OGG_INCLUDE_DIR)
-+    SET(OGG_FIND_QUIETLY TRUE)
-+ENDIF (OGG_INCLUDE_DIR)
-+
-+find_path(OGG_INCLUDE_DIR ogg/ogg.h)
-+
-+find_library(OGG_LIBRARY NAMES ogg)
-+
-+mark_as_advanced(OGG_INCLUDE_DIR OGG_LIBRARY)
-+
-+
-+if (OGG_LIBRARY)
-+   set(OGG_FOUND TRUE)
-+endif (OGG_LIBRARY)
-+
-+   set(_CMAKE_REQUIRED_LIBRARIES_TMP ${CMAKE_REQUIRED_LIBRARIES})
-+   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${OGG_LIBRARY})
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(OGG DEFAULT_MSG OGG_LIBRARY OGG_INCLUDE_DIR)
-\ No newline at end of file
+diff -Nru -x '*~' libvorbis-1.3.1.orig/win32/vorbis.def libvorbis-1.3.1/win32/vorbis.def
+--- libvorbis-1.3.1.orig/win32/vorbis.def	2010-03-25 07:28:59.000000000 +0100
++++ libvorbis-1.3.1/win32/vorbis.def	2013-04-19 14:42:35.983023600 +0200
+@@ -1,7 +1,6 @@
+ ;
+ ; $Id: vorbis.def 16335 2009-07-25 22:52:38Z cristianadam $
+ ; 
+-LIBRARY
+ EXPORTS
+ _floor_P
+ _mapping_P
+diff -Nru -x '*~' libvorbis-1.3.1.orig/win32/vorbisenc.def libvorbis-1.3.1/win32/vorbisenc.def
+--- libvorbis-1.3.1.orig/win32/vorbisenc.def	2007-01-24 17:09:38.000000000 +0100
++++ libvorbis-1.3.1/win32/vorbisenc.def	2013-04-19 14:42:41.474438400 +0200
+@@ -1,7 +1,6 @@
+ ;
+ ; $Id: vorbisenc.def 7187 2004-07-20 07:24:27Z xiphmont $
+ ;
+-LIBRARY
+ 
+ EXPORTS
+ vorbis_encode_init
+diff -Nru -x '*~' libvorbis-1.3.1.orig/win32/vorbisfile.def libvorbis-1.3.1/win32/vorbisfile.def
+--- libvorbis-1.3.1.orig/win32/vorbisfile.def	2009-04-03 02:12:49.000000000 +0200
++++ libvorbis-1.3.1/win32/vorbisfile.def	2013-04-19 14:42:46.417906000 +0200
+@@ -3,7 +3,6 @@
+ ;
+ ; last modified: $Id: vorbisfile.def 15566 2008-12-08 09:07:12Z conrad $
+ ;
+-LIBRARY
+ EXPORTS
+ ov_clear
+ ov_open

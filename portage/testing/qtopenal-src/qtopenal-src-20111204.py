@@ -4,8 +4,8 @@ from Package.CMakePackageBase import *
  
 class subinfo(info.infoclass):
     def setTargets( self ):
-    self.svnTargets['gitHEAD'] = '[git]kde:qtopenal'
-    self.defaultTarget = 'gitHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:qtopenal'
+        self.defaultTarget = 'gitHEAD'
  
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
