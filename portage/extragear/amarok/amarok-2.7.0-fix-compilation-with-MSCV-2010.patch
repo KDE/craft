@@ -21,7 +21,7 @@ diff -Nru -x '*~' amarok-2.7.0.orig/src/core-impl/collections/db/sql/amarok_sqlc
 +#       if defined(MAKE_AMAROK_SQLCOLLECTION_MYSQLE_LIB)
 +#           define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS KDE_EXPORT
 +#       else
-+#           define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS
++#           define AMAROK_SQLCOLLECTION_MYSQLE_EXPORT_TESTS KDE_IMPORT
 +#       endif
  #   else
  #       define AMAROK_SQLCOLLECTION_EXPORT_TESTS
