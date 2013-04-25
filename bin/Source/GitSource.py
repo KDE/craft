@@ -46,7 +46,7 @@ class GitSource ( VersionSystemSourceBase ):
             # TODO: check return value for success
             tmpFile.seek( 0 )
             for line in tmpFile:
-                if str(line[2:].rstrip(), "UTF-8") == branch:
+                if str(line[2:].rstrip(), "UTF-8") == branch.rstrip():
                     return True
         return False
 
