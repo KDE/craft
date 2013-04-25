@@ -1,6 +1,26 @@
-diff -Nru -x '*~' libkdcraw-4.10.2.orig/libraw/src/libraw_datastream.cpp libkdcraw-4.10.2/libraw/src/libraw_datastream.cpp
---- libkdcraw-4.10.2.orig/libraw/src/libraw_datastream.cpp	2013-03-01 08:01:46.026448000 +0100
-+++ libkdcraw-4.10.2/libraw/src/libraw_datastream.cpp	2013-04-20 16:45:12.105912400 +0200
+ libraw/internal/dcraw_common.cpp | 4 ++--
+ libraw/src/libraw_datastream.cpp | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/libraw/internal/dcraw_common.cpp b/libraw/internal/dcraw_common.cpp
+index b098c92..06b7dae 100644
+--- a/libraw/internal/dcraw_common.cpp
++++ b/libraw/internal/dcraw_common.cpp
+@@ -5844,8 +5844,8 @@ void CLASS parse_ciff (int offset, int length)
+       thumb_length = len;
+     }
+     if (type == 0x1818) {
+-      shutter = pow (2, -int_to_float((get4(),get4())));
+-      aperture = pow (2, int_to_float(get4())/2);
++      shutter = pow (2, (double) -int_to_float((get4(),get4())));
++      aperture = pow (2, int_to_float(get4())/2.0);
+     }
+     if (type == 0x102a) {
+       iso_speed = pow (2, (get4(),get2())/32.0 - 4) * 50;
+diff --git a/libraw/src/libraw_datastream.cpp b/libraw/src/libraw_datastream.cpp
+index 810dd9c..7645dde 100755
+--- a/libraw/src/libraw_datastream.cpp
++++ b/libraw/src/libraw_datastream.cpp
 @@ -3,6 +3,7 @@
      #define _WIN32_WINNT 0x0500
      #include <stdexcept>

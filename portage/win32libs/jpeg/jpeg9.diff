@@ -1,6 +1,6 @@
 diff -Nru -x '*~' jpeg-9.orig/cdjpeg.c jpeg-9/cdjpeg.c
 --- jpeg-9.orig/cdjpeg.c	1997-09-07 17:51:36.000000000 +0200
-+++ jpeg-9/cdjpeg.c	2013-01-23 12:56:59.748823600 +0100
++++ jpeg-9/cdjpeg.c	2013-04-22 02:14:01.616801500 +0200
 @@ -43,7 +43,7 @@
  }
  
@@ -57,7 +57,7 @@ diff -Nru -x '*~' jpeg-9.orig/cdjpeg.c jpeg-9/cdjpeg.c
    FILE * output_file = stdout;
 diff -Nru -x '*~' jpeg-9.orig/cdjpeg.h jpeg-9/cdjpeg.h
 --- jpeg-9.orig/cdjpeg.h	2003-11-03 21:53:18.000000000 +0100
-+++ jpeg-9/cdjpeg.h	2013-01-23 12:56:59.753823600 +0100
++++ jpeg-9/cdjpeg.h	2013-04-22 02:14:01.626802000 +0200
 @@ -16,7 +16,8 @@
  #include "jerror.h"		/* get library error codes too */
  #include "cderror.h"		/* get application-specific error codes */
@@ -70,8 +70,8 @@ diff -Nru -x '*~' jpeg-9.orig/cdjpeg.h jpeg-9/cdjpeg.h
   */
 diff -Nru -x '*~' jpeg-9.orig/CMakeLists.txt jpeg-9/CMakeLists.txt
 --- jpeg-9.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-9/CMakeLists.txt	2013-01-23 12:56:59.763823600 +0100
-@@ -0,0 +1,101 @@
++++ jpeg-9/CMakeLists.txt	2013-04-22 02:14:01.636802600 +0200
+@@ -0,0 +1,102 @@
 +project(jpeg)
 +
 +set(JPEG_VERSION_MAJOR 8 CACHE INT "Major JPEG version number" FORCE)
@@ -121,6 +121,7 @@ diff -Nru -x '*~' jpeg-9.orig/CMakeLists.txt jpeg-9/CMakeLists.txt
 +    jerror.h
 +    jdatadst.h
 +    jdatasrc.h
++    jinclude.h
 +    jmorecfg.h
 +)
 +
@@ -173,10 +174,10 @@ diff -Nru -x '*~' jpeg-9.orig/CMakeLists.txt jpeg-9/CMakeLists.txt
 +    RUNTIME DESTINATION bin
 +)
 +endif(BUILD_tools)
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' jpeg-9.orig/jconfig.h.cmake jpeg-9/jconfig.h.cmake
 --- jpeg-9.orig/jconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-9/jconfig.h.cmake	2013-01-23 12:56:59.768823600 +0100
++++ jpeg-9/jconfig.h.cmake	2013-04-22 02:14:01.651803500 +0200
 @@ -0,0 +1,31 @@
 +#define HAVE_PROTOTYPES
 +#define HAVE_UNSIGNED_CHAR
@@ -211,23 +212,35 @@ diff -Nru -x '*~' jpeg-9.orig/jconfig.h.cmake jpeg-9/jconfig.h.cmake
 +#define EXTERN(type) JPEG_EXPORT type
 diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 --- jpeg-9.orig/jdatadst.h	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-9/jdatadst.h	2013-01-23 12:56:59.773823600 +0100
-@@ -0,0 +1,145 @@
++++ jpeg-9/jdatadst.h	2013-04-22 02:27:16.540268500 +0200
+@@ -0,0 +1,270 @@
 +/*
 + * jdatadst.c
 + *
 + * Copyright (C) 1994-1996, Thomas G. Lane.
++ * Modified 2009-2012 by Guido Vollbeding.
 + * This file is part of the Independent JPEG Group's software.
 + * For conditions of distribution and use, see the accompanying README file.
 + *
 + * This file contains compression data destination routines for the case of
-+ * emitting JPEG data to a file (or any stdio stream).  While these routines
-+ * are sufficient for most applications, some will want to use a different
-+ * destination manager.
++ * emitting JPEG data to memory or to a file (or any stdio stream).
++ * While these routines are sufficient for most applications,
++ * some will want to use a different destination manager.
 + * IMPORTANT: we assume that fwrite() will correctly transcribe an array of
 + * JOCTETs into 8-bit-wide elements on external storage.  If char is wider
 + * than 8 bits on your machine, you may need to do some tweaking.
 + */
++
++/* this is not a core library module, so it doesn't define JPEG_INTERNALS */
++#include "jinclude.h"
++#include "jpeglib.h"
++#include "jerror.h"
++
++#ifndef HAVE_STDLIB_H		/* <stdlib.h> should declare malloc(),free() */
++extern void * malloc JPP((size_t size));
++extern void free JPP((void *ptr));
++#endif
++
 +
 +/* Expanded data destination object for stdio output */
 +
@@ -243,6 +256,21 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +#define JDATADST_OUTPUT_BUF_SIZE  4096	/* choose an efficiently fwrite'able size */
 +
 +
++/* Expanded data destination object for memory output */
++
++typedef struct {
++  struct jpeg_destination_mgr pub; /* public fields */
++
++  unsigned char ** outbuffer;	/* target buffer */
++  unsigned long * outsize;
++  unsigned char * newbuffer;	/* newly allocated buffer */
++  JOCTET * buffer;		/* start of buffer */
++  size_t bufsize;
++} jdatadst_my_mem_destination_mgr;
++
++typedef jdatadst_my_mem_destination_mgr * jdatadst_my_mem_dest_ptr;
++
++
 +/*
 + * Initialize destination --- called by jpeg_start_compress
 + * before any data is actually written.
@@ -256,10 +284,16 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +  /* Allocate the output buffer --- it will be released when done with image */
 +  dest->buffer = (JOCTET *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-+				  JDATADST_OUTPUT_BUF_SIZE * sizeof(JOCTET));
++				  JDATADST_OUTPUT_BUF_SIZE * SIZEOF(JOCTET));
 +
 +  dest->pub.next_output_byte = dest->buffer;
 +  dest->pub.free_in_buffer = JDATADST_OUTPUT_BUF_SIZE;
++}
++
++METHODDEF(void)
++jdatadst_init_mem_destination (j_compress_ptr cinfo)
++{
++  /* no work necessary here */
 +}
 +
 +
@@ -291,12 +325,42 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +{
 +  jdatadst_my_dest_ptr dest = (jdatadst_my_dest_ptr) cinfo->dest;
 +
-+  if (fwrite(dest->buffer, 1, JDATADST_OUTPUT_BUF_SIZE, dest->outfile) !=
++  if (JFWRITE(dest->outfile, dest->buffer, JDATADST_OUTPUT_BUF_SIZE) !=
 +      (size_t) JDATADST_OUTPUT_BUF_SIZE)
 +    ERREXIT(cinfo, JERR_FILE_WRITE);
 +
 +  dest->pub.next_output_byte = dest->buffer;
 +  dest->pub.free_in_buffer = JDATADST_OUTPUT_BUF_SIZE;
++
++  return TRUE;
++}
++
++METHODDEF(boolean)
++jdatadst_empty_mem_output_buffer (j_compress_ptr cinfo)
++{
++  size_t nextsize;
++  JOCTET * nextbuffer;
++  jdatadst_my_mem_dest_ptr dest = (jdatadst_my_mem_dest_ptr) cinfo->dest;
++
++  /* Try to allocate new buffer with double size */
++  nextsize = dest->bufsize * 2;
++  nextbuffer = (JOCTET *) malloc(nextsize);
++
++  if (nextbuffer == NULL)
++    ERREXIT1(cinfo, JERR_OUT_OF_MEMORY, 10);
++
++  MEMCOPY(nextbuffer, dest->buffer, dest->bufsize);
++
++  if (dest->newbuffer != NULL)
++    free(dest->newbuffer);
++
++  dest->newbuffer = nextbuffer;
++
++  dest->pub.next_output_byte = nextbuffer + dest->bufsize;
++  dest->pub.free_in_buffer = dest->bufsize;
++
++  dest->buffer = nextbuffer;
++  dest->bufsize = nextsize;
 +
 +  return TRUE;
 +}
@@ -319,13 +383,22 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +
 +  /* Write any data remaining in the buffer */
 +  if (datacount > 0) {
-+    if (fwrite(dest->buffer, 1, datacount, dest->outfile) != datacount) 
++    if (JFWRITE(dest->outfile, dest->buffer, datacount) != datacount)
 +      ERREXIT(cinfo, JERR_FILE_WRITE);
 +  }
 +  fflush(dest->outfile);
 +  /* Make sure we wrote the output file OK */
 +  if (ferror(dest->outfile))
 +    ERREXIT(cinfo, JERR_FILE_WRITE);
++}
++
++METHODDEF(void)
++jdatadst_term_mem_destination (j_compress_ptr cinfo)
++{
++  jdatadst_my_mem_dest_ptr dest = (jdatadst_my_mem_dest_ptr) cinfo->dest;
++
++  *dest->outbuffer = dest->buffer;
++  *dest->outsize = dest->bufsize - dest->pub.free_in_buffer;
 +}
 +
 +
@@ -349,7 +422,7 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
 +    cinfo->dest = (struct jpeg_destination_mgr *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-+				  sizeof(jdatadst_my_destination_mgr));
++				  SIZEOF(jdatadst_my_destination_mgr));
 +  }
 +
 +  dest = (jdatadst_my_dest_ptr) cinfo->dest;
@@ -358,25 +431,85 @@ diff -Nru -x '*~' jpeg-9.orig/jdatadst.h jpeg-9/jdatadst.h
 +  dest->pub.term_destination = jdatadst_term_destination;
 +  dest->outfile = outfile;
 +}
++
++
++/*
++ * Prepare for output to a memory buffer.
++ * The caller may supply an own initial buffer with appropriate size.
++ * Otherwise, or when the actual data output exceeds the given size,
++ * the library adapts the buffer size as necessary.
++ * The standard library functions malloc/free are used for allocating
++ * larger memory, so the buffer is available to the application after
++ * finishing compression, and then the application is responsible for
++ * freeing the requested memory.
++ * Note:  An initial buffer supplied by the caller is expected to be
++ * managed by the application.  The library does not free such buffer
++ * when allocating a larger buffer.
++ */
++
++LOCAL(void)
++jpeg_mem_dest (j_compress_ptr cinfo,
++	       unsigned char ** outbuffer, unsigned long * outsize)
++{
++  jdatadst_my_mem_dest_ptr dest;
++
++  if (outbuffer == NULL || outsize == NULL)	/* sanity check */
++    ERREXIT(cinfo, JERR_BUFFER_SIZE);
++
++  /* The destination object is made permanent so that multiple JPEG images
++   * can be written to the same buffer without re-executing jpeg_mem_dest.
++   */
++  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
++    cinfo->dest = (struct jpeg_destination_mgr *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
++				  SIZEOF(jdatadst_my_mem_destination_mgr));
++  }
++
++  dest = (jdatadst_my_mem_dest_ptr) cinfo->dest;
++  dest->pub.init_destination = jdatadst_init_mem_destination;
++  dest->pub.empty_output_buffer = jdatadst_empty_mem_output_buffer;
++  dest->pub.term_destination = jdatadst_term_mem_destination;
++  dest->outbuffer = outbuffer;
++  dest->outsize = outsize;
++  dest->newbuffer = NULL;
++
++  if (*outbuffer == NULL || *outsize == 0) {
++    /* Allocate initial buffer */
++    dest->newbuffer = *outbuffer = (unsigned char *) malloc(JDATADST_OUTPUT_BUF_SIZE);
++    if (dest->newbuffer == NULL)
++      ERREXIT1(cinfo, JERR_OUT_OF_MEMORY, 10);
++    *outsize = JDATADST_OUTPUT_BUF_SIZE;
++  }
++
++  dest->pub.next_output_byte = dest->buffer = *outbuffer;
++  dest->pub.free_in_buffer = dest->bufsize = *outsize;
++}
 diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 --- jpeg-9.orig/jdatasrc.h	1970-01-01 01:00:00.000000000 +0100
-+++ jpeg-9/jdatasrc.h	2013-01-23 12:56:59.778823600 +0100
-@@ -0,0 +1,206 @@
++++ jpeg-9/jdatasrc.h	2013-04-22 02:34:54.712474400 +0200
+@@ -0,0 +1,275 @@
 +/*
 + * jdatasrc.c
 + *
 + * Copyright (C) 1994-1996, Thomas G. Lane.
++ * Modified 2009-2011 by Guido Vollbeding.
 + * This file is part of the Independent JPEG Group's software.
 + * For conditions of distribution and use, see the accompanying README file.
 + *
 + * This file contains decompression data source routines for the case of
-+ * reading JPEG data from a file (or any stdio stream).  While these routines
-+ * are sufficient for most applications, some will want to use a different
-+ * source manager.
++ * reading JPEG data from memory or from a file (or any stdio stream).
++ * While these routines are sufficient for most applications,
++ * some will want to use a different source manager.
 + * IMPORTANT: we assume that fread() will correctly transcribe an array of
 + * JOCTETs from 8-bit-wide elements on external storage.  If char is wider
 + * than 8 bits on your machine, you may need to do some tweaking.
 + */
++
++/* this is not a core library module, so it doesn't define JPEG_INTERNALS */
++#include "jinclude.h"
++#include "jpeglib.h"
++#include "jerror.h"
++
 +
 +/* Expanded data source object for stdio input */
 +
@@ -408,6 +541,12 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +   * This is correct behavior for reading a series of images from one source.
 +   */
 +  src->start_of_file = TRUE;
++}
++
++METHODDEF(void)
++jdatasrc_init_mem_source (j_decompress_ptr cinfo)
++{
++  /* no work necessary here */
 +}
 +
 +
@@ -450,7 +589,7 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +  jdatasrc_my_src_ptr src = (jdatasrc_my_src_ptr) cinfo->src;
 +  size_t nbytes;
 +
-+  nbytes = fread(src->buffer, 1, JDATASRC_INPUT_BUF_SIZE, src->infile);
++  nbytes = JFREAD(src->infile, src->buffer, JDATASRC_INPUT_BUF_SIZE);
 +
 +  if (nbytes <= 0) {
 +    if (src->start_of_file)	/* Treat empty input file as fatal error */
@@ -465,6 +604,27 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +  src->pub.next_input_byte = src->buffer;
 +  src->pub.bytes_in_buffer = nbytes;
 +  src->start_of_file = FALSE;
++
++  return TRUE;
++}
++
++METHODDEF(boolean)
++jdatasrc_fill_mem_input_buffer (j_decompress_ptr cinfo)
++{
++  static const JOCTET mybuffer[4] = {
++    (JOCTET) 0xFF, (JOCTET) JPEG_EOI, 0, 0
++  };
++
++  /* The whole JPEG data is expected to reside in the supplied memory
++   * buffer, so any request for more data beyond the given buffer size
++   * is treated as an error.
++   */
++  WARNMS(cinfo, JWRN_JPEG_EOF);
++
++  /* Insert a fake EOI marker */
++
++  cinfo->src->next_input_byte = mybuffer;
++  cinfo->src->bytes_in_buffer = 2;
 +
 +  return TRUE;
 +}
@@ -485,22 +645,22 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +METHODDEF(void)
 +jdatasrc_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 +{
-+  jdatasrc_my_src_ptr src = (jdatasrc_my_src_ptr) cinfo->src;
++  struct jpeg_source_mgr * src = cinfo->src;
 +
 +  /* Just a dumb implementation for now.  Could use fseek() except
 +   * it doesn't work on pipes.  Not clear that being smart is worth
 +   * any trouble anyway --- large skips are infrequent.
 +   */
 +  if (num_bytes > 0) {
-+    while (num_bytes > (long) src->pub.bytes_in_buffer) {
-+      num_bytes -= (long) src->pub.bytes_in_buffer;
-+      (void) jdatasrc_fill_input_buffer(cinfo);
-+      /* note we assume that jdatasrc_fill_input_buffer will never return FALSE,
++    while (num_bytes > (long) src->bytes_in_buffer) {
++      num_bytes -= (long) src->bytes_in_buffer;
++      (void) (*src->fill_input_buffer) (cinfo);
++      /* note we assume that fill_input_buffer will never return FALSE,
 +       * so suspension need not be handled.
 +       */
 +    }
-+    src->pub.next_input_byte += (size_t) num_bytes;
-+    src->pub.bytes_in_buffer -= (size_t) num_bytes;
++    src->next_input_byte += (size_t) num_bytes;
++    src->bytes_in_buffer -= (size_t) num_bytes;
 +  }
 +}
 +
@@ -551,11 +711,11 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
 +    cinfo->src = (struct jpeg_source_mgr *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-+				  sizeof(jdatasrc_my_source_mgr));
++				  SIZEOF(jdatasrc_my_source_mgr));
 +    src = (jdatasrc_my_src_ptr) cinfo->src;
 +    src->buffer = (JOCTET *)
 +      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-+				  JDATASRC_INPUT_BUF_SIZE * sizeof(JOCTET));
++				  JDATASRC_INPUT_BUF_SIZE * SIZEOF(JOCTET));
 +  }
 +
 +  src = (jdatasrc_my_src_ptr) cinfo->src;
@@ -565,12 +725,47 @@ diff -Nru -x '*~' jpeg-9.orig/jdatasrc.h jpeg-9/jdatasrc.h
 +  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
 +  src->pub.term_source = jdatasrc_term_source;
 +  src->infile = infile;
-+  src->pub.bytes_in_buffer = 0; /* forces jdatasrc_fill_input_buffer on first read */
++  src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
 +  src->pub.next_input_byte = NULL; /* until buffer loaded */
++}
++
++
++/*
++ * Prepare for input from a supplied memory buffer.
++ * The buffer must contain the whole JPEG data.
++ */
++
++LOCAL(void)
++jpeg_mem_src (j_decompress_ptr cinfo,
++	      unsigned char * inbuffer, unsigned long insize)
++{
++  struct jpeg_source_mgr * src;
++
++  if (inbuffer == NULL || insize == 0)	/* Treat empty input as fatal error */
++    ERREXIT(cinfo, JERR_INPUT_EMPTY);
++
++  /* The source object is made permanent so that a series of JPEG images
++   * can be read from the same buffer by calling jpeg_mem_src only before
++   * the first one.
++   */
++  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
++    cinfo->src = (struct jpeg_source_mgr *)
++      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
++				  SIZEOF(struct jpeg_source_mgr));
++  }
++
++  src = cinfo->src;
++  src->init_source = jdatasrc_init_mem_source;
++  src->fill_input_buffer = jdatasrc_fill_mem_input_buffer;
++  src->skip_input_data = jdatasrc_skip_input_data;
++  src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
++  src->term_source = jdatasrc_term_source;
++  src->bytes_in_buffer = (size_t) insize;
++  src->next_input_byte = (JOCTET *) inbuffer;
 +}
 diff -Nru -x '*~' jpeg-9.orig/jerror.h jpeg-9/jerror.h
 --- jpeg-9.orig/jerror.h	2012-04-29 14:35:38.000000000 +0200
-+++ jpeg-9/jerror.h	2013-01-23 12:56:59.783823600 +0100
++++ jpeg-9/jerror.h	2013-04-22 02:14:01.681805200 +0200
 @@ -14,6 +14,21 @@
   * and/or the macros.
   */
@@ -613,7 +808,7 @@ diff -Nru -x '*~' jpeg-9.orig/jerror.h jpeg-9/jerror.h
  #endif /* JERROR_H */
 diff -Nru -x '*~' jpeg-9.orig/jmorecfg.h jpeg-9/jmorecfg.h
 --- jpeg-9.orig/jmorecfg.h	2012-08-08 16:23:20.000000000 +0200
-+++ jpeg-9/jmorecfg.h	2013-01-23 12:56:59.788823700 +0100
++++ jpeg-9/jmorecfg.h	2013-04-22 02:14:01.691805800 +0200
 @@ -188,13 +188,21 @@
   */
  
@@ -638,7 +833,7 @@ diff -Nru -x '*~' jpeg-9.orig/jmorecfg.h jpeg-9/jmorecfg.h
  /* This macro is used to declare a "method", that is, a function pointer.
 diff -Nru -x '*~' jpeg-9.orig/jpeglib.h jpeg-9/jpeglib.h
 --- jpeg-9.orig/jpeglib.h	2012-08-08 14:44:08.000000000 +0200
-+++ jpeg-9/jpeglib.h	2013-01-23 12:56:59.798823700 +0100
++++ jpeg-9/jpeglib.h	2013-04-22 02:14:01.701806300 +0200
 @@ -26,6 +26,19 @@
  #endif
  #include "jmorecfg.h"		/* seldom changed options */
@@ -659,7 +854,7 @@ diff -Nru -x '*~' jpeg-9.orig/jpeglib.h jpeg-9/jpeglib.h
  
  #ifdef __cplusplus
  #ifndef DONT_USE_EXTERN_C
-@@ -964,8 +977,10 @@
+@@ -964,16 +977,20 @@
  
  /* Standard data source and destination managers: stdio streams. */
  /* Caller is responsible for opening the file before and closing after. */
@@ -669,8 +864,18 @@ diff -Nru -x '*~' jpeg-9.orig/jpeglib.h jpeg-9/jpeglib.h
 +#endif
  
  /* Data source and destination managers: memory buffers. */
++#ifndef JPEG_STDIO_IN_HEADERS
  EXTERN(void) jpeg_mem_dest JPP((j_compress_ptr cinfo,
-@@ -1170,4 +1185,10 @@
+ 			       unsigned char ** outbuffer,
+ 			       unsigned long * outsize));
+ EXTERN(void) jpeg_mem_src JPP((j_decompress_ptr cinfo,
+ 			      unsigned char * inbuffer,
+ 			      unsigned long insize));
++#endif
+ 
+ /* Default parameter setup for compression */
+ EXTERN(void) jpeg_set_defaults JPP((j_compress_ptr cinfo));
+@@ -1170,4 +1187,10 @@
  #endif
  #endif
  
@@ -683,7 +888,7 @@ diff -Nru -x '*~' jpeg-9.orig/jpeglib.h jpeg-9/jpeglib.h
  #endif /* JPEGLIB_H */
 diff -Nru -x '*~' jpeg-9.orig/rdcolmap.c jpeg-9/rdcolmap.c
 --- jpeg-9.orig/rdcolmap.c	1996-11-19 11:38:44.000000000 +0100
-+++ jpeg-9/rdcolmap.c	2013-01-23 12:56:59.803823700 +0100
++++ jpeg-9/rdcolmap.c	2013-04-22 02:14:01.712807000 +0200
 @@ -42,7 +42,7 @@
   * Add a (potentially) new color to the color map.
   */
@@ -740,7 +945,7 @@ diff -Nru -x '*~' jpeg-9.orig/rdcolmap.c jpeg-9/rdcolmap.c
    /* Allocate space for a color map of maximum supported size. */
 diff -Nru -x '*~' jpeg-9.orig/rdswitch.c jpeg-9/rdswitch.c
 --- jpeg-9.orig/rdswitch.c	2003-11-03 21:51:40.000000000 +0100
-+++ jpeg-9/rdswitch.c	2013-01-23 12:56:59.813823700 +0100
++++ jpeg-9/rdswitch.c	2013-04-22 02:14:01.725807700 +0200
 @@ -18,7 +18,7 @@
  #include <ctype.h>		/* to declare isdigit(), isspace() */
  
@@ -815,7 +1020,7 @@ diff -Nru -x '*~' jpeg-9.orig/rdswitch.c jpeg-9/rdswitch.c
   *     HxV[,HxV,...]
 diff -Nru -x '*~' jpeg-9.orig/transupp.c jpeg-9/transupp.c
 --- jpeg-9.orig/transupp.c	2012-06-02 14:44:44.000000000 +0200
-+++ jpeg-9/transupp.c	2013-01-23 12:56:59.843823700 +0100
++++ jpeg-9/transupp.c	2013-04-22 02:14:01.736808300 +0200
 @@ -22,6 +22,8 @@
  #include "transupp.h"		/* My own external interface */
  #include <ctype.h>		/* to declare isdigit() */
