@@ -46,10 +46,9 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
         # XXX: There is apperantly a bug in update ressource on some Windows
         # Systems, causing the way mt.exe form uactools calls it to produce
         # invalid executables.
-        # Experiments show that windows server 2008 (winver 6.0.6002) works
-        # so currently minimum winver is 6.0
+        # FIXME: Add more versions where it works (apart from windows 7 here)
 
-        if ( utils.getWinVer() < "6.0.0000"):
+        if ( utils.getWinVer() < "6.1.7600"):
             return True
         else:
             return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
