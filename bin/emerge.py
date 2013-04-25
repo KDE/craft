@@ -657,7 +657,9 @@ else:
                             msg += portage.getHostAndTarget( hostEnabled and not hostInstalled, targetEnabled and not targetInstalled )
                         else:
                             msg = ""
-                    utils.warning( "pretending %s/%s-%s%s" % ( mainCategory, mainPackage, mainVersion, msg ) )
+                    targetMsg = ":default"
+                    if defaultTarget: targetMsg = ":" + defaultTarget
+                    utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
             else:
                 mainAction = mainBuildAction
                 if mainBuildAction == "install-deps":
