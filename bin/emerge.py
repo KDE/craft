@@ -542,7 +542,10 @@ elif listFile:
     listFileObject = open( listFile, 'r' )
     for line in listFileObject:
         if line.strip().startswith('#'): continue
-        cat, pac, tar, _ = line.split( ',' )
+        try:
+            cat, pac, tar, _ = line.split( ',' )
+        except:
+            continue
         categoryList.append( cat )
         packageList.append( pac )
         targetDict[ cat + "/" + pac ] = tar
