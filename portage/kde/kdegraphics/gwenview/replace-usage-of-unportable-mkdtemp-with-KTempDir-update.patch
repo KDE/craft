@@ -1,0 +1,31 @@
+diff -Nru -x '*~' gwenview-4.10.2.orig/importer/fileutils.cpp gwenview-4.10.2/importer/fileutils.cpp
+--- gwenview-4.10.2.orig/importer/fileutils.cpp	2013-03-01 08:00:12.919609000 +0100
++++ gwenview-4.10.2/importer/fileutils.cpp	2013-04-20 21:49:16.562133400 +0200
+@@ -28,6 +28,7 @@
+ // KDE
+ #include <KDebug>
+ #include <KFileItem>
++#include <KTempDir>
+ #include <KIO/CopyJob>
+ #include <KIO/Job>
+ #include <KIO/JobClasses>
+@@ -128,14 +129,13 @@
+ {
+     Q_ASSERT(errorMessage);
+ 
+-    QByteArray name = QFile::encodeName(baseDir + '/' + prefix + "XXXXXX");
+-
+-    if (!mkdtemp(name.data())) {
+-        // Failure
+-        *errorMessage = QString::fromLocal8Bit(::strerror(errno));
++    KTempDir td(baseDir + QLatin1String("/") + prefix);
++    td.setAutoRemove(false);
++    if(td.status() != 0) {
++        *errorMessage = strerror(td.status());
+         return QString();
+     }
+-    return QFile::decodeName(name + '/');
++    return td.name();
+ }
+ 
+ } // namespace

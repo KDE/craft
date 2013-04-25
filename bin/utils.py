@@ -355,19 +355,19 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                 line = f.readline()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
             if not digest:
-                error( " digestFile %s for file %s does not contain a valid checksum" % (digestFileName,
+                error( " digestFile %s for file %s does not contain a valid SHA1 hash" % (digestFileName,
                         pathName,) )
                 return False
             digest = digest.group(0)
             if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (pathName, currentHash, digest) )
+                error( "SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest) )
                 return False
         # digest provided in digests parameter
         else:
             currentHash = digestFileSha1( pathName )
             digest = digestList[i].strip()
             if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error( "digest value for file %s (%s) do not match (%s)" % (pathName, currentHash, digest) )
+                error( "SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest) )
                 return False
         i = i + 1
     return True

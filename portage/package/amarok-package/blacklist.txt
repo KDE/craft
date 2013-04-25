@@ -9,8 +9,9 @@ manifest\\.*
 doc\\.*
 share\\man\\.*
 share\\xml\\.*
-share\\locale\\.*
 man\\.*
+.*\.cmake
+.*\.pl
 
 # cmake stuff
 share\\apps\\cmake\\.*
@@ -37,8 +38,6 @@ phrasebooks\\.*
 mkspecs\\.*
 
 # unneeded binaries:
-bin\\QtTest4\.dll
-
 bin\\qdbusviewer\.exe
 bin\\openssl\.exe
 bin\\qmlviewer\.exe
@@ -47,8 +46,53 @@ bin\\curl\.exe
 
 bin\\raptor-config\.exe
 bin\\rasqal-config\.exe
-
+#mysql
 bin\\mysq.*\.exe
+bin\\bug25714.exe
+bin\\comp_err.exe
+bin\\echo.exe
+bin\\my_print_defaults.exe
+bin\\myisam_ftdump.exe
+bin\\myisamchk.exe
+bin\\myisamlog.exe
+bin\\myisampack.exe
+bin\\mysql.exe
+bin\\mysql_upgrade.exe
+bin\\mysqladmin.exe
+bin\\mysqlbinlog.exe
+bin\\mysqlcheck.exe
+bin\\mysqld.exe
+bin\\mysqldump.exe
+bin\\mysqlimport.exe
+bin\\mysqlmanager.exe
+bin\\mysqlshow.exe
+bin\\mysqlslap.exe
+bin\\perror.exe
+bin\\replace.exe
+bin\\resolveip.exe
+share\\czech\\.*
+share\\danish\\.*
+share\\dutch\\.*
+share\\estonian\\.*
+share\\french\\.*
+share\\german\\.*
+share\\greek\\.*
+share\\hungarian\\.*
+share\\italian\\.*
+share\\japanese\\.*
+share\\japanese-sjis\\.*
+share\\korean\\.*
+share\\norwegian\\.*
+share\\norwegian-ny\\.*
+share\\polish\\.*
+share\\portuguese\\.*
+share\\romanian\\.*
+share\\russian\\.*
+share\\serbian\\.*
+share\\slovak\\.*
+share\\spanish\\.*
+share\\swedish\\.*
+share\\ukrainian\\.*
 
 bin\\plasma.*
 bin\\akonadi.*
@@ -107,6 +151,8 @@ bin\\qdbuscpp2xml\.exe
 bin\\qdbus\.exe
 bin\\qhelpgenerator\.exe
 bin\\qmlviewer\.exe
+bin\\qmlplugindump\.exe
+bin\\prezip-bin\.exe
 bin\\qttracereplay\.exe
 bin\\sqlite3\.exe
 bin\\metacopy\.exe
@@ -142,3 +188,17 @@ bin\\soprano\\.*
 lib\\libstreams\\.*
 lib\\strigi\\.*
 lib\\aspell-0.60\\.*
+
+#vlc
+bin\\locale\\.*
+bin\\lua\\.*
+bin\\osdmenu\\.*
+bin\\plugins\\gui\\.*
+bin\\plugins\\lua\\.*
+bin\\plugins\\media_library\\.*
+bin\\plugins\\visualisation\\.*
+bin\\skins\\.*
+bin\\vlc.*
+
+#boost
+bin\\libboost.*

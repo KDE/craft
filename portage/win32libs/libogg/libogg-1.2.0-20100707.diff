@@ -1,6 +1,6 @@
-diff -Nru libogg-1.2.0.orig/CMakeLists.txt libogg-1.2.0/CMakeLists.txt
---- libogg-1.2.0.orig/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libogg-1.2.0/CMakeLists.txt	Wed Jul  7 23:03:02 2010
+diff -Nru -x '*~' libogg-1.2.0.orig/CMakeLists.txt libogg-1.2.0/CMakeLists.txt
+--- libogg-1.2.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libogg-1.2.0/CMakeLists.txt	2013-04-19 14:16:55.445435900 +0200
 @@ -0,0 +1,6 @@
 +project (libogg)
 +
@@ -8,15 +8,15 @@ diff -Nru libogg-1.2.0.orig/CMakeLists.txt libogg-1.2.0/CMakeLists.txt
 +
 +add_subdirectory(include)
 +add_subdirectory(src)
-diff -Nru libogg-1.2.0.orig/include/CMakeLists.txt libogg-1.2.0/include/CMakeLists.txt
---- libogg-1.2.0.orig/include/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libogg-1.2.0/include/CMakeLists.txt	Wed Jul  7 23:02:41 2010
+diff -Nru -x '*~' libogg-1.2.0.orig/include/CMakeLists.txt libogg-1.2.0/include/CMakeLists.txt
+--- libogg-1.2.0.orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libogg-1.2.0/include/CMakeLists.txt	2013-04-19 14:16:55.448436200 +0200
 @@ -0,0 +1 @@
 +install(FILES ogg/ogg.h ogg/os_types.h DESTINATION include/ogg)
 \ No newline at end of file
-diff -Nru libogg-1.2.0.orig/src/CMakeLists.txt libogg-1.2.0/src/CMakeLists.txt
---- libogg-1.2.0.orig/src/CMakeLists.txt	Thu Jan  1 02:00:00 1970
-+++ libogg-1.2.0/src/CMakeLists.txt	Wed Jul  7 23:08:24 2010
+diff -Nru -x '*~' libogg-1.2.0.orig/src/CMakeLists.txt libogg-1.2.0/src/CMakeLists.txt
+--- libogg-1.2.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libogg-1.2.0/src/CMakeLists.txt	2013-04-19 14:16:55.451436500 +0200
 @@ -0,0 +1,13 @@
 +set(ogg_SRCS
 +bitwise.c
@@ -32,3 +32,14 @@ diff -Nru libogg-1.2.0.orig/src/CMakeLists.txt libogg-1.2.0/src/CMakeLists.txt
 +                           LIBRARY DESTINATION lib
 +                           ARCHIVE DESTINATION lib)
 \ No newline at end of file
+diff -Nru -x '*~' libogg-1.2.0.orig/win32/ogg.def libogg-1.2.0/win32/ogg.def
+--- libogg-1.2.0.orig/win32/ogg.def	2009-05-21 00:57:14.000000000 +0200
++++ libogg-1.2.0/win32/ogg.def	2013-04-19 14:38:44.751600600 +0200
+@@ -2,7 +2,6 @@
+ ;
+ ; ogg.def
+ ;
+-LIBRARY
+ EXPORTS
+ ;
+ oggpack_writeinit

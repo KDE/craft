@@ -16,6 +16,7 @@ Packager for portal 7zip archives
         CollectionPackagerBase.__init__( self, whitelists, blacklists )
         self.scriptnames = []
         self.packagerExe = None
+        self.subinfo.options.package.withArchitecture = True
         fileName = "bin\\7za.exe"
         for directory in [".", "dev-utils", "release", "debug"]:
             path = os.path.join(self.rootdir, directory, fileName )
@@ -40,7 +41,10 @@ Packager for portal 7zip archives
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-%s-%s.7z" % ( shortPackage, os.getenv("EMERGE_ARCHITECTURE") , self.buildTarget )
+            self.defines[ "setupname" ] = shortPackage
+            if self.subinfo.options.package.withArchitecture:
+                    self.defines[ "setupname" ]  += "-" + os.getenv("EMERGE_ARCHITECTURE")
+            self.defines[ "setupname" ]  += "-" + self.buildTarget + ".7z" 
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
         for f in self.scriptnames:

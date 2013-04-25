@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/cairo'
         self.patchToApply['gitHEAD'] = [ ( "0001-add-cmake-support.patch", 1 ),
-                                         ( "0002-win32-compile-fixes.patch", 1 ) 
+                                         ( "0002-win32-compile-fixes.patch", 1 ), 
                                          ( "0003-add-missing-file.patch", 1)
                                        ]
 

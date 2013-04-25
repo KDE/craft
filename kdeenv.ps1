@@ -172,7 +172,6 @@ else
 }
 
 
-prependPATH "$env:KDEROOT\bin"
 $env:QT_PLUGIN_PATH="$env:KDEROOT\plugins;$env:KDEROOT\lib\kde4\plugins"
 $env:XDG_DATA_DIRS="$env:KDEROOT\share"
 
@@ -181,6 +180,9 @@ prependPATH  "$env:KDEROOT\dev-utils\bin"
 
 #todo:get pythonpath from registry
 prependPATH $settings["Paths"]["PYTHONPATH"]
+
+# make sure that kderoot/bin is the last in path to prevent issues wer libs from devutils are used
+prependPATH "$env:KDEROOT\bin"
 
 $env:HOME=$env:USERPROFILE
 $env:SVN_SSH="plink"
