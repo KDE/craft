@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True
