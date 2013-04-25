@@ -38,8 +38,6 @@ phrasebooks\\.*
 mkspecs\\.*
 
 # unneeded binaries:
-bin\\QtTest4\.dll
-
 bin\\qdbusviewer\.exe
 bin\\openssl\.exe
 bin\\qmlviewer\.exe

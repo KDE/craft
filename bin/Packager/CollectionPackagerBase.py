@@ -243,7 +243,7 @@ class CollectionPackagerBase( PackagerBase ):
                 if os.path.exists( directory ):
                     self.copyFiles(directory, imageDir, strip)
                 else:
-                    utils.warning( "image directory %s does not exist!" % directory )
+                    utils.die( "image directory %s does not exist!" % directory )
 
         if not os.path.exists( self.imageDir() ):
             os.makedirs( self.imageDir() )
