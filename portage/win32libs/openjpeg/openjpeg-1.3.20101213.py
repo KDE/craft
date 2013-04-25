@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.5.1'] = '1b0b74d1af4c297fd82806a9325bb544caf9bb8b'
         self.targetDigests['2.0.0'] = '0af78ab2283b43421458f80373422d8029a9f7a7'
         self.svnTargets['svnHEAD'] = 'http://openjpeg.googlecode.com/svn/trunk/'
-        self.options.configure.defines = " -DBUILD_SHARED_LIBS=ON "
+        self.options.configure.defines = " -DBUILD_SHARED_LIBS=ON -DOPENJPEG_INSTALL_INCLUDE_DIR=\"include/openjpeg\""
         self.shortDescription = "a library for handling JPEG2000 image formats"
         self.defaultTarget = '1.5.1'
 
