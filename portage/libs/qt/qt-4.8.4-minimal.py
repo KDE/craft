@@ -71,9 +71,10 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         command += "-no-phonon "
-        command += "-qdbus -dbus-linked -no-openssl "
+        command += "-qdbus -dbus-linked -openssl "
         command += "-no-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
+
         command += "%s %s" % ( incdirs, libdirs )
 
         # WebKit won't link properly with LTCG in a 32-bit MSVC environment

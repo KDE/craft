@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libxml2']  = 'default'
         self.dependencies['win32libs/libxslt']  = 'default'
 #        self.dependencies['win32libs/openexr']  = 'default'
-        self.dependencies['win32libs/openssl']  = 'default'
+#        self.dependencies['win32libs/openssl']  = 'default'
         self.dependencies['win32libs/pcre']  = 'default'
         self.dependencies['win32libs/shared-mime-info']  = 'default'
         self.dependencies['win32libs/zlib']  = 'default'
