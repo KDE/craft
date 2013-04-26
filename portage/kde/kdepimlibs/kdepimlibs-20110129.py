@@ -19,10 +19,10 @@ class subinfo(info.infoclass):
 #        self.dependencies['kdesupport/akonadi'] = 'default'
 #        self.dependencies['win32libs/cyrus-sasl'] = 'default'
 #        self.dependencies['win32libs/libical'] = 'default'
-        self.dependencies['win32libs/gpgme'] = 'default'
+        self.dependencies['binary/gpg4win-e5'] = 'default'
 #        self.dependencies['win32libs/openldap'] = 'default'
         self.dependencies['win32libs/boost-graph'] = 'default'
-        
+
         self.shortDescription = "the base libraries for PIM related services"
 
 from Package.CMakePackageBase import *
