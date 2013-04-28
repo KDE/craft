@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
       
       self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
+      self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1)]
       
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
