@@ -1,0 +1,17 @@
+--- a/src/devicemanager.cpp
++++ b/src/devicemanager.cpp
+@@ -261,7 +261,12 @@
+         // libVLC gives no devices for some sound systems, like OSS
+         if (deviceCount == 0) {
+             debug() << "manually injecting sound system" << soundSystem;
+-            DeviceInfo device(QString::fromUtf8(soundSystem), true);
++            // NOTE: Do not mark manually injected devices as advanced.
++            //       libphonon filters advanced devices from the default
++            //       selection which on systems such as OSX or Windows can
++            //       lead to an empty device list as the injected device is
++            //       the only available one.
++            DeviceInfo device(QString::fromUtf8(soundSystem), false);
+             device.addAccess(DeviceAccess(soundSystem, ""));
+             device.setCapabilities(DeviceInfo::AudioOutput);
+             newDeviceList.append(device);
+
