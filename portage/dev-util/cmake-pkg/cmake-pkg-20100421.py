@@ -14,8 +14,9 @@ class subinfo(info.infoclass):
         self.patchToApply['2.8.3'] = ("cmake-2.8.3-20101222.diff", 1)
         self.patchToApply['2.8.8'] = ("cmake-2.8.3-20101222.diff", 1)
         self.patchToApply['2.8.10.2'] = ("cmake-2.8.10.diff", 1)
+        self.patchToApply['release'] = ("0001-windows-fix.patch", 1)
         self.targetDigests['2.8.10.2'] = '2d868ccc3f9f2aa7c2844bd0a4609d5313edaaec'
-        self.defaultTarget = '2.8.10.2'
+        self.defaultTarget = 'release'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

@@ -1,0 +1,30 @@
+From a14b153c613a5c4dddab65fa89da695c3e0ce019 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Sun, 28 Apr 2013 18:55:09 +0200
+Subject: [PATCH] windows fix
+
+---
+ Source/kwsys/SystemTools.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/kwsys/SystemTools.cxx b/Source/kwsys/SystemTools.cxx
+index 22bf193..d816b17 100644
+--- a/Source/kwsys/SystemTools.cxx
++++ b/Source/kwsys/SystemTools.cxx
+@@ -2741,11 +2741,11 @@ bool SystemTools::FileIsDirectory(const char* name)
+     return false;
+     }
+ 
+-  // Remove any trailing slash from the name.
++  // Remove any trailing slash from the name except in a root component.
+   char buffer[KWSYS_SYSTEMTOOLS_MAXPATH];
+   size_t last = length-1;
+   if(last > 0 && (name[last] == '/' || name[last] == '\\')
+-    && strcmp(name, "/") !=0)
++    && strcmp(name, "/") !=0 && name[last-1] != ':')
+     {
+     memcpy(buffer, name, last);
+     buffer[last] = 0;
+-- 
+1.8.0.msysgit.0
+
