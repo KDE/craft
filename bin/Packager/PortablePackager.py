@@ -56,7 +56,7 @@ Packager for portal 7zip archives
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
         utils.deleteFile(self.defines[ "setupname" ])
-        cmd = "cd %s && %s a -r %s %s" % (self.defines[ "srcdir" ], self.packagerExe,self.defines[ "setupname" ], '*.*')
+        cmd = "cd %s && %s a -r %s %s" % (self.defines[ "srcdir" ], self.packagerExe,self.defines[ "setupname" ], '*')
         if not utils.system(cmd):
             utils.die( "while packaging. cmd: %s" % cmd )
 
