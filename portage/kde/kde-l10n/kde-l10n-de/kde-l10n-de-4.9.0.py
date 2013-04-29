@@ -22,6 +22,15 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        meinproc = os.path.join( self.rootdir, "bin", "meinproc4.exe" )
+        docdir=os.path.join(self.installDir(), "share", "doc", "HTML", "de", "kleopatra")
+        utils.system([meinproc, os.path.join(docdir, "index.docbook")],
+                cwd=docdir)
+        return True
+
 
 if __name__ == '__main__':
     Package().execute()

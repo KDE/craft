@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
+#        self.runtimeDependencies['kde/kdepim-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
 #        self.dependencies['kdesupport/grantlee'] = 'default'
 #        self.dependencies['kde/nepomuk-widgets'] = 'default'
@@ -31,7 +31,18 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
-        self.subinfo.options.configure.defines = " -DKDEPIM_ONLY_KLEO=True"
+        self.subinfo.options.configure.defines = ( " -DKDEPIM_ONLY_KLEO=True"
+                " -DBUILD_doc=TRUE"
+                " -DBUILD_kleopatra=TRUE" )
 
+    # For kleo only we want a html handbook
+    def install( self ):
+        if not CMakePackageBase.install( self ):
+            return False
+        meinproc = os.path.join( self.rootdir, "bin", "meinproc4.exe" )
+        docdir=os.path.join(self.installDir(), "share", "doc", "HTML", "en", "kleopatra")
+        utils.system([meinproc, os.path.join(docdir, "index.docbook")],
+                cwd=docdir)
+        return True
 if __name__ == '__main__':
     Package().execute()
