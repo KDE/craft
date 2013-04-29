@@ -1,0 +1,50 @@
+diff -Nru -x '*~' kig-4.10.2.orig/cmake/FindBoostPython.cmake kig-4.10.2/cmake/FindBoostPython.cmake
+--- kig-4.10.2.orig/cmake/FindBoostPython.cmake	2013-03-01 07:42:42.533167000 +0100
++++ kig-4.10.2/cmake/FindBoostPython.cmake	2013-04-26 14:48:36.194463500 +0200
+@@ -32,6 +32,15 @@
+ set(PYTHON_LIBRARY_DIRS "/usr/lib${LIB_SUFFIX};/usr/local/lib${LIB_SUFFIX};/usr/lib${LIB_SUFFIX}/$pyver/config")
+ set(PYTHON_LIBS "boost_python-gcc-mt;boost_python-mt;boost_python-gcc-mt-1_33;boost_python-gcc-mt-1_33_1;boost_python;boost_python-gcc-mt-1_32;boost_python")
+ 
++if(WIN32)
++    set(PythonLibs_FIND_VERSION 2.7.0)
++    find_package(PythonLibs)
++    find_package(Boost COMPONENTS python QUIET)
++    if(PYTHONLIBS_FOUND AND Boost_FOUND)
++        set(BOOST_PYTHON_INCLUDES ${PYTHON_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
++        set(BOOST_PYTHON_LIBS ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
++    endif(PYTHONLIBS_FOUND AND Boost_FOUND)
++else(WIN32)
+ # 1st: check for boost/shared_ptr.hpp
+ check_include_file_cxx(boost/shared_ptr.hpp HAVE_BOOST_SHARED_PTR_HPP)
+ 
+@@ -133,6 +142,7 @@
+   set(CMAKE_CXX_FLAGS ${_save_CMAKE_CXX_FLAGS})
+ 
+ endif(HAVE_BOOST_SHARED_PTR_HPP AND NOT _found)
++endif(WIN32)
+ 
+ if(BOOST_PYTHON_INCLUDES AND BOOST_PYTHON_LIBS)
+   set(BOOST_PYTHON_FOUND TRUE)
+diff -Nru -x '*~' kig-4.10.2.orig/CMakeLists.txt kig-4.10.2/CMakeLists.txt
+--- kig-4.10.2.orig/CMakeLists.txt	2013-03-29 08:02:54.431783000 +0100
++++ kig-4.10.2/CMakeLists.txt	2013-04-26 01:44:13.986960400 +0200
+@@ -29,7 +29,6 @@
+ include_directories (${QDBUS_INCLUDE_DIRS}  ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+ 
+ # ...to here
+-
+ find_package(BoostPython)
+ 
+ kde4_no_enable_final(kig)
+diff -Nru -x '*~' kig-4.10.2.orig/scripting/script_mode.cc kig-4.10.2/scripting/script_mode.cc
+--- kig-4.10.2.orig/scripting/script_mode.cc	2013-03-01 07:42:42.661165000 +0100
++++ kig-4.10.2/scripting/script_mode.cc	2013-04-26 01:44:14.018160400 +0200
+@@ -17,6 +17,8 @@
+ 
+ #include "script_mode.h"
+ 
++#include <iterator>
++
+ #include "newscriptwizard.h"
+ #include "python_type.h"
+ #include "python_scripter.h"
