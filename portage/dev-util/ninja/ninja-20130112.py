@@ -7,9 +7,10 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         """ """
         self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"        
-        self.patchToApply['gitHEAD'] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
         for ver in ["1.1.0","1.2.0"]:
-            self.svnTargets[ ver ] = "git://github.com/martine/ninja.git||v%s" % ver
+            self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
+            self.targetInstSrc[ ver ] = "ninja-%s" % ver
+        self.targetDigests['1.2.0'] = '9ce01fdf7815f0fda4e477d7fedcd47a3d0afb51'
         self.patchToApply[ "1.1.0" ] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
         self.defaultTarget = '1.2.0'
 
