@@ -22,7 +22,7 @@ class PackagerLists(object):
         ret = []
         for line in blacklisted:
             try:
-                exp = re.compile( line )
+                exp = re.compile( line, re.IGNORECASE )
                 ret.append( exp )
                 utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
             except re.error:
@@ -67,6 +67,7 @@ class CollectionPackagerBase( PackagerBase ):
         utils.debug( "length of whitelist: %s" % len( self.whitelist ), 0 )
 
         self.scriptname = None
+
 
     def __isInstalled( self ):
         return abstract()
@@ -135,7 +136,7 @@ class CollectionPackagerBase( PackagerBase ):
             if line.startswith( "#" ) or len( line ) == 0:
                 continue
             try:
-                exp = re.compile( line )
+                exp = re.compile( line, re.IGNORECASE )
                 self.whitelist.append( exp )
                 utils.debug( "%s added to whitelist as %s" % ( line, exp.pattern ), 2 )
             except re.error:
@@ -154,7 +155,7 @@ class CollectionPackagerBase( PackagerBase ):
             if line.startswith( "#" ) or len( line ) == 0:
                 continue
             try:
-                exp = re.compile( line )
+                exp = re.compile( line, re.IGNORECASE )
                 self.blacklist.append( exp )
                 utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
             except re.error:
