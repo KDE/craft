@@ -1,0 +1,12 @@
+diff -Nru -x '*~' poppler-0.22.3.orig/test/perf-test.cc poppler-0.22.3/test/perf-test.cc
+--- poppler-0.22.3.orig/test/perf-test.cc	2013-03-25 22:48:35.000000000 +0100
++++ poppler-0.22.3/test/perf-test.cc	2013-04-29 14:19:48.847121200 +0200
+@@ -325,7 +325,7 @@
+ #endif
+ }
+ 
+-#ifndef _MSC_VER
++#if !defined(_MSC_VER) && __MINGW64_VERSION_MAJOR < 3
+ void strcpy_s(char* dst, size_t dst_size, const char* src)
+ {
+     size_t src_size = strlen(src) + 1;
