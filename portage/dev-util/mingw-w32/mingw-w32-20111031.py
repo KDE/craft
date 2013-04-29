@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         
         
         self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture()
-        self.targets["4.8.0-1"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-4.8.0-release-posix-sjlj-rev1.7z"
+        self.targets["4.8.0-2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-4.8.0-release-posix-sjlj-rev2.7z"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
