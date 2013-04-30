@@ -482,13 +482,13 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
     package, subpackage = getSubPackage( category, package )
     if subpackage:
-        utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
+        utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 0 )
     else:
-        utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 2 )
+        utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 0 )
         subpackage = package
     
     deps = []
-    for pkg in subpackage:
+    for pkg in [ subpackage ]:
         mod = __import__( getFilename( category, subpackage, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -504,6 +504,24 @@ def getDependencies( category, package, version, runtimeOnly=False ):
                 deps.append( [ category, package, version, depDict[ line ] ] )
 
     return deps
+
+def parseListFile( filename ):
+    """parses a csv file used for building a list of specific packages"""
+    categoryList = []
+    packageList = []
+    infoDict = {}
+    listFileObject = open( filename, 'r' )
+    for line in listFileObject:
+        if line.strip().startswith('#'): continue
+        try:
+            cat, pac, tar, plvl = line.split( ',' )
+        except:
+            continue
+        categoryList.append( cat )
+        packageList.append( pac )
+        infoDict[ cat + "/" + pac ] = (tar, plvl)
+    return categoryList, packageList, infoDict
+
 
 def solveDependencies( category, package, version, depList, dep_type='both' ):
     depList.reverse()
