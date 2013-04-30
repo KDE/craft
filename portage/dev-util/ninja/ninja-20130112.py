@@ -28,6 +28,9 @@ class Package(CMakePackageBase):
     def make(self):
         self.enterSourceDir()
         command = "python bootstrap.py"
+        if compiler.isMinGW() and self.subinfo.buildTarget not in ("1.1.0", "1.2.0"):
+            command += " --platform=mingw"
+        print(command)
         return self.system( command, "make" )
         
     def install(self):
