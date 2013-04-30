@@ -4,6 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = ''
         self.defaultTarget = 'gitHEAD'
+        self.shortDescription = 'a collection of educational applications'
 
     def setDependencies( self ):
         self.dependencies['kde/libkdeedu'] = 'default'

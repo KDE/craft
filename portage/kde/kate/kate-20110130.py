@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.0'] = [("kate-4.10.0.diff", 1)]
         self.patchToApply['4.10.1'] = [("kate-4.10.1-20130304.diff", 1)]
+        self.shortDescription = "the KDE text editor"
 
         self.defaultTarget = 'gitHEAD'
 
