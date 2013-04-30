@@ -2,15 +2,15 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['2.2.0'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.2.0.tar.gz'
-        self.targets['2.2.3'] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-2.2.3.tar.gz'
+        for ver in ['2.2.0', '2.2.3', '2.3.1']:
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/openbabel/openbabel-' + ver + '.tar.gz'
+            self.targetInstSrc[ ver ] = 'openbabel-' + ver
         self.patchToApply['2.2.0'] = ('openbabel-2.2.0-cmake.diff', 0)
         self.patchToApply['2.2.3'] = ('openbabel-2.2.3-20101208.diff', 1)
-        self.targetDigests['2.2.3'] = 'e396b27551a106e001ca6c953181657a0a53f43f'
-        self.targetInstSrc['2.2.0'] = 'openbabel-2.2.0'
-        self.targetInstSrc['2.2.3'] = 'openbabel-2.2.3'
+        self.patchToApply['2.3.1'] = [('openbabel-2.3.1-20130430.diff', 1)]
+        self.targetDigests['2.3.1'] = 'b2dd1638eaf7e6d350110b1561aeb23b03552846'
         self.shortDescription = "library to convert the various file formats used in chemical software"
-        self.defaultTarget = '2.2.3'
+        self.defaultTarget = '2.3.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
