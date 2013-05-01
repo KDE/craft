@@ -669,6 +669,7 @@ else:
                 mainAction = mainBuildAction
                 if mainBuildAction == "install-deps":
                     mainAction = "all"
+                if defaultTarget: os.environ["EMERGE_TARGET"] = defaultTarget
 
                 if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
