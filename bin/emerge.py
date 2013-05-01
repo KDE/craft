@@ -513,6 +513,7 @@ sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) 
 _deplist = []
 deplist = []
 packageList = []
+originalPackageList = []
 categoryList = []
 targetDict = dict()
 
@@ -548,6 +549,7 @@ elif listFile:
             continue
         categoryList.append( cat )
         packageList.append( pac )
+        originalPackageList.append( pac )
         targetDict[ cat + "/" + pac ] = tar
 elif packageName:
     packageList, categoryList = portage.getPackagesCategories(packageName)
@@ -596,11 +598,12 @@ deplist.reverse()
 # package[1] -> package
 # package[2] -> version
 
-if ( mainBuildAction != "all" and mainBuildAction != "install-deps" ):
+if ( mainBuildAction != "all" and mainBuildAction != "install-deps" and not listFile ):
     # if a buildAction is given, then do not try to build dependencies
     # and do the action although the package might already be installed.
     # This is still a bit problematic since packageName might not be a valid
     # package
+    # for list files, we also want to handle fetching & packaging per package
 
     if packageName and len( deplist ) >= 1:
         mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
@@ -637,6 +640,8 @@ else:
                 isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
         else:
             isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
+        if listFile and mainBuildAction != "all":
+            ignoreInstalled = mainPackage in originalPackageList
         if ( isInstalled and not ignoreInstalled ) and not (
                         isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and target in targetList ):
             if utils.verbose() > 1 and mainPackage == packageName:
