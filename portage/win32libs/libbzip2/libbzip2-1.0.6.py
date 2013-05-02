@@ -27,6 +27,7 @@ class Package(CMakePackageBase):
     self.subinfo = subinfo()
     CMakePackageBase.__init__(self)
     self.subinfo.options.package.packageName = 'libbzip2'
+    self.subinfo.options.configure.defines = "-DBUILD_STATIC=TRUE"
     # self.supportsNinja = False
 
 
