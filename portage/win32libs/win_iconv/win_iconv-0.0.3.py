@@ -28,8 +28,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
-        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild():
-            self.subinfo.options.configure.defines = "-DBUILD_STATIC=ON "
+        self.subinfo.options.configure.defines = "-DBUILD_STATIC=ON -DBUILD_SHARED=OFF "
 
 if __name__ == '__main__':
     Package().execute()
