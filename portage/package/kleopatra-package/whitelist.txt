@@ -7,14 +7,11 @@ lib\\kde4\\kded_globalaccel.dll
 lib\\kde4\\kcm_kleopatra.dll
 
 # Dependencies for kleopatra extracted with depedency walker profiling
-bin\\ICONV.DLL
 bin\\KLEOPATRA.EXE
 bin\\LIBATTICA.DLL
-bin\\LIBBZIP2.DLL
 bin\\LIBDBUSMENU-QT.DLL
 bin\\LIBGCC_S_SJLJ-1.DLL
 bin\\LIBGPGME\+\+.DLL
-bin\\LIBINTL.DLL
 bin\\LIBJASPER.DLL
 bin\\LIBKCMUTILS.DLL
 bin\\LIBKDECORE.DLL
@@ -27,6 +24,8 @@ bin\\LIBQGPGME.DLL
 bin\\libkleo.dll
 bin\\libkleopatraclientcore.dll
 bin\\libkleopatraclientgui.dll
+
+share\\xdg\\menus\\applications.menu
 
 share\\applications\\kde4\\kleopatra_import.desktop
 share\\applications\\kde4\\kleopatra.desktop
