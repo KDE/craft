@@ -176,6 +176,7 @@ class KDEWinCreator( Visitor ):
     cats["KDE"] = []
     cats["kdesupport"] = []
     cats["win32libs"] = []
+    packageVisited = []
 
     def cleanup( self ):
         self.cats["data"] = []
@@ -185,8 +186,9 @@ class KDEWinCreator( Visitor ):
 
     def collectMetaData( self, node, context ):
         visited = context[0]
-        if str( node ) not in visited:
+        if str( node ) not in visited and str( node ) not in KDEWinCreator.packageVisited:
             visited.add( str( node ) )
+            KDEWinCreator.packageVisited.append( str( node ) )
             metaData = node.metaData
             packageName = node.package
             if node.category == "virtual":
@@ -203,8 +205,9 @@ class KDEWinCreator( Visitor ):
 
     def collectVirtualPackages( self, node, context ):
         visited = context[0]
-        if str( node ) not in visited:
+        if str( node ) not in visited and str( node ) not in KDEWinCreator.packageVisited:
             visited.add( str( node ) )
+            KDEWinCreator.packageVisited.append( str( node ) )
             if node.virtual or portage.PortageInstance.isVirtualPackage( node.category, node.package ):
                 if node.category == "kde":
                     return "@metapackage " + node.package + " " + " ".join( [ x.package for x in node.children if not x.package.startswith("lib") ] )
@@ -212,8 +215,9 @@ class KDEWinCreator( Visitor ):
 
     def collectPackagesForCategory( self, node, context ):
         visited = context[0]
-        if str( node ) not in visited:
+        if str( node ) not in visited and str( node ) not in KDEWinCreator.packageVisited:
             visited.add( str( node ) )
+            KDEWinCreator.packageVisited.append( str( node ) )
             if node.category in [ "kdesupport", "libs" ] and node not in self.cats[ "kdesupport" ]:
                 self.cats[ "kdesupport" ].append( node )
                 return None
@@ -326,6 +330,7 @@ class KDEWinCreator( Visitor ):
         self.mode = "cats"
         for self.compiler in self.compilerlist:
             visited = set()
+            KDEWinCreator.packageVisited = []
             tree.visit( self, ( visited, out, ranks ) )
             self.__dumpCategories( out )
             self.cleanup()
@@ -335,6 +340,7 @@ class KDEWinCreator( Visitor ):
         self.mode = "deps"
         for self.compiler in self.compilerlist:
             visited = set()
+            KDEWinCreator.packageVisited = []
             out.append( "; package dependencies for compiler " + self.compiler )
             tree.visit( self, ( visited, out, ranks ) )
             out.append( ";" )
@@ -344,6 +350,7 @@ class KDEWinCreator( Visitor ):
         visited = set()
         ranks = {}
         self.mode = "meta"
+        KDEWinCreator.packageVisited = []
         tree.visit( self, ( visited, out, ranks ) )
         _meta = "\n".join( out )
 
@@ -351,6 +358,7 @@ class KDEWinCreator( Visitor ):
         visited = set()
         ranks = {}
         self.mode = "virtual"
+        KDEWinCreator.packageVisited = []
         tree.visit( self, ( visited, out, ranks ) )
         _metapackages = "\n".join( out )
 
@@ -543,13 +551,10 @@ def parseOptions():
 def parsePackageListFiles( filenames ):
     depList = []
     for filename in filenames:
-        with open(filename) as packagefile:
-            for line in packagefile:
-                if not line.startswith( '#' ):
-                    cat, pac, target, patchlvl = line.strip().split( ',' )
-                    if pac.endswith( "-src" ):
-                        cat, pac = portage.PortageInstance.getCorrespondingBinaryPackage(pac)
-                    depList.append( ( cat, pac, target, patchlvl ) )
+        catList, pacList, infoDict = portage.parseListFile( filename )
+        for cat, pac in zip(catList, pacList):
+            target, patchlvl = infoDict[ cat + "/" + pac ]
+            depList.append( ( cat, pac, target, patchlvl ) )
     return depList
 
 def main():

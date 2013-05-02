@@ -103,7 +103,7 @@ class KDEWinPackager (PackagerBase):
                     if ( fileName.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
                     elif not self.subinfo.options.package.disableStriping:
-                        if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) ):
+                        if ( fileName.endswith( ".exe" ) or fileName.endswith( ".dll" ) or fileName.endswith( ".obf" ) ):
                             if compiler.isMinGW():
                                 symFilename = fileName[:-4] + ".sym"
                                 utils.system( "strip --only-keep-debug " + " -o " + os.path.join( path, symFilename ) \

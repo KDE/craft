@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:skanlite.git'
         self.defaultTarget = 'gitHEAD'
+        self.shortDescription = 'a small application for image scanning'
 
     def setDependencies( self ):
         self.dependencies['virtual/kdegraphics'] = 'default'
