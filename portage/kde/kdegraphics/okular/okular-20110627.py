@@ -25,7 +25,9 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/djvu'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/freetype'] = 'default'
-        self.dependencies['win32libs/libspectre'] = 'default'
+        self.dependencies['win32libs/ebook-tools'] = 'default'
+        self.buildDependencies['win32libs/libspectre'] = 'default'
+        self.dependencies['binary/ghostscript'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
