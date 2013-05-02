@@ -1,7 +1,7 @@
 diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 --- bzip2-1.0.5.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
 +++ bzip2-1.0.5/CMakeLists.txt	Mon May 17 12:52:18 2010
-@@ -0,0 +1,82 @@
+@@ -0,0 +1,88 @@
 +project(bzip2)
 +cmake_minimum_required(VERSION 2.6)
 +
@@ -45,7 +45,13 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /LTCG")
 +endif(MSVC)
 +
-+add_library(bzip2 SHARED ${bzip2_lib_SRCS})
++if(BUILD_STATIC)
++add_library(bzip2 STATIC ${bzip2_lib_SRCS})
++add_definitions(-DBZIP2_STATIC)
++else()
++add_library(bzip2 ${bzip2_lib_SRCS})
++endif()
++
 +if(WIN32)
 +  set_target_properties(bzip2 PROPERTIES PREFIX "" RUNTIME_OUTPUT_NAME libbzip2)
 +endif(WIN32)
