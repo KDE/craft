@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
         self.patchToApply["4.10.2"] = [("kdelibs-4.10.2-20130430.diff", 1), 
                                        ("kde.conf-extended-fix.diff", 1),
                                        ("fix-kdoctools.diff", 1)]
-        self.patchToApply["gitHEAD"] = self.patchToApply["4.10.2"]
+        self.patchToApply["gitHEAD"] = self.patchToApply["4.10.2"].append(
+                ("no_khelpcenter.diff", 1))
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 

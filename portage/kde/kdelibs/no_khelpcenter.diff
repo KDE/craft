@@ -1,0 +1,17 @@
+diff --git a/kdecore/kernel/ktoolinvocation.cpp b/kdecore/kernel/ktoolinvocation.cpp
+index 73c8bc0..b45c580 100644
+--- a/kdecore/kernel/ktoolinvocation.cpp
++++ b/kdecore/kernel/ktoolinvocation.cpp
+@@ -268,7 +268,10 @@ void KToolInvocation::invokeHelp( const QString& anchor,
+     }
+ 
+     if (!docPath.isEmpty()) {
+-        url = KUrl(KUrl("help:/"), docPath);
++        QString doclang = KGlobal::locale()->language();
++        doclang.truncate(2);
++        QString helpfile = KStandardDirs::locate("html", doclang + QLatin1String("/") + docPath);
++        url = KUrl(helpfile);
+     } else {
+         url = QString::fromLatin1("help:/%1/index.html").arg(appname);
+     }
+
