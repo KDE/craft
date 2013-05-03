@@ -12,7 +12,7 @@ bin\\LIBATTICA.DLL
 bin\\LIBDBUSMENU-QT.DLL
 bin\\LIBGCC_S_SJLJ-1.DLL
 bin\\LIBGPGME\+\+.DLL
-bin\\LIBJASPER.DLL
+bin\\LIBINTL.DLL
 bin\\LIBKCMUTILS.DLL
 bin\\LIBKDECORE.DLL
 bin\\LIBKDEUI.DLL
@@ -179,6 +179,7 @@ share\\locale\\de\\LC_MESSAGES\\kio4.mo
 share\\locale\\de\\LC_MESSAGES\\kio_help4.mo
 share\\locale\\de\\LC_MESSAGES\\ktexteditor_plugins.mo
 share\\locale\\de\\LC_MESSAGES\\timezones4.mo
+share\\locale\\.*\\entry.desktop
 share\\locale\\all_languages
 
 # Some stuff that was packaged before but i don't know

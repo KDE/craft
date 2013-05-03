@@ -28,15 +28,15 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/attica'] = 'default'
         self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['kdesupport/qimageblitz'] = 'default'
-        self.dependencies['kdesupport/soprano'] = 'default'
+#        self.dependencies['kdesupport/qca'] = 'default'
+#        self.dependencies['kdesupport/qimageblitz'] = 'default'
+#        self.dependencies['kdesupport/soprano'] = 'default'
         self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
-        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+#        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
 
 from Package.CMakePackageBase import *
 
