@@ -1,0 +1,15 @@
+diff -Nru -x '*~' konversation-1.5-d938500c.orig/src/application.cpp konversation-1.5-d938500c/src/application.cpp
+--- konversation-1.5-d938500c.orig/src/application.cpp	2013-04-18 19:39:58.000000000 +0200
++++ konversation-1.5-d938500c/src/application.cpp	2013-05-02 23:35:57.073547400 +0200
+@@ -1257,7 +1257,11 @@
+         else if (url.startsWith(QLatin1String("mailto:")))
+             KToolInvocation::invokeMailer(KUrl(url));
+         else
++#ifdef Q_OS_WIN
++            KToolInvocation::invokeBrowser(url);
++#else
+             new KRun(KUrl(url), Application::instance()->getMainWindow());
++#endif
+     }
+     else
+     {
