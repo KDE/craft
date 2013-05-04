@@ -1,0 +1,34 @@
+From 7c61198e545f8fc549c0255c5b6df07b77b64957 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Sat, 4 May 2013 23:23:46 +0200
+Subject: [PATCH] fix building under msvc
+
+---
+ libalkimia/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libalkimia/CMakeLists.txt b/libalkimia/CMakeLists.txt
+index b957805..7676567 100644
+--- a/libalkimia/CMakeLists.txt
++++ b/libalkimia/CMakeLists.txt
+@@ -21,7 +21,7 @@ set(ALKIMIA_LIB_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+ set(ALKIMIA_LIB_SOVERSION "${VERSION_MAJOR}")
+ 
+ include_directories(${KDE4_INCLUDES})
+-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DMAKE_ALK_LIB)
++add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
+@@ -47,7 +47,7 @@ kde4_add_library(alkimia SHARED ${alkimia_LIB_SRCS})
+  
+ target_link_libraries(alkimia ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${GMP_LIBRARIES})
+ 
+-set_target_properties(alkimia PROPERTIES VERSION ${ALKIMIA_LIB_VERSION} SOVERSION ${ALKIMIA_LIB_SOVERSION})
++set_target_properties(alkimia PROPERTIES VERSION ${ALKIMIA_LIB_VERSION} SOVERSION ${ALKIMIA_LIB_SOVERSION} DEFINE_SYMBOL MAKE_ALK_LIB)
+ 
+ if (NOT WIN32)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libalkimia.pc.in ${CMAKE_CURRENT_BINARY_DIR}/libalkimia.pc IMMEDIATE @ONLY)
+-- 
+1.8.1.msysgit.1
+
