@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'konversation-' + ver
         self.patchToApply['1.3.1'] = ("konversation-1.3.1-20110822.diff", 1)
         self.patchToApply['1.4'] = [("konversation-1.4-20130305.diff", 1)]
-        self.patchToApply['1.5-d938500c'] = [("konversation-1.5-d938500c-20130421.diff", 1)]
+        self.patchToApply['1.5-d938500c'] = [("konversation-1.5-d938500c-20130421.diff", 1), ("fix-opening-of-urls-on-windows.diff", 1)]
         self.svnTargets['gitHEAD'] = '[git]kde:konversation'
         self.defaultTarget = 'gitHEAD'
 

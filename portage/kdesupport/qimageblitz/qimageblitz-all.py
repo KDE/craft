@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
         for ver in ['0.0.5','0.0.6']:
           self.targets[ver] ='http://download.kde.org/download.php?url=stable/qimageblitz/qimageblitz-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'qimageblitz-' + ver
+        for ver in ['20130212']:
+          self.targets[ver] ='http://downloads.sourceforge.net/kde-windows/qimageblitz-' + ver + '.tar.xz'
+          self.targetInstSrc[ver] = 'qimageblitz-' + ver
 
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/qimageblitz'
