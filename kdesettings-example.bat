@@ -46,7 +46,7 @@ rem This option is needed to avoid path limit problems in case of long base path
 rem and compiling big packages like qt
 rem If you disable it do _not_ use any paths longer than 6 letters in the
 rem directory settings
-set EMERGE_USE_SHORT_PATH=1
+set EMERGE_USE_SHORT_PATH=True
 
 rem each drive could be commented out to skip substution
 set EMERGE_ROOT_DRIVE=r:
