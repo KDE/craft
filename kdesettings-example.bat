@@ -78,7 +78,7 @@ rem By default the emerge svn module supports only single branch svn checkouts.
 rem With this option emerge assumes that the svn repository have the svn standard layout 
 rem and will create related subdirectories for trunk, branches and tags below the above 
 rem mentioned root directory. 
-rem set EMERGE_SVN_STDLAYOUT=1
+rem set EMERGE_SVN_STDLAYOUT=True
 
 rem If you use svn+ssh, you will need a ssh-agent equaivalent for managing
 rem the authorization. Pageant is provided by the Putty project, get it at 
@@ -89,7 +89,7 @@ set SVN_SSH=plink
 
 rem ####### Git Settings #######
 
-rem With this option set emerge checks out each git repository branch into a 
+rem With this option set to True emerge checks out each git repository branch into a 
 rem separate subdirectory (see git clone --mirror at git clone  --shared --local).
 rem Without this option changing the branch will overwrite previous checkouts.
 rem Note: Changing the value invalidates available checkouts of related packages
@@ -199,7 +199,7 @@ rem svn repository. To disable, set EMERGE_NOCOPY=False.
 set EMERGE_NOCOPY=True
 
 rem By default emerge will merge all package into KDEROOT. By setting the following 
-rem option to true, the package will be installed into a subdir of KDEROOT. 
+rem option to True, the package will be installed into a subdir of KDEROOT. 
 rem The directory is named like the lower cased build type 
 rem When using this option you can run emerge/kdeenv.bat with the build mode type 
 rem parameter (release, releasedebug or debug) to have different shells for each 
@@ -242,7 +242,7 @@ rem with the same name. They provide a standardized way to define runtime depend
 rem for emerge itself. 
 rem note: After finishing the testing phase this feature will be enabled by default 
 rem and this option removed. 
-rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
+rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=True
 
 rem The following option makes the emerge run fail if applying patches fails
 rem the default is that failing patches do not result in a stop
@@ -255,9 +255,9 @@ rem sqlite based database seems to be slighty faster but is only accessable
 rem through the emerge command line. This option let you choose the used on.
 rem By default the sqlite database is not used, because the implementation 
 rem results into errors on qmerge action.
-rem set EMERGE_ENABLE_SQLITEDB=FALSE
+rem set EMERGE_ENABLE_SQLITEDB=False
 
-rem ####### Cross Compiling
+rem ####### Cross Compiling #######
 
 rem The following variables are used for cross-compiling to Windows Mobile / WinCE
 rem when uncommented, the proper toolchain is set up for the specified target OS and architecture.
