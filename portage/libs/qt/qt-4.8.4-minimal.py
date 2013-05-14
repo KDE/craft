@@ -54,6 +54,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         self.dbus = portage.getPackageInstance('win32libs', 'dbus')
+        self.openssl = portage.getPackageInstance('win32libs', 'openssl')
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -62,6 +63,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         userin = "y"
 
         incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
@@ -74,6 +76,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command += "-qdbus -dbus-linked -openssl "
         command += "-no-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
+        command += "-no-mmx -no-3dnow -no-sse -no-sse2 "
 
         command += "%s %s" % ( incdirs, libdirs )
 
