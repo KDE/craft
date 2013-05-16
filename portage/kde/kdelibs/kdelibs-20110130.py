@@ -14,7 +14,9 @@ class subinfo(info.infoclass):
                                        ("kde.conf-extended-fix.diff", 1),
                                        ("fix-kdoctools.diff", 1)]
         self.patchToApply["gitHEAD"] = self.patchToApply["4.10.2"] + [
-                ("no_khelpcenter.diff", 1)]
+                ("no_khelpcenter.diff", 1),
+                ("fix_window_activation_and_process-lookup.patch", 1),
+                ("Call-newInstance-on-Windows-if-already-running.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 

@@ -1,0 +1,55 @@
+From 5d1baec645f0856d28d8c66a089658c5563c727c Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Thu, 16 May 2013 07:23:51 +0000
+Subject: [PATCH] Call newInstance on Windows if already running
+
+    This change is mostly taken from the pimuniqueapplication
+    in kdepimlibs. The problem is that on Window we are always
+    in the nofork mode and thus when a new kuniqueapplication
+    is requested and one is already running we have just tried
+    to bring this window to front. This lost the command line
+    arguments.
+---
+ kdeui/kernel/kuniqueapplication.cpp |   23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/kdeui/kernel/kuniqueapplication.cpp b/kdeui/kernel/kuniqueapplication.cpp
+index 777fc35..9d1d89f 100644
+--- a/kdeui/kernel/kuniqueapplication.cpp
++++ b/kdeui/kernel/kuniqueapplication.cpp
+@@ -156,11 +156,30 @@ KUniqueApplication::start(StartFlags flags)
+      bool registered = dbusService->registerService(appName) == QDBusConnectionInterface::ServiceRegistered;
+      if (!registered)
+      {
+-        kError() << "KUniqueApplication: Can't setup D-Bus service. Probably already running."
+-                 << endl;
+ #if defined(Q_WS_WIN) && !defined(_WIN32_WCE)
++        // Try to get a new instance from the registred process
++        if (dbusService->isServiceRegistered(appName)) {
++            QByteArray saved_args;
++            QDataStream ds(&saved_args, QIODevice::WriteOnly);
++            KCmdLineArgs::saveAppArgs( ds );
++
++            QDBusInterface iface(appName, QString::fromLatin1("/MainApplication"),
++                    "org.kde.KUniqueApplication", QDBusConnection::sessionBus() );
++            QDBusReply<int> reply;
++            if ( iface.isValid() &&
++                 ( reply = iface.call( "newInstance", QByteArray(), saved_args ) ).isValid() ) {
++              return false; // success means that main() can exit now.
++            }
++            kDebug() << "Could not call newInstance for " << appName;
++        } else {
++            kError() << "KUinqueApplication: Can't register with D-Bus and no other service " <<
++                "is registred for: " << appName;
++        }
++        // If all fails try to just activate a running process with our name
+         KApplication_activateWindowForProcess(KCmdLineArgs::aboutData()->appName());
+ #endif
++        kError() << "KUniqueApplication: Can't setup D-Bus service. Probably already running."
++                 << endl;
+         ::exit(255);
+      }
+ 
+-- 
+1.7.10
+
