@@ -183,6 +183,12 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         else:
             self.wcecompat = portage.getPackageInstance('win32libs', 'wcecompat')
 
+    def unpack( self ):
+        if not GitSource.unpack( self ): return False
+        utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
+                os.path.join( self.sourceDir(), "configure.exe" ) )
+        return True
+
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
         self.setPathes()
