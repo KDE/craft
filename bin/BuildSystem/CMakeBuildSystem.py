@@ -125,6 +125,7 @@ class CMakeBuildSystem(BuildSystemBase):
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
             options += " -DCMAKE_C_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
+            options += " -DCMAKE_LINKER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "xilink.exe" ).replace( "\\", "/" )
         options += " \"%s\"" % self.configureSourceDir()
         return options
 
