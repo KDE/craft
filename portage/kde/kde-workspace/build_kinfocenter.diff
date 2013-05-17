@@ -1,0 +1,112 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 40e07c5..68d7f31 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -156,12 +156,12 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+    macro_optional_add_subdirectory(kstartupconfig)
+    macro_optional_add_subdirectory(freespacenotifier)
+    macro_optional_add_subdirectory(kscreensaver)
++   macro_optional_add_subdirectory(kinfocenter)
+ 
+    # data
+    macro_optional_add_subdirectory(doc)
+ 
+    if (Q_WS_X11)
+-      macro_optional_add_subdirectory(kinfocenter)
+       macro_optional_add_subdirectory(ktouchpadenabler)
+    endif (Q_WS_X11)
+ 
+diff --git a/kinfocenter/Modules/CMakeLists.txt b/kinfocenter/Modules/CMakeLists.txt
+index dd1a02e..349ef50 100644
+--- a/kinfocenter/Modules/CMakeLists.txt
++++ b/kinfocenter/Modules/CMakeLists.txt
+@@ -4,10 +4,10 @@ add_subdirectory( infosummary )
+ add_subdirectory( memory )
+ add_subdirectory( devinfo )
+ add_subdirectory( info )
+-add_subdirectory( nics )
+ 
+ if(NOT WIN32)
+   add_subdirectory( samba )
++  add_subdirectory( nics )
+ 
+   macro_optional_find_package(OpenGL)
+   macro_log_feature(OPENGL_FOUND "OpenGL" "API for developing portable, interactive 2D and 3D graphics applications" "http://mesa3d.sourceforge.net" FALSE "" "View OpenGL details in kinfocenter.")
+diff --git a/kinfocenter/Modules/base/os_base.h b/kinfocenter/Modules/base/os_base.h
+index f09202d..1076d96 100644
+--- a/kinfocenter/Modules/base/os_base.h
++++ b/kinfocenter/Modules/base/os_base.h
+@@ -34,7 +34,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ #include <kglobal.h>
+ #include <klocale.h>
+ 
++#ifdef Q_WS_X11
+ #include <X11/Xlib.h>
++#else
++#define Display void
++#endif
+ 
+ #include "config-infocenter.h"
+ 
+@@ -52,6 +56,7 @@ static const QString HexStr(unsigned long val, int digits) {
+ 	return hexstr;
+ }
+ 
++#ifdef Q_WS_X11
+ static const QString Order(int order) {
+ 	if (order==LSBFirst)
+ 		return i18n("LSBFirst");
+@@ -60,6 +65,7 @@ static const QString Order(int order) {
+ 	else
+ 		return i18n("Unknown Order %1", order);
+ }
++#endif
+ 
+ static const QString BitString(unsigned long n) {
+ 	return i18np("1 Bit", "%1 Bits", n);
+@@ -69,6 +75,7 @@ static const QString ByteString(unsigned long n) {
+ 	return i18np("1 Byte", "%1 Bytes", n);
+ }
+ 
++#ifdef Q_WS_X11
+ static const struct _event_table {
+ 	const char *name;
+ 	long value;
+@@ -77,6 +84,7 @@ static const struct _event_table {
+ 				"ButtonMotionMask", ButtonMotionMask }, { "KeymapStateMask", KeymapStateMask }, { "ExposureMask", ExposureMask }, { "VisibilityChangeMask", VisibilityChangeMask }, { "StructureNotifyMask", StructureNotifyMask }, { "ResizeRedirectMask", ResizeRedirectMask }, {
+ 				"SubstructureNotifyMask", SubstructureNotifyMask }, { "SubstructureRedirectMask", SubstructureRedirectMask }, { "FocusChangeMask", FocusChangeMask }, { "PropertyChangeMask", PropertyChangeMask }, { "ColormapChangeMask", ColormapChangeMask }, { "OwnerGrabButtonMask",
+ 				OwnerGrabButtonMask }, { 0L, 0 } };
++#endif
+ 
+ /* easier to read with such a define ! */
+ #define I18N_MAX(txt,in,fm,maxw) \
+@@ -86,6 +94,7 @@ static const struct _event_table {
+ #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Bytes = 32 Bits = 8 Hex-Digits */
+ 
+ static QTreeWidgetItem* XServer_fill_screen_info(QTreeWidgetItem *lBox, QTreeWidgetItem *last, Display *dpy, int scr, int default_scr) {
++#ifdef Q_WS_X11
+ 	unsigned width, height;
+ 	double xres, yres;
+ 	int i, ndepths, *depths;
+@@ -198,9 +207,13 @@ static QTreeWidgetItem* XServer_fill_screen_info(QTreeWidgetItem *lBox, QTreeWid
+ 		return last;
+ 	else
+ 		return last->child(last->childCount()-1);
++#else
++    return new QTreeWidgetItem();
++#endif
+ }
+ 
+ static bool GetInfo_XServer_Generic(QTreeWidget *lBox) {
++#ifdef Q_WS_X11
+ 	/* Many parts of this source are taken from the X11-program "xdpyinfo" */
+ 
+ 	int i, n;
+@@ -316,6 +329,7 @@ static bool GetInfo_XServer_Generic(QTreeWidget *lBox) {
+ 	last = new QTreeWidgetItem(next, imageByteList);
+ 
+ 	XCloseDisplay(dpy);
++#endif
+ 	return true;
+ }
+ 
