@@ -175,9 +175,6 @@ set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
-rem for msys
-set TERM=msys
-
 rem for python
 if NOT "!EMERGE_PYTHON_PATH!" == "" ( 
    set PATH=!EMERGE_PYTHON_PATH!;!PATH!
