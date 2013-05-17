@@ -63,6 +63,8 @@ def isMSVC2010():
 def isMSVC2012():
     return COMPILER == "msvc2012"
 
+def isIntel():
+    return COMPILER == "intel"
 
 def getCompilerName():
     if isMinGW():

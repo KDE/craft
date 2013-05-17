@@ -13,7 +13,11 @@ rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler
 rem * msvc2012 - use the Microsoft Visual C++ 2012 compiler 
+rem * intel    - use the Intel C++ Compiler
+rem *            note: "intel" option depends on an MSVC environment,
+rem *                  please set the INTEL_VSSHELL var (vs2008, vs2010 or vs2012)
 set KDECOMPILER=mingw4
+rem set INTEL_VSSHELL=vs2010
 
 rem Here you can set the architecure for which packages are build. 
 rem Currently x86 (32bit), x64 (64) and arm (wince) are supported
@@ -24,6 +28,7 @@ rem  mingw         x   ---     ---
 rem  msvc2005      x   ---     ---  
 rem  msvc2008      x   ---     ---
 rem  msvc2010      x   ---     ---
+rem  intel         x   ---     ---
 rem 
 rem [1] by dev-utils/cegcc-arm-wince package
 rem 
@@ -129,11 +134,12 @@ rem set EMERGE_NO_PASSIVE_FTP=True
 
 rem ####### Visual Studio Settings #######
 
-rem Here you can adjust the path to your Visual Studio installation if needed
+rem Here you can adjust the path to your Visual Studio or Intel Composer installation if needed
 rem This is used to set up the build environment automatically
 if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
 if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
 if %KDECOMPILER% == msvc2012 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 11.0
+if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
 
 rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically

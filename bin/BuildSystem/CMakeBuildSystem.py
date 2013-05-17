@@ -35,7 +35,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     return "Visual Studio 9 2008"
             else:
                 return "NMake Makefiles"
-        elif compiler.isMSVC():
+        elif compiler.isMSVC() or compiler.isIntel():
             return "NMake Makefiles"
         elif compiler.isMinGW():
             return "MinGW Makefiles"
@@ -121,6 +121,10 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.subinfo.options.cmake.useCTest:
             options += " -DCMAKE_PROGRAM_PATH=\"%s\" " % \
                             ( os.path.join( self.mergeDestinationDir(), "dev-utils", "svn", "bin" ).replace( "\\", "/" ) )
+        if compiler.isIntel():
+            # this is needed because otherwise it'll detect the MSVC environment
+            options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
+            options += " -DCMAKE_C_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
         options += " \"%s\"" % self.configureSourceDir()
         return options
 
