@@ -94,7 +94,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # There is a bug in jom that parallel installation of qmake projects
         # does not work. So just use the usual make programs. It's hacky but
         # this was decided on the 2012 Windows sprint.
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel():
             installmake="nmake /NOLOGO"
         elif compiler.isMinGW():
             installmake="mingw32-make"
