@@ -70,6 +70,7 @@ class subinfo(info.infoclass):
             self.patchToApply['1.4.10'] = [('workaround-for-inline-keyword-in-msvc10.patch', 1),
                                            ('16e6236b8310d41d0f21923bb87fa4cf148919d0.patch', 1)
                                          ]
+            self.patchToApply['1.4.24'] = [('dbus-va-copy-on-intel-compiler-should-behave-the-same-of-msvc.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
