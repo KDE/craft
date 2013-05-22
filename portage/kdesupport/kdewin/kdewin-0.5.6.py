@@ -22,6 +22,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'kdewin-' + ver
         self.shortDescription = "kde supplementary package for win32"
         self.defaultTarget = '0.5.6'
+        self.patchToApply['0.5.6'] = [ ("invert-if-msvc.diff", 1) ]
 
 from Package.CMakePackageBase import *
 

@@ -1,0 +1,38 @@
+diff -Nru -x '*~' kdewin-0.5.6.orig/tools/create_hash_table/CMakeLists.txt kdewin-0.5.6/tools/create_hash_table/CMakeLists.txt
+--- kdewin-0.5.6.orig/tools/create_hash_table/CMakeLists.txt	2013-02-22 10:03:48.000000000 -0300
++++ kdewin-0.5.6/tools/create_hash_table/CMakeLists.txt	2013-05-22 17:12:52.664554600 -0300
+@@ -7,11 +7,11 @@
+     ${CMAKE_CURRENT_BINARY_DIR} 
+     ${ZLIB_INCLUDE_DIR}
+ )
+-if (MSVC)
+-    include_directories(${CMAKE_SOURCE_DIR}/include/msvc)
+-else (MSVC)
++if (MINGW)
+     include_directories(${CMAKE_SOURCE_DIR}/include/mingw)
+-endif(MSVC)
++else (MINGW)
++    include_directories(${CMAKE_SOURCE_DIR}/include/msvc)
++endif(MINGW)
+ 
+ add_executable(create_hash_table create_hash_table.cpp lookup.cpp)
+ target_link_libraries(create_hash_table ${QT_QTCORE_LIBRARY} )
+diff -Nru -x '*~' kdewin-0.5.6.orig/tools/svg2ico/CMakeLists.txt kdewin-0.5.6/tools/svg2ico/CMakeLists.txt
+--- kdewin-0.5.6.orig/tools/svg2ico/CMakeLists.txt	2013-02-22 10:03:48.000000000 -0300
++++ kdewin-0.5.6/tools/svg2ico/CMakeLists.txt	2013-05-22 17:21:51.031347400 -0300
+@@ -9,11 +9,11 @@
+     ${CMAKE_CURRENT_BINARY_DIR} 
+     ${ZLIB_INCLUDE_DIR}
+ )
+-if (MSVC)
+-    include_directories(${CMAKE_SOURCE_DIR}/include/msvc)
+-else (MSVC)
++if (MINGW)
+     include_directories(${CMAKE_SOURCE_DIR}/include/mingw)
+-endif(MSVC)
++else (MINGW)
++    include_directories(${CMAKE_SOURCE_DIR}/include/msvc)
++endif(MINGW)
+ 
+ add_executable(svg2ico svg2ico.cpp )
+ target_link_libraries(svg2ico ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTSVG_LIBRARY} ${ZLIB_LIBRARY})
