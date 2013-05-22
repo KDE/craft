@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "grantlee-%s" % ver
         self.shortDescription = 'libraries for a template system similar to django\'s'
         self.defaultTarget = '0.3.0'
+        self.patchToApply['0.3.0'] = [ ("patches/0.3.0/fix-exports-generator-for-intel-compiler.diff", 1) ]
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
