@@ -64,11 +64,11 @@ class Package(BinaryPackageBase):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) )
-    shutil.copy( os.path.join( self.imageDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlc.lib" ))
-    shutil.copy( os.path.join( self.imageDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlccore.lib" ))
+    shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlc.lib" ))
+    shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlccore.lib" ))
     shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
     os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
-    #utils.wgetFile( "http://git.videolan.org/?p=vlc.git;a=blob_plain;f=share/vlc.desktop" , os.path.join( self.installDir() , "share" , "applications" , "kde4" ) , "vlc.desktop"  )
+    shutil.copy( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.installDir() , "share" , "applications" , "kde4" , "vlc.desktop" ))
     return True
 
 if __name__ == '__main__':
