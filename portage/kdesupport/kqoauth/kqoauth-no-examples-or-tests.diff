@@ -1,0 +1,12 @@
+diff --git a/kqoauth.pro b/kqoauth.pro
+index 66c8a18..447cf5c 100644
+--- a/kqoauth.pro
++++ b/kqoauth.pro
+@@ -1,6 +1,6 @@
+ TEMPLATE = subdirs
+ 
+-SUBDIRS += src examples tests
++SUBDIRS += src
+ 
+ CONFIG += ordered
+ 

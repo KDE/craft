@@ -1,0 +1,12 @@
+diff -Nru -x '*~' kdelibs-4.10.2.orig/kdecore/kernel/kstandarddirs.cpp kdelibs-4.10.2/kdecore/kernel/kstandarddirs.cpp
+--- kdelibs-4.10.2.orig/kdecore/kernel/kstandarddirs.cpp	2013-05-08 23:31:39.781498700 +0200
++++ kdelibs-4.10.2/kdecore/kernel/kstandarddirs.cpp	2013-05-08 23:13:00.053599100 +0200
+@@ -979,7 +979,7 @@
+     }
+     if (len == 0)
+         return QString();
+-    return QString::fromUtf16((const unsigned short*)buf.data()).replace(QLatin1Char('\\'),QLatin1Char('/')).toLower();
++    return QString::fromUtf16((const unsigned short*)buf.data()).replace(QLatin1Char('\\'),QLatin1Char('/'));
+ #else
+     char realpath_buffer[MAXPATHLEN + 1];
+     memset(realpath_buffer, 0, MAXPATHLEN + 1);

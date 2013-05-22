@@ -154,6 +154,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/dbus'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
         if not emergePlatform.isCrossCompilingEnabled():
             self.dependencies['binary/mysql-pkg'] = 'default'
         else:
@@ -176,10 +177,17 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs', 'openssl')
         self.dbus = portage.getPackageInstance('win32libs', 'dbus')
+        self.sqlite = portage.getPackageInstance('win32libs', 'sqlite')
         if not emergePlatform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
         else:
             self.wcecompat = portage.getPackageInstance('win32libs', 'wcecompat')
+
+    def unpack( self ):
+        if not GitSource.unpack( self ): return False
+        utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
+                os.path.join( self.sourceDir(), "configure.exe" ) )
+        return True
 
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
@@ -203,6 +211,8 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+        os.environ[ "INCLUDE" ] = os.environ[ "INCLUDE" ] + ";" + os.path.join( self.sqlite.installDir(), "include" )
+        os.environ[ "LIB" ] = os.environ[ "LIB" ] + ";" + os.path.join( self.sqlite.installDir(), "lib" )
         if self.isTargetBuild():
             incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
@@ -232,7 +242,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
 
         if not emergePlatform.isCrossCompilingEnabled():
             # non-cc builds only
-            command += "-plugin-sql-odbc -plugin-sql-mysql "
+            command += "-plugin-sql-odbc -plugin-sql-mysql -system-sqlite "
             command += "-qt-style-windowsxp -qt-style-windowsvista "
             command += "-qt-libpng -qt-libjpeg -qt-libtiff "
 
