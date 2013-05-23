@@ -322,7 +322,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         utils.copyFile( os.path.join( self.packageDir(), "qt.conf" ), os.path.join( self.installDir(), "bin", "qt.conf" ) )
 
         # install msvc debug files if available
-        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010":
+        if self.compiler() == "msvc2005" or self.compiler() == "msvc2008" or self.compiler() == "msvc2010" or self.compiler() == "intel":
             srcdir = os.path.join( self.buildDir(), "lib" )
             destdir = os.path.join( self.installDir(), "lib" )
 
