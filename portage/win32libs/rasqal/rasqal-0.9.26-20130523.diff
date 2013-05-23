@@ -373,10 +373,10 @@ diff -Nru rasqal-0.9.26.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.26/cmake/
 +    endif (found_vers_num LESS req_vers_num)
 +
 +ENDMACRO(MACRO_ENSURE_VERSION2)
-diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
---- rasqal-0.9.26.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.26/CMakeLists.txt	2011-07-28 00:07:01.362295600 +0200
-@@ -0,0 +1,214 @@
+diff -Nru -x '*~' rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
+--- rasqal-0.9.26.orig/CMakeLists.txt	1969-12-31 22:00:00.000000000 -0200
++++ rasqal-0.9.26/CMakeLists.txt	2013-05-23 15:12:25.712557900 -0300
+@@ -0,0 +1,216 @@
 +project(rasqal)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -484,8 +484,10 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    add_definitions(-DRASQAL_DECIMAL_NONE)
 +    if(MSVC)
 +        add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
-+        list(APPEND rasqal_SRCS utils/gettimeofday.c)
 +    endif(MSVC)
++    if(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
++        list(APPEND rasqal_SRCS utils/gettimeofday.c)
++    endif(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +endif(WIN32)
 +
 +include_directories(
@@ -524,12 +526,12 @@ diff -Nru rasqal-0.9.26.orig/CMakeLists.txt rasqal-0.9.26/CMakeLists.txt
 +    set(roqet_SRCS
 +        utils/roqet.c
 +    )
-+    if(MSVC)
++    if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +        set(roqet_SRCS
 +            ${roqet_SRCS} 
 +            utils/getopt.c
 +        )
-+    endif(MSVC)
++    endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    add_executable(roqet ${roqet_SRCS})
 +    set_target_properties(roqet PROPERTIES COMPILE_FLAGS "-DRASQAL_STATIC -DRASQAL_INTERNAL")
 +    target_link_libraries(roqet rasqal_static ${PCRE_LIBRARIES} ${RAPTOR_LIBRARIES})

@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         for ver in ['0.9.26']:
             self.targets[ ver ] = 'http://download.librdf.org/source/rasqal-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'rasqal-' + ver
-        self.patchToApply[ '0.9.26' ] = ( 'rasqal-0.9.26-20110726.diff', 1 )
+        self.patchToApply[ '0.9.26' ] = ( 'rasqal-0.9.26-20130523.diff', 1 )
         self.targetDigests['0.9.26'] = '5496312158c0569bc047b4cab85604a06f116555'
         self.shortDescription = "Rasqal RDF Query Library - for executing RDF queries"
         self.defaultTarget = '0.9.26'
