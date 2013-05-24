@@ -78,6 +78,8 @@ def getCompilerName():
             return "arm-wince"
     elif isMSVC():
         return COMPILER
+    elif isIntel():
+        return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
     else:
         return "Unknown Compiler"
 
@@ -89,6 +91,8 @@ def getSimpleCompilerName():
             return "mingw"
     elif isMSVC():
         return "msvc"
+    elif isIntel():
+        return "intel"
     else:
         return "Unknown Compiler"
 
@@ -108,6 +112,8 @@ def getMinGWVersion():
 def getVersion():
     if isMinGW():
         return "%s %s" % ( getCompilerName(), getMinGWVersion() )
+    elif isIntel():
+        return os.getenv("PRODUCT_NAME_FULL")
     return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
 
 
