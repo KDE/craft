@@ -540,9 +540,9 @@ diff -Nru -x '*~' exiv2-0.22.orig/config/ConfigureChecks.cmake exiv2-0.22/config
 +endif( CONST_ICONV )
 +
 +# for msvc define to int in exv_conf.h
-+if( NOT MSVC )
++if( NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    set( HAVE_PID_T TRUE )
-+endif( NOT MSVC )
++endif( NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +
 +set( EXV_SYMBOLS
 +HAVE_INTTYPES_H
@@ -601,10 +601,10 @@ diff -Nru -x '*~' exiv2-0.22.orig/config/ConfigureChecks.cmake exiv2-0.22/config
 +install( FILES ${CMAKE_BINARY_DIR}/exv_conf.h DESTINATION include/exiv2 )
 +install( FILES ${CMAKE_BINARY_DIR}/exv_msvc.h DESTINATION include/exiv2 )
 +
-+if( NOT MSVC )
++if( NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    configure_file( config/exiv2.pc.cmake ${CMAKE_BINARY_DIR}/exiv2.pc )
 +    install( FILES ${CMAKE_BINARY_DIR}/exiv2.pc DESTINATION lib/pkgconfig )
-+endif( NOT MSVC )
++endif( NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +
 +# ******************************************************************************
 +# output chosen build options
@@ -998,11 +998,11 @@ diff -Nru -x '*~' exiv2-0.22.orig/src/CMakeLists.txt exiv2-0.22/src/CMakeLists.t
 +    set( EXIV2_SRC      ${EXIV2_SRC}    localtime.c )
 +endif( NOT HAVE_TIMEGM )
 +
-+if( MSVC )
++if( MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    set( MC_SRC         ${MC_SRC}       getopt_win32.c )
 +    set( EXIV2_SRC      ${EXIV2_SRC}    getopt_win32.c )
 +    set( LIBEXIV2_SRC   ${LIBEXIV2_SRC} getopt_win32.c )
-+endif( MSVC )
++endif( MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +
 +
 +if( EXIV2_ENABLE_XMP )
