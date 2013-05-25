@@ -1701,9 +1701,9 @@ diff -Nru -x '*~' gettext-0.18.orig/gettext-runtime/intl/CMakeLists.txt gettext-
 +
 +add_library(intl ${LIBRARY_TYPE} ${INTL_SRCS})
 +target_link_libraries(intl ${ICONV_LIBRARIES})
-+if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +set_target_properties(intl PROPERTIES OUTPUT_NAME "libintl")
-+endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +
 +if(WINCE)
 +    target_link_libraries(intl ${WCECOMPAT_LIBRARIES})
