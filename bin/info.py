@@ -74,13 +74,13 @@ class infoclass(object):
                 # if version is not available then set it as -1
                 self.hardDependencies[ x ] = [ -1 ]
 
+
+        self.setDependencies()
+
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
         self.setBuildOptions()
-
-        # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
-        self.setDependencies()
 
     def setDependencies( self ):
         """default method for setting dependencies, override to set individual targets"""
