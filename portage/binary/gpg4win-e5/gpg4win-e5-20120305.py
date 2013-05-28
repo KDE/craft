@@ -20,7 +20,7 @@ import compiler
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        version="2013281338"
+        version="201305281338"
         self.targets[version] = \
                 "http://files.kolab.org/local/gpg4win/gpg4win-dev-"+version+".tar.bz2"
         self.defaultTarget = version
