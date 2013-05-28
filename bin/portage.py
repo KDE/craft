@@ -301,6 +301,8 @@ class Portage(object):
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
         p = module.Package()
+        if buildtarget == None:
+            buildtarget = findPossibleTargets( category, package, version )
         p.setup(fileName, category, package, version, buildtarget)
         return p
 
