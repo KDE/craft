@@ -1,0 +1,15 @@
+diff --git a/src/corelib/global/qglobal.h b/src/corelib/global/qglobal.h
+index 8346e46..c69a4de 100644
+--- a/src/corelib/global/qglobal.h
++++ b/src/corelib/global/qglobal.h
+@@ -1461,8 +1461,8 @@ class QDataStream;
+ #endif
+ 
+ // Functions marked as Q_GUI_EXPORT_INLINE were exported and inlined by mistake.
+-// Compilers like MinGW complain that the import attribute is ignored.
+-#if defined(Q_CC_MINGW)
++// Compilers like MinGW and Intel complain that the import attribute is ignored.
++#if defined(Q_CC_MINGW) || (defined(Q_CC_INTEL) && defined(Q_OS_WIN))
+ #    if defined(QT_BUILD_CORE_LIB)
+ #      define Q_CORE_EXPORT_INLINE Q_CORE_EXPORT inline
+ #    else

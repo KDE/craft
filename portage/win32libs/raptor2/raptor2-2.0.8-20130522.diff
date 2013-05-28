@@ -31,7 +31,7 @@ diff -Nru -x '*~' raptor2-2.0.8.orig/cmake/modules/FindYajl.cmake raptor2-2.0.8/
 diff -Nru -x '*~' raptor2-2.0.8.orig/CMakeLists.txt raptor2-2.0.8/CMakeLists.txt
 --- raptor2-2.0.8.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ raptor2-2.0.8/CMakeLists.txt	2012-12-30 11:29:57.398351900 +0100
-@@ -0,0 +1,216 @@
+@@ -0,0 +1,220 @@
 +project(raptor2)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -64,6 +64,10 @@ diff -Nru -x '*~' raptor2-2.0.8.orig/CMakeLists.txt raptor2-2.0.8/CMakeLists.txt
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996 -Dstrcasecmp=stricmp -Dstrncasecmp=strnicmp)
 +endif(MSVC)
++
++if(WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++    add_definitions(-Dstrcasecmp=stricmp -Dstrncasecmp=strnicmp)
++endif(WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 +
 +set(raptor2_SRCS
 +    src/raptor_parse.c
@@ -229,10 +233,10 @@ diff -Nru -x '*~' raptor2-2.0.8.orig/CMakeLists.txt raptor2-2.0.8/CMakeLists.txt
 +    set(rdfdiff_SRCS
 +        utils/rdfdiff.c
 +    )
-+    if(MSVC)
++    if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +        set(rapper_SRCS utils/getopt.c ${rapper_SRCS})
 +        set(rdfdiff_SRCS utils/getopt.c ${rdfdiff_SRCS})
-+    endif(MSVC)
++    endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    add_executable(rapper ${rapper_SRCS})
 +    set_target_properties(rapper PROPERTIES COMPILE_FLAGS "-DRAPTOR_STATIC")
 +    target_link_libraries(rapper raptor2_static ${raptor2_LIBS})

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.1'] = [("kdenetwork-4.8.0-20120125.diff", 1)]
-        self.patchToApply['4.10.2'] = [("kdenetwork-4.10.2-fix-MSVC2010-compile.patch", 1), ("kdenetwork-4.10.2-fix-yahoo-mingw.diff", 1)]
+        self.patchToApply['4.10.2'] = [("kdenetwork-4.10.2-fix-MSVC2010-compile.patch", 1), ("kdenetwork-4.10.2-fix-yahoo-mingw.diff", 1), ("kdenetwork-4.10.2-fix-jabber-mingw.diff", 1)]
 
         if kd.kdebranch == 'master':
             self.svnTargets['svnHEAD'] = 'trunk/KDE/%s' % self.package

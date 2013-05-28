@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = ''
         self.defaultTarget = 'gitHEAD'
+        self.shortDescription = 'small utility applications (kgpg, kwallet, kcalc)'
 
     def setDependencies( self ):
         self.dependencies['kde/ark'] = 'default'

@@ -96,12 +96,12 @@ diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/li
 +
 +set(CMAKE_DEBUG_POSTFIX "d")
 +
-+if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -wd4996)
 +    add_definitions(-DWIN32 -DJAS_WIN_MSVC_BUILD)
 +    set(jasper_base_SRCS ${jasper_base_SRCS} jasper.def)
-+endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +
 +add_library(jasper SHARED ${jasper_base_SRCS}
 +                          ${jasper_bmp_SRCS}

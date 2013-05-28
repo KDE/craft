@@ -1,0 +1,60 @@
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/endplugins/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/plugins/endplugins/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/endplugins/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/plugins/endplugins/CMakeLists.txt	2013-05-24 13:52:12.954044600 -0300
+@@ -8,6 +8,8 @@
+     elseif(MINGW)
+       # mingw
+       set(prefix mingw_strigiea_)
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++      set(prefix intel_strigiea_)
+     endif(MSVC)
+ 
+   else(WIN32)
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/eventplugins/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/plugins/eventplugins/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/eventplugins/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/plugins/eventplugins/CMakeLists.txt	2013-05-24 13:52:53.746377800 -0300
+@@ -7,6 +7,8 @@
+       set(prefix cyg_strigiea_)
+     elseif(MINGW)
+       set(prefix mingw_strigiea_)
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++      set(prefix intel_strigiea_)
+     endif(MSVC)
+   else(WIN32)
+     set(prefix strigiea_)
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/lineplugins/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/plugins/lineplugins/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/lineplugins/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/plugins/lineplugins/CMakeLists.txt	2013-05-24 13:55:24.884022400 -0300
+@@ -7,6 +7,8 @@
+       set(prefix cyg_strigila_)
+     elseif(MINGW)
+       set(prefix mingw_strigila_)
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++      set(prefix intel_strigila_)
+     endif(MSVC)
+   else(WIN32)
+     set(prefix strigila_)
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/saxplugins/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/plugins/saxplugins/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/saxplugins/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/plugins/saxplugins/CMakeLists.txt	2013-05-24 13:55:06.065946100 -0300
+@@ -7,6 +7,8 @@
+       set(prefix cyg_strigila_)
+     elseif(MINGW)
+       set(prefix mingw_strigila_)
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++      set(prefix intel_strigila_)
+     endif(MSVC)
+   else(WIN32)
+     set(prefix strigila_)
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/plugins/throughplugins/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/plugins/throughplugins/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/plugins/throughplugins/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/plugins/throughplugins/CMakeLists.txt	2013-05-24 13:56:14.258846500 -0300
+@@ -7,6 +7,8 @@
+       set(prefix cyg_strigita_)
+     elseif(MINGW)
+       set(prefix mingw_strigita_)
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++      set(prefix intel_strigita_)
+     endif(MSVC)
+   else(WIN32)
+     set(prefix strigita_)

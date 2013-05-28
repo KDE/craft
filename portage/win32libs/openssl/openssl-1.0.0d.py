@@ -14,6 +14,10 @@ class subinfo( info.infoclass ):
         # and the sources are exactly the same. Packaged
         # with GNU Tar options: tar --dereference -czf to avoid
         # problems with symlinks on windows
+        
+        # TODO: Patch this to use icl.exe when compiler.isIntel()
+        # As this is pure C, there should be no problem with building it with cl.exe by now
+        
         self.targets[ '1.0.0d' ] = ('https://downloads.sourceforge.net/project/kde-windows'
                                     '/openssl/1.0.0d/openssl-1.0.0d-orig-deref-src.tar.gz')
         self.targetInstSrc[ '1.0.0d' ] = 'openssl-1.0.0d'

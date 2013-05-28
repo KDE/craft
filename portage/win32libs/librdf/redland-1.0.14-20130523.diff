@@ -573,9 +573,9 @@ diff -Nru -x '*~' redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.t
 +    set(rdfproc_SRCS
 +        utils/rdfproc.c
 +    )
-+    if(MSVC)
++    if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +        list(APPEND rdfproc_SRCS utils/getopt.c)
-+    endif(MSVC)
++    endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    add_executable(rdfproc ${rdfproc_SRCS})
 +    set_target_properties(rdfproc PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
 +    target_link_libraries(rdfproc rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})
@@ -583,9 +583,9 @@ diff -Nru -x '*~' redland-1.0.14.orig/CMakeLists.txt redland-1.0.14/CMakeLists.t
 +    set(redland_db_upgrade_SRCS
 +        utils/db_upgrade.c
 +    )
-+    if(MSVC)
++    if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +        list(APPEND redland_db_upgrade_SRCS utils/getopt.c)
-+    endif(MSVC)
++    endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +    add_executable(redland-db-upgrade ${redland_db_upgrade_SRCS})
 +    set_target_properties(redland-db-upgrade PROPERTIES COMPILE_FLAGS "-DREDLAND_STATIC")
 +    target_link_libraries(redland-db-upgrade rdf_static ${PTHREADS_WIN32_LIBRARIES} ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${SQLITE_LIBRARIES})

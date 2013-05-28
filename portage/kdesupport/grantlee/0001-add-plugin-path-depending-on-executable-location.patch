@@ -1,0 +1,31 @@
+From 9838164346ce0789997caede3e41a036e401d7a5 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Fri, 24 May 2013 13:25:36 +0200
+Subject: [PATCH] add plugin path depending on executable location
+
+This fixes a bug in skrooge, where original grantlee plugins
+could not be found because the pluginPath was not identical to the
+buildtime one.
+
+CCBUG:298680
+---
+ templates/lib/engine.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/templates/lib/engine.cpp b/templates/lib/engine.cpp
+index 7825bcc..dbe0b7d 100644
+--- a/templates/lib/engine.cpp
++++ b/templates/lib/engine.cpp
+@@ -48,6 +48,9 @@ Engine::Engine( QObject *parent )
+ 
+   d_ptr->m_pluginDirs = QCoreApplication::instance()->libraryPaths();
+   d_ptr->m_pluginDirs << QString::fromLocal8Bit( GRANTLEE_PLUGIN_PATH );
++#ifdef Q_WS_WIN
++  d_ptr->m_pluginDirs << QDir(QCoreApplication::applicationDirPath() + "/../lib").canonicalPath();
++#endif
+ }
+ 
+ Engine::~Engine()
+-- 
+1.8.1.msysgit.1
+

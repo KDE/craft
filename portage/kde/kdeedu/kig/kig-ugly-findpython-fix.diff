@@ -1,0 +1,16 @@
+diff -Nru -x '*~' kig-4.10.2.orig/cmake/FindBoostPython.cmake kig-4.10.2/cmake/FindBoostPython.cmake
+--- kig-4.10.2.orig/cmake/FindBoostPython.cmake	2013-04-26 14:59:07.754356900 +0200
++++ kig-4.10.2/cmake/FindBoostPython.cmake	2013-04-26 14:48:36.194463500 +0200
+@@ -36,6 +36,12 @@
+     set(PythonLibs_FIND_VERSION 2.7.0)
+     find_package(PythonLibs)
+     find_package(Boost COMPONENTS python QUIET)
++    string(SUBSTRING "${PythonLibs_FIND_VERSION}" 0 3 _reqVersion)
++    string(SUBSTRING "${PYTHONLIBS_VERSION_STRING}" 0 3 _fndVersion)
++    if(MINGW AND NOT ${_reqVersion} STREQUAL ${_fndVersion})
++        set(PYTHON_INCLUDE_DIRS C:/python27/include)
++        set(PYTHON_LIBRARIES C:/python27/libs/libpython27.a)
++    endif(MINGW AND NOT ${_reqVersion} STREQUAL ${_fndVersion})
+     if(PYTHONLIBS_FOUND AND Boost_FOUND)
+         set(BOOST_PYTHON_INCLUDES ${PYTHON_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
+         set(BOOST_PYTHON_LIBS ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})

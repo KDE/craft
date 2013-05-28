@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['binary/vlc'] = 'default'
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel():
             self.dependencies['kdesupport/kdewin'] = 'default'
 
     def setTargets( self ):
@@ -35,8 +35,8 @@ class subinfo(info.infoclass):
       
       self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
-      self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1)]
-      
+      self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1),
+                                    ("use-kdewin-also-for-intel-compiler.diff", 1)]
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       self.shortDescription = "the vlc based phonon multimedia backend"

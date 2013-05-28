@@ -1,0 +1,173 @@
+diff -Nru -x '*~' liblqr-1-0.4.2.orig/CMakeLists.txt liblqr-1-0.4.2/CMakeLists.txt
+--- liblqr-1-0.4.2.orig/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
++++ liblqr-1-0.4.2/CMakeLists.txt	2013-04-30 22:11:58.476472900 +0100
+@@ -0,0 +1,74 @@
++# CMake build system for liblqr-1 library
++# Copyright 2013 by Ananta Palani <anantapalani@gmail.com>
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#    1. Redistributions of source code must retain the above copyright
++#       notice, this list of conditions and the following disclaimer.
++#    2. Redistributions in binary form must reproduce the above
++#       copyright notice, this list of conditions and the following
++#       disclaimer in the documentation and/or other materials provided
++#       with the distribution.
++#    3. The name of the author may not be used to endorse or promote
++#       products derived from this software without specific prior
++#       written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++#
++
++project( liblqr )
++
++cmake_minimum_required( VERSION 2.6 )
++
++set( PACKAGE_BUGREPORT      "kde-windows@kde.org" )
++set( PACKAGE_BASENAME       "lqr" )
++set( PACKAGE_VERSION        "0.4.2" )
++set( PACKAGE                "${PACKAGE_BASENAME}-1" )
++set( PACKAGE_NAME           "${PACKAGE}" )
++set( PACKAGE_TARNAME        "${PACKAGE}" )
++set( PACKAGE_STRING         "${PACKAGE} ${PACKAGE_VERSION}" )
++set( GENERIC_LIB_VERSION    "${PACKAGE_VERSION}" )
++set( GENERIC_LIB_SOVERSION  "0" )
++
++# options and their default values
++
++option( BUILD_DOCS          "Build the docs"                                OFF )
++option( BUILD_EXAMPLES      "Build the examples"                            OFF )
++option( DISABLE_DECLSPEC    "Disable __declspec() on Windows"               OFF )
++
++# Find GLIB2 using KDE FindGLIB2.cmake module
++find_package( KDE4 REQUIRED )
++include( MacroLibrary )
++find_package( GLIB2 REQUIRED )
++
++if( GLIB2_FOUND )
++    INCLUDE_DIRECTORIES( ${GLIB2_INCLUDE_DIR} )
++endif( GLIB2_FOUND )
++
++if( MINGW OR UNIX )
++#        add_definitions( -Wall -Wcast-align -Wpointer-arith -Wformat-security -Wmissing-format-attribute -Woverloaded-virtual -W )
++endif( MINGW OR UNIX )
++
++set( INSTALL_TARGET_STANDARD_ARGS RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
++
++add_subdirectory( lqr )
++
++if( BUILD_DOCS )
++#    add_subdirectory( docs )
++endif( BUILD_DOCS )
++
++if( BUILD_EXAMPLES )
++#    add_subdirectory( examples )
++endif( BUILD_EXAMPLES )
+diff -Nru -x '*~' liblqr-1-0.4.2.orig/lqr/CMakeLists.txt liblqr-1-0.4.2/lqr/CMakeLists.txt
+--- liblqr-1-0.4.2.orig/lqr/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
++++ liblqr-1-0.4.2/lqr/CMakeLists.txt	2013-04-30 22:12:38.708943600 +0100
+@@ -0,0 +1,91 @@
++# CMake build system for liblqr-1 library
++# Copyright 2013 by Ananta Palani <anantapalani@gmail.com>
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#    1. Redistributions of source code must retain the above copyright
++#       notice, this list of conditions and the following disclaimer.
++#    2. Redistributions in binary form must reproduce the above
++#       copyright notice, this list of conditions and the following
++#       disclaimer in the documentation and/or other materials provided
++#       with the distribution.
++#    3. The name of the author may not be used to endorse or promote
++#       products derived from this software without specific prior
++#       written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++#
++
++if( WIN32 )
++    if( DISABLE_DECLSPEC )
++        add_definitions( -DLQR_DISABLE_DECLSPEC )
++    else( DISABLE_DECLSPEC )
++        add_definitions( -DLQR_EXPORTS )
++    endif( DISABLE_DECLSPEC )
++endif( WIN32 )
++
++set( liblqr_SRCS 
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_gradient.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_rwindow.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_energy.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_cursor.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_list.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_bias.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_rigmask.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_vmap.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_vmap_list.c
++     ${CMAKE_CURRENT_SOURCE_DIR}/lqr_progress.c
++)
++
++include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
++include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
++
++add_library( liblqr SHARED ${liblqr_SRCS} )
++target_link_libraries( liblqr ${GLIB2_LIBRARIES} )
++
++set_target_properties( liblqr PROPERTIES
++                       OUTPUT_NAME ${PACKAGE_NAME}
++                       VERSION ${GENERIC_LIB_VERSION}
++                       SOVERSION ${GENERIC_LIB_SOVERSION}
++)
++
++install(
++    TARGETS liblqr
++    ARCHIVE DESTINATION lib
++    LIBRARY DESTINATION lib
++    RUNTIME DESTINATION bin
++)
++
++install(
++    FILES ${CMAKE_CURRENT_SOURCE_DIR}/lqr.h
++    DESTINATION include/${PACKAGE_NAME}
++)
++
++install(
++    FILES ${CMAKE_CURRENT_SOURCE_DIR}/lqr_base.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_gradient_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_rwindow_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_energy_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_cursor_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_list_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_bias_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_carver_rigmask_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_vmap_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_vmap_list_pub.h
++          ${CMAKE_CURRENT_SOURCE_DIR}/lqr_progress_pub.h
++    DESTINATION include/${PACKAGE_NAME}/${PACKAGE_BASENAME}
++)

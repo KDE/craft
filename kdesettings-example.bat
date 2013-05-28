@@ -13,7 +13,11 @@ rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler
 rem * msvc2012 - use the Microsoft Visual C++ 2012 compiler 
+rem * intel    - use the Intel C++ Compiler
+rem *            note: "intel" option depends on an MSVC environment,
+rem *                  please set the INTEL_VSSHELL var (vs2008, vs2010 or vs2012)
 set KDECOMPILER=mingw4
+rem set INTEL_VSSHELL=vs2010
 
 rem Here you can set the architecure for which packages are build. 
 rem Currently x86 (32bit), x64 (64) and arm (wince) are supported
@@ -24,6 +28,7 @@ rem  mingw         x   ---     ---
 rem  msvc2005      x   ---     ---  
 rem  msvc2008      x   ---     ---
 rem  msvc2010      x   ---     ---
+rem  intel         x   ---     ---
 rem 
 rem [1] by dev-utils/cegcc-arm-wince package
 rem 
@@ -46,7 +51,7 @@ rem This option is needed to avoid path limit problems in case of long base path
 rem and compiling big packages like qt
 rem If you disable it do _not_ use any paths longer than 6 letters in the
 rem directory settings
-set EMERGE_USE_SHORT_PATH=1
+set EMERGE_USE_SHORT_PATH=True
 
 rem each drive could be commented out to skip substution
 set EMERGE_ROOT_DRIVE=r:
@@ -78,7 +83,7 @@ rem By default the emerge svn module supports only single branch svn checkouts.
 rem With this option emerge assumes that the svn repository have the svn standard layout 
 rem and will create related subdirectories for trunk, branches and tags below the above 
 rem mentioned root directory. 
-rem set EMERGE_SVN_STDLAYOUT=1
+rem set EMERGE_SVN_STDLAYOUT=True
 
 rem If you use svn+ssh, you will need a ssh-agent equaivalent for managing
 rem the authorization. Pageant is provided by the Putty project, get it at 
@@ -89,7 +94,7 @@ set SVN_SSH=plink
 
 rem ####### Git Settings #######
 
-rem With this option set emerge checks out each git repository branch into a 
+rem With this option set to True emerge checks out each git repository branch into a 
 rem separate subdirectory (see git clone --mirror at git clone  --shared --local).
 rem Without this option changing the branch will overwrite previous checkouts.
 rem Note: Changing the value invalidates available checkouts of related packages
@@ -129,11 +134,12 @@ rem set EMERGE_NO_PASSIVE_FTP=True
 
 rem ####### Visual Studio Settings #######
 
-rem Here you can adjust the path to your Visual Studio installation if needed
+rem Here you can adjust the path to your Visual Studio or Intel Composer installation if needed
 rem This is used to set up the build environment automatically
 if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
 if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
 if %KDECOMPILER% == msvc2012 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 11.0
+if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
 
 rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically
@@ -199,7 +205,7 @@ rem svn repository. To disable, set EMERGE_NOCOPY=False.
 set EMERGE_NOCOPY=True
 
 rem By default emerge will merge all package into KDEROOT. By setting the following 
-rem option to true, the package will be installed into a subdir of KDEROOT. 
+rem option to True, the package will be installed into a subdir of KDEROOT. 
 rem The directory is named like the lower cased build type 
 rem When using this option you can run emerge/kdeenv.bat with the build mode type 
 rem parameter (release, releasedebug or debug) to have different shells for each 
@@ -242,7 +248,7 @@ rem with the same name. They provide a standardized way to define runtime depend
 rem for emerge itself. 
 rem note: After finishing the testing phase this feature will be enabled by default 
 rem and this option removed. 
-rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=1
+rem set EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES=True
 
 rem The following option makes the emerge run fail if applying patches fails
 rem the default is that failing patches do not result in a stop
@@ -255,9 +261,9 @@ rem sqlite based database seems to be slighty faster but is only accessable
 rem through the emerge command line. This option let you choose the used on.
 rem By default the sqlite database is not used, because the implementation 
 rem results into errors on qmerge action.
-rem set EMERGE_ENABLE_SQLITEDB=FALSE
+rem set EMERGE_ENABLE_SQLITEDB=False
 
-rem ####### Cross Compiling
+rem ####### Cross Compiling #######
 
 rem The following variables are used for cross-compiling to Windows Mobile / WinCE
 rem when uncommented, the proper toolchain is set up for the specified target OS and architecture.

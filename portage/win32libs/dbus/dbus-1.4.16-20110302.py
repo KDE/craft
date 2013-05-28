@@ -74,6 +74,8 @@ class subinfo(info.infoclass):
                                          ]
             self.patchToApply['1.4.16'] = [('qt5.diff', 1),]
             self.patchToApply['1.6.8'] = [('qt5.diff', 1),]
+            self.patchToApply['1.4.24'] = [('dbus-va-copy-on-intel-compiler-should-behave-the-same-of-msvc.diff', 1)]
+
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '1.4.0'

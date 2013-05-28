@@ -37,7 +37,7 @@ class BuildSystemBase(EmergeBase):
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel() :
             return "nmake /NOLOGO"
         elif compiler.isMinGW():
             return "mingw32-make"

@@ -1,0 +1,128 @@
+diff --git a/kdecore/kernel/kstandarddirs.cpp b/kdecore/kernel/kstandarddirs.cpp
+index 1a5cc32..82c7ee2 100644
+--- a/kdecore/kernel/kstandarddirs.cpp
++++ b/kdecore/kernel/kstandarddirs.cpp
+@@ -72,6 +72,7 @@
+ #include <QtCore/QDir>
+ #include <QtCore/QFileInfo>
+ #include <QtCore/QSettings>
++#include <QtCore/QProcessEnvironment>
+ 
+ class KStandardDirs::KStandardDirsPrivate
+ {
+@@ -234,6 +235,8 @@ static const int types_indices[] = {
+ static void tokenize(QStringList& token, const QString& str,
+                      const QString& delim);
+ 
++QString expandEnvironmentVariables(QString& str);
++
+ KStandardDirs::KStandardDirs()
+     : d(new KStandardDirsPrivate(this))
+ {
+@@ -1461,6 +1464,32 @@ static inline QString equalizePath(QString &str)
+         return str;
+ }
+ 
++static QMap<QString, QString> getEnvironment()
++{
++    QMap<QString, QString> ret;
++    Q_FOREACH(const QString& str, QProcessEnvironment::systemEnvironment().toStringList())
++    {
++        const int p = str.indexOf(QLatin1Char('='));
++        ret[str.left(p)] = str.mid(p + 1);
++    }
++    return ret;
++}
++
++QString expandEnvironmentVariables(const QString& str)
++{
++    QString ret = str;
++    static QMap<QString, QString> envVars = getEnvironment();
++    Q_FOREACH(const QString& var, envVars.keys())
++    {
++        const QString varName = QLatin1Char('%') + var + QLatin1Char('%');
++        if(str.contains(varName))
++        {
++            ret.replace(varName, envVars[var], Qt::CaseInsensitive);
++        }
++    }
++    return ret;
++}
++
+ static void tokenize(QStringList& tokens, const QString& str,
+                     const QString& delim)
+ {
+@@ -1714,6 +1743,16 @@ void KStandardDirs::addKDEDefaults()
+         kdedirList.append( linuxExecPrefix );
+ #endif
+ 
++#if defined(Q_WS_WIN) && !defined(_WIN32_WCE)
++    WCHAR wPath[MAX_PATH+1];
++    GetModuleFileNameW(NULL, wPath, MAX_PATH);
++    QString kdeconfPath = QString::fromUtf16((const ushort *) wPath);
++    kdeconfPath = kdeconfPath.left(kdeconfPath.lastIndexOf(QLatin1Char('\\'))).replace(QLatin1Char('\\'), QLatin1Char('/'));
++    QScopedPointer<QSettings> kdeconf;
++    if ( QFile::exists(kdeconfPath + QString::fromLatin1("/kde.conf") ) ) {
++        kdeconf.reset( new QSettings( kdeconfPath + QString::fromLatin1("/kde.conf"), QSettings::IniFormat ) );
++    }
++#endif
+     // We treat root differently to prevent a "su" shell messing up the
+     // file permissions in the user's home directory.
+     QString localKdeDir = readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME");
+@@ -1729,8 +1768,9 @@ void KStandardDirs::addKDEDefaults()
+         localKdeDir =  QDir::homePath() + QLatin1String("/Library/Preferences/KDE/");
+ #elif defined(Q_WS_WIN)
+ #ifndef _WIN32_WCE
+-        WCHAR wPath[MAX_PATH+1];
+-        if ( SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, wPath) == S_OK) {
++        if ( kdeconf && kdeconf->contains(QLatin1String("KDE/KDEHOME"))) {
++            localKdeDir = expandEnvironmentVariables(kdeconf->value(QString::fromLatin1("KDE/KDEHOME")).toString());
++        } else if ( SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, wPath) == S_OK) {
+           localKdeDir = QDir::fromNativeSeparators(QString::fromUtf16((const ushort *) wPath)) + QLatin1Char('/') + QString::fromLatin1(KDE_DEFAULT_HOME) + QLatin1Char('/');
+         } else {
+ #endif
+@@ -1783,6 +1823,10 @@ void KStandardDirs::addKDEDefaults()
+         xdgdirList.append(QString::fromLatin1("/etc/xdg"));
+ #ifdef Q_WS_WIN
+         xdgdirList.append(installPath("kdedir") + QString::fromLatin1("etc/xdg"));
++        if(kdeconf && kdeconf->contains(QLatin1String("XDG/XDG_CONFIG_DIRS")))
++        {
++            xdgdirList.append(expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG/XDG_CONFIG_DIRS")).toString()));
++        }
+ #else
+         xdgdirList.append(QFile::decodeName(KDESYSCONFDIR "/xdg"));
+ #endif
+@@ -1797,6 +1841,10 @@ void KStandardDirs::addKDEDefaults()
+         localXdgDir = QDir::homePath() + QString::fromLatin1("/Library/Preferences/XDG/");
+ #else
+         localXdgDir = QDir::homePath() + QString::fromLatin1("/.config/");
++        if(kdeconf && kdeconf->contains(QLatin1String("XDG/XDG_CONFIG_HOME")))
++        {
++            localXdgDir = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG/XDG_CONFIG_HOME")).toString());
++        }
+ #endif
+     }
+ 
+@@ -1836,6 +1884,11 @@ void KStandardDirs::addKDEDefaults()
+ #ifndef Q_WS_WIN
+         xdgdirList.append(QString::fromLatin1("/usr/local/share/"));
+         xdgdirList.append(QString::fromLatin1("/usr/share/"));
++#else
++        if(kdeconf && kdeconf->contains(QLatin1String("XDG/XDG_DATA_DIRS")))
++        {
++            xdgdirList.append(expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG/XDG_DATA_DIRS")).toString()));
++        }
+ #endif
+     }
+ 
+@@ -1848,6 +1901,10 @@ void KStandardDirs::addKDEDefaults()
+     else
+     {
+         localXdgDir = QDir::homePath() + QLatin1String("/.local/share/");
++        if(kdeconf && kdeconf->contains(QLatin1String("XDG/XDG_DATA_HOME")))
++        {
++            localXdgDir = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG/XDG_DATA_HOME")).toString());
++        }
+     }
+ 
+     localXdgDir = KShell::tildeExpand(localXdgDir);

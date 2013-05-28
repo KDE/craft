@@ -17,6 +17,8 @@ class QMakeBuildSystem(BuildSystemBase):
             self.platform = "win32-%s" % self.compiler()
         elif compiler.isMinGW():
             self.platform = "win32-g++"
+        elif compiler.isIntel():
+            self.platform = "win32-icc"
         else:
             utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
 
@@ -74,7 +76,7 @@ class QMakeBuildSystem(BuildSystemBase):
         # There is a bug in jom that parallel installation of qmake projects
         # does not work. So just use the usual make programs. It's hacky but
         # this was decided on the 2012 Windows sprint.
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel():
             installmake="nmake /NOLOGO"
         elif compiler.isMinGW():
             installmake="mingw32-make"

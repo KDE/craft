@@ -5,6 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.defaultTarget = '0.2.6'
+        self.shortDescription = "a library to perform image correction based on lens profiles"
+        
         for ver in ['0.2.6']:
             self.targets[ver] = "http://sourceforge.net/projects/lensfun.berlios/files/lensfun-%s.tar.bz2/download/lensfun-%s.tar.bz2" % (ver, ver)
             self.targetInstSrc[ver] = "lensfun-%s" % ver
@@ -13,6 +16,10 @@ class subinfo(info.infoclass):
         
         self.patchToApply['0.2.6'] = ( 'lensfun-0.2.6.diff', 1 )
         
+    
+    def setBuildOptions( self ):
+        info.infoclass.setBuildOptions(self)
+        
         self.options.configure.defines = "-DBUILD_STATIC=OFF"
         self.options.configure.defines += " -DBUILD_TESTS=OFF"
         self.options.configure.defines += " -DBUILD_AUXFUN=OFF"
@@ -20,13 +27,11 @@ class subinfo(info.infoclass):
         self.options.configure.defines += " -DBUILD_FOR_SSE2=ON"
         self.options.configure.defines += " -DBUILD_DOC=OFF"
         
-        self.shortDescription = "a library to perform image correction based on lens profiles"
-        self.defaultTarget = '0.2.6'
     
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         # self.buildDependencies['dev-util/doxygen'] = 'default' # only needed if building docs
-        self.dependencies['testing/glib'] = 'default'
+        self.dependencies['testing/glib-src'] = 'default'
         # self.dependencies['win32libs-bin/zlib']  = 'default' # only needed if building auxfun and tests
         # self.dependencies['win32libs-bin/libpng'] = 'default' # only needed if building auxfun and tests
         
