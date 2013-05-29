@@ -76,7 +76,7 @@ kde,kdepimlibs,4.10.2,
 kde,oxygen-icons,4.10.2,
 win32libs,libbfd,2.21.1a,
 win32libs,libssh,0.5.3,
-kde,kde-runtime,4.10.2,
+kde,kde-runtime,4.10.2,1
 kde,kate,4.10.2,
 kde,nepomuk-widgets,4.10.2,
 kde,kde-baseapps,4.10.2,
