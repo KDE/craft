@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
         self.patchToApply["4.10.2"] = [("kdelibs-4.10.2-20130430.diff", 1), 
                                        ("kde.conf-extended-fix.diff", 1),
                                        ("fix-kdoctools.diff", 1),
-                                       ("fix-casing-of-realFilePath.diff", 1)]
+                                       ("fix-casing-of-realFilePath.diff", 1),
+                                       ("add-new-solid-backend.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
