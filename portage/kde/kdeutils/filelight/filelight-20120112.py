@@ -8,6 +8,8 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
+        self.patchToApply['4.10.2'] = [("filelight-4.10.2-20130530.diff", 1)]
+
         self.shortDescription = "a graphical representation of your file system"
         self.defaultTarget = 'gitHEAD'
 
