@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
                                        ("kde.conf-extended-fix.diff", 1),
                                        ("fix-kdoctools.diff", 1),
                                        ("fix-casing-of-realFilePath.diff", 1),
-                                       ("add-new-solid-backend.diff", 1)]
+                                       ("add-new-solid-win-backend.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
