@@ -117,7 +117,7 @@ kde,libkdegames,4.10.2,
 kde,ksnakeduel,4.10.2,
 kde,kfourinline,4.10.2,
 kde,kpat,4.10.2,
-kde,picmi,4.10.2,
+kde,picmi,4.10.2,1
 kde,kreversi,4.10.2,
 kde,kbounce,4.10.2,
 kde,ksudoku,4.10.2,

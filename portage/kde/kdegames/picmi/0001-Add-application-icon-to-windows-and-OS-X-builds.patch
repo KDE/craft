@@ -1,0 +1,25 @@
+From f6c839dae762946cbbbd789b37fa6c099aafa168 Mon Sep 17 00:00:00 2001
+From: Jakob Gruber <jakob.gruber@gmail.com>
+Date: Wed, 29 May 2013 22:59:45 +0200
+Subject: [PATCH] Add application icon to windows and OS X builds
+
+BUG: 320433
+---
+ src/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index a4b2a41..a2fdd59 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -42,6 +42,7 @@ set(picmi_SRCS
+     systemexception.cpp
+ )
+ 
++kde4_add_app_icon(picmi_SRCS "${CMAKE_SOURCE_DIR}/icons/hi*-apps-picmi.png")
+ kde4_add_executable(picmi
+     ${picmi_SRCS}
+ )
+-- 
+1.8.1.msysgit.1
+
