@@ -12,8 +12,21 @@ index 0e87f30..39ccd38 100644
  ############### Load the CTest options ###############
  # CTestCustom.cmake has to be in the CTEST_BINARY_DIR.
  # in the KDE build system, this is the same as CMAKE_BINARY_DIR.
+diff --git a/kjs/wtf/AlwaysInline.h b/kjs/wtf/AlwaysInline.h
+index cc5c29c..f7ca16c 100644
+--- a/kjs/wtf/AlwaysInline.h
++++ b/kjs/wtf/AlwaysInline.h
+@@ -22,7 +22,7 @@
+ 
+ 
+ #ifndef ALWAYS_INLINE
+-#if COMPILER(GCC) && defined(NDEBUG) &&  __GNUC__ > 3
++#if !defined(_WIN32) && COMPILER(GCC) && defined(NDEBUG) &&  __GNUC__ > 3
+ #define ALWAYS_INLINE inline __attribute__ ((__always_inline__))
+ #elif COMPILER(MSVC) && defined(NDEBUG)
+ #define ALWAYS_INLINE __forceinline
 diff --git a/solid/solid/CMakeLists.txt b/solid/solid/CMakeLists.txt
-index a57df09..9353ea7 100644
+index 83de7ec..9353ea7 100644
 --- a/solid/solid/CMakeLists.txt
 +++ b/solid/solid/CMakeLists.txt
 @@ -10,7 +10,12 @@ endif(WIN32)
@@ -38,7 +51,15 @@ index a57df09..9353ea7 100644
  check_cxx_source_compiles("     #ifdef __SUNPRO_CC
                                          #define __asm__ asm
                                  #endif
-@@ -339,17 +345,20 @@ if(APPLE)
+@@ -43,6 +49,7 @@ file(MAKE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/hal
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/udev
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/wmi
++   ${CMAKE_CURRENT_BINARY_DIR}/backends/win
+ )
+ 
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${KDE4_C_FLAGS}") # enable -fvisibility=hidden for C sources
+@@ -338,17 +345,20 @@ if(APPLE)
  endif(APPLE)
  
  if(WIN32)
@@ -51,7 +72,7 @@ index a57df09..9353ea7 100644
 -   else(HAVE_WBEM AND WBEM_LIBRARIES)
 -      set(HAVE_WBEM False)
 -   endif(HAVE_WBEM AND WBEM_LIBRARIES)
--   if(False)#HAVE_WBEM AND NOT WINCE)
+-   if(HAVE_WBEM AND NOT WINCE)
 -       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WBEM")
 +    if(WITH_SOLID_WMI)
 +       include(CheckIncludeFileCXX)
@@ -70,39 +91,34 @@ index a57df09..9353ea7 100644
         message(STATUS "-- Building Solid WMI backend." )
  
         set(solid_LIB_SRCS ${solid_LIB_SRCS}
-@@ -376,21 +385,25 @@ if(WIN32)
+@@ -375,7 +385,25 @@ if(WIN32)
         backends/wmi/wmivolume.cpp
  
         )
--    endif(False)#HAVE_WBEM AND NOT WINCE)
--
+-    endif(HAVE_WBEM AND NOT WINCE)
 +    else(WITH_SOLID_WMI)
 +       message(STATUS "-- Building Solid Windows backend." )
-        set(solid_LIB_SRCS ${solid_LIB_SRCS}
-        backends/win/winblock.cpp
--       #backends/win/wmicdrom.cpp
++       set(solid_LIB_SRCS ${solid_LIB_SRCS}
++       backends/win/winblock.cpp
 +       backends/win/winopticaldrive.cpp
-        backends/win/wininterface.cpp
-        backends/win/wingenericinterface.cpp
-        backends/win/windevice.cpp
-        backends/win/windevicemanager.cpp
--       #backends/win/wmiopticaldisc.cpp
++       backends/win/wininterface.cpp
++       backends/win/wingenericinterface.cpp
++       backends/win/windevice.cpp
++       backends/win/windevicemanager.cpp
 +       backends/win/winopticaldisc.cpp
 +       backends/win/winprocessor.cpp
-        #backends/win/wmiportablemediaplayer.cpp
--       #backends/win/wmistorageaccess.cpp
++       #backends/win/wmiportablemediaplayer.cpp
 +       backends/win/winstorageaccess.cpp
 +       backends/win/winstoragedrive.cpp
-        backends/win/winstoragevolume.cpp
--
++       backends/win/winstoragevolume.cpp
 +       backends/win/winbattery.cpp
 +       backends/win/winacadapter.cpp
-        )
++       )
 +    endif(WITH_SOLID_WMI)
  endif(WIN32)
  
  set_source_files_properties( org.freedesktop.PowerManagement.xml
-@@ -409,9 +422,11 @@ set(solid_OPTIONAL_LIBS)
+@@ -394,9 +422,11 @@ set(solid_OPTIONAL_LIBS)
  
  if(WIN32)
     set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} ${KDEWIN_LIBRARY})
@@ -515,27 +531,38 @@ index 0000000..8286783
 +
 +#endif // WINBATTERY_H
 diff --git a/solid/solid/backends/win/winblock.cpp b/solid/solid/backends/win/winblock.cpp
-index f0485e4..bdf8151 100644
---- a/solid/solid/backends/win/winblock.cpp
+new file mode 100644
+index 0000000..bdf8151
+--- /dev/null
 +++ b/solid/solid/backends/win/winblock.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,224 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -20,11 +20,42 @@
- 
- #include "winblock.h"
- 
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "winblock.h"
++
 +#include <QSettings>
 +#include <QDebug>
 +
- using namespace Solid::Backends::Win;
- 
--WinBlock::WinBlock(WinDevice *device)
--    :WinInterface(device)
++using namespace Solid::Backends::Win;
++
 +#ifdef HEAVE_DRIVER_KIT
 +#include <ntddcdrm.h>
 +#include <ntddmmc.h>
@@ -549,7 +576,7 @@ index f0485e4..bdf8151 100644
 +    WinInterface(device),
 +    m_major(-1),
 +    m_minor(-1)
- {
++{
 +    if(m_device->type() == Solid::DeviceInterface::StorageVolume)
 +    {
 +        STORAGE_DEVICE_NUMBER info = WinDeviceManager::getDeviceInfo<STORAGE_DEVICE_NUMBER>(driveLetterFromUdi(m_device->udi()),IOCTL_STORAGE_GET_DEVICE_NUMBER);
@@ -567,27 +594,25 @@ index f0485e4..bdf8151 100644
 +        qFatal("Not implemented device type %i",m_device->type());
 +    }
 +
- }
- 
- WinBlock::~WinBlock()
-@@ -33,17 +64,161 @@ WinBlock::~WinBlock()
- 
- int WinBlock::deviceMajor() const
- {
--    return 0;
++}
++
++WinBlock::~WinBlock()
++{
++}
++
++int WinBlock::deviceMajor() const
++{
 +    Q_ASSERT(m_major != -1);
 +    return m_major;
- }
- 
- int WinBlock::deviceMinor() const
- {
--    return 0;
++}
++
++int WinBlock::deviceMinor() const
++{
 +    return m_minor;
- }
- 
- QString WinBlock::device() const
- {
--    return m_device->driveLetter();
++}
++
++QString WinBlock::device() const
++{
 +    return driveLetterFromUdi(m_device->udi());
 +}
 +
@@ -732,31 +757,60 @@ index f0485e4..bdf8151 100644
 +
 +    }
 +    return list;
- }
- 
- #include "winblock.moc"
++}
++
++#include "winblock.moc"
 diff --git a/solid/solid/backends/win/winblock.h b/solid/solid/backends/win/winblock.h
-index 4b93543..bbcea3c 100644
---- a/solid/solid/backends/win/winblock.h
+new file mode 100644
+index 0000000..bbcea3c
+--- /dev/null
 +++ b/solid/solid/backends/win/winblock.h
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,70 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -39,11 +39,28 @@ public:
-     WinBlock(WinDevice *device);
-     ~WinBlock();
- 
--   virtual int deviceMajor() const;
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WINBLOCK_H
++#define WINBLOCK_H
++
++#include <solid/ifaces/block.h>
++#include "wininterface.h"
++
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++
++class WinBlock : public WinInterface, virtual public Solid::Ifaces::Block
++{
++    Q_OBJECT
++    Q_INTERFACES(Solid::Ifaces::Block)
++public:
++    WinBlock(WinDevice *device);
++    ~WinBlock();
++
 +    virtual int deviceMajor() const;
- 
--   virtual int deviceMinor() const;
++
 +    virtual int deviceMinor() const;
- 
--   virtual QString device() const;
++
 +    virtual QString device() const;
 +
 +    static QSet<QString> getUdis();
@@ -775,24 +829,45 @@ index 4b93543..bbcea3c 100644
 +    int m_minor;
 +
 +    static QStringList drivesFromMask(const DWORD unitmask);
- };
- 
- }
++};
++
++}
++}
++}
++
++#endif // WINBLOCK_H
 diff --git a/solid/solid/backends/win/windevice.cpp b/solid/solid/backends/win/windevice.cpp
-index 78545ec..ee6e904 100644
---- a/solid/solid/backends/win/windevice.cpp
+new file mode 100644
+index 0000000..ee6e904
+--- /dev/null
 +++ b/solid/solid/backends/win/windevice.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,429 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -24,94 +24,289 @@
- #include "wingenericinterface.h"
- #include "winstoragevolume.h"
- #include "winblock.h"
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "windevice.h"
++#include <solid/deviceinterface.h>
++
++#include "wingenericinterface.h"
++#include "winstoragevolume.h"
++#include "winblock.h"
 +#include "winstorageaccess.h"
 +#include "winstoragedrive.h"
 +#include "winopticaldrive.h"
@@ -801,35 +876,28 @@ index 78545ec..ee6e904 100644
 +#include "winprocessor.h"
 +#include "winbattery.h"
 +#include "winacadapter.h"
- 
--using namespace Solid::Backends::Win;
++
 +#include <batclass.h>
- 
--QMap<QString,QString> WinDevice::m_driveLetters = QMap<QString,QString>();
++
 +using namespace Solid::Backends::Win;
- 
--WinDevice::WinDevice(const QString &udi)
--    :Device()
--    ,m_udi(udi)
++
 +WinDevice::WinDevice(const QString &udi) :
 +    Device(),
 +    m_udi(udi),
 +    m_type(Solid::DeviceInterface::Unknown)
- {
--    // /org/kde/solid/win/volume/disk #%1, partition #%2
++{
 +    /*
 +     /org/kde/solid/win/volume/disk #%1, partition #%2
 +     /org/kde/solid/win/storage.cdrom/disk #%0
 +    */
-     QStringList data = udi.split("/");
--    m_parentUdi = data[6].split(",")[0].trimmed();
++    QStringList data = udi.split("/");
 +    QString parentName = data[6].split(",")[0].trimmed();
-     QString type = data[5];
- 
-     if(type == "storage")
-         m_type = Solid::DeviceInterface::StorageDrive;
-     else if(type == "volume")
-         m_type = Solid::DeviceInterface::StorageVolume;
++    QString type = data[5];
++
++    if(type == "storage")
++        m_type = Solid::DeviceInterface::StorageDrive;
++    else if(type == "volume")
++        m_type = Solid::DeviceInterface::StorageVolume;
 +    else if (type == "storage.cdrom")
 +        m_type = Solid::DeviceInterface::OpticalDrive;
 +    else if (type == "volume.cdrom")
@@ -844,21 +912,13 @@ index 78545ec..ee6e904 100644
 +    {
 +        m_type = Solid::DeviceInterface::StorageAccess;
 +    }
- 
--}
- 
--QString WinDevice::udi() const
--{
--    return m_udi;
--}
- 
--QString WinDevice::parentUdi() const
--{
-     switch(m_type)
-     {
-     case Solid::DeviceInterface::StorageVolume:
-     {
--        return QString("/org/kde/solid/win/storage/").append(m_parentUdi);
++
++
++
++    switch(m_type)
++    {
++    case Solid::DeviceInterface::StorageVolume:
++    {
 +        m_parentUdi = QLatin1String("/org/kde/solid/win/storage/") + parentName;
 +    }
 +        break;
@@ -874,18 +934,12 @@ index 78545ec..ee6e904 100644
 +        {
 +            m_parentUdi = QLatin1String("/org/kde/solid/win/")+ type;
 +        }
-     }
++    }
 +        break;
-     default:
--        return QString();
++    default:
 +        m_parentUdi = QLatin1String("/org/kde/solid/win/")+ type;
-     }
--}
- 
--QString WinDevice::vendor() const
--{
--    //TODO:implement
--    return QString();
++    }
++
 +
 +
 +    switch(m_type)
@@ -911,15 +965,13 @@ index 78545ec..ee6e904 100644
 +    }
 +
 +
- }
- 
--QString WinDevice::product() const
++}
++
 +void WinDevice::initStorageDevice()
- {
++{
 +    QString dev;
-     switch(m_type)
-     {
--    case Solid::DeviceInterface::StorageVolume:
++    switch(m_type)
++    {
 +    case Solid::DeviceInterface::StorageAccess:
 +        dev = WinBlock::driveLetterFromUdi(udi());
 +        m_product = QString("Virtual drive %1").arg(dev);
@@ -945,27 +997,21 @@ index 78545ec..ee6e904 100644
 +    WinDeviceManager::getDeviceInfo<char,STORAGE_PROPERTY_QUERY>(dev,IOCTL_STORAGE_QUERY_PROPERTY,buff,1024,&query);
 +    STORAGE_DEVICE_DESCRIPTOR *info = ((STORAGE_DEVICE_DESCRIPTOR*)buff);
 +    if(info->VendorIdOffset != 0)
-     {
--        WinDevice wDev(udi());
--        WinStorageVolume dev(&wDev);
--        return dev.label();
++    {
 +        m_vendor = QString((char*)buff+ info->VendorIdOffset).trimmed();
 +        if(info->ProductIdOffset != 0)
 +        {
 +            m_product = QString((char*)buff+ info->ProductIdOffset).trimmed();
 +        }
-     }
--    default:
--        return QString();
++    }
 +    else if(info->ProductIdOffset != 0)//fallback doesnt work for all devices
 +    {
 +        QStringList tmp = QString((char*)buff+ info->ProductIdOffset).trimmed().split(" ");
 +        m_vendor = tmp.takeFirst();
 +        m_product = tmp.join(" ");
-     }
- }
- 
--QString WinDevice::icon() const
++    }
++}
++
 +void WinDevice::initBatteryDevice()
 +{
 +    WinBattery::Battery battery = WinBattery::batteryInfoFromUdi(m_udi);
@@ -997,26 +1043,21 @@ index 78545ec..ee6e904 100644
 +}
 +
 +void WinDevice::initCpuDevice()
- {
--    //TODO:implement
--    return QString();
++{
 +    WinProcessor cpu(this);
 +    WinProcessor::ProcessorInfo info = WinProcessor::updateCache()[cpu.number()];
 +    m_vendor = info.vendor;
 +    m_product = info.produuct;
 +    m_description = info.name;
- }
- 
--QStringList WinDevice::emblems() const
++}
++
 +QString WinDevice::udi() const
 +{
 +    return m_udi;
 +}
 +
 +QString WinDevice::parentUdi() const
- {
--    //TODO:implement
--    return QStringList();
++{
 +    return m_parentUdi;
 +}
 +
@@ -1028,11 +1069,10 @@ index 78545ec..ee6e904 100644
 +QString WinDevice::product() const
 +{
 +    return m_product;
- }
- 
- QString WinDevice::description() const
- {
--    return product();
++}
++
++QString WinDevice::description() const
++{
 +    return m_description.isEmpty()?m_product:m_description;
 +}
 +
@@ -1086,8 +1126,8 @@ index 78545ec..ee6e904 100644
 +        break;
 +    }
 +    return icon;
- }
- 
++}
++
 +QStringList WinDevice::emblems() const
 +{
 +    QStringList icons;
@@ -1100,73 +1140,63 @@ index 78545ec..ee6e904 100644
 +    }
 +    return icons;
 +}
- 
--bool WinDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) const
++
 +bool WinDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &queryType) const
- {
--    if (type==Solid::DeviceInterface::GenericInterface) {
++{
 +    if (queryType == Solid::DeviceInterface::GenericInterface) {
-         return true;
-     }
- 
-     QList<Solid::DeviceInterface::Type> interfaceList;
--    interfaceList<<type;
++        return true;
++    }
++
++    QList<Solid::DeviceInterface::Type> interfaceList;
 +    interfaceList << type();
- 
--    switch (type)
++
 +    switch (type())
-     {
-     case Solid::DeviceInterface::GenericInterface:
-         break;
-@@ -122,13 +317,13 @@ bool WinDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) c
-     case Solid::DeviceInterface::StorageDrive:
-         break;
-     case Solid::DeviceInterface::OpticalDrive:
--        interfaceList <<Solid::DeviceInterface::Block<<Solid::DeviceInterface::StorageDrive;
++    {
++    case Solid::DeviceInterface::GenericInterface:
++        break;
++    case Solid::DeviceInterface::Block:
++        break;
++    case Solid::DeviceInterface::StorageAccess:
++        break;
++    case Solid::DeviceInterface::StorageDrive:
++        break;
++    case Solid::DeviceInterface::OpticalDrive:
 +        interfaceList << Solid::DeviceInterface::Block << Solid::DeviceInterface::StorageDrive;
-         break;
-     case Solid::DeviceInterface::StorageVolume:
--        interfaceList <<Solid::DeviceInterface::Block<<Solid::DeviceInterface::StorageAccess;
++        break;
++    case Solid::DeviceInterface::StorageVolume:
 +        interfaceList << Solid::DeviceInterface::Block << Solid::DeviceInterface::StorageAccess;
-         break;
-     case Solid::DeviceInterface::OpticalDisc:
--        interfaceList <<Solid::DeviceInterface::Block<<Solid::DeviceInterface::StorageVolume;
++        break;
++    case Solid::DeviceInterface::OpticalDisc:
 +        interfaceList << Solid::DeviceInterface::Block << Solid::DeviceInterface::StorageVolume << Solid::DeviceInterface::StorageAccess;
-         break;
-     case Solid::DeviceInterface::PortableMediaPlayer:
-         break;
-@@ -139,8 +334,8 @@ bool WinDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) c
-     }
- 
-     if (interfaceList.size() == 0)
--        qWarning() << "no interface found for type" << type;
--    return interfaceList.contains(type);
++        break;
++    case Solid::DeviceInterface::PortableMediaPlayer:
++        break;
++    case Solid::DeviceInterface::Unknown:
++    case Solid::DeviceInterface::Last:
++    default:
++        break;
++    }
++
++    if (interfaceList.size() == 0)
 +        qWarning() << "no interface found for type" << type();
 +    return interfaceList.contains(queryType);
- }
- 
- QObject *WinDevice::createDeviceInterface(const Solid::DeviceInterface::Type &type)
-@@ -150,7 +345,6 @@ QObject *WinDevice::createDeviceInterface(const Solid::DeviceInterface::Type &ty
-     }
-     WinInterface *iface = 0;
- 
--
-     switch (type)
-     {
-     case Solid::DeviceInterface::GenericInterface:
-@@ -159,35 +353,77 @@ QObject *WinDevice::createDeviceInterface(const Solid::DeviceInterface::Type &ty
-     case Solid::DeviceInterface::Block:
-         iface = new WinBlock(this);
-         break;
--        //      case Solid::DeviceInterface::StorageAccess:
--        //          iface = new WinStorageAccess(this);
--        //          break;
--        //      case Solid::DeviceInterface::StorageDrive:
--        //          iface = new WinStorage(this);
--        //          break;
--        //      case Solid::DeviceInterface::OpticalDrive:
--        //          iface = new Cdrom(this);
--        //          break;
++}
++
++QObject *WinDevice::createDeviceInterface(const Solid::DeviceInterface::Type &type)
++{
++    if (!queryDeviceInterface(type)) {
++        return 0;
++    }
++    WinInterface *iface = 0;
++
++    switch (type)
++    {
++    case Solid::DeviceInterface::GenericInterface:
++        iface = new WinGenericInterface(this);
++        break;
++    case Solid::DeviceInterface::Block:
++        iface = new WinBlock(this);
++        break;
 +    case Solid::DeviceInterface::Processor:
 +        iface = new WinProcessor(this);
 +        break;
@@ -1179,41 +1209,36 @@ index 78545ec..ee6e904 100644
 +    case Solid::DeviceInterface::OpticalDrive:
 +        iface = new WinOpticalDrive(this);
 +        break;
-     case Solid::DeviceInterface::StorageVolume:
-         iface = new WinStorageVolume(this);
-         break;
--        //      case Solid::DeviceInterface::OpticalDisc:
--        //          iface = new OpticalDisc(this);
--        //          break;
++    case Solid::DeviceInterface::StorageVolume:
++        iface = new WinStorageVolume(this);
++        break;
 +    case Solid::DeviceInterface::OpticalDisc:
 +        iface = new WinOpticalDisc(this);
 +        break;
-         //      case Solid::DeviceInterface::PortableMediaPlayer:
-         //          iface = new PortableMediaPlayer(this);
-         //          break;
++        //      case Solid::DeviceInterface::PortableMediaPlayer:
++        //          iface = new PortableMediaPlayer(this);
++        //          break;
 +    case Solid::DeviceInterface::Battery:
 +        iface = new WinBattery(this);
 +        break;
 +    case Solid::DeviceInterface::AcAdapter:
 +        iface = new WinAcadapter(this);
 +        break;
-     case Solid::DeviceInterface::Unknown:
-     case Solid::DeviceInterface::Last:
-         break;
++    case Solid::DeviceInterface::Unknown:
++    case Solid::DeviceInterface::Last:
++        break;
 +    default:
 +        break;
-     }
- 
-     return iface;
- }
- 
--QString WinDevice::driveLetter() const
++    }
++
++    return iface;
++}
++
 +Solid::DeviceInterface::Type WinDevice::type() const
- {
--    return m_driveLetters[udi()];
++{
 +    return m_type;
- }
- 
++}
++
 +QString WinDevice::batteryTechnology(QString tec) const
 +{
 +    //based on upowerdevice.cpp
@@ -1245,99 +1270,149 @@ index 78545ec..ee6e904 100644
 +}
 +
 +
- #include "windevice.moc"
++#include "windevice.moc"
 diff --git a/solid/solid/backends/win/windevice.h b/solid/solid/backends/win/windevice.h
-index 77b26fb..06309ec 100644
---- a/solid/solid/backends/win/windevice.h
+new file mode 100644
+index 0000000..06309ec
+--- /dev/null
 +++ b/solid/solid/backends/win/windevice.h
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,78 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -33,7 +33,6 @@ namespace Win
- 
- class WinDevice : public Solid::Ifaces::Device
- {
--    friend class WinDeviceManager;
-     Q_OBJECT
- public:
-     WinDevice(const QString &udi);
-@@ -53,12 +52,21 @@ public:
-    virtual bool queryDeviceInterface(const Solid::DeviceInterface::Type &type) const;
-    virtual QObject *createDeviceInterface(const Solid::DeviceInterface::Type &type);
- 
--    QString driveLetter() const;
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WINDEVICE_H
++#define WINDEVICE_H
++
++#include <solid/ifaces/device.h>
++#include "windevicemanager.h"
++
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++
++class WinDevice : public Solid::Ifaces::Device
++{
++    Q_OBJECT
++public:
++    WinDevice(const QString &udi);
++
++   virtual QString udi() const;
++
++   virtual QString parentUdi() const;
++   virtual QString vendor() const;
++   virtual QString product() const;
++
++   virtual QString icon() const;
++
++   virtual QStringList emblems() const;
++
++   virtual QString description() const;
++
++   virtual bool queryDeviceInterface(const Solid::DeviceInterface::Type &type) const;
++   virtual QObject *createDeviceInterface(const Solid::DeviceInterface::Type &type);
++
 +    Solid::DeviceInterface::Type type() const;
 +
- private:
-     QString m_udi;
-     QString m_parentUdi;
++private:
++    QString m_udi;
++    QString m_parentUdi;
 +    QString m_vendor;
 +    QString m_product;
 +    QString m_description;
-     Solid::DeviceInterface::Type m_type;
--    static QMap<QString,QString> m_driveLetters;
++    Solid::DeviceInterface::Type m_type;
 +
 +    void initStorageDevice();
 +    void initBatteryDevice();
 +    void initCpuDevice();
 +    QString batteryTechnology(QString tech) const;
 +
- 
- 
- };
++
++
++};
++
++}
++}
++}
++
++#endif // WINDEVICE_H
 diff --git a/solid/solid/backends/win/windevicemanager.cpp b/solid/solid/backends/win/windevicemanager.cpp
-index 4c0bb23..6db0970 100644
---- a/solid/solid/backends/win/windevicemanager.cpp
+new file mode 100644
+index 0000000..6db0970
+--- /dev/null
 +++ b/solid/solid/backends/win/windevicemanager.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,250 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -21,26 +21,72 @@
- #include <solid/deviceinterface.h>
- #include "windevicemanager.h"
- #include "windevice.h"
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include <solid/deviceinterface.h>
++#include "windevicemanager.h"
++#include "windevice.h"
 +#include "winprocessor.h"
 +#include "winblock.h"
 +#include "winbattery.h"
 +#include "winacadapter.h"
- 
--#include <windows.h>
--#include <winioctl.h>
--
++
 +#include <dbt.h>
- 
++
 +#include <QDebug>
 +#include <QTimer>
 +#include <QTime>
 +#include <QApplication>
- 
- 
- using namespace Solid::Backends::Win;
- 
++
++
++using namespace Solid::Backends::Win;
++
 +WinDeviceManager *WinDeviceManager::m_instance = NULL;
 +
- WinDeviceManager::WinDeviceManager(QObject *parent)
-     :DeviceManager(parent)
- {
++WinDeviceManager::WinDeviceManager(QObject *parent)
++    :DeviceManager(parent)
++{
 +    if(m_instance)
 +        qFatal("There are multiple WinDeviceManager instances");
 +    m_instance = this;
-     m_supportedInterfaces << Solid::DeviceInterface::GenericInterface
--                          << Solid::DeviceInterface::Block
++    m_supportedInterfaces << Solid::DeviceInterface::GenericInterface
 +                             //                          << Solid::DeviceInterface::Block
-                           << Solid::DeviceInterface::StorageAccess
-                           << Solid::DeviceInterface::StorageDrive
-                           << Solid::DeviceInterface::OpticalDrive
-                           << Solid::DeviceInterface::StorageVolume
--                          << Solid::DeviceInterface::OpticalDisc;
++                          << Solid::DeviceInterface::StorageAccess
++                          << Solid::DeviceInterface::StorageDrive
++                          << Solid::DeviceInterface::OpticalDrive
++                          << Solid::DeviceInterface::StorageVolume
 +                          << Solid::DeviceInterface::OpticalDisc
 +                          << Solid::DeviceInterface::Processor
 +                          << Solid::DeviceInterface::Battery
@@ -1360,7 +1435,7 @@ index 4c0bb23..6db0970 100644
 +        qWarning() << "Failed to initialize KDEWinDeviceManager we will be unable to detect device changes";
 +        return;
 +    }
- 
++
 +    m_windowID = CreateWindow(title, title, WS_ICONIC, 0, 0,
 +                              CW_USEDEFAULT, 0, NULL, NULL, wcex.hInstance, NULL);
 +    if(m_windowID == NULL)
@@ -1375,13 +1450,21 @@ index 4c0bb23..6db0970 100644
 +{
 +    PostMessage(m_windowID, WM_CLOSE, 0, 0);
 +    m_instance = NULL;
- }
- 
- QString WinDeviceManager::udiPrefix() const
-@@ -56,66 +102,146 @@ QSet<Solid::DeviceInterface::Type> Solid::Backends::Win::WinDeviceManager::suppo
- 
- QStringList WinDeviceManager::allDevices()
- {
++}
++
++QString WinDeviceManager::udiPrefix() const
++{
++    return QString();
++}
++
++
++QSet<Solid::DeviceInterface::Type> Solid::Backends::Win::WinDeviceManager::supportedInterfaces() const
++{
++    return m_supportedInterfaces;
++}
++
++QStringList WinDeviceManager::allDevices()
++{
 +    return m_devicesList;
 +}
 +
@@ -1389,9 +1472,7 @@ index 4c0bb23..6db0970 100644
 +QStringList WinDeviceManager::devicesFromQuery(const QString &parentUdi, Solid::DeviceInterface::Type type)
 +{
 +
-     QStringList list;
--    foreach(const Solid::DeviceInterface::Type &type,m_supportedInterfaces){
--        list<<devicesFromQuery("",type);
++    QStringList list;
 +    if (!parentUdi.isEmpty())
 +    {
 +        foreach(const QString &udi,allDevices()){
@@ -1409,25 +1490,14 @@ index 4c0bb23..6db0970 100644
 +        }
 +    } else {
 +        list << allDevices();
-     }
-     return list;
++    }
++    return list;
 +
- }
- 
--QStringList WinDeviceManager::devicesFromQuery(const QString &parentUdi, Solid::DeviceInterface::Type type)
++}
++
 +
 +QObject *Solid::Backends::Win::WinDeviceManager::createDevice(const QString &udi)
- {
--    QStringList list;
--    if(type & (Solid::DeviceInterface::StorageVolume | Solid::DeviceInterface::StorageAccess | Solid::DeviceInterface::StorageDrive)){
--        QSet<int> storageDrives;
--        DWORD word = GetLogicalDrives();
--        wchar_t buff[MAX_PATH];
--        char c = 'A';
--        int i = 0;
--        while(word != 0)
--        {
--            if(word & 1 ){
++{
 +    if (allDevices().contains(udi)) {
 +        return new WinDevice(udi);
 +    } else {
@@ -1453,18 +1523,9 @@ index 4c0bb23..6db0970 100644
 +    qSort(m_devicesList);
 +}
 +
- 
--                QString drive = QString("%1:").arg((char)(c+i));
--                QString dev = QString("\\\\.\\%1").arg(drive);
--                dev.toWCharArray(buff);
--                HANDLE h = ::CreateFile(buff, 0, 0, NULL, OPEN_EXISTING, 0, NULL);
- 
--                STORAGE_DEVICE_NUMBER info = {};
--                DWORD bytesReturned =  0;
- 
--                ::DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, NULL, 0, &info, sizeof(info), &bytesReturned, NULL);
--                ::CloseHandle(h);
--                if(info.DeviceType == FILE_DEVICE_DISK)
++
++
++
 +LRESULT WinDeviceManager::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 +{
 +    //some parts of the code are based on http://www.codeproject.com/Articles/119168/Hardware-Change-Detection
@@ -1490,31 +1551,20 @@ index 4c0bb23..6db0970 100644
 +                }
 +                    break;
 +                case DBT_DEVICEARRIVAL:
-                 {
--                    QString udi = QString("/org/kde/solid/win/volume/disk #%1, partition #%2").arg(info.DeviceNumber).arg(info.PartitionNumber);
--                    list<<udi;
--                    storageDrives.insert(info.DeviceNumber);
--                    WinDevice::m_driveLetters[udi] = drive;
--                }//TODO: handle subst
++                {
 +                    QSet<QString> udis = WinBlock::updateUdiFromBitMask(devNot->dbcv_unitmask);
 +                    m_instance->promoteAddedDevice(udis);
 +                }
 +                    break;
 +                }
 +                break;
-             }
--            word = (word >> 1);
--            ++i;
-         }
--        foreach(int i,storageDrives){
--            list<<QString("/org/kde/solid/win/storage/disk #%1").arg(i);
--        }
--
-     }
++            }
++        }
++    }
 +        break;
 +    case WM_POWERBROADCAST:
 +    {
- 
++
 +    }
 +    break;
 +    case WM_DESTROY:
@@ -1527,8 +1577,7 @@ index 4c0bb23..6db0970 100644
 +    }
 +    return 0;
 +}
- 
--    return list;
++
 +void WinDeviceManager::promoteAddedDevice(const QSet<QString> &udi)
 +{
 +    QSet<QString> tmp = udi - m_devices;//dont report devices that are already known(cd drive)
@@ -1540,8 +1589,8 @@ index 4c0bb23..6db0970 100644
 +
 +        emit deviceAdded(s);
 +    }
- }
- 
++}
++
 +void WinDeviceManager::promoteRemovedDevice(const QSet<QString> &udi)
 +{
 +    m_devices -= udi;
@@ -1552,56 +1601,49 @@ index 4c0bb23..6db0970 100644
 +        emit deviceRemoved(s);
 +    }
 +}
- 
--QObject *Solid::Backends::Win::WinDeviceManager::createDevice(const QString &udi)
++
 +void WinDeviceManager::promotePowerChange()
- {
--    //TODO:: implement
--    //    if (deviceExists(udi)) {
--    return new WinDevice(udi);
--    //    } else {
--    //        return 0;
--    //    }
++{
 +    emit powerChanged();
- }
- 
- 
++}
++
++
++
++#include <windevicemanager.moc>
++
 diff --git a/solid/solid/backends/win/windevicemanager.h b/solid/solid/backends/win/windevicemanager.h
-index 8a56330..2794b27 100644
---- a/solid/solid/backends/win/windevicemanager.h
+new file mode 100644
+index 0000000..2794b27
+--- /dev/null
 +++ b/solid/solid/backends/win/windevicemanager.h
-@@ -1,6 +1,6 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
--    
+@@ -0,0 +1,192 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
 +
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-     License as published by the Free Software Foundation; either
-@@ -8,12 +8,12 @@
-     later version accepted by the membership of KDE e.V. (or its
-     successor approved by the membership of KDE e.V.), which shall
-     act as a proxy defined in Section 6 of version 3 of the license.
--    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
 +
-     This library is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-     Lesser General Public License for more details.
--    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
 +
-     You should have received a copy of the GNU Lesser General Public
-     License along with this library. If not, see <http://www.gnu.org/licenses/>.
- */
-@@ -22,9 +22,29 @@
- #define WINDEVICEMANAGER_H
- 
- #include <solid/ifaces/devicemanager.h>
--
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WINDEVICEMANAGER_H
++#define WINDEVICEMANAGER_H
++
++#include <solid/ifaces/devicemanager.h>
 +#define HEAVE_DRIVER_KIT
- 
- #include <QSet>
++
++#include <QSet>
 +#include <QDebug>
 +
 +#include <windows.h>
@@ -1622,32 +1664,32 @@ index 8a56330..2794b27 100644
 +    LocalFree(error);
 +    return out;
 +}
- 
- namespace Solid
- {
-@@ -33,11 +53,12 @@ namespace Backends
- namespace Win
- {
- 
--
- class WinDeviceManager : public Solid::Ifaces::DeviceManager
- {
++
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++
++class WinDeviceManager : public Solid::Ifaces::DeviceManager
++{
 +    Q_OBJECT
- public:
-     WinDeviceManager(QObject *parent=0);
++public:
++    WinDeviceManager(QObject *parent=0);
 +    ~WinDeviceManager();
- 
-     virtual QString udiPrefix() const;
- 
-@@ -46,13 +67,122 @@ public:
-     virtual QStringList allDevices();
- 
-     virtual QStringList devicesFromQuery(const QString &parentUdi,
--                                          Solid::DeviceInterface::Type type = Solid::DeviceInterface::Unknown);
++
++    virtual QString udiPrefix() const;
++
++    virtual QSet<Solid::DeviceInterface::Type> supportedInterfaces() const;
++
++    virtual QStringList allDevices();
++
++    virtual QStringList devicesFromQuery(const QString &parentUdi,
 +                                         Solid::DeviceInterface::Type type = Solid::DeviceInterface::Unknown);
- 
-     virtual QObject *createDevice(const QString &udi);
- 
++
++    virtual QObject *createDevice(const QString &udi);
++
 +    static const WinDeviceManager *instance();
 +
 +    template< class INFO>
@@ -1683,9 +1725,8 @@ index 8a56330..2794b27 100644
 +
 +private slots:
 +    void updateDeviceList();
- 
- private:
--    QSet<Solid::DeviceInterface::Type> m_supportedInterfaces;    
++
++private:
 +    static WinDeviceManager *m_instance;
 +    HWND m_windowID;
 +    QSet<QString> m_devices;
@@ -1761,9 +1802,13 @@ index 8a56330..2794b27 100644
 +
 +        ::CloseHandle(handle);
 +    }
- 
- };
- 
++
++};
++
++}
++}
++}
++#endif // WINDEVICEMANAGER_H
 diff --git a/solid/solid/backends/win/windevicemanager.h.oh1996 b/solid/solid/backends/win/windevicemanager.h.oh1996
 new file mode 100644
 index 0000000..3b05de0
@@ -1960,101 +2005,231 @@ index 0000000..3b05de0
 +}
 +#endif // WINDEVICEMANAGER_H
 diff --git a/solid/solid/backends/win/wingenericinterface.cpp b/solid/solid/backends/win/wingenericinterface.cpp
-index e40a3ed..9e67aab 100644
---- a/solid/solid/backends/win/wingenericinterface.cpp
+new file mode 100644
+index 0000000..9e67aab
+--- /dev/null
 +++ b/solid/solid/backends/win/wingenericinterface.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,52 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -29,32 +29,24 @@ WinGenericInterface::WinGenericInterface(WinDevice *device)
- 
- QVariant WinGenericInterface::property(const QString &key) const
- {
--    qFatal("shit");
--    QVariant();
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "wingenericinterface.h"
++
++using namespace Solid::Backends::Win;
++
++WinGenericInterface::WinGenericInterface(WinDevice *device)
++    :WinInterface(device)
++{
++}
++
++QVariant WinGenericInterface::property(const QString &key) const
++{
 +    Q_UNUSED(key)
 +    qFatal("Not implemented");
 +    return QVariant();
- }
- 
- 
- 
- QMap<QString, QVariant> Solid::Backends::Win::WinGenericInterface::allProperties() const
- {
--    qFatal("shit");
++}
++
++
++
++QMap<QString, QVariant> Solid::Backends::Win::WinGenericInterface::allProperties() const
++{
 +    qFatal("Not implemented");
-     return QMap<QString, QVariant>();
- }
- 
- bool WinGenericInterface::propertyExists(const QString &key) const
- {
--    qFatal("shit");
++    return QMap<QString, QVariant>();
++}
++
++bool WinGenericInterface::propertyExists(const QString &key) const
++{
 +    Q_UNUSED(key)
 +    qFatal("Not implemented");
-     return true;
- }
- 
--void WinGenericInterface::propertyChanged(const QMap<QString, int> &changes)
--{
--}
--
--void WinGenericInterface::conditionRaised(const QString &condition, const QString &reason)
--{
--}
--
--
--
- #include "wingenericinterface.moc"
++    return true;
++}
++
++#include "wingenericinterface.moc"
 diff --git a/solid/solid/backends/win/wingenericinterface.h b/solid/solid/backends/win/wingenericinterface.h
-index 82f70b3..7bf198a 100644
---- a/solid/solid/backends/win/wingenericinterface.h
+new file mode 100644
+index 0000000..7bf198a
+--- /dev/null
 +++ b/solid/solid/backends/win/wingenericinterface.h
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,55 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -44,9 +44,9 @@ public:
- 
-     virtual bool propertyExists(const QString &key) const;
- 
--protected:
--    virtual void propertyChanged(const QMap<QString,int> &changes);
--    virtual void conditionRaised(const QString &condition, const QString &reason);
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WINGENERICINTERFACE_H
++#define WINGENERICINTERFACE_H
++
++#include <solid/ifaces/genericinterface.h>
++#include "wininterface.h"
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++
++
++class WinGenericInterface : public WinInterface,virtual public Solid::Ifaces::GenericInterface
++{
++    Q_OBJECT
++     Q_INTERFACES(Solid::Ifaces::GenericInterface)
++public:
++    WinGenericInterface(WinDevice *device);
++
++    virtual QVariant property(const QString &key) const;
++
++    virtual QMap<QString, QVariant> allProperties() const;
++
++    virtual bool propertyExists(const QString &key) const;
++
 +signals:
 +    void propertyChanged(const QMap<QString,int> &changes);
 +    void conditionRaised(const QString &condition, const QString &reason);
- };
- }
- }
++};
++}
++}
++}
++
++#endif // WINGENERICINTERFACE_H
 diff --git a/solid/solid/backends/win/wininterface.cpp b/solid/solid/backends/win/wininterface.cpp
-index 7114521..8569229 100644
---- a/solid/solid/backends/win/wininterface.cpp
+new file mode 100644
+index 0000000..8569229
+--- /dev/null
 +++ b/solid/solid/backends/win/wininterface.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,42 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "wininterface.h"
++
++using namespace Solid::Backends::Win;
++
++
++WinInterface::WinInterface(WinDevice *device)
++    :QObject(device)
++    ,m_device(device)
++{
++}
++
++
++
++WinInterface::~WinInterface()
++{
++}
++
++
++
++#include "wininterface.moc"
++
++
 diff --git a/solid/solid/backends/win/wininterface.h b/solid/solid/backends/win/wininterface.h
-index c869c8b..5748859 100644
---- a/solid/solid/backends/win/wininterface.h
+new file mode 100644
+index 0000000..5748859
+--- /dev/null
 +++ b/solid/solid/backends/win/wininterface.h
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,53 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WININTERFACE_H
++#define WININTERFACE_H
++
++#include <solid/ifaces/deviceinterface.h>
++
++#include "windevice.h"
++#include <QDebug>
++
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++class WinInterface : public QObject, virtual public Solid::Ifaces::DeviceInterface
++{
++Q_OBJECT
++Q_INTERFACES(Solid::Ifaces::DeviceInterface)
++
++public:
++    WinInterface(WinDevice *device);
++    virtual ~WinInterface();
++
++
++protected:
++    WinDevice *m_device;
++};
++
++}
++}
++}
++
++#endif // WININTERFACE_H
 diff --git a/solid/solid/backends/win/winopticaldisc.cpp b/solid/solid/backends/win/winopticaldisc.cpp
 new file mode 100644
 index 0000000..70b58ce
@@ -3103,86 +3278,193 @@ index 0000000..d3954dd
 +
 +#endif // WINSTORAGEDRIVE_H
 diff --git a/solid/solid/backends/win/winstoragevolume.cpp b/solid/solid/backends/win/winstoragevolume.cpp
-index 3704cbd..9f5b213 100644
---- a/solid/solid/backends/win/winstoragevolume.cpp
+new file mode 100644
+index 0000000..9f5b213
+--- /dev/null
 +++ b/solid/solid/backends/win/winstoragevolume.cpp
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,108 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-@@ -29,7 +29,8 @@
- using namespace Solid::Backends::Win;
- 
- WinStorageVolume::WinStorageVolume(WinDevice *device)
--    : WinBlock(device)
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#include "winstoragevolume.h"
++
++#include "windevicemanager.h"
++
++#include <windows.h>
++
++#include <iostream>
++
++using namespace Solid::Backends::Win;
++
++WinStorageVolume::WinStorageVolume(WinDevice *device)
 +    : WinBlock(device),
 +      m_size(0)
- {
-     updateCache();
- }
-@@ -40,7 +41,7 @@ WinStorageVolume::~WinStorageVolume()
- 
- bool WinStorageVolume::isIgnored() const
- {
--    return m_device->driveLetter().isNull();
++{
++    updateCache();
++}
++
++WinStorageVolume::~WinStorageVolume()
++{
++}
++
++bool WinStorageVolume::isIgnored() const
++{
 +    return WinBlock::driveLetterFromUdi(m_device->udi()).isNull();
- }
- 
- Solid::StorageVolume::UsageType WinStorageVolume::usage() const
-@@ -57,19 +58,22 @@ void WinStorageVolume::updateCache()
-     DWORD flags;
-     //TODO:get correct name
-     wchar_t dLetter[MAX_PATH];
--    int dLetterSize = m_device->driveLetter().toWCharArray(dLetter);
++}
++
++Solid::StorageVolume::UsageType WinStorageVolume::usage() const
++{
++    return Solid::StorageVolume::FileSystem;//TODO:???
++}
++
++
++void WinStorageVolume::updateCache()
++{
++    wchar_t label[MAX_PATH];
++    wchar_t fs[MAX_PATH];
++    DWORD serial;
++    DWORD flags;
++    //TODO:get correct name
++    wchar_t dLetter[MAX_PATH];
 +    int dLetterSize = WinBlock::driveLetterFromUdi(m_device->udi()).toWCharArray(dLetter);
-     dLetter[dLetterSize] = (wchar_t)'\\';
-     dLetter[dLetterSize+1] = 0;
- 
--    GetVolumeInformation(dLetter,label,MAX_PATH,&serial,NULL,&flags,fs,MAX_PATH);
--    m_label = QString::fromWCharArray(label);
--    m_fs = QString::fromWCharArray(fs);
--    m_uuid = QString::number(serial);
--
++    dLetter[dLetterSize] = (wchar_t)'\\';
++    dLetter[dLetterSize+1] = 0;
++
 +    if(GetVolumeInformation(dLetter,label,MAX_PATH,&serial,NULL,&flags,fs,MAX_PATH) == TRUE)
 +    {
 +        m_label = QString::fromWCharArray(label);
 +        m_fs = QString::fromWCharArray(fs);
 +        m_uuid =  QString::number(serial,16);
 +    }
- 
-     ULARGE_INTEGER size;
--    GetDiskFreeSpaceEx(dLetter,NULL,&size,NULL);
--    m_size = size.QuadPart;
++
++    ULARGE_INTEGER size;
 +    if(GetDiskFreeSpaceEx(dLetter,NULL,&size,NULL) == TRUE)
 +    {
 +        m_size = size.QuadPart;
 +    }
- }
- 
- 
-@@ -95,7 +99,7 @@ qulonglong WinStorageVolume::size() const
- 
- QString WinStorageVolume::encryptedContainerUdi() const
- {
--    QString();
++}
++
++
++QString WinStorageVolume::fsType() const
++{
++    return m_fs;
++}
++
++QString WinStorageVolume::label() const
++{
++    return m_label;
++}
++
++QString WinStorageVolume::uuid() const
++{
++    return m_uuid;
++}
++
++qulonglong WinStorageVolume::size() const
++{
++    return m_size;
++}
++
++QString WinStorageVolume::encryptedContainerUdi() const
++{
 +    return QString();
- }
- 
- #include "winstoragevolume.moc"
++}
++
++#include "winstoragevolume.moc"
++
++
++
 diff --git a/solid/solid/backends/win/winstoragevolume.h b/solid/solid/backends/win/winstoragevolume.h
-index 8e620ac..2f9ebc4 100644
---- a/solid/solid/backends/win/winstoragevolume.h
+new file mode 100644
+index 0000000..2f9ebc4
+--- /dev/null
 +++ b/solid/solid/backends/win/winstoragevolume.h
-@@ -1,5 +1,5 @@
- /*
--    Copyright 2012 Patrick von Reth <vonreth@kde.org>
+@@ -0,0 +1,68 @@
++/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-     
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
++    
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) version 3, or any
++    later version accepted by the membership of KDE e.V. (or its
++    successor approved by the membership of KDE e.V.), which shall
++    act as a proxy defined in Section 6 of version 3 of the license.
++    
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++    
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library. If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef WINSTORAGEVOLUME_H
++#define WINSTORAGEVOLUME_H
++
++#include <solid/ifaces/storagevolume.h>
++
++#include "wininterface.h"
++#include "winblock.h"
++
++namespace Solid
++{
++namespace Backends
++{
++namespace Win
++{
++
++class WinStorageVolume : public WinBlock, public virtual Solid::Ifaces::StorageVolume
++{
++    Q_OBJECT
++    Q_INTERFACES(Solid::Ifaces::StorageVolume)
++
++public:
++    WinStorageVolume(WinDevice *device);
++    ~WinStorageVolume();
++
++    virtual bool isIgnored() const;
++
++    virtual Solid::StorageVolume::UsageType usage() const;
++    virtual QString fsType() const;
++    virtual QString label() const;
++    virtual QString uuid() const;
++    virtual qulonglong size() const;
++    virtual QString encryptedContainerUdi() const;
++
++private:
++    QString m_fs;
++    QString m_label;
++    QString m_uuid;
++    qulonglong m_size;
++
++    void updateCache();
++
++};
++
++}
++}
++}
++
++#endif // WINVOLUME_H
 diff --git a/solid/solid/managerbase.cpp b/solid/solid/managerbase.cpp
 index beaeac5..6649972 100644
 --- a/solid/solid/managerbase.cpp
