@@ -1,8 +1,7 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0e87f30..39ccd38 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -41,6 +41,9 @@ endif(KDE_PLATFORM_FEATURE_DISABLE_DEPRECATED)
+diff -Nru -x '*~' kdelibs-4.10.2.orig/CMakeLists.txt kdelibs-4.10.2/CMakeLists.txt
+--- kdelibs-4.10.2.orig/CMakeLists.txt	2013-03-29 09:30:09.355321000 +0100
++++ kdelibs-4.10.2/CMakeLists.txt	2013-05-31 14:13:49.443163600 +0200
+@@ -41,6 +41,9 @@
  ############### Give the user the option to build the udisks2 solid backend instead of the udisks backend ###############
  option(WITH_SOLID_UDISKS2 "Enable the udisks2 solid backend instead")
  
@@ -12,10 +11,9 @@ index 0e87f30..39ccd38 100644
  ############### Load the CTest options ###############
  # CTestCustom.cmake has to be in the CTEST_BINARY_DIR.
  # in the KDE build system, this is the same as CMAKE_BINARY_DIR.
-diff --git a/kjs/wtf/AlwaysInline.h b/kjs/wtf/AlwaysInline.h
-index cc5c29c..f7ca16c 100644
---- a/kjs/wtf/AlwaysInline.h
-+++ b/kjs/wtf/AlwaysInline.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/kjs/wtf/AlwaysInline.h kdelibs-4.10.2/kjs/wtf/AlwaysInline.h
+--- kdelibs-4.10.2.orig/kjs/wtf/AlwaysInline.h	2013-03-01 07:26:14.347776000 +0100
++++ kdelibs-4.10.2/kjs/wtf/AlwaysInline.h	2013-05-31 14:13:49.443163600 +0200
 @@ -22,7 +22,7 @@
  
  
@@ -25,118 +23,9 @@ index cc5c29c..f7ca16c 100644
  #define ALWAYS_INLINE inline __attribute__ ((__always_inline__))
  #elif COMPILER(MSVC) && defined(NDEBUG)
  #define ALWAYS_INLINE __forceinline
-diff --git a/solid/solid/CMakeLists.txt b/solid/solid/CMakeLists.txt
-index 83de7ec..9353ea7 100644
---- a/solid/solid/CMakeLists.txt
-+++ b/solid/solid/CMakeLists.txt
-@@ -10,7 +10,12 @@ endif(WIN32)
- configure_file(solid_export.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/solid_export.h)
- 
- include (CheckCXXSourceCompiles)
--
-+if(MSVC)
-+check_cxx_source_compiles("int main() { __asm { pxor mm0, mm0 }; }" HAVE_X86_MMX)
-+check_cxx_source_compiles("int main() { __asm { xorps xmm0, xmm0 }; }" HAVE_X86_SSE)
-+check_cxx_source_compiles("int main() { __asm { xorpd xmm0, xmm0 }; }" HAVE_X86_SSE2)
-+check_cxx_source_compiles("int main() { __asm { femms }; }" HAVE_X86_3DNOW)
-+else(MSVC)
- check_cxx_source_compiles("	#ifdef __SUNPRO_CC
- 					#define __asm__ asm
- 				#endif
-@@ -27,6 +32,7 @@ check_cxx_source_compiles("     #ifdef __SUNPRO_CC
-                                         #define __asm__ asm
-                                 #endif
- 				int main() { __asm__(\"femms\"); }" HAVE_X86_3DNOW)
-+endif(MSVC)
- check_cxx_source_compiles("     #ifdef __SUNPRO_CC
-                                         #define __asm__ asm
-                                 #endif
-@@ -43,6 +49,7 @@ file(MAKE_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/backends/hal
-    ${CMAKE_CURRENT_BINARY_DIR}/backends/udev
-    ${CMAKE_CURRENT_BINARY_DIR}/backends/wmi
-+   ${CMAKE_CURRENT_BINARY_DIR}/backends/win
- )
- 
- set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${KDE4_C_FLAGS}") # enable -fvisibility=hidden for C sources
-@@ -338,17 +345,20 @@ if(APPLE)
- endif(APPLE)
- 
- if(WIN32)
--   include(CheckIncludeFileCXX)
--   check_include_file_cxx(wbemidl.h HAVE_WBEM)
--   FIND_LIBRARY(WBEM_LIBRARIES NAMES wbemuuid wbemuuidd)
--   if(HAVE_WBEM AND WBEM_LIBRARIES)
--      set(HAVE_WBEM True)
--      message(STATUS "Found wbemuuid library: ${WBEM_LIBRARIES}")
--   else(HAVE_WBEM AND WBEM_LIBRARIES)
--      set(HAVE_WBEM False)
--   endif(HAVE_WBEM AND WBEM_LIBRARIES)
--   if(HAVE_WBEM AND NOT WINCE)
--       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WBEM")
-+    if(WITH_SOLID_WMI)
-+       include(CheckIncludeFileCXX)
-+       check_include_file_cxx(wbemidl.h HAVE_WBEM)
-+       FIND_LIBRARY(WBEM_LIBRARIES NAMES wbemuuid wbemuuidd)
-+       if(HAVE_WBEM AND WBEM_LIBRARIES)
-+          set(HAVE_WBEM True)
-+          message(STATUS "Found wbemuuid library: ${WBEM_LIBRARIES}")
-+       else(HAVE_WBEM AND WBEM_LIBRARIES)
-+          set(HAVE_WBEM False)
-+          set(WITH_SOLID_WMI False)
-+      endif(HAVE_WBEM AND WBEM_LIBRARIES)
-+   endif(WITH_SOLID_WMI)
-+   if(WITH_SOLID_WMI)
-+       add_definitions(-WITH_SOLID_WMI)
-        message(STATUS "-- Building Solid WMI backend." )
- 
-        set(solid_LIB_SRCS ${solid_LIB_SRCS}
-@@ -375,7 +385,25 @@ if(WIN32)
-        backends/wmi/wmivolume.cpp
- 
-        )
--    endif(HAVE_WBEM AND NOT WINCE)
-+    else(WITH_SOLID_WMI)
-+       message(STATUS "-- Building Solid Windows backend." )
-+       set(solid_LIB_SRCS ${solid_LIB_SRCS}
-+       backends/win/winblock.cpp
-+       backends/win/winopticaldrive.cpp
-+       backends/win/wininterface.cpp
-+       backends/win/wingenericinterface.cpp
-+       backends/win/windevice.cpp
-+       backends/win/windevicemanager.cpp
-+       backends/win/winopticaldisc.cpp
-+       backends/win/winprocessor.cpp
-+       #backends/win/wmiportablemediaplayer.cpp
-+       backends/win/winstorageaccess.cpp
-+       backends/win/winstoragedrive.cpp
-+       backends/win/winstoragevolume.cpp
-+       backends/win/winbattery.cpp
-+       backends/win/winacadapter.cpp
-+       )
-+    endif(WITH_SOLID_WMI)
- endif(WIN32)
- 
- set_source_files_properties( org.freedesktop.PowerManagement.xml
-@@ -394,9 +422,11 @@ set(solid_OPTIONAL_LIBS)
- 
- if(WIN32)
-    set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} ${KDEWIN_LIBRARY})
--   if(HAVE_WBEM)
-+   if(WITH_SOLID_WMI)
-       set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} ${WBEM_LIBRARIES})
--   endif(HAVE_WBEM)
-+   else(WITH_SOLID_WMI)
-+      set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} setupapi)
-+   endif(WITH_SOLID_WMI)
- endif(WIN32)
- 
- if(APPLE)
-diff --git a/solid/solid/backends/win/winacadapter.cpp b/solid/solid/backends/win/winacadapter.cpp
-new file mode 100644
-index 0000000..18cd45c
---- /dev/null
-+++ b/solid/solid/backends/win/winacadapter.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.cpp kdelibs-4.10.2/solid/solid/backends/win/winacadapter.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.cpp	2013-05-31 14:13:49.443163600 +0200
 @@ -0,0 +1,56 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -194,11 +83,9 @@ index 0000000..18cd45c
 +}
 +
 +#include "winacadapter.moc"
-diff --git a/solid/solid/backends/win/winacadapter.h b/solid/solid/backends/win/winacadapter.h
-new file mode 100644
-index 0000000..15d334e
---- /dev/null
-+++ b/solid/solid/backends/win/winacadapter.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.h kdelibs-4.10.2/solid/solid/backends/win/winacadapter.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.h	2013-05-31 14:13:49.458763700 +0200
 @@ -0,0 +1,58 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -258,11 +145,9 @@ index 0000000..15d334e
 +}
 +}
 +#endif // WINACADAPTER_H
-diff --git a/solid/solid/backends/win/winbattery.cpp b/solid/solid/backends/win/winbattery.cpp
-new file mode 100644
-index 0000000..8c20834
---- /dev/null
-+++ b/solid/solid/backends/win/winbattery.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.cpp kdelibs-4.10.2/solid/solid/backends/win/winbattery.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.cpp	2013-05-31 14:13:49.458763700 +0200
 @@ -0,0 +1,180 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -444,11 +329,9 @@ index 0000000..8c20834
 +}
 +
 +#include "winbattery.moc"
-diff --git a/solid/solid/backends/win/winbattery.h b/solid/solid/backends/win/winbattery.h
-new file mode 100644
-index 0000000..8286783
---- /dev/null
-+++ b/solid/solid/backends/win/winbattery.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.h kdelibs-4.10.2/solid/solid/backends/win/winbattery.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.h	2013-05-31 14:13:49.458763700 +0200
 @@ -0,0 +1,80 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -530,11 +413,9 @@ index 0000000..8286783
 +}
 +
 +#endif // WINBATTERY_H
-diff --git a/solid/solid/backends/win/winblock.cpp b/solid/solid/backends/win/winblock.cpp
-new file mode 100644
-index 0000000..bdf8151
---- /dev/null
-+++ b/solid/solid/backends/win/winblock.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.cpp kdelibs-4.10.2/solid/solid/backends/win/winblock.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winblock.cpp	2013-05-31 14:13:49.458763700 +0200
 @@ -0,0 +1,224 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -760,11 +641,9 @@ index 0000000..bdf8151
 +}
 +
 +#include "winblock.moc"
-diff --git a/solid/solid/backends/win/winblock.h b/solid/solid/backends/win/winblock.h
-new file mode 100644
-index 0000000..bbcea3c
---- /dev/null
-+++ b/solid/solid/backends/win/winblock.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.h kdelibs-4.10.2/solid/solid/backends/win/winblock.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winblock.h	2013-05-31 14:13:49.458763700 +0200
 @@ -0,0 +1,70 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -836,12 +715,10 @@ index 0000000..bbcea3c
 +}
 +
 +#endif // WINBLOCK_H
-diff --git a/solid/solid/backends/win/windevice.cpp b/solid/solid/backends/win/windevice.cpp
-new file mode 100644
-index 0000000..ee6e904
---- /dev/null
-+++ b/solid/solid/backends/win/windevice.cpp
-@@ -0,0 +1,429 @@
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.cpp kdelibs-4.10.2/solid/solid/backends/win/windevice.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/windevice.cpp	2013-05-31 15:04:23.000072900 +0200
+@@ -0,0 +1,433 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
 +    
@@ -878,6 +755,10 @@ index 0000000..ee6e904
 +#include "winacadapter.h"
 +
 +#include <batclass.h>
++
++#if defined(__MINGW32__) && !defined(IOCTL_STORAGE_QUERY_PROPERTY)
++#include <winioctl_backport.h>
++#endif
 +
 +using namespace Solid::Backends::Win;
 +
@@ -1021,7 +902,7 @@ index 0000000..ee6e904
 +
 +
 +    size_t size = 1024;
-+    wchar_t buff[size];
++    wchar_t buff[1024];
 +
 +    query.InformationLevel = BatteryDeviceName;
 +    WinDeviceManager::getDeviceInfo<wchar_t,BATTERY_QUERY_INFORMATION>(battery.first,IOCTL_BATTERY_QUERY_INFORMATION,buff,size,&query);
@@ -1271,11 +1152,9 @@ index 0000000..ee6e904
 +
 +
 +#include "windevice.moc"
-diff --git a/solid/solid/backends/win/windevice.h b/solid/solid/backends/win/windevice.h
-new file mode 100644
-index 0000000..06309ec
---- /dev/null
-+++ b/solid/solid/backends/win/windevice.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.h kdelibs-4.10.2/solid/solid/backends/win/windevice.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/windevice.h	2013-05-31 14:13:49.474363700 +0200
 @@ -0,0 +1,78 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1355,11 +1234,9 @@ index 0000000..06309ec
 +}
 +
 +#endif // WINDEVICE_H
-diff --git a/solid/solid/backends/win/windevicemanager.cpp b/solid/solid/backends/win/windevicemanager.cpp
-new file mode 100644
-index 0000000..6db0970
---- /dev/null
-+++ b/solid/solid/backends/win/windevicemanager.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.cpp kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.cpp	2013-05-31 14:13:49.474363700 +0200
 @@ -0,0 +1,250 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1611,11 +1488,9 @@ index 0000000..6db0970
 +
 +#include <windevicemanager.moc>
 +
-diff --git a/solid/solid/backends/win/windevicemanager.h b/solid/solid/backends/win/windevicemanager.h
-new file mode 100644
-index 0000000..2794b27
---- /dev/null
-+++ b/solid/solid/backends/win/windevicemanager.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.h kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.h	2013-05-31 14:39:49.162650800 +0200
 @@ -0,0 +1,192 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1772,7 +1647,7 @@ index 0000000..2794b27
 +            }
 +
 +        }
-+        if(::DeviceIoControl(handle, code, query, sizeof(QUERY), info, size, &bytesReturned, NULL) == TRUE)
++        if(::DeviceIoControl(handle, code, query, sizeof(QUERY), info, size, &bytesReturned, NULL))
 +        {
 +            ::CloseHandle(handle);
 +            return;
@@ -1809,206 +1684,9 @@ index 0000000..2794b27
 +}
 +}
 +#endif // WINDEVICEMANAGER_H
-diff --git a/solid/solid/backends/win/windevicemanager.h.oh1996 b/solid/solid/backends/win/windevicemanager.h.oh1996
-new file mode 100644
-index 0000000..3b05de0
---- /dev/null
-+++ b/solid/solid/backends/win/windevicemanager.h.oh1996
-@@ -0,0 +1,189 @@
-+/*
-+    Copyright 2013 Patrick von Reth <vonreth@kde.org>
-+
-+    This library is free software; you can redistribute it and/or
-+    modify it under the terms of the GNU Lesser General Public
-+    License as published by the Free Software Foundation; either
-+    version 2.1 of the License, or (at your option) version 3, or any
-+    later version accepted by the membership of KDE e.V. (or its
-+    successor approved by the membership of KDE e.V.), which shall
-+    act as a proxy defined in Section 6 of version 3 of the license.
-+
-+    This library is distributed in the hope that it will be useful,
-+    but WITHOUT ANY WARRANTY; without even the implied warranty of
-+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+    Lesser General Public License for more details.
-+
-+    You should have received a copy of the GNU Lesser General Public
-+    License along with this library. If not, see <http://www.gnu.org/licenses/>.
-+*/
-+
-+#ifndef WINDEVICEMANAGER_H
-+#define WINDEVICEMANAGER_H
-+
-+#include <solid/ifaces/devicemanager.h>
-+#define HEAVE_DRIVER_KIT
-+
-+#include <QSet>
-+#include <QDebug>
-+#include <QMutex>
-+
-+#include <windows.h>
-+#include <winioctl.h>
-+
-+inline QString qGetLastError(ulong errorNummber = GetLastError())
-+{
-+    LPVOID error = NULL;
-+    size_t len = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-+                               FORMAT_MESSAGE_FROM_SYSTEM |
-+                               FORMAT_MESSAGE_IGNORE_INSERTS,
-+                               NULL,
-+                               errorNummber,
-+                               MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-+                               (LPWSTR) &error ,
-+                               0, NULL );
-+    QString out = QString::fromWCharArray((wchar_t*)error,len).trimmed().append(" %1").arg(errorNummber);
-+    LocalFree(error);
-+    return out;
-+}
-+
-+namespace Solid
-+{
-+namespace Backends
-+{
-+namespace Win
-+{
-+
-+class WinDeviceManager : public Solid::Ifaces::DeviceManager
-+{
-+    Q_OBJECT
-+public:
-+    WinDeviceManager(QObject *parent=0);
-+    ~WinDeviceManager();
-+
-+    virtual QString udiPrefix() const;
-+
-+    virtual QSet<Solid::DeviceInterface::Type> supportedInterfaces() const;
-+
-+    virtual QStringList allDevices();
-+
-+    virtual QStringList devicesFromQuery(const QString &parentUdi,
-+                                         Solid::DeviceInterface::Type type = Solid::DeviceInterface::Unknown);
-+
-+    virtual QObject *createDevice(const QString &udi);
-+
-+    static const WinDeviceManager *instance();
-+
-+    template< class INFO>
-+    static INFO getDeviceInfo(const QString &devName, int code)
-+    {
-+        return getDeviceInfo<INFO,void*>(devName,code);
-+    }
-+
-+
-+    template< class INFO, class QUERY>
-+    static INFO getDeviceInfo(const QString &devName, int code, QUERY *query = NULL)
-+    {
-+        INFO info;
-+        ZeroMemory(&info,sizeof(INFO));
-+        getDeviceInfoPrivate(devName,code,&info,sizeof(INFO),query);
-+        return info;
-+    }
-+
-+    template<class BUFFER_TYPE,class QUERY>
-+    static void getDeviceInfo(const QString &devName, int code, BUFFER_TYPE *out, size_t outSize, QUERY *query = NULL)
-+    {
-+        ZeroMemory(out,sizeof(BUFFER_TYPE)*outSize);
-+        getDeviceInfoPrivate(devName,code,out,outSize,query);
-+    }
-+
-+    static void deviceAction(const QString &devName, int code)
-+    {
-+        getDeviceInfoPrivate<void,void*>(devName,code,NULL,0,NULL);
-+    }
-+
-+signals:
-+    void powerChanged();
-+
-+private slots:
-+    void updateDeviceList();
-+
-+private:
-+    static WinDeviceManager *m_instance;
-+    HWND m_windowID;
-+    QSet<QString> m_devices;
-+    QStringList m_devicesList;
-+    QSet<Solid::DeviceInterface::Type> m_supportedInterfaces;
-+
-+    static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-+
-+    void promoteAddedDevice(const QSet<QString> &udi);
-+    void promoteRemovedDevice(const QSet<QString> &udi);
-+
-+    void promotePowerChange();
-+
-+    template< class INFO, class QUERY>
-+    static void getDeviceInfoPrivate(const QString &devName, int code,INFO *info,size_t size, QUERY *query = NULL)
-+    {
-+        static QMutex mutex;
-+        QMutexLocker lock(&mutex);
-+        Q_ASSERT(!devName.isNull());
-+        wchar_t deviceNameBuffer[MAX_PATH];
-+        QString dev = QLatin1String("\\\\.\\") + devName;
-+        deviceNameBuffer[dev.toWCharArray(deviceNameBuffer)] = 0;
-+        DWORD bytesReturned =  0;
-+
-+        //TODO:cleanup
-+        ulong err = GetLastError();
-+        HANDLE handle = ::CreateFile(deviceNameBuffer, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL  , OPEN_EXISTING , 0, NULL);
-+        if(handle == INVALID_HANDLE_VALUE)
-+        {
-+
-+            err = GetLastError();
-+            if(err == ERROR_ACCESS_DENIED)
-+            {
-+                //we would need admin rights
-+                //                        DebugBreak();
-+                qWarning() << "we would need admin rights" << dev << "reason:" << qGetLastError(err);
-+            }
-+            else
-+            {
-+                qWarning() << "Invalid Handle" << dev << "reason:" << qGetLastError(err) << " this should not happen.";
-+            }
-+            return;
-+        }
-+        if(::DeviceIoControl(handle, code, query, sizeof(QUERY), info, size, &bytesReturned, NULL) == TRUE)
-+        {
-+            ::CloseHandle(handle);
-+            return;
-+        }
-+        err = GetLastError();
-+
-+        if(err == ERROR_NOT_READY)
-+        {
-+            //the drive is a cd drive with no disk
-+            ::CloseHandle(handle);
-+            return;
-+        }
-+        if(handle == INVALID_HANDLE_VALUE)
-+        {
-+            qWarning() <<" Invalid Handle" << devName << "reason:" << qGetLastError() << " is probaply a subst path or more seriously there is  bug!";
-+            return;
-+        }
-+#if 1
-+        ::CloseHandle(handle);
-+        qFatal("Failed to query %s reason: %s", qPrintable(dev), qPrintable(qGetLastError(err)));
-+#else
-+        qWarning() << "Failed to query" << dev << "reason:" << qGetLastError(err);
-+#endif
-+
-+
-+        ::CloseHandle(handle);
-+    }
-+
-+};
-+
-+}
-+}
-+}
-+#endif // WINDEVICEMANAGER_H
-diff --git a/solid/solid/backends/win/wingenericinterface.cpp b/solid/solid/backends/win/wingenericinterface.cpp
-new file mode 100644
-index 0000000..9e67aab
---- /dev/null
-+++ b/solid/solid/backends/win/wingenericinterface.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.cpp kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.cpp	2013-05-31 14:13:49.474363700 +0200
 @@ -0,0 +1,52 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2062,11 +1740,9 @@ index 0000000..9e67aab
 +}
 +
 +#include "wingenericinterface.moc"
-diff --git a/solid/solid/backends/win/wingenericinterface.h b/solid/solid/backends/win/wingenericinterface.h
-new file mode 100644
-index 0000000..7bf198a
---- /dev/null
-+++ b/solid/solid/backends/win/wingenericinterface.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.h kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.h	2013-05-31 14:13:49.489963700 +0200
 @@ -0,0 +1,55 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2123,11 +1799,9 @@ index 0000000..7bf198a
 +}
 +
 +#endif // WINGENERICINTERFACE_H
-diff --git a/solid/solid/backends/win/wininterface.cpp b/solid/solid/backends/win/wininterface.cpp
-new file mode 100644
-index 0000000..8569229
---- /dev/null
-+++ b/solid/solid/backends/win/wininterface.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.cpp kdelibs-4.10.2/solid/solid/backends/win/wininterface.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.cpp	2013-05-31 14:13:49.489963700 +0200
 @@ -0,0 +1,42 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2171,11 +1845,9 @@ index 0000000..8569229
 +#include "wininterface.moc"
 +
 +
-diff --git a/solid/solid/backends/win/wininterface.h b/solid/solid/backends/win/wininterface.h
-new file mode 100644
-index 0000000..5748859
---- /dev/null
-+++ b/solid/solid/backends/win/wininterface.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.h kdelibs-4.10.2/solid/solid/backends/win/wininterface.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.h	2013-05-31 14:13:49.489963700 +0200
 @@ -0,0 +1,53 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2230,11 +1902,9 @@ index 0000000..5748859
 +}
 +
 +#endif // WININTERFACE_H
-diff --git a/solid/solid/backends/win/winopticaldisc.cpp b/solid/solid/backends/win/winopticaldisc.cpp
-new file mode 100644
-index 0000000..70b58ce
---- /dev/null
-+++ b/solid/solid/backends/win/winopticaldisc.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.cpp kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.cpp	2013-05-31 14:40:56.394496200 +0200
 @@ -0,0 +1,122 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2339,7 +2009,7 @@ index 0000000..70b58ce
 +
 +    ULARGE_INTEGER sizeTotal;
 +    ULARGE_INTEGER sizeFree;
-+    if(GetDiskFreeSpaceEx(dLetter,&sizeFree,&sizeTotal,NULL) == TRUE)
++    if(GetDiskFreeSpaceEx(dLetter,&sizeFree,&sizeTotal,NULL))
 +    {
 +        return sizeFree.QuadPart>0 && sizeTotal.QuadPart == 0;
 +    }
@@ -2358,11 +2028,9 @@ index 0000000..70b58ce
 +}
 +
 +#include "winopticaldisc.moc"
-diff --git a/solid/solid/backends/win/winopticaldisc.h b/solid/solid/backends/win/winopticaldisc.h
-new file mode 100644
-index 0000000..663bb91
---- /dev/null
-+++ b/solid/solid/backends/win/winopticaldisc.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.h kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.h	2013-05-31 14:13:49.489963700 +0200
 @@ -0,0 +1,68 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2432,11 +2100,9 @@ index 0000000..663bb91
 +}
 +
 +#endif // WINOPTICALDISC_H
-diff --git a/solid/solid/backends/win/winopticaldrive.cpp b/solid/solid/backends/win/winopticaldrive.cpp
-new file mode 100644
-index 0000000..7566144
---- /dev/null
-+++ b/solid/solid/backends/win/winopticaldrive.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.cpp kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.cpp	2013-05-31 14:34:57.257390400 +0200
 @@ -0,0 +1,177 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2561,7 +2227,7 @@ index 0000000..7566144
 +
 +    QMap<ulong,MediaProfiles> out;
 +    size_t buffSize = 1024;
-+    char buffer[buffSize];
++    char buffer[1024];
 +    GET_CONFIGURATION_IOCTL_INPUT input;
 +    ZeroMemory(&input,sizeof(GET_CONFIGURATION_IOCTL_INPUT));
 +    input.Feature = FeatureProfileList;
@@ -2615,11 +2281,9 @@ index 0000000..7566144
 +
 +
 +#include "winopticaldrive.moc"
-diff --git a/solid/solid/backends/win/winopticaldrive.h b/solid/solid/backends/win/winopticaldrive.h
-new file mode 100644
-index 0000000..ce6c2c4
---- /dev/null
-+++ b/solid/solid/backends/win/winopticaldrive.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.h kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.h	2013-05-31 14:13:49.505563800 +0200
 @@ -0,0 +1,90 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2711,11 +2375,9 @@ index 0000000..ce6c2c4
 +}
 +
 +#endif // WINOPTICALDRIVE_H
-diff --git a/solid/solid/backends/win/winprocessor.cpp b/solid/solid/backends/win/winprocessor.cpp
-new file mode 100644
-index 0000000..7dbe795
---- /dev/null
-+++ b/solid/solid/backends/win/winprocessor.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp kdelibs-4.10.2/solid/solid/backends/win/winprocessor.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.cpp	2013-05-31 14:13:49.505563800 +0200
 @@ -0,0 +1,139 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2856,11 +2518,9 @@ index 0000000..7dbe795
 +}
 +
 +#include "winprocessor.moc"
-diff --git a/solid/solid/backends/win/winprocessor.h b/solid/solid/backends/win/winprocessor.h
-new file mode 100644
-index 0000000..0b48e4d
---- /dev/null
-+++ b/solid/solid/backends/win/winprocessor.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.h kdelibs-4.10.2/solid/solid/backends/win/winprocessor.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.h	2013-05-31 14:13:49.505563800 +0200
 @@ -0,0 +1,76 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2938,11 +2598,9 @@ index 0000000..0b48e4d
 +}
 +
 +#endif // WINPROCESSOR_H
-diff --git a/solid/solid/backends/win/winstorageaccess.cpp b/solid/solid/backends/win/winstorageaccess.cpp
-new file mode 100644
-index 0000000..28dd14d
---- /dev/null
-+++ b/solid/solid/backends/win/winstorageaccess.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.cpp kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.cpp	2013-05-31 14:13:49.505563800 +0200
 @@ -0,0 +1,69 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3013,11 +2671,9 @@ index 0000000..28dd14d
 +
 +
 +#include "winstorageaccess.moc"
-diff --git a/solid/solid/backends/win/winstorageaccess.h b/solid/solid/backends/win/winstorageaccess.h
-new file mode 100644
-index 0000000..10c92e8
---- /dev/null
-+++ b/solid/solid/backends/win/winstorageaccess.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.h kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.h	2013-05-31 14:13:49.505563800 +0200
 @@ -0,0 +1,70 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3089,12 +2745,10 @@ index 0000000..10c92e8
 +
 +
 +#endif // WINSTORAGEACCESS_H
-diff --git a/solid/solid/backends/win/winstoragedrive.cpp b/solid/solid/backends/win/winstoragedrive.cpp
-new file mode 100644
-index 0000000..d856177
---- /dev/null
-+++ b/solid/solid/backends/win/winstoragedrive.cpp
-@@ -0,0 +1,110 @@
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.cpp kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.cpp	2013-05-31 15:04:23.005073200 +0200
+@@ -0,0 +1,114 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
 +
@@ -3118,6 +2772,10 @@ index 0000000..d856177
 +
 +#include <windows.h>
 +#include <winioctl.h>
++
++#if defined(__MINGW32__) && !defined(IOCTL_STORAGE_QUERY_PROPERTY)
++#include <winioctl_backport.h>
++#endif
 +
 +using namespace Solid::Backends::Win;
 +
@@ -3205,11 +2863,9 @@ index 0000000..d856177
 +}
 +
 +#include "winstoragedrive.moc"
-diff --git a/solid/solid/backends/win/winstoragedrive.h b/solid/solid/backends/win/winstoragedrive.h
-new file mode 100644
-index 0000000..d3954dd
---- /dev/null
-+++ b/solid/solid/backends/win/winstoragedrive.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.h kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.h	2013-05-31 14:13:49.521163800 +0200
 @@ -0,0 +1,66 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3277,11 +2933,9 @@ index 0000000..d3954dd
 +}
 +
 +#endif // WINSTORAGEDRIVE_H
-diff --git a/solid/solid/backends/win/winstoragevolume.cpp b/solid/solid/backends/win/winstoragevolume.cpp
-new file mode 100644
-index 0000000..9f5b213
---- /dev/null
-+++ b/solid/solid/backends/win/winstoragevolume.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.cpp kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.cpp
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.cpp	2013-05-31 14:41:28.337323200 +0200
 @@ -0,0 +1,108 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3347,7 +3001,7 @@ index 0000000..9f5b213
 +    dLetter[dLetterSize] = (wchar_t)'\\';
 +    dLetter[dLetterSize+1] = 0;
 +
-+    if(GetVolumeInformation(dLetter,label,MAX_PATH,&serial,NULL,&flags,fs,MAX_PATH) == TRUE)
++    if(GetVolumeInformation(dLetter,label,MAX_PATH,&serial,NULL,&flags,fs,MAX_PATH))
 +    {
 +        m_label = QString::fromWCharArray(label);
 +        m_fs = QString::fromWCharArray(fs);
@@ -3355,7 +3009,7 @@ index 0000000..9f5b213
 +    }
 +
 +    ULARGE_INTEGER size;
-+    if(GetDiskFreeSpaceEx(dLetter,NULL,&size,NULL) == TRUE)
++    if(GetDiskFreeSpaceEx(dLetter,NULL,&size,NULL))
 +    {
 +        m_size = size.QuadPart;
 +    }
@@ -3391,11 +3045,9 @@ index 0000000..9f5b213
 +
 +
 +
-diff --git a/solid/solid/backends/win/winstoragevolume.h b/solid/solid/backends/win/winstoragevolume.h
-new file mode 100644
-index 0000000..2f9ebc4
---- /dev/null
-+++ b/solid/solid/backends/win/winstoragevolume.h
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.h kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.h
+--- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.h	1970-01-01 01:00:00.000000000 +0100
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.h	2013-05-31 14:13:49.521163800 +0200
 @@ -0,0 +1,68 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3465,10 +3117,115 @@ index 0000000..2f9ebc4
 +}
 +
 +#endif // WINVOLUME_H
-diff --git a/solid/solid/managerbase.cpp b/solid/solid/managerbase.cpp
-index beaeac5..6649972 100644
---- a/solid/solid/managerbase.cpp
-+++ b/solid/solid/managerbase.cpp
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/CMakeLists.txt kdelibs-4.10.2/solid/solid/CMakeLists.txt
+--- kdelibs-4.10.2.orig/solid/solid/CMakeLists.txt	2013-03-29 08:00:27.998064000 +0100
++++ kdelibs-4.10.2/solid/solid/CMakeLists.txt	2013-05-31 14:13:49.443163600 +0200
+@@ -10,7 +10,12 @@
+ configure_file(solid_export.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/solid_export.h)
+ 
+ include (CheckCXXSourceCompiles)
+-
++if(MSVC)
++check_cxx_source_compiles("int main() { __asm { pxor mm0, mm0 }; }" HAVE_X86_MMX)
++check_cxx_source_compiles("int main() { __asm { xorps xmm0, xmm0 }; }" HAVE_X86_SSE)
++check_cxx_source_compiles("int main() { __asm { xorpd xmm0, xmm0 }; }" HAVE_X86_SSE2)
++check_cxx_source_compiles("int main() { __asm { femms }; }" HAVE_X86_3DNOW)
++else(MSVC)
+ check_cxx_source_compiles("	#ifdef __SUNPRO_CC
+ 					#define __asm__ asm
+ 				#endif
+@@ -27,6 +32,7 @@
+                                         #define __asm__ asm
+                                 #endif
+ 				int main() { __asm__(\"femms\"); }" HAVE_X86_3DNOW)
++endif(MSVC)
+ check_cxx_source_compiles("     #ifdef __SUNPRO_CC
+                                         #define __asm__ asm
+                                 #endif
+@@ -43,6 +49,7 @@
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/hal
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/udev
+    ${CMAKE_CURRENT_BINARY_DIR}/backends/wmi
++   ${CMAKE_CURRENT_BINARY_DIR}/backends/win
+ )
+ 
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${KDE4_C_FLAGS}") # enable -fvisibility=hidden for C sources
+@@ -338,17 +345,20 @@
+ endif(APPLE)
+ 
+ if(WIN32)
+-   include(CheckIncludeFileCXX)
+-   check_include_file_cxx(wbemidl.h HAVE_WBEM)
+-   FIND_LIBRARY(WBEM_LIBRARIES NAMES wbemuuid wbemuuidd)
+-   if(HAVE_WBEM AND WBEM_LIBRARIES)
+-      set(HAVE_WBEM True)
+-      message(STATUS "Found wbemuuid library: ${WBEM_LIBRARIES}")
+-   else(HAVE_WBEM AND WBEM_LIBRARIES)
+-      set(HAVE_WBEM False)
+-   endif(HAVE_WBEM AND WBEM_LIBRARIES)
+-   if(HAVE_WBEM AND NOT WINCE)
+-       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WBEM")
++    if(WITH_SOLID_WMI)
++       include(CheckIncludeFileCXX)
++       check_include_file_cxx(wbemidl.h HAVE_WBEM)
++       FIND_LIBRARY(WBEM_LIBRARIES NAMES wbemuuid wbemuuidd)
++       if(HAVE_WBEM AND WBEM_LIBRARIES)
++          set(HAVE_WBEM True)
++          message(STATUS "Found wbemuuid library: ${WBEM_LIBRARIES}")
++       else(HAVE_WBEM AND WBEM_LIBRARIES)
++          set(HAVE_WBEM False)
++          set(WITH_SOLID_WMI False)
++      endif(HAVE_WBEM AND WBEM_LIBRARIES)
++   endif(WITH_SOLID_WMI)
++   if(WITH_SOLID_WMI)
++       add_definitions(-WITH_SOLID_WMI)
+        message(STATUS "-- Building Solid WMI backend." )
+ 
+        set(solid_LIB_SRCS ${solid_LIB_SRCS}
+@@ -375,7 +385,25 @@
+        backends/wmi/wmivolume.cpp
+ 
+        )
+-    endif(HAVE_WBEM AND NOT WINCE)
++    else(WITH_SOLID_WMI)
++       message(STATUS "-- Building Solid Windows backend." )
++       set(solid_LIB_SRCS ${solid_LIB_SRCS}
++       backends/win/winblock.cpp
++       backends/win/winopticaldrive.cpp
++       backends/win/wininterface.cpp
++       backends/win/wingenericinterface.cpp
++       backends/win/windevice.cpp
++       backends/win/windevicemanager.cpp
++       backends/win/winopticaldisc.cpp
++       backends/win/winprocessor.cpp
++       #backends/win/wmiportablemediaplayer.cpp
++       backends/win/winstorageaccess.cpp
++       backends/win/winstoragedrive.cpp
++       backends/win/winstoragevolume.cpp
++       backends/win/winbattery.cpp
++       backends/win/winacadapter.cpp
++       )
++    endif(WITH_SOLID_WMI)
+ endif(WIN32)
+ 
+ set_source_files_properties( org.freedesktop.PowerManagement.xml
+@@ -394,9 +422,11 @@
+ 
+ if(WIN32)
+    set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} ${KDEWIN_LIBRARY})
+-   if(HAVE_WBEM)
++   if(WITH_SOLID_WMI)
+       set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} ${WBEM_LIBRARIES})
+-   endif(HAVE_WBEM)
++   else(WITH_SOLID_WMI)
++      set(solid_OPTIONAL_LIBS ${solid_OPTIONAL_LIBS} setupapi)
++   endif(WITH_SOLID_WMI)
+ endif(WIN32)
+ 
+ if(APPLE)
+diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/managerbase.cpp kdelibs-4.10.2/solid/solid/managerbase.cpp
+--- kdelibs-4.10.2.orig/solid/solid/managerbase.cpp	2013-03-01 07:26:14.567774000 +0100
++++ kdelibs-4.10.2/solid/solid/managerbase.cpp	2013-05-31 14:13:49.521163800 +0200
 @@ -48,9 +48,12 @@
  
  #include "backends/fstab/fstabmanager.h"
@@ -3483,7 +3240,7 @@ index beaeac5..6649972 100644
  
  
  Solid::ManagerBasePrivate::ManagerBasePrivate()
-@@ -72,9 +75,10 @@ void Solid::ManagerBasePrivate::loadBackends()
+@@ -72,9 +75,10 @@
  #        if defined(Q_OS_MAC)
              m_backends << new Solid::Backends::IOKit::IOKitManager(0);
  
