@@ -1,7 +1,21 @@
-diff -Nru -x '*~' kde-runtime-4.10.2.orig/platforms/win/kwinstartmenu/misc.cpp kde-runtime-4.10.2/platforms/win/kwinstartmenu/misc.cpp
---- kde-runtime-4.10.2.orig/platforms/win/kwinstartmenu/misc.cpp	2013-03-01 07:34:47.599074000 +0100
-+++ kde-runtime-4.10.2/platforms/win/kwinstartmenu/misc.cpp	2013-05-29 16:31:35.527473600 +0200
-@@ -218,7 +218,7 @@
+diff --git a/nepomuk/controller/CMakeLists.txt b/nepomuk/controller/CMakeLists.txt
+index 25f8dd0..ebe7887 100644
+--- a/nepomuk/controller/CMakeLists.txt
++++ b/nepomuk/controller/CMakeLists.txt
+@@ -20,6 +20,8 @@ qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.k
+ 
+ kde4_add_ui_files(controller_SRCS ../kcm/statuswidget.ui)
+ 
++kde4_add_app_icon(controller_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/nepomuk.png")
++
+ kde4_add_executable(nepomukcontroller ${controller_SRCS})
+ 
+ target_link_libraries(nepomukcontroller
+diff --git a/platforms/win/kwinstartmenu/misc.cpp b/platforms/win/kwinstartmenu/misc.cpp
+index 1c014c1..aa4747f 100644
+--- a/platforms/win/kwinstartmenu/misc.cpp
++++ b/platforms/win/kwinstartmenu/misc.cpp
+@@ -218,7 +218,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString
              QStringList arguments;
              if (cmd.size() > 1) {
                  // ignore arguments completely when they contain a variable
