@@ -1,6 +1,6 @@
 diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddcdrm.h kdewin-0.5.6/include/ntddcdrm.h
 --- kdewin-0.5.6.orig/include/ntddcdrm.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdewin-0.5.6/include/ntddcdrm.h	2013-05-30 21:08:15.054581800 +0200
++++ kdewin-0.5.6/include/ntddcdrm.h	2013-05-30 22:02:10.791259400 +0200
 @@ -0,0 +1,360 @@
 +/*
 + * ntddcdrm.h
@@ -364,7 +364,7 @@ diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddcdrm.h kdewin-0.5.6/include/ntdd
 +#endif /* _NTDDCDRM_ */
 diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddcdvd.h kdewin-0.5.6/include/ntddcdvd.h
 --- kdewin-0.5.6.orig/include/ntddcdvd.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdewin-0.5.6/include/ntddcdvd.h	2013-05-30 21:08:33.426632700 +0200
++++ kdewin-0.5.6/include/ntddcdvd.h	2013-05-30 22:02:10.791259400 +0200
 @@ -0,0 +1,215 @@
 +/*
 + * ntddcdvd.h
@@ -583,7 +583,7 @@ diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddcdvd.h kdewin-0.5.6/include/ntdd
 +#endif /* _NTDDCDVD_ */
 diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddmmc.h kdewin-0.5.6/include/ntddmmc.h
 --- kdewin-0.5.6.orig/include/ntddmmc.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdewin-0.5.6/include/ntddmmc.h	2013-05-30 21:08:25.962205700 +0200
++++ kdewin-0.5.6/include/ntddmmc.h	2013-05-30 22:02:10.791259400 +0200
 @@ -0,0 +1,663 @@
 +/**
 + * This file has no copyright assigned and is placed in the Public Domain.
@@ -1250,7 +1250,7 @@ diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddmmc.h kdewin-0.5.6/include/ntddm
 +#endif
 diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddstor.h kdewin-0.5.6/include/ntddstor.h
 --- kdewin-0.5.6.orig/include/ntddstor.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdewin-0.5.6/include/ntddstor.h	2013-05-30 21:08:19.441832800 +0200
++++ kdewin-0.5.6/include/ntddstor.h	2013-05-30 22:02:10.791259400 +0200
 @@ -0,0 +1,704 @@
 +/*
 + * ntddstor.h
@@ -1956,13 +1956,117 @@ diff -Nru -x '*~' kdewin-0.5.6.orig/include/ntddstor.h kdewin-0.5.6/include/ntdd
 +#endif
 +
 +#endif /* _NTDDSTOR_H_ */
+diff -Nru -x '*~' kdewin-0.5.6.orig/include/winioctl_backport.h kdewin-0.5.6/include/winioctl_backport.h
+--- kdewin-0.5.6.orig/include/winioctl_backport.h	1970-01-01 01:00:00.000000000 +0100
++++ kdewin-0.5.6/include/winioctl_backport.h	2013-05-31 12:01:52.610144700 +0200
+@@ -0,0 +1,87 @@
++/*
++ * winioctl_backport.h
++ *
++ * additional IOCTL interface definitions based on the winioctl.h from the new w32api package.
++ *
++ * This file is part of the kdewin package and is originally from the mingw-w64 w32api package.
++ *
++ * Contributors:
++ *   Created by Patrick Spendrin <ps_ml@gmx.de>
++ *
++ * THIS SOFTWARE IS NOT COPYRIGHTED
++ *
++ * This source code is offered for use in the public domain. You may
++ * use, modify or distribute it freely.
++ *
++ * This code is distributed in the hope that it will be useful but
++ * WITHOUT ANY WARRANTY. ALL WARRANTIES, EXPRESS OR IMPLIED ARE HEREBY
++ * DISCLAIMED. This includes but is not limited to warranties of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ *
++ */
++
++#ifndef WINIOCTL_BACKPORT_H
++#define WINIOCTL_BACKPORT_H
++
++#include <winioctl.h>
++
++#define IOCTL_STORAGE_QUERY_PROPERTY CTL_CODE(IOCTL_STORAGE_BASE, 0x0500, METHOD_BUFFERED, FILE_ANY_ACCESS)
++
++typedef enum _STORAGE_PROPERTY_ID {
++  StorageDeviceProperty              = 0,
++  StorageAdapterProperty             = 1,
++  StorageDeviceIdProperty            = 2,
++  StorageDeviceUniqueIdProperty      = 3,
++  StorageDeviceWriteCacheProperty    = 4,
++  StorageMiniportProperty            = 5,
++  StorageAccessAlignmentProperty     = 6,
++  StorageDeviceSeekPenaltyProperty   = 7,
++  StorageDeviceTrimProperty          = 8 
++} STORAGE_PROPERTY_ID, *PSTORAGE_PROPERTY_ID;
++
++typedef enum _STORAGE_QUERY_TYPE {
++  PropertyStandardQuery     = 0,
++  PropertyExistsQuery       = 1,
++  PropertyMaskQuery         = 2,
++  PropertyQueryMaxDefined   = 3 
++} STORAGE_QUERY_TYPE, *PSTORAGE_QUERY_TYPE;
++
++typedef struct _STORAGE_PROPERTY_QUERY {
++  STORAGE_PROPERTY_ID PropertyId;
++  STORAGE_QUERY_TYPE  QueryType;
++  BYTE                AdditionalParameters[1];
++} STORAGE_PROPERTY_QUERY, *PSTORAGE_PROPERTY_QUERY;
++
++typedef struct _STORAGE_DEVICE_DESCRIPTOR {
++  DWORD            Version;
++  DWORD            Size;
++  BYTE             DeviceType;
++  BYTE             DeviceTypeModifier;
++  BOOLEAN          RemovableMedia;
++  BOOLEAN          CommandQueueing;
++  DWORD            VendorIdOffset;
++  DWORD            ProductIdOffset;
++  DWORD            ProductRevisionOffset;
++  DWORD            SerialNumberOffset;
++  STORAGE_BUS_TYPE BusType;
++  DWORD            RawPropertiesLength;
++  BYTE             RawDeviceProperties[1];
++} STORAGE_DEVICE_DESCRIPTOR, *PSTORAGE_DEVICE_DESCRIPTOR;
++
++typedef struct _STORAGE_ADAPTER_DESCRIPTOR {
++  DWORD   Version;
++  DWORD   Size;
++  DWORD   MaximumTransferLength;
++  DWORD   MaximumPhysicalPages;
++  DWORD   AlignmentMask;
++  BOOLEAN AdapterUsesPio;
++  BOOLEAN AdapterScansDown;
++  BOOLEAN CommandQueueing;
++  BOOLEAN AcceleratedTransfer;
++  BYTE    BusType;
++  WORD    BusMajorVersion;
++  WORD    BusMinorVersion;
++} STORAGE_ADAPTER_DESCRIPTOR, *PSTORAGE_ADAPTER_DESCRIPTOR;
++
++
++#endif /* WINIOCTL_BACKPORT_H */
+\ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' kdewin-0.5.6.orig/src/CMakeLists.txt kdewin-0.5.6/src/CMakeLists.txt
 --- kdewin-0.5.6.orig/src/CMakeLists.txt	2013-02-22 14:03:48.000000000 +0100
-+++ kdewin-0.5.6/src/CMakeLists.txt	2013-05-30 21:10:56.704827700 +0200
-@@ -87,9 +87,17 @@
++++ kdewin-0.5.6/src/CMakeLists.txt	2013-05-31 12:08:25.072592300 +0200
+@@ -87,10 +87,36 @@
    ARCHIVE DESTINATION lib
  )
  
++file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/required_ioctls_test.cpp
++"#include <windows.h>
++#include <winioctl.h>
++#if !defined(IOCTL_STORAGE_QUERY_PROPERTY)
++#error 1
++#endif
++
++int main() { return 0; }
++")
++try_compile(HAVE_REQUIRED_IOCTLS ${CMAKE_CURRENT_BINARY_DIR}
++                                 ${CMAKE_CURRENT_BINARY_DIR}/required_ioctls_test.cpp)
++
 +set(ddk_HDRS
 +  ../include/ntddcdrm.h
 +  ../include/ntddcdvd.h
@@ -1973,7 +2077,14 @@ diff -Nru -x '*~' kdewin-0.5.6.orig/src/CMakeLists.txt kdewin-0.5.6/src/CMakeLis
  install(DIRECTORY ../include/${_incDirPrefix}                  DESTINATION include PATTERN ".svn" EXCLUDE)
  install(FILES ../include/fixwinh.h ../include/kde_file_win.h   DESTINATION include)
  install(FILES ${CMAKE_BINARY_DIR}/include/kdewin_export.h      DESTINATION include)
-+install(FILES ${ddk_HDRS}                                      DESTINATION include/${_incDirPrefix})
  
++install(FILES ${ddk_HDRS}                                      DESTINATION include/${_incDirPrefix})
++
++if(MINGW AND NOT HAVE_REQUIRED_IOCTLS)
++    message(STATUS "you miss the required ioctl definitions. Installing winioctl_backport.h")
++    install(FILES ../include/winioctl_backport.h               DESTINATION include/${_incDirPrefix})
++endif(MINGW AND NOT HAVE_REQUIRED_IOCTLS)
++
  if(MINGW32 AND NOT MINGW_W32)
      install(DIRECTORY ../include/directx                       DESTINATION include/${_incDirPrefix} PATTERN ".svn" EXCLUDE)
+ endif(MINGW32 AND NOT MINGW_W32)
