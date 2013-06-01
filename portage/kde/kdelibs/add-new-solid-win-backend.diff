@@ -1,6 +1,6 @@
 diff -Nru -x '*~' kdelibs-4.10.2.orig/CMakeLists.txt kdelibs-4.10.2/CMakeLists.txt
 --- kdelibs-4.10.2.orig/CMakeLists.txt	2013-03-29 09:30:09.355321000 +0100
-+++ kdelibs-4.10.2/CMakeLists.txt	2013-05-31 14:13:49.443163600 +0200
++++ kdelibs-4.10.2/CMakeLists.txt	2013-06-01 14:28:09.601842800 +0200
 @@ -41,6 +41,9 @@
  ############### Give the user the option to build the udisks2 solid backend instead of the udisks backend ###############
  option(WITH_SOLID_UDISKS2 "Enable the udisks2 solid backend instead")
@@ -13,7 +13,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/CMakeLists.txt kdelibs-4.10.2/CMakeLists.t
  # in the KDE build system, this is the same as CMAKE_BINARY_DIR.
 diff -Nru -x '*~' kdelibs-4.10.2.orig/kjs/wtf/AlwaysInline.h kdelibs-4.10.2/kjs/wtf/AlwaysInline.h
 --- kdelibs-4.10.2.orig/kjs/wtf/AlwaysInline.h	2013-03-01 07:26:14.347776000 +0100
-+++ kdelibs-4.10.2/kjs/wtf/AlwaysInline.h	2013-05-31 14:13:49.443163600 +0200
++++ kdelibs-4.10.2/kjs/wtf/AlwaysInline.h	2013-06-01 14:28:09.604843000 +0200
 @@ -22,7 +22,7 @@
  
  
@@ -25,7 +25,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/kjs/wtf/AlwaysInline.h kdelibs-4.10.2/kjs/
  #define ALWAYS_INLINE __forceinline
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.cpp kdelibs-4.10.2/solid/solid/backends/win/winacadapter.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.cpp	2013-05-31 14:13:49.443163600 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.cpp	2013-06-01 14:28:09.608843200 +0200
 @@ -0,0 +1,56 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -85,7 +85,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.cpp 
 +#include "winacadapter.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.h kdelibs-4.10.2/solid/solid/backends/win/winacadapter.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.h	2013-05-31 14:13:49.458763700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winacadapter.h	2013-06-01 14:28:09.611843400 +0200
 @@ -0,0 +1,58 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -147,7 +147,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winacadapter.h kd
 +#endif // WINACADAPTER_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.cpp kdelibs-4.10.2/solid/solid/backends/win/winbattery.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.cpp	2013-05-31 14:13:49.458763700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.cpp	2013-06-01 14:28:09.614843500 +0200
 @@ -0,0 +1,180 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -331,7 +331,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.cpp kd
 +#include "winbattery.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.h kdelibs-4.10.2/solid/solid/backends/win/winbattery.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.h	2013-05-31 14:13:49.458763700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winbattery.h	2013-06-01 14:28:09.618843800 +0200
 @@ -0,0 +1,80 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -415,7 +415,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winbattery.h kdel
 +#endif // WINBATTERY_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.cpp kdelibs-4.10.2/solid/solid/backends/win/winblock.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winblock.cpp	2013-05-31 14:13:49.458763700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winblock.cpp	2013-06-01 14:28:09.656845900 +0200
 @@ -0,0 +1,224 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -643,7 +643,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.cpp kdel
 +#include "winblock.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.h kdelibs-4.10.2/solid/solid/backends/win/winblock.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winblock.h	2013-05-31 14:13:49.458763700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winblock.h	2013-06-01 14:28:10.288882100 +0200
 @@ -0,0 +1,70 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -717,7 +717,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winblock.h kdelib
 +#endif // WINBLOCK_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.cpp kdelibs-4.10.2/solid/solid/backends/win/windevice.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/windevice.cpp	2013-05-31 15:04:23.000072900 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/windevice.cpp	2013-06-01 14:28:10.292882300 +0200
 @@ -0,0 +1,433 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1154,7 +1154,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.cpp kde
 +#include "windevice.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.h kdelibs-4.10.2/solid/solid/backends/win/windevice.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/windevice.h	2013-05-31 14:13:49.474363700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/windevice.h	2013-06-01 14:28:10.295882500 +0200
 @@ -0,0 +1,78 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1236,7 +1236,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevice.h kdeli
 +#endif // WINDEVICE_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.cpp kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.cpp	2013-05-31 14:13:49.474363700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.cpp	2013-06-01 14:28:10.732907500 +0200
 @@ -0,0 +1,250 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1490,7 +1490,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.
 +
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.h kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.h	2013-05-31 14:39:49.162650800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/windevicemanager.h	2013-06-01 14:28:10.736907700 +0200
 @@ -0,0 +1,192 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1686,7 +1686,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/windevicemanager.
 +#endif // WINDEVICEMANAGER_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.cpp kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.cpp	2013-05-31 14:13:49.474363700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.cpp	2013-06-01 14:28:10.739907900 +0200
 @@ -0,0 +1,52 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1742,7 +1742,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterfa
 +#include "wingenericinterface.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.h kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterface.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.h	2013-05-31 14:13:49.489963700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/wingenericinterface.h	2013-06-01 14:28:10.742908100 +0200
 @@ -0,0 +1,55 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1801,7 +1801,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wingenericinterfa
 +#endif // WINGENERICINTERFACE_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.cpp kdelibs-4.10.2/solid/solid/backends/win/wininterface.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.cpp	2013-05-31 14:13:49.489963700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.cpp	2013-06-01 14:28:10.744908200 +0200
 @@ -0,0 +1,42 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1847,7 +1847,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.cpp 
 +
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.h kdelibs-4.10.2/solid/solid/backends/win/wininterface.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.h	2013-05-31 14:13:49.489963700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/wininterface.h	2013-06-01 14:28:10.747908300 +0200
 @@ -0,0 +1,53 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -1904,7 +1904,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/wininterface.h kd
 +#endif // WININTERFACE_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.cpp kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.cpp	2013-05-31 14:40:56.394496200 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.cpp	2013-06-01 14:28:10.750908500 +0200
 @@ -0,0 +1,122 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2030,7 +2030,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.cp
 +#include "winopticaldisc.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.h kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.h	2013-05-31 14:13:49.489963700 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldisc.h	2013-06-01 14:28:10.753908700 +0200
 @@ -0,0 +1,68 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2102,7 +2102,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldisc.h 
 +#endif // WINOPTICALDISC_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.cpp kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.cpp	2013-05-31 14:34:57.257390400 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.cpp	2013-06-01 14:28:10.756908900 +0200
 @@ -0,0 +1,177 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2283,7 +2283,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.c
 +#include "winopticaldrive.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.h kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.h	2013-05-31 14:13:49.505563800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winopticaldrive.h	2013-06-01 14:28:10.759909000 +0200
 @@ -0,0 +1,90 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2377,8 +2377,8 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winopticaldrive.h
 +#endif // WINOPTICALDRIVE_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp kdelibs-4.10.2/solid/solid/backends/win/winprocessor.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.cpp	2013-05-31 14:13:49.505563800 +0200
-@@ -0,0 +1,139 @@
++++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.cpp	2013-06-01 23:15:08.731155700 +0200
+@@ -0,0 +1,146 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
 +
@@ -2407,9 +2407,16 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp 
 +
 +using namespace Solid::Backends::Win;
 +
++typedef BOOL (WINAPI *GLPI_fn)(SYSTEM_LOGICAL_PROCESSOR_INFORMATION* Buffer, DWORD* ReturnLength);
++GLPI_fn pGetLogicalProcessorInformation = 0;
++
 +WinProcessor::WinProcessor(WinDevice *device):
 +    WinInterface(device)
 +{
++    if(pGetLogicalProcessorInformation == 0) {
++        HMODULE hKernel32 = LoadLibraryA("kernel32.dll");
++        pGetLogicalProcessorInformation = (GLPI_fn)GetProcAddress(hKernel32, "GetLogicalProcessorInformation");
++    }
 +    m_number = m_device->udi().mid(m_device->udi().length()-1).toInt();
 +}
 +
@@ -2477,10 +2484,10 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp 
 +    if(p.isEmpty())
 +    {
 +        DWORD size = 0;
-+        GetLogicalProcessorInformation(NULL,&size);
++        pGetLogicalProcessorInformation(NULL,&size);
 +        char *buff = new char[size];
 +        SYSTEM_LOGICAL_PROCESSOR_INFORMATION *info = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION*)buff;
-+        GetLogicalProcessorInformation(info,&size);
++        pGetLogicalProcessorInformation(info,&size);
 +        size /= sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
 +
 +
@@ -2520,7 +2527,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.cpp 
 +#include "winprocessor.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.h kdelibs-4.10.2/solid/solid/backends/win/winprocessor.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.h	2013-05-31 14:13:49.505563800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winprocessor.h	2013-06-01 14:28:10.774909900 +0200
 @@ -0,0 +1,76 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2600,7 +2607,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winprocessor.h kd
 +#endif // WINPROCESSOR_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.cpp kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.cpp	2013-05-31 14:13:49.505563800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.cpp	2013-06-01 14:28:10.778910100 +0200
 @@ -0,0 +1,69 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2673,7 +2680,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.
 +#include "winstorageaccess.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.h kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.h	2013-05-31 14:13:49.505563800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstorageaccess.h	2013-06-01 14:28:10.780910200 +0200
 @@ -0,0 +1,70 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2747,7 +2754,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstorageaccess.
 +#endif // WINSTORAGEACCESS_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.cpp kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.cpp	2013-05-31 15:04:23.005073200 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.cpp	2013-06-01 14:28:10.783910400 +0200
 @@ -0,0 +1,114 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2865,7 +2872,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.c
 +#include "winstoragedrive.moc"
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.h kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.h	2013-05-31 14:13:49.521163800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragedrive.h	2013-06-01 14:28:10.786910600 +0200
 @@ -0,0 +1,66 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -2935,7 +2942,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragedrive.h
 +#endif // WINSTORAGEDRIVE_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.cpp kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.cpp
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.cpp	2013-05-31 14:41:28.337323200 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.cpp	2013-06-01 14:28:10.789910700 +0200
 @@ -0,0 +1,108 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3047,7 +3054,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.
 +
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.h kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.h
 --- kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.h	1970-01-01 01:00:00.000000000 +0100
-+++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.h	2013-05-31 14:13:49.521163800 +0200
++++ kdelibs-4.10.2/solid/solid/backends/win/winstoragevolume.h	2013-06-01 14:28:10.792910900 +0200
 @@ -0,0 +1,68 @@
 +/*
 +    Copyright 2013 Patrick von Reth <vonreth@kde.org>
@@ -3119,7 +3126,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/backends/win/winstoragevolume.
 +#endif // WINVOLUME_H
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/CMakeLists.txt kdelibs-4.10.2/solid/solid/CMakeLists.txt
 --- kdelibs-4.10.2.orig/solid/solid/CMakeLists.txt	2013-03-29 08:00:27.998064000 +0100
-+++ kdelibs-4.10.2/solid/solid/CMakeLists.txt	2013-05-31 14:13:49.443163600 +0200
++++ kdelibs-4.10.2/solid/solid/CMakeLists.txt	2013-06-01 14:28:10.795911100 +0200
 @@ -10,7 +10,12 @@
  configure_file(solid_export.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/solid_export.h)
  
@@ -3225,7 +3232,7 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/CMakeLists.txt kdelibs-4.10.2/
  if(APPLE)
 diff -Nru -x '*~' kdelibs-4.10.2.orig/solid/solid/managerbase.cpp kdelibs-4.10.2/solid/solid/managerbase.cpp
 --- kdelibs-4.10.2.orig/solid/solid/managerbase.cpp	2013-03-01 07:26:14.567774000 +0100
-+++ kdelibs-4.10.2/solid/solid/managerbase.cpp	2013-05-31 14:13:49.521163800 +0200
++++ kdelibs-4.10.2/solid/solid/managerbase.cpp	2013-06-01 14:28:11.076927200 +0200
 @@ -48,9 +48,12 @@
  
  #include "backends/fstab/fstabmanager.h"
