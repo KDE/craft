@@ -110,7 +110,7 @@ kde,blinken,4.10.2,
 kde,cantor,4.10.2,
 kde,kwordquiz,4.10.2,
 dev-util,zip,3.0,
-kde,pairs,4.10.2,
+kde,pairs,4.10.2,1
 kde,kdeedu,gitHEAD,
 win32libs,libsndfile,1.0.24,
 kde,libkdegames,4.10.2,
@@ -150,7 +150,7 @@ kde,knetwalk,4.10.2,
 kde,ksquares,4.10.2,
 kde,kblackbox,4.10.2,
 kde,kmines,4.10.2,
-kde,ksirk,4.10.2,
+kde,ksirk,4.10.2,1
 kde,kapman,4.10.2,
 kde,kspaceduel,4.10.2,
 kde,kdegames,gitHEAD,
@@ -187,7 +187,7 @@ win32libs,mpir,2.5.0,
 win32libs,libidn,1.19,
 kde,kdenetwork,4.10.2,1
 kde,kdepim-runtime,4.10.2,1
-kde,kdepim,4.10.2,1
+kde,kdepim,4.10.2,2
 kde,kdeplasma-addons,4.10.2,
 kde,okteta,4.10.2,
 kde,kdesdk-strigi-analyzers,4.10.2,
