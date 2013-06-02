@@ -1,18 +1,16 @@
-From f6c839dae762946cbbbd789b37fa6c099aafa168 Mon Sep 17 00:00:00 2001
-From: Jakob Gruber <jakob.gruber@gmail.com>
-Date: Wed, 29 May 2013 22:59:45 +0200
-Subject: [PATCH] Add application icon to windows and OS X builds
-
-BUG: 320433
----
- src/CMakeLists.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index a4b2a41..a2fdd59 100644
---- a/src/CMakeLists.txt
-+++ b/src/CMakeLists.txt
-@@ -42,6 +42,7 @@ set(picmi_SRCS
+diff -Nru -x '*~' picmi-4.10.2.orig/src/CMakeLists.txt picmi-4.10.2/src/CMakeLists.txt
+--- picmi-4.10.2.orig/src/CMakeLists.txt	2013-03-01 08:23:49.517552000 +0100
++++ picmi-4.10.2/src/CMakeLists.txt	2013-06-02 10:46:46.598799200 +0200
+@@ -13,7 +13,7 @@
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
+ 
+ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+-    add_definitions("-Wextra -pedantic")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -pedantic")
+ endif ()
+ 
+ include(CheckIncludeFileCXX)
+@@ -42,6 +42,7 @@
      systemexception.cpp
  )
  
@@ -20,6 +18,3 @@ index a4b2a41..a2fdd59 100644
  kde4_add_executable(picmi
      ${picmi_SRCS}
  )
--- 
-1.8.1.msysgit.1
-
