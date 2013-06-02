@@ -41,3 +41,16 @@ index 6aa395a..819319e 100644
  install(TARGETS ktnef ${INSTALL_TARGETS_DEFAULT_ARGS})
  
  install(PROGRAMS ktnef.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
+diff --git a/mobile/tasks/CMakeLists.txt b/mobile/tasks/CMakeLists.txt
+index 6aa395a..819319e 100644
+--- a/mobile/tasks/CMakeLists.txt
++++ b/mobile/tasks/CMakeLists.txt
+@@ -31,7 +31,7 @@
+   add_definitions(-DKCALCORE_SERIALIZER_PLUGIN_STATIC)
+ endif (RUNTIME_PLUGINS_STATIC)
+ 
+-kde4_add_app_icon(mobile_tasks_srcs "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-tasks-mobile.png")
++kde4_add_app_icon(mobile_tasks_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-apps-tasks-mobile.png")
+ 
+ kde4_add_executable(tasks-mobile ${mobile_tasks_SRCS} )
+ if (WINCE)
