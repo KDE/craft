@@ -5,6 +5,7 @@ win32libs,dbus,1.4.24,
 binary,mysql-pkg,5.5.30,
 win32libs,zlib,1.2.7,1
 win32libs,openssl,1.0.1c,
+win32libs,sqlite,3.7.15.2,
 libs,qt,4.8.4,1
 kdesupport,grantlee,0.3.0,1
 kdesupport,attica,0.4.1,
@@ -37,7 +38,6 @@ kdesupport,strigi,0.7.5,
 kdesupport,libqtsoap,2.7_1,
 kdesupport,hupnp,1.0.0,
 binary,virtuoso,6.1.6,
-win32libs,sqlite,3.7.15.2,
 win32libs,libcurl,7.20.0,
 win32libs,yajl,1.0.12,
 win32libs,raptor2,2.0.8,
@@ -186,7 +186,7 @@ win32libs,libmsn,4.1,
 win32libs,mpir,2.5.0,
 win32libs,libidn,1.19,
 kde,kdenetwork,4.10.2,1
-kde,kdepim-runtime,4.10.2,
+kde,kdepim-runtime,4.10.2,1
 kde,kdepim,4.10.2,1
 kde,kdeplasma-addons,4.10.2,
 kde,okteta,4.10.2,
