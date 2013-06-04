@@ -38,3 +38,15 @@ diff -Nru -x '*~' kdelibs-4.10.2.orig/kioslave/http/tests/CMakeLists.txt kdelibs
  if(GSSAPI_FOUND)
    target_link_libraries(httpobjecttest ${GSSAPI_LIBS})
  endif(GSSAPI_FOUND)
+diff -Nru -x '*~' kdelibs-4.10.2.orig/kfile/kdiroperator.cpp kdelibs-4.10.2/kfile/kdiroperator.cpp
+--- kdelibs-4.10.2.orig/kfile/kdiroperator.cpp	2013-03-01 07:26:14.011780000 +0100
++++ kdelibs-4.10.2/kfile/kdiroperator.cpp	2013-06-03 20:39:40.523920500 +0200
+@@ -1040,7 +1040,7 @@
+ 
+     newurl.adjustPath( KUrl::AddTrailingSlash );
+ #ifdef Q_WS_WIN
+-    QString pathstr = QDir::fromNativeSeparators(newurl.toLocalFile());
++    QString pathstr = (newurl.isLocalFile()) ? QDir::fromNativeSeparators(newurl.toLocalFile()) : newurl.path();
+ #else
+     QString pathstr = newurl.path();
+ #endif
