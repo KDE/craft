@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "grantlee-%s" % ver
         self.patchToApply['0.3.0'] = [("0001-add-plugin-path-depending-on-executable-location.patch", 1),
                                       ("patches/0.3.0/fix-exports-generator-for-intel-compiler.diff", 1)]
+
         self.shortDescription = 'libraries for a template system similar to django\'s'
         self.defaultTarget = '0.3.0'
 

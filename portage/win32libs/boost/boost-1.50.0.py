@@ -2,7 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['1.50.0', '1.52.0'] = ''
+        for ver in ['1.50.0', '1.52.0']:
+            self.svnTargets[ver] = ''
         self.defaultTarget = '1.52.0'
 
         self.homepage = 'http://www.boost.org/'
