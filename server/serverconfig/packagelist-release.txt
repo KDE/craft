@@ -47,7 +47,7 @@ win32libs,librdf,1.0.14,
 kdesupport,soprano,v2.9.0,
 kdesupport,qimageblitz,20130212,
 data,shared-desktop-ontologies,0.10.0,
-kde,kdelibs,4.10.2,2
+kde,kdelibs,4.10.2,3
 kde,kactivities,4.10.2,
 win32libs,openldap,2.4.33,
 win32libs,libical,0.44,
