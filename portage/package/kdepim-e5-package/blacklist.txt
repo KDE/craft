@@ -4,14 +4,19 @@
 # Author: Andre Heinecke <aheinecke@intevation.de>
 #
 
+# Temporary while nepomuk is broken
+nepomukfile.*\.desktop
+# virtuoso-20100330
+
 # Complete Packages:
-mysql.*-\d+\.\d+\.\d+
+# mysql.*-\d+\.\d+\.\d+
 
 # Some general build directories
 include$
 manifest$
 hosting$
 dev-utils
+tests$
 
 # Development files
 cmake$
@@ -26,10 +31,19 @@ cmake$
 \.pdb$
 
 # Individual executables
+ldapadd\.exe
+ldapcompare\.exe
+ldapdelete\.exe
+ldapexop\.exe
+ldapmodify\.exe
+ldapmodrdn\.exe
+ldappasswd\.exe
+ldapsearch\.exe
+ldapwhoami\.exe
+ldapurl\.exe
 QtDesignerComponents4\.dll
 onto2vocabularyclass\.exe
 makekdewidgets\.exe
-meinproc4\.exe
 moc\.exe
 linguist\.exe
 lrelease\.exe
@@ -47,6 +61,7 @@ kabc2mutt\.exe
 blitztest\.exe
 virtuoso-clr-t\.exe
 virtuoso-sample-t\.exe
+php5ts\.dll
 qt3to4\.exe
 .*_unittest\.exe
 hmac256\.exe
@@ -71,6 +86,57 @@ xml.*\.exe
 meinproc4_simpile\*.exe
 win_iconv\.exe
 aspell\.exe
+bjam\.exe
+curl\.exe
+mt\.exe
+
+pcregrep\.exe
+pcretest\.exe
+qcatool2\.exe
+
+# mysql binaries
+echo\.exe
+libmysqld\.dll
+myisamchk\.exe
+myisamlog\.exe
+myisampack\.exe
+myisam_ftdump\.exe
+mysqlbinlog\.exe
+mysqlcheck\.exe
+mysqldump\.exe
+mysqlimport\.exe
+mysqlshow\.exe
+mysqlslap\.exe
+mysql_embedded\.exe
+mysql_plugin\.exe
+mysql_tzinfo_to_sql\.exe
+mysql_upgrade\.exe
+my_print_defaults\.exe
+perror\.exe
+replace\.exe
+resolveip\.exe
+
+# xerces-c package:
+CreateDOMDocument\.exe
+DOMCount\.exe
+DOMPrint\.exe
+EnumVal\.exe
+MemParse\.exe
+PParse\.exe
+PSVIWriter\.exe
+Redirect\.exe
+SAX2Count\.exe
+SAX2Print\.exe
+SAXCount\.exe
+SAXPrint\.exe
+SCMPrint\.exe
+SEnumVal\.exe
+StdInParse\.exe
+xerces-c_3_1D\.dll
+XInclude\.exe
+
+json_reformat\.exe
+json_verify\.exe
 
 # languages apart from german
 # TODO: split this part up in language dependend lists
@@ -124,7 +190,7 @@ translations$
 \\gzip$
 \\help$
 \\http$
-\\imap$
+doc.*\\imap$
 \\info$
 \\juk$
 \\k3b$
@@ -277,6 +343,8 @@ translations$
 \\xz$
 
 # Other
+phonon-buildsystem$
+^share\\autostart$
 ^vad$
 ^ssl$
 ^vsp$
@@ -302,3 +370,6 @@ translations$
 \.svg$
 \.svgz$
 ^README\.txt$
+^lib\\boost_.*$
+^lib\\HUpnp1\.dll$
+^lib\\libvirtuoso-t\.dll$
