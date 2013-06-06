@@ -31,10 +31,9 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        if self.subinfo.features.akonadiBackendSqlite:
-            self.subinfo.options.configure.defines = (
-                    " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
-                    " -DDATABASE_BACKEND=SQLITE " )
+        self.subinfo.options.configure.defines = (
+                " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
+                " -DDATABASE_BACKEND=SQLITE " )
 
 
 if __name__ == '__main__':
