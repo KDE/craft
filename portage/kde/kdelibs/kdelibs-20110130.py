@@ -34,13 +34,17 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
-        self.dependencies['kdesupport/soprano'] = 'default'
-        self.dependencies['kdesupport/strigi'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kdesupport/soprano'] = 'default'
+            self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
-        self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+        if self.options.features.phononBackend.vlc:
+            self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+        elif self.options.features.phononBackend.ds9:
+            self.runtimeDependencies['kdesupport/phonon-ds9'] = 'default'
 
 from Package.CMakePackageBase import *
 
