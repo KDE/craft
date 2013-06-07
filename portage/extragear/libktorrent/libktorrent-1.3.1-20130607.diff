@@ -1,0 +1,102 @@
+diff -Nru -x '*~' libktorrent-1.3.1.orig/cmake/modules/FindLibGcrypt.cmake libktorrent-1.3.1/cmake/modules/FindLibGcrypt.cmake
+--- libktorrent-1.3.1.orig/cmake/modules/FindLibGcrypt.cmake	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/cmake/modules/FindLibGcrypt.cmake	2013-06-07 14:51:09.787068500 +0200
+@@ -24,8 +24,8 @@
+ 		PATHS 
+ 		${KDE4_INCLUDE_DIR}
+ 		${INCLUDE_INSTALL_DIR}
+-		PATH_SUFFIXES
+-		libgcrypt
++#		PATH_SUFFIXES
++#		libgcrypt
+ 	)
+ 	
+ 	FIND_LIBRARY(LIBGCRYPT_LIBRARIES 
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/dht/dht.cpp libktorrent-1.3.1/src/dht/dht.cpp
+--- libktorrent-1.3.1.orig/src/dht/dht.cpp	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/dht/dht.cpp	2013-06-07 15:06:51.230916000 +0200
+@@ -29,6 +29,7 @@
+ #include "node.h"
+ #include "rpcserver.h"
+ #include "rpcmsg.h"
++#include "errmsg.h"
+ #include "kclosestnodessearch.h"
+ #include "database.h"
+ #include "taskmanager.h"
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/diskio/cache.cpp libktorrent-1.3.1/src/diskio/cache.cpp
+--- libktorrent-1.3.1.orig/src/diskio/cache.cpp	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/diskio/cache.cpp	2013-06-07 15:13:36.203079100 +0200
+@@ -22,6 +22,7 @@
+ #include <util/functions.h>
+ #include <util/log.h>
+ #include <util/fileops.h>
++#include <util/error.h>
+ #include <peer/connectionlimit.h>
+ #include <peer/peermanager.h>
+ #include <torrent/torrent.h>
+@@ -167,7 +168,7 @@
+ 		QString mp_file = tmpdir + "mount_points";
+ 		QFile fptr(mp_file);
+ 		if(!fptr.open(QIODevice::WriteOnly))
+-			throw Error(i18n("Failed to create %1: %2", mp_file, fptr.errorString()));
++			throw bt::Error(i18n("Failed to create %1: %2", mp_file, fptr.errorString()));
+ 		
+ 		QTextStream out(&fptr);
+ 		foreach(const QString & mount_point, mount_points)
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/diskio/tests/chunkmanagertest.cpp libktorrent-1.3.1/src/diskio/tests/chunkmanagertest.cpp
+--- libktorrent-1.3.1.orig/src/diskio/tests/chunkmanagertest.cpp	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/diskio/tests/chunkmanagertest.cpp	2013-06-07 15:33:52.319637000 +0200
+@@ -23,6 +23,7 @@
+ #include <KLocale>
+ #include <util/log.h>
+ #include <util/functions.h>
++#include <util/error.h>
+ #include <torrent/torrentcontrol.h>
+ #include <diskio/chunkmanager.h>
+ #include <diskio/piecedata.h>
+@@ -104,8 +105,9 @@
+ 		{
+ 		}
+ 	}
+-	
+-#ifndef Q_CC_MSVC
++
++// Q_CC_MSVC is not defined in moc, so take this ugly workaround instead
++#ifndef MSVC_NO_TEST
+ 	void testBusErrorHandling()
+ 	{
+ 		ChunkManager cman(tor,creator.tempPath(),creator.dataPath(),true,0);
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/diskio/tests/CMakeLists.txt libktorrent-1.3.1/src/diskio/tests/CMakeLists.txt
+--- libktorrent-1.3.1.orig/src/diskio/tests/CMakeLists.txt	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/diskio/tests/CMakeLists.txt	2013-06-07 15:33:25.289090900 +0200
+@@ -1,3 +1,6 @@
++if(MSVC)
++    add_definitions(-DMSVC_NO_TEST)
++endif(MSVC)
+ set(chunkmanagertest_SRCS chunkmanagertest.cpp)
+ kde4_add_unit_test(chunkmanagertest TESTNAME chunkmanagertest ${chunkmanagertest_SRCS})
+ target_link_libraries( chunkmanagertest ${QT_QTTEST_LIBRARY} testlib ktorrent)
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/net/socket.cpp libktorrent-1.3.1/src/net/socket.cpp
+--- libktorrent-1.3.1.orig/src/net/socket.cpp	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/net/socket.cpp	2013-06-07 15:03:17.559694700 +0200
+@@ -355,7 +355,7 @@
+ 		{
+ #if defined(IPV6_TCLASS)
+ 			int c = type_of_service;
+-			if (setsockopt(m_fd,IPPROTO_IPV6,IPV6_TCLASS,&c,sizeof(c)) < 0)
++			if (setsockopt(m_fd,IPPROTO_IPV6,IPV6_TCLASS,(const char*)&c,sizeof(c)) < 0)
+ 			{
+ 				Out(SYS_CON|LOG_NOTICE) << QString("Failed to set traffic class to %1 : %2")
+ 						.arg((int)type_of_service).arg(strerror(errno)) << endl;
+diff -Nru -x '*~' libktorrent-1.3.1.orig/src/peer/connectionlimit.h libktorrent-1.3.1/src/peer/connectionlimit.h
+--- libktorrent-1.3.1.orig/src/peer/connectionlimit.h	2013-01-14 18:09:10.000000000 +0100
++++ libktorrent-1.3.1/src/peer/connectionlimit.h	2013-06-07 15:16:37.749463000 +0200
+@@ -52,7 +52,7 @@
+ 		 * Token representing the allowance to open a connection.
+ 		 * When the token is destroyed, it will be automatically released.
+ 		 */
+-		class Token
++		class KTORRENT_EXPORT Token
+ 		{
+ 		public:
+ 			Token(ConnectionLimit & limit, const bt::SHA1Hash & hash);
