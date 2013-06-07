@@ -1,0 +1,736 @@
+diff -Nru -x '*~' digikam-3.0.0.orig/core/cmake/templates/gitscript.cmake.in_cmake digikam-3.0.0/core/cmake/templates/gitscript.cmake.in_cmake
+--- digikam-3.0.0.orig/core/cmake/templates/gitscript.cmake.in_cmake	2013-02-06 23:51:27.000000000 +0000
++++ digikam-3.0.0/core/cmake/templates/gitscript.cmake.in_cmake	2013-05-23 14:03:59.031042100 +0100
+@@ -5,7 +5,11 @@
+ 
+ # Read the version if installed, else set to "unknown"
+ IF (GITEXEC)
+-    EXEC_PROGRAM(${GITEXEC} ARGS --git-dir=@CMAKE_CURRENT_SOURCE_DIR@/.git rev-parse HEAD OUTPUT_VARIABLE MYVERSION)
++    EXECUTE_PROCESS(COMMAND ${GITEXEC} --git-dir=@CMAKE_CURRENT_SOURCE_DIR@/.git rev-parse HEAD OUTPUT_VARIABLE MYVERSION)
++    IF (MYVERSION)
++        # Remove the newline that git returns
++        STRING(STRIP ${MYVERSION} MYVERSION)
++    ENDIF (MYVERSION)
+ ELSE (GITEXEC)
+     SET(MYVERSION unknown)
+ ENDIF (GITEXEC)
+diff -Nru -x '*~' digikam-3.0.0.orig/core/digikam/album/album.cpp digikam-3.0.0/core/digikam/album/album.cpp
+--- digikam-3.0.0.orig/core/digikam/album/album.cpp	2013-02-06 23:51:27.000000000 +0000
++++ digikam-3.0.0/core/digikam/album/album.cpp	2013-05-23 14:03:59.113046800 +0100
+@@ -420,7 +420,8 @@
+ 
+ QString PAlbum::prettyUrl() const
+ {
+-    QString u = i18n("My Albums") + albumPath();
++    QString u = i18n("My Albums") + albumRootPath().section('/', -1, -1, QString::SectionIncludeLeadingSep) + albumPath();
++    if (u.endsWith('/')) u.truncate(u.length() - 1);
+     return u;
+ }
+ 
+diff -Nru -x '*~' digikam-3.0.0.orig/core/digikam/album/albummanager.cpp digikam-3.0.0/core/digikam/album/albummanager.cpp
+--- digikam-3.0.0.orig/core/digikam/album/albummanager.cpp	2013-02-06 23:51:27.000000000 +0000
++++ digikam-3.0.0/core/digikam/album/albummanager.cpp	2013-05-23 14:03:59.117047000 +0100
+@@ -407,7 +407,7 @@
+         {
+             KMessageBox::error(0, i18n("Failed to backup the existing database file (\"%1\"). "
+                                        "Refusing to replace file without backup, using the existing file.",
+-                                       info.filePath()));
++                                       QDir::toNativeSeparators(info.filePath())));
+             return false;
+         }
+     }
+@@ -424,7 +424,7 @@
+         message = i18n("Failed to copy the old database file (\"%1\") "
+                        "to its new location (\"%2\"). "
+                        "Starting with an empty database.",
+-                       oldFile.filePath(), newFile.filePath());
++                       QDir::toNativeSeparators(oldFile.filePath()), QDir::toNativeSeparators(newFile.filePath()));
+ 
+     KIO::Job* job = KIO::file_copy(oldFile.filePath(), newFile.filePath(), -1,
+                                    KIO::Overwrite /*| KIO::HideProgressInfo*/);
+@@ -461,7 +461,7 @@
+                                                         "<p>Would you like to upgrade the old database file - confirming "
+                                                         "that this database file was indeed created for the pictures located in the folder \"%2\" - "
+                                                         "or ignore the old file and start with a new database?</p> ",
+-                                                        newDir.path(), albumDir.path()),
++                                                        QDir::toNativeSeparators(newDir.path()), QDir::toNativeSeparators(albumDir.path())),
+                                                    i18n("Database Folder"),
+                                                    upgrade, startFresh);
+ 
+@@ -513,7 +513,7 @@
+                                                                   "A database file from an older version of digiKam is found in this folder.</p> "
+                                                                   "<p>Would you like to upgrade the old database file, start with a new database, "
+                                                                   "or copy the current database to this location and continue using it?</p> ",
+-                                                                  newDir.path()),
++                                                                  QDir::toNativeSeparators(newDir.path())),
+                                                              i18n("New database folder"),
+                                                              upgrade, startFresh, copyCurrent);
+                 }
+@@ -523,7 +523,7 @@
+                                                        i18n("<p>You have chosen the folder \"%1\" as the new place to store the database. "
+                                                             "A database file from an older version of digiKam is found in this folder.</p> "
+                                                             "<p>Would you like to upgrade the old database file or start with a new database?</p>",
+-                                                            newDir.path()),
++                                                            QDir::toNativeSeparators(newDir.path())),
+                                                        i18n("New database folder"),
+                                                        upgrade, startFresh);
+                 }
+@@ -549,7 +549,7 @@
+                     copyToNewLocation(oldFile, newFile, i18n("Failed to copy the old database file (\"%1\") "
+                                                              "to its new location (\"%2\"). "
+                                                              "Trying to upgrade old databases.",
+-                                                             oldFile.filePath(), newFile.filePath()));
++                                                             QDir::toNativeSeparators(oldFile.filePath()), QDir::toNativeSeparators(newFile.filePath())));
+                 }
+             }
+             else
+@@ -564,7 +564,7 @@
+                                                        i18n("<p>You have chosen the folder \"%1\" as the new place to store the database.</p>"
+                                                             "<p>Would you like to copy the current database to this location "
+                                                             "and continue using it, or start with a new database?</p> ",
+-                                                            newDir.path()),
++                                                            QDir::toNativeSeparators(newDir.path())),
+                                                        i18n("New database folder"),
+                                                        startFresh, copyCurrent);
+                 }
+@@ -590,7 +590,7 @@
+                                                         "There is already a database file in this location.</p> "
+                                                         "<p>Would you like to use this existing file as the new database, or remove it "
+                                                         "and copy the current database to this place?</p> ",
+-                                                        newDir.path()),
++                                                        QDir::toNativeSeparators(newDir.path())),
+                                                    i18n("New database folder"),
+                                                    replaceItem, useExistingItem);
+             }
+@@ -853,7 +853,7 @@
+         QLabel* mainLabel = new QLabel(
+             i18n("<p>The collection </p><p><b>%1</b><br/>(%2)</p><p> is currently not found on your system.<br/> "
+                  "Please choose the most appropriate option to handle this situation:</p>",
+-                 loc.label(), locDescription));
++                 loc.label(), QDir::toNativeSeparators(locDescription)));
+         mainLabel->setWordWrap(true);
+         mainLayout->addWidget(mainLabel, 0, 1);
+ 
+@@ -880,7 +880,7 @@
+ 
+             for (int i = 0; i < candidateIds.size(); ++i)
+             {
+-                migrateChoices->addItem(candidateDescriptions.at(i), candidateIds.at(i));
++                migrateChoices->addItem(QDir::toNativeSeparators(candidateDescriptions.at(i)), candidateIds.at(i));
+             }
+ 
+             layout->addWidget(migrateButton,  0, 0, Qt::AlignTop);
+@@ -1311,7 +1311,7 @@
+             if (!parent)
+             {
+                 kError() <<  "Could not find parent with url: "
+-                         << parentPath << " for: " << info.relativePath;
++                         << QDir::toNativeSeparators(parentPath) << " for: " << QDir::toNativeSeparators(info.relativePath);
+                 continue;
+             }
+ 
+diff -Nru -x '*~' digikam-3.0.0.orig/core/digikam/items/imagecategorydrawer.cpp digikam-3.0.0/core/digikam/items/imagecategorydrawer.cpp
+--- digikam-3.0.0.orig/core/digikam/items/imagecategorydrawer.cpp	2013-02-06 23:51:27.000000000 +0000
++++ digikam-3.0.0/core/digikam/items/imagecategorydrawer.cpp	2013-05-23 14:03:59.145048600 +0100
+@@ -282,7 +282,7 @@
+         *subLine        += " - " + caption.replace('\n', ' ');
+     }
+ 
+-    *header = album->prettyUrl().left(-1);
++    *header = album->prettyUrl();
+ }
+ 
+ void ImageCategoryDrawer::textForTAlbum(TAlbum* talbum, bool recursive, int count, QString* header,
+diff -Nru -x '*~' digikam-3.0.0.orig/core/digikam/main/digikamapp.cpp digikam-3.0.0/core/digikam/main/digikamapp.cpp
+--- digikam-3.0.0.orig/core/digikam/main/digikamapp.cpp	2013-02-06 23:51:27.000000000 +0000
++++ digikam-3.0.0/core/digikam/main/digikamapp.cpp	2013-05-23 14:03:59.150048900 +0100
+@@ -1908,7 +1908,7 @@
+ 
+         // Create Camera UI
+ 
+-        QString path = access->filePath();
++        QString path = QDir::fromNativeSeparators(access->filePath());
+ 
+         if (mediaLabel.isNull())
+         {
+@@ -2242,7 +2242,7 @@
+             {
+                 if (!access->filePath().isEmpty())
+                     label += i18nc("<drive type> \"<device name or label>\" at <mount path>",
+-                                   "%1 \"%2\" at %3", driveType, labelOrProduct, access->filePath());
++                                   "%1 \"%2\" at %3", driveType, labelOrProduct, QDir::toNativeSeparators(access->filePath()));
+                 else
+                     label += i18nc("<drive type> \"<device name or label>\"",
+                                    "%1 \"%2\"", driveType, labelOrProduct);
+@@ -2251,7 +2251,7 @@
+             {
+                 if (!access->filePath().isEmpty())
+                     label += i18nc("<drive type> at <mount path>",
+-                                   "%1 at %2", driveType, access->filePath());
++                                   "%1 at %2", driveType, QDir::toNativeSeparators(access->filePath()));
+                 else
+                 {
+                     label += driveType;
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/3rdparty/kmemoryinfo/kmemoryinfo_backend.cpp digikam-3.0.0/core/libs/3rdparty/kmemoryinfo/kmemoryinfo_backend.cpp
+--- digikam-3.0.0.orig/core/libs/3rdparty/kmemoryinfo/kmemoryinfo_backend.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/3rdparty/kmemoryinfo/kmemoryinfo_backend.cpp	2013-05-31 23:47:26.917149400 +0100
+@@ -70,7 +70,7 @@
+ #include <sys/pstat.h>
+ #include <unistd.h>
+ #endif
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+ #include <windows.h>
+ //#include "win32.h"
+ #endif
+@@ -198,7 +198,7 @@
+     size_t size;
+     int pagesize, page_multiplier;
+ #endif
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+     MEMORYSTATUSEX memstats;
+ #endif
+ 
+@@ -384,7 +384,7 @@
+     data->totalRam = (data->usedRam + data->freeRam);
+ #endif
+ 
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+     memstats.dwLength = sizeof(memstats);
+     if (!GlobalMemoryStatusEx(&memstats)) {
+         //sg_set_error_with_errno(SG_ERROR_MEMSTATUS, NULL);
+@@ -437,7 +437,7 @@
+ #include <unistd.h>
+ #define SWAP_BATCH 5
+ #endif
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+ #include <windows.h>
+ #endif
+ 
+@@ -472,7 +472,7 @@
+ #if defined(Q_OS_NETBSD) || defined(Q_OS_OPENBSD)
+     struct uvmexp *uvm;
+ #endif
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+     MEMORYSTATUSEX memstats;
+ #endif
+ 
+@@ -601,7 +601,7 @@
+     data->usedSwap = (long long)uvm->pagesize * (long long)uvm->swpginuse;
+     data->freeSwap = data->totalSwap - data->usedSwap;
+ #endif
+-#ifdef Q_OS_WIN32
++#ifdef Q_OS_WIN
+     memstats.dwLength = sizeof(memstats);
+     if (!GlobalMemoryStatusEx(&memstats)) {
+         //sg_set_error_with_errno(SG_ERROR_MEMSTATUS, "GloblaMemoryStatusEx");
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/database/collectionmanager.cpp digikam-3.0.0/core/libs/database/collectionmanager.cpp
+--- digikam-3.0.0.orig/core/libs/database/collectionmanager.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/database/collectionmanager.cpp	2013-05-23 14:03:59.154049100 +0100
+@@ -365,7 +365,7 @@
+ 
+         SolidVolumeInfo info;
+         info.udi = accessDevice.udi();
+-        info.path = access->filePath();
++        info.path = QDir::fromNativeSeparators(access->filePath());
+         info.isMounted = access->isAccessible();
+ 
+         if (!info.path.isEmpty() && !info.path.endsWith('/'))
+@@ -614,13 +614,13 @@
+         {
+             return i18nc("\"relative path\" on harddisk partition with \"UUID\"",
+                          "Folder \"%1\" on the volume with the id \"%2\"",
+-                         albumLoc->specificPath, queryItem);
++                         QDir::toNativeSeparators(albumLoc->specificPath), queryItem);
+         }
+         else if (!(queryItem = url.queryItem("label")).isNull())
+         {
+             return i18nc("\"relative path\" on harddisk partition with \"label\"",
+                          "Folder \"%1\" on the volume labeled \"%2\"",
+-                         albumLoc->specificPath, queryItem);
++                         QDir::toNativeSeparators(albumLoc->specificPath), queryItem);
+         }
+         else if (!(queryItem = url.queryItem("mountpath")).isNull())
+         {
+@@ -634,7 +634,7 @@
+         // FIXME: unreachable code??? What should this code really do?
+         if (!(queryItem =  url.queryItem("mountpath")).isNull())
+         {
+-            return QString("\"%1\"").arg(queryItem);
++            return i18nc("@info", "Shared directory mounted at <filename>%1</filename>", QDir::toNativeSeparators(queryItem));
+         }
+     }
+ 
+@@ -885,7 +885,7 @@
+     {
+         if (message)
+         {
+-            *message = i18n("There is already a collection containing the folder \"%1\"", path);
++            *message = i18n("There is already a collection containing the folder \"%1\"", QDir::toNativeSeparators(path));
+         }
+ 
+         if (iconName)
+@@ -997,7 +997,7 @@
+             if (message)
+                 *message = i18n("This entry will only be identified by the path where it is found on your system (\"%1\"). "
+                                 "No more specific means of identification (UUID, label) is available.",
+-                                volume.path);
++                                QDir::toNativeSeparators(volume.path));
+ 
+             if (iconName)
+             {
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/dimg/filters/randomnumbergenerator.cpp digikam-3.0.0/core/libs/dimg/filters/randomnumbergenerator.cpp
+--- digikam-3.0.0.orig/core/libs/dimg/filters/randomnumbergenerator.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/dimg/filters/randomnumbergenerator.cpp	2013-05-31 23:46:07.704618700 +0100
+@@ -47,7 +47,7 @@
+ 
+ NonDeterministicRandomData::NonDeterministicRandomData(int s)
+ {
+-#ifndef Q_OS_WIN32
++#ifndef Q_OS_WIN
+     {
+         // Try urandom for UNIX platforms.
+         QFile urandom("/dev/urandom");
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/imageproperties/imagepropertiestab.cpp digikam-3.0.0/core/libs/imageproperties/imagepropertiestab.cpp
+--- digikam-3.0.0.orig/core/libs/imageproperties/imagepropertiestab.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/imageproperties/imagepropertiestab.cpp	2013-05-23 14:03:59.158049300 +0100
+@@ -27,6 +27,7 @@
+ 
+ #include <QGridLayout>
+ #include <QStyle>
++#include <QDir>
+ #include <QFile>
+ #include <QPixmap>
+ #include <QPainter>
+@@ -484,7 +485,7 @@
+     setEnabled(true);
+ 
+     d->labelFile->setText(url.fileName());
+-    d->labelFolder->setText(url.directory());
++    d->labelFolder->setText(QDir::toNativeSeparators(url.directory()));
+ }
+ 
+ void ImagePropertiesTab::setPhotoInfoDisable(const bool b)
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/jpegutils/jpegutils.cpp digikam-3.0.0/core/libs/jpegutils/jpegutils.cpp
+--- digikam-3.0.0.orig/core/libs/jpegutils/jpegutils.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/jpegutils/jpegutils.cpp	2013-05-31 23:48:52.725057400 +0100
+@@ -388,32 +388,40 @@
+ 
+     for (int i=0; i<actions.size(); i++)
+     {
+-        SafeTemporaryFile temp(dir + "/JpegRotator-XXXXXX.digikamtempfile.jpg");
+-        temp.setAutoRemove(false);
+-        temp.open();
++        SafeTemporaryFile* temp = new SafeTemporaryFile(dir + "/JpegRotator-XXXXXX.digikamtempfile.jpg");
++        temp->setAutoRemove(false);
++        temp->open();
++        QString tempFile = temp->fileName();
++        // Crash fix: a QTemporaryFile is not properly closed until its destructor is called.
++        delete temp;
+ 
+-        if (!performJpegTransform(actions[i], src, temp))
++        if (!performJpegTransform(actions[i], src, tempFile))
+         {
++            ::unlink(QFile::encodeName(tempFile));
+             kError() << "JPEG transform of" << src << "failed";
+             return false;
+         }
+-
++        
+         if (i+1 != actions.size())
+         {
+             // another round
+-            src = temp.fileName();
+-            unlinkLater << temp.fileName();
++            src = tempFile;
++            unlinkLater << tempFile;
+             continue;
+         }
+ 
+         // finalize
+-        updateMetadata(temp.fileName(), matrix);
++        updateMetadata(tempFile, matrix);
+ 
+         // atomic rename
+-        if (::rename(QFile::encodeName(temp.fileName()), QFile::encodeName(m_destFile)) != 0)
++#ifndef Q_OS_WIN
++        if (::rename(QFile::encodeName(tempFile), QFile::encodeName(dest)) != 0)
++#else
++        if (::MoveFileEx(tempFile.utf16(), dest.utf16(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
++#endif
+         {
+-            unlinkLater << temp.fileName();
+-            kError() << "Renaming" << temp.fileName() << "to" << m_destFile << "failed";
++            unlinkLater << tempFile;
++            kError() << "Renaming" << tempFile << "to" << dest << "failed";
+             break;
+         }
+     }
+@@ -474,7 +482,7 @@
+         }
+     }
+ 
+-#ifndef Q_OS_WIN32
++#ifndef Q_OS_WIN
+     // restore permissions
+     if (::chmod(QFile::encodeName(fileName), st.st_mode) != 0)
+     {
+@@ -486,10 +494,10 @@
+ #endif
+ }
+ 
+-bool JpegRotator::performJpegTransform(TransformAction action, const QString& src, QFile& dest)
++bool JpegRotator::performJpegTransform(TransformAction action, const QString& src, const QString& dest)
+ {
+     QByteArray in                   = QFile::encodeName(src);
+-    QByteArray out                  = QFile::encodeName(dest.fileName());
++    QByteArray out                  = QFile::encodeName(dest);
+ 
+     JCOPY_OPTION copyoption         = JCOPYOPT_ALL;
+     jpeg_transform_info transformoption;
+@@ -541,7 +549,7 @@
+         return false;
+     }
+ 
+-    output_file = fdopen(dest.handle(), "wb");
++    output_file = fopen(out, "wb");
+ 
+     if (!output_file)
+     {
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/jpegutils/jpegutils.h digikam-3.0.0/core/libs/jpegutils/jpegutils.h
+--- digikam-3.0.0.orig/core/libs/jpegutils/jpegutils.h	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/jpegutils/jpegutils.h	2013-05-27 13:46:20.214062100 +0100
+@@ -112,7 +112,7 @@
+ protected:
+ 
+     void updateMetadata(const QString& fileName, const RotationMatrix& matrix);
+-    bool performJpegTransform(TransformAction action, const QString& src, QFile& dest);
++    bool performJpegTransform(TransformAction action, const QString& src, const QString& dest);
+ };
+ 
+ DIGIKAM_EXPORT bool loadJPEGScaled(QImage& image, const QString& path, int maximumSize);
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/threadimageio/thumbnailcreator.cpp digikam-3.0.0/core/libs/threadimageio/thumbnailcreator.cpp
+--- digikam-3.0.0.orig/core/libs/threadimageio/thumbnailcreator.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/threadimageio/thumbnailcreator.cpp	2013-06-01 23:18:39.000115600 +0100
+@@ -1081,6 +1081,7 @@
+ 
+             temp.close();
+ 
++#ifndef Q_OS_WIN
+ #if KDE_IS_VERSION(4,2,85)
+             // KDE 4.3.0
+             ret = KDE::rename(QFile::encodeName(tempFileName),
+@@ -1092,6 +1093,9 @@
+ #endif
+ 
+             if (ret != 0)
++#else
++            if(::MoveFileEx(tempFileName.utf16(), thumbPath.utf16(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
++#endif
+             {
+                 kDebug() << "Cannot rename thumb file (" << tempFileName << ")";
+                 kDebug() << "to (" << thumbPath << ")...";
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/widgets/common/databasewidget.cpp digikam-3.0.0/core/libs/widgets/common/databasewidget.cpp
+--- digikam-3.0.0.orig/core/libs/widgets/common/databasewidget.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/widgets/common/databasewidget.cpp	2013-05-23 14:03:59.190051200 +0100
+@@ -222,11 +222,13 @@
+ 
+     if (!newPath.isEmpty() && !QDir::isAbsolutePath(newPath))
+     {
+-        databasePathEdit->setUrl(QString(QDir::homePath() + QLatin1Char('/') + newPath));
++        databasePathEdit->setUrl(QString(QDir::homePath() + QLatin1Char('/') + QDir::fromNativeSeparators(newPath)));
+     }
+ 
+ #endif
+ 
++    databasePathEdit->setText(QDir::toNativeSeparators(databasePathEdit->text()));
++
+     checkDBPath();
+ }
+ 
+diff -Nru -x '*~' digikam-3.0.0.orig/core/libs/widgets/common/splashscreen.cpp digikam-3.0.0/core/libs/widgets/common/splashscreen.cpp
+--- digikam-3.0.0.orig/core/libs/widgets/common/splashscreen.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/libs/widgets/common/splashscreen.cpp	2013-05-31 23:46:01.602269700 +0100
+@@ -96,7 +96,7 @@
+     // Under Linux, only test versions has Beta stage.
+     bool isBeta = !QString(digikam_version_suffix).isEmpty();
+ 
+-#if defined Q_OS_WIN32
++#if defined Q_OS_WIN
+     isBeta = true;   // Windows version is always beta for the moment.
+ #elif defined Q_OS_MACX
+     isBeta = true;   // MAC version is always beta for the moment.
+diff -Nru -x '*~' digikam-3.0.0.orig/core/showfoto/main/showfoto.cpp digikam-3.0.0/core/showfoto/main/showfoto.cpp
+--- digikam-3.0.0.orig/core/showfoto/main/showfoto.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/showfoto/main/showfoto.cpp	2013-05-23 14:03:59.194051400 +0100
+@@ -739,7 +739,7 @@
+                      "%1 (%2 of %3)", d->currentItem->url().fileName(),
+                      index, d->itemsNb);
+ 
+-        setCaption(d->currentItem->url().directory());
++        setCaption(QDir::toNativeSeparators(d->currentItem->url().directory()));
+     }
+     else
+     {
+diff -Nru -x '*~' digikam-3.0.0.orig/core/utilities/imageeditor/editor/editorwindow.cpp digikam-3.0.0/core/utilities/imageeditor/editor/editorwindow.cpp
+--- digikam-3.0.0.orig/core/utilities/imageeditor/editor/editorwindow.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/utilities/imageeditor/editor/editorwindow.cpp	2013-05-31 23:45:41.288107800 +0100
+@@ -1311,7 +1311,7 @@
+     {
+ 
+         QFileInfo fi(m_canvas->currentImageFilePath());
+-        QString warnMsg(i18n("About to overwrite file \"%1\"\nAre you sure?", fi.fileName()));
++        QString warnMsg(i18n("About to overwrite file \"%1\"\nAre you sure?", QDir::toNativeSeparators(fi.fileName())));
+         return (KMessageBox::warningContinueCancel(this,
+                                                    warnMsg,
+                                                    i18n("Warning"),
+@@ -1998,7 +1998,7 @@
+     if (!m_savingContext.saveTempFile->open())
+     {
+         KMessageBox::error(this, i18n("Could not open a temporary file in the folder \"%1\": %2 (%3)",
+-                                      tempDir, m_savingContext.saveTempFile->errorString(),
++                                      QDir::toNativeSeparators(tempDir), m_savingContext.saveTempFile->errorString(),
+                                       m_savingContext.saveTempFile->error()));
+         return;
+     }
+@@ -2664,11 +2664,11 @@
+     if (info.isSymLink())
+     {
+         dest = info.symLinkTarget();
+-        kDebug() << "Target filePath" << dest << "is a symlink pointing to"
+-                 << dest << ". Storing image there.";
++        kDebug() << "Target filePath" << QDir::toNativeSeparators(dest) << "is a symlink pointing to"
++                 << QDir::toNativeSeparators(dest) << ". Storing image there.";
+     }
+ 
+-#ifndef Q_OS_WIN32
++#ifndef Q_OS_WIN
+     QByteArray dstFileName = QFile::encodeName(dest);
+ 
+     // Store old permissions:
+@@ -2697,7 +2697,7 @@
+         return false;
+     }
+ 
+-#ifndef Q_OS_WIN32
++#ifndef Q_OS_WIN
+ 
+     // restore permissions
+     if (::chmod(dstFileName, filePermissions) != 0)
+diff -Nru -x '*~' digikam-3.0.0.orig/core/utilities/importui/backend/umscamera.cpp digikam-3.0.0/core/utilities/importui/backend/umscamera.cpp
+--- digikam-3.0.0.orig/core/utilities/importui/backend/umscamera.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/utilities/importui/backend/umscamera.cpp	2013-05-23 14:03:59.203051900 +0100
+@@ -646,7 +646,7 @@
+ 
+         Solid::StorageVolume* const volume = volumeDevice.as<Solid::StorageVolume>();
+ 
+-        if (m_path.startsWith(access->filePath()))
++        if (m_path.startsWith(QDir::fromNativeSeparators(access->filePath())))
+         {
+             m_uuid = volume->uuid();
+         }
+diff -Nru -x '*~' digikam-3.0.0.orig/core/utilities/setup/setupcollectionview.cpp digikam-3.0.0/core/utilities/setup/setupcollectionview.cpp
+--- digikam-3.0.0.orig/core/utilities/setup/setupcollectionview.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/utilities/setup/setupcollectionview.cpp	2013-05-23 14:03:59.206052100 +0100
+@@ -486,7 +486,7 @@
+ 
+         foreach(const Item& item, failedItems)
+         {
+-            failedPaths << item.path;
++            failedPaths << QDir::toNativeSeparators(item.path);
+         }
+ 
+         KMessageBox::errorList(m_dialogParentWidget,
+@@ -589,7 +589,7 @@
+                 if (path == item.path || path.startsWith(item.path + '/'))
+                 {
+                     messageFromManager = i18n("You have previously added a collection "
+-                                              "that contains the path \"%1\".", path);
++                                              "that contains the path \"%1\".", QDir::toNativeSeparators(path));
+                     result = CollectionManager::LocationNotAllowed;
+                     break;
+                 }
+@@ -828,12 +828,12 @@
+                 {
+                     if (!item.path.isNull())
+                     {
+-                        return item.path;
++                        return QDir::toNativeSeparators(item.path);
+                     }
+ 
+                     //TODO: Path can be empty for items not available,
+                     // query more info from CollectionManager
+-                    return item.location.albumRootPath();
++                    return QDir::toNativeSeparators(item.location.albumRootPath());
+                 }
+ 
+                 break;
+diff -Nru -x '*~' digikam-3.0.0.orig/core/utilities/setup/setupicc.cpp digikam-3.0.0/core/utilities/setup/setupicc.cpp
+--- digikam-3.0.0.orig/core/utilities/setup/setupicc.cpp	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/utilities/setup/setupicc.cpp	2013-05-23 14:03:59.210052300 +0100
+@@ -534,6 +534,9 @@
+ 
+     connect(d->defaultPathKU, SIGNAL(urlSelected(KUrl)),
+             this, SLOT(slotUrlChanged()));
++    
++    connect(d->defaultPathKU, SIGNAL(textChanged(QString)),
++            this, SLOT(slotUrlTextChanged()));
+ 
+     connect(d->iccFolderLabel, SIGNAL(linkActivated(QString)),
+             this, SLOT(slotShowDefaultSearchPaths()));
+@@ -726,6 +729,11 @@
+     fillCombos(true);
+ }
+ 
++void SetupICC::slotUrlTextChanged()
++{
++    d->defaultPathKU->setText(QDir::toNativeSeparators(d->defaultPathKU->text()));
++}
++
+ void SetupICC::fillCombos(bool report)
+ {
+     if (!d->enableColorManagement->isChecked())
+diff -Nru -x '*~' digikam-3.0.0.orig/core/utilities/setup/setupicc.h digikam-3.0.0/core/utilities/setup/setupicc.h
+--- digikam-3.0.0.orig/core/utilities/setup/setupicc.h	2013-02-06 23:51:28.000000000 +0000
++++ digikam-3.0.0/core/utilities/setup/setupicc.h	2013-05-23 14:03:59.213052500 +0100
+@@ -72,6 +72,7 @@
+     void slotToggledEnabled();
+     void processLcmsUrl(const QString&);
+     void slotUrlChanged();
++    void slotUrlTextChanged();
+     void slotClickedIn();
+     void slotClickedWork();
+     void slotClickedMonitor();
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/cmake/modules/FindQtKOAuth.cmake digikam-3.0.0/extra/kipi-plugins/cmake/modules/FindQtKOAuth.cmake
+--- digikam-3.0.0.orig/extra/kipi-plugins/cmake/modules/FindQtKOAuth.cmake	2013-02-06 23:52:03.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/cmake/modules/FindQtKOAuth.cmake	2013-05-23 14:03:59.216052600 +0100
+@@ -17,12 +17,13 @@
+     set(QTKOAUTH_DEFINITIONS ${PC_QTKOAUTH_CFLAGS_OTHER})
+   endif(NOT WIN32)
+ 
+-  find_library(QTKOAUTH_LIBRARIES NAMES kqoauth
++  find_library(QTKOAUTH_LIBRARIES NAMES kqoauth kqoauth0
+     HINTS ${PC_QTKOAUTH_LIBDIR} ${PC_QTKOAUTH_LIBRARIES_DIRS}
+   )
+ 
+   find_path(QTKOAUTH_INCLUDE_DIR kqoauthmanager.h
+     HINTS ${PC_QTKOAUTH_INCLUDEDIR} ${PC_QTKOAUTH_INCLUDE_DIRS}
++    PATH_SUFFIXES QtKOAuth
+   )
+ 
+   include(FindPackageHandleStandardArgs)
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/cmake/templates/gitscript.cmake.in_cmake digikam-3.0.0/extra/kipi-plugins/cmake/templates/gitscript.cmake.in_cmake
+--- digikam-3.0.0.orig/extra/kipi-plugins/cmake/templates/gitscript.cmake.in_cmake	2013-02-06 23:52:03.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/cmake/templates/gitscript.cmake.in_cmake	2013-05-23 14:03:59.219052800 +0100
+@@ -5,7 +5,11 @@
+ 
+ # Read the version if installed, else set to "unknown"
+ IF (GITEXEC)
+-    EXEC_PROGRAM(${GITEXEC} ARGS --git-dir=@CMAKE_CURRENT_SOURCE_DIR@/.git rev-parse HEAD OUTPUT_VARIABLE MYVERSION)
++    EXECUTE_PROCESS(COMMAND ${GITEXEC} --git-dir=@CMAKE_CURRENT_SOURCE_DIR@/.git rev-parse HEAD OUTPUT_VARIABLE MYVERSION)
++    IF (MYVERSION)
++        # Remove the newline that git returns
++        STRING(STRIP ${MYVERSION} MYVERSION)
++    ENDIF (MYVERSION)
+ ELSE (GITEXEC)
+     SET(MYVERSION unknown)
+ ENDIF (GITEXEC)
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/imgurexport/imgurtalkerauth.cpp digikam-3.0.0/extra/kipi-plugins/imgurexport/imgurtalkerauth.cpp
+--- digikam-3.0.0.orig/extra/kipi-plugins/imgurexport/imgurtalkerauth.cpp	2013-02-06 23:52:04.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/imgurexport/imgurtalkerauth.cpp	2013-05-23 14:03:59.257055000 +0100
+@@ -133,7 +133,7 @@
+ 
+     kDebug() << "Authenticated upload of" << currentUrl();
+ 
+-    state = IE_ADDPHOTO;
++    m_state = IE_ADDPHOTO;
+ 
+     emit signalUploadStart(filePath);
+     emit signalBusy(true);
+@@ -176,7 +176,7 @@
+ 
+ void ImgurTalkerAuth::slotOAuthLogin()
+ {
+-    state = IE_LOGIN;
++    m_state = IE_LOGIN;
+ 
+     d->OAuthRequest->initRequest(KQOAuthRequest::TemporaryCredentials, KUrl(ImgurConnection::OAuthTokenEndPoint()));
+     d->OAuthRequest->setConsumerKey(d->consumerKey.data());
+@@ -279,17 +279,17 @@
+ {
+     d->continueUpload = yes;
+ 
+-    if (yes && !queue->isEmpty())
++    if (yes && !m_queue->isEmpty())
+     {
+         if (!d->OAuthService->isAuthorized())
+         {
+             // not authenticated, we upload anonymously
+-            ImgurTalker::imageUpload (queue->first());
++            ImgurTalker::imageUpload (m_queue->first());
+         }
+         else
+         {
+             // the top of the queue was already removed - first() is a new image
+-            imageUpload (queue->first());
++            imageUpload (m_queue->first());
+         }
+     }
+ 
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/panorama/CMakeLists.txt digikam-3.0.0/extra/kipi-plugins/panorama/CMakeLists.txt
+--- digikam-3.0.0.orig/extra/kipi-plugins/panorama/CMakeLists.txt	2013-02-06 23:52:04.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/panorama/CMakeLists.txt	2013-05-23 14:03:59.260055200 +0100
+@@ -89,7 +89,7 @@
+ 
+ SET(panorama_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/plugin/panorama.cpp)
+ 
+-KDE4_ADD_APP_ICON(panoramagui_SRCS "./icons/*panorama.png")
++KDE4_ADD_APP_ICON(panorama_SRCS "./icons/*panorama.png")
+ 
+ KDE4_ADD_EXECUTABLE(panoramagui ${panorama_SRCS})
+ 
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/rawconverter/dialogs/batchdialog.cpp digikam-3.0.0/extra/kipi-plugins/rawconverter/dialogs/batchdialog.cpp
+--- digikam-3.0.0.orig/extra/kipi-plugins/rawconverter/dialogs/batchdialog.cpp	2013-02-06 23:52:04.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/rawconverter/dialogs/batchdialog.cpp	2013-05-31 23:41:34.601998200 +0100
+@@ -526,7 +526,11 @@
+             }
+         }
+ 
++#ifndef Q_OS_WIN
+         if (::rename(QFile::encodeName(tmpFile), QFile::encodeName(destFile)) != 0)
++#else
++        if (::MoveFileEx(tmpFile.utf16(), destFile.utf16(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
++#endif
+         {
+             item->setStatus(QString("Failed to save image."));
+             d->listView->processed(url, false);
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/kipi-plugins/rawconverter/dialogs/singledialog.cpp digikam-3.0.0/extra/kipi-plugins/rawconverter/dialogs/singledialog.cpp
+--- digikam-3.0.0.orig/extra/kipi-plugins/rawconverter/dialogs/singledialog.cpp	2013-02-06 23:52:04.000000000 +0000
++++ digikam-3.0.0/extra/kipi-plugins/rawconverter/dialogs/singledialog.cpp	2013-05-31 23:42:29.811155900 +0100
+@@ -465,7 +465,11 @@
+             }
+         }
+ 
++#ifndef Q_OS_WIN
+         if (::rename(QFile::encodeName(tmpFile), QFile::encodeName(destFile)) != 0)
++#else
++        if (::MoveFileEx(tmpFile.utf16(), destFile.utf16(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
++#endif
+         {
+             KMessageBox::error(this, i18n("Failed to save image %1", destFile));
+         }
+diff -Nru -x '*~' digikam-3.0.0.orig/extra/libkdcraw/libraw/CMakeLists.txt digikam-3.0.0/extra/libkdcraw/libraw/CMakeLists.txt
+--- digikam-3.0.0.orig/extra/libkdcraw/libraw/CMakeLists.txt	2013-02-06 23:52:09.000000000 +0000
++++ digikam-3.0.0/extra/libkdcraw/libraw/CMakeLists.txt	2013-05-23 14:03:59.264055400 +0100
+@@ -108,6 +108,7 @@
+ 
+ # Flag to use libjpeg with LibRaw DNG lossy codec
+ IF(JPEG_FOUND)
++    ADD_DEFINITIONS(-DUSE_JPEG)
+     ADD_DEFINITIONS(-DUSE_JPEG8)
+     INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR})
+ ENDIF()
