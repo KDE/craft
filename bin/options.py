@@ -39,6 +39,21 @@ class OptionsBase(object):
     def __init__(self):
         pass
 
+## options for enabling or disabling features of KDE
+## in the future, a certain set of features make up a 'profile' together
+class OptionsFeatures(OptionsBase):
+    def __init__(self):
+        class PhononBackend(OptionsBase):
+            def __init__(self):
+                ## options for the phonon backend
+                self.vlc = True
+                self.ds9 = False
+
+        self.phononBackend = PhononBackend()
+
+        ## options whether to build nepomuk
+        self.nepomuk = True
+
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):
@@ -170,6 +185,8 @@ class OptionsGit(OptionsBase):
 ## main option class
 class Options(object):
     def __init__(self):
+        ## options for the dependency generation
+        self.features = OptionsFeatures()
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
@@ -235,51 +252,59 @@ class Options(object):
         if 'EMERGE_OPTIONS' in os.environ:
             self.__readFromString(os.environ['EMERGE_OPTIONS'])
 
-    def __collectAttributes( self ):
-        """ collect all public attributes this class and subclasses """
-        temp = dict()
+    def __collectAttributes( self, instance=None, container=None ):
+        """ collect all public attributes this class and subclasses
+        """
+        if instance == None: instance = self
+        if container == None: container = self.__instances
+        # first save instance object
+        container['.'] = [instance, dict()]
 
-        for key, value in inspect.getmembers(self):
-            if key.startswith('__'):
+        # now check all children
+        for key, value in inspect.getmembers(instance):
+            if key.startswith('__') or type(value).__name__.startswith('instance'):
                 continue
             if inspect.ismethod(value):
                 continue
+            # we have found a child that in itself could have children again
             if isinstance(value, OptionsBase):
-                # collect attributes of instance one level below
-                sattributes = dict()
-                for skey, svalue in inspect.getmembers(value):
-                    if skey.startswith('__') or type(svalue).__name__.startswith('instance'):
-                        continue
-                    sattributes[skey.lower()] = [ skey, svalue ]
-                self.__instances[key.lower()] = [ key, value, sattributes ]
+                container[key.lower()] = dict()
+                self.__collectAttributes(value, container[key.lower()])
             else:
-                temp[key.lower()] = [ key, value ]
+                # simply append properties here
+                container['.'][1][key.lower()] = [key, value]
 
-        self.__instances['.'] = [ '', self, temp ]
         if self.__verbose:
-            for key in self.__instances:
-                print(self.__instances[key])
+            for key in container:
+                print(container[key])
 
-    def __setInstanceAttribute( self, origKey, instanceKey, key, value ):
+    def __setInstanceAttribute( self, key, value ):
         """set attribute in an instance"""
-        a = instanceKey.lower()
-        if not a in self.__instances:
-            if self.__errors:
-                print("instance self.%s not found" % (a))
+        currentObject = None
+        currentKey = None
+        currentDict = self.__instances
+        for keyparticle in key.split('.'):
+            if keyparticle.lower() in currentDict:
+                #print("found keyparticle as branch", keyparticle)
+                currentDict = currentDict[keyparticle.lower()]
+            elif keyparticle.lower() in currentDict['.'][1]:
+                #print("found keyparticle as node", keyparticle)
+                currentObject = currentDict['.'][0]
+                currentKey = currentDict['.'][1][keyparticle.lower()][0]
+        if not currentObject or not currentKey:
             return False
-        i = self.__instances[a][1]
 
-        b = key.lower()
-        if not b in self.__instances[a][2]:
-            if self.__errors:
-                print("key %s not found" % (b))
-            return False
-        setattr( i, self.__instances[a][2][b][0], value )
-        p = ""
-        if self.__instances[a][0]:
-            p += self.__instances[a][0] + '.'
-        if self.__verbose:
-            print("mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value))
+        # if the type is already bool, we'll keep it that way and interpret the string accordingly
+        if type(getattr(currentObject, currentKey)) is bool:
+            value = value in ['True', 'true', '1', 'ON', 'on']
+
+        setattr( currentObject, currentKey, value )
+
+#        p = ""
+#        if self.__instances[a][0]:
+#            p += self.__instances[a][0] + '.'
+#        if self.__verbose:
+#            print("mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value))
         return True
 
     def __readFromString( self, opts ):
@@ -294,11 +319,7 @@ class Options(object):
                 utils.debug('incomplete option %s' % entry, 3)
                 continue
             (key, value) = entry.split( '=', 1 )
-            a = key.split('.')
-            if self.__setInstanceAttribute(key, '.', '.'.join(a[0:]), value ):
-                result = True
-                continue
-            if len(a) >= 2 and self.__setInstanceAttribute(key, a[0], '.'.join(a[1:]), value ):
+            if self.__setInstanceAttribute(key, value ):
                 result = True
                 continue
         return result
