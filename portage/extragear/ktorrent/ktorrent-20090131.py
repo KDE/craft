@@ -5,9 +5,11 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:ktorrent'
-        for version in ['3.2beta1', '3.2rc1', '3.2', '3.2.2', '3.2.3', '3.3beta1']:
+        for version in ['3.2beta1', '3.2rc1', '3.2', '3.2.2', '3.2.3', '3.3beta1', '4.3.1']:
             self.targets[version] = 'http://ktorrent.org/downloads/' + version + '/ktorrent-' + version + '.tar.bz2'
             self.targetInstSrc[version] = 'ktorrent-' + version
+        self.patchToApply['4.3.1'] = [("0001-Do-not-include-signalcatcher.h-in-windows.patch", 1), 
+                                      ("0002-Cast-activateWindow-param-to-improved-portability.patch", 1)]
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
