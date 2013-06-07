@@ -51,8 +51,11 @@ class OptionsFeatures(OptionsBase):
 
         self.phononBackend = PhononBackend()
 
-        ## options whether to build nepomuk
+        ## option whether to build nepomuk
         self.nepomuk = True
+
+        ## whether to build the sqlite backend in akonadi instead of the mysql one
+        self.akonadiBackendSqlite = False
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
