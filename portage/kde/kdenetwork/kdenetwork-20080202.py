@@ -22,6 +22,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['extragear/libktorrent'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs/libidn'] = 'default'
         self.dependencies['win32libs/libmsn'] = 'default'
