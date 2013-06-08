@@ -222,3 +222,8 @@ extragear,skanlite,0.9,
 extragear,skrooge,1.6.0,1
 extragear,libalkimia,4.3.2,
 extragear,kmymoney,4.6.3,
+extragear,kile,gitStable-2.1,
+extragear,libktorrent,1.3.1,
+extragear,ktorrent,4.3.1,
+kdeapps,kbibtex,0.5-beta2,
+kdeapps,kate-contextmenu,gitHEAD,
