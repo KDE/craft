@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = "http://ktorrent.org/downloads/4." + ver[2:] + "/libktorrent-" + ver + ".tar.bz2"
             self.targetInstSrc[ver] = "libktorrent-" + ver
         self.patchToApply['1.3.1'] = [("libktorrent-1.3.1-20130607.diff", 1)]
+        self.shortDescription = "A BitTorrent protocol implementation."
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
