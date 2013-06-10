@@ -56,6 +56,9 @@ class OptionsFeatures(OptionsBase):
 
         ## whether to build the sqlite backend in akonadi instead of the mysql one
         self.akonadiBackendSqlite = False
+        
+        ## enable python support in several packages.
+        self.pythonSupport = False
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):

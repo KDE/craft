@@ -15,7 +15,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/boost-bjam'] = 'default'
         self.dependencies['win32libs/boost-graph'] = 'default'
         self.dependencies['win32libs/boost-program-options'] = 'default'
-        self.dependencies['win32libs/boost-python'] = 'default'
+        if self.options.features.pythonSupport:
+            self.dependencies['win32libs/boost-python'] = 'default'
         self.dependencies['win32libs/boost-regex'] = 'default'
         self.dependencies['win32libs/boost-system'] = 'default'
         self.dependencies['win32libs/boost-thread'] = 'default'
