@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs/freetype'] = 'default'
-#        self.dependencies['win32libs/boost'] = 'default'
+        self.dependencies['win32libs/boost'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
 
 from Package.CMakePackageBase import *
