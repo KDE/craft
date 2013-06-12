@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply["4.10.2"] = [("kde-runtime-4.10.2-20130529.diff", 1),
                                        ("fix-case-sensitivity.diff", 1)]
+        self.patchToApply["4.10.4"] = [("fix-case-sensitivity.diff", 1), ("kde-runtime-4.10.4-20130612.diff", 1)]
 
         self.shortDescription = 'Components for KDE applications required at runtime'
         self.defaultTarget = 'gitHEAD'
