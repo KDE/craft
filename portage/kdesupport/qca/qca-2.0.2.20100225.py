@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['20130212'] = "qca-20130212"
         self.targetDigests['20130212'] = 'c87ef3cfe920fe331de156cf5dda297e835a1dfc'
         self.shortDescription = "Qt Cryptographic Architecture (QCA)"
-        self.defaultTarget = 'svnHEAD'
+        self.defaultTarget = '20130212'
 
 from Package.CMakePackageBase import *
 
