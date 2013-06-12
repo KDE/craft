@@ -19,6 +19,14 @@ class subinfo(info.infoclass):
                                        ("add-new-solid-win-backend.diff", 1),
                                        ("0003-fixed-atatch-to-attachToConsole.patch", 1),
                                        ("0001-KDE-doesnt-know-the-windows-specific-mimetype-aplica.patch", 1)]
+        self.patchToApply["4.10.4"] = [("kdelibs-4.10.4-20130613.diff", 1),
+                                       ("kde.conf-extended-fix.diff", 1),
+                                       ("fix-dir-separator.diff", 1),
+                                       ("extended-fix-casing-of-realFilePath-4.10.4.diff", 1),
+                                       ("fix-krun-url-case-sensitivity.diff", 1),
+                                       ("add-new-solid-win-backend.diff", 1),
+                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1),
+                                       ("0001-KDE-doesnt-know-the-windows-specific-mimetype-aplica.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
