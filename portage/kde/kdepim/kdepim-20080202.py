@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.10.1'] = [('kdepim-4.10.0.diff', 1)]
         self.patchToApply['4.10.2'] = [('kdepim-4.10.0.diff', 1),
                                        ('kdepim-app-icons.diff', 1)]
+        self.patchToApply['4.10.4'] = [('kdepim-4.10.0.diff', 1)]
 
         self.defaultTarget = 'gitHEAD'
 
