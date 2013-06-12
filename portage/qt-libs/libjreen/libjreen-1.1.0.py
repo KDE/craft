@@ -17,7 +17,7 @@ class subinfo( info.infoclass ):
       self.targets['1.1.1'] = 'http://qutim.org/dwnl/44/libjreen-1.1.1.tar.bz2'
       self.targetInstSrc['1.1.1'] = 'libjreen-1.1.1'
       self.targetDigests['1.1.1'] = 'a4b1a0b31823cc521733a54e964e599e4e150aa4'
-      self.defaultTarget = '1.1.1'
+      self.defaultTarget = 'gitHEAD'
 
 
 class Package( CMakePackageBase ):

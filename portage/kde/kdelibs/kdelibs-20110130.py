@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
                                        ("fix-kdoctools.diff", 1),
                                        ("fix-casing-of-realFilePath.diff", 1)]
         self.shortDescription = "The KDE Library"
-        self.defaultTarget = 'frameworks'
+        self.defaultTarget = 'gitHEAD'
 
 
     def setDependencies( self ):
@@ -23,11 +23,11 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
         # self.dependencies['kdesupport/hupnp'] = 'default'
-        # self.dependencies['kdesupport/kdewin'] = 'default'
+        self.dependencies['kdesupport/kdewin'] = 'default'
         # self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'
         self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
-        self.dependencies['kdesupport/grantlee'] = 'default'
+        #self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
         # needed for nepomuk

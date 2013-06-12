@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtjsbackend.git|stable"
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtjsbackend.git|dev"
 
         self.defaultTarget = "gitHEAD"
 

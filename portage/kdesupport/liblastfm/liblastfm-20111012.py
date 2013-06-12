@@ -6,8 +6,7 @@ import shutil
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = "git://github.com/TheOneRing/liblastfm.git"
-        self.targetSrcSuffix['gitHEAD'] = "theo"
+        self.svnTargets[ 'gitHEAD' ] = "git://github.com/lastfm/liblastfm.git"
         for ver in ['1.0.0','1.0.1','1.0.2','1.0.3']:
             self.targets[ver] = 'http://cdn.last.fm/client/liblastfm-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'liblastfm-%s' % ver
@@ -16,7 +15,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.0.3'] = '4c6dc0eb2a32049fed72f8d713489edfad7b4eff'
         
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
-        self.defaultTarget = '1.0.3'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
@@ -29,7 +28,7 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_FINGERPRINT=ON"
+        self.subinfo.options.configure.defines = " -DBUILD_FINGERPRINT=OFF -DBUILD_TESTS=OFF"
 
 
 if __name__ == '__main__':

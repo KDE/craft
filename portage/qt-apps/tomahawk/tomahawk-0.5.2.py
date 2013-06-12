@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['libs/qt'] = 'default'
         self.hardDependencies['qt-libs/quazip'] = 'default'
         self.hardDependencies['qt-libs/libjreen'] = 'default'
-        self.hardDependencies['qt-libs/qtsparkle'] = 'default'
+        #self.hardDependencies['qt-libs/qtsparkle'] = 'default'
         self.hardDependencies['qt-libs/qtweetlib'] = 'default'
         self.hardDependencies['kdesupport/phonon'] = 'default'
         self.hardDependencies['kdesupport/phonon-vlc'] = 'default'

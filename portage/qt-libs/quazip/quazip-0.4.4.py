@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
 import os
-from Package.CMakePackageBase import *
+from Package.QMakePackageBase import *
 
 
 class subinfo( info.infoclass ):
@@ -10,7 +10,8 @@ class subinfo( info.infoclass ):
       self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'svnHEAD' ] = 'https://quazip.svn.sourceforge.net/svnroot/quazip'
+      self.svnTargets[ 'svnHEAD' ] = 'https://quazip.svn.sourceforge.net/svnroot/quazip/trunk/quazip'
+      self.patchToApply['svnHEAD'] = ('quazip-0.4.4.diff',1)
       self.targets['0.4.4'] = 'http://heanet.dl.sourceforge.net/project/quazip/quazip/0.4.4/quazip-0.4.4.zip'
       self.targetDigests['0.4.4'] = 'cfc5ca35ff157e77328fc55de40b73591f425592'
       self.targetInstSrc['0.4.4'] = 'quazip-0.4.4'
@@ -18,10 +19,10 @@ class subinfo( info.infoclass ):
       self.defaultTarget = '0.4.4'
 
 
-class Package( CMakePackageBase ):
+class Package( QMakePackageBase ):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        CMakePackageBase.__init__( self )
+        QMakePackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()

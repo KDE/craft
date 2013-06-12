@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/qjson/qjson.git'
+        self.svnTargets['gitHEAD'] = 'git://github.com/flavio/qjson.git'
         for ver in ['0.7.1','0.8.0','0.8.1']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/qjson/qjson-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = "qjson-%s" % ver
