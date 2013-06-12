@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = 'soprano-' + ver[1:]
         self.patchToApply['v2.9.0'] = [("soprano-redland-callback.diff", 1)]
         self.shortDescription = "a RDF storage solutions library"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'v2.9.0'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
