@@ -19,7 +19,11 @@ class subinfo(info.infoclass):
         for ver in ['v2.8.0', 'v2.9.0', 'v2.9.2']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/soprano/soprano-' + ver.replace('v', '') + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'soprano-' + ver[1:]
-        self.patchToApply['v2.9.0'] = [("soprano-redland-callback.diff", 1)]
+        self.patchToApply['v2.9.0'] = [("soprano-redland-callback.diff", 1),
+                                       ("0001-test-if-virtuoso-executable-exists-first.patch", 1),
+                                       ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
+        self.patchToApply['v2.9.0'] = [("0001-test-if-virtuoso-executable-exists-first.patch", 1),
+                                       ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
         self.shortDescription = "a RDF storage solutions library"
         self.defaultTarget = 'v2.9.2'
 
