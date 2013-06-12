@@ -17,7 +17,8 @@ class subinfo(info.infoclass):
                                        ("fix-dir-separator.diff", 1),
                                        ("fix-krun-url-case-sensitivity.diff", 1),
                                        ("add-new-solid-win-backend.diff", 1),
-                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1)]
+                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1),
+                                       ("0001-KDE-doesnt-know-the-windows-specific-mimetype-aplica.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
