@@ -24,8 +24,9 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs/libopensp'] = 'default'
+        self.dependencies['win32libs/libofx'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

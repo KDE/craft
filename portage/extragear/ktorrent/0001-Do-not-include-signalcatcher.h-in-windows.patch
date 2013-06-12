@@ -1,0 +1,26 @@
+From e1b51b0b837b1b4c2d90f23d5a8ed72087981e9e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Torbj=C3=B6rn=20L=C3=B6nnemark?= <tobbez@ryara.net>
+Date: Tue, 7 May 2013 00:07:42 +0200
+Subject: [PATCH 1/2] Do not include signalcatcher.h in windows
+
+---
+ ktorrent/main.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ktorrent/main.cpp b/ktorrent/main.cpp
+index 271d501..7e86136 100644
+--- a/ktorrent/main.cpp
++++ b/ktorrent/main.cpp
+@@ -42,7 +42,9 @@
+ #include <util/error.h>
+ #include <util/log.h>
+ #include <util/functions.h>
++#ifndef Q_OS_WIN
+ #include <util/signalcatcher.h>
++#endif
+ 
+ using namespace bt;
+ 
+-- 
+1.8.0.msysgit.0
+

@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        if self.options.features.pythonSupport:
+            self.dependencies['win32libs/boost-python'] = 'default'
 
 from Package.CMakePackageBase import *
 
