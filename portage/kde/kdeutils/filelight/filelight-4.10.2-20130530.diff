@@ -1,0 +1,12 @@
+diff -Nru -x '*~' filelight-4.10.2.orig/src/app/CMakeLists.txt filelight-4.10.2/src/app/CMakeLists.txt
+--- filelight-4.10.2.orig/src/app/CMakeLists.txt	2013-03-01 08:04:44.808218000 +0100
++++ filelight-4.10.2/src/app/CMakeLists.txt	2013-05-30 22:10:33.948434300 +0200
+@@ -20,6 +20,8 @@
+ 
+ set(filelight_SRCS historyAction.cpp mainWindow.cpp main.cpp)
+ 
++kde4_add_app_icon(filelight_SRCS "../../misc/hi*-app-filelight.png")
++
+ kde4_add_executable(filelight ${filelight_SRCS})
+ 
+ target_link_libraries(filelight ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KDEUI_LIBS})

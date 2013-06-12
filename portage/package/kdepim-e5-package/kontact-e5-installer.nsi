@@ -1,8 +1,10 @@
 ;kontact-e5-installer.nsi
-;(c)2009-2011, Intevation GmbH
+;(c)2009-2012, Intevation GmbH
+;(c)2013, Klaralvdalens Datakonsult AB
 ;Authors:
 ; Emanuel Schütze emanuel@intevation.de
 ; Andre Heinecke aheinecke@intevation.de
+; Patrick Spendrin patrick.spendrin@kdab.com
 ;
 ; This program is free software; you can redistribute it and/or modify
 ; it under the terms of the GNU General Public License version 2,
@@ -30,9 +32,6 @@
   ; Add (custom) plugin dir
   !addplugindir plugins
 
-  ; String Replace function
-  !include "includes\StrReplace.nsh"
-
   ; Windows Version detection
   !include "includes\getWinVer.nsi"
 
@@ -53,7 +52,7 @@
 ;General
 
   ; Define Name, File and Installdir of Installer
-  Name "${productname}"
+  Name "${productname_short}"
   OutFile "${setupname}"
   InstallDir "$PROGRAMFILES\${productname_short}"
 
@@ -78,7 +77,7 @@
 ;Pages
   !define MUI_PAGE_CUSTOMFUNCTION_SHOW PrintNonAdminWarning
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE ${license}
+;  ${license}
   !insertmacro MUI_PAGE_DIRECTORY
   Page custom CustomPageOptions
   !insertmacro MUI_PAGE_INSTFILES
@@ -148,8 +147,8 @@ Section ""
     "Field 2" "State"
   IntCmp $R0 0 no_start_menu
   # Create new Start menu entries
-  CreateDirectory "$SMPROGRAMS\${productname}"
-  CreateShortCut "$SMPROGRAMS\${productname}\${productname_short}.lnk" "$INSTDIR\bin\kontact.exe"
+  CreateDirectory "$SMPROGRAMS\${productname_short}"
+  CreateShortCut "$SMPROGRAMS\${productname_short}\${productname_short}.lnk" "$INSTDIR\bin\kontact.exe"
 #  CreateShortCut "$SMPROGRAMS\${productname}\Akonadiconsole.lnk" "$INSTDIR\bin\akonadiconsole.exe"
   no_start_menu:
 
@@ -203,7 +202,7 @@ Section ""
   ; Create killkde.bat 
   FileOpen $1 "$INSTDIR\bin\killkde.bat" "w"
   FileWrite $1 '@echo off $\r$\n'
-  FileWrite $1 'kdeinit4 --terminate'
+  FileWrite $1 '$INSTDIR\bin\kdeinit4 --terminate'
   FileClose $1
 
 call CreateGlobals
@@ -230,10 +229,36 @@ call CreateGlobals
   FileWrite $1 "Enabled=false$\r$\n"
   FileClose $1
 
-  FileOpen $1 "$INSTDIR\share\config\kwalletrc" "w"
-  FileWrite $1 "[Auto Allow]$\r$\n"
-  FileWrite $1 "kdewallet=Akonadi Resource,Account Assistant,Kolab E5 RC,Kontact,Akonadi Agent$\r$\n"
+  FileOpen $1 "$INSTDIR\share\config\kconf_updaterc" "w"
+  FileWrite $1 "autoUpdateDisabled=false$\r$\n"
   FileClose $1
+
+  FileOpen $1 "$INSTDIR\bin\kde.conf" "w"
+  FileWrite $1 "[KDE]$\r$\n"
+  FileWrite $1 "KDEHOME=%APPDATA%\\.kontact$\r$\n"
+  FileWrite $1 "[XDG]$\r$\n"
+  FileWrite $1 "XDG_CONFIG_HOME=%APPDATA%\\.kontact\\.config$\r$\n"
+  FileWrite $1 "XDG_DATA_HOME=%APPDATA%\\.kontact\\.local\\share$\r$\n"
+  FileClose $1
+
+  SetShellVarContext current
+  CreateDirectory "$APPDATA\.kontact\share\config"
+  CreateDirectory "$APPDATA\.kontact\share\apps\kwallet"
+
+  FileOpen $1 "$APPDATA\.kontact\share\config\kwalletrc" "w"
+  FileWrite $1 "[Auto Allow]$\r$\n"
+  FileWrite $1 "kdewallet=Akonadi Resource,Akonadi-Ressource,Akonadi-Agent,Account Assistant,Kolab E5 RC,Kontact,Akonadi Agent$\r$\n"
+  FileWrite $1 "$\r$\n"
+  FileWrite $1 "[Wallet]$\r$\n"
+  FileWrite $1 "Close When Idle=false$\r$\n"
+  FileWrite $1 "Default Wallet=kontactdefaultwallet$\r$\n"
+  FileWrite $1 "Enabled=true$\r$\n"
+  FileWrite $1 "First Use=false$\r$\n"
+  FileWrite $1 "Use One Wallet=true$\r$\n"
+  FileClose $1
+
+  CopyFiles "$INSTDIR\share\kontactdefaultwallet.kwl" "$APPDATA\.kontact\share\apps\kwallet"
+  SetShellVarContext all
 
   ; Set bin dir to PATH
   ; ${ENVVARUPDATE} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
@@ -301,12 +326,22 @@ FunctionEnd
 Function CheckExistingVersion
   ClearErrors
   Push $0
-  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "Displayversion_number"
-  IfErrors leave 0
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} $0 \
-    $(T_AlreadyInstalled)" IDYES leave
-    Abort
-  leave:
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname_short}" "UninstallString"
+  IfErrors checkkolabe5rc 0
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
+    $(T_AlreadyInstalled)" IDYES uninstall IDNO abort_install
+  checkkolabe5rc:
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Kolab E5RC" "UninstallString"
+  IfErrors overwrite 0
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${productname_short} \
+    $(T_AlreadyInstalled)" IDYES uninstall IDNO abort_install
+
+  abort_install:
+    Quit
+  uninstall:
+    ${StrRep} '$R1' '$0' '\uninstall.exe' ''
+    ExecWait '$0 _?=$INSTDIR'
+  overwrite:
 FunctionEnd
 
 Function CreateGlobals
@@ -395,8 +430,12 @@ FunctionEnd
 
 Section "un."
   DetailPrint "Beende Prozesse"
-  ExecDos::exec '"$SYSDIR\cmd.exe" /C "$INSTDIR\bin\killkde.bat"' ""
-  
+  ${UnStrRep} '$0' '$INSTDIR' '\' '\\'
+  ${UnStrRep} '$1' '$0' '(x86)' '%'
+  ExecDos::exec '"$SYSDIR\cmd.exe" /C "wmic process where (executablepath like $\"%$1\\bin%$\") terminate 0"' "" "$TEMP\kontact_termination.log"
+
+  sleep 3000
+
   ; Unregister Virtuoso
   ExecWait 'regsvr32.exe /u /s "$INSTDIR\lib\virtodbc.dll"'
 
@@ -419,6 +458,7 @@ Section "un."
 
   ; Delete start menu entries
   RMDir /R  "$SMPROGRAMS\${productname}"
+  RMDir /R  "$SMPROGRAMS\${productname_short}"
   ; Delete Desktop Icon
   Delete "$DESKTOP\${productname_short}.lnk"
 #  Delete "$DESKTOP\Akonadiconsole.lnk"
@@ -491,30 +531,26 @@ FunctionEnd
 
 
 
-
-
-
-
-
 ;---------------------------
 ; Language Strings
 ;---------------------------
 # From Function CheckExistingVersion
 LangString T_AlreadyInstalled ${LANG_ENGLISH} \
-    "has already been installed.$\r$\nDo you want to\
-    continue the installation of ${productname_short} ${version_date}?"
+    " has already been installed.$\r$\nYou need to \
+    uninstall the other Version before continuing.$\r$\n\
+    Start the Uninstall now?"
 LangString T_AlreadyInstalled ${LANG_GERMAN} \
-    "ist bereits auf ihrem System installiert.$\r$\nWollen Sie die \
-    Installation von ${productname_short} ${version_date} fortsetzen?$\r$\n$\r$\nIhre \
-    alte Installation wird dadurch überschrieben."
+    " ist bereits auf ihrem System installiert.$\r$\n\
+    Sie müssen es deinstallieren befor Sie mit der Installation fortfahren können.\
+    $\r$\nMöchten Sie die Deinstallation jetzt starten?"
 
 # From Custom Welcome Page
 #
 # Title
 LangString T_WelcomeTitle ${LANG_ENGLISH} \
-  "Welcome to the installation of  ${productname}"
+  "Welcome to the installation of ${productname_short}"
 LangString T_WelcomeTitle ${LANG_GERMAN} \
-  "Willkommen bei der Installation von  ${productname}"
+  "Willkommen bei der Installation von ${productname_short}"
 # description
 LangString T_About ${LANG_ENGLISH} \
     "${description}, based upon KDE Kontact."

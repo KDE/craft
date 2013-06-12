@@ -14,35 +14,30 @@ class PackagerBase(EmergeBase):
         """ return version information for the currently used package"""
         if self.subinfo.options.package.version != None:
             pkgVersion = self.subinfo.options.package.version
-            pkgNotesVersion = pkgVersion
         else:
             versionFile = os.path.join(self.buildDir(),'emerge-package-version')
             if os.path.exists(versionFile):
                 with open( versionFile, "r" ) as f:
                     pkgVersion = f.read()
-                pkgNotesVersion = pkgVersion
             elif self.version == "all": 
                 if self.subinfo.buildTarget == "gitHEAD":
                     pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-' + self.source.currentRevision()
-                    pkgNotesVersion = pkgVersion
                 elif self.subinfo.buildTarget == "svnHEAD":
                     pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-r' + self.source.currentRevision()
-                    pkgNotesVersion = pkgVersion
                 elif self.subinfo.buildTarget == "HEAD":
                     pkgVersion = str( datetime.date.today() ).replace('-', '')  + '-' + self.subinfo.buildTarget
-                    pkgNotesVersion = pkgVersion
                 else:
                     pkgVersion = self.subinfo.buildTarget
-                    pkgNotesVersion = pkgVersion
             elif self.subinfo.buildTarget == "gitHEAD" or self.subinfo.buildTarget == "svnHEAD":
                 pkgVersion = str( datetime.date.today() ).replace('-', '')
-                pkgNotesVersion = pkgVersion
             else:
                 pkgVersion = self.subinfo.buildTarget
-                pkgNotesVersion = pkgVersion
+
+        pkgNotesVersion = pkgVersion
 
         if "EMERGE_PKGPATCHLVL" in os.environ:
             pkgVersion += "-" + os.environ["EMERGE_PKGPATCHLVL"]
+
         return [pkgVersion, pkgNotesVersion]
 
     #""" create a package """
@@ -52,6 +47,3 @@ class PackagerBase(EmergeBase):
     # for compatibility
     def make_package(self):
         return self.createPackage()
-
-
-

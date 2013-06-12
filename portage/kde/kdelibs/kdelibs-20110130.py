@@ -13,7 +13,11 @@ class subinfo(info.infoclass):
         self.patchToApply["4.10.2"] = [("kdelibs-4.10.2-20130430.diff", 1), 
                                        ("kde.conf-extended-fix.diff", 1),
                                        ("fix-kdoctools.diff", 1),
-                                       ("fix-casing-of-realFilePath.diff", 1)]
+                                       ("extended-fix-casing-of-realFilePath.diff", 1),
+                                       ("fix-dir-separator.diff", 1),
+                                       ("fix-krun-url-case-sensitivity.diff", 1),
+                                       ("add-new-solid-win-backend.diff", 1),
+                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
@@ -30,16 +34,17 @@ class subinfo(info.infoclass):
         #self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
-        # needed for nepomuk
-        # self.dependencies['kdesupport/soprano'] = 'default'
-        # unneeded in the future?
-        # self.dependencies['kdesupport/strigi'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kdesupport/soprano'] = 'default'
+            #self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
         self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
-        # this should only be needed for nepomuk
-        # self.dependencies['data/shared-desktop-ontologies'] = 'default'
-        # self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+        self.dependencies['data/shared-desktop-ontologies'] = 'default'
+        if self.options.features.phononBackend.vlc:
+            self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+        elif self.options.features.phononBackend.ds9:
+            self.runtimeDependencies['kdesupport/phonon-ds9'] = 'default'
 
 from Package.CMakePackageBase import *
 

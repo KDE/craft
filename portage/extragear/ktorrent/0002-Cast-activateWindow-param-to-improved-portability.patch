@@ -1,0 +1,31 @@
+diff -Nru -x '*~' ktorrent-4.3.1.orig/ktorrent/groups/groupviewmodel.cpp ktorrent-4.3.1/ktorrent/groups/groupviewmodel.cpp
+--- ktorrent-4.3.1.orig/ktorrent/groups/groupviewmodel.cpp	2013-01-14 18:12:24.000000000 +0100
++++ ktorrent-4.3.1/ktorrent/groups/groupviewmodel.cpp	2013-06-07 16:10:47.529229200 +0200
+@@ -24,6 +24,7 @@
+ #include <groups/groupmanager.h>
+ #include <groups/group.h>
+ #include <groups/torrentgroup.h>
++#include <torrent/queuemanager.h>
+ #include <view/view.h>
+ #include <util/log.h>
+ 
+diff -Nru -x '*~' ktorrent-4.3.1.orig/plasma/applet/applet.cpp ktorrent-4.3.1/plasma/applet/applet.cpp
+--- ktorrent-4.3.1.orig/plasma/applet/applet.cpp	2013-01-14 18:12:24.000000000 +0100
++++ ktorrent-4.3.1/plasma/applet/applet.cpp	2013-06-07 15:51:03.541619500 +0200
+@@ -373,7 +373,7 @@
+ 		else
+ 		{
+ 			QDBusPendingReply<qlonglong> reply = *self;
+-			KWindowSystem::activateWindow(reply.value());		
++			KWindowSystem::activateWindow(reinterpret_cast<WId>(reply.value()));
+ 		}
+ 		self->deleteLater();
+ 	}
+diff -Nru -x '*~' ktorrent-4.3.1.orig/plugins/ipfilter/tests/CMakeLists.txt ktorrent-4.3.1/plugins/ipfilter/tests/CMakeLists.txt
+--- ktorrent-4.3.1.orig/plugins/ipfilter/tests/CMakeLists.txt	2013-01-14 18:12:24.000000000 +0100
++++ ktorrent-4.3.1/plugins/ipfilter/tests/CMakeLists.txt	2013-06-07 15:57:55.007154000 +0200
+@@ -1,3 +1,3 @@
+ set(ipblocklisttest_SRCS ipblocklisttest.cpp ../ipblocklist.cpp)
+ kde4_add_unit_test(ipblocklisttest TESTNAME ipblocklisttest ${ipblocklisttest_SRCS})
+-target_link_libraries(ipblocklisttest ${QT_QTTEST_LIBRARY} ktorrent)
++target_link_libraries(ipblocklisttest ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ktorrent)

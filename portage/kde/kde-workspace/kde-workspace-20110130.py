@@ -9,7 +9,10 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.0'] = [("kde-workspace-4.10.0-20130302.diff", 1)]
         self.patchToApply['4.10.1'] = [("kde-workspace-4.10.0-20130302.diff", 1)]
-        self.patchToApply['4.10.2'] = [("kde-workspace-4.10.0-20130302.diff", 1), ("build_kinfocenter.diff", 1)]
+        self.patchToApply['4.10.2'] = [("kde-workspace-4.10.0-20130302.diff", 1),
+                                       ("build_kinfocenter.diff", 1),
+                                       ("fix_oxygenstyle_crash.diff", 1)]
+        self.patchToApply['4.10.3'] = [("fix_oxygenstyle_crash.diff", 1)]
 
         self.shortDescription = 'the KDE workspace including the oxygen style'
         self.defaultTarget = 'gitHEAD'
