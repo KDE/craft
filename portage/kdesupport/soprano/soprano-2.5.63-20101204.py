@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.patchToApply['v2.9.0'] = [("0001-test-if-virtuoso-executable-exists-first.patch", 1),
                                        ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
         self.shortDescription = "a RDF storage solutions library"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'v2.9.2'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
