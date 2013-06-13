@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
                                       ("patches/0.3.0/fix-exports-generator-for-intel-compiler.diff", 1)]
 
         self.shortDescription = 'libraries for a template system similar to django\'s'
-        self.defaultTarget = '0.3.0'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
