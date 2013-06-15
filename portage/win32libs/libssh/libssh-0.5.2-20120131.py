@@ -19,7 +19,8 @@ class subinfo(info.infoclass):
         self.patchToApply['0.5.2'] = [("0001-implement-support-for-putty-s-pageant.patch", 1), 
                                       ("0002-add-a-way-to-test-ssh-connections-on-windows.patch", 1)]
         self.patchToApply['0.5.3'] = [ ("0002-add-a-way-to-test-ssh-connections-on-windows.patch", 1),
-                                       ("0001-implement-support-for-putty-s-pageant-0.5.3.patch", 1)]
+                                       ("0001-implement-support-for-putty-s-pageant-0.5.3.patch", 1),
+                                       ("0003-intel-compiler-support.patch", 1),]
 
         self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh.git"
         self.svnTargets['0.4'] = "git://git.libssh.org/projects/libssh.git|v0-4"

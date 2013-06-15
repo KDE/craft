@@ -1,0 +1,18 @@
+diff -Nru -x '*~' libssh-0.5.3.orig/src/CMakeLists.txt libssh-0.5.3/src/CMakeLists.txt
+--- libssh-0.5.3.orig/src/CMakeLists.txt	2013-06-14 23:23:59.499003600 -0300
++++ libssh-0.5.3/src/CMakeLists.txt	2013-06-14 23:13:52.284883400 -0300
+@@ -190,11 +190,11 @@
+ if (WITH_STATIC_LIB)
+   add_library(${LIBSSH_STATIC_LIBRARY} STATIC ${libssh_SRCS})
+ 
+-  if (MSVC)
++  if (MSVC OR (WIN32 AND "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel"))
+     set(OUTPUT_SUFFIX static)
+-  else (MSVC)
++  else (MSVC OR (WIN32 AND "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel"))
+     set(OUTPUT_SUFFIX )
+-  endif (MSVC)
++  endif (MSVC OR (WIN32 AND "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel"))
+   set_target_properties(
+     ${LIBSSH_STATIC_LIBRARY}
+       PROPERTIES
