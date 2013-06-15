@@ -1,0 +1,55 @@
+diff -Nru -x '*~' libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rndw32.c
+--- libgcrypt-1.5.0.orig/random/rndw32.c	2013-06-08 21:21:40.912117900 +0200
++++ libgcrypt-1.5.0/random/rndw32.c	2013-06-08 21:15:32.659307600 +0200
+@@ -829,10 +829,10 @@
+      and milliseconds since Windows was started.  */
+ 
+   {
+-    byte buffer[20*sizeof(ulong)], *bufptr;
++    byte buffer[20*sizeof(intptr_t)], *bufptr;
+ 
+     bufptr = buffer;
+-#define ADD(f)  do { ulong along = (ulong)(f);                  \
++#define ADD(f)  do { intptr_t along = (intptr_t)(f);            \
+                      memcpy (bufptr, &along, sizeof (along) );  \
+                      bufptr += sizeof (along);                  \
+                    } while (0)
+@@ -888,7 +888,7 @@
+   {
+     HANDLE handle;
+     FILETIME creationTime, exitTime, kernelTime, userTime;
+-    DWORD minimumWorkingSetSize, maximumWorkingSetSize;
++    ULONG_PTR minimumWorkingSetSize, maximumWorkingSetSize;
+ 
+     handle = GetCurrentThread ();
+     GetThreadTimes (handle, &creationTime, &exitTime,
+diff -Nru -x '*~' libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
+--- libgcrypt-1.5.0.orig/src/ath.c	2013-06-08 21:21:40.932117900 +0200
++++ libgcrypt-1.5.0/src/ath.c	2013-06-08 21:17:15.755461200 +0200
+@@ -41,7 +41,11 @@
+ #else
+ #include <winsock2.h>
+ #define ssize_t SSIZE_T
++#ifndef _WIN64
+ typedef int pid_t;
++#else
++typedef __int64 pid_t;
++#endif
+ #endif
+ #include <errno.h>
+ 
+diff -Nru -x '*~' libgcrypt-1.5.0.orig/src/secmem.c libgcrypt-1.5.0/src/secmem.c
+--- libgcrypt-1.5.0.orig/src/secmem.c	2013-06-08 21:21:40.982118000 +0200
++++ libgcrypt-1.5.0/src/secmem.c	2013-06-08 21:16:03.991352100 +0200
+@@ -31,7 +31,11 @@
+ #ifdef _WIN32
+ #include <winsock2.h>
+ #define ssize_t SSIZE_T
++#ifndef _WIN64
+ typedef int pid_t;
++#else
++typedef __int64 pid_t;
++#endif
+ #endif
+ 
+ #if defined(HAVE_MLOCK) || defined(HAVE_MMAP)

@@ -1,0 +1,28 @@
+From 91f6e6fe570e6a7cda311de67d109735e1d0bb4b Mon Sep 17 00:00:00 2001
+From: Stephane Mankowski <stephane@mankowski.fr>
+Date: Fri, 24 May 2013 18:35:53 +0200
+Subject: [PATCH] 320226: Monthly report does not work due to missing template
+
+---
+ plugins/generic/skg_monthly/skgmonthlyplugin.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/generic/skg_monthly/skgmonthlyplugin.cpp b/plugins/generic/skg_monthly/skgmonthlyplugin.cpp
+index b353b34..ee23782 100644
+--- a/plugins/generic/skg_monthly/skgmonthlyplugin.cpp
++++ b/plugins/generic/skg_monthly/skgmonthlyplugin.cpp
+@@ -80,8 +80,9 @@ bool SKGMonthlyPlugin::setupActions(SKGDocument* iDocument, const QStringList& i
+ 
+     //Copy "default" directory in locale
+     foreach(const QString & file, KStandardDirs().findAllResources("data", KGlobal::mainComponent().aboutData()->appName() % "/html/default/*.html")) {
+-        QFile(file).remove();
+-        QFile(file).copy(path % QFileInfo(file).fileName());
++        QString target = path % QFileInfo(file).fileName();
++        QFile(target).remove();
++        QFile(file).copy(target);
+     }
+ 
+     //Create yours actions here
+-- 
+1.8.1.msysgit.1
+

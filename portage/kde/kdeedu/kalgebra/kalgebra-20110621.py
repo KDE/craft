@@ -9,7 +9,8 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.0'] = [("kalgebra-4.10.0-20130301.diff", 1)]
         self.patchToApply['4.10.1'] = [("kalgebra-4.10.0-20130301.diff", 1)]
-        self.patchToApply['4.10.2'] = [("kalgebra-4.10.0-20130301.diff", 1)]
+        self.patchToApply['4.10.2'] = [("kalgebra-4.10.0-20130301.diff", 1),
+                                       ("0001-add-app-icon-for-kalgebramobile.patch", 1)]
 
         self.shortDescription = 'a graph calculator'
         self.defaultTarget = 'gitHEAD'

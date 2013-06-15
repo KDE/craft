@@ -1,0 +1,27 @@
+From cf5a923b4223c505cc962a1ab2187a981697c6ee Mon Sep 17 00:00:00 2001
+From: Anne-Marie Mahfouf <annma@kde.org>
+Date: Fri, 31 May 2013 09:34:22 +0200
+Subject: [PATCH] Fix pattern path to install icons correctly on Windows -
+ backport
+
+CCBUG: 320514
+---
+ src/desktop/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/desktop/CMakeLists.txt b/src/desktop/CMakeLists.txt
+index 65f0295..2cd60be 100644
+--- a/src/desktop/CMakeLists.txt
++++ b/src/desktop/CMakeLists.txt
+@@ -18,7 +18,7 @@ kde4_add_kcfg_files(khangman_SRCS prefs.kcfgc )
+ 
+ #kde4_add_app_icon(khangman_SRCS "${KDE4_ICON_DIR}/oxygen/*/apps/khangman.png")
+ #kde4_add_app_icon(khangman_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../icons/ox*-apps-khangman.png")
+-kde4_add_app_icon(khangman_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../icons/hi*-app-khangman.png")
++kde4_add_app_icon(khangman_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../../icons/hi*-app-khangman.png")
+ 
+ kde4_add_executable(khangman ${khangman_SRCS})
+ add_dependencies(khangman kvtml_data)
+-- 
+1.8.1.msysgit.1
+

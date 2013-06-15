@@ -9,8 +9,9 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply[ '4.10.0' ] = [("nepomuk-core-4.10.0-20130217.diff", 1)]
         self.patchToApply[ '4.10.1' ] = [("nepomuk-core-4.10.0-20130217.diff", 1)]
-        self.patchToApply[ '4.10.2' ] = [("nepomuk-core-4.10.0-20130217.diff", 1)]
-
+        self.patchToApply[ '4.10.2' ] = [("nepomuk-core-4.10.0-20130217.diff", 1),
+                                         ("nepomukcleaner-and-nepomukbackup-app-icons.diff", 1)]
+        self.patchToApply[ '4.10.4' ] = [] # all patches applied upstream
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

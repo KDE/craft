@@ -1,0 +1,12 @@
+diff -Nru -x '*~' kde-runtime-4.10.4.orig/platforms/win/kwinstartmenu/misc.cpp kde-runtime-4.10.4/platforms/win/kwinstartmenu/misc.cpp
+--- kde-runtime-4.10.4.orig/platforms/win/kwinstartmenu/misc.cpp	2013-05-28 20:40:22.000000000 +0200
++++ kde-runtime-4.10.4/platforms/win/kwinstartmenu/misc.cpp	2013-06-12 16:34:55.809308700 +0200
+@@ -218,7 +218,7 @@
+             QStringList arguments;
+             if (cmd.size() > 1) {
+                 // ignore arguments completely when they contain a variable
+-                if (!(_exec.contains("%i") || _exec.contains("%u") || _exec.contains("%U") || _exec.contains("%c"))) {
++                if (!(_exec.contains("%i") || _exec.contains("%u") || _exec.contains("%U") || _exec.contains("%c") || _exec.contains("%f"))) {
+                     arguments = cmd;
+                     arguments.removeFirst();
+                 }

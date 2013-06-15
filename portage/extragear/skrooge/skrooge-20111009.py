@@ -12,7 +12,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.0'] = [("skrooge-1.0.0-20111009.diff", 1)]
         self.patchToApply['1.1.1'] = [("skrooge-1.1.1-20111208.diff", 1)]
         self.patchToApply['1.2.0'] = [("skrooge-1.2.0-20120114.diff", 1)]
-        self.patchToApply['1.6.0'] = [("skrooge-1.6.0-20130307.diff", 1)]
+        self.patchToApply['1.6.0'] = [("skrooge-1.6.0-20130307.diff", 1),
+                                      ("0001-320226-Monthly-report-does-not-work-due-to-missing-t.patch", 1)]
         self.targetDigests['1.1.1'] = '063af1a04c2406babc59203e0d57912e834e46f1'
         self.targetDigests['1.2.0'] = '1587d493f6064637805e3601bdae08fd5258a633'
         self.shortDescription = "a personal finance manager for KDE"
@@ -23,8 +24,9 @@ class subinfo( info.infoclass ):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.dependencies['win32libs/libopensp'] = 'default'
+        self.dependencies['win32libs/libofx'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 

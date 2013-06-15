@@ -1,0 +1,12 @@
+diff -Nru -x ''\''*~'\''' kdelibs-4.10.2.orig/kdecore/kernel/kstandarddirs.cpp kdelibs-4.10.2/kdecore/kernel/kstandarddirs.cpp
+--- kdelibs-4.10.2.orig/kdecore/kernel/kstandarddirs.cpp	2013-05-20 12:11:38.558452900 +0100
++++ kdelibs-4.10.2/kdecore/kernel/kstandarddirs.cpp	2013-05-19 23:23:40.740469600 +0100
+@@ -1400,7 +1400,7 @@
+     QFileInfo info;
+ 
+     // absolute or relative path?
+-    if (appname.contains(QDir::separator()))
++    if (appname.contains(QLatin1Char('/')))
+     {
+         //kDebug(180) << "findExe(): absolute path given";
+         QString path = checkExecutable(appname, options & IgnoreExecBit);

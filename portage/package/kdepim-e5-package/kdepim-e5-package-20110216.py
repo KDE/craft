@@ -21,10 +21,9 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'libs/runtime' ] = 'default'
-        self.dependencies[ 'enterprise5/kdepim-runtime-e5' ] = 'default'
-        self.dependencies[ 'enterprise5/kdepim-e5' ] = 'default'
-        self.dependencies[ 'testing/virtuoso' ] = 'default'
-        self.dependencies[ 'enterprise5/l10n-wce-e5' ] = 'default'
+        self.dependencies[ 'kde/kdepim-runtime' ] = 'default'
+        self.dependencies[ 'kde/kdepim' ] = 'default'
+        self.dependencies[ 'kde/kde-l10n-de' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):

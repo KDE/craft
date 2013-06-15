@@ -303,12 +303,14 @@ class Portage(object):
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
         p = module.Package()
+        if buildtarget == None:
+            buildtarget = findPossibleTargets( category, package, version )
         p.setup(fileName, category, package, version, buildtarget)
         return p
 
     def getDefaultTarget( self, category, package, version ):
         """ returns the default package of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -319,7 +321,7 @@ class Portage(object):
 
     def getMetaData( self, category, package, version ):
         """ returns all targets of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getMetaData: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -342,7 +344,7 @@ class Portage(object):
 
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -358,7 +360,7 @@ class Portage(object):
     def getAllVCSTargets( self, category, package, version ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getAllVCSTargets: importing file %s" % getFilename( category, package, version ), 1 )
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -458,7 +460,13 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
         if os.path.isdir( os.path.join( buildroot, directory ) ):
             if directory.startswith( "image" ) and directory != "image":
                 particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
-                if len(particles) == 3:
+                if len(particles) == 1 and \
+                   not particles[0] in [os.getenv( "KDECOMPILER" ), \
+                                        os.getenv( "EMERGE_BUILDTYPE" ), \
+                                        os.getenv( "EMERGE_TARGET_PLATFORM" ), \
+                                        "WIN32"]:
+                    return particles[0]
+                elif len(particles) == 3:
                     _platform, _buildType, _target = particles
                 elif len(particles) == 4 and emergePlatform.isCrossCompilingEnabled():
                     _platform, _buildType, _buildArch, _target = particles
@@ -622,7 +630,7 @@ def isTargetBuildEnabled( category, package, version ):
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
 def isPackageUpdateable( category, package, version ):
-    utils.debug( "importing file %s" % getFilename( category, package, version ), 2 )
+    utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package, version ), 2 )
     mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()

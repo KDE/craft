@@ -1,0 +1,36 @@
+From 652aa0ada5be8183fc512dc63f1c314dff942ed3 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Tue, 4 Jun 2013 13:01:49 +0200
+Subject: [PATCH 3/3] fixed atatch to attachToConsole
+
+---
+ kdecore/kernel/kkernel_win.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/kdecore/kernel/kkernel_win.cpp b/kdecore/kernel/kkernel_win.cpp
+index 7bef7d9..5007c703 100644
+--- a/kdecore/kernel/kkernel_win.cpp
++++ b/kdecore/kernel/kkernel_win.cpp
+@@ -332,11 +332,18 @@ static attachConsolePtr attachConsole = 0;
+ static bool attachConsoleResolved = false;
+ static bool attachToConsole()
+ {
++    bool out = true;
+     if(!attachConsoleResolved) {
+       attachConsoleResolved = true;
+       attachConsole = (attachConsolePtr)QLibrary::resolve(QLatin1String("kernel32"), "AttachConsole");
+     }
+-    return attachConsole ? attachConsole(~0U) != 0 : false;
++    out = attachConsole ? attachConsole(~0U) != 0 : false;
++    if(GetLastError() == ERROR_ACCESS_DENIED)
++    {
++        //we are already atatched to a console
++        out  = true;
++    }
++    return out;
+ }
+ 
+ /**
+-- 
+1.8.0.msysgit.0
+

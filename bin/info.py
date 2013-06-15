@@ -99,8 +99,8 @@ class infoclass(object):
         elif not os.getenv( "EMERGE_TARGET" ) == None:
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
-            self.buildTarget = self.defaultTarget
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys())), 1)
+            self.buildTarget = self.defaultTarget
 
     def setBuildOptions( self ):
         """default method for setting build options, override to set individual targets"""
