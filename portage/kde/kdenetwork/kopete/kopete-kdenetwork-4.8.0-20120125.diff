@@ -1,6 +1,36 @@
-diff -Nru -x '*~' kdenetwork-4.10.1.orig/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c kdenetwork-4.10.1/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c
---- kdenetwork-4.10.1.orig/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-01 06:22:03.809161000 +0100
-+++ kdenetwork-4.10.1/kopete/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-10 02:32:56.755814800 +0100
+diff -Nru -x '*~' kopete-4.10.2/protocols/jabber/libiris/CMakeLists.txt kopete-4.10.2/protocols/jabber/libiris/CMakeLists.txt
+--- kopete-4.10.2/protocols/jabber/libiris/CMakeLists.txt	2013-03-01 06:22:13.593039000 +0100
++++ kopete-4.10.2/protocols/jabber/libiris/CMakeLists.txt	2013-03-10 09:07:51.964309300 +0100
+@@ -5,9 +5,13 @@
+ FIND_PACKAGE(ZLIB REQUIRED)
+ 
+ remove_definitions(-DQT_NO_HTTP)
+-if(NOT MSVC)
++if(NOT WIN32)
+   add_definitions(-fPIC)
+-endif(NOT MSVC)
++else(NOT WIN32)
++  if(MINGW)
++    add_definitions(-DWIN32)
++  endif(MINGW)
++endif(NOT WIN32)
+ 
+ include_directories(
+ ${CMAKE_CURRENT_SOURCE_DIR}/iris
+diff -Nru -x '*~' kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h
+--- kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h	2013-03-01 06:22:13.537040000 +0100
++++ kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h	2013-03-10 09:14:10.458957900 +0100
+@@ -45,6 +45,7 @@
+ #endif
+ 
+ #ifdef JDNS_OS_WIN
++# include <winsock2.h>
+ # include <windows.h>
+ #endif
+ 
+diff -Nru -x '*~' kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c
+--- kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-01 06:22:03.809161000 +0100
++++ kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-10 02:32:56.755814800 +0100
 @@ -4188,344 +4188,344 @@
       { IDENT, 0, 0 },
       { IDENT, 0, 0 }},
