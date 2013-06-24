@@ -185,7 +185,12 @@ kde,kdemultimedia,gitHEAD,
 win32libs,libmsn,4.1,
 win32libs,mpir,2.5.0,
 win32libs,libidn,1.19,
-kde,kdenetwork,4.10.2,2
+kde,kdenetwork-strigi-analyzers,4.10.2,
+kde,kopete,4.10.2,
+kde,kdnssd,4.10.2,
+kde,kget,4.10.2,
+kde,krdc,4.10.2,
+kde,kdenetwork,4.10.2,
 kde,kdepim-runtime,4.10.2,1
 kde,kdepim,4.10.2,2
 kde,kdeplasma-addons,4.10.2,
