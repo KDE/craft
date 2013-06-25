@@ -605,7 +605,10 @@ def debug( message, level=0 ):
 
 def warning( message ):
     if verbose() > 0:
-        print("emerge warning: %s" % message)
+        try:
+            print("emerge warning: %s" % message)
+        except UnicodeEncodeError:
+            print("emerge warning: failed to print message")
     return True
 
 def new_line( level=0 ):
@@ -1018,10 +1021,14 @@ def digestFile( filepath ):
             warning("cant resolve symbolic link target %s, returning \"\" as digests" % tmp)
             return ""
         filepath = tmp
-    with open( filepath, "rb" ) as digFile:
-        for line in digFile:
-            fileHash.update( line )
-        return fileHash.hexdigest()
+    try:
+        with open( filepath, "rb" ) as digFile:
+            for line in digFile:
+                fileHash.update( line )
+            return fileHash.hexdigest()
+    except IOError:
+        return ""
+        
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
@@ -1189,6 +1196,7 @@ def resolveLink(link):
     tmp = os.path.join(os.path.abspath(os.path.dirname(link) ),os.readlink(link))
     if not os.path.exists(tmp):
         warning("cant resolve Link: %s" % link)
+        return link
     return tmp
     
 def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):

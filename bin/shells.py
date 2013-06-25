@@ -51,7 +51,7 @@ class MSysShell(object):
 
     def toNativePath( self, path ):
         path = path.replace( '\\', '/' )
-        if ( path[1] == ':' ):
+        if ( len(path)>4 and path[1] == ':' ):
             path = '/' + path[0].lower() + '/' + path[3:]
         return path
 
