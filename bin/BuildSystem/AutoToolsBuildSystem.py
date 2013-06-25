@@ -16,6 +16,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.makeProgram = "make -e"
         if self.subinfo.options.make.supportsMultijob:
             self.makeProgram += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
+        if emergePlatform.buildArchitecture() == "x86":
+            self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
+        else:
+            self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
 
     def configureDefaultDefines( self ):
@@ -46,6 +50,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     autogen = os.path.join(sourcedir, "autogen.sh")
                     if os.path.exists(autogen):
                         self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
+                #else:
+                    #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
                 if self.subinfo.options.configure.noDefaultOptions == False:
                     if self.subinfo.options.install.useDestDir == False:
                         _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
@@ -53,7 +59,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
                         _prefix = "--prefix=" + mergeroot
                 else:
                     _prefix = ""
-                _options = BuildSystemBase.configureOptions(self)
+ 
+                _options = self.platform
+                _options += BuildSystemBase.configureOptions(self)
                 if _options:
                     _prefix += " %s" % _options
                 if self.buildInSource:
@@ -99,7 +107,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             args = "install"
 
             if self.subinfo.options.install.useDestDir == True:
-                args += " DESTDIR=%s prefix=." % self.shell.toNativePath( self.installDir() )
+                args += " DESTDIR=%s prefix=" % self.shell.toNativePath( self.installDir() )
 
             if self.subinfo.options.make.ignoreErrors:
                 args += " -i"

@@ -32,6 +32,8 @@ class MSysShell(object):
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
             utils.putenv("LD", "link.exe")
+        
+        utils.putenv("PKG_CONFIG_PATH", "%s/lib/pkgconfig" % mergeroot)
 
         utils.putenv("CFLAGS", cflags)
         utils.putenv("LDFLAGS", ldflags)
