@@ -149,7 +149,7 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
         AutoToolsPackageBase.__init__(self)
-        self.shell = MSysShell()
+        self.platform = ""
 
         self.buildInSource=True
 
