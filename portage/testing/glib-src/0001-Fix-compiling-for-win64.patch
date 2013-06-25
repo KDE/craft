@@ -1,0 +1,34 @@
+From d760d17f85cc8b657e9ef226cc88190b67b6c6c7 Mon Sep 17 00:00:00 2001
+From: Hib Eris <hib@hiberis.nl>
+Date: Sun, 31 Mar 2013 16:17:40 +0200
+Subject: [PATCH] Fix compiling for win64
+
+https://bugzilla.gnome.org/show_bug.cgi?id=696970
+---
+ glib/tests/gdatetime.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/glib/tests/gdatetime.c b/glib/tests/gdatetime.c
+index 4f82929..94d6bdd 100644
+--- a/glib/tests/gdatetime.c
++++ b/glib/tests/gdatetime.c
+@@ -801,7 +801,6 @@ test_GDateTime_printf (void)
+   gchar dst[64];
+   struct tm tt;
+   time_t t;
+-  gchar t_str[16];
+ 
+ #define TEST_PRINTF(f,o)                        G_STMT_START {  \
+ GDateTime *__dt = g_date_time_new_local (2009, 10, 24, 0, 0, 0);\
+@@ -844,7 +843,6 @@ GDateTime *__dt = g_date_time_new_local (2009, 10, 24, 0, 0, 0);\
+   tt.tm_min = 0;
+   tt.tm_hour = 0;
+   t = mktime (&tt);
+-  g_sprintf (t_str, "%ld", t);
+ 
+   TEST_PRINTF ("%a", "Sat");
+   TEST_PRINTF ("%A", "Saturday");
+-- 
+1.7.10.4
+
+

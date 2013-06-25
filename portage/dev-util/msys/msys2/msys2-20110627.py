@@ -3,9 +3,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20130619"
-        self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/%s-msys2-alpha-%s.tar.xz" % (emergePlatform.buildArchitecture(), ver)       
-        self.targetDigests['20130619'] = '79dd1c7da9168cc0969db22d5e4f9ad7ac953282'
+        ver = "20130625"
+        self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/%s-msys2-alpha-%s.tar.xz" % (emergePlatform.buildArchitecture(), ver)
+        self.targetDigests['20130625'] = '83f3ec88b633a12238835df922618ed8d313776e'
         self.defaultTarget = ver
 
 
@@ -36,8 +36,11 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True
     
-    def install(self):
-        #self.shell.execute
+    def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+           return False
+        self.shell.execute(".","mkpasswd -l > /etc/passwd")
+        self.shell.execute(".","mkgroup  -l > /etc/group")
         return True
        
 if __name__ == '__main__':

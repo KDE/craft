@@ -1,0 +1,17 @@
+diff -Nru -x '*~' glib-2.36.3.orig/configure glib-2.36.3/configure
+--- glib-2.36.3.orig/configure	2013-06-10 00:53:42.000000000 +0200
++++ glib-2.36.3/configure	2013-06-24 12:44:49.079085400 +0200
+@@ -8079,11 +8079,11 @@
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char ngettext ();
++#include <libintl.h>
+ int
+ main ()
+ {
+-return ngettext ();
++return !ngettext ("","", 1)
+   ;
+   return 0;
+ }

@@ -12,14 +12,15 @@ class subinfo(info.infoclass):
             self.patchToApply["2.29.14"] = ('glib-2.29.14-20121010.diff', 1)
             self.patchToApply["2.36.3"] = ('glib-2.29.14-20121010.diff', 1)
         else:
-            self.patchToApply["2.36.3"] = ('glib-2.36.3-20130624_mingw.diff',1)            
-            #self.options.make.supportsMultijob = False
+            self.patchToApply["2.36.3"] = [('glib-2.36.3-20130624_mingw.diff',1),
+                                           ('0001-Fix-compiling-for-win64.patch',1)]
         self.defaultTarget = "2.36.3"
         self.shortDescription = "The Glib libraries: glib, gio, gthread, gmodule, gobject"
         
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'        
+        self.buildDependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['testing/libffi-src'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
             
@@ -65,23 +66,10 @@ from Package.AutoToolsPackageBase import *
 class PackageMinGW( AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
+        if not self.subinfo.options.features.msys2:
+            utils.die("Glib requries the msys2 feature activated to compile")
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 --enable-gtk-doc=no --enable-static=yes --enable-shared=no LIBFFI_LIBS=-lffi LIBFFI_CFLAGS=' '"
-        
-    #def doMake(self, path, command = ""):            
-        #if not self.shell.execute(path,self.makeProgram , command):
-            #utils.die( "while Make'ing. cmd: %s" % command )
-        #return True
-    
-    #def make( self, dummyBuildType=None ):
-        #"""Using the *make program"""
-        #with utils.LockFile(utils.LockFileName("MSYS")):
-            #self.enterBuildDir()
-            #self.doMake(os.path.join(self.buildDir(), "glib"),"glibconfig.h.win32")
-            #self.doMake(os.path.join(self.buildDir(), "glib"),"glibconfig-stamp")
-            #utils.copyFile(os.path.join(self.buildDir(), "glib","glibconfig.h"), os.path.join(self.buildDir(), "glib","glibconfig.h.autogened"))
-            #utils.copyFile(os.path.join(self.buildDir(), "glib", "glibconfig.h.win32"), os.path.join(self.buildDir(), "glib", "glibconfig.h"))
-            #return self.doMake(os.path.join(self.buildDir(), "glib"));
+        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=yes --enable-shared=no --disable-modular-tests"
 
 
         
