@@ -792,7 +792,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
-            if currentHash == filehash or filehash == "" or os.path.islink(fullPath):
+            if currentHash == filehash or filehash == "":
                 debug( "deleting file %s" % fullPath)
                 try:
                     os.remove(fullPath)
@@ -811,6 +811,13 @@ def unmergeFileList(rootdir, fileList, forced=False):
                 else:
                     warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ) )
+        elif os.path.islink(fullPath):
+            debug( "deleting symbolic link %s" % fullPath)
+            try:
+                os.remove(fullPath)
+            except OSError:
+                system( "cmd /C \"attrib -R %s\"" % fullPath )
+                os.remove(fullPath)
         elif not os.path.isdir(fullPath):
             warning( "file %s does not exist" % fullPath)
 
