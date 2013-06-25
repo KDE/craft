@@ -59,6 +59,9 @@ class OptionsFeatures(OptionsBase):
         
         ## enable python support in several packages.
         self.pythonSupport = False
+        
+        ## enable use of msys2 in several packages, required for glib.
+        self.msys2 = False
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):

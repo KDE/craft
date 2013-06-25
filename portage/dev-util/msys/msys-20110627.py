@@ -9,10 +9,14 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-        self.dependencies['dev-util/minsys'] = 'default'
-        if compiler.isMinGW():
-            self.dependencies['dev-util/libtool'] = 'default'
-            self.dependencies['dev-util/autotools'] = 'default'
+        if not self.options.features.msys2:
+            self.dependencies['dev-util/minsys'] = 'default'
+            if compiler.isMinGW():
+                self.dependencies['dev-util/libtool'] = 'default'
+                self.dependencies['dev-util/autotools'] = 'default'
+        else:
+            self.dependencies['dev-util/msys2'] = 'default'
+            
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
