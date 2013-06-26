@@ -115,9 +115,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if self.subinfo.options.make.makeOptions:
                 args += " %s" % self.subinfo.options.make.makeOptions
             if self.buildInSource:
-                return self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+                self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
             else:
-                return self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+                self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+            return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la") 
 
     def runTest( self ):
         """running unittests"""
