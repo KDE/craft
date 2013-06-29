@@ -49,13 +49,12 @@ class MSysShell(object):
 
             #prepare path to use autotools
             utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( self.msysdir, "opt", "autotools", "bin" )))
+        else:
+            utils.putenv("MSYSTEM","MINGW32")
 
 
     def toNativePath( self, path ):
-        path = path.replace( '\\', '/' )
-        if ( len(path)>=2 and path[1] == ':' ):
-            path = '/' + path[0].lower() + '/' + path[3:]
-        return path
+        return utils.toMSysPath( path )
 
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
