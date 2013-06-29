@@ -1,6 +1,6 @@
-diff -Nru -x '*~' kdenetwork-4.10.2.orig/kget/core/transferhistorystore.cpp kdenetwork-4.10.2/kget/core/transferhistorystore.cpp
---- kdenetwork-4.10.2.orig/kget/core/transferhistorystore.cpp	2013-03-29 08:11:01.565524300 +0100
-+++ kdenetwork-4.10.2/kget/core/transferhistorystore.cpp	2013-04-20 16:50:01.378485100 +0200
+diff -Nru -x '*~' kget-4.10.2/core/transferhistorystore.cpp kget-4.10.2/core/transferhistorystore.cpp
+--- kget-4.10.2/core/transferhistorystore.cpp	2013-03-29 08:11:01.565524300 +0100
++++ kget-4.10.2/core/transferhistorystore.cpp	2013-04-20 16:50:01.378485100 +0200
 @@ -554,7 +554,9 @@
  void NepomukStore::load()
  {

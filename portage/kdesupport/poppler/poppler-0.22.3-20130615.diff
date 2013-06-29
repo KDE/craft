@@ -1,0 +1,20 @@
+diff -Nru -x '*~' poppler-0.22.3.orig/CMakeLists.txt poppler-0.22.3/CMakeLists.txt
+--- poppler-0.22.3.orig/CMakeLists.txt	2013-04-11 18:28:43.000000000 -0300
++++ poppler-0.22.3/CMakeLists.txt	2013-06-15 09:06:56.219707500 -0300
+@@ -389,13 +389,13 @@
+   set(poppler_LIBS ${poppler_LIBS} ${TIFF_LIBRARIES})
+ endif(TIFF_FOUND)
+ 
+-if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+ set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
+ add_library(poppler STATIC ${poppler_SRCS})
+-else(MSVC)
++else(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_library(poppler SHARED ${poppler_SRCS})
+-endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ set_target_properties(poppler PROPERTIES VERSION 36.0.0 SOVERSION 36)
+ target_link_libraries(poppler ${poppler_LIBS})
+ target_link_libraries(poppler LINK_INTERFACE_LIBRARIES "")

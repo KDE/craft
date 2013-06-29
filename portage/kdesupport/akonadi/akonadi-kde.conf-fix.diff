@@ -1,16 +1,16 @@
-diff --git a/libs/xdgbasedirs.cpp b/libs/xdgbasedirs.cpp
-index acc316b..bb2a334 100644
---- a/libs/xdgbasedirs.cpp
-+++ b/libs/xdgbasedirs.cpp
-@@ -27,6 +27,7 @@
+diff -Nru -x '*~' akonadi-1.9.0.orig/libs/xdgbasedirs.cpp akonadi-1.9.0/libs/xdgbasedirs.cpp
+--- akonadi-1.9.0.orig/libs/xdgbasedirs.cpp	2012-12-23 11:11:44.000000000 +0100
++++ akonadi-1.9.0/libs/xdgbasedirs.cpp	2013-05-08 18:30:46.707346200 +0200
+@@ -27,6 +27,8 @@
  #include <QtCore/QFileInfo>
  #include <QtCore/QProcess>
  #include <QtCore/QSettings>
 +#include <QtCore/QProcessEnvironment>
++#include <QtCore/QRegexp>
  
  #include <cstdlib>
  
-@@ -38,6 +39,10 @@
+@@ -38,6 +40,10 @@
  # endif
  #endif
  
@@ -21,7 +21,7 @@ index acc316b..bb2a334 100644
  static QStringList alternateExecPaths( const QString& path )
  {
    QStringList pathList;
-@@ -62,6 +67,53 @@ static QStringList splitPathList( const QString &pathList )
+@@ -62,6 +68,57 @@
  #endif
  }
  
@@ -40,12 +40,12 @@ index acc316b..bb2a334 100644
 +QString expandEnvironmentVariables(const QString& str)
 +{
 +    static QMap<QString, QString> envVars = getEnvironment();
-+    static QRegExp possibleVars("((\\{|%)(\\w+)(\\}|%))");
++    static QRegExp possibleVars(QLatin1String("((\\{|%)(\\w+)(\\}|%))"));
 +    QString ret = str;
 +    while(possibleVars.indexIn(ret) != -1)
 +    {
 +        QStringList caps = possibleVars.capturedTexts();
-+        if(caps[2] == "{")
++        if(caps[2] == QLatin1String("{"))
 +        {
 +            ret.replace(QLatin1String("$") + caps[1], envVars[caps[3]]);
 +        }
@@ -65,17 +65,21 @@ index acc316b..bb2a334 100644
 +    GetModuleFileNameW(NULL, wPath, MAX_PATH);
 +    QString kdeconfPath = QString::fromUtf16((const ushort *) wPath);
 +    kdeconfPath = kdeconfPath.left(kdeconfPath.lastIndexOf(QLatin1Char('\\'))).replace(QLatin1Char('\\'), QLatin1Char('/'));
-+    if(QFile::exists(kdeconfPath + QString::fromLatin1("/kde.conf"))) {
++    if(QFile::exists(kdeconfPath + QString::fromLatin1("/kde.conf")))
++    {
 +        return new QSettings(kdeconfPath + QString::fromLatin1("/kde.conf"), QSettings::IniFormat);
++    }
 +    else
++    {
 +        return 0;
++    }
 +}
 +#endif
 +
  namespace Akonadi {
  
  class XdgBaseDirsPrivate
-@@ -111,9 +163,23 @@ XdgBaseDirs::~XdgBaseDirs()
+@@ -111,9 +168,25 @@
  
  QString XdgBaseDirs::homePath( const char *resource )
  {
@@ -90,6 +94,8 @@ index acc316b..bb2a334 100644
 +         kdeconf->beginGroup(QLatin1String("XDG"));
 +         if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_HOME")))
 +           instance()->mDataHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_HOME")).toString());
++         else
++           instance()->mDataHome = instance()->homePath( "XDG_DATA_HOME", ".local/share" );
 +         kdeconf->endGroup();
 +      } else {
 +#else
@@ -100,7 +106,7 @@ index acc316b..bb2a334 100644
  #ifdef Q_OS_WINCE
        WIN32_FIND_DATA lpwFlashCard;
        if ( FindFirstFlashCard( &lpwFlashCard ) != INVALID_HANDLE_VALUE ) {
-@@ -125,7 +191,18 @@ QString XdgBaseDirs::homePath( const char *resource )
+@@ -125,7 +198,20 @@
      return instance()->mDataHome;
    } else if ( qstrncmp( "config", resource, 6 ) == 0 ) {
      if ( instance()->mConfigHome.isEmpty() ) {
@@ -109,7 +115,9 @@ index acc316b..bb2a334 100644
 +      if(kdeconf) {
 +         kdeconf->beginGroup(QLatin1String("XDG"));
 +         if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_HOME")))
-+           instance()->mDataHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString());
++           instance()->mConfigHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString());
++         else
++           instance()->mConfigHome = instance()->homePath( "XDG_CONFIG_HOME", ".config" );
 +         kdeconf->endGroup();
 +      } else {
 +#else
@@ -120,7 +128,7 @@ index acc316b..bb2a334 100644
      }
      return instance()->mConfigHome;
    }
-@@ -135,13 +212,24 @@ QString XdgBaseDirs::homePath( const char *resource )
+@@ -135,13 +221,30 @@
  
  QStringList XdgBaseDirs::systemPathList( const char *resource )
  {
@@ -137,8 +145,14 @@ index acc316b..bb2a334 100644
 +      QStringList dataDirs;
 +      if(kdeconf) {
 +        kdeconf->beginGroup(QLatin1String("XDG"));
-+        if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_DIRS")))
++        if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_DIRS"))) {
 +          dataDirs = instance()->systemPathList( "XDG_DATA_DIRS", expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_DIRS")).toString()).toLocal8Bit().constData() );
++        } else {
++          QDir dir( QCoreApplication::applicationDirPath() );
++          dir.cdUp();
++          const QString defaultPathList = dir.absoluteFilePath( QLatin1String( "share" ) );
++          dataDirs = instance()->systemPathList( "XDG_DATA_DIRS", defaultPathList.toLocal8Bit().constData() );
++        }
 +        kdeconf->endGroup();
 +      } else {
 +        QDir dir( QCoreApplication::applicationDirPath() );
@@ -149,7 +163,7 @@ index acc316b..bb2a334 100644
  #else
        QStringList dataDirs = instance()->systemPathList( "XDG_DATA_DIRS", "/usr/local/share:/usr/share" );
  #endif
-@@ -193,10 +281,18 @@ QStringList XdgBaseDirs::systemPathList( const char *resource )
+@@ -193,10 +296,24 @@
    } else if ( qstrncmp( "config", resource, 6 ) == 0 ) {
      if ( instance()->mConfigDirs.isEmpty() ) {
  #ifdef Q_OS_WIN
@@ -160,8 +174,14 @@ index acc316b..bb2a334 100644
 +      QStringList configDirs;
 +      if(kdeconf) {
 +        kdeconf->beginGroup(QLatin1String("XDG"));
-+        if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_DIRS")))
-+          configDirs = instance()->systemPathList( "XDG_CONFIG_DIRS", expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_DIRS")).toString()).toLocal8Bit().constData() );
++        if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_DIRS"))) {
++            configDirs = instance()->systemPathList( "XDG_CONFIG_DIRS", expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_DIRS")).toString()).toLocal8Bit().constData() );
++        } else {
++            QDir dir( QCoreApplication::applicationDirPath() );
++            dir.cdUp();
++            const QString defaultPathList = dir.absoluteFilePath( QLatin1String( "etc" ) ) + QLatin1Char( ';' ) + dir.absoluteFilePath( QLatin1String( "share/config" ) );
++            configDirs = instance()->systemPathList( "XDG_CONFIG_DIRS", defaultPathList.toLocal8Bit().constData() );
++        }
 +        kdeconf->endGroup();
 +      } else {
 +        QDir dir( QCoreApplication::applicationDirPath() );

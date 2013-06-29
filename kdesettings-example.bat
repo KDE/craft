@@ -185,6 +185,13 @@ rem it is needed for wince builds, but works everywhere and is the recommended w
 rem use emerge.
 set EMERGE_SOURCEONLY=True
 
+rem This option can be used to enable a notification backend.
+rem As soon as the buildprocess of a project has finished a notification will be displayed.
+rem Possible Backends:
+rem Snarl      http://snarl.fullphat.net/
+rem Toaster    Toaster will display a Windows 8 toast notification
+rem set EMERGE_USE_NOTIFY="Snarl;Toaster"
+
 rem override specific emerge options 
 rem This option makes it possible to set properties, which are defined in 
 rem bin\options.py. Multiple entries are separated by a space 

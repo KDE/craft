@@ -1,7 +1,7 @@
-Index: kdenetwork/krdc/CMakeLists.txt
+Index: krdc-4.10.2/CMakeLists.txt
 ===================================================================
---- kdenetwork/krdc/CMakeLists.txt	(Revision 1356485)
-+++ kdenetwork/krdc/CMakeLists.txt	(Arbeitskopie)
+--- krdc-4.10.2/CMakeLists.txt	(Revision 1356485)
++++ krdc-4.10.2/CMakeLists.txt	(Arbeitskopie)
 @@ -87,6 +87,8 @@
      config/general.ui
  )

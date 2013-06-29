@@ -7,12 +7,13 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         """ """
         self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"        
-        for ver in ["1.1.0","1.2.0","1.3.0","1.3.1","1.3.2","1.3.3"]:
+        for ver in ["1.1.0","1.2.0","1.3.0","1.3.1","1.3.2","1.3.3","1.3.4"]:
             self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "ninja-%s" % ver
         self.targetDigests['1.2.0'] = '9ce01fdf7815f0fda4e477d7fedcd47a3d0afb51'
         self.patchToApply[ "1.1.0" ] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
-        self.defaultTarget = '1.3.3'
+        self.targetDigests['1.3.4'] = 'e6ac7d49b2b5913956ad6740c8612981183808af'
+        self.defaultTarget = '1.3.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

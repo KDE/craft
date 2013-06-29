@@ -5,15 +5,25 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets["2.29.14"] = "http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.29/glib-2.29.14.tar.bz2"
         self.targetInstSrc["2.29.14"] = "glib-2.29.14"
-        self.patchToApply["2.29.14"] = ('glib-2.29.14-20121010.diff', '1')
-        self.targetDigests['2.29.14'] = 'bd993994e9d6262c19d241f6a6f781f11b840831'
+        self.targets["2.36.3"] = "http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.36/glib-2.36.3.tar.xz"
+        self.targetDigests['2.36.3'] = 'aafba69934b9ba77cc8cb0e5d8105aa1d8463eba'
+        self.targetInstSrc["2.36.3"] = "glib-2.36.3"
+        if compiler.isMSVC():
+            self.patchToApply["2.29.14"] = ('glib-2.29.14-20121010.diff', 1)
+            self.patchToApply["2.36.3"] = ('glib-2.29.14-20121010.diff', 1)
+        else:
+            self.patchToApply["2.36.3"] = [('glib-2.36.3-20130624_mingw.diff',1),
+                                           ('0001-Fix-compiling-for-win64.patch',1)]
+        self.defaultTarget = "2.36.3"
         self.shortDescription = "The Glib libraries: glib, gio, gthread, gmodule, gobject"
-        self.defaultTarget = "2.29.14"
+        
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'        
+        self.buildDependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['testing/libffi-src'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
+            
 
 
 class PackageMSVC(CMakePackageBase):
@@ -56,9 +66,12 @@ from Package.AutoToolsPackageBase import *
 class PackageMinGW( AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
+        if not self.subinfo.options.features.msys2:
+            utils.die("Glib requries the msys2 feature activated to compile")
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--disable-gtk-doc --enable-static=no --enable-shared=yes LIBFFI_LIBS=-lffi LIBFFI_CFLAGS='$CFLAGS'" 
-        
+        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=no --enable-shared=yes --disable-modular-tests"
+
+
         
 if compiler.isMinGW():
     class Package(PackageMinGW):
@@ -71,4 +84,4 @@ else:
             PackageMSVC.__init__( self )
 
 if __name__ == '__main__':
-      Package().execute()
+    Package().execute()
