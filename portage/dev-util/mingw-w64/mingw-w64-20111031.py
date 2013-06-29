@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         
         self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture()
         self.targetDigests['4.7.2'] = 'e4cc0963bbfe632fd4f7170767f5654ee6adb3c9'
-        self.targets["4.8.0-2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.0-release-posix-seh-rev2.7z" % emergePlatform.buildArchitecture()
+        self.targets["4.8.1-1"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.1-release-posix-seh-rev1.7z" % emergePlatform.buildArchitecture()
 
         self.defaultTarget = "20111031"
 
