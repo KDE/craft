@@ -1187,9 +1187,12 @@ def createDir(path):
 def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
-    destDir = os.path.dirname(dest)
-    if not os.path.exists(destDir):
-        os.makedirs(destDir)
+    destDir = os.path.dirname( dest )
+    if not os.path.exists( destDir ):
+        os.makedirs( destDir )
+    if os.path.exists( dest ):
+        warning( "Overiding %s" % dest )
+        os.remove( dest )
     if linkOnly:
             os.link( src , dest )
     else:
