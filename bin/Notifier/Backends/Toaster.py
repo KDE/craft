@@ -9,5 +9,5 @@ class Toaster(NotificationInterface):
         
     def notify(self,title,message,alertClass):
         path = os.path.dirname(os.path.realpath(__file__))
-        subprocess.Popen( "%s\\..\Libs\\toaster\\toast.exe -t \"%s\" -m \"%s\" -p \"%s\\..\\kde-logo.png\"" % (path,  title , message ,path ),shell=True)
+        subprocess.Popen( "%s -t \"%s\" -m \"%s\" -p \"%s\"" % (os.path.join( path, "..", "Libs", "toaster", "toast.exe") ,  title , message , os.path.join(path, "..", "kde-logo.png" )))
         
