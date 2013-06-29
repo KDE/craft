@@ -206,15 +206,22 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
             else:
                 exit( 1 )
 
-        os.environ[ "USERIN" ] = "y"
+        utils.putenv( "USERIN", "y")
         userin = "y"
 
         incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
         libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
-        os.environ[ "INCLUDE" ] = os.environ[ "INCLUDE" ] + ";" + os.path.join( self.sqlite.installDir(), "include" )
-        os.environ[ "LIB" ] = os.environ[ "LIB" ] + ";" + os.path.join( self.sqlite.installDir(), "lib" )
+        
+        if os.getenv("INCLUDE"):
+            utils.putenv( "INCLUDE", os.getenv( "INCLUDE" ) + ";" + os.path.join( self.sqlite.installDir(), "include" ))
+        else:
+            utils.putenv( "INCLUDE", os.path.join( self.sqlite.installDir(), "include" ))
+        if os.getenv( "LIB" ):
+            utils.putenv( "LIB", os.getenv( "LIB" ) + ";" + os.path.join( self.sqlite.installDir(), "lib" ))
+        else:
+            utils.putenv( "LIB", os.path.join( self.sqlite.installDir(), "lib" ))
         if self.isTargetBuild():
             incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
