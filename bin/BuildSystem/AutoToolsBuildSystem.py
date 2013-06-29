@@ -118,7 +118,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
             else:
                 self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
-            return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la") 
+            if os.path.exists(os.path.join(self.imageDir(),"lib")):
+                return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la")
+            else:
+                return True
 
     def runTest( self ):
         """running unittests"""
