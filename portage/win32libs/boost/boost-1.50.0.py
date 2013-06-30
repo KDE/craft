@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/boost-regex'] = 'default'
         self.dependencies['win32libs/boost-system'] = 'default'
         self.dependencies['win32libs/boost-thread'] = 'default'
+        self.dependencies['win32libs/boost-random'] = 'default'
 
 from Package.VirtualPackageBase import *
 
