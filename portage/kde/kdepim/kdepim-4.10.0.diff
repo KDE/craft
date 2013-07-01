@@ -10,49 +10,6 @@ diff -Nru -x '*~' kdepim-4.10.1.orig/archivemailagent/archivemailagent.cpp kdepi
  }
  
  void ArchiveMailAgent::pause()
-diff -Nru -x '*~' kdepim-4.10.1.orig/kontact/src/mainwindow.cpp kdepim-4.10.1/kontact/src/mainwindow.cpp
---- kdepim-4.10.1.orig/kontact/src/mainwindow.cpp	2013-03-01 07:57:28.299636000 +0100
-+++ kdepim-4.10.1/kontact/src/mainwindow.cpp	2013-03-05 21:46:54.359053000 +0100
-@@ -387,12 +387,12 @@
- {
-   QString location = KStandardDirs::locate( "data", "kontact/about/main.html" );
-   QString content = KPIMUtils::kFileToByteArray( location );
--  content = content.arg( "file:" + KStandardDirs::locate(
-+  content = content.arg( "file:/" + KStandardDirs::locate(
-                            "data", "kdeui/about/kde_infopage.css" ) );
-   if ( QApplication::isRightToLeft() ) {
-     content =
-       content.arg( "@import \"%1\";" ).
--              arg( "file:" + KStandardDirs::locate(
-+              arg( "file:/" + KStandardDirs::locate(
-                      "data", "kdeui/about/kde_infopage_rtl.css" ) );
-   } else {
-     content = content.arg( "" );
-@@ -1240,21 +1240,21 @@
-     subs( "exec:/help?kontact" ).
-     subs( iconSize ).
-     subs( iconSize ).
--    subs( "file:" + handbook_icon_path ).
-+    subs( "file:/" + handbook_icon_path ).
-     subs( "exec:/help?kontact" ).
-     subs( i18nc( "@item:intext", "Read Manual" ) ).
-     subs( i18nc( "@item:intext", "Learn more about Kontact and its components" ) ).
-     subs( "http://kontact.org" ).
-     subs( iconSize ).
-     subs( iconSize ).
--    subs( "file:" + html_icon_path ).
-+    subs( "file:/" + html_icon_path ).
-     subs( "http://kontact.org" ).
-     subs( i18nc( "@item:intext", "Visit Kontact Website" ) ).
-     subs( i18nc( "@item:intext", "Access online resources and tutorials" ) ).
-     subs( "exec:/accountwizard" ).
-     subs( iconSize ).
-     subs( iconSize ).
--    subs( "file:" + wizard_icon_path ).
-+    subs( "file:/" + wizard_icon_path ).
-     subs( "exec:/accountwizard" ).
-     subs( i18nc( "@item:intext", "Setup your Accounts" ) ).
-     subs( i18nc( "@item:intext", "Prepare Kontact for use" ) ).
 diff -Nru -x '*~' kdepim-4.10.1.orig/korganizer/views/todoview/incidencetreemodel.cpp kdepim-4.10.1/korganizer/views/todoview/incidencetreemodel.cpp
 --- kdepim-4.10.1.orig/korganizer/views/todoview/incidencetreemodel.cpp	2013-03-01 07:57:28.303636000 +0100
 +++ kdepim-4.10.1/korganizer/views/todoview/incidencetreemodel.cpp	2013-03-06 00:32:58.916645400 +0100

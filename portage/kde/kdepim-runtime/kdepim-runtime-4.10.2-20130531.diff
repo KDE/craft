@@ -26,15 +26,4 @@ diff -Nru -x '*~' kdepim-runtime-4.10.2.orig/defaultsetup/defaultnotebook.deskto
  [Settings]
 -Path[$e]=$HOME/.local/share/notes/
 +Path[$e]=$XDG_DATA_HOME/notes/
-diff -Nru -x '*~' kdepim-runtime-4.10.2.orig/tray/CMakeLists.txt kdepim-runtime-4.10.2/tray/CMakeLists.txt
---- kdepim-runtime-4.10.2.orig/tray/CMakeLists.txt	2013-03-01 07:59:42.421969000 +0100
-+++ kdepim-runtime-4.10.2/tray/CMakeLists.txt	2013-06-18 12:08:17.131171400 +0200
-@@ -7,7 +7,7 @@
-                              org.freedesktop.akonaditray.xml )
- qt4_add_dbus_adaptor( tray_sources org.freedesktop.akonaditray.xml dock.h Dock )
- 
--kde4_add_app_icon(tray_sources "${KDE4_ICON_DIR}/oxygen/*/apps/akonadi.png")
-+kde4_add_app_icon(tray_sources "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/akonadi.png")
- 
- kde4_add_executable(akonaditray ${tray_sources})
- 
+
