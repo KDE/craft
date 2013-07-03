@@ -7,12 +7,12 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-        self.patchToApply['4.10.0'] = [("kde-workspace-4.10.0-20130302.diff", 1)]
-        self.patchToApply['4.10.1'] = [("kde-workspace-4.10.0-20130302.diff", 1)]
-        self.patchToApply['4.10.2'] = [("kde-workspace-4.10.0-20130302.diff", 1),
-                                       ("build_kinfocenter.diff", 1),
-                                       ("fix_oxygenstyle_crash.diff", 1)]
-        self.patchToApply['4.10.3'] = [("fix_oxygenstyle_crash.diff", 1)]
+        self.patchToApply['4.10.0'] = [("kde-workspace-4.10.0-20130302.diff", 1)]#upstream
+        self.patchToApply['4.10.1'] = [("kde-workspace-4.10.0-20130302.diff", 1)]#upstream
+        self.patchToApply['4.10.2'] = [("kde-workspace-4.10.0-20130302.diff", 1),#upstream
+                                       ("build_kinfocenter.diff", 1),#on reviewboard
+                                       ("fix_oxygenstyle_crash.diff", 1)]#upstream
+        self.patchToApply['4.10.3'] = [("fix_oxygenstyle_crash.diff", 1)]#upstream
 
         self.shortDescription = 'the KDE workspace including the oxygen style'
         self.defaultTarget = 'gitHEAD'
