@@ -2,13 +2,12 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:scratch/sengels/kcwsh'
+        self.svnTargets['gitHEAD'] = '[git]kde:scratch/sengels/libkcw'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.shortDescription = "a cmd wrapper for konsole"
+        self.shortDescription = "a support toolkit to minimally wrap Windows API"
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['testing/libkcw'] = 'default'
 
 from Package.CMakePackageBase import *
 

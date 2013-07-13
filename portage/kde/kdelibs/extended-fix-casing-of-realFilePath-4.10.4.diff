@@ -60,9 +60,9 @@ diff -Nru -x '*~' kdelibs-4.10.4.orig/kdecore/io/kmountpoint.cpp kdelibs-4.10.4/
  #endif
  
 +#ifdef Q_OS_WIN
-+Qt::CaseSensitivity cs = Qt::CaseInsensitive;
++static Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 +#else
-+Qt::CaseSensitivity cs = Qt::CaseSensitive;
++static Qt::CaseSensitivity cs = Qt::CaseSensitive;
 +#endif
 +
  #ifdef HAVE_VOLMGT
@@ -110,9 +110,9 @@ diff -Nru -x '*~' kdelibs-4.10.4.orig/kdecore/kernel/kstandarddirs.cpp kdelibs-4
  #include <QtCore/QProcessEnvironment>
  
 +#ifdef Q_OS_WIN
-+Qt::CaseSensitivity cs = Qt::CaseInsensitive;
++static Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 +#else
-+Qt::CaseSensitivity cs = Qt::CaseSensitive;
++static Qt::CaseSensitivity cs = Qt::CaseSensitive;
 +#endif
 +
 +
