@@ -9,7 +9,8 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
         self.patchToApply['4.10.2'] = [("kdepim-runtime-4.10.2-20130531.diff", 1)]
-        self.patchToApply['4.10.4'] = [("kdepim-runtime-4.10.2-20130531.diff", 1)]
+        self.patchToApply['4.10.4'] = [("kdepim-runtime-4.10.2-20130531.diff", 1), # not to be upstreamed, this fix is only a hack
+                                       ("kdepim-runtime-tray-icon.diff", 1)] # upstreamed
 
         self.defaultTarget = 'gitHEAD'
 

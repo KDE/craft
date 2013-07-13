@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
         self.patchToApply['4.10.1'] = [("libkcddb-4.10.1-20130310.diff", 1)]
-        self.patchToApply['4.10.2'] = [("libkcddb-4.10.1-20130310.diff", 1)]
+        self.patchToApply['4.10.2'] = [("libkcddb-4.10.1-20130310.diff", 1)] # upstreamed
 
         self.defaultTarget = 'gitHEAD'
 

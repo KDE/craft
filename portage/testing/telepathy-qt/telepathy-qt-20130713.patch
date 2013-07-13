@@ -1,0 +1,82 @@
+diff --git a/cmake/modules/TelepathyDefaults.cmake b/cmake/modules/TelepathyDefaults.cmake
+index ee3ab33..7389117 100644
+--- a/cmake/modules/TelepathyDefaults.cmake
++++ b/cmake/modules/TelepathyDefaults.cmake
+@@ -135,8 +135,8 @@ Telepathy-Qt as a static library.")
+ 
+     # gcc under Windows
+     if(MINGW)
+-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--export-all-symbols -Wl,--disable-auto-import")
+-        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--export-all-symbols -Wl,--disable-auto-import")
++        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--export-all-symbols")
++        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--export-all-symbols")
+ 
+         # we always link against the release version of QT with mingw
+         # (even for debug builds). So we need to define QT_NO_DEBUG
+diff --git a/cmake/modules/TpQtMacros.cmake b/cmake/modules/TpQtMacros.cmake
+index 38f4af6..add6078 100644
+--- a/cmake/modules/TpQtMacros.cmake
++++ b/cmake/modules/TpQtMacros.cmake
+@@ -223,7 +223,8 @@ function(tpqt_client_generator spec group pretty_include namespace)
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+ 
+         DEPENDS ${CMAKE_SOURCE_DIR}/tools/libqtcodegen.py
+-                ${CMAKE_SOURCE_DIR}/tools/qt-client-gen.py)
++                ${CMAKE_SOURCE_DIR}/tools/qt-client-gen.py
++                ${CMAKE_CURRENT_BINARY_DIR}/_gen/spec-${spec}.xml )
+     add_custom_target(generate_cli-${spec}-body DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_gen/cli-${spec}-body.hpp)
+     add_dependencies(all-generated-sources generate_cli-${spec}-body)
+ 
+@@ -259,7 +260,8 @@ function(tpqt_future_client_generator spec namespace)
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+ 
+         DEPENDS ${CMAKE_SOURCE_DIR}/tools/libqtcodegen.py
+-                ${CMAKE_SOURCE_DIR}/tools/qt-client-gen.py)
++                ${CMAKE_SOURCE_DIR}/tools/qt-client-gen.py
++                ${CMAKE_CURRENT_BINARY_DIR}/_gen/future-${spec}.xml )
+     add_custom_target(generate_future-${spec}-body DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_gen/future-${spec}-body.hpp)
+     add_dependencies(all-generated-sources generate_future-${spec}-body)
+ 
+@@ -294,8 +296,9 @@ function(tpqt_service_generator spec group pretty_include namespace)
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+ 
+         DEPENDS ${CMAKE_SOURCE_DIR}/tools/libqtcodegen.py
+-                ${CMAKE_SOURCE_DIR}/tools/qt-svc-gen.py)
+-    add_custom_target(generate_service-${spec}-body DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_gen/svc-${spec}.cpp)
++                ${CMAKE_SOURCE_DIR}/tools/qt-svc-gen.py
++                ${CMAKE_CURRENT_BINARY_DIR}/_gen/spec-svc-${spec}.xml)
++    add_custom_target(generate_service-${spec}-body DEPENDS  ${CMAKE_CURRENT_BINARY_DIR}/_gen/svc-${spec}.cpp)
+     add_dependencies(all-generated-service-sources generate_service-${spec}-body)
+ 
+     if (service_generator_depends)
+@@ -341,7 +344,8 @@ function(tpqt_xincludator _TARGET_NAME _INPUT_FILE _OUTPUT_FILE)
+                             > ${_OUTPUT_FILE}
+ 
+                        DEPENDS ${CMAKE_SOURCE_DIR}/tools/xincludator.py
+-                               ${_INPUT_FILE} ${depends_xml_files})
++                               ${_INPUT_FILE} ${depends_xml_files}
++                       )
+     add_custom_target(${_TARGET_NAME} DEPENDS ${_OUTPUT_FILE})
+ 
+     if (xincludator_gen_depends)
+@@ -362,7 +366,7 @@ function(tpqt_constants_gen _TARGET_NAME _SPEC_XML _OUTFILE)
+                                ${constants_gen_args}
+                                --specxml=${_SPEC_XML}
+                                > ${_OUTFILE}
+-
++                       
+                        DEPENDS ${CMAKE_SOURCE_DIR}/tools/libqtcodegen.py
+                                ${CMAKE_SOURCE_DIR}/tools/qt-constants-gen.py
+                                ${_SPEC_XML} ${depends_xml_files})
+diff --git a/tools/qt-client-gen.py b/tools/qt-client-gen.py
+index d79ac30..1df34fd 100644
+--- a/tools/qt-client-gen.py
++++ b/tools/qt-client-gen.py
+@@ -74,6 +74,7 @@ class Generator(object):
+         self.h('\n')
+ 
+         if self.extraincludes:
++            self.extraincludes = self.extraincludes.replace('\'','')
+             for include in self.extraincludes.split(','):
+                 self.h('#include %s\n' % include)
+ 

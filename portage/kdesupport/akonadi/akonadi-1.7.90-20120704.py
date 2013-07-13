@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver
         self.patchToApply['1.9.0'] = [("akonadi-kde.conf-fix.diff", 1)]
-        self.patchToApply['1.9.2'] = [("akonadi-kde.conf-fix.diff", 1)]
+        self.patchToApply['1.9.2'] = [("akonadi-kde.conf-fix.diff", 1), ("akonadi-unused-sockets.diff", 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"

@@ -23,15 +23,30 @@ class MSysShell(object):
 
     def initEnvironment(self, cflags="", ldflags=""):
         mergeroot = self.toNativePath(os.getenv("KDEROOT"))
-        cflags = "-I%s/include %s" % (mergeroot, cflags)
-        ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
+
         if compiler.isMinGW():
+            ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
+            cflags = "-I%s/include %s" % (mergeroot, cflags)
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
-            utils.putenv("LD", "link.exe")
+            utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), os.getenv("KDEROOT")))
+            utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), os.getenv("KDEROOT")))
+            utils.putenv("LD", "link")
+            utils.putenv("CC", "/share/automake-1.13/compile cl -nologo")
+            utils.putenv("CXX", "/share/automake-1.13/compile cl -nologo")
+            utils.putenv("NM", "dumpbin -symbols")
+            utils.putenv("AR", "/share/automake-1.13/ar-lib lib")
+            utils.putenv("WINDRES","rc-windres")
+            utils.putenv("RC","rc-windres")
+            utils.putenv("STRIP",":")
+            utils.putenv("RANLIB",":")
+            utils.putenv("F77", "no")
+            utils.putenv("FC", "no")
+            cflags += " -MD -Zi"
+
         
         utils.putenv("PKG_CONFIG_PATH", "%s/lib/pkgconfig" % mergeroot)
 
@@ -71,7 +86,6 @@ class MSysShell(object):
 
 def main():
     shell = MSysShell()
-    shell.initEnvironment()
     utils.putenv("MSYS_LOGIN_DIR",os.getcwd())
     utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login -i"))
 
