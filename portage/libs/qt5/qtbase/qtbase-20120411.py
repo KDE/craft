@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git|dev"
         self.shortDescription = "a cross-platform application framework"
+        self.patchToApply[ 'gitHEAD' ] = ("qtbase-20130714.patch" , 1)
         # If you change the default target here please do not forget to rename the portage file
         self.defaultTarget = 'gitHEAD'
 
@@ -64,7 +65,7 @@ class Package(Qt5CorePackageBase):
         command += "-qt-libjpeg "
         command += "-qt-zlib "
         command += "-no-vcproj "
-        command += "-nomake demos -nomake examples -nomake tests -nomake docs  "
+        command += "-nomake examples "
         command += "-c++11 "
         command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
         command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()

@@ -1,0 +1,18 @@
+diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
+index c836e0e..70f329d 100644
+--- a/tools/configure/configureapp.cpp
++++ b/tools/configure/configureapp.cpp
+@@ -2745,11 +2745,11 @@ void Configure::generateOutputVars()
+     }
+     if (dictionary[ "DBUS" ] != "no" && !dbusPath.isEmpty()) {
+         qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
+-        qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib").arg(dbusPath);
++        qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib -ldbus-1").arg(dbusPath);
+     }
+     if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
+         qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
+-        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib").arg(mysqlPath);
++        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib -lmysql").arg(mysqlPath);
+     }
+     if (!psqlLibs.isEmpty())
+         qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
