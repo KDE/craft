@@ -1162,7 +1162,7 @@ def createImportLibs( dll_name, basepath ):
 
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )
-    if ( path[1] == ':' ):
+    if ( len(path) > 1 and path[1] == ':' ):
         path = '/' + path[0].lower() + '/' + path[3:]
     return path
 
