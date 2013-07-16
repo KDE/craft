@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20130625"
+        ver = "20130709"
         if emergePlatform.buildArchitecture() == "x86":
             self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x32-msys2-alpha-%s.tar.xz" % ver
             self.targetDigests['20130625'] = 'b37da10deea58ab8ccba88e255cd64bd7fab00dd'
