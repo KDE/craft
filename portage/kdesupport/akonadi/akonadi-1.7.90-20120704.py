@@ -7,7 +7,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs/automoc'] = 'default'
-        self.dependencies['kdesupport/soprano'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kdesupport/soprano'] = 'default'
+        else:
+            self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['win32libs/boost-program-options']   = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['libs/qt'] = 'default'
