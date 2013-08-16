@@ -35,10 +35,13 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = ""
         if self.subinfo.options.features.akonadiBackendSqlite:
-            self.subinfo.options.configure.defines = (
+            self.subinfo.options.configure.defines += (
                     " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
                     " -DDATABASE_BACKEND=SQLITE " )
+        if not self.subinfo.options.features.nepomuk:
+            self.subinfo.options.configure.defines += " -DAKONADI_USE_STRIGI_SEARCH=ON"
 
 
 if __name__ == '__main__':
