@@ -62,6 +62,9 @@ class OptionsFeatures(OptionsBase):
         
         ## enable use of msys2 in several packages, required for glib.
         self.msys2 = False
+        
+        ## stick to the gcc 4.4.7 version
+        self.legacyGCC = True
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
