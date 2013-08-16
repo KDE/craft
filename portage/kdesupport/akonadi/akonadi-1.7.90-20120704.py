@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '1.9.2'
 
 from Package.CMakePackageBase import *
 
