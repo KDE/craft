@@ -13,7 +13,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.buildInSource = False
         BuildSystemBase.__init__(self, "autotools")
         self.shell = MSysShell()
-        self.makeProgram = "make -e"
+        self.makeProgram = "make "
         if self.subinfo.options.make.supportsMultijob:
             self.makeProgram += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
         if emergePlatform.buildArchitecture() == "x86":
@@ -40,36 +40,20 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 sourcedir = self.buildDir()
 
-
-
             configure = os.path.join(sourcedir, "configure")
-            if os.path.exists(configure) or self.subinfo.options.configure.bootstrap == True:
-                mergeroot = self.shell.toNativePath(self.mergeDestinationDir())
-                self.shell.initEnvironment(cflags, ldflags)
-                if self.subinfo.options.configure.bootstrap == True:
-                    autogen = os.path.join(sourcedir, "autogen.sh")
-                    if os.path.exists(autogen):
-                        self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
-                #else:
-                    #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
-                if self.subinfo.options.configure.noDefaultOptions == False:
-                    if self.subinfo.options.install.useDestDir == False:
-                        _prefix = "--prefix=" + self.shell.toNativePath(self.imageDir())
-                    else:
-                        _prefix = "--prefix=" + mergeroot
-                else:
-                    _prefix = ""
- 
-                _options = self.platform
-                _options += BuildSystemBase.configureOptions(self)
-                if _options:
-                    _prefix += " %s" % _options
-                if self.buildInSource:
-                    ret = self.shell.execute(self.sourceDir(), configure, _prefix, debugLvl=0 )
-                else:
-                    ret = self.shell.execute(self.buildDir(), configure, _prefix, debugLvl=0  )
+            self.shell.initEnvironment(cflags, ldflags)
+            if self.subinfo.options.configure.bootstrap == True:
+                autogen = os.path.join(sourcedir, "autogen.sh")
+                if os.path.exists(autogen):
+                    self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
+            #else:
+                #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
+            
+
+            if self.buildInSource:
+                ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self), debugLvl=0 )
             else:
-                ret = self.shell.execute(self.sourceDir(), "ruby", "configure", debugLvl=0 )
+                ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self), debugLvl=0  )
             return ret
 
     def make( self, dummyBuildType=None ):
@@ -127,3 +111,18 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """running unittests"""
         return True
 
+    def configureOptions( self, defines=""):
+        """returns default configure options"""
+        options = BuildSystemBase.configureOptions(self)
+        if self.subinfo.options.configure.noDefaultOptions == False:
+            if self.subinfo.options.install.useDestDir == False:
+                options += "--prefix=" + self.shell.toNativePath(self.imageDir())
+            else:
+                options += "--prefix=" + self.shell.toNativePath(self.mergeDestinationDir())
+        options += self.platform
+        
+        return options;
+
+        
+    def ccacheOptions(self):
+        return " CC='ccache gcc' CXX='ccache g++'"

@@ -111,9 +111,6 @@ function setupCCACHE()
     if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true)
     {
         $env:CCACHE_DIR="$env:KDEROOT\build\CCACHE"
-        $env:CXX="ccache g++"
-        $env:CC="ccache gcc"
-        $env:EMERGE_MAKE_PROGRAM="jom /E"
     }
 }
 

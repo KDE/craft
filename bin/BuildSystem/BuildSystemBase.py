@@ -18,7 +18,8 @@ class BuildSystemBase(EmergeBase):
     def __init__(self, typeName=""):
         """constructor"""
         EmergeBase.__init__(self)
-        self.supportsNinja = False
+        self.supportsNinja = False        
+        self.supportsCCACHE = utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW();
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -69,6 +70,9 @@ class BuildSystemBase(EmergeBase):
         """return options for configure command line"""
         if self.subinfo.options.configure.defines != None:
             defines += " %s" % self.subinfo.options.configure.defines
+        
+        if self.supportsCCACHE:
+            defines += " %s" % self.ccacheOptions()
         return defines
 
     def makeOptions(self, defines="", maybeVerbose=True):
@@ -81,7 +85,7 @@ class BuildSystemBase(EmergeBase):
             if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
                 defines += " -v "
             else:
-                defines += " VERBOSE=1"
+                defines += " VERBOSE=1 V=1"
         return defines
 
     def setupTargetToolchain(self):
@@ -118,3 +122,7 @@ class BuildSystemBase(EmergeBase):
         
     def install(self):
         return True
+
+        
+    def ccacheOptions(self):
+        return ""
