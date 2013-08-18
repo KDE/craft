@@ -7,26 +7,10 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-
-        self.patchToApply["4.10.0"] = [("kdelibs-4.10.0-20130219.diff", 1)]
-        self.patchToApply["4.10.1"] = [("kdelibs-4.10.0-20130219.diff", 1)]
-        self.patchToApply["4.10.2"] = [("kdelibs-4.10.2-20130430.diff", 1), 
-                                       ("kde.conf-extended-fix.diff", 1),
-                                       ("fix-kdoctools.diff", 1),
-                                       ("extended-fix-casing-of-realFilePath.diff", 1),
-                                       ("fix-dir-separator.diff", 1),
-                                       ("fix-krun-url-case-sensitivity.diff", 1),
-                                       ("add-new-solid-win-backend.diff", 1),
-                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1),
-                                       ("0001-KDE-doesnt-know-the-windows-specific-mimetype-aplica.patch", 1)]
-        self.patchToApply["4.10.4"] = [("kdelibs-4.10.4-20130613.diff", 1),
-                                       ("kde.conf-extended-fix.diff", 1),
+        self.patchToApply["4.11.0"] = [("kde.conf-extended-fix.diff", 1),
                                        ("fix-dir-separator.diff", 1),
                                        ("extended-fix-casing-of-realFilePath-4.10.4.diff", 1),
-                                       ("fix-krun-url-case-sensitivity.diff", 1),
-                                       ("add-new-solid-win-backend.diff", 1),
-                                       ("0003-fixed-atatch-to-attachToConsole.patch", 1),
-                                       ("0001-KDE-doesnt-know-the-windows-specific-mimetype-aplica.patch", 1)]
+                                       ("fix-krun-url-case-sensitivity.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
