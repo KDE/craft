@@ -116,13 +116,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         if self.subinfo.options.configure.noDefaultOptions == False:
             if self.subinfo.options.install.useDestDir == False:
-                options += "--prefix=" + self.shell.toNativePath(self.imageDir())
+                options += " --prefix=%s " % self.shell.toNativePath(self.imageDir())
             else:
-                options += "--prefix=" + self.shell.toNativePath(self.mergeDestinationDir())
+                options += " --prefix=%s " % self.shell.toNativePath(self.mergeDestinationDir())
         options += self.platform
         
         return options;
 
         
     def ccacheOptions(self):
-        return " CC='ccache gcc' CXX='ccache g++'"
+        return " CC='ccache gcc' CXX='ccache g++' "
