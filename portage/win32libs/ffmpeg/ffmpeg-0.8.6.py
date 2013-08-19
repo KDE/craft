@@ -24,7 +24,8 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/msys'] = 'default'
             self.buildDependencies['dev-util/yasm'] = 'default'
         self.dependencies['win32libs/libvorbis'] = 'default'
-        #self.buildDependencies['testing/lame-src'] = 'default'
+        self.dependencies['win32libs/liblame'] = 'default'
+        self.dependencies['win32libs/libopus'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *
@@ -36,13 +37,13 @@ class PackageMinGW(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.platform = ""
-        self.subinfo.options.configure.defines = " --disable-static --enable-shared --enable-gpl --enable-libvorbis   --disable-doc "# --enable-libmp3lame"
+        self.subinfo.options.configure.defines = " --disable-static --enable-shared --enable-gpl --enable-libvorbis  --disable-doc  --enable-libmp3lame --enable-libopus "
         
     def configure( self):
         return AutoToolsPackageBase.configure( self, cflags="-std=c99 ", ldflags="")
         
     def ccacheOptions(self):
-        return " --cc='ccache gcc' --cxx='ccache g++'"
+        return " --cc='ccache gcc' --cxx='ccache g++' "
 
 
 if compiler.isMinGW():
