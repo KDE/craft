@@ -23,15 +23,15 @@ class subinfo(info.infoclass):
 
     self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
     self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s" % (self.vlcTagName)
-    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6']:
+    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6', '2.0.8']:
         self.targets[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
         self.targetDigestUrls[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z.sha1" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
     for releaseTag in [ '2.0.2','2.0.5','2.0.6' ]:
         self.patchToApply[ releaseTag ] = [("vlc-%s.diff" % (releaseTag),1)]
     self.shortDescription = "an open-source multimedia framework"
-
-    self.defaultTarget = releaseTag
+    
+    self.defaultTarget = '2.0.8'
 
 
   def setDependencies( self ):

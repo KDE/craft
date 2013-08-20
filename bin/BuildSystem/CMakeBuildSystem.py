@@ -240,3 +240,5 @@ class CMakeBuildSystem(BuildSystemBase):
 
         return graphviz.openOutput()
 
+    def ccacheOptions(self):
+        return " -DCMAKE_CXX_COMPILER=ccache -D CMAKE_CXX_COMPILER_ARG1=g++ -DCMAKE_CC_COMPILER=ccache -D CMAKE_CC_COMPILER_ARG1=gcc"

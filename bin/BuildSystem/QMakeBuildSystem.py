@@ -57,8 +57,6 @@ class QMakeBuildSystem(BuildSystemBase):
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool):
-            if utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW():
-                configureDefines += ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
             if self.buildType() == "Release":
                 configureDefines += ' "CONFIG -= debug"'
                 configureDefines += ' "CONFIG += release"'
@@ -110,3 +108,6 @@ class QMakeBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running qmake based unittests"""
         return True
+        
+    def ccacheOptions(self):
+        return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '

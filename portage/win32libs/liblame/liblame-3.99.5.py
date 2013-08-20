@@ -4,19 +4,17 @@ import os
 import compiler
 import shells
 
-#TODO: find a clean solution to run it with msvc support(lib.exe must be in path to generate msvc import libs)
-
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.98.4'] = "http://downloads.sourceforge.net/sourceforge/lame/lame-3.98.4.tar.gz"
-        #self.targetDigests['3.99.3'] = '0d9acaed7737d5e6b51096dc0b35322d319f463d'
-        self.targetInstSrc['3.98.4'] = "lame-3.98.4"
-        self.defaultTarget = '3.98.4'
+        self.targets['3.99.5'] = "http://downloads.sourceforge.net/sourceforge/lame/lame-3.99.5.tar.gz"
+        self.targetDigests['3.99.5'] = '03a0bfa85713adcc6b3383c12e2cc68a9cfbf4c4'
+        self.targetInstSrc['3.99.5'] = "lame-3.99.5"
+        self.defaultTarget = '3.99.5'
 
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/autotools'] = 'default'
+        self.buildDependencies['dev-util/msys'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *
@@ -28,7 +26,7 @@ class PackageMinGW(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.shell = MSysShell()
-        self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-nasm" 
+        self.subinfo.options.configure.defines = "--disable-static --enable-shared " 
 
 
         
