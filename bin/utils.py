@@ -1191,7 +1191,7 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     if not os.path.exists( destDir ):
         os.makedirs( destDir )
     if os.path.exists( dest ):
-        warning( "Overiding %s" % dest )
+        warning( "Overriding %s" % dest )
         os.remove( dest )
     if linkOnly:
             os.link( src , dest )
