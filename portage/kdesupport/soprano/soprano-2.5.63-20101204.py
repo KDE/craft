@@ -14,22 +14,25 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
 
         for ver in ['2.8.0', '2.9.0', '2.9.2', '2.9.3']:
-            self.svnTargets[ ver ] ='[git]kde:soprano.git||' + ver
-
-        for ver in ['v2.8.0', 'v2.9.0', 'v2.9.2', 'v2.9.3']:
-            self.targets[ ver ] = 'http://downloads.sourceforge.net/soprano/soprano-' + ver.replace('v', '') + '.tar.bz2'
-            self.targetInstSrc[ ver ] = 'soprano-' + ver[1:]
+            self.svnTargets[ ver ] ='[git]kde:soprano.git||v' + ver
+            self.targets[ 'v' + ver ] = 'http://downloads.sourceforge.net/soprano/soprano-' + ver + '.tar.bz2'
+            self.targetInstSrc[ 'v' + ver ] = 'soprano-' + ver
         self.patchToApply['v2.9.0'] = [("soprano-redland-callback.diff", 1),
                                        ("0001-test-if-virtuoso-executable-exists-first.patch", 1),
                                        ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
+        self.patchToApply['2.9.0'] = self.patchToApply['v2.9.0']
         self.patchToApply['v2.9.2'] = [("soprano-redland-callback.diff", 1),
                                        ("0001-test-if-virtuoso-executable-exists-first.patch", 1),
                                        ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
+        self.patchToApply['2.9.2'] = self.patchToApply['v2.9.2']
+        self.targetDigests['v2.9.3'] = '9137c21e31c802ac9c45564962e07017952cb9c5'
         self.patchToApply['v2.9.3'] = [("soprano-redland-callback.diff", 1),
                                        ("0001-test-if-virtuoso-executable-exists-first.patch", 1),
                                        ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
+        self.patchToApply['2.9.3'] = self.patchToApply['v2.9.3']
+
         self.shortDescription = "a RDF storage solutions library"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'v2.9.3'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
