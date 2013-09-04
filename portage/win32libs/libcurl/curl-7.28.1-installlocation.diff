@@ -6,7 +6,7 @@ diff -Nru -x '*~' curl-7.28.1.orig/CMakeLists.txt curl-7.28.1/CMakeLists.txt
  mark_as_advanced(ENABLE_IPV6)
  
 +if(NOT CURL_RUNTIME_INSTALL_DESTINATION)
-+  set(CURL_RUNTIME_INSTALL_DESTINATION lib)
++  set(CURL_RUNTIME_INSTALL_DESTINATION bin)
 +endif()
 +if(NOT CURL_LIBRARY_INSTALL_DESTINATION)
 +  set(CURL_LIBRARY_INSTALL_DESTINATION lib)
