@@ -18,6 +18,10 @@ class subinfo(info.infoclass):
         self.shortDescription = "document translation defintions for docbook format"
         self.defaultTarget = '1.78.1'
 
+
+    def setDependencies( self ):
+        self.dependencies['data/docbook-dtd'] = '4.5' # actually, all v4 should work
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

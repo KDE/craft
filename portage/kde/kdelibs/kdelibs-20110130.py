@@ -31,7 +31,6 @@ class subinfo(info.infoclass):
             self.dependencies['kdesupport/soprano'] = 'default'
             self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
-        self.dependencies['data/docbook-dtd'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
         if self.options.features.phononBackend.vlc:
