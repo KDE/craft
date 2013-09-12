@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.2.0'
 
     def setDependencies( self ):
-        self.hardDependencies['testing/libgcrypt-src'] = 'default'
+        self.hardDependencies['win32libs/gcrypt'] = 'default'
         self.hardDependencies['virtual/bin-base'] = 'default'
 
 class Package(CMakePackageBase):

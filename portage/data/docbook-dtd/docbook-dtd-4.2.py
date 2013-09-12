@@ -12,10 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['4.2'] = '5e3a35663cd028c5c5fbb959c3858fec2d7f8b9e'
         self.targetDigests['4.5'] = 'b9124233b50668fb508773aa2b3ebc631d7c1620'
         self.targetDigests['5.0'] = '49f274e67efdee771300cba4da1f3e4bc00be1ec'
-        self.shortDescription = "document type definition for docbook format"
         self.options.package.withCompiler = False
         self.options.package.packSources = False
-        self.defaultTarget = '4.2'
+
+        self.shortDescription = "document type definition for docbook format"
+        self.defaultTarget = '4.5'
 
 from Package.BinaryPackageBase import *
 

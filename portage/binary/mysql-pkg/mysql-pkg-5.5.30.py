@@ -13,15 +13,21 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         #self.baseURL = "http://www.winkde.org/pub/kde/ports/win32/repository/other/"
         self.baseURL = "http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/"
+        for ver in [ '5.5.32' , '5.5.33' ]:
+            if( emergePlatform.buildArchitecture() == 'x64' ):
+              self.targets[ ver ] = self.baseURL+"mysql-" + ver + "-winx64.zip"
+              self.targetInstSrc[ ver ] = "mysql-" + ver + "-winx64"
+            else:
+              self.targets[ ver ] = self.baseURL+"mysql-" + ver + "-win32.zip"
+              self.targetInstSrc[ ver ] = "mysql-" + ver + "-win32"
         if( emergePlatform.buildArchitecture() == 'x64' ):
-          self.targets[ '5.5.32'] = self.baseURL+"mysql-5.5.32-winx64.zip"
-          self.targetInstSrc[ '5.5.32' ] = "mysql-5.5.32-winx64"
+              self.targetDigests['5.5.32'] = '9b6969ce7814ddb9fc9f7b39f0f59cc18ded98fc'
+              self.targetDigests['5.5.33'] = 'eceac0d0a01e45feb11df26029913022351476e6'
         else:
-          self.targets[ '5.5.32'] = self.baseURL+"mysql-5.5.32-win32.zip"
-          self.targetInstSrc[ '5.5.32' ] = "mysql-5.5.32-win32"
-          self.targetDigests['5.5.32'] = '3d84eccbf05d0ef8117c0f1c1fbf5df277adacb0'
+              self.targetDigests['5.5.32'] = '3d84eccbf05d0ef8117c0f1c1fbf5df277adacb0'
+              self.targetDigests['5.5.33'] = 'fdf6523699576fe818a63722a994710b8b52f171'
         self.shortDescription = "MySql database server and embedded library"
-        self.defaultTarget = '5.5.32'
+        self.defaultTarget = '5.5.33'
 
 
     def setDependencies( self ):
