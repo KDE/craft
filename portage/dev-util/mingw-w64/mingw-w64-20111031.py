@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
         
         
-        self.targets["4.8.1-3"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.1-release-posix-seh-rev3.7z" % emergePlatform.buildArchitecture()
+        self.targets["4.8.1-5"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.1-release-posix-seh-rev5.7z" % emergePlatform.buildArchitecture()
 
         if self.options.features.legacyGCC:
             self.defaultTarget = "20111031"
         else:
-            self.defaultTarget = "4.8.1-3"
+            self.defaultTarget = "4.8.1-5"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'

@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
         ver = "20111031"
         self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w32-bin_i686-mingw_"+ver+"_sezero.zip"
         
-        self.targets["4.8.1-3"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-4.8.1-release-posix-sjlj-rev3.7z"
+        self.targets["4.8.1-5"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-4.8.1-release-posix-sjlj-rev5.7z"
         
         if self.options.features.legacyGCC:
             self.defaultTarget = "20111031"
         else:
-            self.defaultTarget = "4.8.1-3"
+            self.defaultTarget = "4.8.1-5"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
