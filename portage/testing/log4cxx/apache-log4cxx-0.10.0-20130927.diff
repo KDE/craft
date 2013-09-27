@@ -1,0 +1,42 @@
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/main/cpp/stringhelper.cpp apache-log4cxx-0.10.0/src/main/cpp/stringhelper.cpp
+--- apache-log4cxx-0.10.0.orig/src/main/cpp/stringhelper.cpp	2008-04-01 00:34:09.000000000 +0200
++++ apache-log4cxx-0.10.0/src/main/cpp/stringhelper.cpp	2013-09-27 16:35:09.443125500 +0200
+@@ -20,6 +20,7 @@
+ #include <log4cxx/helpers/stringhelper.h>
+ #include <log4cxx/helpers/transcoder.h>
+ #include <algorithm>
++#include <iterator>
+ #include <vector>
+ #include <apr_strings.h>
+ #include <log4cxx/helpers/pool.h>
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/main/include/log4cxx/log4cxx.hw apache-log4cxx-0.10.0/src/main/include/log4cxx/log4cxx.hw
+--- apache-log4cxx-0.10.0.orig/src/main/include/log4cxx/log4cxx.hw	2008-04-01 00:34:42.000000000 +0200
++++ apache-log4cxx-0.10.0/src/main/include/log4cxx/log4cxx.hw	2013-09-27 17:12:15.080424700 +0200
+@@ -72,9 +72,11 @@
+ template class LOG4CXX_EXPORT log4cxx::helpers::ObjectPtrT<T>; \
+ typedef log4cxx::helpers::ObjectPtrT<T> T##Ptr
+ #define LOG4CXX_LIST_DEF(N, T) \
+-template class LOG4CXX_EXPORT std::allocator<T>; \
+-template class LOG4CXX_EXPORT std::vector<T>; \
+ typedef std::vector<T> N
++
++// template <> class LOG4CXX_EXPORT std::allocator<T>; \
++// template <> class LOG4CXX_EXPORT std::vector<T>; \
++
+ //
+ //   pointer and list definition macros when linking with DLL using VC
+ //
+@@ -83,9 +85,11 @@
+ extern template class LOG4CXX_EXPORT log4cxx::helpers::ObjectPtrT<T>; \
+ typedef log4cxx::helpers::ObjectPtrT<T> T##Ptr
+ #define LOG4CXX_LIST_DEF(N, T) \
+-extern template class LOG4CXX_EXPORT std::allocator<T>; \
+-extern template class LOG4CXX_EXPORT std::vector<T>; \
+ typedef std::vector<T> N
++
++// extern template class LOG4CXX_EXPORT std::allocator<T>; \
++// extern template class LOG4CXX_EXPORT std::vector<T>; \
++
+ //
+ //   pointer and list definition macros for all other cases
+ //
