@@ -7,11 +7,16 @@ class subinfo( info.infoclass ):
                                    'http://apache.mirror.digionline.de/apr/apr-1.4.5.tar.bz2',
                                    'http://apache.mirror.digionline.de/apr/apr-iconv-1.2.1.tar.bz2'
                                    ]
+        self.targets[ '1.4.8' ] = ['http://apache.mirror.digionline.de/apr/apr-util-1.3.12.tar.bz2',
+                                   'http://apache.mirror.digionline.de/apr/apr-1.4.8.tar.bz2',
+                                   'http://apache.mirror.digionline.de/apr/apr-iconv-1.2.1.tar.bz2'
+                                   ]
         self.targetDigests['1.4.5'] = ['4902165fc5f2f077afbcc7ddf7ebbf61556a1cda',
                                        '517de5e3cc1e3be810d9bc95508ab66bb8ebe7cb',
                                        'c4707c92472dace3d96dd9d5d161d078b9797608']
         self.patchToApply['1.4.5'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.3.12-20110524.diff', 0)]
-        self.defaultTarget = '1.4.5'
+        self.patchToApply['1.4.8'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.3.12-20110524.diff', 0)]
+        self.defaultTarget = '1.4.8'
         self.options.make.supportsMultijob = False
 
     def setDependencies( self ):
