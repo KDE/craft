@@ -5,13 +5,16 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ '0.8.2' ]:
+        for ver in [ '0.8.2', '0.8.4' ]:
             self.targets[ ver ] = 'http://git.kolab.org/libkolabxml/snapshot/libkolabxml-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = "libkolabxml-" + ver
+        self.targetDigests['0.8.2'] = '8575595b7d18b1114a222255a50e6e3788262799'
         self.patchToApply['0.8.2'] = [("libkolabxml-fixes.diff", 1)]
+        self.targetDigests['0.8.4'] = 'b95e3ce59698d4abfeb21fab8ab5aebe141c652e'
+        self.patchToApply['0.8.4'] = [("libkolabxml-fixes.diff", 1)]
 
-        self.shortDescription = ''
-        self.defaultTarget = '0.8.2'
+        self.shortDescription = 'Kolab XML Format Schema Definitions Library'
+        self.defaultTarget = '0.8.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
