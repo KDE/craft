@@ -1,0 +1,1439 @@
+diff -Nru -x '*~' openldap-2.4.33.orig/clients/CMakeLists.txt openldap-2.4.33/clients/CMakeLists.txt
+--- openldap-2.4.33.orig/clients/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/clients/CMakeLists.txt	2013-01-24 23:36:14.897525100 +0100
+@@ -0,0 +1,2 @@
++include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
++add_subdirectory(tools)
+diff -Nru -x '*~' openldap-2.4.33.orig/clients/tools/CMakeLists.txt openldap-2.4.33/clients/tools/CMakeLists.txt
+--- openldap-2.4.33.orig/clients/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/clients/tools/CMakeLists.txt	2013-01-24 23:36:14.910525800 +0100
+@@ -0,0 +1,32 @@
++set(ldap_tools
++    ldapsearch
++    ldapmodify
++    ldapdelete
++    ldapmodrdn
++    ldappasswd
++    ldapwhoami
++    ldapcompare
++    ldapexop
++    ldapurl
++)
++
++foreach(_tool ${ldap_tools})
++    # the next file was called ld[dmprsvu]version.c but is renamed here
++    file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR}/build/version.h _version_h)
++    file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${_tool}_version.c _version_c)
++    if(MINGW)
++        string(REPLACE "/" "\\" _version_h ${_version_h})
++        string(REPLACE "/" "\\" _version_c ${_version_c})
++    endif(MINGW)
++    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_tool}_version.c"
++                       COMMAND ${CMAKE_SOURCE_DIR}/build/mkvers.bat
++                       ARGS ${_version_h} ${_version_c} > NUL)
++    set(${_tool}_SRCS ${_tool}.c ${_tool}_version.c)
++    if(NOT ${_tool} MATCHES ldapurl)
++        list(APPEND ${_tool}_SRCS common.c)
++    endif(NOT ${_tool} MATCHES ldapurl)
++    add_executable(${_tool} ${${_tool}_SRCS})
++    target_link_libraries(${_tool} lber lutil ldap_r)
++endforeach(_tool ${ldap_tools})
++
++install(TARGETS ${ldap_tools} ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/clients/tools/ldapsearch.c openldap-2.4.33/clients/tools/ldapsearch.c
+--- openldap-2.4.33.orig/clients/tools/ldapsearch.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/clients/tools/ldapsearch.c	2013-01-24 23:36:14.930527000 +0100
+@@ -70,6 +70,7 @@
+ #include "ldap_pvt.h"
+ 
+ #include "common.h"
++#include <winsock2.h>
+ 
+ #if !LDAP_DEPRECATED
+ /*
+diff -Nru -x '*~' openldap-2.4.33.orig/cmake/modules/FindPCRE.cmake openldap-2.4.33/cmake/modules/FindPCRE.cmake
+--- openldap-2.4.33.orig/cmake/modules/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/cmake/modules/FindPCRE.cmake	2013-01-24 23:36:14.939527500 +0100
+@@ -0,0 +1,44 @@
++# - Try to find the PCRE regular expression library
++# Once done this will define
++#
++#  PCRE_FOUND - system has the PCRE library
++#  PCRE_INCLUDE_DIR - the PCRE include directory
++#  PCRE_LIBRARIES - The libraries needed to use PCRE
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++if (PCRE_INCLUDE_DIR AND PCRE_PCREPOSIX_LIBRARY AND PCRE_PCRE_LIBRARY)
++  # Already in cache, be silent
++  set(PCRE_FIND_QUIETLY TRUE)
++endif (PCRE_INCLUDE_DIR AND PCRE_PCREPOSIX_LIBRARY AND PCRE_PCRE_LIBRARY)
++
++
++if (NOT WIN32)
++  # use pkg-config to get the directories and then use these values
++  # in the FIND_PATH() and FIND_LIBRARY() calls
++  find_package(PkgConfig)
++
++  pkg_check_modules(PC_PCRE QUIET libpcre)
++
++  set(PCRE_DEFINITIONS ${PC_PCRE_CFLAGS_OTHER})
++
++endif (NOT WIN32)
++
++find_path(PCRE_INCLUDE_DIR pcre.h 
++          HINTS ${PC_PCRE_INCLUDEDIR} ${PC_PCRE_INCLUDE_DIRS} 
++          PATH_SUFFIXES pcre)
++
++find_library(PCRE_PCRE_LIBRARY NAMES pcre pcred HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
++
++find_library(PCRE_PCREPOSIX_LIBRARY NAMES pcreposix pcreposixd HINTS ${PC_PCRE_LIBDIR} ${PC_PCRE_LIBRARY_DIRS})
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(PCRE DEFAULT_MSG PCRE_INCLUDE_DIR PCRE_PCRE_LIBRARY PCRE_PCREPOSIX_LIBRARY )
++
++set(PCRE_LIBRARIES ${PCRE_PCRE_LIBRARY} ${PCRE_PCREPOSIX_LIBRARY})
++
++mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
+diff -Nru -x '*~' openldap-2.4.33.orig/cmake/modules/FindSasl2.cmake openldap-2.4.33/cmake/modules/FindSasl2.cmake
+--- openldap-2.4.33.orig/cmake/modules/FindSasl2.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/cmake/modules/FindSasl2.cmake	2013-01-24 23:36:14.948528000 +0100
+@@ -0,0 +1,26 @@
++# - Try to find the sasl2 directory library
++# Once done this will define
++#
++#  SASL2_FOUND - system has SASL2
++#  SASL2_INCLUDE_DIR - the SASL2 include directory
++#  SASL2_LIBRARIES - The libraries needed to use SASL2
++
++# Copyright (c) 2006, 2007 Laurent Montel, <montel@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++find_path(SASL2_INCLUDE_DIR sasl/sasl.h
++)
++
++# libsasl2 add for windows, because the windows package of cyrus-sasl2
++# contains a libsasl2 also for msvc which is not standard conform
++find_library(SASL2_LIBRARIES NAMES sasl2 libsasl2
++)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Sasl2  DEFAULT_MSG  SASL2_LIBRARIES SASL2_INCLUDE_DIR)
++
++mark_as_advanced(SASL2_INCLUDE_DIR SASL2_LIBRARIES)
++
+diff -Nru -x '*~' openldap-2.4.33.orig/cmake/modules/MacroBoolTo01.cmake openldap-2.4.33/cmake/modules/MacroBoolTo01.cmake
+--- openldap-2.4.33.orig/cmake/modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/cmake/modules/MacroBoolTo01.cmake	2013-01-24 23:36:14.955528400 +0100
+@@ -0,0 +1,20 @@
++# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
++# This macro evaluates its first argument
++# and sets all the given vaiables either to 0 or 1
++# depending on the value of the first one
++
++# Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++
++MACRO(MACRO_BOOL_TO_01 FOUND_VAR )
++   FOREACH (_current_VAR ${ARGN})
++      IF(${FOUND_VAR})
++         SET(${_current_VAR} 1)
++      ELSE(${FOUND_VAR})
++         SET(${_current_VAR} 0)
++      ENDIF(${FOUND_VAR})
++   ENDFOREACH(_current_VAR)
++ENDMACRO(MACRO_BOOL_TO_01)
+diff -Nru -x '*~' openldap-2.4.33.orig/cmake/modules/PrepareConfigureFile.cmake openldap-2.4.33/cmake/modules/PrepareConfigureFile.cmake
+--- openldap-2.4.33.orig/cmake/modules/PrepareConfigureFile.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/cmake/modules/PrepareConfigureFile.cmake	2013-01-24 23:36:14.963528900 +0100
+@@ -0,0 +1,12 @@
++# this macro is used to bring the template header syntax of ldap to the cmake syntax
++macro(prepare_configure_file _infile)
++    string(LENGTH ${_infile} __namelength)
++    math(EXPR __namelength "${__namelength} - 2")
++    string(SUBSTRING ${_infile} 0 ${__namelength} __outfile)
++    file(RELATIVE_PATH __outfile ${CMAKE_SOURCE_DIR}/include ${__outfile})
++    file(READ ${_infile} __content)
++    string(REPLACE ";" "\\;" __content "${__content}") # make sure that also ; get through cmake and won't get interpreted as array separators
++    string(REGEX REPLACE "\#undef ([^\r\n ]*)" "#cmakedefine \\1 @\\1@" __content "${__content}")
++    string(REGEX REPLACE "%([A-Za-z0-9_]*)%" "@\\1@" __content "${__content}")
++    file(WRITE ${CMAKE_BINARY_DIR}/${__outfile}.cmake ${__content})
++endmacro(prepare_configure_file _infile)
+diff -Nru -x '*~' openldap-2.4.33.orig/CMakeLists.txt openldap-2.4.33/CMakeLists.txt
+--- openldap-2.4.33.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/CMakeLists.txt	2013-01-24 23:36:14.979529800 +0100
+@@ -0,0 +1,66 @@
++# openldap cmake based build system
++# copyright (c) 2012 Patrick Spendrin <pspendrin@kde.org>
++
++project(openldap)
++
++cmake_minimum_required(VERSION 2.8)
++
++
++# build options:
++option(BUILD_REENTRANT "build a reentrant library" ON)
++option(BUILD_THREADSAFE "build a threadsafe library" ON)
++option(BUILD_TOOLS "build the ldap tools" ON)
++option(LDAP_DEBUG "define this to add debugging code" ON)
++option(LDAP_LIBS_DYNAMIC "define if LDAP libs are dynamic" ON)
++option(LDAP_PF_INET6 "define to support PF_INET6" ON)
++option(LDAP_PF_LOCAL "define to support PF_LOCAL" OFF) # FIXME sockaddr_un is missing?!?
++option(LDAP_PROCTITLE "define this for LDAP process title support" ON)
++option(LDAP_SLAPI "define this to add SLAPI code" OFF)
++option(LDAP_SYSLOG "define this to add syslog code" OFF)
++
++set(BINDIR "bin")
++set(SBINDIR "bin")
++set(DATADIR "share")
++set(SYSCONFDIR "")
++set(LIBEXECDIR "lib")
++set(MODULEDIR "")
++set(RUNDIR "")
++set(LOCALEDIR "")
++
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
++include(MacroBoolTo01)
++
++#undef LDAP_API_FEATURE_X_OPENLDAP_V2_REFERRALS
++
++
++
++
++
++# find required packages
++find_package(OpenSSL REQUIRED)
++# KDE doesn't provide another pcre library - so accomodate with pcre
++find_package(PCRE REQUIRED)
++find_package(Sasl2)
++
++include_directories(${OPENSSL_INCLUDE_DIR} ${PCRE_INCLUDE_DIR})
++include(ConfigureChecks.cmake)
++
++if(NOT MINGW)
++# specially for my friend Andy
++add_definitions(-wd4996)
++add_definitions(-Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
++endif()
++
++set(INSTALL_TARGETS_DEFAULT_ARGS RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++if(LDAP_LIBS_DYNAMIC)
++    set(LDAP_SHARED SHARED)
++else(LDAP_LIBS_DYNAMIC)
++    set(LDAP_SHARED STATIC)
++endif(LDAP_LIBS_DYNAMIC)
++set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
++
++add_subdirectory(include)
++add_subdirectory(libraries)
++if(BUILD_TOOLS)
++    add_subdirectory(clients)
++endif(BUILD_TOOLS)
+diff -Nru -x '*~' openldap-2.4.33.orig/ConfigureChecks.cmake openldap-2.4.33/ConfigureChecks.cmake
+--- openldap-2.4.33.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/ConfigureChecks.cmake	2013-01-24 23:36:15.003531200 +0100
+@@ -0,0 +1,476 @@
++if(BUILD_REENTRANT)
++set(REENTRANT 1)
++set(_REENTRANT 1)
++endif(BUILD_REENTRANT)
++
++if(BUILD_THREADSAFE)
++set(THREADSAFE 1)
++set(_THREADSAFE 1)
++set(THREAD_SAFE 1)
++set(_THREAD_SAFE 1)
++endif(BUILD_THREADSAFE)
++
++#/* set to the number of arguments ctime_r() expects */
++set(CTIME_R_NARGS 2) # best guess
++#/* define to enable rewriting in back-ldap and back-meta */
++set(ENABLE_REWRITE 1)
++#/* defined to be the EXE extension */
++set(EXEEXT "\".exe\"")
++#/* if you have NT Event Log */
++set(HAVE_NT_EVENT_LOG 1)
++#/* if you have NT Service Manager */
++set(HAVE_NT_SERVICE_MANAGER 1)
++#/* if you have NT Threads */
++set(HAVE_NT_THREADS 1)
++#/* Define to 1 if the system has the type `ptrdiff_t'. */
++set(HAVE_PTRDIFF_T 1)
++#/* define if you have winsock */
++set(HAVE_WINSOCK 1)
++#/* define if you have winsock2 */
++set(HAVE_WINSOCK2 1)
++#/* define to snprintf routine */
++set(snprintf _snprintf)
++set(HAVE_SYS_ERRLIST 1)
++
++if(${OPENSSL_FOUND})
++    set(HAVE_OPENSSL 1)
++    #/* define if you have OpenSSL with CRL checking capability */
++    set(HAVE_OPENSSL_CRL 1)
++    #/* define if OpenSSL needs RSAref */
++    set(HAVE_RSAREF 0)
++    set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
++endif(${OPENSSL_FOUND})
++
++if(${SASL2_FOUND})
++    #/* define if your SASL library has sasl_version() */
++    set(HAVE_SASL 1)
++    set(HAVE_SASL_VERSION 1)
++endif(${SASL2_FOUND})
++
++include(CheckIncludeFile)
++include(CheckTypeSize)
++check_include_file("arpa/inet.h" HAVE_ARPA_INET_H)
++check_include_file("arpa/nameser.h" HAVE_ARPA_NAMESER_H)
++check_include_file("assert.h" HAVE_ASSERT_H)
++check_include_file("bits/types.h" HAVE_BITS_TYPES_H)
++check_include_file("conio.h" HAVE_CONIO_H)
++check_include_file("crypt.h" HAVE_CRYPT_H)
++check_include_file("cthreads.h" HAVE_CTHREADS_H)
++check_include_file("db.h" HAVE_DB_H)
++check_include_file("direct.h" HAVE_DIRECT_H)
++check_include_file("dirent.h" HAVE_DIRENT_H)
++check_include_file("dlfcn.h" HAVE_DLFCN_H)
++check_include_file("errno.h" HAVE_ERRNO_H)
++check_include_file("fcntl.h" HAVE_FCNTL_H)
++check_include_file("filio.h" HAVE_FILIO_H)
++check_include_file("getopt.h" HAVE_GETOPT_H)
++check_include_file("gmp.h" HAVE_GMP_H)
++check_include_file("gnutls/gnutls.h" HAVE_GNUTLS_GNUTLS_H)
++check_include_file("grp.h" HAVE_GRP_H)
++check_include_file("inttypes.h" HAVE_INTTYPES_H)
++check_include_file("libutil.h" HAVE_LIBUTIL_H)
++check_include_file("limits.h" HAVE_LIMITS_H)
++check_include_file("locale.h" HAVE_LOCALE_H)
++check_include_file("ltdl.h" HAVE_LTDL_H)
++check_include_file("mach/cthreads.h" HAVE_MACH_CTHREADS_H)
++check_include_file("malloc.h" HAVE_MALLOC_H)
++check_include_file("memory.h" HAVE_MEMORY_H)
++check_include_file("ndir.h" HAVE_NDIR_H)
++check_include_file("netinet/tcp.h" HAVE_NETINET_TCP_H)
++check_include_file("nssutil.h" HAVE_NSSUTIL_H)
++check_include_file("openssl/bn.h" HAVE_OPENSSL_BN_H)
++check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
++check_include_file("openssl/ssl.h" HAVE_OPENSSL_SSL_H)
++check_include_file("io.h" HAVE_IO_H)
++check_include_file("poll.h" HAVE_POLL_H)
++check_include_file("process.h" HAVE_PROCESS_H)
++check_include_file("psap.h" HAVE_PSAP_H)
++check_include_file("pthread.h" HAVE_PTHREAD_H)
++check_include_file("pth.h" HAVE_PTH_H)
++check_include_file("pwd.h" HAVE_PWD_H)
++check_include_file("regex.h" HAVE_REGEX_H)
++check_include_file("pcreposix.h" HAVE_PCREPOSIX_H)
++if(HAVE_PCREPOSIX_H)
++    set(HAVE_REGEX_H 1)
++endif(HAVE_PCREPOSIX_H)
++check_include_file("resolv.h" HAVE_RESOLV_H)
++check_include_file("sasl.h" HAVE_SASL_H)
++check_include_file("sasl/sasl.h" HAVE_SASL_SASL_H)
++check_include_file("sched.h" HAVE_SCHED_H)
++check_include_file("sgtty.h" HAVE_SGTTY_H)
++check_include_file("shadow.h" HAVE_SHADOW_H)
++check_include_file("sqlext.h" HAVE_SQLEXT_H)
++check_include_file("sql.h" HAVE_SQL_H)
++check_include_file("stddef.h" HAVE_STDDEF_H)
++check_include_file("stdint.h" HAVE_STDINT_H)
++check_include_file("stdlib.h" HAVE_STDLIB_H)
++check_include_file("slp.h" HAVE_SLP_H)
++check_include_file("strings.h" HAVE_STRINGS_H)
++check_include_file("string.h" HAVE_STRING_H)
++check_include_file("synch.h" HAVE_SYNCH_H)
++check_include_file("sysexits.h" HAVE_SYSEXITS_H)
++check_include_file("syslog.h" HAVE_SYSLOG_H)
++check_include_file("sys/devpoll.h" HAVE_SYS_DEVPOLL_H)
++check_include_file("sys/dir.h" HAVE_SYS_DIR_H)
++check_include_file("sys/epoll.h" HAVE_SYS_EPOLL_H)
++check_include_file("sys/errno.h" HAVE_SYS_ERRNO_H)
++check_include_file("sys/file.h" HAVE_SYS_FILE_H)
++check_include_file("sys/filio.h" HAVE_SYS_FILIO_H)
++check_include_file("sys/fstyp.h" HAVE_SYS_FSTYP_H)
++check_include_file("sys/ioctl.h" HAVE_SYS_IOCTL_H)
++check_include_file("sys/ndir.h" HAVE_SYS_NDIR_H)
++check_include_file("sys/param.h" HAVE_SYS_PARAM_H)
++check_include_file("sys/poll.h" HAVE_SYS_POLL_H)
++check_include_file("sys/privgrp.h" HAVE_SYS_PRIVGRP_H)
++check_include_file("sys/resource.h" HAVE_SYS_RESOURCE_H)
++check_include_file("sys/select.h" HAVE_SYS_SELECT_H)
++check_include_file("sys/socket.h" HAVE_SYS_SOCKET_H)
++check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
++check_include_file("sys/syslog.h" HAVE_SYS_SYSLOG_H)
++check_include_file("sys/time.h" HAVE_SYS_TIME_H)
++check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
++check_include_file("sys/ucred.h" HAVE_SYS_UCRED_H)
++check_include_file("sys/uio.h" HAVE_SYS_UIO_H)
++check_include_file("sys/un.h" HAVE_SYS_UN_H)
++check_include_file("sys/uuid.h" HAVE_SYS_UUID_H)
++check_include_file("sys/vmount.h" HAVE_SYS_VMOUNT_H)
++check_include_file("sys/wait.h" HAVE_SYS_WAIT_H)
++check_include_file("tcpd.h" HAVE_TCPD_H)
++check_include_file("termios.h" HAVE_TERMIOS_H)
++check_include_file("thread.h" HAVE_THREAD_H)
++check_include_file("unicode/utypes.h" HAVE_UNICODE_UTYPES_H)
++check_include_file("unistd.h" HAVE_UNISTD_H)
++check_include_file("utime.h" HAVE_UTIME_H)
++check_include_file("uuid/uuid.h" HAVE_UUID_UUID_H)
++check_include_file("winsock2.h" HAVE_WINSOCK2_H)
++check_include_file("winsock.h" HAVE_WINSOCK_H)
++
++# berkeley db might be interesting for later usage
++#/* define this if Berkeley DB is available */#undef HAVE_BERKELEY_DB
++#/* define if Berkeley DB has DB_THREAD support */#undef HAVE_BERKELEY_DB_THREAD
++#/* define if you have Cyrus SASL */#undef HAVE_CYRUS_SASL
++#/* define if you have GNUtls */#undef HAVE_GNUTLS
++#/* if you have GNU Pth */#undef HAVE_GNU_PTH
++#/* define if you actually have ICU */#undef HAVE_ICU
++#/* Define to 1 if you have the `gmp' library (-lgmp). */#undef HAVE_LIBGMP
++
++#/* define to use both <string.h> and <strings.h> */#undef BOTH_STRINGS_H
++#/* define if toupper() requires islower() */ #undef C_UPPER_LOWER
++#/* set to the number of arguments gethostbyaddr_r() expects */#undef GETHOSTBYADDR_R_NARGS
++#/* set to the number of arguments gethostbyname_r() expects */#undef GETHOSTBYNAME_R_NARGS
++#/* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */#undef GWINSZ_IN_SYS_IOCTL
++#/* define if you have AIX security lib */#undef HAVE_AIX_SECURITY
++
++include(CheckFunctionExists)
++check_function_exists("chroot" HAVE_CHROOT)
++check_function_exists("bcopy" HAVE_BCOPY)
++check_function_exists("closesocket" HAVE_CLOSESOCKET)
++check_function_exists("ctime_r" HAVE_CTIME_R)
++check_function_exists("endgrent" HAVE_ENDGRENT)
++check_function_exists("endpwent" HAVE_ENDPWENT)
++check_function_exists("fcntl" HAVE_FCNTL)
++check_function_exists("flock" HAVE_FLOCK)
++check_function_exists("fstat" HAVE_FSTAT)
++check_function_exists("gai_strerror" HAVE_GAI_STRERROR)
++check_function_exists("getaddrinfo" HAVE_GETADDRINFO)
++check_function_exists("getdtablesize" HAVE_GETDTABLESIZE)
++check_function_exists("geteuid" HAVE_GETEUID)
++check_function_exists("getgrgid" HAVE_GETGRGID)
++check_function_exists("gethostbyaddr_r" HAVE_GETHOSTBYADDR_R)
++check_function_exists("gethostbyname_r" HAVE_GETHOSTBYNAME_R)
++check_function_exists("gethostname" HAVE_GETHOSTNAME)
++check_function_exists("getnameinfo" HAVE_GETNAMEINFO)
++check_function_exists("getopt" HAVE_GETOPT)
++check_function_exists("getpassphrase" HAVE_GETPASSPHRASE)
++check_function_exists("getpeereid" HAVE_GETPEEREID)
++check_function_exists("getpeerucred" HAVE_GETPEERUCRED)
++check_function_exists("getpwnam" HAVE_GETPWNAM)
++check_function_exists("getpwuid" HAVE_GETPWUID)
++check_function_exists("getspnam" HAVE_GETSPNAM)
++check_function_exists("gettimeofday" HAVE_GETTIMEOFDAY)
++check_function_exists("gmtime_r" HAVE_GMTIME_R)
++check_function_exists("hstrerror" HAVE_HSTRERROR)
++check_function_exists("inet_ntoa_b" HAVE_INET_NTOA_B)
++check_function_exists("inet_ntop" HAVE_INET_NTOP)
++check_function_exists("initgroups" HAVE_INITGROUPS)
++check_function_exists("ioctl" HAVE_IOCTL)
++check_function_exists("localtime_r" HAVE_LOCALTIME_R)
++check_function_exists("lockf" HAVE_LOCKF)
++check_function_exists("memcpy" HAVE_MEMCPY)
++check_function_exists("memmove" HAVE_MEMMOVE)
++check_function_exists("memrchr" HAVE_MEMRCHR)
++check_function_exists("mkstemp" HAVE_MKSTEMP)
++check_function_exists("mktemp" HAVE_MKTEMP)
++check_function_exists("pipe" HAVE_PIPE)
++check_function_exists("poll" HAVE_POLL)
++check_function_exists("pthread_detach" HAVE_PTHREAD_DETACH)
++check_function_exists("pthread_getconcurrency" HAVE_PTHREAD_GETCONCURRENCY)
++check_function_exists("pthread_kill" HAVE_PTHREAD_KILL)
++check_function_exists("pthread_kill_other_threads_np" HAVE_PTHREAD_KILL_OTHER_THREADS_NP)
++check_function_exists("pthread_rwlock_destroy function" HAVE_PTHREAD_RWLOCK_DESTROY)
++check_function_exists("pthread_setconcurrency" HAVE_PTHREAD_SETCONCURRENCY)
++check_function_exists("pthread_yield" HAVE_PTHREAD_YIELD)
++check_function_exists("read" HAVE_READ)
++check_function_exists("recv" HAVE_RECV)
++check_function_exists("recvfrom" HAVE_RECVFROM)
++check_function_exists("sched_yield" HAVE_SCHED_YIELD)
++check_function_exists("send" HAVE_SEND)
++check_function_exists("sendmsg" HAVE_SENDMSG)
++check_function_exists("sendto" HAVE_SENDTO)
++check_function_exists("setegid" HAVE_SETEGID)
++check_function_exists("seteuid" HAVE_SETEUID)
++check_function_exists("setgid" HAVE_SETGID)
++check_function_exists("setpwfile" HAVE_SETPWFILE)
++check_function_exists("setsid" HAVE_SETSID)
++check_function_exists("setuid" HAVE_SETUID)
++check_function_exists("sigaction" HAVE_SIGACTION)
++check_function_exists("signal" HAVE_SIGNAL)
++check_function_exists("sigset" HAVE_SIGSET)
++check_function_exists("snprintf" HAVE_SNPRINTF)
++check_function_exists("strdup" HAVE_STRDUP)
++check_function_exists("strerror" HAVE_STRERROR)
++check_function_exists("strerror_r" HAVE_STRERROR_R)
++check_function_exists("strftime" HAVE_STRFTIME)
++check_function_exists("strpbrk" HAVE_STRPBRK)
++check_function_exists("strrchr" HAVE_STRRCHR)
++check_function_exists("strsep" HAVE_STRSEP)
++check_function_exists("strspn" HAVE_STRSPN)
++check_function_exists("strstr" HAVE_STRSTR)
++check_function_exists("strtol" HAVE_STRTOL)
++check_function_exists("strtoll" HAVE_STRTOLL)
++check_function_exists("strtoq" HAVE_STRTOQ)
++check_function_exists("strtoul" HAVE_STRTOUL)
++check_function_exists("strtoull" HAVE_STRTOULL)
++check_function_exists("strtouq" HAVE_STRTOUQ)
++check_function_exists("sysconf" HAVE_SYSCONF)
++#check_function_exists("thr_getconcurrency" HAVE_THR_GETCONCURRENCY)
++#check_function_exists("thr_setconcurrency" HAVE_THR_SETCONCURRENCY)
++#check_function_exists("thr_yield" HAVE_THR_YIELD)
++check_function_exists("vprintf" HAVE_VPRINTF)
++check_function_exists("vsnprintf" HAVE_VSNPRINTF)
++check_function_exists("wait4" HAVE_WAIT4)
++check_function_exists("waitpid" HAVE_WAITPID)
++check_function_exists("write" HAVE_WRITE)
++check_function_exists("_vsnprintf" HAVE__VSNPRINTF)
++
++set(CMAKE_EXTRA_INCLUDE_FILES sys/types.h)
++check_type_size("mode_t" MODE_T)
++set(CMAKE_EXTRA_INCLUDE_FILES)
++
++#/* define if crypt(3) is available */
++#undef HAVE_CRYPT
++#/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
++#undef HAVE_DOPRNT
++#/* define if system uses EBCDIC instead of ASCII */
++#undef HAVE_EBCDIC
++#/* define if your system supports epoll */
++#undef HAVE_EPOLL
++#/* define if you actually have FreeBSD fetch(3) */
++#undef HAVE_FETCH
++#/* define if your system supports /dev/poll */
++#undef HAVE_DEVPOLL
++#/* define to you inet_aton(3) is available */
++#undef HAVE_INET_ATON
++#/* if you have LinuxThreads */
++#undef HAVE_LINUX_THREADS
++#/* define if you have Mach Cthreads */
++#undef HAVE_MACH_CTHREADS
++#/* define this if you have mkversion */
++#undef HAVE_MKVERSION
++#/* define if you have MozNSS */
++#undef HAVE_MOZNSS
++#/* define if strerror_r returns char* instead of int */
++#undef HAVE_NONPOSIX_STRERROR_R
++
++
++
++#/* Define to 1 if you have the `gen' library (-lgen). */
++#undef HAVE_LIBGEN
++#/* Define to 1 if you have the `inet' library (-linet). */
++#undef HAVE_LIBINET
++#/* define if you have libtool -ltdl */
++#undef HAVE_LIBLTDL
++#/* Define to 1 if you have the `net' library (-lnet). */
++#undef HAVE_LIBNET
++#/* Define to 1 if you have the `nsl' library (-lnsl). */
++#undef HAVE_LIBNSL
++#/* Define to 1 if you have the `nsl_s' library (-lnsl_s). */
++#undef HAVE_LIBNSL_S
++#/* Define to 1 if you have the `socket' library (-lsocket). */
++#undef HAVE_LIBSOCKET
++#/* Define to 1 if you have the `V3' library (-lV3). */
++#undef HAVE_LIBV3
++
++#/* Define to 1 if the system has the type `long long'. */
++set(HAVE_LONG_LONG 1)
++
++#/* define to pthreads API spec revision */
++#undef HAVE_PTHREADS
++#/* define if you have res_query() */
++#undef HAVE_RES_QUERY
++#/* define if setproctitle(3) is available */
++#undef HAVE_SETPROCTITLE
++#/* define if you have -lslp */
++#undef HAVE_SLP
++#/* if you have spawnlp() */
++#undef HAVE_SPAWNLP
++#/* Define to 1 if `msg_accrightslen' is member of `struct msghdr'. */
++#undef HAVE_STRUCT_MSGHDR_MSG_ACCRIGHTSLEN
++#/* Define to 1 if `msg_control' is member of `struct msghdr'. */
++#undef HAVE_STRUCT_MSGHDR_MSG_CONTROL
++#/* Define to 1 if `pw_gecos' is member of `struct passwd'. */
++#undef HAVE_STRUCT_PASSWD_PW_GECOS
++#/* Define to 1 if `pw_passwd' is member of `struct passwd'. */
++#undef HAVE_STRUCT_PASSWD_PW_PASSWD
++#/* Define to 1 if `st_blksize' is member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_BLKSIZE
++#/* Define to 1 if `st_fstype' is member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_FSTYPE
++#/* define to 1 if st_fstype is char * */
++#undef HAVE_STRUCT_STAT_ST_FSTYPE_CHAR
++#/* define to 1 if st_fstype is int */
++#undef HAVE_STRUCT_STAT_ST_FSTYPE_INT
++#/* Define to 1 if `st_vfstype' is member of `struct stat'. */
++#undef HAVE_STRUCT_STAT_ST_VFSTYPE
++#/* define if you have -lwrap */
++#undef HAVE_TCPD
++#/* if you have Solaris LWP (thr) package */
++#undef HAVE_THR
++#/* define if you have TLS */
++#undef HAVE_TLS
++#/* define if you have uuid_generate() */
++#undef HAVE_UUID_GENERATE
++#/* define if you have uuid_to_str() */
++#undef HAVE_UUID_TO_STR
++#/* define if select implicitly yields */
++#undef HAVE_YIELDING_SELECT
++
++
++#/* define to 32-bit or greater integer type */
++set(LBER_INT_T "int")
++#/* define to large integer type */
++set(LBER_LEN_T "int")
++#/* define to socket descriptor type */
++set(LBER_SOCKET_T "int")
++#/* define to large integer type */
++set(LBER_TAG_T "int")
++
++#########################################################
++#/* define to 1 if library is thread safe */
++if(BUILD_THREADSAFE)
++    set(LDAP_API_FEATURE_X_OPENLDAP_THREAD_SAFE 1)
++endif(BUILD_THREADSAFE)
++
++#/* Major */
++set(LDAP_VENDOR_VERSION_MAJOR 2)
++
++#/* Minor */
++set(LDAP_VENDOR_VERSION_MINOR 4)
++
++#/* Patch */
++set(LDAP_VENDOR_VERSION_PATCH 36)
++
++#/* Version */
++MATH(EXPR LDAP_VENDOR_VERSION "${LDAP_VENDOR_VERSION_MAJOR} * 10000 + ${LDAP_VENDOR_VERSION_MINOR} * 100 + ${LDAP_VENDOR_VERSION_PATCH}")
++
++#/* define if memcmp is not 8-bit clean or is otherwise broken */
++#undef NEED_MEMCMP_REPLACEMENT
++
++#/* define if you have (or want) no threads */
++#undef NO_THREADS
++
++#/* define to use the original debug style */
++#undef OLD_DEBUG
++
++#/* Package */
++set(OPENLDAP_PACKAGE "\"OpenLDAP\"")
++
++#/* Version */
++set(OPENLDAP_VERSION "\"${LDAP_VENDOR_VERSION_MAJOR}.${LDAP_VENDOR_VERSION_MINOR}.${LDAP_VENDOR_VERSION_PATCH}\"")
++
++#/* Define to the address where bug reports for this package should be sent. */
++set(PACKAGE_BUGREPORT "kde-windows@kde.org")
++#/* Define to the full name of this package. */
++set(PACKAGE_NAME "")
++#/* Define to the full name and version of this package. */
++set(PACKAGE_STRING "")
++#/* Define to the one symbol short name of this package. */
++set(PACKAGE_TARNAME "")
++#/* Define to the version of this package. */
++set(PACKAGE_VERSION "")
++
++#/* define if sched_yield yields the entire process */
++#undef REPLACE_BROKEN_YIELD
++#/* Define to the type of arg 1 for `select'. */
++#undef SELECT_TYPE_ARG1
++#/* Define to the type of args 2, 3 and 4 for `select'. */
++#undef SELECT_TYPE_ARG234
++#/* Define to the type of arg 5 for `select'. */
++#undef SELECT_TYPE_ARG5
++
++#/* The size of `int', as computed by sizeof. */
++set(SIZEOF_INT 4)
++#/* The size of `long', as computed by sizeof. */
++set(SIZEOF_LONG 4)
++#/* The size of `long long', as computed by sizeof. */
++set(SIZEOF_LONG_LONG 8)
++#/* The size of `short', as computed by sizeof. */
++set(SIZEOF_SHORT 2)
++#/* The size of `wchar_t', as computed by sizeof. */
++set(SIZEOF_WCHAR_T 2)
++
++#/* Define as the return type of signal handlers (`int' or `void'). */
++set(RETSIGTYPE void)
++#/* Define to 1 if you have the ANSI C header files. */
++set(STDC_HEADERS 1)
++
++#/* set to urandom device */
++#undef URANDOM_DEVICE
++
++#/* define to use OpenSSL BIGNUM for MP */
++#undef USE_MP_BIGNUM
++
++#/* define to use GMP for MP */
++#undef USE_MP_GMP
++
++#/* define to use 'long' for MP */
++#undef USE_MP_LONG
++
++#/* define to use 'long long' for MP */
++#undef USE_MP_LONG_LONG
++
++#/* Define to 1 if your processor stores words with the most significant byte
++#   first (like Motorola and SPARC, unlike Intel and VAX). */
++#undef WORDS_BIGENDIAN
++
++#/* Define to the type of arg 3 for `accept'. */
++set(ber_socklen_t int)
++#/* Define to `char *' if <sys/types.h> does not define. */
++set(caddr_t "char*")
++#/* Define to empty if `const' does not conform to ANSI C. */
++#undef const
++#/* Define to `int' if <sys/types.h> doesn't define. */
++set(gid_t int)
++#/* Define to `int' if <sys/types.h> does not define. */
++if (NOT HAVE_MODE_T)
++set(mode_t int)
++endif()
++#/* Define to `long' if <sys/types.h> does not define. */
++#set(off_t long)
++#/* Define to `int' if <sys/types.h> does not define. */
++set(pid_t int)
++#/* Define to `int' if <signal.h> does not define. */
++#set(sig_atomic_t int)
++#/* Define to `unsigned' if <sys/types.h> does not define. */
++set(size_t unsigned int)
++#/* Define like ber_socklen_t if <sys/socket.h> does not define. */
++#undef socklen_t
++#/* Define to `signed int' if <sys/types.h> does not define. */
++set(ssize_t signed int)
++#/* Define to `int' if <sys/types.h> doesn't define. */
++set(uid_t int)
++#/* define as empty if volatile is not supported */
++#undef volatile
++#/* define to snprintf routine */
++#undef vsnprintf
++
+diff -Nru -x '*~' openldap-2.4.33.orig/ConfigureOptions.cmake openldap-2.4.33/ConfigureOptions.cmake
+--- openldap-2.4.33.orig/ConfigureOptions.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/ConfigureOptions.cmake	2013-01-24 23:36:15.015531800 +0100
+@@ -0,0 +1,45 @@
++option(SLAPD_ACI_ENABLED "per-object ACIs" OFF)
++option(SLAPD_BDB "BDB backend" OFF)
++option(SLAPD_CLEARTEXT "cleartext passwords" OFF)
++option(SLAPD_CRYPT "crypt(3 OFF) passwords" OFF)
++option(SLAPD_DNSSRV "DNS SRV backend" OFF)
++option(SLAPD_HDB "HDB backend" OFF)
++option(SLAPD_LDAP "LDAP backend" OFF)
++option(SLAPD_LMHASH "LAN Manager passwords" OFF)
++option(SLAPD_MDB "MDB backend" OFF)
++option(SLAPD_META "LDAP Metadirectory backend" OFF)
++option(SLAPD_MODULES "modules" OFF)
++#option(SLAPD_MOD_DYNAMIC "dynamically linked module" OFF)
++#option(SLAPD_MOD_STATIC "statically linked module" OFF)
++#option(SLAPD_MONITOR "cn=Monitor backend" OFF)
++option(SLAPD_NDB "NDB backend" OFF)
++option(SLAPD_NULL "NULL backend" ON)
++option(SLAPD_OVER_ACCESSLOG "In-Directory Access Logging overlay" OFF)
++option(SLAPD_OVER_AUDITLOG "Audit Logging overlay" OFF)
++option(SLAPD_OVER_COLLECT "Collect overlay" OFF)
++option(SLAPD_OVER_CONSTRAINT "Attribute Constraint overlay" OFF)
++option(SLAPD_OVER_DDS "Dynamic Directory Services overlay" OFF)
++option(SLAPD_OVER_DEREF "Dynamic Directory Services overlay" OFF)
++option(SLAPD_OVER_DYNGROUP "Dynamic Group overlay" OFF)
++option(SLAPD_OVER_DYNLIST "Dynamic List overlay" OFF)
++option(SLAPD_OVER_MEMBEROF "Reverse Group Membership overlay" OFF)
++option(SLAPD_OVER_PPOLICY "Password Policy overlay" OFF)
++option(SLAPD_OVER_PROXYCACHE "Proxy Cache overlay" OFF)
++option(SLAPD_OVER_REFINT "Referential Integrity overlay" OFF)
++option(SLAPD_OVER_RETCODE "Referential Integrity overlay" OFF)
++option(SLAPD_OVER_RWM "Rewrite/Remap overlay" OFF)
++option(SLAPD_OVER_SEQMOD "Sequential Modify overlay" OFF)
++option(SLAPD_OVER_SSSVLV "ServerSideSort/VLV overlay" OFF)
++option(SLAPD_OVER_SYNCPROV "Syncrepl Provider overlay" OFF)
++option(SLAPD_OVER_TRANSLUCENT "Translucent Proxy overlay" OFF)
++option(SLAPD_OVER_UNIQUE "Attribute Uniqueness overlay" OFF)
++option(SLAPD_OVER_VALSORT "Value Sorting overlay" OFF)
++option(SLAPD_PASSWD "PASSWD backend" OFF)
++option(SLAPD_PERL "PERL backend" OFF)
++option(SLAPD_RELAY "relay backend" OFF)
++option(SLAPD_RLOOKUPS "reverse lookups" OFF)
++option(SLAPD_SHELL "SHELL backend" OFF)
++option(SLAPD_SOCK "SOCK backend" OFF)
++option(SLAPD_SPASSWD "SASL passwords" OFF)
++option(SLAPD_SQL "SQL backend" OFF)
++option(SLAP_DYNACL "run-time loadable ACL" OFF)
+diff -Nru -x '*~' openldap-2.4.33.orig/include/ac/regex.h openldap-2.4.33/include/ac/regex.h
+--- openldap-2.4.33.orig/include/ac/regex.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/ac/regex.h	2013-01-24 23:36:15.028532600 +0100
+@@ -28,6 +28,9 @@
+  */
+ #error "No POSIX REGEX available."
+ 
++#elif HAVE_PCREPOSIX_H
++	/* system has pcre pcreposix.h */
++#	include <pcreposix.h>
+ #elif HAVE_GNUREGEX_H
+ 	/* system has GNU gnuregex.h */
+ #	include <gnuregex.h>
+diff -Nru -x '*~' openldap-2.4.33.orig/include/ac/socket.h openldap-2.4.33/include/ac/socket.h
+--- openldap-2.4.33.orig/include/ac/socket.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/ac/socket.h	2013-01-24 23:36:15.040533300 +0100
+@@ -98,9 +98,11 @@
+ #		define tcp_close( s )		closesocket( s )
+ #	endif
+ 
++#if _MSC_VER < 1600
+ #define EWOULDBLOCK WSAEWOULDBLOCK
+ #define EINPROGRESS WSAEINPROGRESS
+ #define ETIMEDOUT	WSAETIMEDOUT
++#endif
+ 
+ #undef	sock_errno
+ #undef	sock_errstr
+diff -Nru -x '*~' openldap-2.4.33.orig/include/ac/time.h openldap-2.4.33/include/ac/time.h
+--- openldap-2.4.33.orig/include/ac/time.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/ac/time.h	2013-01-24 23:36:15.056534200 +0100
+@@ -29,4 +29,7 @@
+ # include <time.h>
+ #endif
+ 
++#ifdef _WIN32
++#include <winsock2.h> // for struct timeval
++#endif
+ #endif /* _AC_TIME_H */
+diff -Nru -x '*~' openldap-2.4.33.orig/include/CMakeLists.txt openldap-2.4.33/include/CMakeLists.txt
+--- openldap-2.4.33.orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/include/CMakeLists.txt	2013-01-24 23:36:15.063534600 +0100
+@@ -0,0 +1,30 @@
++###############################################################
++include(PrepareConfigureFile)
++prepare_configure_file(${CMAKE_SOURCE_DIR}/include/portable.hin)
++prepare_configure_file(${CMAKE_SOURCE_DIR}/include/lber_types.hin)
++prepare_configure_file(${CMAKE_SOURCE_DIR}/include/ldap_config.hin)
++prepare_configure_file(${CMAKE_SOURCE_DIR}/include/ldap_features.hin)
++
++configure_file(${CMAKE_BINARY_DIR}/portable.h.cmake portable.h)
++configure_file(${CMAKE_BINARY_DIR}/lber_types.h.cmake lber_types.h)
++configure_file(${CMAKE_BINARY_DIR}/ldap_config.h.cmake ldap_config.h)
++configure_file(${CMAKE_BINARY_DIR}/ldap_features.h.cmake ldap_features.h)
++
++set(ldap_HDRS
++# generated headers:
++    ${CMAKE_CURRENT_BINARY_DIR}/portable.h
++    ${CMAKE_CURRENT_BINARY_DIR}/lber_types.h
++    ${CMAKE_CURRENT_BINARY_DIR}/ldap_config.h
++    ${CMAKE_CURRENT_BINARY_DIR}/ldap_features.h
++
++# non-generated headers:
++    lber.h
++    ldap.h
++    ldap_cdefs.h
++    ldap_schema.h
++    ldap_utf8.h
++    slapi-plugin.h
++    ldif.h
++)
++
++install(FILES ${ldap_HDRS} DESTINATION include)
+diff -Nru -x '*~' openldap-2.4.33.orig/include/getopt-compat.h openldap-2.4.33/include/getopt-compat.h
+--- openldap-2.4.33.orig/include/getopt-compat.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/getopt-compat.h	2013-01-24 23:36:15.121537900 +0100
+@@ -32,7 +32,9 @@
+ #define getopt lutil_getopt
+ 
+ LDAP_LUTIL_V (char *) optarg;
+-LDAP_LUTIL_V (int) optind, opterr, optopt;
++LDAP_LUTIL_V (int) optind;
++LDAP_LUTIL_V (int) opterr;
++LDAP_LUTIL_V (int) optopt;
+ LDAP_LUTIL_F (int) getopt LDAP_P(( int, char * const [], const char *));
+ 
+ LDAP_END_DECL
+diff -Nru -x '*~' openldap-2.4.33.orig/include/ldap_cdefs.h openldap-2.4.33/include/ldap_cdefs.h
+--- openldap-2.4.33.orig/include/ldap_cdefs.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/ldap_cdefs.h	2013-01-24 23:36:15.137538800 +0100
+@@ -127,68 +127,99 @@
+  */
+ 
+ /* LBER library */
+-#if defined(_WIN32) && \
+-    ((defined(LDAP_LIBS_DYNAMIC) && !defined(LBER_LIBRARY)) || \
+-     (!defined(LDAP_LIBS_DYNAMIC) && defined(SLAPD_IMPORT)))
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LBER_LIBRARY)
+ #	define LBER_F(type)		extern __declspec(dllimport) type
+ #	define LBER_V(type)		extern __declspec(dllimport) type
+ #else
++#	define LBER_F(type)		extern __declspec(dllexport) type
++#	define LBER_V(type)		extern __declspec(dllexport) type
++#endif
++#else
+ #	define LBER_F(type)		extern type
+ #	define LBER_V(type)		extern type
+ #endif
+ 
+ /* LDAP library */
+-#if defined(_WIN32) && \
+-    ((defined(LDAP_LIBS_DYNAMIC) && !defined(LDAP_LIBRARY)) || \
+-     (!defined(LDAP_LIBS_DYNAMIC) && defined(SLAPD_IMPORT)))
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LDAP_LIBRARY)
+ #	define LDAP_F(type)		extern __declspec(dllimport) type
+ #	define LDAP_V(type)		extern __declspec(dllimport) type
+ #else
++#	define LDAP_F(type)		extern __declspec(dllexport) type
++#	define LDAP_V(type)		extern __declspec(dllexport) type
++#endif
++#else
+ #	define LDAP_F(type)		extern type
+ #	define LDAP_V(type)		extern type
+ #endif
+ 
+ /* AVL library */
+-#if defined(_WIN32) && defined(SLAPD_IMPORT)
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LUTIL_LIBRARY)
+ #	define LDAP_AVL_F(type)		extern __declspec(dllimport) type
+ #	define LDAP_AVL_V(type)		extern __declspec(dllimport) type
+ #else
++#	define LDAP_AVL_F(type)		extern __declspec(dllexport) type
++#	define LDAP_AVL_V(type)		extern __declspec(dllexport) type
++#endif
++#else
+ #	define LDAP_AVL_F(type)		extern type
+ #	define LDAP_AVL_V(type)		extern type
+ #endif
+ 
+ /* LDIF library */
+-#if defined(_WIN32) && defined(SLAPD_IMPORT)
+-#	define LDAP_LDIF_F(type)	extern __declspec(dllimport) type
+-#	define LDAP_LDIF_V(type)	extern __declspec(dllimport) type
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LDAP_LIBRARY)
++#	define LDAP_LDIF_F(type)		extern __declspec(dllimport) type
++#	define LDAP_LDIF_V(type)		extern __declspec(dllimport) type
++#else
++#	define LDAP_LDIF_F(type)		extern __declspec(dllexport) type
++#	define LDAP_LDIF_V(type)		extern __declspec(dllexport) type
++#endif
+ #else
+ #	define LDAP_LDIF_F(type)	extern type
+ #	define LDAP_LDIF_V(type)	extern type
+ #endif
+ 
+ /* LUNICODE library */
+-#if defined(_WIN32) && defined(SLAPD_IMPORT)
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LUNICODE_LIBRARY)
+ #	define LDAP_LUNICODE_F(type)	extern __declspec(dllimport) type
+ #	define LDAP_LUNICODE_V(type)	extern __declspec(dllimport) type
+ #else
++#	define LDAP_LUNICODE_F(type)	extern __declspec(dllexport) type
++#	define LDAP_LUNICODE_V(type)	extern __declspec(dllexport) type
++#endif
++#else
+ #	define LDAP_LUNICODE_F(type)	extern type
+ #	define LDAP_LUNICODE_V(type)	extern type
+ #endif
+ 
+ /* LUTIL library */
+-#if defined(_WIN32) && defined(SLAPD_IMPORT)
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(LUTIL_LIBRARY)
+ #	define LDAP_LUTIL_F(type)	extern __declspec(dllimport) type
+ #	define LDAP_LUTIL_V(type)	extern __declspec(dllimport) type
+ #else
++#	define LDAP_LUTIL_F(type)	extern __declspec(dllexport) type
++#	define LDAP_LUTIL_V(type)	extern __declspec(dllexport) type
++#endif
++#else
+ #	define LDAP_LUTIL_F(type)	extern type
+ #	define LDAP_LUTIL_V(type)	extern type
+ #endif
+ 
+ /* REWRITE library */
+-#if defined(_WIN32) && defined(SLAPD_IMPORT)
++#if defined(_WIN32) && defined(LDAP_LIBS_DYNAMIC)
++#if !defined(REWRITE_LIBRARY)
+ #	define LDAP_REWRITE_F(type)	extern __declspec(dllimport) type
+ #	define LDAP_REWRITE_V(type)	extern __declspec(dllimport) type
+ #else
++#	define LDAP_REWRITE_F(type)	extern __declspec(dllexport) type
++#	define LDAP_REWRITE_V(type)	extern __declspec(dllexport) type
++#endif
++#else
+ #	define LDAP_REWRITE_F(type)	extern type
+ #	define LDAP_REWRITE_V(type)	extern type
+ #endif
+diff -Nru -x '*~' openldap-2.4.33.orig/include/ldap_log.h openldap-2.4.33/include/ldap_log.h
+--- openldap-2.4.33.orig/include/ldap_log.h	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/ldap_log.h	2013-01-24 23:36:15.156539900 +0100
+@@ -132,12 +132,12 @@
+      * a 'proper' dllimport.
+      */
+ #ifndef ldap_debug
+-extern int	ldap_debug;
++LDAP_REWRITE_V(int) ldap_debug;
+ #endif /* !ldap_debug */
+ 
+ #ifdef LDAP_SYSLOG
+-extern int	ldap_syslog;
+-extern int	ldap_syslog_level;
++LDAP_REWRITE_V(int) ldap_syslog;
++LDAP_REWRITE_V(int) ldap_syslog_level;
+ 
+ #ifdef HAVE_EBCDIC
+ #define syslog	eb_syslog
+@@ -243,9 +243,9 @@
+ #endif /* ! LDAP_DEBUG */
+ 
+ /* Actually now in liblber/debug.c */
+-LDAP_LUTIL_F(int) lutil_debug_file LDAP_P(( FILE *file ));
++LBER_F(int) lutil_debug_file LDAP_P(( FILE *file ));
+ 
+-LDAP_LUTIL_F(void) lutil_debug LDAP_P((
++LBER_F(void) lutil_debug LDAP_P((
+ 	int debug, int level,
+ 	const char* fmt, ... )) LDAP_GCCATTR((format(printf, 3, 4)));
+ 
+diff -Nru -x '*~' openldap-2.4.33.orig/include/portable.hin openldap-2.4.33/include/portable.hin
+--- openldap-2.4.33.orig/include/portable.hin	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/include/portable.hin	2013-01-24 23:36:15.168540600 +0100
+@@ -463,6 +463,9 @@
+ /* Define to 1 if you have the <regex.h> header file. */
+ #undef HAVE_REGEX_H
+ 
++/* Define to 1 if you have the <pcreposix.h> header file. */
++#undef HAVE_PCREPOSIX_H
++
+ /* Define to 1 if you have the <resolv.h> header file. */
+ #undef HAVE_RESOLV_H
+ 
+@@ -1105,18 +1108,12 @@
+ /* Define to `int' if <signal.h> does not define. */
+ #undef sig_atomic_t
+ 
+-/* Define to `unsigned' if <sys/types.h> does not define. */
+-#undef size_t
+-
+ /* define to snprintf routine */
+ #undef snprintf
+ 
+ /* Define like ber_socklen_t if <sys/socket.h> does not define. */
+ #undef socklen_t
+ 
+-/* Define to `signed int' if <sys/types.h> does not define. */
+-#undef ssize_t
+-
+ /* Define to `int' if <sys/types.h> doesn't define. */
+ #undef uid_t
+ 
+@@ -1165,6 +1162,7 @@
+ #define vsprintf ber_pvt_vsprintf
+ #endif
+ 
++#include <windows.h>
+ #include "ac/fdset.h"
+ 
+ #include "ldap_cdefs.h"
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/CMakeLists.txt openldap-2.4.33/libraries/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/CMakeLists.txt	2013-01-24 23:36:15.183541500 +0100
+@@ -0,0 +1,7 @@
++include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
++add_subdirectory(liblutil)
++add_subdirectory(liblber)
++add_subdirectory(liblunicode)
++add_subdirectory(libldap)
++add_subdirectory(libldap_r)
++add_subdirectory(librewrite)
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/liblber/CMakeLists.txt openldap-2.4.33/libraries/liblber/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/liblber/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/liblber/CMakeLists.txt	2013-01-24 23:36:15.207542800 +0100
+@@ -0,0 +1,23 @@
++set(lber_SRCS
++    assert.c
++    decode.c
++    encode.c
++    io.c
++    bprint.c
++    debug.c
++    memory.c
++    options.c
++    sockbuf.c
++)
++
++if(WIN32)
++    list(APPEND lber_SRCS nt_err.c)
++endif(WIN32)
++if(UNIX)
++    list(APPEND lber_SRCS stdio.c)
++endif(UNIX)
++
++add_library(lber ${LDAP_SHARED} ${lber_SRCS})
++target_link_libraries(lber ws2_32)
++set_target_properties(lber PROPERTIES DEFINE_SYMBOL LBER_LIBRARY)
++install(TARGETS lber ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/liblber/nt_err.c openldap-2.4.33/libraries/liblber/nt_err.c
+--- openldap-2.4.33.orig/libraries/liblber/nt_err.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/libraries/liblber/nt_err.c	2013-01-24 23:36:15.224543800 +0100
+@@ -15,6 +15,9 @@
+ 
+ #include "portable.h"
+ 
++LBER_F( char * )
++ber_pvt_wsa_err2string LDAP_P((int));
++
+ #ifdef HAVE_WINSOCK2
+ #include <winsock2.h>
+ #elif defined(HAVE_WINSOCK)
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/libldap/CMakeLists.txt openldap-2.4.33/libraries/libldap/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/libldap/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/libldap/CMakeLists.txt	2013-01-24 23:36:15.240544700 +0100
+@@ -0,0 +1,69 @@
++set(ldap_SRCS
++    bind.c
++    open.c
++    result.c
++    error.c
++    compare.c
++    search.c
++    controls.c
++    messages.c
++    references.c
++    extended.c
++    cyrus.c
++    modify.c
++    add.c
++    modrdn.c
++    delete.c
++    abandon.c
++    sasl.c
++    gssapi.c
++    sbind.c
++    unbind.c
++    cancel.c
++    filter.c
++    free.c
++    sort.c
++    passwd.c
++    whoami.c
++    getdn.c
++    getentry.c
++    getattr.c
++    getvalues.c
++    addentry.c
++    request.c
++    os-ip.c
++    url.c
++    pagectrl.c
++    sortctrl.c
++    vlvctrl.c
++    init.c
++    options.c
++    print.c
++    string.c
++    util-int.c
++    schema.c
++    charray.c
++    os-local.c
++    dnssrv.c
++    utf-8.c
++    utf-8-conv.c
++    tls2.c
++#    tls_o.c
++    tls_g.c
++    tls_m.c
++    turn.c
++    ppolicy.c
++    dds.c
++    txn.c
++    ldap_sync.c
++    stctrl.c
++    assertion.c
++    deref.c
++    ldif.c
++    fetch.c
++)
++
++add_library(ldap ${LDAP_SHARED} ${ldap_SRCS})
++set_target_properties(ldap PROPERTIES DEFINE_SYMBOL LDAP_LIBRARY)
++target_link_libraries(ldap lber)
++install(TARGETS ldap ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/libldap/ldif.c openldap-2.4.33/libraries/libldap/ldif.c
+--- openldap-2.4.33.orig/libraries/libldap/ldif.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/libraries/libldap/ldif.c	2013-01-24 23:36:15.253545500 +0100
+@@ -38,12 +38,12 @@
+ #include <ac/socket.h>
+ #include <ac/time.h>
+ 
+-int ldif_debug = 0;
+-
+ #include "ldap_log.h"
+ #include "lber_pvt.h"
+ #include "ldif.h"
+ 
++int ldif_debug = 0;
++
+ #define RIGHT2			0x03
+ #define RIGHT4			0x0f
+ #define CONTINUED_LINE_MARKER	'\r'
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/libldap/tls_o.c openldap-2.4.33/libraries/libldap/tls_o.c
+--- openldap-2.4.33.orig/libraries/libldap/tls_o.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/libraries/libldap/tls_o.c	2013-01-24 23:36:15.269546400 +0100
+@@ -146,6 +146,7 @@
+ tlso_init( void )
+ {
+ 	struct ldapoptions *lo = LDAP_INT_GLOBAL_OPT();   
++#ifdef HAVE_TLS
+ #ifdef HAVE_EBCDIC
+ 	{
+ 		char *file = LDAP_STRDUP( lo->ldo_tls_randfile );
+@@ -156,6 +157,7 @@
+ #else
+ 	(void) tlso_seed_PRNG( lo->ldo_tls_randfile );
+ #endif
++#endif /* HAVE_TLS */
+ 
+ 	SSL_load_error_strings();
+ 	SSL_library_init();
+@@ -178,11 +180,12 @@
+ 	EVP_cleanup();
+ 	ERR_remove_state(0);
+ 	ERR_free_strings();
+-
++#ifdef HAVE_TLS
+ 	if ( lo->ldo_tls_randfile ) {
+ 		LDAP_FREE( lo->ldo_tls_randfile );
+ 		lo->ldo_tls_randfile = NULL;
+ 	}
++ #endif /* HAVE_TLS */
+ }
+ 
+ static tls_ctx *
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/libldap_r/CMakeLists.txt openldap-2.4.33/libraries/libldap_r/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/libldap_r/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/libldap_r/CMakeLists.txt	2013-01-24 23:36:15.280547000 +0100
+@@ -0,0 +1,85 @@
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libldap)
++set(ldap_r_SRCS
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/bind.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/open.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/result.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/error.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/compare.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/search.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/controls.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/messages.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/references.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/extended.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/cyrus.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/modify.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/add.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/modrdn.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/delete.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/abandon.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/sasl.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/gssapi.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/sbind.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/unbind.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/cancel.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/filter.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/free.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/sort.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/passwd.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/whoami.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/getdn.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/getentry.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/getattr.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/getvalues.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/addentry.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/request.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/os-ip.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/url.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/pagectrl.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/sortctrl.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/vlvctrl.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/init.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/options.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/print.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/string.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/util-int.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/schema.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/charray.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/os-local.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/dnssrv.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/utf-8.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/utf-8-conv.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/tls2.c
++#    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/tls_o.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/tls_g.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/tls_m.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/turn.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/ppolicy.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/dds.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/txn.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/ldap_sync.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/stctrl.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/assertion.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/deref.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/ldif.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/../libldap/fetch.c
++)
++
++set(ldap_r_add_SRCS
++    threads.c
++    rdwr.c
++    rmutex.c
++    tpool.c
++    rq.c
++    thr_posix.c
++    thr_cthreads.c
++    thr_thr.c
++    thr_nt.c
++    thr_pth.c
++    thr_stub.c
++    thr_debug.c
++)
++
++add_library(ldap_r ${LDAP_SHARED} ${ldap_r_SRCS} ${ldap_r_add_SRCS})
++set_target_properties(ldap_r PROPERTIES DEFINE_SYMBOL LDAP_LIBRARY)
++target_link_libraries(ldap_r lber)
++install(TARGETS ldap_r ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/liblunicode/CMakeLists.txt openldap-2.4.33/libraries/liblunicode/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/liblunicode/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/liblunicode/CMakeLists.txt	2013-01-24 23:36:15.287547400 +0100
+@@ -0,0 +1,27 @@
++#set(UCGENDAT_SRC
++#ucdata.c
++#ucgendat.c
++#ure.c
++#urestubs.c
++#)
++
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ucdata)
++
++add_executable(ucgendat ${CMAKE_CURRENT_SOURCE_DIR}/ucdata/ucgendat.c)
++target_link_libraries(ucgendat lutil lber)
++
++get_target_property(UCGENDAT ucgendat LOCATION)
++add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/uctable.h COMMAND ${UCGENDAT} ${CMAKE_CURRENT_SOURCE_DIR}/UnicodeData.txt -x ${CMAKE_CURRENT_SOURCE_DIR}/CompositionExclusions.txt DEPENDS ${UCGENDAT})
++
++set(lunicode_SRCS
++    ${CMAKE_CURRENT_BINARY_DIR}/uctable.h
++    ucdata/ucdata.c
++    ure/ure.c
++    ure/urestubs.c
++    ucstr.c
++)
++
++add_library(lunicode ${LDAP_SHARED} ${lunicode_SRCS})
++set_target_properties(lunicode PROPERTIES DEFINE_SYMBOL LUNICODE_LIBRARY)
++target_link_libraries(lunicode ldap lber lutil)
++install(TARGETS lunicode ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/liblutil/CMakeLists.txt openldap-2.4.33/libraries/liblutil/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/liblutil/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/liblutil/CMakeLists.txt	2013-01-24 23:36:15.302548300 +0100
+@@ -0,0 +1,31 @@
++set(lutil_SRCS
++    base64.c
++    entropy.c
++    sasl.c
++    signal.c
++    hash.c
++    passfile.c
++    md5.c
++    passwd.c
++    sha1.c
++    getpass.c
++    lockf.c
++    utils.c
++    uuid.c
++    sockpair.c
++    avl.c
++    tavl.c
++    meter.c
++)
++
++if(WIN32)
++    list(APPEND lutil_SRCS getopt.c ntservice.c slapdmsg.rc)
++endif(WIN32)
++if(UNIX)
++    list(APPEND lutil_SRCS detach.c)
++endif(UNIX)
++
++add_library(lutil ${LDAP_SHARED} ${lutil_SRCS})
++set_target_properties(lutil PROPERTIES DEFINE_SYMBOL LUTIL_LIBRARY)
++target_link_libraries(lutil ldap_r lber rpcrt4)
++install(TARGETS lutil ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/librewrite/CMakeLists.txt openldap-2.4.33/libraries/librewrite/CMakeLists.txt
+--- openldap-2.4.33.orig/libraries/librewrite/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/libraries/librewrite/CMakeLists.txt	2013-01-24 23:36:15.320549300 +0100
+@@ -0,0 +1,27 @@
++set(rewrite_SRCS
++    config.c
++    context.c
++    info.c
++    ldapmap.c
++    map.c
++    params.c
++    rule.c
++    session.c
++    subst.c
++    var.c
++    xmap.c
++    parse.c
++)
++
++add_library(rewrite ${LDAP_SHARED} ${rewrite_SRCS})
++set_target_properties(rewrite PROPERTIES DEFINE_SYMBOL REWRITE_LIBRARY)
++target_link_libraries(rewrite lber lutil)
++target_link_libraries(rewrite ${PCRE_LIBRARIES})
++
++set(rewrite_bin_SRCS
++    rewrite.c
++)
++add_executable(rewrite_bin ${rewrite_bin_SRCS})
++target_link_libraries(rewrite_bin rewrite ldap_r lber lutil)
++set_target_properties(rewrite_bin PROPERTIES RUNTIME_OUTPUT_NAME rewrite)
++install(TARGETS rewrite rewrite_bin ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/librewrite/config.c openldap-2.4.33/libraries/librewrite/config.c
+--- openldap-2.4.33.orig/libraries/librewrite/config.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/libraries/librewrite/config.c	2013-01-24 23:36:15.328549800 +0100
+@@ -22,6 +22,8 @@
+ #include "rewrite-int.h"
+ #include "rewrite-map.h"
+ 
++// this is needed to export ldap_debug and ldap_syslog and ldap_syslog_level
++#include <ldap_log.h>
+ /*
+  * Parses a plugin map
+  */
+diff -Nru -x '*~' openldap-2.4.33.orig/libraries/librewrite/rewrite.c openldap-2.4.33/libraries/librewrite/rewrite.c
+--- openldap-2.4.33.orig/libraries/librewrite/rewrite.c	2012-10-10 14:18:49.000000000 +0200
++++ openldap-2.4.33/libraries/librewrite/rewrite.c	2013-01-24 23:36:15.338550300 +0100
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <portable.h>
++#include <ldap_cdefs.h>
+ 
+ #include <ac/stdlib.h>
+ #include <ac/string.h>
+@@ -33,10 +34,6 @@
+ #include <lutil.h>
+ #include <ldap.h>
+ 
+-int ldap_debug;
+-int ldap_syslog;
+-int ldap_syslog_level;
+-
+ static void
+ apply( 
+ 		FILE *fin, 
