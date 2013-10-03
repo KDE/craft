@@ -4,24 +4,26 @@ import info
 
 
 class subinfo(info.infoclass):
+    def setTargets( self ):
+        for ver in ['2.3.0', '2.5.0', '2.6.0']:
+            self.targets[ver] = 'http://www.mpir.org/mpir-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = "mpir-" + ver
+        self.targetDigests['2.3.0'] = 'e359e8d7417e4ffef40ba975409c306ac4c381e5'
+        self.patchToApply['2.3.0'] = ('mpir-2.3.0-20110310.diff', 1)
+        self.targetDigests['2.5.0'] = 'de6adf9c5318dfba52b29d1700812069cfb6be39'
+        self.patchToApply['2.5.0'] = ('mpir-2.5.0-20120201.diff', 1)
+        self.targetDigests['2.6.0'] = '28a91eb4d2315a9a73dc39771acf2b99838b9d72'
+        self.patchToApply['2.6.0'] = ('mpir-2.6.0-20131003.diff', 1)
+
+        self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
+        self.defaultTarget = '2.6.0'
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
         else:
                 self.buildDependencies['dev-util/yasm'] = 'default'
-
-    def setTargets( self ):
-        self.targets['2.3.0'] = 'http://www.mpir.org/mpir-2.3.0.tar.bz2'
-        self.targetInstSrc['2.3.0'] = "mpir-2.3.0"
-        self.patchToApply['2.3.0'] = ('mpir-2.3.0-20110310.diff', 1)
-
-        self.targets['2.5.0'] = 'http://www.mpir.org/mpir-2.5.0.tar.bz2'
-        self.targetInstSrc['2.5.0'] = "mpir-2.5.0"
-        self.patchToApply['2.5.0'] = ('mpir-2.5.0-20120201.diff', 1)
-
-        self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
-        self.defaultTarget = '2.5.0'
 
 from Package.AutoToolsPackageBase import *
 from Package.MakeFilePackageBase import *
