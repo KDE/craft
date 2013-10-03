@@ -9,8 +9,9 @@ class subinfo(info.infoclass):
         self.targets['1.0.3'] = "http://downloads.xiph.org/releases/opus/opus-1.0.3.tar.gz"
         self.targetDigests['1.0.3'] = '5781bdd009943deb55a742ac99db20a0d4e89c1e'
         self.targetInstSrc['1.0.3'] = "opus-1.0.3"
-        self.defaultTarget = '1.0.3'
 
+        self.shortDescription = "Opus codec library"
+        self.defaultTarget = '1.0.3'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
