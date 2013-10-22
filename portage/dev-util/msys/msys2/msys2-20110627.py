@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "beta2-20130909"
+        ver = "20131022"
         if emergePlatform.buildArchitecture() == "x86":
             self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x32-msys2-%s.tar.xz" % ver
         else:
@@ -26,14 +26,11 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)        
         self.shell = MSysShell()
+        self.subinfo.options.merge.destinationPath = "msys"
 
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
            return False
-        if emergePlatform.buildArchitecture() == "x64":
-            shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
-        else:
-            shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
         utils.applyPatch(self.imageDir() , os.path.join(self.packageDir(), 'cd_currentDir.diff'), '0')
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True

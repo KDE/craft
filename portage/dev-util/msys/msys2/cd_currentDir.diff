@@ -1,5 +1,5 @@
---- msys\etc\profile2	2013-06-25 10:15:21.999757500 +0200
-+++ msys\etc\profile	2013-06-25 10:16:28.514803600 +0200
+--- etc\profile2	2013-06-25 10:15:21.999757500 +0200
++++ etc\profile	2013-06-25 10:16:28.514803600 +0200
 @@ -97,7 +97,11 @@
  if [ ! -z "${CHERE_INVOKING}" ]; then
    unset CHERE_INVOKING
