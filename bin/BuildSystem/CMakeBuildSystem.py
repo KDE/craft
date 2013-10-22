@@ -241,7 +241,7 @@ class CMakeBuildSystem(BuildSystemBase):
         return graphviz.openOutput()
 
     def ccacheOptions(self):
-        ccache = os.path.join(os.getenv("KDEROOT"), "bin", "ccache.exe")
+        ccache = os.path.join(os.getenv("KDEROOT"), "bin", "ccache.exe").replace( "\\", "/" )
         out  =  " -DCMAKE_CXX_COMPILER=%s -DCMAKE_CXX_COMPILER_ARG1=g++ "% ccache
         out  += " -DCMAKE_CC_COMPILER=%s -DCMAKE_CC_COMPILER_ARG1=gcc " % ccache
         return out
