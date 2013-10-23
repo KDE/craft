@@ -38,8 +38,7 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
-        self.shell.execute(".","mkpasswd -l > /etc/passwd")
-        self.shell.execute(".","mkgroup  -l > /etc/group")
+        self.shell.execute(".","echo Test")#start and restart msys before first use
         return True
        
 if __name__ == '__main__':
