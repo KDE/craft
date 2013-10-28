@@ -98,11 +98,11 @@ diff -Nru -x '*~' freetype-2.5.0.1.orig/CMakeLists.txt freetype-2.5.0.1/CMakeLis
 +add_library( freetype SHARED ${freetype_SRC} )
 +
 +install( TARGETS freetype RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
-+
-+file( GLOB include_files "include/freetype/*.h")
++file( GLOB include_ftbuild_files "include/*.h" )
++file( GLOB include_files "include/freetype/*.h" )
 +file( GLOB include_config_files "include/freetype/config/*.h" "${CMAKE_CURRENT_BINARY_DIR}/include/freetype/config/*.h")
 +file( GLOB include_internal_files "include/freetype/internal/*.h")
-+
++install( FILES ${include_ftbuild_files} DESTINATION include/freetype2 )
 +install( FILES ${include_files} DESTINATION include/freetype2/freetype )
 +install( FILES ${include_config_files} DESTINATION include/freetype2/freetype/config )
 +install( FILES ${include_internal_files} DESTINATION include/freetype2/freetype/internal )
