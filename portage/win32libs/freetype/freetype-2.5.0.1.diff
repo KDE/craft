@@ -1,6 +1,6 @@
 diff -Nru -x '*~' freetype-2.5.0.1.orig/CMakeLists.txt freetype-2.5.0.1/CMakeLists.txt
 --- freetype-2.5.0.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.5.0.1/CMakeLists.txt	2013-09-12 01:09:16.413792700 +0200
++++ freetype-2.5.0.1/CMakeLists.txt	2013-10-29 10:11:38.168848300 +0100
 @@ -0,0 +1,104 @@
 +project( freetype )
 +
@@ -108,7 +108,7 @@ diff -Nru -x '*~' freetype-2.5.0.1.orig/CMakeLists.txt freetype-2.5.0.1/CMakeLis
 +install( FILES ${include_internal_files} DESTINATION include/freetype2/freetype/internal )
 diff -Nru -x '*~' freetype-2.5.0.1.orig/ftconfig.h.cmake freetype-2.5.0.1/ftconfig.h.cmake
 --- freetype-2.5.0.1.orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.5.0.1/ftconfig.h.cmake	2013-09-12 01:01:08.606363500 +0200
++++ freetype-2.5.0.1/ftconfig.h.cmake	2013-10-29 12:59:35.984645900 +0100
 @@ -0,0 +1,520 @@
 +/***************************************************************************/
 +/*                                                                         */
@@ -539,15 +539,15 @@ diff -Nru -x '*~' freetype-2.5.0.1.orig/ftconfig.h.cmake freetype-2.5.0.1/ftconf
 +# ifdef WIN32
 +#  ifdef freetype_EXPORTS
 +#   ifdef __cplusplus
-+#    define FT_EXPORT( x ) __declspec(dllexport) "C" x
++#    define FT_EXPORT( x ) extern "C" x __declspec(dllexport)
 +#   else
-+#    define FT_EXPORT( x ) __declspec(dllexport) x
++#    define FT_EXPORT( x ) x __declspec(dllexport)
 +#   endif
 +#  else
 +#   ifdef __cplusplus
-+#    define FT_EXPORT( x ) __declspec(dllimport) "C" x
++#    define FT_EXPORT( x ) extern "C" x __declspec(dllimport)
 +#   else
-+#    define FT_EXPORT( x ) __declspec(dllimport) x
++#    define FT_EXPORT( x ) x __declspec(dllimport)
 +#   endif
 +#  endif
 +# else
@@ -632,7 +632,7 @@ diff -Nru -x '*~' freetype-2.5.0.1.orig/ftconfig.h.cmake freetype-2.5.0.1/ftconf
 +/* END */
 diff -Nru -x '*~' freetype-2.5.0.1.orig/ftmodule.h.cmake freetype-2.5.0.1/ftmodule.h.cmake
 --- freetype-2.5.0.1.orig/ftmodule.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.5.0.1/ftmodule.h.cmake	2013-09-12 01:01:08.621963600 +0200
++++ freetype-2.5.0.1/ftmodule.h.cmake	2013-10-29 10:11:38.179842400 +0100
 @@ -0,0 +1,32 @@
 +/*
 + *  This file registers the FreeType modules compiled into the library.
