@@ -50,6 +50,7 @@ class Package( BinaryPackageBase ):
                     srcdir = os.path.join( self.rootdir, "mingw", "bin" )                    
                 elif compiler.isMinGW_W64():
                     files.append('libgcc_s_seh-1.dll')
+                    srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
                 
         elif compiler.isMSVC2010():
             if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
