@@ -301,10 +301,12 @@ diff -Nru -x '*~' giflib-5.0.5.orig/lib/egif_lib.c giflib-5.0.5/lib/egif_lib.c
 diff -Nru -x '*~' giflib-5.0.5.orig/lib/gif_lib.h giflib-5.0.5/lib/gif_lib.h
 --- giflib-5.0.5.orig/lib/gif_lib.h	2013-08-29 22:02:42.000000000 +0200
 +++ giflib-5.0.5/lib/gif_lib.h	2013-09-16 23:27:13.817673600 +0200
-@@ -9,6 +9,8 @@
+@@ -9,6 +9,10 @@
  
  #ifdef __cplusplus
  extern "C" {
++#elif !defined(_STDBOOL_H)
++#include <stdbool.h>
 +#else
 +typedef int bool;
  #endif /* __cplusplus */
