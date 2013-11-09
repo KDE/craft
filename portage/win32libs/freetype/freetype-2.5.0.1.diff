@@ -539,15 +539,15 @@ diff -Nru -x '*~' freetype-2.5.0.1.orig/ftconfig.h.cmake freetype-2.5.0.1/ftconf
 +# ifdef WIN32
 +#  ifdef freetype_EXPORTS
 +#   ifdef __cplusplus
-+#    define FT_EXPORT( x ) extern "C" x __declspec(dllexport)
++#    define FT_EXPORT( x ) extern "C" __declspec(dllexport) x
 +#   else
-+#    define FT_EXPORT( x ) x __declspec(dllexport)
++#    define FT_EXPORT( x ) __declspec(dllexport) x
 +#   endif
 +#  else
 +#   ifdef __cplusplus
-+#    define FT_EXPORT( x ) extern "C" x __declspec(dllimport)
++#    define FT_EXPORT( x ) extern "C" __declspec(dllimport) x
 +#   else
-+#    define FT_EXPORT( x ) x __declspec(dllimport)
++#    define FT_EXPORT( x ) __declspec(dllimport) x
 +#   endif
 +#  endif
 +# else
