@@ -1,0 +1,123 @@
+diff -Nru -x '*~' poppler-0.24.3.orig/CMakeLists.txt poppler-0.24.3/CMakeLists.txt
+--- poppler-0.24.3.orig/CMakeLists.txt	2013-10-26 19:05:25.000000000 +0200
++++ poppler-0.24.3/CMakeLists.txt	2013-11-10 16:16:15.144199000 +0100
+@@ -416,13 +416,13 @@
+   set(poppler_LIBS ${poppler_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+ endif()
+ 
+-if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+ set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
+ add_library(poppler STATIC ${poppler_SRCS})
+-else(MSVC)
++else(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_library(poppler SHARED ${poppler_SRCS})
+-endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ set_target_properties(poppler PROPERTIES VERSION 43.0.0 SOVERSION 43)
+ target_link_libraries(poppler ${poppler_LIBS})
+ target_link_libraries(poppler LINK_INTERFACE_LIBRARIES "")
+diff -Nru -x '*~' poppler-0.24.3.orig/goo/gfile.h poppler-0.24.3/goo/gfile.h
+--- poppler-0.24.3.orig/goo/gfile.h	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/goo/gfile.h	2013-11-10 16:43:17.962018900 +0100
+@@ -39,6 +39,7 @@
+ #  ifdef FPTEX
+ #    include <win32lib.h>
+ #  else
++#    define WIN32_LEAN_AND_MEAN
+ #    include <windows.h>
+ #  endif
+ #elif defined(ACORN)
+diff -Nru -x '*~' poppler-0.24.3.orig/goo/GooMutex.h poppler-0.24.3/goo/GooMutex.h
+--- poppler-0.24.3.orig/goo/GooMutex.h	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/goo/GooMutex.h	2013-11-10 16:43:07.433416700 +0100
+@@ -40,7 +40,7 @@
+ // gDestroyMutex(&m);
+ 
+ #ifdef _WIN32
+-
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ 
+ typedef CRITICAL_SECTION GooMutex;
+diff -Nru -x '*~' poppler-0.24.3.orig/goo/GooTimer.h poppler-0.24.3/goo/GooTimer.h
+--- poppler-0.24.3.orig/goo/GooTimer.h	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/goo/GooTimer.h	2013-11-10 16:43:10.952618000 +0100
+@@ -26,6 +26,7 @@
+ #endif
+ 
+ #ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #endif
+ 
+diff -Nru -x '*~' poppler-0.24.3.orig/poppler/GlobalParamsWin.cc poppler-0.24.3/poppler/GlobalParamsWin.cc
+--- poppler-0.24.3.orig/poppler/GlobalParamsWin.cc	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/poppler/GlobalParamsWin.cc	2013-11-10 16:43:25.232434700 +0100
+@@ -21,6 +21,7 @@
+ #pragma implementation
+ #endif
+ 
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #if !(_WIN32_IE >= 0x0500)
+ #error "_WIN32_IE must be defined >= 0x0500 for SHGFP_TYPE_CURRENT from shlobj.h"
+diff -Nru -x '*~' poppler-0.24.3.orig/poppler/PDFDoc.cc poppler-0.24.3/poppler/PDFDoc.cc
+--- poppler-0.24.3.orig/poppler/PDFDoc.cc	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/poppler/PDFDoc.cc	2013-11-10 16:43:31.509793800 +0100
+@@ -51,6 +51,7 @@
+ #include <string.h>
+ #include <time.h>
+ #ifdef _WIN32
++#  define WIN32_LEAN_AND_MEAN
+ #  include <windows.h>
+ #endif
+ #include <sys/stat.h>
+diff -Nru -x '*~' poppler-0.24.3.orig/poppler/XpdfPluginAPI.h poppler-0.24.3/poppler/XpdfPluginAPI.h
+--- poppler-0.24.3.orig/poppler/XpdfPluginAPI.h	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/poppler/XpdfPluginAPI.h	2013-11-10 16:43:34.857985300 +0100
+@@ -22,6 +22,7 @@
+ #define XPDFPLUGINAPI_H
+ 
+ #ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #else
+ #define Object XtObject
+diff -Nru -x '*~' poppler-0.24.3.orig/qt4/tests/stress-threads-qt4.cpp poppler-0.24.3/qt4/tests/stress-threads-qt4.cpp
+--- poppler-0.24.3.orig/qt4/tests/stress-threads-qt4.cpp	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/qt4/tests/stress-threads-qt4.cpp	2013-11-10 16:43:39.802268100 +0100
+@@ -1,6 +1,13 @@
+ 
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
++#endif
+ #include <time.h>
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#define sleep(x) Sleep(x)
++#endif
+ 
+ #include <poppler-qt4.h>
+ #include <poppler-form.h>
+diff -Nru -x '*~' poppler-0.24.3.orig/test/perf-test.cc poppler-0.24.3/test/perf-test.cc
+--- poppler-0.24.3.orig/test/perf-test.cc	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.3/test/perf-test.cc	2013-11-10 16:43:51.089913700 +0100
+@@ -21,6 +21,7 @@
+ #endif
+ 
+ #ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #else
+ #include <strings.h>
+@@ -469,6 +470,7 @@
+ };
+ 
+ #ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #include <sys/timeb.h>
+ #include <direct.h>
