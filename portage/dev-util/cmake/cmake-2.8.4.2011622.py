@@ -28,6 +28,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['v2.8.8'] = 'd63da3b1790b64729e357c157ad9103e1bcfa267'
         self.targetDigests['v2.8.10.2'] = '56a5d0820e92c01c39ae2d9be38d3dfe459d4281'
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
+        self.patchToApply['v2.8.10.2'] = ( 'findpng16.diff', 0 )
 
         if emergePlatform.isCrossCompilingEnabled():
             self.defaultTarget = '2.8.0-ce'
