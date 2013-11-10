@@ -28,6 +28,9 @@ import time
 import datetime
 import threading
 
+def _exit(code):
+    utils.stopTimer("Emerge")
+    exit(code)
 
 def usage():
     print("""
@@ -455,22 +458,22 @@ for i in sys.argv:
     elif( i == "--cleanup" ):
         utils.debug("Starting to clean emerge" )
         utils.system("cd %s && git clean -f -x -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
-        exit(0)
+        _exit(0)
     elif( i == "--cleanup-dry" ):
         utils.debug("Starting to clean emerge" )
         utils.system("cd %s && git clean --dry-run -x -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
-        exit(0)
+        _exit(0)
     elif i == "--cleanallbuilds":
         # clean complete build directory
         utils.cleanDirectory(os.path.join( os.getenv("KDEROOT"), "build"))
-        exit(0)
+        _exit(0)
     elif ( i == "--search" ):
         package = nextArguments.pop(0)
         category = ""
         if not package.find("/") == -1:
             (category,package) = package.split("/")
         portageSearch.printSearch(category, package)
-        exit(0)
+        _exit(0)
     elif ( i.startswith( "-" ) ):
         usage()
         exit ( 1 )
@@ -612,7 +615,7 @@ if ( mainBuildAction != "all" and mainBuildAction != "install-deps" and not list
 
     if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
         utils.notify("Emerge %s failed" % mainBuildAction, "%s of %s/%s-%s failed" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
-        exit(1)
+        _exit(1)
     utils.notify("Emerge %s finished"% mainBuildAction, "%s of %s/%s-%s finished" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
 
 else:
@@ -675,7 +678,7 @@ else:
                     utils.error( "fatal error: package %s/%s-%s %s failed" % \
                         ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
                     utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),mainAction)
-                    exit( 1 )
+                    _exit( 1 )
                 utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),mainAction)
 
 utils.new_line()
@@ -692,5 +695,5 @@ if len( nextArguments ) > 0:
     if not utils.system(command):
         utils.die( "cannot execute next commands cmd: %s" % command )
 
-utils.stopTimer("Emerge")
+
 
