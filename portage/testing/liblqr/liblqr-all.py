@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = "liblqr-1-%s" % ver
         
         self.targetDigests['0.4.2'] = '69639f7dc56a084f59a3198f3a8d72e4a73ff927'
-        s
+        
         self.patchToApply['0.4.2'] = ('liblqr-1-0.4.2.diff', 1)
         
     
