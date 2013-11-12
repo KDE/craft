@@ -1,0 +1,16 @@
+diff -Nru -x '*~' kcalc-4.11.3.orig/knumber/knumber_float.cpp kcalc-4.11.3/knumber/knumber_float.cpp
+--- kcalc-4.11.3.orig/knumber/knumber_float.cpp	2013-08-28 19:08:28.734058100 +0200
++++ kcalc-4.11.3/knumber/knumber_float.cpp	2013-11-12 23:34:14.031663900 +0100
+@@ -25,6 +25,12 @@
+ #include <QDebug>
+ #include <math.h>
+ 
++#ifdef _MSC_VER
++double log2(double x) { return log(x) / log(2); }
++double exp2(double x) { return exp(x * log(2)); }
++double exp10(double x) { return exp(x * log(10)); }
++#endif
++
+ // NOTE: these assume IEEE floats..
+ #ifndef isinf
+ #define isinf(x) ((x) != 0.0 && (x) + (x) == (x))
