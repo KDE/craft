@@ -1,15 +1,14 @@
---- etc\profile2	2013-06-25 10:15:21.999757500 +0200
-+++ etc\profile	2013-06-25 10:16:28.514803600 +0200
-@@ -97,7 +97,11 @@
- if [ ! -z "${CHERE_INVOKING}" ]; then
-   unset CHERE_INVOKING
- else
--  cd "${HOME}" || echo "WARNING: Failed attempt to cd into ${HOME}!"
+--- msys\etc\profile2	2013-06-25 10:15:21.999757500 +0200
++++ msys\etc\profile	2013-06-25 10:16:28.514803600 +0200
+@@ -326,7 +326,11 @@
+   if [ ! -z "${CHERE_INVOKING}" ]; then
+     unset CHERE_INVOKING
+   else
+-    cd "${HOME}" || echo "WARNING: Failed attempt to cd into ${HOME}!"
 +    if [ ! -z "${MSYS_LOGIN_DIR}" ]; then
 +        cd "$MSYS_LOGIN_DIR" || echo "WARNING: Failed attempt to cd into ${MSYS_LOGIN_DIR}!"
 +    else
-+        cd "$HOME" || echo "WARNING: Failed attempt to cd into ${HOME}!"
-+    fi 
- fi
- 
- # Shell dependent settings
++        cd "${HOME}" || echo "WARNING: Failed attempt to cd into ${HOME}!"
++    fi
+   fi
+ }

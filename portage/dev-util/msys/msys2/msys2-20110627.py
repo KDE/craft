@@ -3,12 +3,12 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20131022"
         if emergePlatform.buildArchitecture() == "x86":
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x32-msys2-%s.tar.xz" % ver
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131112.tar.xz"
         else:
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x64-msys2-%s.tar.xz" % ver
-        self.defaultTarget = ver
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys64-base-x86_64-20131113.tar.xz"
+            self.targetDigests['base'] = 'b907866161f92b8de2e9ff072e285479eb03afb6'
+        self.defaultTarget = "base"
 
 
     def setDependencies( self ):
@@ -26,11 +26,14 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         BinaryPackageBase.__init__(self)        
         self.shell = MSysShell()
-        self.subinfo.options.merge.destinationPath = "msys"
 
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
-           return False
+          return False
+        if emergePlatform.buildArchitecture() == "x64":
+           shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
+        else:
+           shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
         utils.applyPatch(self.imageDir() , os.path.join(self.packageDir(), 'cd_currentDir.diff'), '0')
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True
@@ -38,7 +41,9 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
-        self.shell.execute(".","echo Test")#start and restart msys before first use
+        self.shell.execute(".","echo Firstrun")#start and restart msys before first use
+        self.shell.execute(".","pacman -Syu --noconfirm")
+        self.shell.execute(".","pacman -S base-devel --noconfirm")
         return True
        
 if __name__ == '__main__':
