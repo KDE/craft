@@ -1,6 +1,6 @@
 diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/config.cpp.in rasqal-0.9.30/cmake/config.cpp.in
 --- rasqal-0.9.30.orig/cmake/config.cpp.in	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/cmake/config.cpp.in	2013-11-09 22:10:50.310006500 +0100
++++ rasqal-0.9.30/cmake/config.cpp.in	2013-10-23 15:33:34.098017300 +0200
 @@ -0,0 +1,27 @@
 +#include <stdio.h>
 +#include <string.h>
@@ -31,7 +31,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/config.cpp.in rasqal-0.9.30/cmake/con
 +
 diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindLibraryWithDebug.cmake rasqal-0.9.30/cmake/FindLibraryWithDebug.cmake
 --- rasqal-0.9.30.orig/cmake/FindLibraryWithDebug.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/cmake/FindLibraryWithDebug.cmake	2013-11-09 22:10:50.320007100 +0100
++++ rasqal-0.9.30/cmake/FindLibraryWithDebug.cmake	2013-10-23 15:33:34.106019000 +0200
 @@ -0,0 +1,112 @@
 +#
 +#  FIND_LIBRARY_WITH_DEBUG
@@ -147,7 +147,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindLibraryWithDebug.cmake rasqal-0.9
 +ENDMACRO(FIND_LIBRARY_WITH_DEBUG)
 diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindPCRE.cmake rasqal-0.9.30/cmake/FindPCRE.cmake
 --- rasqal-0.9.30.orig/cmake/FindPCRE.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/cmake/FindPCRE.cmake	2013-11-09 22:10:50.330007700 +0100
++++ rasqal-0.9.30/cmake/FindPCRE.cmake	2013-10-23 15:33:34.111019800 +0200
 @@ -0,0 +1,45 @@
 +# - Try to find the PCRE regular expression library
 +# Once done this will define
@@ -196,7 +196,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindPCRE.cmake rasqal-0.9.30/cmake/Fi
 +
 diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindRaptor.cmake rasqal-0.9.30/cmake/FindRaptor.cmake
 --- rasqal-0.9.30.orig/cmake/FindRaptor.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/cmake/FindRaptor.cmake	2013-11-09 22:10:50.340008200 +0100
++++ rasqal-0.9.30/cmake/FindRaptor.cmake	2013-10-23 15:33:34.118114100 +0200
 @@ -0,0 +1,100 @@
 +# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
 +# Once done this will define
@@ -300,7 +300,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/FindRaptor.cmake rasqal-0.9.30/cmake/
 +
 diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.30/cmake/MacroEnsureVersion.cmake
 --- rasqal-0.9.30.orig/cmake/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/cmake/MacroEnsureVersion.cmake	2013-11-09 22:10:50.350008800 +0100
++++ rasqal-0.9.30/cmake/MacroEnsureVersion.cmake	2013-10-23 15:33:34.125658600 +0200
 @@ -0,0 +1,71 @@
 +# This macro compares version numbers of the form "x.y.z"
 +# MACRO_ENSURE_VERSION( FOO_MIN_VERSION FOO_VERSION_FOUND FOO_VERSION_OK)
@@ -375,7 +375,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/cmake/MacroEnsureVersion.cmake rasqal-0.9.3
 +ENDMACRO(MACRO_ENSURE_VERSION2)
 diff -Nru -x '*~' rasqal-0.9.30.orig/CMakeLists.txt rasqal-0.9.30/CMakeLists.txt
 --- rasqal-0.9.30.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/CMakeLists.txt	2013-11-09 22:10:50.360009400 +0100
++++ rasqal-0.9.30/CMakeLists.txt	2013-10-23 15:33:34.131659700 +0200
 @@ -0,0 +1,221 @@
 +project(rasqal)
 +
@@ -600,7 +600,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/CMakeLists.txt rasqal-0.9.30/CMakeLists.txt
 +install(FILES docs/librasqal.3 DESTINATION share/man/man3)
 diff -Nru -x '*~' rasqal-0.9.30.orig/ConfigureChecks.cmake rasqal-0.9.30/ConfigureChecks.cmake
 --- rasqal-0.9.30.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/ConfigureChecks.cmake	2013-11-09 22:10:50.367009800 +0100
++++ rasqal-0.9.30/ConfigureChecks.cmake	2013-10-23 15:34:00.863788800 +0200
 @@ -0,0 +1,139 @@
 +#/* Have curl/curl.h * HAVE_CURL_CURL_H
 +#/* INN parsedate function present * HAVE_INN_PARSEDATE
@@ -743,7 +743,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/ConfigureChecks.cmake rasqal-0.9.30/Configu
 +add_definitions(-DHAVE_CONFIG_H)
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/rasqal-config.h.cmake rasqal-0.9.30/src/rasqal-config.h.cmake
 --- rasqal-0.9.30.orig/src/rasqal-config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ rasqal-0.9.30/src/rasqal-config.h.cmake	2013-11-09 22:10:50.377010300 +0100
++++ rasqal-0.9.30/src/rasqal-config.h.cmake	2013-10-23 15:33:34.141660900 +0200
 @@ -0,0 +1,227 @@
 +/* src/rasqal_config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -974,7 +974,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/rasqal-config.h.cmake rasqal-0.9.30/src
 +#cmakedefine const @const@
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/rasqal_expr_numerics.c rasqal-0.9.30/src/rasqal_expr_numerics.c
 --- rasqal-0.9.30.orig/src/rasqal_expr_numerics.c	2013-01-22 20:26:51.000000000 +0100
-+++ rasqal-0.9.30/src/rasqal_expr_numerics.c	2013-11-09 22:10:50.389011000 +0100
++++ rasqal-0.9.30/src/rasqal_expr_numerics.c	2013-10-23 15:33:34.146661800 +0200
 @@ -25,6 +25,10 @@
  #include <rasqal_config.h>
  #endif
@@ -988,7 +988,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/rasqal_expr_numerics.c rasqal-0.9.30/sr
  #endif
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/sparql_parser.h rasqal-0.9.30/src/sparql_parser.h
 --- rasqal-0.9.30.orig/src/sparql_parser.h	2012-12-17 00:17:29.000000000 +0100
-+++ rasqal-0.9.30/src/sparql_parser.h	2013-11-09 22:10:50.400011700 +0100
++++ rasqal-0.9.30/src/sparql_parser.h	2013-10-23 15:33:34.150661400 +0200
 @@ -30,7 +30,6 @@
     This special exception was added by the Free Software Foundation in
     version 2.2 of Bison.  */
@@ -999,7 +999,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/sparql_parser.h rasqal-0.9.30/src/sparq
  # define YYTOKENTYPE
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/timegm.c rasqal-0.9.30/src/timegm.c
 --- rasqal-0.9.30.orig/src/timegm.c	2011-08-22 08:06:00.000000000 +0200
-+++ rasqal-0.9.30/src/timegm.c	2013-11-09 22:10:50.410012200 +0100
++++ rasqal-0.9.30/src/timegm.c	2013-10-23 15:33:34.154661400 +0200
 @@ -23,10 +23,108 @@
  #include <time.h>
  #endif
@@ -1111,7 +1111,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/timegm.c rasqal-0.9.30/src/timegm.c
  rasqal_timegm(struct tm *tm)
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h rasqal-0.9.30/src/win32_rasqal_config.h
 --- rasqal-0.9.30.orig/src/win32_rasqal_config.h	2013-01-23 03:37:13.000000000 +0100
-+++ rasqal-0.9.30/src/win32_rasqal_config.h	2013-11-09 22:10:50.427013200 +0100
++++ rasqal-0.9.30/src/win32_rasqal_config.h	2013-10-23 15:33:34.158660600 +0200
 @@ -24,6 +24,7 @@
  
  #ifndef WIN32_CONFIG_H
@@ -1144,8 +1144,8 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h rasqal-0.9.30/src
  
 diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h.in rasqal-0.9.30/src/win32_rasqal_config.h.in
 --- rasqal-0.9.30.orig/src/win32_rasqal_config.h.in	2012-05-15 06:33:58.000000000 +0200
-+++ rasqal-0.9.30/src/win32_rasqal_config.h.in	2013-11-09 22:43:27.272938400 +0100
-@@ -55,36 +55,24 @@
++++ rasqal-0.9.30/src/win32_rasqal_config.h.in	2013-10-23 15:33:34.161661800 +0200
+@@ -55,6 +55,7 @@
  } timeval;
  #endif
  
@@ -1153,15 +1153,14 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h.in rasqal-0.9.30/
  struct timezone
  {
    int tz_minuteswest; /* minutes West of Greenwich */
-   int tz_dsttime;     /* type of dst correction */
- };
-+#endif
- 
-+#ifndef HAVE_GETTIMEOFDAY
+@@ -64,27 +65,16 @@
  int rasqal_gettimeofday(struct timeval *tv, struct timezone *tz);
--#undef HAVE_GETTIMEOFDAY
-+#endif
+ #undef HAVE_GETTIMEOFDAY
  
++#else
++#define HAVE_GETTIMEOFDAY
++#endif
++
  #include <float.h>
  #define isnan(n) _isnan(n)
  /* no round function available */
@@ -1188,7 +1187,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h.in rasqal-0.9.30/
  
  
  #define HAVE_C99_VSNPRINTF 1
-@@ -120,12 +108,23 @@
+@@ -120,12 +110,23 @@
  /* Release version number */
  #define RASQAL_VERSION_RELEASE @RASQAL_VERSION_RELEASE@
  
@@ -1214,7 +1213,7 @@ diff -Nru -x '*~' rasqal-0.9.30.orig/src/win32_rasqal_config.h.in rasqal-0.9.30/
  /* bison: output uses ERROR in an enum which breaks if this is defined */
  #ifdef ERROR
  #undef ERROR
-@@ -151,6 +150,16 @@
+@@ -151,6 +152,16 @@
  /* Use PCRE regex library */
  #define RASQAL_REGEX_PCRE 1
  
