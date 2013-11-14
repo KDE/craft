@@ -1,6 +1,6 @@
 diff -Nru -x '*~' tiff-4.0.3.orig/CMakeLists.txt tiff-4.0.3/CMakeLists.txt
 --- tiff-4.0.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/CMakeLists.txt	2013-01-25 00:22:45.986728700 +0100
++++ tiff-4.0.3/CMakeLists.txt	2013-10-28 17:47:08.141514200 +0100
 @@ -0,0 +1,45 @@
 +project(libtiff)
 +
@@ -49,7 +49,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/CMakeLists.txt tiff-4.0.3/CMakeLists.txt
 +endif(BUILD_TESTS)
 diff -Nru -x '*~' tiff-4.0.3.orig/ConfigureChecks.cmake tiff-4.0.3/ConfigureChecks.cmake
 --- tiff-4.0.3.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/ConfigureChecks.cmake	2013-02-03 01:17:37.080669300 +0100
++++ tiff-4.0.3/ConfigureChecks.cmake	2013-10-28 17:47:08.151576000 +0100
 @@ -0,0 +1,181 @@
 +# configure checks.
 +find_package(OpenGL)
@@ -234,7 +234,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/ConfigureChecks.cmake tiff-4.0.3/ConfigureChec
 +
 diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/CMakeLists.txt tiff-4.0.3/libtiff/CMakeLists.txt
 --- tiff-4.0.3.orig/libtiff/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/libtiff/CMakeLists.txt	2013-02-03 01:20:52.897869400 +0100
++++ tiff-4.0.3/libtiff/CMakeLists.txt	2013-10-28 17:47:08.155585900 +0100
 @@ -0,0 +1,63 @@
 +set(tiff_SRCS
 +    tif_aux.c
@@ -299,10 +299,10 @@ diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/CMakeLists.txt tiff-4.0.3/libtiff/CMak
 +                     ARCHIVE DESTINATION lib)
 +                     
 +install(FILES tiffvers.h tiff.h ${CMAKE_BINARY_DIR}/tiffconf.h tiffio.h DESTINATION include)
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tif_config.h.cmake tiff-4.0.3/libtiff/tif_config.h.cmake
 --- tiff-4.0.3.orig/libtiff/tif_config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/libtiff/tif_config.h.cmake	2013-01-25 00:22:46.007729900 +0100
++++ tiff-4.0.3/libtiff/tif_config.h.cmake	2013-10-28 17:47:08.161493100 +0100
 @@ -0,0 +1,320 @@
 +/* libtiff/tif_config.h.in.  Generated from configure.ac by autoheader.  */
 +#ifndef TIF_CONFIG_H
@@ -624,11 +624,22 @@ diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tif_config.h.cmake tiff-4.0.3/libtiff/
 +    #include "libport.h"
 +#endif
 +#endif
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiff.h tiff-4.0.3/libtiff/tiff.h
 --- tiff-4.0.3.orig/libtiff/tiff.h	2012-08-19 18:56:35.000000000 +0200
-+++ tiff-4.0.3/libtiff/tiff.h	2013-01-25 00:46:51.657617300 +0100
-@@ -65,17 +65,17 @@
++++ tiff-4.0.3/libtiff/tiff.h	2013-10-28 18:40:37.428978500 +0100
+@@ -26,8 +26,9 @@
+ 
+ #ifndef _TIFF_
+ #define	_TIFF_
+-
+ #include "tiffconf.h"
++#include <stdio.h>
++
+ 
+ /*
+  * Tag Image File Format (TIFF)
+@@ -65,17 +66,17 @@
   * strings              unsigned char*
   */
  
@@ -656,7 +667,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiff.h tiff-4.0.3/libtiff/tiff.h
   * Some types as promoted in a variable argument list
 diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiffconf.h.cmake tiff-4.0.3/libtiff/tiffconf.h.cmake
 --- tiff-4.0.3.orig/libtiff/tiffconf.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/libtiff/tiffconf.h.cmake	2013-01-25 00:40:31.639621100 +0100
++++ tiff-4.0.3/libtiff/tiffconf.h.cmake	2013-10-28 17:47:08.171506500 +0100
 @@ -0,0 +1,103 @@
 +/*
 +  Configuration defines for installed libtiff.
@@ -763,7 +774,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiffconf.h.cmake tiff-4.0.3/libtiff/ti
 +#endif /* _TIFFCONF_ */
 diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiffconf.vc.h tiff-4.0.3/libtiff/tiffconf.vc.h
 --- tiff-4.0.3.orig/libtiff/tiffconf.vc.h	2010-03-10 19:51:17.000000000 +0100
-+++ tiff-4.0.3/libtiff/tiffconf.vc.h	2013-02-03 01:27:11.332507100 +0100
++++ tiff-4.0.3/libtiff/tiffconf.vc.h	2013-10-28 17:47:08.176495600 +0100
 @@ -89,7 +89,7 @@
  #define CCITT_SUPPORT 1
  
@@ -784,7 +795,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/libtiff/tiffconf.vc.h tiff-4.0.3/libtiff/tiffc
     images to mutiple strips of ~8Kb to reduce memory usage) */
 diff -Nru -x '*~' tiff-4.0.3.orig/man/CMakeLists.txt tiff-4.0.3/man/CMakeLists.txt
 --- tiff-4.0.3.orig/man/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/man/CMakeLists.txt	2013-01-25 00:22:46.020730700 +0100
++++ tiff-4.0.3/man/CMakeLists.txt	2013-10-28 17:47:08.180514300 +0100
 @@ -0,0 +1,73 @@
 +set(tiff1_FILES
 +    bmp2tiff.1
@@ -859,10 +870,10 @@ diff -Nru -x '*~' tiff-4.0.3.orig/man/CMakeLists.txt tiff-4.0.3/man/CMakeLists.t
 +    install(FILES ${tiff1_FILES} DESTINATION share/man/man1)
 +endif(BUILD_TOOLS)
 +install(FILES ${tiff3_FILES} DESTINATION share/man/man3)
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' tiff-4.0.3.orig/port/CMakeLists.txt tiff-4.0.3/port/CMakeLists.txt
 --- tiff-4.0.3.orig/port/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/port/CMakeLists.txt	2013-01-25 00:22:46.023730800 +0100
++++ tiff-4.0.3/port/CMakeLists.txt	2013-10-28 17:47:08.185568400 +0100
 @@ -0,0 +1,19 @@
 +if(NOT WIN32)
 +    set(port_SRCS
@@ -883,10 +894,10 @@ diff -Nru -x '*~' tiff-4.0.3.orig/port/CMakeLists.txt tiff-4.0.3/port/CMakeLists
 +endif(NOT HAVE_STRTOUL)
 +
 +add_library(port ${port_SRCS})
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' tiff-4.0.3.orig/tests/CMakeLists.txt tiff-4.0.3/tests/CMakeLists.txt
 --- tiff-4.0.3.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/tests/CMakeLists.txt	2013-01-25 00:22:46.030731200 +0100
++++ tiff-4.0.3/tests/CMakeLists.txt	2013-10-28 17:47:08.189494700 +0100
 @@ -0,0 +1,20 @@
 +set(ascii_tag_SRCS ascii_tag.c)
 +add_executable(ascii_tag ${ascii_tag_SRCS})
@@ -910,7 +921,7 @@ diff -Nru -x '*~' tiff-4.0.3.orig/tests/CMakeLists.txt tiff-4.0.3/tests/CMakeLis
 +
 diff -Nru -x '*~' tiff-4.0.3.orig/tools/CMakeLists.txt tiff-4.0.3/tools/CMakeLists.txt
 --- tiff-4.0.3.orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ tiff-4.0.3/tools/CMakeLists.txt	2013-01-25 00:22:46.039731700 +0100
++++ tiff-4.0.3/tools/CMakeLists.txt	2013-10-28 17:47:08.193498200 +0100
 @@ -0,0 +1,137 @@
 +
 +#EXTRA_PROGRAMS = sgi2tiff sgisv ycbcr
@@ -1049,10 +1060,10 @@ diff -Nru -x '*~' tiff-4.0.3.orig/tools/CMakeLists.txt tiff-4.0.3/tools/CMakeLis
 +install(TARGETS ${tools} RUNTIME DESTINATION bin
 +                         LIBRARY DESTINATION lib
 +                         ARCHIVE DESTINATION lib)
-\ Kein Zeilenumbruch am Dateiende.
+\ No newline at end of file
 diff -Nru -x '*~' tiff-4.0.3.orig/tools/tiffcrop.c tiff-4.0.3/tools/tiffcrop.c
 --- tiff-4.0.3.orig/tools/tiffcrop.c	2010-12-14 15:18:28.000000000 +0100
-+++ tiff-4.0.3/tools/tiffcrop.c	2013-01-25 00:22:46.104735500 +0100
++++ tiff-4.0.3/tools/tiffcrop.c	2013-10-28 17:47:08.205498000 +0100
 @@ -2931,9 +2931,9 @@
          }
        else /* If we have a full buffer's worth, write it out */

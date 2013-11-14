@@ -1,0 +1,44 @@
+diff -Nru -x '*~' openbabel-2.3.2.orig/CMakeLists.txt openbabel-2.3.2/CMakeLists.txt
+--- openbabel-2.3.2.orig/CMakeLists.txt	2012-10-03 21:08:58.000000000 +0200
++++ openbabel-2.3.2/CMakeLists.txt	2013-10-03 14:51:39.464282100 +0200
+@@ -129,14 +129,15 @@
+ option(WITH_INCHI   "Build inchi support" ON)
+ option(OPENBABEL_USE_SYSTEM_INCHI
+   "Use the system inchi library." OFF)
+-if(OPENBABEL_USE_SYSTEM_INCHI)
++if(OPENBABEL_USE_SYSTEM_INCHI AND NOT WIN32)
+   find_package(Inchi REQUIRED)
+   if (NOT INCHI_FOUND)
+     message(FATAL_ERROR "Inchi library not found.")
+   endif()
+ else()
+   message(STATUS "Using included inchi library.")
+-  set(INCHI_LIBRARIES inchi)
++  set(INCHI_LIBRARY inchi)
++  set(INCHI_LIBRARIES ${INCHI_LIBRARY})
+ endif()
+ 
+ if(WIN32)
+@@ -190,6 +191,7 @@
+   # Force OPENBABEL_USE_SYSTEM_INCHI to ON, as this should be using the binary
+   set(OPENBABEL_USE_SYSTEM_INCHI ON CACHE BOOL
+     "Forced to ON for prebuilt binaries" FORCE)
++  set(XDR_LIBRARY ${openbabel_SOURCE_DIR}/windows-vc2008/libs/i386/xdr.lib)
+ endif()
+ 
+ include(CheckIncludeFile)
+diff -Nru -x '*~' openbabel-2.3.2.orig/src/formats/CMakeLists.txt openbabel-2.3.2/src/formats/CMakeLists.txt
+--- openbabel-2.3.2.orig/src/formats/CMakeLists.txt	2012-10-03 21:13:05.000000000 +0200
++++ openbabel-2.3.2/src/formats/CMakeLists.txt	2013-10-03 14:51:39.479882100 +0200
+@@ -139,9 +139,9 @@
+   if(NOT OPENBABEL_USE_SYSTEM_INCHI)
+     set(ADD_INCHI_FORMAT TRUE)
+   else()
+-    if (EXISTS ${INCHI_LIBRARY})
++    if (EXISTS ${INCHI_LIBRARY} OR TARGET ${INCHI_LIBRARY})
+       set(ADD_INCHI_FORMAT TRUE)
+-    else (EXISTS ${INCHI_LIBRARY})
++    else (EXISTS ${INCHI_LIBRARY} OR TARGET ${INCHI_LIBRARY})
+       message("WARNING: INCHI_LIBRARY not set, or does not exist.\n....InChI format will NOT be compiled.")
+     endif()
+   endif()

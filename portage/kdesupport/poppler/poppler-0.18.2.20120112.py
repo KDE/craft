@@ -7,6 +7,9 @@ class subinfo(info.infoclass):
         for i in ( '0.18.0', '0.18.1', '0.18.2', '0.20.3', '0.22.3' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
+        for i in ( '0.24.3', ):
+            self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.xz' % i
+            self.targetInstSrc[ i ] = 'poppler-%s' % i
             
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.svnTargets['0.18-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.18"
@@ -14,12 +17,14 @@ class subinfo(info.infoclass):
         self.svnTargets['0.22-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.22"
         self.targetDigests['0.18.2'] = '7ef4eec20e849024c0cdd7a49c428d20eb3de875'
         self.targetDigests['0.22.3'] = '92fd3d2f56cf74bb76e4856a8ac606330343ba8d'
+        self.targetDigests['0.24.3'] = '9aca24a8b012587ea579f72892863d9b3245009a'
         self.patchToApply["0.18.2"] = [("poppler-0.18.2-20130113.diff",1)]
         self.patchToApply["0.22.3"] = [("poppler-0.22.3-20130429.diff",1),
                                        ("poppler-0.22.3-20130615.diff",1)]
+        self.patchToApply["0.24.3"] = [("poppler-0.24.3-20131110.diff",1)]
 
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
-        self.defaultTarget = "0.22.3"
+        self.defaultTarget = "0.24.3"
 
     def setDependencies( self ):
         self.dependencies['win32libs/freetype'] = 'default'

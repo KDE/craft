@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.48.0'] = [('boost_1_47_0-20110815.diff',1)]
         self.patchToApply['1.47.0'] = [('boost_1_47_0-20110815.diff',1)]
         self.patchToApply['1.49.0'] = [('boost_1_47_0-20110815.diff',1)]
+        self.patchToApply['1.54.0'] = [('boost_1_54_0-spirit-20131114.diff',1)] # TODO: also include in future releases!
 
         self.homepage = 'http://www.boost.org/'
 

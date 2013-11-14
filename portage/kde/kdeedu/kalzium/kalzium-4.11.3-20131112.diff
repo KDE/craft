@@ -1,0 +1,14 @@
+diff -Nru -x '*~' kalzium-4.11.3.orig/CMakeLists.txt kalzium-4.11.3/CMakeLists.txt
+--- kalzium-4.11.3.orig/CMakeLists.txt	2013-06-28 19:17:40.879858200 +0200
++++ kalzium-4.11.3/CMakeLists.txt	2013-11-12 23:06:36.274845600 +0100
+@@ -24,6 +24,10 @@
+ 
+ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+ include_directories (${QDBUS_INCLUDE_DIRS}  ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} libscience)
++
++# for correctly linking openbabel:
++# see http://www.mail-archive.com/openbabel-devel@lists.sourceforge.net/msg01975.html
++add_definitions(-DUSING_DYNAMIC_LIBS)
+ 
+ kde4_no_enable_final(kalzium)

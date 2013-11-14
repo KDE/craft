@@ -23,15 +23,15 @@ class subinfo(info.infoclass):
 
     self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
     self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s" % (self.vlcTagName)
-    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6', '2.0.8']:
+    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6', '2.0.8', '2.1.0']:
         self.targets[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
         self.targetDigestUrls[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z.sha1" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
-    for releaseTag in [ '2.0.2','2.0.5','2.0.6' ]:
+    for releaseTag in [ '2.0.2','2.0.5','2.0.6','2.1.0' ]:
         self.patchToApply[ releaseTag ] = [("vlc-%s.diff" % (releaseTag),1)]
     self.shortDescription = "an open-source multimedia framework"
     
-    self.defaultTarget = '2.0.8'
+    self.defaultTarget = '2.1.0'
 
 
   def setDependencies( self ):
@@ -63,8 +63,10 @@ class Package(BinaryPackageBase):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) )
-    shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlc.lib" ))
-    shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlccore.lib" ))
+    ver2 = self.subinfo.buildTarget.split('.')
+    if not (int(ver2[0]) >= 2 and int(ver2[0]) >= 1):
+      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlc.lib" ))
+      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlccore.lib" ))
     shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
     os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
     shutil.copy( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.installDir() , "share" , "applications" , "kde4" , "vlc.desktop" ))

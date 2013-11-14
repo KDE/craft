@@ -11,6 +11,8 @@ class subinfo(info.infoclass):
         self.patchToApply['4.10.1'] = [('kdepimlibs-4.10.0.diff', 1)]
         self.patchToApply['4.10.2'] = [('kdepimlibs-4.10.0.diff', 1)]
         self.patchToApply['4.10.4'] = [('kdepimlibs-4.10.0.diff', 1)] # not to be upstreamed, quite a few hacks in it
+        for ver in ['0', '1', '2', '3', '4', '5']:
+            self.patchToApply['4.11.' + ver] = [('kdepimlibs-4.11.0.diff', 1)]
 
         self.defaultTarget = 'gitHEAD'
 

@@ -1,0 +1,12 @@
+diff -Nru -x '*~' phonon-4.7.0.orig/phonon/mediasource.h phonon-4.7.0/phonon/mediasource.h
+--- phonon-4.7.0.orig/phonon/mediasource.h	2013-11-04 17:49:06.000000000 +0100
++++ phonon-4.7.0/phonon/mediasource.h	2013-11-10 13:50:27.746876500 +0100
+@@ -62,7 +62,7 @@
+ class PHONON_EXPORT MediaSource
+ {
+     friend class StreamInterface;
+-    friend QDebug operator <<(QDebug dbg, const Phonon::MediaSource &);
++    friend PHONON_EXPORT QDebug operator <<(QDebug dbg, const Phonon::MediaSource &);
+     public:
+         /**
+          * Identifies the type of media described by the MediaSource object.

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         if compiler.isMinGW():
-            self.buildDependencies['dev-util/autotools'] = 'default'
+            self.buildDependencies['dev-util/msys'] = 'default'
             self.dependencies['testing/gcrypt'] = 'default'
             self.dependencies['kdesupport/kdewin'] = 'default'
             self.dependencies['win32libs/libcurl'] = 'default'

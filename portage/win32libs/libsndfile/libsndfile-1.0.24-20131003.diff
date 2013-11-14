@@ -102,8 +102,8 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/CMakeLists.txt libsndfile-1.0.24/CMakeL
 +set(PACKAGE             "\"libsndfile\"")
 +set(PACKAGE_BUGREPORT   "\"kde-windows@kde.org\"")
 +set(PACKAGE_NAME        "\"libsndfile\"")
-+set(PACKAGE_VERSION     "\"1.0.21\"")
-+set(VERSION             "\"1.0.21\"")
++set(PACKAGE_VERSION     "\"1.0.24\"")
++set(VERSION             "\"1.0.24\"")
 +
 +include(ConfigureChecks.cmake)
 +
@@ -756,7 +756,7 @@ diff -Nru -x '*~' libsndfile-1.0.24.orig/src/libsndfile.rc libsndfile-1.0.24/src
 +		BEGIN
 +		VALUE "FileDescription",  "sndfile"
 +		VALUE "LegalCopyright", "Erik de Castro Lopo <erikd@mega-nerd.com>"
-+		VALUE "FileVersion", "1.0.21"
++		VALUE "FileVersion", "1.0.24"
 +		VALUE "OriginalFilename", "sndfile.dll"
 +		VALUE "Comments", "Bug reports to KDE Windows <kde-windows@kde.org>"
 +		END

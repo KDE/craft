@@ -1,0 +1,46 @@
+diff -Nru -x '*~' kdepimlibs-4.11.3.orig/akonadi/calendar/CMakeLists.txt kdepimlibs-4.11.3/akonadi/calendar/CMakeLists.txt
+--- kdepimlibs-4.11.3.orig/akonadi/calendar/CMakeLists.txt	2013-08-28 19:06:13.741955200 +0200
++++ kdepimlibs-4.11.3/akonadi/calendar/CMakeLists.txt	2013-11-11 23:31:19.151551000 +0100
+@@ -7,6 +7,7 @@
+ add_subdirectory( tests )
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -UQT_NO_CAST_FROM_ASCII -UQT_NO_CAST_TO_ASCII ${KDE4_ENABLE_EXCEPTIONS}")
++remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII)
+ 
+ set(akonadicalendar_LIB_SRC
+   blockalarmsattribute.cpp
+diff -Nru -x '*~' kdepimlibs-4.11.3.orig/akonadi/entitycache_p.h kdepimlibs-4.11.3/akonadi/entitycache_p.h
+--- kdepimlibs-4.11.3.orig/akonadi/entitycache_p.h	2013-08-28 19:06:13.765955200 +0200
++++ kdepimlibs-4.11.3/akonadi/entitycache_p.h	2013-11-11 22:33:29.204081400 +0100
+@@ -441,7 +441,7 @@
+       // make sure we find this node again if something went wrong here,
+       // most likely the object got deleted from the server in the meantime
+       if ( !result.isValid() ) {
+-        node->entity = Item( id );
++        node->entity = T( id );
+         node->invalid = true;
+       } else {
+         node->entity = result;
+diff -Nru -x '*~' kdepimlibs-4.11.3.orig/akonadi/notes/CMakeLists.txt kdepimlibs-4.11.3/akonadi/notes/CMakeLists.txt
+--- kdepimlibs-4.11.3.orig/akonadi/notes/CMakeLists.txt	2013-06-28 19:34:42.187098000 +0200
++++ kdepimlibs-4.11.3/akonadi/notes/CMakeLists.txt	2013-11-11 23:31:23.423795400 +0100
+@@ -5,6 +5,7 @@
+ )
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -UQT_NO_CAST_FROM_ASCII -UQT_NO_CAST_TO_ASCII ${KDE4_ENABLE_EXCEPTIONS}")
++remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII)
+ 
+ set(akonadinotes_LIB_SRC
+   noteutils.cpp
+diff -Nru -x '*~' kdepimlibs-4.11.3.orig/kimap/tests/testimapidle.cpp kdepimlibs-4.11.3/kimap/tests/testimapidle.cpp
+--- kdepimlibs-4.11.3.orig/kimap/tests/testimapidle.cpp	2013-08-28 19:06:13.900954200 +0200
++++ kdepimlibs-4.11.3/kimap/tests/testimapidle.cpp	2013-11-11 23:40:08.810845800 +0100
+@@ -23,7 +23,7 @@
+ #include <klocale.h>
+ #include <klocalizedstring.h>
+ #include <kdebug.h>
+-#include <qtcpsocket.h>
++#include <ktcpsocket.h>
+ #include <QCoreApplication>
+ #include <qsignalspy.h>
+ 

@@ -1,6 +1,6 @@
 diff -Nru -x '*~' djvulibre-3.5.25.orig/CMakeLists.txt djvulibre-3.5.25/CMakeLists.txt
 --- djvulibre-3.5.25.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.25/CMakeLists.txt	2013-09-07 00:03:24.475377200 +0200
++++ djvulibre-3.5.25/CMakeLists.txt	2013-10-28 20:45:23.693655700 +0100
 @@ -0,0 +1,35 @@
 +project(djvulibre)
 +
@@ -39,7 +39,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/CMakeLists.txt djvulibre-3.5.25/CMakeLis
 +add_subdirectory(xmltools)
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/Arrays.h djvulibre-3.5.25/libdjvu/Arrays.h
 --- djvulibre-3.5.25.orig/libdjvu/Arrays.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/Arrays.h	2013-09-07 00:03:24.481377500 +0200
++++ djvulibre-3.5.25/libdjvu/Arrays.h	2013-10-28 20:45:23.699735000 +0100
 @@ -125,7 +125,7 @@
  //@{
  
@@ -60,7 +60,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/Arrays.h djvulibre-3.5.25/libdjv
     _ArrayBase(void) : rep(0) {}
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/atomic.h djvulibre-3.5.25/libdjvu/atomic.h
 --- djvulibre-3.5.25.orig/libdjvu/atomic.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/atomic.h	2013-09-07 00:03:24.497378400 +0200
++++ djvulibre-3.5.25/libdjvu/atomic.h	2013-10-28 20:45:23.704656100 +0100
 @@ -78,24 +78,35 @@
  # ifdef __cplusplus
  extern "C" {
@@ -106,7 +106,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/atomic.h djvulibre-3.5.25/libdjv
  # ifdef __cplusplus
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/CMakeLists.txt djvulibre-3.5.25/libdjvu/CMakeLists.txt
 --- djvulibre-3.5.25.orig/libdjvu/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.25/libdjvu/CMakeLists.txt	2013-09-07 00:03:24.506379000 +0200
++++ djvulibre-3.5.25/libdjvu/CMakeLists.txt	2013-10-28 20:45:23.708705600 +0100
 @@ -0,0 +1,81 @@
 +# ******************************************************************************
 +# building djvu library
@@ -191,7 +191,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/CMakeLists.txt djvulibre-3.5.25/
 +endforeach(filename ${datafiles})
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.25/libdjvu/DjVuGlobal.h
 --- djvulibre-3.5.25.orig/libdjvu/DjVuGlobal.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/DjVuGlobal.h	2013-09-07 00:03:24.511379200 +0200
++++ djvulibre-3.5.25/libdjvu/DjVuGlobal.h	2013-10-28 20:45:23.712728200 +0100
 @@ -66,13 +66,14 @@
  # ifndef __WCEALT_H__
  inline void * operator new(size_t, void * ptr) { return ptr; }
@@ -210,7 +210,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/DjVuGlobal.h djvulibre-3.5.25/li
  # else
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/DjVuPort.cpp djvulibre-3.5.25/libdjvu/DjVuPort.cpp
 --- djvulibre-3.5.25.orig/libdjvu/DjVuPort.cpp	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/DjVuPort.cpp	2013-09-07 00:03:24.524380000 +0200
++++ djvulibre-3.5.25/libdjvu/DjVuPort.cpp	2013-10-28 20:45:23.716670600 +0100
 @@ -466,11 +466,11 @@
         // Sort in depth order
         int max_dist=0;
@@ -228,7 +228,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/DjVuPort.cpp djvulibre-3.5.25/li
             {
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GBitmap.cpp djvulibre-3.5.25/libdjvu/GBitmap.cpp
 --- djvulibre-3.5.25.orig/libdjvu/GBitmap.cpp	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/GBitmap.cpp	2013-09-07 00:03:24.538380800 +0200
++++ djvulibre-3.5.25/libdjvu/GBitmap.cpp	2013-10-28 20:45:23.722659000 +0100
 @@ -469,7 +469,11 @@
  {
    if (!monitorptr)
@@ -243,7 +243,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GBitmap.cpp djvulibre-3.5.25/lib
  }
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GContainer.h djvulibre-3.5.25/libdjvu/GContainer.h
 --- djvulibre-3.5.25.orig/libdjvu/GContainer.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/GContainer.h	2013-09-07 00:03:24.555381800 +0200
++++ djvulibre-3.5.25/libdjvu/GContainer.h	2013-10-28 20:45:23.727658900 +0100
 @@ -177,8 +177,12 @@
  /** Hashing function (const void *). */
  static inline unsigned int 
@@ -261,7 +261,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GContainer.h djvulibre-3.5.25/li
  /** Hashing function (float). */
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GString.cpp djvulibre-3.5.25/libdjvu/GString.cpp
 --- djvulibre-3.5.25.orig/libdjvu/GString.cpp	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/GString.cpp	2013-09-07 00:03:24.572382700 +0200
++++ djvulibre-3.5.25/libdjvu/GString.cpp	2013-10-28 20:45:23.733730400 +0100
 @@ -2598,6 +2598,8 @@
    else 
      init(fmt); 
@@ -273,7 +273,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GString.cpp djvulibre-3.5.25/lib
  { init(GStringRep::UTF8::create(str)); }
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GString.h djvulibre-3.5.25/libdjvu/GString.h
 --- djvulibre-3.5.25.orig/libdjvu/GString.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/GString.h	2013-09-07 00:03:24.589383700 +0200
++++ djvulibre-3.5.25/libdjvu/GString.h	2013-10-28 20:45:23.738688200 +0100
 @@ -1427,9 +1427,6 @@
  
  inline GUTF8String::GUTF8String(void) { }
@@ -286,7 +286,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GString.h djvulibre-3.5.25/libdj
  
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GThreads.h djvulibre-3.5.25/libdjvu/GThreads.h
 --- djvulibre-3.5.25.orig/libdjvu/GThreads.h	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/GThreads.h	2013-09-07 00:03:24.606384700 +0200
++++ djvulibre-3.5.25/libdjvu/GThreads.h	2013-10-28 20:45:23.743731100 +0100
 @@ -260,7 +260,7 @@
      as private members. It is therefore not possible to make multiple copies
      of instances of this class, as implied by the class semantic. */
@@ -305,9 +305,48 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/GThreads.h djvulibre-3.5.25/libd
  {
  private:
     volatile long flags;
+diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/IW44EncodeCodec.cpp djvulibre-3.5.25/libdjvu/IW44EncodeCodec.cpp
+--- djvulibre-3.5.25.orig/libdjvu/IW44EncodeCodec.cpp	2012-05-08 04:56:53.000000000 +0200
++++ djvulibre-3.5.25/libdjvu/IW44EncodeCodec.cpp	2013-10-28 20:56:05.079345900 +0100
+@@ -310,7 +310,7 @@
+ static inline void
+ mmx_fv_1 ( short* &q, short* e, int s, int s3 )
+ {
+-  while (q<e && (((long)q)&0x7))
++  while (q<e && (((intptr_t)q)&0x7))
+     {
+       int a = (int)q[-s] + (int)q[s];
+       int b = (int)q[-s3] + (int)q[s3];
+@@ -353,7 +353,7 @@
+ static inline void
+ mmx_fv_2 ( short* &q, short* e, int s, int s3 )
+ {
+-  while (q<e && (((long)q)&0x7))
++  while (q<e && (((intptr_t)q)&0x7))
+     {
+       int a = (int)q[-s] + (int)q[s];
+       int b = (int)q[-s3] + (int)q[s3];
 diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/IW44Image.cpp djvulibre-3.5.25/libdjvu/IW44Image.cpp
 --- djvulibre-3.5.25.orig/libdjvu/IW44Image.cpp	2012-05-08 04:56:53.000000000 +0200
-+++ djvulibre-3.5.25/libdjvu/IW44Image.cpp	2013-09-07 00:03:24.620385500 +0200
++++ djvulibre-3.5.25/libdjvu/IW44Image.cpp	2013-10-28 20:55:20.004653900 +0100
+@@ -167,7 +167,7 @@
+ static void
+ mmx_bv_1 ( short* &q, short* e, int s, int s3 )
+ {
+-  while (q<e && (((long)q)&0x7))
++  while (q<e && (((intptr_t)q)&0x7))
+     {
+       int a = (int)q[-s] + (int)q[s];
+       int b = (int)q[-s3] + (int)q[s3];
+@@ -211,7 +211,7 @@
+ static void
+ mmx_bv_2 ( short* &q, short* e, int s, int s3 )
+ {
+-  while (q<e && (((long)q)&0x7))
++  while (q<e && (((intptr_t)q)&0x7))
+     {
+       int a = (int)q[-s] + (int)q[s];
+       int b = (int)q[-s3] + (int)q[s3];
 @@ -649,7 +649,7 @@
    // Allocate enough room for pointers plus alignment
    short *p = alloc( (n+1) * sizeof(short*) / sizeof(short) );
@@ -319,7 +358,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/libdjvu/IW44Image.cpp djvulibre-3.5.25/l
    return (short**)p;
 diff -Nru -x '*~' djvulibre-3.5.25.orig/tools/CMakeLists.txt djvulibre-3.5.25/tools/CMakeLists.txt
 --- djvulibre-3.5.25.orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.25/tools/CMakeLists.txt	2013-09-07 00:03:24.637386400 +0200
++++ djvulibre-3.5.25/tools/CMakeLists.txt	2013-10-28 20:45:23.753734200 +0100
 @@ -0,0 +1,53 @@
 +# libdjvu tools
 +
@@ -376,7 +415,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/tools/CMakeLists.txt djvulibre-3.5.25/to
 +endif(NOT WIN32)
 diff -Nru -x '*~' djvulibre-3.5.25.orig/xmltools/CMakeLists.txt djvulibre-3.5.25/xmltools/CMakeLists.txt
 --- djvulibre-3.5.25.orig/xmltools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.25/xmltools/CMakeLists.txt	2013-09-07 00:03:24.642386700 +0200
++++ djvulibre-3.5.25/xmltools/CMakeLists.txt	2013-10-28 20:45:23.756682700 +0100
 @@ -0,0 +1,27 @@
 +include_directories( ../libdjvu 
 +                     ..)
@@ -407,7 +446,7 @@ diff -Nru -x '*~' djvulibre-3.5.25.orig/xmltools/CMakeLists.txt djvulibre-3.5.25
 +install(FILES ${docdefs} DESTINATION ${DATA_INSTALL_DIR}/djvu/pubtest)
 diff -Nru -x '*~' djvulibre-3.5.25.orig/xmltools/djvuxml.1.cmake djvulibre-3.5.25/xmltools/djvuxml.1.cmake
 --- djvulibre-3.5.25.orig/xmltools/djvuxml.1.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ djvulibre-3.5.25/xmltools/djvuxml.1.cmake	2013-09-07 00:03:24.647387000 +0200
++++ djvulibre-3.5.25/xmltools/djvuxml.1.cmake	2013-10-28 20:45:23.761660600 +0100
 @@ -0,0 +1,288 @@
 +.\" Copyright (c) 2002 Bill C. Riemers
 +.\"

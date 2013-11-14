@@ -22,8 +22,8 @@ class subinfo(info.infoclass):
       self.targetDigests['0.4.1'] = 'b2957b70e1722f08a231b9e64acfafb799b52d11'
       
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
-      for ver in ['0.5.0', '0.6.0', '0.6.1']:
-        self.targets[ ver ] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
+      for ver in ['0.5.0', '0.6.0', '0.6.1', '0.7.0']:
+        self.targets[ ver ] = "http://download.kde.org/stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
         self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
         
       for ver in ['0.6.2']:
@@ -37,10 +37,13 @@ class subinfo(info.infoclass):
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
       self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1),
                                     ("use-kdewin-also-for-intel-compiler.diff", 1)]
+      self.patchToApply['0.7.0'] = [("use-kdewin-also-for-intel-compiler.diff", 1),
+                                    ("no-vlc-2.2-equalizereffect.diff", 1)]
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
+      
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.6.2'
+      self.defaultTarget = '0.7.0'
 
 
 class Package( CMakePackageBase ):
