@@ -202,3 +202,6 @@ function emerge()
 }
 
 cd $env:KDEROOT
+
+# make sure term is not defined by any script
+$env:TERM=""
