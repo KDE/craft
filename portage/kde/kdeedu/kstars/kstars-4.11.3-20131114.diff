@@ -1,0 +1,23 @@
+diff -Nru -x '*~' kstars-4.11.3.orig/kstars/skyobjects/ksmoon.cpp kstars-4.11.3/kstars/skyobjects/ksmoon.cpp
+--- kstars-4.11.3.orig/kstars/skyobjects/ksmoon.cpp	2013-08-28 19:03:16.454121300 +0200
++++ kstars-4.11.3/kstars/skyobjects/ksmoon.cpp	2013-11-14 00:58:51.525422100 +0100
+@@ -33,6 +33,10 @@
+ 
+ using namespace std;
+ 
++#ifndef isnan
++#define isnan(x) ((x) != (x))
++#endif
++
+ namespace {
+     // Convert degrees to radians and put it into [0,2*pi] range
+     double degToRad(double x) {
+@@ -224,7 +228,7 @@
+     // relevant data put into ksplanetbase.h) was taken from
+     // SkyChart v3 Beta
+     double phd = phase().Degrees();
+-    if( std::isnan( phd ) ) // Avoid nanny phases.
++    if( isnan( phd ) ) // Avoid nanny phases.
+         return;
+     int p = floor( phd );
+     if( p > 180 )
