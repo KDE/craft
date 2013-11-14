@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.svnTargets['0.22-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.22"
         self.targetDigests['0.18.2'] = '7ef4eec20e849024c0cdd7a49c428d20eb3de875'
         self.targetDigests['0.22.3'] = '92fd3d2f56cf74bb76e4856a8ac606330343ba8d'
+        self.targetDigests['0.24.3'] = '9aca24a8b012587ea579f72892863d9b3245009a'
         self.patchToApply["0.18.2"] = [("poppler-0.18.2-20130113.diff",1)]
         self.patchToApply["0.22.3"] = [("poppler-0.22.3-20130429.diff",1),
                                        ("poppler-0.22.3-20130615.diff",1)]
