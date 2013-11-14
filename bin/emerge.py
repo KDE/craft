@@ -68,6 +68,8 @@ Commands (no packagename needed - will be ignored when given):
 
 Commands (must have a packagename):
 
+--search                This will search for a package or a description matching
+                        or similar to the search term.
 --print-targets         This will print all the different targets one package
                         can contain: different releases might have different
                         tags that are build as targets of a package. As an
