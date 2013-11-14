@@ -25,8 +25,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = "--with-bundled-zlib "
-        os.putenv("CXX","g++")
-        os.putenv("CC","gcc")
+        self.supportsCCACHE = False
 
 if compiler.isMinGW():
     class Package(PackageMinGW):
