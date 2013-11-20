@@ -86,7 +86,7 @@ class MSysShell(object):
 
 def main():
     shell = MSysShell()
-    utils.putenv("MSYS_LOGIN_DIR",os.getcwd())
+    utils.putenv("CHERE_INVOKING","1")
     utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login -i"))
 
 if __name__ == '__main__':

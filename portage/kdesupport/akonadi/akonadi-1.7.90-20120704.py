@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
-        for ver in ['1.4.80', '1.4.90', '1.6.0','1.6.2', '1.7.90', '1.9.0', '1.9.2', '1.10.2']:
+        for ver in ['1.4.80', '1.4.90', '1.6.0','1.6.2', '1.7.90', '1.9.0', '1.9.2', '1.10.2','1.10.80']:
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver
         for ver in ['1.10.3']:
@@ -36,7 +36,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = '1.10.3'
+        self.defaultTarget = '1.10.80'
 
 from Package.CMakePackageBase import *
 

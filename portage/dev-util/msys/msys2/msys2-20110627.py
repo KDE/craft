@@ -34,7 +34,6 @@ class Package(BinaryPackageBase):
            shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
         else:
            shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
-        utils.applyPatch(self.imageDir() , os.path.join(self.packageDir(), 'cd_currentDir.diff'), '0')
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True
     
@@ -44,6 +43,7 @@ class Package(BinaryPackageBase):
         self.shell.execute(".","echo Firstrun")#start and restart msys before first use
         self.shell.execute(".","pacman -Syu --noconfirm")
         self.shell.execute(".","pacman -S base-devel --noconfirm")
+        utils.system(os.path.join(os.getenv("KDEROOT"),"msys","autorebase.bat")
         return True
        
 if __name__ == '__main__':
