@@ -43,7 +43,7 @@ class Package(BinaryPackageBase):
         self.shell.execute(".","echo Firstrun")#start and restart msys before first use
         self.shell.execute(".","pacman -Syu --noconfirm")
         self.shell.execute(".","pacman -S base-devel --noconfirm")
-        utils.system(os.path.join(os.getenv("KDEROOT"),"msys","autorebase.bat")
+        utils.system(os.path.join(os.getenv("KDEROOT"),"msys","autorebase.bat"))
         return True
        
 if __name__ == '__main__':
