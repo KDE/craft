@@ -115,8 +115,7 @@ class subinfo(info.infoclass):
             ('patches/4.8/add-pdbs-on-msvc.diff', 1),
             ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
             ('patches/4.8.1/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1),
-            ('patches/4.8/moc-boost-fix-bug-22829.diff', 1),
-            ('patches/4.8.4/fix-defined-defined-and-do-not-include-inttypes-for-intel-compiler.patch', 1),
+            ('patches/4.8.5/fix-defined-defined-and-do-not-include-inttypes-for-intel-compiler.patch', 1),
             ('patches/4.8.4/fix-Q_CORE_EXPORT_INLINE-for-intel-compiler.patch', 1),
         ]
 
