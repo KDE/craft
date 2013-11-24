@@ -38,7 +38,7 @@ class subinfo(info.infoclass):
       self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1),
                                     ("use-kdewin-also-for-intel-compiler.diff", 1)]
       self.patchToApply['0.7.0'] = [("use-kdewin-also-for-intel-compiler.diff", 1),
-                                    ("no-vlc-2.2-equalizereffect.diff", 1)]
+                                    ("0002-FindLIBVLC-Detect-libvlc-s-version-even-if-pkg-confi.patch", 1)]
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       
