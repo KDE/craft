@@ -12,6 +12,7 @@ import utils
 import compiler
 from options import *
 import types
+from collections import OrderedDict
 
 class infoclass(object):
     """this module contains the information class"""
@@ -19,35 +20,35 @@ class infoclass(object):
         ### package options
         self.options = Options()
         self.options.readFromEnv()
-        self.targets = dict()
-        self.archiveNames = dict()
+        self.targets = OrderedDict()
+        self.archiveNames = OrderedDict()
         # Specifiy that the fetched source should be placed into a
         # subdirectory of the default source directory
-        self.targetInstSrc = dict()
+        self.targetInstSrc = OrderedDict()
         # Specifiy that the default source directory should have a suffix after
         # the package name. This is usefull for package which needs different sources.
-        self.targetSrcSuffix = dict()
-        self.targetConfigurePath = dict()
-        self.targetInstallPath = dict()
-        self.targetMergeSourcePath = dict()
-        self.targetMergePath = dict()
+        self.targetSrcSuffix = OrderedDict()
+        self.targetConfigurePath = OrderedDict()
+        self.targetInstallPath = OrderedDict()
+        self.targetMergeSourcePath = OrderedDict()
+        self.targetMergePath = OrderedDict()
 
-        self.targetDigests = dict()
-        self.targetDigestUrls = dict()
+        self.targetDigests = OrderedDict()
+        self.targetDigestUrls = OrderedDict()
         ## \todo prelimary
-        self.svnTargets = dict()
+        self.svnTargets = OrderedDict()
 
-        self.hardDependencies = dict()
-        self.softDependencies = dict()
+        self.hardDependencies = OrderedDict()
+        self.softDependencies = OrderedDict()
 
         # dependencies is the common way to define dependencies that are both
         # run time and build time dependencies, it is equivalent to hardDependencies
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies
-        self.dependencies = dict()
-        self.runtimeDependencies = dict()
-        self.buildDependencies = dict()
+        self.dependencies = OrderedDict()
+        self.runtimeDependencies = OrderedDict()
+        self.buildDependencies = OrderedDict()
 
         # a long and a short description for the package
         self.shortDescription = ''
@@ -59,7 +60,7 @@ class infoclass(object):
         # of the package
         self.categoryName = ''
 
-        self.patchToApply = dict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
+        self.patchToApply = OrderedDict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
         self.svnTargets['svnHEAD'] = False
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
