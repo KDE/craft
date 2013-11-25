@@ -222,7 +222,7 @@ def updateTitle(startTime,title):
         delta = datetime.datetime.now() - startTime
         utils.setTitle("emerge %s %s" %(title , delta))
         time.sleep(1)
-    
+
 def handlePackage( category, package, version, buildAction, opts ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
     success = True
