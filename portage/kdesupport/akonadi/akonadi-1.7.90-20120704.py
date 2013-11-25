@@ -28,11 +28,14 @@ class subinfo(info.infoclass):
 
         self.targetDigests['1.10.2'] = '97660e2a4fc8797ae86ac2981490d3868c6085ff'
         self.targetDigests['1.10.3'] = '701fbdde01a2787ec47fc085da02ad6238cf3b92'
+        self.targetDigests['1.10.80'] = '016ff1d137af37dc1a295958e612cfd92075c3f8'
 
         self.patchToApply['1.9.0'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.9.2'] = [("akonadi-kde.conf-fix.diff", 1), ("akonadi-unused-sockets.diff", 1)]
         self.patchToApply['1.10.2'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.3'] = [("akonadi-kde.conf-fix.diff", 1)]
+        self.patchToApply['1.10.80'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
+        self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
