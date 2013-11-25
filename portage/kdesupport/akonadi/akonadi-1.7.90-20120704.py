@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
-        for ver in ['1.4.80', '1.4.90', '1.6.0','1.6.2', '1.7.90', '1.9.0', '1.9.2', '1.10.2','1.10.80']:
+        for ver in ['1.10.2','1.10.80']:
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver
         for ver in ['1.10.3']:
@@ -30,8 +30,6 @@ class subinfo(info.infoclass):
         self.targetDigests['1.10.3'] = '701fbdde01a2787ec47fc085da02ad6238cf3b92'
         self.targetDigests['1.10.80'] = '016ff1d137af37dc1a295958e612cfd92075c3f8'
 
-        self.patchToApply['1.9.0'] = [("akonadi-kde.conf-fix.diff", 1)]
-        self.patchToApply['1.9.2'] = [("akonadi-kde.conf-fix.diff", 1), ("akonadi-unused-sockets.diff", 1)]
         self.patchToApply['1.10.2'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.3'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.80'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
