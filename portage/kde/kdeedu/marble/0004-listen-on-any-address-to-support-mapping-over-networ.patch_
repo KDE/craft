@@ -1,25 +1,25 @@
-From 49b265a485ac12d54a7196a5c8fe8f7e85b43f09 Mon Sep 17 00:00:00 2001
-From: Ralf Habacker <ralf.habacker@freenet.de>
-Date: Fri, 4 May 2012 12:39:28 +0200
-Subject: [PATCH 4/4] listen on any address to support mapping over network
+From 8cca9c1648196585bdfdd8b70b8f673bbb7d7f1d Mon Sep 17 00:00:00 2001
+From: Nico Kruber <nico.kruber@gmail.com>
+Date: Thu, 28 Nov 2013 00:44:38 +0100
+Subject: [PATCH] listen on any address to support mapping over network
 
 ---
- .../FlightGearPositionProviderPlugin.cpp           |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ .../positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
-index 7c13d0e..ecd02dd 100644
+index 6ab49af..eed4191 100644
 --- a/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
 +++ b/src/plugins/positionprovider/flightgear/FlightGearPositionProviderPlugin.cpp
-@@ -82,7 +81,7 @@ void FlightGearPositionProviderPlugin::initialize()
+@@ -78,7 +78,7 @@ void FlightGearPositionProviderPlugin::initialize()
      emit statusChanged( m_status );
  
      m_socket = new QUdpSocket(this);
 -    m_socket->bind(QHostAddress::LocalHost, 5500);
 +    m_socket->bind(QHostAddress::Any, 5500);
-     nmea_parser_init(&m_parser);
-     nmea_zero_INFO(&m_info);
  
+     connect(m_socket, SIGNAL(readyRead()),
+              this, SLOT(readPendingDatagrams()));
 -- 
-1.7.4.msysgit.0
+1.8.3.msysgit.0
 
