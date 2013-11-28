@@ -1,0 +1,25 @@
+From 80047bf12188ea9f98cdf1782d8e87e90c828931 Mon Sep 17 00:00:00 2001
+From: Nico Kruber <nico.kruber@gmail.com>
+Date: Fri, 29 Nov 2013 00:10:42 +0100
+Subject: [PATCH] fix parttest not linking against okularpart on msvc
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 217337f..50e4018 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -204,7 +204,7 @@ kde4_add_kcfg_files(okularpart_SRCS conf/settings.kcfgc )
+ 
+ qt4_add_dbus_interfaces(okularpart_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSpeech.xml)
+ 
+-kde4_add_plugin(okularpart ${okularpart_SRCS})
++kde4_add_plugin(okularpart SHARED ${okularpart_SRCS})
+ 
+ target_link_libraries(okularpart okularcore ${KDE4_KPARTS_LIBS} ${KDE4_KPRINTUTILS_LIBS} ${MATH_LIB} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_PHONON_LIBRARY} ${KDE4_SOLID_LIBRARY})
+ 
+-- 
+1.8.3.msysgit.0
+
