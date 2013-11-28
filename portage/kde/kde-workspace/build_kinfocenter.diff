@@ -1,7 +1,8 @@
-diff -Nru -x '*~' kde-workspace-4.10.2.orig/CMakeLists.txt kde-workspace-4.10.2/CMakeLists.txt
---- kde-workspace-4.10.2.orig/CMakeLists.txt	2013-03-29 09:35:09.542235000 +0100
-+++ kde-workspace-4.10.2/CMakeLists.txt	2013-05-17 01:23:50.479999200 +0200
-@@ -156,12 +156,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 57cd82c56539b93fafe7866a259c155eebcc86a0..1b43d2b04f94adbd037f67de3a88a84bb02a5275 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -245,12 +245,12 @@ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
     macro_optional_add_subdirectory(kstartupconfig)
     macro_optional_add_subdirectory(freespacenotifier)
     macro_optional_add_subdirectory(kscreensaver)
@@ -15,88 +16,11 @@ diff -Nru -x '*~' kde-workspace-4.10.2.orig/CMakeLists.txt kde-workspace-4.10.2/
        macro_optional_add_subdirectory(ktouchpadenabler)
     endif (Q_WS_X11)
  
-diff -Nru -x '*~' kde-workspace-4.10.2.orig/kinfocenter/Modules/base/os_base.h kde-workspace-4.10.2/kinfocenter/Modules/base/os_base.h
---- kde-workspace-4.10.2.orig/kinfocenter/Modules/base/os_base.h	2013-03-01 07:32:24.240857000 +0100
-+++ kde-workspace-4.10.2/kinfocenter/Modules/base/os_base.h	2013-05-17 01:23:50.495000100 +0200
-@@ -34,7 +34,11 @@
- #include <kglobal.h>
- #include <klocale.h>
- 
-+#ifdef Q_WS_X11
- #include <X11/Xlib.h>
-+#else
-+#define Display void
-+#endif
- 
- #include "config-infocenter.h"
- 
-@@ -52,6 +56,7 @@
- 	return hexstr;
- }
- 
-+#ifdef Q_WS_X11
- static const QString Order(int order) {
- 	if (order==LSBFirst)
- 		return i18n("LSBFirst");
-@@ -60,6 +65,7 @@
- 	else
- 		return i18n("Unknown Order %1", order);
- }
-+#endif
- 
- static const QString BitString(unsigned long n) {
- 	return i18np("1 Bit", "%1 Bits", n);
-@@ -69,6 +75,7 @@
- 	return i18np("1 Byte", "%1 Bytes", n);
- }
- 
-+#ifdef Q_WS_X11
- static const struct _event_table {
- 	const char *name;
- 	long value;
-@@ -76,7 +83,8 @@
- 		{ "PointerMotionHintMask", PointerMotionHintMask }, { "Button1MotionMask", Button1MotionMask }, { "Button2MotionMask", Button2MotionMask }, { "Button3MotionMask", Button3MotionMask }, { "Button4MotionMask", Button4MotionMask }, { "Button5MotionMask", Button5MotionMask }, {
- 				"ButtonMotionMask", ButtonMotionMask }, { "KeymapStateMask", KeymapStateMask }, { "ExposureMask", ExposureMask }, { "VisibilityChangeMask", VisibilityChangeMask }, { "StructureNotifyMask", StructureNotifyMask }, { "ResizeRedirectMask", ResizeRedirectMask }, {
- 				"SubstructureNotifyMask", SubstructureNotifyMask }, { "SubstructureRedirectMask", SubstructureRedirectMask }, { "FocusChangeMask", FocusChangeMask }, { "PropertyChangeMask", PropertyChangeMask }, { "ColormapChangeMask", ColormapChangeMask }, { "OwnerGrabButtonMask",
- 				OwnerGrabButtonMask }, { 0L, 0 } };
-+#endif
- 
- /* easier to read with such a define ! */
- #define I18N_MAX(txt,in,fm,maxw) \
-@@ -86,6 +94,7 @@
- #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Bytes = 32 Bits = 8 Hex-Digits */
- 
- static QTreeWidgetItem* XServer_fill_screen_info(QTreeWidgetItem *lBox, QTreeWidgetItem *last, Display *dpy, int scr, int default_scr) {
-+#ifdef Q_WS_X11
- 	unsigned width, height;
- 	double xres, yres;
- 	int i, ndepths, *depths;
-@@ -198,9 +207,13 @@
- 		return last;
- 	else
- 		return last->child(last->childCount()-1);
-+#else
-+    return new QTreeWidgetItem();
-+#endif
- }
- 
- static bool GetInfo_XServer_Generic(QTreeWidget *lBox) {
-+#ifdef Q_WS_X11
- 	/* Many parts of this source are taken from the X11-program "xdpyinfo" */
- 
- 	int i, n;
-@@ -316,6 +329,7 @@
- 	last = new QTreeWidgetItem(next, imageByteList);
- 
- 	XCloseDisplay(dpy);
-+#endif
- 	return true;
- }
- 
-diff -Nru -x '*~' kde-workspace-4.10.2.orig/kinfocenter/Modules/CMakeLists.txt kde-workspace-4.10.2/kinfocenter/Modules/CMakeLists.txt
---- kde-workspace-4.10.2.orig/kinfocenter/Modules/CMakeLists.txt	2013-03-01 07:32:25.040847000 +0100
-+++ kde-workspace-4.10.2/kinfocenter/Modules/CMakeLists.txt	2013-05-17 01:23:50.487999700 +0200
-@@ -4,10 +4,10 @@
+diff --git a/kinfocenter/Modules/CMakeLists.txt b/kinfocenter/Modules/CMakeLists.txt
+index 0a87eb48d97df2e0224819225ba0af6bf0d93f39..b014c4ee6153b7d41565bdd627fc234f43a5e5e4 100644
+--- a/kinfocenter/Modules/CMakeLists.txt
++++ b/kinfocenter/Modules/CMakeLists.txt
+@@ -4,10 +4,10 @@ add_subdirectory( infosummary )
  add_subdirectory( memory )
  add_subdirectory( devinfo )
  add_subdirectory( info )
@@ -107,12 +31,86 @@ diff -Nru -x '*~' kde-workspace-4.10.2.orig/kinfocenter/Modules/CMakeLists.txt k
 +add_subdirectory( samba )
 +add_subdirectory( nics )
  
-   macro_optional_find_package(OpenGL)
-   macro_log_feature(OPENGL_FOUND "OpenGL" "API for developing portable, interactive 2D and 3D graphics applications" "http://mesa3d.sourceforge.net" FALSE "" "View OpenGL details in kinfocenter.")
-diff -Nru -x '*~' kde-workspace-4.10.2.orig/kinfocenter/Modules/devinfo/soldevicetypes.cpp kde-workspace-4.10.2/kinfocenter/Modules/devinfo/soldevicetypes.cpp
---- kde-workspace-4.10.2.orig/kinfocenter/Modules/devinfo/soldevicetypes.cpp	2013-03-01 07:32:24.240857000 +0100
-+++ kde-workspace-4.10.2/kinfocenter/Modules/devinfo/soldevicetypes.cpp	2013-05-17 15:46:24.511129400 +0200
-@@ -329,13 +329,21 @@
+ add_feature_info("OpenGL support" OPENGL_FOUND "View OpenGL details in kinfocenter." )
+ add_feature_info("OpenGL/ES support" OPENGLES_FOUND "View OpenGL ES2.0 details in kinfocenter." )
+diff --git a/kinfocenter/Modules/base/os_base.h b/kinfocenter/Modules/base/os_base.h
+index f09202d9d0c592238735dc1b2d5041a921358adb..0ff2aa20c015fa5baef8b97839433732d86aa9d1 100644
+--- a/kinfocenter/Modules/base/os_base.h
++++ b/kinfocenter/Modules/base/os_base.h
+@@ -34,7 +34,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ #include <kglobal.h>
+ #include <klocale.h>
+ 
++#ifdef Q_WS_X11
+ #include <X11/Xlib.h>
++#endif
+ 
+ #include "config-infocenter.h"
+ 
+@@ -52,6 +54,7 @@ static const QString HexStr(unsigned long val, int digits) {
+ 	return hexstr;
+ }
+ 
++#ifdef Q_WS_X11
+ static const QString Order(int order) {
+ 	if (order==LSBFirst)
+ 		return i18n("LSBFirst");
+@@ -60,6 +63,7 @@ static const QString Order(int order) {
+ 	else
+ 		return i18n("Unknown Order %1", order);
+ }
++#endif
+ 
+ static const QString BitString(unsigned long n) {
+ 	return i18np("1 Bit", "%1 Bits", n);
+@@ -69,6 +73,7 @@ static const QString ByteString(unsigned long n) {
+ 	return i18np("1 Byte", "%1 Bytes", n);
+ }
+ 
++#ifdef Q_WS_X11
+ static const struct _event_table {
+ 	const char *name;
+ 	long value;
+@@ -77,6 +82,7 @@ static const struct _event_table {
+ 				"ButtonMotionMask", ButtonMotionMask }, { "KeymapStateMask", KeymapStateMask }, { "ExposureMask", ExposureMask }, { "VisibilityChangeMask", VisibilityChangeMask }, { "StructureNotifyMask", StructureNotifyMask }, { "ResizeRedirectMask", ResizeRedirectMask }, {
+ 				"SubstructureNotifyMask", SubstructureNotifyMask }, { "SubstructureRedirectMask", SubstructureRedirectMask }, { "FocusChangeMask", FocusChangeMask }, { "PropertyChangeMask", PropertyChangeMask }, { "ColormapChangeMask", ColormapChangeMask }, { "OwnerGrabButtonMask",
+ 				OwnerGrabButtonMask }, { 0L, 0 } };
++#endif
+ 
+ /* easier to read with such a define ! */
+ #define I18N_MAX(txt,in,fm,maxw) \
+@@ -85,6 +91,7 @@ static const struct _event_table {
+ #define PIXEL_ADD	20	// add x Pixel to multicolumns..
+ #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Bytes = 32 Bits = 8 Hex-Digits */
+ 
++#ifdef Q_WS_X11
+ static QTreeWidgetItem* XServer_fill_screen_info(QTreeWidgetItem *lBox, QTreeWidgetItem *last, Display *dpy, int scr, int default_scr) {
+ 	unsigned width, height;
+ 	double xres, yres;
+@@ -199,8 +206,10 @@ static QTreeWidgetItem* XServer_fill_screen_info(QTreeWidgetItem *lBox, QTreeWid
+ 	else
+ 		return last->child(last->childCount()-1);
+ }
++#endif
+ 
+ static bool GetInfo_XServer_Generic(QTreeWidget *lBox) {
++#ifdef Q_WS_X11
+ 	/* Many parts of this source are taken from the X11-program "xdpyinfo" */
+ 
+ 	int i, n;
+@@ -316,6 +325,7 @@ static bool GetInfo_XServer_Generic(QTreeWidget *lBox) {
+ 	last = new QTreeWidgetItem(next, imageByteList);
+ 
+ 	XCloseDisplay(dpy);
++#endif
+ 	return true;
+ }
+ 
+diff --git a/kinfocenter/Modules/devinfo/soldevicetypes.cpp b/kinfocenter/Modules/devinfo/soldevicetypes.cpp
+index d3387d972b14368e9fa2b5ad1f97d5210d2beb01..e71d96fd4bb90f023b949d0a3f630ecefb0d6afe 100644
+--- a/kinfocenter/Modules/devinfo/soldevicetypes.cpp
++++ b/kinfocenter/Modules/devinfo/soldevicetypes.cpp
+@@ -329,13 +329,21 @@ QVListLayout *SolVolumeDevice::infoPanelLayout()
        labels << i18n("Volume Space:");
        
        usageBar = new KCapacityBar();

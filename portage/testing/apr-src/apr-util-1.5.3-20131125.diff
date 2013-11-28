@@ -1,0 +1,12 @@
+diff -Nru apr-util-1.5.3.orig/xml/expat/lib/expat.h apr-util-1.5.3/xml/expat/lib/expat.h
+--- apr-util-1.5.3.orig/xml/expat/lib/expat.h	2010-09-30 22:57:11.000000000 +0200
++++ apr-util-1.5.3/xml/expat/lib/expat.h	2011-05-24 10:52:07.901152300 +0200
+@@ -68,7 +68,7 @@
+ /* using Expat from an application */
+ 
+ #ifdef XML_USE_MSC_EXTENSIONS
+-#define XMLIMPORT __declspec(dllimport)
++//#define XMLIMPORT __declspec(dllimport)
+ #endif
+ 
+ #endif

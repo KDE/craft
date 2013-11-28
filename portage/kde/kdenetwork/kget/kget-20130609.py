@@ -7,7 +7,6 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-        self.patchToApply['4.10.2'] = [("kget-kdenetwork-4.10.2-fix-MSVC2010-compile.patch", 1)]
 
         self.defaultTarget = 'gitHEAD'
 
@@ -18,6 +17,8 @@ class subinfo(info.infoclass):
         self.dependencies['extragear/libktorrent'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kde/nepomuk-widgets'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.shortDescription = "A KDE Download Manager"
 

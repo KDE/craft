@@ -11,14 +11,15 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
+from collections import OrderedDict
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
 
-modDict = dict()
-packageDict = dict()
+modDict = OrderedDict()
+packageDict = OrderedDict()
 
 def __import__( module ): # pylint: disable=W0622
     utils.debug( "module to import: %s" % module, 2 )
@@ -570,7 +571,7 @@ def readChildren( category, package, version ):
     # if we are an emerge internal package and already in the dictionary, ignore childrens
     # To avoid possible endless recursion this may be also make sense for all packages
     if category == internalCategory and identFileName in list(modDict.keys()):
-        return dict(), dict()
+        return OrderedDict(), OrderedDict()
     package, subpackage = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
@@ -588,10 +589,10 @@ def readChildren( category, package, version ):
     elif hasattr( mod, 'subinfo' ):
         subinfo = mod.subinfo()
     else:
-        return dict(), dict()
+        return OrderedDict(), OrderedDict()
 
-    runtimeDependencies = subinfo.runtimeDependencies or dict()
-    buildDependencies = subinfo.buildDependencies or dict()
+    runtimeDependencies = subinfo.runtimeDependencies or OrderedDict()
+    buildDependencies = subinfo.buildDependencies or OrderedDict()
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies

@@ -1,0 +1,47 @@
+From 3d42fd99a9c2d0ff71876c9f17b9e96ed8760d7c Mon Sep 17 00:00:00 2001
+From: Raphael Kubo da Costa <rakuco@FreeBSD.org>
+Date: Mon, 11 Nov 2013 12:14:43 +0200
+Subject: [PATCH 2/5] FindLIBVLC: Detect libvlc's version even if pkg-config
+ fails.
+
+Do so by reading libvlc_version.h and parsing LIBVLC_VERSION_MAJOR,
+LIBVLC_VERSION_MINOR and LIBVLC_VERSION_REVISION accordingly.
+
+libvlc_version.h also defines LIBVLC_VERSION_EXTRA, but it does not seem to
+be reported by libvlc.pc, so compatibility with it was preferred.
+
+REVIEW:	113791
+---
+ cmake/FindLIBVLC.cmake | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/cmake/FindLIBVLC.cmake b/cmake/FindLIBVLC.cmake
+index 4ce72cd..6a5f40e 100644
+--- a/cmake/FindLIBVLC.cmake
++++ b/cmake/FindLIBVLC.cmake
+@@ -67,7 +67,21 @@ find_library(LIBVLCCORE_LIBRARY NAMES vlccore libvlccore)
+ 
+ set(LIBVLC_VERSION ${PC_LIBVLC_VERSION})
+ if (NOT LIBVLC_VERSION)
+-# TODO: implement means to detect version on windows (vlc --version && regex? ... ultimately we would get it from a header though...)
++    file(READ "${LIBVLC_INCLUDE_DIR}/vlc/libvlc_version.h" _libvlc_version_h)
++
++    string(REGEX MATCH "# define LIBVLC_VERSION_MAJOR +\\(([0-9])\\)" _dummy "${_libvlc_version_h}")
++    set(_version_major "${CMAKE_MATCH_1}")
++
++    string(REGEX MATCH "# define LIBVLC_VERSION_MINOR +\\(([0-9])\\)" _dummy "${_libvlc_version_h}")
++    set(_version_minor "${CMAKE_MATCH_1}")
++
++    string(REGEX MATCH "# define LIBVLC_VERSION_REVISION +\\(([0-9])\\)" _dummy "${_libvlc_version_h}")
++    set(_version_revision "${CMAKE_MATCH_1}")
++
++    # Optionally, one could also parse LIBVLC_VERSION_EXTRA, but it does not
++    # seem to be used by libvlc.pc.
++
++    set(LIBVLC_VERSION "${_version_major}.${_version_minor}.${_version_revision}")
+ endif (NOT LIBVLC_VERSION)
+ 
+ if (LIBVLC_INCLUDE_DIR AND LIBVLC_LIBRARY AND LIBVLCCORE_LIBRARY)
+-- 
+1.8.3.msysgit.0
+

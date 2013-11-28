@@ -8,8 +8,6 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
-        self.patchToApply['4.10.2'] = [("0001-Fix-pattern-path-to-install-icons-correctly-on-Windo.patch", 1)]
-
         self.shortDescription = 'a letter order game'
         self.defaultTarget = 'gitHEAD'
 

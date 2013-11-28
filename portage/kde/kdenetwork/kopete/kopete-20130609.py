@@ -7,8 +7,11 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-        self.patchToApply['4.10.2'] = [("kopete-kdenetwork-4.8.0-20120125.diff", 1),  # not for upstream, we'll have to find a cleaner solution with the maintainer
-                                       ("kopete-mingw-protocols.diff", 1)] # upstreamed
+            self.patchToApply[kd.kdeversion + ver] = [("kopete-kdenetwork-4.12.0-20131128.diff", 1)]
+        
+        # not for upstream, we'll have to find a cleaner solution with the maintainer
+        # TODO: check if needed - MSVC compiles kopete without the patch!
+        self.patchToApply['gitHEAD'] = [("kopete-kdenetwork-4.12.0-20131128.diff", 1)]
 
         self.defaultTarget = 'gitHEAD'
 
