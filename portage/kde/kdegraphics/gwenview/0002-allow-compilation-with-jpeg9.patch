@@ -1,7 +1,7 @@
-From ee77eb4fb6e0a6375f28aa94013d0ac4e93e6e6f Mon Sep 17 00:00:00 2001
+From 186aaef616634be1a53f4fb1b7bf83b2c92826f0 Mon Sep 17 00:00:00 2001
 From: Nico Kruber <nico.kruber@gmail.com>
-Date: Sat, 20 Apr 2013 15:34:03 +0200
-Subject: [PATCH] allow compilation with jpeg9
+Date: Thu, 28 Nov 2013 14:02:16 +0100
+Subject: [PATCH 2/2] allow compilation with jpeg9
 
 ---
  lib/CMakeLists.txt         |    4 +
@@ -18,12 +18,12 @@ Subject: [PATCH] allow compilation with jpeg9
  create mode 100644 lib/libjpeg-90/transupp.h
 
 diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
-index d3f795f..808f263 100644
+index c6ffe14..9f257db 100644
 --- a/lib/CMakeLists.txt
 +++ b/lib/CMakeLists.txt
 @@ -32,6 +32,10 @@ if ("${jpeglib_version}" EQUAL 80)
      set(GV_JPEG_DIR libjpeg-80)
- endif ("${jpeglib_version}" EQUAL 80)
+ endif()
  
 +if ("${jpeglib_version}" EQUAL 90)
 +    set(GV_JPEG_DIR libjpeg-90)
@@ -31,7 +31,7 @@ index d3f795f..808f263 100644
 +
  if ("${GV_JPEG_DIR}" STREQUAL "")
      message(FATAL_ERROR "Unknown libjpeg version: ${jpeglib_version}")
- endif ("${GV_JPEG_DIR}" STREQUAL "")
+ endif()
 diff --git a/lib/libjpeg-90/README.jpeg b/lib/libjpeg-90/README.jpeg
 new file mode 100644
 index 0000000..fc5ca5d
@@ -2740,5 +2740,5 @@ index 0000000..9aa0af3
 +	JPP((j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
 +	     JCOPY_OPTION option));
 -- 
-1.8.0.msysgit.0
+1.8.3.msysgit.0
 
