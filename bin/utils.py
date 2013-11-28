@@ -506,7 +506,7 @@ def unTar( fileName, destdir ):
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
                 except IOError:
-                    warning("Failed to extratc %s to directory %s" % ( tarMember.name, destdir ) )
+                    warning("Failed to extract %s to directory %s" % ( tarMember.name, destdir ) )
         return True
     except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
