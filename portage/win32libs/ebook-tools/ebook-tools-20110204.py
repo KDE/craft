@@ -12,8 +12,11 @@ class subinfo(info.infoclass):
         for ver in ['0.1.1', '0.2.1', '0.2.2']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/ebook-tools/ebook-tools-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'ebook-tools-' + ver
-            self.patchToApply[ ver ] = [('ebook-tools-' + ver + '.diff', 1)]
-        self.patchToApply[ '0.2.2' ] = [] # no patch needed
+            ver2 = ver.split('.')
+            # no patches for versions >= 0.2.2:
+            if not (int(ver2[0]) >= 0 and int(ver2[1]) >= 2 and int(ver2[2]) >= 2):
+                self.patchToApply[ ver ] = [('ebook-tools-' + ver + '.diff', 1)]
+
         if compiler.isMSVC():
             self.patchToApply['0.1.1'].append(('msvc-toC89.diff', 1))
         self.targetDigests['0.2.1'] = '1340eb7141b453088d39e62bba771413053a6d18'
