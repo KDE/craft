@@ -17,9 +17,8 @@ class subinfo(info.infoclass):
         self.dependencies['extragear/libktorrent'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
-        # guard with this?
-        #if self.options.features.nepomuk:
-        self.dependencies['kde/nepomuk-widgets'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kde/nepomuk-widgets'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.shortDescription = "A KDE Download Manager"
 
