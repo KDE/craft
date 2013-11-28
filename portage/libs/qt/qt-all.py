@@ -51,9 +51,9 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['4.8.0'] = "4.8.0"
         self.targetSrcSuffix['4.8.1'] = "4.8.1"
         self.targetSrcSuffix['4.8.2'] = "4.8.2"
-        self.targetSrcSuffix['4.8.3'] = "4.8.2"
-        self.targetSrcSuffix['4.8.4'] = "4.8.2"
-        self.targetSrcSuffix['4.8.5'] = "4.8.2"
+        self.targetSrcSuffix['4.8.3'] = "4.8.3"
+        self.targetSrcSuffix['4.8.4'] = "4.8.4"
+        self.targetSrcSuffix['4.8.5'] = "4.8.5"
         self.patchToApply['4.6.3'] = ('patches/4.6.3/fixed_export_macro_for_QtDbus.patch', 1)
         self.patchToApply['4.7'] = [
             ('patches/4.7/out-of-source-build.patch', 1),
