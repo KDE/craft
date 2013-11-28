@@ -1,14 +1,3 @@
-diff -Nru -x '*~' kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h
---- kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h	2013-03-01 06:22:13.537040000 +0100
-+++ kopete-4.10.2/protocols/jabber/libiris/iris/jdns/jdns_p.h	2013-03-10 09:14:10.458957900 +0100
-@@ -45,6 +45,7 @@
- #endif
- 
- #ifdef JDNS_OS_WIN
-+# include <winsock2.h>
- # include <windows.h>
- #endif
- 
 diff -Nru -x '*~' kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c
 --- kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-01 06:22:03.809161000 +0100
 +++ kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-10 02:32:56.755814800 +0100
