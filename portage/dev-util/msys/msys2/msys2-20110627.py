@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         if emergePlatform.buildArchitecture() == "x86":
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131112.tar.xz"
+            self.targetDigests['base'] = 'd6c210e93a54e4461e8fef5e806fe1b1c8c6651c'
         else:
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys64-base-x86_64-20131113.tar.xz"
             self.targetDigests['base'] = 'b907866161f92b8de2e9ff072e285479eb03afb6'
@@ -40,10 +41,13 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
+        msysDir = os.path.join(os.getenv("KDEROOT"),"msys")
         self.shell.execute(".","echo Firstrun")#start and restart msys before first use
-        self.shell.execute(".","pacman -Syu --noconfirm")
+        self.shell.execute(".","pacman -Syu --noconfirm")        
+        utils.system("autorebase.bat", cwd = msysDir)
+        self.shell.execute(".","pacman -Sy --noconfirm")   
         self.shell.execute(".","pacman -S base-devel --noconfirm")
-        utils.system(os.path.join(os.getenv("KDEROOT"),"msys","autorebase.bat"))
+        utils.system("autorebase.bat", cwd = msysDir)
         return True
        
 if __name__ == '__main__':
