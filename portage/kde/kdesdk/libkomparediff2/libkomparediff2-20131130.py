@@ -5,6 +5,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
         for ver in ['0', '1', '2', '3', '4', '5']:
+            # let's see if this is the URL from 4.12 on...
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
 
@@ -12,9 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies['kde/libkomparediff2'] = 'default'
-        self.shortDescription = "Graphical File Differences Tool"
+        self.shortDescription = "Library to compare files and strings, used in Kompare and KDevelop"
 
 from Package.CMakePackageBase import *
 
