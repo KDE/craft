@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['testing/kcwsh'] = 'default'
-	self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 
 from Package.CMakePackageBase import *
