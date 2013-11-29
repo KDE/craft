@@ -12,8 +12,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['kde/libkomparediff2'] = 'default'
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies['kde/libkomparediff2'] = 'default'
         self.shortDescription = "Graphical File Differences Tool"
 
 from Package.CMakePackageBase import *
