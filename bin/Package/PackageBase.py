@@ -288,7 +288,7 @@ class PackageBase (EmergeBase):
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
                      "geturls":        "getUrls",
-                     "printrev":       "sourceVersion",
+                     "printrev":       "printSourceVersion",
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:
