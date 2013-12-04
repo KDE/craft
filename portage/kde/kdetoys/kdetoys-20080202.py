@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
 #        self.dependencies['kde/amor'] = 'default'
         self.dependencies['kde/kteatime'] = 'default'
-#        self.dependencies['kde/ktux'] = 'default'
+        self.dependencies['kde/ktux'] = 'default'
 
 from Package.VirtualPackageBase import *
 
