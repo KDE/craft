@@ -69,10 +69,9 @@ class GitSource ( VersionSystemSourceBase ):
         if not self.__isTag( branch ):
             if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
                 with open( os.path.join( self.checkoutDir(), ".git", "ORIG_HEAD"), "rt+") as ORIG_HEAD:
-                    return ORIG_HEAD.readline()[0:7]
+                    return "%s-%s" %  (branch, ORIG_HEAD.readline()[0:7])
             else:
                 utils.die("Directory: %s is not a git repository." % self.checkoutDir())
-                    
         else:
             # in case this is a tag, print out the tag version
             return branch
@@ -240,8 +239,7 @@ class GitSource ( VersionSystemSourceBase ):
         """print the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
 
-        print(self.__getCurrentRevision())
-        return True
+        return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0 ):
         utils.trace( 'GitSource checkoutDir', 2 )
