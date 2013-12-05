@@ -120,7 +120,7 @@ def getVersion():
     return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
     
 def getShortName():
-    if isMingw():
+    if isMinGW():
         return "mingw4"
     elif isMSVC2008():
         return "vc90"
