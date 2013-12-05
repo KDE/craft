@@ -116,21 +116,23 @@ class infoclass(object):
             arch = "-x86"
         return arch
 
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler=None):
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler_name=None):
         """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
         if not os.getenv("EMERGE_PACKAGETYPES") is None:
             packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
         arch = self.getArchitecture();
+        if compiler_name == None:
+            compiler_name = compiler.getShortName()
         ret = ''
         # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
         if scheme == 'sf':
             for packageType in packagetypes:
-                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compiler.getShortName() + '-' + version + '-' + packageType + ext + '\n'
+                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
         else:
             for packageType in packagetypes:
-                ret += repoUrl + '/' + name + arch + '-' + compiler.getShortName() + '-' + version + '-' + packageType + ext + '\n'
+                ret += repoUrl + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
 
         return ret
 
@@ -188,7 +190,7 @@ example:
     def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler=None):
         """return full url of a package provided by the kdewin mirrors"""
         repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
-        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler=compiler )
+        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler_name=compiler )
 
     def getPackageList( self, baseUrl, files ):
         """returns a package url for multiple files from the same base url"""
