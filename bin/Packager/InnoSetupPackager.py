@@ -89,7 +89,7 @@ class InnoSetupPackager (PackagerBase):
         #    srcCmd = ""
 
         if( self.subinfo.options.package.withCompiler ):
-            pkgName += "-%s" compiler.getShortName()
+            pkgName += "-%s" % compiler.getShortName()
 
         if self.subinfo.options.package.withDigests:
             if self.subinfo.options.package.packageFromSubDir:
