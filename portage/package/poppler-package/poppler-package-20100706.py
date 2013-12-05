@@ -13,8 +13,6 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'kdesupport/poppler' ] = 'default'
-        if compiler.isMinGW_XX():
-            self.dependencies[ 'dev-util/mingw-w64' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
