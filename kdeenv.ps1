@@ -17,10 +17,13 @@ $dp0=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 function subst([string] $varname, [string] $path, [string] $drive)
 {
-    foreach($key in $settings["Paths"].keys)
-    {
-        $path = $path.Replace("`$`{"+$key+"`}",$settings["Paths"][$key])
-    }
+	while($path.Contains("$"))
+	{
+		foreach($key in $settings["Paths"].keys)
+		{
+			$path = $path.Replace("`$`{"+$key+"`}",$settings["Paths"][$key])
+		}
+	}
     if(!(test-path -path $path))
     {
         mkdir $path
