@@ -94,11 +94,5 @@ class QMakeBuildSystem(BuildSystemBase):
         """running qmake based unittests"""
         return True
         
-<<<<<<< HEAD
-
-          
-
-=======
     def ccacheOptions(self):
         return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
->>>>>>> master
