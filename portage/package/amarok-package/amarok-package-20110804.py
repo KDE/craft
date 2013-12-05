@@ -10,8 +10,8 @@ class subinfo( info.infoclass ):
         self.amarok = portage.getPackageInstance('extragear','amarok')
         _,gitVersion = self.amarok.getPackageVersion() 
         self.svnTargets[ 'git-' + gitVersion  ] = ""
-        self.svnTargets[ '2.7.0-1' ] = ""
-        self.defaultTarget = '2.7.0-1'
+        self.svnTargets[ '2.8.0' ] = ""
+        self.defaultTarget = '2.8.0'
 
 
 
@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         # self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
-        self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
+        #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
         self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
@@ -30,8 +30,8 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.scriptname = os.path.join(self.subinfo.amarok.sourceDir(),"release_scripts","windows","amarok.nsi")
-        self.defines[ "kde-version" ] = "4.10.2"
+        self.scriptname = os.path.join( os.getenv("KDEGITDIR"), "amarok", "release_scripts", "windows", "amarok.nsi")
+        self.defines[ "kde-version" ] = "4.11.0"
 
 if __name__ == '__main__':
     Package().execute()

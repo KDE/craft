@@ -1,6 +1,6 @@
 diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/FindAssuan2.cmake gpgme-1.3.1/cmake/modules/FindAssuan2.cmake
 --- gpgme-1.3.1.orig/cmake/modules/FindAssuan2.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/cmake/modules/FindAssuan2.cmake	2012-01-11 18:46:47.027691300 +0100
++++ gpgme-1.3.1/cmake/modules/FindAssuan2.cmake	2013-08-16 19:03:46.878138500 +0200
 @@ -0,0 +1,256 @@
 +# - Try to find the assuan v2 library
 +
@@ -260,7 +260,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/FindAssuan2.cmake gpgme-1.3.1/c
 +set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS_assuan2_saved )
 diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/FindGpg-Error.cmake gpgme-1.3.1/cmake/modules/FindGpg-Error.cmake
 --- gpgme-1.3.1.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/cmake/modules/FindGpg-Error.cmake	2012-01-11 18:46:47.029691400 +0100
++++ gpgme-1.3.1/cmake/modules/FindGpg-Error.cmake	2013-08-16 19:03:46.885137400 +0200
 @@ -0,0 +1,35 @@
 +# - Try to find GPG_ERROR
 +# Once done this will define
@@ -299,7 +299,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/FindGpg-Error.cmake gpgme-1.3.1
 +endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
 diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroBoolTo01.cmake gpgme-1.3.1/cmake/modules/MacroBoolTo01.cmake
 --- gpgme-1.3.1.orig/cmake/modules/MacroBoolTo01.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/cmake/modules/MacroBoolTo01.cmake	2012-01-11 18:46:47.031691500 +0100
++++ gpgme-1.3.1/cmake/modules/MacroBoolTo01.cmake	2013-08-16 19:03:46.889138500 +0200
 @@ -0,0 +1,20 @@
 +# MACRO_BOOL_TO_01( VAR RESULT0 ... RESULTN )
 +# This macro evaluates its first argument
@@ -323,7 +323,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroBoolTo01.cmake gpgme-1.3.1
 +ENDMACRO(MACRO_BOOL_TO_01)
 diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroEnsureVersion.cmake gpgme-1.3.1/cmake/modules/MacroEnsureVersion.cmake
 --- gpgme-1.3.1.orig/cmake/modules/MacroEnsureVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/cmake/modules/MacroEnsureVersion.cmake	2012-01-11 18:46:47.035691700 +0100
++++ gpgme-1.3.1/cmake/modules/MacroEnsureVersion.cmake	2013-08-16 19:03:46.892139300 +0200
 @@ -0,0 +1,117 @@
 +# This file defines the following macros for developers to use in ensuring
 +# that installed software is of the right version:
@@ -444,7 +444,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroEnsureVersion.cmake gpgme-
 +
 diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroLogFeature.cmake gpgme-1.3.1/cmake/modules/MacroLogFeature.cmake
 --- gpgme-1.3.1.orig/cmake/modules/MacroLogFeature.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/cmake/modules/MacroLogFeature.cmake	2012-01-11 18:46:47.037691800 +0100
++++ gpgme-1.3.1/cmake/modules/MacroLogFeature.cmake	2013-08-16 19:03:46.897138700 +0200
 @@ -0,0 +1,157 @@
 +# This file defines the Feature Logging macros.
 +#
@@ -605,7 +605,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/cmake/modules/MacroLogFeature.cmake gpgme-1.3
 +ENDMACRO(MACRO_DISPLAY_FEATURE_LOG)
 diff -Nru -x '*~' gpgme-1.3.1.orig/CMakeLists.txt gpgme-1.3.1/CMakeLists.txt
 --- gpgme-1.3.1.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/CMakeLists.txt	2012-01-11 23:11:08.976942900 +0100
++++ gpgme-1.3.1/CMakeLists.txt	2013-08-16 19:03:46.901144600 +0200
 @@ -0,0 +1,207 @@
 +project(gpgme)
 +
@@ -816,7 +816,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/CMakeLists.txt gpgme-1.3.1/CMakeLists.txt
 +macro_display_feature_log()
 diff -Nru -x '*~' gpgme-1.3.1.orig/config.h.cmake gpgme-1.3.1/config.h.cmake
 --- gpgme-1.3.1.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/config.h.cmake	2012-01-11 18:46:47.045692300 +0100
++++ gpgme-1.3.1/config.h.cmake	2013-08-16 19:03:46.903139800 +0200
 @@ -0,0 +1,281 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -1101,7 +1101,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/config.h.cmake gpgme-1.3.1/config.h.cmake
 +
 diff -Nru -x '*~' gpgme-1.3.1.orig/ConfigureChecks.cmake gpgme-1.3.1/ConfigureChecks.cmake
 --- gpgme-1.3.1.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/ConfigureChecks.cmake	2012-01-11 18:46:47.047692400 +0100
++++ gpgme-1.3.1/ConfigureChecks.cmake	2013-08-16 19:03:46.906140100 +0200
 @@ -0,0 +1,98 @@
 +# Configure checks for the config.h
 +
@@ -1203,7 +1203,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/ConfigureChecks.cmake gpgme-1.3.1/ConfigureCh
 +configure_file(src/gpgme.h.in gpgme.h)
 diff -Nru -x '*~' gpgme-1.3.1.orig/mkstatus.awk gpgme-1.3.1/mkstatus.awk
 --- gpgme-1.3.1.orig/mkstatus.awk	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/mkstatus.awk	2012-01-11 18:46:47.048692500 +0100
++++ gpgme-1.3.1/mkstatus.awk	2013-08-16 19:03:46.908138700 +0200
 @@ -0,0 +1,4 @@
 +/GPGME_STATUS_ENTER/      { okay = 1 }
 +!okay                     { next }
@@ -1211,7 +1211,7 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/mkstatus.awk gpgme-1.3.1/mkstatus.awk
 +/GPGME_STATUS_[A-Za-z_]*/ { sub (/,/, "", $1); printf "  { \"%s\", %s },\n", substr($1,14), $1 }
 diff -Nru -x '*~' gpgme-1.3.1.orig/mkstatus.cmake gpgme-1.3.1/mkstatus.cmake
 --- gpgme-1.3.1.orig/mkstatus.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/mkstatus.cmake	2012-01-11 18:46:47.050692600 +0100
++++ gpgme-1.3.1/mkstatus.cmake	2013-08-16 19:03:46.911139000 +0200
 @@ -0,0 +1,45 @@
 +############## search for external tools that are needed for header generation ###################
 +find_program(AWK_EXECUTABLE NAMES awk gawk)
@@ -1258,9 +1258,21 @@ diff -Nru -x '*~' gpgme-1.3.1.orig/mkstatus.cmake gpgme-1.3.1/mkstatus.cmake
 +file(APPEND ${CMAKE_BINARY_DIR}/status-table.h "  {NULL, 0}\n"
 +"};\n"
 +"\n")
+diff -Nru -x '*~' gpgme-1.3.1.orig/src/util.h gpgme-1.3.1/src/util.h
+--- gpgme-1.3.1.orig/src/util.h	2013-08-16 19:05:36.519386700 +0200
++++ gpgme-1.3.1/src/util.h	2013-08-16 19:05:05.960887500 +0200
+@@ -73,7 +73,7 @@
+ #define stpcpy(a,b) _gpgme_stpcpy ((a), (b))
+ #endif /*!HAVE_STPCPY*/
+ 
+-#if !HAVE_VASPRINTF
++#ifndef HAVE_VASPRINTF
+ #include <stdarg.h>
+ int vasprintf (char **result, const char *format, va_list args);
+ int asprintf (char **result, const char *format, ...);
 diff -Nru -x '*~' gpgme-1.3.1.orig/tests/CMakeLists.txt gpgme-1.3.1/tests/CMakeLists.txt
 --- gpgme-1.3.1.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gpgme-1.3.1/tests/CMakeLists.txt	2012-01-11 18:46:47.051692600 +0100
++++ gpgme-1.3.1/tests/CMakeLists.txt	2013-08-16 19:03:46.915143900 +0200
 @@ -0,0 +1,29 @@
 +# gpgme tests
 +

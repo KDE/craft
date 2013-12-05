@@ -1,0 +1,22 @@
+--- boost_1_54_0.orig/boost/spirit/home/support/char_encoding/standard.hpp	2011-01-13 03:11:19.000000000 +0100
++++ boost_1_54_0/boost/spirit/home/support/char_encoding/standard.hpp	2013-11-14 09:48:06.054679900 +0100
+@@ -15,6 +15,10 @@
+ #include <cctype>
+ #include <boost/cstdint.hpp>
+ 
++#if !defined(_MSC_VER)
++using std::isspace;
++#endif
++
+ namespace boost { namespace spirit { namespace char_encoding
+ {
+     ///////////////////////////////////////////////////////////////////////////
+@@ -95,7 +99,7 @@
+         static int
+         isspace(int ch)
+         {
+-            return std::isspace(ch);
++            return ::isspace(ch);
+         }
+ 
+         static int

@@ -50,8 +50,7 @@ class Package( PackageBase, SourceBase, BinaryBuildSystem ):
             return False
         manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
         patch = os.path.join( self.installDir(), "patch.exe" )
-        utils.embedManifest(patch, manifest)
-        return True
-
+        return utils.embedManifest(patch, manifest)
+        
 if __name__ == '__main__':
     Package().execute()

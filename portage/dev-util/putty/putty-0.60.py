@@ -2,10 +2,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['0.62'] = "http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip"
+        self.targets['HEAD'] = 'http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip'
+        for ver in ['0.62', '0.63']:
+            self.targets[ver] = 'http://the.earth.li/~sgtatham/putty/' + ver + '/x86/putty.zip'
+            self.targetInstallPath[ver] = "bin"
         self.targetDigests['0.62'] = '953e7b2eb7844184ccfb24651c7829f3e1e30558'
-        self.targetInstallPath['0.62'] = "bin"
-        self.defaultTarget = '0.62'
+        self.targetDigests['0.63'] = '573ffcaa7f3205ca77ee5f3502b7def3b0ec7e79'
+        self.defaultTarget = '0.63'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'

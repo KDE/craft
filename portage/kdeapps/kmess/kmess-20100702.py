@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['virtual/kde-runtime'] = 'default'
-        self.dependencies['testing/libgcrypt-src'] = 'default'
+        self.dependencies['win32libs/gcrypt'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

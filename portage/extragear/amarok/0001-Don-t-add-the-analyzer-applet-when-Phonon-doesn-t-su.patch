@@ -1,0 +1,25 @@
+From e631534993c03244a36ed013c186ad8bf83ca1fd Mon Sep 17 00:00:00 2001
+From: Mark Kretschmann <kretschmann@kde.org>
+Date: Sun, 18 Aug 2013 12:22:35 +0200
+Subject: [PATCH] Don't add the analyzer applet when Phonon doesn't support it.
+
+Stupid... I forgot about that file.
+
+BUG: 323632
+BACKPORT
+---
+ data/amarok_homerc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/amarok_homerc b/data/amarok_homerc
+index d2da7ed..4a5aa4b 100644
+--- a/data/amarok_homerc
++++ b/data/amarok_homerc
+@@ -1,3 +1,3 @@
+ [Containment 0]
+ firstShowingApplet=0
+-plugins=currenttrack,analyzer,wikipedia,lyrics
++plugins=currenttrack,wikipedia,lyrics
+-- 
+1.8.3.msysgit.0
+

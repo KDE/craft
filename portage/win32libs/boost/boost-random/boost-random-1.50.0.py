@@ -1,10 +1,10 @@
 import info
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ['1.44.0', '1.47.0', '1.48.0', '1.49.0', '1.50.0', '1.52.0']:
+        for ver in ['1.44.0', '1.47.0', '1.48.0', '1.49.0', '1.50.0', '1.52.0', '1.54.0','1.55.0']:
             self.targets[ver] = ''
             self.targetInstSrc[ver] = 'random'
-        self.defaultTarget = '1.52.0'
+        self.defaultTarget = '1.55.0'
 
 
         self.homepage = 'http://www.boost.org/'

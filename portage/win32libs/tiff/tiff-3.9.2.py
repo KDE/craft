@@ -12,8 +12,9 @@ class subinfo(info.infoclass):
         self.patchToApply['4.0.3'] = [('tiff-4.0.3-rename-test.diff', 1), ( 'tiff-4.0.3-20130124.diff', 1 )]
         self.targetDigests['3.9.2'] = '5c054d31e350e53102221b7760c3700cf70b4327'
         self.targetDigests['4.0.3'] = '652e97b78f1444237a82cbcfe014310e776eb6f0'
+
         self.shortDescription = "a library to manipulate TIFF image files"
-        self.defaultTarget = '3.9.2'
+        self.defaultTarget = '4.0.3'
 
     def setDependencies( self ):
         self.dependencies['win32libs/zlib'] = 'default'

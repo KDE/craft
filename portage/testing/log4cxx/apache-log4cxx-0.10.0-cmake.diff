@@ -1,0 +1,494 @@
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/cmake/FindAPR.cmake apache-log4cxx-0.10.0/cmake/FindAPR.cmake
+--- apache-log4cxx-0.10.0.orig/cmake/FindAPR.cmake	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/cmake/FindAPR.cmake	2013-09-27 16:42:25.483065600 +0200
+@@ -0,0 +1,113 @@
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++# 
++#   http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++
++# - Find Apache Portable Runtime
++# Find the APR includes and libraries
++# This module defines
++#  APR_INCLUDE_DIR and APRUTIL_INCLUDE_DIR, where to find apr.h, etc.
++#  APR_LIBRARIES and APRUTIL_LIBRARIES, the libraries needed to use APR.
++#  APR_FOUND and APRUTIL_FOUND, If false, do not try to use APR.
++# also defined, but not for general use are
++#  APR_LIBRARY and APRUTIL_LIBRARY, where to find the APR library.
++
++# APR first.
++
++FIND_PATH(APR_INCLUDE_DIR apr.h
++/usr/local/include/apr-1
++/usr/local/include/apr-1.0
++/usr/include/apr-1
++/usr/include/apr-1.0
++/usr/local/apr/include/apr-1
++)
++
++SET(APR_NAMES ${APR_NAMES} apr-1)
++FIND_LIBRARY(APR_LIBRARY
++  NAMES ${APR_NAMES}
++  PATHS /usr/lib /usr/local/lib /usr/local/apr/lib
++  )
++
++IF (APR_LIBRARY AND APR_INCLUDE_DIR)
++    SET(APR_LIBRARIES ${APR_LIBRARY})
++    SET(APR_FOUND "YES")
++ELSE (APR_LIBRARY AND APR_INCLUDE_DIR)
++  SET(APR_FOUND "NO")
++ENDIF (APR_LIBRARY AND APR_INCLUDE_DIR)
++
++
++IF (APR_FOUND)
++   IF (NOT APR_FIND_QUIETLY)
++      MESSAGE(STATUS "Found APR: ${APR_LIBRARIES}")
++   ENDIF (NOT APR_FIND_QUIETLY)
++ELSE (APR_FOUND)
++   IF (APR_FIND_REQUIRED)
++      MESSAGE(FATAL_ERROR "Could not find APR library")
++   ENDIF (APR_FIND_REQUIRED)
++ENDIF (APR_FOUND)
++
++# Deprecated declarations.
++SET (NATIVE_APR_INCLUDE_PATH ${APR_INCLUDE_DIR} )
++GET_FILENAME_COMPONENT (NATIVE_APR_LIB_PATH ${APR_LIBRARY} PATH)
++
++MARK_AS_ADVANCED(
++  APR_LIBRARY
++  APR_LIBRARIES
++  APR_INCLUDE_DIR
++  )
++
++# Next, APRUTIL.
++
++FIND_PATH(APRUTIL_INCLUDE_DIR apu.h
++/usr/local/include/apr-1
++/usr/local/include/apr-1.0
++/usr/include/apr-1
++/usr/include/apr-1.0
++/usr/local/apr/include/apr-1
++)
++
++SET(APRUTIL_NAMES ${APRUTIL_NAMES} aprutil-1)
++FIND_LIBRARY(APRUTIL_LIBRARY
++  NAMES ${APRUTIL_NAMES}
++  PATHS /usr/lib /usr/local/lib /usr/local/apr/lib
++  )
++
++IF (APRUTIL_LIBRARY AND APRUTIL_INCLUDE_DIR)
++    SET(APRUTIL_LIBRARIES ${APRUTIL_LIBRARY})
++    SET(APRUTIL_FOUND "YES")
++ELSE (APRUTIL_LIBRARY AND APRUTIL_INCLUDE_DIR)
++  SET(APRUTIL_FOUND "NO")
++ENDIF (APRUTIL_LIBRARY AND APRUTIL_INCLUDE_DIR)
++
++
++IF (APRUTIL_FOUND)
++   IF (NOT APRUTIL_FIND_QUIETLY)
++      MESSAGE(STATUS "Found APRUTIL: ${APRUTIL_LIBRARIES}")
++   ENDIF (NOT APRUTIL_FIND_QUIETLY)
++ELSE (APRUTIL_FOUND)
++   IF (APRUTIL_FIND_REQUIRED)
++      MESSAGE(FATAL_ERROR "Could not find APRUTIL library")
++   ENDIF (APRUTIL_FIND_REQUIRED)
++ENDIF (APRUTIL_FOUND)
++
++# Deprecated declarations.
++SET (NATIVE_APRUTIL_INCLUDE_PATH ${APRUTIL_INCLUDE_DIR} )
++GET_FILENAME_COMPONENT (NATIVE_APRUTIL_LIB_PATH ${APRUTIL_LIBRARY} PATH)
++
++MARK_AS_ADVANCED(
++  APRUTIL_LIBRARY
++  APRUTIL_LIBRARIES
++  APRUTIL_INCLUDE_DIR
++  )
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/CMakeLists.txt apache-log4cxx-0.10.0/CMakeLists.txt
+--- apache-log4cxx-0.10.0.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/CMakeLists.txt	2013-09-27 21:16:05.788277400 +0200
+@@ -0,0 +1,22 @@
++project(log4cxx)
++
++cmake_minimum_required(VERSION 2.8)
++
++option(BUILD_TESTS "build the test suite" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif()
++
++set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
++
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
++find_package(APR REQUIRED)
++
++include_directories(
++    ${APR_INCLUDE_DIR}
++    ${APRUTIL_INCLUDE_DIR}
++)
++
++add_definitions(-DAPU_DECLARE_STATIC -DAPR_DECLARE_STATIC)
++add_subdirectory(src)
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/CMakeLists.txt apache-log4cxx-0.10.0/src/CMakeLists.txt
+--- apache-log4cxx-0.10.0.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/src/CMakeLists.txt	2013-09-27 17:08:37.239965000 +0200
+@@ -0,0 +1,6 @@
++add_subdirectory(main)
++#add_subdirectory(examples)
++#add_subdirectory(site)
++if(BUILD_TESTS)
++    add_subdirectory(test)
++endif()
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/main/CMakeLists.txt apache-log4cxx-0.10.0/src/main/CMakeLists.txt
+--- apache-log4cxx-0.10.0.orig/src/main/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/src/main/CMakeLists.txt	2013-09-27 16:54:00.432814500 +0200
+@@ -0,0 +1,187 @@
++# first do what is done in include/log4cxx/Makefile.am
++include_directories(${CMAKE_BINARY_DIR})
++
++file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/log4cxx)
++file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/log4cxx/private)
++
++configure_file(include/log4cxx/log4cxx.hw ${CMAKE_BINARY_DIR}/log4cxx/log4cxx.h COPYONLY)
++configure_file(include/log4cxx/private/log4cxx_private.hw ${CMAKE_BINARY_DIR}/log4cxx/private/log4cxx_private.h COPYONLY)
++
++foreach(_subdir helpers net nt rolling spi spi/location varia xml config db pattern filter)
++	file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/log4cxx/${_subdir})
++	file(GLOB _headers "${CMAKE_CURRENT_SOURCE_DIR}/include/log4cxx/${_subdir}/*.h")
++	install(FILES ${_headers} DESTINATION include/log4cxx/${_subdir})
++	file(COPY ${_headers} DESTINATION ${CMAKE_BINARY_DIR}/log4cxx/${_subdir})
++endforeach(_subdir)
++
++file(GLOB _headers "${CMAKE_CURRENT_SOURCE_DIR}/include/log4cxx/*.h")
++install(FILES ${_headers} DESTINATION include/log4cxx)
++file(COPY ${_headers} DESTINATION ${CMAKE_BINARY_DIR}/log4cxx)
++
++# then do what is done cpp/Makefile.am
++set(log4cxx_SRC_FILES
++    action.cpp
++    appenderattachableimpl.cpp
++    appenderskeleton.cpp
++    aprinitializer.cpp
++    asyncappender.cpp
++    basicconfigurator.cpp
++    bufferedwriter.cpp
++    bytearrayinputstream.cpp
++    bytearrayoutputstream.cpp
++    bytebuffer.cpp
++    cacheddateformat.cpp
++    charsetdecoder.cpp
++    charsetencoder.cpp
++    class.cpp
++    classnamepatternconverter.cpp
++    classregistration.cpp
++    condition.cpp
++    configurator.cpp
++    consoleappender.cpp
++    cyclicbuffer.cpp
++    dailyrollingfileappender.cpp
++    datagrampacket.cpp
++    datagramsocket.cpp
++    date.cpp
++    dateformat.cpp
++    datelayout.cpp
++    datepatternconverter.cpp
++    defaultloggerfactory.cpp
++    defaultconfigurator.cpp
++    defaultrepositoryselector.cpp
++    domconfigurator.cpp
++    exception.cpp
++    fallbackerrorhandler.cpp
++    file.cpp
++    fileappender.cpp
++    filedatepatternconverter.cpp
++    fileinputstream.cpp
++    filelocationpatternconverter.cpp
++    fileoutputstream.cpp
++    filerenameaction.cpp
++    filewatchdog.cpp
++    filter.cpp
++    filterbasedtriggeringpolicy.cpp
++    fixedwindowrollingpolicy.cpp
++    formattinginfo.cpp
++    fulllocationpatternconverter.cpp
++    gzcompressaction.cpp
++    hierarchy.cpp
++    htmllayout.cpp
++    inetaddress.cpp
++    inputstream.cpp
++    inputstreamreader.cpp
++    integer.cpp
++    integerpatternconverter.cpp
++    layout.cpp
++    level.cpp
++    levelmatchfilter.cpp
++    levelrangefilter.cpp
++    levelpatternconverter.cpp
++    linelocationpatternconverter.cpp
++    lineseparatorpatternconverter.cpp
++    literalpatternconverter.cpp
++    loggerpatternconverter.cpp
++    loggingeventpatternconverter.cpp
++    loader.cpp
++    locale.cpp
++    locationinfo.cpp
++    logger.cpp
++    loggingevent.cpp
++    loglog.cpp
++    logmanager.cpp
++    logstream.cpp
++    manualtriggeringpolicy.cpp
++    messagebuffer.cpp
++    messagepatternconverter.cpp
++    methodlocationpatternconverter.cpp
++    mdc.cpp
++    mutex.cpp
++    nameabbreviator.cpp
++    namepatternconverter.cpp
++    ndcpatternconverter.cpp
++    ndc.cpp
++    nteventlogappender.cpp
++    objectimpl.cpp
++    objectptr.cpp
++    objectoutputstream.cpp
++    obsoleterollingfileappender.cpp
++    odbcappender.cpp
++    onlyonceerrorhandler.cpp
++    optionconverter.cpp
++    outputdebugstringappender.cpp
++    outputstream.cpp
++    outputstreamwriter.cpp
++    patternconverter.cpp
++    patternlayout.cpp
++    patternparser.cpp
++    pool.cpp
++    properties.cpp
++    propertiespatternconverter.cpp
++    propertyconfigurator.cpp
++    propertyresourcebundle.cpp
++    propertysetter.cpp
++    reader.cpp
++    relativetimedateformat.cpp
++    relativetimepatternconverter.cpp
++    resourcebundle.cpp
++    rollingfileappender.cpp
++    rollingpolicy.cpp
++    rollingpolicybase.cpp
++    rolloverdescription.cpp
++    rootlogger.cpp
++    serversocket.cpp
++    simpledateformat.cpp
++    simplelayout.cpp
++    sizebasedtriggeringpolicy.cpp
++    smtpappender.cpp
++    socket.cpp
++    socketappender.cpp
++    socketappenderskeleton.cpp
++    sockethubappender.cpp
++    socketoutputstream.cpp
++    strftimedateformat.cpp
++    stringhelper.cpp
++    stringmatchfilter.cpp
++    stringtokenizer.cpp
++    synchronized.cpp
++    syslogappender.cpp
++    syslogwriter.cpp
++    system.cpp
++    systemerrwriter.cpp
++    systemoutwriter.cpp
++    telnetappender.cpp
++    threadcxx.cpp
++    threadlocal.cpp
++    threadspecificdata.cpp
++    threadpatternconverter.cpp
++    throwableinformationpatternconverter.cpp
++    timezone.cpp
++    timebasedrollingpolicy.cpp
++    transform.cpp
++    triggeringpolicy.cpp
++    transcoder.cpp
++    ttcclayout.cpp
++    writer.cpp
++    writerappender.cpp
++    xmllayout.cpp
++    xmlsocketappender.cpp
++    zipcompressaction.cpp
++)
++foreach(_file ${log4cxx_SRC_FILES})
++    list(APPEND log4cxx_SRCS cpp/${_file})
++endforeach(_file)
++
++if(MSVC)
++    list(APPEND log4cxx_SRCS resources/log4cxx.rc)
++endif()
++
++add_library(log4cxx SHARED ${log4cxx_SRCS})
++set_target_properties(log4cxx PROPERTIES DEFINE_SYMBOL LOG4CXX)
++target_link_libraries(log4cxx ${APRUTIL_LIBRARIES} ${APR_LIBRARIES} odbc32 ws2_32 mswsock)
++
++install(TARGETS log4cxx RUNTIME DESTINATION bin
++                        LIBRARY DESTINATION lib
++                        ARCHIVE DESTINATION lib)
++
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/test/CMakeLists.txt apache-log4cxx-0.10.0/src/test/CMakeLists.txt
+--- apache-log4cxx-0.10.0.orig/src/test/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/src/test/CMakeLists.txt	2013-09-27 17:07:01.374481800 +0200
+@@ -0,0 +1 @@
++add_subdirectory(cpp)
+diff -Nru -x '*~' apache-log4cxx-0.10.0.orig/src/test/cpp/CMakeLists.txt apache-log4cxx-0.10.0/src/test/cpp/CMakeLists.txt
+--- apache-log4cxx-0.10.0.orig/src/test/cpp/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ apache-log4cxx-0.10.0/src/test/cpp/CMakeLists.txt	2013-09-27 22:41:12.302353300 +0200
+@@ -0,0 +1,141 @@
++include_directories(${CMAKE_BINARY_DIR})
++set(customlogger_tests
++        customlogger/xlogger.cpp
++        customlogger/xloggertestcase.cpp
++)
++
++set(defaultinit_tests
++        defaultinit/testcase1.cpp
++        defaultinit/testcase2.cpp
++        defaultinit/testcase3.cpp
++        defaultinit/testcase4.cpp
++)
++
++set(helpers
++        helpers/absolutetimedateformattestcase.cpp
++        helpers/cacheddateformattestcase.cpp
++        helpers/charsetdecodertestcase.cpp
++        helpers/charsetencodertestcase.cpp
++        helpers/cyclicbuffertestcase.cpp
++        helpers/datetimedateformattestcase.cpp
++        helpers/inetaddresstestcase.cpp
++        helpers/iso8601dateformattestcase.cpp
++        helpers/localechanger.cpp
++        helpers/messagebuffertest.cpp
++        helpers/optionconvertertestcase.cpp      
++        helpers/propertiestestcase.cpp
++        helpers/relativetimedateformattestcase.cpp
++        helpers/stringtokenizertestcase.cpp
++        helpers/stringhelpertestcase.cpp
++        helpers/syslogwritertest.cpp
++        helpers/timezonetestcase.cpp
++        helpers/transcodertestcase.cpp
++)
++
++set(net_tests
++        net/smtpappendertestcase.cpp
++        net/socketappendertestcase.cpp
++        net/sockethubappendertestcase.cpp
++        net/socketservertestcase.cpp
++        net/syslogappendertestcase.cpp
++        net/telnetappendertestcase.cpp
++        net/xmlsocketappendertestcase.cpp
++)
++
++set(pattern_tests
++        pattern/num343patternconverter.cpp
++        pattern/patternparsertestcase.cpp
++)
++
++set(rolling_tests
++        rolling/filenamepatterntestcase.cpp
++        rolling/filterbasedrollingtest.cpp
++        rolling/manualrollingtest.cpp
++        rolling/obsoletedailyrollingfileappendertest.cpp
++        rolling/obsoleterollingfileappendertest.cpp
++        rolling/sizebasedrollingtest.cpp
++        rolling/timebasedrollingtest.cpp
++)
++
++set(util
++        util/absolutetimefilter.cpp
++        util/absolutedateandtimefilter.cpp
++        util/binarycompare.cpp
++        util/compare.cpp
++        util/controlfilter.cpp
++        util/filenamefilter.cpp
++        util/utilfilter.cpp
++        util/iso8601filter.cpp
++        util/linenumberfilter.cpp
++        util/relativetimefilter.cpp
++        util/serializationtesthelper.cpp
++        util/threadfilter.cpp
++        util/transformer.cpp
++        util/xmlfilenamefilter.cpp
++        util/xmllineattributefilter.cpp
++        util/xmltimestampfilter.cpp
++        util/xmlthreadfilter.cpp
++)
++
++set(varia_tests
++        varia/errorhandlertestcase.cpp
++        varia/levelmatchfiltertestcase.cpp
++        varia/levelrangefiltertestcase.cpp
++)
++
++set(db_tests
++        db/odbcappendertestcase.cpp
++)
++
++set(xml_tests
++        xml/customleveltestcase.cpp
++        xml/domtestcase.cpp
++        xml/xlevel.cpp
++        xml/xmllayouttestcase.cpp
++        xml/xmllayouttest.cpp
++)
++
++set(nt_tests
++        nt/nteventlogappendertestcase.cpp
++)
++
++set(testsuite_SOURCES
++        ${customlogger_tests}
++        ${defaultinit_tests}
++        ${helpers}
++        ${net_tests}
++        ${pattern_tests}
++        ${rolling_tests}
++        ${util}
++        ${varia_tests}
++        ${db_tests}
++        ${xml_tests}
++        ${nt_tests}
++        abts.cpp
++        asyncappendertestcase.cpp
++        encodingtest.cpp
++        filetestcase.cpp
++        hierarchytest.cpp
++        hierarchythresholdtestcase.cpp
++        l7dtestcase.cpp
++        leveltestcase.cpp
++        logunit.cpp
++        loggertestcase.cpp
++        minimumtestcase.cpp
++        patternlayouttest.cpp
++        vectorappender.cpp
++        appenderskeletontestcase.cpp
++        consoleappendertestcase.cpp
++        fileappendertestcase.cpp
++        rollingfileappendertestcase.cpp
++        streamtestcase.cpp
++        writerappendertestcase.cpp
++        ndctestcase.cpp
++        propertyconfiguratortest.cpp
++)
++
++add_executable(testsuite ${testsuite_SOURCES})
++target_link_libraries(testsuite log4cxx)
++add_test(NAME testsuite WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../resources COMMAND testsuite)
++
++

@@ -1,4 +1,11 @@
+# python
 *.pyc
 *~
 python/*
 test.outlog
+
+# from kdiff3
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*

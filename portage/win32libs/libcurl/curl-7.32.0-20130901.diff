@@ -1,0 +1,58 @@
+diff -Nru -x '*~' curl-7.32.0.orig/CMakeLists.txt curl-7.32.0/CMakeLists.txt
+--- curl-7.32.0.orig/CMakeLists.txt	2013-06-22 00:29:04.000000000 +0200
++++ curl-7.32.0/CMakeLists.txt	2013-09-01 12:50:26.700689200 +0200
+@@ -191,6 +191,13 @@
+ check_library_exists("wldap32" cldap_open "" HAVE_WLDAP32)
+ 
+ if(WIN32)
++  if(HAVE_LIBWS2_32)
++    link_libraries( ws2_32 ) 
++  endif(HAVE_LIBWS2_32)
++  if(HAVE_LIBWINMM)
++    link_libraries( wsock32)
++  endif(HAVE_LIBWINMM)
++
+   set(CURL_DEFAULT_DISABLE_LDAP OFF)
+   # some windows compilers do not have wldap32
+   if(NOT HAVE_WLDAP32)
+@@ -201,6 +208,10 @@
+     option(CURL_LDAP_WIN "Use Windows LDAP implementation" ON)
+   endif()
+   mark_as_advanced(CURL_LDAP_WIN)
++
++  if(NOT CURL_DISABLE_LDAP AND HAVE_WLDAP32)
++    link_libraries(wldap32)
++  endif(NOT CURL_DISABLE_LDAP AND HAVE_WLDAP32)
+ endif()
+ 
+ 
+@@ -211,8 +222,10 @@
+ # Check for idn
+ check_library_exists_concat("idn" idna_to_ascii_lz HAVE_LIBIDN)
+ 
++if(NOT CURL_LDAP_WIN)
+ # Check for LDAP
+ check_library_exists_concat("ldap" ldap_init HAVE_LIBLDAP)
++endif()
+ # if(NOT HAVE_LIBLDAP)
+ # SET(CURL_DISABLE_LDAP ON)
+ # endif(NOT HAVE_LIBLDAP)
+@@ -279,6 +292,7 @@
+ if(NOT UNIX)
+   check_include_file_concat("windows.h"      HAVE_WINDOWS_H)
+   check_include_file_concat("winsock.h"      HAVE_WINSOCK_H)
++  check_include_file_concat("winldap.h"      HAVE_WINLDAP_H)
+ endif(NOT UNIX)
+ 
+ check_include_file_concat("inttypes.h"       HAVE_INTTYPES_H)
+@@ -366,8 +380,8 @@
+ check_include_file_concat("sys/utsname.h"   HAVE_SYS_UTSNAME_H)
+ check_include_file_concat("idna.h"          HAVE_IDNA_H)
+ 
+-if(NOT HAVE_LDAP_H)
+-  message(STATUS "LDAP_H not found CURL_DISABLE_LDAP set ON")
++if(NOT HAVE_LDAP_H AND NOT HAVE_WINLDAP_H)
++  message(STATUS "Neither LDAP_H nor WINLDAP_H found CURL_DISABLE_LDAP set ON")
+   set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
+ endif()
+ 

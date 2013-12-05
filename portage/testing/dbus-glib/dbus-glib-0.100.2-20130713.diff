@@ -1,0 +1,36 @@
+diff -Nru -x '*~' dbus-glib-0.100.2.orig/dbus/examples/Makefile.in dbus-glib-0.100.2/dbus/examples/Makefile.in
+--- dbus-glib-0.100.2.orig/dbus/examples/Makefile.in	2013-02-25 13:20:15.000000000 +0100
++++ dbus-glib-0.100.2/dbus/examples/Makefile.in	2013-07-13 16:23:20.441775700 +0200
+@@ -229,7 +229,7 @@
+ LD = @LD@
+ LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@
++LIBS = @LIBS@ ${DBUS_LIBS}
+ LIBTOOL = @LIBTOOL@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+diff -Nru -x '*~' dbus-glib-0.100.2.orig/dbus/examples/statemachine/Makefile.in dbus-glib-0.100.2/dbus/examples/statemachine/Makefile.in
+--- dbus-glib-0.100.2.orig/dbus/examples/statemachine/Makefile.in	2013-02-25 13:20:15.000000000 +0100
++++ dbus-glib-0.100.2/dbus/examples/statemachine/Makefile.in	2013-07-13 16:25:33.288051900 +0200
+@@ -169,7 +169,7 @@
+ LD = @LD@
+ LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@
++LIBS = @LIBS@ ${DBUS_LIBS}
+ LIBTOOL = @LIBTOOL@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+diff -Nru -x '*~' dbus-glib-0.100.2.orig/dbus/Makefile.in dbus-glib-0.100.2/dbus/Makefile.in
+--- dbus-glib-0.100.2.orig/dbus/Makefile.in	2013-02-25 13:20:14.000000000 +0100
++++ dbus-glib-0.100.2/dbus/Makefile.in	2013-07-13 16:19:09.912392800 +0200
+@@ -286,7 +286,7 @@
+ LD = @LD@
+ LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@
++LIBS = @LIBS@ ${DBUS_LIBS}
+ LIBTOOL = @LIBTOOL@
+ LIPO = @LIPO@
+ LN_S = @LN_S@

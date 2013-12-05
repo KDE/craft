@@ -61,7 +61,10 @@ class OptionsFeatures(OptionsBase):
         self.pythonSupport = False
         
         ## enable use of msys2 in several packages, required for glib.
-        self.msys2 = False
+        self.msys2 = True
+        
+        ## stick to the gcc 4.4.7 version
+        self.legacyGCC = False
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):

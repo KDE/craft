@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import info
 import emergePlatform
 
@@ -11,7 +12,14 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:phonon'        
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = 'gitHEAD'
+        
+        for ver in ['4.7.0']:
+            self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/phonon-%s.tar.xz' % (ver ,ver)
+            self.targetInstSrc[ver] = 'phonon-%s' % ver
+        
+        self.targetDigests['4.7.0'] = 'feda28afe016fe38eb253f2be01973fc0226d10f'
+        
+        self.defaultTarget = '4.7.0'
 
 from Package.CMakePackageBase import *
 

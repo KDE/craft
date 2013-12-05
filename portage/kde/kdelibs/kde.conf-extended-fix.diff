@@ -8,8 +8,8 @@ index 1a5cc32..82c7ee2 100644
  #include <QtCore/QSettings>
 +#include <QtCore/QProcessEnvironment>
  
- class KStandardDirs::KStandardDirsPrivate
- {
+ #ifdef Q_OS_WIN
+ static Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 @@ -234,6 +235,8 @@ static const int types_indices[] = {
  static void tokenize(QStringList& token, const QString& str,
                       const QString& delim);
@@ -41,7 +41,7 @@ index 1a5cc32..82c7ee2 100644
 +    Q_FOREACH(const QString& var, envVars.keys())
 +    {
 +        const QString varName = QLatin1Char('%') + var + QLatin1Char('%');
-+        if(str.contains(varName))
++        if(str.contains(varName, Qt::CaseInsensitive))
 +        {
 +            ret.replace(varName, envVars[var], Qt::CaseInsensitive);
 +        }

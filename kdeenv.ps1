@@ -87,23 +87,45 @@ function path-mingw()
     }
 }
 
+function setupMSVCENV([string] $key)
+{
+    $path = [Environment]::GetEnvironmentVariable($key, "Process")
+    if($path  -eq "")
+        {
+            Write-Host("Couldnt find msvc installation")
+        }
+        #http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
+        $arch = "x86"
+        if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x64")
+        {
+            $arch = "amd64"
+        }        
+        pushd "$path\..\..\VC"
+        cmd /c "vcvarsall.bat $arch &set" |
+        foreach {
+          if ($_ -match "=") {        
+            $v = $_.split("=")
+            set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+            #Write-Host("$v[0]=$v[1]")
+          }
+        }
+        popd
+}
 function path-msvc()
 {
-    if($env:VS110COMNTOOLS -eq "")
+    if($settings["General"]["KDECOMPILER"] -eq "msvc2010")
     {
-        Write-Host("Couldnt find msvc installation")
+       setupMSVCENV "VS100COMNTOOLS"
     }
-    #http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
-    pushd "$env:VS110COMNTOOLS\..\..\VC"
-    cmd /c "vcvarsall.bat&set" |
-    foreach {
-      if ($_ -match "=") {        
-        $v = $_.split("=")
-        set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-        #Write-Host("$v[0]=$v[1]")
-      }
+    if($settings["General"]["KDECOMPILER"] -eq "msvc2012")
+    {
+       setupMSVCENV "VS110COMNTOOLS"
     }
-    popd
+    if($settings["General"]["KDECOMPILER"] -eq "msvc2013")
+    {
+       setupMSVCENV "VS120COMNTOOLS"
+    }
+    
 }
 
 function setupCCACHE()
@@ -111,9 +133,6 @@ function setupCCACHE()
     if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true)
     {
         $env:CCACHE_DIR="$env:KDEROOT\build\CCACHE"
-        $env:CXX="ccache g++"
-        $env:CC="ccache gcc"
-        $env:EMERGE_MAKE_PROGRAM="jom /E"
     }
 }
 
@@ -205,3 +224,6 @@ function emerge()
 }
 
 cd $env:KDEROOT
+
+# make sure term is not defined by any script
+$env:TERM=""

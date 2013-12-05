@@ -239,7 +239,7 @@ class PackageBase (EmergeBase):
         this will be executed from the package if the package is started on its own
         it shouldn't be called if the package is imported as a python module"""
 
-        utils.debug( "EmergeBase.execute called. args: %s" % sys.argv, 2 )
+        utils.debug( "PackageBase.execute called. args: %s" % sys.argv, 2 )
         command, _ = self.getAction(cmd)
 
         #if self.createCombinedPackage:
@@ -288,7 +288,7 @@ class PackageBase (EmergeBase):
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
                      "geturls":        "getUrls",
-                     "printrev":       "sourceVersion",
+                     "printrev":       "printSourceVersion",
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:

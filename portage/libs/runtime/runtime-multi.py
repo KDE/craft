@@ -36,11 +36,18 @@ class Package( BinaryPackageBase ):
             postfix = "d"
 
         files = []
-        if compiler.isMinGW():                
+        if compiler.isMinGW():
+            if self.subinfo.options.features.legacyGCC:
+                if compiler.isMinGW_W32():
+                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )
+                elif compiler.isMinGW_W64():
+                    srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
+                files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll' ]
+            else:                
                 files = [ 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
                 if compiler.isMinGW_W32():
                     files.append('libgcc_s_sjlj-1.dll')
-                    srcdir = os.path.join( self.rootdir, "mingw32", "bin" )                    
+                    srcdir = os.path.join( self.rootdir, "mingw", "bin" )                    
                 elif compiler.isMinGW_W64():
                     files.append('libgcc_s_seh-1.dll')
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )

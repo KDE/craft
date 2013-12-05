@@ -3,14 +3,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20130722"
         if emergePlatform.buildArchitecture() == "x86":
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x32-msys2-alpha-%s.tar.xz" % ver
-            self.targetDigests['20130625'] = 'b37da10deea58ab8ccba88e255cd64bd7fab00dd'
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131112.tar.xz"
+            self.targetDigests['base'] = 'd6c210e93a54e4461e8fef5e806fe1b1c8c6651c'
         else:
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/msys2/x64-msys2-alpha-%s.tar.xz" % ver
-            self.targetDigests['20130625'] = '83f3ec88b633a12238835df922618ed8d313776e'
-        self.defaultTarget = ver
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys64-base-x86_64-20131113.tar.xz"
+            self.targetDigests['base'] = 'b907866161f92b8de2e9ff072e285479eb03afb6'
+        self.defaultTarget = "base"
 
 
     def setDependencies( self ):
@@ -31,20 +30,24 @@ class Package(BinaryPackageBase):
 
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
-           return False
+          return False
         if emergePlatform.buildArchitecture() == "x64":
-            shutil.move(os.path.join( self.imageDir(), "cross64"), os.path.join( self.imageDir(), "msys"))
+           shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
         else:
-            shutil.move(os.path.join( self.imageDir(), "cross32"), os.path.join( self.imageDir(), "msys"))
-        utils.applyPatch(self.imageDir() , os.path.join(self.packageDir(), 'cd_currentDir.diff'), '0')
+           shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True
     
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
-        self.shell.execute(".","mkpasswd -l > /etc/passwd")
-        self.shell.execute(".","mkgroup  -l > /etc/group")
+        msysDir = os.path.join(os.getenv("KDEROOT"),"msys")
+        self.shell.execute(".","echo Firstrun")#start and restart msys before first use
+        self.shell.execute(".","pacman -Syu --noconfirm")        
+        utils.system("autorebase.bat", cwd = msysDir)
+        self.shell.execute(".","pacman -Sy --noconfirm")   
+        self.shell.execute(".","pacman -S base-devel --noconfirm")
+        utils.system("autorebase.bat", cwd = msysDir)
         return True
        
 if __name__ == '__main__':

@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.1'] = ['752668b0cc5729433c99cbad00f21241ec4797ef',
                                      '32714e64fff52d18db5f077732910215790e0c5b']
         self.shortDescription = "common mimetype library"
-        self.defaultTarget = '0.71'
+        self.defaultTarget = '1.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

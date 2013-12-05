@@ -506,7 +506,7 @@ def unTar( fileName, destdir ):
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
                 except IOError:
-                    warning("Failed to extratc %s to directory %s" % ( tarMember.name, destdir ) )
+                    warning("Failed to extract %s to directory %s" % ( tarMember.name, destdir ) )
         return True
     except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
@@ -1191,7 +1191,7 @@ def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     if not os.path.exists( destDir ):
         os.makedirs( destDir )
     if os.path.exists( dest ):
-        warning( "Overiding %s" % dest )
+        warning( "Overriding %s" % dest )
         os.remove( dest )
     if linkOnly:
             os.link( src , dest )
@@ -1385,11 +1385,11 @@ def embedManifest(executable, manifest):
                 debug("embedManifest could not find a mt.exe in\n\t %s" % \
                     os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
-        system([mtExe, "-nologo", "-manifest", manifest,
+        return system([mtExe, "-nologo", "-manifest", manifest,
             "-outputresource:%s;1" % executable])
     else:
-        debug("No manifest tool found. \n Ressource manifest for %s not embedded"\
-                % executable, 1)
+        return system(["mt", "-nologo", "-manifest", manifest,
+            "-outputresource:%s;1" % executable])
 
 
 def getscriptname():
