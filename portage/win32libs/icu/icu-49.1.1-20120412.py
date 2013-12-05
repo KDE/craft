@@ -8,13 +8,14 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['49.1.1'] = 'http://download.icu-project.org/files/icu4c/49.1.1/icu4c-49_1_1-src.tgz'
-        self.targetInstSrc['49.1.1'] = "icu\\source"
-        self.targetDigests['49.1.1'] = 'f407d7e2808b76e3a6ca316aab896aef74bf6722'
-        self.patchToApply[ '49.1.1' ] = [('icu-20120702.diff', 1)]
+        self.targets['52rc2'] = 'http://download.icu-project.org/files/icu4c/52rc/icu4c-52_rc2-src.zip'
+        self.targetInstSrc['52rc2'] = "icu\\source"
+        self.targetDigests['52rc2'] = '51faaf7e0a3e1eef00295d684420bc10708aa659'
         if compiler.isMSVC2012():
-            self.patchToApply[ '49.1.1' ].append(('msvc2011.diff', 1))
-        self.defaultTarget = '49.1.1'
+            self.patchToApply[ '52rc2' ] = (('msvc2011.diff', 1))
+        if compiler.isMSVC2013():
+            self.patchToApply[ '52rc2' ] = (('msvc2012.diff', 1))
+        self.defaultTarget = '52rc2'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
