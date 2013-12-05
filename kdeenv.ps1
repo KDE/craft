@@ -95,8 +95,13 @@ function setupMSVCENV([string] $key)
             Write-Host("Couldnt find msvc installation")
         }
         #http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
+        $arch = "x86"
+        if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x64")
+        {
+            $arch = "amd64"
+        }        
         pushd "$path\..\..\VC"
-        cmd /c "vcvarsall.bat&set" |
+        cmd /c "vcvarsall.bat $arch &set" |
         foreach {
           if ($_ -match "=") {        
             $v = $_.split("=")
