@@ -13,6 +13,7 @@ rem               sure about the consequences)
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
 rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler
 rem * msvc2012 - use the Microsoft Visual C++ 2012 compiler 
+rem * msvc2013 - use the Microsoft Visual C++ 2013 compiler 
 rem * intel    - use the Intel C++ Compiler
 rem *            note: "intel" option depends on an MSVC environment,
 rem *                  please set the INTEL_VSSHELL var (vs2008, vs2010 or vs2012)
@@ -139,6 +140,7 @@ rem This is used to set up the build environment automatically
 if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9.0
 if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10.0
 if %KDECOMPILER% == msvc2012 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 11.0
+if %KDECOMPILER% == msvc2013 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 12.0
 if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
 
 rem Here you can adjust the path to the Windows Mobile SDK installation

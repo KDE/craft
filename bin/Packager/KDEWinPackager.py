@@ -134,22 +134,13 @@ class KDEWinPackager (PackagerBase):
             utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
 
         if( self.subinfo.options.package.withCompiler ):
-            if( self.compiler() == "mingw"):
-                cmd += " -type mingw "
-            elif self.compiler() == "mingw4" and self.buildArchitecture() == "x64":
-                cmd += " -type x64-mingw4 "
-            elif self.compiler() == "mingw4" and compiler.isMinGW_W32():
-                cmd += " -type x86-mingw4 "
-            elif self.compiler() == "mingw4":
-                cmd += " -type mingw4 "
-            elif self.compiler() == "msvc2005":
-                cmd += " -type msvc "
-            elif self.compiler() == "msvc2008":
-                cmd += " -type vc90 "
-            elif self.compiler() == "msvc2010":
-                cmd += " -type vc100 "
-            else:
-                cmd += " -type unknown "
+            cmd += " -type "
+            if compiler.isMinGW():
+                if self.buildArchitecture() == "x64":
+                    cmd += "x64-"
+                else:
+                    cmd += "x86-"                
+            cmd += compiler.getShortName()
 
 
 #        not needed anymore
