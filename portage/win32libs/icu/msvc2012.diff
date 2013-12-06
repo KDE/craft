@@ -1,8 +1,8 @@
 Files icu.orig/source/allinone/allinone.sdf and source/allinone/allinone.sdf differ
 Files icu.orig/source/allinone/allinone.v12.suo and source/allinone/allinone.v12.suo differ
 diff -Nru -x '*~' icu.orig/source/common/common.vcxproj source/common/common.vcxproj
---- icu.orig/source/common/common.vcxproj	2013-12-05 12:56:25.431520300 +0100
-+++ source/common/common.vcxproj	2013-12-05 12:54:58.984975800 +0100
+--- icu.orig/source/common/common.vcxproj	2013-12-06 12:41:16.258294600 +0100
++++ source/common/common.vcxproj	2013-12-06 12:39:37.172673300 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -44,8 +44,8 @@ diff -Nru -x '*~' icu.orig/source/common/common.vcxproj source/common/common.vcx
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/extra/uconv/uconv.vcxproj source/extra/uconv/uconv.vcxproj
---- icu.orig/source/extra/uconv/uconv.vcxproj	2013-12-05 12:56:29.214929200 +0100
-+++ source/extra/uconv/uconv.vcxproj	2013-12-05 12:55:01.986062200 +0100
+--- icu.orig/source/extra/uconv/uconv.vcxproj	2013-12-06 12:41:19.541959900 +0100
++++ source/extra/uconv/uconv.vcxproj	2013-12-06 12:39:40.237957300 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -87,8 +87,8 @@ diff -Nru -x '*~' icu.orig/source/extra/uconv/uconv.vcxproj source/extra/uconv/u
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/i18n/i18n.vcxproj source/i18n/i18n.vcxproj
---- icu.orig/source/i18n/i18n.vcxproj	2013-12-05 12:56:29.358533000 +0100
-+++ source/i18n/i18n.vcxproj	2013-12-05 12:55:00.639774400 +0100
+--- icu.orig/source/i18n/i18n.vcxproj	2013-12-06 12:41:19.681061500 +0100
++++ source/i18n/i18n.vcxproj	2013-12-06 12:39:38.917915200 +0100
 @@ -1,5 +1,5 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -131,8 +131,8 @@ diff -Nru -x '*~' icu.orig/source/i18n/i18n.vcxproj source/i18n/i18n.vcxproj
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/i18n/i18n.vcxproj.filters source/i18n/i18n.vcxproj.filters
---- icu.orig/source/i18n/i18n.vcxproj.filters	2013-12-05 12:56:29.360533600 +0100
-+++ source/i18n/i18n.vcxproj.filters	2013-12-05 12:55:00.588997500 +0100
+--- icu.orig/source/i18n/i18n.vcxproj.filters	2013-12-06 12:41:19.683075400 +0100
++++ source/i18n/i18n.vcxproj.filters	2013-12-06 12:39:38.852871700 +0100
 @@ -1050,5 +1050,6 @@
      <CustomBuild Include="unicode\uregion.h">
        <Filter>misc</Filter>
@@ -143,8 +143,8 @@ diff -Nru -x '*~' icu.orig/source/i18n/i18n.vcxproj.filters source/i18n/i18n.vcx
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/io/io.vcxproj source/io/io.vcxproj
---- icu.orig/source/io/io.vcxproj	2013-12-05 12:56:29.904012400 +0100
-+++ source/io/io.vcxproj	2013-12-05 12:55:02.157056500 +0100
+--- icu.orig/source/io/io.vcxproj	2013-12-06 12:41:20.126409400 +0100
++++ source/io/io.vcxproj	2013-12-06 12:39:40.383060000 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -186,8 +186,8 @@ diff -Nru -x '*~' icu.orig/source/io/io.vcxproj source/io/io.vcxproj
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/layout/layout.vcxproj source/layout/layout.vcxproj
---- icu.orig/source/layout/layout.vcxproj	2013-12-05 12:56:30.058249500 +0100
-+++ source/layout/layout.vcxproj	2013-12-05 12:55:00.981987400 +0100
+--- icu.orig/source/layout/layout.vcxproj	2013-12-06 12:41:20.564770300 +0100
++++ source/layout/layout.vcxproj	2013-12-06 12:39:39.280175100 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -229,8 +229,8 @@ diff -Nru -x '*~' icu.orig/source/layout/layout.vcxproj source/layout/layout.vcx
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/layoutex/layoutex.vcxproj source/layoutex/layoutex.vcxproj
---- icu.orig/source/layoutex/layoutex.vcxproj	2013-12-05 12:56:30.231100100 +0100
-+++ source/layoutex/layoutex.vcxproj	2013-12-05 12:55:01.150999700 +0100
+--- icu.orig/source/layoutex/layoutex.vcxproj	2013-12-06 12:41:21.063626200 +0100
++++ source/layoutex/layoutex.vcxproj	2013-12-06 12:39:39.434283600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -272,8 +272,8 @@ diff -Nru -x '*~' icu.orig/source/layoutex/layoutex.vcxproj source/layoutex/layo
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/samples/cal/cal.vcxproj source/samples/cal/cal.vcxproj
---- icu.orig/source/samples/cal/cal.vcxproj	2013-12-05 12:56:30.256103300 +0100
-+++ source/samples/cal/cal.vcxproj	2013-12-05 12:54:58.571881700 +0100
+--- icu.orig/source/samples/cal/cal.vcxproj	2013-12-06 12:41:21.149688400 +0100
++++ source/samples/cal/cal.vcxproj	2013-12-06 12:39:36.792403700 +0100
 @@ -1,264 +1,268 @@
 -﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -807,8 +807,8 @@ diff -Nru -x '*~' icu.orig/source/samples/cal/cal.vcxproj source/samples/cal/cal
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/samples/date/date.vcxproj source/samples/date/date.vcxproj
---- icu.orig/source/samples/date/date.vcxproj	2013-12-05 12:56:30.291105800 +0100
-+++ source/samples/date/date.vcxproj	2013-12-05 12:54:59.309922200 +0100
+--- icu.orig/source/samples/date/date.vcxproj	2013-12-06 12:41:21.207728400 +0100
++++ source/samples/date/date.vcxproj	2013-12-06 12:39:37.471885400 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -850,8 +850,8 @@ diff -Nru -x '*~' icu.orig/source/samples/date/date.vcxproj source/samples/date/
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/stubdata/stubdata.vcxproj source/stubdata/stubdata.vcxproj
---- icu.orig/source/stubdata/stubdata.vcxproj	2013-12-05 12:56:30.509963800 +0100
-+++ source/stubdata/stubdata.vcxproj	2013-12-05 12:55:01.646027200 +0100
+--- icu.orig/source/stubdata/stubdata.vcxproj	2013-12-06 12:41:21.657080500 +0100
++++ source/stubdata/stubdata.vcxproj	2013-12-06 12:39:39.930737700 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -893,8 +893,8 @@ diff -Nru -x '*~' icu.orig/source/stubdata/stubdata.vcxproj source/stubdata/stub
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/test/cintltst/cintltst.vcxproj source/test/cintltst/cintltst.vcxproj
---- icu.orig/source/test/cintltst/cintltst.vcxproj	2013-12-05 12:56:30.562176700 +0100
-+++ source/test/cintltst/cintltst.vcxproj	2013-12-05 12:54:58.774893400 +0100
+--- icu.orig/source/test/cintltst/cintltst.vcxproj	2013-12-06 12:41:21.724129400 +0100
++++ source/test/cintltst/cintltst.vcxproj	2013-12-06 12:39:36.986541600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -936,8 +936,8 @@ diff -Nru -x '*~' icu.orig/source/test/cintltst/cintltst.vcxproj source/test/cin
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/test/intltest/intltest.vcxproj source/test/intltest/intltest.vcxproj
---- icu.orig/source/test/intltest/intltest.vcxproj	2013-12-05 12:56:30.746480900 +0100
-+++ source/test/intltest/intltest.vcxproj	2013-12-05 12:55:00.809838400 +0100
+--- icu.orig/source/test/intltest/intltest.vcxproj	2013-12-06 12:41:22.045482600 +0100
++++ source/test/intltest/intltest.vcxproj	2013-12-06 12:39:39.093039800 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1084,8 +1084,8 @@ diff -Nru -x '*~' icu.orig/source/test/intltest/intltest.vcxproj source/test/int
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/test/iotest/iotest.vcxproj source/test/iotest/iotest.vcxproj
---- icu.orig/source/test/iotest/iotest.vcxproj	2013-12-05 12:56:30.939158400 +0100
-+++ source/test/iotest/iotest.vcxproj	2013-12-05 12:55:02.557200300 +0100
+--- icu.orig/source/test/iotest/iotest.vcxproj	2013-12-06 12:41:22.316675600 +0100
++++ source/test/iotest/iotest.vcxproj	2013-12-06 12:39:40.710313100 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1127,8 +1127,8 @@ diff -Nru -x '*~' icu.orig/source/test/iotest/iotest.vcxproj source/test/iotest/
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/test/letest/letest.vcxproj source/test/letest/letest.vcxproj
---- icu.orig/source/test/letest/letest.vcxproj	2013-12-05 12:56:31.113076800 +0100
-+++ source/test/letest/letest.vcxproj	2013-12-05 12:55:03.067228300 +0100
+--- icu.orig/source/test/letest/letest.vcxproj	2013-12-06 12:41:22.352703900 +0100
++++ source/test/letest/letest.vcxproj	2013-12-06 12:39:41.160616600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1170,8 +1170,8 @@ diff -Nru -x '*~' icu.orig/source/test/letest/letest.vcxproj source/test/letest/
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/ctestfw/ctestfw.vcxproj source/tools/ctestfw/ctestfw.vcxproj
---- icu.orig/source/tools/ctestfw/ctestfw.vcxproj	2013-12-05 12:56:32.229116900 +0100
-+++ source/tools/ctestfw/ctestfw.vcxproj	2013-12-05 12:54:59.156917500 +0100
+--- icu.orig/source/tools/ctestfw/ctestfw.vcxproj	2013-12-06 12:41:22.877076300 +0100
++++ source/tools/ctestfw/ctestfw.vcxproj	2013-12-06 12:39:37.320780200 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1213,8 +1213,8 @@ diff -Nru -x '*~' icu.orig/source/tools/ctestfw/ctestfw.vcxproj source/tools/cte
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/genbrk/genbrk.vcxproj source/tools/genbrk/genbrk.vcxproj
---- icu.orig/source/tools/genbrk/genbrk.vcxproj	2013-12-05 12:56:32.256120600 +0100
-+++ source/tools/genbrk/genbrk.vcxproj	2013-12-05 12:54:59.619940400 +0100
+--- icu.orig/source/tools/genbrk/genbrk.vcxproj	2013-12-06 12:41:22.906116800 +0100
++++ source/tools/genbrk/genbrk.vcxproj	2013-12-06 12:39:37.779105900 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1256,8 +1256,8 @@ diff -Nru -x '*~' icu.orig/source/tools/genbrk/genbrk.vcxproj source/tools/genbr
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/genccode/genccode.vcxproj source/tools/genccode/genccode.vcxproj
---- icu.orig/source/tools/genccode/genccode.vcxproj	2013-12-05 12:56:32.261814300 +0100
-+++ source/tools/genccode/genccode.vcxproj	2013-12-05 12:54:59.772950900 +0100
+--- icu.orig/source/tools/genccode/genccode.vcxproj	2013-12-06 12:41:22.914101500 +0100
++++ source/tools/genccode/genccode.vcxproj	2013-12-06 12:39:37.945222000 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1299,8 +1299,8 @@ diff -Nru -x '*~' icu.orig/source/tools/genccode/genccode.vcxproj source/tools/g
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gencfu/gencfu.vcxproj source/tools/gencfu/gencfu.vcxproj
---- icu.orig/source/tools/gencfu/gencfu.vcxproj	2013-12-05 12:56:32.267768900 +0100
-+++ source/tools/gencfu/gencfu.vcxproj	2013-12-05 12:55:03.241238100 +0100
+--- icu.orig/source/tools/gencfu/gencfu.vcxproj	2013-12-06 12:41:22.922110800 +0100
++++ source/tools/gencfu/gencfu.vcxproj	2013-12-06 12:39:41.304717000 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1341,8 +1341,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gencfu/gencfu.vcxproj source/tools/gencf
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gencmn/gencmn.vcxproj source/tools/gencmn/gencmn.vcxproj
---- icu.orig/source/tools/gencmn/gencmn.vcxproj	2013-12-05 12:56:32.273769500 +0100
-+++ source/tools/gencmn/gencmn.vcxproj	2013-12-05 12:54:59.928960700 +0100
+--- icu.orig/source/tools/gencmn/gencmn.vcxproj	2013-12-06 12:41:22.929114700 +0100
++++ source/tools/gencmn/gencmn.vcxproj	2013-12-06 12:39:38.162377500 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1384,8 +1384,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gencmn/gencmn.vcxproj source/tools/gencm
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gencnval/gencnval.vcxproj source/tools/gencnval/gencnval.vcxproj
---- icu.orig/source/tools/gencnval/gencnval.vcxproj	2013-12-05 12:56:32.283770700 +0100
-+++ source/tools/gencnval/gencnval.vcxproj	2013-12-05 12:55:00.090967300 +0100
+--- icu.orig/source/tools/gencnval/gencnval.vcxproj	2013-12-06 12:41:22.937125800 +0100
++++ source/tools/gencnval/gencnval.vcxproj	2013-12-06 12:39:38.363520600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1427,8 +1427,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gencnval/gencnval.vcxproj source/tools/g
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gendict/gendict.vcxproj source/tools/gendict/gendict.vcxproj
---- icu.orig/source/tools/gendict/gendict.vcxproj	2013-12-05 12:56:32.304771000 +0100
-+++ source/tools/gendict/gendict.vcxproj	2013-12-05 12:55:02.899219200 +0100
+--- icu.orig/source/tools/gendict/gendict.vcxproj	2013-12-06 12:41:22.944122500 +0100
++++ source/tools/gendict/gendict.vcxproj	2013-12-06 12:39:41.011507900 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1470,8 +1470,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gendict/gendict.vcxproj source/tools/gen
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gennorm2/gennorm2.vcxproj source/tools/gennorm2/gennorm2.vcxproj
---- icu.orig/source/tools/gennorm2/gennorm2.vcxproj	2013-12-05 12:56:32.346770400 +0100
-+++ source/tools/gennorm2/gennorm2.vcxproj	2013-12-05 12:55:03.412251900 +0100
+--- icu.orig/source/tools/gennorm2/gennorm2.vcxproj	2013-12-06 12:41:22.953133100 +0100
++++ source/tools/gennorm2/gennorm2.vcxproj	2013-12-06 12:39:41.449828700 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1512,8 +1512,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gennorm2/gennorm2.vcxproj source/tools/g
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/genrb/derb.vcxproj source/tools/genrb/derb.vcxproj
---- icu.orig/source/tools/genrb/derb.vcxproj	2013-12-05 12:56:32.375777200 +0100
-+++ source/tools/genrb/derb.vcxproj	2013-12-05 12:54:59.463931500 +0100
+--- icu.orig/source/tools/genrb/derb.vcxproj	2013-12-06 12:41:22.962135800 +0100
++++ source/tools/genrb/derb.vcxproj	2013-12-06 12:39:37.632006700 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1555,8 +1555,8 @@ diff -Nru -x '*~' icu.orig/source/tools/genrb/derb.vcxproj source/tools/genrb/de
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/genrb/genrb.vcxproj source/tools/genrb/genrb.vcxproj
---- icu.orig/source/tools/genrb/genrb.vcxproj	2013-12-05 12:56:32.400538400 +0100
-+++ source/tools/genrb/genrb.vcxproj	2013-12-05 12:55:00.254978300 +0100
+--- icu.orig/source/tools/genrb/genrb.vcxproj	2013-12-06 12:41:22.973146100 +0100
++++ source/tools/genrb/genrb.vcxproj	2013-12-06 12:39:38.533641800 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1598,8 +1598,8 @@ diff -Nru -x '*~' icu.orig/source/tools/genrb/genrb.vcxproj source/tools/genrb/g
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gensprep/gensprep.vcxproj source/tools/gensprep/gensprep.vcxproj
---- icu.orig/source/tools/gensprep/gensprep.vcxproj	2013-12-05 12:56:32.452524900 +0100
-+++ source/tools/gensprep/gensprep.vcxproj	2013-12-05 12:55:02.366069700 +0100
+--- icu.orig/source/tools/gensprep/gensprep.vcxproj	2013-12-06 12:41:23.020178500 +0100
++++ source/tools/gensprep/gensprep.vcxproj	2013-12-06 12:39:40.547178800 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1641,8 +1641,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gensprep/gensprep.vcxproj source/tools/g
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/gentest/gentest.vcxproj source/tools/gentest/gentest.vcxproj
---- icu.orig/source/tools/gentest/gentest.vcxproj	2013-12-05 12:56:32.461450600 +0100
-+++ source/tools/gentest/gentest.vcxproj	2013-12-05 12:55:00.413986900 +0100
+--- icu.orig/source/tools/gentest/gentest.vcxproj	2013-12-06 12:41:23.035187600 +0100
++++ source/tools/gentest/gentest.vcxproj	2013-12-06 12:39:38.694758600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1684,8 +1684,8 @@ diff -Nru -x '*~' icu.orig/source/tools/gentest/gentest.vcxproj source/tools/gen
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/icuinfo/icuinfo.vcxproj source/tools/icuinfo/icuinfo.vcxproj
---- icu.orig/source/tools/icuinfo/icuinfo.vcxproj	2013-12-05 12:56:33.453839400 +0100
-+++ source/tools/icuinfo/icuinfo.vcxproj	2013-12-05 12:55:03.580257700 +0100
+--- icu.orig/source/tools/icuinfo/icuinfo.vcxproj	2013-12-06 12:41:23.045195600 +0100
++++ source/tools/icuinfo/icuinfo.vcxproj	2013-12-06 12:39:41.592925100 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1727,8 +1727,8 @@ diff -Nru -x '*~' icu.orig/source/tools/icuinfo/icuinfo.vcxproj source/tools/icu
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/icuinfo/testplug.vcxproj source/tools/icuinfo/testplug.vcxproj
---- icu.orig/source/tools/icuinfo/testplug.vcxproj	2013-12-05 12:56:33.484008800 +0100
-+++ source/tools/icuinfo/testplug.vcxproj	2013-12-05 12:55:03.778270400 +0100
+--- icu.orig/source/tools/icuinfo/testplug.vcxproj	2013-12-06 12:41:23.051199000 +0100
++++ source/tools/icuinfo/testplug.vcxproj	2013-12-06 12:39:41.765063300 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1770,8 +1770,8 @@ diff -Nru -x '*~' icu.orig/source/tools/icuinfo/testplug.vcxproj source/tools/ic
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/icupkg/icupkg.vcxproj source/tools/icupkg/icupkg.vcxproj
---- icu.orig/source/tools/icupkg/icupkg.vcxproj	2013-12-05 12:56:33.494013400 +0100
-+++ source/tools/icupkg/icupkg.vcxproj	2013-12-05 12:55:02.723208400 +0100
+--- icu.orig/source/tools/icupkg/icupkg.vcxproj	2013-12-06 12:41:23.056204600 +0100
++++ source/tools/icupkg/icupkg.vcxproj	2013-12-06 12:39:40.855396600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1813,8 +1813,8 @@ diff -Nru -x '*~' icu.orig/source/tools/icupkg/icupkg.vcxproj source/tools/icupk
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/makeconv/makeconv.vcxproj source/tools/makeconv/makeconv.vcxproj
---- icu.orig/source/tools/makeconv/makeconv.vcxproj	2013-12-05 12:56:33.522135300 +0100
-+++ source/tools/makeconv/makeconv.vcxproj	2013-12-05 12:55:01.316008600 +0100
+--- icu.orig/source/tools/makeconv/makeconv.vcxproj	2013-12-06 12:41:23.082289600 +0100
++++ source/tools/makeconv/makeconv.vcxproj	2013-12-06 12:39:39.597406300 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1856,8 +1856,8 @@ diff -Nru -x '*~' icu.orig/source/tools/makeconv/makeconv.vcxproj source/tools/m
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/pkgdata/pkgdata.vcxproj source/tools/pkgdata/pkgdata.vcxproj
---- icu.orig/source/tools/pkgdata/pkgdata.vcxproj	2013-12-05 12:56:33.544621700 +0100
-+++ source/tools/pkgdata/pkgdata.vcxproj	2013-12-05 12:55:01.482020100 +0100
+--- icu.orig/source/tools/pkgdata/pkgdata.vcxproj	2013-12-06 12:41:23.095296400 +0100
++++ source/tools/pkgdata/pkgdata.vcxproj	2013-12-06 12:39:39.747508800 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1899,8 +1899,8 @@ diff -Nru -x '*~' icu.orig/source/tools/pkgdata/pkgdata.vcxproj source/tools/pkg
 +</Project>
 \ No newline at end of file
 diff -Nru -x '*~' icu.orig/source/tools/toolutil/toolutil.vcxproj source/tools/toolutil/toolutil.vcxproj
---- icu.orig/source/tools/toolutil/toolutil.vcxproj	2013-12-05 12:56:33.617649500 +0100
-+++ source/tools/toolutil/toolutil.vcxproj	2013-12-05 12:55:01.825040200 +0100
+--- icu.orig/source/tools/toolutil/toolutil.vcxproj	2013-12-06 12:41:23.142339500 +0100
++++ source/tools/toolutil/toolutil.vcxproj	2013-12-06 12:39:40.097856600 +0100
 @@ -1,5 +1,5 @@
  ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
