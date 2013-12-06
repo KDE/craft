@@ -12,7 +12,7 @@ index c836e0e..70f329d 100644
      if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
          qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
 -        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib").arg(mysqlPath);
-+        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib -lmysql").arg(mysqlPath);
++        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib -llibmysql").arg(mysqlPath);
      }
      if (!psqlLibs.isEmpty())
          qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
