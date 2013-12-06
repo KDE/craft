@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtxmlpatterns'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
-        self.dependencies['libs/qtjsbackend'] ='default'
 
 
 from Package.Qt5CorePackageBase import *

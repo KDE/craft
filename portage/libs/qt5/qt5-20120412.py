@@ -12,7 +12,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtgraphicaleffects'] = 'default'
         self.dependencies['libs/qtimageformats'] = 'default'
-        self.dependencies['libs/qtjsbackend'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
