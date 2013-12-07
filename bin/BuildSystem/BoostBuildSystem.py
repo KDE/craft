@@ -46,6 +46,10 @@ class BoostBuildSystem(BuildSystemBase):
                 options += "msvc-9.0"
             elif compiler.isMSVC2010():
                 options += "msvc-10.0"
+            elif compiler.isMSVC2012():
+                options += "msvc-11.0"
+            elif compiler.isMSVC2013():
+                options += "msvc-12.0"
             elif compiler.isIntel():
                 options += "intel"
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
