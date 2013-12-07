@@ -17,18 +17,19 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['libs/qtwinextras'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
         # self.dependencies['kdesupport/hupnp'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
-        # self.dependencies['kdesupport/phonon'] = 'default'
+        self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'
-        self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
+        # self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
         #self.dependencies['kdesupport/grantlee'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
+        # self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
-        if self.options.features.nepomuk:
-            self.dependencies['kdesupport/soprano'] = 'default'
+        # if self.options.features.nepomuk:
+            # self.dependencies['kdesupport/soprano'] = 'default'
             #self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['virtual/kdelibs-base'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
