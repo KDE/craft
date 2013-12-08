@@ -27,6 +27,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.5.0'] = '122f7c53939a2c40c3312c2f5e59f25ca2c9ee53'
         self.targetDigests['4.6.0'] = 'd8dbc188b58c6dd9c6a73d3742a25291e647bb95'
         self.targetDigests['4.7.0'] = 'feda28afe016fe38eb253f2be01973fc0226d10f'
+        self.targetDigests['4.7.1'] = 'f1d3214a752d97028dc4ed910a832c1272951522'
 
         self.shortDescription = "a Qt based multimedia framework"
         self.defaultTarget = '4.7.1'
