@@ -22,9 +22,13 @@ class subinfo(info.infoclass):
       self.targetDigests['0.4.1'] = 'b2957b70e1722f08a231b9e64acfafb799b52d11'
       
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
-      for ver in ['0.5.0', '0.6.0', '0.6.1', '0.7.0', '0.7.1']:
+      for ver in ['0.5.0', '0.6.0', '0.6.1', '0.7.0']:
         self.targets[ ver ] = "http://download.kde.org/stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
-        self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
+        self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver
+
+      for ver in ['0.7.1']:
+        self.targets[ ver ] = "http://download.kde.org/stable/phonon/phonon-backend-vlc/%s/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
+        self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver  
         
       for ver in ['0.6.2']:
         self.targets[ ver ] = "http://download.kde.org/download.php?url=stable/phonon/phonon-backend-vlc/%s/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
@@ -32,13 +36,16 @@ class subinfo(info.infoclass):
         
       self.targetDigests['0.6.0'] = 'f66a70cd27ad49dc98eb6526d0566cfe0802774b'
       self.targetDigests['0.6.1'] = '2c17bd124a2f6543efc6af0e6a79bf37f8f5cd37'
+      self.targetDigests['0.6.2'] = '6c12107389831e433918e34468e8829568003964'
+      self.targetDigests['0.7.0'] = '8ebf032d7a87064e1307ff3f421aef2b07088681'
+      self.targetDigests['0.7.1'] = '6f8e8abae12fdafc63b911b185cb335c65d59450'
       
       self.patchToApply['0.5.0'] = [("0001-Revert-stop-leaking-video-audio-abstraction.patch",1)]
       self.patchToApply['0.6.0'] = [("fix windows aout selection.diff",1)]
       self.patchToApply['0.6.2'] = [("do not mark injected devices as advanced.diff",1),
                                     ("use-kdewin-also-for-intel-compiler.diff", 1)]
-      self.patchToApply['0.7.0'] = [("use-kdewin-also-for-intel-compiler.diff", 1),
-                                    ("0002-FindLIBVLC-Detect-libvlc-s-version-even-if-pkg-confi.patch", 1)]
+      self.patchToApply['0.7.0'] = [("use-kdewin-also-for-intel-compiler.diff", 1), # upstream
+                                    ("0002-FindLIBVLC-Detect-libvlc-s-version-even-if-pkg-confi.patch", 1)] # upstream
       
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       
