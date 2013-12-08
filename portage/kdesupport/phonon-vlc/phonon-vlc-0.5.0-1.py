@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
       self.targetDigests['0.4.1'] = 'b2957b70e1722f08a231b9e64acfafb799b52d11'
       
       self.patchToApply['0.4.1'] = [("phonon-backend-vlc-0.4.1-20111213.diff", 1),("phonon-backend-vlc-0.4.1-20111223.diff",1)]
-      for ver in ['0.5.0', '0.6.0', '0.6.1', '0.7.0']:
+      for ver in ['0.5.0', '0.6.0', '0.6.1', '0.7.0', '0.7.1']:
         self.targets[ ver ] = "http://download.kde.org/stable/phonon/phonon-backend-vlc/%s/src/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
         self.targetInstSrc[ ver ] = "phonon-backend-vlc-%s" % ver 
         
@@ -43,7 +43,7 @@ class subinfo(info.infoclass):
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.7.0'
+      self.defaultTarget = '0.7.1'
 
 
 class Package( CMakePackageBase ):

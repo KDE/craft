@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         for ver in ['4.5.1','4.6.0']:
             self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/src/phonon-%s.tar.xz' % (ver ,ver)
             self.targetInstSrc[ver] = 'phonon-%s' % ver
-        for ver in ['4.7.0']:
+        for ver in ['4.7.0','4.7.1']:
             self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/phonon-%s.tar.xz' % (ver ,ver)
             self.targetInstSrc[ver] = 'phonon-%s' % ver
         if ver in ['4.4.3', '4.4.4']: self.patchToApply[ver] = ("phonon-20100915.diff", 1)
@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.7.0'] = 'feda28afe016fe38eb253f2be01973fc0226d10f'
 
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = '4.7.0'
+        self.defaultTarget = '4.7.1'
 
 
     def setBuildOptions( self ):
