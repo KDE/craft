@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/libkolab'] = 'default'
         self.dependencies['extragear/libkgapi'] = 'default'
+        self.dependencies['extragear/libkfbapi'] = 'default'
         self.shortDescription = "Extends the functionality of kdepim"
 
 from Package.CMakePackageBase import *
