@@ -1,0 +1,30 @@
+From f9ce9b65a89d2ddd71574ac51a2ff1c6566fde27 Mon Sep 17 00:00:00 2001
+From: Nico Kruber <nico.kruber@gmail.com>
+Date: Mon, 9 Dec 2013 03:42:16 +0100
+Subject: [PATCH 2/2] fix akonadi_serializer_kcalcore build on msvc
+
+the following definition from KCalCore's incidencebase.h only allows a
+"const KCalCore::IncidenceBase::Ptr &" and MSVC does not seem to try that
+cast itself:
+KCALCORE_EXPORT QDataStream &operator>>(QDataStream &in, const
+KCalCore::IncidenceBase::Ptr &);
+---
+ plugins/akonadi_serializer_kcalcore.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/akonadi_serializer_kcalcore.cpp b/plugins/akonadi_serializer_kcalcore.cpp
+index 63f7f01..d13d965 100644
+--- a/plugins/akonadi_serializer_kcalcore.cpp
++++ b/plugins/akonadi_serializer_kcalcore.cpp
+@@ -76,7 +76,7 @@ bool SerializerPluginKCalCore::deserialize( Item &item, const QByteArray &label,
+       default:
+         break;
+     }
+-    input >> base;
++    input >> static_cast<const IncidenceBase::Ptr>(base);
+     incidence = base.staticCast<KCalCore::Incidence>();
+   } else {
+     // Use the old format
+-- 
+1.8.3.msysgit.0
+
