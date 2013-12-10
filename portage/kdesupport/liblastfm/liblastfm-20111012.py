@@ -6,8 +6,7 @@ import shutil
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = "git://github.com/TheOneRing/liblastfm.git"
-        self.targetSrcSuffix['gitHEAD'] = "theo"
+        self.svnTargets[ 'gitHEAD' ] = "https://github.com/lastfm/liblastfm.git"
         for ver in ['1.0.0','1.0.1','1.0.2','1.0.3']:
             self.targets[ver] = 'http://cdn.last.fm/client/liblastfm-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'liblastfm-%s' % ver
