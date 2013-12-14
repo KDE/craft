@@ -3,7 +3,8 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "[git]kde:calligra"
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['2.8'] = "[git]kde:calligra|calligra/2.8"
+        self.defaultTarget = '2.8'
         self.shortDescription = "The Calligra Suite of Applications"
 
     def setDependencies( self ):
@@ -18,6 +19,7 @@ class subinfo( info.infoclass ):
         self.dependencies['testing/gsl'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'
         self.dependencies['win32libs/openjpeg'] = 'default'
+        self.dependencies['win32libs/icu'] = 'default'
 #        self.dependencies['win32libs/libfftw'] = 'default'
 
 from Package.CMakePackageBase import *
@@ -27,8 +29,6 @@ class Package( CMakePackageBase ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         defines = ""
-        defines += "-DBUILD_kexi=OFF "
-        defines += "-DBUILD_plan=OFF "
         defines += "-DBUILD_doc=OFF "
         defines += "-DMEMORY_LEAK_TRACKER=OFF"
 
