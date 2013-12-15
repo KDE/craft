@@ -117,7 +117,7 @@ class subinfo(info.infoclass):
             ('patches/4.8.1/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1),
             ('patches/4.8.5/fix-defined-defined-and-do-not-include-inttypes-for-intel-compiler.patch', 1),
             ('patches/4.8.4/fix-Q_CORE_EXPORT_INLINE-for-intel-compiler.patch', 1),
-            ('0001-fixed-build-with-new-mingw.patch', 1)
+            ('patches/4.8.5/0001-fixed-build-with-new-mingw.patch', 1)
         ]
 
         self.shortDescription = "a cross-platform application framework"
