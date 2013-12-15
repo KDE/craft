@@ -1385,11 +1385,11 @@ def embedManifest(executable, manifest):
                 debug("embedManifest could not find a mt.exe in\n\t %s" % \
                     os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
-        return system([mtExe, "-nologo", "-manifest", manifest,
+        system([mtExe, "-nologo", "-manifest", manifest,
             "-outputresource:%s;1" % executable])
     else:
-        return system(["mt", "-nologo", "-manifest", manifest,
-            "-outputresource:%s;1" % executable])
+        debug("No manifest tool found. \n Ressource manifest for %s not embedded"\
+                % executable, 1)
 
 
 def getscriptname():
