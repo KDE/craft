@@ -48,8 +48,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        if compiler.isMSVC():
-            self.supportsNinja = False
         # adjust some vars for proper compile
         self.glibDir=os.path.join( self.buildDir() , ".."  , "glib-" + GLIB_VER );
         self.subinfo.options.configure.defines = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
