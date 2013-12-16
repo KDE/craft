@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
       self.svnTargets['gitHEAD'] = 'git@github.com:TheOneRing/Snorenotify.git'
       for ver in ['0.2','0.3','0.4-beta1','0.4-beta2']:
           self.targets[ver] = 'https://github.com/TheOneRing/Snorenotify/archive/v%s.tar.gz' % ver
+          self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
           self.targetInstSrc[ver] = 'Snorenotify-%s' % ver
       self.targetDigests['0.4-beta1'] = '76996e2ebd23fa7b99b68e743c880b3fa0d724af'
       self.defaultTarget = '0.4-beta2'
