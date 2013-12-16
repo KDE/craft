@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.patchToApply[kd.kdeversion + ver] = [('fix-introduction-screen.diff', 1),  # not to be upstreamed, this is an ugly hack, the fix is somewhere else (ref. bug 302342)
+            self.patchToApply[kd.kdeversion + ver] = [('fix_introduction_screen.diff', 1),  # not to be upstreamed, this is an ugly hack, the fix is somewhere else (ref. bug 302342)
                                                       ('0001-fixed-windows-x64-build.patch', 1)] # reverted upstream (does not compile on Linux)
 
         self.defaultTarget = 'gitHEAD'
