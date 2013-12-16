@@ -1,0 +1,25 @@
+From 345c2ad251cf8a8e83b576af336c0269cdb153e2 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Sat, 14 Dec 2013 18:11:41 +0100
+Subject: [PATCH] fixed build with new mingw
+
+---
+ src/corelib/tools/qsimd.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/corelib/tools/qsimd.cpp b/src/corelib/tools/qsimd.cpp
+index 540b615..dc95ac9 100644
+--- a/src/corelib/tools/qsimd.cpp
++++ b/src/corelib/tools/qsimd.cpp
+@@ -47,7 +47,7 @@
+ #include <windows.h>
+ #endif
+ 
+-#if defined(Q_OS_WIN64) && !defined(Q_CC_GNU)
++#if defined(Q_OS_WIN64)
+ #include <intrin.h>
+ #endif
+ 
+-- 
+1.8.3.msysgit.0
+

@@ -1,0 +1,25 @@
+From b2398dd3bf7094311e37b09ff6bb85a7c612c0d5 Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Sat, 7 Dec 2013 00:02:37 +0100
+Subject: [PATCH 1/2] fixed windows build
+
+---
+ agents/newmailnotifier/newmailnotifieragent.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/agents/newmailnotifier/newmailnotifieragent.cpp b/agents/newmailnotifier/newmailnotifieragent.cpp
+index d620ed1..7cd8792 100644
+--- a/agents/newmailnotifier/newmailnotifieragent.cpp
++++ b/agents/newmailnotifier/newmailnotifieragent.cpp
+@@ -231,7 +231,7 @@ bool NewMailNotifierAgent::enabledAgent() const
+ 
+ void NewMailNotifierAgent::showConfigureDialog(qlonglong windowId)
+ {
+-    configure( windowId );
++    configure( reinterpret_cast<WId>(windowId));
+ }
+ 
+ void NewMailNotifierAgent::configure( WId windowId )
+-- 
+1.8.3.msysgit.0
+

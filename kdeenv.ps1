@@ -11,19 +11,20 @@
 
 cls
 
+
 $dp0=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
 
 function subst([string] $varname, [string] $path, [string] $drive)
 {
-	while($path.Contains("$"))
-	{
-		foreach($key in $settings["Paths"].keys)
-		{
-			$path = $path.Replace("`$`{"+$key+"`}",$settings["Paths"][$key])
-		}
-	}
+    while($path.Contains("$"))
+    {
+        foreach($key in $settings["Paths"].keys)
+        {
+            $path = $path.Replace("`$`{"+$key+"`}",$settings["Paths"][$key])
+        }
+    }
     if(!(test-path -path $path))
     {
         mkdir $path
@@ -226,7 +227,22 @@ function emerge()
     python "$env:KDEROOT\emerge\bin\emerge.py" $args
 }
 
-cd $env:KDEROOT
 
 # make sure term is not defined by any script
 $env:TERM=""
+
+if($args.Length -eq 2 -and $args[0] -eq "--package")
+{
+    python "$env:KDEROOT\emerge\server\package.py" $args[1]
+}
+else
+{
+    if($args.Length -ne 0)
+    {
+        invoke-expression -command "$args"
+    }
+    else
+    {
+        cd $env:KDEROOT
+    }
+}

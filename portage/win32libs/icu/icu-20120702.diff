@@ -1,0 +1,29 @@
+diff -Nru -x '*~' icu.orig/source/tools/toolutil/pkg_genc.c icu/source/tools/toolutil/pkg_genc.c
+--- icu.orig/source/tools/toolutil/pkg_genc.c	2012-04-05 23:46:28.000000000 +0300
++++ source/tools/toolutil/pkg_genc.c	2012-07-02 14:46:45.017000200 +0300
+@@ -5,6 +5,12 @@
+  */
+ #include "unicode/utypes.h"
+ 
++#ifndef USER_LABEL_PREFIX
++#define USER_LABEL_PREFIX _
++#endif
++#define GCC_LABEL_PREFIX_INTERNAL(a) #a
++#define GCC_LABEL_PREFIX(a) GCC_LABEL_PREFIX_INTERNAL(a)
++
+ #if U_PLATFORM_HAS_WIN32_API
+ #   define VC_EXTRALEAN
+ #   define WIN32_LEAN_AND_MEAN
+@@ -135,10 +141,10 @@
+         ".long ","",HEX_0X
+     },
+     {"gcc-cygwin",
+-        ".globl _%s\n"
++        ".globl " GCC_LABEL_PREFIX(__USER_LABEL_PREFIX__) "%s\n"
+         "\t.section .rodata\n"
+         "\t.align 8\n" /* Either align 8 bytes or 2^8 (256) bytes. 8 bytes is needed. */
+-        "_%s:\n\n",
++        GCC_LABEL_PREFIX(__USER_LABEL_PREFIX__) "%s:\n\n",
+ 
+         ".long ","",HEX_0X
+     },
