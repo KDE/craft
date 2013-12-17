@@ -13,16 +13,28 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
+        if compiler.isMSVC():
+            self.buildDependencies['binary/xerces-c-bin'] = 'default'
 
 from Package.AutoToolsPackageBase import *
+from Package.VirtualPackageBase import *
 
-class Package(AutoToolsPackageBase):
+class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
 
-        self.buildInSource=True
+
+if compiler.isMinGW():
+    class Package(PackageMSys):
+        def __init__( self ):
+            PackageMSys.__init__( self )
+else:
+    class Package(Virtual):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+            
 
 if __name__ == '__main__':
       Package().execute()
-
