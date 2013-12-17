@@ -11,15 +11,11 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'dbus-%s' % ver
             self.targetConfigurePath[ver] = 'cmake'
-
-
+            
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
-
-
-      
-                                         ]
+        
         self.patchToApply['1.4.24'] = [('dbus-va-copy-on-intel-compiler-should-behave-the-same-of-msvc.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
