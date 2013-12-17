@@ -63,6 +63,9 @@ class DependencyPackage(object):
         if autoExpand:
             self.__readChildren()
 
+    def __hash__(self):
+        return str( self.category + "/" +  self.name).__hash__()
+        
     def __eq__( self, other ):
         return self.category == other.category and self.name == other.name and self.version == other.version
 
@@ -94,7 +97,7 @@ class DependencyPackage(object):
                 children.append( p )
         return children
 
-    def getDependencies( self, depList=None, dep_type="both" ):
+    def getDependencies( self, depList=None, dep_type="both", single = set() ):
         """ returns all dependencies """
         if depList is None:
             depList = []
@@ -104,17 +107,15 @@ class DependencyPackage(object):
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
-
+            
+        single.add(self)
+        for p in children:
+            if not p in single and not p in depList:
+                p.getDependencies( depList, dep_type,single )
+                    
         #if self.category != internalCategory:
         if not self in depList:
             depList.append( self )
-            
-        for p in children:
-            if not p in depList:
-                    p.getDependencies( depList, dep_type )
-                    
-        depList.remove(self)
-        depList.append( self )
 
 
 
