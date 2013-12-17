@@ -54,13 +54,14 @@ class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
-    def __init__( self, category, name, version ):
+    def __init__( self, category, name, version , autoExpand = True ):
         self.category = category
         self.name = name
         self.version = version
         self.runtimeChildren = []
         self.buildChildren = []
-        self.__readChildren()
+        if autoExpand:
+            self.__readChildren()
 
     def __eq__( self, other ):
         return self.category == other.category and self.name == other.name and self.version == other.version
@@ -84,9 +85,10 @@ class DependencyPackage(object):
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in list(packageDict.keys()):
-                    p = DependencyPackage( category, package, version )
+                    p = DependencyPackage( category, package, version, False )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
+                    p.__readChildren()
                 else:
                     p = packageDict[ line ]
                 children.append( p )
