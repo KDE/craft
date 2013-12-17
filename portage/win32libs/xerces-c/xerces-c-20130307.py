@@ -30,7 +30,7 @@ if compiler.isMinGW():
         def __init__( self ):
             PackageMSys.__init__( self )
 else:
-    class Package(Virtual):
+    class Package(VirtualPackageBase):
         def __init__( self ):
             self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
