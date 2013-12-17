@@ -258,9 +258,6 @@ for [cat, pac, ver, tar] in depList:
     if cat + "/" + pac in list(addInfo.keys()):
         target, patchlvl = addInfo[ cat + "/" + pac ]
     p = package( cat, pac, target, patchlvl )
-    if not [cat, pac, ver, tar] in runtimeDepList:
-        print("could not find package %s in runtime dependencies" % pac)
-        p.ignoreNotifications = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:
