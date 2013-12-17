@@ -46,7 +46,7 @@ class subinfo(info.infoclass):
             if utils.envAsBool("EMERGE_USE_NINJA"):
                 self.buildDependencies['dev-util/ninja'] = 'default'
             if utils.envAsBool("EMERGE_USE_CCACHE"):
-                self.buildDependencies['dev-util/ccache'] = 'default'
+                self.buildDependencies['win32libs/ccache'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
