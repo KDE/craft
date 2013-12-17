@@ -1,0 +1,27 @@
+From 6b9104734ae3b58824f4850b356737616b1753f7 Mon Sep 17 00:00:00 2001
+From: Neil Mitchell <ndmitchell@gmail.com>
+Date: Mon, 18 Nov 2013 06:32:32 +0000
+Subject: [PATCH 2/3] Fix up platform_helper for MSVC, with Python 2.6.8 the
+ arguments have to be in a list, not space separated (unless you set Shell to
+ true)
+
+---
+ platform_helper.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/platform_helper.py b/platform_helper.py
+index dac7c02..1b45e19 100644
+--- a/platform_helper.py
++++ b/platform_helper.py
+@@ -58,7 +58,7 @@ class Platform(object):
+ 
+     def msvc_needs_fs(self):
+         import subprocess
+-        popen = subprocess.Popen('cl /nologo /?',
++        popen = subprocess.Popen(['cl', '/nologo', '/?'],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+         out, err = popen.communicate()
+-- 
+1.8.3.2
+
