@@ -73,8 +73,6 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
-        if self.category in [ "virtual", "gnuwin32" ]:
-            self.ignoreNotifications = True
 
     def __str__( self ):
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
