@@ -73,6 +73,8 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
+        if self.category in [ "virtual", "gnuwin32" ]:
+            self.ignoreNotifications = True
 
     def __str__( self ):
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
@@ -199,11 +201,6 @@ cmdstring = emerge + " --cleanup"
 p = subprocess.Popen( cmdstring, shell=True )
 p.wait()
 
-# first emerge base, so that the base is installed everywhere
-cmdstring = emerge + " base"
-p = subprocess.Popen( cmdstring, shell=True )
-p.wait()
-
 # second check whether the kdewin-packager is installed at all
 ver = portage.PortageInstance.getNewestVersion( "dev-util", "kdewin-packager" )
 if isDBEnabled():
@@ -261,6 +258,9 @@ for [cat, pac, ver, tar] in depList:
     if cat + "/" + pac in list(addInfo.keys()):
         target, patchlvl = addInfo[ cat + "/" + pac ]
     p = package( cat, pac, target, patchlvl )
+    if not [cat, pac, ver, tar] in runtimeDepList:
+        print("could not find package %s in runtime dependencies" % pac)
+        p.ignoreNotifications = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:
