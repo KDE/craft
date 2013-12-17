@@ -1,0 +1,95 @@
+From a90b279e469ec4ad3c57dff5075acecabc41e70a Mon Sep 17 00:00:00 2001
+From: Scott Graham <scottmg@chromium.org>
+Date: Thu, 17 Oct 2013 21:12:11 -0700
+Subject: [PATCH 1/8] Fix compilation on VS2013
+
+---
+ configure.py         |  2 ++
+ platform_helper.py   | 12 ++++++++++--
+ src/edit_distance.cc |  1 +
+ src/hash_map.h       |  1 +
+ src/metrics.cc       |  2 ++
+ 5 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index 9fe3be8..431b03e 100755
+--- a/configure.py
++++ b/configure.py
+@@ -125,6 +125,8 @@ if platform.is_msvc():
+               '/DNOMINMAX', '/D_CRT_SECURE_NO_WARNINGS',
+               '/D_VARIADIC_MAX=10',
+               '/DNINJA_PYTHON="%s"' % options.with_python]
++    if platform.msvc_needs_fs():
++        cflags.append('/FS')
+     ldflags = ['/DEBUG', '/libpath:$builddir']
+     if not options.debug:
+         cflags += ['/Ox', '/DNDEBUG', '/GL']
+diff --git a/platform_helper.py b/platform_helper.py
+index b7447a1..dac7c02 100644
+--- a/platform_helper.py
++++ b/platform_helper.py
+@@ -21,8 +21,8 @@ def platforms():
+     return ['linux', 'darwin', 'freebsd', 'openbsd', 'solaris', 'sunos5',
+             'mingw', 'msvc', 'gnukfreebsd8', 'bitrig']
+
+-class Platform( object ):
+-    def __init__( self, platform):
++class Platform(object):
++    def __init__(self, platform):
+         self._platform = platform
+         if not self._platform is None:
+             return
+@@ -56,6 +56,14 @@ class Platform( object ):
+     def is_msvc(self):
+         return self._platform == 'msvc'
+
++    def msvc_needs_fs(self):
++        import subprocess
++        popen = subprocess.Popen('cl /nologo /?',
++                                 stdout=subprocess.PIPE,
++                                 stderr=subprocess.PIPE)
++        out, err = popen.communicate()
++        return '/FS ' in out
++
+     def is_windows(self):
+         return self.is_mingw() or self.is_msvc()
+
+diff --git a/src/edit_distance.cc b/src/edit_distance.cc
+index cc4483f..9553c6e 100644
+--- a/src/edit_distance.cc
++++ b/src/edit_distance.cc
+@@ -14,6 +14,7 @@
+
+ #include "edit_distance.h"
+
++#include <algorithm>
+ #include <vector>
+
+ int EditDistance(const StringPiece& s1,
+diff --git a/src/hash_map.h b/src/hash_map.h
+index c63aa88..77e7586 100644
+--- a/src/hash_map.h
++++ b/src/hash_map.h
+@@ -15,6 +15,7 @@
+ #ifndef NINJA_MAP_H_
+ #define NINJA_MAP_H_
+
++#include <algorithm>
+ #include <string.h>
+ #include "string_piece.h"
+
+diff --git a/src/metrics.cc b/src/metrics.cc
+index ca4f97a..a7d3c7a 100644
+--- a/src/metrics.cc
++++ b/src/metrics.cc
+@@ -24,6 +24,8 @@
+ #include <windows.h>
+ #endif
+
++#include <algorithm>
++
+ #include "util.h"
+
+ Metrics* g_metrics = NULL;
+--
+1.8.3.2
