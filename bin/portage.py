@@ -80,10 +80,13 @@ class DependencyPackage(object):
         children = []
         if deps:
             for line in deps:
+                if line in packageDict:
+                    continue
                 ( category, package ) = line.split( "/" )
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in list(packageDict.keys()):
+                    packageDict[ line ] = None#add a dummy to the list to prevent recursive imports
                     p = DependencyPackage( category, package, version )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
