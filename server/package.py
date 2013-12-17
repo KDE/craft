@@ -73,7 +73,7 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
-        if self.category in [ "virtual", "dev-util", "gnuwin32" ]:
+        if self.category in [ "virtual", "gnuwin32" ]:
             self.ignoreNotifications = True
 
     def __str__( self ):
@@ -263,9 +263,6 @@ for [cat, pac, ver, tar] in depList:
     if cat + "/" + pac in list(addInfo.keys()):
         target, patchlvl = addInfo[ cat + "/" + pac ]
     p = package( cat, pac, target, patchlvl )
-    if not [cat, pac, ver, tar] in runtimeDepList:
-        print("could not find package %s in runtime dependencies" % pac)
-        p.ignoreNotifications = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:
