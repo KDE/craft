@@ -103,13 +103,18 @@ class DependencyPackage(object):
         else:
             children = self.runtimeChildren + self.buildChildren
 
-        for p in children:
-            if not p in depList:
-                p.getDependencies( depList, dep_type )
-
         #if self.category != internalCategory:
         if not self in depList:
             depList.append( self )
+            
+        for p in children:
+            if not p in depList:
+                    p.getDependencies( depList, dep_type )
+                    
+        depList.remove(self)
+        depList.append( self )
+
+
 
         return depList
 
