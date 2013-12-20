@@ -36,6 +36,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
+        self.platform = ""
         self.subinfo.options.configure.defines = " --disable-static --enable-shared --enable-gpl --enable-libvorbis  --disable-doc  --enable-libmp3lame --enable-libopus --enable-w32threads"
         
     def configure( self):

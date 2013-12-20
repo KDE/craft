@@ -16,6 +16,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.makeProgram = "make "
         if self.subinfo.options.make.supportsMultijob:
             self.makeProgram += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
+        if emergePlatform.buildArchitecture() == "x86":
+            self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
+        else:
+            self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
 
     def configureDefaultDefines( self ):
@@ -115,6 +119,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 options += " --prefix=%s " % self.shell.toNativePath(self.imageDir())
             else:
                 options += " --prefix=%s " % self.shell.toNativePath(self.mergeDestinationDir())
+        options += self.platform
         
         return options;
 
