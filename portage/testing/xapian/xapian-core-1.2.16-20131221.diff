@@ -1,0 +1,613 @@
+diff -Nru -x '*~' xapian-core-1.2.16.orig/api/CMakeLists.txt xapian-core-1.2.16/api/CMakeLists.txt
+--- xapian-core-1.2.16.orig/api/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/api/CMakeLists.txt	2013-12-21 01:25:35.273850600 +0100
+@@ -0,0 +1,35 @@
++# api subdirectory
++
++set(api_SRCS
++    compactor.cc
++    decvalwtsource.cc
++    documentvaluelist.cc
++    editdistance.cc
++    emptypostlist.cc
++    error.cc
++    errorhandler.cc
++    expanddecider.cc
++    keymaker.cc
++    leafpostlist.cc
++    matchspy.cc
++    omdatabase.cc
++    omdocument.cc
++    omenquire.cc
++    ompositionlistiterator.cc
++    ompostlistiterator.cc
++    omquery.cc
++    omqueryinternal.cc
++    omtermlistiterator.cc
++    postingsource.cc
++    postlist.cc
++    registry.cc
++    replication.cc
++    sortable-serialise.cc
++    termlist.cc
++    valueiterator.cc
++    valuerangeproc.cc
++    valuesetmatchdecider.cc
++    version.cc
++)
++
++add_library(xapian_api OBJECT ${api_SRCS})
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt xapian-core-1.2.16/backends/brass/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/brass/CMakeLists.txt	2013-12-21 02:03:10.073817800 +0100
+@@ -0,0 +1,31 @@
++# backends / brass
++
++set(backends_brass_SRCS
++    brass_alldocspostlist.cc
++    brass_alltermslist.cc
++    brass_btreebase.cc
++    brass_compact.cc
++    brass_cursor.cc
++    brass_database.cc
++    brass_databasereplicator.cc
++    brass_dbstats.cc
++    brass_document.cc
++    brass_inverter.cc
++    brass_metadata.cc
++    brass_positionlist.cc
++    brass_postlist.cc
++    brass_record.cc
++    brass_spelling.cc
++    brass_spellingwordslist.cc
++    brass_synonym.cc
++    brass_table.cc
++    brass_termlist.cc
++    brass_termlisttable.cc
++    brass_valuelist.cc
++    brass_values.cc
++    brass_version.cc
++)
++
++add_library(backend_brass OBJECT ${backends_brass_SRCS})
++
++add_library(brasscheck brass_check.cc)
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt xapian-core-1.2.16/backends/chert/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/chert/CMakeLists.txt	2013-12-21 01:36:32.841461300 +0100
+@@ -0,0 +1,34 @@
++# backends / chert
++
++if(BUILD_BACKEND_CHERT)
++    set(backends_chert_SRCS
++        chert_alldocsmodifiedpostlist.cc
++        chert_alldocspostlist.cc
++        chert_alltermslist.cc
++        chert_btreebase.cc
++        chert_compact.cc
++        chert_cursor.cc
++        chert_database.cc
++        chert_databasereplicator.cc
++        chert_dbstats.cc
++        chert_document.cc
++        chert_metadata.cc
++        chert_modifiedpostlist.cc
++        chert_positionlist.cc
++        chert_postlist.cc
++        chert_record.cc
++        chert_spelling.cc
++        chert_spellingwordslist.cc
++        chert_synonym.cc
++        chert_table.cc
++        chert_termlist.cc
++        chert_termlisttable.cc
++        chert_valuelist.cc
++        chert_values.cc
++        chert_version.cc
++    )
++
++    add_library(backend_chert OBJECT ${backends_chert_SRCS})
++
++    add_library(chertcheck chert_check.cc)
++endif()
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/CMakeLists.txt xapian-core-1.2.16/backends/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/CMakeLists.txt	2013-12-21 01:54:30.005071600 +0100
+@@ -0,0 +1,30 @@
++# backends
++
++add_subdirectory(brass)
++add_subdirectory(chert)
++add_subdirectory(flint)
++add_subdirectory(inmemory)
++add_subdirectory(multi)
++add_subdirectory(remote)
++
++set(backends_SRCS
++    alltermslist.cc
++    database.cc
++    databasereplicator.cc
++    dbfactory.cc
++    slowvaluelist.cc
++    valuelist.cc
++)
++
++if(BUILD_BACKEND_REMOTE)
++    list(APPEND backends_SRCS dbfactory_remote.cc)
++endif()
++
++if(BUILD_BACKEND_FLINT OR BUILD_BACKEND_CHERT OR BUILD_BACKEND_BRASS)
++    list(APPEND backends_SRCS
++        contiguousalldocspostlist.cc
++        flint_lock.cc
++    )
++endif()
++
++add_library(backends OBJECT ${backends_SRCS})
+\ No newline at end of file
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt xapian-core-1.2.16/backends/flint/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/flint/CMakeLists.txt	2013-12-21 01:37:56.309235400 +0100
+@@ -0,0 +1,31 @@
++# backends / flint
++
++if(BUILD_BACKEND_FLINT)
++    set(backends_flint_SRCS
++        flint_alldocspostlist.cc
++        flint_alltermslist.cc
++        flint_btreebase.cc
++        flint_compact.cc
++        flint_cursor.cc
++        flint_database.cc
++        flint_databasereplicator.cc
++        flint_document.cc
++        flint_metadata.cc
++        flint_modifiedpostlist.cc
++        flint_positionlist.cc
++        flint_postlist.cc
++        flint_record.cc
++        flint_spelling.cc
++        flint_spellingwordslist.cc
++        flint_synonym.cc
++        flint_table.cc
++        flint_termlist.cc
++        flint_termlisttable.cc
++        flint_values.cc
++        flint_version.cc
++    )
++
++    add_library(backend_flint OBJECT ${backends_flint_SRCS})
++
++    add_library(flintcheck flint_check.cc)
++endif()
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/inmemory/CMakeLists.txt xapian-core-1.2.16/backends/inmemory/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/inmemory/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/inmemory/CMakeLists.txt	2013-12-21 01:43:04.839882300 +0100
+@@ -0,0 +1,14 @@
++# backends / inmemory
++
++if(BUILD_BACKEND_INMEMORY)
++    set(backends_inmemory_SRCS
++        inmemory_alltermslist.cc
++        inmemory_database.cc
++        inmemory_document.cc
++        inmemory_positionlist.cc
++    )
++
++    add_library(backend_inmemory OBJECT ${backends_inmemory_SRCS})
++else()
++    add_library(backend_inmemory inmemory_positionlist.cc)
++endif()
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/multi/CMakeLists.txt xapian-core-1.2.16/backends/multi/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/multi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/multi/CMakeLists.txt	2013-12-21 01:44:03.932262200 +0100
+@@ -0,0 +1,10 @@
++# backends / multi
++
++set(backends_multi_SRCS
++    multi_alltermslist.cc
++    multi_postlist.cc
++    multi_termlist.cc
++    multi_valuelist.cc
++)
++
++add_library(backend_multi OBJECT ${backends_multi_SRCS})
+diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt xapian-core-1.2.16/backends/remote/CMakeLists.txt
+--- xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/backends/remote/CMakeLists.txt	2013-12-21 01:45:03.587674300 +0100
+@@ -0,0 +1,12 @@
++# backends / remote
++
++if(BUILD_BACKEND_REMOTE)
++    set(backends_remote_SRCS
++        remote-document.cc
++        net_postlist.cc
++        net_termlist.cc
++        remote-database.cc
++    )
++
++    add_library(backend_remote OBJECT ${backends_remote_SRCS})
++endif()
+diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMakeLists.txt
+--- xapian-core-1.2.16.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/CMakeLists.txt	2013-12-21 02:26:13.024918100 +0100
+@@ -0,0 +1,48 @@
++project(xapian)
++
++cmake_minimum_required(VERSION 2.8)
++
++set(MAJOR_VERSION 1)
++set(MINOR_VERSION 2)
++set(REVISION 16)
++
++option(BUILD_BACKEND_CHERT "build chert backend" ON)
++option(BUILD_BACKEND_FLINT "build flint backend" ON)
++option(BUILD_BACKEND_INMEMORY "build inmemory backend" ON)
++option(BUILD_BACKEND_REMOTE "build remote backend" ON)
++
++find_package(ZLIB REQUIRED)
++
++include_directories(
++    ${CMAKE_BINARY_DIR}/include
++    include
++    common
++    ${CMAKE_SOURCE_DIR}
++    ${ZLIB_INCLUDE_DIRS}
++)
++
++if(WIN32)
++    add_definitions(-D__WIN32__)
++endif()
++
++
++file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/include/xapian)
++configure_file(config.h.win32 ${CMAKE_BINARY_DIR}/include/config.h @COPYONLY)
++configure_file(version.h.in ${CMAKE_BINARY_DIR}/include/xapian/version.h)
++
++add_subdirectory(api)
++add_subdirectory(backends)
++add_subdirectory(common)
++add_subdirectory(expand)
++add_subdirectory(languages)
++# include bin/Makefile.mk
++# include common/Makefile.mk
++# include examples/Makefile.mk
++# include expand/Makefile.mk
++# include include/Makefile.mk
++# include languages/Makefile.mk
++# include matcher/Makefile.mk
++# include net/Makefile.mk
++# include queryparser/Makefile.mk
++# include unicode/Makefile.mk
++# include weight/Makefile.mk
+diff -Nru -x '*~' xapian-core-1.2.16.orig/common/CMakeLists.txt xapian-core-1.2.16/common/CMakeLists.txt
+--- xapian-core-1.2.16.orig/common/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/common/CMakeLists.txt	2013-12-21 02:19:47.489866700 +0100
+@@ -0,0 +1,31 @@
++set(common_SRCS
++    bitstream.cc
++    closefrom.cc
++    const_database_wrapper.cc
++    debuglog.cc
++    fileutils.cc
++    io_utils.cc
++    msvc_dirent.cc
++    msvc_posix_wrapper.cc
++    replicate_utils.cc
++    safe.cc
++    serialise-double.cc
++    socket_utils.cc
++    str.cc
++    stringutils.cc
++    utils.cc
++)
++
++if(USE_WIN32_UUID_API)
++    list(APPEND common_SRCS
++        win32_uuid.cc
++    )
++endif()
++
++add_library(common ${common_SRCS})
++if(USE_WIN32_UUID_API)
++    target_link_libraries(common rpcrt4)
++endif()
++
++add_library(getopt getopt.cc)
++
+diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/config.h.win32
+--- xapian-core-1.2.16.orig/config.h.win32	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/config.h.win32	2011-12-14 14:26:04.000000000 +0100
+@@ -0,0 +1,198 @@
++/* config.h.win32 */
++/* On Unix systems, generated by configure, but must be manually created for */
++/* Win32 / Visual C++ builds */
++
++/* Define if ftime returns void */
++#define FTIME_RETURNS_VOID 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++/* #undef HAVE_DLFCN_H */
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#define HAVE_FCNTL_H 1
++
++/* Define to 1 if you have the `fork' function. */
++/* #undef HAVE_FORK */
++
++/* Define to 1 if you have the `fsync' function. */
++/* #undef HAVE_FSYNC */
++
++/* Define to 1 if you have the `ftime' function. */
++#define HAVE_FTIME 1
++
++/* Define to 1 if you have the `gethostname' function. */
++/* #undef HAVE_GETHOSTNAME */
++
++/* Define to 1 if you have the `gettimeofday' function. */
++/* #undef HAVE_GETTIMEOFDAY */
++
++/* Define to 1 if you have the `hstrerror' function. */
++/* #undef HAVE_HSTRERROR */
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++/* #undef HAVE_INTTYPES_H */
++
++/* Define to 1 if you have the <limits.h> header file. */
++#define HAVE_LIMITS_H 1
++
++/* Define to 1 if you have the `link' function. */
++/* #undef HAVE_LINK */
++
++/* Define to 1 if you have the <memory.h> header file. */
++#define HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the 'socketpair' function. */
++/* #undef HAVE_SOCKETPAIR */
++
++/* Define to 1 if you have the <sstream> header file. */
++#define HAVE_SSTREAM 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++/* #undef HAVE_STDINT_H */
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <streambuf> header file. */
++#define HAVE_STREAMBUF 1
++
++/* Define to 1 if you have the `strerror' function. */
++#define HAVE_STRERROR 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++/* #undef HAVE_STRINGS_H */
++
++/* Define to 1 if you have the <string.h> header file. */
++#define HAVE_STRING_H 1
++
++/* Define to 1 if you have the <sys/errno.h> header file. */
++/* #undef HAVE_SYS_ERRNO_H */
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++/* #undef HAVE_SYS_SELECT_H */
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#define HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#define HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <sys/utsname.h> header file. */
++/* #undef HAVE_SYS_UTSNAME_H */
++
++/* Define to 1 if you have the <unistd.h> header file. */
++/* #undef HAVE_UNISTD_H */
++
++/* Define if valgrind is installed and supports VALGRIND_COUNT_LEAKS */
++/* #undef HAVE_VALGRIND */
++
++/* Define to 1 if you have the <zlib.h> header file. */
++#define HAVE_ZLIB_H 1
++
++/* Name of package */
++#define PACKAGE "xapian-core"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT "kde-windows@kde.org"
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "xapian-core"
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING "xapian-core 1.2.16"
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME "xapian-core"
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION "1.2.16"
++
++/* explicit prototype needed for pread (if any) */
++/* #undef PREAD_PROTOTYPE */
++
++/* explicit prototype needed for pwrite (if any) */
++/* #undef PWRITE_PROTOTYPE */
++
++/* Define to the name of a function implementing snprintf but not caring about
++   ISO C90 return value semantics (if one exists) */
++/* #undef SNPRINTF */
++
++/* Define to the name of a function implementing snprintf with ISO C90
++   semantics (if one exists) */
++/* #undef SNPRINTF_ISO */
++
++/* type to use for 5th parameter to getsockopt */
++#define SOCKLEN_T int
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Version number of package */
++#define VERSION "1.2.16"
++
++/* Define if you want debugging to be enabled (will cause some slow down) */
++/* #undef XAPIAN_DEBUG */
++
++/* Define if you want paranoid debugging to be enabled (will cause significant
++   slow-down) */
++/* #undef XAPIAN_DEBUG_PARANOID */
++
++/* Define if you want code profiling messages */
++/* #undef XAPIAN_DEBUG_PROFILE */
++
++/* Define if you want lots of debugging messages */
++/* #undef XAPIAN_DEBUG_VERBOSE */
++
++/* Define to disable use of visibility attributes */
++/* #undef XAPIAN_DISABLE_VISIBILITY */
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++/* #undef _FILE_OFFSET_BITS */
++
++/* Define for large files, on AIX-style hosts. */
++/* #undef _LARGE_FILES */
++
++/* Define to `int' if <sys/types.h> does not define. */
++#define mode_t int
++
++/* Define to `int' if <sys/types.h> does not define. */
++#define pid_t int
++
++/* Define to `int' if <sys/types.h> does not define. */
++#ifdef _WIN64
++# define ssize_t __int64
++#else
++# define ssize_t long
++#endif
++
++/* Disable stupid MSVC "performance" warning for converting int to bool. */
++#ifdef _MSC_VER
++# pragma warning(disable:4800)
++#endif
++
++/* Disable MSVC warning about obsolete functions */
++#ifdef _MSC_VER
++# pragma warning(disable:4996)
++#endif
++
++/* Disable MSVC warning about macros with missing parameters */
++#ifdef _MSC_VER
++# pragma warning(disable:4003)
++#endif
++
++/* Define rare() as identity, since we don't have this in MSVC (See
++ * the section "Branch Prediction Hints" in xapian-core/HACKING) */
++#define rare(COND) (COND)
++
++/* Define usual() as identity, since we don't have this in MSVC (See
++ * the section "Branch Prediction Hints" in xapian-core/HACKING) */
++#define usual(COND) (COND)
++
++/* Define sizes of types as this isn't done by Windows */
++
++/* The number of bytes in a int.  */
++#define SIZEOF_INT 4
++
++/* The number of bytes in a long.  */
++#define SIZEOF_LONG 4
++
+diff -Nru -x '*~' xapian-core-1.2.16.orig/expand/CMakeLists.txt xapian-core-1.2.16/expand/CMakeLists.txt
+--- xapian-core-1.2.16.orig/expand/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/expand/CMakeLists.txt	2013-12-21 02:20:01.904691200 +0100
+@@ -0,0 +1,9 @@
++# expand
++
++set(expand_SRCS
++    esetinternal.cc
++    expandweight.cc
++    ortermlist.cc
++)
++
++add_library(expand ${expand_SRCS})
+diff -Nru -x '*~' xapian-core-1.2.16.orig/languages/CMakeLists.txt xapian-core-1.2.16/languages/CMakeLists.txt
+--- xapian-core-1.2.16.orig/languages/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/languages/CMakeLists.txt	2013-12-21 02:24:58.051629800 +0100
+@@ -0,0 +1,34 @@
++# languages
++
++set(language_NAMES
++    danish
++    dutch
++    english
++    finnish
++    french
++    german2
++    german
++    hungarian
++    italian
++    kraaij_pohlmann
++    lovins
++    norwegian
++    porter
++    portuguese
++    romanian
++    russian
++    spanish
++    swedish
++    turkish
++)
++
++set(languages_SRCS
++    stem.cc
++    steminternal.cc
++)
++
++foreach(lang ${language_NAMES})
++    list(APPEND languages_SRCS ${lang}.cc)
++endforeach()
++
++add_library(languages ${languages_SRCS})
+\ No newline at end of file
+diff -Nru -x '*~' xapian-core-1.2.16.orig/version.h.in xapian-core-1.2.16/version.h.in
+--- xapian-core-1.2.16.orig/version.h.in	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/version.h.in	2010-02-03 12:56:46.000000000 +0100
+@@ -0,0 +1,38 @@
++// @configure_input@
++// msvc/version.h: Define preprocesor symbols for the library version.
++//
++// This version.h is for the MSVC build.  The version.h used for the Unix
++// and CYGWIN builds is generated by running the configure script.
++//
++// Copyright (C) 2007 Olly Betts
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License as
++// published by the Free Software Foundation; either version 2 of the
++// License, or (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, write to the Free Software
++// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
++
++#ifndef XAPIAN_INCLUDED_VERSION_H
++#define XAPIAN_INCLUDED_VERSION_H
++
++#define XAPIAN_VERSION "@MAJOR_VERSION@.@MINOR_VERSION@.@REVISION@"
++#define XAPIAN_MAJOR_VERSION @MAJOR_VERSION@
++#define XAPIAN_MINOR_VERSION @MINOR_VERSION@
++#define XAPIAN_REVISION @REVISION@
++
++#define XAPIAN_HAS_BRASS_BACKEND 1
++#define XAPIAN_HAS_CHERT_BACKEND 1
++#define XAPIAN_HAS_FLINT_BACKEND 1
++#define XAPIAN_HAS_QUARTZ_BACKEND 1
++#define XAPIAN_HAS_INMEMORY_BACKEND 1
++#define XAPIAN_HAS_REMOTE_BACKEND 1
++
++#endif /* XAPIAN_INCLUDED_VERSION_H */
