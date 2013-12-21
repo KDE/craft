@@ -1,0 +1,5 @@
+kdf
+kfloppy
+kremotecontrol
+superkaramba
+printer-manager
