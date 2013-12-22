@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.targets['0.9.1'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/skrooge-4c9e641.tar.bz2"
         self.targetInstSrc['0.9.1'] = "skrooge-4c9e641"
         self.patchToApply['0.9.1'] = ("skrooge-4c9e641-20110830.diff", 1)
-        for ver in ['1.0.0', '1.1.1', '1.2.0', '1.6.0']:
+        for ver in ['1.0.0', '1.1.1', '1.2.0', '1.6.0', '1.8.0']:
             self.targets[ ver ] = "http://skrooge.org/files/skrooge-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = "skrooge-" + ver
         self.patchToApply['1.0.0'] = [("skrooge-1.0.0-20111009.diff", 1)]
