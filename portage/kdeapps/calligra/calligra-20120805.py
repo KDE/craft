@@ -20,6 +20,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs/exiv2'] = 'default'
         self.dependencies['win32libs/openjpeg'] = 'default'
         self.dependencies['win32libs/icu'] = 'default'
+        self.dependencies['win32libs/vc'] = 'default'
 #        self.dependencies['win32libs/libfftw'] = 'default'
 
 from Package.CMakePackageBase import *
