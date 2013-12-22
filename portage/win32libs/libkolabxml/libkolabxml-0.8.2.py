@@ -20,9 +20,9 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['binary/xsd'] = 'default'
+        self.buildDependencies['win32libs/xerces-c'] = 'default'
 
         # the following dependencies are runtime dependencies for packages linking to the static! libkolabxml
-        self.dependencies['binary/xerces-c-bin'] = 'default'
         self.dependencies['win32libs/boost-thread'] = 'default'
         self.dependencies['win32libs/boost-system'] = 'default'
         self.dependencies['win32libs/libcurl'] = 'default'

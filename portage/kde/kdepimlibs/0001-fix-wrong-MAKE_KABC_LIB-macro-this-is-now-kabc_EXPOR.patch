@@ -1,0 +1,26 @@
+From b24b00e681f5eaf4b81eb61fb611bc0e91b9a0f8 Mon Sep 17 00:00:00 2001
+From: Nico Kruber <nico.kruber@gmail.com>
+Date: Tue, 26 Nov 2013 00:41:09 +0100
+Subject: [PATCH] fix wrong MAKE_KABC_LIB macro (this is now kabc_EXPORTS)
+
+regression of 147ac4356128036fbb46f74f02c17638da8d7778
+---
+ kabc/addressee.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kabc/addressee.h b/kabc/addressee.h
+index b81deba..a9b3e59 100644
+--- a/kabc/addressee.h
++++ b/kabc/addressee.h
+@@ -980,7 +980,7 @@ class KABC_EXPORT Addressee
+     class Private;
+     QSharedDataPointer<Private> d;
+ };
+-#ifdef MAKE_KABC_LIB
++#ifdef kabc_EXPORTS
+ KDE_DUMMY_QHASH_FUNCTION( Addressee )
+ #endif
+ 
+-- 
+1.8.3.msysgit.0
+

@@ -73,8 +73,12 @@ class package(object):
 
         self.enabled = common.settings.getSectionEnabled( "Build" )
         self.ignoreNotifications = False
-        if self.category in [ "virtual", "dev-util", "gnuwin32" ]:
+        self.dontPackage = False
+        if self.category in [ "virtual", "gnuwin32" ]:
             self.ignoreNotifications = True
+            self.dontPackage = True
+        if self.category in [ "dev-util" ]:
+            self.dontPackage = True
 
     def __str__( self ):
         return "%s/%s:%s-%s" % ( self.category, self.packageName, self.target, self.patchlevel )
@@ -145,7 +149,7 @@ class package(object):
         """ packages into subdirectories of the normal directory - this helps to keep the directory clean """
         if not self.enabled:
             return
-        if self.ignoreNotifications:
+        if self.dontPackage:
             return
 
         self.timestamp()
@@ -163,7 +167,7 @@ class package(object):
         """ uploads packages to winkde server """
         if not self.enabled:
             return
-        if self.ignoreNotifications:
+        if self.dontPackage:
             return
 
         self.timestamp()
@@ -198,11 +202,6 @@ emerge = "python " + os.path.join( general["kderoot"], "emerge", "bin", "emerge.
 
 # first cleanup
 cmdstring = emerge + " --cleanup"
-p = subprocess.Popen( cmdstring, shell=True )
-p.wait()
-
-# first emerge base, so that the base is installed everywhere
-cmdstring = emerge + " base"
 p = subprocess.Popen( cmdstring, shell=True )
 p.wait()
 
@@ -265,7 +264,7 @@ for [cat, pac, ver, tar] in depList:
     p = package( cat, pac, target, patchlvl )
     if not [cat, pac, ver, tar] in runtimeDepList:
         print("could not find package %s in runtime dependencies" % pac)
-        p.ignoreNotifications = True
+        p.dontPackage = True
     if isDBEnabled():
         isInstalled = installdb.isInstalled( cat, pac, ver )
     else:

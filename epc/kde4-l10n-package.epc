@@ -1,178 +1,181 @@
 {
   "epc": {
-    "buildtime-dependencies": [], 
-    "default-target": "4.9.0", 
+    "buildtime-dependencies": [],
+    "default-target": "4.12.0",
     "dependencies": [
       "kde/kde-l10n-${EPC_PACKAGE-NAME}"
-    ], 
-    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.PortablePackager import *\nclass Package( PortablePackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )\n        VirtualPackageBase.__init__( self )\n        self.subinfo.options.package.withArchitecture=False", 
+    ],
+    "package-template": "from Package.VirtualPackageBase import *\nfrom Packager.PortablePackager import *\nclass Package( PortablePackager, VirtualPackageBase ):\n    def __init__( self, **args ):\n        self.subinfo = subinfo()\n        PortablePackager.__init__( self , whitelists = [os.path.join(os.getenv('KDEROOT'),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )\n        VirtualPackageBase.__init__( self )\n        self.subinfo.options.package.withArchitecture=False",
     "packages": [
       {
         "name": "ar"
-      }, 
+      },
       {
         "name": "bg"
-      }, 
+      },
       {
         "name": "bs"
-      }, 
+      },
       {
         "name": "ca"
-      }, 
+      },
       {
         "name": "ca@valencia"
-      }, 
+      },
       {
         "name": "cs"
-      }, 
+      },
       {
         "name": "da"
-      }, 
+      },
       {
         "name": "de"
-      }, 
+      },
       {
         "name": "el"
-      }, 
+      },
       {
         "name": "en_GB"
-      }, 
+      },
       {
         "name": "es"
-      }, 
+      },
       {
         "name": "et"
-      }, 
+      },
       {
         "name": "eu"
-      }, 
+      },
       {
         "name": "fi"
-      }, 
+      },
       {
         "name": "fr"
-      }, 
+      },
       {
         "name": "ga"
-      }, 
+      },
       {
         "name": "gl"
-      }, 
+      },
       {
         "name": "he"
-      }, 
+      },
+      {
+        "name": "hi"
+      },
       {
         "name": "hr"
-      }, 
+      },
       {
         "name": "hu"
-      }, 
+      },
       {
         "name": "ia"
-      }, 
-      {
-        "name": "id"
-      }, 
+      },
       {
         "name": "is"
-      }, 
+      },
       {
         "name": "it"
-      }, 
+      },
       {
         "name": "ja"
-      }, 
+      },
       {
         "name": "kk"
-      }, 
+      },
       {
         "name": "km"
-      }, 
+      },
       {
         "name": "ko"
-      }, 
+      },
       {
         "name": "lt"
-      }, 
+      },
       {
         "name": "lv"
-      }, 
+      },
+      {
+        "name": "mr"
+      },
       {
         "name": "nb"
-      }, 
+      },
       {
         "name": "nds"
-      }, 
+      },
       {
         "name": "nl"
-      }, 
+      },
       {
         "name": "nn"
-      }, 
+      },
       {
         "name": "pa"
-      }, 
+      },
       {
         "name": "pl"
-      }, 
+      },
       {
         "name": "pt"
-      }, 
+      },
       {
         "name": "pt_BR"
-      }, 
+      },
       {
         "name": "ro"
-      }, 
+      },
       {
         "name": "ru"
-      }, 
+      },
       {
         "name": "sk"
-      }, 
+      },
       {
         "name": "sl"
-      }, 
+      },
       {
         "name": "sr"
-      }, 
+      },
       {
         "name": "sv"
-      }, 
-      {
-        "name": "th"
-      }, 
+      },
       {
         "name": "tr"
-      }, 
+      },
       {
         "name": "ug"
-      }, 
+      },
       {
         "name": "uk"
-      }, 
+      },
+      {
+        "name": "vi"
+      },
       {
         "name": "wa"
-      }, 
+      },
       {
         "name": "zh_CN"
-      }, 
+      },
       {
         "name": "zh_TW"
       }
     ], 
-    "portage-dir": "package/kde-l10n-package", 
-    "prefix": "kde-l10n", 
-    "subinfo-template": "import os\nimport info\nimport kdedefaults as kd\n\nkd.setKDEPath(os.path.join(os.getenv('KDEROOT'),'emerge','portage','kde'))\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ kd.kdeversion + ver ] = ''\n\n        self.defaultTarget = kd.kdeversion + '0'", 
-    "suffix": "package", 
+    "portage-dir": "package/kde-l10n-package",
+    "prefix": "kde-l10n",
+    "subinfo-template": "import os\nimport info\nimport kdedefaults as kd\n\nkd.setKDEPath(os.path.join(os.getenv('KDEROOT'),'emerge','portage','kde'))\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.svnTargets[ kd.kdeversion + ver ] = ''\n\n        self.defaultTarget = kd.kdeversion + '0'",
+    "suffix": "package",
     "versions": [
-      "0", 
-      "1", 
-      "2", 
+      "0",
+      "1",
+      "2",
       "3",
       "4",
       "5"
     ]
-  }, 
+  },
   "vars": {}
 }

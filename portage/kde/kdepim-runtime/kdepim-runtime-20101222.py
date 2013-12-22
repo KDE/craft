@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
-        self.dependencies['win32libs/libkolab'] = 'default'
+        self.dependencies['extragear/libkolab'] = 'default'
         self.dependencies['extragear/libkgapi'] = 'default'
         self.dependencies['extragear/libkfbapi'] = 'default'
         self.shortDescription = "Extends the functionality of kdepim"

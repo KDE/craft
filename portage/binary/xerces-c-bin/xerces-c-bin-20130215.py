@@ -14,12 +14,13 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['win32libs/xerces-c'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-class Package(BinaryPackageBase):
+class PackageBin(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
@@ -34,5 +35,18 @@ class Package(BinaryPackageBase):
         shutil.rmtree( os.path.join( self.imageDir(), "xerces-c-3.1.1-x86-windows-vc-10.0" ) )
         return True
 
+from Package.VirtualPackageBase import *
+
+if compiler.isMSVC():
+    class Package(PackageBin):
+        def __init__( self ):
+            PackageBin.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+            
+
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()

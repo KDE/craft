@@ -1,176 +1,179 @@
 {
   "epc": {
     "buildtime-dependencies": [
-      "dev-util/cmake", 
-      "kde/kdelibs", 
+      "dev-util/cmake",
+      "kde/kdelibs",
       "dev-util/gettext-tools"
-    ], 
-    "default-target": "4.9.0", 
+    ],
+    "default-target": "4.12.0",
     "packages": [
       {
         "name": "ar"
-      }, 
+      },
       {
         "name": "bg"
-      }, 
+      },
       {
         "name": "bs"
-      }, 
+      },
       {
         "name": "ca"
-      }, 
+      },
       {
         "name": "ca@valencia"
-      }, 
+      },
       {
         "name": "cs"
-      }, 
+      },
       {
         "name": "da"
-      }, 
+      },
       {
         "name": "de"
-      }, 
+      },
       {
         "name": "el"
-      }, 
+      },
       {
         "name": "en_GB"
-      }, 
+      },
       {
         "name": "es"
-      }, 
+      },
       {
         "name": "et"
-      }, 
+      },
       {
         "name": "eu"
-      }, 
+      },
       {
         "name": "fi"
-      }, 
+      },
       {
         "name": "fr"
-      }, 
+      },
       {
         "name": "ga"
-      }, 
+      },
       {
         "name": "gl"
-      }, 
+      },
       {
         "name": "he"
-      }, 
+      },
+      {
+        "name": "hi"
+      },
       {
         "name": "hr"
-      }, 
+      },
       {
         "name": "hu"
-      }, 
+      },
       {
         "name": "ia"
-      }, 
-      {
-        "name": "id"
-      }, 
+      },
       {
         "name": "is"
-      }, 
+      },
       {
         "name": "it"
-      }, 
+      },
       {
         "name": "ja"
-      }, 
+      },
       {
         "name": "kk"
-      }, 
+      },
       {
         "name": "km"
       },
       {
         "name": "ko"
-      }, 
+      },
       {
         "name": "lt"
-      }, 
+      },
       {
         "name": "lv"
-      }, 
+      },
+      {
+        "name": "mr"
+      },
       {
         "name": "nb"
-      }, 
+      },
       {
         "name": "nds"
-      }, 
+      },
       {
         "name": "nl"
-      }, 
+      },
       {
         "name": "nn"
-      }, 
+      },
       {
         "name": "pa"
-      }, 
+      },
       {
         "name": "pl"
-      }, 
+      },
       {
         "name": "pt"
-      }, 
+      },
       {
         "name": "pt_BR"
-      }, 
+      },
       {
         "name": "ro"
-      }, 
+      },
       {
         "name": "ru"
-      }, 
+      },
       {
         "name": "sk"
-      }, 
+      },
       {
         "name": "sl"
-      }, 
+      },
       {
         "name": "sr"
-      }, 
+      },
       {
         "name": "sv"
-      }, 
-      {
-        "name": "th"
-      }, 
+      },
       {
         "name": "tr"
-      }, 
+      },
       {
         "name": "ug"
-      }, 
+      },
       {
         "name": "uk"
-      }, 
+      },
+      {
+        "name": "vi"
+      },
       {
         "name": "wa"
-      }, 
+      },
       {
         "name": "zh_CN"
-      }, 
+      },
       {
         "name": "zh_TW"
       }
     ], 
-    "portage-dir": "kde/kde4-l10n", 
-    "prefix": "kde4-l10n", 
-    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.xz' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'", 
+    "portage-dir": "kde/kde-l10n",
+    "prefix": "kde-l10n",
+    "subinfo-template": "import os\nimport info\n\nclass subinfo( info.infoclass ):\n    def setTargets( self ):\n        for ver in ${EPC_VERSIONS}:\n          self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-${EPC_PACKAGE-NAME}-%s.tar.xz' % (ver , ver )\n          self.targetInstSrc[ ver] = 'kde-l10n-${EPC_PACKAGE-NAME}-%s'  % ver\n\n        self.defaultTarget = '${EPC_DEFAULT-TARGET}'",
     "versions": [
-      "4.9.0", 
-      "4.9.1", 
-      "4.9.2", 
-      "4.9.3", 
-      "4.9.4"
+      "4.12.0",
+      "4.12.1",
+      "4.12.2",
+      "4.12.3",
+      "4.12.4"
     ]
-  }, 
+  },
   "vars": {}
 }

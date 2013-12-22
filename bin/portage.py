@@ -12,6 +12,7 @@ import portage_versions
 import emergePlatform
 import copy
 from collections import OrderedDict
+from EmergePackageObject import PackageObjectBase
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
@@ -54,14 +55,18 @@ class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
-    def __init__( self, category, name, version ):
+    def __init__( self, category, name, version , autoExpand = True ):
         self.category = category
         self.name = name
         self.version = version
         self.runtimeChildren = []
         self.buildChildren = []
-        self.__readChildren()
+        if autoExpand:
+            self.__readChildren()
 
+    def __hash__(self):
+        return str( self.category + "/" +  self.name).__hash__()
+        
     def __eq__( self, other ):
         return self.category == other.category and self.name == other.name and self.version == other.version
 
@@ -84,15 +89,16 @@ class DependencyPackage(object):
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in list(packageDict.keys()):
-                    p = DependencyPackage( category, package, version )
+                    p = DependencyPackage( category, package, version, False )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
+                    p.__readChildren()
                 else:
                     p = packageDict[ line ]
                 children.append( p )
         return children
 
-    def getDependencies( self, depList=None, dep_type="both" ):
+    def getDependencies( self, depList=None, dep_type="both", single = set() ):
         """ returns all dependencies """
         if depList is None:
             depList = []
@@ -102,14 +108,17 @@ class DependencyPackage(object):
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
-
+            
+        single.add(self)
         for p in children:
-            if not p in depList:
-                p.getDependencies( depList, dep_type )
-
+            if not p in single and not p in depList:
+                p.getDependencies( depList, dep_type,single )
+                    
         #if self.category != internalCategory:
         if not self in depList:
             depList.append( self )
+
+
 
         return depList
 
@@ -213,6 +222,10 @@ class Portage(object):
         for vcsdir in VCSDirs():
             if vcsdir in categoryList:
                 categoryList.remove( vcsdir )
+        if "__pycache__" in categoryList:
+            categoryList.remove( "__pycache__" )
+
+        dontBuildCategoryList = self.getDontBuildPackagesList( os.path.join( directory ) )
 
         self.portages[ directory ] = []
         for category in categoryList:
@@ -227,23 +240,41 @@ class Portage(object):
             for vcsdir in VCSDirs():
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
+            if "__pycache__" in packageList:
+                packageList.remove( "__pycache__" )
+
+            dontBuildPackageList = self.getDontBuildPackagesList( os.path.join( directory, category ) )
 
             if not category in list(self.categories.keys()):
                 self.categories[ category ] = []
+
             for package in packageList:
                 if not os.path.isdir( os.path.join( directory, category, package ) ):
                     continue
                 if not package in self.categories[ category ]:
-                    self.categories[ category ].append( package )
+                    _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList
+                    self.categories[ category ].append( PackageObjectBase( category=category, package=package, enabled=_enabled ) )
 
                 subPackageList = os.listdir( os.path.join( directory, category, package ) )
+
+                # remove vcs directories
+                for vcsdir in VCSDirs():
+                    if vcsdir in subPackageList:
+                        subPackageList.remove( vcsdir )
+                if "__pycache__" in subPackageList:
+                    subPackageList.remove( "__pycache__" )
+
                 for subPackage in subPackageList:
                     if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in VCSDirs():
                         continue
+
+                    dontBuildSubPackageList = self.getDontBuildPackagesList( os.path.join( directory, category, package ) )
+
                     if not subPackage in list(self.subpackages.keys()):
                         self.subpackages[ subPackage ] = []
                     if not subPackage in self.categories[ category ]:
-                        self.categories[ category ].append( subPackage )
+                        _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList and not subPackage in dontBuildSubPackageList
+                        self.categories[ category ].append( PackageObjectBase( category=category, subpackage=package, package=subPackage, enabled=_enabled ) )
                     self.subpackages[ subPackage ].append( category + "/" + package )
 
 
@@ -276,24 +307,25 @@ class Portage(object):
                 if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
 
+    def getDontBuildPackagesList( self, path ):
+        """ get a list of packages from a dont_build file"""
+        plist = []
+        if os.path.exists( os.path.join( path, "dont_build.txt" ) ):
+            with open( os.path.join( path, "dont_build.txt" ), "r" ) as f:
+                for line in f:
+                    if line.strip().startswith('#'): continue
+                    if not line.strip() == "":
+                        plist.append(line.strip())
+        return plist
+
     def getAllPackages( self, category ):
         """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
         in case the category doesn't exist, nothing is returned"""
         if self.isCategory( category ):
-            plist = copy.copy(self.categories[ category ])
-            try:
-                plist.remove( "__pycache__" )
-                plist.remove( ".git" )
-            except ValueError:
-                pass
-
-            if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
-                with open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" ) as f:
-                    for line in f:
-                        try:
-                            plist.remove( line.strip() )
-                        except ValueError:
-                            utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
+            plist = []
+            for _p in self.categories[ category ]:
+                if _p:
+                    plist.append(_p.package)
             return plist
         else:
             return
@@ -429,10 +461,10 @@ class Portage(object):
         instList = list()
         for category in list(self.categories.keys()):
             for package in self.categories[ category ]:
-                for script in os.listdir( getDirname( category, package ) ):
+                for script in os.listdir( getDirname( category, package.package ) ):
                     if script.endswith( '.py' ):
-                        version = script.replace('.py', '').replace(package + '-', '')
-                        instList.append([category, package, version])
+                        version = script.replace('.py', '').replace(package.package + '-', '')
+                        instList.append([category, package.package, version])
         return instList
 
 # when importing this, this static Object should get added
