@@ -10,9 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.5.9'
 
     def setDependencies( self ):
-        self.buildDependencies['gnuwin32/wget'] = 'default'
-        if compiler.isMinGW():
-            self.dependencies['dev-util/uactools'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
