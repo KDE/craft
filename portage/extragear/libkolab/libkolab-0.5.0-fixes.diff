@@ -1,6 +1,6 @@
 diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.txt
 --- libkolab-0.5.0.orig/CMakeLists.txt	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/CMakeLists.txt	2013-12-23 15:56:31.653180100 +0100
++++ libkolab-0.5.0/CMakeLists.txt	2013-12-23 17:54:33.387036000 +0100
 @@ -3,6 +3,7 @@
  cmake_minimum_required(VERSION 2.6.4)
  
@@ -98,7 +98,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
  configure_file(${Libkolab_MODULE_DIR}/LibkolabConfigVersion.cmake.in ${Libkolab_BINARY_DIR}/LibkolabConfigVersion.cmake @ONLY )
 diff -Nru -x '*~' libkolab-0.5.0.orig/kolab_export.h libkolab-0.5.0/kolab_export.h
 --- libkolab-0.5.0.orig/kolab_export.h	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/kolab_export.h	2013-12-23 15:46:25.545315600 +0100
++++ libkolab-0.5.0/kolab_export.h	2013-12-23 17:54:33.401036800 +0100
 @@ -21,7 +21,7 @@
  #ifndef KOLAB_EXPORT_H
  #define KOLAB_EXPORT_H
@@ -129,7 +129,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/kolab_export.h libkolab-0.5.0/kolab_export
  /**
 diff -Nru -x '*~' libkolab-0.5.0.orig/tests/CMakeLists.txt libkolab-0.5.0/tests/CMakeLists.txt
 --- libkolab-0.5.0.orig/tests/CMakeLists.txt	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/tests/CMakeLists.txt	2013-12-23 15:46:25.560915600 +0100
++++ libkolab-0.5.0/tests/CMakeLists.txt	2013-12-23 17:54:33.408037200 +0100
 @@ -1,6 +1,6 @@
  
  include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -138,3 +138,11 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/tests/CMakeLists.txt libkolab-0.5.0/tests/
  
  macro(addTest TEST_NAME)
      QT4_AUTOMOC(${TEST_NAME}.cpp)
+diff -Nru -x '*~' libkolab-0.5.0.orig/utils/CMakeLists.txt libkolab-0.5.0/utils/CMakeLists.txt
+--- libkolab-0.5.0.orig/utils/CMakeLists.txt	2013-10-14 17:57:12.000000000 +0200
++++ libkolab-0.5.0/utils/CMakeLists.txt	2013-12-23 18:32:17.389509200 +0100
+@@ -3,3 +3,4 @@
+ 
+ add_executable(kolabformatchecker kolabformatchecker.cpp)
+ target_link_libraries(kolabformatchecker kolab_static ${Boost_LIBRARIES})
++set_target_properties(kolabformatchecker PROPERTIES COMPILE_FLAGS "-DKOLAB_STATIC_LIBS -DBOOST_PROGRAM_OPTIONS_DYN_LINK")
