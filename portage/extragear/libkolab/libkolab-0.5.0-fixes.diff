@@ -92,7 +92,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
  set(CONF_INCLUDE_DIRS "\${Libkolab_CMAKE_DIR}/${REL_INCLUDE_DIR}")
  
 -install(EXPORT LibkolabExport DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE LibkolabTargets.cmake )
-+install(EXPORT LibkolabExport DESTINATION lib/cmake/kolab FILE LibkolabTargets.cmake )
++install(EXPORT LibkolabExport DESTINATION lib/cmake/Libkolab FILE LibkolabTargets.cmake )
  
  configure_file(${Libkolab_MODULE_DIR}/LibkolabConfig.cmake.in ${Libkolab_BINARY_DIR}/LibkolabConfig.cmake @ONLY )
  configure_file(${Libkolab_MODULE_DIR}/LibkolabConfigVersion.cmake.in ${Libkolab_BINARY_DIR}/LibkolabConfigVersion.cmake @ONLY )
