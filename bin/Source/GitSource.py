@@ -50,7 +50,7 @@ class GitSource ( VersionSystemSourceBase ):
                     if "tag" in line and line.endswith(_tag):
                         return True
         else:
-                utils.die("Directory: %s is not a git repository." % self.checkoutDir())
+            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
         return False
 
     def __getCurrentRevision( self ):
