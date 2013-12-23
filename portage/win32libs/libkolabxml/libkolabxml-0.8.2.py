@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.0.1'] = '7fa6bf909cd33d2ca9908bb461b9fcddf7ba6503'
         self.patchToApply['0.8.2'] = [("libkolabxml-fixes.diff", 1)]
         self.patchToApply['0.8.4'] = [("libkolabxml-fixes.diff", 1)]
-        self.patchToApply['1.0.1'] = [("libkolabxml-fixes.diff", 1)]
+        self.patchToApply['1.0.1'] = [("libkolabxml-1.0.1-fixes.diff", 1)]
 
         self.shortDescription = 'Kolab XML Format Schema Definitions Library'
         self.defaultTarget = '1.0.1'
