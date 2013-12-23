@@ -1,7 +1,15 @@
 diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.txt
 --- libkolab-0.5.0.orig/CMakeLists.txt	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/CMakeLists.txt	2013-12-23 14:56:27.632105200 +0100
-@@ -82,7 +82,12 @@
++++ libkolab-0.5.0/CMakeLists.txt	2013-12-23 15:56:31.653180100 +0100
+@@ -3,6 +3,7 @@
+ cmake_minimum_required(VERSION 2.6.4)
+ 
+ option( BUILD_TESTS "Build the tests" TRUE )
++option( BUILD_TOOLS "Build the tools" TRUE )
+ option( PYTHON_BINDINGS "Build bindings for python" FALSE )
+ option( PHP_BINDINGS "Build bindings for php" FALSE )
+ option( USE_LIBCALENDARING "Use libcalendaring" FALSE )
+@@ -82,7 +83,12 @@
      add_definitions(-DKDEPIMLIBS_VERSION_DEVEL)
  endif()
  
@@ -15,7 +23,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
  # message("${CMAKE_CXX_FLAGS}")
  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DQT_NO_DEBUG")
  
-@@ -91,7 +96,7 @@
+@@ -91,7 +97,7 @@
      set( KDE_LIBRARIES ${Libcalendaring_LIBRARIES} )
      message("${Libcalendaring_INCLUDE_DIRS} ${Libcalendaring_LIBRARIES}")
  else()
@@ -24,7 +32,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
      set( KDE_LIBRARIES
          ${KDEPIMLIBS_KCALCORE_LIBS}
          ${KDEPIMLIBS_KABC_LIBS}
-@@ -100,8 +105,8 @@
+@@ -100,8 +106,8 @@
          ${KDEPIMLIBS_AKONADI_NOTES_LIBS}
          ${KDEPIMLIBS_KCALUTILS_LIBS}
          ${KDEPIMLIBS_KPIMUTILS_LIBS}
@@ -35,11 +43,32 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
          )
  endif()
  
-@@ -158,13 +163,15 @@
-     enable_testing()
-     add_library(kolab_static STATIC ${KOLAB_SRCS})
-     target_link_libraries(kolab_static ${KOLAB_LINK_LIBRARIES})
+@@ -124,7 +130,9 @@
+ add_subdirectory(calendaring)
+ add_subdirectory(icalendar)
+ add_subdirectory(freebusy)
++if(BUILD_TOOLS)
+ add_subdirectory(utils)
++endif()
+ 
+ QT4_WRAP_CPP(CALENDARING_MOC calendaring/event.h)
+ # QT4_WRAP_CPP(CONVERSION_MOC conversion/qtevent.h conversion/qtduration.h)
+@@ -153,18 +161,24 @@
+     ${QT_QTGUI_LIBRARY}
+     ${KDE_LIBRARIES}
+ )
++
++if(BUILD_TESTS OR BUILD_TOOLS)
++    add_library(kolab_static STATIC ${KOLAB_SRCS})
++    target_link_libraries(kolab_static ${KOLAB_LINK_LIBRARIES})
 +    set_target_properties(kolab_static PROPERTIES COMPILE_FLAGS "-DKOLAB_STATIC_LIBS")
++endif()
++
+ if(BUILD_TESTS)
+     #for tests only
+     enable_testing()
+-    add_library(kolab_static STATIC ${KOLAB_SRCS})
+-    target_link_libraries(kolab_static ${KOLAB_LINK_LIBRARIES})
      add_subdirectory(tests)
  endif(BUILD_TESTS)
  
@@ -52,7 +81,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
  
  install(TARGETS kolab EXPORT LibkolabExport 
      RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-@@ -188,11 +195,12 @@
+@@ -188,11 +202,12 @@
  )
  
  #Get the include directory relative to CMAKECONFIG_INSTALL_DIR
@@ -69,7 +98,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/CMakeLists.txt libkolab-0.5.0/CMakeLists.t
  configure_file(${Libkolab_MODULE_DIR}/LibkolabConfigVersion.cmake.in ${Libkolab_BINARY_DIR}/LibkolabConfigVersion.cmake @ONLY )
 diff -Nru -x '*~' libkolab-0.5.0.orig/kolab_export.h libkolab-0.5.0/kolab_export.h
 --- libkolab-0.5.0.orig/kolab_export.h	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/kolab_export.h	2013-12-23 14:39:07.016677400 +0100
++++ libkolab-0.5.0/kolab_export.h	2013-12-23 15:46:25.545315600 +0100
 @@ -21,7 +21,7 @@
  #ifndef KOLAB_EXPORT_H
  #define KOLAB_EXPORT_H
@@ -100,7 +129,7 @@ diff -Nru -x '*~' libkolab-0.5.0.orig/kolab_export.h libkolab-0.5.0/kolab_export
  /**
 diff -Nru -x '*~' libkolab-0.5.0.orig/tests/CMakeLists.txt libkolab-0.5.0/tests/CMakeLists.txt
 --- libkolab-0.5.0.orig/tests/CMakeLists.txt	2013-10-14 17:57:12.000000000 +0200
-+++ libkolab-0.5.0/tests/CMakeLists.txt	2013-12-23 14:39:07.016677400 +0100
++++ libkolab-0.5.0/tests/CMakeLists.txt	2013-12-23 15:46:25.560915600 +0100
 @@ -1,6 +1,6 @@
  
  include_directories(${CMAKE_CURRENT_BINARY_DIR})
