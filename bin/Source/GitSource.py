@@ -28,8 +28,19 @@ class GitSource ( VersionSystemSourceBase ):
     def __getCurrentBranch( self ):
         if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
             with open( os.path.join( self.checkoutDir(), ".git", "HEAD"), "rt+") as HEAD:
-                line = HEAD.readline()
-                return line[line.rfind("/")+1:].strip()
+                tag = HEAD.readline().strip()
+                if tag.startswith("ref:"):
+                    return tag[tag.rfind("/")+1:]
+                else:
+                    oldLine = None
+                    with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
+                        for line in packed_refs:
+                            if tag in line:
+                                if line.startswith("^"):
+                                    return oldLine[oldLine.rfind("/")+1:].strip()
+                                else:
+                                    return line[line.rfind("/")+1:].strip()
+                            oldLine = line;
         else:
             utils.die("Directory: %s is not a git repository." % self.checkoutDir())
         return None
@@ -44,10 +55,13 @@ class GitSource ( VersionSystemSourceBase ):
         return False
 
     def __isTag( self, _tag ):
+        #this can fail because packed-refs is not updated
+        if _tag == "master":
+            return False
         if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
             with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
                 for line in packed_refs:
-                    if "tag" in line and line.endswith(_tag):
+                    if _tag in line:
                         return True
         else:
             utils.die("Directory: %s is not a git repository." % self.checkoutDir())
