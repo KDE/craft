@@ -1,0 +1,137 @@
+diff -Nru -x '*~' libkolabxml-1.0.1.orig/cmake/modules/FindLibkolabxmlDependencies.cmake libkolabxml-1.0.1/cmake/modules/FindLibkolabxmlDependencies.cmake
+--- libkolabxml-1.0.1.orig/cmake/modules/FindLibkolabxmlDependencies.cmake	2013-10-30 17:48:07.000000000 +0100
++++ libkolabxml-1.0.1/cmake/modules/FindLibkolabxmlDependencies.cmake	2013-12-23 14:08:23.969402100 +0100
+@@ -23,14 +23,14 @@
+ find_package_handle_standard_args(XSDCXX  DEFAULT_MSG
+                                   XSDCXX XSDCXX_INCLUDE_DIRS)
+ 
+-find_library(XERCES_C NAMES xerces-c xerces-c_2)
++find_library(XERCES_C NAMES xerces-c xerces-c_2 xerces-c_3)
+ if (XERCES_C)
+     find_path(XERCES_C_INCLUDE_DIRS NAMES xercesc/framework/XMLGrammarPool.hpp)
+ endif()
+ find_package_handle_standard_args(Xerces  DEFAULT_MSG
+                                   XERCES_C XERCES_C_INCLUDE_DIRS)
+ 
+-find_library(CURL NAMES curl)
++find_library(CURL NAMES curl libcurl libcurl_imp)
+ if (CURL)
+     find_path(CURL_INCLUDE_DIRS NAMES curl/curl.h)
+ endif()
+diff -Nru -x '*~' libkolabxml-1.0.1.orig/CMakeLists.txt libkolabxml-1.0.1/CMakeLists.txt
+--- libkolabxml-1.0.1.orig/CMakeLists.txt	2013-10-30 17:48:07.000000000 +0100
++++ libkolabxml-1.0.1/CMakeLists.txt	2013-12-23 14:16:28.974142800 +0100
+@@ -100,16 +100,22 @@
+ 
+ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall" )
+ 
+-execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
+-                OUTPUT_VARIABLE GCC_VERSION)
+-if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+-    message(STATUS "GCC Version >= 4.7, applying unqualified lookup workaround")
+-    # gcc 4.7 no longer performs unqualified lookups by default, see: http://gcc.gnu.org/gcc-4.7/porting_to.html.
+-    # This workaround is added for xsd code, which fails otherwise to compile. -fpermissive turns the errors into warnings. 
+-    # It's only temporary, and should be removed once xsd is fixed.
+-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive" ) 
++if(CMAKE_COMPILER_IS_GNUCXX)
++    execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${CMAKE_C_COMPILER_ARG1} -dumpversion
++                    OUTPUT_VARIABLE GCC_VERSION)
++    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
++        message(STATUS "GCC Version >= 4.7, applying unqualified lookup workaround")
++        # gcc 4.7 no longer performs unqualified lookups by default, see: http://gcc.gnu.org/gcc-4.7/porting_to.html.
++        # This workaround is added for xsd code, which fails otherwise to compile. -fpermissive turns the errors into warnings.
++        # It's only temporary, and should be removed once xsd is fixed.
++        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive" )
++    endif()
+ endif()
+ 
++if(MSVC)
++    add_definitions(-wd4710 -wd4514 -wd4350 -wd4571 -wd4505 -wd4820 -wd4061 -wd4365 -wd4625 -wd4626 -wd4668 -wd4986 -wd4996 -D_CRT_SECURE_NO_WARNING -D_SCL_SECURE_NO_WARNINGS)
++endif(MSVC)
++
+ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bindings)
+ 
+ set( SCHEMA_DIR ${CMAKE_SOURCE_DIR}/schemas )
+diff -Nru -x '*~' libkolabxml-1.0.1.orig/src/CMakeLists.txt libkolabxml-1.0.1/src/CMakeLists.txt
+--- libkolabxml-1.0.1.orig/src/CMakeLists.txt	2013-10-30 17:48:07.000000000 +0100
++++ libkolabxml-1.0.1/src/CMakeLists.txt	2013-12-23 14:10:27.508468100 +0100
+@@ -2,10 +2,21 @@
+ #This property is not available anymore here, although present in the parent file.
+ SET_SOURCE_FILES_PROPERTIES(${SCHEMA_SOURCEFILES} PROPERTIES GENERATED 1)
+ 
+-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wp,-D_FORTIFY_SOURCE=2 -O2" ) #always generate shared libraries with -fPIC, -D_FORTIFY_SOURCE=2 enables some extra checking
++if(CMAKE_COMPILER_IS_GNUCXX)
++    if(NOT MINGW)
++      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
++    endif(NOT MINGW)
++    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wp,-D_FORTIFY_SOURCE=2 -O2" ) #always generate shared libraries with -fPIC, -D_FORTIFY_SOURCE=2 enables some extra checking
++endif()
++
++if(NOT WIN32)
++    set(_SHARED SHARED)
++else()
++    set(_SHARED STATIC)  # Windows requires exports for a dynamic library
++endif()
+ 
+ # Library with serialization/deserialization code and kolab-containers
+-add_library(kolabxml SHARED
++add_library(kolabxml ${_SHARED}
+     kolabformat.cpp
+     objectvalidation.cpp
+     containers/kolabcontainers.cpp
+@@ -25,15 +36,17 @@
+ add_dependencies(kolabxml generate_bindings)
+ target_link_libraries(kolabxml ${XERCES_C} ${Boost_LIBRARIES} ${UUID} ${CURL})
+ 
+-# For the core library we can be stricter when compiling. This doesn't work with the auto generated code though.
+-if (${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_LESS 1.42)
+-    # We can't be as strict on with older versions of boost it seems (not sure if this is the exact version number where it breaks)
+-    # Since this is only for el5 compatibility we relax the rules (resulting in a couple of warning but a working build)
+-    #for development add here -Werror -Wfatal-errors (but don't for releases)
+-    set_target_properties(kolabxml PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion")
+-else() #then normal case
+-    #for development add here -Werror -Wfatal-errors (but don't for releases)
+-    set_target_properties(kolabxml PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wl,--no-undefined")
++if(CMAKE_COMPILER_IS_GNUCXX)
++    # For the core library we can be stricter when compiling. This doesn't work with the auto generated code though.
++    if (${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_LESS 1.42)
++        # We can't be as strict on with older versions of boost it seems (not sure if this is the exact version number where it breaks)
++        # Since this is only for el5 compatibility we relax the rules (resulting in a couple of warning but a working build)
++        #for development add here -Werror -Wfatal-errors (but don't for releases)
++    #    set_target_properties(kolabxml PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion")
++    else() #then normal case
++        #for development add here -Werror -Wfatal-errors (but don't for releases)
++    #    set_target_properties(kolabxml PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wl,--no-undefined")
++    endif()
+ endif()
+ 
+ set_target_properties(kolabxml PROPERTIES VERSION ${Libkolabxml_VERSION} SOVERSION ${Libkolabxml_VERSION_MAJOR})
+diff -Nru -x '*~' libkolabxml-1.0.1.orig/tests/CMakeLists.txt libkolabxml-1.0.1/tests/CMakeLists.txt
+--- libkolabxml-1.0.1.orig/tests/CMakeLists.txt	2013-10-30 17:48:07.000000000 +0100
++++ libkolabxml-1.0.1/tests/CMakeLists.txt	2013-12-23 14:08:24.000403900 +0100
+@@ -5,7 +5,7 @@
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
+ include_directories(${QT_INCLUDES} ${QT_INCLUDE_DIR} QtCore)
+-if (NOT APPLE)
++if(CMAKE_COMPILER_IS_GNUCXX)
+     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-undefined" ) 
+ endif()
+ 
+@@ -20,10 +20,12 @@
+     target_link_libraries(bindingstest ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} kolabxml ${XERCES_C})
+     add_test(bindingstest ${CMAKE_CURRENT_BINARY_DIR}/bindingstest)
+ 
+-    QT4_AUTOMOC(conversiontest.cpp)
+-    add_executable(conversiontest conversiontest.cpp ${CMAKE_CURRENT_BINARY_DIR}/${CONVERSIONTEST_MOC})
+-    target_link_libraries(conversiontest ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} kolabxml ${XERCES_C})
+-    add_test(conversiontest ${CMAKE_CURRENT_BINARY_DIR}/conversiontest)
++    if(NOT MSVC)
++        QT4_AUTOMOC(conversiontest.cpp)
++        add_executable(conversiontest conversiontest.cpp ${CMAKE_CURRENT_BINARY_DIR}/${CONVERSIONTEST_MOC})
++        target_link_libraries(conversiontest ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} kolabxml ${XERCES_C})
++        add_test(conversiontest ${CMAKE_CURRENT_BINARY_DIR}/conversiontest)
++    endif()
+ 
+     QT4_AUTOMOC(parsingtest.cpp)
+     add_executable(parsingtest parsingtest.cpp ${CMAKE_CURRENT_BINARY_DIR}/${CONVERSIONTEST_MOC})
