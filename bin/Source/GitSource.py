@@ -26,28 +26,35 @@ class GitSource ( VersionSystemSourceBase ):
             self.gitPath = 'git'
 
     def __getCurrentBranch( self ):
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            with open( os.path.join( self.checkoutDir(), ".git", "HEAD"), "rt+") as HEAD:
-                line = HEAD.readline()
-                return line[line.rfind("/")+1:].strip()
-        else:
-            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
-        return None
+        branch = None
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("branch -a", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                line = str(line,"UTF-8")
+                if line.startswith("*"):
+                    branch = line[2:].rstrip()
+                    break
+        return branch
 
     def __isLocalBranch( self, branch ):
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            for _, _, files in os.walk( os.path.join( self.checkoutDir(), ".git", "refs" ) ):
-                if branch in files:
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("branch", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if str(line[2:].rstrip(), "UTF-8") == branch.rstrip():
                     return True
-        else:
-            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
         return False
 
     def __isTag( self, _tag ):
         if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
             with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
                 for line in packed_refs:
-                    if "tag" in line and line.endswith(_tag):
+                    if line.endswith(_tag):
                         return True
         else:
                 utils.die("Directory: %s is not a git repository." % self.checkoutDir())
@@ -62,11 +69,7 @@ class GitSource ( VersionSystemSourceBase ):
         if not self.__isTag( branch ):
             if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
                 with open( os.path.join( self.checkoutDir(), ".git", "ORIG_HEAD"), "rt+") as ORIG_HEAD:
-                    ref = ORIG_HEAD.readline()[0:7]
-                    if self.__isLocalBranch(branch):
-                        return "%s-%s" %  (branch, ref)
-                    else:
-                        return ref
+                    return "%s-%s" %  (branch, ORIG_HEAD.readline()[0:7])
             else:
                 utils.die("Directory: %s is not a git repository." % self.checkoutDir())
         else:
