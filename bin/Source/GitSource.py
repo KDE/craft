@@ -51,28 +51,30 @@ class GitSource ( VersionSystemSourceBase ):
         return False
 
     def __isTag( self, _tag ):
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
-                for line in packed_refs:
-                    if line.endswith(_tag):
-                        return True
-        else:
-                utils.die("Directory: %s is not a git repository." % self.checkoutDir())
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("tag", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if str(line.rstrip(), "UTF-8") == _tag:
+                    return True
         return False
 
     def __getCurrentRevision( self ):
         """return the revision returned by git show"""
 
         # run the command
-        
         branch = self.__getCurrentBranch()
         if not self.__isTag( branch ):
-            if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-                with open( os.path.join( self.checkoutDir(), ".git", "ORIG_HEAD"), "rt+") as ORIG_HEAD:
-                    return ORIG_HEAD.readline()[0:7]
-            else:
-                utils.die("Directory: %s is not a git repository." % self.checkoutDir())
-                    
+            # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+            with tempfile.TemporaryFile() as tmpFile:
+                self.__git("show", "--abbrev-commit", stdout=tmpFile )
+                tmpFile.seek( os.SEEK_SET )
+                # read the temporary file and grab the first line
+                # print the revision - everything else should be quiet now
+                line = tmpFile.readline()
+                return str(line, "UTF-8").replace("commit ", "").strip()
         else:
             # in case this is a tag, print out the tag version
             return branch
