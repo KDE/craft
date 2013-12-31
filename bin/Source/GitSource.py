@@ -61,12 +61,8 @@ class GitSource ( VersionSystemSourceBase ):
         branch = self.__getCurrentBranch()
         if not self.__isTag( branch ):
             if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-                with open( os.path.join( self.checkoutDir(), ".git", "HEAD"), "rt+") as HEAD:
-                    line = HEAD.readline().strip()
-                    if line.startswith("ref:"):
-                        with open( os.path.join( self.checkoutDir(), ".git", line[5:] ), "rt+") as REF_FILE:
-                            line = REF_FILE.readline()
-                    ref = line[0:7]
+                with open( os.path.join( self.checkoutDir(), ".git", "ORIG_HEAD"), "rt+") as ORIG_HEAD:
+                    ref = ORIG_HEAD.readline()[0:7]
                     if self.__isLocalBranch(branch):
                         return "%s-%s" %  (branch, ref)
                     else:
