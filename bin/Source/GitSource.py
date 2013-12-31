@@ -26,67 +26,55 @@ class GitSource ( VersionSystemSourceBase ):
             self.gitPath = 'git'
 
     def __getCurrentBranch( self ):
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            with open( os.path.join( self.checkoutDir(), ".git", "HEAD"), "rt+") as HEAD:
-                tag = HEAD.readline().strip()
-                if tag.startswith("ref:"):
-                    return tag[tag.rfind("/")+1:]
-                else:
-                    oldLine = None
-                    with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
-                        for line in packed_refs:
-                            if tag in line:
-                                if line.startswith("^"):
-                                    return oldLine[oldLine.rfind("/")+1:].strip()
-                                else:
-                                    return line[line.rfind("/")+1:].strip()
-                            oldLine = line;
-        else:
-            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
-        return None
+        branch = None
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("branch -a", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                line = str(line,"UTF-8")
+                if line.startswith("*"):
+                    branch = line[2:].rstrip()
+                    break
+        return branch
 
     def __isLocalBranch( self, branch ):
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            for _, _, files in os.walk( os.path.join( self.checkoutDir(), ".git", "refs" ) ):
-                if branch in files:
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("branch", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if str(line[2:].rstrip(), "UTF-8") == branch.rstrip():
                     return True
-        else:
-            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
         return False
 
     def __isTag( self, _tag ):
-        #this can fail because packed-refs is not updated
-        if _tag == "master":
-            return False
-        if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-            with open( os.path.join( self.checkoutDir(), ".git", "packed-refs"), "rt+") as packed_refs:
-                for line in packed_refs:
-                    if _tag in line:
-                        return True
-        else:
-            utils.die("Directory: %s is not a git repository." % self.checkoutDir())
+        if os.path.exists( self.checkoutDir() ):
+            tmpFile = tempfile.TemporaryFile()
+            self.__git("tag", stdout=tmpFile )
+            # TODO: check return value for success
+            tmpFile.seek( 0 )
+            for line in tmpFile:
+                if str(line.rstrip(), "UTF-8") == _tag:
+                    return True
         return False
 
     def __getCurrentRevision( self ):
         """return the revision returned by git show"""
 
         # run the command
-
         branch = self.__getCurrentBranch()
         if not self.__isTag( branch ):
-            if os.path.exists( os.path.join( self.checkoutDir(), ".git" )):
-                with open( os.path.join( self.checkoutDir(), ".git", "HEAD"), "rt+") as HEAD:
-                    line = HEAD.readline().strip()
-                    if line.startswith("ref:"):
-                        with open( os.path.join( self.checkoutDir(), ".git", line[5:] ), "rt+") as REF_FILE:
-                            line = REF_FILE.readline()
-                    ref = line[0:7]
-                    if self.__isLocalBranch(branch):
-                        return "%s-%s" %  (branch, ref)
-                    else:
-                        return ref
-            else:
-                utils.die("Directory: %s is not a git repository." % self.checkoutDir())
+            # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
+            with tempfile.TemporaryFile() as tmpFile:
+                self.__git("show", "--abbrev-commit", stdout=tmpFile )
+                tmpFile.seek( os.SEEK_SET )
+                # read the temporary file and grab the first line
+                # print the revision - everything else should be quiet now
+                line = tmpFile.readline()
+                return "%s-%s" % (branch, str(line, "UTF-8").replace("commit ", "").strip())
         else:
             # in case this is a tag, print out the tag version
             return branch
