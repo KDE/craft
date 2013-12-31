@@ -12,7 +12,8 @@ class subinfo(info.infoclass):
                                                       ("revert-icl-fix.diff", 1)]
         self.patchToApply['gitHEAD'] = [("kde.conf-extended-fix.diff", 1),
                                         ("fix-dir-separator.diff", 1),
-                                        ("revert-icl-fix.diff", 1)]
+                                        ("revert-icl-fix.diff", 1),
+                                        ("0001-Make-compatible-with-cmath.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 

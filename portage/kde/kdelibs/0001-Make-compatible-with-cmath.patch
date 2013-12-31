@@ -1,0 +1,57 @@
+From 2d685e498da926d3b07568d8c6f0619f58d7df81 Mon Sep 17 00:00:00 2001
+From: Kevin Funk <kevin@kfunk.org>
+Date: Tue, 31 Dec 2013 15:15:36 +0100
+Subject: [PATCH] Make compatible with cmath.
+
+Fixes a compile error related to fmod/wtf_fmod when using MSVC2012:
+C:\Program Files (x86)\Microsoft Visual Studio
+11.0\VC\INCLUDE\xtgmath.h(96) : error C2732: linkage specification
+contradicts earlier specification for 'wtf_fmod'
+C:\Program Files (x86)\Microsoft Visual Studio
+11.0\VC\INCLUDE\xtgmath.h(96) : see declaration of 'wtf_fmod'
+
+Situation:
+xtgmath.h defines fmod as C function via some macro magic. xtgmath.h is an internal header and
+is included by cmath. Now, MathExtras.h contains "#define fmod(x, y)
+wtf_fmod(x, y)". Here wtf_fmod is an inline function.
+Including cmath after MathExtras.h replaces "fmod"
+with "wtf_fmod" in the cmath header and we get two definitions of wtf_fmod with different linkage.
+Solution: Include cmath as early as possible (before doing the above mentioned define)
+to first get a definition of fmod.
+
+This shouldn't have any effect on other platforms. Use "using" for the
+four functions from <cmath> we want to using without the "std" prefix.
+
+Also see:
+http://trac.webkit.org/changeset/54388/trunk/JavaScriptCore/wtf/MathExtras.h
+https://bugs.webkit.org/show_bug.cgi?id=34618
+---
+ kjs/wtf/MathExtras.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/kjs/wtf/MathExtras.h b/kjs/wtf/MathExtras.h
+index 58be75b..a0702b3 100644
+--- a/kjs/wtf/MathExtras.h
++++ b/kjs/wtf/MathExtras.h
+@@ -26,7 +26,7 @@
+ #ifndef WTF_MathExtras_h
+ #define WTF_MathExtras_h
+ 
+-#include <math.h>
++#include <cmath>
+ 
+ #if PLATFORM(WIN)
+ 
+@@ -125,4 +125,9 @@ inline float grad2deg(float g) { return g * 360.0f / 400.0f; }
+ inline float rad2grad(float r) { return r * 200.0f / piFloat; }
+ inline float grad2rad(float g) { return g * piFloat / 200.0f; }
+ 
++using std::isfinite;
++using std::isinf;
++using std::isnan;
++using std::signbit;
++
+ #endif // #ifndef WTF_MathExtras_h
+-- 
+1.8.3.2
+
