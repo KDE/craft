@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['testing/gsl'] = 'default'
+        self.dependencies['win32libs/gsl'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'
         self.dependencies['win32libs/openjpeg'] = 'default'
         self.dependencies['win32libs/icu'] = 'default'
