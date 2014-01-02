@@ -1,0 +1,20 @@
+diff -Nru -x '*~' calligra-2.7.90.orig/sheets/plugins/solver/CMakeLists.txt calligra-2.7.90/sheets/plugins/solver/CMakeLists.txt
+--- calligra-2.7.90.orig/sheets/plugins/solver/CMakeLists.txt	2013-12-01 16:24:26.000000000 -0200
++++ calligra-2.7.90/sheets/plugins/solver/CMakeLists.txt	2013-12-31 20:03:51.616997100 -0200
+@@ -27,11 +27,14 @@
+ 
+ target_link_libraries( sheetssolver
+ 	${GSL_LIBRARIES}
+-        calligrasheetscommon
++	calligrasheetscommon
+ )
+ 
+-install(TARGETS sheetssolver  DESTINATION ${PLUGIN_INSTALL_DIR})
++if(WIN32)
++	target_link_libraries( sheetssolver ${GSL_CBLAS_LIBRARIES} )
++endif(WIN32)
+ 
++install(TARGETS sheetssolver  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+ ########### install files ###############
+ 

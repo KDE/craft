@@ -4,7 +4,16 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "[git]kde:calligra"
         self.svnTargets['2.8'] = "[git]kde:calligra|calligra/2.8"
-        self.defaultTarget = '2.8'
+        
+        for ver in ['2.7.90']:
+            self.targets[ver] = "http://download.kde.org/unstable/calligra-" + ver + "/calligra-" + ver + ".tar.xz"
+            self.targetInstSrc[ver] = 'calligra-' + ver
+        self.targetDigests['2.7.90'] = 'bc689b9644c0adfafa2cccd840a0abbdbf098ef8'
+        self.patchToApply['2.7.90'] = [ ('patches/2.7.90/rng2cpp-fix.patch', 1),
+                                        ('patches/2.7.90/deduplicate-includes-where-moc-fails-due-to-long-commandline.patch', 1),
+                                        ('patches/2.7.90/gsl-cblas-link-fix.patch', 1) ]
+        
+        self.defaultTarget = '2.7.90'
         self.shortDescription = "The Calligra Suite of Applications"
 
     def setDependencies( self ):
@@ -16,7 +25,7 @@ class subinfo( info.infoclass ):
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['testing/gsl'] = 'default'
+        self.dependencies['win32libs/gsl'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'
         self.dependencies['win32libs/openjpeg'] = 'default'
         self.dependencies['win32libs/icu'] = 'default'
