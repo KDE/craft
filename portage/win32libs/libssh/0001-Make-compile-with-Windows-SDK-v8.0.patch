@@ -1,0 +1,68 @@
+From 1a9934938c549e80a3c0e8b8a053529d4b8ebd71 Mon Sep 17 00:00:00 2001
+From: Kevin Funk <kevin@kfunk.org>
+Date: Thu, 2 Jan 2014 16:18:15 +0100
+Subject: [PATCH] Make compile with Windows SDK v8.0
+
+Let's hope that doesn't break anything else.
+
+Patch is assembled out of several hunks from a series of patches against
+ConfigureChecks.cmake in libssh.git in order to support ntohll/htonll.
+See version history there if something is wrong.
+---
+ ConfigureChecks.cmake | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/ConfigureChecks.cmake b/ConfigureChecks.cmake
+index e140f26..3af65a7 100644
+--- a/ConfigureChecks.cmake
++++ b/ConfigureChecks.cmake
+@@ -46,11 +46,11 @@ check_include_file(pty.h HAVE_PTY_H)
+ check_include_file(termios.h HAVE_TERMIOS_H)
+ 
+ if (WIN32)
+-  check_include_file(wspiapi.h HAVE_WSPIAPI_H)
++  check_include_files("winsock2.h;ws2tcpip.h;wspiapi.h" HAVE_WSPIAPI_H)
+   if (NOT HAVE_WSPIAPI_H)
+     message(STATUS "WARNING: Without wspiapi.h, this build will only work on Windows XP and newer versions")
+   endif (NOT HAVE_WSPIAPI_H)
+-  check_include_file(ws2tcpip.h HAVE_WS2TCPIP_H)
++  check_include_files("winsock2.h;ws2tcpip.h" HAVE_WS2TCPIP_H)
+   if (HAVE_WSPIAPI_H OR HAVE_WS2TCPIP_H)
+     set(HAVE_GETADDRINFO TRUE)
+     set(HAVE_GETHOSTBYNAME TRUE)
+@@ -77,12 +77,24 @@ endif (CMAKE_HAVE_PTHREAD_H)
+ check_function_exists(strncpy HAVE_STRNCPY)
+ check_function_exists(vsnprintf HAVE_VSNPRINTF)
+ check_function_exists(snprintf HAVE_SNPRINTF)
++check_function_exists(ntohll HAVE_NTOHLL)
++check_function_exists(htonll HAVE_HTONLL)
+ 
+ if (WIN32)
+     check_function_exists(_vsnprintf_s HAVE__VSNPRINTF_S)
+     check_function_exists(_vsnprintf HAVE__VSNPRINTF)
+     check_function_exists(_snprintf HAVE__SNPRINTF)
+     check_function_exists(_snprintf_s HAVE__SNPRINTF_S)
++
++    if (HAVE_WSPIAPI_H OR HAVE_WS2TCPIP_H)
++        set(HAVE_GETADDRINFO TRUE)
++        set(HAVE_GETHOSTBYNAME TRUE)
++        if (MSVC)
++            set(HAVE_NTOHLL TRUE)
++            set(HAVE_HTONLL TRUE)
++        endif (MSVC)
++    endif (HAVE_WSPIAPI_H OR HAVE_WS2TCPIP_H)
++
+ endif (WIN32)
+ 
+ if (UNIX)
+@@ -119,7 +131,6 @@ if (UNIX)
+     check_function_exists(select HAVE_SELECT)
+     check_function_exists(cfmakeraw HAVE_CFMAKERAW)
+     check_function_exists(regcomp HAVE_REGCOMP)
+-    check_function_exists(ntohll HAVE_NTOHLL)
+ endif (UNIX)
+ 
+ set(LIBSSH_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} CACHE INTERNAL "libssh required system libraries")
+-- 
+1.8.3.2
+
