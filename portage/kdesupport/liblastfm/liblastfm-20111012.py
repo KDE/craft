@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.0.0'] = '1947b1a6397ea188151572da33edc7699bf10164'
         self.targetDigests['1.0.1'] = '2d6adb2c265daa4b62bd9bf7fa8e45d2e29b9c37'
         self.targetDigests['1.0.3'] = '4c6dc0eb2a32049fed72f8d713489edfad7b4eff'
+        self.patchToApply['1.0.8'] = [ ('remove_atl_stuff.patch', 1) ]
         
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
         self.defaultTarget = '1.0.8'
