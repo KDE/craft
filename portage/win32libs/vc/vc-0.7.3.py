@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         self.targets['0.7.3'] = 'http://code.compeng.uni-frankfurt.de/attachments/download/174/Vc-0.7.3.tar.gz'
         self.targetDigests['0.7.3'] = 'aa41aeddac59abc60f292de8fdedbe70a4b49108'
         self.targetInstSrc['0.7.3'] = "Vc-0.7.3"
+        self.patchToApply['0.7.3'] = ("Vc-0.7.3-20140107.diff", 1)
         self.shortDescription = 'Portable, zero-overhead SIMD library for C++'
         self.defaultTarget = '0.7.3'
 
