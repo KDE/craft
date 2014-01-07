@@ -50,7 +50,7 @@ class subinfo(info.infoclass):
             self.options.configure.defines += " -DKDE4_BUILD_TESTS=1"
     
     def setDependencies( self ):
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.runtimeDependencies['kde/kde-workspace'] = 'default' #not explicitly required, but some components (such as theme support) require this
         if self.buildTarget in ['2.3.0', '2.4.1', '2.5.0', '2.6.0', '2.7.0', '2.8.0', '2.9.0', '3.0.0']:
             #glib is not explicitly required by digikam after 3.0.0, but may be required by dependencies

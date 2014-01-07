@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies['win32libs/glew'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.dependencies['win32libs/lcms2'] = 'default'
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['virtual/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'

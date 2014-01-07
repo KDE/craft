@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
         #self.homepage = "http://konstruktor.influx.kr/"
 
     def setDependencies( self ):
-        self.dependencies['virtual/kde-runtime']    = 'default'
+        self.dependencies['kde/kde-runtime']    = 'default'
         self.dependencies['win32libs/sqlite']    = 'default'
         self.dependencies['testing/l3p']    = 'default'
         self.dependencies['testing/ldraw-parts']    = 'default'

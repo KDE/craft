@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "common KDE graphics application plugins"
 
     def setDependencies( self ):
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['virtual/kdegraphics'] = 'default'
         self.dependencies['win32libs/expat'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'

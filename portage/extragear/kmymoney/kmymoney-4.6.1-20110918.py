@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/kdepimlibs'] = 'default'
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/libofx'] = 'default'
