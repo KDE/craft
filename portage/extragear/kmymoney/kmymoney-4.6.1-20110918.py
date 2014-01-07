@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.6.1'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdepimlibs'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'

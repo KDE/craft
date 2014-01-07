@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['virtual/kdepimlibs'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
         self.shortDescription = "a KDE based irc client"
 
 class Package(CMakePackageBase):

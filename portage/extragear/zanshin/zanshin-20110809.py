@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdepimlibs'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):
