@@ -1,6 +1,6 @@
 diff -Nru -x '*~' Vc-0.7.3.orig/cmake/VcMacros.cmake Vc-0.7.3/cmake/VcMacros.cmake
 --- Vc-0.7.3.orig/cmake/VcMacros.cmake	2013-09-09 08:23:27.000000000 +0200
-+++ Vc-0.7.3/cmake/VcMacros.cmake	2014-01-07 12:03:55.429389800 +0100
++++ Vc-0.7.3/cmake/VcMacros.cmake	2014-01-07 12:07:17.342796900 +0100
 @@ -44,7 +44,7 @@
  
  macro(vc_determine_compiler)
@@ -79,3 +79,58 @@ diff -Nru -x '*~' Vc-0.7.3.orig/cmake/VcMacros.cmake Vc-0.7.3/cmake/VcMacros.cma
              -DVC_IMPL=${_impl}
              ${_outfile_flag}${_out} ${CMAKE_CURRENT_SOURCE_DIR}/${_vc_compile_src}
              MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_vc_compile_src}
+diff -Nru -x '*~' Vc-0.7.3.orig/tests/deinterleave.cpp Vc-0.7.3/tests/deinterleave.cpp
+--- Vc-0.7.3.orig/tests/deinterleave.cpp	2013-09-09 08:23:27.000000000 +0200
++++ Vc-0.7.3/tests/deinterleave.cpp	2014-01-07 12:24:58.433344000 +0100
+@@ -77,7 +77,7 @@
+         // note that a 32 bit integer is certainly enough to decide on alignment...
+         // ... but uintptr_t is C99 but not C++ yet
+         // ... and GCC refuses to do the cast, even if I know what I'm doing
+-        if (reinterpret_cast<unsigned long>(&memory[i]) & (VectorAlignment - 1)) {
++        if (reinterpret_cast<uintptr_t>(&memory[i]) & (VectorAlignment - 1)) {
+             Vc::deinterleave(&a, &b, &memory[i], Unaligned);
+         } else {
+             Vc::deinterleave(&a, &b, &memory[i]);
+diff -Nru -x '*~' Vc-0.7.3.orig/tests/utils.cpp Vc-0.7.3/tests/utils.cpp
+--- Vc-0.7.3.orig/tests/utils.cpp	2013-09-09 08:23:27.000000000 +0200
++++ Vc-0.7.3/tests/utils.cpp	2014-01-07 12:35:38.467338900 +0100
+@@ -358,9 +358,9 @@
+ {
+     int_v *a = Vc::malloc<int_v, Vc::AlignOnVector>(10);
+ 
+-    unsigned long mask = VectorAlignment - 1;
++    uintptr_t mask = VectorAlignment - 1;
+     for (int i = 0; i < 10; ++i) {
+-        VERIFY((reinterpret_cast<unsigned long>(&a[i]) & mask) == 0);
++        VERIFY((reinterpret_cast<uintptr_t>(&a[i]) & mask) == 0);
+     }
+     const char *data = reinterpret_cast<const char *>(&a[0]);
+     for (int i = 0; i < 10; ++i) {
+@@ -369,13 +369,13 @@
+ 
+     a = Vc::malloc<int_v, Vc::AlignOnCacheline>(10);
+     mask = CpuId::cacheLineSize() - 1;
+-    COMPARE((reinterpret_cast<unsigned long>(&a[0]) & mask), 0ul);
++    COMPARE((reinterpret_cast<uintptr_t>(&a[0]) & mask), 0ul);
+ 
+     // I don't know how to properly check page alignment. So we check for 4 KiB alignment as this is
+     // the minimum page size on x86
+     a = Vc::malloc<int_v, Vc::AlignOnPage>(10);
+     mask = 4096 - 1;
+-    COMPARE((reinterpret_cast<unsigned long>(&a[0]) & mask), 0ul);
++    COMPARE((reinterpret_cast<uintptr_t>(&a[0]) & mask), 0ul);
+ }
+ 
+ int main()
+diff -Nru -x '*~' Vc-0.7.3.orig/tests/vectormemoryhelper.h Vc-0.7.3/tests/vectormemoryhelper.h
+--- Vc-0.7.3.orig/tests/vectormemoryhelper.h	2013-09-09 08:23:27.000000000 +0200
++++ Vc-0.7.3/tests/vectormemoryhelper.h	2014-01-07 12:26:07.399634200 +0100
+@@ -30,7 +30,7 @@
+     public:
+         VectorMemoryHelper(int count)
+             : mem(new char[count * sizeof(Vec) + Vc::VectorAlignment]),
+-            aligned(mem + (Vc::VectorAlignment - (reinterpret_cast<unsigned long>( mem ) & ( Vc::VectorAlignment - 1 ))))
++            aligned(mem + (Vc::VectorAlignment - (reinterpret_cast<uintptr_t>( mem ) & ( Vc::VectorAlignment - 1 ))))
+         {
+         }
+         ~VectorMemoryHelper() { delete[] mem; }
