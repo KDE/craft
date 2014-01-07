@@ -1,0 +1,142 @@
+diff -Nru -x '*~' kdepim-4.12.0.orig/knotes/CMakeLists.txt kdepim-4.12.0/knotes/CMakeLists.txt
+--- kdepim-4.12.0.orig/knotes/CMakeLists.txt	2013-12-11 21:11:23.000000000 +0100
++++ kdepim-4.12.0/knotes/CMakeLists.txt	2014-01-07 17:15:39.927850600 +0100
+@@ -85,7 +85,7 @@
+ install(TARGETS knotes_local  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+ ########### next target ###############
+-set(kcm_knotes_PART_SRCS configdialog/knoteconfigdialog.cpp )
++set(kcm_knotes_PART_SRCS configdialog/knoteconfigdialogkcm.cpp )
+ 
+ kde4_add_plugin(kcm_knote ${kcm_knotes_PART_SRCS} ${libknotesconfig_SRCS})
+ 
+diff -Nru -x '*~' kdepim-4.12.0.orig/knotes/configdialog/knoteconfigdialog.cpp kdepim-4.12.0/knotes/configdialog/knoteconfigdialog.cpp
+--- kdepim-4.12.0.orig/knotes/configdialog/knoteconfigdialog.cpp	2013-12-11 21:11:23.000000000 +0100
++++ kdepim-4.12.0/knotes/configdialog/knoteconfigdialog.cpp	2014-01-07 17:16:09.469238700 +0100
+@@ -84,53 +84,6 @@
+     emit configWrote();
+ }
+ 
+-
+-extern "C"
+-{
+-KDE_EXPORT KCModule *create_knote_config_display( QWidget *parent )
+-{
+-    KComponentData instance( "kcmnote_config_display" );
+-    return new KNoteDisplayConfig( instance, parent );
+-}
+-}
+-
+-extern "C"
+-{
+-KDE_EXPORT KCModule *create_knote_config_editor( QWidget *parent )
+-{
+-    KComponentData instance( "kcmnote_config_editor" );
+-    return new KNoteEditorConfig( instance, parent );
+-}
+-}
+-
+-extern "C"
+-{
+-KDE_EXPORT KCModule *create_knote_config_action( QWidget *parent )
+-{
+-    KComponentData instance( "kcmnote_config_action" );
+-    return new KNoteActionConfig( instance, parent );
+-}
+-}
+-
+-extern "C"
+-{
+-KDE_EXPORT KCModule *create_knote_config_network( QWidget *parent )
+-{
+-    KComponentData instance( "kcmnote_config_network" );
+-    return new KNoteNetworkConfig( instance, parent );
+-}
+-}
+-
+-extern "C"
+-{
+-KDE_EXPORT KCModule *create_knote_config_print( QWidget *parent )
+-{
+-    KComponentData instance( "kcmnote_config_print" );
+-    return new KNotePrintConfig( instance, parent );
+-}
+-}
+-
+-
+ KNoteDisplayConfigWidget::KNoteDisplayConfigWidget( bool defaults )
+     :QWidget( 0 )
+ {
+diff -Nru -x '*~' kdepim-4.12.0.orig/knotes/configdialog/knoteconfigdialogkcm.cpp kdepim-4.12.0/knotes/configdialog/knoteconfigdialogkcm.cpp
+--- kdepim-4.12.0.orig/knotes/configdialog/knoteconfigdialogkcm.cpp	1970-01-01 01:00:00.000000000 +0100
++++ kdepim-4.12.0/knotes/configdialog/knoteconfigdialogkcm.cpp	2014-01-07 17:28:25.653894400 +0100
+@@ -0,0 +1,69 @@
++/*******************************************************************
++ KNotes -- Notes for the KDE project
++
++ Copyright (c) 1997-2005, The KNotes Developers
++
++ This program is free software; you can redistribute it and/or
++ modify it under the terms of the GNU General Public License
++ as published by the Free Software Foundation; either version 2
++ of the License, or (at your option) any later version.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++*******************************************************************/
++
++#include <kcmodule.h>
++#include <kcmultidialog.h>
++
++#include "knoteconfigdialog.h"
++
++extern "C"
++{
++KDE_EXPORT KCModule *create_knote_config_display( QWidget *parent )
++{
++    KComponentData instance( "kcmnote_config_display" );
++    return new KNoteDisplayConfig( instance, parent );
++}
++}
++
++extern "C"
++{
++KDE_EXPORT KCModule *create_knote_config_editor( QWidget *parent )
++{
++    KComponentData instance( "kcmnote_config_editor" );
++    return new KNoteEditorConfig( instance, parent );
++}
++}
++
++extern "C"
++{
++KDE_EXPORT KCModule *create_knote_config_action( QWidget *parent )
++{
++    KComponentData instance( "kcmnote_config_action" );
++    return new KNoteActionConfig( instance, parent );
++}
++}
++
++extern "C"
++{
++KDE_EXPORT KCModule *create_knote_config_network( QWidget *parent )
++{
++    KComponentData instance( "kcmnote_config_network" );
++    return new KNoteNetworkConfig( instance, parent );
++}
++}
++
++extern "C"
++{
++KDE_EXPORT KCModule *create_knote_config_print( QWidget *parent )
++{
++    KComponentData instance( "kcmnote_config_print" );
++    return new KNotePrintConfig( instance, parent );
++}
++}

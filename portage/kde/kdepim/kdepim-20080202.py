@@ -9,7 +9,9 @@ class subinfo(info.infoclass):
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
             self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
             self.patchToApply[kd.kdeversion + ver] = [('fix_introduction_screen.diff', 1),  # not to be upstreamed, this is an ugly hack, the fix is somewhere else (ref. bug 302342)
-                                                      ('0001-fixed-windows-x64-build.patch', 1)] # reverted upstream (does not compile on Linux)
+                                                      ('0001-fixed-windows-x64-build.patch', 1),# reverted upstream (does not compile on Linux)
+                                                      ('0002-fixed-windows-x64-build.patch', 1),
+                                                      ("fixknote.diff",1)] #this needs some review
 
         self.defaultTarget = 'gitHEAD'
 
