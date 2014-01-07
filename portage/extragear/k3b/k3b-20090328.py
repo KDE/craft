@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['virtual/kdemultimedia'] = 'default'
+        self.dependencies['kde/kdemultimedia'] = 'default'
         self.dependencies['win32libs/libsamplerate'] = 'default'
         self.dependencies['testing/libdvdcss'] = 'default'
         #        self.dependencies['testing/libcdio'] = 'default'
