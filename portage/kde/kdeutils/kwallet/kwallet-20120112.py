@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
             self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+            self.patchToApply[kd.kdeversion + ver] = [('kwallet-4.12.0-20140107.diff', 1)]
 
         self.shortDescription = "KDE Wallet Manager"
         self.defaultTarget = 'gitHEAD'
