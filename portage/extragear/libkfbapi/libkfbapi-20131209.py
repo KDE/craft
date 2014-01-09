@@ -16,6 +16,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['kde/kdepimlibs'] = 'default'
         self.dependencies['kdesupport/qjson'] = 'default'
+        self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "KDE library for accessing Facebook services"
 
 from Package.CMakePackageBase import *
