@@ -134,7 +134,7 @@ function path-msvc()
 
 function setupCCACHE()
 {
-    if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true)
+    if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true -and $env:CCACHE_DIR -eq "")
     {
         $env:CCACHE_DIR="$env:KDEROOT\build\CCACHE"
     }
