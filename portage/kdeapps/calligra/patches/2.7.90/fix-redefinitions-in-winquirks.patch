@@ -1,0 +1,35 @@
+diff -Nru -x '*~' calligra-2.7.90.orig/winquirks/sys/time.h calligra-2.7.90/winquirks/sys/time.h
+--- calligra-2.7.90.orig/winquirks/sys/time.h	2013-12-01 16:24:26.000000000 -0200
++++ calligra-2.7.90/winquirks/sys/time.h	2014-01-15 18:38:16.745938100 -0200
+@@ -11,6 +11,8 @@
+   #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
+ #endif
+  
++#ifndef _TIMEZONE_DEFINED /* also in mingw's time.h */
++#define _TIMEZONE_DEFINED
+ struct timezone 
+ {
+   int  tz_minuteswest; /* minutes W of Greenwich */
+@@ -52,4 +54,6 @@
+ 
+ 	return 0;
+ }
++#endif /* _TIMEZONE_DEFINED */
++
+ #endif
+diff -Nru -x '*~' calligra-2.7.90.orig/winquirks/unistd.h calligra-2.7.90/winquirks/unistd.h
+--- calligra-2.7.90.orig/winquirks/unistd.h	2013-12-01 16:24:26.000000000 -0200
++++ calligra-2.7.90/winquirks/unistd.h	2014-01-15 18:38:16.747939900 -0200
+@@ -116,7 +116,12 @@
+ #if _MSC_VER < 1600
+ #define ENOTSUP       ENOSYS
+ #endif
++
++#ifndef _MODE_T_
++#define _MODE_T_
+ typedef int mode_t;
++#endif
++
+ typedef unsigned int gid_t;
+ typedef unsigned int uid_t;
+ 

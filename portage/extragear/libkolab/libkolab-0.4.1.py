@@ -10,7 +10,6 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "libkolab-" + ver
         self.patchToApply['0.4.1'] = [("libkolab-fixes.diff", 1)]
         self.patchToApply['0.5.0'] = [("libkolab-0.5.0-fixes.diff", 1)]
-        self.targetDigests['0.5.0'] = 'db886a7401761e0efab22badf575d310c1655fef'
 
         self.shortDescription = ''
         self.defaultTarget = '0.5.0'

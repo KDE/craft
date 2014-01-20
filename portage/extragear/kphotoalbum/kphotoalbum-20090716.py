@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdegraphics'] = 'default'
+        self.dependencies['kde/kdegraphics'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):

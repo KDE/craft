@@ -1,6 +1,17 @@
-diff -Nru -x '*~' kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c
---- kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-01 06:22:03.809161000 +0100
-+++ kopete-4.10.2/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-03-10 02:32:56.755814800 +0100
+diff -Nru -x '*~' kopete-4.12.0.orig/protocols/jabber/libiris/src/jdns/jdns_p.h kopete-4.12.0/protocols/jabber/libiris/src/jdns/jdns_p.h
+--- kopete-4.12.0.orig/protocols/jabber/libiris/src/jdns/jdns_p.h	2013-12-11 20:35:24.000000000 +0100
++++ kopete-4.12.0/protocols/jabber/libiris/src/jdns/jdns_p.h	2014-01-08 18:40:38.674326500 +0100
+@@ -47,6 +47,7 @@
+ #endif
+ 
+ #ifdef JDNS_OS_WIN
++# include <winsock2.h>
+ # include <windows.h>
+ #endif
+ 
+diff -Nru -x '*~' kopete-4.12.0.orig/protocols/yahoo/libkyahoo/yahoo_fn.c kopete-4.12.0/protocols/yahoo/libkyahoo/yahoo_fn.c
+--- kopete-4.12.0.orig/protocols/yahoo/libkyahoo/yahoo_fn.c	2013-12-11 20:35:24.000000000 +0100
++++ kopete-4.12.0/protocols/yahoo/libkyahoo/yahoo_fn.c	2014-01-08 18:32:43.236602100 +0100
 @@ -4188,344 +4188,344 @@
       { IDENT, 0, 0 },
       { IDENT, 0, 0 }},

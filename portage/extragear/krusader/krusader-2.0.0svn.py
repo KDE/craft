@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):
