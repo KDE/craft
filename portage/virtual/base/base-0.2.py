@@ -37,7 +37,11 @@ class subinfo(info.infoclass):
                 elif emergePlatform.buildArchitecture() == 'arm-wince':
                     self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
             if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
-                self.buildDependencies['dev-util/jom']        = 'default'
+                self.buildDependencies['dev-util/jom'] = 'default'
+            if utils.envAsBool("EMERGE_USE_NINJA"):
+                self.buildDependencies['dev-util/ninja'] = 'default'
+            if utils.envAsBool("EMERGE_USE_CCACHE"):
+                self.buildDependencies['win32libs/ccache'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

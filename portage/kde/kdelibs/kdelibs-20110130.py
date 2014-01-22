@@ -7,10 +7,14 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
             self.patchToApply[kd.kdeversion + ver] = [("kde.conf-extended-fix.diff", 1),
-                                                      ("fix-dir-separator.diff", 1)]
+                                                      ("fix-dir-separator.diff", 1),
+                                                      ("revert-icl-fix.diff", 1)]
         self.patchToApply['gitHEAD'] = [("kde.conf-extended-fix.diff", 1),
-                                        ("fix-dir-separator.diff", 1)]
+                                        ("fix-dir-separator.diff", 1),
+                                        ("revert-icl-fix.diff", 1),
+                                        ("0001-Make-compatible-with-cmath.patch", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
 
@@ -38,6 +42,24 @@ class subinfo(info.infoclass):
             self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
         elif self.options.features.phononBackend.ds9:
             self.runtimeDependencies['kdesupport/phonon-ds9'] = 'default'
+        self.dependencies['win32libs/aspell']  = 'default'
+#        self.dependencies['win32libs/enchant']  = 'default'
+        self.dependencies['win32libs/gettext']  = 'default'
+        self.dependencies['win32libs/giflib']  = 'default'
+#        self.dependencies['win32libs/gssapi']  = 'default'
+#        self.dependencies['win32libs/hspell']  = 'default'
+        if not emergePlatform.isCrossCompilingEnabled():
+            self.dependencies['win32libs/jasper']  = 'default'
+        self.dependencies['win32libs/jpeg']  = 'default'
+        self.dependencies['win32libs/libbzip2']  = 'default'
+        self.dependencies['win32libs/libpng']  = 'default'
+        self.dependencies['win32libs/libxml2']  = 'default'
+        self.dependencies['win32libs/libxslt']  = 'default'
+#        self.dependencies['win32libs/openexr']  = 'default'
+        self.dependencies['win32libs/openssl']  = 'default'
+        self.dependencies['win32libs/pcre']  = 'default'
+        self.dependencies['win32libs/shared-mime-info']  = 'default'
+        self.dependencies['win32libs/zlib']  = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -1,0 +1,25 @@
+From abf3546ae6645bcb7f53d60bbfdcf3951a37fcbb Mon Sep 17 00:00:00 2001
+From: Patrick von Reth <vonreth@kde.org>
+Date: Thu, 5 Dec 2013 10:37:52 +0100
+Subject: [PATCH 3/3] fixed platform_helper.py msvc_needs_fs test
+
+---
+ platform_helper.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/platform_helper.py b/platform_helper.py
+index 1b45e19..de102b5 100644
+--- a/platform_helper.py
++++ b/platform_helper.py
+@@ -62,7 +62,7 @@ class Platform(object):
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+         out, err = popen.communicate()
+-        return '/FS ' in out
++        return '/FS ' in str(out)
+ 
+     def is_windows(self):
+         return self.is_mingw() or self.is_msvc()
+-- 
+1.8.3.2
+

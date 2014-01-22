@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
         
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git://gitorious.org/vsd/vsd.git'
+      self.svnTargets['gitHEAD'] = 'https://github.com/TheOneRing/vsd.git'
       self.defaultTarget = 'gitHEAD'
          
 

@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libpng'] = 'default'
         self.dependencies['win32libs/libcurl'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
+        self.dependencies['win32libs/tiff'] = 'default'
         self.runtimeDependencies['data/poppler-data'] = 'default'
         self.dependencies['libs/qt'] = 'default'
 

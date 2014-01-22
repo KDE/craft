@@ -1,0 +1,18 @@
+diff -Nru -x '*~' calligra-2.7.90.orig/libs/odf/writeodf/CMakeLists.txt calligra-2.7.90/libs/odf/writeodf/CMakeLists.txt
+--- calligra-2.7.90.orig/libs/odf/writeodf/CMakeLists.txt	2013-12-01 16:24:25.000000000 -0200
++++ calligra-2.7.90/libs/odf/writeodf/CMakeLists.txt	2013-12-28 14:06:59.032923400 -0200
+@@ -1,13 +1,9 @@
+ set(RNGFILE ${CMAKE_SOURCE_DIR}/devtools/scripts/OpenDocument-v1.2-cs01-schema-calligra.rng)
+ set(RNGHEADERDIR ${CMAKE_BINARY_DIR}/libs/odf/writeodf)
+ if (WIN32)
+-    find_program(RNG2CCP_EXECUTABLE rng2cpp
+-        ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}
+-        ${CMAKE_BINARY_DIR}/bin
+-    )
+     add_custom_command(
+         OUTPUT ${RNGHEADERDIR}/writeodf.h
+-        COMMAND ${RNG2CCP_EXECUTABLE}
++        COMMAND rng2cpp
+         ARGS ${RNGFILE} ${RNGHEADERDIR}
+         DEPENDS rng2cpp ${RNGFILE}
+         WORKING_DIRECTORY ${RNGHEADERDIR}

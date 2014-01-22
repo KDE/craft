@@ -17,9 +17,10 @@ class subinfo(info.infoclass):
         self.targets['1.8.1.2'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.1.2-preview20130201.7z"
         self.targetDigests['1.8.1.2'] = 'b2ab1de84727466fe3830b33c47e275bbd9a8d2d'
         self.targets['1.8.3'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.3-preview20130601.7z"
-        self.targetDigests['1.8.3'] = 'd8082d19fc6f377f52bd7717f6c3dfdf8ecf821e'
+        self.targets['1.8.5.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.8.5.2-preview20131230.7z"
+        self.targetDigests['1.8.5.2'] = 'c53de59d32a13ae892f07c6083cad68eca2dbaa2'
         
-        self.defaultTarget = '1.8.3'
+        self.defaultTarget = '1.8.5.2'
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'

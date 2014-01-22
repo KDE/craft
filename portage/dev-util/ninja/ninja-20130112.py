@@ -14,6 +14,9 @@ class subinfo(info.infoclass):
         self.patchToApply[ "1.1.0" ] = [("0001-if-windows-and-not-msvc-set-platform-to-mingw.patch",1)]
         self.targetDigests['1.3.4'] = 'e6ac7d49b2b5913956ad6740c8612981183808af'
         self.targetDigests['1.4.0'] = '3ab2fcb71e9f70c19cda2d63983cdfe0f971d04f'
+        self.patchToApply['1.4.0'] = [("0001-Fix-compilation-on-VS2013.patch", 1),
+                                      ("0002-Fix-up-platform_helper-for-MSVC-with-Python-2.6.8-th.patch", 1),
+                                      ("0003-fixed-platform_helper.py-msvc_needs_fs-test.patch", 1)]
         self.defaultTarget = '1.4.0'
 
     def setDependencies( self ):

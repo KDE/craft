@@ -7,7 +7,7 @@ import emergePlatform
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "4.8.2"
-        rev = "0"
+        rev = "1"
         if emergePlatform.buildArchitecture() == 'x64':
             self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x64-%s-release-posix-seh-rev%s.7z" % ( ver, rev )
         else:

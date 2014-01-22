@@ -1,6 +1,6 @@
-diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/libjasper/CMakeLists.txt
+diff -Nru -x '*~' jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/libjasper/CMakeLists.txt
 --- jasper-1.900.1.orig/src/libjasper/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ jasper-1.900.1/src/libjasper/CMakeLists.txt	2010-04-30 16:08:23.293200000 +0200
++++ jasper-1.900.1/src/libjasper/CMakeLists.txt	2013-05-08 12:16:19.893296000 +0200
 @@ -0,0 +1,120 @@
 +# echo EXPORTS > libjasper.def
 +# nm libjasper.dll | grep " T _" | sed "s/.* T _//" >> libjasper.def
@@ -96,12 +96,12 @@ diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/li
 +
 +set(CMAKE_DEBUG_POSTFIX "d")
 +
-+if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
++if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 +    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -wd4996)
 +    add_definitions(-DWIN32 -DJAS_WIN_MSVC_BUILD)
 +    set(jasper_base_SRCS ${jasper_base_SRCS} jasper.def)
-+endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
++endif(MSVC)
 +
 +add_library(jasper SHARED ${jasper_base_SRCS}
 +                          ${jasper_bmp_SRCS}
@@ -122,9 +122,32 @@ diff -Nru jasper-1.900.1.orig/src/libjasper/CMakeLists.txt jasper-1.900.1/src/li
 +                ARCHIVE DESTINATION lib
 +)
 +install(FILES ${jasper_headers} DESTINATION include/jasper)
-diff -Nru jasper-1.900.1.orig/src/libjasper/jasper.def jasper-1.900.1/src/libjasper/jasper.def
+diff -Nru -x '*~' jasper-1.900.1.orig/src/libjasper/include/jasper/jas_config.h jasper-1.900.1/src/libjasper/include/jasper/jas_config.h
+--- jasper-1.900.1.orig/src/libjasper/include/jasper/jas_config.h	2013-12-23 16:36:44.290471300 +0100
++++ jasper-1.900.1/src/libjasper/include/jasper/jas_config.h	2013-12-23 16:36:07.460364800 +0100
+@@ -14,6 +14,10 @@
+ /* The preprocessor symbol JAS_WIN_MSVC_BUILD should not be defined
+   unless the JasPer software is being built under Microsoft Windows
+   using Microsoft Visual C. */
++#if defined _WIN32 && !defined(JAS_WIN_MSVC_BUILD)
++#define JAS_WIN_MSVC_BUILD
++#endif
++
+ #if !defined(JAS_WIN_MSVC_BUILD)
+ /* A configure-based build is being used. */
+ 
+@@ -86,7 +90,7 @@
+ #define HAVE_SYS_TYPES_H 1
+ 
+ /* Define to 1 if you have the <unistd.h> header file. */
+-#define HAVE_UNISTD_H 1
++// #define HAVE_UNISTD_H
+ 
+ /* Have variable length arrays */
+ #define HAVE_VLA 1
+diff -Nru -x '*~' jasper-1.900.1.orig/src/libjasper/jasper.def jasper-1.900.1/src/libjasper/jasper.def
 --- jasper-1.900.1.orig/src/libjasper/jasper.def	1970-01-01 01:00:00.000000000 +0100
-+++ jasper-1.900.1/src/libjasper/jasper.def	2010-05-02 02:18:18.364200000 +0200
++++ jasper-1.900.1/src/libjasper/jasper.def	2013-05-08 12:16:19.898296000 +0200
 @@ -0,0 +1,369 @@
 +EXPORTS
 +JPC_ISTERMINATED

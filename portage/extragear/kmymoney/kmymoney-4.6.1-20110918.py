@@ -3,7 +3,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:kmymoney'
-        for ver in ['4.5.3', '4.6.0', '4.6.1', '4.6.3']:
+        for ver in ['4.5.3', '4.6.0', '4.6.1', '4.6.3', '4.6.4']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/kmymoney2/kmymoney-' + ver + '.tar.bz2'
             self.targetInstSrc[ ver ] = 'kmymoney-' + ver
         self.patchToApply['4.5.3'] = ('kmymoney-4.5.2-20110112.diff', 1)
@@ -12,8 +12,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.6.1'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kdepimlibs'] = 'default'
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/libofx'] = 'default'

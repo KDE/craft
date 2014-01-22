@@ -1,0 +1,35 @@
+diff -Nru -x '*~' libkgapi-2.0.2.orig/libkgapi/account.h libkgapi-2.0.2/libkgapi/account.h
+--- libkgapi-2.0.2.orig/libkgapi/account.h	2013-12-04 16:57:05.000000000 +0100
++++ libkgapi-2.0.2/libkgapi/account.h	2013-12-09 01:00:55.884390800 +0100
+@@ -164,6 +164,8 @@
+      * will just refresh existing tokens until the scopes are changed again.
+      */
+     bool m_scopesChanged; //krazy:exclude=dpointer
++
++    Account& operator=(const Account& other);
+ };
+ 
+ } /* namespace KGAPI */
+diff -Nru -x '*~' libkgapi-2.0.2.orig/libkgapi/object.h libkgapi-2.0.2/libkgapi/object.h
+--- libkgapi-2.0.2.orig/libkgapi/object.h	2013-12-04 16:57:05.000000000 +0100
++++ libkgapi-2.0.2/libkgapi/object.h	2013-12-09 01:02:57.179328500 +0100
+@@ -59,6 +59,7 @@
+     Private * const d;
+     friend class Private;
+ 
++	Object& operator=(const Object& other);
+ };
+ 
+ } // namespace KGAPI
+diff -Nru -x '*~' libkgapi-2.0.2.orig/libkgapi/objects/reminder.h libkgapi-2.0.2/libkgapi/objects/reminder.h
+--- libkgapi-2.0.2.orig/libkgapi/objects/reminder.h	2013-12-04 16:57:05.000000000 +0100
++++ libkgapi-2.0.2/libkgapi/objects/reminder.h	2013-12-09 01:07:28.816865200 +0100
+@@ -65,6 +65,8 @@
+         class Private;
+         Private * const d;
+         friend class Private;
++
++		Reminder& operator=(const Reminder& other);
+ };
+ 
+ } // namespace Objects

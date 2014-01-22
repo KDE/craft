@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
 
 
 class Package( CMakePackageBase ):

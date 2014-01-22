@@ -10,15 +10,15 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:phonon'        
-        self.shortDescription = "a Qt based multimedia framework"
-        
-        for ver in ['4.7.0']:
+        for ver in ['4.7.0','4.7.1']:
             self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/phonon-%s.tar.xz' % (ver ,ver)
             self.targetInstSrc[ver] = 'phonon-%s' % ver
-        
+        self.patchToApply['4.7.0'] = ("phonon-4.7.0-fix-dll-linkage.diff", 1) # upstream
         self.targetDigests['4.7.0'] = 'feda28afe016fe38eb253f2be01973fc0226d10f'
+        self.targetDigests['4.7.1'] = 'f1d3214a752d97028dc4ed910a832c1272951522'
         
-        self.defaultTarget = '4.7.0'
+        self.shortDescription = "a Qt based multimedia framework"
+        self.defaultTarget = '4.7.1'
 
 from Package.CMakePackageBase import *
 

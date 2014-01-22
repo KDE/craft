@@ -1,0 +1,12 @@
+diff -Nru -x '*~' calligra-2.7.90.orig/kexi/main/KexiUserFeedbackAgent.cpp calligra-2.7.90/kexi/main/KexiUserFeedbackAgent.cpp
+--- calligra-2.7.90.orig/kexi/main/KexiUserFeedbackAgent.cpp    2013-12-01 16:24:22.000000000 -0200
++++ calligra-2.7.90/kexi/main/KexiUserFeedbackAgent.cpp 2014-01-14 23:00:17.819494900 -0200
+@@ -146,7 +146,7 @@
+     snprintf(releaseStr, 6, "%2d.%2d", versionInfo.dwMajorVersion, versionInfo.dwMinorVersion);
+     ADD("os_release", releaseStr, SystemInfoArea);
+     
+-    delete [6] releaseStr;
++    delete [] releaseStr;
+     
+     switch(sysInfo.wProcessorArchitecture) {
+     case PROCESSOR_ARCHITECTURE_AMD64:
