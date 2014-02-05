@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         ver = "4.8.2"
         rev = "2"
         if emergePlatform.buildArchitecture() == 'x64':
-            self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x64-%s-release-posix-seh-rev%s.7z" % ( ver, rev )
+            self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x86_64-%s-release-posix-seh-rt_v3-rev%s.7z" % ( ver, rev )
         else:
-            self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-%s-release-posix-sjlj-rev%s.7z" % ( ver, rev )
+            self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/i686-%s-release-posix-sjlj-rt_v3-rev%s.7z" % ( ver, rev )
         self.defaultTarget = "%s-%s" % ( ver, rev )
 
 
