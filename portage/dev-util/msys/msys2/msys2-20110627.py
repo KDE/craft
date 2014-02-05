@@ -4,11 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         if emergePlatform.buildArchitecture() == "x86":
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131112.tar.xz"
-            self.targetDigests['base'] = 'd6c210e93a54e4461e8fef5e806fe1b1c8c6651c'
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131208.tar.xz"
         else:
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys64-base-x86_64-20131113.tar.xz"
-            self.targetDigests['base'] = 'b907866161f92b8de2e9ff072e285479eb03afb6'
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-x86_64-20131208.tar.xz"
         self.defaultTarget = "base"
 
 
