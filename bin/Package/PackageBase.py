@@ -127,6 +127,21 @@ class PackageBase (EmergeBase):
         """unmergeing the files from the filesystem"""
         utils.debug( "Packagebase unmerge called", 2 )
 
+        # run post-uninstall scripts
+        if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):
+            for pkgtype in ['bin', 'lib', 'doc', 'src']:
+                scriptName = "post-uninstall-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+                script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
+                if os.path.exists( script ):
+                    utils.debug("run post uninstall script '%s'" % script , 2)
+                    cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
+                    if not utils.system(cmd):
+                        utils.warning("%s failed!" % cmd )
+                else:
+                    utils.debug("post uninstall script '%s' not found" % script , 2)
+        else:
+            utils.debug("running of post uninstall scripts disabled!", 0)
+
         ## \todo mergeDestinationDir() reads the real used merge dir from the
         ## package definition, which fails if this is changed
         ## a better solution will be to save the merge sub dir into
