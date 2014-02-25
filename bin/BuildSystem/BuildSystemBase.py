@@ -121,6 +121,9 @@ class BuildSystemBase(EmergeBase):
         return True
         
     def install(self):
+        # important - remove all old manifests to not pollute merge root manifest dir with old packaging info
+        utils.cleanManifestDir( self.imageDir() )
+
         # create post (un)install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
@@ -139,8 +142,14 @@ class BuildSystemBase(EmergeBase):
                 utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
+
+        if self.subinfo.options.package.withDigests:
+            if self.subinfo.options.package.packageFromSubDir:
+                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
+            else:
+                filesDir = self.imageDir()
+            utils.createManifestFiles(filesDir, filesDir, "", self.package, self.version)
         return True
 
-        
     def ccacheOptions(self):
         return ""

@@ -80,13 +80,6 @@ class InnoSetupPackager (PackagerBase):
         if( self.subinfo.options.package.withCompiler ):
             pkgName += "-%s" % compiler.getShortName()
 
-        if self.subinfo.options.package.withDigests:
-            if self.subinfo.options.package.packageFromSubDir:
-                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
-            else:
-                filesDir = self.imageDir()
-            utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
-
         dstpath = self.packageDestinationDir()
 
         cmd = "\"%s\" /O\"%s\" /F\"setup-%s-%s\"" % (self.packagerExe, dstpath, pkgName, pkgVersion)

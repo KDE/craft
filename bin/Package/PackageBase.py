@@ -44,7 +44,6 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
-        self.manifest()
         ## \todo is this the optimal place for creating the post install scripts ?
         ignoreInstalled = False
         if isDBEnabled():
@@ -194,17 +193,9 @@ class PackageBase (EmergeBase):
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers
         install database"""
+        # TODO: cleanup old manifest files without removing post (un)install scripts
 
         utils.debug("base manifest called", 2)
-        # important - remove all old manifests to not pollute merge root manifest dir with old packaging info
-        utils.cleanManifestDir( self.mergeSourceDir() )
-        # For qmerging the manifests files could go into merge destination
-        # For packaging they have to stay in image dir
-        # ->  the common denominator is to create manifests in image dir
-        # qmerge needs creating of manifests and packaging too, there is not need why they are 
-        # created in the qmerge step *and* the package step
-        # -> merge them into the install step of the build system classes 
-        ## @todo move all createManifestFiles() calls into install() method of the Buildsystem classes
         utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
 
