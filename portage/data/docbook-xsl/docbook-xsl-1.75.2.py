@@ -28,14 +28,16 @@ class Package(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.install.installPath = 'share/xml/docbook'
 
     def unpack( self ):
         """rename the directory here"""
+        self.subinfo.options.install.installPath = 'share/xml/docbook'
         if not BinaryPackageBase.unpack(self):
             return False
         os.rename(os.path.join(self.installDir(), os.path.basename(self.repositoryUrl()).replace(".tar.bz2", "")),
                   os.path.join(self.installDir(), "xsl-stylesheets-" + self.subinfo.buildTarget))
+        self.subinfo.options.install.installPath = ''
+        utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.installDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
         return True
 
 if __name__ == '__main__':
