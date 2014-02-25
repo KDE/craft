@@ -83,11 +83,14 @@ class PackageBase (EmergeBase):
                 scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
+                    utils.debug("run post install script '%s'" % script , 2)
                     cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
                         utils.warning("%s failed!" % cmd )
+                else:
+                    utils.debug("post install script '%s' not found" % script , 2)
         else:
-            utils.debug("running of post-install scripts disabled!", 0)
+            utils.debug("running of post install scripts disabled!", 0)
 
         # add package to installed database -> is this not the task of the manifest files ?
 
