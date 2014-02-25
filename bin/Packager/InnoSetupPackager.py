@@ -62,17 +62,6 @@ class InnoSetupPackager (PackagerBase):
         #else:
         #    pkgName += "-x86"
 
-        # FIXME: add a test for the installer later
-
-        for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if os.path.exists( script ):
-                if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                    os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
-                utils.copyFile( script, destscript )
-
         # todo: this is probably code for dealing with svn repositories
         # needs to be refactored
         # determine source in case MultiSource is used
