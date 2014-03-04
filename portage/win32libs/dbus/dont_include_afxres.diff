@@ -1,0 +1,11 @@
+diff -Nru -x '*~' dbus-1.6.14.orig/dbus/versioninfo.rc.in dbus-1.6.14/dbus/versioninfo.rc.in
+--- dbus-1.6.14.orig/dbus/versioninfo.rc.in	2012-06-06 07:45:55.000000000 -0300
++++ dbus-1.6.14/dbus/versioninfo.rc.in	2014-03-04 15:04:23.989622000 -0300
+@@ -14,7 +14,6 @@
+ 
+ #line __LINE__ "versioninfo.rc.in"
+ 
+-#include <afxres.h>
+ 
+ 
+ VS_VERSION_INFO VERSIONINFO

@@ -15,6 +15,8 @@ class subinfo(info.infoclass):
         self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
+        
+        self.patchToApply['1.6.14'] = [('dont_include_afxres.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         self.defaultTarget = '1.6.14'
