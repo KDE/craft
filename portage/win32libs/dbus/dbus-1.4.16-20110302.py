@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetSrcSuffix['gitHEAD'] = 'git'
         self.targetConfigurePath['gitHEAD'] = 'cmake'
         
-        self.patchToApply['1.4.24'] = [('dbus-va-copy-on-intel-compiler-should-behave-the-same-of-msvc.diff', 1)]
+        self.patchToApply['1.6.14'] = [('dont_include_afxres.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         self.defaultTarget = '1.6.14'
