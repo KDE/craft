@@ -18,7 +18,7 @@ from Package.Qt5CorePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git|dev"
+        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git|stable"
         self.shortDescription = "a cross-platform application framework"
         self.patchToApply[ 'gitHEAD' ] = ("qtbase-20130714.patch" , 1)
         # If you change the default target here please do not forget to rename the portage file
@@ -73,6 +73,8 @@ class Package(Qt5CorePackageBase):
         command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
         if os.getenv("DXSDK_DIR") == None:
             command += "-opengl desktop "
+        else:
+            command += "-opengl es2 "
        
         command += "-ltcg "
        
