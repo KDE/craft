@@ -20,8 +20,12 @@ from Package.QMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['master'] = "[git]kde:qt|4.8"
-        self.targets['4.8.4'] = "http://download.qt-project.org/official_releases/qt/4.8/4.8.4/qt-everywhere-opensource-src-4.8.4.tar.gz"
-        self.targets['4.8.5'] = "http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.tar.gz"
+        self.targets['4.8.4'] = "http://download.qt-project.org/archive/qt/4.8/4.8.4/qt-everywhere-opensource-src-4.8.4.tar.gz"
+        self.targetInstSrc[ '4.8.4' ] = 'qt-everywhere-opensource-src-4.8.4'
+        self.targetDigests['4.8.4'] = 'f5880f11c139d7d8d01ecb8d874535f7d9553198'
+        self.targets['4.8.5'] = "http://download.qt-project.org/archive/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.tar.gz"
+        self.targetInstSrc[ '4.8.5' ] = 'qt-everywhere-opensource-src-4.8.5'
+        self.targetDigests['4.8.5'] = '745f9ebf091696c0d5403ce691dc28c039d77b9e'
 
         self.patchToApply['4.8.4'] = [
             ('patches/4.8.4/out-of-source-build.patch', 1),
