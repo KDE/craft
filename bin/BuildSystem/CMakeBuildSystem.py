@@ -178,6 +178,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def install( self):
         """install the target"""
+        if not BuildSystemBase.install(self):
+            return False
+
         self.enterBuildDir()
 
         fastString = ""

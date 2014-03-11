@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <group id="docbook_4-4.2">
+    <delegatePublic publicIdStartString="-//OASIS//DTD DocBook XML V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//DTD DocBook CALS Table Model V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <!-- <delegatePublic publicIdStartString="-//OASIS//DTD XML Exchange Table Model 19990315//EN" catalog="../../share/xml/docbook/schema/dtd/4.5/catalog.xml"/> -->
+    <delegatePublic publicIdStartString="-//OASIS//ELEMENTS DocBook Information Pool V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ELEMENTS DocBook Document Hierarchy V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Additional General Entities V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Notations V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Character Entities V4.2//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegateSystem systemIdStartString="http://www.oasis-open.org/docbook/xml/4.2" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegateURI uriStartString="http://www.oasis-open.org/docbook/xml/4.2" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <rewriteSystem systemIdStartString="http://www.oasis-open.org/docbook/xml/4.2" rewritePrefix="../../share/xml/docbook/schema/dtd/4.2"/>
+    <!-- wrap 4.4 to mostly compatible 4.2 used by dbus. Full fix available by upgrading docbook-dtd to 4.5, which includes 4.2 -->
+    <delegatePublic publicIdStartString="-//OASIS//DTD DocBook XML V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//DTD DocBook CALS Table Model V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ELEMENTS DocBook Information Pool V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ELEMENTS DocBook Document Hierarchy V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Additional General Entities V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Notations V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegatePublic publicIdStartString="-//OASIS//ENTITIES DocBook Character Entities V4.4//EN" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegateSystem systemIdStartString="http://www.oasis-open.org/docbook/xml/4.4" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <delegateURI uriStartString="http://www.oasis-open.org/docbook/xml/4.4" catalog="../../share/xml/docbook/schema/dtd/4.2/catalog.xml"/>
+    <rewriteSystem systemIdStartString="http://www.oasis-open.org/docbook/xml/4.4" rewritePrefix="../../share/xml/docbook/schema/dtd/4.2"/>
+   </group>
+</catalog>

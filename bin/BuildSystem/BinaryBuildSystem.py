@@ -15,9 +15,8 @@ class BinaryBuildSystem(BuildSystemBase):
     def make( self ):
         return True
 
-    # nothing to do - unpack hasd done this job already
     def install( self ):
-        return True
+        return BuildSystemBase.install(self)
 
     def runTest( self ):
         return False

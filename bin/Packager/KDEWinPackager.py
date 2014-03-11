@@ -56,15 +56,6 @@ class KDEWinPackager (PackagerBase):
         # FIXME: add a test for the installer later
         dstpath = self.packageDestinationDir()
 
-        for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
-            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if os.path.exists( script ):
-                if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                    os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
-                utils.copyFile( script, destscript )
-
         if ( self.subinfo.options.package.packSources ) and os.path.exists( self.sourceDir() ):
             srcCmd = " -srcroot " + self.sourceDir()
         else:

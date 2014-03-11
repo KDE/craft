@@ -8,7 +8,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.5.2'] = SRC_URI
         self.targetInstSrc['1.5.2'] = "OpenSP-1.5.2"
-        self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1 )
+        self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1)
+        self.targetDigests['1.5.2'] = 'b4e903e980f8a8b3887396a24e067bef126e97d5'
         self.shortDescription = "a library for a SGML parser algorithm"
         self.defaultTarget = '1.5.2'
 

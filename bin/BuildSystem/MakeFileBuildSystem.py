@@ -31,6 +31,9 @@ class MakeFileBuildSystem(BuildSystemBase):
 
     def install( self):
         """install the target"""
+        if not BuildSystemBase.install(self):
+            return False
+
         self.enterBuildDir()
         command = "%s install DESTDIR=%s" % (self.makeProgramm, self.installDir())
         self.system( command, "install" )
