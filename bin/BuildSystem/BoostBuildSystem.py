@@ -79,6 +79,9 @@ class BoostBuildSystem(BuildSystemBase):
 
     def install( self ):
         """install the target"""
+        if not BuildSystemBase.install(self):
+            return False
+
         for root, dirs, files in os.walk( self.buildDir() ):
             for f in files:
                 if f.endswith( ".dll" ):

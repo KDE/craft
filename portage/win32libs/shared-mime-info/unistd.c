@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -150,8 +151,6 @@ unsigned alarm(unsigned __secs )
   /** @todo */
   return 1;
 }
-
-typedef unsigned int size_t;
 
 /*#define INCL_WINSOCK_API_PROTOTYPES 0
 #include <winsock2.h>*/

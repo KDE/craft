@@ -26,7 +26,14 @@ class Package(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
+
+    def unpack( self ):
         self.subinfo.options.install.installPath = 'share/xml/docbook/schema/dtd/%s' % self.subinfo.buildTarget
+        if not BinaryPackageBase.unpack(self):
+            return False
+        self.subinfo.options.install.installPath = ''
+        utils.copyFile(os.path.join(self.packageDir(), "docbook-dtd-4.2.xml"), os.path.join(self.installDir(), "etc", "xml", "docbook-dtd-4.2.xml"))
+        return True
 
 if __name__ == '__main__':
     Package().execute()

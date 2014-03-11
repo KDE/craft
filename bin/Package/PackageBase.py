@@ -44,18 +44,7 @@ class PackageBase (EmergeBase):
 
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
-        self.manifest()
         ## \todo is this the optimal place for creating the post install scripts ?
-        # create post install scripts
-        for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
-            # are there any cases there installDir should be honored ?
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
-            if os.path.exists( script ):
-                utils.copyFile( script, destscript )
         ignoreInstalled = False
         if isDBEnabled():
             if self.isTargetBuild():
@@ -81,13 +70,16 @@ class PackageBase (EmergeBase):
         if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
-                script = os.path.join( self.rootdir, "manifest", scriptName )
+                script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
-                    cmd = "cd /D %s && %s" % ( self.rootdir, script )
+                    utils.debug("run post install script '%s'" % script , 2)
+                    cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
                         utils.warning("%s failed!" % cmd )
+                else:
+                    utils.debug("post install script '%s' not found" % script , 2)
         else:
-            utils.debug("running of post-install scripts disabled!", 0)
+            utils.debug("running of post install scripts disabled!", 0)
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -161,6 +153,22 @@ class PackageBase (EmergeBase):
             portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Debug" ) )
         else:
             portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+
+        # run post-uninstall scripts
+        if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):
+            for pkgtype in ['bin', 'lib', 'doc', 'src']:
+                scriptName = "post-uninstall-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+                script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
+                if os.path.exists( script ):
+                    utils.debug("run post uninstall script '%s'" % script , 2)
+                    cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
+                    if not utils.system(cmd):
+                        utils.warning("%s failed!" % cmd )
+                else:
+                    utils.debug("post uninstall script '%s' not found" % script , 2)
+        else:
+            utils.debug("running of post uninstall scripts disabled!", 0)
+
         return True
 
     def cleanImage( self ):
@@ -185,17 +193,9 @@ class PackageBase (EmergeBase):
     def manifest( self ):
         """installer compatibility: make the manifest files that make up the installers
         install database"""
+        # TODO: cleanup old manifest files without removing post (un)install scripts
 
         utils.debug("base manifest called", 2)
-        # important - remove all old manifests to not pollute merge root manifest dir with old packaging info
-        utils.cleanManifestDir( self.mergeSourceDir() )
-        # For qmerging the manifests files could go into merge destination
-        # For packaging they have to stay in image dir
-        # ->  the common denominator is to create manifests in image dir
-        # qmerge needs creating of manifests and packaging too, there is not need why they are 
-        # created in the qmerge step *and* the package step
-        # -> merge them into the install step of the build system classes 
-        ## @todo move all createManifestFiles() calls into install() method of the Buildsystem classes
         utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
         return True
 

@@ -72,6 +72,8 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def install( self, options=None ):
         """implements the make step for Qt projects"""
+        if not BuildSystemBase.install(self):
+            return False
 
         # There is a bug in jom that parallel installation of qmake projects
         # does not work. So just use the usual make programs. It's hacky but

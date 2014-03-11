@@ -50,14 +50,6 @@ class SevenZipPackager (PackagerBase):
             else:
                 pkgName += "-x86"
 
-        if self.subinfo.options.package.packageFromSubDir:
-            filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
-        else:
-            filesDir = self.imageDir()
-
-        if self.subinfo.options.package.withDigests:
-            utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
-
         dstpath = self.packageDestinationDir()
 
         if self.subinfo.options.package.withCompiler:
