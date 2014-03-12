@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['1.5.9', '1.7.1', '1.7.3', '1.7.4', '1.8.1.2', '1.8.2', '1.8.3.1', '1.8.4', '1.8.5']:
+        for ver in ['1.5.9', '1.7.1', '1.7.3', '1.7.4', '1.8.1.2', '1.8.2', '1.8.3.1', '1.8.4', '1.8.5', '1.8.6']:
             self.targets[ ver ] = 'ftp://ftp.stack.nl/pub/users/dimitri/doxygen-%s.windows.bin.zip' % ver
             self.targetInstallPath[ ver ] = "bin"
             
@@ -12,9 +12,10 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.8.2'] = '95eb9882ea105435556c92d71acb19150fd6c76b'
         self.targetDigests['1.8.4'] = 'e12c1eb90de5800a0dc0124c855b7e51c622e7be'
         self.targetDigests['1.8.5'] = '2102a49c05b36b1ca945c433eaf02845b7ea895c'
+        self.targetDigests['1.8.6'] = '13e651244021462ad52054f93806d030c03555f0'
 
         self.shortDescription = 'Automated C, C++, and Java Documentation Generator'
-        self.defaultTarget = '1.8.5'
+        self.defaultTarget = '1.8.6'
 
 from Package.BinaryPackageBase import *
 
