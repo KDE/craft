@@ -1,0 +1,36 @@
+diff -Nru -x '*~' calligra-2.8.0.orig/krita/ui/tests/CMakeLists.txt calligra-2.8.0/krita/ui/tests/CMakeLists.txt
+--- calligra-2.8.0.orig/krita/ui/tests/CMakeLists.txt	2014-03-02 11:53:40.000000000 -0300
++++ calligra-2.8.0/krita/ui/tests/CMakeLists.txt	2014-03-22 18:23:05.840139700 -0300
+@@ -1,6 +1,8 @@
+ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
+ include_directories(  ${KOMAIN_INCLUDES}   ${CMAKE_SOURCE_DIR}/krita/sdk/tests )
+ 
++remove_duplicated_include_directories()
++
+ add_subdirectory(scratchpad)
+ 
+ macro_add_unittest_definitions()
+diff -Nru -x '*~' calligra-2.8.0.orig/sheets/shape/CMakeLists.txt calligra-2.8.0/sheets/shape/CMakeLists.txt
+--- calligra-2.8.0.orig/sheets/shape/CMakeLists.txt	2014-03-02 11:46:09.000000000 -0300
++++ calligra-2.8.0/sheets/shape/CMakeLists.txt	2014-03-22 16:25:46.839210500 -0300
+@@ -6,6 +6,8 @@
+     ${TEXTLAYOUT_INCLUDES}
+ 	)
+ 
++remove_duplicated_include_directories()
++
+ ########### Flake Plugin library ###############
+ 
+ SET (tableshape_LIB_SRCS
+diff -Nru -x '*~' calligra-2.8.0.orig/stage/part/CMakeLists.txt calligra-2.8.0/stage/part/CMakeLists.txt
+--- calligra-2.8.0.orig/stage/part/CMakeLists.txt	2014-03-02 11:46:09.000000000 -0300
++++ calligra-2.8.0/stage/part/CMakeLists.txt	2014-03-08 23:38:06.612435600 -0300
+@@ -2,6 +2,8 @@
+ 
+ include_directories( ${KOMAIN_INCLUDES} ${KOPAGEAPP_INCLUDES} ${Boost_INCLUDE_DIR})
+ 
++remove_duplicated_include_directories()
++
+ if(KDE4_BUILD_TESTS)
+     # only with this definition will the STAGE_TEST_EXPORT macro do something
+     add_definitions(-DCOMPILING_TESTS)
