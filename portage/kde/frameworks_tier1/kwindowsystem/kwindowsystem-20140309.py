@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["win32libs/automoc"] = "default"
         self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtwinextras"] = "default"
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
