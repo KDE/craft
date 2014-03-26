@@ -8,14 +8,10 @@ import shutil
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['52rc2'] = 'http://download.icu-project.org/files/icu4c/52rc/icu4c-52_rc2-src.zip'
-        self.targetInstSrc['52rc2'] = "icu\\source"
-        self.targetDigests['52rc2'] = '51faaf7e0a3e1eef00295d684420bc10708aa659'
-        if compiler.isMSVC2012():
-            self.patchToApply[ '52rc2' ] = (('msvc2011.diff', 1))
-        if compiler.isMSVC2013():
-            self.patchToApply[ '52rc2' ] = (('msvc2012.diff', 1))
-        self.defaultTarget = '52rc2'
+        self.targets['52.1'] = 'http://download.icu-project.org/files/icu4c/52.1/icu4c-52_1-src.tgz'
+        self.targetDigests['52.1'] = '6de440b71668f1a65a9344cdaf7a437291416781'
+        self.targetInstSrc['52.1'] = "icu\\source"
+        self.defaultTarget = '52.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -38,8 +34,9 @@ class PackageCMake(CMakePackageBase):
           bt = "Debug"
         else:
           bt = "Release"
-        utils.system("msbuild /t:Rebuild %s /p:Configuration=%s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
-        return True
+          
+        utils.system("devenv \"%s\" /upgrade" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" )) )
+        return utils.system("devenv \"%s\" /build %s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
 
     def install(self):
         utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
