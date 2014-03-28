@@ -48,9 +48,12 @@ class Package(Qt5CorePackageBase):
         
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs', 'openssl')
-        self.dbus = portage.getPackageInstance('win32libs', 'dbus')
-        self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
-        self.icu = portage.getPackageInstance('win32libs','icu')
+        if self.subinfo.options.isActive("win32libs/dbus"):
+            self.dbus = portage.getPackageInstance('win32libs', 'dbus')
+        if self.subinfo.options.isActive("binary/mysql-pkg"):
+            self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
+        if self.subinfo.options.isActive("win32libs/icu"):
+            self.icu = portage.getPackageInstance('win32libs','icu')
 
 
     def configure( self, unused1=None, unused2=""):
@@ -67,10 +70,14 @@ class Package(Qt5CorePackageBase):
         command += "-no-vcproj "
         command += "-nomake examples "
         command += "-c++11 "
-        command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-        command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
-        command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
+        if self.subinfo.options.isActive("binary/mysql-pkg"):
+            command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
+        if self.subinfo.options.isActive("win32libs/dbus"):
+            command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+        if self.subinfo.options.isActive("win32libs/icu"):
+            command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
         if os.getenv("DXSDK_DIR") == None:
             command += "-opengl desktop "
         else:
