@@ -66,7 +66,6 @@ class subinfo(info.infoclass):
         self.options.package.packageName = 'qt'
         self.options.package.specialMode = True
 
-
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -107,8 +106,9 @@ class Package(QMakePackageBase):
         utils.putenv( "USERIN", "y")
         userin = "y"
 
-        incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-        libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
+        if self.subinfo.options.isActive("win32libs/dbus"):
+            incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+            libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
         libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         
@@ -142,7 +142,9 @@ class Package(QMakePackageBase):
 
         # all builds
         command += "-no-phonon "
-        command += "-qdbus -dbus-linked -openssl-linked "
+        if self.subinfo.options.isActive("win32libs/dbus"):
+            command += "-qdbus -dbus-linked "
+        command += "-openssl-linked "
         command += "-no-fast -no-vcproj -no-dsp "
         command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
