@@ -34,6 +34,7 @@ import os
 import utils
 import inspect
 import shlex
+import portage
 
 class OptionsBase(object):
     def __init__(self):
@@ -263,6 +264,9 @@ class Options(object):
         self.__collectAttributes()
         if 'EMERGE_OPTIONS' in os.environ:
             self.__readFromString(os.environ['EMERGE_OPTIONS'])
+            
+    def isActive(self, package):
+        return not package in portage.PortageInstance.ignores
 
     def __collectAttributes( self, instance=None, container=None ):
         """ collect all public attributes this class and subclasses
