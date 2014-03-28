@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
       
       self.shortDescription = "the vlc based phonon multimedia backend"
-      self.defaultTarget = '0.7.1'
+      self.defaultTarget = 'gitHEAD'
 
 
 class Package( CMakePackageBase ):
