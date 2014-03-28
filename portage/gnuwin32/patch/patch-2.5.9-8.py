@@ -18,38 +18,20 @@ class subinfo(info.infoclass):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-from Source.SourceBase import *
-from Package.PackageBase import *
-from BuildSystem.BinaryBuildSystem import *
+from Package.BinaryPackageBase import *
 
-class Package( PackageBase, SourceBase, BinaryBuildSystem ):
+class Package( BinaryPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
-        SourceBase.__init__( self )
-        PackageBase.__init__( self )
-        BinaryBuildSystem.__init__( self )
-
-    def fetch( self ):
-        filenames = [ os.path.basename( self.subinfo.target() ) ]
-
-        if ( self.noFetch ):
-            utils.debug( "skipping fetch (--offline)" )
-            return True
-
-        self.setProxy()
-        return utils.getFiles( self.subinfo.target(), self.downloadDir() )
-
-    def unpack( self ):
-        return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
+        BinaryPackageBase.__init__( self )
 
     def install( self ):
-        if not BinaryBuildSystem.install( self ):
+        if not BinaryPackageBase.install( self ):
             return False
         manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
-        patch = os.path.join( self.installDir(), "patch.exe" )
+        patch = os.path.join( self.installDir(), "bin", "patch.exe" )
         return utils.embedManifest(patch, manifest)
         
 if __name__ == '__main__':

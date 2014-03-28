@@ -13,6 +13,7 @@ import emergePlatform
 import copy
 from collections import OrderedDict
 from EmergePackageObject import PackageObjectBase
+import configparser
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
@@ -111,11 +112,12 @@ class DependencyPackage(object):
             
         single.add(self)
         for p in children:
-            if not p in single and not p in depList:
+            if not p in single and not p in depList\
+            and not ("%s/%s" % (p.category, p.name)) in PortageInstance.ignores:
                 p.getDependencies( depList, dep_type,single )
                     
         #if self.category != internalCategory:
-        if not self in depList:
+        if not self in depList and not ("%s/%s" % (self.category, self.name)) in PortageInstance.ignores:
             depList.append( self )
 
 
@@ -210,6 +212,27 @@ class Portage(object):
         self.categories = {}
         self.subpackages = {}
         self.portages = {}
+        self.ignores = set()
+        self._readIgnores()
+        
+    def _readIgnores(self):
+        iniPath = os.path.join(ROOTDIR, "etc", "kdesettings.ini")
+        config = configparser.ConfigParser()
+        config.optionxform = str
+        setDefautls = True
+        if os.path.exists(iniPath):
+            config.read(iniPath)
+            if config.has_section("Portage") and "PACKAGE_IGNORES" in config["Portage"]:
+                setDefautls = False
+                for p in config["Portage"]["PACKAGE_IGNORES"].split(";"):
+                    self.ignores.add(p)
+        if setDefautls:
+            if not config.has_section("Portage"):
+                config.add_section("Portage")
+            config["Portage"]["PACKAGE_IGNORES"] = ""
+            with open(iniPath, 'w') as configfile:
+                config.write(configfile)
+            
 
     def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """
@@ -545,7 +568,6 @@ def getDependencies( category, package, version, runtimeOnly=False ):
                 (category, package) = line.split( "/" )
                 version = PortageInstance.getNewestVersion( category, package )
                 deps.append( [ category, package, version, depDict[ line ] ] )
-
     return deps
 
 def parseListFile( filename ):
