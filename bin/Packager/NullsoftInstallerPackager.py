@@ -130,6 +130,7 @@ file collection process is skipped, and only the installer is generated.
         print("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
+        self.preArchive()
         self.generateNSISInstaller()
         utils.createDigestFile( self.defines[ "setupname" ])
         return True

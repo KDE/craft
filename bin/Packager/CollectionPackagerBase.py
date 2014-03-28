@@ -250,3 +250,7 @@ class CollectionPackagerBase( PackagerBase ):
             os.makedirs( self.imageDir() )
 
         return True
+
+        
+    def preArchive(self):
+        return True
