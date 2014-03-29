@@ -4,7 +4,6 @@
 
 import utils
 
-from Source.FileSource import *
 from Source.ArchiveSource import *
 from Source.SvnSource import *
 from Source.GitSource import *
