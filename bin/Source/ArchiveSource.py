@@ -146,8 +146,20 @@ class ArchiveSource(SourceBase):
             digests = utils.createFilesDigests( self.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
 
-        if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
-            return False
+        if self.url.find(".exe") != -1 or self.url.find(".bat") != -1 or self.url.find(".msi") != -1:
+            for filename in filenames:
+                filePath = os.path.abspath( os.path.join(self.downloadDir(), filename) )
+                if self.subinfo.options.unpack.runInstaller: 
+                    _, ext = os.path.splitext( filename )
+                    if ext == ".exe":
+                        return utils.system("%s" % filePath )
+                    elif ( ext == ".msi" ):
+                        return utils.system("msiexec /package %s" % filePath )
+                if not utils.copyFile( filePath, os.path.join(destdir, filename) ):
+                    return False
+        else:    
+            if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
+                return False
 
         ret = self.applyPatches()
         if utils.envAsBool("EMERGE_HOLD_ON_PATCH_FAIL"):
