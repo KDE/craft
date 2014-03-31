@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
       self.targetDigests['2.0.2'] = '346eba6037ff544f84505941832604668c1e5b2b'
       self.targetDigests['2.0.3'] = '10ada8aced6dce3c0d206afcfbd4b05313bd4d04'
       self.patchToApply['2.0.3'] = ('libechonest-2.0.3-20130419.diff',1)
-      self.defaultTarget = '2.0.3'
+      self.defaultTarget = 'gitHEAD'
 
 
 class Package( CMakePackageBase ):

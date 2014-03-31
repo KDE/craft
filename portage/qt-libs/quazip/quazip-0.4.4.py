@@ -7,7 +7,6 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setDependencies( self ):
       self.hardDependencies[ 'libs/qt' ] = 'default'
-      self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
 
     def setTargets( self ):
       self.svnTargets[ 'svnHEAD' ] = 'https://quazip.svn.sourceforge.net/svnroot/quazip/trunk/quazip'
