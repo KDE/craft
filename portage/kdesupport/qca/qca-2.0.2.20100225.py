@@ -14,12 +14,12 @@ class subinfo(info.infoclass):
         self.svnTargets['2.0.0-5'] = 'tags/qca/2.0.0'
         self.svnTargets['2.0.1-3'] = 'tags/qca/2.0.1'
         self.svnTargets['2.0.2-1'] = 'tags/qca/2.0.2'
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qca'
+        self.svnTargets['gitHEAD'] = 'kde:qca.git'
         self.targets['20130212'] = "http://downloads.sourceforge.net/kde-windows/qca-20130212.tar.xz"
         self.targetInstSrc['20130212'] = "qca-20130212"
         self.targetDigests['20130212'] = 'c87ef3cfe920fe331de156cf5dda297e835a1dfc'
         self.shortDescription = "Qt Cryptographic Architecture (QCA)"
-        self.defaultTarget = '20130212'
+        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
