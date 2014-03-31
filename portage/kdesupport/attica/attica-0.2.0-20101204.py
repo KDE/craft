@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             self.targets[ver] ='http://download.kde.org/stable/attica/attica-' + ver +'.tar.bz2'
             self.targetInstSrc[ver] = 'attica-' + ver
         self.shortDescription = "implements the Open Collaboration Services API"
-        self.defaultTarget = '0.4.2'
+        self.defaultTarget = 'gitHEAD'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
