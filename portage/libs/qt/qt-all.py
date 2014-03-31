@@ -87,9 +87,11 @@ class Package(QMakePackageBase):
             self.subinfo.options.useShortPathes = True
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs', 'openssl')
-        self.dbus = portage.getPackageInstance('win32libs', 'dbus')
+        if self.subinfo.options.isActive("win32libs/dbus"):
+            self.dbus = portage.getPackageInstance('win32libs', 'dbus')
         self.sqlite = portage.getPackageInstance('win32libs', 'sqlite')
-        self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
+        if self.subinfo.options.isActive("binary/mysql-pkg"):
+            self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ): return False
@@ -106,11 +108,12 @@ class Package(QMakePackageBase):
         utils.putenv( "USERIN", "y")
         userin = "y"
 
+        
+        incdirs = " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
+        libdirs = " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
         if self.subinfo.options.isActive("win32libs/dbus"):
-            incdirs = " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
-            libdirs = " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
-        incdirs += " -I \"" + os.path.join( self.openssl.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.openssl.installDir(), "lib" ) + "\""
+            incdirs += " -I \"" + os.path.join( self.dbus.installDir(), "include" ) + "\""
+            libdirs += " -L \"" + os.path.join( self.dbus.installDir(), "lib" ) + "\""
         
         if os.getenv("INCLUDE"):
             utils.putenv( "INCLUDE", os.getenv( "INCLUDE" ) + ";" + os.path.join( self.sqlite.installDir(), "include" ))
@@ -124,13 +127,16 @@ class Package(QMakePackageBase):
             incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
 
-        incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
-        libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
-        libdirs += " -l libmysql "
+        if self.subinfo.options.isActive("binary/mysql-pkg"):
+            incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
+            libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
+            libdirs += " -l libmysql "
 
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
-        command += "-plugin-sql-odbc -plugin-sql-mysql -system-sqlite "
+        command += "-plugin-sql-odbc -system-sqlite "
+        if self.subinfo.options.isActive("binary/mysql-pkg"):
+            command += "-plugin-sql-mysql "
         command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
 
