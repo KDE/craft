@@ -7,7 +7,7 @@ from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *
 
-class SetupPackageBase (PackageBase, FileSource, BuildSystemBase, PackagerBase):
+class SetupPackageBase (PackageBase, SourceBase, BuildSystemBase, PackagerBase):
     """provides a base class for 3rd party installers or msi packages"""
     def __init__(self):
         utils.debug("SetupPackageBase.__init__ called", 2)
