@@ -18,11 +18,19 @@ from Package.Qt5CorePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "[git]git://gitorious.org/qt/qtbase.git|stable"
-        self.shortDescription = "a cross-platform application framework"
+        self.setupDefaultVersions(__file__)
+        self.svnTargets['gitHEAD'] = '[git]git://gitorious.org/qt/%s.git|dev' % self.package
+        self.svnTargets[self.defaultBranch()] = '[git]git://gitorious.org/qt/%s.git|%s' % ( self.package, self.defaultBranch())
+        self.targets[self.defaultTag()] = 'http://download.qt-project.org/official_releases/qt/5.2/%s/submodules/%s-opensource-src-%s.zip' % ( self.defaultTag(), self.package, self.defaultTag())
+        self.targetDigestUrls[self.defaultTag()] = 'http://download.qt-project.org/official_releases/qt/5.2/%s/submodules/%s-opensource-src-%s.zip.sha1' % (self.defaultTag(), self.package, self.defaultTag())
+        self.targetInstSrc[self.defaultTag()] = '%s-opensource-src-%s' % ( self.package, self.defaultTag())
+
         self.patchToApply[ 'gitHEAD' ] = ("qtbase-20130714.patch" , 1)
-        # If you change the default target here please do not forget to rename the portage file
-        self.defaultTarget = 'gitHEAD'
+        self.patchToApply[ self.defaultBranch() ] = ("qtbase-20130714.patch" , 1)
+        self.patchToApply[ self.defaultTag() ] = ("qtbase-20130714.patch" , 1)
+        
+        self.shortDescription = "a cross-platform application framework"
+        self.defaultTarget = self.defaultBranch()
 
 
     def setDependencies( self ):
@@ -60,7 +68,7 @@ class Package(Qt5CorePackageBase):
         self.enterBuildDir()
         self.setPathes()
 
-        configure = os.path.join( self.sourceDir() ,"configure" ).replace( "/", "\\" )
+        configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT")[0:3], self.platform )
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
