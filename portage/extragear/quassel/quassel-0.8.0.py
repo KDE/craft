@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
-        self.dependencies['kdesupport/phonon-vlc'] = 'default'
+        self.dependencies['kdesupport/phonon-ds9'] = 'default'
         self.dependencies['kdesupport/snorenotify'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtwebkit'] = 'default'

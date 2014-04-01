@@ -28,7 +28,6 @@ bin\\icudt\d+\.dll
 #
 #qt
 bin\\Qt5Core\.dll
-bin\\Qt5DBus\.dll
 bin\\Qt5Gui\.dll
 bin\\Qt5Network\.dll
 bin\\Qt5Opengl\.dll
@@ -60,10 +59,4 @@ bin\\phonon.*\.dll
 bin\\libphononexperimental.*\.dll
 bin\\phonon_backend\\.*
 plugins\\phonon_backend\\.*
-#
-#vlc
-bin\\libvlc\.dll
-bin\\libvlccore\.dll
-bin\\plugins\\audio_filter\\libmpgatofixed.*\.dll
-bin\\plugins\\codec\\libaraw.*\.dll
-bin\\plugins\\demux\\librawaud.*\.dll
+plugins\\phonon4qt5_backend\\.*
