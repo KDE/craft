@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['kdesupport/phonon-vlc'] = 'default'
         self.hardDependencies['kdesupport/qca'] = 'default'
         self.hardDependencies['kdesupport/libechonest'] = 'default'
-        self.hardDependencies['kdesupport/attica'] = 'default'
+        self.hardDependencies['kde/attica'] = 'default'
         self.hardDependencies['kdesupport/liblastfm'] = 'default'
         self.hardDependencies['win32libs/clucene-core'] = 'default'
         self.hardDependencies['win32libs/taglib'] = 'default'
