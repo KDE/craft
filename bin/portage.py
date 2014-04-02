@@ -13,7 +13,7 @@ import emergePlatform
 import copy
 from collections import OrderedDict
 from EmergePackageObject import PackageObjectBase
-import configparser
+from emerge_config import *
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
@@ -213,25 +213,9 @@ class Portage(object):
         self.subpackages = {}
         self.portages = {}
         self.ignores = set()
-        self._readIgnores()
-        
-    def _readIgnores(self):
-        iniPath = os.path.join(ROOTDIR, "etc", "kdesettings.ini")
-        config = configparser.ConfigParser()
-        config.optionxform = str
-        setDefautls = True
-        if os.path.exists(iniPath):
-            config.read(iniPath)
-            if config.has_section("Portage") and "PACKAGE_IGNORES" in config["Portage"]:
-                setDefautls = False
-                for p in config["Portage"]["PACKAGE_IGNORES"].split(";"):
-                    self.ignores.add(p)
-        if setDefautls:
-            if not config.has_section("Portage"):
-                config.add_section("Portage")
-            config["Portage"]["PACKAGE_IGNORES"] = ""
-            with open(iniPath, 'w') as configfile:
-                config.write(configfile)
+        if emergSettings.contains("Portage","PACKAGE_IGNORES"):
+            for p in emergSettings.get("Portage","PACKAGE_IGNORES").split(";"):
+                self.ignores.add(p)
             
 
     def addPortageDir( self, directory ):

@@ -6,6 +6,7 @@
 import configparser
 import os
 import utils
+from emerge_config import *
 
 _VERSION_INFOS = dict()
 _VERSION_INFOS_HINTS = dict()
@@ -44,11 +45,11 @@ class VersionInfo(object):
         
         
         
-    def _getVersionInfo(self,key, name = ""):
+    def _getVersionInfo(self,key, name = None):
         if self._defaulVersions == None:
-            info = key
+            info = name
             if info  == None:
-                info = name
+                info = key
             utils.fail("Please calls setupDefaultVersions(__file__) before calling self.%s()" % info)
         if self._defaulVersions.has_section("General") and key in self._defaulVersions["General"]:
                 return self._defaulVersions["General"][key]
@@ -64,6 +65,9 @@ class VersionInfo(object):
         return self._getVersionInfo("tarballs").split(";")
         
     def defaultTarget(self):
+        name = self._getVersionInfo("name","defaultTarget")
+        if emergSettings.contains("PortageVersions", name):
+            return emergSettings.get("PortageVersions", name)
         return self._getVersionInfo("defaulttarget")
         
     def packageName(self):
