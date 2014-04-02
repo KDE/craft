@@ -8,6 +8,7 @@ import os
 import utils
 
 _VERSION_INFOS = dict()
+_VERSION_INFOS_HINTS = dict()
 
 class VersionInfo(object):
     def __init__( self):
@@ -16,18 +17,25 @@ class VersionInfo(object):
         
     def __getVersionConfig(self, name):
         global _VERSION_INFOS
-        if name in _VERSION_INFOS:
-            return _VERSION_INFOS[name]
+        global _VERSION_INFOS_HINTS
+        if name in _VERSION_INFOS_HINTS:
+            if _VERSION_INFOS_HINTS[name] == None:
+                return None
+            else:
+                return _VERSION_INFOS[_VERSION_INFOS_HINTS[name]]
         root = os.path.dirname(name)
         dirs = [os.path.join( root, "version.ini"), os.path.join( root, "..", "version.ini")]
         
         for iniPath in dirs:
+            if iniPath in _VERSION_INFOS:
+                return _VERSION_INFOS[iniPath]
             if os.path.exists( iniPath ):
                 config = configparser.ConfigParser()
                 config.read(iniPath)
-                _VERSION_INFOS[name] = config
+                _VERSION_INFOS[iniPath] = config
+                _VERSION_INFOS_HINTS[name] = iniPath
                 return config
-        _VERSION_INFOS[name] = None
+        _VERSION_INFOS_HINTS[name] = None
         
         
     def setupDefaultVersions(self, filename):
