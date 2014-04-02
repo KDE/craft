@@ -353,11 +353,16 @@ class Portage(object):
         utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
-        mod = __import__( getFilename( category, package, version ) )
-        if hasattr( mod, 'subinfo' ):
-            return mod.subinfo().defaultTarget
+        
+        pname = "%s/%s" % ( category, package )
+        if emergeSettings.contains("PortageVersions", pname):
+            return emergeSettings.get("PortageVersions", pname)
         else:
-            return None
+            mod = __import__( getFilename( category, package, version ) )
+            if hasattr( mod, 'subinfo' ):
+                return mod.subinfo().defaultTarget
+            else:
+                return None
 
     def getMetaData( self, category, package, version ):
         """ returns all targets of a specified package """

@@ -20,6 +20,7 @@ class EmergeConfig(object):
             
     
     def contains(self, group, key):
+        # print("[%s] = %s " % (group, key))
         return self.config and self.config.has_section( group ) and key in self.config[ group ]
         
     def get(self, group, key):
