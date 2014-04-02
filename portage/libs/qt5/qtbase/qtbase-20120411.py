@@ -67,7 +67,11 @@ class Package(Qt5CorePackageBase):
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
         self.setPathes()
-
+        if not os.path.exists(os.path.join(self.sourceDir(),".gitignore")):#force bootstrap of configure.exe
+            f = open(os.path.join(self.sourceDir(),".gitignore"),"wt+")
+            f.write("Force Bootstrap")
+            f.close()
+            os.remove(os.path.join(self.sourceDir(),"configure.exe"))
         configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT")[0:3], self.platform )
         command += "-plugin-sql-odbc "
