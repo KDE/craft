@@ -213,8 +213,8 @@ class Portage(object):
         self.subpackages = {}
         self.portages = {}
         self.ignores = set()
-        if emergSettings.contains("Portage","PACKAGE_IGNORES"):
-            for p in emergSettings.get("Portage","PACKAGE_IGNORES").split(";"):
+        if emergeSettings.contains("Portage","PACKAGE_IGNORES"):
+            for p in emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"):
                 self.ignores.add(p)
             
 

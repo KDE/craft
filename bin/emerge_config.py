@@ -7,7 +7,7 @@ import os
 import utils
 
 
-emergSettings = None
+emergeSettings = None
 
 class EmergeConfig(object):
     def __init__(self):
@@ -30,5 +30,5 @@ class EmergeConfig(object):
 
 
     
-if emergSettings == None:
-    emergSettings = EmergeConfig()
+if emergeSettings == None:
+    emergeSettings = EmergeConfig()

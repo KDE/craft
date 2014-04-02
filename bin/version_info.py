@@ -66,8 +66,8 @@ class VersionInfo(object):
         
     def defaultTarget(self):
         name = self._getVersionInfo("name","defaultTarget")
-        if emergSettings.contains("PortageVersions", name):
-            return emergSettings.get("PortageVersions", name)
+        if emergeSettings.contains("PortageVersions", name):
+            return emergeSettings.get("PortageVersions", name)
         return self._getVersionInfo("defaulttarget")
         
     def packageName(self):
