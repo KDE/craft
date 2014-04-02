@@ -13,15 +13,14 @@ import compiler
 from options import *
 import types
 from collections import OrderedDict
-import configparser
-
-_VERSION_INFOS = dict()
+import version_info
 
 class infoclass(object):
     """this module contains the information class"""
     def __init__( self, RAW="" ):
         ### package options
         self.options = Options()
+        self.versionInfo = version_info.VersionInfo()
         self.options.readFromEnv()
         self.targets = OrderedDict()
         self.archiveNames = OrderedDict()
@@ -72,8 +71,7 @@ class infoclass(object):
         self.disableHostBuild = False
         self.disableTargetBuild = False
         self.package = utils.packageSplit(os.path.basename(utils.getCallerFilename()))[0]
-        
-        self._defaulVersions = None
+
 
         for x in RAW.splitlines():
             if not x == '':
@@ -349,36 +347,4 @@ example:
         
         
 
-    def __getVersionConfig(self, name):
-        global _VERSION_INFOS
-        if name in _VERSION_INFOS:
-            return _VERSION_INFOS[name]
-        root = os.path.dirname(name)
-        dirs = [os.path.join( root, "version.ini"), os.path.join( root, "..", "version.ini")]
-        
-        for iniPath in dirs:
-            if os.path.exists( iniPath ):
-                config = configparser.ConfigParser()
-                config.read(iniPath)
-                _VERSION_INFOS[name] = config
-                return config
-        _VERSION_INFOS[name] = None
-        
-        
-    def setupDefaultVersions(self, filename):
-        self._defaulVersions = self.__getVersionConfig(filename)        
-        self.package = utils.packageSplit(os.path.basename(filename))[0]#more reliable the utils.getCallerFilename
-        
-    def defaultTag(self):
-        if self._defaulVersions == None:
-            utils.fail("Please calls setupDefaultVersions(__file__) before calling defaultTag")
-        if self._defaulVersions.has_section("General") and "tag" in self._defaulVersions["General"]:
-                return self._defaulVersions["General"]["tag"]
-        return ""
-        
-    def defaultBranch(self):
-        if self._defaulVersions == None:
-            utils.fail("Please calls setupDefaultVersions(__file__) before calling defaultBranch")
-        if self._defaulVersions.has_section("General") and "branch" in self._defaulVersions["General"]:
-                return self._defaulVersions["General"]["branch"]
-        return ""
+   
