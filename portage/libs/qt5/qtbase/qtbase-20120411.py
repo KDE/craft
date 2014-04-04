@@ -86,7 +86,7 @@ class Package(Qt5CorePackageBase):
         command += "-qt-zlib "
         command += "-no-vcproj "
         command += "-nomake examples "
-        command += "-c++11 "
+        command += "-c++11 -force-debug-info "
         
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         if self.subinfo.options.isActive("binary/mysql-pkg"):
@@ -108,8 +108,7 @@ class Package(Qt5CorePackageBase):
         else:
           command += " -release "
         print("command: ", command)
-        utils.system( command )
-        return True
+        return utils.system( command )
         
 
     def make(self, unused=''):
