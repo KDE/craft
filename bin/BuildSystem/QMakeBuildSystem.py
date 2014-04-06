@@ -26,39 +26,14 @@ class QMakeBuildSystem(BuildSystemBase):
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
         self.enterBuildDir()
-
-        # here follows some automatic configure tool detection
-        # 1. search for configure.exe in the order
-        #      a. provided by method call
-        #      b. in source directory
-        # 2. if qmake is available search for a pro-file named as the package
-        # 3. if a pro-file is available through configureOptions, run it with qmake
-        # 4. otherwise run qmake without any pro file given
-        qmakeTool = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
-        topLevelProFilesFound = 0
-        topLevelProFile = ""
-        for fileListed in os.listdir(self.configureSourceDir()):
-            if fileListed.endswith(".pro"):
-                if topLevelProFilesFound == 0:
-                    topLevelProFile = os.path.join(self.configureSourceDir(), fileListed)
-                topLevelProFilesFound += 1
-        if self.subinfo.options.configure.tool != None and self.subinfo.options.configure.tool != False:
-            command = "%s %s" % (self.subinfo.options.configure.tool, self.configureOptions(configureDefines))
-        elif os.path.exists(qmakeTool):
-            if utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW():
-                configureDefines += ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
-            if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
-                configureDefines += ' "CONFIG -= debug"'
-                configureDefines += ' "CONFIG += release"'
-            elif self.buildType() == "Debug":
-                configureDefines += ' "CONFIG += debug"'
-                configureDefines += ' "CONFIG -= release"'
-            if os.path.exists(topLevelProFile) and topLevelProFilesFound == 1:
-                command = "qmake -makefile %s %s" % (topLevelProFile, self.configureOptions(configureDefines))
-            else:
-                command = "qmake %s" % self.configureOptions(configureDefines)
-        else:
-            utils.die("could not find configure.exe or top level pro-file, please take a look into the source and setup the config process.")
+        if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
+            configureDefines += ' "CONFIG -= debug"'
+            configureDefines += ' "CONFIG += release"'
+        elif self.buildType() == "Debug":
+            configureDefines += ' "CONFIG += debug"'
+            configureDefines += ' "CONFIG -= release"'
+        
+        command = "qmake -makefile %s %s" % (self.configureSourceDir(), self.configureOptions(configureDefines))
 
         return self.system( command, "configure" )
 
