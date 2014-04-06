@@ -10,12 +10,6 @@ import compiler
 
 from Package.Qt5CorePackageBase import *
 
-# there is a bug in qmake which results in install targets like
-# V:${INSTALL_ROOT}\build\libs\qtbase\bin
-# that is why I remove the first two character of installroot in Qt5CorePackageBase
-# and why I set the prefix to the first 3 chars of KDEROOT
-# its a ugly hack based on bugs but it works somehow
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setupDefaultVersions(__file__)
@@ -78,7 +72,7 @@ class Package(Qt5CorePackageBase):
             f.close()
             os.remove(os.path.join(self.sourceDir(),"configure.exe"))
         configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT")[0:3], self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT"), self.platform )
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "

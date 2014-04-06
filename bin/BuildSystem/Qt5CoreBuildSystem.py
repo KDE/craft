@@ -22,6 +22,12 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
        options += " INSTALL_ROOT=%s install" % self.imageDir()[2:]
        if not QMakeBuildSystem.install( self ,options):
            return False
+           
+       badPrefix = os.path.join(self.installDir(), os.getenv("KDEROOT")[3:])
+       if os.getenv("KDEROOT")[3:] != "" and os.path.exists(badPrefix):
+           for subdir in os.listdir(badPrefix):
+               shutil.move(os.path.join(badPrefix, subdir), self.installDir())
+           shutil.rmtree(badPrefix)
 
        if os.path.exists(os.path.join( self.installDir() , "bin" , "mkspecs") ):
             shutil.move( os.path.join( self.installDir() , "bin" , "mkspecs") , os.path.join( self.installDir(), "mkspecs" ) )
