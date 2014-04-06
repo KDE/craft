@@ -8,10 +8,12 @@ class subinfo( info.infoclass ):
         for ver in ['2.7.90']:
             self.targets[ver] = "http://download.kde.org/unstable/calligra-" + ver + "/calligra-" + ver + ".tar.xz"
             self.targetInstSrc[ver] = 'calligra-' + ver
-        for ver in ['2.8.0']:
+        for ver in ['2.8.0', '2.8.1']:
             self.targets[ver] = "http://download.kde.org/stable/calligra-" + ver + "/calligra-" + ver + ".tar.xz"
             self.targetInstSrc[ver] = 'calligra-' + ver
         self.targetDigests['2.7.90'] = 'bc689b9644c0adfafa2cccd840a0abbdbf098ef8'
+        self.targetDigests['2.8.0'] = 'c603d092bff8f053cfb5440bbd9074e933712435'
+        self.targetDigests['2.8.1'] = '985e12837ccc841784a1a7a568fb75b24e55b61d'
         self.patchToApply['2.7.90'] = [ ('patches/2.7.90/rng2cpp-fix.patch', 1),
                                         ('patches/2.7.90/deduplicate-includes-where-moc-fails-due-to-long-commandline.patch', 1),
                                         ('patches/2.7.90/gsl-cblas-link-fix.patch', 1),
@@ -28,7 +30,10 @@ class subinfo( info.infoclass ):
                                        ('patches/2.7.90/lst-to-list.patch', 1),
                                        ('patches/2.8.0/deduplicate-includes-where-moc-fails-due-to-long-commandline.patch', 1) ]
         
-        self.defaultTarget = '2.8.0'
+        self.patchToApply['2.8.1'] = [ ('patches/2.7.90/add-flags-to-vc-derived-macros-and-allow-multiple-definitions-on-mingw.patch', 1),
+                                       ('patches/2.8.0/deduplicate-includes-where-moc-fails-due-to-long-commandline.patch', 1) ]
+        
+        self.defaultTarget = '2.8.1'
         self.shortDescription = "The Calligra Suite of Applications"
 
     def setDependencies( self ):
