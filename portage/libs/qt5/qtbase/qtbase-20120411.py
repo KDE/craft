@@ -45,13 +45,6 @@ class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         Qt5CorePackageBase.__init__(self)
-        if not self.subinfo.options.useShortPathes \
-                and compiler.isMinGW()  and len(self.rootdir) > 10:
-            # mingw4 cannot compile qt if the command line arguments
-            # exceed 8192 chars
-            utils.warning('for mingw4, rootdir %s is too long for full path names.'
-                ' Using short path names.' % self.rootdir)
-            self.subinfo.options.useShortPathes = True
         
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs', 'openssl')
