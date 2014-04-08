@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "document type definition for docbook format"
         # note: use the version specified as DOCBOOKXML_CURRENTDTD_VERSION in
         #       FindDocBookXML.cmake of kdelibs or install all DTDs at the same time 
-        self.defaultTarget = '4.2'
+        self.defaultTarget = '4.5'
 
 from Package.BinaryPackageBase import *
 
