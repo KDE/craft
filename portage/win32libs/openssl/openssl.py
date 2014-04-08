@@ -34,7 +34,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "The OpenSSL runtime environment"
 
         self.defaultTarget = '1.0.1g'
-
+        
         if compiler.isMinGW_W64():
             self.patchToApply[ '1.0.0' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
             self.patchToApply[ '1.0.0a' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
