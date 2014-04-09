@@ -24,6 +24,8 @@ class subinfo(info.infoclass):
         if not self.options.isActive("kde/kde-runtime"):
             self.dependencies['kdesupport/snorenotify'] = 'default'
             self.dependencies['kdesupport/phonon-ds9'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.shortDescription = "a distributed IRC client"
 
