@@ -1,6 +1,6 @@
 diff -Nru -x '*~' xapian-core-1.2.16.orig/api/CMakeLists.txt xapian-core-1.2.16/api/CMakeLists.txt
 --- xapian-core-1.2.16.orig/api/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/api/CMakeLists.txt	2013-12-21 01:25:35.273850600 +0100
++++ xapian-core-1.2.16/api/CMakeLists.txt	2013-12-21 14:37:59.128571400 +0100
 @@ -0,0 +1,35 @@
 +# api subdirectory
 +
@@ -36,45 +36,47 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/api/CMakeLists.txt xapian-core-1.2.16/
 +    version.cc
 +)
 +
-+add_library(xapian_api OBJECT ${api_SRCS})
++add_library(api OBJECT ${api_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt xapian-core-1.2.16/backends/brass/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/brass/CMakeLists.txt	2013-12-21 02:03:10.073817800 +0100
-@@ -0,0 +1,31 @@
++++ xapian-core-1.2.16/backends/brass/CMakeLists.txt	2013-12-21 23:49:08.628038600 +0100
+@@ -0,0 +1,33 @@
 +# backends / brass
 +
-+set(backends_brass_SRCS
-+    brass_alldocspostlist.cc
-+    brass_alltermslist.cc
-+    brass_btreebase.cc
-+    brass_compact.cc
-+    brass_cursor.cc
-+    brass_database.cc
-+    brass_databasereplicator.cc
-+    brass_dbstats.cc
-+    brass_document.cc
-+    brass_inverter.cc
-+    brass_metadata.cc
-+    brass_positionlist.cc
-+    brass_postlist.cc
-+    brass_record.cc
-+    brass_spelling.cc
-+    brass_spellingwordslist.cc
-+    brass_synonym.cc
-+    brass_table.cc
-+    brass_termlist.cc
-+    brass_termlisttable.cc
-+    brass_valuelist.cc
-+    brass_values.cc
-+    brass_version.cc
-+)
++if(BUILD_BACKEND_BRASS)
++    set(backends_brass_SRCS
++        brass_alldocspostlist.cc
++        brass_alltermslist.cc
++        brass_btreebase.cc
++        brass_compact.cc
++        brass_cursor.cc
++        brass_database.cc
++        brass_databasereplicator.cc
++        brass_dbstats.cc
++        brass_document.cc
++        brass_inverter.cc
++        brass_metadata.cc
++        brass_positionlist.cc
++        brass_postlist.cc
++        brass_record.cc
++        brass_spelling.cc
++        brass_spellingwordslist.cc
++        brass_synonym.cc
++        brass_table.cc
++        brass_termlist.cc
++        brass_termlisttable.cc
++        brass_valuelist.cc
++        brass_values.cc
++        brass_version.cc
++    )
 +
-+add_library(backend_brass OBJECT ${backends_brass_SRCS})
++    add_library(backend_brass OBJECT ${backends_brass_SRCS})
 +
-+add_library(brasscheck brass_check.cc)
++    add_library(brasscheck brass_check.cc)
++endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt xapian-core-1.2.16/backends/chert/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/chert/CMakeLists.txt	2013-12-21 01:36:32.841461300 +0100
++++ xapian-core-1.2.16/backends/chert/CMakeLists.txt	2013-12-21 23:45:25.420271800 +0100
 @@ -0,0 +1,34 @@
 +# backends / chert
 +
@@ -112,9 +114,16 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt xapian-c
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/CMakeLists.txt xapian-core-1.2.16/backends/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/CMakeLists.txt	2013-12-21 01:54:30.005071600 +0100
-@@ -0,0 +1,30 @@
++++ xapian-core-1.2.16/backends/CMakeLists.txt	2013-12-21 23:48:30.072833300 +0100
+@@ -0,0 +1,37 @@
 +# backends
++
++if(BUILD_BACKEND_FLINT OR BUILD_BACKEND_CHERT OR BUILD_BACKEND_BRASS)
++    find_package(ZLIB REQUIRED)
++    include_directories(${ZLIB_INCLUDE_DIRS})
++    set(xapian_LIBS ${ZLIB_LIBRARIES} PARENT_SCOPE)
++endif()
++
 +
 +add_subdirectory(brass)
 +add_subdirectory(chert)
@@ -147,7 +156,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/CMakeLists.txt xapian-core-1.
 \ No newline at end of file
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt xapian-core-1.2.16/backends/flint/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/flint/CMakeLists.txt	2013-12-21 01:37:56.309235400 +0100
++++ xapian-core-1.2.16/backends/flint/CMakeLists.txt	2013-12-21 23:45:35.460846100 +0100
 @@ -0,0 +1,31 @@
 +# backends / flint
 +
@@ -228,10 +237,96 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt xapian-
 +
 +    add_library(backend_remote OBJECT ${backends_remote_SRCS})
 +endif()
+diff -Nru -x '*~' xapian-core-1.2.16.orig/bin/CMakeLists.txt xapian-core-1.2.16/bin/CMakeLists.txt
+--- xapian-core-1.2.16.orig/bin/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/bin/CMakeLists.txt	2013-12-22 00:12:30.130199900 +0100
+@@ -0,0 +1,72 @@
++# bin
++if(BUILD_BACKEND_BRASS OR BUILD_BACKEND_CHERT OR BUILD_BACKEND_FLINT)
++    find_package(ZLIB REQUIRED)
++    include_directories(
++        ${CMAKE_SOURCE_DIR}/backends/brass
++        ${CMAKE_SOURCE_DIR}/backends/chert
++        ${CMAKE_SOURCE_DIR}/backends/flint
++        ${ZLIB_INCLUDE_DIRS}
++    )
++    set(xapian_check_SRCS xapian-check.cc)
++    set(xapian_check_LIBS)
++    if(BUILD_BACKEND_BRASS)
++        list(APPEND xapian_check_SRCS xapian-check-brass.cc)
++        list(APPEND xapian_check_LIBS brasscheck)
++    endif()
++    if(BUILD_BACKEND_CHERT)
++        list(APPEND xapian_check_SRCS xapian-check-chert.cc)
++        list(APPEND xapian_check_LIBS chertcheck)
++    endif()
++    if(BUILD_BACKEND_FLINT)
++        list(APPEND xapian_check_SRCS xapian-check-flint.cc)
++        list(APPEND xapian_check_LIBS flintcheck)
++    endif()
++
++    add_executable(xapian-check ${xapian_check_SRCS})
++    target_link_libraries(xapian-check ${xapian_check_LIBS} xapian)
++    list(APPEND _targets xapian-check)
++
++    set(xapian_compact_SRCS xapian-compact.cc)
++    add_executable(xapian-compact ${xapian_compact_SRCS})
++    target_link_libraries(xapian-compact getopt xapian)
++    list(APPEND _targets xapian-compact)
++
++    set(xapian_inspect_SRCS xapian-inspect.cc)
++    add_executable(xapian-inspect ${xapian_inspect_SRCS})
++    target_link_libraries(xapian-inspect getopt xapian)
++    list(APPEND _targets xapian-inspect)
++
++    set(xapian_replicate_SRCS xapian-replicate.cc)
++    add_executable(xapian-replicate ${xapian_replicate_SRCS})
++    target_link_libraries(xapian-replicate getopt xapian)
++    list(APPEND _targets xapian-replicate)
++
++    set(xapian_replicate_server_SRCS xapian-replicate-server.cc)
++    add_executable(xapian-replicate-server ${xapian_replicate_server_SRCS})
++    target_link_libraries(xapian-replicate-server getopt xapian)
++    list(APPEND _targets xapian-replicate-server)
++endif()
++
++if(BUILD_BACKEND_CHERT AND BUILD_BACKEND_FLINT)
++    ## xapian-chert-update.cc uses FlintTable to read the old format chert db.
++    set(xapian_chert_update_SRCS xapian-chert-update.cc)
++    add_executable(xapian-chert-update ${xapian_chert_update_SRCS})
++    target_link_libraries(xapian-chert-update getopt xapian)
++    list(APPEND _targets xapian-chert-update)
++endif()
++
++if(BUILD_BACKEND_REMOTE)
++    set(xapian_progsrv_SRCS xapian-progsrv.cc)
++    add_executable(xapian-progsrv ${xapian_progsrv_SRCS})
++    target_link_libraries(xapian-progsrv getopt xapian)
++    list(APPEND _targets xapian-progsrv)
++
++    set(xapian_tcpsrv_SRCS xapian-tcpsrv.cc)
++    add_executable(xapian-tcpsrv ${xapian_tcpsrv_SRCS})
++    target_link_libraries(xapian-tcpsrv getopt xapian)
++    list(APPEND _targets xapian-tcpsrv)
++endif()
++
++install(TARGETS ${_targets} RUNTIME DESTINATION bin
++                            ARCHIVE DESTINATION lib
++                            LIBRARY DESTINATION lib)
+\ No newline at end of file
+diff -Nru -x '*~' xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in xapian-core-1.2.16/cmake/xapian-config-win32.cmake.in
+--- xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/cmake/xapian-config-win32.cmake.in	2014-04-18 01:17:04.128747200 +0200
+@@ -0,0 +1,5 @@
++SET(prefix "@prefix@")
++SET(exec_prefix "@exec_prefix@")
++SET(XAPIAN_LIBRARIES "@libdir@/@LIBRARY_VERSION_PREFIX@xapian@LIBRARY_VERSION_SUFFIX@@SHLIBEXT@" CACHE FILEPATH "Libraries for Xapian")
++SET(XAPIAN_INCLUDE_DIR "@incdir@" CACHE PATH "Include path for Xapian")
++SET(XAPIAN_FOUND "TRUE")
 diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMakeLists.txt
 --- xapian-core-1.2.16.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/CMakeLists.txt	2013-12-21 02:26:13.024918100 +0100
-@@ -0,0 +1,48 @@
++++ xapian-core-1.2.16/CMakeLists.txt	2014-04-18 01:36:13.368480000 +0200
+@@ -0,0 +1,134 @@
 +project(xapian)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -240,12 +335,11 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMak
 +set(MINOR_VERSION 2)
 +set(REVISION 16)
 +
++option(BUILD_BACKEND_BRASS "build brass backend" ON)
 +option(BUILD_BACKEND_CHERT "build chert backend" ON)
 +option(BUILD_BACKEND_FLINT "build flint backend" ON)
 +option(BUILD_BACKEND_INMEMORY "build inmemory backend" ON)
 +option(BUILD_BACKEND_REMOTE "build remote backend" ON)
-+
-+find_package(ZLIB REQUIRED)
 +
 +include_directories(
 +    ${CMAKE_BINARY_DIR}/include
@@ -264,26 +358,114 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMak
 +configure_file(config.h.win32 ${CMAKE_BINARY_DIR}/include/config.h @COPYONLY)
 +configure_file(version.h.in ${CMAKE_BINARY_DIR}/include/xapian/version.h)
 +
++file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/cmake)
++set(prefix ${CMAKE_INSTALL_PREFIX})
++set(exec_prefix ${CMAKE_INSTALL_PREFIX})
++set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
++if(MSVC)
++    set(LIBRARY_VERSION_PREFIX "")
++else(MSVC)
++    set(LIBRARY_VERSION_PREFIX "lib")
++endif(MSVC)
++
++set(LIBRARY_VERSION_SUFFIX "")
++if(MSVC)
++    set(SHLIBEXT ".lib")
++elseif(MINGW)
++    set(SHLIBEXT ".dll.a")
++# FIXME: mac is missing here
++else()
++    SET(SHLIBEXT ".so")
++endif()
++set(incdir "\${prefix}/include")
++set(PACKAGE_VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${REVISION})
++
++configure_file(cmake/xapian-config-version.cmake.in ${CMAKE_BINARY_DIR}/cmake/xapian-config-version.cmake)
++configure_file(cmake/xapian-config-win32.cmake.in ${CMAKE_BINARY_DIR}/cmake/xapian-config.cmake)
++
 +add_subdirectory(api)
 +add_subdirectory(backends)
 +add_subdirectory(common)
 +add_subdirectory(expand)
 +add_subdirectory(languages)
-+# include bin/Makefile.mk
-+# include common/Makefile.mk
++add_subdirectory(matcher)
++add_subdirectory(net)
++add_subdirectory(queryparser)
++add_subdirectory(unicode)
++add_subdirectory(weight)
++
++add_subdirectory(bin)
 +# include examples/Makefile.mk
-+# include expand/Makefile.mk
 +# include include/Makefile.mk
-+# include languages/Makefile.mk
-+# include matcher/Makefile.mk
-+# include net/Makefile.mk
-+# include queryparser/Makefile.mk
-+# include unicode/Makefile.mk
-+# include weight/Makefile.mk
++
++foreach(_backend BRASS CHERT FLINT REMOTE)
++    if(BUILD_BACKEND_${_backend})
++        string(TOLOWER ${_backend} _backend_lower)
++        list(APPEND xapian_SRCS $<TARGET_OBJECTS:backend_${_backend_lower}>)
++    endif(BUILD_BACKEND_${_backend})
++endforeach()
++
++set(xapian_SRCS
++    ${xapian_SRCS}
++    $<TARGET_OBJECTS:api>
++    $<TARGET_OBJECTS:backend_inmemory>
++    $<TARGET_OBJECTS:backend_multi>
++    $<TARGET_OBJECTS:backends>
++    $<TARGET_OBJECTS:common>
++    $<TARGET_OBJECTS:expand>
++    $<TARGET_OBJECTS:languages>
++    $<TARGET_OBJECTS:matcher>
++    $<TARGET_OBJECTS:net>
++    $<TARGET_OBJECTS:queryparser>
++    $<TARGET_OBJECTS:unicode>
++    $<TARGET_OBJECTS:weight>
++)
++add_library(xapian STATIC ${xapian_SRCS})
++target_link_libraries(xapian ${xapian_LIBS})
++install(TARGETS xapian RUNTIME DESTINATION bin
++                       ARCHIVE DESTINATION lib
++                       LIBRARY DESTINATION lib)
++
++set(xapian_HDRS
++    include/xapian/base.h
++    include/xapian/compactor.h
++    include/xapian/database.h
++    include/xapian/dbfactory.h
++    include/xapian/deprecated.h
++    include/xapian/derefwrapper.h
++    include/xapian/document.h
++    include/xapian/enquire.h
++    include/xapian/error.h
++    include/xapian/errorhandler.h
++    include/xapian/expanddecider.h
++    include/xapian/keymaker.h
++    include/xapian/matchspy.h
++    include/xapian/positioniterator.h
++    include/xapian/postingiterator.h
++    include/xapian/postingsource.h
++    include/xapian/query.h
++    include/xapian/queryparser.h
++    include/xapian/registry.h
++    include/xapian/stem.h
++    include/xapian/termgenerator.h
++    include/xapian/termiterator.h
++    include/xapian/types.h
++    include/xapian/unicode.h
++    include/xapian/valueiterator.h
++    include/xapian/valuesetmatchdecider.h
++    include/xapian/visibility.h
++    include/xapian/weight.h
++    ${CMAKE_BINARY_DIR}/include/xapian/version.h
++)
++
++install(FILES ${xapian_HDRS} DESTINATION include/xapian)
++install(FILES include/xapian.h DESTINATION include)
++install(FILES ${CMAKE_BINARY_DIR}/cmake/xapian-config.cmake ${CMAKE_BINARY_DIR}/cmake/xapian-config-version.cmake DESTINATION lib/cmake/xapian)
+\ No newline at end of file
 diff -Nru -x '*~' xapian-core-1.2.16.orig/common/CMakeLists.txt xapian-core-1.2.16/common/CMakeLists.txt
 --- xapian-core-1.2.16.orig/common/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/common/CMakeLists.txt	2013-12-21 02:19:47.489866700 +0100
-@@ -0,0 +1,31 @@
++++ xapian-core-1.2.16/common/CMakeLists.txt	2013-12-21 23:26:45.330206300 +0100
+@@ -0,0 +1,32 @@
 +set(common_SRCS
 +    bitstream.cc
 +    closefrom.cc
@@ -302,15 +484,16 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/common/CMakeLists.txt xapian-core-1.2.
 +    utils.cc
 +)
 +
++set(USE_WIN32_UUID_API 1)
 +if(USE_WIN32_UUID_API)
 +    list(APPEND common_SRCS
 +        win32_uuid.cc
 +    )
 +endif()
 +
-+add_library(common ${common_SRCS})
++add_library(common OBJECT ${common_SRCS})
 +if(USE_WIN32_UUID_API)
-+    target_link_libraries(common rpcrt4)
++    set(xapian_LIBS ${xapian_LIBS} rpcrt4 PARENT_SCOPE)
 +endif()
 +
 +add_library(getopt getopt.cc)
@@ -414,19 +597,19 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +#define PACKAGE "xapian-core"
 +
 +/* Define to the address where bug reports for this package should be sent. */
-+#define PACKAGE_BUGREPORT "kde-windows@kde.org"
++#define PACKAGE_BUGREPORT ""
 +
 +/* Define to the full name of this package. */
 +#define PACKAGE_NAME "xapian-core"
 +
 +/* Define to the full name and version of this package. */
-+#define PACKAGE_STRING "xapian-core 1.2.16"
++#define PACKAGE_STRING "xapian-core 1.2.8"
 +
 +/* Define to the one symbol short name of this package. */
 +#define PACKAGE_TARNAME "xapian-core"
 +
 +/* Define to the version of this package. */
-+#define PACKAGE_VERSION "1.2.16"
++#define PACKAGE_VERSION "1.2.8"
 +
 +/* explicit prototype needed for pread (if any) */
 +/* #undef PREAD_PROTOTYPE */
@@ -449,7 +632,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +#define STDC_HEADERS 1
 +
 +/* Version number of package */
-+#define VERSION "1.2.16"
++#define VERSION "1.2.8"
 +
 +/* Define if you want debugging to be enabled (will cause some slow down) */
 +/* #undef XAPIAN_DEBUG */
@@ -519,7 +702,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +
 diff -Nru -x '*~' xapian-core-1.2.16.orig/expand/CMakeLists.txt xapian-core-1.2.16/expand/CMakeLists.txt
 --- xapian-core-1.2.16.orig/expand/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/expand/CMakeLists.txt	2013-12-21 02:20:01.904691200 +0100
++++ xapian-core-1.2.16/expand/CMakeLists.txt	2013-12-21 14:33:46.429117800 +0100
 @@ -0,0 +1,9 @@
 +# expand
 +
@@ -529,10 +712,10 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/expand/CMakeLists.txt xapian-core-1.2.
 +    ortermlist.cc
 +)
 +
-+add_library(expand ${expand_SRCS})
++add_library(expand OBJECT ${expand_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/languages/CMakeLists.txt xapian-core-1.2.16/languages/CMakeLists.txt
 --- xapian-core-1.2.16.orig/languages/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/languages/CMakeLists.txt	2013-12-21 02:24:58.051629800 +0100
++++ xapian-core-1.2.16/languages/CMakeLists.txt	2013-12-21 14:33:55.338627400 +0100
 @@ -0,0 +1,34 @@
 +# languages
 +
@@ -567,8 +750,92 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/languages/CMakeLists.txt xapian-core-1
 +    list(APPEND languages_SRCS ${lang}.cc)
 +endforeach()
 +
-+add_library(languages ${languages_SRCS})
++add_library(languages OBJECT ${languages_SRCS})
 \ No newline at end of file
+diff -Nru -x '*~' xapian-core-1.2.16.orig/matcher/CMakeLists.txt xapian-core-1.2.16/matcher/CMakeLists.txt
+--- xapian-core-1.2.16.orig/matcher/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/matcher/CMakeLists.txt	2013-12-21 14:36:21.264973900 +0100
+@@ -0,0 +1,31 @@
++# matcher
++
++set(matcher_SRCS
++    andmaybepostlist.cc
++    andnotpostlist.cc
++    branchpostlist.cc
++    collapser.cc
++    exactphrasepostlist.cc
++    externalpostlist.cc
++    localsubmatch.cc
++    mergepostlist.cc
++    msetcmp.cc
++    msetpostlist.cc
++    multiandpostlist.cc
++    multimatch.cc
++    multixorpostlist.cc
++    orpostlist.cc
++    phrasepostlist.cc
++    queryoptimiser.cc
++    selectpostlist.cc
++    synonympostlist.cc
++    valuegepostlist.cc
++    valuerangepostlist.cc
++    valuestreamdocument.cc
++)
++
++if(BUILD_BACKEND_REMOTE)
++    list(APPEND matcher_SRCS remotesubmatch.cc)
++endif()
++
++add_library(matcher OBJECT ${matcher_SRCS})
+\ No newline at end of file
+diff -Nru -x '*~' xapian-core-1.2.16.orig/net/CMakeLists.txt xapian-core-1.2.16/net/CMakeLists.txt
+--- xapian-core-1.2.16.orig/net/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/net/CMakeLists.txt	2013-12-21 23:26:57.474901000 +0100
+@@ -0,0 +1,17 @@
++# net
++
++set(net_SRCS
++    progclient.cc
++    remoteconnection.cc
++    remoteserver.cc
++    remotetcpclient.cc
++    remotetcpserver.cc
++    replicatetcpclient.cc
++    replicatetcpserver.cc
++    serialise.cc
++    tcpclient.cc
++    tcpserver.cc
++)
++
++add_library(net OBJECT ${net_SRCS})
++set(xapian_LIBS ${xapian_LIBS} ws2_32 PARENT_SCOPE)
+diff -Nru -x '*~' xapian-core-1.2.16.orig/queryparser/CMakeLists.txt xapian-core-1.2.16/queryparser/CMakeLists.txt
+--- xapian-core-1.2.16.orig/queryparser/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/queryparser/CMakeLists.txt	2013-12-21 14:34:14.664732800 +0100
+@@ -0,0 +1,11 @@
++# queryparser
++
++set(queryparser_SRCS
++    cjk-tokenizer.cc
++    queryparser.cc
++    queryparser_internal.cc
++    termgenerator.cc
++    termgenerator_internal.cc
++)
++
++add_library(queryparser OBJECT ${queryparser_SRCS})
+diff -Nru -x '*~' xapian-core-1.2.16.orig/unicode/CMakeLists.txt xapian-core-1.2.16/unicode/CMakeLists.txt
+--- xapian-core-1.2.16.orig/unicode/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/unicode/CMakeLists.txt	2013-12-21 14:34:20.665076000 +0100
+@@ -0,0 +1,8 @@
++# unicode
++
++set(unicode_SRCS
++    tclUniData.cc
++    utf8itor.cc
++)
++
++add_library(unicode OBJECT ${unicode_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/version.h.in xapian-core-1.2.16/version.h.in
 --- xapian-core-1.2.16.orig/version.h.in	1970-01-01 01:00:00.000000000 +0100
 +++ xapian-core-1.2.16/version.h.in	2010-02-03 12:56:46.000000000 +0100
@@ -611,3 +878,18 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/version.h.in xapian-core-1.2.16/versio
 +#define XAPIAN_HAS_REMOTE_BACKEND 1
 +
 +#endif /* XAPIAN_INCLUDED_VERSION_H */
+diff -Nru -x '*~' xapian-core-1.2.16.orig/weight/CMakeLists.txt xapian-core-1.2.16/weight/CMakeLists.txt
+--- xapian-core-1.2.16.orig/weight/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xapian-core-1.2.16/weight/CMakeLists.txt	2013-12-21 14:34:27.812484800 +0100
+@@ -0,0 +1,11 @@
++# weight
++
++set(weight_SRCS
++    bm25weight.cc
++    boolweight.cc
++    tradweight.cc
++    weight.cc
++    weightinternal.cc
++)
++
++add_library(weight OBJECT ${weight_SRCS})
