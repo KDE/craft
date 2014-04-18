@@ -1,7 +1,8 @@
-diff -Nru -x '*~' libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rndw32.c
---- libgcrypt-1.5.0.orig/random/rndw32.c	2013-06-08 21:21:40.912117900 +0200
-+++ libgcrypt-1.5.0/random/rndw32.c	2013-06-08 21:15:32.659307600 +0200
-@@ -829,10 +829,10 @@
+Index: libgcrypt-1.5.3/random/rndw32.c
+===================================================================
+--- libgcrypt-1.5.3.orig/random/rndw32.c
++++ libgcrypt-1.5.3/random/rndw32.c
+@@ -829,10 +829,10 @@ _gcry_rndw32_gather_random_fast (void (*
       and milliseconds since Windows was started.  */
  
    {
@@ -14,7 +15,7 @@ diff -Nru -x '*~' libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rn
                       memcpy (bufptr, &along, sizeof (along) );  \
                       bufptr += sizeof (along);                  \
                     } while (0)
-@@ -888,7 +888,7 @@
+@@ -888,7 +888,7 @@ _gcry_rndw32_gather_random_fast (void (*
    {
      HANDLE handle;
      FILETIME creationTime, exitTime, kernelTime, userTime;
@@ -23,9 +24,10 @@ diff -Nru -x '*~' libgcrypt-1.5.0.orig/random/rndw32.c libgcrypt-1.5.0/random/rn
  
      handle = GetCurrentThread ();
      GetThreadTimes (handle, &creationTime, &exitTime,
-diff -Nru -x '*~' libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
---- libgcrypt-1.5.0.orig/src/ath.c	2013-06-08 21:21:40.932117900 +0200
-+++ libgcrypt-1.5.0/src/ath.c	2013-06-08 21:17:15.755461200 +0200
+Index: libgcrypt-1.5.3/src/ath.c
+===================================================================
+--- libgcrypt-1.5.3.orig/src/ath.c
++++ libgcrypt-1.5.3/src/ath.c
 @@ -41,7 +41,11 @@
  #else
  #include <winsock2.h>
@@ -38,9 +40,10 @@ diff -Nru -x '*~' libgcrypt-1.5.0.orig/src/ath.c libgcrypt-1.5.0/src/ath.c
  #endif
  #include <errno.h>
  
-diff -Nru -x '*~' libgcrypt-1.5.0.orig/src/secmem.c libgcrypt-1.5.0/src/secmem.c
---- libgcrypt-1.5.0.orig/src/secmem.c	2013-06-08 21:21:40.982118000 +0200
-+++ libgcrypt-1.5.0/src/secmem.c	2013-06-08 21:16:03.991352100 +0200
+Index: libgcrypt-1.5.3/src/secmem.c
+===================================================================
+--- libgcrypt-1.5.3.orig/src/secmem.c
++++ libgcrypt-1.5.3/src/secmem.c
 @@ -31,7 +31,11 @@
  #ifdef _WIN32
  #include <winsock2.h>
