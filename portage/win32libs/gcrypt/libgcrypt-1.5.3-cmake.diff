@@ -644,7 +644,7 @@ diff -Nru libgcrypt-1.5.0.orig/config.h.cmake libgcrypt-1.5.0/config.h.cmake
 +#cmakedefine USE_WHIRLPOOL @USE_WHIRLPOOL@
 +
 +/* Version of this package */
-+#cmakedefine VERSION @VERSION@
++#cmakedefine VERSION "@VERSION@"
 +
 +/* Defined if compiled symbols have a leading underscore */
 +#cmakedefine WITH_SYMBOL_UNDERSCORE @WITH_SYMBOL_UNDERSCORE@
@@ -906,7 +906,7 @@ diff -Nru libgcrypt-1.5.0.orig/ConfigureChecks.cmake libgcrypt-1.5.0/ConfigureCh
 +#/* Name of this package */
 +set(PACKAGE "libgcrypt")
 +#/* Version of this package */
-+set(VERSION "\"${GCRYPT_VERSION}\"")
++set(VERSION "${GCRYPT_VERSION}")
 +#/* Define to the address where bug reports for this package should be sent. */
 +set(PACKAGE_BUGREPORT "\"kde-windows@kde.org\"")
 +#/* Define to the full name of this package. */
