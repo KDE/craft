@@ -111,106 +111,6 @@ Index: libgcrypt-1.5.3/cipher/tiger.c
    if (hd->variant == 0)
      {
        X(a);
-Index: libgcrypt-1.5.3/compat/access.c
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/compat/access.c
-@@ -0,0 +1,95 @@
-+/* w32-ce.h 
-+   Copyright (C) 2010 g10 Code GmbH
-+   Copyright (C) 1991,92,97,2000,02 Free Software Foundation, Inc.
-+
-+   This file is part of GPGME.
-+ 
-+   GPGME is free software; you can redistribute it and/or modify it
-+   under the terms of the GNU Lesser General Public License as
-+   published by the Free Software Foundation; either version 2.1 of
-+   the License, or (at your option) any later version.
-+   
-+   GPGME is distributed in the hope that it will be useful, but
-+   WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+   
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifdef HAVE_CONFIG_H
-+#include <config.h>
-+#endif
-+
-+#include <errno.h>
-+#include <string.h>
-+#include <gpg-error.h>
-+
-+#include <windows.h>
-+
-+/* Return a malloced wide char string from an UTF-8 encoded input
-+   string STRING.  Caller must free this value.  Returns NULL and sets
-+   ERRNO on failure.  Calling this function with STRING set to NULL is
-+   not defined.  */
-+wchar_t *
-+utf8_to_wchar (const char *string)
-+{
-+  int n;
-+  size_t nbytes;
-+  wchar_t *result;
-+
-+  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, NULL, 0);
-+  if (n < 0)
-+    {
-+      gpg_err_set_errno (EINVAL);
-+      return NULL;
-+    }
-+
-+  nbytes = (size_t)(n+1) * sizeof(*result);
-+  if (nbytes / sizeof(*result) != (n+1)) 
-+    {
-+      gpg_err_set_errno (ENOMEM);
-+      return NULL;
-+    }
-+  result = malloc (nbytes);
-+  if (!result)
-+    return NULL;
-+
-+  n = MultiByteToWideChar (CP_UTF8, 0, string, -1, result, n);
-+  if (n < 0)
-+    {
-+      free (result);
-+      gpg_err_set_errno (EINVAL);
-+      result = NULL;
-+    }
-+  return result;
-+}
-+
-+/* Replacement for the access function.  Note that we can't use fopen
-+   here because wince might now allow to have a shared read for an
-+   executable; it is better to to read the file attributes.
-+   
-+   Limitation:  Only F_OK is supported.
-+*/
-+int
-+_access (const char *fname, int mode)
-+{
-+  DWORD attr;
-+  wchar_t *wfname;
-+
-+  (void)mode;
-+
-+  wfname = utf8_to_wchar (fname);
-+  if (!wfname)
-+    return -1;
-+
-+  attr = GetFileAttributes (wfname);
-+  free (wfname);
-+  if (attr == (DWORD)(-1))
-+    {
-+      gpg_err_set_errno (ENOENT);
-+      return -1;
-+    }
-+  return 0;
-+}
 Index: libgcrypt-1.5.3/compat/clock.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/compat/clock.c
@@ -243,37 +143,6 @@ Index: libgcrypt-1.5.3/compat/getpid.c
  
  pid_t
  _gcry_getpid (void)
-Index: libgcrypt-1.5.3/mpi/mpi-internal.h
-===================================================================
---- libgcrypt-1.5.3.orig/mpi/mpi-internal.h
-+++ libgcrypt-1.5.3/mpi/mpi-internal.h
-@@ -51,6 +51,11 @@
- 
- #include "mpi.h"
- 
-+#ifdef _WIN32_WCE
-+#undef leave
-+#endif
-+
-+
- /* If KARATSUBA_THRESHOLD is not already defined, define it to a
-  * value which is good on most machines.  */
- 
-Index: libgcrypt-1.5.3/random/rand-internal.h
-===================================================================
---- libgcrypt-1.5.3.orig/random/rand-internal.h
-+++ libgcrypt-1.5.3/random/rand-internal.h
-@@ -22,6 +22,10 @@
- 
- #include "../src/cipher-proto.h"
- 
-+#ifdef _WIN32_WCE
-+#undef leave
-+#endif
-+
- /* Constants used to define the origin of random added to the pool.
-    The code is sensitive to the order of the values.  */
- enum random_origins
 Index: libgcrypt-1.5.3/random/random-csprng.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/random/random-csprng.c
@@ -377,24 +246,6 @@ Index: libgcrypt-1.5.3/random/rndw32.c
  #include <windows.h>
  
  
-Index: libgcrypt-1.5.3/random/rndw32ce.c
-===================================================================
---- libgcrypt-1.5.3.orig/random/rndw32ce.c
-+++ libgcrypt-1.5.3/random/rndw32ce.c
-@@ -20,8 +20,13 @@
- #include <stdlib.h>
- #include <errno.h>
- #include <string.h>
-+#ifdef HAVE_STDINT_H
- #include <stdint.h>
-+#endif
- 
-+#ifdef _WIN32_WCE
-+#include <winsock2.h>
-+#endif
- #include <windows.h>
- #include <wincrypt.h>
- 
 Index: libgcrypt-1.5.3/src/ath.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/src/ath.c
@@ -427,20 +278,6 @@ Index: libgcrypt-1.5.3/src/ath.c
  #endif
  #include <errno.h>
  
-Index: libgcrypt-1.5.3/src/cipher.h
-===================================================================
---- libgcrypt-1.5.3.orig/src/cipher.h
-+++ libgcrypt-1.5.3/src/cipher.h
-@@ -70,6 +70,9 @@ struct pk_encoding_ctx
- 
- #include "cipher-proto.h"
- 
-+#ifdef _WIN32_WCE
-+#undef leave
-+#endif
- 
- /*-- rmd160.c --*/
- void _gcry_rmd160_hash_buffer (void *outbuf,
 Index: libgcrypt-1.5.3/src/fips.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/src/fips.c
@@ -455,7 +292,7 @@ Index: libgcrypt-1.5.3/src/fips.c
  #include <string.h>
  #ifdef ENABLE_HMAC_BINARY_CHECK
  # include <dlfcn.h>
-@@ -29,12 +31,20 @@
+@@ -29,6 +31,11 @@
  #ifdef HAVE_SYSLOG
  # include <syslog.h>
  #endif /*HAVE_SYSLOG*/
@@ -467,30 +304,6 @@ Index: libgcrypt-1.5.3/src/fips.c
  
  #include "g10lib.h"
  #include "ath.h"
- #include "cipher-proto.h"
- #include "hmac256.h"
- 
-+#ifdef _WIN32_WCE
-+#undef leave
-+#endif
- 
- /* The name of the file used to foce libgcrypt into fips mode. */
- #define FIPS_FORCE_FILE "/etc/gcrypt/fips_enabled"
-Index: libgcrypt-1.5.3/src/gcrypt.h.in
-===================================================================
---- libgcrypt-1.5.3.orig/src/gcrypt.h.in
-+++ libgcrypt-1.5.3/src/gcrypt.h.in
-@@ -30,7 +30,9 @@
- 
- #include <gpg-error.h>
- 
--#include <sys/types.h>
-+#ifndef _WIN32_WCE
-+# include <sys/types.h>
-+#endif
- 
- #if defined _WIN32 || defined __WIN32__
- # include <winsock2.h>
 Index: libgcrypt-1.5.3/src/global.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/src/global.c
@@ -505,19 +318,6 @@ Index: libgcrypt-1.5.3/src/global.c
  #ifdef HAVE_SYSLOG
  # include <syslog.h>
  #endif /*HAVE_SYSLOG*/
-Index: libgcrypt-1.5.3/src/hmac256.c
-===================================================================
---- libgcrypt-1.5.3.orig/src/hmac256.c
-+++ libgcrypt-1.5.3/src/hmac256.c
-@@ -59,7 +59,7 @@
- /* For a native WindowsCE binary we need to include gpg-error.h to
-    provide a replacement for strerror.  In other cases we need a
-    replacement macro for gpg_err_set_errno.  */
--#ifdef __MINGW32CE__
-+#ifdef _WIN32_WCE
- # include <gpg-error.h>
- #else
- # define gpg_err_set_errno(a) (errno = (a))
 Index: libgcrypt-1.5.3/src/hwfeatures.c
 ===================================================================
 --- libgcrypt-1.5.3.orig/src/hwfeatures.c
@@ -566,33 +366,3 @@ Index: libgcrypt-1.5.3/src/secmem.c
  
  #if defined(HAVE_MLOCK) || defined(HAVE_MMAP)
  #include <sys/mman.h>
-Index: libgcrypt-1.5.3/src/sexp.c
-===================================================================
---- libgcrypt-1.5.3.orig/src/sexp.c
-+++ libgcrypt-1.5.3/src/sexp.c
-@@ -31,6 +31,10 @@
- #define GCRYPT_NO_MPI_MACROS 1
- #include "g10lib.h"
- 
-+#ifdef _WIN32_WCE
-+#undef leave
-+#endif
-+
- typedef struct gcry_sexp *NODE;
- typedef unsigned short DATALEN;
- 
-Index: libgcrypt-1.5.3/src/types.h
-===================================================================
---- libgcrypt-1.5.3.orig/src/types.h
-+++ libgcrypt-1.5.3/src/types.h
-@@ -38,7 +38,9 @@
- #endif
- 
- 
--#include <sys/types.h>
-+#ifndef _WIN32_WCE
-+# include <sys/types.h>
-+#endif
- 
- 
- #ifndef HAVE_BYTE_TYPEDEF
