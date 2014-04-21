@@ -320,7 +320,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in xap
 @@ -0,0 +1,5 @@
 +SET(prefix "@prefix@")
 +SET(exec_prefix "@exec_prefix@")
-+SET(XAPIAN_LIBRARIES "@libdir@/@LIBRARY_VERSION_PREFIX@xapian@LIBRARY_VERSION_SUFFIX@@SHLIBEXT@" CACHE FILEPATH "Libraries for Xapian")
++SET(XAPIAN_LIBRARIES "@libdir@/@LIBRARY_VERSION_PREFIX@xapian@LIBRARY_VERSION_SUFFIX@@SHLIBEXT@;rpcrt4" CACHE FILEPATH "Libraries for Xapian")
 +SET(XAPIAN_INCLUDE_DIR "@incdir@" CACHE PATH "Include path for Xapian")
 +SET(XAPIAN_FOUND "TRUE")
 diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMakeLists.txt
