@@ -11,6 +11,14 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["win32libs/automoc"] = "default"
+        self.buildDependencies["kde/kauth"] = "default"
+        self.buildDependencies["kde/kcoreaddons"] = "default"
+        self.buildDependencies["kde/kcodecs"] = "default"
+        self.buildDependencies["kde/kconfig"] = "default"
+        self.buildDependencies["kde/kdoctools"] = "default"
+        self.buildDependencies["kde/kguiaddons"] = "default"
+        self.buildDependencies["kde/ki18n"] = "default"
+        self.buildDependencies["kde/kwidgetsaddons"] = "default"
 
 from Package.CMakePackageBase import *
 
