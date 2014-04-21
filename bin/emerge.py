@@ -100,6 +100,8 @@ Commands (must have a packagename):
                         to KDEROOT
 --install-deps          This will fetch and install all required dependencies
                         for the specified package
+--update-direct-deps    This will have the same effect as "-i --noclean" on all
+                        direct vcs dependencies
 --unmerge               this uninstalls a package from KDEROOT - it requires a
                         working manifest directory. unmerge only delete
                         unmodified files by default. You may use the -f or
@@ -310,8 +312,6 @@ def handlePackage( category, package, version, buildAction, opts ):
     elif ( buildAction == "print-targets" ):
         portage.printTargets( category, package, version )
         success = True
-    elif ( buildAction == "install-deps" ):
-        success = True
     else:
         success = utils.error( "could not understand this buildAction: %s" % buildAction )
 
@@ -348,6 +348,7 @@ continueFlag = False
 dumpDepsFile = None
 listFile = None
 dependencyType = 'both'
+dependencyDepth = -1 # resolve all dependencies
 
 if len( sys.argv ) < 2:
     usage()
@@ -447,6 +448,12 @@ for i in sys.argv:
     elif ( i == "--install-deps" ):
         ignoreInstalled = True
         mainBuildAction = "install-deps"
+    elif ( i == "--update-direct-deps" ):
+        mainBuildAction = "update-direct-deps"
+        outDateVCS = True
+        ignoreInstalled = True
+        os.environ["EMERGE_NOCLEAN"] = str( True )
+        dependencyDepth = 1
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
                   "--full-package", "--cleanimage", "--cleanbuild", "--createpatch", "--geturls"] ):
@@ -564,7 +571,7 @@ for entry in packageList:
 utils.debug_line( 1 )
 
 for mainCategory, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType )
+    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType, depth = dependencyDepth )
 
 deplist = [p.ident() for p in _deplist]
 target = os.getenv( "EMERGE_TARGET" )
@@ -603,7 +610,7 @@ deplist.reverse()
 # package[1] -> package
 # package[2] -> version
 
-if ( mainBuildAction != "all" and mainBuildAction != "install-deps" and not listFile ):
+if ( not mainBuildAction in ["all", "install-deps", "update-direct-deps"] and not listFile ):
     # if a buildAction is given, then do not try to build dependencies
     # and do the action although the package might already be installed.
     # This is still a bit problematic since packageName might not be a valid
@@ -625,15 +632,14 @@ else:
         dumpDepsFileObject = open( dumpDepsFile, 'w+' )
         dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
     for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
-        target = ""
-        targetList = []
+        isVCSTarget = False
 
         if dumpDepsFile:
             dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
 
         isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
         if outDateVCS or (outDatePackage and isLastPackage):
-            targetList = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion )
+            isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion ) != []
         if isDBEnabled():
             if emergePlatform.isCrossCompilingEnabled():
                 hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
@@ -648,7 +654,7 @@ else:
         if listFile and mainBuildAction != "all":
             ignoreInstalled = mainPackage in originalPackageList
         if ( isInstalled and not ignoreInstalled ) and not (
-                        isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and target in targetList ):
+                        isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and isVCSTarget ):
             if utils.verbose() > 1 and mainPackage == packageName:
                 utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
             elif utils.verbose() > 2 and not mainPackage == packageName:
@@ -672,8 +678,9 @@ else:
                     utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
             else:
                 mainAction = mainBuildAction
-                if mainBuildAction == "install-deps":
+                if mainBuildAction in ["install-deps", "update-direct-deps"]:
                     mainAction = "all"
+                    
                 if defaultTarget: os.environ["EMERGE_TARGET"] = defaultTarget
 
                 if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
