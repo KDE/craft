@@ -4,7 +4,7 @@ import kdedefaults as kd
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["gitHEAD"] = "[git]kde:%s|%s|" % (self.package, kd.kdebranch)
-        self.shortDescription = "TODO"
+        self.shortDescription = "Classes to improve the handling of icons"
         self.defaultTarget = "gitHEAD"
 
     def setDependencies( self ):
