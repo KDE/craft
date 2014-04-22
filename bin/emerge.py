@@ -101,7 +101,7 @@ Commands (must have a packagename):
 --install-deps          This will fetch and install all required dependencies
                         for the specified package
 --update-direct-deps    This will have the same effect as "-i " on all
-                        direct vcs dependencies of a target.
+                        direct dependencies of a target.
 --unmerge               this uninstalls a package from KDEROOT - it requires a
                         working manifest directory. unmerge only delete
                         unmodified files by default. You may use the -f or
@@ -570,24 +570,26 @@ for entry in packageList:
 utils.debug_line( 1 )
 
 for mainCategory, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType, depth = dependencyDepth )
+    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType, maxDetpth = dependencyDepth )
 
 deplist = [p.ident() for p in _deplist]
 target = os.getenv( "EMERGE_TARGET" )
 
-for item in range( len( deplist ) ):
-    if deplist[ item ][ 0 ] in categoryList and deplist[ item ][ 1 ] in packageList:
-        deplist[ item ].append( ignoreInstalled )
-    else:
-        deplist[ item ].append( False )
-    if deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] in targetDict:
-        deplist[ item ][ 3 ] = targetDict[ deplist[ item ][ 0 ] + "/" + deplist[ item ][ 1 ] ]
 
-    if target in list( portage.PortageInstance.getAllTargets( deplist[ item ][ 0 ], deplist[ item ][ 1 ], deplist[ item ][ 2 ] ).keys()):
+for item in deplist: 
+    item.append( False )
+    if ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
+        item[-1] =  True
+        
+    if  item[ 0 ] + "/" + item[ 1 ] in targetDict:
+        item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
+        
+    if target in list( portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ], item[ 2 ] ).keys()):
         # if no target or a wrong one is defined, simply set the default target here
-        deplist[ item ][ 3 ] = target
+        item[ 3 ] = target
+        
+    utils.debug( "dependency: %s" % item, 1 )
 
-    utils.debug( "dependency: %s" % deplist[ item ], 1 )
 
 #for item in deplist:
 #    cat = item[ 0 ]
@@ -602,6 +604,10 @@ if mainBuildAction == "install-deps":
     # the first dependency is the package itself - ignore it
     # TODO: why are we our own dependency?
     del deplist[ 0 ]
+    
+if mainBuildAction == "update-direct-deps":
+    for item in deplist:
+        item[-1] =  True
 
 deplist.reverse()
 

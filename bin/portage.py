@@ -99,7 +99,7 @@ class DependencyPackage(object):
                 children.append( p )
         return children
 
-    def getDependencies( self, depList=None, dep_type="both", single = set(), depth = -1):
+    def getDependencies( self, depList=None, dep_type="both", single = set(), maxDetpth = -1, depth = 0):
         """ returns all dependencies """
         if depList is None:
             depList = []
@@ -114,10 +114,10 @@ class DependencyPackage(object):
         for p in children:
             if not p in single and not p in depList\
             and not ("%s/%s" % (p.category, p.name)) in PortageInstance.ignores:
-                if depth == -1:
-                    p.getDependencies( depList, dep_type,single, depth = - 1 )
-                elif depth > 0:
-                    p.getDependencies( depList, dep_type,single, depth = depth - 1 )
+                if maxDetpth == -1:
+                    p.getDependencies( depList, dep_type, single )
+                elif depth < maxDetpth:
+                    p.getDependencies( depList, dep_type, single, maxDetpth = maxDetpth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
         if not self in depList and not ("%s/%s" % (self.category, self.name)) in PortageInstance.ignores:
@@ -580,7 +580,7 @@ def parseListFile( filename ):
     return categoryList, packageList, infoDict
 
 
-def solveDependencies( category, package, version, depList, dep_type='both' , depth = -1 ):
+def solveDependencies( category, package, version, depList, dep_type='both' , maxDetpth = -1 ):
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
@@ -590,7 +590,7 @@ def solveDependencies( category, package, version, depList, dep_type='both' , de
         utils.debug( "found package with newest version %s" % version, 2 )
 
     pac = DependencyPackage( category, package, version )
-    depList = pac.getDependencies( depList, dep_type=dep_type, depth = depth )
+    depList = pac.getDependencies( depList, dep_type=dep_type, maxDetpth = maxDetpth )
 
     depList.reverse()
     return depList
