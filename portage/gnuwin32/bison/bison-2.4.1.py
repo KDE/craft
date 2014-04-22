@@ -1,5 +1,3 @@
-# -*- coding: iso-8859-15 -*-
-
 import info
 import os
 import shutil

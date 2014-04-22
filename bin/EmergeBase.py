@@ -44,8 +44,7 @@ KDESVNUSERNAME = os.getenv( "KDESVNUSERNAME" )
 class EmergeBase(object):
     """base class for emerge system - holds attributes and methods required by base classes"""
 
-    def __init__( self, **args):
-        """args really should be documented, see self.argv0 below"""
+    def __init__( self):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
@@ -73,12 +72,7 @@ class EmergeBase(object):
             return
         self.alreadyCalled = True
         self.buildTarget = None
-
-        if "args" in list(args.keys()) and "argv0" in list(args["args"].keys()):
-            self.argv0 = args["args"]["argv0"]
-        else:
-            self.argv0 = sys.argv[ 0 ]
-
+        
         self.versioned              = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
@@ -117,8 +111,6 @@ class EmergeBase(object):
             print("emerge error: KDECOMPILER: '%s' not understood" % COMPILER, file=sys.stderr)
             exit( 1 )
         self.rootdir = ROOTDIR
-        if self.subinfo:
-            self.setup()
 
     def __adjustPath(self, directory):
         """return adjusted path"""
@@ -322,15 +314,11 @@ class EmergeBase(object):
             # in MultiSource.
             self.source.buildTarget = self.subinfo.buildTarget
 
-    def setup( self, fileName=None, category=None, package=None, version=None, buildTarget=None):
-        if fileName == None:
-            self.PV, _ = os.path.splitext( os.path.basename( self.argv0 ) )
-            self.category, self.package, self.version = portage.getCategoryPackageVersion( self.argv0 )
-        else:
-            self.category = category
-            self.package = package
-            self.version = version
-            self.PV, _ = os.path.splitext( os.path.basename( fileName) )
+    def setup( self, fileName, category, package, version, buildTarget=None):
+        self.category = category
+        self.package = package
+        self.version = version
+        self.PV, _ = os.path.splitext( os.path.basename( fileName) )
         self.setBuildTarget(buildTarget)
         if hasattr(self,'source'):
             # pylint: disable=E1101

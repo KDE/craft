@@ -4,6 +4,7 @@
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
+# Patrick von Reth <vonreth [AT] kde [DOT] org>
 
 import sys
 
@@ -27,192 +28,28 @@ from InstallDB import *
 import time
 import datetime
 import threading
+import argparse
 
 def _exit(code):
     utils.stopTimer("Emerge")
     exit(code)
 
-def usage():
-    print("""
-Usage:
-    emerge [[ command and flags ] [ singletarget ]
-            [ command and flags ] [ singletarget ]
-            ... ]
 
-    where singletarget can be of the form:
-        category
-        package
-        category/package
-
-Emerge is a tool for building KDE-related software under Windows. emerge
-automates it, looks for the dependencies and fetches them automatically.
-Some options should be used with extreme caution since they will
-make your kde installation unusable in 999 out of 1000 cases.
-
-Commands (no packagename needed - will be ignored when given):
-
---print-installed               This will show a list of all packages that
-                                are installed currently. It queries both
-                                databases (etc\portage\installed) and the
-                                manifest directory - it prints out only those
-                                packages that are contained within
-                                --print-installable
---print-installable             This will give you a list of packages that can
-                                be installed. Currently you don't need to
-                                enter the category and package: only the
-                                package will be enough.
---update-all                    this option tries to update all installed
-                                packages that contain one or multiple svn
-                                targets. This is equivalent to running all
-                                those packages with the flag --update.
-
-Commands (must have a packagename):
-
---search                This will search for a package or a description matching
-                        or similar to the search term.
---print-targets         This will print all the different targets one package
-                        can contain: different releases might have different
-                        tags that are build as targets of a package. As an
-                        example: You could build the latest amarok sources with
-                        the target 'svnHEAD' the previous '1.80' release would
-                        be contained as target '1.80'.
---print-revision        This will print the revision that the source repository
-                        of this package currently has or nothing if there is no
-                        repository.
---fetch                 retrieve package sources (also checkout sources from
-                        svn or git).
---unpack                unpack package sources and make up the build directory.
---compile               compile the sources: this includes
-                        configure'ing/cmake'ing and running [mingw32-|n|]make.
---configure             configure the sources (support is package specific)
---make                  run [mingw32-|n|]make (support is package specific)
---install               This will run [mingw32-|n|]make install into the image
-                        directory of each package.
---manifest              This step creates the files contained in the manifest
-                        dir.
---qmerge                This will merge the image directory into the KDEROOT
---test                  This will run the unittests if they are present
---package               This step will create a package out of the image
-                        directory instead of merge'ing the image directory into
-                        the KDEROOT (Requires the packager to be installed
-                        already.)
---full-package          This will create packages instead of installing stuff
-                        to KDEROOT
---install-deps          This will fetch and install all required dependencies
-                        for the specified package
---update-direct-deps    This will have the same effect as "-i " on all
-                        direct dependencies of a target.
---unmerge               this uninstalls a package from KDEROOT - it requires a
-                        working manifest directory. unmerge only delete
-                        unmodified files by default. You may use the -f or
-                        --force option to let unmerge delete all files
-                        unconditional.
---cleanallbuilds        Clean complete build directory.
---cleanbuild            Clean build directory for the specified package. This
-                        cleans also all the image directories of all targets of
-                        the specified package.
---checkdigest           Check digest for the specified package. If no digest is
-                        available calculate and print digests.
---geturls               Prints the required urls for the source(s) of this
-                        package. 
---cleanimage            Clean image directory for the specified package and
-                        target.
---createpatch           Create source patch file for the specific package based
-                        on the original archive file or checkout revision of
-                        the used software revision control system.
---disable-buildhost     This disables the building for the host.
---disable-buildtarget   This disables the building for the target.
-
-Flags:
-
---buildtype=[BUILDTYPE]         This will override the build type set by the
-                                environment option EMERGE_BUILDTYPE .
-                                Please set it to one out of Release, Debug,
-                                RelWithDebInfo, MinSizeRel
---target=[TARGET]               This will override the build of the default
-                                target. The default Target is marked with a
-                                star in the printout of --print-targets
---options=<OPTIONS>             Set emerge property from string <OPTIONS>.
-                                An example for is "cmake.openIDE=1"; 
-                                see options.py for more informations.
---patchlevel=[PATCHLEVEL]       This will add a patch level when used together
-                                with --package
---log-dir=[LOG_DIR]             This will log the build output to a logfile in
-                                LOG_DIR for each package. Logging information
-                                is appended to existing logs.
---dump-deps-file=[filename]     Output the dependencies of this package as a
-                                csv file suitable for emerge server.
---list-file=[filename]          Build all packages from the csv file provided
-
--i          ignore install: using this option will install a package over an
-            existing install. This can be useful if you want to check some
-            new code and your last build isn't that old.
--p
---probe     probing: emerge will only look which files it has to build
-            according to the list of installed files and according to the
-            dependencies of the package.
--q          quiet: there should be no output - The verbose level should be 0
--t          test: if used on an KDE target it will override the environment
-            variable and build the target with -DKDE_BUILD_TESTS=ON
--v          verbose: increases the verbose level of emerge. Default is 1.
-            verbose level 1 contains some notes from emerge, all output of
-            cmake, make and other programs that are used. verbose level 2
-            adds an option VERBOSE=1 to make and emerge is more verbose
-            highest level is verbose level 3.
--z          if packages from version control system sources are installed,
-            it marks them as out of date and rebuilds them (tags are not
-            marked as out of date).
--sz         similar to -z, only that it acts only on the last package, and
-            works as normal on the rest.
---noclean   this option will try to use an existing build directory. Please
-            handle this option with care - it will possibly break if the
-            directory isn't existing.
---nocopy    this option is deprecated. In older releases emerge would have
-            copied everything from the SVN source tree to a source directory
-            under %KDEROOT%\\tmp - currently nocopy is applied by default if
-            EMERGE_NOCOPY is not set to "False". Be aware that setting
-            EMERGE_NOCOPY to "False" might slow down the build process,
-            irritate you and increase the disk space roughly by the size of
-            SVN source tree.
---offline   do not try to connect to the internet: KDE packages will try to
-            use an existing source tree and other packages would try to use
-            existing packages in the download directory. If that doesn't
-            work, the build will fail.
---update    this option is the same as '-i --noclean'. It will update a single
-            package that is already installed.
---cleanup   Clean your portage directory, to prevent emerge errors, removes
-            empty directories and *.pyc files
-
-Internal options:
-PLEASE DO NOT USE!
---version-dir
---version-package
---dt=[both|runtime|buildtime]   sets the way how dependencies are evaluated
-                                default is both, but for generation of dependency lists
-                                with -p or --dump-deps-file this can be used to adapt
-                                the output to only include some dependencies
-
-More information see the README or http://windows.kde.org/.
-Send feedback to <kde-windows@kde.org>.
-
-""")
 
 @utils.log
-def doExec( category, package, version, action, opts ):
+def doExec( category, package, version, action ):
     utils.startTimer("%s for %s" % ( action,package),1)
-    utils.debug( "emerge doExec called. action: %s opts: %s" % (action, opts), 2 )
+    utils.debug( "emerge doExec called. action: %s" % action, 2 )
     fileName = portage.getFilename( category, package, version )
-    opts_string = ( "%s " * len( opts ) ) % tuple( opts )
-    commandstring = "python %s %s %s" % ( fileName, action, opts_string )
 
     utils.debug( "file: " + fileName, 1 )
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
-        if not utils.system( commandstring ):
-            utils.die( "running %s" % commandstring )
-        #mod = portage.__import__( fileName )
-        #mod.Package().execute(action)
+        mod = portage.__import__( fileName )
+        pack = mod.Package()
+        pack.setup(fileName, category, package, version)
+        pack.execute(action)
     except OSError:
         utils.stopTimer("%s for %s" % ( action,package))
         return False
@@ -225,7 +62,7 @@ def updateTitle(startTime,title):
         utils.setTitle("emerge %s %s" %(title , delta))
         time.sleep(1)
 
-def handlePackage( category, package, version, buildAction, opts ):
+def handlePackage( category, package, version, buildAction, continueFlag ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
     success = True
 
@@ -237,36 +74,36 @@ def handlePackage( category, package, version, buildAction, opts ):
             if not found and action != buildAction:
                 continue
             found = True
-            success = success and doExec( category, package, version, action, opts )
+            success = success and doExec( category, package, version, action )
     elif ( buildAction == "all" or buildAction == "full-package" ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
-        success = doExec( category, package, version, "fetch", opts )
-        success = success and doExec( category, package, version, "unpack", opts )
+        success = doExec( category, package, version, "fetch" )
+        success = success and doExec( category, package, version, "unpack" )
         if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
-                success = success and doExec( category, package, version, "compile", opts )
-                success = success and doExec( category, package, version, "cleanimage", opts )
-                success = success and doExec( category, package, version, "install", opts )
+                success = success and doExec( category, package, version, "compile" )
+                success = success and doExec( category, package, version, "cleanimage" )
+                success = success and doExec( category, package, version, "install" )
                 if ( buildAction == "all" ):
-                    success = success and doExec( category, package, version, "manifest", opts )
+                    success = success and doExec( category, package, version, "manifest" )
                 if ( buildAction == "all" ):
-                    success = success and doExec( category, package, version, "qmerge", opts )
+                    success = success and doExec( category, package, version, "qmerge" )
                 if( buildAction == "full-package" ):
-                    success = success and doExec( category, package, version, "package", opts )
+                    success = success and doExec( category, package, version, "package" )
             if disableTargetBuild:
                 return success
             os.putenv( "EMERGE_BUILD_STEP", "target" )
 
-        success = success and doExec( category, package, version, "compile", opts )
-        success = success and doExec( category, package, version, "cleanimage", opts )
-        success = success and doExec( category, package, version, "install", opts )
+        success = success and doExec( category, package, version, "compile" )
+        success = success and doExec( category, package, version, "cleanimage" )
+        success = success and doExec( category, package, version, "install" )
         if ( buildAction == "all" ):
-            success = success and doExec( category, package, version, "manifest", opts )
+            success = success and doExec( category, package, version, "manifest" )
         if ( buildAction == "all" ):
-            success = success and doExec( category, package, version, "qmerge", opts )
+            success = success and doExec( category, package, version, "qmerge" )
         if( buildAction == "full-package" ):
-            success = success and doExec( category, package, version, "package", opts )
+            success = success and doExec( category, package, version, "package" )
 
     elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest", "dumpdeps",
                             "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch", "geturls",
@@ -276,24 +113,24 @@ def handlePackage( category, package, version, buildAction, opts ):
         if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
-                success = doExec( category, package, version, buildAction, opts )
+                success = doExec( category, package, version, buildAction )
             if disableTargetBuild:
                 return success
             os.putenv( "EMERGE_BUILD_STEP", "target" )
-        success = success and doExec( category, package, version, buildAction, opts )
+        success = success and doExec( category, package, version, buildAction )
     elif ( buildAction == "install" ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
         success = True
         if emergePlatform.isCrossCompilingEnabled():
             if not disableHostBuild:
                 os.putenv( "EMERGE_BUILD_STEP", "host" )
-                success = doExec( category, package, version, "cleanimage", opts )
-                success = success and doExec( category, package, version, "install", opts )
+                success = doExec( category, package, version, "cleanimage" )
+                success = success and doExec( category, package, version, "install" )
             if disableTargetBuild:
                 return success
             os.putenv( "EMERGE_BUILD_STEP", "target" )
-        success = success and doExec( category, package, version, "cleanimage", opts )
-        success = success and doExec( category, package, version, "install", opts )
+        success = success and doExec( category, package, version, "cleanimage" )
+        success = success and doExec( category, package, version, "install" )
     elif ( buildAction == "version-dir" ):
         print("%s-%s" % ( package, version ))
         success = True
@@ -334,169 +171,103 @@ tittleThread.setDaemon(True)
 tittleThread.start()
 
 
-mainBuildAction = "all"
-packageName = None
-doPretend = False
-outDateVCS = False
-outDatePackage = False
-stayQuiet = False
-disableHostBuild = False
-disableTargetBuild = False
-ignoreInstalled = False
-updateAll = False
-continueFlag = False
-dumpDepsFile = None
-listFile = None
-dependencyType = 'both'
-dependencyDepth = -1 # resolve all dependencies
-
-if len( sys.argv ) < 2:
-    usage()
-    utils.die("")
-
-environ = dict() # TODO: why do we need this at all?
-environ["EMERGE_TRACE"]         = os.getenv( "EMERGE_TRACE" )
-environ["EMERGE_BUILDTESTS"]    = os.getenv( "EMERGE_BUILDTESTS" )
-environ["EMERGE_OFFLINE"]       = os.getenv( "EMERGE_OFFLINE" )
-environ["EMERGE_FORCED"]        = os.getenv( "EMERGE_FORCED" )
-environ["EMERGE_VERSION"]       = os.getenv( "EMERGE_VERSION" )
-environ["EMERGE_BUILDTYPE"]     = os.getenv( "EMERGE_BUILDTYPE" )
-environ["EMERGE_TARGET"]        = os.getenv( "EMERGE_TARGET" )
-environ["EMERGE_PKGPATCHLVL"]        = os.getenv( "EMERGE_PKGPATCHLVL" )
-environ["EMERGE_LOG_DIR"]       = os.getenv( "EMERGE_LOG_DIR" )
-
-if environ['EMERGE_TRACE'] == None or not environ['EMERGE_TRACE'].isdigit():
+if not "EMERGE_TRACE" in os.environ:
     trace = 0
     os.environ["EMERGE_TRACE"] = str( trace )
 else:
-    trace = int( environ[ "EMERGE_TRACE" ] )
+    trace = int( os.environ[ "EMERGE_TRACE" ] )
 
-mainOpts = list()
-
-executableName = sys.argv.pop( 0 )
-nextArguments = sys.argv[:]
-
-for i in sys.argv:
-    nextArguments.pop(0)
-    if ( i == "-p" or i == "--probe" ):
-        doPretend = True
-    elif ( i.startswith( "--list-file=" ) ):
-        listFile = i.replace( "--list-file=", "" )
+parser = argparse.ArgumentParser(prog = "Emerge",
+description = "Emerge is a tool for building KDE-related software under Windows. emerge automates it, looks for the dependencies and fetches them automatically. Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
+epilog = """More information see the README or http://windows.kde.org/.
+Send feedback to <kde-windows@kde.org>.""")
+parser.add_argument("-p", "--probe", action = "store_true", help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
+parser.add_argument("--list-file", action = "append" )
+    # elif ( i.startswith("--options=") ):
+        # # @todo how to add -o <parameter> option
+        # options = i.replace( "--options=", "" )
+        # if "EMERGE_OPTIONS" in os.environ:
+            # os.environ["EMERGE_OPTIONS"] += " %s" % options
+        # else:
+            # os.environ["EMERGE_OPTIONS"] = options
+parser.add_argument("-z","--outDateVCS", action = "store_true", help = "if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date).")
+parser.add_argument("-sz","--outDatePackage", action = "store_true", help = "similar to -z, only that it acts only on the last package, and works as normal on the rest.")
+parser.add_argument("-q","--stayQuiet", action = "store_true", help = "quiet: there should be no output - The verbose level should be 0")
+    # elif ( i == "-t" ):
+        # os.environ["EMERGE_BUILDTESTS"] = "True"
+parser.add_argument("-c","--continue", action = "store_true", dest = "doContinue")
+parser.add_argument("--offline", action = "store_true")
+#        os.environ["EMERGE_OFFLINE"] = "True"
+parser.add_argument("-f","--force", action = "store_true")
+        # os.environ["EMERGE_FORCED"] = "True"
+parser.add_argument("--buildtype", choices = ["Release", "RelWithDebInfo", "MinSizeRel" "Debug"], help = "This will override the build type set by the environment option EMERGE_BUILDTYPE .")
+        # os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )
+parser.add_argument("-v","--verbose", action = "count", help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used. verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3.")
+parser.add_argument("-i","--ignoreInstalled", action = "store_true")
+parser.add_argument("-a", "--action", choices = ["fetch", "unpack", "preconfigure", "configure", "compile", "make",
+                  "install", "qmerge", "manifest", "package", "unmerge", "test", "checkdigest", "dumpdeps",
+                  "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
+                  "version-dir", "version-package", "print-installable",
+                  "print-installed", "print-targets",
+                  "install-deps", "update", "update-direct-deps"], default = "all") 
+parser.add_argument("--target", action = "store" )
+        # os.environ["EMERGE_TARGET"] = i.replace( "--target=", "" )
+parser.add_argument("--search", action = "store_true")
         
-    elif ( i.startswith("--options=") ):
-        # @todo how to add -o <parameter> option
-        options = i.replace( "--options=", "" )
-        if "EMERGE_OPTIONS" in os.environ:
-            os.environ["EMERGE_OPTIONS"] += " %s" % options
-        else:
-            os.environ["EMERGE_OPTIONS"] = options
-    elif ( i == "-z" ):
-        outDateVCS = True
-    elif ( i == "-sz" ):
-        outDatePackage = True
-    elif ( i == "-q" ):
-        stayQuiet = True
-    elif ( i == "-t" ):
-        os.environ["EMERGE_BUILDTESTS"] = "True"
-    elif i == "-c" or i == "--continue":
-        continueFlag = True
-    elif ( i == "--offline" ):
-        mainOpts.append( "--offline" )
-        os.environ["EMERGE_OFFLINE"] = "True"
-    elif ( i == "-f" or i == "--force" ):
-        os.environ["EMERGE_FORCED"] = "True"
-    elif ( i.startswith( "--buildtype=" ) ):
-        os.environ["EMERGE_BUILDTYPE"] = i.replace( "--buildtype=", "" )
-    elif ( i.startswith( "--target=" ) ):
-        os.environ["EMERGE_TARGET"] = i.replace( "--target=", "" )
-    elif ( i.startswith( "--patchlevel=" ) ):
-        os.environ["EMERGE_PKGPATCHLVL"] = i.replace( "--patchlevel=", "" )
-    elif ( i.startswith( "--log-dir=" ) ):
-        os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
-    elif ( i.startswith( "--dump-deps-file=" ) ):
-        dumpDepsFile = i.replace( "--dump-deps-file=", "" )
-    elif ( i.startswith( "--dt=" ) ):
-        dependencyType = i.replace( "--dt=", "" )
-        if dependencyType not in ['both', 'runtime', 'buildtime']:
-            dependencyType = 'both'
-    elif ( i == "-v" ):
-        utils.Verbose.increase()
-    elif ( i == "--trace" ):
-        trace = trace + 1
-        os.environ["EMERGE_TRACE"] = str( trace )
-    elif ( i == "--nocopy" ):
-        os.environ["EMERGE_NOCOPY"] = str( True )
-    elif ( i == "--noclean" ):
-        os.environ["EMERGE_NOCLEAN"] = str( True )
-    elif ( i == "--clean" ):
-        os.environ["EMERGE_NOCLEAN"] = str( False )
-    elif ( i in [ "--version-dir", "--version-package", "--print-installable",
-                  "--print-installed", "--print-targets" ] ):
-        mainBuildAction = i[2:]
-        stayQuiet = True
-        if i in [ "--print-installable", "--print-installed" ]:
-            break
-    elif ( i == "-i" ):
-        ignoreInstalled = True
-    elif ( i == "--update" ):
-        ignoreInstalled = True
-        os.environ["EMERGE_NOCLEAN"] = str( True )
-    elif ( i == "--update-all" ):
-        ignoreInstalled = True
-        os.environ["EMERGE_NOCLEAN"] = str( True )
-        updateAll = True
-    elif ( i == "--install-deps" ):
-        ignoreInstalled = True
-        mainBuildAction = "install-deps"
-    elif ( i == "--update-direct-deps" ):
-        mainBuildAction = "update-direct-deps"
-        outDateVCS = True
-        ignoreInstalled = True
-        dependencyDepth = 1
-    elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
-                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
-                  "--full-package", "--cleanimage", "--cleanbuild", "--createpatch", "--geturls"] ):
-        mainBuildAction = i[2:]
-    elif ( i == "--print-revision" ):
-        mainBuildAction = "printrev"
-    elif ( i == "--disable-buildhost" ):
-        disableHostBuild = True
-    elif ( i == "--disable-buildtarget" ):
-        disableTargetBuild = True
-    elif( i == "--cleanup" ):
-        utils.debug("Starting to clean emerge" )
-        utils.system("cd %s && git clean -f -x -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
-        _exit(0)
-    elif( i == "--cleanup-dry" ):
-        utils.debug("Starting to clean emerge" )
-        utils.system("cd %s && git clean --dry-run -x -e *.py -e *.diff -e *.ba\\t -e *.cmd -e *.reg" % os.path.join(os.getenv("KDEROOT"),"emerge") )
-        _exit(0)
-    elif i == "--cleanallbuilds":
-        # clean complete build directory
-        utils.cleanDirectory(os.path.join( os.getenv("KDEROOT"), "build"))
-        _exit(0)
-    elif ( i == "--search" ):
-        package = nextArguments.pop(0)
-        category = ""
-        if not package.find("/") == -1:
-            (category,package) = package.split("/")
-        portageSearch.printSearch(category, package)
-        _exit(0)
-    elif ( i.startswith( "-" ) ):
-        usage()
-        exit ( 1 )
-    else:
-        packageName = i
-        break
+        
+    # elif ( i.startswith( "--patchlevel=" ) ):
+        # # os.environ["EMERGE_PKGPATCHLVL"] = i.replace( "--patchlevel=", "" )
+    # elif ( i.startswith( "--log-dir=" ) ):
+        # os.environ["EMERGE_LOG_DIR"] = i.replace( "--log-dir=", "" )
+    # elif ( i.startswith( "--dump-deps-file=" ) ):
+        # dumpDepsFile = i.replace( "--dump-deps-file=", "" )
+    # elif ( i.startswith( "--dt=" ) ):
+        # dependencyType = i.replace( "--dt=", "" )
+        # if dependencyType not in ['both', 'runtime', 'buildtime']:
+            # dependencyType = 'both'
+        
+    # elif ( i == "--trace" ):
+        # trace = trace + 1
+        # os.environ["EMERGE_TRACE"] = str( trace )
+    # elif ( i == "--nocopy" ):
+        # os.environ["EMERGE_NOCOPY"] = str( True )
+    # elif ( i == "--noclean" ):
+        # os.environ["EMERGE_NOCLEAN"] = str( True )
+    # elif ( i == "--clean" ):
+        # os.environ["EMERGE_NOCLEAN"] = str( False )
 
-if stayQuiet == True:
+    # elif ( i == "--update" ):
+        # ignoreInstalled = True
+        # os.environ["EMERGE_NOCLEAN"] = str( True )
+    # elif ( i == "--update-all" ):
+        # ignoreInstalled = True
+        # os.environ["EMERGE_NOCLEAN"] = str( True )
+        # updateAll = True
+
+
+    # elif ( i == "--print-revision" ):
+        # mainBuildAction = "printrev"
+
+
+
+parser.add_argument("packageNames", nargs = "*")
+
+args = parser.parse_args()
+print(args)
+
+if args.stayQuiet == True or args.action in [ "version-dir", "version-package", "print-installable","print-installed", "print-targets" ]:
     utils.setVerbose(0)
+elif args.verbose:
+    utils.setVerbose(args.verbose)
+   
+    
+
 
 # get KDEROOT from env
 KDEROOT = os.getenv( "KDEROOT" )
-utils.debug( "buildAction: %s" % mainBuildAction )
-utils.debug( "doPretend: %s" % doPretend, 1 )
-utils.debug( "packageName: %s" % packageName )
+utils.debug( "buildAction: %s" % args.action )
+utils.debug( "doPretend: %s" % args.probe, 1 )
+utils.debug( "packageName: %s" % args.packageNames )
 utils.debug( "buildType: %s" % os.getenv( "EMERGE_BUILDTYPE" ) )
 utils.debug( "buildTests: %s" % utils.envAsBool( "EMERGE_BUILDTESTS" ) )
 utils.debug( "verbose: %d" % utils.verbose(), 1 )
@@ -504,210 +275,212 @@ utils.debug( "trace: %s" % os.getenv( "EMERGE_TRACE" ), 1 )
 utils.debug( "KDEROOT: %s\n" % KDEROOT, 1 )
 utils.debug_line()
 
-def unset_var( varname ):
-    if not os.getenv( varname ) == None:
-        print()
-        utils.warning( "%s found as environment variable. you cannot override emerge"\
-                       " with this - unsetting %s locally" % ( varname, varname ) )
-        os.environ[ varname ] = ""
+def mainThing(packageName, dependencyDepth):
+    global args
+    disableHostBuild = False
+    disableTargetBuild = False
+    updateAll = False
+    dumpDepsFile = None
+    listFile = None
+    dependencyType = 'both'
 
-unset_var( "CMAKE_INCLUDE_PATH" )
-unset_var( "CMAKE_LIBRARY_PATH" )
-unset_var( "CMAKE_FIND_PREFIX" )
-unset_var( "CMAKE_INSTALL_PREFIX" )
-
-# adding emerge/bin to find base.py and gnuwin32.py etc.
-os.environ["PYTHONPATH"] = os.getenv( "PYTHONPATH", "" ) + os.pathsep + \
-                           os.path.join( os.getcwd(), os.path.dirname( executableName ) )
-sys.path.append( os.path.join( os.getcwd(), os.path.dirname( executableName ) ) )
-
-_deplist = []
-deplist = []
-packageList = []
-originalPackageList = []
-categoryList = []
-targetDict = dict()
-
-
-buildType = os.getenv("EMERGE_BUILDTYPE")
-if "EMERGE_DEFAULTCATEGORY" in os.environ:
-    defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
-else:
-    defaultCategory = "kde"
-
-if updateAll:
-    installedPackages = portage.PortageInstance.getInstallables()
-    if portage.PortageInstance.isCategory( packageName ):
-        utils.debug( "Updating installed packages from category " + packageName, 1 )
-    else:
-        utils.debug( "Updating all installed packages", 1 )
+    _deplist = []
+    deplist = []
     packageList = []
-    for mainCategory, mainPackage, mainVersion in installedPackages:
-        if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
-            continue
-        if portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType ) \
-                and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
-            categoryList.append( mainCategory )
-            packageList.append( mainPackage )
-    utils.debug( "Will update packages: " + str (packageList), 1 )
-elif listFile:
-    listFileObject = open( listFile, 'r' )
-    for line in listFileObject:
-        if line.strip().startswith('#'): continue
-        try:
-            cat, pac, tar, _ = line.split( ',' )
-        except:
-            continue
-        categoryList.append( cat )
-        packageList.append( pac )
-        originalPackageList.append( pac )
-        targetDict[ cat + "/" + pac ] = tar
-elif packageName:
-    packageList, categoryList = portage.getPackagesCategories(packageName)
-
-for entry in packageList:
-    utils.debug( "%s" % entry, 1 )
-utils.debug_line( 1 )
-
-for mainCategory, entry in zip (categoryList, packageList):
-    _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType, maxDetpth = dependencyDepth )
-
-deplist = [p.ident() for p in _deplist]
-target = os.getenv( "EMERGE_TARGET" )
+    originalPackageList = []
+    categoryList = []
+    targetDict = dict()
 
 
-for item in deplist: 
-    item.append( False )
-    if ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
-        item[-1] =  True
-        
-    if  item[ 0 ] + "/" + item[ 1 ] in targetDict:
-        item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
-        
-    if target in list( portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ], item[ 2 ] ).keys()):
-        # if no target or a wrong one is defined, simply set the default target here
-        item[ 3 ] = target
-        
-    utils.debug( "dependency: %s" % item, 1 )
-
-
-#for item in deplist:
-#    cat = item[ 0 ]
-#    pac = item[ 1 ]
-#    ver = item[ 2 ]
-
-#    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
-#        print "remove:", cat, pac, ver
-#        deplist.remove( item )
-
-if mainBuildAction == "install-deps":
-    # the first dependency is the package itself - ignore it
-    # TODO: why are we our own dependency?
-    del deplist[ 0 ]
-    
-if mainBuildAction == "update-direct-deps":
-    for item in deplist:
-        item[-1] =  True
-
-deplist.reverse()
-
-# package[0] -> category
-# package[1] -> package
-# package[2] -> version
-
-if ( not mainBuildAction in ["all", "install-deps", "update-direct-deps"] and not listFile ):
-    # if a buildAction is given, then do not try to build dependencies
-    # and do the action although the package might already be installed.
-    # This is still a bit problematic since packageName might not be a valid
-    # package
-    # for list files, we also want to handle fetching & packaging per package
-
-    if packageName and len( deplist ) >= 1:
-        mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
+    buildType = os.getenv("EMERGE_BUILDTYPE")
+    if "EMERGE_DEFAULTCATEGORY" in os.environ:
+        defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
     else:
-        mainCategory, mainPackage, mainVersion = None, None, None
+        defaultCategory = "kde"
 
-    if not handlePackage( mainCategory, mainPackage, mainVersion, mainBuildAction, mainOpts ):
-        utils.notify("Emerge %s failed" % mainBuildAction, "%s of %s/%s-%s failed" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
-        _exit(1)
-    utils.notify("Emerge %s finished"% mainBuildAction, "%s of %s/%s-%s finished" % ( mainBuildAction,mainCategory, mainPackage, mainVersion),mainBuildAction)
+    if updateAll:
+        installedPackages = portage.PortageInstance.getInstallables()
+        if portage.PortageInstance.isCategory( packageName ):
+            utils.debug( "Updating installed packages from category " + packageName, 1 )
+        else:
+            utils.debug( "Updating all installed packages", 1 )
+        packageList = []
+        for mainCategory, mainPackage, mainVersion in installedPackages:
+            if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
+                continue
+            if portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType ) \
+                    and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
+                categoryList.append( mainCategory )
+                packageList.append( mainPackage )
+        utils.debug( "Will update packages: " + str (packageList), 1 )
+    elif listFile:
+        listFileObject = open( listFile, 'r' )
+        for line in listFileObject:
+            if line.strip().startswith('#'): continue
+            try:
+                cat, pac, tar, _ = line.split( ',' )
+            except:
+                continue
+            categoryList.append( cat )
+            packageList.append( pac )
+            originalPackageList.append( pac )
+            targetDict[ cat + "/" + pac ] = tar
+    elif packageName:
+        packageList, categoryList = portage.getPackagesCategories(packageName)
 
-else:
-    if dumpDepsFile:
-        dumpDepsFileObject = open( dumpDepsFile, 'w+' )
-        dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
-    for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
-        isVCSTarget = False
+    for entry in packageList:
+        utils.debug( "%s" % entry, 1 )
+    utils.debug_line( 1 )
 
+    for mainCategory, entry in zip (categoryList, packageList):
+        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType, maxDetpth = dependencyDepth )
+
+    deplist = [p.ident() for p in _deplist]
+    target = os.getenv( "EMERGE_TARGET" )
+
+
+    for item in deplist: 
+        item.append( False )
+        if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
+            item[-1] =  True
+            
+        if  item[ 0 ] + "/" + item[ 1 ] in targetDict:
+            item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
+            
+        if target in list( portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ], item[ 2 ] ).keys()):
+            # if no target or a wrong one is defined, simply set the default target here
+            item[ 3 ] = target
+            
+        utils.debug( "dependency: %s" % item, 1 )
+
+
+    #for item in deplist:
+    #    cat = item[ 0 ]
+    #    pac = item[ 1 ]
+    #    ver = item[ 2 ]
+
+    #    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
+    #        print "remove:", cat, pac, ver
+    #        deplist.remove( item )
+
+    if args.action == "install-deps":
+        # the first dependency is the package itself - ignore it
+        # TODO: why are we our own dependency?
+        del deplist[ 0 ]
+        
+    if args.action == "update-direct-deps":
+        for item in deplist:
+            item[-1] =  True
+
+    deplist.reverse()
+
+    # package[0] -> category
+    # package[1] -> package
+    # package[2] -> version
+
+    if ( not args.action in ["all", "install-deps", "update-direct-deps"] and not listFile ):
+        # if a buildAction is given, then do not try to build dependencies
+        # and do the action although the package might already be installed.
+        # This is still a bit problematic since packageName might not be a valid
+        # package
+        # for list files, we also want to handle fetching & packaging per package
+
+        if packageName and len( deplist ) >= 1:
+            mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
+        else:
+            mainCategory, mainPackage, mainVersion = None, None, None
+
+        if not handlePackage( mainCategory, mainPackage, mainVersion, args.action, args.doContinue ):
+            utils.notify("Emerge %s failed" % args.action, "%s of %s/%s-%s failed" % ( args.action,mainCategory, mainPackage, mainVersion),args.action)
+            _exit(1)
+        utils.notify("Emerge %s finished"% args.action, "%s of %s/%s-%s finished" % ( args.action,mainCategory, mainPackage, mainVersion),args.action)
+
+    else:
         if dumpDepsFile:
-            dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
+            dumpDepsFileObject = open( dumpDepsFile, 'w+' )
+            dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
+        for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
+            isVCSTarget = False
 
-        isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
-        if outDateVCS or (outDatePackage and isLastPackage):
-            isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion ) != []
-        if isDBEnabled():
-            if emergePlatform.isCrossCompilingEnabled():
-                hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
-                targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
-                hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
-                targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-                isInstalled = ( not hostEnabled or hostInstalled ) and ( not targetEnabled or targetInstalled )
+            if dumpDepsFile:
+                dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
+
+            isLastPackage = [mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled] == deplist[-1]
+            if args.outDateVCS or (args.outDatePackage and isLastPackage):
+                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage, mainVersion ) != []
+            if isDBEnabled():
+                if emergePlatform.isCrossCompilingEnabled():
+                    hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
+                    targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
+                    hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
+                    targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                    isInstalled = ( not hostEnabled or hostInstalled ) and ( not targetEnabled or targetInstalled )
+                else:
+                    isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
             else:
-                isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
-        else:
-            isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
-        if listFile and mainBuildAction != "all":
-            ignoreInstalled = mainPackage in originalPackageList
-        if ( isInstalled and not ignoreInstalled ) and not (
-                        isInstalled and (outDateVCS  or (outDatePackage and isLastPackage) ) and isVCSTarget ):
-            if utils.verbose() > 1 and mainPackage == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
-            elif utils.verbose() > 2 and not mainPackage == packageName:
-                utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
-        else:
-            # in case we only want to see which packages are still to be build, simply return the package name
-            if ( doPretend ):
-                if utils.verbose() > 0:
-                    msg = " "
-                    if emergePlatform.isCrossCompilingEnabled():
-                        if isDBEnabled():
-                            hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
-                            targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
-                            hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
-                            targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-                            msg += portage.getHostAndTarget( hostEnabled and not hostInstalled, targetEnabled and not targetInstalled )
-                        else:
-                            msg = ""
-                    targetMsg = ":default"
-                    if defaultTarget: targetMsg = ":" + defaultTarget
-                    utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
+                isInstalled = portage.isInstalled( mainCategory, mainPackage, mainVersion, buildType )
+            if listFile and args.action != "all":
+                ignoreInstalled = mainPackage in originalPackageList
+            if ( isInstalled and not ignoreInstalled ) and not (
+                            isInstalled and (args.outDateVCS  or (args.outDatePackage and isLastPackage) ) and isVCSTarget ):
+                if utils.verbose() > 1 and mainPackage == packageName:
+                    utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
+                elif utils.verbose() > 2 and not mainPackage == packageName:
+                    utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
             else:
-                mainAction = mainBuildAction
-                if mainBuildAction in ["install-deps", "update-direct-deps"]:
-                    mainAction = "all"
-                    
-                if defaultTarget: os.environ["EMERGE_TARGET"] = defaultTarget
+                # in case we only want to see which packages are still to be build, simply return the package name
+                if ( args.probe ):
+                    if utils.verbose() > 0:
+                        msg = " "
+                        if emergePlatform.isCrossCompilingEnabled():
+                            if isDBEnabled():
+                                hostEnabled = portage.isHostBuildEnabled( mainCategory, mainPackage, mainVersion )
+                                targetEnabled = portage.isTargetBuildEnabled( mainCategory, mainPackage, mainVersion )
+                                hostInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
+                                targetInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
+                                msg += portage.getHostAndTarget( hostEnabled and not hostInstalled, targetEnabled and not targetInstalled )
+                            else:
+                                msg = ""
+                        targetMsg = ":default"
+                        if defaultTarget: targetMsg = ":" + defaultTarget
+                        utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
+                else:
+                    mainAction = args.action
+                    if args.action in ["install-deps", "update-direct-deps"]:
+                        mainAction = "all"
+                        
+                    if defaultTarget: os.environ["EMERGE_TARGET"] = defaultTarget
 
-                if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, mainOpts ):
-                    utils.error( "fatal error: package %s/%s-%s %s failed" % \
-                        ( mainCategory, mainPackage, mainVersion, mainBuildAction ) )
-                    utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),mainAction)
-                    _exit( 1 )
-                utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),mainAction)
+                    if not handlePackage( mainCategory, mainPackage, mainVersion, mainAction, args.doContinue ):
+                        utils.error( "fatal error: package %s/%s-%s %s failed" % \
+                            ( mainCategory, mainPackage, mainVersion, args.action ) )
+                        utils.notify("Emerge build failed", "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),mainAction)
+                        _exit( 1 )
+                    utils.notify("Emerge build finished", "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),mainAction)
 
-utils.new_line()
-if len( nextArguments ) > 0:
-    command = "\"" + sys.executable + "\" -u " + executableName + " " + " ".join( nextArguments )
-
-    #for element in environ.keys():
-    #    if environ[ element ]:
-    #        os.environ[ element ] = environ[ element ]
-    #    elif element == "EMERGE_VERBOSE":
-    #        os.environ[ element ] = "1"
-    #    else:
-    #        os.environ[ element ] = ""
-    if not utils.system(command):
-        utils.die( "cannot execute next commands cmd: %s" % command )
+    utils.new_line()
 
 
+if args.search:
+    for package in args.packageNames:
+        category = ""
+        if not package.find("/") == -1:
+            (category,package) = package.split("/")
+        portageSearch.printSearch(category, package)
+    _exit(0)
 
+if args.action in ["install-deps", "update", "update-all", "update-direct-deps"]:
+    args.ignoreInstalled = True
+
+#todo
+# if args.action in ["update", "update-all"]:
+    # os.environ["EMERGE_NOCLEAN"] = str( True )
+
+dependencyDepth = -1 #TODO
+
+if args.action == "update-direct-deps":
+        args.outDateVCS = True
+        dependencyDepth = 1
+        
+for x in args.packageNames:
+    mainThing(x, dependencyDepth)

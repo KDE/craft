@@ -17,10 +17,6 @@ class MultiSource(object):
         # TODO: This code should mostly be in the class defining self.source etc.
         self.source = SourceFactory(self.subinfo)
         self.source.localFileNames = self.localFileNames.__get__(self, MultiSource)
-        self.source.category = self.category
-        self.source.package = self.package
-        self.source.version = self.version
-        self.source.PV = self.PV
 
     def localFileNames( self ):
         utils.trace( "MultiSource localFileNames", 2 )
