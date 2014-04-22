@@ -100,8 +100,8 @@ Commands (must have a packagename):
                         to KDEROOT
 --install-deps          This will fetch and install all required dependencies
                         for the specified package
---update-direct-deps    This will have the same effect as "-i --noclean" on all
-                        direct vcs dependencies
+--update-direct-deps    This will have the same effect as "-i " on all
+                        direct vcs dependencies of a target.
 --unmerge               this uninstalls a package from KDEROOT - it requires a
                         working manifest directory. unmerge only delete
                         unmodified files by default. You may use the -f or
@@ -452,7 +452,6 @@ for i in sys.argv:
         mainBuildAction = "update-direct-deps"
         outDateVCS = True
         ignoreInstalled = True
-        os.environ["EMERGE_NOCLEAN"] = str( True )
         dependencyDepth = 1
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
                   "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest", "--dumpdeps",
