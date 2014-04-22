@@ -1,0 +1,126 @@
+diff -Nru -x '*~' poppler-0.24.5.orig/CMakeLists.txt poppler-0.24.5/CMakeLists.txt
+--- poppler-0.24.5.orig/CMakeLists.txt	2014-01-02 22:55:29.000000000 +0100
++++ poppler-0.24.5/CMakeLists.txt	2014-04-22 13:53:26.131974000 +0200
+@@ -405,6 +405,7 @@
+ if(WIN32)
+   # gdi32 is needed under win32
+   set(poppler_LIBS ${poppler_LIBS} gdi32)
++  add_definitions(-DWIN32_LEAN_AND_MEAN -DNOMINMAX)
+ endif(WIN32)
+ if(PNG_FOUND)
+   set(poppler_LIBS ${poppler_LIBS} ${PNG_LIBRARIES})
+@@ -416,13 +417,13 @@
+   set(poppler_LIBS ${poppler_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+ endif()
+ 
+-if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+-set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
++set(CMAKE_CXX_FLAGS "/Zc:wchar_t ${CMAKE_CXX_FLAGS}")
+ add_library(poppler STATIC ${poppler_SRCS})
+-else(MSVC)
++else(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ add_library(poppler SHARED ${poppler_SRCS})
+-endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ set_target_properties(poppler PROPERTIES VERSION 44.0.0 SOVERSION 44)
+ target_link_libraries(poppler ${poppler_LIBS})
+ target_link_libraries(poppler LINK_INTERFACE_LIBRARIES "")
+diff -Nru -x '*~' poppler-0.24.5.orig/config.h.cmake poppler-0.24.5/config.h.cmake
+--- poppler-0.24.5.orig/config.h.cmake	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/config.h.cmake	2014-04-22 14:13:46.873256000 +0200
+@@ -221,6 +221,11 @@
+ #define snprintf _snprintf
+ #endif
+ 
++#ifdef _WIN32
++//use min max functions instead of min max define
++#include <algorithm>
++#endif
++
+ /* Number of bits in a file offset, on hosts where this is settable. */
+ #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
+ 
+@@ -229,3 +234,7 @@
+ 
+ /* Define for large files, on AIX-style hosts. */
+ /* TODO This is wrong, port if needed #undef _LARGE_FILES */
++
++#cmakedefine HAVE_STRCAT_S
++
++#cmakedefine HAVE_STRCPY_S
+diff -Nru -x '*~' poppler-0.24.5.orig/cpp/poppler-font.cpp poppler-0.24.5/cpp/poppler-font.cpp
+--- poppler-0.24.5.orig/cpp/poppler-font.cpp	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/cpp/poppler-font.cpp	2014-04-22 14:17:46.520495900 +0200
+@@ -22,6 +22,8 @@
+ 
+ #include "FontInfo.h"
+ 
++#include "config.h"
++
+ using namespace poppler;
+ 
+ class poppler::font_info_private
+diff -Nru -x '*~' poppler-0.24.5.orig/poppler/poppler-config.h.cmake poppler-0.24.5/poppler/poppler-config.h.cmake
+--- poppler-0.24.5.orig/poppler/poppler-config.h.cmake	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/poppler/poppler-config.h.cmake	2014-04-22 14:13:41.655802800 +0200
+@@ -169,7 +169,7 @@
+ #define GCC_PRINTF_FORMAT(fmt_index, va_index)
+ #endif
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) && _MSC_VER <= 1600
+ #define fmax(a, b) max(a, b)
+ #define fmin(a, b) min(a, b)
+ #endif
+diff -Nru -x '*~' poppler-0.24.5.orig/qt4/tests/stress-threads-qt4.cpp poppler-0.24.5/qt4/tests/stress-threads-qt4.cpp
+--- poppler-0.24.5.orig/qt4/tests/stress-threads-qt4.cpp	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/qt4/tests/stress-threads-qt4.cpp	2014-04-22 13:53:26.154050800 +0200
+@@ -1,6 +1,12 @@
+ 
+-#include <unistd.h>
+-#include <time.h>
++#ifdef HAVE_UNISTD_H
++ #include <unistd.h>
++#endif
++ #include <time.h>
++#ifdef _WIN32
++#include <windows.h>
++#define sleep(x) Sleep(x)
++#endif
+ 
+ #include <poppler-qt4.h>
+ #include <poppler-form.h>
+diff -Nru -x '*~' poppler-0.24.5.orig/qt5/src/poppler-private.h poppler-0.24.5/qt5/src/poppler-private.h
+--- poppler-0.24.5.orig/qt5/src/poppler-private.h	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/qt5/src/poppler-private.h	2014-04-22 13:53:26.159048700 +0200
+@@ -85,8 +85,8 @@
+ 		m_filePath = filePath;	
+ 
+ #if defined(_WIN32)
+-		wchar_t *fileName = new WCHAR[filePath.length()];
+-		int length = filePath.toWCharArray(fileName); 
++        wchar_t *fileName = new wchar_t[filePath.length()];
++        int length = filePath.toWCharArray(fileName);
+ 		doc = new PDFDoc(fileName, length, ownerPassword, userPassword);
+ 		delete[] fileName;
+ #else
+diff -Nru -x '*~' poppler-0.24.5.orig/qt5/tests/stress-threads-qt5.cpp poppler-0.24.5/qt5/tests/stress-threads-qt5.cpp
+--- poppler-0.24.5.orig/qt5/tests/stress-threads-qt5.cpp	2013-08-17 01:20:41.000000000 +0200
++++ poppler-0.24.5/qt5/tests/stress-threads-qt5.cpp	2014-04-22 13:53:26.164043600 +0200
+@@ -1,6 +1,12 @@
+ 
+-#include <unistd.h>
+-#include <time.h>
++#ifdef HAVE_UNISTD_H
++ #include <unistd.h>
++#endif
++ #include <time.h>
++#ifdef _WIN32
++#include <windows.h>
++#define sleep(x) Sleep(x)
++#endif
+ 
+ #include <poppler-qt5.h>
+ #include <poppler-form.h>
