@@ -46,15 +46,11 @@ class PackageBase (EmergeBase):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
         ignoreInstalled = False
-        if isDBEnabled():
-            prefixPath = self._installedDBPrefix( self.buildType() )
-            if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
-                ignoreInstalled = True
-                self.unmerge()
-        else:
-            if portage.isInstalled( '', self.package, '', self.buildType() ):
-                ignoreInstalled = True
-                self.unmerge()
+
+        prefixPath = self._installedDBPrefix( self.buildType() )
+        if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
+            ignoreInstalled = True
+            self.unmerge()
 
         
 
@@ -82,19 +78,14 @@ class PackageBase (EmergeBase):
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                if isDBEnabled():
-                    package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled )
-                    package.addFiles( utils.getFileListFromManifest(  self._installedDBPrefix( prefix ), self.package ) )
-                    package.install()
-                else:
-                    portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
-        else:
-            if isDBEnabled():
-                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
-                package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled )
+                package.addFiles( utils.getFileListFromManifest(  self._installedDBPrefix( prefix ), self.package ) )
                 package.install()
-            else:
-                portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+        else:
+            package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
+            package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+            package.install()
+
 
         return True
 
@@ -107,35 +98,29 @@ class PackageBase (EmergeBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         utils.debug( "unmerge package from %s" % self.mergeDestinationDir(), 2 )
-        if isDBEnabled():
-            if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                    and self.subinfo.options.merge.destinationPath != None:
-                for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                    packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
-                    for package in packageList:
-                        fileList = package.getFiles()
-                        utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
-                        package.uninstall()
-            else:
-                packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
+                and self.subinfo.options.merge.destinationPath != None:
+            for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
+                packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
                 for package in packageList:
                     fileList = package.getFiles()
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
-            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ):
-                # compatibility code: uninstall subclass based package
-                utils.unmerge( self.rootdir, self.package, self.forced )
-                portage.remInstalled( self.category, self.package, self.version, '')
+            packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+            for package in packageList:
+                fileList = package.getFiles()
+                utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+                package.uninstall()
 
         # only packages using a specific merge destination path are shared between build types
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
-            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Release" ) )
-            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "RelWithDebInfo" ) )
-            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Debug" ) )
+            installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Release" ) )
+            installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "RelWithDebInfo" ) )
+            installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix( "Debug" ) )
         else:
-            portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+            installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
 
         # run post-uninstall scripts
         if not utils.envAsBool("EMERGE_NO_POST_INSTALL"):

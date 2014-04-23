@@ -206,10 +206,7 @@ p.wait()
 
 # second check whether the kdewin-packager is installed at all
 ver = portage.PortageInstance.getNewestVersion( "dev-util", "kdewin-packager" )
-if isDBEnabled():
-    isInstalled = installdb.isInstalled( "dev-util", "kdewin-packager", ver )
-else:
-    isInstalled = portage.isInstalled( "dev-util", "kdewin-packager", ver )
+isInstalled = installdb.isInstalled( "dev-util", "kdewin-packager", ver )
 if not isInstalled:
     cmdstring = emerge + " kdewin-packager"
     p = subprocess.Popen( cmdstring, shell=True )
@@ -264,10 +261,7 @@ for [cat, pac, ver, tar] in depList:
     if not [cat, pac, ver, tar] in runtimeDepList:
         print("could not find package %s in runtime dependencies" % pac)
         p.dontPackage = True
-    if isDBEnabled():
-        isInstalled = installdb.isInstalled( cat, pac, ver )
-    else:
-        isInstalled = portage.isInstalled( cat, pac, ver )
+    isInstalled = installdb.isInstalled( cat, pac, ver )
         
     if common.settings.getSectionEnabled("vcsrebuild"):
         if target == '':

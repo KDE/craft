@@ -32,15 +32,15 @@ class InternalPackageBase(PackageBase):
 
     def qmerge(self):
         print("%s %s " % (self.category, self.package))
-        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
-        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
-        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
-        portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
+        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
+        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
+        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
         return True
 
     def unmerge(self):
-        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
-        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
-        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
-        portage.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+        installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
+        installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
+        installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
+        installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
         return True

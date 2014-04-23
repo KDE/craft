@@ -8,12 +8,6 @@ import portage
 
 __blockme = threading.local()
 
-def isDBEnabled():
-    """ this function returns whether sqlite database should be used """
-    if not os.getenv("EMERGE_ENABLE_SQLITEDB"):
-        return True
-    return utils.envAsBool("EMERGE_ENABLE_SQLITEDB")
-
 def blocking(fn):
     """ Block parallel access to sqlite """
     def block(*args, **kw):
@@ -330,8 +324,7 @@ class InstallDB(object):
         return False
 
 # get a global object
-if isDBEnabled():
-    installdb = InstallDB()
+installdb = InstallDB()
 
 # an additional function from portage.py
 def printInstalled():
@@ -439,7 +432,6 @@ def main():
     utils.new_line()
     db_temp.importExistingDatabase()
     print("getInstalled:", db_temp.getInstalled())
-    print("findInstalled:", portage.findInstalled( 'win32libs', 'dbus-src' ))
     print("getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) ))
 
 if __name__ == '__main__':
