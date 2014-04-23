@@ -34,6 +34,7 @@ import os
 import inspect
 import shlex
 
+from emerge_config import  *
 import utils
 import portage
 
@@ -251,7 +252,7 @@ class Options(object):
         self.useShortPathes = False
 
         ## there is a special option available already
-        self.buildTests = utils.envAsBool("EMERGE_BUILDTESTS")
+        self.buildTests = emergeSettings.args.buildTests
         self.buildTools = "False"
         self.buildStatic = "False"
 
@@ -264,8 +265,7 @@ class Options(object):
         """ read emerge related variables from environment and map them to public
         attributes in the option class and sub classes """
         self.__collectAttributes()
-        if 'EMERGE_OPTIONS' in os.environ:
-            self.__readFromString(os.environ['EMERGE_OPTIONS'])
+        self.__readFromList(emergeSettings.args.options)
             
     def isActive(self, package):
         return not package in portage.PortageInstance.ignores
@@ -325,13 +325,12 @@ class Options(object):
 #            print("mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value))
         return True
 
-    def __readFromString( self, opts ):
-        """collect properties from a space delimited key=valule string"""
+
+
+    def __readFromList( self, opts ):
+        """collect properties from a list of key=valule string"""
         if opts == None:
             return False
-        # keep escapes inside this string - otherwise spaces cannot be given over
-        opts = shlex.split(opts, posix=True)
-        result = False
         for entry in opts:
             if entry.find('=') == -1:
                 utils.debug('incomplete option %s' % entry, 3)

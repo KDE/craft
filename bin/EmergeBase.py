@@ -9,6 +9,7 @@ from ctypes import *
 import utils
 import portage
 import compiler
+from emerge_config import *
 
 
 ## @todo complete a release and binary merge dir below rootdir
@@ -85,12 +86,12 @@ class EmergeBase(object):
 
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
-        self.noFetch = utils.envAsBool( "EMERGE_OFFLINE" )
-        self.noCopy = utils.envAsBool( "EMERGE_NOCOPY")
+        self.noFetch = emergeSettings.args.offline
+        self.noCopy = emergeSettings.args.nocopy
         self.noFast = utils.envAsBool( "EMERGE_NOFAST", default=True )
-        self.noClean = utils.envAsBool( "EMERGE_NOCLEAN" )
-        self.forced = utils.envAsBool( "EMERGE_FORCED" )
-        self.buildTests = utils.envAsBool( "EMERGE_BUILDTESTS" )
+        self.noClean = emergeSettings.args.noclean
+        self.forced = emergeSettings.args.forced
+        self.buildTests = emergeSettings.args.buildTests
 
         if COMPILER == "msvc2005":
             self.__compiler = "msvc2005"
@@ -129,12 +130,7 @@ class EmergeBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        Type = os.getenv( "EMERGE_BUILDTYPE" )
-        if ( not Type == None ):
-            buildType = Type
-        else:
-            buildType = None
-        return buildType
+        return emergeSettings.args.buildType
 
     def compiler(self):
         """return currently selected compiler"""

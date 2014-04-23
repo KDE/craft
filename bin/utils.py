@@ -28,6 +28,7 @@ from operator import itemgetter
 import ctypes
 
 import Notifier.NotificationLoader
+from emerge_config import *
 
 
 if os.name == 'nt':
@@ -1290,7 +1291,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
 def log(fn):
     def inner(*args, **argv):
 
-        logdir = os.environ.get('EMERGE_LOG_DIR')
+        logdir = emergeSettings.args.log_dir
 
         if not logdir:
             return fn(*args, **argv)

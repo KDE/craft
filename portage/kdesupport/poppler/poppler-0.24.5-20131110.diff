@@ -70,7 +70,7 @@ diff -Nru -x '*~' poppler-0.24.5.orig/poppler/poppler-config.h.cmake poppler-0.2
  #endif
  
 -#if defined(_MSC_VER)
-+#if defined(_MSC_VER) && _MSC_VER <= 1600
++#if defined(_MSC_VER) && _MSC_VER <= 1700
  #define fmax(a, b) max(a, b)
  #define fmin(a, b) min(a, b)
  #endif

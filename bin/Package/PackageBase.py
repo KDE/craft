@@ -210,14 +210,6 @@ class PackageBase (EmergeBase):
         utils.debug( "PackageBase.execute called. args: %s" % sys.argv, 2 )
         command, _ = self.getAction(cmd)
 
-        #if self.createCombinedPackage:
-        #    oldBuildType = os.environ["EMERGE_BUILDTYPE"]
-        #    os.environ["EMERGE_BUILDTYPE"] = "Release"
-        #    self.runAction(command)
-        #    os.environ["EMERGE_BUILDTYPE"] = "Debug"
-        #    self.runAction(command)
-        #    os.environ["EMERGE_BUILDTYPE"] = oldBuildType
-        #else:
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
                 or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
             print("target ignored for this build type")
@@ -246,7 +238,7 @@ class PackageBase (EmergeBase):
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
                      "geturls":        "getUrls",
-                     "printrev":       "printSourceVersion",
+                     "print-revision":       "printSourceVersion",
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:

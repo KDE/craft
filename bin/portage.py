@@ -127,7 +127,7 @@ class DependencyPackage(object):
 
 def buildType():
     """return currently selected build type"""
-    return os.getenv( "EMERGE_BUILDTYPE" )
+    return emergeSettings.args.buildType
 
 def rootDirectories():
     # this function should return all currently set portage directories
@@ -508,7 +508,7 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
                 particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
                 if len(particles) == 1 and \
                    not particles[0] in [os.getenv( "KDECOMPILER" ), \
-                                        os.getenv( "EMERGE_BUILDTYPE" ), \
+                                        buildType(), \
                                         os.getenv( "EMERGE_TARGET_PLATFORM" ), \
                                         "WIN32"]:
                     return particles[0]
@@ -520,7 +520,7 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
                 else:
                     return target
                 if _platform == os.getenv( "KDECOMPILER" ) and \
-                   _buildType == os.getenv( "EMERGE_BUILDTYPE" ):
+                   _buildType == buildType():
                     return _target
     return target
 

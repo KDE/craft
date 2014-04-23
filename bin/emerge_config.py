@@ -8,10 +8,9 @@ import os
 import utils
 
 
-emergeSettings = None
-
 class EmergeConfig(object):
     def __init__(self):
+        self.args = None
         self.config = None
         iniPath = os.path.join(os.getenv("KDEROOT"), "etc", "kdesettings.ini")
         if os.path.exists(iniPath):
@@ -42,6 +41,6 @@ class EmergeConfig(object):
     
 
 
-    
-if emergeSettings == None:
-    emergeSettings = EmergeConfig()
+
+
+emergeSettings = EmergeConfig()
