@@ -328,14 +328,6 @@ def main( ):
     parser.add_argument( "--trace", action = "count", default = emergeSettings.get( "General", "EMERGE_TRACE", "0" ) )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
-    parser.add_argument( "-a", "--action",
-                         choices = sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
-                                             "install", "qmerge", "manifest", "package", "unmerge", "test",
-                                             "checkdigest", "dumpdeps",
-                                             "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
-                                             "version-dir", "version-package", "print-installable",
-                                             "print-installed", "print-revision", "print-targets",
-                                             "install-deps", "update", "update-direct-deps" ] ), default = "all" )
     parser.add_argument( "--target", action = "store",
                          help = "This will override the build of the default target. The default Target is marked with a star in the printout of --print-targets" )
     parser.add_argument( "--search", action = "store_true",
@@ -358,7 +350,15 @@ def main( ):
                          help = "Output the dependencies of this package as a csv file suitable for emerge server." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
-    parser.add_argument( "packageNames", nargs = "*" )
+    for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
+                                             "install", "qmerge", "manifest", "package", "unmerge", "test",
+                                             "checkdigest", "dumpdeps",
+                                             "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
+                                             "version-dir", "version-package", "print-installable",
+                                             "print-installed", "print-revision", "print-targets",
+                                             "install-deps", "update", "update-direct-deps" ]):
+        parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x )
+    parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     emergeSettings.args = parser.parse_args( )
     print( emergeSettings.args )
