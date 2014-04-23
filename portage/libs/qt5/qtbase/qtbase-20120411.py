@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import utils
-from utils import die
 import os
+
+import utils
 import info
 import portage
-import emergePlatform
 import compiler
-
 from Package.Qt5CorePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import utils
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):

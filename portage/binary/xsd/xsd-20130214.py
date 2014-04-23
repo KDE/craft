@@ -1,7 +1,9 @@
-from Package.BinaryPackageBase import *
 import os
-import info
 import shutil
+
+from Package.BinaryPackageBase import *
+import info
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -14,9 +16,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package(BinaryPackageBase):
     def __init__( self ):

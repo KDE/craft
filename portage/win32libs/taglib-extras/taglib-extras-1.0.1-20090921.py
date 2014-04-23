@@ -1,6 +1,3 @@
-
-import utils
-import sys
 import info
 
 class subinfo(info.infoclass):

@@ -4,6 +4,7 @@
 
 import configparser
 import os
+
 import utils
 
 
@@ -18,15 +19,26 @@ class EmergeConfig(object):
             self.config.optionxform = str
             self.config.read(iniPath)
             
-    
-    def contains(self, group, key):
-        # print("[%s] = %s " % (group, key))
-        return self.config and self.config.has_section( group ) and key in self.config[ group ]
+    def __contains__(self, key):
+        if len(key) != 2:
+            utils.die("Wrong key %s" % key)
+        return self.config and self.config.has_section( key[0] ) and key[1] in self.config[ key[0] ]
         
-    def get(self, group, key):
-        if self.contains(group,key):
+    def get(self, group, key, default = None):
+        if self.__contains__((group,key)):
             return self.config[ group ][ key ]
-        return None
+        if default != None:
+            return default
+        self.config[ group ][ key ]
+        utils.die("unknown key %s/%s" % ( group , key))
+        
+    def set(self, group, key , value):
+        self.config[ group ][ key ] = value
+        
+        
+    def setDefault(self, group, key , value):
+        if not self.contains( group, key ):
+            self.set(group, key, value)
     
 
 

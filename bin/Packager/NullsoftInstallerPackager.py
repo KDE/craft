@@ -3,8 +3,10 @@
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
 from winreg import * # pylint: disable=F0401
+
 import utils
 from Packager.CollectionPackagerBase import *
+
 
 class NSIPackagerLists( PackagerLists ):
     """ dummy name for PackagerLists """

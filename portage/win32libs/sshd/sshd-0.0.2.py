@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import utils
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
@@ -15,9 +14,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

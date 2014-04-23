@@ -1,10 +1,9 @@
 import info
-import emergePlatform
 import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isX64():
             if compiler.isMinGW():
                 self.targets['1.2.0'] = "http://www.tortall.net/projects/yasm/releases/yasm-1.2.0-win64.exe"
             if compiler.isMSVC():
@@ -18,10 +17,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.0'
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

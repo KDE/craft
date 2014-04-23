@@ -1,7 +1,9 @@
-import portage
 import re
+
+import portage
 import utils
 import InstallDB
+
 
 def printSearch(search_category, search_package,maxDist = 2):
         installable = portage.PortageInstance.getInstallables()

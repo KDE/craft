@@ -3,7 +3,7 @@ from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *
 import portage
-import InstallDB
+
 
 class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase ):
     """provides a base class for virtual packages"""

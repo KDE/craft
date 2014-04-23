@@ -2,13 +2,13 @@
 # copyright (c) 2010-2011 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-from Packager.PackagerBase import *
 import shutil
 import re
 import types
 import fileinput
-from winreg import * # pylint: disable=F0401
-import compiler
+
+from Packager.PackagerBase import *
+
 
 class PackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
@@ -83,8 +83,6 @@ class CollectionPackagerBase( PackagerBase ):
 
         if package.subinfo.options.useCompilerType == True:
             directory += '-' + COMPILER
-        if package.isTargetBuild():
-            directory += "-%s" % package.buildPlatform()
         if package.subinfo.options.useBuildType == True:
             directory += '-' + package.buildType()
         directory += '-' + buildTarget

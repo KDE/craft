@@ -31,10 +31,12 @@
 #  emerge "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
 import os
-import utils
 import inspect
 import shlex
+
+import utils
 import portage
+
 
 class OptionsBase(object):
     def __init__(self):

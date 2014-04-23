@@ -39,7 +39,6 @@
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "New-style BSD"
 
-import getopt
 import os
 import sys
 import re

@@ -1,14 +1,15 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import utils
-import portage
 import os
 import sys
 import datetime
-import emergePlatform
 from ctypes import *
+
+import utils
+import portage
 import compiler
+
 
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
@@ -139,39 +140,15 @@ class EmergeBase(object):
         """return currently selected compiler"""
         return self.__compiler
 
-    def isTargetBuild(self):
-        if not emergePlatform.isCrossCompilingEnabled():
-            return False
-        else:
-            return os.getenv( "EMERGE_BUILD_STEP" ) == "target"
-
-    def isHostBuild(self):
-        if not emergePlatform.isCrossCompilingEnabled():
-            return True
-        else:
-            return os.getenv( "EMERGE_BUILD_STEP" ) == "host"
-
-    def buildPlatform(self):
-        """return the cross-compiling target platform"""
-        if self.isTargetBuild():
-            return os.getenv( "EMERGE_TARGET_PLATFORM" )
-        else:
-            return "WIN32"
-
     def buildArchitecture(self):
         """return the target CPU architecture"""
-        if self.isTargetBuild():
-            return os.getenv( "EMERGE_TARGET_ARCHITECTURE" )
-        else:
-            return os.getenv( "EMERGE_ARCHITECTURE" )
+        compiler.architecture()
 
     def workDirPattern(self):
         """return base directory name for package related work directory"""
         directory = ""
         if self.subinfo.options.useCompilerType == True:
             directory += "%s-" % COMPILER
-        if self.isTargetBuild():
-            directory += "%s-" % self.buildPlatform()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -193,8 +170,6 @@ class EmergeBase(object):
 
         if self.subinfo.options.useCompilerType == True:
             directory += '-' + COMPILER
-        if self.isTargetBuild():
-            directory += "-%s" % self.buildPlatform()
         if self.subinfo.options.useBuildType == True:
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget
@@ -269,8 +244,6 @@ class EmergeBase(object):
 
         if self.subinfo.hasMergePath():
             directory = os.path.join( ROOTDIR, self.subinfo.mergePath() )
-        elif self.isTargetBuild():
-            directory = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             directory = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:

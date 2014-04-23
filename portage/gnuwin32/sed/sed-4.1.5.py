@@ -16,10 +16,6 @@ http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-""" + ver + """-dep.zi
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
-
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

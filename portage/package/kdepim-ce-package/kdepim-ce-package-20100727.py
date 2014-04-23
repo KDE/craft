@@ -6,17 +6,18 @@
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
-import info
-import compiler
 import re
-import utils
 import os
 import shutil
 import fileinput
 import subprocess
-
 from string import Template
+
+import info
+import compiler
+import utils
 from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -24,9 +25,6 @@ class subinfo(info.infoclass):
         self.targets['en'] = ""
         self.defaultTarget = 'de'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
     def setDependencies( self ):
         self.dependencies['testing/wincetools'] = 'kdepimcetools'

@@ -1,4 +1,3 @@
-import os
 import info
 from Package.CMakePackageBase import *
 

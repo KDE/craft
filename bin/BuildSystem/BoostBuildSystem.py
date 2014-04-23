@@ -6,8 +6,10 @@
 """@package provides boost build system"""
 
 import os
+
 import utils
 from BuildSystem.BuildSystemBase import *
+
 
 class BoostBuildSystem(BuildSystemBase):
     """ cmake build support """

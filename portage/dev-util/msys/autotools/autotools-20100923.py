@@ -1,5 +1,5 @@
 import info
-import shutil
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -15,9 +15,6 @@ class subinfo(info.infoclass):
         self.dependencies['dev-util/minsys'] = 'default'
         self.dependencies['dev-util/libtool'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

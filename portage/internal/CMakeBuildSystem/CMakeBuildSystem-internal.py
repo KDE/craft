@@ -10,8 +10,6 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             if compiler.isMinGW_WXX():
                 self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            elif emergePlatform.buildArchitecture() == 'arm-wince':
-                self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
 
 from Package.InternalPackageBase import *
 

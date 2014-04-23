@@ -1,4 +1,3 @@
-import shutil
 import info
 from Package.CMakePackageBase import *
 
@@ -24,10 +23,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/win_iconv'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = False
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

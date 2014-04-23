@@ -1,9 +1,10 @@
 import json
 import sys
-import utils
 import os
 import re
-from time import strftime
+
+import utils
+
 
 class EpcPackageCreator(object):
     def __init__( self , epcFile ):

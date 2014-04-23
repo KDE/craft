@@ -1,5 +1,4 @@
 import info
-import compiler
 from Package.CMakePackageBase import *
 
 

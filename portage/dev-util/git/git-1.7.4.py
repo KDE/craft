@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import info
 import tempfile
+
+import info
 import utils
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -26,10 +28,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

@@ -1,19 +1,13 @@
 # copyright (c) 2011 Patrick Spendrin <ps_ml@gmx.de>
 
 import uuid
-import shutil
-import re
-import types
-import fileinput
-from winreg import * # pylint: disable=F0401
-import compiler
-from .CollectionPackagerBase import *
 from xml.dom.minidom import Document
 import hashlib
 from string import Template
 from io import StringIO
 import re
 
+from .CollectionPackagerBase import *
 
 
 class MSInstallerPackager( CollectionPackagerBase ):

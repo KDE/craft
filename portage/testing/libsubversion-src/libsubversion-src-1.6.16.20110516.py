@@ -1,7 +1,7 @@
-import utils
 import os
-import compiler
+
 import info
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

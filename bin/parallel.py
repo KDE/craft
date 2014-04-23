@@ -71,15 +71,11 @@ import sys
 import traceback
 import tempfile
 import getpass
-
 from datetime import datetime
-
 from multiprocessing import Process, Queue, cpu_count
 
 import portage
-
 import utils
-
 from dependencies import DependenciesTree
 
 

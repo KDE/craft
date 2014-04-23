@@ -1,8 +1,5 @@
-import utils
-import os
 import info
-import emergePlatform
-import compiler
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

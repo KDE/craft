@@ -1,7 +1,4 @@
-import os
 import info
-import shutil
-
 
 
 class subinfo( info.infoclass ):

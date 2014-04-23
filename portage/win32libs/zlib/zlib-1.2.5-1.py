@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import utils
-import compiler
-import shutil
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
@@ -23,8 +20,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/wcecompat'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

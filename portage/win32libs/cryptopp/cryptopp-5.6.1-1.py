@@ -1,9 +1,5 @@
-
-import os
-import shutil
-import utils
 import info
-import emergePlatform
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -17,10 +13,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
             self.buildDependencies['virtual/base'] = 'default'
-            
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = False
+
 
 
 from Package.CMakePackageBase import *

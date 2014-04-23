@@ -47,15 +47,10 @@ class PackageBase (EmergeBase):
         ## \todo is this the optimal place for creating the post install scripts ?
         ignoreInstalled = False
         if isDBEnabled():
-            if self.isTargetBuild():
-                if installdb.isInstalled( category=None, package=self.package, prefix=os.getenv( "EMERGE_TARGET_PLATFORM" ) ):
-                    ignoreInstalled = True
-                    self.unmerge()
-            else:
-                prefixPath = self._installedDBPrefix( self.buildType() )
-                if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
-                    ignoreInstalled = True
-                    self.unmerge()
+            prefixPath = self._installedDBPrefix( self.buildType() )
+            if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
+                ignoreInstalled = True
+                self.unmerge()
         else:
             if portage.isInstalled( '', self.package, '', self.buildType() ):
                 ignoreInstalled = True
@@ -95,18 +90,9 @@ class PackageBase (EmergeBase):
                     portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ) )
         else:
             if isDBEnabled():
-                if emergePlatform.isCrossCompilingEnabled():
-                    if self.isTargetBuild():
-                        package = installdb.addInstalled( self.category, self.package, self.version,
-                                os.getenv( "EMERGE_TARGET_PLATFORM" ), ignoreInstalled )
-                    else:
-                        package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
-                    package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
-                    package.install()
-                else:
-                    package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
-                    package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
-                    package.install()
+                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
+                package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+                package.install()
             else:
                 portage.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
 
@@ -131,16 +117,13 @@ class PackageBase (EmergeBase):
                         utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                         package.uninstall()
             else:
-                if self.isTargetBuild():
-                    packageList = installdb.remInstalled( self.category, self.package, self.version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-                else:
-                    packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+                packageList = installdb.remInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
                 for package in packageList:
                     fileList = package.getFiles()
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
-            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ) and not emergePlatform.isCrossCompilingEnabled():
+            if not utils.unmerge( self.mergeDestinationDir(), self.package, self.forced ):
                 # compatibility code: uninstall subclass based package
                 utils.unmerge( self.rootdir, self.package, self.forced )
                 portage.remInstalled( self.category, self.package, self.version, '')
@@ -254,16 +237,6 @@ class PackageBase (EmergeBase):
                 or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
             print("target ignored for this build type")
             return False
-
-        if emergePlatform.isCrossCompilingEnabled() and self.isHostBuild() and self.subinfo.disableHostBuild \
-                and not command == "fetch" and not command == "unpack":
-            utils.debug( "host build disabled, skipping host build", 1 )
-            return True
-
-        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild() and self.subinfo.disableTargetBuild \
-                and not command == "fetch" and not command == "unpack":
-            utils.debug( "target build disabled, skipping target build", 1 )
-            return True
 
         self.runAction(command)
         return True

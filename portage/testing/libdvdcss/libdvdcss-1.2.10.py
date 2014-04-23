@@ -1,8 +1,5 @@
 from Package.BinaryPackageBase import *
 
-import os
-import shutil
-import utils
 import info
 
 PACKAGE_NAME         = "libdvdcss"

@@ -5,8 +5,10 @@
 
 import configparser
 import os
+
 import utils
 from emerge_config import *
+
 
 _VERSION_INFOS = dict()
 _VERSION_INFOS_HINTS = dict()
@@ -66,7 +68,7 @@ class VersionInfo(object):
         
     def defaultTarget(self):
         name = self._getVersionInfo("name","defaultTarget")
-        if emergeSettings.contains("PortageVersions", name):
+        if ("PortageVersions", name) in emergeSettings:
             return emergeSettings.get("PortageVersions", name)
         return self._getVersionInfo("defaulttarget")
         

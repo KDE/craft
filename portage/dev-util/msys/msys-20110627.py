@@ -16,11 +16,7 @@ class subinfo(info.infoclass):
                 self.dependencies['dev-util/autotools'] = 'default'
         else:
             self.dependencies['dev-util/msys2'] = 'default'
-            
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.VirtualPackageBase import *
 

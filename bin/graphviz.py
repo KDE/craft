@@ -5,7 +5,9 @@
 """@package provides graphviz tool support"""
 
 import os
+
 import utils
+
 try:
     from winreg import *  # pylint: disable=F0401
     HAS_REGISTRY = True

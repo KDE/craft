@@ -1,6 +1,4 @@
 import info
-import emergePlatform
-import utils
 import compiler
 
 class subinfo(info.infoclass):
@@ -25,10 +23,6 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
         CMakePackageBase.__init__( self )
 
-    def make(self ):
-        if self.isTargetBuild():
-            os.environ["TARGET_INCLUDE"] = "%s;%s" % (os.path.join(self.mergeDestinationDir(), "include", "wcecompat"), os.getenv("TARGET_INCLUDE"))
-        return CMakePackageBase.make( self )
 
 if __name__ == '__main__':
     Package().execute()

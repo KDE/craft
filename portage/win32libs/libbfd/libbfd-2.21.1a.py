@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import os
 
 
 class subinfo(info.infoclass):

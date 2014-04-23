@@ -1,6 +1,7 @@
-import info
-import shutil
 import os
+
+import info
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):

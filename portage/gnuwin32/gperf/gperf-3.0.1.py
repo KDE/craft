@@ -1,7 +1,5 @@
 import info
-import os
-import shutil
-import utils
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

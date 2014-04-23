@@ -1,4 +1,3 @@
-import shutil
 import info
 from Package.CMakePackageBase import *
 

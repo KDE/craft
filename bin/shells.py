@@ -5,10 +5,12 @@
 """
 
 import os
-import utils
 import sys
+
+import utils
 import compiler
 from options import *
+
 
 ## \todo requires installed msys package -> add suport for installing packages
 

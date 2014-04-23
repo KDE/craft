@@ -1,12 +1,13 @@
 import os
-import utils
-import info
 import re
 import shutil
+
+import utils
+import info
 import info
 import compiler
-
 from Package.CMakePackageBase import *
+
 # do not forget to update CMakeLists.txt!
 SRC_URI={'0.71': """
 http://people.freedesktop.org/~hadess/shared-mime-info-0.71.tar.bz2
@@ -39,10 +40,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/gettext'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
         self.dependencies['gnuwin32/sed'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
@@ -119,21 +116,6 @@ class Package(CMakePackageBase):
             executable = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
             utils.embedManifest( executable, manifest )
         return True
-
-    def qmerge( self ):
-        # When crosscompiling also install into the targets directory
-        ret = CMakePackageBase.qmerge(self)
-        if emergePlatform.isCrossCompilingEnabled():
-            target_mimedir = os.path.join(ROOTDIR, emergePlatform.targetPlatform(),
-                            "share", "mime", "packages")
-            build_mime = os.path.join(self.imageDir(), "share", "mime",
-                         "packages", "freedesktop.org.xml")
-            utils.createDir(target_mimedir)
-            if not os.path.exists(build_mime):
-                utils.error("Could not find mime file: %s" % build_mime)
-                return False
-            utils.copyFile(build_mime, target_mimedir)
-        return ret
 
 
 if __name__ == '__main__':

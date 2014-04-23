@@ -4,10 +4,11 @@
 # Patrick von Reth <patrick.vonreth [AT] gmail [DOT] com>
 
 import os
-import utils
 import subprocess
-import emergePlatform
 import re
+
+import utils
+
 
 COMPILER = os.getenv("KDECOMPILER")
 
@@ -29,6 +30,15 @@ def getGCCTarget():
                 GCCTARGET = "i686-w64-mingw32"
     return GCCTARGET
 
+def architecture():
+    return os.getenv( "EMERGE_ARCHITECTURE" )
+
+def isX64():
+    return architecture() == "x64"
+
+def isX86():
+    return architecture() == "x86"
+
 def isMinGW():
     return COMPILER.startswith("mingw")
 
@@ -42,11 +52,7 @@ def isMinGW_W32():
     return isMinGW() and getGCCTarget() == "i686-w64-mingw32"
 
 def isMinGW_W64():
-    return isMinGW() and emergePlatform.buildArchitecture() == "x64"
-
-def isMinGW_ARM():
-    return isMinGW() and emergePlatform.buildArchitecture() == 'arm-wince'
-
+    return isMinGW() and isX64()
 
 def isMSVC():
     return COMPILER.startswith("msvc")

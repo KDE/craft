@@ -1,14 +1,12 @@
+import shutil
+
 from Package.CMakePackageBase import *
 import info
-import shutil
-import os
-import re
-import urllib.request, urllib.parse, urllib.error
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isX64():
             self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-win64-20100330.zip'
             self.targets['6.1.6'] = \
                 "http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.6/virtuoso-opensource-win64-20120802.zip"

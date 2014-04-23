@@ -35,9 +35,11 @@ Main entry point for the emerge test suite.
 Just run this file as a python script to execute all tests
 """
 
-import os, sys
+import os
+import sys
 import unittest
 import optparse
+
 
 def main():
     """Run all the tests in the emerge test suite"""

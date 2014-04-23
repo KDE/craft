@@ -1,5 +1,4 @@
 import info
-import emergePlatform
 import utils
 import compiler
 
@@ -32,8 +31,7 @@ class Package(CMakePackageBase):
         # required for package generating because we build from svnHEAD by default
 #        self.subinfo.options.package.version = '0.5.4'
         self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON '
-        if not emergePlatform.isCrossCompilingEnabled() or self.isHostBuild():
-            self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
+        self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
         CMakePackageBase.__init__( self )
@@ -44,11 +42,6 @@ class Package(CMakePackageBase):
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
         self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
-
-    def make(self ):
-        if self.isTargetBuild():
-            os.environ["TARGET_INCLUDE"] = "%s;%s" % (os.path.join(self.mergeDestinationDir(), "include", "wcecompat"), os.getenv("TARGET_INCLUDE"))
-        return CMakePackageBase.make( self )
 
 if __name__ == '__main__':
     Package().execute()

@@ -1,5 +1,3 @@
-
-import os
 import info
 
 class subinfo(info.infoclass):
@@ -10,14 +8,7 @@ class subinfo(info.infoclass):
                                 + repoUrl + """/aspell-de-0.60.20030222.1-10-bin.tar.bz2 """)
         self.targets[ '0.60.6' ] = """ http://files.kolab.org/local/windows-ce/aspell-0.60.6-data.zip"""
 
-        if emergePlatform.isCrossCompilingEnabled():
-            # The default target is on 0.60 because the data
-            # files in the 0.60.6 package are a bit different and
-            # have only been tested on WinCE
-            # please test them before you change the default target
-            self.defaultTarget = '0.60.6'
-        else:
-            self.defaultTarget = '0.60'
+        self.defaultTarget = '0.60'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'

@@ -1,14 +1,15 @@
-import utils
 import shutil
 import os
+
+import utils
 import info
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "4.8.2"
         rev = "3"
-        if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isX64():
             self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x86_64-%s-release-posix-seh-rt_v3-rev%s.7z" % ( ver, rev )
         else:
             self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/i686-%s-release-posix-sjlj-rt_v3-rev%s.7z" % ( ver, rev )
@@ -28,7 +29,7 @@ class Package(BinaryPackageBase):
     def install(self):
         if not BinaryPackageBase.install(self):
             return False
-        if emergePlatform.buildArchitecture() == 'x86':
+        if compiler.isX86():
             shutil.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
             if self.subinfo.buildTarget == "20111031":
                 shutil.copy( os.path.join( self.installDir() , "mingw" , "bin" , "gmake.exe") , os.path.join( self.installDir() , "mingw" , "bin" , "mingw32-make.exe") )

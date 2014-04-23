@@ -12,9 +12,6 @@ class subinfo( info.infoclass ):
             self.targetInstSrc[ ver ] = "automoc-" + ver
         self.defaultTarget = '20130507'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.CMakePackageBase import *
 

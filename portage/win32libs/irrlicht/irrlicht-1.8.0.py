@@ -1,7 +1,6 @@
 from Package.CMakePackageBase import *
 import info
-import shutil
-import os
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

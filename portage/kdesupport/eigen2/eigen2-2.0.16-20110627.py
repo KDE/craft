@@ -1,7 +1,3 @@
-
-import utils
-from utils import die
-import sys
 import info
 
 # see http://eigen.tuxfamily.org/ for more informations

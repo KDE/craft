@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import utils
-import os
 import info
 
 class subinfo(info.infoclass):
@@ -11,10 +9,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 from Package.CMakePackageBase import *
 

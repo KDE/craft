@@ -1,5 +1,7 @@
-import info
 import os
+
+import info
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -10,9 +12,6 @@ class subinfo(info.infoclass):
         # don't add a digest here, since we can't be sure about the version anyway
         self.defaultTarget = 'HEAD'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

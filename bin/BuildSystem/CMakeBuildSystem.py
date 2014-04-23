@@ -5,11 +5,13 @@
 """@package provides cmake build system"""
 
 import os
+
 import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from graphviz import *
 import compiler
+
 
 class CMakeBuildSystem(BuildSystemBase):
     """ cmake build support """
@@ -29,10 +31,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 return "NMake Makefiles"
         elif compiler.isMSVC2008():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                if self.isTargetBuild():
-                    return "Visual Studio 9.0 Windows Mobile 6 Professional SDK (ARMV4I)"
-                else:
-                    return "Visual Studio 9 2008"
+                return "Visual Studio 9 2008"
             else:
                 return "NMake Makefiles"
         elif compiler.isMSVC() or compiler.isIntel():
@@ -101,11 +100,6 @@ class CMakeBuildSystem(BuildSystemBase):
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
 
-        if self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
-            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.02"
-        elif self.buildPlatform() == "WM50":
-            options += " -DCMAKE_SYSTEM_NAME=WinCE -DCMAKE_SYSTEM_VERSION=5.01"
-
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case
             if not self.subinfo.options.configure.testDefine == None:
@@ -140,9 +134,6 @@ class CMakeBuildSystem(BuildSystemBase):
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
 
-        if self.isTargetBuild():
-            self.setupTargetToolchain()
-
         return self.system( command, "configure", 0 )
 
     def make( self ):
@@ -158,10 +149,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 command = "start vcexpress %s" % self.__slnFileName()
         elif self.subinfo.options.cmake.useIDE:
             if compiler.isMSVC2008():
-                if self.isTargetBuild():
-                    command = "vcbuild /M1 %s \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % (self.__slnFileName(), self.buildType())
-                else:
-                    command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
+                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
                 utils.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
@@ -171,8 +159,6 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = ' '.join([self.makeProgramm, self.makeOptions()])
 
-        if self.isTargetBuild():
-            self.setupTargetToolchain()
 
         return self.system( command, "make" )
 
@@ -189,18 +175,12 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.install.useMakeToolForInstall:
             if compiler.isMSVC2008() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-                if self.isTargetBuild():
-                    command = "vcbuild INSTALL.vcproj \"%s|Windows Mobile 6 Professional SDK (ARMV4I)\"" % self.buildType()
-                else:
-                    command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
+                command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
             else:
                 os.putenv("DESTDIR",self.installDir())
                 command = "%s install%s" % ( self.makeProgramm, fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
-
-        if self.isTargetBuild():
-            self.setupTargetToolchain()
 
         self.system( command, "install" )
 

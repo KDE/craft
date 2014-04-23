@@ -3,7 +3,6 @@
 #
 # definitions for the qmake build system
 
-import os
 import utils
 import compiler
 

@@ -48,13 +48,15 @@
 __author__  = "Sascha L. Teichmann <sascha.teichmann@intevation.de>"
 __license__ = "New-style BSD"
 
-import portage
 import sys
 import os
+from argparse import ArgumentParser # pylint: disable=F0401
+
+import portage
 import utils
 import graphviz
 import xml2conf
-from argparse import ArgumentParser # pylint: disable=F0401
+
 # this is for using pylint on Ubuntu which has still python2.6
 # and no module argparse yet
 
@@ -488,15 +490,6 @@ class DependenciesTree(object):
         """Recursive method to construct the nodes of the dependency tree."""
 
         pi = portage.PortageInstance
-
-        if portage.emergePlatform.isCrossCompilingEnabled():
-            sp = pi.getCorrespondingSourcePackage(package)
-            if sp:
-                # we found such a package and we're allowed to replace it
-                category = sp[0]
-                package = sp[1]
-                version = pi.getNewestVersion(category, package)
-
         try:
             tag = pi.getDefaultTarget( category, package, version )
         except ImportError:

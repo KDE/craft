@@ -3,9 +3,11 @@
 #
 # Packager base
 
+import subprocess
+
 from Packager.PackagerBase import *
 import compiler
-import subprocess
+
 
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""

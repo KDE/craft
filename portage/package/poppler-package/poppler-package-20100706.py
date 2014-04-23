@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
 

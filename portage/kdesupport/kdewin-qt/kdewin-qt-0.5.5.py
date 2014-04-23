@@ -1,6 +1,4 @@
 import info
-import emergePlatform
-import utils
 import compiler
 
 class subinfo(info.infoclass):

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import info
-import shutil
 import os
+
+import info
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -31,9 +32,6 @@ class subinfo(info.infoclass):
         self.targetDigests['unstable'] = '04feebc828bd30b3490890f04dc6b8ed7949e070'
         self.defaultTarget = '1_0_13'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

@@ -1,13 +1,4 @@
-
-
-
-import os
-import shutil
-import utils
-from utils import die
 import info
-import emergePlatform
-import compiler
 
 #
 # this library is used by kdeedu/kstars

@@ -1,6 +1,8 @@
 import os
-from Notifier.NotificationInterface import *
 import subprocess
+
+from Notifier.NotificationInterface import *
+
 
 #use https://github.com/nels-o/toaster to generate windows 8 toast notifications
 class Toaster(NotificationInterface):

@@ -9,9 +9,6 @@ class subinfo( info.infoclass ):
         self.targetDigests[ '920' ] = '9ce9ce89ebc070fea5d679936f21f9dde25faae0'
         self.defaultTarget = '920'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
     def setDependencies( self ):
         self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'

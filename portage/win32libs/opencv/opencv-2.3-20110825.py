@@ -1,7 +1,9 @@
-import info
 import os
+
+import info
 from Package.CMakePackageBase import *
 import compiler
+
 
 if compiler.isMinGW() and os.getenv("EMERGE_USE_CCACHE") == "True":
     os.putenv("CXX","g++")

@@ -1,14 +1,12 @@
 import info
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base']  = 'default'
         self.dependencies['libs/qt']            = 'default'
         self.dependencies['win32libs/librdf']   = 'default'
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.buildDependencies['win32libs/clucene-core'] = 'default'
-            self.dependencies['binary/virtuoso']             = 'default'
+        self.dependencies['binary/virtuoso']             = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
@@ -38,9 +36,6 @@ class subinfo(info.infoclass):
         self.shortDescription = "a RDF storage solutions library"
         self.defaultTarget = 'v2.9.4'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.CMakePackageBase import *
 

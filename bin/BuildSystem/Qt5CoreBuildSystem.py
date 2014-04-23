@@ -4,12 +4,11 @@
 # definitions for the qt5 modules 
 
 import os
-import utils
-import compiler
 import shutil
-import re
 
+import utils
 from BuildSystem.QMakeBuildSystem import *
+
 
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__( self ):

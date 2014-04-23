@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        if emergePlatform.buildArchitecture() == "x86":
+        if compiler.isX86():
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20131208.tar.xz"
         else:
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-x86_64-20131208.tar.xz"
@@ -13,9 +13,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 
@@ -29,7 +26,7 @@ class Package(BinaryPackageBase):
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
           return False
-        if emergePlatform.buildArchitecture() == "x64":
+        if compiler.isX64():
            shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
         else:
            shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))

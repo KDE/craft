@@ -1,7 +1,9 @@
 import os
+
 import info
 import utils
 import compiler
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -13,10 +15,6 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             self.dependencies['dev-util/uactools'] = 'default'
         self.buildDependencies['virtual/bin-base'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

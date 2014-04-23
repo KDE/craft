@@ -1,5 +1,7 @@
-import info
 import os
+
+import info
+
 
 SRC_URI = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/libarchive-2.4.12-1-bin.zip

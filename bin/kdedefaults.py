@@ -1,7 +1,9 @@
 ## add some default functionality for KDE packages.
+from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
+
 import utils
 from portage import rootDirectories
-from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
+
 
 def __kdepath(name):
     """ return the path of the kde category directory. If multiple portages are used,

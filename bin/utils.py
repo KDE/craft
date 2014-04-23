@@ -23,13 +23,11 @@ import getpass
 import subprocess
 import re
 import inspect
-import types
 import datetime
 from operator import itemgetter
-import Notifier.NotificationLoader
 import ctypes
 
-
+import Notifier.NotificationLoader
 
 
 if os.name == 'nt':

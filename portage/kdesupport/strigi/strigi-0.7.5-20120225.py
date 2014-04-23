@@ -4,13 +4,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/exiv2'] = 'default'
-        else:
-            #FIXME make strigi svnHEAD compile on Windows
-            # This hack is needed to get a different Version of
-            # strigi for the Host platform
-            self.buildDependencies['enterprise5/strigi-e5'] = 'default'
+        self.dependencies['win32libs/exiv2'] = 'default'
         self.dependencies['win32libs/win_iconv'] = 'default'
         self.dependencies['win32libs/libbzip2'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
@@ -44,15 +38,8 @@ class subinfo(info.infoclass):
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
 
         self.shortDescription = "a desktop search engine and indexer"
-        if emergePlatform.isCrossCompilingEnabled():
-          #FIXME make strigi svnHEAD compile on Windows
-          self.defaultTarget = 'komobranch'
-        else:
-          self.defaultTarget = '0.7.8'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
+        self.defaultTarget = '0.7.8'
 
 from Package.CMakePackageBase import *
 
@@ -63,17 +50,6 @@ class Package(CMakePackageBase):
         self.subinfo.options.fetch.checkoutSubmodules = True
         self.subinfo.options.configure.defines = ""
         self.subinfo.options.configure.defines += "-DENABLE_CLUCENE=OFF "
-        if emergePlatform.isCrossCompilingEnabled():            
-            self.subinfo.options.configure.defines += "-DBUILD_DEEPTOOLS=OFF "
-            self.subinfo.options.configure.defines += "-DBUILD_UTILS=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_CPPUNIT=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_XINE=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_FFMPEG=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_EXIV2=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_INOTIFY=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_POLLING=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_FAM=OFF "
-            self.subinfo.options.configure.defines += "-DENABLE_LOG4CXX=OFF "
 
         if self.buildTarget == "gitHEAD":
             self.subinfo.options.configure.defines = (

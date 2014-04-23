@@ -1,6 +1,4 @@
 #
-import os
-import sys
 #import info
 
 # pylint: disable=F0401,E0611,E0602,E1101

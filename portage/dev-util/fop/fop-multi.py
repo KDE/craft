@@ -1,5 +1,5 @@
 import info
-import emergePlatform
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -8,9 +8,6 @@ class subinfo( info.infoclass ):
         self.targetMergeSourcePath['1.0'] = 'fop-1.0'
         self.defaultTarget = '1.0'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

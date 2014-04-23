@@ -7,7 +7,9 @@
 #
 
 import os
+
 import utils
+
 
 rootdir = os.getenv( "KDEROOT" )
 

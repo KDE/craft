@@ -1,7 +1,9 @@
 # -*- coding: iso-8859-15 -*-
 from xml.dom.minidom import *
 import re
-import os, sys
+import os
+import sys
+
 
 TAGDOKU = dict()
 TAGDOKU['headline'] = """

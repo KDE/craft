@@ -7,8 +7,9 @@
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
-import info
 import time
+
+import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
 

@@ -16,10 +16,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
-
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
@@ -31,15 +27,6 @@ class Package(CMakePackageBase):
         self.subinfo.options.useCompilerType = False
         CMakePackageBase.__init__( self )
 
-    def qmerge( self ):
-        ''' When crosscompiling install oxygen files
-            also into the targets directory '''
-        ret = CMakePackageBase.qmerge(self)
-        if emergePlatform.isCrossCompilingEnabled():
-            utils.copyDir(self.imageDir(),
-                    os.path.join(self.rootdir,
-                    os.environ["EMERGE_TARGET_PLATFORM"]))
-        return ret
 
 
 if __name__ == '__main__':

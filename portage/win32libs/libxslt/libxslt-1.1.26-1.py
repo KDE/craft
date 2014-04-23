@@ -1,4 +1,3 @@
-import shutil
 import info
 from Package.CMakePackageBase import *
 
@@ -19,9 +18,6 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package( CMakePackageBase ):
     def __init__( self ):

@@ -12,10 +12,12 @@
 # (www.gpg4win.de) which packages gnupg seperatly so KDE software can interact
 # with gpg4win.
 
+import glob
+
 from Package.CMakePackageBase import *
 import info
-import glob
 import compiler
+
 
 class subinfo(info.infoclass):
 
@@ -28,12 +30,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
-        if emergePlatform.isCrossCompilingEnabled():
-            self.hardDependencies['contributed/gpg-wce-dev'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package(CMakePackageBase):
     def __init__(self):

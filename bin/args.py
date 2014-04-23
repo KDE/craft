@@ -12,7 +12,8 @@
 # we do not like to have the exact help text as class description, rather what this class 
 # do like 'handle the ... option' 
 #  
-import sys, argparse
+import sys
+import argparse
 
 import portage
 

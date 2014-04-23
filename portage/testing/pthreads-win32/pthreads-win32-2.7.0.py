@@ -1,6 +1,8 @@
-from Package.BinaryPackageBase import *
 import os
+
+from Package.BinaryPackageBase import *
 import info
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

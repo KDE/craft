@@ -1,10 +1,9 @@
-from Package.CMakePackageBase import *
-import info
 import shutil
 import os
-import re
-import urllib.request, urllib.parse, urllib.error
-import emergePlatform
+
+from Package.CMakePackageBase import *
+import info
+
 
 # currently only needed from kdenetwork
 
@@ -16,13 +15,13 @@ class subinfo(info.infoclass):
         for ver in [ '5.5.32' , '5.5.33' , '5.5.34', '5.6.14', '5.6.16' ]:
             ver2 = ver.split('.')
             url = self.baseURL + "MySQL-" + ver2[0] + "." + ver2[1] + "/"
-            if( emergePlatform.buildArchitecture() == 'x64' ):
+            if compiler.isX64():
               self.targets[ ver ] = url+"mysql-" + ver + "-winx64.zip"
               self.targetInstSrc[ ver ] = "mysql-" + ver + "-winx64"
             else:
               self.targets[ ver ] = url+"mysql-" + ver + "-win32.zip"
               self.targetInstSrc[ ver ] = "mysql-" + ver + "-win32"
-        if( emergePlatform.buildArchitecture() == 'x64' ):
+        if compiler.isX64():
               self.targetDigests['5.5.32'] = '9b6969ce7814ddb9fc9f7b39f0f59cc18ded98fc'
               self.targetDigests['5.5.33'] = 'eceac0d0a01e45feb11df26029913022351476e6'
               self.targetDigests['5.5.34'] = '32cb59f0c4cba0aee4703c7c3757cb36a499bd68'

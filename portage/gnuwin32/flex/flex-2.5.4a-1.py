@@ -1,9 +1,10 @@
 # -*- coding: iso-8859-15 -*-
 
-import info
 import os
-import shutil
+
+import info
 import utils
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

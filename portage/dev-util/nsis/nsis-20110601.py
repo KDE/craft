@@ -1,6 +1,8 @@
-import info
 import os
 import shutil
+
+import info
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -10,10 +12,6 @@ class subinfo(info.infoclass):
         self.targets['2.46'] = 'http://downloads.sourceforge.net/sourceforge/nsis/nsis-2.46.zip'
         self.targetDigests['2.46'] = 'adeff823a1f8af3c19783700a6b8d9054cf0f3c2'
         self.defaultTarget = '2.46'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import info
 import os
+
+import info
 import compiler
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

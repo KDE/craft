@@ -4,8 +4,10 @@
 #
 # git support
 
-from Source.VersionSystemSourceBase import *
 import tempfile
+
+from Source.VersionSystemSourceBase import *
+
 
 ## \todo requires installed git package -> add suport for installing packages
 

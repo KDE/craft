@@ -11,8 +11,6 @@ class subinfo( info.infoclass ):
         self.patchToApply[ '8.21' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
         self.patchToApply[ '8.32' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
         self.patchToApply[ '8.33' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
-        if emergePlatform.isCrossCompilingEnabled():
-            self.patchToApply[ '8.10' ].append( ( "pcre-8.02-20100518.diff", 1 ) )
 
         self.targetDigests['8.10'] = '8b345da0f835b2caabff071b0b5bab40564652be'
         self.targetDigests['8.12'] = '2219b372bff53ee29a7e44ecf5977ad15df01cea'
@@ -28,8 +26,6 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'win32libs/libbzip2' ] = 'default'
         self.dependencies[ 'win32libs/zlib' ] = 'default'
 
-        if emergePlatform.isCrossCompilingEnabled():
-            self.buildDependencies['win32libs/wcecompat'] = 'default'
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
@@ -40,9 +36,6 @@ class Package( CMakePackageBase ):
         defines += "-DPCRE_SUPPORT_UNICODE_PROPERTIES=ON "
         defines += "-DPCRE_SUPPORT_UTF8=ON "
         defines += "-DPCRE_EBCDIC=OFF "
-        if self.isTargetBuild():
-            defines += "-DPCRE_BUILD_TESTS=OFF "
-            defines += "-DPCRE_BUILD_PCREGREP=OFF "
         self.subinfo.options.configure.defines = defines
 
 if __name__ == '__main__':

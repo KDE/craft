@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import subprocess
+
 import info
 import utils
-import subprocess
+
 
 PACKAGE_CRAN_MIRROR     = 'http://ftp5.gwdg.de/pub/misc/cran'
 PACKAGE_PATH            = '/bin/windows/base/'

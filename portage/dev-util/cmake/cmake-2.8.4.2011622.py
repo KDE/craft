@@ -1,5 +1,5 @@
 import info
-import emergePlatform
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -36,16 +36,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
         self.patchToApply['v2.8.10.2'] = ( 'findpng16.diff', 0 )
 
-        if emergePlatform.isCrossCompilingEnabled():
-            self.defaultTarget = '2.8.0-ce'
-        else:
-            # 2.8.4 is broken when using short paths and
-            # windres fails even in old projects like zlib
-            self.defaultTarget = '2.8.12.2'
+        self.defaultTarget = '2.8.12.2'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base']       = 'default'

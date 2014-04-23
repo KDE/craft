@@ -1,9 +1,10 @@
 import os
-import utils
-import portage
-import emergePlatform
 import sqlite3
 import threading
+
+import utils
+import portage
+
 
 __blockme = threading.local()
 
@@ -289,11 +290,6 @@ class InstallDB(object):
                 packageObject = self.addInstalled( category, package, version, "" )
                 packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
                 packageObject.install()
-                if emergePlatform.isCrossCompilingEnabled():
-                    targetObject = self.addInstalled( category, package, version, os.getenv( "EMERGE_TARGET_PLATFORM" ) )
-                    targetObject.addFiles( utils.getFileListFromManifest( os.path.join( os.getenv( "KDEROOT" ),
-                            os.getenv( "EMERGE_TARGET_PLATFORM" ) ), package ) )
-                    targetObject.install()
                 # check PackageBase.mergeDestinationDir() for further things regarding the import from other prefixes
 
 
@@ -341,9 +337,6 @@ if isDBEnabled():
 def printInstalled():
     """get all the packages that are already installed"""
     host = target = portage.alwaysTrue
-    if emergePlatform.isCrossCompilingEnabled():
-        host = portage.isHostBuildEnabled
-        target = portage.isTargetBuildEnabled
     portage.printCategoriesPackagesAndVersions( installdb.getDistinctInstalled(), portage.alwaysTrue, host, target )
 
 

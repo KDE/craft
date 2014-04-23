@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import os
 import compiler
 
 #TODO: find a clean solution to run it with msvc support(lib.exe must be in path to generate msvc import libs)

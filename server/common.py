@@ -5,7 +5,6 @@ import sys
 from datetime import date, datetime
 from configparser import ConfigParser
 import subprocess
-import time
 
 isodate = str( date.today() ).replace( '-', '' )
 isodatetime = datetime.now().strftime( "%Y%m%d%H%M" )

@@ -1,17 +1,21 @@
-from Package.BinaryPackageBase import *
-import info
 import shutil
 import os
 import re
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
+
+from Package.BinaryPackageBase import *
+import info
 import compiler
+
 
 _VLC_VER = None
 
 class subinfo(info.infoclass):
   def setTargets( self ):
     self.vlcArch = "32"
-    if( emergePlatform.buildArchitecture() == 'x64' ):
+    if compiler.isX64():
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = 'vlc-2.2.0-git' 

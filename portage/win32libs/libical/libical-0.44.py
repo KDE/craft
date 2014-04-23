@@ -14,8 +14,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/wcecompat'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -24,9 +22,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = " -DUSE_BUILTIN_TZDATA=true -DICAL_UNIX_NEWLINE=false "
-
-        if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild():
-            self.subinfo.options.configure.defines += " -DSTATIC_LIBRARY=ON "
 
 if __name__ == '__main__':
     Package().execute()

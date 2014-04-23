@@ -2,8 +2,10 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-from Source.SourceBase import *
 import shutil
+
+from Source.SourceBase import *
+
 
 class ArchiveSource(SourceBase):
     """ file download source"""

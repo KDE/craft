@@ -1,5 +1,5 @@
 import info
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):

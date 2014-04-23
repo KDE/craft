@@ -2,10 +2,10 @@
 
 import os
 import shutil
-import utils
-import info
 
+import info
 import compiler
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

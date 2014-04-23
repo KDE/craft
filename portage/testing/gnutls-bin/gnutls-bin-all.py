@@ -1,5 +1,5 @@
 import info
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -10,10 +10,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.2.3'
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

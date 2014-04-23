@@ -1,6 +1,8 @@
 import os
+
 import info
 import kdedefaults as kd
+
 
 kd.setKDEPath(os.path.join(os.getenv('KDEROOT'),'emerge','portage','kde'))
 

@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 from Package.CMakePackageBase import *
 from Source.SvnSource import *
 from BuildSystem.BuildSystemBase import *
-from datetime import date
+
 
 class Package(PackageBase,GitSource,BuildSystemBase):
     def __init__( self):

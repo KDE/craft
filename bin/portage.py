@@ -1,17 +1,15 @@
 ## @package portage
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
-import utils
-
 import builtins
 import imp
 import os
 import re
 import sys
-import portage_versions
-import emergePlatform
-import copy
 from collections import OrderedDict
+
+import utils
+import portage_versions
 from EmergePackageObject import PackageObjectBase
 from emerge_config import *
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
@@ -216,7 +214,7 @@ class Portage(object):
         self.subpackages = {}
         self.portages = {}
         self.ignores = set()
-        if emergeSettings.contains("Portage","PACKAGE_IGNORES"):
+        if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
             for p in emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"):
                 self.ignores.add(p)
             
@@ -358,7 +356,7 @@ class Portage(object):
             return dict()
         
         pname = "%s/%s" % ( category, package )
-        if emergeSettings.contains("PortageVersions", pname):
+        if ("PortageVersions", pname) in emergeSettings:
             return emergeSettings.get("PortageVersions", pname)
         else:
             mod = __import__( getFilename( category, package, version ) )
@@ -516,9 +514,7 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
                     return particles[0]
                 elif len(particles) == 3:
                     _platform, _buildType, _target = particles
-                elif len(particles) == 4 and emergePlatform.isCrossCompilingEnabled():
-                    _platform, _buildType, _buildArch, _target = particles
-                elif len(particles) >= 4 and not emergePlatform.isCrossCompilingEnabled():
+                elif len(particles) >= 4:
                     _platform, _buildType = particles[0:2]
                     _target = '-'.join(particles[2:])
                 else:
@@ -648,34 +644,6 @@ def readChildren( category, package, version ):
 
     return runtimeDependencies, buildDependencies
 
-def isHostBuildEnabled( category, package, version ):
-    """ returns whether this package's host build is enabled. This will only work if
-        isCrossCompilingEnabled() == True """
-
-    if emergePlatform.isCrossCompilingEnabled():
-        mod = __import__( getFilename( category, package, version ) )
-        if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
-            return not info.disableHostBuild
-        else:
-            return False
-    else:
-        utils.die( "This function must not be used outside of cross-compiling environments!" )
-
-def isTargetBuildEnabled( category, package, version ):
-    """ returns whether this package's target build is enabled. This will only work if
-        isCrossCompilingEnabled() == True """
-
-    if emergePlatform.isCrossCompilingEnabled():
-        mod = __import__( getFilename( category, package, version ) )
-        if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
-            return not info.disableTargetBuild
-        else:
-            return False
-    else:
-        utils.die( "This function must not be used outside of cross-compiling environments!" )
-
 def isPackageUpdateable( category, package, version ):
     utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package, version ), 2 )
     mod = __import__( getFilename( category, package, version ) )
@@ -715,12 +683,8 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
-        if emergePlatform.isCrossCompilingEnabled():
-            msg = getHostAndTarget( hostEnabled( category, package, version ), targetEnabled( category, package, version ) )
-        else:
-            msg = ""
         if condition( category, package, version ):
-            printLine( category, package, version, msg )
+            printLine( category, package, version )
 
 def printInstallables():
     """get all the packages that can be installed"""

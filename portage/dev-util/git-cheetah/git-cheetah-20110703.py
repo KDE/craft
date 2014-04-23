@@ -1,6 +1,8 @@
-from Package.BinaryPackageBase import *
 import os
+
+from Package.BinaryPackageBase import *
 import info
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -19,10 +21,6 @@ class subinfo( info.infoclass ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
         self.runtimeDependencies[ 'win32libs/expat' ] = 'default'
 
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package(BinaryPackageBase):
   def __init__(self):

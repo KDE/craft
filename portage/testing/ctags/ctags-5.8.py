@@ -1,6 +1,3 @@
-import os
-import shutil
-import utils
 import info
 
 from Package.CMakePackageBase import *

@@ -47,8 +47,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/giflib']  = 'default'
 #        self.dependencies['win32libs/gssapi']  = 'default'
 #        self.dependencies['win32libs/hspell']  = 'default'
-        if not emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/jasper']  = 'default'
         self.dependencies['win32libs/jpeg']  = 'default'
         self.dependencies['win32libs/libbzip2']  = 'default'
         self.dependencies['win32libs/libpng']  = 'default'

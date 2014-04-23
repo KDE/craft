@@ -10,8 +10,9 @@ __license__ = "GNU General Public License (GPL)"
 # to get this working, install http://wix.codeplex.com/releases/view/60102#DownloadId=204417
 # and put it into the path
 
-import info
 import time
+
+import info
 from Package.VirtualPackageBase import *
 from Packager.MSInstallerPackager import *
 

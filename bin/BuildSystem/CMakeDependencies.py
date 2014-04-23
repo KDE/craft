@@ -3,9 +3,11 @@
 #
 
 import os
-import utils
 import re
 import sys
+
+import utils
+
 
 def toNodeName(fileName):
     """convert filename to dot node name"""

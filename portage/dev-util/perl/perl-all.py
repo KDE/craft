@@ -1,11 +1,11 @@
 import info
-import emergePlatform
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['5.8.8'] = "http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.822-MSWin32-x86-280952.zip"
         self.targetMergeSourcePath['5.8.8'] = "ActivePerl-5.8.8.822-MSWin32-x86-280952\\perl"
-        if emergePlatform.buildArchitecture() == 'x64':
+        if compiler.isX64():
            self.targets['5.10.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x64-291969.zip"
            self.targetDigests['5.10.1'] = 'b5e9ab83d14e1c3311e280a96d355d491d4d55f5'
            self.targetMergeSourcePath['5.10.1'] = "ActivePerl-5.10.1.1007-MSWin32-x64-291969\\perl"
@@ -38,12 +38,10 @@ class subinfo(info.infoclass):
            self.targetDigests['5.16.3'] = 'c85063396993a6bf4989970585b0d3a21c7a2a8c'
            self.targetMergeSourcePath['5.16.3'] = "ActivePerl-5.16.3.1603-MSWin32-x86-296746\\perl"
         self.defaultTarget = '5.16.3'
+
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 from Package.BinaryPackageBase import *
 

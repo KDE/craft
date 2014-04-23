@@ -1,10 +1,10 @@
-
 import os
 import shutil
+
 import utils
 import info
-import emergePlatform
 import compiler
+
 
 class subinfo( info.infoclass ):
 
@@ -32,10 +32,8 @@ class subinfo( info.infoclass ):
             self.targetDigestUrls[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz.sha1'
         self.targets[ '1.0.1-snapshot' ] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
         self.shortDescription = "The OpenSSL runtime environment"
-        if emergePlatform.isCrossCompilingEnabled():
-            self.defaultTarget = '1.0.0'
-        else:
-            self.defaultTarget = '1.0.1g'
+
+        self.defaultTarget = '1.0.1g'
 
         if compiler.isMinGW_W64():
             self.patchToApply[ '1.0.0' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
@@ -47,15 +45,9 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
             self.buildDependencies['virtual/base'] = 'default'
             self.buildDependencies['dev-util/perl'] = 'default'
-            if emergePlatform.isCrossCompilingEnabled():
-                self.dependencies['win32libs/wcecompat'] = 'default'
             if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
                 self.dependencies['win32libs/zlib'] = 'default'
-
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = False
 
 
 from Package.CMakePackageBase import *
@@ -69,17 +61,7 @@ class PackageCMake(CMakePackageBase):
     def compile( self ):
         os.chdir( self.sourceDir() )
         cmd = ""
-        if self.isTargetBuild():
-            """WinCE cross-building environment setup"""
-            config = "VC-CE"
-            os.environ["WCECOMPAT"] = self.mergeDestinationDir()
-            os.environ["TARGETCPU"] = self.buildArchitecture()
-            os.environ["PLATFORM"] = self.buildPlatform()
-            if self.buildPlatform() == "WM50":
-                os.environ["OSVERSION"] = "WCE501"
-            elif self.buildPlatform() == "WM60" or self.buildPlatform() == "WM65":
-                os.environ["OSVERSION"] = "WCE502"
-        elif emergePlatform.buildArchitecture() == "x64":
+        if compiler.isX64():
             config = "VC-WIN64A"
         else:
             config = "VC-WIN32"
@@ -87,25 +69,18 @@ class PackageCMake(CMakePackageBase):
         if not self.system( "perl Configure %s" % config, "configure" ):
             return False
 
-        if emergePlatform.buildArchitecture() == "x64":
+        if compiler.isX64():
             if not self.system( "ms\do_win64a.bat", "configure" ):
                 return False
         else:
             if not self.system( "ms\do_ms.bat", "configure" ):
                 return False
 
-        if self.isTargetBuild():
-            self.setupTargetToolchain()
-            # Set the include path for the wcecompat files (e.g. errno.h). Setting it through
-            # the Configure script generates errors due to the the backslashes in the path
-            wcecompatincdir = os.path.join( os.path.join( self.mergeDestinationDir(), "include" ), "wcecompat" )
-            os.putenv( "INCLUDE", wcecompatincdir + ";" + os.getenv("INCLUDE") )
-            cmd = r"nmake -f ms\ce.mak"
+
+        if self.staticBuild:
+            cmd = r"nmake -f ms\nt.mak"
         else:
-            if self.staticBuild:
-                cmd = r"nmake -f ms\nt.mak"
-            else:
-                cmd = r"nmake -f ms\ntdll.mak"
+            cmd = r"nmake -f ms\ntdll.mak"
 
         return self.system( cmd )
 
@@ -127,10 +102,7 @@ class PackageCMake(CMakePackageBase):
         else:
             outdir = "out32dll"
 
-        if self.isTargetBuild():
-            outdir = "out32_" + self.buildArchitecture()
-
-        if not self.isTargetBuild() and not self.staticBuild:
+        if not self.staticBuild:
             shutil.copy( os.path.join( src, outdir, "libeay32.dll" ) , os.path.join( dst, "bin" ) )
             shutil.copy( os.path.join( src, outdir, "ssleay32.dll" ) , os.path.join( dst, "bin" ) )
         shutil.copy( os.path.join( src, outdir, "libeay32.lib" ) , os.path.join( dst, "lib" ) )

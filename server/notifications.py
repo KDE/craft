@@ -2,10 +2,14 @@
 # License: BSD
 import os
 from email.mime.text import MIMEText
-import common
 import smtplib
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 import json
+
+import common
+
 
 class Notification(object):
     """ this class is the base class for notifications """

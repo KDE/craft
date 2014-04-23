@@ -1,5 +1,4 @@
 import info
-import emergePlatform
 
 from Package.CMakePackageBase import *
 

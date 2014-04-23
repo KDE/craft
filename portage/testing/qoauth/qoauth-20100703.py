@@ -1,7 +1,8 @@
-import info
 import os
 
+import info
 from Package.QMakePackageBase import *
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

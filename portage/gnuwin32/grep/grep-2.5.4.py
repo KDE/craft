@@ -1,5 +1,7 @@
-import info
 import os
+
+import info
+
 
 ## \todo the dep files will let into have dll's installed multiple times
 SRC_URI = """

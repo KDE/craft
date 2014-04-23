@@ -88,11 +88,6 @@ class BuildSystemBase(EmergeBase):
                 defines += " VERBOSE=1 V=1"
         return defines
 
-    def setupTargetToolchain(self):
-        os.environ["PATH"] = os.environ["TARGET_PATH"]
-        os.environ["INCLUDE"] = os.environ["TARGET_INCLUDE"]
-        os.environ["LIB"] = os.environ["TARGET_LIB"]
-
     def dumpEmergeDependencies( self ):
         """dump emerge package dependencies"""
         output = dependencies.dumpDependencies( self.package )

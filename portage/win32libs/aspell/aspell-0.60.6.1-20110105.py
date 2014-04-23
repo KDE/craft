@@ -1,7 +1,4 @@
 # -*- coding: iso-8859-15 -*-
-import os
-import shutil
-import utils
 import info
 
 
@@ -23,10 +20,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/perl'] = 'default'
         self.dependencies['win32libs/win_iconv'] = 'default'
 
-        if emergePlatform.isCrossCompilingEnabled():
-            # Take the golden hammer and swing it
-            self.dependencies['libs/qt'] = 'default'
-
 
 from Package.CMakePackageBase import *
 
@@ -35,8 +28,6 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
-        if emergePlatform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines = ("-DASPELL_STATIC=ON ")
 
 if __name__ == '__main__':
     Package().execute()

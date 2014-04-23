@@ -1,8 +1,9 @@
-import info
 import os
-import emergePlatform
+
+import info
 import compiler
 from Package.VirtualPackageBase import *
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -22,10 +23,6 @@ class subinfo(info.infoclass):
         # for creating combined packages
         self.buildDependencies['dev-util/pexports']   = 'default'
 
-        #add c++ runtime if we xcompile
-        if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/runtime-ce']   = 'default'
-
         if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             if os.getenv( "SVN_SSH" ) == "plink" or \
                     os.getenv( "GIT_SSH" ) == "plink":
@@ -34,8 +31,6 @@ class subinfo(info.infoclass):
             if compiler.isMinGW():
                 if compiler.isMinGW_WXX():
                     self.buildDependencies['dev-util/mingw-w64']    = 'default'
-                elif emergePlatform.buildArchitecture() == 'arm-wince':
-                    self.buildDependencies['dev-util/cegcc-arm-wince'] = 'default'
             if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
                 self.buildDependencies['dev-util/jom'] = 'default'
             if utils.envAsBool("EMERGE_USE_NINJA"):
@@ -43,9 +38,6 @@ class subinfo(info.infoclass):
             if utils.envAsBool("EMERGE_USE_CCACHE"):
                 self.buildDependencies['win32libs/ccache'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = False
-        self.disableTargetBuild = True
 
 class Package( VirtualPackageBase ):
     def __init__( self ):

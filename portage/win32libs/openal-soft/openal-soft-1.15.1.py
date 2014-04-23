@@ -1,7 +1,6 @@
 import info
-import os
 from Package.CMakePackageBase import *
-import compiler
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

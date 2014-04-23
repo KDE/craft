@@ -1,4 +1,3 @@
-import utils
 import info
 
 # http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz

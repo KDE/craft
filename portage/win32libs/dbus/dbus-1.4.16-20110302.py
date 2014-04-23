@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import utils
-import os
 import info
-import emergePlatform
-import compiler
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -44,11 +41,7 @@ class Package(CMakePackageBase):
                     "-DDBUS_ENABLE_VERBOSE_MODE=OFF "
                     "-DDBUS_DISABLE_ASSERTS=ON ")
 
-        if emergePlatform.isCrossCompilingEnabled():
-            self.subinfo.options.configure.defines += (
-                    "-DDBUS_SESSION_BUS_DEFAULT_ADDRESS:"
-                    "STRING=tcp:host=localhost,port=12434 ")
-        elif self.buildTarget == "gitHEAD":
+        if self.buildTarget == "gitHEAD":
             self.subinfo.options.configure.defines += (
                 "-DDBUS_SESSION_BUS_LISTEN_ADDRESS:STRING=autolaunch:scope=*install-path "
                 "-DDBUS_SESSION_BUS_CONNECT_ADDRESS:STRING=autolaunch:scope=*install-path ")

@@ -1,4 +1,3 @@
-import Notifier.NotificationInterface
 import importlib
 
 _NOTIFICATION_BACKENDS = None

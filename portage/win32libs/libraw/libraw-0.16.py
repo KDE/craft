@@ -1,5 +1,3 @@
-import os
-import utils
 import info
 from Package.CMakePackageBase import *
 

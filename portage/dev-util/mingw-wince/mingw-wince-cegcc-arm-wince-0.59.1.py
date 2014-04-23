@@ -1,7 +1,8 @@
-import utils
-import shutil
 import os
+
+import utils
 import info
+
 
 #  experimental wince compiler package
 #  todo:

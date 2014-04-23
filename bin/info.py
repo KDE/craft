@@ -8,12 +8,13 @@
 
 import datetime
 import os
+from collections import OrderedDict
+
 import utils
 import compiler
 from options import *
-import types
-from collections import OrderedDict
 import version_info
+
 
 class infoclass(object):
     """this module contains the information class"""
@@ -68,8 +69,6 @@ class infoclass(object):
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
-        self.disableHostBuild = False
-        self.disableTargetBuild = False
         self.package = utils.packageSplit(os.path.basename(utils.getCallerFilename()))[0]
 
 
@@ -108,8 +107,7 @@ class infoclass(object):
 
     def setBuildOptions( self ):
         """default method for setting build options, override to set individual targets"""
-        self.disableHostBuild = False
-        self.disableTargetBuild = False
+        return
 
     def getArchitecture(self):
         arch = ""

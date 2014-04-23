@@ -1,10 +1,10 @@
+import os
 
 import utils
-import sys
 import info
-import os
 import compiler
 from Package.CMakePackageBase import *
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):

@@ -1,4 +1,3 @@
-import os
 import info
 from Package.CMakePackageBase import *
 
@@ -13,9 +12,6 @@ class subinfo(info.infoclass):
         self.targetConfigurePath['0.0.1'] = 'setupdll'
         self.defaultTarget = 'gitHEAD'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

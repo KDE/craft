@@ -1,8 +1,10 @@
-from Package.BinaryPackageBase import *
 import os
+import subprocess
+
+from Package.BinaryPackageBase import *
 import info
 import utils
-import subprocess
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -55,9 +57,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
 
 class Package(BinaryPackageBase):
     def __init__(self):

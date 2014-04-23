@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import utils
 import os
+
+import utils
 import info
-import emergePlatform
 import compiler
-import shutil
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):

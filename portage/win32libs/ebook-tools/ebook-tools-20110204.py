@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
 
 # attention: if you want to build ebook-tools with msvc, please apply the msvc-toC89.diff patch first
 # currently msvc gets problems when compiling it

@@ -1,5 +1,3 @@
-import utils
-import os
 import compiler
 import info
 

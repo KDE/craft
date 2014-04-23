@@ -1,4 +1,3 @@
-import os
 from Notifier.NotificationInterface import *
 from Notifier.Libs.pysnp import *
 

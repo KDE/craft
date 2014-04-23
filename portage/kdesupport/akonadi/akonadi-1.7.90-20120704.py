@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import emergePlatform
-import os
+
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
