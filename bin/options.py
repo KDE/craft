@@ -331,6 +331,7 @@ class Options(object):
         """collect properties from a list of key=valule string"""
         if opts == None:
             return False
+        result = False
         for entry in opts:
             if entry.find('=') == -1:
                 utils.debug('incomplete option %s' % entry, 3)
