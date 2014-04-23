@@ -2,8 +2,7 @@
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import builtins
-import imp
-import sys
+import importlib
 from collections import OrderedDict
 
 import portage_versions
@@ -29,25 +28,9 @@ def __import__( module ): # pylint: disable=W0622
             utils.warning( 'import failed for module %s: %s' % (module, str(e)) )
             return None
     else:
-        sys.path.append( os.path.dirname( module ) )
-        modulename = os.path.basename( module ).replace('.py', '')
-
-        suff_index = None
-        for suff in imp.get_suffixes():
-            if suff[0] == ".py":
-                suff_index = suff
-                break
-
-        if suff_index is None:
-            utils.die("no .py suffix found")
-
-        with open( module ) as fileHdl:
-            try:
-                return imp.load_module( modulename.replace('.', '_'),
-                fileHdl, module, suff_index )
-            except ImportError as e:
-                utils.warning( 'import failed for file %s: %s' % (module, e) )
-                return None
+        modulename = os.path.basename( module ).replace('.py', '').replace('.', '_')
+        loader = importlib.machinery.SourceFileLoader(modulename, module)
+        return loader.load_module(modulename)
 
 class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
