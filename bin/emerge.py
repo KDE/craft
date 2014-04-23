@@ -316,7 +316,8 @@ def main( ):
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument( "--offline", action = "store_true",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_OFFLINE", "False" ) ),
-                         help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory. If that doesn't work, the build will fail." )
+                         help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
+                          If that doesn't work, the build will fail." )
     parser.add_argument( "-f", "--force", action = "store_true", dest = "forced",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_FORCED", "False" ) ) )
     parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel" "Debug" ],
@@ -324,7 +325,8 @@ def main( ):
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
                          help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
     parser.add_argument( "-v", "--verbose", action = "count",
-                         help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used. verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
+                         help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
+                          verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
     parser.add_argument( "--trace", action = "count", default = emergeSettings.get( "General", "EMERGE_TRACE", "0" ) )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
@@ -334,7 +336,9 @@ def main( ):
                          help = "This will search for a package or a description matching or similar to the search term." )
     parser.add_argument( "--nocopy", action = "store_true",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCOPY", "False" ) ),
-                         help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under KDEROOT\\tmp - currently nocopy is applied by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly by the size of SVN source tree." )
+                         help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under KDEROOT\\tmp - currently nocopy is applied\
+                          by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly\
+                           by the size of SVN source tree." )
     parser.add_argument( "--noclean", action = "store_true",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCLEAN", "False" ) ),
                          help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
@@ -357,11 +361,12 @@ def main( ):
                                              "version-dir", "version-package", "print-installable",
                                              "print-installed", "print-revision", "print-targets",
                                              "install-deps", "update", "update-direct-deps" ]):
-        parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x )
+        parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x, default = "all" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     emergeSettings.args = parser.parse_args( )
     print( emergeSettings.args )
+
 
     if emergeSettings.args.stayQuiet == True or emergeSettings.args.action in [ "version-dir", "version-package",
                                                                                 "print-installable", "print-installed",
