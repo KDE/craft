@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/test.py" line="36" mnemonic="7" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9365672b-ca51-4c5e-af20-3e5bd58cdc73" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="DELETED" beforePath="D:\Qt5\emerge\bin\args.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Packager/CollectionPackagerBase.py" afterPath="$PROJECT_DIR$/bin/Packager/CollectionPackagerBase.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/EmergeBase.py" afterPath="$PROJECT_DIR$/bin/EmergeBase.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Package/PackageBase.py" afterPath="$PROJECT_DIR$/bin/Package/PackageBase.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Packager/PackagerBase.py" afterPath="$PROJECT_DIR$/bin/Packager/PackagerBase.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/emerge.py" afterPath="$PROJECT_DIR$/bin/emerge.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/emerge_config.py" afterPath="$PROJECT_DIR$/bin/emerge_config.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/options.py" afterPath="$PROJECT_DIR$/bin/options.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/portage/kdesupport/poppler/poppler-0.24.5-20131110.diff" afterPath="$PROJECT_DIR$/portage/kdesupport/poppler/poppler-0.24.5-20131110.diff" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/portage.py" afterPath="$PROJECT_DIR$/bin/portage.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/utils.py" afterPath="$PROJECT_DIR$/bin/utils.py" />
+    </list>
+    <ignored path="emerge.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="emerge" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="portage.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/portage.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="522" column="44" selection-start="22389" selection-end="22389" vertical-scroll-proportion="-3.3636363" vertical-offset="8519" max-vertical-offset="12512">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="emerge.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/emerge.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="343" column="67" selection-start="17972" selection-end="17972" vertical-scroll-proportion="0.0" vertical-offset="5596" max-vertical-offset="6800">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EmergeBase.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/EmergeBase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="132" column="44" selection-start="5188" selection-end="5188" vertical-scroll-proportion="-3.3636363" vertical-offset="2059" max-vertical-offset="5865">
+              <folding>
+                <element signature="e#66#75#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PackagerBase.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/Packager/PackagerBase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="62" selection-start="1797" selection-end="1797" vertical-scroll-proportion="-5.836364" vertical-offset="325" max-vertical-offset="935">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1299" column="17" selection-start="46343" selection-end="46343" vertical-scroll-proportion="0.0" vertical-offset="21843" max-vertical-offset="25449">
+              <folding>
+                <element signature="e#264#282#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="options.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/options.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="337" column="48" selection-start="12336" selection-end="12336" vertical-scroll-proportion="-6.690909" vertical-offset="5361" max-vertical-offset="5916">
+              <folding>
+                <element signature="e#681#690#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PackageBase.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/bin/Package/PackageBase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="218" column="19" selection-start="9930" selection-end="9930" vertical-scroll-proportion="6.616216" vertical-offset="0" max-vertical-offset="4335">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/portage/testing/libxml2-test/libxml2-test-2.7.8.py" />
+        <option value="$PROJECT_DIR$/portage/testing/setupdll-wince/setupdll-wince-0.0.2.py" />
+        <option value="$PROJECT_DIR$/portage/testing/wincetools/wincetools-0.01.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/automoc/automoc-gitHEAD.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/cryptopp/cryptopp-5.6.1-1.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/libcurl/libcurl-7.20.0.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/libxml2/libxml2-2.7.7-1.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/libxslt/libxslt-1.1.26-1.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/rasqal/rasqal-0.9.26-20110726.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/shared-mime-info/shared-mime-info-0.71.20101219.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/sshd/sshd-0.0.2.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/wcecompat/wcecompat-20100122.py" />
+        <option value="$PROJECT_DIR$/bin/info.py" />
+        <option value="$PROJECT_DIR$/bin/emergePlatform.py" />
+        <option value="$PROJECT_DIR$/bin/BuildSystem/AutoToolsBuildSystem.py" />
+        <option value="$PROJECT_DIR$/bin/compiler.py" />
+        <option value="$PROJECT_DIR$/portage/binary/mysql-pkg/mysql-pkg-5.5.30.py" />
+        <option value="$PROJECT_DIR$/portage/binary/virtuoso/virtuoso-20100330.py" />
+        <option value="$PROJECT_DIR$/portage/binary/vlc/vlc-2.0.2.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/depends/depends-2.2.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/mingw-w64/mingw-w64-20111031.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/msys/msys2/msys2-20110627.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/perl/perl-all.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/pexports/pexports-0.44.py" />
+        <option value="$PROJECT_DIR$/portage/dev-util/yasm/yasm-1.2.0-20111113.py" />
+        <option value="$PROJECT_DIR$/portage/internal/CMakeBuildSystem/CMakeBuildSystem-internal.py" />
+        <option value="$PROJECT_DIR$/portage/internal/QMakeBuildSystem/QMakeBuildSystem-internal.py" />
+        <option value="$PROJECT_DIR$/portage/virtual/base/base-0.2.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/openssl/openssl-1.0.0d.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/stlport/stlport-5.2.1.py" />
+        <option value="$PROJECT_DIR$/bin/BuildSystem/BuildSystemBase.py" />
+        <option value="$PROJECT_DIR$/bin/BuildSystem/CMakeBuildSystem.py" />
+        <option value="$PROJECT_DIR$/portage/kdesupport/kdewin-lib/kdewin-lib-0.5.5.py" />
+        <option value="$PROJECT_DIR$/portage/kdesupport/kdewin/kdewin-0.5.6.py" />
+        <option value="$PROJECT_DIR$/portage/win32libs/sqlite/sqlite-3.7.2.py" />
+        <option value="$PROJECT_DIR$/bin/version_info.py" />
+        <option value="$PROJECT_DIR$/portage/kdesupport/soprano/soprano-2.5.63-20101204.py" />
+        <option value="$PROJECT_DIR$/bin/Package/InternalPackageBase.py" />
+        <option value="$PROJECT_DIR$/portage/testing/r-base/r-base-2010-03-21.py" />
+        <option value="$PROJECT_DIR$/bin/InstallDB.py" />
+        <option value="$PROJECT_DIR$/server/package.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/bin/emerge_config.py" />
+        <option value="$PROJECT_DIR$/bin/Packager/CollectionPackagerBase.py" />
+        <option value="$PROJECT_DIR$/bin/emerge.py" />
+        <option value="$PROJECT_DIR$/bin/Packager/PackagerBase.py" />
+        <option value="$PROJECT_DIR$/bin/utils.py" />
+        <option value="$PROJECT_DIR$/bin/portage.py" />
+        <option value="$PROJECT_DIR$/bin/options.py" />
+        <option value="$PROJECT_DIR$/bin/EmergeBase.py" />
+        <option value="$PROJECT_DIR$/bin/Package/PackageBase.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="portage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="portage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kdesupport" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="portage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kdesupport" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="soprano" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Packager" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Package" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="emerge" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BuildSystem" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="recentsLimit" value="5" />
+    <property name="LayoutCode.rearrangeEntriesPython" value="false" />
+    <property name="options.lastSelected" value="editor.preferences.appearance" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings />
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.emerge">
+    <configuration default="false" name="emerge" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/bin" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bin/emerge.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="true" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="emerge" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Python.emerge" />
+    </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Python.emerge" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9365672b-ca51-4c5e-af20-3e5bd58cdc73" name="Default" comment="" />
+      <created>1398207552715</created>
+      <updated>1398207552715</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32982087" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18020834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32982087" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/automoc/automoc-gitHEAD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="547" selection-end="547" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/cryptopp/cryptopp-5.6.1-1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="0" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0" vertical-offset="19" max-vertical-offset="629" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/libcurl/libcurl-7.20.0.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="1277" selection-end="1277" vertical-scroll-proportion="0.0" vertical-offset="138" max-vertical-offset="748" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/libxml2/libxml2-2.7.7-1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="60" selection-start="1317" selection-end="1317" vertical-scroll-proportion="0.0" vertical-offset="104" max-vertical-offset="714" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/libxslt/libxslt-1.1.26-1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="0" selection-start="882" selection-end="882" vertical-scroll-proportion="0.0" vertical-offset="2" max-vertical-offset="612" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/rasqal/rasqal-0.9.26-20110726.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="58" selection-start="1275" selection-end="1275" vertical-scroll-proportion="0.0" vertical-offset="19" max-vertical-offset="629" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/shared-mime-info/shared-mime-info-0.71.20101219.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="53" selection-start="1714" selection-end="1714" vertical-scroll-proportion="0.0" vertical-offset="358" max-vertical-offset="2023" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/sshd/sshd-0.0.2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="585" selection-end="585" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/wcecompat/wcecompat-20100122.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="59" selection-start="388" selection-end="388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/extragear/digikam/digikam-3.0.0.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="23" selection-start="1531" selection-end="1531" vertical-scroll-proportion="0.0" vertical-offset="222" max-vertical-offset="1768" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/BuildSystem/AutoToolsBuildSystem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="27" selection-start="527" selection-end="550" vertical-scroll-proportion="0.0" vertical-offset="16" max-vertical-offset="2261" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/compiler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="33" selection-start="1053" selection-end="1088" vertical-scroll-proportion="0.0" vertical-offset="154" max-vertical-offset="2533" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/binary/mysql-pkg/mysql-pkg-5.5.30.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="27" selection-start="954" selection-end="954" vertical-scroll-proportion="0.0" vertical-offset="103" max-vertical-offset="1496" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/binary/virtuoso/virtuoso-20100330.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="49" selection-start="134" selection-end="134" vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="1088" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/binary/vlc/vlc-2.0.2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="23" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1292" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/depends/depends-2.2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="27" selection-start="144" selection-end="144" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/mingw-w64/mingw-w64-20111031.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="27" selection-start="198" selection-end="198" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/msys/msys2/msys2-20110627.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="27" selection-start="100" selection-end="100" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/perl/perl-all.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="27" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="1054" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/pexports/pexports-0.44.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="27" selection-start="248" selection-end="248" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/dev-util/yasm/yasm-1.2.0-20111113.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="27" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/internal/CMakeBuildSystem/CMakeBuildSystem-internal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="75" selection-start="416" selection-end="416" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="459" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/internal/QMakeBuildSystem/QMakeBuildSystem-internal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="75" selection-start="537" selection-end="537" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="561" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/virtual/base/base-0.2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="79" selection-start="1345" selection-end="1345" vertical-scroll-proportion="0.0" vertical-offset="308" max-vertical-offset="918" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/openssl/openssl-1.0.0d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="27" selection-start="3084" selection-end="3084" vertical-scroll-proportion="0.0" vertical-offset="868" max-vertical-offset="2788" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="69" column="36" selection-start="2799" selection-end="2799" vertical-scroll-proportion="0.0" vertical-offset="986" max-vertical-offset="5899" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/BuildSystem/BuildSystemBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="22" selection-start="3239" selection-end="3239" vertical-scroll-proportion="0.0" vertical-offset="1205" max-vertical-offset="2584" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/BuildSystem/CMakeDependencies.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="40" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2822" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/kdesupport/kdewin-lib/kdewin-lib-0.5.5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="1029" selection-end="1029" vertical-scroll-proportion="-7.0" vertical-offset="23" max-vertical-offset="578" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/kdesupport/kdewin/kdewin-0.5.6.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="0" selection-start="2186" selection-end="2186" vertical-scroll-proportion="0.0" vertical-offset="291" max-vertical-offset="901" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/win32libs/sqlite/sqlite-3.7.2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="0" selection-start="2024" selection-end="2024" vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="850" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/portage_versions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5542" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/version_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="54" selection-start="2408" selection-end="2408" vertical-scroll-proportion="0.0" vertical-offset="750" max-vertical-offset="1360" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/kdesupport/soprano/soprano-2.5.63-20101204.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="9" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="969">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/Package/InternalPackageBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="17" selection-start="1519" selection-end="1519" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="884">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/portage/testing/r-base/r-base-2010-03-21.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="17" selection-start="2278" selection-end="2278" vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="1445">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/InstallDB.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="329" column="4" selection-start="14302" selection-end="14302" vertical-scroll-proportion="0.0" vertical-offset="5594" max-vertical-offset="7548">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="9" selection-start="1008" selection-end="1008" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="901">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/portageSearch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="986">
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/package.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="263" column="4" selection-start="10207" selection-end="10207" vertical-scroll-proportion="0.0" vertical-offset="4200" max-vertical-offset="5865">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/emerge_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="0" selection-start="1244" selection-end="1275" vertical-scroll-proportion="0.83278686" vertical-offset="206" max-vertical-offset="816">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/BuildSystem/CMakeBuildSystem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="172" column="20" selection-start="7518" selection-end="7518" vertical-scroll-proportion="0.3327869" vertical-offset="2619" max-vertical-offset="3910">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/Packager/CollectionPackagerBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="234" column="42" selection-start="10114" selection-end="10114" vertical-scroll-proportion="0.39344263" vertical-offset="3653" max-vertical-offset="4318">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/Packager/NullsoftInstallerPackager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="3" selection-start="1883" selection-end="1883" vertical-scroll-proportion="0.39344263" vertical-offset="406" max-vertical-offset="2397">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/emerge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="343" column="67" selection-start="17972" selection-end="17972" vertical-scroll-proportion="0.0" vertical-offset="5596" max-vertical-offset="6800">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1299" column="17" selection-start="46343" selection-end="46343" vertical-scroll-proportion="0.0" vertical-offset="21843" max-vertical-offset="25449">
+          <folding>
+            <element signature="e#264#282#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="337" column="48" selection-start="12336" selection-end="12336" vertical-scroll-proportion="-6.690909" vertical-offset="5361" max-vertical-offset="5916">
+          <folding>
+            <element signature="e#681#690#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/portage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="522" column="44" selection-start="22389" selection-end="22389" vertical-scroll-proportion="-3.3636363" vertical-offset="8519" max-vertical-offset="12512">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/EmergeBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="132" column="44" selection-start="5188" selection-end="5188" vertical-scroll-proportion="-3.3636363" vertical-offset="2059" max-vertical-offset="5865">
+          <folding>
+            <element signature="e#66#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/Packager/PackagerBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="62" selection-start="1797" selection-end="1797" vertical-scroll-proportion="-5.836364" vertical-offset="325" max-vertical-offset="935">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/Package/PackageBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="218" column="19" selection-start="9930" selection-end="9930" vertical-scroll-proportion="6.616216" vertical-offset="0" max-vertical-offset="4335">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
+
