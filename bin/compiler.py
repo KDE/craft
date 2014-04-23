@@ -83,8 +83,6 @@ def getCompilerName():
             return "mingw-w64"
         elif isMinGW32():
             return "mingw32"
-        elif isMinGW_ARM():
-            return "arm-wince"
     elif isMSVC():
         return COMPILER
     elif isIntel():

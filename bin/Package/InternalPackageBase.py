@@ -10,7 +10,6 @@ class InternalPackageBase(PackageBase):
 
     def __init__(self):
         PackageBase.__init__(self)
-        return None
 
     def fetch(self):
         return True

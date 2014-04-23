@@ -4,6 +4,7 @@
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
 from emerge_config import *
+import utils
 
 
 _VERSION_INFOS = dict()
