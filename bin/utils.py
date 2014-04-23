@@ -631,7 +631,7 @@ def die( message ):
 
 def traceMode():
     """return the value of the trace level"""
-    traceVal = os.getenv( "EMERGE_TRACE" )
+    traceVal = emergeSettings.args.trace
     if ( not traceVal == None and traceVal.isdigit() and int(traceVal) > 0 and verbose() > 0 ):
         return int( traceVal )
     else:
