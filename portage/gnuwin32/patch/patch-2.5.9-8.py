@@ -1,4 +1,8 @@
+import os
+
 import info
+import utils
+import compiler
 
 
 class subinfo(info.infoclass):

@@ -30,7 +30,9 @@
 #
 #  emerge "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
+import os
 import inspect
+import shlex
 
 from emerge_config import  *
 import utils

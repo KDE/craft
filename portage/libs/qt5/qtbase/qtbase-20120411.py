@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import os
+
+import utils
 import info
+import portage
+import compiler
 from Package.Qt5CorePackageBase import *
 
 

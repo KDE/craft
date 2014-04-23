@@ -1,3 +1,6 @@
+import shutil
+import os
+
 from Package.CMakePackageBase import *
 import info
 

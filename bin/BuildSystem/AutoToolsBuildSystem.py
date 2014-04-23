@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
 
+import os
+
+import utils
 from shells import *
 from BuildSystem.BuildSystemBase import *
 

@@ -5,10 +5,10 @@ import builtins
 import importlib
 from collections import OrderedDict
 
+import utils
 import portage_versions
 from EmergePackageObject import PackageObjectBase
 from emerge_config import *
-import utils
 
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 

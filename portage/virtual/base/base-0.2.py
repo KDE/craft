@@ -1,4 +1,7 @@
+import os
+
 import info
+import compiler
 from Package.VirtualPackageBase import *
 
 

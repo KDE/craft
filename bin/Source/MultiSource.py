@@ -2,6 +2,8 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
+import utils
+
 from Source.SourceFactory import *
 
 class MultiSource(object):

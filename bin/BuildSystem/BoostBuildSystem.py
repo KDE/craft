@@ -5,6 +5,9 @@
 
 """@package provides boost build system"""
 
+import os
+
+import utils
 from BuildSystem.BuildSystemBase import *
 
 

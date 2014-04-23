@@ -3,8 +3,10 @@
 #
 # definitions for the qt5 modules 
 
+import os
 import shutil
 
+import utils
 from BuildSystem.QMakeBuildSystem import *
 
 

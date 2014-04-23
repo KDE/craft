@@ -1,3 +1,5 @@
+import os
+
 import info
 from Package.QMakePackageBase import *
 

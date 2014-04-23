@@ -2,6 +2,7 @@
 # copyright (c) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
 #
 
+import utils
 from .CollectionPackagerBase import *
 
 class PortablePackagerList( PackagerLists ):

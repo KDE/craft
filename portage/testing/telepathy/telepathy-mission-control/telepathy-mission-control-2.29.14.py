@@ -1,3 +1,4 @@
+from Package.CMakePackageBase import *
 import info
 
 class subinfo(info.infoclass):

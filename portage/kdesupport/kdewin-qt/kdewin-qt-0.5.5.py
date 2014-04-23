@@ -1,5 +1,5 @@
 import info
-
+import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):

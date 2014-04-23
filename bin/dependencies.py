@@ -57,7 +57,6 @@ import utils
 import graphviz
 import xml2conf
 
-
 # this is for using pylint on Ubuntu which has still python2.6
 # and no module argparse yet
 

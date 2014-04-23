@@ -1,3 +1,5 @@
+import os
+
 import info
 import kdedefaults as kd
 

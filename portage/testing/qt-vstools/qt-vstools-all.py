@@ -1,3 +1,5 @@
+
+import utils
 import info
 from Package.QMakePackageBase import *
 

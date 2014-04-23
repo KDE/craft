@@ -7,8 +7,10 @@
 # the definition
 
 import datetime
+import os
 from collections import OrderedDict
 
+import utils
 import compiler
 from options import *
 import version_info

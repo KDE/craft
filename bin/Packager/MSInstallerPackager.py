@@ -5,6 +5,7 @@ from xml.dom.minidom import Document
 import hashlib
 from string import Template
 from io import StringIO
+import re
 
 from .CollectionPackagerBase import *
 

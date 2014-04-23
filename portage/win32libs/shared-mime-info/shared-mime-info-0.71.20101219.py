@@ -1,4 +1,11 @@
+import os
+import re
+import shutil
+
+import utils
 import info
+import info
+import compiler
 from Package.CMakePackageBase import *
 
 # do not forget to update CMakeLists.txt!

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import subprocess
 
 import info
+import utils
 
 
 PACKAGE_CRAN_MIRROR     = 'http://ftp5.gwdg.de/pub/misc/cran'

@@ -3,6 +3,10 @@
 # copyright:
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
+import configparser
+import os
+
+import utils
 from emerge_config import *
 import utils
 

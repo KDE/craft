@@ -3,6 +3,9 @@
 #
 
 from Packager.KDEWinPackager import *
+from Packager.CPackPackager import *
+from Packager.SevenZipPackager import *
+from Packager.MSInstallerPackager import *
 from Packager.InnoSetupPackager import *
 
 def init(packager, parent):
