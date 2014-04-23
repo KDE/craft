@@ -8,6 +8,7 @@ from ctypes import *
 import portage
 import compiler
 from emerge_config import *
+import utils
 
 
 

@@ -5,7 +5,6 @@
 import configparser
 import os
 
-import utils
 
 
 class EmergeConfig(object):
@@ -19,8 +18,6 @@ class EmergeConfig(object):
             self.config.read(iniPath)
             
     def __contains__(self, key):
-        if len(key) != 2:
-            utils.die("Wrong key %s" % key)
         return self.config and self.config.has_section( key[0] ) and key[1] in self.config[ key[0] ]
         
     def get(self, group, key, default = None):
@@ -29,7 +26,6 @@ class EmergeConfig(object):
         if default != None:
             return default
         self.config[ group ][ key ]
-        utils.die("unknown key %s/%s" % ( group , key))
         
     def set(self, group, key , value):
         self.config[ group ][ key ] = value

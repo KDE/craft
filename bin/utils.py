@@ -1289,7 +1289,6 @@ def applyPatch(sourceDir, f, patchLevel='0'):
 
 def log(fn):
     def inner(*args, **argv):
-
         logdir = emergeSettings.args.log_dir
 
         if not logdir:
