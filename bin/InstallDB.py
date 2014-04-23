@@ -272,20 +272,6 @@ class InstallDB(object):
                            packageId INTEGER, filename TEXT, fileHash TEXT)''' )
         self.connection.commit()
 
-        self.importExistingDatabase()
-
-    def importExistingDatabase( self ):
-        """ imports from the previous installation database system """
-        for category, package, version in portage.PortageInstance.getInstallables():
-            # FIXME: we need to adapt this to use prefixes as well
-            utils.debug( "importing package %s/%s-%s ..." % ( category, package, version ) )
-            if self.isPkgInstalled( category, package, version ):
-                utils.debug( 'adding installed package %s/%s-%s' % ( category, package, version ), 1 )
-                packageObject = self.addInstalled( category, package, version, "" )
-                packageObject.addFiles( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), package ) )
-                packageObject.install()
-                # check PackageBase.mergeDestinationDir() for further things regarding the import from other prefixes
-
 
 
 
@@ -430,7 +416,6 @@ def main():
 
     # test the import from the old style (manifest based) databases
     utils.new_line()
-    db_temp.importExistingDatabase()
     print("getInstalled:", db_temp.getInstalled())
     print("getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) ))
 

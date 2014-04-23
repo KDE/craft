@@ -1,6 +1,7 @@
 ## add some default functionality for KDE packages.
-from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
 
+from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
+import os
 import utils
 from portage import rootDirectories
 

@@ -103,12 +103,6 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
     elif ( buildAction == "version-package" ):
         print( "%s-%s-%s" % ( package, emergeSettings.get( "General", "KDECOMPILER" ), version ) )
         success = True
-    elif ( buildAction == "print-installable" ):
-        portage.printInstallables( )
-        success = True
-    elif ( buildAction == "print-installed" ):
-        printInstalled( )
-        success = True
     elif ( buildAction == "print-targets" ):
         portage.printTargets( category, package, version )
         success = True
@@ -396,6 +390,16 @@ def main( ):
     utils.debug( "trace: %s" % emergeSettings.args.trace, 1 )
     utils.debug( "KDEROOT: %s\n" % emergeSettings.get( "Paths", "KDEROOT" ), 1 )
     utils.debug_line( )
+
+
+
+    if emergeSettings.args.action == "print-installed":
+        printInstalled( )
+        _exit(0)
+
+    elif emergeSettings.args.action == "print-installable" :
+        portage.printInstallables( )
+        _exit(0)
 
     for x in emergeSettings.args.packageNames:
         handleSinglePackage( x, dependencyDepth )
