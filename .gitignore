@@ -9,3 +9,6 @@ test.outlog
 *.BASE.*
 *.LOCAL.*
 *.REMOTE.*
+
+# pycharm
+.idea/workspace.xml
