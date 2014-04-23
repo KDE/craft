@@ -319,7 +319,7 @@ def main( ):
     parser.add_argument( "-v", "--verbose", action = "count",
                          help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
-    parser.add_argument( "--trace", action = "count", default = emergeSettings.get( "General", "EMERGE_TRACE", "0" ) )
+    parser.add_argument( "--trace", action = "count", default = int(emergeSettings.get( "General", "EMERGE_TRACE", "0" )) )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
     parser.add_argument( "--target", action = "store",
