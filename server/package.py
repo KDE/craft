@@ -1,7 +1,6 @@
 # copyright 2009,2010 Patrick Spendrin <ps_ml@gmx.de>
 # License: BSD
 
-import os;
 import sys;
 import subprocess;
 import time;     # for sleep
@@ -11,7 +10,6 @@ import socket;
 
 # extend sys.path so that we can use the emerge stuff
 sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
-import portage;
 from InstallDB import *;
 
 # our own headers

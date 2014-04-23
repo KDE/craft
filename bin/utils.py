@@ -10,7 +10,6 @@ this file contains some helper functions for emerge
 
 import http.client
 import ftplib
-import os.path
 import sys
 import urllib.parse
 import shutil

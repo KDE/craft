@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 from Package.BinaryPackageBase import *
 import info

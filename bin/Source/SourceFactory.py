@@ -2,8 +2,6 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-import utils
-
 from Source.ArchiveSource import *
 from Source.SvnSource import *
 from Source.GitSource import *

@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
         self.dependencies['dev-util/doxygen'] = 'default'
 
 from Package.CMakePackageBase import *
-from Source.SvnSource import *
 from BuildSystem.BuildSystemBase import *
 from datetime import date
 

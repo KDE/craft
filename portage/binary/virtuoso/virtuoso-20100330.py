@@ -1,5 +1,3 @@
-import shutil
-
 from Package.CMakePackageBase import *
 import info
 

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
 
 import info
-import compiler
 from Package.CMakePackageBase import *
 
 

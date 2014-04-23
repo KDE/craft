@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
 
-from Source.MultiSource import *
 from BuildSystem.AutoToolsBuildSystem import *
-from Packager.MultiPackager import *
 from Package.PackageBase import *
 from Package.VirtualPackageBase import VirtualPackageBase
 

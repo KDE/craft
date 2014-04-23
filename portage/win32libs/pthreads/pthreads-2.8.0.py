@@ -1,4 +1,3 @@
-import compiler
 import info
 
 class subinfo(info.infoclass):

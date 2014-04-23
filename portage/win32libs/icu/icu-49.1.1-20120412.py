@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
 
-import utils
 import info
-import compiler
 
 
 class subinfo(info.infoclass):

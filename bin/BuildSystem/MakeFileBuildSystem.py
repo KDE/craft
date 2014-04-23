@@ -4,8 +4,6 @@
 
 """@package provides simple makefile based build system without any configure step"""
 
-import utils
-
 from BuildSystem.BuildSystemBase import *
 
 class MakeFileBuildSystem(BuildSystemBase):

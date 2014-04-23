@@ -4,9 +4,6 @@
 
 """@package provides cmake build system"""
 
-import os
-
-import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from graphviz import *

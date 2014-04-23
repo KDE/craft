@@ -4,10 +4,8 @@
     provides shells
 """
 
-import os
 import sys
 
-import utils
 import compiler
 from options import *
 

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import tempfile
 
 import info
-import utils
 
 
 class subinfo(info.infoclass):

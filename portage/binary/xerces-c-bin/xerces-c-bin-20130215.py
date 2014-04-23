@@ -1,6 +1,3 @@
-import os
-import shutil
-
 from Package.BinaryPackageBase import *
 import info
 

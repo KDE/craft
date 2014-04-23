@@ -1,6 +1,3 @@
-import os
-
-from shells import MSysShell
 import info
 
 

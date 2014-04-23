@@ -1,6 +1,3 @@
-import shutil
-import os
-import re
 import urllib.request
 import urllib.error
 import urllib.parse

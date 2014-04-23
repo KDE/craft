@@ -4,7 +4,6 @@
 #
 from winreg import * # pylint: disable=F0401
 
-import utils
 from Packager.CollectionPackagerBase import *
 
 

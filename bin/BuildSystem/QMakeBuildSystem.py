@@ -3,9 +3,6 @@
 #
 # definitions for the qmake build system
 
-import utils
-import compiler
-
 from BuildSystem.BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):

@@ -6,16 +6,10 @@
 __author__  = "Andre Heinecke <aheinecke@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
-import re
-import os
-import shutil
 import fileinput
-import subprocess
 from string import Template
 
 import info
-import compiler
-import utils
 from Package.CMakePackageBase import *
 
 

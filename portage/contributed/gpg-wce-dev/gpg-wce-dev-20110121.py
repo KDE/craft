@@ -1,6 +1,3 @@
-import os
-import subprocess
-
 from Package.BinaryPackageBase import *
 import info
 import utils

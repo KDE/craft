@@ -3,15 +3,13 @@
 #  @note this file should replace all other related portage related files
 import builtins
 import imp
-import os
-import re
 import sys
 from collections import OrderedDict
 
-import utils
 import portage_versions
 from EmergePackageObject import PackageObjectBase
 from emerge_config import *
+
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 

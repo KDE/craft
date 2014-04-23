@@ -1,15 +1,14 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import os
 import sys
 import datetime
 from ctypes import *
 
-import utils
 import portage
 import compiler
 from emerge_config import *
+
 
 
 ## @todo complete a release and binary merge dir below rootdir

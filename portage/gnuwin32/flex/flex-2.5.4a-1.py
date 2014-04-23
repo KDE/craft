@@ -1,9 +1,6 @@
 # -*- coding: iso-8859-15 -*-
 
-import os
-
 import info
-import utils
 
 
 class subinfo(info.infoclass):
