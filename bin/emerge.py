@@ -119,11 +119,6 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
 
 
 def handleSinglePackage( packageName, dependencyDepth ):
-    updateAll = False
-    dumpDepsFile = None
-    listFile = None
-    dependencyType = 'both'
-
     _deplist = [ ]
     deplist = [ ]
     packageList = [ ]
@@ -131,9 +126,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
     categoryList = [ ]
     targetDict = dict( )
 
-    defaultCategory = emergeSettings.get( "General", "EMERGE_DEFAULTCATEGORY", "kde" )
-
-    if updateAll:
+    if emergeSettings.args.action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
             utils.debug( "Updating installed packages from category " + packageName, 1 )
@@ -148,8 +141,8 @@ def handleSinglePackage( packageName, dependencyDepth ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
         utils.debug( "Will update packages: " + str( packageList ), 1 )
-    elif listFile:
-        listFileObject = open( listFile, 'r' )
+    elif emergeSettings.args.list_file:
+        listFileObject = open( emergeSettings.args.list_file, 'r' )
         for line in listFileObject:
             if line.strip( ).startswith( '#' ): continue
             try:
@@ -168,7 +161,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
     utils.debug_line( 1 )
 
     for mainCategory, entry in zip( categoryList, packageList ):
-        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, dependencyType,
+        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, emergeSettings.args.dependencyType,
                                               maxDetpth = dependencyDepth )
 
     deplist = [ p.ident( ) for p in _deplist ]
@@ -202,8 +195,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
         # the first dependency is the package itself - ignore it
         # TODO: why are we our own dependency?
         del deplist[ 0 ]
-
-    if emergeSettings.args.action == "update-direct-deps":
+    elif emergeSettings.args.action == "update-direct-deps":
         for item in deplist:
             item[ -1 ] = True
 
@@ -213,7 +205,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
     # package[1] -> package
     # package[2] -> version
 
-    if ( not emergeSettings.args.action in [ "all", "install-deps", "update-direct-deps" ] and not listFile ):
+    if ( not emergeSettings.args.action in [ "all", "install-deps", "update-direct-deps" ] and not emergeSettings.args.list_file ):
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -235,13 +227,13 @@ def handleSinglePackage( packageName, dependencyDepth ):
                       emergeSettings.args.action )
 
     else:
-        if dumpDepsFile:
-            dumpDepsFileObject = open( dumpDepsFile, 'w+' )
+        if emergeSettings.args.dumpDepsFile:
+            dumpDepsFileObject = open( emergeSettings.args.dumpDepsFile, 'w+' )
             dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
         for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
             isVCSTarget = False
 
-            if dumpDepsFile:
+            if emergeSettings.args.dumpDepsFile:
                 dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
 
             isLastPackage = [ mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
@@ -249,7 +241,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage,
                                                                               mainVersion ) != [ ]
             isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
-            if listFile and emergeSettings.args.action != "all":
+            if emergeSettings.args.list_file and emergeSettings.args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList
             if ( isInstalled and not ignoreInstalled ) and not (
                             isInstalled and (emergeSettings.args.outDateVCS or (
