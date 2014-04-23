@@ -342,7 +342,7 @@ def main( ):
                          help = "This will search for a package or a description matching or similar to the search term." )
     parser.add_argument( "--nocopy", action = "store_true",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCOPY", "False" ) ),
-                         help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under %KDEROOT%\\tmp - currently nocopy is applied by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly by the size of SVN source tree." )
+                         help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under KDEROOT\\tmp - currently nocopy is applied by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly by the size of SVN source tree." )
     parser.add_argument( "--noclean", action = "store_true",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCLEAN", "False" ) ),
                          help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
