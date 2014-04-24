@@ -46,7 +46,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines="-DSOPRANO_DISABLE_SESAME2_BACKEND=YES -DSOPRANO_DISABLE_CLUCENE_INDEX=On "
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
-            % os.path.join(ROOTDIR, "bin")
+            % os.path.join(emergeRoot(), "bin")
 
 if __name__ == '__main__':
     Package().execute()

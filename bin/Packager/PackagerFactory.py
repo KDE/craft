@@ -15,7 +15,6 @@ def init(packager, parent):
     packager.package = parent.package
     packager.version = parent.version
     packager.buildTarget = parent.subinfo.buildTarget
-    packager.PV = parent.PV
     return
 
 def PackagerFactory(parent, packagerType):

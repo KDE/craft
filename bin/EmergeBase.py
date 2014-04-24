@@ -20,23 +20,8 @@ import utils
 # marked in both databases or should have a separate install database
 # question: How to detect reliable this case ?
 
-
-ROOTDIR = os.getenv( "KDEROOT" )
-COMPILER = os.getenv( "KDECOMPILER" )
-DOWNLOADDIR = os.getenv( "DOWNLOADDIR" )
-if ( DOWNLOADDIR == None ):
-    DOWNLOADDIR = os.path.join( ROOTDIR, "distfiles" )
-
-KDESVNDIR = os.getenv( "KDESVNDIR" )
-if ( KDESVNDIR == None ):
-    KDESVNDIR = os.path.join( DOWNLOADDIR, "svn-src", "kde" )
-KDESVNSERVER = os.getenv( "KDESVNSERVER" )
-if ( KDESVNSERVER == None ):
-    KDESVNSERVER = "svn://anonsvn.kde.org"
-KDESVNUSERNAME = os.getenv( "KDESVNUSERNAME" )
-
 # ok, we have the following dirs:
-# ROOTDIR: the root where all this is below
+# emergeRoot(): the root where all this is below
 # DOWNLOADDIR: the dir under rootdir, where the downloaded files are put into
 # WORKDIR: the directory, under which the files are unpacked and compiled.
 #            here rootdir/tmp/packagename/work
@@ -52,6 +37,9 @@ class EmergeBase(object):
         # called here. That is really the wrong way round.
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
+        self.filename, self.category, self.package = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
+        self.version = None
+
 
         if not hasattr(self, 'subinfo'):
             # see the TODO above. This helps pylint understand the code, otherwise
@@ -66,7 +54,7 @@ class EmergeBase(object):
             for cls in type(self).mro():
                 className = cls.__name__
                 packageName = 'internal/%s' % className
-                if os.path.exists(os.path.join(ROOTDIR, 'emerge', 'portage',
+                if os.path.exists(os.path.join(emergeRoot() , 'emerge', 'portage',
                         'internal', className, '%s-internal.py' % className)):
                     if self.subinfo and not packageName in self.subinfo.buildDependencies:
                         self.subinfo.buildDependencies[packageName] = 'default'
@@ -94,26 +82,7 @@ class EmergeBase(object):
         self.forced = emergeSettings.args.forced
         self.buildTests = emergeSettings.args.buildTests
 
-        if COMPILER == "msvc2005":
-            self.__compiler = "msvc2005"
-        elif COMPILER == "msvc2008":
-            self.__compiler = "msvc2008"
-        elif COMPILER == "msvc2010":
-            self.__compiler = "msvc2010"
-        elif COMPILER == "msvc2012":
-            self.__compiler = "msvc2012"
-        elif COMPILER == "msvc2013":
-            self.__compiler = "msvc2013"
-        elif COMPILER == "mingw":
-            self.__compiler = "mingw"
-        elif COMPILER == "mingw4":
-            self.__compiler = "mingw4"
-        elif COMPILER == "intel":
-            self.__compiler = "intel"
-        else:
-            print("emerge error: KDECOMPILER: '%s' not understood" % COMPILER, file=sys.stderr)
-            exit( 1 )
-        self.rootdir = ROOTDIR
+        self.rootdir = emergeRoot()
 
     def __adjustPath(self, directory):
         """return adjusted path"""
@@ -134,8 +103,9 @@ class EmergeBase(object):
         return emergeSettings.args.buildType
 
     def compiler(self):
+        """deprecated"""
         """return currently selected compiler"""
-        return self.__compiler
+        return compiler.getCompilerName()
 
     def buildArchitecture(self):
         """return the target CPU architecture"""
@@ -145,7 +115,7 @@ class EmergeBase(object):
         """return base directory name for package related work directory"""
         directory = ""
         if self.subinfo.options.useCompilerType == True:
-            directory += "%s-" % COMPILER
+            directory += "%s-" % compiler.getCompilerName()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -166,7 +136,7 @@ class EmergeBase(object):
             return directory
 
         if self.subinfo.options.useCompilerType == True:
-            directory += '-' + COMPILER
+            directory += '-' + compiler.getCompilerName()
         if self.subinfo.options.useBuildType == True:
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget
@@ -174,7 +144,7 @@ class EmergeBase(object):
 
     def downloadDir(self):
         """ location of directory where fetched files are  stored """
-        return self.__adjustPath(DOWNLOADDIR)
+        return self.__adjustPath(emergeSettings.get("Paths", "DOWNLOADDIR"))
 
     def sourceDir(self, dummyIndex=0):
         utils.abstract()
@@ -185,7 +155,7 @@ class EmergeBase(object):
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        buildroot    = os.path.join( ROOTDIR, "build", self.category, self.PV )
+        buildroot    = os.path.join( emergeRoot(), "build", self.category, self.package )
         return self.__adjustPath(buildroot)
 
     def workDir(self):
@@ -240,19 +210,19 @@ class EmergeBase(object):
         """
 
         if self.subinfo.hasMergePath():
-            directory = os.path.join( ROOTDIR, self.subinfo.mergePath() )
+            directory = os.path.join( emergeRoot(), self.subinfo.mergePath() )
         elif not self.subinfo.options.merge.destinationPath == None:
-            directory = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
+            directory = os.path.join( emergeRoot(), self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
-            directory = ROOTDIR
+            directory = emergeRoot()
         elif self.buildType() == 'Debug':
-            directory = os.path.join(ROOTDIR,'debug')
+            directory = os.path.join(emergeRoot(),'debug')
         elif self.buildType() == 'Release':
-            directory = os.path.join(ROOTDIR,'release')
+            directory = os.path.join(emergeRoot(),'release')
         elif self.buildType() == 'RelWithDebInfo':
-            directory = os.path.join(ROOTDIR,'relwithdebinfo')
+            directory = os.path.join(emergeRoot(),'relwithdebinfo')
         else:
-            directory = ROOTDIR
+            directory = emergeRoot()
         return self.__adjustPath(directory)
 
     def packageDestinationDir( self, withBuildType=True ):
@@ -278,23 +248,6 @@ class EmergeBase(object):
         self.subinfo.setBuildTarget(target)
         ## \todo replace self.buildTarget by self.buildTarget()
         self.buildTarget = self.subinfo.buildTarget
-        if hasattr(self,'source'):
-            # pylint: disable=E1101
-            # this class never defines self.source, that happens only
-            # in MultiSource.
-            self.source.buildTarget = self.subinfo.buildTarget
-
-    def setup( self, fileName, category, package, buildTarget = None ):
-        self.category = category
-        self.package = package
-        self.version = portage.PortageInstance.getDefaultTarget( self.category, self.package )
-        self.PV, _ = os.path.splitext( os.path.basename( fileName) )
-        self.setBuildTarget(buildTarget)
-        if hasattr(self,'source'):
-            # pylint: disable=E1101
-            # this class never defines self.source, that happens only
-            # in MultiSource.
-            self.source.setup( fileName, category, package, buildTarget )
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )

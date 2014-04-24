@@ -46,28 +46,36 @@ class CollectionPackagerBase( PackagerBase ):
         if blacklists is None:
             blacklists = [ PackagerLists.defaultBlacklist ]
         self.defines = dict()
-        self.whitelist = []
-        self.blacklist = []
-
-        for entry in whitelists:
-            utils.debug( "reading whitelist: %s" % entry, 2 )
-            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
-                for line in entry():
-                    self.whitelist.append( line )
-            else:
-                self.read_whitelist( entry )
-        for entry in blacklists:
-            utils.debug( "reading blacklist: %s" % entry, 2 )
-            if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
-                for line in entry():
-                    self.blacklist.append( line )
-            else:
-                self.read_blacklist( entry )
-        utils.debug( "length of blacklist: %s" % len( self.blacklist ), 0 )
-        utils.debug( "length of whitelist: %s" % len( self.whitelist ), 0 )
+        self.whitelist_file = whitelists
+        self.blacklist_file = blacklists
+        self._whitelist = []
+        self._blacklist = []
 
         self.scriptname = None
 
+    @property
+    def whitelist(self):
+        if not self._whitelist:
+            for entry in self.whitelist_file:
+                utils.debug( "reading whitelist: %s" % entry, 2 )
+                if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                    for line in entry():
+                        self._whitelist.append( line )
+                else:
+                    self.read_whitelist( entry )
+        return self._whitelist
+
+    @property
+    def blacklist(self):
+        if not self._blacklist:
+            for entry in self.blacklist_file:
+                utils.debug( "reading blacklist: %s" % entry, 2 )
+                if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                    for line in entry():
+                        self._blacklist.append( line )
+                else:
+                    self.read_blacklist( entry )
+        return self._blacklist
 
     def __isInstalled( self ):
         return abstract()
@@ -82,7 +90,7 @@ class CollectionPackagerBase( PackagerBase ):
             return directory
 
         if package.subinfo.options.useCompilerType == True:
-            directory += '-' + COMPILER
+            directory += '-' + compiler.getCompilerName()
         if package.subinfo.options.useBuildType == True:
             directory += '-' + package.buildType()
         directory += '-' + buildTarget
@@ -135,7 +143,7 @@ class CollectionPackagerBase( PackagerBase ):
                 continue
             try:
                 exp = re.compile( line, re.IGNORECASE )
-                self.whitelist.append( exp )
+                self._whitelist.append( exp )
                 utils.debug( "%s added to whitelist as %s" % ( line, exp.pattern ), 2 )
             except re.error:
                 utils.debug( "%s is not a valid regexp" % line, 1 )
@@ -154,7 +162,7 @@ class CollectionPackagerBase( PackagerBase ):
                 continue
             try:
                 exp = re.compile( line, re.IGNORECASE )
-                self.blacklist.append( exp )
+                self._blacklist.append( exp )
                 utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
             except re.error:
                 utils.debug( "%s is not a valid regexp" % line, 1 )

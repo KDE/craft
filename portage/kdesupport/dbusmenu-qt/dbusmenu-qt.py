@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
             % qmake.replace('\\', '/')
 
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
-            % os.path.join(ROOTDIR, "bin")
+            % os.path.join(emergeRoot(), "bin")
 
 if __name__ == '__main__':
     Package().execute()

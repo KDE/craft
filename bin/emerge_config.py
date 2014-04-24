@@ -4,13 +4,25 @@
 
 import configparser
 import os
+import sys
 
+
+def emergeRoot():
+    return os.path.abspath(os.path.join( os.path.dirname( sys.argv[0]) , "..", ".."))
+
+
+def etcDir():
+    return os.path.join( emergeRoot(), "etc")
+
+def etcPortageDir():
+    """the etc directory for portage"""
+    return os.path.join( etcDir(), "portage" )
 
 class EmergeConfig( object ):
     def __init__( self ):
         self.args = None
         self.config = None
-        iniPath = os.path.join( os.getenv( "KDEROOT" ), "etc", "kdesettings.ini" )
+        iniPath = os.path.join( etcDir(), "kdesettings.ini" )
         if os.path.exists( iniPath ):
             self.config = configparser.ConfigParser( )
             self.config.optionxform = str
@@ -36,3 +48,5 @@ class EmergeConfig( object ):
 
 
 emergeSettings = EmergeConfig( )
+
+

@@ -9,7 +9,7 @@ import utils
 class EpcPackageCreator(object):
     def __init__( self , epcFile ):
         self.epcFile = epcFile        
-        self.kderoot = os.getenv("KDEROOT")
+        self.kderoot = emergeRoot()
         self.epcVariables = re.compile("\$\{.*\}")
         self.epcDict = dict()
         self.variables = dict()

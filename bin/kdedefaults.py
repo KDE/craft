@@ -3,6 +3,7 @@
 from os.path import dirname as dn, join as j, normcase, relpath, sep, exists
 import os
 import utils
+from emerge_config import *
 from portage import rootDirectories
 
 

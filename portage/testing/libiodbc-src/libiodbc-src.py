@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
 
-from Source.MultiSource import *
-from BuildSystem.AutoToolsBuildSystem import *
-from Packager.MultiPackager import *
-from Package.PackageBase import *
+from Package.AutoToolsPackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -18,13 +15,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['dev-utils/msys'] = 'default'
 
-class Package(PackageBase, MultiSource, AutoToolsBuildSystem, MultiPackager):
+class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)
-        MultiPackager.__init__(self)
+        AutoToolsPackageBase.__init__(self)
         self.buildInSource = True
 
 if __name__ == '__main__':

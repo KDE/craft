@@ -166,7 +166,7 @@ for i in range( 100 ):
         testfile.close()
 
     command = sys.executable + " -u " + os.path.join( os.path.dirname( sys.argv[0] ), "test.py" )
-    log = open( os.path.join( os.getenv( "KDEROOT" ), "tools.log" ), mode='w+b' )
+    log = open( os.path.join( emergeRoot(), "tools.log" ), mode='w+b' )
     T_err = Tee( outfile=log )
     sys.stdout = log
     process = Popen( command, stderr=T_err, shell=True )

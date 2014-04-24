@@ -64,7 +64,7 @@ class Package(Qt5CorePackageBase):
             f.close()
             os.remove(os.path.join(self.sourceDir(),"configure.exe"))
         configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, os.getenv("KDEROOT"), self.platform )
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, emergeRoot(), self.platform )
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "

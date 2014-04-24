@@ -22,7 +22,7 @@ class Package( AutoToolsPackageBase):
         self.subinfo = subinfo()
         self.subinfo.options.make.supportsMultijob = False
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=no --enable-shared=yes DBUS_LIBS='%s/lib/libdbus-1.dll.a' DBUS_CFLAGS=' '" % utils.toMSysPath(os.getenv("KDEROOT"))
+        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=no --enable-shared=yes DBUS_LIBS='%s/lib/libdbus-1.dll.a' DBUS_CFLAGS=' '" % utils.toMSysPath(emergeRoot())
 
 
         

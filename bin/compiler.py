@@ -8,27 +8,27 @@ import subprocess
 import re
 
 import utils
+from emerge_config import *
 
 
-COMPILER = os.getenv("KDECOMPILER")
-
-GCCTARGET = None
-MINGW_VERSION = None
+_COMPILER = emergeSettings.get("General","KDECOMPILER")
+_GCCTARGET = None
+_MINGW_VERSION = None
 
 def getGCCTarget():
-    global GCCTARGET # pylint: disable=W0603
-    if not GCCTARGET:
+    global _GCCTARGET # pylint: disable=W0603
+    if not _GCCTARGET:
         try:
             result = str(subprocess.Popen("gcc -dumpmachine", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             utils.debug("GCC Target Processor:%s" % result, 1 )
-            GCCTARGET = result.strip()
+            _GCCTARGET = result.strip()
         except OSError:
             #if no mingw is installed return mingw-w32 it is part of base
             if os.getenv("EMERGE_ARCHITECTURE") == "x64":
-                GCCTARGET = "x86_64-w64-mingw32"
+                _GCCTARGET = "x86_64-w64-mingw32"
             else:
-                GCCTARGET = "i686-w64-mingw32"
-    return GCCTARGET
+                _GCCTARGET = "i686-w64-mingw32"
+    return _GCCTARGET
 
 def architecture():
     return os.getenv( "EMERGE_ARCHITECTURE" )
@@ -40,7 +40,7 @@ def isX86():
     return architecture() == "x86"
 
 def isMinGW():
-    return COMPILER.startswith("mingw")
+    return _COMPILER.startswith("mingw")
 
 def isMinGW32():
     return isMinGW() and getGCCTarget() == "mingw32"
@@ -55,25 +55,25 @@ def isMinGW_W64():
     return isMinGW() and isX64()
 
 def isMSVC():
-    return COMPILER.startswith("msvc")
+    return _COMPILER.startswith("msvc")
 
 def isMSVC2005():
-    return COMPILER == "msvc2005"
+    return _COMPILER == "msvc2005"
 
 def isMSVC2008():
-    return COMPILER == "msvc2008"
+    return _COMPILER == "msvc2008"
 
 def isMSVC2010():
-    return COMPILER == "msvc2010"
+    return _COMPILER == "msvc2010"
 
 def isMSVC2012():
-    return COMPILER == "msvc2012"
+    return _COMPILER == "msvc2012"
     
 def isMSVC2013():
-    return COMPILER == "msvc2013"
+    return _COMPILER == "msvc2013"
 
 def isIntel():
-    return COMPILER == "intel"
+    return _COMPILER == "intel"
 
 def getCompilerName():
     if isMinGW():
@@ -84,11 +84,11 @@ def getCompilerName():
         elif isMinGW32():
             return "mingw32"
     elif isMSVC():
-        return COMPILER
+        return _COMPILER
     elif isIntel():
         return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
     else:
-        return "Unknown Compiler"
+        utils.die("Unknown Compiler %s" %  _COMPILER)
 
 def getSimpleCompilerName():
     if isMinGW():
@@ -101,27 +101,27 @@ def getSimpleCompilerName():
     elif isIntel():
         return "intel"
     else:
-        return "Unknown Compiler"
+        utils.die("Unknown Compiler %s" %  _COMPILER)
 
 def getMinGWVersion():
-    global MINGW_VERSION # pylint: disable=W0603
-    if not MINGW_VERSION:
+    global _MINGW_VERSION # pylint: disable=W0603
+    if not _MINGW_VERSION:
         try:
             result = str(subprocess.Popen("gcc --version", stdout=subprocess.PIPE).communicate()[0],'windows-1252')
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
             utils.debug("GCC Version:%s" % result, 1 )
-            MINGW_VERSION = result.strip()
+            _MINGW_VERSION = result.strip()
         except OSError:
             #if no mingw is installed return 0
-            MINGW_VERSION = "0"
-    return MINGW_VERSION
+            _MINGW_VERSION = "0"
+    return _MINGW_VERSION
 
 def getVersion():
     if isMinGW():
         return "%s %s" % ( getCompilerName(), getMinGWVersion() )
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
-    return "Microsoft Visual Studio 20%s" %  COMPILER[len(COMPILER)-2:]
+    return "Microsoft Visual Studio 20%s" %  _COMPILER[len(_COMPILER)-2:]
     
 def getShortName():
     if isMinGW():
@@ -135,7 +135,7 @@ def getShortName():
     elif isMSVC2013():
         return "vc120"
     else:
-        return "unknown"
+        utils.die("Unknown Compiler %s" %  _COMPILER)
 
 
 if __name__ == '__main__':

@@ -10,8 +10,6 @@ this file contains some helper functions for emerge
 
 import http.client
 import ftplib
-import os.path
-import sys
 import urllib.parse
 import shutil
 import zipfile
@@ -29,7 +27,7 @@ import ctypes
 
 import Notifier.NotificationLoader
 from emerge_config import *
-
+from emerge_config import etcPortageDir
 
 
 if os.name == 'nt':
@@ -138,9 +136,9 @@ class LockFile(object):
 ### fetch functions
 
 #FIXME: get this from somewhere else:
-WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "bin", "wget.exe" )
+WGetExecutable = os.path.join( emergeRoot(), "bin", "wget.exe" )
 if not os.path.exists( WGetExecutable ):
-    WGetExecutable = os.path.join( os.getenv( "KDEROOT" ), "dev-utils", "bin", "wget.exe" )
+    WGetExecutable = os.path.join( emergeRoot(), "dev-utils", "bin", "wget.exe" )
 
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
@@ -693,9 +691,6 @@ def getFileListFromDirectory( imagedir ):
             ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
     return ret
 
-def etcDir():
-    """the etc directory for portage"""
-    return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
 
 def unmergeFileList(rootdir, fileList, forced=False):
     """ delete files in the fileList if has matches or forced is True """
@@ -899,7 +894,7 @@ def splitVCSUrl( Url ):
 def replaceVCSUrl( Url ):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(etcDir(), "..", "emergehosts.conf" )
+    configfile = os.path.join(etcPortageDir(), "..", "emergehosts.conf" )
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
@@ -1185,7 +1180,7 @@ def embedManifest(executable, manifest):
     debug("embedding ressource manifest %s into %s" % \
             (manifest, executable), 2)
     mtExe = None
-    mtExe = os.path.join(os.getenv("KDEROOT"), "dev-utils", "bin", "mt.exe")
+    mtExe = os.path.join(emergeRoot(), "dev-utils", "bin", "mt.exe")
 
     if(not os.path.isfile(mtExe)):
         # If there is no free manifest tool installed on the system

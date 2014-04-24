@@ -25,7 +25,7 @@ class Package( AutoToolsPackageBase):
         if not self.subinfo.options.features.msys2:
             utils.die("Glib requries the msys2 feature activated to compile")
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=yes --enable-shared=no --enable-tests=no DBUS_LIBS='%s/lib/libdbus-1.dll.a' DBUS_CFLAGS=' '" % utils.toMSysPath(os.getenv("KDEROOT"))
+        self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=yes --enable-shared=no --enable-tests=no DBUS_LIBS='%s/lib/libdbus-1.dll.a' DBUS_CFLAGS=' '" % utils.toMSysPath(emergeRoot())
 
 
 

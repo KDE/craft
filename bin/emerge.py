@@ -36,13 +36,10 @@ def _exit( code ):
 def doExec( category, package, action ):
     utils.startTimer( "%s for %s" % ( action, package), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
-    fileName = portage.getFilename( category, package )
-
-    utils.debug( "file: " + fileName, 1 )
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
-        pack = portage.loadPackage( category, package )
+        pack = portage.getPackageInstance( category, package )
         pack.execute( action )
     except OSError:
         utils.stopTimer( "%s for %s" % ( action, package) )
@@ -387,8 +384,10 @@ def main( ):
     utils.debug( "buildTests: %s" % emergeSettings.args.buildTests )
     utils.debug( "verbose: %d" % utils.verbose( ), 1 )
     utils.debug( "trace: %s" % emergeSettings.args.trace, 1 )
-    utils.debug( "KDEROOT: %s\n" % emergeSettings.get( "Paths", "KDEROOT" ), 1 )
+    utils.debug( "KDEROOT: %s\n" % emergeRoot(), 1 )
     utils.debug_line( )
+    #evenso emerge doesnt depend on the env var KDEROOT anymore there are some scripts that still need it
+    utils.putenv("KDEROOT", emergeRoot())
 
 
 

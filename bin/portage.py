@@ -14,23 +14,11 @@ import utils
 
 
 internalCategory = 'internal'
-ROOTDIR = os.getenv( "KDEROOT" )
 
 packageDict = OrderedDict()
 dependencyPackageDict = OrderedDict()
 
-def __import__( module ): # pylint: disable=W0622
-    utils.debug( "module to import: %s" % module, 2 )
-    if not os.path.isfile( module ):
-        try:
-            return builtins.__import__( module )
-        except ImportError as e:
-            utils.warning( 'import failed for module %s: %s' % (module, str(e)) )
-            return None
-    else:
-        modulename = os.path.basename( module ).replace('.py', '').replace('.', '_')
-        loader = importlib.machinery.SourceFileLoader(modulename, module)
-        return loader.load_module(modulename)
+
 
 class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
@@ -118,7 +106,7 @@ def rootDirectories():
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
-        rootDirs = [ os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" ) ]
+        rootDirs = [ os.path.join( emergeRoot(), "emerge", "portage" ) ]
     return rootDirs
 
 def rootDir():
@@ -134,7 +122,7 @@ def rootDirForCategory( category ):
         if category and os.path.exists( os.path.join( i, category ) ):
             return i
     # as a fall back return the default even if it might be wrong
-    return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
+    return os.path.join( emergeRoot(), "emerge", "portage" )
 
 def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
@@ -150,7 +138,7 @@ def rootDirForPackage( category, package ):
                 if os.path.exists( os.path.join( i, category, package ) ):
                     return i
     # as a fall back return the default even if it might be wrong
-    return os.path.join( os.getenv( "KDEROOT" ), "emerge", "portage" )
+    return os.path.join( emergeRoot(), "emerge", "portage" )
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
@@ -194,6 +182,7 @@ class Portage(object):
         self.categories = {}
         self.subpackages = {}
         self.portages = {}
+        self._CURRENT_MODULE = ()#todo refactor package constructor
         self.ignores = set()
         if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
             for p in emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"):
@@ -289,10 +278,9 @@ class Portage(object):
         """ check if that package is of VirtualPackageBase """
         if not self.isPackage( category, package ):
             return False
-        mod = __import__( getFilename( category, package ) )
-        if hasattr( mod, 'Package' ):
-            for baseClassObject in mod.Package.__bases__:
-                if baseClassObject.__name__ == 'VirtualPackageBase': return True
+        mod = getPackageInstance(category,package)
+        for baseClassObject in mod.Package.__bases__:
+            if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
 
     def getDontBuildPackagesList( self, path ):
@@ -320,13 +308,33 @@ class Portage(object):
 
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
-        fileName = getFilename( category, package )
-        module = __import__( fileName )
-        p = module.Package()
-        if buildtarget == None:
-            buildtarget = findPossibleTargets( category, package )
-        p.setup( fileName, category, package, buildtarget )
-        return p
+        fileName =  getFilename( category, package )
+        pack = None
+        mod = None
+        if fileName.endswith(".py") and os.path.isfile(fileName):
+            if not fileName in packageDict:
+                utils.debug( "module to import: %s" % fileName, 2 )
+                if not os.path.isfile( fileName ):
+                    try:
+                        mod = builtins.__import__( fileName )
+                    except ImportError as e:
+                        utils.warning( 'import failed for module %s: %s' % (fileName, str(e)) )
+                        mod =  None
+                else:
+                    modulename = os.path.basename( fileName ).replace('.py', '').replace('.', '_')
+                    loader = importlib.machinery.SourceFileLoader(modulename, fileName)
+                    mod = loader.load_module(modulename)
+                if not mod is None:
+                    self._CURRENT_MODULE  = ( fileName, category, package )
+                    pack = mod.Package( )
+                    packageDict[ fileName ] = pack
+                    pack.version = self.getDefaultTarget( category, package )
+                    if buildtarget == None:
+                        buildtarget = findPossibleTargets( category, package )
+                    pack.setBuildTarget(buildtarget)
+            else:
+                pack = packageDict[ fileName ]
+            return pack
 
     def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
@@ -349,7 +357,7 @@ class Portage(object):
         utils.debug( "getMetaData: importing file %s" % getFilename( category, package ), 1 )
         if not ( category and package ):
             return dict()
-        info = _getSubinfo( getFilename( category, package ) )
+        info = _getSubinfo(  category, package  )
         if not info is None:
             tmpdict = dict()
             if not info.categoryName == "":
@@ -462,7 +470,7 @@ def getSubPackage( category, package ):
 def findPossibleTargets( category, package, buildtype = '' ): # pylint: disable=W0613
     """ this function tries to guess which target got used by looking at the different image directories """
     target = PortageInstance.getDefaultTarget( category, package )
-    buildroot = os.path.join( ROOTDIR, "build", category,  package )
+    buildroot = os.path.join( emergeRoot(), "build", category,  package )
 
     if not os.path.exists( buildroot ):
         return target
@@ -571,20 +579,8 @@ def printTargets( category, package ):
             print(' ', end=' ')
         print(i)
 
-def loadPackage( category, package ):#TODO rename
-    identFileName =  getFilename( category, package )
-    if identFileName.endswith(".py") and os.path.isfile(identFileName):
-        if not identFileName in packageDict:
-            mod = __import__( identFileName )
-            pack = mod.Package( )
-            packageDict[ identFileName ] = pack
-            pack.setup( identFileName, category, package )
-        else:
-            pack = packageDict[ identFileName ]
-    return pack
-
 def _getSubinfo( category, package  ):
-    pack = loadPackage( category, package  )
+    pack = getPackageInstance( category, package  )
     if pack:
         return pack.subinfo
     return None

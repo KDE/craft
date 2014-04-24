@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import threading
+from emerge_config import etcPortageDir
 
 import utils
 import portage
@@ -111,11 +112,11 @@ class InstallDB(object):
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
 
-    def __init__( self, filename = os.path.join( utils.etcDir(), 'install.db' ) ):
+    def __init__( self, filename = os.path.join( etcPortageDir(), 'install.db' ) ):
         self.dbfilename = filename
         if not os.path.exists( filename ):
-            if not os.path.exists( utils.etcDir() ):
-                os.makedirs( utils.etcDir() )
+            if not os.path.exists( etcPortageDir() ):
+                os.makedirs( etcPortageDir() )
             utils.debug( "database does not exist yet: creating database & importing old data" )
             self._prepareDatabase()
         else:
@@ -287,11 +288,11 @@ def main():
     """ Testing the class"""
 
     # add two databases
-    tempdbpath1 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp1.db" )
-    tempdbpath2 = os.path.join( os.getenv("KDEROOT"), "tmp", "temp2.db" )
+    tempdbpath1 = os.path.join( emergeRoot(), "tmp", "temp1.db" )
+    tempdbpath2 = os.path.join( emergeRoot(), "tmp", "temp2.db" )
 
-    if not os.path.exists( os.path.join( os.getenv( "KDEROOT" ), "tmp" ) ):
-        os.makedirs( os.path.join( os.getenv( "KDEROOT" ), "tmp" ) )
+    if not os.path.exists( os.path.join( emergeRoot(), "tmp" ) ):
+        os.makedirs( os.path.join( emergeRoot(), "tmp" ) )
 
     if os.path.exists( tempdbpath1 ):
         os.remove( tempdbpath1 )

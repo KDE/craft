@@ -36,7 +36,7 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
-        msysDir = os.path.join(os.getenv("KDEROOT"),"msys")
+        msysDir = os.path.join(emergeRoot(),"msys")
         self.shell.execute(".","echo Firstrun")#start and restart msys before first use
         self.shell.execute(".","pacman -Syu --noconfirm")        
         utils.system("autorebase.bat", cwd = msysDir)

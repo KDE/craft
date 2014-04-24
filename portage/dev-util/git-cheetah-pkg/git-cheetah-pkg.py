@@ -22,7 +22,7 @@ class Package( AutoToolsPackageBase):
         self.subinfo.options.package.withCompiler = False
         self.buildInSource = True
         self.makeProgram = "make"
-        utils.prependPath(os.path.join( os.getenv("KDEROOT") , "dev-utils" , "git" , "bin" ))
+        utils.prependPath(os.path.join( emergeRoot() , "dev-utils" , "git" , "bin" ))
         utils.putenv("CC","gcc.exe")
         
     def configure(self):

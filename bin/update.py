@@ -11,7 +11,7 @@ import os
 import utils
 
 
-rootdir = os.getenv( "KDEROOT" )
+rootdir = emergeRoot()
 
 newVersion = '20090809'
 

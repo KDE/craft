@@ -1,5 +1,6 @@
 import info
 import kdedefaults as kd
+from emerge_config import *
 
 class subinfo(info.infoclass):
 
