@@ -12,41 +12,9 @@
 cls
 
 
-$dp0=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
+$EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
-
-function subst([string] $varname, [string] $path, [string] $drive)
-{
-    while($path.Contains("$"))
-    {
-        foreach($key in $settings["Paths"].keys)
-        {
-            $path = $path.Replace("`$`{"+$key+"`}",$settings["Paths"][$key])
-        }
-    }
-    if(!(test-path -path $path))
-    {
-        mkdir $path
-    }
-
-    if( $settings["ShortPath"]["EMERGE_USE_SHORT_PATH"] -eq $true )
-    {
-        [Environment]::SetEnvironmentVariable("EMERGE_USE_SHORT_PATH",$settings["ShortPath"]["EMERGE_USE_SHORT_PATH"],"Process")
-        if(!(test-path -path $drive))
-        {
-            subst.exe $drive $path
-        }
-        $path=$drive
-    }
-    if(!$path.endswith("\"))
-    {
-        $path += "\"
-    }
-    [Environment]::SetEnvironmentVariable($varname, $path, "Process")
-    
-}
-
 
 function readINI([string] $fileName)
 {
@@ -65,28 +33,64 @@ function readINI([string] $fileName)
   $ini
 }
 
+
+
+$env:EMERGE_BUILDTYPE="RelWithDebInfo"
+
+foreach($arg in $args)
+{
+if($arg.ToString().ToLower() -is  @("debug","release","relwithdebinfo"))
+{
+    $env:EMERGE_BUILDTYPE=$arg
+}
+else
+{
+    $APPLICATION=$arg
+}
+
+}
+
+
+if(test-path -path $EMERGE_ROOT\..\etc\kdesettings.ini)
+{
+    $settings = readINI $EMERGE_ROOT\..\etc\kdesettings.ini
+}
+else
+{
+    Write-Error("$EMERGE_ROOT\..\etc\kdesettings.ini Does not exist")
+}
+
 function prependPATH([string] $path)
 {
     $env:PATH="$path;$env:PATH"
 }
 
+#todo:get pythonpath from registry
+prependPATH $settings["Paths"]["PYTHONPATH"]
+
+$KDEROOT = (python "$EMERGE_ROOT\bin\subst.py") | Out-String
+$KDEROOT = $KDEROOT.TrimEnd()
+$EMERGE_ROOT = "$KDEROOT\emerge"
+
+
+
 function path-mingw()
 {
-    if(test-path -path "$env:KDEROOT\mingw\bin")
+    if(test-path -path "$KDEROOT\mingw\bin")
     {
-        prependPATH "$env:KDEROOT\mingw\bin"
+        prependPATH "$KDEROOT\mingw\bin"
     }
     else 
     {
-        if(test-path -path "$env:KDEROOT\mingw64\bin")
+        if(test-path -path "$KDEROOT\mingw64\bin")
         {
-            prependPATH "$env:KDEROOT\mingw64\bin"
+            prependPATH "$KDEROOT\mingw64\bin"
         }
         else
         { 
             #dont know which version
-            prependPATH "$env:KDEROOT\mingw64\bin"
-            prependPATH "$env:KDEROOT\mingw\bin"
+            prependPATH "$KDEROOT\mingw64\bin"
+            prependPATH "$KDEROOT\mingw\bin"
         }
     }
 }
@@ -136,34 +140,8 @@ function setupCCACHE()
 {
     if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true -and $env:CCACHE_DIR -eq $null)
     {
-        $env:CCACHE_DIR="$env:KDEROOT\build\CCACHE"
+        $env:CCACHE_DIR="$KDEROOT\build\CCACHE"
     }
-}
-
-
-$env:EMERGE_BUILDTYPE="RelWithDebInfo"
-
-foreach($arg in $args)
-{
-if($arg.ToString().ToLower() -is  @("debug","release","relwithdebinfo"))
-{
-    $env:EMERGE_BUILDTYPE=$arg
-}
-else
-{
-    $APPLICATION=$arg
-}
-
-}
-
-
-if(test-path -path $dp0\..\etc\kdesettings.ini)
-{
-    $settings = readINI $dp0\..\etc\kdesettings.ini
-}
-else
-{
-    Write-Error("$dp0\..\etc\kdesettings.ini Does not exist")
 }
 
 
@@ -172,13 +150,6 @@ foreach($key in $settings["General"].keys)
 {
     [Environment]::SetEnvironmentVariable($key,$settings["General"][$key], "Process")
 }
-
-
-subst "KDEROOT" $settings["Paths"]["KDEROOT"] $settings["ShortPath"]["EMERGE_ROOT_DRIVE"]
-subst "DOWNLOADDIR" $settings["Paths"]["DOWNLOADDIR"] $settings["ShortPath"]["EMERGE_DOWNLOAD_DRIVE"]
-subst "KDESVNDIR" $settings["Paths"]["KDESVNDIR"] $settings["ShortPath"]["EMERGE_SVN_DRIVE"]
-subst "KDEGITDIR" $settings["Paths"]["KDEGITDIR"] $settings["ShortPath"]["EMERGE_GIT_DRIVE"]
-
 
 
 if ($settings["General"]["KDECOMPILER"] -eq "mingw4")
@@ -195,36 +166,46 @@ else
 }
 
 
-$env:QT_PLUGIN_PATH="$env:KDEROOT\plugins;$env:KDEROOT\lib\kde4\plugins"
-$env:XDG_DATA_DIRS="$env:KDEROOT\share"
+$env:QT_PLUGIN_PATH="${KDEROOT}\plugins;$KDEROOT\lib\kde4\plugins"
+$env:XDG_DATA_DIRS="$KDEROOT\share"
 
 # for dev-utils
-prependPATH  "$env:KDEROOT\dev-utils\bin"
+prependPATH  "$KDEROOT\dev-utils\bin"
 
-#todo:get pythonpath from registry
-prependPATH $settings["Paths"]["PYTHONPATH"]
 
 # make sure that kderoot/bin is the last in path to prevent issues wer libs from devutils are used
-prependPATH "$env:KDEROOT\bin"
+prependPATH "$KDEROOT\bin"
 
 $env:HOME=$env:USERPROFILE
 $env:SVN_SSH="plink"
 $env:GIT_SSH="plink"
 
 
-Write-Host("KDEROOT     : ${env:KDEROOT}")
-Write-Host("KDECOMPILER : ${env:KDECOMPILER}")
-Write-Host("KDESVNDIR   : ${env:KDESVNDIR}")
-Write-Host("KDEGITDIR   : ${env:KDEGITDIR}")
-Write-Host("PYTHONPATH  : " + $settings["Paths"]["PYTHONPATH"])
-Write-Host("DOWNLOADDIR : ${env:DOWNLOADDIR}")
+Write-Host("KDEROOT     : $KDEROOT")
+Write-Host("KDECOMPILER : " + $settings["General"]["KDECOMPILER"])
+if ($settings["ShortPath"]["EMERGE_USE_SHORT_PATH"] -eq $False)
+{
+    Write-Host("KDESVNDIR   : " + $settings["Paths"]["KDESVNDIR"])
+    Write-Host("KDEGITDIR   : " + $settings["Paths"]["KDEGITDIR"])
+    Write-Host("DOWNLOADDIR : " + $settings["Paths"]["DOWNLOADDIR"])
+}
+else
+{
+    Write-Host("KDESVNDIR   : " + $settings["ShortPath"]["EMERGE_SVN_DRIVE"])
+    Write-Host("KDEGITDIR   : " + $settings["ShortPath"]["EMERGE_GIT_DRIVE"])
+    Write-Host("DOWNLOADDIR : " + $settings["ShortPath"]["EMERGE_DOWNLOAD_DRIVE"])
+}
 
+
+Write-Host("PYTHONPATH  : " + $settings["Paths"]["PYTHONPATH"])
+
+cd "$KDEROOT"
 }
 
 
 function emerge()
 {
-    python "$env:KDEROOT\emerge\bin\emerge.py" $args
+    python "$EMERGE_ROOT\bin\emerge.py" $args
 }
 
 
@@ -233,7 +214,7 @@ $env:TERM=""
 
 if($args.Length -eq 2 -and $args[0] -eq "--package")
 {
-    python "$env:KDEROOT\emerge\server\package.py" $args[1]
+    python "$EMERGE_ROOT\emerge\server\package.py" $args[1]
 }
 else
 {
@@ -241,8 +222,5 @@ else
     {
         invoke-expression -command "$args"
     }
-    else
-    {
-        cd $env:KDEROOT
-    }
+
 }

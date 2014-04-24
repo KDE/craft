@@ -7,8 +7,11 @@ import os
 import re
 import sys
 
+emergeSettings = None
 
 def emergeRoot():
+    if not emergeSettings is None and emergeSettings.get("ShortPath","EMERGE_USE_SHORT_PATH", "False") == "True":
+        return emergeSettings.get("ShortPath","EMERGE_ROOT_DRIVE")
     return os.path.abspath(os.path.join( os.path.dirname( sys.argv[0]) , "..", ".."))
 
 
@@ -61,5 +64,6 @@ class EmergeConfig( object ):
 
 
 emergeSettings = EmergeConfig( )
+
 
 
