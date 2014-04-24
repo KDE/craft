@@ -30,12 +30,12 @@ class Package(PackageBase,BinaryBuildSystem):
         self.subinfo.options.install.installPath = "bin"
         PackageBase.__init__(self)
         BinaryBuildSystem.__init__(self)
-        self.localwget = os.path.join(self.packageDir(),'wget.exe')
 
     def fetch(self):
         return True
 
     def unpack(self):
+        self.localwget = os.path.join(self.packageDir(),'wget.exe')
         dest = os.path.join(self.installDir(),'wget.exe')
         if not os.path.exists(self.installDir()):
             os.makedirs(self.installDir())

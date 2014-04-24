@@ -338,7 +338,7 @@ class Portage(object):
         if ("PortageVersions", pname) in emergeSettings:
             return emergeSettings.get("PortageVersions", pname)
         else:
-            info = _getSubinfo( getFilename( category, package ) )
+            info = _getSubinfo( category, package )
             if not info is None:
                 return info.defaultTarget
             else:
@@ -371,7 +371,7 @@ class Portage(object):
         utils.debug( "getAllTargets: importing file %s" % getFilename( category, package ), 1 )
         if not ( category and package ):
             return dict()
-        info = _getSubinfo( getFilename( category, package ) )
+        info = _getSubinfo( category, package )
         if not info is None:
             tagDict = info.svnTargets
             tagDict.update( info.targets )
@@ -384,7 +384,7 @@ class Portage(object):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
         utils.debug( "getAllVCSTargets: importing file %s" % getFilename( category, package ), 1 )
-        info = _getSubinfo( getFilename( category, package ) )
+        info = _getSubinfo(  category, package )
         if not info is None:
             tagDict = info.svnTargets
             for key in tagDict:
@@ -571,27 +571,23 @@ def printTargets( category, package ):
             print(' ', end=' ')
         print(i)
 
-def loadPackage( identFileName ):#TODO rename
-    mod = None
+def loadPackage( category, package ):#TODO rename
+    identFileName =  getFilename( category, package )
     if identFileName.endswith(".py") and os.path.isfile(identFileName):
         if not identFileName in packageDict:
             mod = __import__( identFileName )
-            packageDict[ identFileName ] = mod
+            pack = mod.Package( )
+            packageDict[ identFileName ] = pack
+            pack.setup( identFileName, category, package )
         else:
-            mod = packageDict[ identFileName ]
-    return mod
+            pack = packageDict[ identFileName ]
+    return pack
 
-def _getSubinfo( identFileName ):
-    subinfo = None
-    mod = loadPackage( identFileName )
-    if mod:
-        if utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
-            _package = mod.Package()
-            utils.die("Need to fix package setup")
-            subinfo = _package.subinfo
-        elif hasattr( mod, 'subinfo' ):
-            subinfo = mod.subinfo()
-    return subinfo
+def _getSubinfo( category, package  ):
+    pack = loadPackage( category, package  )
+    if pack:
+        return pack.subinfo
+    return None
 
 
 def readChildren( category, package ):
@@ -608,7 +604,7 @@ def readChildren( category, package ):
         utils.debug( "solving package %s/%s/%s %s" % ( category, subpackage, package, getFilename( category, package ) ), 2 )
     else:
         utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 2 )
-    subinfo = _getSubinfo( identFileName )
+    subinfo = _getSubinfo( category, package  )
     if subinfo is None:
         return OrderedDict(), OrderedDict()
 
@@ -625,7 +621,7 @@ def readChildren( category, package ):
 
 def isPackageUpdateable( category, package ):
     utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package ), 2 )
-    subinfo = _getSubinfo( getFilename( category, package ) )
+    subinfo = _getSubinfo( category, package )
     if not subinfo is None:
         if len( subinfo.svnTargets ) == 1 and not subinfo.svnTargets[ list(subinfo.svnTargets.keys())[0] ]:
             return False

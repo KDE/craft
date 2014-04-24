@@ -42,9 +42,7 @@ def doExec( category, package, action ):
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
-        mod = portage.loadPackage( fileName )
-        pack = mod.Package( )
-        pack.setup( fileName, category, package )
+        pack = portage.loadPackage( category, package )
         pack.execute( action )
     except OSError:
         utils.stopTimer( "%s for %s" % ( action, package) )
