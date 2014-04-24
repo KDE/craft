@@ -24,12 +24,12 @@ class SvnSource (VersionSystemSourceBase):
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join( emergeSettings.get("General", "KDESVNDIR"), url )
+                sourcedir = os.path.join( emergeSettings.get("Paths", "KDESVNDIR"), url )
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
                 _, path = self.__splitPath(url)
-                if path and utils.envAsBool("EMERGE_SVN_STDLAYOUT"):
+                if path and utils.varAsBool(emergeSettings.get("General", "EMERGE_SVN_STDLAYOUT", "False")):
                     sourcedir = os.path.join( sourcedir, path )
         else:
             utils.die("svnTarget property not set for this target")
@@ -193,7 +193,7 @@ class SvnSource (VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if utils.verbose() < 2 and not utils.envAsBool("KDESVNVERBOSE"):
+        if utils.verbose() < 2 and not utils.varAsBool(emergeSettings.get("General", "KDESVNVERBOSE","False")):
             option += " --quiet"
 
         self.setProxy()

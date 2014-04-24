@@ -267,7 +267,7 @@ def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
     command = "%s --no-check-certificate -c -t 10" % compath
-    if os.environ.get("EMERGE_NO_PASSIVE_FTP"):
+    if varAsBool( emergeSettings.get("General", "EMERGE_NO_PASSIVE_FTP", "False")):
         command += " --no-passive-ftp "
     if(filename ==''):
         command += "  -P %s" % destdir
@@ -900,7 +900,7 @@ def replaceVCSUrl( Url ):
     # FIXME handle svn/git usernames and settings with a distinct naming
     #todo WTF
     if ( ("General", "KDESVNUSERNAME") in emergeSettings and
-         emergeSettings.get("General", "KDESVNUSERNAME") != "username" ) :
+     emergeSettings.get("General", "KDESVNUSERNAME") != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
         config = configparser.ConfigParser()

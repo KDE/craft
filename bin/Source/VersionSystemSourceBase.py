@@ -115,7 +115,7 @@ class VersionSystemSourceBase (SourceBase):
     def checkoutDir( self, dummyIndex=0 ):
         utils.trace( "VersionSystemSourceBase checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
-            sourcedir = os.path.join(  emergeSettings.get("General",  "KDEGITDIR" ), self.package )
+            sourcedir = os.path.join(  emergeSettings.get("Paths",  "KDEGITDIR" ), self.package )
         else:
             utils.die("svnTarget property not set for this target")
 
