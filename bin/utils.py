@@ -1255,7 +1255,7 @@ def stopAllTimer():
 _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
-    if not envAsBool("EMERGE_USE_SHORT_PATH"):
+    if not varAsBool(emergeSettings.get("General", "EMERGE_USE_SHORT_PATH")):
         return path
     global _SUBST # pylint: disable=W0603
     drive , tail = os.path.splitdrive(path)

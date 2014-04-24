@@ -24,10 +24,7 @@ class SvnSource (VersionSystemSourceBase):
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                if os.getenv("KDESVNDIR") == None:
-                    sourcedir = os.path.join( self.downloadDir(), "svn-src", "kde", url )
-                else:
-                    sourcedir = os.path.join( os.getenv("KDESVNDIR"), url )
+                sourcedir = os.path.join( emergeSettings.get("General", "KDESVNDIR"), url )
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
