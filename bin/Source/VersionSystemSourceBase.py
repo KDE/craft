@@ -50,10 +50,8 @@ class VersionSystemSourceBase (SourceBase):
         """ this function return the base url to the KDE repository """
         utils.trace( "VersionSystemSourceBase __repositoryBaseUrl", 2 )
         # @todo move to SvnSource
-        if ( os.getenv("KDESVNSERVER") == None ):
-            server = "svn://anonsvn.kde.org"
-        else:
-            server = os.getenv("KDESVNSERVER")
+        server = emergeSettings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
+
 
         return server + '/home/kde/'
 

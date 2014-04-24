@@ -898,8 +898,9 @@ def replaceVCSUrl( Url ):
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
-    if ( os.getenv( "KDESVNUSERNAME" ) and
-         os.getenv( "KDESVNUSERNAME" ) != "username" ) :
+    #todo WTF
+    if ( ("General", "KDESVNUSERNAME") in emergeSettings and
+         emergeSettings.get("General", "KDESVNUSERNAME") != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
         config = configparser.ConfigParser()
