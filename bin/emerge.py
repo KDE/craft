@@ -74,8 +74,6 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
             found = True
             success = success and doExec( category, package, version, action )
     elif ( buildAction == "all" or buildAction == "full-package" ):
-        if installdb.isInstalled( category, package ):
-            success = success and doExec( category, package, installdb.findInstalled(category, package), "unmerge" )
         success = success and doExec( category, package, version, "fetch" )
         success = success and doExec( category, package, version, "unpack" )
         success = success and doExec( category, package, version, "compile" )

@@ -54,7 +54,7 @@ class Package(BinaryPackageBase):
         os.makedirs (os.path.join (dstdir, "bin"))
 
         # place everything in dstdir/lib/R (similar to debian packaging)
-        installdb.remInstalled( self.category, self.package, "stablelatest" )
+        installdb.remInstalled( self.category, self.package )
         utils.copyDir (srcdir, os.path.join (dstdir, "lib", "R"))
 
         # create a shortcut in dstdir/bin

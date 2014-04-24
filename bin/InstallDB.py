@@ -217,12 +217,12 @@ class InstallDB(object):
         return values
 
     @blocking
-    def getPackageIds( self, category=None, package=None, version=None, prefix=None ):
+    def getPackageIds( self, category = None, package = None, prefix = None ):
         """ returns a list of the ids of the packages, which can be restricted by adding
             package, category and prefix.
         """
         cmd = '''SELECT packageId FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
@@ -248,16 +248,16 @@ class InstallDB(object):
         return InstallPackage( cursor, self.getLastId() )
 
     @blocking
-    def remInstalled( self, category, package, version, prefix=None ):
+    def remInstalled( self, category, package, prefix = None ):
         """ removes an installed package """
         cmd = '''DELETE FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
         utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
         cursor = self.connection.cursor()
-        return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, version, prefix ) ]
+        return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
 
     @blocking
     def _prepareDatabase( self ):
@@ -305,7 +305,7 @@ def main():
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
-        packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0' )
+        packageList = db.remInstalled( 'win32libs', 'dbus-src' )
         # really commit uninstall
         for package in packageList:
             package.uninstall()
@@ -335,7 +335,7 @@ def main():
     utils.new_line()
     utils.debug( 'now trying to remove package & revert it again later' )
     # remove the package again
-    packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0' )
+    packageList = db.remInstalled( 'win32libs', 'dbus-src' )
     for pac in packageList:
         for line in pac.getFiles(): # pylint: disable=W0612
             # we could remove the file here
@@ -366,7 +366,7 @@ def main():
 
     utils.new_line()
     utils.debug( 'now really remove the package' )
-    packageList = db.remInstalled( 'win32libs', 'dbus-src', '1.4.0')
+    packageList = db.remInstalled( 'win32libs', 'dbus-src' )
     for pac in packageList:
         utils.debug( 'removing %s files' % len( pac.getFiles() ) )
         pac.uninstall()
