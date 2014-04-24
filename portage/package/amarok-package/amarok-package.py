@@ -30,7 +30,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.scriptname = os.path.join( os.getenv("KDEGITDIR"), "amarok", "release_scripts", "windows", "amarok.nsi")
+        self.scriptname = os.path.join( emergeSettings.get("General",  "KDEGITDIR" ), "amarok", "release_scripts", "windows", "amarok.nsi")
         self.defines[ "kde-version" ] = "4.11.0"
 
 if __name__ == '__main__':
