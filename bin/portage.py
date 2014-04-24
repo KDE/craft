@@ -574,7 +574,7 @@ def printTargets( category, package ):
             print(' ', end=' ')
         print(i)
 
-def _loadPackage( identFileName ):
+def loadPackage( identFileName ):#TODO rename
     mod = None
     if identFileName.endswith(".py") and os.path.isfile(identFileName):
         if not identFileName in packageDict:
@@ -586,10 +586,11 @@ def _loadPackage( identFileName ):
 
 def _getSubinfo( identFileName ):
     subinfo = None
-    mod = _loadPackage( identFileName )
+    mod = loadPackage( identFileName )
     if mod:
         if utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES') and hasattr( mod, 'Package' ):
             _package = mod.Package()
+            utils.die("Need to fix package setup")
             subinfo = _package.subinfo
         elif hasattr( mod, 'subinfo' ):
             subinfo = mod.subinfo()

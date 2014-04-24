@@ -42,7 +42,7 @@ def doExec( category, package, version, action ):
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
-        mod = portage.__import__( fileName )
+        mod = portage.loadPackage( fileName )
         pack = mod.Package( )
         pack.setup( fileName, category, package, version )
         pack.execute( action )
@@ -65,7 +65,7 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
     success = True
 
     if continueFlag:
-        actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'manifest', 'qmerge' ]
+        actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'qmerge' ]
 
         found = None
         for action in actionList:
@@ -74,7 +74,9 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
             found = True
             success = success and doExec( category, package, version, action )
     elif ( buildAction == "all" or buildAction == "full-package" ):
-        success = doExec( category, package, version, "fetch" )
+        if installdb.isInstalled( category, package ):
+            success = success and doExec( category, package, installdb.findInstalled(category, package), "unmerge" )
+        success = success and doExec( category, package, version, "fetch" )
         success = success and doExec( category, package, version, "unpack" )
         success = success and doExec( category, package, version, "compile" )
         success = success and doExec( category, package, version, "cleanimage" )
@@ -231,7 +233,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
             isLastPackage = [ mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
             if emergeSettings.args.outDateVCS or (emergeSettings.args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
-            isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
+            isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion )
             if emergeSettings.args.list_file and emergeSettings.args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList
             if ( isInstalled and not ignoreInstalled ) and not (
