@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-        if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if not utils.varAsBool(emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False")):
             self.buildDependencies['gnuwin32/wget']       = 'default'
             self.buildDependencies['dev-util/7zip']       = 'default'
             self.buildDependencies['gnuwin32/patch']      = 'default'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         # for creating combined packages
         self.buildDependencies['dev-util/pexports']   = 'default'
 
-        if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if not utils.varAsBool(emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False")):
             if os.getenv( "SVN_SSH" ) == "plink" or \
                     os.getenv( "GIT_SSH" ) == "plink":
                 self.buildDependencies['dev-util/putty']      = 'default'
@@ -31,11 +31,11 @@ class subinfo(info.infoclass):
             if compiler.isMinGW():
                 if compiler.isMinGW_WXX():
                     self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
+            if emergeSettings.get("General","EMERGE_MAKE_PROGRAM" ,"" ) != "":
                 self.buildDependencies['dev-util/jom'] = 'default'
-            if utils.envAsBool("EMERGE_USE_NINJA"):
+            if utils.varAsBool( emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
                 self.buildDependencies['dev-util/ninja'] = 'default'
-            if utils.envAsBool("EMERGE_USE_CCACHE"):
+            if utils.varAsBool( emergeSettings.get("General","EMERGE_USE_CCACHE","False")):
                 self.buildDependencies['win32libs/ccache'] = 'default'
 
 

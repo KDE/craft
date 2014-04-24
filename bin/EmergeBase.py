@@ -45,7 +45,7 @@ class EmergeBase(object):
 
         # if implicit build time dependency is wanted, depend on internal packages
         # for this class and all of its ancestor classes
-        if utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
+        if utils.varAsBool( emergeSettings.get("General", "EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES", "False")):
             for cls in type(self).mro():
                 className = cls.__name__
                 packageName = 'internal/%s' % className
@@ -64,14 +64,14 @@ class EmergeBase(object):
 
         ## specifies if a build type related root directory should be used
         self.useBuildTypeRelatedMergeRoot = False
-        if utils.envAsBool("EMERGE_MERGE_ROOT_WITH_BUILD_TYPE"):
+        if utils.varAsBool( emergeSettings.get("General","EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", "False")):
             self.useBuildTypeRelatedMergeRoot = True
 
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
         self.noFetch = emergeSettings.args.offline
         self.noCopy = emergeSettings.args.nocopy
-        self.noFast = utils.envAsBool( "EMERGE_NOFAST", default=True )
+        self.noFast = utils.varAsBool( emergeSettings.get("General", "EMERGE_NOFAST", "True") )
         self.noClean = emergeSettings.args.noclean
         self.forced = emergeSettings.args.forced
         self.buildTests = emergeSettings.args.buildTests
@@ -227,7 +227,7 @@ class EmergeBase(object):
             dstpath = os.path.join( self.rootdir, "tmp" )
 
         if withBuildType:
-            if utils.envAsBool( "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE" ):
+            if utils.varAsBool( emergeSettings.get("General", "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", "False") ):
                 dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):

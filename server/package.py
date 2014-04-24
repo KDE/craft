@@ -126,7 +126,7 @@ class package(object):
     def fetch( self ):
         """ fetches and unpacks; make sure that all packages are fetched & unpacked
             correctly before they are used """
-        if not utils.envAsBool( "EMERGE_OFFLINE" ):
+        if not utils.varAsBool( "EMERGE_OFFLINE" ):
             self.timestamp()
             self.emerge( "fetch" )
 

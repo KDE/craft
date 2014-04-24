@@ -82,7 +82,7 @@ class BuildSystemBase(EmergeBase):
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
         if maybeVerbose and utils.verbose() > 1:
-            if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
+            if self.supportsNinja and utils.varAsBool( emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

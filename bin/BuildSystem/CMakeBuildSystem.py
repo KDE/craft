@@ -22,7 +22,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
+        if self.supportsNinja and utils.varAsBool(emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
             return "Ninja"
         if compiler.isMSVC2010():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
