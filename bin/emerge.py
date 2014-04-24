@@ -36,7 +36,7 @@ def _exit( code ):
 def doExec( category, package, version, action ):
     utils.startTimer( "%s for %s" % ( action, package), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
-    fileName = portage.getFilename( category, package, version )
+    fileName = portage.getFilename( category, package )
 
     utils.debug( "file: " + fileName, 1 )
     try:
@@ -80,15 +80,13 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
         success = success and doExec( category, package, version, "cleanimage" )
         success = success and doExec( category, package, version, "install" )
         if ( buildAction == "all" ):
-            success = success and doExec( category, package, version, "manifest" )
-        if ( buildAction == "all" ):
             success = success and doExec( category, package, version, "qmerge" )
         if ( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package" )
 
     elif (buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                            "dumpdeps",
-                           "package", "manifest", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch",
+                           "package", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch",
                            "geturls",
                            "print-revision" ] and category and package and version ):
         success = True
@@ -104,7 +102,7 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
         print( "%s-%s-%s" % ( package, emergeSettings.get( "General", "KDECOMPILER" ), version ) )
         success = True
     elif ( buildAction == "print-targets" ):
-        portage.printTargets( category, package, version )
+        portage.printTargets( category, package )
         success = True
     else:
         success = utils.error( "could not understand this buildAction: %s" % buildAction )
@@ -131,7 +129,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
                 continue
             if installdb.isInstalled( mainCategory, mainPackage, mainVersion, emergeSettings.args.buildType ) \
-                    and portage.isPackageUpdateable( mainCategory, mainPackage, mainVersion ):
+                    and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
         utils.debug( "Will update packages: " + str( packageList ), 1 )
@@ -169,7 +167,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
             item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
 
         if emergeSettings.args.target in list(
-                portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ], item[ 2 ] ).keys( ) ):
+                portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ] ).keys( ) ):
             # if no target or a wrong one is defined, simply set the default target here
             item[ 3 ] = emergeSettings.args.target
 
@@ -232,8 +230,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
 
             isLastPackage = [ mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
             if emergeSettings.args.outDateVCS or (emergeSettings.args.outDatePackage and isLastPackage):
-                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage,
-                                                                              mainVersion ) != [ ]
+                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
             isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion, "" )
             if emergeSettings.args.list_file and emergeSettings.args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList

@@ -54,7 +54,7 @@ class package(object):
         else:
             self.targetString = ""
             version = portage.PortageInstance.getNewestVersion( category, self.packageName )
-            self.target = portage.PortageInstance.getDefaultTarget( self.category, self.packageName, version )
+            self.target = portage.PortageInstance.getDefaultTarget( self.category, self.packageName )
         self.patchlevel = patchlevel
         self.revision = None
         self.generalSettings = common.settings.getSection( 'General', { 'package': self.cleanPackageName,
@@ -265,8 +265,8 @@ for [cat, pac, ver, tar] in depList:
         
     if common.settings.getSectionEnabled("vcsrebuild"):
         if target == '':
-            target = portage.PortageInstance.getDefaultTarget( cat, pac, ver )
-        isInstalled = isInstalled and not target in portage.PortageInstance.getUpdatableVCSTargets( cat, pac, ver )
+            target = portage.PortageInstance.getDefaultTarget( cat, pac )
+        isInstalled = isInstalled and not target in portage.PortageInstance.getUpdatableVCSTargets( cat, pac )
     if not isInstalled:
         packagelist.append( p )
 

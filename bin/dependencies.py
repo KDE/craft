@@ -428,7 +428,7 @@ class DependenciesTree(object):
                 else:
                     _ver = rootnode.version
                 try:
-                    _tag = portage.PortageInstance.getDefaultTarget( _cat, _pac, _ver )
+                    _tag = portage.PortageInstance.getDefaultTarget( _cat, _pac )
                 except ImportError:
                     _tag = "1"
             subkey = "%s-%s-%s-%s" % (_cat, _pac, _ver, _tag)
@@ -455,7 +455,7 @@ class DependenciesTree(object):
             pass
 
         rootnode = DependenciesNode(category, package, version, tag, [])
-        rootnode.metaData = portage.PortageInstance.getMetaData(category, package, version)
+        rootnode.metaData = portage.PortageInstance.getMetaData( category, package )
 
         if package == converter.moduleMetaName: rootnode.virtual = True
         self.__buildSubNodes(rootnode, converter)
@@ -474,7 +474,7 @@ class DependenciesTree(object):
             version = pi.getNewestVersion(category, package)
 
         try:
-            tag = pi.getDefaultTarget( category, package, version )
+            tag = pi.getDefaultTarget( category, package )
         except ImportError:
             tag = "1"
 
@@ -491,7 +491,7 @@ class DependenciesTree(object):
 
         pi = portage.PortageInstance
         try:
-            tag = pi.getDefaultTarget( category, package, version )
+            tag = pi.getDefaultTarget( category, package )
         except ImportError:
             tag = "1"
 
@@ -504,11 +504,11 @@ class DependenciesTree(object):
 
         children = []
 
-        for t in portage.getDependencies(category, package, version, (dep_type=="runtime")):
+        for t in portage.getDependencies( category, package, (dep_type == "runtime") ):
             sub_node = self.buildDepNode(t[0], t[1], t[2], tag, dep_type)
             children.append(sub_node)
         node = DependenciesNode(category, package, version, tag, children)
-        node.metaData = pi.getMetaData(category, package, version)
+        node.metaData = pi.getMetaData( category, package )
 
         for child in children:
             child.parents.append(node)

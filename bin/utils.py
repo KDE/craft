@@ -693,58 +693,10 @@ def getFileListFromDirectory( imagedir ):
             ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
     return ret
 
-def isVersion( part ):
-    ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
-    if ver_regexp.match( part ):
-        return True
-    else:
-        return False
-
 def etcDir():
     """the etc directory for portage"""
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
 
-def packageSplit( fullname ):
-    """ instead of using portage_versions.catpkgsplit use this function now """
-    splitname = fullname.split('-')
-    x = 0 # fixes pylint warning about using possibly undefined loop variable.
-          # maybe this could be simplified by using only one for loop.
-    for x in range( len( splitname ) ):
-        if isVersion( splitname[ x ] ):
-            break
-    package = splitname[ 0 ]
-    version = splitname[ x ]
-    for part in splitname[ 1 : x ]:
-        package += '-' + part
-    for part in splitname[ x  + 1: ]:
-        version += '-' + part
-    return [ package, version ]
-
-def getManifestFiles(rootdir, package):
-    """return a list of manifest files for package.
-    The file names are relative to rootdir
-    and normalized (lowercase on windows).
-    Only return existing files - it sometimes
-    happens that the manifest file exists in the
-    manifest directory but not in the package
-    directory"""
-    result = []
-    manifestDir = os.path.join( rootdir, "manifest" )
-    if not os.path.exists( manifestDir ):
-        debug("could not find manifest directory %s" % manifestDir, 2)
-    else:
-        fileNames = (os.path.normcase(x) for x in os.listdir(manifestDir) if x.endswith(".mft"))
-        for fileName in fileNames:
-            if package == packageSplit( fileName.replace( ".mft", ""))[0]:
-                fullName = os.path.join(rootdir, "manifest", fileName)
-                if os.path.exists(fullName):
-                    result.append(fileName)
-                else:
-                    warning("did not find manifest file %s" % fullName)
-        if not result:
-            debug( "could not find any manifest files in %s for rootdir=%s, package=%s" % \
-                  (manifestDir, rootdir, package), 2 )
-    return result
 
 def getFileListFromManifest(rootdir, package, withManifests=False):
     """ return sorted list according to the manifest files for deletion/import.
@@ -811,99 +763,6 @@ def unmergeFileList(rootdir, fileList, forced=False):
         elif not os.path.isdir(fullPath):
             warning( "file %s does not exist" % fullPath)
 
-def unmerge(rootdir, package, forced=False):
-    """ delete files according to the manifest files.
-    returns False if it found no manifest files."""
-    debug( "unmerge called: %s" % ( package ), 2 )
-    fileList = getFileListFromManifest(rootdir, package, withManifests=True)
-    unmergeFileList(rootdir, fileList, forced)
-    return bool(fileList)
-
-def cleanManifestDir(imageDir):
-    manifestDir = os.path.join( imageDir, "manifest" )
-    if os.path.exists( manifestDir ):
-        rmtree(manifestDir)
-
-def createManifestDir(imagedir, category, package, version ):
-    """if not yet existing, create the manifest files for an imagedir like the kdewin-packager does"""
-    if not hasManifestFile( imagedir, package ):
-        createManifestFiles( imagedir, imagedir, category, package, version )
-
-def hasManifestFile( imagedir, package ):
-    if os.path.exists( os.path.join( imagedir, "manifest"  ) ):
-        for fileName in os.listdir( os.path.join( imagedir, "manifest"  ) ):
-            if fileName.startswith( package ) and fileName.endswith( "-bin.mft" ):
-                return True
-    return False
-
-def createManifestFiles( imagedir, destdir, category, package, version ):
-    """create the manifest files for an imagedir like the kdewin-packager does"""
-    debug( "createManifestFiles called: %s %s %s %s %s" % ( imagedir, destdir, category, package, version ), 1 )
-
-    myimagedir = imagedir
-    if ( not imagedir.endswith( "\\" ) ):
-        myimagedir = myimagedir + "\\"
-
-    binList = list()
-    libList = list()
-    docList = list()
-    dirType = 0
-
-    for root, _, files in os.walk( imagedir ):
-        relativeRoot = root.replace( imagedir, "" )
-        if relativeRoot.startswith("\\manifest"):
-            continue
-        if relativeRoot.startswith( "\\bin" ):
-            dirType = 1
-        elif relativeRoot.startswith( "\\lib" ):
-            dirType = 2
-        elif relativeRoot.startswith( "\\share" ):
-            dirType = 3
-        elif relativeRoot.startswith( "\\data" ):
-            dirType = 4
-        elif relativeRoot.startswith( "\\etc" ):
-            dirType = 5
-        elif relativeRoot.startswith( "\\include" ):
-            dirType = 6
-        elif relativeRoot.startswith( "\\doc" ):
-            dirType = 7
-        elif relativeRoot.startswith( "\\man" ):
-            dirType = 8
-        else:
-            dirType = 1
-
-        for fileName in files:
-            if dirType == 1 or dirType == 2:
-                binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-            if dirType == 2:
-                if fileName.endswith( ".a" ) or fileName.endswith( ".lib" ):
-                    libList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-                else:
-                    binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-            if dirType == 3 or dirType == 4 or dirType == 5:
-                binList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-            if dirType == 6:
-                libList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-            if dirType == 7 or dirType == 8:
-                docList.append( os.path.join( root, fileName ).replace( myimagedir, "" ) )
-
-    if not os.path.exists( os.path.join( destdir, "manifest" ) ):
-        os.makedirs( os.path.join( destdir, "manifest" ) )
-
-    for mList, ext, description in [
-            (binList, 'bin', 'Binaries'),
-            (libList, 'lib', 'developer files'),
-            (docList, 'doc', 'Documentation')]:
-        if mList:
-            with open( os.path.join( destdir, "manifest", "%s-%s-%s.mft" % ( package, version, ext )), 'wb' ) as f:
-                for fileName in mList:
-                    f.write( bytes( "%s %s\n" % ( fileName, digestFile( os.path.join( myimagedir, fileName ) ) ), "UTF-8" ) )
-                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.mft\n" % ( package, version, ext ) ), "UTF-8" ) )
-                f.write( bytes( os.path.join( "manifest", "%s-%s-%s.ver\n" % ( package, version, ext ) ), "UTF-8" ) )
-            with open( os.path.join( destdir, "manifest", "%s-%s-%s.ver" % ( package, version, ext )), 'wb' ) as f:
-                f.write( bytes( "%s %s %s\n%s/%s:%s:unknown" % ( package, version, description, category, package, version ), "UTF-8" ) )
-
-    return True
 
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     copyDir( imagedir, rootdir , linkOnly)

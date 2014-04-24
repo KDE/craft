@@ -45,7 +45,7 @@ class VersionInfo( object ):
 
     def setupDefaultVersions( self, filename ):
         self._defaulVersions = self.__getVersionConfig( filename )
-        self._package = utils.packageSplit( os.path.basename( filename ) )[ 0 ]
+        self._package = os.path.basename( filename )[:-3]
 
 
     def _getVersionInfo( self, key, name = None ):

@@ -158,15 +158,6 @@ class PackageBase (EmergeBase):
 
         return True
 
-    def manifest( self ):
-        """installer compatibility: make the manifest files that make up the installers
-        install database"""
-        # TODO: cleanup old manifest files without removing post (un)install scripts
-
-        utils.debug("base manifest called", 2)
-        utils.createManifestFiles( self.mergeSourceDir(), self.mergeSourceDir(), self.category, self.package, self.version )
-        return True
-
     def stripLibs( self, pkgName ):
         """strip debugging informations from shared libraries - mingw only!!! """
         return self.strip(pkgName + ".dll" ) 
@@ -234,7 +225,6 @@ class PackageBase (EmergeBase):
                      "test":           "unittest",
                      "qmerge":         "qmerge",
                      "unmerge":        "unmerge",
-                     "manifest":       "manifest",
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
                      "geturls":        "getUrls",

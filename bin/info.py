@@ -69,7 +69,7 @@ class infoclass(object):
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
-        self.package = utils.packageSplit(os.path.basename(utils.getCallerFilename()))[0]
+        self.package = os.path.basename(utils.getCallerFilename())[:-3]
 
 
         for x in RAW.splitlines():

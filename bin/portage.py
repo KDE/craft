@@ -55,10 +55,10 @@ class DependencyPackage(object):
         return self.category != other.category or self.name != other.name or self.version != other.version
 
     def ident( self ):
-        return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name, self.version ) ]
+        return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name ) ]
 
     def __readChildren( self ):
-        runtimeDependencies, buildDependencies = readChildren( self.category, self.name, self.version )
+        runtimeDependencies, buildDependencies = readChildren( self.category, self.name )
         self.runtimeChildren = self.__readDependenciesForChildren( list(runtimeDependencies.keys()) )
         self.buildChildren = self.__readDependenciesForChildren( list(buildDependencies.keys()) )
 
@@ -163,7 +163,7 @@ def getDirname( category, package ):
     else:
         return ""
 
-def getFilename( category, package, version = None ):
+def getFilename( category, package ):
     """ return absolute filename for a given category, package  """
     return os.path.join( getDirname( category, package ), "%s.py" % package  )
 
@@ -182,9 +182,9 @@ def getCategoryPackageVersion( path ):
         head, category = os.path.split( head )
 
     filename = os.path.splitext( fullFileName )[0]
-    package, version = utils.packageSplit( filename )
-    utils.debug( "category: %s, package: %s, version: %s" % ( category, package, version ), 1 )
-    return [ category, package, version ] # TODO: why a list and not a tuple?
+    package = filename[:-3]
+    utils.debug( "category: %s, package: %s" % ( category, package ), 1 )
+    return [ category, package ] # TODO: why a list and not a tuple?
 
 def VCSDirs():
     return [ '.svn', 'CVS', '.hg', '.git' ]
@@ -290,8 +290,7 @@ class Portage(object):
         """ check if that package is of VirtualPackageBase """
         if not self.isPackage( category, package ):
             return False
-        version = self.getNewestVersion( category, package )
-        mod = __import__( getFilename( category, package, version ) )
+        mod = __import__( getFilename( category, package ) )
         if hasattr( mod, 'Package' ):
             for baseClassObject in mod.Package.__bases__:
                 if baseClassObject.__name__ == 'VirtualPackageBase': return True
@@ -331,7 +330,7 @@ class Portage(object):
         p.setup(fileName, category, package, version, buildtarget)
         return p
 
-    def getDefaultTarget( self, category, package, version = None ):
+    def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
         utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package ), 1 )
         if not ( category and package ):
@@ -347,12 +346,12 @@ class Portage(object):
             else:
                 return None
 
-    def getMetaData( self, category, package, version ):
+    def getMetaData( self, category, package ):
         """ returns all targets of a specified package """
-        utils.debug( "getMetaData: importing file %s" % getFilename( category, package, version ), 1 )
-        if not ( category and package and version ):
+        utils.debug( "getMetaData: importing file %s" % getFilename( category, package ), 1 )
+        if not ( category and package ):
             return dict()
-        info = _getSubinfo( getFilename( category, package, version ) )
+        info = _getSubinfo( getFilename( category, package ) )
         if not info is None:
             tmpdict = dict()
             if not info.categoryName == "":
@@ -369,12 +368,12 @@ class Portage(object):
         else:
             return {'withCompiler': True}
 
-    def getAllTargets( self, category, package, version ):
+    def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
-        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package, version ), 1 )
-        if not ( category and package and version ):
+        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package ), 1 )
+        if not ( category and package ):
             return dict()
-        info = _getSubinfo( getFilename( category, package, version ) )
+        info = _getSubinfo( getFilename( category, package ) )
         if not info is None:
             tagDict = info.svnTargets
             tagDict.update( info.targets )
@@ -383,11 +382,11 @@ class Portage(object):
         else:
             return dict()
 
-    def getAllVCSTargets( self, category, package, version ):
+    def getAllVCSTargets( self, category, package ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        utils.debug( "getAllVCSTargets: importing file %s" % getFilename( category, package, version ), 1 )
-        info = _getSubinfo( getFilename( category, package, version ) )
+        utils.debug( "getAllVCSTargets: importing file %s" % getFilename( category, package ), 1 )
+        info = _getSubinfo( getFilename( category, package ) )
         if not info is None:
             tagDict = info.svnTargets
             for key in tagDict:
@@ -396,9 +395,9 @@ class Portage(object):
         else:
             return dict()
 
-    def getUpdatableVCSTargets( self, category, package, version ):
+    def getUpdatableVCSTargets( self, category, package ):
         """ check if the targets are tags or not """
-        targetDict = PortageInstance.getAllVCSTargets( category, package, version )
+        targetDict = PortageInstance.getAllVCSTargets( category, package )
         retList = []
         for key in targetDict:
             url = targetDict[ key ]
@@ -427,12 +426,10 @@ class Portage(object):
             utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
         installedVer = InstallDB.installdb.getInstalled(category, package )
-        avalibleVer = PortageInstance.getDefaultTarget(category,package)
+        avalibleVer = PortageInstance.getDefaultTarget( category, package )
 
         if installedVer:
             installedVer = installedVer[0][2]
-            print( "%s>%s = %s" % ( installedVer, avalibleVer, utils.parse_version(installedVer) > utils.parse_version(avalibleVer)))
-            print(utils.parse_version(installedVer) , utils.parse_version(avalibleVer))
             if utils.parse_version(installedVer) > utils.parse_version(avalibleVer):
                 return installedVer
             else:
@@ -445,7 +442,7 @@ class Portage(object):
         instList = list()
         for category in list(self.categories.keys()):
             for package in self.categories[ category ]:
-                version = PortageInstance.getDefaultTarget(category, package.package )
+                version = PortageInstance.getDefaultTarget( category, package.package )
                 if version:
                     instList.append([category, package.package, version])
         return instList
@@ -466,7 +463,7 @@ def getSubPackage( category, package ):
 
 def findPossibleTargets( category, package, version, buildtype=''): # pylint: disable=W0613
     """ this function tries to guess which target got used by looking at the different image directories """
-    target = PortageInstance.getDefaultTarget( category, package, version )
+    target = PortageInstance.getDefaultTarget( category, package )
     buildroot = os.path.join( ROOTDIR, "build", category, "%s-%s" % ( package, version ) )
 
     if not os.path.exists( buildroot ):
@@ -498,7 +495,7 @@ def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""
     return PortageInstance.getPackageInstance(category, package, buildtarget)
 
-def getDependencies( category, package, version, runtimeOnly=False ):
+def getDependencies( category, package, runtimeOnly = False ):
     """returns the dependencies of this package as list of strings:
     category/package"""
     if not os.path.isfile( getFilename( category, package ) ):
@@ -506,14 +503,15 @@ def getDependencies( category, package, version, runtimeOnly=False ):
 
     package, subpackage = getSubPackage( category, package )
     if subpackage:
-        utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 0 )
+        utils.debug( "solving package %s/%s/%s %s" % ( category, subpackage, package,
+                                                          getFilename( category, package ) ), 0 )
     else:
-        utils.debug( "solving package %s/%s-%s %s" % ( category, package, version, getFilename( category, package, version ) ), 0 )
+        utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 0 )
         subpackage = package
     
     deps = []
     for pkg in [ subpackage ]:
-        mod = __import__( getFilename( category, subpackage, version ) )
+        mod = __import__( getFilename( category, subpackage ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
             depDict = info.hardDependencies
@@ -562,9 +560,9 @@ def solveDependencies( category, package, version, depList, dep_type='both' , ma
     depList.reverse()
     return depList
 
-def printTargets( category, package, version ):
-    targetsDict = PortageInstance.getAllTargets( category, package, version )
-    defaultTarget = PortageInstance.getDefaultTarget( category, package, version )
+def printTargets( category, package ):
+    targetsDict = PortageInstance.getAllTargets( category, package )
+    defaultTarget = PortageInstance.getDefaultTarget( category, package )
     if 'svnHEAD' in targetsDict and not targetsDict['svnHEAD']:
         del targetsDict['svnHEAD']
     targetsDictKeys = list(targetsDict.keys())
@@ -598,7 +596,7 @@ def _getSubinfo( identFileName ):
     return subinfo
 
 
-def readChildren( category, package, version ):
+def readChildren( category, package ):
     identFileName = getFilename( category, package )
     if not os.path.isfile( identFileName ):
         utils.die( "package name %s/%s unknown" % ( category, package ) )
@@ -627,9 +625,9 @@ def readChildren( category, package, version ):
 
     return runtimeDependencies, buildDependencies
 
-def isPackageUpdateable( category, package, version ):
-    utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package, version ), 2 )
-    subinfo = _getSubinfo(  getFilename( category, package, version ) )
+def isPackageUpdateable( category, package ):
+    utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package ), 2 )
+    subinfo = _getSubinfo( getFilename( category, package ) )
     if not subinfo is None:
         if len( subinfo.svnTargets ) == 1 and not subinfo.svnTargets[ list(subinfo.svnTargets.keys())[0] ]:
             return False

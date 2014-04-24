@@ -273,42 +273,6 @@ class InstallDB(object):
         self.connection.commit()
 
 
-
-
-    def isPkgInstalled( self, category, package, version, buildType='' ):
-        # TODO: we have self.isPkgInstalled (formerly self._isInstalled) and self.isInstalled. Clarify names.
-        """ check if a package with a certain category, package and version is installed (used for import) """
-
-        # find in old style database
-        path = utils.etcDir()
-        fileName = os.path.join( path, 'installed' )
-        if not os.path.isfile( fileName ):
-            return False
-
-        with open( fileName, "rb" ) as f:
-            for line in f.read().splitlines():
-                ( _category, _packageVersion ) = line.split( "/" )
-                ( _package, _version ) = utils.packageSplit(_packageVersion)
-                if category != '' and version != '' and category == _category and package == _package \
-                                  and version == _version:
-                    return True
-                elif category == '' and version == '' and package == _package:
-                    return True
-
-        # find in release mode database
-        if buildType != '':
-            fileName = os.path.join( path,'installed-' + buildType )
-            if os.path.isfile( fileName ):
-                with open( fileName, "rb" ) as f:
-                    for line in f.read().splitlines():
-                        ( _category, _packageVersion ) = line.split( "/" )
-                        ( _package, _version ) = utils.packageSplit( _packageVersion )
-                        if category != '' and version != '' and category == _category and package == _package and version == _version:
-                            return True
-                        elif category == '' and version == '' and package == _package:
-                            return True
-        return False
-
 # get a global object
 installdb = InstallDB()
 
@@ -338,9 +302,6 @@ def main():
     db = InstallDB( tempdbpath2 )
 
     utils.debug( 'testing installation database' )
-
-    utils.debug( 'testing if package win32libs/dbus-src with version 1.4.0 is installed: %s' %
-                 db.isPkgInstalled( 'win32libs', 'dbus-src', '1.4.0' ) )
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
@@ -417,7 +378,6 @@ def main():
     # test the import from the old style (manifest based) databases
     utils.new_line()
     print("getInstalled:", db_temp.getInstalled())
-    print("getFileListFromManifest:", len( utils.getFileListFromManifest( os.getenv( "KDEROOT" ), 'dbus-src' ) ))
 
 if __name__ == '__main__':
     main()
