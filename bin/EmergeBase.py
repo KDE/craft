@@ -44,7 +44,9 @@ class EmergeBase(object):
         if not hasattr(self, 'subinfo'):
             # see the TODO above. This helps pylint understand the code, otherwise
             # it generates tons of error messages.
-            self.subinfo = None
+            utils.die("Please initialize subinfo first in %s" % self.filename)
+        else:
+            self.version = self.subinfo.defaultTarget
         if not hasattr(self, 'buildSystemType'):
             self.buildSystemType = None
 

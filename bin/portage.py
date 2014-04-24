@@ -279,7 +279,7 @@ class Portage(object):
         if not self.isPackage( category, package ):
             return False
         mod = getPackageInstance(category,package)
-        for baseClassObject in mod.Package.__bases__:
+        for baseClassObject in mod.__bases__:
             if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
 
