@@ -329,9 +329,6 @@ class Portage(object):
                     pack = mod.Package( )
                     packageDict[ fileName ] = pack
                     pack.version = self.getDefaultTarget( category, package )
-                    if buildtarget == None:
-                        buildtarget = findPossibleTargets( category, package )
-                    pack.setBuildTarget(buildtarget)
             else:
                 pack = packageDict[ fileName ]
             return pack
@@ -467,35 +464,7 @@ def getSubPackage( category, package ):
             if cat == category: return pac, package
     return package, None
 
-def findPossibleTargets( category, package, buildtype = '' ): # pylint: disable=W0613
-    """ this function tries to guess which target got used by looking at the different image directories """
-    target = PortageInstance.getDefaultTarget( category, package )
-    buildroot = os.path.join( emergeRoot(), "build", category,  package )
 
-    if not os.path.exists( buildroot ):
-        return target
-
-    for directory in os.listdir( buildroot ):
-        if os.path.isdir( os.path.join( buildroot, directory ) ):
-            if directory.startswith( "image" ) and directory != "image":
-                particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
-                if len(particles) == 1 and \
-                   not particles[0] in [os.getenv( "KDECOMPILER" ), \
-                                        buildType(), \
-                                        os.getenv( "EMERGE_TARGET_PLATFORM" ), \
-                                        "WIN32"]:
-                    return particles[0]
-                elif len(particles) == 3:
-                    _platform, _buildType, _target = particles
-                elif len(particles) >= 4:
-                    _platform, _buildType = particles[0:2]
-                    _target = '-'.join(particles[2:])
-                else:
-                    return target
-                if _platform == os.getenv( "KDECOMPILER" ) and \
-                   _buildType == buildType():
-                    return _target
-    return target
 
 def getPackageInstance(category, package, buildtarget=None):
     """return instance of class Package from package file"""

@@ -64,8 +64,7 @@ class EmergeBase(object):
         if hasattr(self,'alreadyCalled'):
             return
         self.alreadyCalled = True
-        self.buildTarget = None
-        
+
         self.versioned              = False
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
@@ -167,7 +166,6 @@ class EmergeBase(object):
 
     def buildDir(self):
         utils.debug("EmergeBase.buildDir() called", 2)
-        self.setBuildTarget()
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
@@ -244,12 +242,9 @@ class EmergeBase(object):
             utils.createDir(dstpath)
         return dstpath
 
-    def setBuildTarget( self, target = None):
-        utils.debug( "EmergeBase.setBuildTarget called", 2 )
-
-        self.subinfo.setBuildTarget(target)
-        ## \todo replace self.buildTarget by self.buildTarget()
-        self.buildTarget = self.subinfo.buildTarget
+    @property
+    def buildTarget(self):
+        return self.subinfo.buildTarget
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )
