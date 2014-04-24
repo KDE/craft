@@ -697,44 +697,6 @@ def etcDir():
     """the etc directory for portage"""
     return os.path.join( os.getenv( "KDEROOT" ), "etc", "portage" )
 
-
-def getFileListFromManifest(rootdir, package, withManifests=False):
-    """ return sorted list according to the manifest files for deletion/import.
-   Each item holds a file name and a digest.
-   If a file name appears once with and once without digest (which often
-   is the case for *.mft), it is only returned once with digest.
-   The file names are normalized: on Windows, all lowercase.
-   Do not return the names of manifest files unless explicitly requested.
-   """
-    fileList = dict()
-    manifestFiles = [os.path.join(rootdir, "manifest", x) for x in getManifestFiles(rootdir, package)]
-    for manifestFile in manifestFiles:
-        with open(manifestFile, 'rt' ) as fptr:
-            for line in fptr:
-                try:
-                    line = line.replace( "\n", "" ).replace( "\r", "" )
-                    # check for digest having two spaces between filename and hash
-                    if not line.find( "  " ) == -1:
-                        [ b, a ] = line.rsplit( "  ", 2 )
-                    # check for filname have spaces
-                    elif line.count( " " ) > 1:
-                        ri = line.rindex( " " )
-                        b = line[ ri: ]
-                        a = line[ : ri - 1 ]
-                    # check for digest having one spaces
-                    elif not line.find( " " ) == -1:
-                        [ a, b ] = line.rsplit( " ", 2 )
-                    else:
-                        a, b = line, ""
-                except Exception: # pylint: disable=W0703
-                    die( "could not parse line %s" % line)
-                a = os.path.normcase(a)
-                if withManifests or os.path.join( rootdir, a) not in manifestFiles:
-                    if a not in fileList or not fileList[a]:
-                        # if it is not yet in the fileList or without digest:
-                        fileList[a] = b
-    return sorted(list(fileList.items()), key = lambda x: x[0])
-
 def unmergeFileList(rootdir, fileList, forced=False):
     """ delete files in the fileList if has matches or forced is True """
     for filename, filehash in fileList:

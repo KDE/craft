@@ -79,7 +79,7 @@ class PackageBase (EmergeBase):
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled )
-                package.addFiles( utils.getFileListFromManifest(  self._installedDBPrefix( prefix ), self.package ) )
+                package.addFiles( utils.getFileListFromDirectory(  self._installedDBPrefix( prefix ), self.package ) )
                 package.install()
         else:
             package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )

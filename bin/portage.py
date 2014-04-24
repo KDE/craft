@@ -551,7 +551,6 @@ def solveDependencies( category, package, version, depList, dep_type='both' , ma
         utils.debug( "found package in category %s" % category, 2 )
     if ( version == "" ):
         version = PortageInstance.getNewestVersion( category, package )
-        print("VERSION %s" % version)
         utils.debug( "found package with newest version %s" % version, 2 )
 
     pac = DependencyPackage( category, package, version )
