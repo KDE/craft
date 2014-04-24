@@ -38,15 +38,8 @@ class EmergeBase(object):
         object.__init__(self)
         utils.debug( "EmergeBase.__init__ called", 2 )
         self.filename, self.category, self.package = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
-        self.version = None
 
 
-        if not hasattr(self, 'subinfo'):
-            # see the TODO above. This helps pylint understand the code, otherwise
-            # it generates tons of error messages.
-            utils.die("Please initialize subinfo first in %s" % self.filename)
-        else:
-            self.version = self.subinfo.defaultTarget
         if not hasattr(self, 'buildSystemType'):
             self.buildSystemType = None
 
@@ -83,7 +76,6 @@ class EmergeBase(object):
         self.forced = emergeSettings.args.forced
         self.buildTests = emergeSettings.args.buildTests
 
-        self.rootdir = emergeRoot()
 
     def __adjustPath(self, directory):
         """return adjusted path"""
@@ -245,6 +237,14 @@ class EmergeBase(object):
     @property
     def buildTarget(self):
         return self.subinfo.buildTarget
+
+    @property
+    def version(self):
+        return self.subinfo.defaultTarget
+
+    @property
+    def rootdir(self):
+        return emergeRoot()
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )
