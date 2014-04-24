@@ -61,77 +61,6 @@ def getCallerFilename():
 def varAsBool(var):
     return var.lower() in ['true', '1']
 
-def envAsBool(key, default=False):
-    """ return value of environment variable as bool value """
-    value = os.getenv(key)
-    if value:
-        return value.lower() in ['true', '1']
-    else:
-        return default
-        
-
-def LockFileName(lock_id):
-    '''Generate a user global lock file. For id lock_id
-       TODO: generate it smarter to prevent security issues
-             and possible collisions.
-    '''
-    if not envAsBool("EMERGE_%s_LOCK" % lock_id):
-        return None
-
-    try:
-        return os.environ["EMERGE_%s_LOCK_FILE" % lock_id]
-    except KeyError:
-        pass
-
-    return os.path.join(
-        tempfile.gettempdir(),
-        "emerge%s-%s.lck" % (lock_id, getpass.getuser()))
-
-class LockFile(object):
-    """Context manager for a user global lock file"""
-
-    def __init__(self, file_name):
-        self.file_name   = file_name
-        self.file_handle = None
-
-    def __enter__(self):
-        if not self.file_name:
-            return
-
-        self.file_handle = open(self.file_name, 'a')
-        fh = self.file_handle
-
-        if os.name == 'nt':
-            fh.seek(0)
-            while True:
-                try:
-                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647)
-                except IOError:
-                    # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
-                    # a exception is raised but we want to continue trying.
-                    continue
-                break
-        else:
-            fcntl.flock(fh, fcntl.LOCK_EX)
-
-        fh.truncate(0)
-        print("%d" % os.getpid(), file=fh)
-        fh.flush()
-
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        fh = self.file_handle
-        if fh is None:
-            return
-        self.file_handle = None
-        if os.name == 'nt':
-            fh.seek(0)
-            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647)
-        else:
-            fcntl.flock(fh, fcntl.LOCK_UN)
-        try:
-            fh.close()
-        except IOError:
-            traceback.print_exc()
 
 ### fetch functions
 
@@ -537,58 +466,6 @@ def unZip( fileName, destdir ):
                 outfile.write( zipObj.read( name ) )
 
     return True
-
-### svn fetch/unpack functions
-
-def svnFetch( repo, destdir, username = None, password = None ):
-    debug( "utils svnfetch: repo %s to destination %s" % ( repo, destdir ), 1 )
-    if ( not os.path.exists( destdir ) ):
-        os.makedirs( destdir )
-    os.chdir( destdir )
-
-    ret = 0
-    #if ( len( os.listdir( destdir ) ) == 0 ):
-
-    directory = os.path.basename( repo.replace( "/", "\\" ) )
-    path = os.path.join( destdir, directory )
-    debug( "path: %s" % path, 1 )
-    if ( not os.path.exists( path ) ):
-        # not checked out yet
-        command = "svn checkout %s" % repo
-        if ( username != None ):
-            command = command + " --username " + username
-        if ( password != None ):
-            command = command + " --password " + password
-        with LockFile(LockFileName("SVN")):
-            ret = system( command )
-    else:
-        # already checked out, so only update
-        os.chdir( path )
-        debug( "svn up cwd: %s" % os.getcwd(), 1 )
-        with LockFile(LockFileName("SVN")):
-            ret = system( "svn update" )
-
-    if ( ret == 0 ):
-        return True
-    else:
-        return False
-
-### package dependencies functions
-
-def checkManifestFile( name, category, package, version ):
-    if os.path.isfile( name ):
-        with open( name, "rt" ) as f:
-            header = f.readline()
-            line = f.readline()
-        if not '/' in line:
-            # update the file
-            line = "%s/%s:%s:%s" % ( package, category, package, version )
-            with open( name, "wt" ) as f:
-                f.write( header )
-                f.write( line )
-        if ( line.startswith( "%s/%s:%s:" % ( category, package, version ) ) ):
-            return True
-    return False
 
 
 def info( message ):

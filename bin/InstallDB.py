@@ -15,9 +15,8 @@ def blocking(fn):
         if hasattr(__blockme, "blocked"): # Already blocked
             return fn(*args, **kw)
         try:
-            with utils.LockFile(utils.LockFileName("SQLITE")):
-                __blockme.blocked = True
-                ret = fn(*args, **kw)
+            __blockme.blocked = True
+            ret = fn(*args, **kw)
         finally:
             delattr(__blockme, "blocked");
         return ret

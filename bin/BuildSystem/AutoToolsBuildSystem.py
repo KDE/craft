@@ -29,83 +29,79 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def configure( self, cflags="", ldflags=""):
         """configure the target"""
-        with utils.LockFile(utils.LockFileName("MSYS")):
-            if self.buildInSource:
-                self.enterSourceDir()
-            else:
-                self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
-            if self.noCopy:
-                sourcedir = self.sourceDir()
-            else:
-                sourcedir = self.buildDir()
+        if self.noCopy:
+            sourcedir = self.sourceDir()
+        else:
+            sourcedir = self.buildDir()
 
-            configure = os.path.join(sourcedir, "configure")
-            self.shell.initEnvironment(cflags, ldflags)
-            if self.subinfo.options.configure.bootstrap == True:
-                autogen = os.path.join(sourcedir, "autogen.sh")
-                if os.path.exists(autogen):
-                    self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
-            #else:
-                #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
-            
+        configure = os.path.join(sourcedir, "configure")
+        self.shell.initEnvironment(cflags, ldflags)
+        if self.subinfo.options.configure.bootstrap == True:
+            autogen = os.path.join(sourcedir, "autogen.sh")
+            if os.path.exists(autogen):
+                self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
+        #else:
+            #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
 
-            if self.buildInSource:
-                ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self), debugLvl=0 )
-            else:
-                ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self), debugLvl=0  )
-            return ret
+
+        if self.buildInSource:
+            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self), debugLvl=0 )
+        else:
+            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self), debugLvl=0  )
+        return ret
 
     def make( self, dummyBuildType=None ):
         """Using the *make program"""
-        with utils.LockFile(utils.LockFileName("MSYS")):
-            if self.buildInSource:
-                self.enterSourceDir()
-            else:
-                self.enterBuildDir()
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
-            command = self.makeProgram
-            args = self.makeOptions()
+        command = self.makeProgram
+        args = self.makeOptions()
 
-            # adding Targets later
-            if self.buildInSource:
-                if not self.shell.execute(self.sourceDir(), self.makeProgram , "clean"):
-                    utils.die( "while Make'ing. cmd: %s clean" % self.makeProgram)
-                if not self.shell.execute(self.sourceDir(), command, args ):
-                    utils.die( "while Make'ing. cmd: %s" % command )
-            else:
-                if not self.shell.execute(self.buildDir(), command, args ):
-                    utils.die( "while Make'ing. cmd: %s" % command )
-            return True
+        # adding Targets later
+        if self.buildInSource:
+            if not self.shell.execute(self.sourceDir(), self.makeProgram , "clean"):
+                utils.die( "while Make'ing. cmd: %s clean" % self.makeProgram)
+            if not self.shell.execute(self.sourceDir(), command, args ):
+                utils.die( "while Make'ing. cmd: %s" % command )
+        else:
+            if not self.shell.execute(self.buildDir(), command, args ):
+                utils.die( "while Make'ing. cmd: %s" % command )
+        return True
 
     def install( self ):
         """Using *make install"""
+        if self.buildInSource:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
-        with utils.LockFile(utils.LockFileName("MSYS")):
-            if self.buildInSource:
-                self.enterSourceDir()
-            else:
-                self.enterBuildDir()
+        command = self.makeProgram
+        args = "install"
 
-            command = self.makeProgram
-            args = "install"
+        if self.subinfo.options.install.useDestDir == True:
+            args += " DESTDIR=%s prefix=" % self.shell.toNativePath( self.installDir() )
 
-            if self.subinfo.options.install.useDestDir == True:
-                args += " DESTDIR=%s prefix=" % self.shell.toNativePath( self.installDir() )
+        if self.subinfo.options.make.ignoreErrors:
+            args += " -i"
 
-            if self.subinfo.options.make.ignoreErrors:
-                args += " -i"
-
-            if self.subinfo.options.make.makeOptions:
-                args += " %s" % self.subinfo.options.make.makeOptions
-            if self.buildInSource:
-                self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
-            else:
-                self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
-            if os.path.exists(os.path.join(self.imageDir(),"lib")):
-                return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la")
-            else:
-                return True
+        if self.subinfo.options.make.makeOptions:
+            args += " %s" % self.subinfo.options.make.makeOptions
+        if self.buildInSource:
+            self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+        else:
+            self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+        if os.path.exists(os.path.join(self.imageDir(),"lib")):
+            return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la")
+        else:
+            return True
 
     def runTest( self ):
         """running unittests"""
