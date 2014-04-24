@@ -120,7 +120,7 @@ class BuildSystemBase(EmergeBase):
         # create post (un)install scripts
         for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
             script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            scriptName = "post-install-%s-%s.cmd" % ( self.package, pkgtype )
             # are there any cases there installDir should be honored ?
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
@@ -128,7 +128,7 @@ class BuildSystemBase(EmergeBase):
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
             script = os.path.join( self.packageDir(), "post-uninstall-%s.cmd" ) % pkgtype
-            scriptName = "post-uninstall-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            scriptName = "post-uninstall-%s-%s.cmd" % ( self.package, pkgtype )
             # are there any cases there installDir should be honored ?
             destscript = os.path.join( self.imageDir(), "manifest", scriptName )
             if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):

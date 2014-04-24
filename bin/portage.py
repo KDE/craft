@@ -181,8 +181,7 @@ def getCategoryPackageVersion( path ):
         head, package = os.path.split( head )
         head, category = os.path.split( head )
 
-    filename = os.path.splitext( fullFileName )[0]
-    package = filename[:-3]
+    package = os.path.splitext( fullFileName )[0]
     utils.debug( "category: %s, package: %s" % ( category, package ), 1 )
     return [ category, package ] # TODO: why a list and not a tuple?
 
@@ -321,13 +320,12 @@ class Portage(object):
 
     def getPackageInstance(self, category, package, buildtarget=None):
         """return instance of class Package from package file"""
-        version = self.getNewestVersion( category, package )
         fileName = getFilename( category, package )
         module = __import__( fileName )
         p = module.Package()
         if buildtarget == None:
-            buildtarget = findPossibleTargets( category, package, version )
-        p.setup(fileName, category, package, version, buildtarget)
+            buildtarget = findPossibleTargets( category, package )
+        p.setup( fileName, category, package, buildtarget )
         return p
 
     def getDefaultTarget( self, category, package ):
@@ -461,10 +459,10 @@ def getSubPackage( category, package ):
             if cat == category: return pac, package
     return package, None
 
-def findPossibleTargets( category, package, version, buildtype=''): # pylint: disable=W0613
+def findPossibleTargets( category, package, buildtype = '' ): # pylint: disable=W0613
     """ this function tries to guess which target got used by looking at the different image directories """
     target = PortageInstance.getDefaultTarget( category, package )
-    buildroot = os.path.join( ROOTDIR, "build", category, "%s-%s" % ( package, version ) )
+    buildroot = os.path.join( ROOTDIR, "build", category,  package )
 
     if not os.path.exists( buildroot ):
         return target

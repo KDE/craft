@@ -284,17 +284,17 @@ class EmergeBase(object):
             # in MultiSource.
             self.source.buildTarget = self.subinfo.buildTarget
 
-    def setup( self, fileName, category, package, version, buildTarget=None):
+    def setup( self, fileName, category, package, buildTarget = None ):
         self.category = category
         self.package = package
-        self.version = version
+        self.version = portage.PortageInstance.getDefaultTarget( self.category, self.package )
         self.PV, _ = os.path.splitext( os.path.basename( fileName) )
         self.setBuildTarget(buildTarget)
         if hasattr(self,'source'):
             # pylint: disable=E1101
             # this class never defines self.source, that happens only
             # in MultiSource.
-            self.source.setup( fileName, category, package, version, buildTarget)
+            self.source.setup( fileName, category, package, buildTarget )
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )

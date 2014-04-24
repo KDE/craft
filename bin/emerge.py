@@ -33,7 +33,7 @@ def _exit( code ):
 
 
 @utils.log
-def doExec( category, package, version, action ):
+def doExec( category, package, action ):
     utils.startTimer( "%s for %s" % ( action, package), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
     fileName = portage.getFilename( category, package )
@@ -44,7 +44,7 @@ def doExec( category, package, version, action ):
         #makes touble for xcompile -> changed back
         mod = portage.loadPackage( fileName )
         pack = mod.Package( )
-        pack.setup( fileName, category, package, version )
+        pack.setup( fileName, category, package )
         pack.execute( action )
     except OSError:
         utils.stopTimer( "%s for %s" % ( action, package) )
@@ -72,17 +72,17 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
             if not found and action != buildAction:
                 continue
             found = True
-            success = success and doExec( category, package, version, action )
+            success = success and doExec( category, package, action )
     elif ( buildAction == "all" or buildAction == "full-package" ):
-        success = success and doExec( category, package, version, "fetch" )
-        success = success and doExec( category, package, version, "unpack" )
-        success = success and doExec( category, package, version, "compile" )
-        success = success and doExec( category, package, version, "cleanimage" )
-        success = success and doExec( category, package, version, "install" )
+        success = success and doExec( category, package, "fetch" )
+        success = success and doExec( category, package, "unpack" )
+        success = success and doExec( category, package, "compile" )
+        success = success and doExec( category, package, "cleanimage" )
+        success = success and doExec( category, package, "install" )
         if ( buildAction == "all" ):
-            success = success and doExec( category, package, version, "qmerge" )
+            success = success and doExec( category, package, "qmerge" )
         if ( buildAction == "full-package" ):
-            success = success and doExec( category, package, version, "package" )
+            success = success and doExec( category, package, "package" )
 
     elif (buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                            "dumpdeps",
@@ -90,11 +90,11 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
                            "geturls",
                            "print-revision" ] and category and package and version ):
         success = True
-        success = success and doExec( category, package, version, buildAction )
+        success = success and doExec( category, package, buildAction )
     elif ( buildAction == "install" ):
         success = True
-        success = success and doExec( category, package, version, "cleanimage" )
-        success = success and doExec( category, package, version, "install" )
+        success = success and doExec( category, package, "cleanimage" )
+        success = success and doExec( category, package, "install" )
     elif ( buildAction == "version-dir" ):
         print( "%s-%s" % ( package, version ) )
         success = True

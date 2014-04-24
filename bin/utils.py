@@ -1307,20 +1307,8 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-#taken from https://pypi.python.org/pypi/distribute/0.7.3
-component_re = re.compile(r'(\d+ | [a-z]+ | \.| -)', re.VERBOSE)
-replace = {'pre':'c', 'preview':'c','-':'final-','rc':'c','dev':'@'}.get
-def _parse_version_parts(s):
-    for part in component_re.split(s):
-        part = replace(part,part)
-        if not part or part=='.':
-            continue
-        if part[:1] in '0123456789':
-            yield part.zfill(8)    # pad for numeric comparison
-        else:
-            yield '*'+part
+#taken from https://bitbucket.org/pypa/setuptools/src/a3d16c5f7443ec6e5e4d8d4791682b56130b41b5/pkg_resources.py?at=default
 
-    yield '*final'  # ensure that alpha/beta/candidate are before final
 
 def parse_version(s):
     """Convert a version string to a chronologically-sortable key
@@ -1353,6 +1341,21 @@ def parse_version(s):
     contain them, and "dev" is replaced with an '@' so that it sorts lower than
     than any other pre-release tag.
     """
+
+    def _parse_version_parts(s):
+        component_re = re.compile(r'(\d+ | [a-z]+ | \.| -)', re.VERBOSE)
+        replace = {'pre':'c', 'preview':'c','-':'final-','rc':'c','dev':'@'}.get
+        for part in component_re.split(s):
+            part = replace(part,part)
+            if not part or part=='.':
+                continue
+            if part[:1] in '0123456789':
+                yield part.zfill(8)    # pad for numeric comparison
+            else:
+                yield '*'+part
+
+        yield '*final'  # ensure that alpha/beta/candidate are before final
+
     parts = []
     for part in _parse_version_parts(s.lower()):
         if part.startswith('*'):
