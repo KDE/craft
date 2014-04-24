@@ -99,8 +99,8 @@ class infoclass(object):
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
             self.buildTarget = buildTarget
-        elif not os.getenv( "EMERGE_TARGET" ) == None:
-            self.buildTarget = os.getenv( "EMERGE_TARGET" )
+        elif not emergeSettings.args.target == None:
+            self.buildTarget = emergeSettings.args.target
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys())), 1)
             self.buildTarget = self.defaultTarget

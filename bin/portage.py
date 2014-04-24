@@ -101,8 +101,8 @@ def buildType():
 
 def rootDirectories():
     # this function should return all currently set portage directories
-    if os.getenv( "EMERGE_PORTAGE_ROOT" ):
-        rootDirs = os.getenv( "EMERGE_PORTAGE_ROOT" ).split( ";" )
+    if ("General", "EMERGE_PORTAGE_ROOT" ) in emergeSettings:
+        rootDirs = emergeSettings.get("General", "EMERGE_PORTAGE_ROOT" ).split( ";" )
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
