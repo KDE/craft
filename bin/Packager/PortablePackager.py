@@ -43,7 +43,7 @@ Packager for portal 7zip archives
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = shortPackage
             if self.subinfo.options.package.withArchitecture:
-                    self.defines[ "setupname" ]  += "-" + os.getenv("EMERGE_ARCHITECTURE")
+                    self.defines[ "setupname" ]  += "-" + compiler.architecture()
             self.defines[ "setupname" ]  += "-" + self.buildTarget + ".7z" 
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()

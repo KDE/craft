@@ -11,11 +11,11 @@ import utils
 from emerge_config import *
 
 
-_COMPILER = emergeSettings.get("General","KDECOMPILER")
+
 _GCCTARGET = None
 _MINGW_VERSION = None
 
-def getGCCTarget():
+def _getGCCTarget():
     global _GCCTARGET # pylint: disable=W0603
     if not _GCCTARGET:
         try:
@@ -24,14 +24,14 @@ def getGCCTarget():
             _GCCTARGET = result.strip()
         except OSError:
             #if no mingw is installed return mingw-w32 it is part of base
-            if os.getenv("EMERGE_ARCHITECTURE") == "x64":
+            if architecture() == "x64":
                 _GCCTARGET = "x86_64-w64-mingw32"
             else:
                 _GCCTARGET = "i686-w64-mingw32"
     return _GCCTARGET
 
 def architecture():
-    return os.getenv( "EMERGE_ARCHITECTURE" )
+    return emergeSettings.get("General", "EMERGE_ARCHITECTURE" )
 
 def isX64():
     return architecture() == "x64"
@@ -39,41 +39,45 @@ def isX64():
 def isX86():
     return architecture() == "x86"
 
+
+def _compiler():
+    return emergeSettings.get("General","KDECOMPILER")
+
 def isMinGW():
-    return _COMPILER.startswith("mingw")
+    return _compiler().startswith("mingw")
 
 def isMinGW32():
-    return isMinGW() and getGCCTarget() == "mingw32"
+    return isMinGW() and _getGCCTarget() == "mingw32"
 
 def isMinGW_WXX():
     return isMinGW_W32() or isMinGW_W64()
 
 def isMinGW_W32():
-    return isMinGW() and getGCCTarget() == "i686-w64-mingw32"
+    return isMinGW() and _getGCCTarget() == "i686-w64-mingw32"
 
 def isMinGW_W64():
     return isMinGW() and isX64()
 
 def isMSVC():
-    return _COMPILER.startswith("msvc")
+    return _compiler().startswith("msvc")
 
 def isMSVC2005():
-    return _COMPILER == "msvc2005"
+    return _compiler() == "msvc2005"
 
 def isMSVC2008():
-    return _COMPILER == "msvc2008"
+    return _compiler() == "msvc2008"
 
 def isMSVC2010():
-    return _COMPILER == "msvc2010"
+    return _compiler() == "msvc2010"
 
 def isMSVC2012():
-    return _COMPILER == "msvc2012"
+    return _compiler() == "msvc2012"
     
 def isMSVC2013():
-    return _COMPILER == "msvc2013"
+    return _compiler() == "msvc2013"
 
 def isIntel():
-    return _COMPILER == "intel"
+    return _compiler() == "intel"
 
 def getCompilerName():
     if isMinGW():
@@ -84,11 +88,11 @@ def getCompilerName():
         elif isMinGW32():
             return "mingw32"
     elif isMSVC():
-        return _COMPILER
+        return _compiler()
     elif isIntel():
         return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
     else:
-        utils.die("Unknown Compiler %s" %  _COMPILER)
+        utils.die("Unknown Compiler %s" %  _compiler())
 
 def getSimpleCompilerName():
     if isMinGW():
@@ -101,7 +105,7 @@ def getSimpleCompilerName():
     elif isIntel():
         return "intel"
     else:
-        utils.die("Unknown Compiler %s" %  _COMPILER)
+        utils.die("Unknown Compiler %s" %  _compiler())
 
 def getMinGWVersion():
     global _MINGW_VERSION # pylint: disable=W0603
@@ -121,7 +125,7 @@ def getVersion():
         return "%s %s" % ( getCompilerName(), getMinGWVersion() )
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
-    return "Microsoft Visual Studio 20%s" %  _COMPILER[len(_COMPILER)-2:]
+    return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
     
 def getShortName():
     if isMinGW():
@@ -135,7 +139,7 @@ def getShortName():
     elif isMSVC2013():
         return "vc120"
     else:
-        utils.die("Unknown Compiler %s" %  _COMPILER)
+        utils.die("Unknown Compiler %s" %  _compiler())
 
 
 if __name__ == '__main__':

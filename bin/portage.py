@@ -328,7 +328,6 @@ class Portage(object):
                     self._CURRENT_MODULE  = ( fileName, category, package )
                     pack = mod.Package( )
                     packageDict[ fileName ] = pack
-                    pack.version = self.getDefaultTarget( category, package )
             else:
                 pack = packageDict[ fileName ]
             return pack

@@ -6,9 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        arch='32'
-        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-           arch='64'
+        arch= compiler.architecture()[1:]
         for version in ['2.7.0']:
             self.targets[ version ] = self.getPackageList("ftp.gnome.org/pub/gnome/binaries/win%s/dependencies"%arch,
                                                           ["pthreads-win32-2.7.0"".zip",

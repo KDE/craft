@@ -17,13 +17,11 @@ class Package( AutoToolsPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         AutoToolsPackageBase.__init__( self )
-        if os.getenv("EMERGE_ARCHITECTURE") == "x64":
-            target = "x86_64-w64-mingw32"
+        if compiler.isX64():
             self.subinfo.options.merge.destinationPath = 'mingw64/x86_64-w64-mingw32'
         else:
-            target = "i686-w64-mingw32"
             self.subinfo.options.merge.destinationPath = 'mingw/i686-w64-mingw32'
-        self.subinfo.options.configure.defines = " --enable-sdk=all --target=%s" % target
+        self.subinfo.options.configure.defines = " --enable-sdk=all "
 
 
 if __name__ == '__main__':

@@ -53,7 +53,7 @@ class Package( BinaryPackageBase ):
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
                 
         elif compiler.isMSVC2010():
-            if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
+            if compiler.isX86() and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
                 srcdir = os.path.join( os.environ["SystemRoot"], "SysWOW64") 
             else:
                 srcdir = os.path.join( os.environ["SystemRoot"], "System32") 

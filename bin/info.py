@@ -109,13 +109,9 @@ class infoclass(object):
         """default method for setting build options, override to set individual targets"""
         return
 
-    def getArchitecture(self):
-        arch = ""
-        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch = "-x64"
-        if compiler.isMinGW_W32():
-            arch = "-x86"
-        return arch
+    @staticmethod
+    def getArchitecture():
+        return "-%s" % compiler.architecture()
 
     def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler_name=None):
         """return archive file based package url"""
@@ -162,11 +158,7 @@ example:
             packagetypes = ['bin', 'lib']
         if not os.getenv("EMERGE_PACKAGETYPES") is None:
             packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
-        arch = ""
-        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch = "-x64"
-        if compiler.isMinGW_W32():
-            arch = "-x86"
+        arch = infoclass.getArchitecture()
         # TODO: use list comprehension
         ret = []
         for packageType in packagetypes:
@@ -180,9 +172,7 @@ example:
             packagetypes = ['bin', 'lib']
         if not os.getenv("EMERGE_PACKAGETYPES") is None:
             packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
-        arch = ""
-        if( os.getenv('EMERGE_ARCHITECTURE')=="x64"):
-            arch = "-x64"
+        arch = infoclass.getArchitecture()
         ret = ''
         for packageType in packagetypes:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
