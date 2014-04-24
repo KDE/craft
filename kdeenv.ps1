@@ -144,14 +144,6 @@ function setupCCACHE()
     }
 }
 
-
-#make settings for general availible in env
-foreach($key in $settings["General"].keys)
-{
-    [Environment]::SetEnvironmentVariable($key,$settings["General"][$key], "Process")
-}
-
-
 if ($settings["General"]["KDECOMPILER"] -eq "mingw4")
 { 
     path-mingw
