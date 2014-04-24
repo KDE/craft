@@ -339,12 +339,16 @@ def main( ):
                          help = "Output the dependencies of this package as a csv file suitable for emerge server." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
+    parser.add_argument("--print-installed", action = "store_true",
+                        help = "This will show a list of all packages that are installed currently.")
+    parser.add_argument("--print-installable", action = "store_true",
+                        help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough.")
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
                                              "install", "qmerge", "manifest", "package", "unmerge", "test",
                                              "checkdigest", "dumpdeps",
                                              "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
-                                             "version-dir", "version-package", "print-installable",
-                                             "print-installed", "print-revision", "print-targets",
+                                             "version-dir", "version-package",
+                                              "print-revision", "print-targets",
                                              "install-deps", "update", "update-direct-deps" ]):
         parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x, default = "all" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
@@ -392,16 +396,13 @@ def main( ):
 
 
 
-    if emergeSettings.args.action == "print-installed":
+    if emergeSettings.args.print_installed:
         printInstalled( )
-        _exit(0)
-
-    elif emergeSettings.args.action == "print-installable" :
+    elif emergeSettings.args.print_installable:
         portage.printInstallables( )
-        _exit(0)
-
-    for x in emergeSettings.args.packageNames:
-        handleSinglePackage( x, dependencyDepth )
+    else:
+        for x in emergeSettings.args.packageNames:
+            handleSinglePackage( x, dependencyDepth )
 
 
 if __name__ == '__main__':

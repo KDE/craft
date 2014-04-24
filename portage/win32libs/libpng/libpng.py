@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.6.6'] = '609c355beef7c16ec85c4580eabd62efe75383af'
 
         self.shortDescription = 'A library to display png images'
-        self.defaultTarget = '1.5.14'
+        self.defaultTarget = '1.6.6'
 
     def setDependencies( self ):
         self.dependencies['win32libs/zlib'] = 'default'
