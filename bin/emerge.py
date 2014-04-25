@@ -288,6 +288,7 @@ def main( ):
                          help = "similar to -z, only that it acts only on the last package, and works as normal on the rest." )
     parser.add_argument( "-q", "--stayquiet", action = "store_true",
                          dest = "stayQuiet",
+                         default = int(emergeSettings.get("EmergeDebug", "Verbose","1")),
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_BUILDTESTS", "False" ) ) )

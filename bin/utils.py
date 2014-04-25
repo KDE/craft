@@ -108,7 +108,6 @@ class Verbose(object):
     def setLevel(newLevel):
         """ set the level by hand for quick and dirty changes """
         Verbose.__level = max(0, newLevel)
-        os.putenv("EMERGE_VERBOSE", str(newLevel))
 
     def verbose( self ):
         """ returns the verbosity level for the application """
@@ -1103,9 +1102,9 @@ def startTimer(name, level = 0):
     if name in _TIMERS:
         die("%s already in timers" % name)
     _TIMERS[name] = (datetime.datetime.now() , level)
-    if varAsBool(emergeSettings.get( "General","EMERGE_MEASURE_TIME", "False")) or level == 0 or verbose() > level and verbose() > 0:
+    #if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")) or level == 0 or verbose() > level and verbose() > 0:
         #debug( "Task: %s started" % name )
-        sys.stdout.flush()
+        #sys.stdout.flush()
     
 def stopTimer(name):
     """stops a timer for meassurement"""
@@ -1113,9 +1112,9 @@ def stopTimer(name):
         debug( "%s not in timers" % name )
         return
     startTime , level = _TIMERS[name]
-    if varAsBool(emergeSettings.get( "General","EMERGE_MEASURE_TIME", "False")) or level == 0 or verbose() > level and verbose() > 0:
+    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")) or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
-        debug( "Task: %s stopped after: %s" % (name , delta) )
+        print( "Task: %s stopped after: %s" % (name , delta) )
         sys.stdout.flush()
     del _TIMERS[name]
     
