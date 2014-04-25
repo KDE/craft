@@ -59,19 +59,17 @@ class EmergeConfig( object ):
     def __contains__( self, key ):
         return self._config and self._config.has_section( key[ 0 ] ) and key[ 1 ] in self._config[ key[ 0 ] ]
 
-    def get( self, group, key, default = "_INVALID" ):
+    def get( self, group, key, default = None):
         if self.__contains__( (group, key) ):
             return self._config[ group ][ key ]
-        if default != "_INVALID":
+        if default != None:
             self.set(group,key, default)
             return default
         self._config[ group ][ key ]
 
     def set( self, group, key, value ):
         self._config[ group ][ key ] = value
-        print((group ,key ,value))
         if self.get("General","DUMP_SETTINGS", "False") == "True":
-            print("write " +self.iniPath + ".dump")
             with open(self.iniPath + ".dump", 'wt+') as configfile:
                 self._config.write(configfile)
 

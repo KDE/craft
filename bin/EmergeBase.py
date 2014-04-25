@@ -282,9 +282,9 @@ class EmergeBase(object):
         return False
 
     def proxySettings(self):
-        host = emergeSettings.get("General", 'EMERGE_PROXY_HOST', None)
-        port = emergeSettings.get("General", 'EMERGE_PROXY_PORT', None)
-        username = emergeSettings.get("General", 'EMERGE_PROXY_USERNAME', None)
-        password = emergeSettings.get("General", 'EMERGE_PROXY_PASSWORD', None)
+        host = emergeSettings.get("General", 'EMERGE_PROXY_HOST', "")
+        port = emergeSettings.get("General", 'EMERGE_PROXY_PORT', "")
+        username = emergeSettings.get("General", 'EMERGE_PROXY_USERNAME', "")
+        password = emergeSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
         return [host, port, username, password]
 

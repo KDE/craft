@@ -19,7 +19,7 @@ class SourceBase(EmergeBase):
             return
 
         name = ""
-        if username != None and password != None:
+        if username != "" and password != "":
             name = "%s:%s@" % (username, password)
 
         proxy = "http://%s%s:%s" % (name, host, port)
