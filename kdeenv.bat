@@ -13,22 +13,12 @@ rem    this file sources the kdesettings.bat file automatically
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-set BUILDTYPE=
-set APPLICATION=
-
 :nextarg
 if "%1" == "" goto :endargs
 
-if "%1" == "debug" goto :setbuildtype
-if "%1" == "release" goto :setbuildtype
-if "%1" == "relwithdebinfo" goto :setbuildtype
 
-set APPLICATION=%1
 shift
 goto :endargs
-
-:setbuildtype
-set BUILDTYPE=%1
 
 :shiftarg
 shift
@@ -49,12 +39,7 @@ if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 rem call kdesettings.bat 
 rem in case we are in kderoot/emerge 
 if exist %~dp0..\etc\kdesettings.bat (
-call %~dp0..\etc\kdesettings.bat %BUILDTYPE%
-)
-
-rem in case we are in kderoot 
-if exist %~dp0etc\kdesettings.bat (
-call %~dp0etc\kdesettings.bat %BUILDTYPE%
+call %~dp0..\etc\kdesettings.bat
 )
 
 rem use local python installation if present
@@ -64,107 +49,45 @@ if exist %~dp0python (
     echo "Using Python from: !EMERGE_PYTHON_PATH!
 )
 
-rem in case we are in kderoot 
-if exist %~dp0emerge\python (
-    set EMERGE_PYTHON_PATH=%~dp0emerge\python
-    echo "Using Python from: !EMERGE_PYTHON_PATH!
-)
-
 rem fall back to global python install if present
 if "%EMERGE_PYTHON_PATH%" == "" (
     if NOT "%PYTHONPATH%" == "" (
         set EMERGE_PYTHON_PATH=%PYTHONPATH%
     )
 )
+set PATH=!EMERGE_PYTHON_PATH!;!PATH!
 
 rem handle drive substitution
 rem
-rem check for unversioned kdesettings.bat,
-rem in that case drive substition already took place
-if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
-	rem Make sure download/svn/git directories exist
-    if not exist !DOWNLOADDIR!\NUL mkdir !DOWNLOADDIR!
-    if not exist !KDESVNDIR!\NUL mkdir !KDESVNDIR!
-    if not exist !KDEGITDIR!\NUL mkdir !KDEGITDIR!
-    if !EMERGE_USE_SHORT_PATH! == 1 (
-        set ROOT_SET=FALSE
-        set SVN_SET=FALSE
-        set DOWNLOAD_SET=FALSE
-        set GIT_SET=FALSE
-        rem Check if drives are already set up correctly
-        FOR /F "tokens=1,2,3* delims= " %%i in ('subst') DO (
-            if /I "%%i" == "!EMERGE_ROOT_DRIVE!\:" (
-                if /I "%%k" == "!KDEROOT!" (
-                    set ROOT_SET=TRUE
-                )
-            )
-            if /I "%%i" == "!EMERGE_SVN_DRIVE!\:" (
-                if /I "%%k" == "!KDESVNDIR!" (
-                    set SVN_SET=TRUE
-                )
-            )
-            if /I "%%i" == "!EMERGE_DOWNLOAD_DRIVE!\:" (
-                if /I "%%k" == "!DOWNLOADDIR!" (
-                    set DOWNLOAD_SET=TRUE
-                )
-            )
-            if /I "%%i" == "!EMERGE_GIT_DRIVE!\:" (
-                if /I "%%k" == "!KDEGITDIR!" (
-                    set GIT_SET=TRUE
-                )
-            )
-        )
-        if NOT "!ROOT_SET!"=="TRUE" (
-            if exist !EMERGE_ROOT_DRIVE!\NUL subst !EMERGE_ROOT_DRIVE! /D
-            subst !EMERGE_ROOT_DRIVE! !KDEROOT!
-        )
-        if NOT "!DOWNLOAD_SET!"=="TRUE" (
-            if exist !EMERGE_DOWNLOAD_DRIVE!\NUL subst !EMERGE_DOWNLOAD_DRIVE! /D
-            subst !EMERGE_DOWNLOAD_DRIVE! !DOWNLOADDIR!
-        )
-        if NOT "!SVN_SET!"=="TRUE" (
-            if exist !EMERGE_SVN_DRIVE!\NUL subst !EMERGE_SVN_DRIVE! /D
-            subst !EMERGE_SVN_DRIVE! !KDESVNDIR!
-        )
-        if NOT "!GIT_SET!" == "TRUE" (
-            if exist !EMERGE_GIT_DRIVE!\NUL subst !EMERGE_GIT_DRIVE! /D
-            subst !EMERGE_GIT_DRIVE! !KDEGITDIR!
-         )
-        set KDEROOT=!EMERGE_ROOT_DRIVE!\
-        set KDESVNDIR=!EMERGE_SVN_DRIVE!\
-        set DOWNLOADDIR=!EMERGE_DOWNLOAD_DRIVE!\
-        set KDEGITDIR=!EMERGE_GIT_DRIVE!\
-        !EMERGE_ROOT_DRIVE!
-    )
-)
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --subst') do SET KDEROOT=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General KDECOMPILER') do SET KDECOMPILER=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General EMERGE_ARCHITECTURE') do SET EMERGE_ARCHITECTURE=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General EMERGE_USE_CCACHE') do SET EMERGE_USE_CCACHE=%%A
+
+
 
 rem print pathes 
-if NOT "%EMERGE_SETTINGS_VERSION%" == "" (
-    echo KDEROOT     : %KDEROOT%
-    echo KDECOMPILER : %KDECOMPILER%
-    echo KDESVNDIR   : %KDESVNDIR%
-    echo KDEGITDIR   : %KDEGITDIR%
-    echo DOWNLOADDIR : %DOWNLOADDIR%
-    title %KDEROOT% %KDECOMPILER%
-)
 
-rem handle multiple merge roots
-set SUBDIR=
-if "%BUILDTYPE%" == "" (
-    if "%EMERGE_MERGE_ROOT_WITH_BUILD_TYPE%" == "True" (
-        set SUBDIR=\%EMERGE_BUILDTYPE%
-    )
-) else (
-    set SUBDIR=\%EMERGE_BUILDTYPE%
-)
+echo KDEROOT     : %KDEROOT%
+
+
+rem ####### Visual Studio Settings #######
+rem Here you can adjust the path to your Visual Studio or Intel Composer installation if needed
+rem This is used to set up the build environment automatically
+if %KDECOMPILER% == msvc2010 set VSDIR=%VS100COMNTOOLS%
+if %KDECOMPILER% == msvc2012 set VSDIR=%VS110COMNTOOLS%
+if %KDECOMPILER% == msvc2013 set VSDIR=%VS120COMNTOOLS%
+if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
+
+
 
 rem nb: we need delayed var expansion (!VAR!) to avoid confusing the batch script parser
 rem in case the expanded vars contain parentheses (same problem as above)
 
-set PATH=%KDEROOT%%SUBDIR%\bin;!PATH!
-set KDEDIRS=%KDEROOT%%SUBDIR%
-set QT_PLUGIN_PATH=%KDEROOT%%SUBDIR%\plugins;%KDEROOT%%SUBDIR%\lib\kde4\plugins
-set XDG_DATA_DIRS=%KDEROOT%%SUBDIR%\share
+set PATH=%KDEROOT%\bin;!PATH!
+set KDEDIRS=%KDEROOT%
+set QT_PLUGIN_PATH=%KDEROOT%\plugins;%KDEROOT%\lib\kde4\plugins
+set XDG_DATA_DIRS=%KDEROOT%\share
 
 rem for emerge
 set PATH=%KDEROOT%\emerge\bin;!PATH!
@@ -175,13 +98,10 @@ set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
-rem for python
-if NOT "!EMERGE_PYTHON_PATH!" == "" ( 
-   set PATH=!EMERGE_PYTHON_PATH!;!PATH!
-   if exist "!EMERGE_PYTHON_PATH!\Scripts" ( 
-        set PATH=!EMERGE_PYTHON_PATH!\Scripts;!PATH!
-   )
-)
+set GIT_SSH=plink
+set HOME=%USERPROFILE%
+set SVN_SSH=plink
+
 
 if "%EMERGE_USE_CCACHE%" == "True" (
    set CCACHE_DIR=%KDEROOT%\build\CCACHE
@@ -201,36 +121,27 @@ if "%KDECOMPILER%" == "mingw" (
     )
 )
 
-if "%APPLICATION%" == "" (
-    %comspec% /e:on /K "cd %KDEROOT%"
-) else (
-    if "%EMERGE_WAIT_FOR_APPLICATION%" == "True" (
-        call %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
-    ) else (
-        start %APPLICATION% %1 %2 %3 %4 %5 %6 %7 %8 %9
-    )
-)
+
+%comspec% /e:on /K "cd /D %KDEROOT%"
 goto :eof
 
 :path-mingw
-    if %EMERGE_ARCHITECTURE% == arm-wince ( 
-        set PATH=%KDEROOT%\cegcc-arm-wince\arm-mingw32ce\bin;%KDEROOT%\cegcc-arm-wince\libexec\gcc\arm-mingw32ce\4.4.0;!PATH!
-        goto :eof
-    ) 
-    set PATH=%KDEROOT%\mingw\bin;!PATH!
+    if "%EMERGE_ARCHITECTURE%" == "x86" (
+        set PATH=%KDEROOT%\mingw\bin;!PATH!
+    ) else (
+        set PATH=%KDEROOT%\mingw64\bin;!PATH!
+    )
     goto :eof
 
 :path-msvc
-    if defined WINDOWSSDKDIR (
-        call "!WINDOWSSDKDIR!\Bin\SetEnv.cmd" /%EMERGE_ARCHITECTURE%
-        echo call "!WINDOWSSDKDIR!\Bin\SetEnv.cmd" /%EMERGE_ARCHITECTURE%
-    ) else (
-        rem MSVC extra setup
-        if defined VSDIR (
-            call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
-        )
+    rem MSVC extra setup
+    if defined VSDIR (
+        if "%EMERGE_ARCHITECTURE%" == "x86" (
+            call "!VSDIR!\..\..\VC\vcvarsall.bat" x86
+        ) else (
+            call "!VSDIR!\..\..\VC\vcvarsall.bat" amd64
+        )        
     )
-    goto :path-common-vsshell
 
 :path-intel
     if defined INTELDIR (
@@ -242,31 +153,5 @@ goto :eof
             )
         )
     )
-    goto :path-common-vsshell
 
-
-:path-common-vsshell
-    if defined PSDKDIR (
-        echo Using Platform SDK: !PSDKDIR!
-        set PATH=!PSDKDIR!\bin;!PATH!
-        set INCLUDE=!PSDKDIR!\Include;!INCLUDE!
-        set LIB=!PSDKDIR!\Lib;!LIB!
-    )
-    
-    if defined MSDXSDKDIR (
-        call "!MSDXSDKDIR!\Utilities\bin\dx_setenv.cmd" %EMERGE_ARCHITECTURE%
-    )
-
-    if defined TARGET_SDKDIR (
-        if exist "%TARGET_SDKDIR%" (
-            echo Using Mobile SDK: !TARGET_SDKDIR!
-            set TARGET_PATH=!VSDIR!\VC\ce\bin\x86_arm;!PATH!
-            set TARGET_INCLUDE=!VSDIR!\VC\ce\include;!TARGET_SDKDIR!\include\%EMERGE_TARGET_ARCHITECTURE%;!TARGET_SDKDIR!\include;!VSDIR!\VC\ce\atlmfc\include
-            set TARGET_LIB=!TARGET_SDKDIR!\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\lib\%EMERGE_TARGET_ARCHITECTURE%;!VSDIR!\VC\ce\atlmfc\lib\%EMERGE_TARGET_ARCHITECTURE%
-        ) else (
-            echo Couldn't find the SDK for target platform %EMERGE_TARGET_PLATFORM%-%EMERGE_TARGET_ARCHITECTURE% ^^! 
-        )
-    )
-
-    goto :eof
 

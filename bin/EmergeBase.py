@@ -222,7 +222,7 @@ class EmergeBase(object):
         Default is to optionally append build type subdirectory"""
 
         utils.debug( "EmergeBase.packageDestinationDir called", 2 )
-        dstpath = os.getenv( "EMERGE_PKGDSTDIR" )
+        dstpath = emergeSettings.get("General","EMERGE_PKGDSTDIR", "None" )
         if not dstpath:
             dstpath = os.path.join( self.rootdir, "tmp" )
 

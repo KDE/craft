@@ -634,10 +634,7 @@ import portageSearch
 def getPackagesCategories(packageName, defaultCategory = None):
     utils.debug( "getPackagesCategories for package name %s" % packageName, 1 )
     if defaultCategory is None:
-        if "EMERGE_DEFAULTCATEGORY" in os.environ:
-            defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
-        else:
-            defaultCategory = "kde"
+        defaultCategory = emergeSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
 
     packageList, categoryList = [], []
     if len( packageName.split( "/" ) ) == 1:
