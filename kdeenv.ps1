@@ -69,8 +69,7 @@ function prependPATH([string] $path)
 prependPATH $settings["Paths"]["PYTHONPATH"]
 
 $KDEROOT = (python "$EMERGE_ROOT\bin\subst.py") | Out-String
-$KDEROOT = $KDEROOT.TrimEnd()
-$EMERGE_ROOT = "$KDEROOT\emerge"
+$KDEROOT = $KDEROOT.Trim()
 
 
 
