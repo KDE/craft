@@ -117,8 +117,8 @@ class infoclass(object):
         """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
-        if not os.getenv("EMERGE_PACKAGETYPES") is None:
-            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
+        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
+            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
         arch = self.getArchitecture();
         if compiler_name == None:
             compiler_name = compiler.getShortName()
@@ -156,8 +156,8 @@ example:
         """
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
-        if not os.getenv("EMERGE_PACKAGETYPES") is None:
-            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
+        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
+            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
         arch = infoclass.getArchitecture()
         # TODO: use list comprehension
         ret = []
@@ -170,8 +170,8 @@ example:
         """return archive file based package url for unified packages"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
-        if not os.getenv("EMERGE_PACKAGETYPES") is None:
-            packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
+        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
+            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
         arch = infoclass.getArchitecture()
         ret = ''
         for packageType in packagetypes:

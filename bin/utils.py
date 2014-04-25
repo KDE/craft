@@ -88,11 +88,7 @@ class Verbose(object):
         There is only one verbosity value for all parts of emerge.
         Always updates the shell variable EMERGE_VERBOSE.
     """
-    __level = os.getenv("EMERGE_VERBOSE")
-    if not __level or not __level.isdigit() or int(__level) < 0:
-        __level = 1
-    else:
-        __level = int(__level)
+    __level = 1
 
     @staticmethod
     def increase():
@@ -1107,7 +1103,7 @@ def startTimer(name, level = 0):
     if name in _TIMERS:
         die("%s already in timers" % name)
     _TIMERS[name] = (datetime.datetime.now() , level)
-    if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
+    if varAsBool(emergeSettings.get( "General","EMERGE_MEASURE_TIME", "False")) or level == 0 or verbose() > level and verbose() > 0:
         #debug( "Task: %s started" % name )
         sys.stdout.flush()
     
@@ -1117,7 +1113,7 @@ def stopTimer(name):
         debug( "%s not in timers" % name )
         return
     startTime , level = _TIMERS[name]
-    if os.getenv("EMERGE_MEASURE_TIME") or level == 0 or verbose() > level and verbose() > 0:
+    if varAsBool(emergeSettings.get( "General","EMERGE_MEASURE_TIME", "False")) or level == 0 or verbose() > level and verbose() > 0:
         delta = datetime.datetime.now() - startTime
         debug( "Task: %s stopped after: %s" % (name , delta) )
         sys.stdout.flush()
@@ -1152,7 +1148,7 @@ def deSubstPath(path):
     return path
 
 def notify(title,message,alertClass = None):
-    backends = os.getenv("EMERGE_USE_NOTIFY")
+    backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", None)
     if not backends:
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))

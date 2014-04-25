@@ -9,8 +9,7 @@ class subinfo(info.infoclass):
         utils.debug("emergebuildsystem:subinfo.setDependencies not implemented yet",1)
         # we need at least qmake
         #self.dependencies['libs/qt'] = 'default'
-        if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
-            self.buildDependencies['dev-util/jom'] = 'default'
+        self.buildDependencies['dev-util/jom'] = 'default'
 
         if compiler.isMinGW():
             if compiler.isMinGW_WXX():

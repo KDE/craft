@@ -24,9 +24,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/pexports']   = 'default'
 
         if not utils.varAsBool(emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False")):
-            if os.getenv( "SVN_SSH" ) == "plink" or \
-                    os.getenv( "GIT_SSH" ) == "plink":
-                self.buildDependencies['dev-util/putty']      = 'default'
+            self.buildDependencies['dev-util/putty']      = 'default'
 
             if compiler.isMinGW():
                 if compiler.isMinGW_WXX():

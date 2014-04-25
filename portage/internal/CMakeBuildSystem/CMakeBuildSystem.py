@@ -4,8 +4,7 @@ import compiler
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['dev-util/cmake'] = 'default'
-        if os.getenv( "EMERGE_MAKE_PROGRAM" ) != "":
-            self.buildDependencies['dev-util/jom'] = 'default'
+        self.buildDependencies['dev-util/jom'] = 'default'
 
         if compiler.isMinGW():
             if compiler.isMinGW_WXX():
