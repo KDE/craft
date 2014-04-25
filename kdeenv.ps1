@@ -65,7 +65,7 @@ function prependPATH([string] $path)
     $env:PATH="$path;$env:PATH"
 }
 
-$KDEROOT = (python "$EMERGE_ROOT\bin\subst.py" "--subst") | Out-String
+$KDEROOT = (python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst") | Out-String
 $KDEROOT = $KDEROOT.Trim()
 
 

@@ -44,10 +44,10 @@ call %~dp0..\etc\kdesettings.bat
 
 rem handle drive substitution
 rem
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --subst') do SET KDEROOT=%%A
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General KDECOMPILER') do SET KDECOMPILER=%%A
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General EMERGE_ARCHITECTURE') do SET EMERGE_ARCHITECTURE=%%A
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --get General EMERGE_USE_CCACHE') do SET EMERGE_USE_CCACHE=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --subst') do SET KDEROOT=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get General KDECOMPILER') do SET KDECOMPILER=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get General EMERGE_ARCHITECTURE') do SET EMERGE_ARCHITECTURE=%%A
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get General EMERGE_USE_CCACHE') do SET EMERGE_USE_CCACHE=%%A
 
 
 
