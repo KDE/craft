@@ -65,31 +65,22 @@ function prependPATH([string] $path)
     $env:PATH="$path;$env:PATH"
 }
 
-#todo:get pythonpath from registry
-prependPATH $settings["Paths"]["PYTHONPATH"]
-
-$KDEROOT = (python "$EMERGE_ROOT\bin\subst.py --subst") | Out-String
+$KDEROOT = (python "$EMERGE_ROOT\bin\subst.py" "--subst") | Out-String
 $KDEROOT = $KDEROOT.Trim()
 
 
 
 function path-mingw()
 {
-    if(test-path -path "$KDEROOT\mingw\bin")
+    if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x86")
     {
         prependPATH "$KDEROOT\mingw\bin"
     }
     else 
     {
-        if(test-path -path "$KDEROOT\mingw64\bin")
+        if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x64")
         {
             prependPATH "$KDEROOT\mingw64\bin"
-        }
-        else
-        { 
-            #dont know which version
-            prependPATH "$KDEROOT\mingw64\bin"
-            prependPATH "$KDEROOT\mingw\bin"
         }
     }
 }

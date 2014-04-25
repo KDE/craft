@@ -42,21 +42,6 @@ if exist %~dp0..\etc\kdesettings.bat (
 call %~dp0..\etc\kdesettings.bat
 )
 
-rem use local python installation if present
-rem when in kderoot/emerge
-if exist %~dp0python (
-    set EMERGE_PYTHON_PATH=%~dp0python
-    echo "Using Python from: !EMERGE_PYTHON_PATH!
-)
-
-rem fall back to global python install if present
-if "%EMERGE_PYTHON_PATH%" == "" (
-    if NOT "%PYTHONPATH%" == "" (
-        set EMERGE_PYTHON_PATH=%PYTHONPATH%
-    )
-)
-set PATH=!EMERGE_PYTHON_PATH!;!PATH!
-
 rem handle drive substitution
 rem
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\subst.py --subst') do SET KDEROOT=%%A
