@@ -49,7 +49,7 @@ def doExec( category, package, action ):
 
 
 def updateTitle( startTime, title ):
-    while (len( utils._TIMERS ) > 0):
+    while ( True ):
         delta = datetime.datetime.now( ) - startTime
         utils.setTitle( "emerge %s %s" % (title, delta) )
         time.sleep( 1 )

@@ -1099,24 +1099,27 @@ def setTitle(title):
 _TIMERS = dict()    
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""
-    if name in _TIMERS:
-        die("%s already in timers" % name)
-    _TIMERS[name] = (datetime.datetime.now() , level)
-    #if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")) or level == 0 or verbose() > level and verbose() > 0:
-        #debug( "Task: %s started" % name )
-        #sys.stdout.flush()
+    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")):
+        if name in _TIMERS:
+            die("%s already in timers" % name)
+        _TIMERS[name] = (datetime.datetime.now() , level)
+        #if verbose() > 0 and ( level == 0 or verbose() > level):
+            #debug( "Task: %s started" % name )
+            #sys.stdout.flush()
     
 def stopTimer(name):
     """stops a timer for meassurement"""
-    if not name in _TIMERS:
-        debug( "%s not in timers" % name )
-        return
-    startTime , level = _TIMERS[name]
-    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")) or level == 0 or verbose() > level and verbose() > 0:
-        delta = datetime.datetime.now() - startTime
-        print( "Task: %s stopped after: %s" % (name , delta) )
-        sys.stdout.flush()
-    del _TIMERS[name]
+    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")):
+        if not name in _TIMERS:
+            debug( "%s not in timers" % name )
+            return
+        startTime , level = _TIMERS[name]
+        if verbose() > 0  and (level == 0 or verbose() > level):
+            print("verbose %s %s" % (verbose(),verbose() > 0))
+            delta = datetime.datetime.now() - startTime
+            print( "Task: %s stopped after: %s" % (name , delta) )
+            sys.stdout.flush()
+        del _TIMERS[name]
     
 
 def stopAllTimer():
