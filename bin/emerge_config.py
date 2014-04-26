@@ -40,13 +40,14 @@ class EmergeConfig( object ):
         self.setDefault( "General", "DUMP_SETTINGS", "False" )
         self.addAlias( "EmergeDebug", "Verbose", "General", "EMERGE_VERBOSE" )
         self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
+        self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
+
 
     def _readSettings( self ):
         if not os.path.exists( self.iniPath ):
             print( "Could not find %s" % self.iniPath )
             exit( 1 )
         self._config = configparser.ConfigParser( )
-        self._config.optionxform = str
         self._config.read( self.iniPath )
         clean = False
         #replace possible vatiables within a section

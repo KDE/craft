@@ -593,7 +593,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
             warning( "file %s does not exist" % fullPath)
 
 
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = varAsBool( emergeSettings.get("General", "EMERGE_USE_SYMLINKS", "False" ))):
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = varAsBool( emergeSettings.get("General", "UseHardlinks", "False" ))):
     copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
@@ -869,7 +869,7 @@ def createDir(path):
         os.makedirs( path )
     return True
     
-def copyFile(src, dest,linkOnly = varAsBool( emergeSettings.get("General", "EMERGE_USE_SYMLINKS", "False"))):
+def copyFile(src, dest,linkOnly = varAsBool( emergeSettings.get("General", "UseHardlinks", "False"))):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
     destDir = os.path.dirname( dest )
