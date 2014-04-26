@@ -5,7 +5,7 @@ from emerge_config import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["gitHEAD"] = "[git]kde:%s|%s|" % (self.package, kd.kdebranch)
-        self.shortDescription = "TODO"
+        self.shortDescription = "Framework for managing menu and toolbar actions"
         self.defaultTarget = "gitHEAD"
 
     def setDependencies( self ):

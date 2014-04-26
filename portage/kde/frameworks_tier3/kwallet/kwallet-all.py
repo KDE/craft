@@ -1,22 +1,22 @@
 import info
 import kdedefaults as kd
-from emerge_config import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["gitHEAD"] = "[git]kde:%s|%s|" % (self.package, kd.kdebranch)
-        self.shortDescription = "Classes to improve the handling of icons"
+        self.shortDescription = "TODO"
         self.defaultTarget = "gitHEAD"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["libs/qtsvg"] = "default"
-        self.buildDependencies["kde/ki18n"] = "default"
-        self.buildDependencies["kde/kconfigwidgets"] = "default"
-        self.buildDependencies["kde/kwidgetsaddons"] = "default"
-        self.buildDependencies["kde/kitemviews"] = "default"
+        self.buildDependencies["win32libs/automoc"] = "default"
+        self.dependencies["kde/kconfig"] = "default"
+        self.dependencies["kde/kcoreaddons"] = "default"
+        self.dependencies["kde/kdbusaddons"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kiconthemes"] = "default"
+        self.dependencies["win32libs/gcrypt"] = "default"
 
 from Package.CMakePackageBase import *
 

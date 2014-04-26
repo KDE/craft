@@ -1,22 +1,26 @@
 import info
 import kdedefaults as kd
-from emerge_config import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["gitHEAD"] = "[git]kde:%s|%s|" % (self.package, kd.kdebranch)
-        self.shortDescription = "Classes to improve the handling of icons"
+        self.shortDescription = "Plugin framework for user interface components"
         self.defaultTarget = "gitHEAD"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["libs/qtsvg"] = "default"
-        self.buildDependencies["kde/ki18n"] = "default"
-        self.buildDependencies["kde/kconfigwidgets"] = "default"
-        self.buildDependencies["kde/kwidgetsaddons"] = "default"
-        self.buildDependencies["kde/kitemviews"] = "default"
+        self.dependencies["kde/kconfig"] = "default"
+        self.dependencies["kde/kcoreaddons"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kiconthemes"] = "default"
+        self.dependencies["kde/kio"] = "default"
+        self.dependencies["kde/kjobwidgets"] = "default"
+        self.dependencies["kde/knotifications"] = "default"
+        self.dependencies["kde/kservice"] = "default"
+        self.dependencies["kde/ktextwidgets"] = "default"
+        self.dependencies["kde/kwidgetsaddons"] = "default"
+        self.dependencies["kde/kxmlgui"] = "default"
 
 from Package.CMakePackageBase import *
 
