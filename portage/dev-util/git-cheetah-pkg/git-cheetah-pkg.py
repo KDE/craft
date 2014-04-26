@@ -23,7 +23,6 @@ class Package( AutoToolsPackageBase):
         self.buildInSource = True
         self.makeProgram = "make"
         utils.prependPath(os.path.join( emergeRoot() , "dev-utils" , "git" , "bin" ))
-        utils.putenv("CC","gcc.exe")
         
     def configure(self):
         return True

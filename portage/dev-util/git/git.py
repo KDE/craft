@@ -50,7 +50,6 @@ class Package(BinaryPackageBase):
         return True
 
     def qmerge(self):
-        utils.putenv("EMERGE_USE_SYMLINKS","False")
         if not BinaryPackageBase.qmerge(self):
             return False
         tmpFile = tempfile.TemporaryFile()
