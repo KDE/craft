@@ -17,7 +17,6 @@ from BuildSystem.BuildSystemBase import *
 
 class Package(PackageBase,GitSource,BuildSystemBase):
     def __init__( self):
-        self.subinfo = subinfo()
         PackageBase.__init__(self)
         GitSource.__init__(self)
         BuildSystemBase.__init__(self,"")

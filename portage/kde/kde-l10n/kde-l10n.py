@@ -63,7 +63,6 @@ from Package.VirtualPackageBase import *
 
 class Package( VirtualPackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         VirtualPackageBase.__init__( self )
 
 

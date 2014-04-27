@@ -15,7 +15,6 @@ from Package.PythonPackageBase import *
         
 class Package(PythonPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         PythonPackageBase.__init__( self )
 
 if __name__ == '__main__':

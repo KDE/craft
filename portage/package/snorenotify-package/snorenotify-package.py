@@ -16,7 +16,6 @@ from Package.VirtualPackageBase import *
 from Packager.PortablePackager import *
 class Package( PortablePackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         whitelists = [ 'whitelist.txt' ]
         VirtualPackageBase.__init__( self )
         PortablePackager.__init__( self , whitelists)

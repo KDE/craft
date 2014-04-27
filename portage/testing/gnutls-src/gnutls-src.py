@@ -23,7 +23,6 @@ class subinfo(info.infoclass):
 
 class PackageMinGW(AutoToolsBuildSystem):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         AutoToolsBuildSystem.__init__(self)
         self.subinfo.options.configure.defines = "--disable-openpgp-authentication --disable-guile"
 
@@ -34,7 +33,6 @@ if compiler.isMinGW():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':

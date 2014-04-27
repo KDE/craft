@@ -288,7 +288,6 @@ def main( ):
                          help = "similar to -z, only that it acts only on the last package, and works as normal on the rest." )
     parser.add_argument( "-q", "--stayquiet", action = "store_true",
                          dest = "stayQuiet",
-                         default = int(emergeSettings.get("EmergeDebug", "Verbose","1")),
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_BUILDTESTS", "False" ) ) )
@@ -304,6 +303,7 @@ def main( ):
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
                          help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
     parser.add_argument( "-v", "--verbose", action = "count",
+                         default = int(emergeSettings.get("EmergeDebug", "Verbose","1")),
                          help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
     parser.add_argument( "--trace", action = "count", default = int(emergeSettings.get( "General", "EMERGE_TRACE", "0" )) )

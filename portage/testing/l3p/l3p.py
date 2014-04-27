@@ -14,7 +14,6 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         self.subinfo.options.install.installPath = "bin"
 

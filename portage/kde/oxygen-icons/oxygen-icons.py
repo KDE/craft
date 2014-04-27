@@ -21,12 +21,11 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         # this package could be used for all build types (only images)
         ## \todo find a way to reuse this build output for different build types
+        CMakePackageBase.__init__( self )
         self.subinfo.options.useBuildType = False
         self.subinfo.options.useCompilerType = False
-        CMakePackageBase.__init__( self )
 
 
 

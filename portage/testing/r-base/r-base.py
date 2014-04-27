@@ -32,7 +32,6 @@ from Package.BinaryPackageBase import *
 #    - is there a way to run updatePackages() (in R) after an update? Do we even want this?
 class Package(BinaryPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         # don't use shortcut to unpack into imageDir()
         self.buildSystemType = 'custom'

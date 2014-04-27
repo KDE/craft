@@ -10,7 +10,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
     def unpack(self):

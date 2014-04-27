@@ -22,7 +22,6 @@ from Package.BoostPackageBase import *
 
 class Package( BoostPackageBase ):
     def __init__(self, **args):
-        self.subinfo = subinfo()
         BoostPackageBase.__init__(self)
 
 

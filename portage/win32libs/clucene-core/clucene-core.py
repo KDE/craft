@@ -31,7 +31,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DCLUCENE_VERSION:STRING="+self.buildTarget
         if self.buildTarget.startswith('0.9'):

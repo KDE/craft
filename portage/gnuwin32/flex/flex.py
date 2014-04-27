@@ -18,11 +18,10 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
-        self.subinfo = subinfo()
+        BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils";
-        BinaryPackageBase.__init__(self)
-        
+
     def install(self):
         if not BinaryPackageBase.install(self):
             return False

@@ -13,7 +13,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         # this program needs python 2.7
         self.subinfo.options.configure.defines = "-DPYTHON_EXECUTABLE=C:/python27_x86/python.exe"

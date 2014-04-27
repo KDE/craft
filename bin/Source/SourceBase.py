@@ -15,7 +15,7 @@ class SourceBase(EmergeBase):
         """set proxy for fetching sources - the default implementation is to set the
         environment variables http_proxy and ftp_proxy"""
         (host, port, username, password) = self.proxySettings()
-        if host == None:
+        if host == "":
             return
 
         name = ""

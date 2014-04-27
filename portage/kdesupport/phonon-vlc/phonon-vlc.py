@@ -36,7 +36,6 @@ class subinfo(info.infoclass):
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = ' -DCMAKE_CXX_FLAGS=-DWIN32  -DPHONON_BUILD_PHONON4QT5=ON -DPHONON_BUILDSYSTEM_DIR=\"%s\" ' % (os.path.join(emergeRoot(),'share','phonon','buildsystem').replace('\\','/'))
 

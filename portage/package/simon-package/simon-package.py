@@ -24,7 +24,6 @@ class subinfo( info.infoclass ):
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )

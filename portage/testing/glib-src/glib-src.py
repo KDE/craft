@@ -28,7 +28,6 @@ class subinfo(info.infoclass):
 
 class PackageMSVC(CMakePackageBase):
     def __init__(self):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
     def configure( self ):
@@ -65,7 +64,6 @@ from Package.AutoToolsPackageBase import *
 
 class PackageMinGW( AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         if not self.subinfo.options.features.msys2:
             utils.die("Glib requries the msys2 feature activated to compile")
         AutoToolsPackageBase.__init__(self)
@@ -80,7 +78,6 @@ if compiler.isMinGW():
 else:
     class Package(PackageMSVC):
         def __init__( self ):
-            self.subinfo = subinfo()
             PackageMSVC.__init__( self )
 
 if __name__ == '__main__':

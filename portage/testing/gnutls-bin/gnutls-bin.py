@@ -15,10 +15,9 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
-        self.subinfo = subinfo()
-        self.subinfo.options.merge.ignoreBuildType = True
-        self.subinfo.options.merge.destinationPath = ""
         BinaryPackageBase.__init__(self)
+        self.subinfo.options.merge.destinationPath = ""
+        self.subinfo.options.merge.ignoreBuildType = True
 
 if __name__ == '__main__':
     Package().execute()

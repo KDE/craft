@@ -18,9 +18,8 @@ from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
-        self.subinfo.options.make.supportsMultijob = False
         AutoToolsPackageBase.__init__(self)
+        self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=no --enable-shared=yes "
 
 

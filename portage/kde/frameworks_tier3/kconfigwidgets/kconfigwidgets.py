@@ -25,7 +25,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
         if compiler.isMinGW():

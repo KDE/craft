@@ -20,7 +20,6 @@ from Package.QMakePackageBase import *
 
 class Package( QMakePackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
 

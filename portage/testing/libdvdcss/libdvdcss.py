@@ -19,7 +19,6 @@ class subinfo( info.infoclass ):
 
 class Package(BinaryPackageBase):
   def __init__(self):
-    self.subinfo = subinfo()
     BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':

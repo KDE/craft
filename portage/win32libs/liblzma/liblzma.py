@@ -27,7 +27,6 @@ from Package.VirtualPackageBase import *
 
 class PackageMinGW( CMakePackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.withCompiler = False
 
@@ -42,7 +41,6 @@ if compiler.isMinGW():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':

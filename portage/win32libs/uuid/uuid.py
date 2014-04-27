@@ -16,7 +16,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
         # building dce and c++ interface not needed

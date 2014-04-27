@@ -17,7 +17,6 @@ class subinfo(info.infoclass):
 
 class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.buildInSource = True
 

@@ -10,7 +10,6 @@ from Package.SetupPackageBase import *
 
 class Package(SetupPackageBase):
     def __init__( self):
-        self.subinfo = subinfo()
         SetupPackageBase.__init__(self)
 
 if __name__ == '__main__':

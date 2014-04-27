@@ -21,9 +21,8 @@ from Package.AutoToolsPackageBase import *
 
 class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
-        self.subinfo.options.package.packageName = 'iconv'
         AutoToolsPackageBase.__init__(self)
+        self.subinfo.options.package.packageName = 'iconv'
 
     def install( self ):
         if not AutoToolsPackageBase.install( self ):

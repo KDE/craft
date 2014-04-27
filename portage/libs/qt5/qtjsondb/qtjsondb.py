@@ -4,7 +4,6 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):       
-        self.versionInfo.setupDefaultVersions(__file__)
         for ver in self.versionInfo.tarballs():
             self.targets[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip' % ( ver[0:3], ver, self.versionInfo.packageName(), ver)
             self.targetDigestUrls[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip.sha1' % (ver[0:3], ver, self.versionInfo.packageName(), ver)
@@ -30,7 +29,6 @@ from Package.Qt5CorePackageBase import *
 
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         Qt5CorePackageBase.__init__( self )
         
 if __name__ == '__main__':

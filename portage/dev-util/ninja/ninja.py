@@ -26,10 +26,9 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
-        self.subinfo.options.merge.destinationPath = "dev-utils"
         CMakePackageBase.__init__( self )
-        
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+
     def configure(self):
         return True
         

@@ -26,7 +26,6 @@ from Package.VirtualPackageBase import *
  
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         mergeroot = self.shell.toNativePath( self.mergeDestinationDir() )
         self.subinfo.options.configure.defines = "--enable-shared --disable-static --with-guis=qt4 --with-qt4-includes=" + mergeroot + "/include --with-qt4-libs=" + mergeroot + "/lib --with-qt4-moc=" + mergeroot + "/bin/moc.exe --with-qt4-uic=" + mergeroot + "/bin/uic.exe"
@@ -42,7 +41,6 @@ if compiler.isMinGW():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':

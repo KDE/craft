@@ -18,11 +18,10 @@ class subinfo(info.infoclass):
 
 class Package(BinaryPackageBase):
   def __init__(self):
-    self.subinfo = subinfo()
-    self.subinfo.options.merge.ignoreBuildType = True
-    self.subinfo.options.package.packSources = False
-    self.subinfo.options.package.withCompiler = None
     BinaryPackageBase.__init__( self )
+    self.subinfo.options.package.withCompiler = None
+    self.subinfo.options.package.packSources = False
+    self.subinfo.options.merge.ignoreBuildType = True
 
   def install( self ):
     if(not os.path.exists(os.path.join( self.imageDir(), "bin" , "mplayer" ))):

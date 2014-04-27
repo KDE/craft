@@ -30,7 +30,6 @@ from Package.MakeFilePackageBase import *
 
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         abi = "ABI=64"
         if self.buildArchitecture()=="x86":
@@ -40,7 +39,6 @@ class PackageMinGW(AutoToolsPackageBase):
 
 class PackageMSVC(MakeFilePackageBase):
     def __init__( self, **args ):
-            self.subinfo = subinfo()
             MakeFilePackageBase.__init__( self )
             
     def configure( self ):

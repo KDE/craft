@@ -22,7 +22,6 @@ from Package.CMakePackageBase import *
 
 class PackageCMake(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
 
     def configure(self):
@@ -50,7 +49,6 @@ from Package.AutoToolsPackageBase import *
 
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
 
     def install(self):

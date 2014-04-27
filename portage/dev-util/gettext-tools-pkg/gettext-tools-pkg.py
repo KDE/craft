@@ -18,7 +18,6 @@ from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__( self )
         self.subinfo.options.configure.defines = "--disable-java --disable-csharp --disable-shared --enable-static --with-gettext-tools "
 

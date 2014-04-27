@@ -325,9 +325,8 @@ class Portage(object):
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
                     mod = loader.load_module(modulename)
                 if not mod is None:
-                    self._CURRENT_MODULE  = ( fileName, category, package )
+                    self._CURRENT_MODULE  = ( fileName, category, package, mod )
                     pack = mod.Package( )
-                    pack.subinfo.parent = pack
                     packageDict[ fileName ] = pack
             else:
                 pack = packageDict[ fileName ]

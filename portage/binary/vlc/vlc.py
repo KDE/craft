@@ -57,10 +57,9 @@ class subinfo(info.infoclass):
 
 class Package(BinaryPackageBase):
   def __init__(self):
-    self.subinfo = subinfo()
-    self.subinfo.options.package.packSources = False
-    self.subinfo.options.package.packageName = 'vlc'
     BinaryPackageBase.__init__( self )
+    self.subinfo.options.package.packageName = 'vlc'
+    self.subinfo.options.package.packSources = False
 
 
   def install( self ):

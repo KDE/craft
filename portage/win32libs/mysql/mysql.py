@@ -21,7 +21,6 @@ class subinfo(info.infoclass):
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = "-DWITH_UNIT_TESTS=OFF -DENABLED_PROFILING=OFF -DINSTALL_SQLBENCHDIR= -DINSTALL_MYSQLTESTDIR= -DWITH_ZLIB=system -DWITH_SSL=system"
 

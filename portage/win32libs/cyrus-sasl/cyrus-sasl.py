@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
 #        self.subinfo.options.configure.defines = "-DSTATIC_LIBRARY=OFF"
         CMakePackageBase.__init__( self )
 

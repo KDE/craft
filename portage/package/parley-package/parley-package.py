@@ -15,7 +15,6 @@ class subinfo( info.infoclass ):
 
 class Package( MSInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
 #        whitelists = [ 'whitelist.txt' ]
         blacklists = [ PackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-mysql.txt', 'blacklist-virtuoso.txt' ]
         MSInstallerPackager.__init__( self, blacklists=blacklists )

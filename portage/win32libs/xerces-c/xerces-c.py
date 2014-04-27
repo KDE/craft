@@ -21,7 +21,6 @@ from Package.VirtualPackageBase import *
 
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
 
 
@@ -32,7 +31,6 @@ if compiler.isMinGW():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
             
 

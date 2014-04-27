@@ -19,7 +19,6 @@ from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         r_executable = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "R.exe" )
         self.subinfo.options.configure.defines = " -DR_EXECUTABLE=" + r_executable.replace( "\\\\", "/" )

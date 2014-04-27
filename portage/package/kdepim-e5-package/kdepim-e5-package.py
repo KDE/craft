@@ -28,7 +28,6 @@ class subinfo( info.infoclass ):
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         # TODO: Split up the blacklist into smaller packages
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt' ]
 

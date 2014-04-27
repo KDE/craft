@@ -17,14 +17,12 @@ class subinfo( info.infoclass ):
 
 class PackageMSVC(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
 
 from Package.AutoToolsPackageBase import *
 
 class PackageMinGW( AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = " --disable-static --enable-shared "
         
@@ -36,7 +34,6 @@ if compiler.isMinGW():
 else:
     class Package(PackageMSVC):
         def __init__( self ):
-            self.subinfo = subinfo()
             PackageMSVC.__init__( self )
 
 if __name__ == '__main__':

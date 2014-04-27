@@ -54,7 +54,6 @@ from Package.CMakePackageBase import *
 
 class PackageCMake(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.staticBuild = False
 
@@ -116,7 +115,6 @@ from Package.AutoToolsPackageBase import *
 
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False

@@ -30,7 +30,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.boost = portage.getPackageInstance('win32libs','boost')
         path = self.boost.installDir()

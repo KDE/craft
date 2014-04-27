@@ -15,7 +15,6 @@ from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__( self )
         if compiler.isX64():
             self.subinfo.options.merge.destinationPath = 'mingw64/x86_64-w64-mingw32'

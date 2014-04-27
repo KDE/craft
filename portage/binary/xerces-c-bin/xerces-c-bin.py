@@ -21,7 +21,6 @@ class subinfo(info.infoclass):
 
 class PackageBin(BinaryPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.package.withSources = False
@@ -43,7 +42,6 @@ if compiler.isMSVC():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
             
 

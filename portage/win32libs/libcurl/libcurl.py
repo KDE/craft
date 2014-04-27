@@ -27,7 +27,6 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = " -DBUILD_CURL_TESTS=OFF"
         self.subinfo.options.configure.testDefine = "-DBUILD_CURL_TESTS=ON"

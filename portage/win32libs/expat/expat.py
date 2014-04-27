@@ -20,7 +20,6 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         # both examples and tests can be run here
         self.subinfo.options.configure.defines = "-DBUILD_tests=OFF -DBUILD_examples=OFF -DBUILD_tools=OFF"

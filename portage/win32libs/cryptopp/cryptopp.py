@@ -20,7 +20,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = "-DCRYPTOPP_BUILD_STATIC_LIBS=ON -DCRYPTOPP_BUILD_SHARED_LIBS=OFF -DCRYPTOPP_BUILD_TESTS=OFF"
          

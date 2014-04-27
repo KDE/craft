@@ -32,7 +32,6 @@ from Packager.KDEWinPackager import *;
 
 class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
     def __init__( self ):
-        self.subinfo = subinfo()
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)

@@ -15,7 +15,6 @@ class subinfo( info.infoclass ):
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         whitelists = [ 'whitelist.txt' ]
         blacklists = [ 'blacklist.txt', 'blacklist-mysql.txt' ]
         NullsoftInstallerPackager.__init__( self, whitelists, blacklists )

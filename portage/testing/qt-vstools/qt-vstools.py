@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
 
 class Package(QMakePackageBase):
     def __init__(self):
-        self.subinfo = subinfo()
         QMakePackageBase.__init__( self )
      
     def make( self ):

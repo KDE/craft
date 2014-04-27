@@ -20,7 +20,6 @@ class subinfo( info.infoclass ):
         
 class Package( PortablePackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         whitelists = [ 'whitelist.txt' ]
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt' ]
         PortablePackager.__init__( self, whitelists ,blacklists )

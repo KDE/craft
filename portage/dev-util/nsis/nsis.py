@@ -17,10 +17,9 @@ from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
-        self.subinfo.options.merge.ignoreBuildType = True
-        self.subinfo.options.merge.destinationPath = os.path.join("dev-utils")
         BinaryPackageBase.__init__(self)
+        self.subinfo.options.merge.destinationPath = os.path.join("dev-utils")
+        self.subinfo.options.merge.ignoreBuildType = True
 
     def unpack( self ):
         if not BinaryPackageBase.unpack(self):

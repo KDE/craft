@@ -18,10 +18,11 @@ import version_info
 
 class infoclass(object):
     """this module contains the information class"""
-    def __init__( self, RAW=""  ):
+    def __init__( self, parent):
         ### package options
+        self.parent = parent
         self.options = Options()
-        self.versionInfo = version_info.VersionInfo()
+        self.versionInfo = version_info.VersionInfo(self)
         self.options.readFromEnv()
         self.targets = OrderedDict()
         self.archiveNames = OrderedDict()
@@ -69,13 +70,6 @@ class infoclass(object):
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
-        self.parent = None
-
-
-        for x in RAW.splitlines():
-            if not x == '':
-                # if version is not available then set it as -1
-                self.hardDependencies[ x ] = [ -1 ]
 
         self.setTargets()
         self.setSVNTargets()

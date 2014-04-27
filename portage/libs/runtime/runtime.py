@@ -16,7 +16,6 @@ import compiler
 
 class Package( BinaryPackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
         if compiler.isMinGW():
             self.subinfo.options.package.version = compiler.getMinGWVersion()

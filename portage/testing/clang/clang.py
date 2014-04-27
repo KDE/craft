@@ -15,7 +15,6 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
         self.llvm = portage.getPackageInstance("testing", "llvm")
         self.subinfo.options.configure.defines = "-DCLANG_PATH_TO_LLVM_BUILD=" + self.llvm.imageDir()

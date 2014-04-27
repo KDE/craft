@@ -24,12 +24,11 @@ from BuildSystem.BinaryBuildSystem import *
 
 class Package(PackageBase,BinaryBuildSystem):
     def __init__( self):
-        self.subinfo = subinfo()
+        PackageBase.__init__(self)
+        BinaryBuildSystem.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.install.installPath = "bin"
-        PackageBase.__init__(self)
-        BinaryBuildSystem.__init__(self)
 
     def fetch(self):
         return True

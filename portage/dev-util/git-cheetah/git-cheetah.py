@@ -24,7 +24,6 @@ class subinfo( info.infoclass ):
 
 class Package(BinaryPackageBase):
   def __init__(self):
-    self.subinfo = subinfo()
     BinaryPackageBase.__init__( self )
     self.subinfo.options.merge.destinationPath = 'dev-utils'
     

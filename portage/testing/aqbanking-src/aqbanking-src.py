@@ -25,7 +25,6 @@ from Package.VirtualPackageBase import *
  
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = "--enable-shared --disable-static"
 
@@ -41,7 +40,6 @@ if compiler.isMinGW():
 else:
     class Package(VirtualPackageBase):
         def __init__( self ):
-            self.subinfo = subinfo()
             VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':

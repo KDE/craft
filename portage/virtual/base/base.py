@@ -39,7 +39,6 @@ class subinfo(info.infoclass):
 
 class Package( VirtualPackageBase ):
     def __init__( self ):
-        self.subinfo = subinfo()
         VirtualPackageBase.__init__( self )
 
 if __name__ == '__main__':

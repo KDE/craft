@@ -18,7 +18,6 @@ from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase):
     def __init__( self ):
-        self.subinfo = subinfo()
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=yes --enable-shared=no DBUS_LIBS='%s/lib/libdbus-1.dll.a' DBUS_CFLAGS=' '" % utils.toMSysPath(emergeRoot())
 
