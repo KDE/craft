@@ -64,8 +64,6 @@ from Package.AutoToolsPackageBase import *
 
 class PackageMinGW( AutoToolsPackageBase):
     def __init__( self ):
-        if not self.subinfo.options.features.msys2:
-            utils.die("Glib requries the msys2 feature activated to compile")
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = " --enable-gtk-doc=no --enable-static=no --enable-shared=yes --disable-modular-tests"
 
