@@ -30,5 +30,3 @@ class Package(BinaryPackageBase):
         shutil.rmtree( os.path.join( self.imageDir(), "xsd-3.3.0-i686-windows" ) )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

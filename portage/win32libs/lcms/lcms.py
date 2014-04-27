@@ -20,5 +20,3 @@ class Package(CMakePackageBase):
         # both examples and tests can be run here
         self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF -DBUILD_SAMPLES=ON -DBUILD_TOOLS=OFF"
 
-if __name__ == '__main__':
-    Package().execute()

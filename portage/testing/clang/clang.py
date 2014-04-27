@@ -19,5 +19,3 @@ class Package(CMakePackageBase):
         self.llvm = portage.getPackageInstance("testing", "llvm")
         self.subinfo.options.configure.defines = "-DCLANG_PATH_TO_LLVM_BUILD=" + self.llvm.imageDir()
 
-if __name__ == '__main__':
-    Package().execute()

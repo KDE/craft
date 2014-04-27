@@ -32,5 +32,3 @@ class Package(BinaryPackageBase):
             shutil.copy(os.path.join(self.packageDir(), "wrapper.bat"), os.path.join(self.imageDir(), "bin", f + ".bat"))
         return True
 
-if __name__ == '__main__':
-    Package().execute()

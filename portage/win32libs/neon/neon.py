@@ -25,5 +25,3 @@ class Package(CMakePackageBase):
         # do not install docs
         self.subinfo.options.configure.defines = "-DINSTALL_DOCS=OFF"
 
-if __name__ == '__main__':
-    Package().execute()

@@ -31,5 +31,3 @@ class Package(BinaryPackageBase):
             os.path.join( self.installDir(), "mcc.exe"))
         return True
 
-if __name__ == '__main__':
-    Package().execute()

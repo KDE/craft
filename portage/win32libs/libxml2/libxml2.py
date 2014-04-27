@@ -31,6 +31,4 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DBUILD_tests=OFF"
 
 
-if __name__ == '__main__':
-    Package().execute()
 

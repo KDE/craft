@@ -24,5 +24,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = "-DWITH_UNIT_TESTS=OFF -DENABLED_PROFILING=OFF -DINSTALL_SQLBENCHDIR= -DINSTALL_MYSQLTESTDIR= -DWITH_ZLIB=system -DWITH_SSL=system"
 
-if __name__ == '__main__':
-    Package().execute()

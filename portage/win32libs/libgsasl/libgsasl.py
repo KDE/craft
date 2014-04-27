@@ -22,5 +22,3 @@ class Package( AutoToolsPackageBase):
         self.subinfo.options.configure.defines = " --enable-static --disable-shared "
         
         
-if __name__ == '__main__':
-      Package().execute()

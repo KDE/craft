@@ -23,5 +23,3 @@ class Package( CMakePackageBase ):
         self.supportsNinja = False
         self.subinfo.options.configure.defines = "-DFFTW_SINGLE=ON -DFFTW_DOUBLE=OFF -DBUILD_BENCHMARKS=OFF"
 
-if __name__ == '__main__':
-     Package().execute()

@@ -25,5 +25,3 @@ class Package( AutoToolsPackageBase):
 
 
         
-if __name__ == '__main__':
-    Package().execute()

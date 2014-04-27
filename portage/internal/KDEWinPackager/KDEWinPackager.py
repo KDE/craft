@@ -11,5 +11,3 @@ class Package(InternalPackageBase):
         InternalPackageBase.__init__(self)
 
 
-if __name__ == '__main__':
-    Package().execute()

@@ -24,5 +24,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, whitelists,blacklists )
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
 
-if __name__ == '__main__':
-    Package().execute()

@@ -40,5 +40,3 @@ class Package( QMakePackageBase ):
         
 
         
-if __name__ == '__main__':
-    Package().execute()

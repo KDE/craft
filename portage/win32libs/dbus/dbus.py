@@ -58,5 +58,3 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += (
                     "-DDBUS_USE_OUTPUT_DEBUG_STRING=ON ")
 
-if __name__ == '__main__':
-    Package().execute()

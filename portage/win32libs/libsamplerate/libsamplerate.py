@@ -20,5 +20,3 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = " -DBUILD_SHARED_LIB=ON -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON"
 
-if __name__ == '__main__':
-    Package().execute()

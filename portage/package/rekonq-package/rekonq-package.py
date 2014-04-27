@@ -27,5 +27,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         # self.defines[ "icon" ] = os.path.join(portage.getPackageInstance('extragear','rekonq').sourceDir(),"icons","rekonq.ico")
         
 
-if __name__ == '__main__':
-    Package().execute()

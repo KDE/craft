@@ -77,5 +77,3 @@ class Package(BinaryPackageBase):
         self.subinfo.options.package.version = self.getVersionFromR()
         return BinaryPackageBase.createPackage(self)
 
-if __name__ == '__main__':
-    Package().execute()

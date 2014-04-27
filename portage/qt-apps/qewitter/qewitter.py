@@ -20,5 +20,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         #self.subinfo.options.cmake.openIDE = True
 
-if __name__ == '__main__':
-    Package().execute()

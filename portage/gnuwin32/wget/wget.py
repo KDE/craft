@@ -40,5 +40,3 @@ class Package(PackageBase,BinaryBuildSystem):
             os.makedirs(self.installDir())
         return utils.copyFile(self.localwget,os.path.join(self.installDir(),'wget.exe'))
 
-if __name__ == '__main__':
-    Package().execute()

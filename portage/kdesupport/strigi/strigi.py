@@ -64,5 +64,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
 
-if __name__ == '__main__':
-    Package().execute()

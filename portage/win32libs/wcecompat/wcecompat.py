@@ -18,5 +18,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.packageName = 'wcecompat'
         self.subinfo.options.configure.defines = "-DWCECOMPAT_INSTALL_INC_DIR=include/wcecompat"
 
-if __name__ == '__main__':
-    Package().execute()

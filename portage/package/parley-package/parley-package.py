@@ -21,5 +21,3 @@ class Package( MSInstallerPackager, VirtualPackageBase ):
         VirtualPackageBase.__init__( self )
         self.defines[ "executable" ] = "bin\\parley.exe"
 
-if __name__ == '__main__':
-    Package().execute()

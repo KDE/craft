@@ -30,5 +30,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.scriptname = os.path.join(self.packageDir(),"NullsoftInstaller.nsi")
         self.defines[ "simon-root" ] = self.subinfo.simon.sourceDir()
 
-if __name__ == '__main__':
-    Package().execute()

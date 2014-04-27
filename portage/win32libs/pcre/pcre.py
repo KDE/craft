@@ -37,5 +37,3 @@ class Package( CMakePackageBase ):
         defines += "-DPCRE_EBCDIC=OFF "
         self.subinfo.options.configure.defines = defines
 
-if __name__ == '__main__':
-    Package().execute()

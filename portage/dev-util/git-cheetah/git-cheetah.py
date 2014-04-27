@@ -37,5 +37,3 @@ class Package(BinaryPackageBase):
         utils.system("regsvr32 -u -s -n -i:machine %s" % utils.deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
         return BinaryPackageBase.unmerge(self)
 
-if __name__ == '__main__':
-    Package().execute()

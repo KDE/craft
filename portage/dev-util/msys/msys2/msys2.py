@@ -44,5 +44,3 @@ class Package(BinaryPackageBase):
         utils.system("autorebase.bat", cwd = msysDir)
         return True
        
-if __name__ == '__main__':
-    Package().execute()

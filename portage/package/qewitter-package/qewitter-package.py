@@ -27,5 +27,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "icon" ] = os.path.join(portage.getPackageInstance('qt-apps','qewitter').sourceDir(),"data","qewitter.ico")
         
 
-if __name__ == '__main__':
-    Package().execute()

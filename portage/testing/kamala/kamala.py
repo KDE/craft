@@ -20,7 +20,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.onlyBuildTargets = 'kamala'
 
-if __name__ == '__main__':
-    Package().execute()
 
 

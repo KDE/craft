@@ -95,5 +95,3 @@ class Package(CMakePackageBase):
             utils.system( "perl.exe " + os.path.join( self.sourceDir(), "download-repos" ) )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

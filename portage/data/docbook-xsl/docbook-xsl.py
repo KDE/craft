@@ -40,5 +40,3 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.installDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
         return True
 
-if __name__ == '__main__':
-    Package().execute()

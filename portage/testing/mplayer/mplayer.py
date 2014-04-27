@@ -29,5 +29,3 @@ class Package(BinaryPackageBase):
     shutil.move( os.path.join( self.imageDir() , "mplayer.exe" ) , os.path.join( self.imageDir(), "bin" , "mplayer" , "mplayer.exe" ) )
     return True
 
-if __name__ == '__main__':
-    Package().execute()

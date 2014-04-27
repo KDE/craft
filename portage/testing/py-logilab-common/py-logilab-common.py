@@ -13,5 +13,3 @@ class Package(PythonPackageBase):
     def __init__( self ):
         PythonPackageBase.__init__( self )
         
-if __name__ == '__main__':
-    Package().execute()

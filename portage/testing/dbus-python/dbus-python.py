@@ -22,5 +22,3 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.subinfo.options.make.supportsMultijob = False
 
-if __name__ == '__main__':
-    Package().execute()

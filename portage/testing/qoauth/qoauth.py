@@ -28,5 +28,3 @@ class Package(QMakePackageBase):
     def setPathes( self ):
         pass
 
-if __name__ == '__main__':
-    Package().execute()

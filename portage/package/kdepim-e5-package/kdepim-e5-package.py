@@ -64,5 +64,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
 
 
 
-if __name__ == '__main__':
-    Package().execute()

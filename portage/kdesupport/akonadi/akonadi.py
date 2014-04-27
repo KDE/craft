@@ -52,5 +52,3 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += " -DAKONADI_USE_STRIGI_SEARCH=ON"
 
 
-if __name__ == '__main__':
-    Package().execute()

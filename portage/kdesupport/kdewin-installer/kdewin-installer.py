@@ -22,5 +22,3 @@ class Package(CMakePackageBase):
             self.subinfo.configure.defines = " -DBUILD_FOR_AMAROK=ON"
         return CMakePackageBase.configure(self)
 
-if __name__ == '__main__':
-    Package().execute()

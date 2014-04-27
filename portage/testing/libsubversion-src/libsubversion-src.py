@@ -61,5 +61,3 @@ class Package(CMakePackageBase):
         return self.system( cmd )
 
 
-if __name__ == '__main__':
-    Package().execute()

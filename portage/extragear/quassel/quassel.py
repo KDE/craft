@@ -55,5 +55,3 @@ class Package( CMakePackageBase ):
 
 
 
-if __name__ == '__main__':
-    Package().execute()

@@ -33,6 +33,4 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.toolsDefine = "-DBUILD_CURL_EXE=ON"
         self.subinfo.options.configure.staticDefine = "-DCURL_STATICLIB=ON"
 
-if __name__ == '__main__':
-    Package().execute()
 

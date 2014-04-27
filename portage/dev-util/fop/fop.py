@@ -18,5 +18,3 @@ class Package(BinaryPackageBase):
         ## @todo manifest files are also written in dev-utils/bin - fix this
         self.subinfo.options.merge.destinationPath = "dev-utils/bin"
 
-if __name__ == '__main__':
-    Package().execute()

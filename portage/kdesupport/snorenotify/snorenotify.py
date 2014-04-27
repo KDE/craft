@@ -28,5 +28,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = ' -DWITH_KDE=OFF -DWITH_QT4=OFF -DWITH_FREEDESKTOP_FRONTEND=ON -DWITH_SNORE_DEAMON=ON '
 
-if __name__ == '__main__':
-    Package().execute()

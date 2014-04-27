@@ -24,5 +24,3 @@ class Package( CMakePackageBase ):
         #using our freetipe fails
         self.subinfo.options.configure.defines ="-DBUILD_TESTING=OFF -DVTK_USE_QT=ON -DVTK_USE_SYSTEM_ZLIB=ON -DVTK_USE_SYSTEM_JPEG=ON -DVTK_USE_SYSTEM_PNG=ON -DVTK_USE_SYSTEM_TIFF=ON -DVTK_USE_SYSTEM_EXPAT=ON -DVTK_USE_SYSTEM_LIBXML2=ON "
 
-if __name__ == '__main__':
-    Package().execute()

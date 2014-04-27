@@ -30,5 +30,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += " -DWITH_ASF=ON"
         self.subinfo.options.configure.defines += " -DWITH_MP4=ON"
 
-if __name__ == '__main__':
-    Package().execute()

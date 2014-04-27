@@ -17,5 +17,3 @@ class Package(CMakePackageBase):
         # this program needs python 2.7
         self.subinfo.options.configure.defines = "-DPYTHON_EXECUTABLE=C:/python27_x86/python.exe"
 
-if __name__ == '__main__':
-    Package().execute()

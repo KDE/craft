@@ -67,5 +67,3 @@ class Package(CMakePackageBase):
     def runTest(self):
         return False
 
-if __name__ == '__main__':
-    Package().execute()

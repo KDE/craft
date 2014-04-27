@@ -28,5 +28,3 @@ class Package( PortablePackager, VirtualPackageBase ):
         self.subinfo.options.package.withArchitecture=False
 
 
-if __name__ == '__main__':
-    Package().execute()

@@ -44,5 +44,3 @@ class Package(CMakePackageBase):
         utils.copyFile(os.path.join(self.sourceDir(),"ninja.exe"),os.path.join(self.imageDir(),"bin","ninja.exe"))
         return True
         
-if __name__ == '__main__':
-    Package().execute()

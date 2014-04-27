@@ -25,6 +25,4 @@ class Package(BinaryPackageBase):
           os.remove( os.path.join( self.installDir(), "MANIFEST" ) )
         return res
 
-if __name__ == '__main__':
-    Package().execute()
 

@@ -17,5 +17,3 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.install.installPath = "share"
 
-if __name__ == '__main__':
-    Package().execute()

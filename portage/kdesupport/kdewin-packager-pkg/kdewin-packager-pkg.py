@@ -17,5 +17,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.configure.defines = " -DBUILD_PACKAGER_ONLY=ON"
 
-if __name__ == '__main__':
-    Package().execute()

@@ -31,5 +31,3 @@ class Package( CMakePackageBase ):
 #        self.subinfo.options.configure.defines = "-DBUILD_TOOL=ON -DBUILD_TESTS=ON "
 
 
-if __name__ == '__main__':
-    Package().execute()

@@ -30,5 +30,3 @@ class Package(CMakePackageBase):
         if self.buildTarget.startswith( "static" ):
             self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE=" + os.path.join( emergeRoot(), "qt-static", "bin", "qmake.exe" )
 
-if __name__ == '__main__':
-    Package().execute()

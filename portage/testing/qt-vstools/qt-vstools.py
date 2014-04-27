@@ -26,5 +26,3 @@ class Package(QMakePackageBase):
         cmd = "%s\\help\\createdoc.bat --qt" % self.sourceDir()
         return utils.system(cmd, cwd=self.buildDir())
 
-if __name__ == '__main__':
-    Package().execute()

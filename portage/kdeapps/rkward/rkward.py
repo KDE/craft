@@ -23,6 +23,4 @@ class Package( CMakePackageBase ):
         r_executable = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "R.exe" )
         self.subinfo.options.configure.defines = " -DR_EXECUTABLE=" + r_executable.replace( "\\\\", "/" )
 
-if __name__ == '__main__':
-    Package().execute()
 

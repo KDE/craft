@@ -32,5 +32,3 @@ class Package( AutoToolsPackageBase ):
             shutil.move( os.path.join( self.installDir() , "lib64" ) , os.path.join( self.installDir(), "lib" ) )
         return True
 
-if __name__ == '__main__':
-     Package().execute()

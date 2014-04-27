@@ -23,5 +23,3 @@ class Package( AutoToolsPackageBase):
         self.subinfo.options.configure.defines = "--enable-shared=no --enable-ltdl-install"
         self.subinfo.options.package.withCompiler = False
 
-if __name__ == '__main__':
-     Package().execute()

@@ -69,5 +69,3 @@ class Package(PackageBase,GitSource,BuildSystemBase):
     def createPackage(self):
         return True
 
-if __name__ == '__main__':
-    Package().execute()

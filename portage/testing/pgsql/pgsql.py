@@ -38,5 +38,3 @@ class Package(CMakePackageBase):
         shutil.copytree(self.sourceDir() , self.installDir())
 
         return True
-if __name__ == '__main__':
-    Package().execute()

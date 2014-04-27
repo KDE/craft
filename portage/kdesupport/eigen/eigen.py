@@ -20,5 +20,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.withCompiler = False
         # header-only package
 
-if __name__ == '__main__':
-    Package().execute()

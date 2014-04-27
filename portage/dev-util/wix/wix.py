@@ -27,5 +27,3 @@ class Package(BinaryPackageBase):
     def fetch( self ):
         return self.system("wget -c -O %s\wix35-binaries.zip \"--post-data=fileId=204418&releaseId=60102&clickOncePath=\" http://wix.codeplex.com/releases/acceptLicense" % self.downloadDir())
 
-if __name__ == '__main__':
-    Package().execute()

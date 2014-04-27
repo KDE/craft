@@ -17,5 +17,3 @@ class Package(BinaryPackageBase):
     BinaryPackageBase.__init__( self )
     self.subinfo.options.merge.destinationPath = 'dev-utils/bin'
 
-if __name__ == '__main__':
-    Package().execute()

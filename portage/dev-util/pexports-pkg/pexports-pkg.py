@@ -23,7 +23,5 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.unpack.unpackDir = 'pexports-0.44'
 
-if __name__ == '__main__':
-    Package().execute()
 
 

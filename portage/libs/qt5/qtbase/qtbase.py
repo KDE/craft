@@ -130,5 +130,3 @@ class Package(Qt5CorePackageBase):
 
 
 
-if __name__ == '__main__':
-    Package().execute()

@@ -40,5 +40,3 @@ class Package(BinaryPackageBase):
                     os.remove( os.path.join( manifestDir, file ) )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

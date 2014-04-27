@@ -31,5 +31,3 @@ class Package(BinaryPackageBase):
         utils.applyPatch( self.sourceDir(), os.path.join( self.packageDir(), "libarchive-comp.diff" ) , "0" )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

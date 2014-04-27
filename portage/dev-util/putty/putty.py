@@ -23,8 +23,6 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = 'dev-utils'
         self.subinfo.options.package.withCompiler = False
 
-if __name__ == '__main__':
-    Package().execute()
 
 
 

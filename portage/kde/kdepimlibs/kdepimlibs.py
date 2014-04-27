@@ -35,5 +35,3 @@ class Package(CMakePackageBase):
         path = self.boost.installDir()
         os.putenv( "BOOST_ROOT", path )
 
-if __name__ == '__main__':
-    Package().execute()

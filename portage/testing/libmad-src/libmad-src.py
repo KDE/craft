@@ -15,6 +15,4 @@ class Package(CMakePackageBase):
         # we use subinfo for now too
         CMakePackageBase.__init__( self )
 
-if __name__ == '__main__':
-    Package().execute()
 

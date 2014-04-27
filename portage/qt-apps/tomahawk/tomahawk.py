@@ -31,5 +31,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = " -DWITH_BREAKPAD=OFF -DWITH_CRASHREPORTER=OFF -DBUILD_WITH_QT4=OFF -DWITH_KDE4=OFF -DBUILD_HATCHET=ON"
 
-if __name__ == '__main__':
-    Package().execute()

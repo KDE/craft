@@ -19,7 +19,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.onlyBuildTargets = "libkdegames"
 
-if __name__ == '__main__':
-    Package().execute()
 
 

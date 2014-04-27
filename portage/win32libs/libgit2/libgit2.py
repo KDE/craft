@@ -19,5 +19,3 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 #        self.subinfo.options.configure.defines = "-DDBUS_REPLACE_LOCAL_DIR=ON "
 
-if __name__ == '__main__':
-    Package().execute()

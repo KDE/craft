@@ -50,5 +50,3 @@ class Package(BinaryPackageBase):
             utils.copyFile(os.path.join(srcDir,file),os.path.join(destDir,file));
         return True
 
-if __name__ == '__main__':
-    Package().execute()

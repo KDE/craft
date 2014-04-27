@@ -22,5 +22,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = ""
 #        self.subinfo.options.configure.defines += "-DWITH_KDE=ON"
 
-if __name__ == '__main__':
-    Package().execute()

@@ -75,5 +75,3 @@ class Package(BinaryPackageBase):
     shutil.copy( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.installDir() , "share" , "applications" , "kde4" , "vlc.desktop" ))
     return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -23,5 +23,3 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.defines = " --enable-sdk=all "
 
 
-if __name__ == '__main__':
-     Package().execute()

@@ -32,5 +32,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.scriptname = os.path.join( emergeSettings.get("Paths",  "KDEGITDIR" ), "amarok", "release_scripts", "windows", "amarok.nsi")
         self.defines[ "kde-version" ] = "4.11.0"
 
-if __name__ == '__main__':
-    Package().execute()

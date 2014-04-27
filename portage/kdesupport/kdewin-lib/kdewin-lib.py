@@ -23,5 +23,3 @@ class Package(CMakePackageBase):
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
 
 
-if __name__ == '__main__':
-    Package().execute()

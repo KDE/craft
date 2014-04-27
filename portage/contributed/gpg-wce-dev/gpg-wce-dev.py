@@ -76,5 +76,3 @@ class Package(BinaryPackageBase):
             return self.runAction(command) == 0
 
 
-if __name__ == '__main__':
-    Package().execute()

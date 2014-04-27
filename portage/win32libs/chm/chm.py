@@ -21,5 +21,3 @@ class Package(CMakePackageBase):
         # building examples and debugging tools
         self.subinfo.options.configure.defines = "-DBUILD_examples=OFF"
 
-if __name__ == '__main__':
-    Package().execute()

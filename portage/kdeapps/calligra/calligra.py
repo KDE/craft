@@ -63,5 +63,3 @@ class Package( CMakePackageBase ):
 
         self.subinfo.options.configure.defines = defines
 
-if __name__ == '__main__':
-    Package().execute()

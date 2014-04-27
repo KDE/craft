@@ -79,5 +79,3 @@ class Package(CMakePackageBase):
             utils.embedManifest( executable, manifest )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -25,5 +25,3 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = "-DENABLE_STATIC=ON"
 
-if __name__ == '__main__':
-    Package().execute()

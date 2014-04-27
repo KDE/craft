@@ -21,5 +21,3 @@ class Package(CMakePackageBase):
         # building dce and c++ interface not needed
         self.subinfo.options.configure.defines = "-DWITH_DCE=OFF -DWITH_CXX=OFF -DWITH_EXEC=OFF"
 
-if __name__ == '__main__':
-    Package().execute()

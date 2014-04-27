@@ -66,5 +66,3 @@ class Package(BinaryPackageBase):
         utils.system( "%s config --system core.autocrlf false" % git)
         return True
 
-if __name__ == '__main__':
-    Package().execute()

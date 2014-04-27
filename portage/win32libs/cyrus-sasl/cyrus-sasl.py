@@ -21,5 +21,3 @@ class Package(CMakePackageBase):
 #        self.subinfo.options.configure.defines = "-DSTATIC_LIBRARY=OFF"
         CMakePackageBase.__init__( self )
 
-if __name__ == '__main__':
-    Package().execute()

@@ -29,5 +29,3 @@ class Package(CMakePackageBase):
         utils.copyFile( src, dst )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

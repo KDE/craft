@@ -50,5 +50,3 @@ class Package(BoostPackageBase):
         return True
 
 
-if __name__ == '__main__':
-    Package().execute()

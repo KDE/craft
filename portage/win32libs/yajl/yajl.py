@@ -25,6 +25,4 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
 
-if __name__ == '__main__':
-    Package().execute()
 

@@ -25,5 +25,3 @@ class Package( PortablePackager, VirtualPackageBase ):
         PortablePackager.__init__( self, whitelists ,blacklists )
         VirtualPackageBase.__init__( self )
 
-if __name__ == '__main__':
-    Package().execute()

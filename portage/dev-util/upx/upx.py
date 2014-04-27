@@ -28,5 +28,3 @@ class Package(BinaryPackageBase):
         os.removedirs( os.path.join( self.imageDir() , "upx" + ver2 + "w" ) )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -48,5 +48,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.packageName = 'poppler'
         self.subinfo.options.configure.defines = "-DBUILD_QT4_TESTS=ON -DENABLE_XPDF_HEADERS=ON -DENABLE_ZLIB=ON -DENABLE_LIBCURL=ON"
 
-if __name__ == '__main__':
-    Package().execute()

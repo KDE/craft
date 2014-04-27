@@ -151,6 +151,4 @@ else:
         def __init__( self ):
             PackageCMake.__init__( self )
 
-if __name__ == '__main__':
-      Package().execute()
 

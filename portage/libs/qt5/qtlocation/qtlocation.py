@@ -31,5 +31,3 @@ class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
         
-if __name__ == '__main__':
-    Package().execute()

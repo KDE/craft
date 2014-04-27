@@ -27,5 +27,3 @@ class Package(CMakePackageBase):
     # self.supportsNinja = False
 
 
-if __name__ == '__main__':
-    Package().execute()

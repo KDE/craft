@@ -10,8 +10,8 @@ from BuildSystem.BuildSystemBase import *
 
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):
-        self.buildInSource = False
         BuildSystemBase.__init__(self, "autotools")
+        self.buildInSource = False
         self.shell = MSysShell()
         self.makeProgram = "make "
         if self.subinfo.options.make.supportsMultijob:

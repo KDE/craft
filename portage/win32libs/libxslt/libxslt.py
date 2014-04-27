@@ -25,6 +25,4 @@ class Package( CMakePackageBase ):
         self.subinfo.options.package.packageName = 'libxslt'
 
 
-if __name__ == '__main__':
-    Package().execute()
 

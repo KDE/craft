@@ -24,5 +24,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "icon" ] = os.path.join( portage.getPackageInstance('testing','vym').imageDir(), "share", "vym", "icons", "vym.ico")
         
 
-if __name__ == '__main__':
-    Package().execute()

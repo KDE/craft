@@ -26,5 +26,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DBUILD_WITH_QT4=OFF "
 
-if __name__ == '__main__':
-    Package().execute()

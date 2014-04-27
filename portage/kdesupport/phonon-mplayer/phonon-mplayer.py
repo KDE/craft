@@ -20,5 +20,3 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines = '-DPHONON_BUILDSYSTEM_DIR=\"%s\" ' % os.path.join(emergeRoot(),'share','phonon-buildsystem').replace('\\','/')
 
 
-if __name__ == '__main__':
-    Package().execute()

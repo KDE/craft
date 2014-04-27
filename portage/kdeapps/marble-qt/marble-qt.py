@@ -21,5 +21,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DQTONLY=ON -DBUILD_MARBLE_TESTS=OFF"
 
-if __name__ == '__main__':
-    Package().execute()

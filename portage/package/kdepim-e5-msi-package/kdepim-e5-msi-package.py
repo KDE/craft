@@ -63,5 +63,3 @@ class Package( MSInstallerPackager, VirtualPackageBase ):
 
 
 
-if __name__ == '__main__':
-    Package().execute()

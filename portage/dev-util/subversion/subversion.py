@@ -35,5 +35,3 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"svn.bat"),os.path.join(self.rootdir,"dev-utils","bin","svn.bat"))
         return True
 	
-if __name__ == '__main__':
-    Package().execute()

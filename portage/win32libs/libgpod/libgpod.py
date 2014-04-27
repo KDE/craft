@@ -39,5 +39,3 @@ class Package( PackageBase, MultiSource, AutoToolsBuildSystem, KDEWinPackager):
         self.subinfo.options.configure.defines = """--with-python=no --disable-static LIBXML_CFLAGS=-I""" + \
         MSysShell().toNativePath( os.path.join( self.rootdir, "include", "libxml" ) ) + """ LIBXML_LIBS=-lxml2"""
 
-if __name__ == '__main__':
-     Package().execute()

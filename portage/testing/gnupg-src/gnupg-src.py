@@ -20,5 +20,3 @@ class Package(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.buildInSource = True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -41,5 +41,3 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = os.path.join("dev-utils","bin")
 
-if __name__ == '__main__':
-    Package().execute()

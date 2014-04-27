@@ -38,5 +38,3 @@ class Package( Qt5CorePackageBase ):
         os.putenv("SQLITE3SRCDIR",emergeRoot())
         self.subinfo.options.make.supportsMultijob = False
 
-if __name__ == '__main__':
-    Package().execute()

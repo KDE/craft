@@ -38,5 +38,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
             % os.path.join(emergeRoot(), "bin")
 
-if __name__ == '__main__':
-    Package().execute()

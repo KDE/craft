@@ -22,5 +22,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = "-DGIT_EXECUTABLE=%s" % os.path.join(emergeRoot(),"dev-utils","git","bin","git.exe").replace("\\","/")
 
-if __name__ == '__main__':
-    Package().execute()

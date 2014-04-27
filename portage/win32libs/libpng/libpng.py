@@ -25,6 +25,4 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
 
-if __name__ == '__main__':
-    Package().execute()
 

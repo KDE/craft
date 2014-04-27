@@ -20,5 +20,3 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.version = "20130507"
 
-if __name__ == '__main__':
-    Package().execute()

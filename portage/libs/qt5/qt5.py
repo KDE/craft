@@ -42,5 +42,3 @@ class Package( VirtualPackageBase ):
         VirtualPackageBase.__init__( self )
 
 
-if __name__ == '__main__':
-    Package().execute()

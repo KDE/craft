@@ -20,5 +20,3 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.buildInSource = True
 
-if __name__ == '__main__':
-    Package().execute()

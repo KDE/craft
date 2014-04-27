@@ -26,5 +26,3 @@ class Package( BoostPackageBase ):
         BoostPackageBase.__init__(self)
 
 
-if __name__ == '__main__':
-    Package().execute()

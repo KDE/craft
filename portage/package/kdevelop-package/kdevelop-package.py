@@ -21,5 +21,3 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         VirtualPackageBase.__init__( self )
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
 
-if __name__ == '__main__':
-    Package().execute()

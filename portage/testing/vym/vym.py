@@ -23,5 +23,3 @@ class Package( QMakePackageBase ):
         QMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
 
-if __name__ == '__main__':
-    Package().execute()

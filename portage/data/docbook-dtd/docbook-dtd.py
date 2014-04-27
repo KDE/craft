@@ -34,5 +34,3 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(), "docbook-dtd-4.2.xml"), os.path.join(self.installDir(), "etc", "xml", "docbook-dtd-4.2.xml"))
         return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -29,5 +29,3 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines = " -DBUILD_FINGERPRINT=OFF -DBUILD_TESTS=OFF"
 
 
-if __name__ == '__main__':
-    Package().execute()

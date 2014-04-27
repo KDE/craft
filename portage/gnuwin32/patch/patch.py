@@ -31,5 +31,3 @@ class Package( BinaryPackageBase ):
         patch = os.path.join( self.installDir(), "bin", "patch.exe" )
         return utils.embedManifest(patch, manifest)
         
-if __name__ == '__main__':
-    Package().execute()

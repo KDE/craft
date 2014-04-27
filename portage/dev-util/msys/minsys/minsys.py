@@ -29,5 +29,3 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
         return True
        
-if __name__ == '__main__':
-    Package().execute()

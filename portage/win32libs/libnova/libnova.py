@@ -25,5 +25,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.package.packageName = 'libnova-src'
         self.subinfo.options.make.slnBaseName = 'libnova-src'
 
-if __name__ == '__main__':
-    Package().execute()

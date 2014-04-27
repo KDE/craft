@@ -74,5 +74,3 @@ class Package( CMakePackageBase ):
         self.system( "%s -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=%s install" % ( self.makeProgramm, self._getConfig(), self.imageDir() ) )
         return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -29,5 +29,3 @@ class Package(BinaryPackageBase):
         os.remove(os.path.join(self.imageDir(),"include","unistd.h"))#would corrup winkde includes
         return True
 
-if __name__ == '__main__':
-    Package().execute()

@@ -22,5 +22,3 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.defines = "--disable-java --disable-csharp --disable-shared --enable-static --with-gettext-tools "
 
 
-if __name__ == '__main__':
-     Package().execute()

@@ -20,5 +20,3 @@ class Package( CMakePackageBase ):
         self.supportsNinja = False
         self.subinfo.options.configure.defines = "-DPYTHON_EXECUTABLE=\"C:/python27/python.exe\" -DENABLE_EXAMPLES=OFF -DENABLE_TESTS=OFF -DDISABLE_WERROR=ON"
 
-if __name__ == '__main__':
-    Package().execute()
