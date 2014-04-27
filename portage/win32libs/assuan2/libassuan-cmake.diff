@@ -393,7 +393,7 @@ diff -Nru libassuan-r400.orig/config.h.cmake libassuan-r400/config.h.cmake
 +#  define ENOFILE ENOENT
 +# endif
 +# define snprintf _snprintf
-+# define ssize_t SSIZE_T
++typedef SSIZE_T ssize_t;
 +typedef int pid_t;
 +#define GPG_ERR_ENABLE_ERRNO_MACROS 1
 +#endif

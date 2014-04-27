@@ -86,3 +86,17 @@ diff -Nru -x '*~' libassuan-2.1.1.orig/src/w32-sock-nonce.inc.h libassuan-2.1.1/
  struct sockaddr_un
  {
    short          sun_family;
+diff -Nru -x '*~' libassuan-2.1.1.orig/src/w32-types.inc.h libassuan-2.1.1/src/w32-types.inc.h
+--- libassuan-2.1.1.orig/src/w32-types.inc.h	2010-12-23 12:32:06.000000000 +0100
++++ libassuan-2.1.1/src/w32-types.inc.h	2014-04-04 19:11:16.269591700 +0200
+@@ -21,8 +21,10 @@
+ ## a double hash mark are not copied to the destination file.
+ typedef void *assuan_msghdr_t;
+ 
++#include <basetsd.h>
++
+ #ifdef _MSC_VER
+-  typedef long ssize_t;
++  typedef SSIZE_T ssize_t;
+   typedef int  pid_t;
+ #endif
