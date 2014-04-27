@@ -58,16 +58,7 @@ class MSysShell(object):
         if "MAKE" in os.environ:
             del os.environ["MAKE"]
         utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( emergeRoot(), "dev-utils", "bin" )))
-        if not self.options.features.msys2:
-            #seting perl to prevent msys from using msys-perl
-            perl = self.toNativePath(os.path.join( emergeRoot(), "dev-utils", "bin", "perl.exe" ))
-            utils.putenv("PERL", perl)
-            utils.putenv("INTLTOOL_PERL", perl)
-
-            #prepare path to use autotools
-            utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( self.msysdir, "opt", "autotools", "bin" )))
-        else:
-            utils.putenv("MSYSTEM","MINGW32")
+        utils.putenv("MSYSTEM","MINGW32")
 
 
     def toNativePath( self, path ):

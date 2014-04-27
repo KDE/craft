@@ -63,9 +63,7 @@ class OptionsFeatures(OptionsBase):
         
         ## enable python support in several packages.
         self.pythonSupport = False
-        
-        ## enable use of msys2 in several packages, required for glib.
-        self.msys2 = True
+
         
         ## stick to the gcc 4.4.7 version
         self.legacyGCC = False
