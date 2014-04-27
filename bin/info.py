@@ -18,7 +18,7 @@ import version_info
 
 class infoclass(object):
     """this module contains the information class"""
-    def __init__( self, RAW="" ):
+    def __init__( self, RAW=""  ):
         ### package options
         self.options = Options()
         self.versionInfo = version_info.VersionInfo()
@@ -69,7 +69,7 @@ class infoclass(object):
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self.defaultTarget = 'svnHEAD'
         self.buildTarget = 'svnHEAD'
-        self.package, _ = os.path.splitext( os.path.basename( utils.getCallerFilename()) )#TODO OMG that doesnt work most of the time
+        self.parent = None
 
 
         for x in RAW.splitlines():
@@ -84,6 +84,10 @@ class infoclass(object):
 
         # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
         self.setDependencies()
+
+    @property
+    def package(self):
+        return self.parent.package
 
     def setDependencies( self ):
         """default method for setting dependencies, override to set individual targets"""

@@ -321,12 +321,13 @@ class Portage(object):
                         utils.warning( 'import failed for module %s: %s' % (fileName, str(e)) )
                         mod =  None
                 else:
-                    modulename = os.path.basename( fileName ).replace('.py', '').replace('.', '_')
+                    modulename = os.path.basename( fileName )[:-3].replace('.', '_')
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
                     mod = loader.load_module(modulename)
                 if not mod is None:
                     self._CURRENT_MODULE  = ( fileName, category, package )
                     pack = mod.Package( )
+                    pack.subinfo.parent = pack
                     packageDict[ fileName ] = pack
             else:
                 pack = packageDict[ fileName ]
