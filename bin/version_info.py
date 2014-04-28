@@ -17,7 +17,7 @@ _VERSION_INFOS_HINTS = dict( )
 
 class VersionInfo( object ):
     def __init__( self, parent ):
-        self.info = parent
+        self.subinfo = parent
         self.__defaulVersions = None
 
     @property
@@ -25,14 +25,15 @@ class VersionInfo( object ):
         if self.__defaulVersions is None:
             global _VERSION_INFOS
             global _VERSION_INFOS_HINTS
-            name = self.info.parent.filename
+            name = self.subinfo.parent.filename
             if name in _VERSION_INFOS_HINTS:
                 if _VERSION_INFOS_HINTS[ name ] == None:
                     return None
                 else:
                     return _VERSION_INFOS[ _VERSION_INFOS_HINTS[ name ] ]
             root = os.path.dirname( name )
-            dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ) ]
+
+            dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),os.path.join( root, "..","..", "version.ini" ) ]
 
             for iniPath in dirs:
                 if iniPath in _VERSION_INFOS:
@@ -48,11 +49,6 @@ class VersionInfo( object ):
 
 
     def _getVersionInfo( self, key, name = None ):
-        if self._defaulVersions == None:
-            info = name
-            if info == None:
-                info = key
-            utils.fail( "Please calls setupDefaultVersions(__file__) before calling self.%s()" % info )
         if self._defaulVersions.has_section( "General" ) and key in self._defaulVersions[ "General" ]:
             return self._defaulVersions[ "General" ][ key ]
         return ""
@@ -73,7 +69,6 @@ class VersionInfo( object ):
         return self._getVersionInfo( "defaulttarget" )
 
     def packageName( self ):
-        self._getVersionInfo( "", "packageName" )
-        return self.info.package
+        return self.subinfo.package
         
     

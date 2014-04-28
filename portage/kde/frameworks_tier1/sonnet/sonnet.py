@@ -4,9 +4,19 @@ from emerge_config import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets["gitHEAD"] = "[git]kde:%s|%s|" % (self.package, kd.kdebranch)
+        for ver in self.versionInfo.tarballs():
+            self.targets[ver] = "http://download.kde.org/unstable/frameworks/%s/%s-%s.tar.xz" % ( ver, self.package, ver )
+            self.targetDigestUrls[ver] = "http://download.kde.org/unstable/frameworks/%s/%s-%s.tar.xz.sha1" % (ver, self.package, ver)
+            self.targetInstSrc[ver] = "%s-%s" % ( self.package, ver)
+
+        for ver in self.versionInfo.branches():
+            self.svnTargets[ver] = "[git]kde:%s|%s|" % (self.package, ver)
+
+        for ver in self.versionInfo.tags():
+            self.svnTargets[ver] = "[git]kde:%s||%s" % (self.package, ver)
+
         self.shortDescription = "Spelling framework for Qt, plugin-based."
-        self.defaultTarget = "gitHEAD"
+        self.defaultTarget = self.versionInfo.defaultTarget()
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
