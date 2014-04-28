@@ -1,7 +1,5 @@
 import info
 
-from emerge_config import *
-from emerge_config import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
