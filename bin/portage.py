@@ -482,12 +482,11 @@ def getDependencies( category, package, runtimeOnly = False ):
     else:
         utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 0 )
         subpackage = package
-    
+
     deps = []
     for pkg in [ subpackage ]:
-        mod = __import__( getFilename( category, subpackage ) )
-        if hasattr( mod, 'subinfo' ):
-            info = mod.subinfo()
+        info = _getSubinfo(category, pkg)
+        if not info is None:
             depDict = info.hardDependencies
             depDict.update( info.dependencies )
             depDict.update( info.runtimeDependencies )
@@ -565,15 +564,17 @@ def readChildren( category, package ):
         return OrderedDict(), OrderedDict()
     package, subpackage = getSubPackage( category, package )
     if subpackage:
-        utils.debug( "solving package %s/%s/%s %s" % ( category, subpackage, package, getFilename( category, package ) ), 2 )
+        utils.debug( "solving package %s/%s/%s %s" % ( category,  package, subpackage, getFilename( category, subpackage ) ), 2 )
+        subinfo = _getSubinfo( category, subpackage  )
     else:
         utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 2 )
-    subinfo = _getSubinfo( category, package  )
+        subinfo = _getSubinfo( category, package  )
+
     if subinfo is None:
         return OrderedDict(), OrderedDict()
 
-    runtimeDependencies = subinfo.runtimeDependencies or OrderedDict()
-    buildDependencies = subinfo.buildDependencies or OrderedDict()
+    runtimeDependencies = subinfo.runtimeDependencies
+    buildDependencies = subinfo.buildDependencies
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies

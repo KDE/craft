@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
+        self.hardDependencies['libs/qt5'] = 'default'
         self.hardDependencies['qt-libs/quazip'] = 'default'
         self.hardDependencies['qt-libs/libjreen'] = 'default'
         #self.hardDependencies['qt-libs/qtsparkle'] = 'default

@@ -5,8 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
     def setDependencies( self ):
-      self.hardDependencies[ 'libs/qt' ] = 'default'
-      self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
+      self.hardDependencies[ 'libs/qtbase' ] = 'default'
 
     def setTargets( self ):
       self.svnTargets[ 'gitHEAD' ] = '[git]kde:libechonest'

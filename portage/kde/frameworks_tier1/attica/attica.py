@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["win32libs/automoc"] = "default"
 
 from Package.CMakePackageBase import *
 
