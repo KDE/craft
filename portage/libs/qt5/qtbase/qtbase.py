@@ -11,23 +11,21 @@ from Package.Qt5CorePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.versionInfo.setDefaultVersions("http://download.qt-project.org/official_releases/qt/5.2/${VERSION}/submodules/${PACKAGE_NAME}-opensource-src-${VERSION}.tar.xz",
+                                    "http://download.qt-project.org/official_releases/qt/5.2/${VERSION}/submodules/${PACKAGE_NAME}-opensource-src-${VERSION}.tar.xz.sha1",
+                                    "${PACKAGE_NAME}-opensource-src-${VERSION}",
+                                    "[git]git://gitorious.org/qt/${PACKAGE_NAME}.git" )
         for ver in self.versionInfo.tarballs():
-            self.targets[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip' % ( ver[0:3], ver, self.versionInfo.packageName(), ver)
-            self.targetDigestUrls[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip.sha1' % (ver[0:3], ver, self.versionInfo.packageName(), ver)
-            self.targetInstSrc[ver] = '%s-opensource-src-%s' % ( self.versionInfo.packageName(), ver)
             self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
             
         for ver in self.versionInfo.branches():
-            self.svnTargets[ver] = '[git]git://gitorious.org/qt/%s.git|%s' % ( self.versionInfo.packageName(), ver)
             self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
             
         for ver in self.versionInfo.tags():
-            self.svnTargets[ver] = '[git]git://gitorious.org/qt/%s.git||%s' % ( self.versionInfo.packageName(), ver)
             self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
             
         
         self.shortDescription = "a cross-platform application framework"
-        self.defaultTarget = self.versionInfo.defaultTarget()
 
 
     def setDependencies( self ):
