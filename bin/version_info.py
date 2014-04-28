@@ -3,10 +3,6 @@
 # copyright:
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
-import configparser
-import os
-
-import utils
 from emerge_config import *
 import utils
 
@@ -31,20 +27,21 @@ class VersionInfo( object ):
                     return VersionInfo._VERSION_INFOS[ VersionInfo._VERSION_INFOS_HINTS[ name ] ]
             root = os.path.dirname( name )
 
-            dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),os.path.join( root, "..","..", "version.ini" ) ]
+            dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),
+                     os.path.join( root, "..", "..", "version.ini" ) ]
 
             for iniPath in dirs:
-                iniPath = os.path.abspath(iniPath)
-                if iniPath in VersionInfo._VERSION_INFOS.keys():
+                iniPath = os.path.abspath( iniPath )
+                if iniPath in VersionInfo._VERSION_INFOS.keys( ):
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    utils.debug("Found a version info for %s in cache" % name, 1)
+                    utils.debug( "Found a version info for %s in cache" % name, 1 )
                     return VersionInfo._VERSION_INFOS[ iniPath ]
                 elif os.path.exists( iniPath ):
                     config = configparser.ConfigParser( )
                     config.read( iniPath )
                     VersionInfo._VERSION_INFOS[ iniPath ] = config
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    utils.debug("Found a version info for %s in %s" % (name, iniPath), 1)
+                    utils.debug( "Found a version info for %s in %s" % (name, iniPath), 1 )
                     return config
             VersionInfo._VERSION_INFOS_HINTS[ name ] = None
         return self.__defaulVersions
