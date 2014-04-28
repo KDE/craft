@@ -70,6 +70,13 @@ class VersionInfo( object ):
 
     def _replaceVar( self, text, ver ):
         replaces = { "VERSION": ver, "PACKAGE_NAME": self.subinfo.package }
+
+        split_ver = ver.split(".")
+        if len(split_ver) == 3:
+            replaces[ "VERSION_MAJOR"] = split_ver[0]
+            replaces[ "VERSION_MINOR"] = split_ver[1]
+            replaces[ "VERSION_PATCH_LEVEL"] = split_ver[2]
+
         while EmergeConfig.variablePatern.search(text):
             for match in EmergeConfig.variablePatern.findall( text ):
                 text = text.replace( match, replaces[ match[ 2:-1 ] ] )
