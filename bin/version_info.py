@@ -30,19 +30,24 @@ class VersionInfo( object ):
                 if _VERSION_INFOS_HINTS[ name ] == None:
                     return None
                 else:
+                    #utils.debug("Using cached version info for %s in %s" % (name, _VERSION_INFOS_HINTS[ name ]),0)
                     return _VERSION_INFOS[ _VERSION_INFOS_HINTS[ name ] ]
             root = os.path.dirname( name )
 
             dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),os.path.join( root, "..","..", "version.ini" ) ]
 
             for iniPath in dirs:
-                if iniPath in _VERSION_INFOS:
+                iniPath = os.path.abspath(iniPath)
+                if iniPath in _VERSION_INFOS.keys():
+                    _VERSION_INFOS_HINTS[ name ] = iniPath
+                    utils.debug("Found a version info for %s in cache" % name, 1)
                     return _VERSION_INFOS[ iniPath ]
-                if os.path.exists( iniPath ):
+                elif os.path.exists( iniPath ):
                     config = configparser.ConfigParser( )
                     config.read( iniPath )
                     _VERSION_INFOS[ iniPath ] = config
                     _VERSION_INFOS_HINTS[ name ] = iniPath
+                    utils.debug("Found a version info for %s in %s" % (name, iniPath), 1)
                     return config
             _VERSION_INFOS_HINTS[ name ] = None
         return self.__defaulVersions
