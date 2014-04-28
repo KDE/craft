@@ -1115,7 +1115,6 @@ def stopTimer(name):
             return
         startTime , level = _TIMERS[name]
         if verbose() > 0  and (level == 0 or verbose() > level):
-            print("verbose %s %s" % (verbose(),verbose() > 0))
             delta = datetime.datetime.now() - startTime
             print( "Task: %s stopped after: %s" % (name , delta) )
             sys.stdout.flush()
