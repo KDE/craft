@@ -9,7 +9,7 @@ def printSearch(search_category, search_package,maxDist = 2):
         installable = portage.PortageInstance.getInstallables()
         similar = []
         match = None
-        package_re = re.compile(".*%s.*" % search_package.lower())
+        package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
         for category,package,version in installable:
             if search_category == "" or search_category == category:
                 meta = portage.PortageInstance.getMetaData( category, package )
@@ -17,13 +17,13 @@ def printSearch(search_category, search_package,maxDist = 2):
                 if levDist == 0 :
                     match = (levDist,category,package,version,meta)
                     break;
-                elif package_re.match(package.lower()):
+                elif package_re.match(package):
                     similar.append((levDist-maxDist,category,package,version,meta))
                 elif len(package)>maxDist and levDist <= maxDist:
                     similar.append((levDist,category,package,version,meta))
                 else:
                     if "shortDescription" in meta:
-                        if package_re.match(meta["shortDescription"].lower()):                        
+                        if package_re.match(meta["shortDescription"]):
                             similar.append((100,category,package,version,meta))
                 
         if match == None:

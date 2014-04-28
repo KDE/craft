@@ -30,6 +30,8 @@ def etcPortageDir( ):
 
 
 class EmergeConfig( object ):
+    variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
+
     def __init__( self ):
         self.args = None
         self._config = None
@@ -51,15 +53,14 @@ class EmergeConfig( object ):
         self._config.read( self.iniPath )
         clean = False
         #replace possible vatiables within a section
-        patern = re.compile( "\${.*}" )
         while not clean:
             clean = True
             for section in self._config.keys( ):
                 for key in self._config[ section ]:
                     val = self._config[ section ][ key ]
-                    if patern.match( val ):
+                    if self.variablePatern.match( val ):
                         clean = False
-                        match = patern.findall( val )[ 0 ]
+                        match = self.variablePatern.findall( val )[ 0 ]
                         self._config[ section ][ key ] = val.replace( match, self._config[ section ][ match[ 2:-1 ] ] )
 
 
@@ -76,7 +77,7 @@ class EmergeConfig( object ):
             return self._config[ group ][ key ]
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
-            if (dg,dk) in self:
+            if (dg, dk) in self:
                 print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ) )
                 return self.get( dg, dk, default )
         if default != None:

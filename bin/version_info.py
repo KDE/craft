@@ -67,6 +67,33 @@ class VersionInfo( object ):
             return emergeSettings.get( "PortageVersions", name )
         return self._getVersionInfo( "defaulttarget" )
 
+
+    def _replaceVar( self, text, ver ):
+        replaces = { "VERSION": ver, "PACKAGE_NAME": self.subinfo.package }
+        while EmergeConfig.variablePatern.search(text):
+            for match in EmergeConfig.variablePatern.findall( text ):
+                text = text.replace( match, replaces[ match[ 2:-1 ] ] )
+        return text
+
+
+    def setDefaultVersions( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
+        if not tarballUrl is None:
+            for ver in self.tarballs( ):
+                self.subinfo.targets[ ver ] = self._replaceVar( tarballUrl, ver )
+                if not tarballDigestUrl is None:
+                    self.subinfo.targetDigestUrls[ ver ] = self._replaceVar( tarballDigestUrl, ver )
+                if not tarballInstallSrc is None:
+                    self.subinfo.targetInstSrc[ ver ] = self._replaceVar( tarballInstallSrc, ver )
+
+        if not gitUrl is None:
+            for ver in self.branches( ):
+                self.subinfo.svnTargets[ ver ] = "%s|%s|" % ( self._replaceVar( gitUrl, ver ), ver)
+
+            for ver in self.tags( ):
+                self.subinfo.svnTargets[ ver ] = "%s||%s" % ( self._replaceVar( gitUrl, ver ), ver)
+
+        self.subinfo.defaultTarget = self.defaultTarget( )
+
     def packageName( self ):
         return self.subinfo.package
         
