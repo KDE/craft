@@ -44,6 +44,10 @@ call %~dp0..\etc\kdesettings.bat
 
 rem handle drive substitution
 rem
+FOR /F "tokens=1 delims=" %%A in ('powershell %~dp0kdeenv.ps1 --get Paths PYTHONPATH') do SET PYTHONPATH=%%A
+set PATH=!PYTHONPATH!;!PATH!
+set PYTHONPATH=""
+
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --subst') do SET KDEROOT=%%A
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get General KDECOMPILER') do SET KDECOMPILER=%%A
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get General EMERGE_ARCHITECTURE') do SET EMERGE_ARCHITECTURE=%%A

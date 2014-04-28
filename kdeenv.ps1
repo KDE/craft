@@ -14,6 +14,8 @@ cls
 
 $EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
+$EMERGE_ARGUMENTS = $args
+
 &{
 
 function readINI([string] $fileName)
@@ -35,22 +37,6 @@ function readINI([string] $fileName)
 
 
 
-$env:EMERGE_BUILDTYPE="RelWithDebInfo"
-
-foreach($arg in $args)
-{
-if($arg.ToString().ToLower() -is  @("debug","release","relwithdebinfo"))
-{
-    $env:EMERGE_BUILDTYPE=$arg
-}
-else
-{
-    $APPLICATION=$arg
-}
-
-}
-
-
 if(test-path -path $EMERGE_ROOT\..\etc\kdesettings.ini)
 {
     $settings = readINI $EMERGE_ROOT\..\etc\kdesettings.ini
@@ -64,6 +50,14 @@ function prependPATH([string] $path)
 {
     $env:PATH="$path;$env:PATH"
 }
+
+
+if( $EMERGE_ARGUMENTS[0] -eq "--get")
+{
+    Write-Host($settings[$EMERGE_ARGUMENTS[1]][$EMERGE_ARGUMENTS[2]])
+    break
+}
+prependPATH $settings["Paths"]["PYTHONPATH"]
 
 $KDEROOT = (python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst") | Out-String
 $KDEROOT = $KDEROOT.Trim()
@@ -193,6 +187,7 @@ function emerge()
 
 # make sure term is not defined by any script
 $env:TERM=""
+$EMERGE_ARGUMENTS=$null
 
 if($args.Length -eq 2 -and $args[0] -eq "--package")
 {
