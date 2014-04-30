@@ -218,12 +218,6 @@ class InstallDB(object):
 
     def remInstalled( self, category, package, prefix = None ):
         """ removes an installed package """
-        cmd = '''DELETE FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
 
