@@ -10,13 +10,14 @@ import sys
 
 emergeSettings = None
 
+def nomalizePath(path):
+    if path.endswith( ":" ):
+        path += "\\"
+    return path
 
 def emergeRoot( ):
-    if not emergeSettings is None and emergeSettings.get( "ShortPath", "EMERGE_USE_SHORT_PATH", "False" ) == "True":
-        path = emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" )
-        if path.endswith( ":" ):
-            path += "\\"
-        return path
+    if not emergeSettings is None and emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
+        return  nomalizePath(emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ))
     return os.path.abspath( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "..", ".." ) )
 
 
@@ -85,8 +86,15 @@ class EmergeConfig( object ):
             return default
         self._config[ group ][ key ]
 
+    def getboolean(self,  group, key, default = False):
+        val = self.get(group,key,default)
+        return self._config._convert_to_boolean(val)
+
+
     def set( self, group, key, value ):
-        self._config[ group ][ key ] = value
+        if not self._config.has_section(group):
+            self._config.add_section(group)
+        self._config[ group ][ key ] = str(value)
         if self.get( "General", "DUMP_SETTINGS", "False" ) == "True":
             with open( self.iniPath + ".dump", 'wt+' ) as configfile:
                 self._config.write( configfile )

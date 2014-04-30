@@ -17,6 +17,7 @@ class SvnSource (VersionSystemSourceBase):
         ## \todo add internal dependency for subversion package
         self.svnInstallDir = os.path.join(self.rootdir, 'dev-utils', 'svn', 'bin')
 
+
     def checkoutDir( self, index=0 ):
         utils.trace( "SvnSource.checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
@@ -24,7 +25,7 @@ class SvnSource (VersionSystemSourceBase):
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join( emergeSettings.get("Paths", "KDESVNDIR"), url )
+                sourcedir = os.path.join(VersionSystemSourceBase.svnDir(), url )
             else:
                 sourcedir = os.path.join( self.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )

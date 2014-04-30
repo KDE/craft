@@ -2,6 +2,7 @@
 import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
+from Source.VersionSystemSourceBase import *
 #you have to install
 #http://nsis.sourceforge.net/Nsis7z_plug-in
 
@@ -31,6 +32,6 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         blacklists = [ NSIPackagerLists.runtimeBlacklist, 'blacklist.txt', 'blacklist-virtuoso.txt' ]
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
-        self.scriptname = os.path.join( emergeSettings.get("Paths",  "KDEGITDIR" ), "amarok", "release_scripts", "windows", "amarok.nsi")
+        self.scriptname = os.path.join( VersionSystemSourceBase.gitDir() , "amarok", "release_scripts", "windows", "amarok.nsi")
         self.defines[ "kde-version" ] = "4.11.0"
 

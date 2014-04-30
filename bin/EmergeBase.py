@@ -141,6 +141,8 @@ class EmergeBase(object):
 
     def downloadDir(self):
         """ location of directory where fetched files are  stored """
+        if emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
+            return nomalizePath(emergeSettings.get("ShortPath", "EMERGE_DOWNLOAD_DRIVE"))
         return self.__adjustPath(emergeSettings.get("Paths", "DOWNLOADDIR"))
 
     def sourceDir(self, dummyIndex=0):
