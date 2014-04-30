@@ -30,7 +30,6 @@ class InternalPackageBase(PackageBase):
         return True
 
     def qmerge(self):
-        print("%s %s " % (self.category, self.package))
         installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
         installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
         installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )

@@ -73,14 +73,15 @@ class PackageBase (EmergeBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         # only packages using a specific merge destination path are shared between build types
+        revision = self.sourceVersion()
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled )
+                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled, revision = revision)
                 package.addFiles( utils.getFileListFromDirectory(  self._installedDBPrefix( prefix ), self.package ) )
                 package.install()
         else:
-            package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled )
+            package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled, revision = revision )
             package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
             package.install()
 
