@@ -78,7 +78,7 @@ class EmergeConfig( object ):
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ) )
+                print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ), file = sys.stderr )
                 return self.get( dg, dk, default )
         if default != None:
             self.set( group, key, default )
