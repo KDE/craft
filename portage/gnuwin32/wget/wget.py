@@ -19,13 +19,11 @@ class subinfo(info.infoclass):
         self.targets['dummy'] = 'empty'
         self.defaultTarget = 'dummy'
 
-from Package.PackageBase import *
-from BuildSystem.BinaryBuildSystem import *
+from Package.BinaryPackageBase import *
 
-class Package(PackageBase,BinaryBuildSystem):
+class Package(BinaryPackageBase):
     def __init__( self):
-        PackageBase.__init__(self)
-        BinaryBuildSystem.__init__(self)
+        BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.install.installPath = "bin"
