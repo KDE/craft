@@ -7,10 +7,13 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        gitVersion = portage.getPackageInstance('extragear','quassel').sourceVersion() 
-        self.svnTargets[ gitVersion  ] = ""
-        self.targets[ '0.10.0-1' ] = ""
-        self.defaultTarget = gitVersion
+        for pack in installdb.getInstalledPackages('extragear','quassel'):
+            gitVersion = pack.getRevision()
+            if not gitVersion is None:
+                self.svnTargets[ gitVersion  ] = ""
+                self.defaultTarget = gitVersion
+        self.targets[ '0.10.0' ] = ""
+        self.defaultTarget = '0.10.0'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/quassel' ] = 'default'

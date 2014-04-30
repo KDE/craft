@@ -57,8 +57,7 @@ class InstallPackage(object):
 
     def revert( self ):
         """ revert all changes made to the database, use with care """
-        with InstallDB.mutex:
-            self.cursor.connection.rollback()
+        self.cursor.connection.rollback()
 
     def uninstall( self ):
         """ really uninstall that package """
@@ -85,6 +84,11 @@ class InstallPackage(object):
         # at last, commit all the changes so that they are committed only after everything is written to the
         # database
         self.cursor.connection.commit()
+
+    def getRevision(self):
+        self.cursor.execute("SELECT revision FROM packageList WHERE packageId == ?", (self.packageId,) )
+        return self.cursor.fetchall()[0][0]
+
 
 
 class InstallDB(object):
@@ -216,10 +220,11 @@ class InstallDB(object):
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
-    def remInstalled( self, category, package, prefix = None ):
-        """ removes an installed package """
+    def getInstalledPackages( self, category, package, prefix = None ):
+        """ return an installed package """
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
+
 
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
@@ -275,7 +280,7 @@ def main():
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
-        packageList = db.remInstalled( 'win32libs', 'dbus-src' )
+        packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
         # really commit uninstall
         for package in packageList:
             package.uninstall()
@@ -305,7 +310,7 @@ def main():
     utils.new_line()
     utils.debug( 'now trying to remove package & revert it again later' )
     # remove the package again
-    packageList = db.remInstalled( 'win32libs', 'dbus-src' )
+    packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
         for line in pac.getFiles(): # pylint: disable=W0612
             # we could remove the file here
@@ -336,7 +341,7 @@ def main():
 
     utils.new_line()
     utils.debug( 'now really remove the package' )
-    packageList = db.remInstalled( 'win32libs', 'dbus-src' )
+    packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
         utils.debug( 'removing %s files' % len( pac.getFiles() ) )
         pac.uninstall()

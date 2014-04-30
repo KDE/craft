@@ -37,8 +37,8 @@ class InternalPackageBase(PackageBase):
         return True
 
     def unmerge(self):
-        installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "Release" ) )
-        installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
-        installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "Debug" ) )
-        installdb.remInstalled( self.category, self.package, self._installedDBPrefix( ) )
+        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Release" ) )
+        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
+        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Debug" ) )
+        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
         return True

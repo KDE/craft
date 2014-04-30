@@ -20,14 +20,12 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
-        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kdesupport/snorenotify'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/phonon-ds9'] = 'default'
-        self.dependencies['kdesupport/snorenotify'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtwebkit'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'

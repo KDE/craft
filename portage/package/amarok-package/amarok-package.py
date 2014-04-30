@@ -7,9 +7,11 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.amarok = portage.getPackageInstance('extragear','amarok')
-        _,gitVersion = self.amarok.getPackageVersion() 
-        self.svnTargets[ 'git-' + gitVersion  ] = ""
+        for pack in installdb.getInstalledPackages('extragear','amarok'):
+            gitVersion = pack.getRevision()
+            if not gitVersion is None:
+                self.svnTargets[ gitVersion  ] = ""
+                self.defaultTarget = gitVersion
         self.svnTargets[ '2.8.0' ] = ""
         self.defaultTarget = '2.8.0'
 

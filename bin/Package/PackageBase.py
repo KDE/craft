@@ -100,13 +100,13 @@ class PackageBase (EmergeBase):
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                packageList = installdb.remInstalled( self.category, self.package, self._installedDBPrefix( prefix ) )
+                packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( prefix ) )
                 for package in packageList:
                     fileList = package.getFiles()
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
-            packageList = installdb.remInstalled( self.category, self.package, self._installedDBPrefix( ) )
+            packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
             for package in packageList:
                 fileList = package.getFiles()
                 utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
@@ -115,11 +115,11 @@ class PackageBase (EmergeBase):
         # only packages using a specific merge destination path are shared between build types
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
-            installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "Release" ) )
-            installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
-            installdb.remInstalled( self.category, self.package, self._installedDBPrefix( "Debug" ) )
+            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Release" ) )
+            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
+            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Debug" ) )
         else:
-            installdb.remInstalled( self.category, self.package, self._installedDBPrefix( ) )
+            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
 
         # run post-uninstall scripts
         if not utils.varAsBool(emergeSettings.get("General","EMERGE_NO_POST_INSTALL", "False")):
