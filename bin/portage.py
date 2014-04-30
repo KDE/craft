@@ -13,17 +13,13 @@ import utils
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
-internalCategory = 'internal'
-
-packageDict = OrderedDict()
-dependencyPackageDict = OrderedDict()
-
-
-
 class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
+    #cache for dependency packages, to prevent loop imports
+    _dependencyPackageDict = OrderedDict()
+
     def __init__( self, category, name, version , autoExpand = True ):
         self.category = category
         self.name = name
@@ -57,13 +53,13 @@ class DependencyPackage(object):
                 ( category, package ) = line.split( "/" )
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
-                if not line in dependencyPackageDict.keys():
+                if not line in self._dependencyPackageDict.keys():
                     p = DependencyPackage( category, package, version, False )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
-                    dependencyPackageDict[ line ] = p
+                    self._dependencyPackageDict[ line ] = p
                     p.__readChildren()
                 else:
-                    p = dependencyPackageDict[ line ]
+                    p = self._dependencyPackageDict[ line ]
                 children.append( p )
         return children
 
@@ -177,6 +173,9 @@ def VCSDirs():
     return [ '.svn', 'CVS', '.hg', '.git' ]
 
 class Portage(object):
+    #cache for pacages
+    _packageDict = OrderedDict()
+
     def __init__( self ):
         """ """
         self.categories = {}
@@ -312,7 +311,7 @@ class Portage(object):
         pack = None
         mod = None
         if fileName.endswith(".py") and os.path.isfile(fileName):
-            if not fileName in packageDict:
+            if not fileName in self._packageDict:
                 utils.debug( "module to import: %s" % fileName, 2 )
                 if not os.path.isfile( fileName ):
                     try:
@@ -327,9 +326,9 @@ class Portage(object):
                 if not mod is None:
                     self._CURRENT_MODULE  = ( fileName, category, package, mod )
                     pack = mod.Package( )
-                    packageDict[ fileName ] = pack
+                    self._packageDict[ fileName ] = pack
             else:
-                pack = packageDict[ fileName ]
+                pack = self._packageDict[ fileName ]
             return pack
 
     def getDefaultTarget( self, category, package ):
@@ -557,10 +556,6 @@ def readChildren( category, package ):
     if not os.path.isfile( identFileName ):
         utils.die( "package name %s/%s unknown" % ( category, package ) )
 
-    # if we are an emerge internal package and already in the dictionary, ignore childrens
-    # To avoid possible endless recursion this may be also make sense for all packages
-    if category == internalCategory and identFileName in list(packageDict.keys()):
-        return OrderedDict(), OrderedDict()
     package, subpackage = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s %s" % ( category,  package, subpackage, getFilename( category, subpackage ) ), 2 )
