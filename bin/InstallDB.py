@@ -1,27 +1,12 @@
 import os
 import sqlite3
 import threading
-from emerge_config import etcPortageDir
+from emerge_config import *
 
 import utils
 import portage
 
 
-__blockme = threading.local()
-
-def blocking(fn):
-    """ Block parallel access to sqlite """
-    def block(*args, **kw):
-        if hasattr(__blockme, "blocked"): # Already blocked
-            return fn(*args, **kw)
-        try:
-            __blockme.blocked = True
-            ret = fn(*args, **kw)
-        finally:
-            delattr(__blockme, "blocked");
-        return ret
-
-    return block
 
 class InstallPackage(object):
     """ InstallPackage finalizes an installation.
@@ -63,38 +48,38 @@ class InstallPackage(object):
         """ appends files to the list of files to be installed """
         self.fileDict.update( fileDict )
 
-    @blocking
     def getFiles( self ):
         """ get a list of files that will be uninstalled """
-        cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
-        self.cursor.execute(cmd, (self.packageId,))
-        return self.cursor.fetchall()
+        with InstallDB.mutex:
+            cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
+            utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+            self.cursor.execute(cmd, (self.packageId,))
+            return self.cursor.fetchall()
 
-    @blocking
     def revert( self ):
         """ revert all changes made to the database, use with care """
-        self.cursor.connection.rollback()
+        with InstallDB.mutex:
+            self.cursor.connection.rollback()
 
-    @blocking
     def uninstall( self ):
         """ really uninstall that package """
-        cmd = '''DELETE FROM fileList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
-        self.cursor.execute(cmd, (self.packageId,))
-        cmd = '''DELETE FROM packageList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
-        self.cursor.execute(cmd, (self.packageId,))
-        self.cursor.connection.commit()
+        with InstallDB.mutex:
+            cmd = '''DELETE FROM fileList WHERE packageId=?;'''
+            utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+            self.cursor.execute(cmd, (self.packageId,))
+            cmd = '''DELETE FROM packageList WHERE packageId=?;'''
+            utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+            self.cursor.execute(cmd, (self.packageId,))
+            self.cursor.connection.commit()
 
-    @blocking
     def install( self ):
         """ marking the package & package file list installed """
-        fileNumber = len( self.fileDict )
-        # keys() and values will stay in the same order if no changes are done in between calls
-        # structure of each tuple:
-        # fileId | packageId == package Id | filenames | file hashes
-        dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
+        with InstallDB.mutex:
+            fileNumber = len( self.fileDict )
+            # keys() and values will stay in the same order if no changes are done in between calls
+            # structure of each tuple:
+            # fileId | packageId == package Id | filenames | file hashes
+            dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
         utils.debug( "executing sqlcmd '%s' %s times" % ( cmd, len( self.fileDict ) ), 1 )
@@ -110,6 +95,7 @@ class InstallDB(object):
         checking its installation status.
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
+    mutex = threading.Lock()
 
     def __init__( self, filename = os.path.join( etcPortageDir(), 'install.db' ) ):
         self.dbfilename = filename
@@ -122,15 +108,15 @@ class InstallDB(object):
             utils.debug( "found database", 1 )
             self.connection = sqlite3.connect( self.dbfilename )
 
-    @blocking
     def getLastId( self ):
         """ returns the last id from a table, which is essentially the  """
-        cmd = '''SELECT max(packageId) FROM packageList;'''
+        with InstallDB.mutex:
+            cmd = '''SELECT max(packageId) FROM packageList;'''
 
-        cursor = self.connection.cursor()
-        cursor.execute( cmd )
-        lastId = cursor.fetchall()[0]
-        return lastId[0]
+            cursor = self.connection.cursor()
+            cursor.execute( cmd )
+            lastId = cursor.fetchall()[0]
+            return lastId[0]
 
     def __constructWhereStmt( self, _dict ):
         params = []
@@ -151,28 +137,28 @@ class InstallDB(object):
 
         return stmt, params
 
-    @blocking
     def isInstalled( self, category, package, version=None, prefix=None ):
         """ returns whether a package is installed. If version and prefix are empty, all versions
             and prefixes will be checked. """
-        cmd = '''SELECT * FROM packageList'''
-        # TODO: what is the difference between prefix=None and prefix=''? Both happens. Document.
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        with InstallDB.mutex:
+            cmd = '''SELECT * FROM packageList'''
+            # TODO: what is the difference between prefix=None and prefix=''? Both happens. Document.
+            stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+            cmd += stmt
+            cmd += ''';'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        cursor = self.connection.cursor()
-        cursor.execute( cmd, tuple( params ) )
-        isPackageInstalled = len( cursor.fetchall() ) > 0
-        if isPackageInstalled:
-            utils.debug( """The package %s/%s has been installed in prefix '%s' with
-                            version '%s'.""" % ( category, package, prefix, version ), 1 )
-        else:
-            utils.debug( """Couldn't find a trace that the package %s/%s has been installed in
-                            prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
-        cursor.close()
-        return isPackageInstalled
+            cursor = self.connection.cursor()
+            cursor.execute( cmd, tuple( params ) )
+            isPackageInstalled = len( cursor.fetchall() ) > 0
+            if isPackageInstalled:
+                utils.debug( """The package %s/%s has been installed in prefix '%s' with
+                                version '%s'.""" % ( category, package, prefix, version ), 1 )
+            else:
+                utils.debug( """Couldn't find a trace that the package %s/%s has been installed in
+                                prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
+            cursor.close()
+            return isPackageInstalled
 
     def findInstalled( self, category, package, prefix=None ):
         """ get the version of a package that is installed """
@@ -182,95 +168,96 @@ class InstallDB(object):
         else:
             return None
 
-    @blocking
     def getInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
         """
-        cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        with InstallDB.mutex:
+            cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
+            stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+            cmd += stmt
+            cmd += ''';'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        cursor = self.connection.cursor()
-        cursor.execute( cmd, tuple( params ) )
-        values = cursor.fetchall()
-        cursor.close()
-        return values
+            cursor = self.connection.cursor()
+            cursor.execute( cmd, tuple( params ) )
+            values = cursor.fetchall()
+            cursor.close()
+            return values
 
-    @blocking
     def getDistinctInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding
             package, category and prefix.
         """
-        cmd = '''SELECT DISTINCT category, packageName, version FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        with InstallDB.mutex:
+            cmd = '''SELECT DISTINCT category, packageName, version FROM packageList'''
+            stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+            cmd += stmt
+            cmd += ''';'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        cursor = self.connection.cursor()
-        cursor.execute( cmd, tuple( params ) )
-        values = cursor.fetchall()
-        cursor.close()
-        return values
+            cursor = self.connection.cursor()
+            cursor.execute( cmd, tuple( params ) )
+            values = cursor.fetchall()
+            cursor.close()
+            return values
 
-    @blocking
     def getPackageIds( self, category = None, package = None, prefix = None ):
         """ returns a list of the ids of the packages, which can be restricted by adding
             package, category and prefix.
         """
-        cmd = '''SELECT packageId FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        with InstallDB.mutex:
+            cmd = '''SELECT packageId FROM packageList'''
+            stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+            cmd += stmt
+            cmd += ''';'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        cursor = self.connection.cursor()
-        cursor.execute( cmd, tuple( params ) )
-        values = []
-        for row in cursor:
-            values.append( row[0] )
-        return values
+            cursor = self.connection.cursor()
+            cursor.execute( cmd, tuple( params ) )
+            values = []
+            for row in cursor:
+                values.append( row[0] )
+            return values
 
-    @blocking
     def addInstalled( self, category, package, version, prefix=None, ignoreInstalled=False ):
         """ adds an installed package """
-        cursor = self.connection.cursor()
-        if self.isInstalled( category, package, version, prefix ) and not ignoreInstalled:
-            raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
+        with InstallDB.mutex:
+            cursor = self.connection.cursor()
+            if self.isInstalled( category, package, version, prefix ) and not ignoreInstalled:
+                raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
 
-        params = [ None, prefix, category, package, version ]
-        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
-        cursor.execute( cmd, tuple( params ) )
-        return InstallPackage( cursor, self.getLastId() )
+            params = [ None, prefix, category, package, version ]
+            cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+            cursor.execute( cmd, tuple( params ) )
+            return InstallPackage( cursor, self.getLastId() )
 
-    @blocking
     def remInstalled( self, category, package, prefix = None ):
         """ removes an installed package """
-        cmd = '''DELETE FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
-        cmd += stmt
-        cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        with InstallDB.mutex:
+            cmd = '''DELETE FROM packageList'''
+            stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+            cmd += stmt
+            cmd += ''';'''
+            utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
 
-        cursor = self.connection.cursor()
-        return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
+            cursor = self.connection.cursor()
+            return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
 
-    @blocking
+
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
-        self.connection = sqlite3.connect( self.dbfilename )
-        cursor = self.connection.cursor()
+        with InstallDB.mutex:
+            self.connection = sqlite3.connect( self.dbfilename )
+            cursor = self.connection.cursor()
 
-        # first, create the required tables
-        cursor.execute( '''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                           prefix TEXT, category TEXT, packageName TEXT, version TEXT)''' )
-        cursor.execute( '''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-                           packageId INTEGER, filename TEXT, fileHash TEXT)''' )
-        self.connection.commit()
+            # first, create the required tables
+            cursor.execute( '''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               prefix TEXT, category TEXT, packageName TEXT, version TEXT)''' )
+            cursor.execute( '''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               packageId INTEGER, filename TEXT, fileHash TEXT)''' )
+            self.connection.commit()
 
 
 # get a global object
