@@ -105,8 +105,7 @@ class CollectionPackagerBase( PackagerBase ):
         imageDirs = []
         runtimeDependencies = self.subinfo.runtimeDependencies
 
-        commonDependencies = self.subinfo.hardDependencies
-        commonDependencies.update( self.subinfo.dependencies )
+        commonDependencies = self.subinfo.dependencies
         for key in commonDependencies:
             runtimeDependencies[ key ] = commonDependencies[ key ]
 

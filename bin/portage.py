@@ -487,8 +487,7 @@ def getDependencies( category, package, runtimeOnly = False ):
     for pkg in [ subpackage ]:
         info = _getSubinfo(category, pkg)
         if not info is None:
-            depDict = info.hardDependencies
-            depDict.update( info.dependencies )
+            depDict = info.dependencies
             depDict.update( info.runtimeDependencies )
             if not runtimeOnly:
                 depDict.update( info.buildDependencies )
@@ -576,9 +575,7 @@ def readChildren( category, package ):
     runtimeDependencies = subinfo.runtimeDependencies
     buildDependencies = subinfo.buildDependencies
 
-    # hardDependencies
-    commonDependencies = subinfo.hardDependencies
-    commonDependencies.update( subinfo.dependencies )
+    commonDependencies = subinfo.dependencies
     runtimeDependencies.update(commonDependencies)
     buildDependencies.update(commonDependencies)
 

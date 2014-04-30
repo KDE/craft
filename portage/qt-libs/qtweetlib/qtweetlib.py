@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
     def setDependencies( self ):
-      self.hardDependencies[ 'libs/qt' ] = 'default'
-      self.hardDependencies[ 'kdesupport/qjson' ] = 'default'
+      self.dependencies[ 'libs/qt' ] = 'default'
+      self.dependencies[ 'kdesupport/qjson' ] = 'default'
 
     def setTargets( self ):
       self.svnTargets[ 'gitHEAD' ] = 'https://github.com/minimoog/QTweetLib.git'

@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.hardDependencies['libs/qt'] = 'default'
-      self.hardDependencies['kdesupport/hupnp'] = 'default'
+      self.dependencies['libs/qt'] = 'default'
+      self.dependencies['kdesupport/hupnp'] = 'default'
 
         
     def setTargets( self ):

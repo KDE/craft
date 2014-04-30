@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/dbus'] = 'default'
+        self.dependencies['win32libs/dbus'] = 'default'
 
 from Package.CMakePackageBase import *        
         

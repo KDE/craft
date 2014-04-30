@@ -19,13 +19,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/lcms'] = 'default'
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['kde/kde-runtime'] = 'default'
-#        self.hardDependencies['kdesupport/eigen'] = 'default'
-        self.hardDependencies['kdesupport/eigen2'] = 'default'
-        self.softDependencies['kdesupport/qca'] = 'default'
-        self.softDependencies['win32libs/gsl'] = 'default'
+        self.dependencies['win32libs/lcms'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
+#        self.dependencies['kdesupport/eigen'] = 'default'
+        self.dependencies['kdesupport/eigen2'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['win32libs/gsl'] = 'default'
 
 from Package.CMakePackageBase import *
 

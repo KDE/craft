@@ -5,12 +5,12 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs/libvorbis'] = 'default'
-        self.hardDependencies['win32libs/openal-soft'] = 'default'
-        self.hardDependencies['win32libs/sqlite'] = 'default'
-        self.hardDependencies['win32libs/freetype'] = 'default'
-        self.hardDependencies['win32libs/irrlicht'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs/libvorbis'] = 'default'
+        self.dependencies['win32libs/openal-soft'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
+        self.dependencies['win32libs/freetype'] = 'default'
+        self.dependencies['win32libs/irrlicht'] = 'default'
         self.shortDescription = 'A very fun Free Software minecraft clone'
 
     def setTargets( self ):

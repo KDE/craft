@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.23.0'
         
     def setDependencies( self ):
-        self.hardDependencies['testing/py-logilab-astng'] = 'default'
-        self.hardDependencies['testing/py-logilab-common'] = 'default'
+        self.dependencies['testing/py-logilab-astng'] = 'default'
+        self.dependencies['testing/py-logilab-common'] = 'default'
         
 from Package.PythonPackageBase import *
         

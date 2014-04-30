@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
 
 
 class Package(PackageMultiBase):

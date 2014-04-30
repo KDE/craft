@@ -9,8 +9,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.0'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdepimlibs'] = 'default'
-        self.hardDependencies['dev-util/gettext-tools'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['dev-util/gettext-tools'] = 'default'
 
 from Package.CMakePackageBase import *
 

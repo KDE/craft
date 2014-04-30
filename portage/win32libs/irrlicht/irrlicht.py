@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.8'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/jpeg'] = 'default'
-        self.hardDependencies['win32libs/libpng'] = 'default'
-        self.hardDependencies['win32libs/libbzip2'] = 'default'
+        self.dependencies['win32libs/jpeg'] = 'default'
+        self.dependencies['win32libs/libpng'] = 'default'
+        self.dependencies['win32libs/libbzip2'] = 'default'
         self.buildDependencies['virtual/bin-base'] = 'default'
 
 

@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
+        self.dependencies['virtual/bin-base'] = 'default'
 
 class Package(AutoToolsPackageBase):
     def __init__( self, **args ):

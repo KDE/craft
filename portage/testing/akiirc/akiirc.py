@@ -7,9 +7,9 @@ class subinfo(infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['kde/kdelibs'] = 'default'
-        self.hardDependencies['win32libs/openssl'] = 'default'
-        self.hardDependencies['win32libs/boost'] = 'default'
+        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/boost'] = 'default'
         # also needs icu from http://site.icu-project.org
 
 class Package(CMakePackageBase):

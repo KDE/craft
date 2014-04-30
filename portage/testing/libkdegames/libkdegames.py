@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
         self.options.configure.configurePath = 'libkdegames'
 
     #def setDependencies( self ):
-        #self.hardDependencies['kde/kdegames'] = 'default'
-#        self.hardDependencies['testing/glew'] = 'default'
+        #self.dependencies['kde/kdegames'] = 'default'
+#        self.dependencies['testing/glew'] = 'default'
 
 
 class Package(CMakePackageBase):

@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
 
     ## define dependencies
     #def setDependencies( self ):
-    #    self.hardDependencies['kde/kde-runtime'] = 'default'
+    #    self.dependencies['kde/kde-runtime'] = 'default'
 
 from Package.BinaryPackageBase import *
 

@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
 
     def setDependencies( self ):
-        self.hardDependencies['dev-utils/msys'] = 'default'
+        self.dependencies['dev-utils/msys'] = 'default'
 
 class Package(AutoToolsPackageBase):
     def __init__( self, **args ):

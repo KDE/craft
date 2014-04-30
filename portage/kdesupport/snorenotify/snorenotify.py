@@ -6,9 +6,9 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
       self.shortDescription = "An application to show kde notifications with Snarl/Growl"
-      self.hardDependencies['libs/qtbase'] = 'default'
-      self.hardDependencies['win32libs/boost-system'] = 'default'
-      self.hardDependencies['win32libs/boost-thread'] = 'default'
+      self.dependencies['libs/qtbase'] = 'default'
+      self.dependencies['win32libs/boost-system'] = 'default'
+      self.dependencies['win32libs/boost-thread'] = 'default'
       self.buildDependencies['win32libs/cryptopp'] = 'default'
 
 

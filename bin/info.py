@@ -42,11 +42,9 @@ class infoclass(object):
         ## \todo prelimary
         self.svnTargets = OrderedDict()
 
-        self.hardDependencies = OrderedDict()
-        self.softDependencies = OrderedDict()
 
         # dependencies is the common way to define dependencies that are both
-        # run time and build time dependencies, it is equivalent to hardDependencies
+        # run time and build time dependencies,
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies

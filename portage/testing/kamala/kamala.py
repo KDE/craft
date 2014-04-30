@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/sqlite'] = 'default'
+        self.dependencies['win32libs/sqlite'] = 'default'
 
-        self.hardDependencies['kde/kdegames'] = 'default'
-#        self.hardDependencies['testing/glew'] = 'default'
+        self.dependencies['kde/kdegames'] = 'default'
+#        self.dependencies['testing/glew'] = 'default'
 
 
 class Package(CMakePackageBase):

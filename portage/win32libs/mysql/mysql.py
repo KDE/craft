@@ -5,9 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs/openssl'] = 'default'
-        self.hardDependencies['win32libs/zlib'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
         self.buildDependencies["gnuwin32/bison"] = "default"
 
         

@@ -5,21 +5,21 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['libs/qt5'] = 'default'
-        self.hardDependencies['qt-libs/quazip'] = 'default'
-        self.hardDependencies['qt-libs/libjreen'] = 'default'
-        #self.hardDependencies['qt-libs/qtsparkle'] = 'default
-        self.hardDependencies['qt-libs/qtkeychain'] = 'default'
-        # self.hardDependencies['qt-libs/qtweetlib'] = 'default'
-        self.hardDependencies['kdesupport/phonon'] = 'default'
-        self.hardDependencies['kdesupport/phonon-vlc'] = 'default'
-        self.hardDependencies['kdesupport/qca'] = 'default'
-        self.hardDependencies['kdesupport/libechonest'] = 'default'
-        self.hardDependencies['kde/attica'] = 'default'
-        self.hardDependencies['kdesupport/liblastfm'] = 'default'
-        self.hardDependencies['win32libs/clucene-core'] = 'default'
-        self.hardDependencies['win32libs/taglib'] = 'default'
-        self.hardDependencies['win32libs/websocketpp'] = 'default'
+        self.dependencies['libs/qt5'] = 'default'
+        self.dependencies['qt-libs/quazip'] = 'default'
+        self.dependencies['qt-libs/libjreen'] = 'default'
+        #self.dependencies['qt-libs/qtsparkle'] = 'default
+        self.dependencies['qt-libs/qtkeychain'] = 'default'
+        # self.dependencies['qt-libs/qtweetlib'] = 'default'
+        self.dependencies['kdesupport/phonon'] = 'default'
+        self.dependencies['kdesupport/phonon-vlc'] = 'default'
+        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['kdesupport/libechonest'] = 'default'
+        self.dependencies['kde/attica'] = 'default'
+        self.dependencies['kdesupport/liblastfm'] = 'default'
+        self.dependencies['win32libs/clucene-core'] = 'default'
+        self.dependencies['win32libs/taglib'] = 'default'
+        self.dependencies['win32libs/websocketpp'] = 'default'
         
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/tomahawk-player/tomahawk.git'

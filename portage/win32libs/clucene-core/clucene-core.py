@@ -4,7 +4,7 @@ import info
 class subinfo (info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.hardDependencies['win32libs/boost-thread'] = 'default'
+        self.dependencies['win32libs/boost-thread'] = 'default'
 
     def setTargets( self ):
         for ver in ['0.9.16a','0.9.20','0.9.21b']:

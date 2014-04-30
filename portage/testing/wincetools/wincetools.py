@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'kdepimcetools'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 
 from Package.CMakePackageBase import *

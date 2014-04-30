@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
 
 class Package(QMakePackageBase):
     def __init__( self, **args ):

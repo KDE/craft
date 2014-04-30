@@ -7,7 +7,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.hardDependencies['testing/mplayer'] = 'default'
+      self.dependencies['testing/mplayer'] = 'default'
 
     def setTargets( self ):
       self.svnTargets['gitHEAD'] = '[git]kde:phonon-mplayer'

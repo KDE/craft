@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.8.6'
 
     def setDependencies( self ):
-        self.hardDependencies['virtual/bin-base'] = 'default'
-        self.hardDependencies['win32libs/gcrypt'] = 'default'
+        self.dependencies['virtual/bin-base'] = 'default'
+        self.dependencies['win32libs/gcrypt'] = 'default'
         if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
 

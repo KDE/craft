@@ -5,8 +5,8 @@ import utils
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.hardDependencies['testing/gwenhywfar-src'] = 'default'
-        self.hardDependencies['win32libs/mpir'] = 'default'
+        self.dependencies['testing/gwenhywfar-src'] = 'default'
+        self.dependencies['win32libs/mpir'] = 'default'
         if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
 

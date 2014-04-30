@@ -5,9 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['libs/qt'] = 'default'
-        self.hardDependencies['qt-apps/libaccu'] = 'default'
-        self.hardDependencies['kdesupport/snorenotify'] = 'default'
+        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['qt-apps/libaccu'] = 'default'
+        self.dependencies['kdesupport/snorenotify'] = 'default'
 
         
     def setTargets( self ):

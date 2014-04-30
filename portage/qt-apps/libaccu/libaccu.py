@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.hardDependencies['libs/qt'] = 'default'
+      self.dependencies['libs/qt'] = 'default'
 
         
     def setTargets( self ):

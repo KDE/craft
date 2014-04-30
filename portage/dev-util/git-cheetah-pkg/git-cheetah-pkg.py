@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.hardDependencies['dev-util/msys'] = 'default'
+        self.dependencies['dev-util/msys'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://repo.or.cz/git-cheetah'

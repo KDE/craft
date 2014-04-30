@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.hardDependencies['win32libs/libxml2'] = 'default'
-        self.hardDependencies['virtual/base'] = 'default'
+        self.dependencies['win32libs/libxml2'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
