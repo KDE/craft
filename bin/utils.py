@@ -1150,7 +1150,7 @@ def deSubstPath(path):
 
 def notify(title,message,alertClass = None):
     backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")
-    if not backends:
+    if backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():
