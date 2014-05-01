@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
-        for ver in ['1.10.2','1.10.80']:
+        for ver in ['1.10.2','1.10.80', '1.12.1']:
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver
         for ver in ['1.10.3']:
@@ -33,11 +33,13 @@ class subinfo(info.infoclass):
         self.patchToApply['1.10.2'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.3'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.80'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
+#        self.patchToApply['1.12.1'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
+        self.patchToApply['1.12.1'] = [("akonadi-1.12.1-20140419.diff", 1)]
         self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = '1.10.80'
+        self.defaultTarget = '1.12.1'
 
 from Package.CMakePackageBase import *
 
@@ -51,7 +53,7 @@ class Package(CMakePackageBase):
                     " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
                     " -DDATABASE_BACKEND=SQLITE " )
         if not self.subinfo.options.features.nepomuk:
-            self.subinfo.options.configure.defines += " -DAKONADI_USE_STRIGI_SEARCH=ON"
+            self.subinfo.options.configure.defines += " -DWITH_SOPRANO=FALSE"
 
 
 if __name__ == '__main__':
