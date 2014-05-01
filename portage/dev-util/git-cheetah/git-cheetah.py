@@ -17,7 +17,7 @@ class subinfo( info.infoclass ):
 
 
     def setDependencies( self ):
-        if not utils.varAsBool( emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False" )):
+        if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False ):
             self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
         self.runtimeDependencies[ 'win32libs/expat' ] = 'default'
 

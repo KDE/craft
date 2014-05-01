@@ -22,7 +22,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.supportsNinja and utils.varAsBool(emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
+        if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
             return "Ninja"
         if compiler.isMSVC2010():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
@@ -106,9 +106,9 @@ class CMakeBuildSystem(BuildSystemBase):
                 options += " " + self.subinfo.options.configure.testDefine + " "
             else:
                 options += " -DKDE4_BUILD_TESTS=1 "
-        if utils.varAsBool(self.subinfo.options.buildTools):
+        if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
-        if utils.varAsBool(self.subinfo.options.buildStatic):
+        if self.subinfo.options.buildStatic:
             options += " " + self.subinfo.options.configure.staticDefine + " "
         if self.subinfo.options.configure.onlyBuildTargets :
             options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )

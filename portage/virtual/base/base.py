@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-        if not utils.varAsBool(emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False")):
+        if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['gnuwin32/wget']       = 'default'
             self.buildDependencies['dev-util/7zip']       = 'default'
             self.buildDependencies['gnuwin32/patch']      = 'default'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         # for creating combined packages
         self.buildDependencies['dev-util/pexports']   = 'default'
 
-        if not utils.varAsBool(emergeSettings.get("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', "False")):
+        if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['dev-util/putty']      = 'default'
 
             if compiler.isMinGW():
@@ -31,9 +31,9 @@ class subinfo(info.infoclass):
                     self.buildDependencies['dev-util/mingw-w64']    = 'default'
             if emergeSettings.get("General","EMERGE_MAKE_PROGRAM" ,"" ) != "":
                 self.buildDependencies['dev-util/jom'] = 'default'
-            if utils.varAsBool( emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
+            if emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
                 self.buildDependencies['dev-util/ninja'] = 'default'
-            if utils.varAsBool( emergeSettings.get("General","EMERGE_USE_CCACHE","False")):
+            if emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False):
                 self.buildDependencies['win32libs/ccache'] = 'default'
 
 

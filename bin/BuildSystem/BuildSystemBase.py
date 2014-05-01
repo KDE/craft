@@ -19,7 +19,7 @@ class BuildSystemBase(EmergeBase):
         """constructor"""
         EmergeBase.__init__(self)
         self.supportsNinja = False        
-        self.supportsCCACHE = utils.varAsBool(emergeSettings.get("General","EMERGE_USE_CCACHE", "False")) and compiler.isMinGW();
+        self.supportsCCACHE = emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False ) and compiler.isMinGW();
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -29,10 +29,10 @@ class BuildSystemBase(EmergeBase):
 
 
     def _getmakeProgram(self):
-        if self.supportsNinja and utils.varAsBool(emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
+        if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
             return "ninja"
-        EMERGE_MAKE_PROGRAM = emergeSettings.get("General", "EMERGE_MAKE_PROGRAM", None )
-        if EMERGE_MAKE_PROGRAM and self.subinfo.options.make.supportsMultijob:
+        EMERGE_MAKE_PROGRAM = emergeSettings.get("General", "EMERGE_MAKE_PROGRAM", "" )
+        if EMERGE_MAKE_PROGRAM != "" and self.subinfo.options.make.supportsMultijob:
             utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
             return EMERGE_MAKE_PROGRAM
         elif not self.subinfo.options.make.supportsMultijob:
@@ -82,7 +82,7 @@ class BuildSystemBase(EmergeBase):
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
         if maybeVerbose and utils.verbose() > 1:
-            if self.supportsNinja and utils.varAsBool( emergeSettings.get("General","EMERGE_USE_NINJA", "False")):
+            if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False ):
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

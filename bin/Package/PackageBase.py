@@ -56,7 +56,7 @@ class PackageBase (EmergeBase):
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
 
         # run post-install scripts
-        if not utils.varAsBool( emergeSettings.get("General","EMERGE_NO_POST_INSTALL", "False") ):
+        if not emergeSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
@@ -122,7 +122,7 @@ class PackageBase (EmergeBase):
             installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
 
         # run post-uninstall scripts
-        if not utils.varAsBool(emergeSettings.get("General","EMERGE_NO_POST_INSTALL", "False")):
+        if not emergeSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-uninstall-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )

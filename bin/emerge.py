@@ -290,14 +290,14 @@ def main( ):
                          dest = "stayQuiet",
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
-                         default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_BUILDTESTS", "False" ) ) )
+                         default = emergeSettings.getboolean( "General", "EMERGE_BUILDTESTS", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument( "--offline", action = "store_true",
-                         default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_OFFLINE", "False" ) ),
+                         default = emergeSettings.getboolean( "General", "EMERGE_OFFLINE", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail." )
     parser.add_argument( "-f", "--force", action = "store_true", dest = "forced",
-                         default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_FORCED", "False" ) ) )
+                         default = emergeSettings.getboolean( "General", "EMERGE_FORCED", False ) )
     parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel" "Debug" ],
                          dest = "buildType",
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
@@ -314,12 +314,12 @@ def main( ):
     parser.add_argument( "--search", action = "store_true",
                          help = "This will search for a package or a description matching or similar to the search term." )
     parser.add_argument( "--nocopy", action = "store_true",
-                         default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCOPY", "False" ) ),
+                         default = emergeSettings.getboolean( "General", "EMERGE_NOCOPY", False ),
                          help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under KDEROOT\\tmp - currently nocopy is applied\
                           by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly\
                            by the size of SVN source tree." )
     parser.add_argument( "--noclean", action = "store_true",
-                         default = utils.varAsBool( emergeSettings.get( "General", "EMERGE_NOCLEAN", "False" ) ),
+                         default = emergeSettings.getboolean( "General", "EMERGE_NOCLEAN", False ),
                          help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
     parser.add_argument( "--clean", action = "store_false", dest = "noclean",
                          help = "oposite of --noclean" )

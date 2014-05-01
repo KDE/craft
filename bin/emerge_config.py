@@ -87,7 +87,7 @@ class EmergeConfig( object ):
         self._config[ group ][ key ]
 
     def getboolean(self,  group, key, default = False):
-        val = self.get(group,key,default)
+        val = self.get(group,key,str(default))
         return self._config._convert_to_boolean(val)
 
 

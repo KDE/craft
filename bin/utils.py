@@ -58,10 +58,6 @@ def getCallerFilename():
             del frame
     return filename
 
-def varAsBool(var):
-    return var.lower() in ['true', '1']
-
-
 ### fetch functions
 
 #FIXME: get this from somewhere else:
@@ -191,7 +187,7 @@ def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     compath = WGetExecutable
     command = "%s --no-check-certificate -c -t 10" % compath
-    if varAsBool( emergeSettings.get("General", "EMERGE_NO_PASSIVE_FTP", "False")):
+    if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
         command += "  -P %s" % destdir
@@ -593,7 +589,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
             warning( "file %s does not exist" % fullPath)
 
 
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = varAsBool( emergeSettings.get("General", "UseHardlinks", "False" ))):
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
@@ -869,7 +865,7 @@ def createDir(path):
         os.makedirs( path )
     return True
     
-def copyFile(src, dest,linkOnly = varAsBool( emergeSettings.get("General", "UseHardlinks", "False"))):
+def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
     destDir = os.path.dirname( dest )
@@ -1099,7 +1095,7 @@ def setTitle(title):
 _TIMERS = dict()    
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""
-    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")):
+    if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
         if name in _TIMERS:
             die("%s already in timers" % name)
         _TIMERS[name] = (datetime.datetime.now() , level)
@@ -1109,7 +1105,7 @@ def startTimer(name, level = 0):
     
 def stopTimer(name):
     """stops a timer for meassurement"""
-    if varAsBool(emergeSettings.get( "EmergeDebug", "MeasureTime", "False")):
+    if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
         if not name in _TIMERS:
             debug( "%s not in timers" % name )
             return
@@ -1130,7 +1126,7 @@ def stopAllTimer():
 _SUBST = None
 def deSubstPath(path):
     """desubstitude emerge short path"""
-    if not varAsBool(emergeSettings.get("General", "EMERGE_USE_SHORT_PATH")):
+    if not emergeSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
         return path
     global _SUBST # pylint: disable=W0603
     drive , tail = os.path.splitdrive(path)

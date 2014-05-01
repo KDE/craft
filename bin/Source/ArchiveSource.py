@@ -164,7 +164,7 @@ class ArchiveSource(SourceBase):
                 return False
 
         ret = self.applyPatches()
-        if utils.varAsBool(emergeSettings.get("General","EMERGE_HOLD_ON_PATCH_FAIL","False")):
+        if emergeSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL",False):
             return ret
         return True
 

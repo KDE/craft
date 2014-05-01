@@ -189,7 +189,7 @@ class OptionsCMake(OptionsBase):
         ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
         self.openIDE = False
         ## use CTest instead of the make utility
-        self.useCTest = utils.varAsBool( emergeSettings.get("General","EMERGE_USECTEST", "False"))
+        self.useCTest = emergeSettings.getboolean("General","EMERGE_USECTEST", False )
 
 class OptionsGit(OptionsBase):
     def __init__(self):
@@ -251,8 +251,8 @@ class Options(object):
 
         ## there is a special option available already
         self.buildTests = emergeSettings.args.buildTests
-        self.buildTools = "False"
-        self.buildStatic = "False"
+        self.buildTools = False
+        self.buildStatic = False
 
         #### end of user configurable part
         self.__instances = dict()
