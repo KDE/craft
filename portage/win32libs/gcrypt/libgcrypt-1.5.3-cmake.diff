@@ -1,7 +1,6 @@
-Index: libgcrypt-1.5.3/cipher/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/cipher/CMakeLists.txt
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/cipher/CMakeLists.txt libgcrypt-1.5.3/cipher/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/cipher/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/cipher/CMakeLists.txt	2014-04-04 20:04:25.708108100 +0200
 @@ -0,0 +1,36 @@
 +set(cipher_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/cipher.c
@@ -39,10 +38,9 @@ Index: libgcrypt-1.5.3/cipher/CMakeLists.txt
 +    ${CMAKE_CURRENT_SOURCE_DIR}/kdf.c
 +    PARENT_SCOPE
 +)
-Index: libgcrypt-1.5.3/cmake/modules/FindGpg-Error.cmake
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/cmake/modules/FindGpg-Error.cmake
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/cmake/modules/FindGpg-Error.cmake libgcrypt-1.5.3/cmake/modules/FindGpg-Error.cmake
+--- libgcrypt-1.5.3.orig/cmake/modules/FindGpg-Error.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/cmake/modules/FindGpg-Error.cmake	2014-04-04 20:04:25.710108200 +0200
 @@ -0,0 +1,35 @@
 +# - Try to find GPG_ERROR
 +# Once done this will define
@@ -79,11 +77,47 @@ Index: libgcrypt-1.5.3/cmake/modules/FindGpg-Error.cmake
 +    MARK_AS_ADVANCED(GPG_ERROR_INCLUDE_DIR GPG_ERROR_LIBRARIES)
 +
 +endif (GPG_ERROR_INCLUDE_DIR AND GPG_ERROR_LIBRARIES)
-Index: libgcrypt-1.5.3/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/CMakeLists.txt
-@@ -0,0 +1,104 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/cmake/modules/FindWcecompat.cmake libgcrypt-1.5.3/cmake/modules/FindWcecompat.cmake
+--- libgcrypt-1.5.3.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/cmake/modules/FindWcecompat.cmake	2014-04-04 20:04:25.713108400 +0200
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/CMakeLists.txt libgcrypt-1.5.3/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/CMakeLists.txt	2014-04-04 20:04:25.715108500 +0200
+@@ -0,0 +1,120 @@
 +project(gcrypt C)
 +
 +cmake_minimum_required(VERSION 2.8)
@@ -97,6 +131,12 @@ Index: libgcrypt-1.5.3/CMakeLists.txt
 +
 +include_directories(${GPG_ERROR_INCLUDE_DIR})
 +
++if(WINCE)
++    find_package(Wcecompat REQUIRED)
++    include_directories(${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_INCLUDES ${WCECOMPAT_INCLUDE_DIR})
++    set(CMAKE_REQUIRED_LIBRARIES ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
 +endif(MSVC)
@@ -167,6 +207,13 @@ Index: libgcrypt-1.5.3/CMakeLists.txt
 +if(WIN32)
 +    set(gcrypt_SRCS ${gcrypt_SRCS} compat/compat.c)
 +endif(WIN32)
++if(WINCE)
++    set(gcrypt_SRCS ${gcrypt_SRCS} 
++        compat/clock.c
++        compat/getpid.c
++        compat/access.c
++    )
++endif(WINCE)
 +
 +if(ENABLE_STATIC)
 +    set(libType STATIC)
@@ -177,6 +224,9 @@ Index: libgcrypt-1.5.3/CMakeLists.txt
 +
 +add_library(gcrypt ${libType} ${gcrypt_SRCS})
 +target_link_libraries(gcrypt ${GPG_ERROR_LIBRARIES})
++if(WINCE)
++    target_link_libraries(gcrypt ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +
 +install(TARGETS gcrypt  RUNTIME DESTINATION bin
@@ -188,11 +238,10 @@ Index: libgcrypt-1.5.3/CMakeLists.txt
 +if(BUILD_TESTS)
 +    add_subdirectory(tests)
 +endif(BUILD_TESTS)
-Index: libgcrypt-1.5.3/config.h.cmake
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/config.h.cmake
-@@ -0,0 +1,483 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/config.h.cmake libgcrypt-1.5.3/config.h.cmake
+--- libgcrypt-1.5.3.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/config.h.cmake	2014-04-04 20:04:25.717108600 +0200
+@@ -0,0 +1,495 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +
@@ -201,6 +250,9 @@ Index: libgcrypt-1.5.3/config.h.cmake
 +
 +/* Enable gpg-error's strerror macro for W32CE.  */
 +#define GPG_ERR_ENABLE_ERRNO_MACROS 1
++
++/* use compat library for W32CE */
++#cmakedefine HAVE_WCECOMPAT @HAVE_WCECOMPAT@
 +
 +/* configure did not test for endianess */
 +#cmakedefine DISABLED_ENDIAN_CHECK 1
@@ -675,12 +727,20 @@ Index: libgcrypt-1.5.3/config.h.cmake
 +# define snprintf _snprintf
 +#endif
 +
++#ifdef _WIN32_WCE
++# undef leave
++# ifdef HAVE_WCECOMPAT
++#  define read _read
++#  define write _write
++# endif
++# define access _access
++#endif
++
 +#endif /*_GCRYPT_CONFIG_H_INCLUDED*/
-Index: libgcrypt-1.5.3/ConfigureChecks.cmake
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/ConfigureChecks.cmake
-@@ -0,0 +1,209 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/ConfigureChecks.cmake libgcrypt-1.5.3/ConfigureChecks.cmake
+--- libgcrypt-1.5.3.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/ConfigureChecks.cmake	2014-04-04 20:04:25.719108700 +0200
+@@ -0,0 +1,217 @@
 +include(CheckIncludeFile)
 +include(CheckFunctionExists)
 +
@@ -707,7 +767,15 @@ Index: libgcrypt-1.5.3/ConfigureChecks.cmake
 +	set(HAVE_DOSISH_SYSTEM 1)
 +    set(HAVE_W32_SYSTEM 1)
 +    set(HAVE_DRIVE_LETTERS 1)
-+    set(USE_RNDW32 1)
++    if(WINCE)
++        set(HAVE_W32CE_SYSTEM 1)
++        set(USE_RNDW32CE 1)
++        if(WCECOMPAT_FOUND)
++            set(HAVE_WCECOMPAT 1)
++        endif(WCECOMPAT_FOUND)
++    else(WINCE)
++        set(USE_RNDW32 1)
++    endif(WINCE)
 +    if(MSVC)
 +        set(inline "__inline")
 +    else(MSVC)
@@ -890,10 +958,9 @@ Index: libgcrypt-1.5.3/ConfigureChecks.cmake
 +
 +configure_file(config.h.cmake config.h)
 +configure_file(src/gcrypt.h.in gcrypt.h)
-Index: libgcrypt-1.5.3/mpi/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/mpi/CMakeLists.txt
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/mpi/CMakeLists.txt libgcrypt-1.5.3/mpi/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/mpi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/mpi/CMakeLists.txt	2014-04-04 20:04:25.721108800 +0200
 @@ -0,0 +1,69 @@
 +# config.links stuff:
 +configure_file(generic/mpi-asm-defs.h ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
@@ -964,11 +1031,10 @@ Index: libgcrypt-1.5.3/mpi/CMakeLists.txt
 +    ${CMAKE_CURRENT_SOURCE_DIR}/ec.c
 +    PARENT_SCOPE
 +)
-Index: libgcrypt-1.5.3/random/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/random/CMakeLists.txt
-@@ -0,0 +1,23 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/random/CMakeLists.txt libgcrypt-1.5.3/random/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/random/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/random/CMakeLists.txt	2014-04-04 20:04:25.724109000 +0200
+@@ -0,0 +1,28 @@
 +set(_random_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/random.c
 +    ${CMAKE_CURRENT_SOURCE_DIR}/random-csprng.c
@@ -976,11 +1042,16 @@ Index: libgcrypt-1.5.3/random/CMakeLists.txt
 +    ${CMAKE_CURRENT_SOURCE_DIR}/rndhw.c
 +)
 +
-+if(WIN32)
++if(WIN32 AND NOT WINCE)
 +    set(_random_SRCS ${_random_SRCS}
 +        ${CMAKE_CURRENT_SOURCE_DIR}/rndw32.c
 +    )
-+endif(WIN32)
++endif(WIN32 AND NOT WINCE)
++if(WINCE)
++    set(_random_SRCS ${_random_SRCS}
++        ${CMAKE_CURRENT_SOURCE_DIR}/rndw32ce.c
++    )
++endif(WINCE)
 +#    ${CMAKE_CURRENT_SOURCE_DIR}/rndlinux.c
 +#    ${CMAKE_CURRENT_SOURCE_DIR}/rndunix.c
 +#    ${CMAKE_CURRENT_SOURCE_DIR}/rndegd.c
@@ -992,11 +1063,10 @@ Index: libgcrypt-1.5.3/random/CMakeLists.txt
 +
 +
 +set(random_SRCS ${_random_SRCS} PARENT_SCOPE)
-Index: libgcrypt-1.5.3/src/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/src/CMakeLists.txt
-@@ -0,0 +1,37 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/CMakeLists.txt libgcrypt-1.5.3/src/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/src/CMakeLists.txt	2014-04-04 20:04:25.726109100 +0200
+@@ -0,0 +1,43 @@
 +set(libgcrypt_SRCS
 +    ${CMAKE_CURRENT_SOURCE_DIR}/visibility.c
 +    ${CMAKE_CURRENT_SOURCE_DIR}/misc.c
@@ -1017,12 +1087,18 @@ Index: libgcrypt-1.5.3/src/CMakeLists.txt
 +    dumpsexp.c
 +)
 +add_executable(dumpsexp ${dumpsexp_SRCS})
++if(WINCE)
++    target_link_libraries(dumpsexp ${GPG_ERROR_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +
 +set(hmac256_SRCS
 +    hmac256.c
 +)
 +add_executable(hmac256 ${hmac256_SRCS})
 +set_target_properties(hmac256 PROPERTIES COMPILE_FLAGS -DSTANDALONE)
++if(WINCE)
++    target_link_libraries(hmac256 ${GPG_ERROR_LIBRARIES} ${WCECOMPAT_LIBRARIES})
++endif(WINCE)
 +install(TARGETS dumpsexp hmac256 RUNTIME DESTINATION bin
 +                                 LIBRARY DESTINATION lib
 +                                 ARCHIVE DESTINATION lib<)
@@ -1034,10 +1110,21 @@ Index: libgcrypt-1.5.3/src/CMakeLists.txt
 +
 +#getrandom_SOURCES = getrandom.c
 +endif(USE_RANDOM_DAEMON)
-Index: libgcrypt-1.5.3/tests/CMakeLists.txt
-===================================================================
---- /dev/null
-+++ libgcrypt-1.5.3/tests/CMakeLists.txt
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h libgcrypt-1.5.3/src/gcrypt.h
+--- libgcrypt-1.5.3.orig/src/gcrypt.h	2013-07-25 11:23:38.000000000 +0200
++++ libgcrypt-1.5.3/src/gcrypt.h	2014-04-04 20:06:26.455014400 +0200
+@@ -37,7 +37,7 @@
+ # include <ws2tcpip.h>
+ # include <time.h>
+ # ifndef __GNUC__
+-  typedef long ssize_t;
++  typedef SSIZE_T ssize_t;
+   typedef int  pid_t;
+ # endif /*!__GNUC__*/
+ #else
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/tests/CMakeLists.txt libgcrypt-1.5.3/tests/CMakeLists.txt
+--- libgcrypt-1.5.3.orig/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ libgcrypt-1.5.3/tests/CMakeLists.txt	2014-04-04 20:04:25.728109200 +0200
 @@ -0,0 +1,29 @@
 +set(gcrypt_TESTS
 +    version

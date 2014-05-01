@@ -1,8 +1,7 @@
-Index: libgcrypt-1.5.3/random/rndw32.c
-===================================================================
---- libgcrypt-1.5.3.orig/random/rndw32.c
-+++ libgcrypt-1.5.3/random/rndw32.c
-@@ -829,10 +829,10 @@ _gcry_rndw32_gather_random_fast (void (*
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/random/rndw32.c libgcrypt-1.5.3/random/rndw32.c
+--- libgcrypt-1.5.3.orig/random/rndw32.c	2014-05-02 00:21:21.141047200 +0200
++++ libgcrypt-1.5.3/random/rndw32.c	2014-05-02 00:15:43.353211500 +0200
+@@ -829,10 +829,10 @@
       and milliseconds since Windows was started.  */
  
    {
@@ -15,7 +14,7 @@ Index: libgcrypt-1.5.3/random/rndw32.c
                       memcpy (bufptr, &along, sizeof (along) );  \
                       bufptr += sizeof (along);                  \
                     } while (0)
-@@ -888,7 +888,7 @@ _gcry_rndw32_gather_random_fast (void (*
+@@ -888,7 +888,7 @@
    {
      HANDLE handle;
      FILETIME creationTime, exitTime, kernelTime, userTime;
@@ -24,35 +23,41 @@ Index: libgcrypt-1.5.3/random/rndw32.c
  
      handle = GetCurrentThread ();
      GetThreadTimes (handle, &creationTime, &exitTime,
-Index: libgcrypt-1.5.3/src/ath.c
-===================================================================
---- libgcrypt-1.5.3.orig/src/ath.c
-+++ libgcrypt-1.5.3/src/ath.c
-@@ -41,7 +41,11 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/ath.c libgcrypt-1.5.3/src/ath.c
+--- libgcrypt-1.5.3.orig/src/ath.c	2014-05-02 00:21:21.142047200 +0200
++++ libgcrypt-1.5.3/src/ath.c	2014-05-02 00:19:36.719710000 +0200
+@@ -40,7 +40,7 @@
+ #include <sys/wait.h>
  #else
  #include <winsock2.h>
- #define ssize_t SSIZE_T
-+#ifndef _WIN64
+-#define ssize_t SSIZE_T
++typedef SSIZE_T ssize_t;
  typedef int pid_t;
-+#else
-+typedef __int64 pid_t;
-+#endif
  #endif
  #include <errno.h>
- 
-Index: libgcrypt-1.5.3/src/secmem.c
-===================================================================
---- libgcrypt-1.5.3.orig/src/secmem.c
-+++ libgcrypt-1.5.3/src/secmem.c
-@@ -31,7 +31,11 @@
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h.in libgcrypt-1.5.3/src/gcrypt.h.in
+--- libgcrypt-1.5.3.orig/src/gcrypt.h.in	2013-07-25 11:10:04.000000000 +0200
++++ libgcrypt-1.5.3/src/gcrypt.h.in	2014-05-02 00:20:57.273091500 +0200
+@@ -37,8 +37,8 @@
+ # include <ws2tcpip.h>
+ # include <time.h>
+ # ifndef __GNUC__
+-  typedef long ssize_t;
+-  typedef int  pid_t;
++  typedef SSIZE_T ssize_t;
++  typedef int pid_t;
+ # endif /*!__GNUC__*/
+ #else
+ # include <sys/socket.h>
+diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/secmem.c libgcrypt-1.5.3/src/secmem.c
+--- libgcrypt-1.5.3.orig/src/secmem.c	2014-05-02 00:21:21.152047800 +0200
++++ libgcrypt-1.5.3/src/secmem.c	2014-05-02 00:20:03.116418100 +0200
+@@ -30,7 +30,7 @@
+ #include <stddef.h>
  #ifdef _WIN32
  #include <winsock2.h>
- #define ssize_t SSIZE_T
-+#ifndef _WIN64
+-#define ssize_t SSIZE_T
++typedef SSIZE_T ssize_t;
  typedef int pid_t;
-+#else
-+typedef __int64 pid_t;
-+#endif
  #endif
  
- #if defined(HAVE_MLOCK) || defined(HAVE_MMAP)
