@@ -235,6 +235,4 @@ class PackageBase (EmergeBase):
         else:
             ok = utils.error( "command %s not understood" % command )
 
-        if ( not ok ):
-            utils.die( "command %s failed" % command )
-        return True
+        return ok

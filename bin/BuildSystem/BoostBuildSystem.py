@@ -75,9 +75,7 @@ class BoostBuildSystem(BuildSystemBase):
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
         if utils.verbose() >= 1:
             print(cmd)
-        os.system(cmd) and utils.die(
-                "command: %s failed" % (cmd))
-        return True
+        return self.system(cmd)
 
     def install( self ):
         """install the target"""
