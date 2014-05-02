@@ -497,7 +497,7 @@ def die( message ):
 
 def traceMode():
     """return the value of the trace level"""
-    return emergeSettings.args.trace
+    return int(emergeSettings.get( "General", "EMERGE_TRACE", "0" ))
 
 def trace( message, dummyLevel=0 ):
     if traceMode(): #> level:
@@ -971,9 +971,9 @@ def applyPatch(sourceDir, f, patchLevel='0'):
 
 def log(fn):
     def inner(*args, **argv):
-        logdir = emergeSettings.args.log_dir
+        logdir = emergeSettings.get( "General", "EMERGE_LOG_DIR", "" )
 
-        if not logdir:
+        if logdir == "":
             return fn(*args, **argv)
 
         if os.path.isfile(logdir):

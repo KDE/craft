@@ -34,7 +34,6 @@ class EmergeConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
 
     def __init__( self ):
-        self.args = None
         self._config = None
         self.iniPath = os.path.join( etcDir( False ), "kdesettings.ini" )
         self._alias = dict( )
@@ -44,6 +43,7 @@ class EmergeConfig( object ):
         self.addAlias( "EmergeDebug", "Verbose", "General", "EMERGE_VERBOSE" )
         self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
+        self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
 
 
     def _readSettings( self ):

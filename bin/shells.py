@@ -17,11 +17,11 @@ from options import *
 class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join( emergeRoot(), "msys" )
-        self.buildType = emergeSettings.args.buildType
-        self.options = Options()
-        self.options.readFromEnv()
         self.initEnvironment()
 
+    @property
+    def buildType(self):
+        return emergeSettings.get("General", "EMERGE_BUILDTYPE")
 
     def initEnvironment(self, cflags="", ldflags=""):
         mergeroot = self.toNativePath(emergeRoot())

@@ -239,7 +239,7 @@ class CollectionPackagerBase( PackagerBase ):
           
     def internalCreatePackage( self ):
         """ create a package """
-        if not emergeSettings.args.noclean:
+        if not self.noClean:
             utils.debug( "cleaning imagedir: %s" % self.imageDir() )
             utils.cleanDirectory( self.imageDir() )
             for directory, mergeDir, strip  in self.__getImageDirectories():

@@ -67,12 +67,31 @@ class EmergeBase(object):
 
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
-        self.noFetch = emergeSettings.args.offline
-        self.noCopy = emergeSettings.args.nocopy
-        self.noFast = emergeSettings.getboolean("General", "EMERGE_NOFAST", True )
-        self.noClean = emergeSettings.args.noclean
-        self.forced = emergeSettings.args.forced
-        self.buildTests = emergeSettings.args.buildTests
+
+    @property
+    def noFetch(self):
+        return emergeSettings.getboolean("General", "WorkOffline", False)
+
+    @property
+    def noCopy(self):
+        return emergeSettings.getboolean("General", "EMERGE_NOCOPY", False)
+
+
+    @property
+    def noFast(self):
+        return emergeSettings.getboolean("General", "EMERGE_NOFAST", True )
+
+    @property
+    def noClean(self):
+        return emergeSettings.getboolean("General", "EMERGE_NOCLEAN", False )
+
+    @property
+    def forced(self):
+        return emergeSettings.getboolean("General", "EMERGE_FORCED", False )
+
+    @property
+    def buildTests(self):
+        return emergeSettings.getboolean("General", "EMERGE_BUILDTESTS", False )
 
 
     def __adjustPath(self, directory):
@@ -91,7 +110,7 @@ class EmergeBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        return emergeSettings.args.buildType
+        return emergeSettings.get("General","EMERGE_BUILDTYPE")
 
     def compiler(self):
         """deprecated"""

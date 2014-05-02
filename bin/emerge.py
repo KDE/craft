@@ -101,7 +101,7 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
     return success
 
 
-def handleSinglePackage( packageName, dependencyDepth ):
+def handleSinglePackage( packageName, dependencyDepth, args ):
     _deplist = [ ]
     deplist = [ ]
     packageList = [ ]
@@ -109,7 +109,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
     categoryList = [ ]
     targetDict = dict( )
 
-    if emergeSettings.args.action == "update-all":
+    if args.action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
             utils.debug( "Updating installed packages from category " + packageName, 1 )
@@ -119,13 +119,13 @@ def handleSinglePackage( packageName, dependencyDepth ):
         for mainCategory, mainPackage, mainVersion in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
                 continue
-            if installdb.isInstalled( mainCategory, mainPackage, mainVersion, emergeSettings.args.buildType ) \
+            if installdb.isInstalled( mainCategory, mainPackage, mainVersion, args.buildType ) \
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
         utils.debug( "Will update packages: " + str( packageList ), 1 )
-    elif emergeSettings.args.list_file:
-        listFileObject = open( emergeSettings.args.list_file, 'r' )
+    elif args.list_file:
+        listFileObject = open( args.list_file, 'r' )
         for line in listFileObject:
             if line.strip( ).startswith( '#' ): continue
             try:
@@ -144,23 +144,23 @@ def handleSinglePackage( packageName, dependencyDepth ):
     utils.debug_line( 1 )
 
     for mainCategory, entry in zip( categoryList, packageList ):
-        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, emergeSettings.args.dependencyType,
+        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, args.dependencyType,
                                               maxDetpth = dependencyDepth )
 
     deplist = [ p.ident( ) for p in _deplist ]
 
     for item in deplist:
         item.append( False )
-        if emergeSettings.args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
+        if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
             item[ -1 ] = True
 
         if item[ 0 ] + "/" + item[ 1 ] in targetDict:
             item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
 
-        if emergeSettings.args.target in list(
+        if args.target in list(
                 portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ] ).keys( ) ):
             # if no target or a wrong one is defined, simply set the default target here
-            item[ 3 ] = emergeSettings.args.target
+            item[ 3 ] = args.target
 
         utils.debug( "dependency: %s" % item, 1 )
 
@@ -174,11 +174,11 @@ def handleSinglePackage( packageName, dependencyDepth ):
     #        print "remove:", cat, pac, ver
     #        deplist.remove( item )
 
-    if emergeSettings.args.action == "install-deps":
+    if args.action == "install-deps":
         # the first dependency is the package itself - ignore it
         # TODO: why are we our own dependency?
         del deplist[ 0 ]
-    elif emergeSettings.args.action == "update-direct-deps":
+    elif args.action == "update-direct-deps":
         for item in deplist:
             item[ -1 ] = True
 
@@ -188,7 +188,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
     # package[1] -> package
     # package[2] -> version
 
-    if ( not emergeSettings.args.action in [ "all", "install-deps", "update-direct-deps" ] and not emergeSettings.args.list_file ):
+    if ( not args.action in [ "all", "install-deps", "update-direct-deps" ] and not args.list_file ):
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -200,61 +200,61 @@ def handleSinglePackage( packageName, dependencyDepth ):
         else:
             mainCategory, mainPackage, mainVersion = None, None, None
 
-        if not handlePackage( mainCategory, mainPackage, mainVersion, emergeSettings.args.action,
-                              emergeSettings.args.doContinue ):
-            utils.notify( "Emerge %s failed" % emergeSettings.args.action, "%s of %s/%s-%s failed" % (
-                emergeSettings.args.action, mainCategory, mainPackage, mainVersion), emergeSettings.args.action )
+        if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
+                              args.doContinue ):
+            utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s-%s failed" % (
+                args.action, mainCategory, mainPackage, mainVersion), args.action )
             return False
-        utils.notify( "Emerge %s finished" % emergeSettings.args.action,
-                      "%s of %s/%s-%s finished" % ( emergeSettings.args.action, mainCategory, mainPackage, mainVersion),
-                      emergeSettings.args.action )
+        utils.notify( "Emerge %s finished" % args.action,
+                      "%s of %s/%s-%s finished" % ( args.action, mainCategory, mainPackage, mainVersion),
+                      args.action )
 
     else:
-        if emergeSettings.args.dumpDepsFile:
-            dumpDepsFileObject = open( emergeSettings.args.dumpDepsFile, 'w+' )
+        if args.dumpDepsFile:
+            dumpDepsFileObject = open( args.dumpDepsFile, 'w+' )
             dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
         for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
             isVCSTarget = False
 
-            if emergeSettings.args.dumpDepsFile:
+            if args.dumpDepsFile:
                 dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
 
             isLastPackage = [ mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
-            if emergeSettings.args.outDateVCS or (emergeSettings.args.outDatePackage and isLastPackage):
+            if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
             isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion )
-            if emergeSettings.args.list_file and emergeSettings.args.action != "all":
+            if args.list_file and args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList
             if ( isInstalled and not ignoreInstalled ) and not (
-                            isInstalled and (emergeSettings.args.outDateVCS or (
-                                    emergeSettings.args.outDatePackage and isLastPackage) ) and isVCSTarget ):
+                            isInstalled and (args.outDateVCS or (
+                                    args.outDatePackage and isLastPackage) ) and isVCSTarget ):
                 if utils.verbose( ) > 1 and mainPackage == packageName:
                     utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
                 elif utils.verbose( ) > 2 and not mainPackage == packageName:
                     utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
-                if emergeSettings.args.probe:
+                if args.probe:
                     if utils.verbose( ) > 0:
                         msg = " "
                         targetMsg = ":default"
                         if defaultTarget: targetMsg = ":" + defaultTarget
                         utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
                 else:
-                    if emergeSettings.args.action in [ "install-deps", "update-direct-deps" ]:
-                        emergeSettings.args.action = "all"
+                    if args.action in [ "install-deps", "update-direct-deps" ]:
+                        args.action = "all"
 
-                    if not handlePackage( mainCategory, mainPackage, mainVersion, emergeSettings.args.action,
-                                          emergeSettings.args.doContinue ):
+                    if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
+                                          args.doContinue ):
                         utils.error( "fatal error: package %s/%s-%s %s failed" % \
-                                     ( mainCategory, mainPackage, mainVersion, emergeSettings.args.action ) )
+                                     ( mainCategory, mainPackage, mainVersion, args.action ) )
                         utils.notify( "Emerge build failed",
                                       "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),
-                                      emergeSettings.args.action )
+                                      args.action )
                         return False
                     utils.notify( "Emerge build finished",
                                   "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),
-                                  emergeSettings.args.action )
+                                  args.action )
 
     utils.new_line( )
     return True
@@ -267,7 +267,7 @@ def main( ):
     tittleThread.setDaemon( True )
     tittleThread.start( )
 
-    parser = argparse.ArgumentParser( prog = "Emerge",
+    parser = argparse.ArgumentParser( prog = "emerge",
                                       description = "Emerge is a tool for building KDE-related software under Windows. emerge automates it, looks for the dependencies and fetches them automatically.\
                                       Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
                                       epilog = """More information see the README or http://windows.kde.org/.
@@ -290,12 +290,12 @@ def main( ):
                          default = emergeSettings.getboolean( "General", "EMERGE_BUILDTESTS", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument( "--offline", action = "store_true",
-                         default = emergeSettings.getboolean( "General", "EMERGE_OFFLINE", False ),
+                         default = emergeSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail." )
     parser.add_argument( "-f", "--force", action = "store_true", dest = "forced",
                          default = emergeSettings.getboolean( "General", "EMERGE_FORCED", False ) )
-    parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel" "Debug" ],
+    parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel", "Debug" ],
                          dest = "buildType",
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
                          help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
@@ -344,43 +344,59 @@ def main( ):
         parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x, default = "all" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
-    emergeSettings.args = parser.parse_args( )
+    args = parser.parse_args( )
 
-
-    if emergeSettings.args.stayQuiet == True or emergeSettings.args.action in [ "version-dir", "version-package",
-                                                                                "print-installable", "print-installed",
-                                                                                "print-targets" ]:
+    if args.stayQuiet == True or args.action in [ "version-dir", "version-package",
+                                                  "print-installable", "print-installed",
+                                                  "print-targets" ]:
         utils.setVerbose( 0 )
-    elif emergeSettings.args.verbose:
-        utils.setVerbose( emergeSettings.args.verbose )
+    elif args.verbose:
+        utils.setVerbose( args.verbose )
 
-    if emergeSettings.args.search:
-        for package in emergeSettings.args.packageNames:
+
+
+    emergeSettings.set("General", "WorkOffline", args.offline)
+    emergeSettings.set("General", "EMERGE_NOCOPY", args.nocopy)
+    emergeSettings.set("General", "EMERGE_NOCLEAN", args.noclean )
+    emergeSettings.set("General", "EMERGE_FORCED", args.forced )
+    emergeSettings.set("General", "EMERGE_BUILDTESTS", args.buildTests )
+    emergeSettings.set("General", "EMERGE_BUILDTYPE",  args.buildType )
+    emergeSettings.set("PortageVersions", "DefaultTarget",  args.target )
+    emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join(args.options) )
+    emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
+    emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
+    emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
+
+
+
+
+    if args.search:
+        for package in args.packageNames:
             category = ""
             if not package.find( "/" ) == -1:
                 (category, package) = package.split( "/" )
             portageSearch.printSearch( category, package )
         return False
 
-    if emergeSettings.args.action in [ "install-deps", "update", "update-all", "update-direct-deps" ]:
-        emergeSettings.args.ignoreInstalled = True
+    if args.action in [ "install-deps", "update", "update-all", "update-direct-deps" ]:
+        args.ignoreInstalled = True
 
-    if emergeSettings.args.action in [ "update", "update-all" ]:
-        emergeSettings.args.noclean = True
+    if args.action in [ "update", "update-all" ]:
+        args.noclean = True
 
     dependencyDepth = -1  #TODO
 
-    if emergeSettings.args.action == "update-direct-deps":
-        emergeSettings.args.outDateVCS = True
+    if args.action == "update-direct-deps":
+        args.outDateVCS = True
         dependencyDepth = 1
 
-    utils.debug( "buildAction: %s" % emergeSettings.args.action )
-    utils.debug( "doPretend: %s" % emergeSettings.args.probe, 1 )
-    utils.debug( "packageName: %s" % emergeSettings.args.packageNames )
-    utils.debug( "buildType: %s" % emergeSettings.args.buildType )
-    utils.debug( "buildTests: %s" % emergeSettings.args.buildTests )
+    utils.debug( "buildAction: %s" % args.action )
+    utils.debug( "doPretend: %s" % args.probe, 1 )
+    utils.debug( "packageName: %s" % args.packageNames )
+    utils.debug( "buildType: %s" % args.buildType )
+    utils.debug( "buildTests: %s" % args.buildTests )
     utils.debug( "verbose: %d" % utils.verbose( ), 1 )
-    utils.debug( "trace: %s" % emergeSettings.args.trace, 1 )
+    utils.debug( "trace: %s" % args.trace, 1 )
     utils.debug( "KDEROOT: %s\n" % emergeRoot(), 1 )
     utils.debug_line( )
     #evenso emerge doesnt depend on the env var KDEROOT anymore there are some scripts that still need it
@@ -388,13 +404,13 @@ def main( ):
 
 
 
-    if emergeSettings.args.print_installed:
+    if args.print_installed:
         printInstalled( )
-    elif emergeSettings.args.print_installable:
+    elif args.print_installable:
         portage.printInstallables( )
     else:
-        for x in emergeSettings.args.packageNames:
-            if not handleSinglePackage( x, dependencyDepth ):
+        for x in args.packageNames:
+            if not handleSinglePackage( x, dependencyDepth, args ):
                 return False
 
 

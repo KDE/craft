@@ -35,8 +35,8 @@ class PackagerBase(EmergeBase):
 
         pkgNotesVersion = pkgVersion
 
-        if emergeSettings.args.patchlevel != "":
-            pkgVersion += "-" + emergeSettings.args.patchlevel
+        if ("General","EMERGE_PKGPATCHLVL") in emergeSettings:
+            pkgVersion += "-" + emergeSettings.get("General","EMERGE_PKGPATCHLVL")
 
         return [pkgVersion, pkgNotesVersion]
 

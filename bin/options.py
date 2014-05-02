@@ -250,7 +250,6 @@ class Options(object):
         self.useShortPathes = False
 
         ## there is a special option available already
-        self.buildTests = emergeSettings.args.buildTests
         self.buildTools = False
         self.buildStatic = False
 
@@ -263,7 +262,7 @@ class Options(object):
         """ read emerge related variables from environment and map them to public
         attributes in the option class and sub classes """
         self.__collectAttributes()
-        self.__readFromList(emergeSettings.args.options)
+        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS").split(";"))
             
     def isActive(self, package):
         return not package in portage.PortageInstance.ignores

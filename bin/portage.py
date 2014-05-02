@@ -93,7 +93,7 @@ class DependencyPackage(object):
 
 def buildType():
     """return currently selected build type"""
-    return emergeSettings.args.buildType
+    return emergeSettings.get("General","EMERGE_BUILDTYPE")
 
 def rootDirectories():
     # this function should return all currently set portage directories
