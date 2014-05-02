@@ -4,9 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         if compiler.isX86():
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys/msys-base-i686-20131208.tar.xz"
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-20140216.tar.xz"
         else:
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys/msys-base-x86_64-20131208.tar.xz"
+            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-x86_64-20140216.tar.xz"
         self.defaultTarget = "base"
 
 
