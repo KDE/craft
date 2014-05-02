@@ -38,7 +38,7 @@ class EmergeConfig( object ):
 
     def __init__( self ):
         self._config = None
-        self.iniPath = os.path.join( etcDir( ), "kdesettings.ini" )
+        self.iniPath = os.path.join( etcDir( False ), "kdesettings.ini" )
         self._alias = dict( )
         self._readSettings( )
 

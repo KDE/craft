@@ -13,14 +13,18 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "autotools")
         self.buildInSource = False
         self.shell = MSysShell()
-        self.makeProgram = "make "
-        if self.subinfo.options.make.supportsMultijob:
-            self.makeProgram += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
-        if compiler.architecture() == "x86":
+        if compiler.isX86():
             self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
         else:
             self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
+
+    @property
+    def makeProgram(self):
+        make = "make "
+        if self.subinfo.options.make.supportsMultijob:
+            make += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
+        return make
 
     def configureDefaultDefines( self ):
 
