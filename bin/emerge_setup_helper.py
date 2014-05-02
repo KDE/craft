@@ -33,5 +33,8 @@ if __name__ == '__main__':
         else:
             print( emergeRoot( ) )
     if args.get:
-        print(emergeSettings.get(args.rest[0],args.rest[1],""))
+        default = ""
+        if len(args.rest) == 3:
+            default = args.rest[2]
+        print(emergeSettings.get(args.rest[0],args.rest[1],default))
 
