@@ -247,6 +247,7 @@ class InstallDB(object):
         cursor.execute( '''PRAGMA table_info('packageList')''')
         if not len(cursor.fetchall()) == 6:
             cursor.execute('''ALTER TABLE packageList ADD COLUMN revision TEXT''')
+            self.connection.commit()
 
 
 # get a global object
