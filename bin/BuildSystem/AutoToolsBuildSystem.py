@@ -68,12 +68,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
         # adding Targets later
         if self.buildInSource:
             if not self.shell.execute(self.sourceDir(), self.makeProgram , "clean"):
-                utils.die( "while Make'ing. cmd: %s clean" % self.makeProgram)
+                print( "while Make'ing. cmd: %s clean" % self.makeProgram)
+                return False
             if not self.shell.execute(self.sourceDir(), command, args ):
-                utils.die( "while Make'ing. cmd: %s" % command )
+                print( "while Make'ing. cmd: %s" % command )
+                return False
         else:
             if not self.shell.execute(self.buildDir(), command, args ):
-                utils.die( "while Make'ing. cmd: %s" % command )
+                print( "while Make'ing. cmd: %s" % command )
+                return False
         return True
 
     def install( self ):
@@ -95,9 +98,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
         if self.buildInSource:
-            self.shell.execute(self.sourceDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+            if not self.shell.execute(self.sourceDir(), command, args):
+                print( "while installing. cmd: %s %s" % (command, args) )
+                return False
         else:
-            self.shell.execute(self.buildDir(), command, args) or utils.die( "while installing. cmd: %s %s" % (command, args) )
+            if not self.shell.execute(self.buildDir(), command, args):
+                print( "while installing. cmd: %s %s" % (command, args) )
+                return False
         if os.path.exists(os.path.join(self.imageDir(),"lib")):
             return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la")
         else:
