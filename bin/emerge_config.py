@@ -96,14 +96,16 @@ class EmergeConfig( object ):
         if not self._config.has_section(group):
             self._config.add_section(group)
         self._config[ group ][ key ] = str(value)
-        if self.get( "General", "DUMP_SETTINGS", "False" ) == "True":
-            with open( self.iniPath + ".dump", 'wt+' ) as configfile:
-                self._config.write( configfile )
 
 
     def setDefault( self, group, key, value ):
         if not ( group, key ) in self:
             self.set( group, key, value )
+
+
+    def dump(self):
+        with open( self.iniPath + ".dump", 'wt+' ) as configfile:
+            self._config.write( configfile )
 
 
 emergeSettings = EmergeConfig( )

@@ -26,6 +26,7 @@ import threading
 import traceback
 import argparse
 from emerge_config import *
+import compiler
 
 
 @utils.log
@@ -425,5 +426,8 @@ if __name__ == '__main__':
         traceback.print_tb(e.__traceback__)
     finally:
         utils.stopTimer( "Emerge" )
+        utils.setTitle("emerge - %s %s-%s" % ( emergeRoot(), compiler.getCompilerName(), compiler.architecture()))
+        if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
+            emergeSettings.dump()
     if not succes:
         exit(1)
