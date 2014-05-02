@@ -401,7 +401,6 @@ def main( ):
 
 if __name__ == '__main__':
     try:
-        utils.die("test")
         succes = main( )
     except KeyboardInterrupt:
         pass
