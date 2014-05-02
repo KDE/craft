@@ -1,0 +1,34 @@
+diff -Nru -x '*~' akonadi-1.12.1.orig/server/src/storage/dbconfigpostgresql.cpp akonadi-1.12.1/server/src/storage/dbconfigpostgresql.cpp
+--- akonadi-1.12.1.orig/server/src/storage/dbconfigpostgresql.cpp	2014-04-07 23:02:16.000000000 +0200
++++ akonadi-1.12.1/server/src/storage/dbconfigpostgresql.cpp	2014-04-19 10:14:22.571869500 +0200
+@@ -30,7 +30,7 @@
+ #include <QtSql/QSqlError>
+ #include <QtSql/QSqlQuery>
+ 
+-#include <unistd.h>
++//#include <unistd.h>
+ 
+ using namespace Akonadi::Server;
+ 
+diff -Nru -x '*~' akonadi-1.12.1.orig/server/src/storage/itemqueryhelper.cpp akonadi-1.12.1/server/src/storage/itemqueryhelper.cpp
+--- akonadi-1.12.1.orig/server/src/storage/itemqueryhelper.cpp	2014-04-07 23:02:16.000000000 +0200
++++ akonadi-1.12.1/server/src/storage/itemqueryhelper.cpp	2014-04-19 10:27:06.645572000 +0200
+@@ -28,6 +28,7 @@
+ #include "storage/queryhelper.h"
+ #include "collectionqueryhelper.h"
+ 
++using namespace Akonadi;
+ using namespace Akonadi::Server;
+ 
+ void ItemQueryHelper::itemSetToQuery( const ImapSet &set, QueryBuilder &qb, const Collection &collection )
+diff -Nru -x '*~' akonadi-1.12.1.orig/server/src/storage/queryhelper.cpp akonadi-1.12.1/server/src/storage/queryhelper.cpp
+--- akonadi-1.12.1.orig/server/src/storage/queryhelper.cpp	2014-04-07 23:02:16.000000000 +0200
++++ akonadi-1.12.1/server/src/storage/queryhelper.cpp	2014-04-19 10:27:21.784437900 +0200
+@@ -22,6 +22,7 @@
+ #include "storage/querybuilder.h"
+ #include "libs/imapset_p.h"
+ 
++using namespace Akonadi;
+ using namespace Akonadi::Server;
+ 
+ void QueryHelper::setToQuery( const ImapSet &set, const QString &column, QueryBuilder &qb )

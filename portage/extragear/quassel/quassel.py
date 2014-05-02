@@ -19,7 +19,6 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['libs/qt'] = 'default'
         self.dependencies['kdesupport/snorenotify'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
