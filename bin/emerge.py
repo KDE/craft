@@ -23,13 +23,9 @@ from InstallDB import *
 import time
 import datetime
 import threading
+import traceback
 import argparse
 from emerge_config import *
-
-
-def _exit( code ):
-    utils.stopTimer( "Emerge" )
-    exit( code )
 
 
 @utils.log
@@ -208,7 +204,7 @@ def handleSinglePackage( packageName, dependencyDepth ):
                               emergeSettings.args.doContinue ):
             utils.notify( "Emerge %s failed" % emergeSettings.args.action, "%s of %s/%s-%s failed" % (
                 emergeSettings.args.action, mainCategory, mainPackage, mainVersion), emergeSettings.args.action )
-            _exit( 1 )
+            return False
         utils.notify( "Emerge %s finished" % emergeSettings.args.action,
                       "%s of %s/%s-%s finished" % ( emergeSettings.args.action, mainCategory, mainPackage, mainVersion),
                       emergeSettings.args.action )
@@ -255,12 +251,13 @@ def handleSinglePackage( packageName, dependencyDepth ):
                         utils.notify( "Emerge build failed",
                                       "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),
                                       emergeSettings.args.action )
-                        _exit( 1 )
+                        return False
                     utils.notify( "Emerge build finished",
                                   "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),
                                   emergeSettings.args.action )
 
     utils.new_line( )
+    return True
 
 
 def main( ):
@@ -364,7 +361,7 @@ def main( ):
             if not package.find( "/" ) == -1:
                 (category, package) = package.split( "/" )
             portageSearch.printSearch( category, package )
-        _exit( 0 )
+        return False
 
     if emergeSettings.args.action in [ "install-deps", "update", "update-all", "update-direct-deps" ]:
         emergeSettings.args.ignoreInstalled = True
@@ -398,8 +395,20 @@ def main( ):
         portage.printInstallables( )
     else:
         for x in emergeSettings.args.packageNames:
-            handleSinglePackage( x, dependencyDepth )
+            if not handleSinglePackage( x, dependencyDepth ):
+                return False
 
 
 if __name__ == '__main__':
-    main( )
+    try:
+        utils.die("test")
+        succes = main( )
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(e)
+        traceback.print_tb(e.__traceback__)
+    finally:
+        utils.stopTimer( "Emerge" )
+    if not succes:
+        exit(1)

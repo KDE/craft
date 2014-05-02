@@ -492,9 +492,8 @@ def error( message ):
     return False
 
 def die( message ):
-    print("emerge fatal error: %s" % message, file=sys.stderr)
-    stopAllTimer()
-    exit( 1 )
+    raise Exception("emerge fatal error: %s" % message)
+
 
 def traceMode():
     """return the value of the trace level"""
