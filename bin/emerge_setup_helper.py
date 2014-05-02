@@ -8,6 +8,9 @@ import utils
 import subprocess
 import argparse
 
+from Source.SourceBase import *
+from Source.VersionSystemSourceBase import *
+import compiler
 
 def subst( path, drive ):
     if not os.path.exists( path ):
@@ -15,11 +18,20 @@ def subst( path, drive ):
     command = "subst %s %s" % ( emergeSettings.get( "ShortPath", drive ), path)
     subprocess.Popen( command, stdout = subprocess.PIPE )
 
+def printBanner():
+    print("KDEROOT     : %s" % emergeRoot())
+    print("KDECOMPILER : %s" % compiler.getCompilerName() )
+    print("KDESVNDIR   : %s" % VersionSystemSourceBase.svnDir())
+    print("KDEGITDIR   : %s" % VersionSystemSourceBase.gitDir())
+    print("DOWNLOADDIR : %s" % SourceBase.downloadDir())
+    print("PYTHONPATH  : %s" % emergeSettings.get("Paths", "PYTHONPATH"))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--subst", action = "store_true")
     parser.add_argument("--get", action = "store_true")
+    parser.add_argument("--print-banner", action= "store_true")
     parser.add_argument("rest", nargs = argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -32,9 +44,11 @@ if __name__ == '__main__':
             print( emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
         else:
             print( emergeRoot( ) )
-    if args.get:
+    elif args.get:
         default = ""
         if len(args.rest) == 3:
             default = args.rest[2]
         print(emergeSettings.get(args.rest[0],args.rest[1],default))
+    elif args.print_banner:
+        printBanner()
 

@@ -164,23 +164,7 @@ $env:SVN_SSH="plink"
 $env:GIT_SSH="plink"
 
 
-Write-Host("KDEROOT     : $KDEROOT")
-Write-Host("KDECOMPILER : " + $settings["General"]["KDECOMPILER"])
-if ($settings["ShortPath"]["EMERGE_USE_SHORT_PATH"] -eq $False)
-{
-    Write-Host("KDESVNDIR   : " + $settings["Paths"]["KDESVNDIR"])
-    Write-Host("KDEGITDIR   : " + $settings["Paths"]["KDEGITDIR"])
-    Write-Host("DOWNLOADDIR : " + $settings["Paths"]["DOWNLOADDIR"])
-}
-else
-{
-    Write-Host("KDESVNDIR   : " + $settings["ShortPath"]["EMERGE_SVN_DRIVE"])
-    Write-Host("KDEGITDIR   : " + $settings["ShortPath"]["EMERGE_GIT_DRIVE"])
-    Write-Host("DOWNLOADDIR : " + $settings["ShortPath"]["EMERGE_DOWNLOAD_DRIVE"])
-}
-
-
-Write-Host("PYTHONPATH  : " + $settings["Paths"]["PYTHONPATH"])
+(python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--print-banner")
 
 cd "$KDEROOT"
 }

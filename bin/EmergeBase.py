@@ -20,13 +20,7 @@ import utils
 # marked in both databases or should have a separate install database
 # question: How to detect reliable this case ?
 
-# ok, we have the following dirs:
-# emergeRoot(): the root where all this is below
-# DOWNLOADDIR: the dir under rootdir, where the downloaded files are put into
-# WORKDIR: the directory, under which the files are unpacked and compiled.
-#            here rootdir/tmp/packagename/work
-# IMAGEDIR: the directory, under which the compiled files are installed.
-#            here rootdir/tmp/packagename/image
+
 
 
 class EmergeBase(object):
@@ -138,12 +132,6 @@ class EmergeBase(object):
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget
         return directory
-
-    def downloadDir(self):
-        """ location of directory where fetched files are  stored """
-        if emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
-            return nomalizePath(emergeSettings.get("ShortPath", "EMERGE_DOWNLOAD_DRIVE"))
-        return self.__adjustPath(emergeSettings.get("Paths", "DOWNLOADDIR"))
 
     def sourceDir(self, dummyIndex=0):
         utils.abstract()

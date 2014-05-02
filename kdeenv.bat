@@ -57,7 +57,7 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get 
 
 rem print pathes 
 
-echo KDEROOT     : %KDEROOT%
+python "%~dp0bin\emerge_setup_helper.py" --print-banner
 
 
 rem ####### Visual Studio Settings #######
