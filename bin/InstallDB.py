@@ -97,7 +97,7 @@ class InstallDB(object):
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
 
-    def __init__( self, filename = os.path.join( etcPortageDir(), 'install.db' ) ):
+    def __init__( self, filename = os.path.join( etcPortageDir(False), 'install.db' ) ):
         self.dbfilename = filename
         self._prepareDatabase()
 

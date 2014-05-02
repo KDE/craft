@@ -15,19 +15,19 @@ def nomalizePath(path):
         path += "\\"
     return path
 
-def emergeRoot( ):
-    if not emergeSettings is None and emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
+def emergeRoot( allowShortpath = True ):
+    if allowShortpath and not emergeSettings is None and emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
         return  nomalizePath(emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ))
     return os.path.abspath( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "..", ".." ) )
 
 
-def etcDir( ):
-    return os.path.join( emergeRoot( ), "etc" )
+def etcDir( allowShortpath = True ):
+    return os.path.join( emergeRoot( allowShortpath ), "etc" )
 
 
-def etcPortageDir( ):
+def etcPortageDir( allowShortpath = True ):
     """the etc directory for portage"""
-    return os.path.join( etcDir( ), "portage" )
+    return os.path.join( etcDir( allowShortpath ), "portage" )
 
 
 class EmergeConfig( object ):
