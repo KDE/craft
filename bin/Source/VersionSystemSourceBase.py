@@ -7,17 +7,6 @@ from Source.SourceBase import *
 class VersionSystemSourceBase (SourceBase):
     """abstract base class for version system support"""
 
-    noFetch = False
-
-    # host part of svn server
-    kdesvnserver = ""
-
-    # local checkout root path
-    kdesvndir = ""
-
-    # complete local path for currently used source
-    svndir = ""
-
     def __init__(self):
         utils.trace( "VersionSystemSourceBase __init__", 2 )
         SourceBase.__init__(self)

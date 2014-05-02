@@ -40,16 +40,9 @@ def doExec( category, package, action ):
         pack = portage.getPackageInstance( category, package )
         ret = pack.execute( action )
     except OSError:
-        ret =  False
+        ret = False
     utils.stopTimer( "%s for %s" % ( action, package) )
     return ret
-
-
-def updateTitle( startTime, title ):
-    while ( True ):
-        delta = datetime.datetime.now( ) - startTime
-        utils.setTitle( "emerge %s %s" % (title, delta) )
-        time.sleep( 1 )
 
 
 def handlePackage( category, package, version, buildAction, continueFlag ):
@@ -262,12 +255,6 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
 
 
 def main( ):
-    utils.startTimer( "Emerge" )
-    tittleThread = threading.Thread( target = updateTitle,
-                                     args = (datetime.datetime.now( ), " ".join( sys.argv[ 1: ] ),) )
-    tittleThread.setDaemon( True )
-    tittleThread.start( )
-
     parser = argparse.ArgumentParser( prog = "emerge",
                                       description = "Emerge is a tool for building KDE-related software under Windows. emerge automates it, looks for the dependencies and fetches them automatically.\
                                       Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
@@ -301,10 +288,11 @@ def main( ):
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
                          help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
     parser.add_argument( "-v", "--verbose", action = "count",
-                         default = int(emergeSettings.get("EmergeDebug", "Verbose","1")),
+                         default = int( emergeSettings.get( "EmergeDebug", "Verbose", "1" ) ),
                          help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
-    parser.add_argument( "--trace", action = "store", default = int(emergeSettings.get( "General", "EMERGE_TRACE", "0" )), type = int )
+    parser.add_argument( "--trace", action = "store",
+                         default = int( emergeSettings.get( "General", "EMERGE_TRACE", "0" ) ), type = int )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
     parser.add_argument( "--target", action = "store",
@@ -331,18 +319,18 @@ def main( ):
                          help = "Output the dependencies of this package as a csv file suitable for emerge server." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
-    parser.add_argument("--print-installed", action = "store_true",
-                        help = "This will show a list of all packages that are installed currently.")
-    parser.add_argument("--print-installable", action = "store_true",
-                        help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough.")
+    parser.add_argument( "--print-installed", action = "store_true",
+                         help = "This will show a list of all packages that are installed currently." )
+    parser.add_argument( "--print-installable", action = "store_true",
+                         help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
-                                             "install", "qmerge", "manifest", "package", "unmerge", "test",
-                                             "checkdigest", "dumpdeps",
-                                             "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
-                                             "version-dir", "version-package",
-                                              "print-revision", "print-targets",
-                                             "install-deps", "update", "update-direct-deps" ]):
-        parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x, default = "all" )
+                       "install", "qmerge", "manifest", "package", "unmerge", "test",
+                       "checkdigest", "dumpdeps",
+                       "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
+                       "version-dir", "version-package",
+                       "print-revision", "print-targets",
+                       "install-deps", "update", "update-direct-deps" ] ):
+        parser.add_argument( "--%s" % x, action = "store_const", dest = "action", const = x, default = "all" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
@@ -354,22 +342,17 @@ def main( ):
     elif args.verbose:
         utils.setVerbose( args.verbose )
 
-
-
-    emergeSettings.set("General", "WorkOffline", args.offline)
-    emergeSettings.set("General", "EMERGE_NOCOPY", args.nocopy)
-    emergeSettings.set("General", "EMERGE_NOCLEAN", args.noclean )
-    emergeSettings.set("General", "EMERGE_FORCED", args.forced )
-    emergeSettings.set("General", "EMERGE_BUILDTESTS", args.buildTests )
-    emergeSettings.set("General", "EMERGE_BUILDTYPE",  args.buildType )
-    emergeSettings.set("PortageVersions", "DefaultTarget",  args.target )
-    emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join(args.options) )
+    emergeSettings.set( "General", "WorkOffline", args.offline )
+    emergeSettings.set( "General", "EMERGE_NOCOPY", args.nocopy )
+    emergeSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
+    emergeSettings.set( "General", "EMERGE_FORCED", args.forced )
+    emergeSettings.set( "General", "EMERGE_BUILDTESTS", args.buildTests )
+    emergeSettings.set( "General", "EMERGE_BUILDTYPE", args.buildType )
+    emergeSettings.set( "PortageVersions", "DefaultTarget", args.target )
+    emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
     emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
     emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
-
-
-
 
     if args.search:
         for package in args.packageNames:
@@ -398,12 +381,10 @@ def main( ):
     utils.debug( "buildTests: %s" % args.buildTests )
     utils.debug( "verbose: %d" % utils.verbose( ), 1 )
     utils.debug( "trace: %s" % args.trace, 1 )
-    utils.debug( "KDEROOT: %s\n" % emergeRoot(), 1 )
+    utils.debug( "KDEROOT: %s\n" % emergeRoot( ), 1 )
     utils.debug_line( )
     #evenso emerge doesnt depend on the env var KDEROOT anymore there are some scripts that still need it
-    utils.putenv("KDEROOT", emergeRoot())
-
-
+    utils.putenv( "KDEROOT", emergeRoot( ) )
 
     if args.print_installed:
         printInstalled( )
@@ -418,16 +399,30 @@ def main( ):
 if __name__ == '__main__':
     succes = True
     try:
+        utils.startTimer( "Emerge" )
+        doUpdateTitle = True
+
+        def updateTitle( startTime, title ):
+            while ( doUpdateTitle ):
+                delta = datetime.datetime.now( ) - startTime
+                utils.setTitle( "emerge - %s %s" % (title, delta) )
+                time.sleep( 1 )
+
+        tittleThread = threading.Thread( target = updateTitle,
+                                         args = (datetime.datetime.now( ), " ".join( sys.argv[ 1: ] ),) )
+        tittleThread.setDaemon( True )
+        tittleThread.start( )
         succes = main( )
     except KeyboardInterrupt:
         pass
     except Exception as e:
-        print(e)
-        traceback.print_tb(e.__traceback__)
+        print( e )
+        traceback.print_tb( e.__traceback__ )
     finally:
         utils.stopTimer( "Emerge" )
-        utils.setTitle("emerge - %s %s-%s" % ( emergeRoot(), compiler.getCompilerName(), compiler.architecture()))
+        doUpdateTitle = False
+        utils.setTitle( "emerge - %s %s-%s" % ( emergeRoot( ), compiler.getCompilerName( ), compiler.architecture( )) )
         if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
-            emergeSettings.dump()
+            emergeSettings.dump( )
     if not succes:
-        exit(1)
+        exit( 1 )
