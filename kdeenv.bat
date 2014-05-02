@@ -93,7 +93,7 @@ set SVN_SSH=plink
 
 
 if "%EMERGE_USE_CCACHE%" == "True" (
-   set CCACHE_DIR=%KDEROOT%\build\CCACHE
+    FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --get Paths CCACHE_DIR %KDEROOT%\build\CCACHE') do SET CCACHE_DIR=%%A
 )
 
 if "%KDECOMPILER%" == "mingw" ( 

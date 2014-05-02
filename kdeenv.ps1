@@ -124,7 +124,14 @@ function setupCCACHE()
 {
     if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true -and $env:CCACHE_DIR -eq $null)
     {
-        $env:CCACHE_DIR="$KDEROOT\build\CCACHE"
+        if($settings["Paths"]["CCACHE_DIR"] -eq $null)
+        {
+            $env:CCACHE_DIR="$KDEROOT\build\CCACHE"
+        }
+        else
+        {
+            $env:CCACHE_DIR=$settings["Paths"]["CCACHE_DIR"]
+        }
     }
 }
 
