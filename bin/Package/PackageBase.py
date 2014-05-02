@@ -205,8 +205,7 @@ class PackageBase (EmergeBase):
             print("target ignored for this build type")
             return False
 
-        self.runAction(command)
-        return True
+        return self.runAction(command)
 
     def runAction( self, command ):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc

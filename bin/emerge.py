@@ -32,16 +32,16 @@ from emerge_config import *
 def doExec( category, package, action ):
     utils.startTimer( "%s for %s" % ( action, package), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
+    ret = True
     try:
         #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
         #makes touble for xcompile -> changed back
         pack = portage.getPackageInstance( category, package )
-        pack.execute( action )
+        ret = pack.execute( action )
     except OSError:
-        utils.stopTimer( "%s for %s" % ( action, package) )
-        return False
+        ret =  False
     utils.stopTimer( "%s for %s" % ( action, package) )
-    return True
+    return ret
 
 
 def updateTitle( startTime, title ):
