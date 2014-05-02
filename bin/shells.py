@@ -21,7 +21,7 @@ class MSysShell(object):
 
     @property
     def buildType(self):
-        return emergeSettings.get("General", "EMERGE_BUILDTYPE")
+        return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
 
     def initEnvironment(self, cflags="", ldflags=""):
         mergeroot = self.toNativePath(emergeRoot())
