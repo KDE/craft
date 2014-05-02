@@ -8,10 +8,10 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['52.1'] = 'http://download.icu-project.org/files/icu4c/52.1/icu4c-52_1-src.tgz'
-        self.targetDigests['52.1'] = '6de440b71668f1a65a9344cdaf7a437291416781'
-        self.targetInstSrc['52.1'] = "icu\\source"
-        self.defaultTarget = '52.1'
+        self.targets['53.1'] = 'http://download.icu-project.org/files/icu4c/53.1/icu4c-53_1-src.tgz'
+        self.targetDigests['53.1'] = '7eca017fdd101e676d425caaf28ef862d3655e0f'
+        self.targetInstSrc['53.1'] = "icu\\source"
+        self.defaultTarget = '53.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
