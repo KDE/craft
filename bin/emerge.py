@@ -345,7 +345,6 @@ def main( ):
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     emergeSettings.args = parser.parse_args( )
-    print( emergeSettings.args )
 
 
     if emergeSettings.args.stayQuiet == True or emergeSettings.args.action in [ "version-dir", "version-package",
