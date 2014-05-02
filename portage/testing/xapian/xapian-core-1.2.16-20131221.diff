@@ -1,6 +1,6 @@
 diff -Nru -x '*~' xapian-core-1.2.16.orig/api/CMakeLists.txt xapian-core-1.2.16/api/CMakeLists.txt
 --- xapian-core-1.2.16.orig/api/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/api/CMakeLists.txt	2014-04-19 19:08:00.015162500 +0200
++++ xapian-core-1.2.16/api/CMakeLists.txt	2014-05-02 13:27:07.448114100 +0200
 @@ -0,0 +1,35 @@
 +# api subdirectory
 +
@@ -39,7 +39,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/api/CMakeLists.txt xapian-core-1.2.16/
 +add_library(api OBJECT ${api_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt xapian-core-1.2.16/backends/brass/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/brass/CMakeLists.txt	2014-04-19 19:08:00.022162900 +0200
++++ xapian-core-1.2.16/backends/brass/CMakeLists.txt	2014-05-02 13:27:07.456116200 +0200
 @@ -0,0 +1,33 @@
 +# backends / brass
 +
@@ -76,7 +76,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/brass/CMakeLists.txt xapian-c
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt xapian-core-1.2.16/backends/chert/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/chert/CMakeLists.txt	2014-04-19 19:08:00.029163300 +0200
++++ xapian-core-1.2.16/backends/chert/CMakeLists.txt	2014-05-02 13:27:07.460185700 +0200
 @@ -0,0 +1,34 @@
 +# backends / chert
 +
@@ -114,7 +114,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/chert/CMakeLists.txt xapian-c
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/CMakeLists.txt xapian-core-1.2.16/backends/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/CMakeLists.txt	2014-04-19 19:08:00.036163700 +0200
++++ xapian-core-1.2.16/backends/CMakeLists.txt	2014-05-02 13:27:07.465115200 +0200
 @@ -0,0 +1,37 @@
 +# backends
 +
@@ -155,7 +155,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/CMakeLists.txt xapian-core-1.
 +add_library(backends OBJECT ${backends_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/dbfactory.cc xapian-core-1.2.16/backends/dbfactory.cc
 --- xapian-core-1.2.16.orig/backends/dbfactory.cc	2013-12-04 01:14:06.000000000 +0100
-+++ xapian-core-1.2.16/backends/dbfactory.cc	2014-04-23 00:58:05.996443200 +0200
++++ xapian-core-1.2.16/backends/dbfactory.cc	2014-05-02 13:27:07.472169900 +0200
 @@ -348,44 +348,49 @@
  {
      LOGCALL_CTOR(API, "Database", path);
@@ -304,7 +304,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/dbfactory.cc xapian-core-1.2.
      }
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt xapian-core-1.2.16/backends/flint/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/flint/CMakeLists.txt	2014-04-19 19:08:00.041163900 +0200
++++ xapian-core-1.2.16/backends/flint/CMakeLists.txt	2014-05-02 13:27:07.477116000 +0200
 @@ -0,0 +1,31 @@
 +# backends / flint
 +
@@ -339,7 +339,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/flint/CMakeLists.txt xapian-c
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/inmemory/CMakeLists.txt xapian-core-1.2.16/backends/inmemory/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/inmemory/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/inmemory/CMakeLists.txt	2014-04-19 19:08:00.046164200 +0200
++++ xapian-core-1.2.16/backends/inmemory/CMakeLists.txt	2014-05-02 13:27:07.482116300 +0200
 @@ -0,0 +1,14 @@
 +# backends / inmemory
 +
@@ -357,7 +357,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/inmemory/CMakeLists.txt xapia
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/multi/CMakeLists.txt xapian-core-1.2.16/backends/multi/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/multi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/multi/CMakeLists.txt	2014-04-19 19:08:00.052164600 +0200
++++ xapian-core-1.2.16/backends/multi/CMakeLists.txt	2014-05-02 13:27:07.487116700 +0200
 @@ -0,0 +1,10 @@
 +# backends / multi
 +
@@ -371,7 +371,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/multi/CMakeLists.txt xapian-c
 +add_library(backend_multi OBJECT ${backends_multi_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt xapian-core-1.2.16/backends/remote/CMakeLists.txt
 --- xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/backends/remote/CMakeLists.txt	2014-04-19 19:08:00.057164900 +0200
++++ xapian-core-1.2.16/backends/remote/CMakeLists.txt	2014-05-02 13:27:07.492117000 +0200
 @@ -0,0 +1,12 @@
 +# backends / remote
 +
@@ -387,7 +387,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/backends/remote/CMakeLists.txt xapian-
 +endif()
 diff -Nru -x '*~' xapian-core-1.2.16.orig/bin/CMakeLists.txt xapian-core-1.2.16/bin/CMakeLists.txt
 --- xapian-core-1.2.16.orig/bin/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/bin/CMakeLists.txt	2014-04-19 19:08:00.064165300 +0200
++++ xapian-core-1.2.16/bin/CMakeLists.txt	2014-05-02 13:27:07.498117200 +0200
 @@ -0,0 +1,72 @@
 +# bin
 +if(BUILD_BACKEND_BRASS OR BUILD_BACKEND_CHERT OR BUILD_BACKEND_FLINT)
@@ -463,7 +463,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/bin/CMakeLists.txt xapian-core-1.2.16/
 +                            LIBRARY DESTINATION lib)
 diff -Nru -x '*~' xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in xapian-core-1.2.16/cmake/xapian-config-win32.cmake.in
 --- xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/cmake/xapian-config-win32.cmake.in	2014-04-22 00:40:22.750188900 +0200
++++ xapian-core-1.2.16/cmake/xapian-config-win32.cmake.in	2014-05-02 13:27:07.503121900 +0200
 @@ -0,0 +1,5 @@
 +SET(prefix "@prefix@")
 +SET(exec_prefix "@exec_prefix@")
@@ -472,7 +472,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/cmake/xapian-config-win32.cmake.in xap
 +SET(XAPIAN_FOUND "TRUE")
 diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMakeLists.txt
 --- xapian-core-1.2.16.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/CMakeLists.txt	2014-04-19 19:08:00.075165900 +0200
++++ xapian-core-1.2.16/CMakeLists.txt	2014-05-02 13:27:07.508117900 +0200
 @@ -0,0 +1,134 @@
 +project(xapian)
 +
@@ -610,7 +610,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/CMakeLists.txt xapian-core-1.2.16/CMak
 +install(FILES ${CMAKE_BINARY_DIR}/cmake/xapian-config.cmake ${CMAKE_BINARY_DIR}/cmake/xapian-config-version.cmake DESTINATION lib/cmake/xapian)
 diff -Nru -x '*~' xapian-core-1.2.16.orig/common/CMakeLists.txt xapian-core-1.2.16/common/CMakeLists.txt
 --- xapian-core-1.2.16.orig/common/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/common/CMakeLists.txt	2014-04-19 19:08:00.081166200 +0200
++++ xapian-core-1.2.16/common/CMakeLists.txt	2014-05-02 13:27:07.513120200 +0200
 @@ -0,0 +1,32 @@
 +set(common_SRCS
 +    bitstream.cc
@@ -646,7 +646,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/common/CMakeLists.txt xapian-core-1.2.
 +
 diff -Nru -x '*~' xapian-core-1.2.16.orig/common/utils.h xapian-core-1.2.16/common/utils.h
 --- xapian-core-1.2.16.orig/common/utils.h	2013-12-04 01:13:34.000000000 +0100
-+++ xapian-core-1.2.16/common/utils.h	2014-04-22 23:01:39.436834800 +0200
++++ xapian-core-1.2.16/common/utils.h	2014-05-02 13:27:07.519120800 +0200
 @@ -56,7 +56,18 @@
  
  /// Allow stat to work directly on C++ strings.
@@ -668,8 +668,8 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/common/utils.h xapian-core-1.2.16/comm
  /** Remove a directory, and its contents.
 diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/config.h.win32
 --- xapian-core-1.2.16.orig/config.h.win32	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/config.h.win32	2014-04-19 19:08:00.087166600 +0200
-@@ -0,0 +1,198 @@
++++ xapian-core-1.2.16/config.h.win32	2014-05-02 13:31:52.184489800 +0200
+@@ -0,0 +1,201 @@
 +/* config.h.win32 */
 +/* On Unix systems, generated by configure, but must be manually created for */
 +/* Win32 / Visual C++ builds */
@@ -824,6 +824,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +/* Define for large files, on AIX-style hosts. */
 +/* #undef _LARGE_FILES */
 +
++#ifdef _MSC_VER
 +/* Define to `int' if <sys/types.h> does not define. */
 +#define mode_t int
 +
@@ -835,6 +836,8 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +# define ssize_t __int64
 +#else
 +# define ssize_t long
++#endif
++
 +#endif
 +
 +/* Disable stupid MSVC "performance" warning for converting int to bool. */
@@ -870,7 +873,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/config.h.win32 xapian-core-1.2.16/conf
 +
 diff -Nru -x '*~' xapian-core-1.2.16.orig/expand/CMakeLists.txt xapian-core-1.2.16/expand/CMakeLists.txt
 --- xapian-core-1.2.16.orig/expand/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/expand/CMakeLists.txt	2014-04-19 19:08:00.092166900 +0200
++++ xapian-core-1.2.16/expand/CMakeLists.txt	2014-05-02 13:27:07.529121500 +0200
 @@ -0,0 +1,9 @@
 +# expand
 +
@@ -883,7 +886,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/expand/CMakeLists.txt xapian-core-1.2.
 +add_library(expand OBJECT ${expand_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/languages/CMakeLists.txt xapian-core-1.2.16/languages/CMakeLists.txt
 --- xapian-core-1.2.16.orig/languages/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/languages/CMakeLists.txt	2014-04-19 19:08:00.097167200 +0200
++++ xapian-core-1.2.16/languages/CMakeLists.txt	2014-05-02 13:27:07.534189400 +0200
 @@ -0,0 +1,34 @@
 +# languages
 +
@@ -921,7 +924,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/languages/CMakeLists.txt xapian-core-1
 +add_library(languages OBJECT ${languages_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/matcher/CMakeLists.txt xapian-core-1.2.16/matcher/CMakeLists.txt
 --- xapian-core-1.2.16.orig/matcher/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/matcher/CMakeLists.txt	2014-04-19 19:08:00.102167400 +0200
++++ xapian-core-1.2.16/matcher/CMakeLists.txt	2014-05-02 13:27:07.539119800 +0200
 @@ -0,0 +1,31 @@
 +# matcher
 +
@@ -956,7 +959,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/matcher/CMakeLists.txt xapian-core-1.2
 +add_library(matcher OBJECT ${matcher_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/net/CMakeLists.txt xapian-core-1.2.16/net/CMakeLists.txt
 --- xapian-core-1.2.16.orig/net/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/net/CMakeLists.txt	2014-04-19 19:08:00.108167800 +0200
++++ xapian-core-1.2.16/net/CMakeLists.txt	2014-05-02 13:27:07.544120200 +0200
 @@ -0,0 +1,17 @@
 +# net
 +
@@ -977,7 +980,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/net/CMakeLists.txt xapian-core-1.2.16/
 +set(xapian_LIBS ${xapian_LIBS} ws2_32 PARENT_SCOPE)
 diff -Nru -x '*~' xapian-core-1.2.16.orig/queryparser/CMakeLists.txt xapian-core-1.2.16/queryparser/CMakeLists.txt
 --- xapian-core-1.2.16.orig/queryparser/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/queryparser/CMakeLists.txt	2014-04-19 19:08:00.113168100 +0200
++++ xapian-core-1.2.16/queryparser/CMakeLists.txt	2014-05-02 13:27:07.549120000 +0200
 @@ -0,0 +1,11 @@
 +# queryparser
 +
@@ -992,7 +995,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/queryparser/CMakeLists.txt xapian-core
 +add_library(queryparser OBJECT ${queryparser_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/unicode/CMakeLists.txt xapian-core-1.2.16/unicode/CMakeLists.txt
 --- xapian-core-1.2.16.orig/unicode/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/unicode/CMakeLists.txt	2014-04-19 19:08:00.118168400 +0200
++++ xapian-core-1.2.16/unicode/CMakeLists.txt	2014-05-02 13:27:07.554122300 +0200
 @@ -0,0 +1,8 @@
 +# unicode
 +
@@ -1004,7 +1007,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/unicode/CMakeLists.txt xapian-core-1.2
 +add_library(unicode OBJECT ${unicode_SRCS})
 diff -Nru -x '*~' xapian-core-1.2.16.orig/version.h.in xapian-core-1.2.16/version.h.in
 --- xapian-core-1.2.16.orig/version.h.in	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/version.h.in	2014-04-19 19:08:00.124168700 +0200
++++ xapian-core-1.2.16/version.h.in	2014-05-02 13:27:07.559136400 +0200
 @@ -0,0 +1,38 @@
 +// @configure_input@
 +// msvc/version.h: Define preprocesor symbols for the library version.
@@ -1046,7 +1049,7 @@ diff -Nru -x '*~' xapian-core-1.2.16.orig/version.h.in xapian-core-1.2.16/versio
 +#endif /* XAPIAN_INCLUDED_VERSION_H */
 diff -Nru -x '*~' xapian-core-1.2.16.orig/weight/CMakeLists.txt xapian-core-1.2.16/weight/CMakeLists.txt
 --- xapian-core-1.2.16.orig/weight/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.16/weight/CMakeLists.txt	2014-04-19 19:08:00.129169000 +0200
++++ xapian-core-1.2.16/weight/CMakeLists.txt	2014-05-02 13:27:07.563122800 +0200
 @@ -0,0 +1,11 @@
 +# weight
 +
