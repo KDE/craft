@@ -44,6 +44,7 @@ class EmergeConfig( object ):
         self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
         self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
+        self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
 
 
     def _readSettings( self ):
