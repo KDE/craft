@@ -24,6 +24,7 @@ import time
 import datetime
 import threading
 import traceback
+import argparse
 from emerge_config import *
 
 
@@ -266,6 +267,84 @@ def main( ):
     tittleThread.setDaemon( True )
     tittleThread.start( )
 
+    parser = argparse.ArgumentParser( prog = "Emerge",
+                                      description = "Emerge is a tool for building KDE-related software under Windows. emerge automates it, looks for the dependencies and fetches them automatically.\
+                                      Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
+                                      epilog = """More information see the README or http://windows.kde.org/.
+    Send feedback to <kde-windows@kde.org>.""" )
+    parser.add_argument( "-p", "--probe", action = "store_true",
+                         help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
+    parser.add_argument( "--list-file", action = "store",
+                         help = "Build all packages from the csv file provided" )
+    parser.add_argument( "--options", action = "append",
+                         default = emergeSettings.get( "General", "EMERGE_OPTIONS", "" ).split( ";" ),
+                         help = "Set emerge property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations." )
+    parser.add_argument( "-z", "--outDateVCS", action = "store_true",
+                         help = "if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date)." )
+    parser.add_argument( "-sz", "--outDatePackage", action = "store_true",
+                         help = "similar to -z, only that it acts only on the last package, and works as normal on the rest." )
+    parser.add_argument( "-q", "--stayquiet", action = "store_true",
+                         dest = "stayQuiet",
+                         help = "quiet: there should be no output - The verbose level should be 0" )
+    parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
+                         default = emergeSettings.getboolean( "General", "EMERGE_BUILDTESTS", False ) )
+    parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
+    parser.add_argument( "--offline", action = "store_true",
+                         default = emergeSettings.getboolean( "General", "EMERGE_OFFLINE", False ),
+                         help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
+                          If that doesn't work, the build will fail." )
+    parser.add_argument( "-f", "--force", action = "store_true", dest = "forced",
+                         default = emergeSettings.getboolean( "General", "EMERGE_FORCED", False ) )
+    parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel" "Debug" ],
+                         dest = "buildType",
+                         default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
+                         help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
+    parser.add_argument( "-v", "--verbose", action = "count",
+                         default = int(emergeSettings.get("EmergeDebug", "Verbose","1")),
+                         help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
+                          verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
+    parser.add_argument( "--trace", action = "store", default = int(emergeSettings.get( "General", "EMERGE_TRACE", "0" )), type = int )
+    parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
+                         help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
+    parser.add_argument( "--target", action = "store",
+                         help = "This will override the build of the default target. The default Target is marked with a star in the printout of --print-targets" )
+    parser.add_argument( "--search", action = "store_true",
+                         help = "This will search for a package or a description matching or similar to the search term." )
+    parser.add_argument( "--nocopy", action = "store_true",
+                         default = emergeSettings.getboolean( "General", "EMERGE_NOCOPY", False ),
+                         help = "this option is deprecated. In older releases emerge would have copied everything from the SVN source tree to a source directory under KDEROOT\\tmp - currently nocopy is applied\
+                          by default if EMERGE_NOCOPY is not set to \"False\". Be aware that setting EMERGE_NOCOPY to \"False\" might slow down the build process, irritate you and increase the disk space roughly\
+                           by the size of SVN source tree." )
+    parser.add_argument( "--noclean", action = "store_true",
+                         default = emergeSettings.getboolean( "General", "EMERGE_NOCLEAN", False ),
+                         help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
+    parser.add_argument( "--clean", action = "store_false", dest = "noclean",
+                         help = "oposite of --noclean" )
+    parser.add_argument( "--patchlevel", action = "store",
+                         default = emergeSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
+                         help = "This will add a patch level when used together with --package" )
+    parser.add_argument( "--log-dir", action = "store",
+                         default = emergeSettings.get( "General", "EMERGE_LOG_DIR", "" ),
+                         help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
+    parser.add_argument( "--dump-deps-file", action = "store", dest = "dumpDepsFile",
+                         help = "Output the dependencies of this package as a csv file suitable for emerge server." )
+    parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
+                         dest = "dependencyType" )
+    parser.add_argument("--print-installed", action = "store_true",
+                        help = "This will show a list of all packages that are installed currently.")
+    parser.add_argument("--print-installable", action = "store_true",
+                        help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough.")
+    for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
+                                             "install", "qmerge", "manifest", "package", "unmerge", "test",
+                                             "checkdigest", "dumpdeps",
+                                             "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
+                                             "version-dir", "version-package",
+                                              "print-revision", "print-targets",
+                                             "install-deps", "update", "update-direct-deps" ]):
+        parser.add_argument( "--%s" % x, action = "store_const" , dest = "action", const = x, default = "all" )
+    parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
+
+    emergeSettings.args = parser.parse_args( )
 
 
     if emergeSettings.args.stayQuiet == True or emergeSettings.args.action in [ "version-dir", "version-package",
