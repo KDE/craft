@@ -35,10 +35,4 @@ class Package(CMakePackageBase):
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
 
-        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
-        if not os.path.exists(qmake):
-            utils.warning("could not find qmake in <%s>" % qmake)
-        ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
-            % qmake.replace('\\', '/')
 

@@ -28,13 +28,4 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 
         self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF "
-        qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
-        if not os.path.exists(qmake):
-            utils.warning("could not find qmake in <%s>" % qmake)
-        ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
-            % qmake.replace('\\', '/')
-
-        self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \
-            % os.path.join(emergeRoot(), "bin")
 
