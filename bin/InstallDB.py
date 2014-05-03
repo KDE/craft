@@ -227,7 +227,7 @@ class InstallDB(object):
         if not os.path.exists( self.dbfilename ):
             if not os.path.exists( etcPortageDir( False ) ):
                 os.makedirs( etcPortageDir( False ) )
-            utils.debug( "database does not exist yet: creating database & importing old data" )
+            print( "database does not exist yet: creating database", file = sys.stderr )
             self.connection = sqlite3.connect( self.dbfilename )
             cursor = self.connection.cursor()
 
