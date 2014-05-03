@@ -6,6 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setDependencies( self ):
       self.dependencies[ 'libs/qtbase' ] = 'default'
+      self.buildDependencies[ 'win32libs/boost-headers' ] = 'default'
 
     def setTargets( self ):
       self.svnTargets[ 'gitHEAD' ] = '[git]kde:libechonest'
