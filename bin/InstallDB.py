@@ -89,6 +89,10 @@ class InstallPackage(object):
         self.cursor.execute("SELECT revision FROM packageList WHERE packageId == ?", (self.packageId,) )
         return self.cursor.fetchall()[0][0]
 
+    def getVersion(self):
+        self.cursor.execute("SELECT version FROM packageList WHERE packageId == ?", (self.packageId,) )
+        return self.cursor.fetchall()[0][0]
+
 
 
 class InstallDB(object):
@@ -150,14 +154,6 @@ class InstallDB(object):
                             prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
         cursor.close()
         return isPackageInstalled
-
-    def findInstalled( self, category, package, prefix=None ):
-        """ get the version of a package that is installed """
-        f = self.getInstalled( category, package, prefix )
-        if len(f) == 1:
-            return f[ 0 ][2]
-        else:
-            return None
 
     def getInstalled( self, category=None, package=None, prefix=None ):
         """ returns a list of the installed packages, which can be restricted by adding

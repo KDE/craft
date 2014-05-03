@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.buildDependencies['gnuwin32/gperf'] = 'default'
         
 
@@ -33,5 +34,7 @@ class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
         os.putenv("SQLITE3SRCDIR",emergeRoot())
-        self.subinfo.options.make.supportsMultijob = False
+        if compiler.isMinGW():
+            self.subinfo.options.configure.defines = """ "QMAKE_CXXFLAGS += -g0" """
+        #self.subinfo.options.make.supportsMultijob = False
 
