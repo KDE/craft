@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
-        self.buildDependencies["gnuwin32/bison"] = "default"
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
 
         
     def setTargets( self ):

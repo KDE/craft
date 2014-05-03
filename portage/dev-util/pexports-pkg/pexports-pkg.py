@@ -9,8 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.44'
 
     def setDependencies( self ):
-        self.buildDependencies['gnuwin32/bison'] = 'default'
-        self.buildDependencies['gnuwin32/flex'] = 'default'
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
 
 
 from Package.CMakePackageBase import *
