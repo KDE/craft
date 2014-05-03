@@ -57,10 +57,7 @@ class infoclass(object):
         self.description = ''
         #a url to the projects homepage
         self.homepage = ''
-        # the category that will be used in the installer for this package
-        # you must only set this property if you want to override the default category
-        # of the package
-        self.categoryName = ''
+
 
         self.patchToApply = OrderedDict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
@@ -81,6 +78,10 @@ class infoclass(object):
     def package(self):
         return self.parent.package
 
+    @property
+    def category(self):
+        return self.parent.category
+
     def setDependencies( self ):
         """default method for setting dependencies, override to set individual targets"""
 
@@ -95,6 +96,8 @@ class infoclass(object):
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
             self.buildTarget = buildTarget
+        elif ("PortageVersions", "%s/%s" % ( self.category, self.package )) in emergeSettings:
+            self.buildTarget = emergeSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
         elif ("PortageVersions", "DefaultTarget") in emergeSettings:
             self.buildTarget = emergeSettings.get("PortageVersions", "DefaultTarget")
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :

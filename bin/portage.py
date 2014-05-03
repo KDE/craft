@@ -336,16 +336,12 @@ class Portage(object):
         utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package ), 1 )
         if not ( category and package ):
             return dict()
-        
-        pname = "%s/%s" % ( category, package )
-        if ("PortageVersions", pname) in emergeSettings:
-            return emergeSettings.get("PortageVersions", pname)
+
+        info = _getSubinfo( category, package )
+        if not info is None:
+            return info.defaultTarget
         else:
-            info = _getSubinfo( category, package )
-            if not info is None:
-                return info.defaultTarget
-            else:
-                return None
+            return None
 
     def getMetaData( self, category, package ):
         """ returns all targets of a specified package """
@@ -355,8 +351,7 @@ class Portage(object):
         info = _getSubinfo(  category, package  )
         if not info is None:
             tmpdict = dict()
-            if not info.categoryName == "":
-                tmpdict['categoryName'] = info.categoryName
+            tmpdict['categoryName'] = info.category
             if not info.shortDescription == "":
                 tmpdict['shortDescription'] = info.shortDescription
             if not info.description == "":
@@ -426,17 +421,14 @@ class Portage(object):
         if not self.isPackage( category, package ):
             utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
 
-        installedVer = InstallDB.installdb.getInstalled(category, package )
-        avalibleVer = PortageInstance.getDefaultTarget( category, package )
+        installed = InstallDB.installdb.getInstalledPackages(category, package )
+        newest = PortageInstance.getDefaultTarget( category, package )
 
-        if installedVer:
-            installedVer = installedVer[0][2]
-            if utils.parse_version(installedVer) > utils.parse_version(avalibleVer):
-                return installedVer
-            else:
-                return avalibleVer
-        else:
-            return avalibleVer
+        for pack in installed:
+            version = pack.getVersion()
+            if utils.parse_version(newest) < utils.parse_version(version):
+                newest = version
+        return newest
 
     def getInstallables( self ):
         """ get all the packages that are within the portage directory """
