@@ -49,11 +49,5 @@ def printSearch(search_category, search_package,maxDist = 2):
             print("\t Homepage: %s" % homepage)
             print("\t Description: %s" % description)
             print("\t Latest version: %s" % version)
-            installed = None
-            for pack in InstallDB.installdb.getInstalledPackages(category,package):
-                if installed:
-                    installed += ", %s" % ( pack.getVersion())
-                else:
-                    installed = pack.getVersion()
-            print("\t Installed versions: %s" % installed)
+            print("\t Installed version: %s" % InstallDB.installdb.findInstalled(category,package))
     

@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "Classes to improve the handling of icons"
         
+
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
