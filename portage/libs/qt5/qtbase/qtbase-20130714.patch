@@ -1,8 +1,20 @@
+diff --git a/mkspecs/win32-g++/qmake.conf b/mkspecs/win32-g++/qmake.conf
+index 830dde9..0bd5e1a 100644
+--- a/mkspecs/win32-g++/qmake.conf
++++ b/mkspecs/win32-g++/qmake.conf
+@@ -30,6 +30,7 @@ QMAKE_CFLAGS_DEPS       = -M
+ QMAKE_CFLAGS_WARN_ON    = -Wall -Wextra
+ QMAKE_CFLAGS_WARN_OFF   = -w
+ QMAKE_CFLAGS_RELEASE    = -O2
++QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO = -O2 -g
+ QMAKE_CFLAGS_DEBUG      = -g
+ QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
+ QMAKE_CFLAGS_SSE2       = -msse2 -mstackrealign
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
-index c836e0e..70f329d 100644
+index 06f78b1..8772ccf 100644
 --- a/tools/configure/configureapp.cpp
 +++ b/tools/configure/configureapp.cpp
-@@ -2745,11 +2745,11 @@ void Configure::generateOutputVars()
+@@ -2940,11 +2940,11 @@ void Configure::generateOutputVars()
      }
      if (dictionary[ "DBUS" ] != "no" && !dbusPath.isEmpty()) {
          qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);

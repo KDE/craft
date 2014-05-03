@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.buildDependencies['dev-util/winflexbison'] = 'default'
+        self.buildDependencies['dev-util/winflexbison2'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/dbus'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
@@ -69,7 +69,9 @@ class Package(Qt5CorePackageBase):
         command += "-qt-zlib "
         command += "-no-vcproj "
         command += "-nomake examples "
-        command += "-c++11 -force-debug-info "
+        command += "-c++11 "
+        if self.buildType() == "RelWithDebInfo":
+            command += "-force-debug-info "
         
         command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
         if self.subinfo.options.isActive("binary/mysql-pkg"):
