@@ -28,11 +28,11 @@ def printBanner():
 def printEnv():
     for var, value in emergeSettings.getSection( "Environment" ):
         print( var.upper() + "=" + value )
-        print( "KDECOMPILER=" + emergeSettings.get( "General", "KDECOMPILER" ) )
-        print( "EMERGE_ARCHITECTURE=" + emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
-        if emergeSettings.get( "General", "EMERGE_USE_CCACHE", False ):
-            print( "EMERGE_USE_CCACHE=" + str(emergeSettings.get( "General", "EMERGE_USE_CCACHE" )) )
-            print( "CCACHE_DIR=" + emergeSettings.get( "Paths", "CCACHE_DIR", emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) + "\\build\\CCACHE" ) )
+    print( "KDECOMPILER=" + emergeSettings.get( "General", "KDECOMPILER" ) )
+    print( "EMERGE_ARCHITECTURE=" + emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
+    if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
+        print( "EMERGE_USE_CCACHE=" + str(emergeSettings.get( "General", "EMERGE_USE_CCACHE" )) )
+        print( "CCACHE_DIR=" + emergeSettings.get( "Paths", "CCACHE_DIR", emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) + "\\build\\CCACHE" ) )
 
 
 if __name__ == '__main__':
