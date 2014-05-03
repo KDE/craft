@@ -86,14 +86,6 @@ class CMakeBuildSystem(BuildSystemBase):
         ## \todo why is it required to replace \\ by / ?
         options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace( "\\", "/" )
 
-        if not self.subinfo.options.configure.noDefaultInclude:
-            options += " -DCMAKE_INCLUDE_PATH=\"%s\"" % \
-                os.path.join( self.mergeDestinationDir(), "include" ).replace( "\\", "/" )
-
-        if not self.subinfo.options.configure.noDefaultLib:
-            options += " -DCMAKE_LIBRARY_PATH=\"%s\"" % \
-                os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
-
         options += " -DCMAKE_PREFIX_PATH=\"%s\"" % \
             self.mergeDestinationDir().replace( "\\", "/" )
 
