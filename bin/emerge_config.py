@@ -74,7 +74,7 @@ class EmergeConfig( object ):
         self._alias[ (group, key) ] = (destGroup, destKey)
 
     def get( self, group, key, default = None ):
-        if self.__contains__( (group, key) ):
+        if (group, key) in self:
             #print((group,key,self._config[ group ][ key ]))
             return self._config[ group ][ key ]
         if (group, key) in self._alias:
@@ -86,6 +86,12 @@ class EmergeConfig( object ):
             self.set( group, key, default )
             return default
         self._config[ group ][ key ]
+
+    def getSection( self, group ):
+        if self._config.has_section( group ):
+            return self._config.items( group )
+        else:
+            return []
 
     def getboolean(self,  group, key, default = False):
         val = self.get(group,key,str(default))

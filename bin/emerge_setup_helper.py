@@ -4,7 +4,6 @@
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
 from emerge_config import *
-import utils
 import subprocess
 import argparse
 
@@ -26,12 +25,22 @@ def printBanner():
     print("DOWNLOADDIR : %s" % SourceBase.downloadDir())
     print("PYTHONPATH  : %s" % emergeSettings.get("Paths", "PYTHONPATH"))
 
+def printEnv():
+    for var, value in emergeSettings.getSection( "Environment" ):
+        print( var.upper() + "=" + value )
+        print( "KDECOMPILER=" + emergeSettings.get( "General", "KDECOMPILER" ) )
+        print( "EMERGE_ARCHITECTURE=" + emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
+        if emergeSettings.get( "General", "EMERGE_USE_CCACHE", False ):
+            print( "EMERGE_USE_CCACHE=" + str(emergeSettings.get( "General", "EMERGE_USE_CCACHE" )) )
+            print( "CCACHE_DIR=" + emergeSettings.get( "Paths", "CCACHE_DIR", emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) + "\\build\\CCACHE" ) )
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--subst", action = "store_true")
     parser.add_argument("--get", action = "store_true")
     parser.add_argument("--print-banner", action= "store_true")
+    parser.add_argument("--getenv", action = "store_true")
     parser.add_argument("rest", nargs = argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -51,4 +60,6 @@ if __name__ == '__main__':
         print(emergeSettings.get(args.rest[0],args.rest[1],default))
     elif args.print_banner:
         printBanner()
+    elif args.getenv:
+        printEnv()
 
