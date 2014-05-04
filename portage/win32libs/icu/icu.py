@@ -30,12 +30,19 @@ class PackageCMake(CMakePackageBase):
     def make(self):
         self.enterSourceDir()
         if self.buildType() == "Debug":
-          bt = "Debug"
+            bt = "Debug"
         else:
-          bt = "Release"
+            bt = "Release"
+
+        toolsetSwitches = ""
+        if compiler.isMSVC2012():
+            toolsetSwitches = "/property:PlatformToolset=v110"
+        elif compiler.isMSVC2013():
+            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
           
-        utils.system("devenv \"%s\" /upgrade" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" )) )
-        return utils.system("devenv \"%s\" /build %s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
+        return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), "allinone", "allinone.sln"), bt, toolsetSwitches)
+        )
 
     def install(self):
         utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
