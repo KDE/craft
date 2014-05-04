@@ -48,7 +48,6 @@ FOR /F "tokens=1 delims=" %%A in ('powershell %~dp0kdeenv.ps1 --get Paths PYTHON
 set PATH=!_PYTHONPATH!;!PATH!
 set _PYTHONPATH=""
 
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --subst') do SET KDEROOT=%%A
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --getenv') do (
     SET Z=%%A
     SET !Z!
@@ -71,53 +70,16 @@ if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
 
 
 
-rem nb: we need delayed var expansion (!VAR!) to avoid confusing the batch script parser
-rem in case the expanded vars contain parentheses (same problem as above)
 
-set PATH=%KDEROOT%\bin;!PATH!
-set KDEDIRS=%KDEROOT%
-set QT_PLUGIN_PATH=%KDEROOT%\plugins;%KDEROOT%\lib\kde4\plugins
-set XDG_DATA_DIRS=%KDEROOT%\share
-
-rem for emerge
-set PATH=%KDEROOT%\emerge\bin;!PATH!
-
-rem for dev-utils
-set PATH=%KDEROOT%\dev-utils\bin;!PATH!
-
-rem for old packages
-set PATH=%KDEROOT%\bin;!PATH!
-
-set GIT_SSH=plink
-set HOME=%USERPROFILE%
-set SVN_SSH=plink
-
-
-if "%KDECOMPILER%" == "mingw" ( 
-    call :path-mingw
+if "%KDECOMPILER%" == "intel" (
+    call :path-intel
 ) else (
-    if "%KDECOMPILER%" == "mingw4" ( 
-        call :path-mingw
-    ) else ( 
-        if "%KDECOMPILER%" == "intel" (
-            call :path-intel
-        ) else (
-            call :path-msvc 
-        )
-    )
+    call :path-msvc 
 )
 
 
 %comspec% /e:on /K "cd /D %KDEROOT%"
 goto :eof
-
-:path-mingw
-    if "%EMERGE_ARCHITECTURE%" == "x86" (
-        set PATH=%KDEROOT%\mingw\bin;!PATH!
-    ) else (
-        set PATH=%KDEROOT%\mingw64\bin;!PATH!
-    )
-    goto :eof
 
 :path-msvc
     rem MSVC extra setup

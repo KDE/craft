@@ -59,25 +59,19 @@ if( $EMERGE_ARGUMENTS[0] -eq "--get")
 }
 prependPATH $settings["Paths"]["PYTHONPATH"]
 
-$KDEROOT = (python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst") | Out-String
-$KDEROOT = $KDEROOT.Trim()
+python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst"
 
 
-
-function path-mingw()
-{
-    if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x86")
-    {
-        prependPATH "$KDEROOT\mingw\bin"
-    }
-    else 
-    {
-        if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x64")
-        {
-            prependPATH "$KDEROOT\mingw64\bin"
-        }
-    }
+$EMERGE_ENV = (python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--getenv") | 
+foreach {
+  if ($_ -match "=") {        
+    $v = $_.split("=")
+    set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+    #Write-Host("$v[0]=$v[1]")
+  }
 }
+
+
 
 function setupMSVCENV([string] $key)
 {
@@ -120,59 +114,23 @@ function path-msvc()
     
 }
 
-function setupCCACHE()
+
+
+if(([string]$settings["General"]["KDECOMPILER"]).StartsWith("msvc"))
 {
-    if( $settings["General"]["EMERGE_USE_CCACHE"] -eq $true -and $env:CCACHE_DIR -eq $null)
-    {
-        if($settings["Paths"]["CCACHE_DIR"] -eq $null)
-        {
-            $env:CCACHE_DIR="$KDEROOT\build\CCACHE"
-        }
-        else
-        {
-            $env:CCACHE_DIR=$settings["Paths"]["CCACHE_DIR"]
-        }
-    }
+    path-msvc
 }
-
-if ($settings["General"]["KDECOMPILER"] -eq "mingw4")
-{ 
-    path-mingw
-    setupCCACHE
-}
-else
-{
-    if(([string]$settings["General"]["KDECOMPILER"]).StartsWith("msvc"))
-    {
-        path-msvc
-    }
-}
-
-
-$env:QT_PLUGIN_PATH="${KDEROOT}\plugins;$KDEROOT\lib\kde4\plugins"
-$env:XDG_DATA_DIRS="$KDEROOT\share"
-
-# for dev-utils
-prependPATH  "$KDEROOT\dev-utils\bin"
-
-
-# make sure that kderoot/bin is the last in path to prevent issues wer libs from devutils are used
-prependPATH "$KDEROOT\bin"
-
-$env:HOME=$env:USERPROFILE
-$env:SVN_SSH="plink"
-$env:GIT_SSH="plink"
 
 
 (python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--print-banner")
 
-cd "$KDEROOT"
+cd "$env:KDEROOT"
 }
 
 
 function emerge()
 {
-    python "$EMERGE_ROOT\bin\emerge.py" $args
+    python "$env:KDEROOT\emerge\bin\emerge.py" $args
 }
 
 
@@ -182,7 +140,7 @@ $EMERGE_ARGUMENTS=$null
 
 if($args.Length -eq 2 -and $args[0] -eq "--package")
 {
-    python "$EMERGE_ROOT\emerge\server\package.py" $args[1]
+    python "$env:KDEROOT\emerge\server\package.py" $args[1]
 }
 else
 {
