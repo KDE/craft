@@ -35,8 +35,7 @@ class PackageCMake(CMakePackageBase):
         else:
           bt = "Release"
           
-        utils.system("devenv \"%s\" /upgrade" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" )) )
-        return utils.system("devenv \"%s\" /build %s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
+        return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
 
     def install(self):
         utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
