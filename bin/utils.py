@@ -874,7 +874,7 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
         warning( "Overriding %s" % dest )
         os.remove( dest )
     if linkOnly:
-            os.link( src , dest )
+        os.link( src , dest )
     else:
         try:
             shutil.copy(src,dest)
@@ -883,7 +883,7 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
             shutil.copy(src,dest)
     return True
     
-def copyDir( srcdir, destdir,linkOnly=False ):
+def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
     debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
 
@@ -900,7 +900,7 @@ def copyDir( srcdir, destdir,linkOnly=False ):
             if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ))
+                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
 
