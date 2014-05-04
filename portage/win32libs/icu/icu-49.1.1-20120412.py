@@ -31,11 +31,13 @@ class PackageCMake(CMakePackageBase):
     def make(self):
         self.enterSourceDir()
         if self.buildType() == "Debug":
-          bt = "Debug"
+            bt = "Debug"
         else:
-          bt = "Release"
+            bt = "Release"
           
-        return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s" % (os.path.join(self.sourceDir(), "allinone", "allinone.sln" ), bt) )
+        return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s" %
+                (os.path.join(self.sourceDir(), "allinone", "allinone.sln"), bt)
+        )
 
     def install(self):
         utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
