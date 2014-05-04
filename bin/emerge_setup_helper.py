@@ -6,8 +6,6 @@
 import subprocess
 import argparse
 
-from emerge_config import *
-from Source.SourceBase import *
 from Source.VersionSystemSourceBase import *
 import compiler
 
@@ -20,7 +18,7 @@ class SetupHelpr( object ):
         parser.add_argument( "--get", action = "store_true" )
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
-        parser.add_argument("--mode", action = "store", choices = {"bat","powershell"})
+        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell" } )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
 
@@ -64,7 +62,7 @@ class SetupHelpr( object ):
     def printEnv( self ):
         for var, value in emergeSettings.getSection( "Environment" ):
             self.printVar( var, value )
-        self.printVar( "KDEROOT", emergeRoot())
+        self.printVar( "KDEROOT", emergeRoot( ) )
 
         if self.args.mode == "bat":
             #needed for intel/msvc setup in bat
@@ -81,7 +79,7 @@ class SetupHelpr( object ):
         self.printVar( "HOME", os.getenv( "USERPROFILE" ) )
 
         self.printVar( "QT_PLUGIN_PATH", "%s;%s" % (
-        os.path.join( emergeRoot( ), "plugins" ), os.path.join( emergeRoot( ), "lib", "kde4", "plugins" )) )
+            os.path.join( emergeRoot( ), "plugins" ), os.path.join( emergeRoot( ), "lib", "kde4", "plugins" )) )
         self.printVar( "XDG_DATA_DIRS", os.path.join( emergeRoot( ), "share" ) )
 
         if compiler.isMinGW( ):
@@ -91,7 +89,8 @@ class SetupHelpr( object ):
                 self.prependPath( os.path.join( emergeRoot( ), "mingw64", "bin" ) )
 
         self.prependPath( os.path.join( emergeRoot( ), "bin" ) )
-        self.prependPath( os.path.join( emergeRoot( ), "emerge", "bin" ) )
+        if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
+            self.prependPath( os.path.join( emergeRoot( ), "emerge", "bin" ) )
         self.prependPath( os.path.join( emergeRoot( ), "dev-utils", "bin" ) )
 
         self.printVar( "PATH", self.path )
