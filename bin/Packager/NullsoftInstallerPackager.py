@@ -45,12 +45,16 @@ file collection process is skipped, and only the installer is generated.
     def __init__( self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__( self, whitelists, blacklists )
         self.nsisInstallPath = None
-        self.isInstalled = self.__isInstalled()
-        if not self.isInstalled:
-            utils.die( "could not find installed nsis package, "
-                       "you can install it using emerge nsis or"
-                       "download and install it from "
-                       "http://sourceforge.net/projects/nsis/" )
+        self._isInstalled = False
+
+    def isInstalled(self):
+        if not self._isInstalled:
+            self._isInstalled = self.__isInstalled()
+            if not self._isInstalled:
+                utils.die( "could not find installed nsis package, "
+                           "you can install it using emerge nsis or"
+                           "download and install it from "
+                           "http://sourceforge.net/projects/nsis/" )
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
@@ -82,6 +86,7 @@ file collection process is skipped, and only the installer is generated.
 
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
+        self.isInstalled()
         if self.package.endswith( "-package" ):
             shortPackage = self.package[ : -8 ]
         else:
@@ -129,6 +134,7 @@ file collection process is skipped, and only the installer is generated.
 
     def createPackage( self ):
         """ create a package """
+        self.isInstalled()
         print("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
