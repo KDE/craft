@@ -71,8 +71,10 @@ class SetupHelpr( object ):
             self.printVar( "EMERGE_ARCHITECTURE", emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
 
         if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
-            self.printVar( "CCACHE_DIR", emergeSettings.get( "Paths", "CCACHE_DIR", emergeSettings.get( "ShortPath",
-                                                                                                        "EMERGE_ROOT_DRIVE" ) + "\\build\\CCACHE" ) )
+            self.printVar( "CCACHE_DIR",
+                           emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( emergeSettings.get( "ShortPath",
+                                                                                                        "EMERGE_ROOT_DRIVE" ),
+                                                                                    "build", "CCACHE" ) ) )
 
         self.printVar( "GIT_SSH", "plink" )
         self.printVar( "SVN_SSH", "plink" )
