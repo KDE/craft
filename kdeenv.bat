@@ -48,7 +48,9 @@ FOR /F "tokens=1 delims=" %%A in ('powershell %~dp0kdeenv.ps1 --get Paths PYTHON
 set PATH=!_PYTHONPATH!;!PATH!
 set _PYTHONPATH=""
 
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --getenv --mode bat') do (
+python %~dp0bin\EmergeSetupHelper.py --subst 
+
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --getenv --mode bat') do (
     SET Z=%%A
     SET !Z!
 )
@@ -57,7 +59,7 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\emerge_setup_helper.py --gete
 
 rem print pathes 
 
-python "%~dp0bin\emerge_setup_helper.py" --print-banner
+python "%~dp0bin\EmergeSetupHelper.py" --print-banner
 
 
 rem ####### Visual Studio Settings #######

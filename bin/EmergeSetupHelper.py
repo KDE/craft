@@ -10,7 +10,7 @@ from Source.VersionSystemSourceBase import *
 import compiler
 
 
-class SetupHelpr( object ):
+class SetupHelper( object ):
     def __init__( self ):
         self.path = os.getenv( "PATH" )
         parser = argparse.ArgumentParser( )
@@ -99,6 +99,6 @@ class SetupHelpr( object ):
 
 
 if __name__ == '__main__':
-    helper = SetupHelpr( )
+    helper = SetupHelper( )
     helper.run( )
 

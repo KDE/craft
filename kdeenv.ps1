@@ -59,10 +59,10 @@ if( $EMERGE_ARGUMENTS[0] -eq "--get")
 }
 prependPATH $settings["Paths"]["PYTHONPATH"]
 
-python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst"
+python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--subst"
 
 
-(python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--getenv" "--mode" "powershell") | 
+(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--getenv" "--mode" "powershell") | 
 foreach {
   if ($_ -match "=") {        
     $v = $_.split("=")
@@ -122,7 +122,7 @@ if(([string]$settings["General"]["KDECOMPILER"]).StartsWith("msvc"))
 }
 
 
-(python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--print-banner")
+(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--print-banner")
 
 cd "$env:KDEROOT"
 }
