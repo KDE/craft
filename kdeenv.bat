@@ -36,10 +36,10 @@ rem     the variable being interpreted as the closing block parenthesis...
 if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
 if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
-rem call kdesettings.bat 
-rem in case we are in kderoot/emerge 
-if exist %~dp0..\etc\kdesettings.bat (
-call %~dp0..\etc\kdesettings.bat
+
+if not exist %~dp0..\etc\kdesettings.ini (
+    echo "Please prepare a %~dp0..\etc\kdesettings.ini"
+    goto :eof
 )
 
 rem handle drive substitution
