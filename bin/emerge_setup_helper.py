@@ -15,30 +15,30 @@ import compiler
 class SetupHelpr( object ):
     def __init__( self ):
         self.path = os.getenv( "PATH" )
-
-    def run( self ):
         parser = argparse.ArgumentParser( )
         parser.add_argument( "--subst", action = "store_true" )
         parser.add_argument( "--get", action = "store_true" )
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
+        parser.add_argument("--mode", action = "store", choices = {"bat","powershell"})
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
-        args = parser.parse_args( )
+        self.args = parser.parse_args( )
 
-        if args.subst:
+    def run( self ):
+        if self.args.subst:
             if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
                 self.subst( os.path.abspath( emergeRoot( False ) ), "EMERGE_ROOT_DRIVE" )
                 self.subst( emergeSettings.get( "Paths", "DOWNLOADDIR" ), "EMERGE_DOWNLOAD_DRIVE" )
                 self.subst( emergeSettings.get( "Paths", "KDESVNDIR" ), "EMERGE_SVN_DRIVE" )
                 self.subst( emergeSettings.get( "Paths", "KDEGITDIR" ), "EMERGE_GIT_DRIVE" )
-        elif args.get:
+        elif self.args.get:
             default = ""
-            if len( args.rest ) == 3:
-                default = args.rest[ 2 ]
-            print( emergeSettings.get( args.rest[ 0 ], args.rest[ 1 ], default ) )
-        elif args.print_banner:
+            if len( self.args.rest ) == 3:
+                default = self.args.rest[ 2 ]
+            print( emergeSettings.get( self.args.rest[ 0 ], self.args.rest[ 1 ], default ) )
+        elif self.args.print_banner:
             self.printBanner( )
-        elif args.getenv:
+        elif self.args.getenv:
             self.printEnv( )
 
     def subst( self, path, drive ):
@@ -64,11 +64,15 @@ class SetupHelpr( object ):
     def printEnv( self ):
         for var, value in emergeSettings.getSection( "Environment" ):
             self.printVar( var, value )
-        self.printVar( "KDECOMPILER", emergeSettings.get( "General", "KDECOMPILER" ) )
         self.printVar( "KDEROOT", emergeRoot())
-        self.printVar( "EMERGE_ARCHITECTURE", emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
+
+        if self.args.mode == "bat":
+            #needed for intel/msvc setup in bat
+            self.printVar( "KDECOMPILER", emergeSettings.get( "General", "KDECOMPILER" ) )
+            #needed for msvc setup in bat
+            self.printVar( "EMERGE_ARCHITECTURE", emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
+
         if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
-            self.printVar( "EMERGE_USE_CCACHE", str( emergeSettings.get( "General", "EMERGE_USE_CCACHE" ) ) )
             self.printVar( "CCACHE_DIR", emergeSettings.get( "Paths", "CCACHE_DIR", emergeSettings.get( "ShortPath",
                                                                                                         "EMERGE_ROOT_DRIVE" ) + "\\build\\CCACHE" ) )
 

@@ -62,7 +62,7 @@ prependPATH $settings["Paths"]["PYTHONPATH"]
 python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--subst"
 
 
-(python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--getenv") | 
+(python "$EMERGE_ROOT\bin\emerge_setup_helper.py" "--getenv" "--mode" "powershell") | 
 foreach {
   if ($_ -match "=") {        
     $v = $_.split("=")
