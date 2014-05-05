@@ -12,7 +12,7 @@ import compiler
 
 class SetupHelper( object ):
     def __init__( self ):
-        self.path = os.getenv( "PATH" )
+        self.env = None
         parser = argparse.ArgumentParser( )
         parser.add_argument( "--subst", action = "store_true" )
         parser.add_argument( "--get", action = "store_true" )
@@ -55,37 +55,64 @@ class SetupHelper( object ):
         print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ) )
         print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "PYTHONPATH" ) )
 
-    def printVar( self, key, val ):
-        print( "%s=%s" % (key.upper( ), val) )
+    def addEnvVar( self, key, val ):
+        self.env[ key ] = val
 
     def prependPath( self, var ):
-        self.path = "%s;%s" % (var, self.path)
+        self.env[ "Path" ] = "%s;%s" % (var, self.env[ "Path" ])
+
+
+    def stringToEnv( self, string ):
+        out = dict( )
+        for line in string.split( "\n" ):
+            line = line.strip( )
+            if line != "":
+                key, value = line.split( "=", 1 )
+                out[ key ] = value
+        return out
+
+    def getEnv( self ):
+        out = dict( )
+        if compiler.isMSVC( ):
+            compilerDirs = { "msvc2010": "VS100COMNTOOLS", "msvc2012": "VS110COMNTOOLS", "msvc2013": "VS120COMNTOOLS" }
+            architectures = { "x86": "x86", "x64": "amd64" }
+            result = str( subprocess.check_output( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s && set" % (
+            os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) ),
+                          'windows-1252' )
+            out = self.stringToEnv( result )
+
+        elif compiler.isIntel( ):
+            architectures = { "x86": "ia32", "x64": "intel64" }
+            programFiles = os.getenv( "ProgramFiles(x86)" ) or os.getenv( "ProgramFiles" )
+            result = str( subprocess.check_output( "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s && set" % (
+            programFiles, architectures[ compiler.architecture( ) ]) ), 'windows-1252' )
+            out = self.stringToEnv( result )
+        elif compiler.isMinGW( ):
+            out = { "Path": os.getenv( "Path" ) }
+        return out
+
 
     def printEnv( self ):
-        for var, value in emergeSettings.getSection( "Environment" ):
-            self.printVar( var, value )
-        self.printVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
+        self.env = self.getEnv( )
 
-        if self.args.mode == "bat":
-            #needed for intel/msvc setup in bat
-            self.printVar( "KDECOMPILER", emergeSettings.get( "General", "KDECOMPILER" ) )
-            #needed for msvc setup in bat
-            self.printVar( "EMERGE_ARCHITECTURE", emergeSettings.get( "General", "EMERGE_ARCHITECTURE" ) )
+        for var, value in emergeSettings.getSection( "Environment" ):
+            self.addEnvVar( var, value )
+        self.addEnvVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
 
         if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
-            self.printVar( "CCACHE_DIR",
-                           emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( emergeSettings.get( "ShortPath",
-                                                                                                        "EMERGE_ROOT_DRIVE" ),
-                                                                                    "build", "CCACHE" ) ) )
+            self.addEnvVar( "CCACHE_DIR",
+                            emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( emergeSettings.get( "ShortPath",
+                                                                                                         "EMERGE_ROOT_DRIVE" ),
+                                                                                     "build", "CCACHE" ) ) )
 
-        self.printVar( "GIT_SSH", "plink" )
-        self.printVar( "SVN_SSH", "plink" )
-        self.printVar( "HOME", os.getenv( "USERPROFILE" ) )
+        self.addEnvVar( "GIT_SSH", "plink" )
+        self.addEnvVar( "SVN_SSH", "plink" )
+        self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
-        self.printVar( "QT_PLUGIN_PATH", "%s;%s" % (
+        self.addEnvVar( "QT_PLUGIN_PATH", "%s;%s" % (
             os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
             os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "kde4", "plugins" )) )
-        self.printVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
+        self.addEnvVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
 
         if compiler.isMinGW( ):
             if compiler.isX86( ):
@@ -98,7 +125,8 @@ class SetupHelper( object ):
             self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
         self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
-        self.printVar( "PATH", self.path )
+        for key, val in self.env.items( ):
+            print( "%s=%s" % (key, val) )
 
 
 if __name__ == '__main__':

@@ -26,15 +26,6 @@ goto :nextarg
 
 :endargs
 
-rem On win64 we have both %ProgramFiles% and %ProgramFiles(x86)%,
-rem but the latter is actually used for most of the paths (e.g. for Visual Studio)
-rem so we create a wrapper to use the right variable on both win32 and win64
-rem 
-rem NB: note that we can't use the usual if () else () there because
-rem     of a bug in the batch script parser which makes the parenthesis from
-rem     the variable being interpreted as the closing block parenthesis...
-if defined ProgramFiles(x86) set PROGRAM_FILES=%ProgramFiles(x86)%
-if not defined PROGRAM_FILES set PROGRAM_FILES=%ProgramFiles%
 
 
 if not exist %~dp0..\etc\kdesettings.ini (
@@ -57,51 +48,9 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --getenv
 
 
 
-rem print pathes 
-
 python "%~dp0bin\EmergeSetupHelper.py" --print-banner
 
 
-rem ####### Visual Studio Settings #######
-rem Here you can adjust the path to your Visual Studio or Intel Composer installation if needed
-rem This is used to set up the build environment automatically
-if %KDECOMPILER% == msvc2010 set VSDIR=%VS100COMNTOOLS%
-if %KDECOMPILER% == msvc2012 set VSDIR=%VS110COMNTOOLS%
-if %KDECOMPILER% == msvc2013 set VSDIR=%VS120COMNTOOLS%
-if %KDECOMPILER% == intel set INTELDIR=%PROGRAM_FILES%\Intel\Composer XE
-
-
-
-
-if "%KDECOMPILER%" == "intel" (
-    call :path-intel
-) else (
-    call :path-msvc 
-)
-
-
 %comspec% /e:on /K "cd /D %KDEROOT%"
-goto :eof
-
-:path-msvc
-    rem MSVC extra setup
-    if defined VSDIR (
-        if "%EMERGE_ARCHITECTURE%" == "x86" (
-            call "!VSDIR!\..\..\VC\vcvarsall.bat" x86
-        ) else (
-            call "!VSDIR!\..\..\VC\vcvarsall.bat" amd64
-        )        
-    )
-
-:path-intel
-    if defined INTELDIR (
-        if "%EMERGE_ARCHITECTURE%" == "x86" (
-            call "!INTELDIR!\bin\compilervars.bat" ia32 %INTEL_VSSHELL%
-        ) else (
-            if "%EMERGE_ARCHITECTURE%" == "x64" (
-                call "!INTELDIR!\bin\compilervars.bat" intel64 %INTEL_VSSHELL%
-            )
-        )
-    )
 
 

@@ -72,56 +72,6 @@ foreach {
 }
 
 
-
-function setupMSVCENV([string] $key)
-{
-    $path = [Environment]::GetEnvironmentVariable($key, "Process")
-    if($path  -eq "")
-        {
-            Write-Host("Couldnt find msvc installation")
-        }
-        #http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
-        $arch = "x86"
-        if($settings["General"]["EMERGE_ARCHITECTURE"] -eq "x64")
-        {
-            $arch = "amd64"
-        }        
-        pushd "$path\..\..\VC"
-        cmd /c "vcvarsall.bat $arch &set" |
-        foreach {
-          if ($_ -match "=") {        
-            $v = $_.split("=")
-            set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-            #Write-Host("$v[0]=$v[1]")
-          }
-        }
-        popd
-}
-function path-msvc()
-{
-    if($settings["General"]["KDECOMPILER"] -eq "msvc2010")
-    {
-       setupMSVCENV "VS100COMNTOOLS"
-    }
-    if($settings["General"]["KDECOMPILER"] -eq "msvc2012")
-    {
-       setupMSVCENV "VS110COMNTOOLS"
-    }
-    if($settings["General"]["KDECOMPILER"] -eq "msvc2013")
-    {
-       setupMSVCENV "VS120COMNTOOLS"
-    }
-    
-}
-
-
-
-if(([string]$settings["General"]["KDECOMPILER"]).StartsWith("msvc"))
-{
-    path-msvc
-}
-
-
 (python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--print-banner")
 
 cd "$env:KDEROOT"
