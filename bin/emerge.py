@@ -360,7 +360,7 @@ def main( ):
             if not package.find( "/" ) == -1:
                 (category, package) = package.split( "/" )
             portageSearch.printSearch( category, package )
-        return False
+        return True
 
     if args.action in [ "install-deps", "update", "update-all", "update-direct-deps" ]:
         args.ignoreInstalled = True
@@ -381,7 +381,7 @@ def main( ):
     utils.debug( "buildTests: %s" % args.buildTests )
     utils.debug( "verbose: %d" % utils.verbose( ), 1 )
     utils.debug( "trace: %s" % args.trace, 1 )
-    utils.debug( "KDEROOT: %s\n" % EmergeStandardDirs.emergeRoot( ), 1 )
+    utils.debug( "KDEROOT: %s" % EmergeStandardDirs.emergeRoot( ), 1 )
     utils.debug_line( )
 
     if args.print_installed:
@@ -392,6 +392,7 @@ def main( ):
         for x in args.packageNames:
             if not handleSinglePackage( x, dependencyDepth, args ):
                 return False
+    return True
 
 
 if __name__ == '__main__':

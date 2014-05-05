@@ -474,8 +474,6 @@ def getPackageInstance(category, package, buildtarget=None):
 def getDependencies( category, package, runtimeOnly = False ):
     """returns the dependencies of this package as list of strings:
     category/package"""
-    if not os.path.isfile( getFilename( category, package ) ):
-        utils.die( "package name %s/%s unknown" % ( category, package ) )
 
     package, subpackage = getSubPackage( category, package )
     if subpackage:
@@ -555,10 +553,6 @@ def _getSubinfo( category, package  ):
 
 
 def readChildren( category, package ):
-    identFileName = getFilename( category, package )
-    if not os.path.isfile( identFileName ):
-        utils.die( "package name %s/%s unknown" % ( category, package ) )
-
     package, subpackage = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s %s" % ( category,  package, subpackage, getFilename( category, subpackage ) ), 2 )
