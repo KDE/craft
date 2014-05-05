@@ -18,11 +18,11 @@ _MINGW_VERSION = None
 def _getGCCTarget():
     global _GCCTARGET # pylint: disable=W0603
     if not _GCCTARGET:
-        try:
-            result = subprocess.getoutput("gcc -dumpmachine")
+        status, result = subprocess.getstatusoutput("gcc -dumpmachine")
+        if status == 0:
             utils.debug("GCC Target Processor:%s" % result, 1 )
             _GCCTARGET = result.strip()
-        except OSError:
+        else:
             #if no mingw is installed return mingw-w32 it is part of base
             if isX64():
                 _GCCTARGET = "x86_64-w64-mingw32"
@@ -110,12 +110,12 @@ def getSimpleCompilerName():
 def getMinGWVersion():
     global _MINGW_VERSION # pylint: disable=W0603
     if not _MINGW_VERSION:
-        try:
-            result = subprocess.getoutput("gcc --version")
+        status, result = subprocess.getstatusoutput("gcc --version")
+        if status == 0:
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
             utils.debug("GCC Version:%s" % result, 1 )
             _MINGW_VERSION = result.strip()
-        except OSError:
+        else:
             #if no mingw is installed return 0
             _MINGW_VERSION = "0"
     return _MINGW_VERSION
