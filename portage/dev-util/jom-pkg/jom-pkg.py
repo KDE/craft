@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DFLEX_EXECUTABLE=" + os.path.join( emergeRoot(), "msys", "bin", "flex.exe" ) + " -DJOM_ENABLE_TESTS=ON"
+        self.subinfo.options.configure.defines = "-DFLEX_EXECUTABLE=" + os.path.join( EmergeStandardDirs.emergeRoot(), "msys", "bin", "flex.exe" ) + " -DJOM_ENABLE_TESTS=ON"
         if self.buildTarget.startswith( "static" ):
-            self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE=" + os.path.join( emergeRoot(), "qt-static", "bin", "qmake.exe" )
+            self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE=" + os.path.join( EmergeStandardDirs.emergeRoot(), "qt-static", "bin", "qmake.exe" )
 

@@ -27,7 +27,6 @@ import ctypes
 
 import Notifier.NotificationLoader
 from emerge_config import *
-from emerge_config import etcPortageDir
 
 
 if os.name == 'nt':
@@ -61,9 +60,9 @@ def getCallerFilename():
 ### fetch functions
 
 #FIXME: get this from somewhere else:
-WGetExecutable = os.path.join( emergeRoot(), "bin", "wget.exe" )
+WGetExecutable = os.path.join( EmergeStandardDirs.emergeRoot(), "bin", "wget.exe" )
 if not os.path.exists( WGetExecutable ):
-    WGetExecutable = os.path.join( emergeRoot(), "dev-utils", "bin", "wget.exe" )
+    WGetExecutable = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "wget.exe" )
 
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
@@ -761,7 +760,7 @@ def splitVCSUrl( Url ):
 def replaceVCSUrl( Url ):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(etcPortageDir(), "..", "emergehosts.conf" )
+    configfile = os.path.join(EmergeStandardDirs.etcPortageDir(), "..", "emergehosts.conf" )
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
@@ -1048,7 +1047,7 @@ def embedManifest(executable, manifest):
     debug("embedding ressource manifest %s into %s" % \
             (manifest, executable), 2)
     mtExe = None
-    mtExe = os.path.join(emergeRoot(), "dev-utils", "bin", "mt.exe")
+    mtExe = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "mt.exe")
 
     if(not os.path.isfile(mtExe)):
         # If there is no free manifest tool installed on the system

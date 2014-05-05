@@ -5,7 +5,7 @@ import kdedefaults as kd
 from emerge_config import *
 
 
-kd.setKDEPath(os.path.join(emergeRoot(),'emerge','portage','kde'))
+kd.setKDEPath(os.path.join(EmergeStandardDirs.emergeRoot(),'emerge','portage','kde'))
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -23,7 +23,7 @@ from Package.VirtualPackageBase import *
 from Packager.PortablePackager import *
 class Package( PortablePackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        PortablePackager.__init__( self , whitelists = [os.path.join(emergeRoot(),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )
+        PortablePackager.__init__( self , whitelists = [os.path.join(EmergeStandardDirs.emergeRoot(),'emerge','portage','package','kde-l10n-package','whitelist.txt')] )
         VirtualPackageBase.__init__( self )
         self.subinfo.options.package.withArchitecture=False
 

@@ -22,7 +22,7 @@ class Package(PackageBase,GitSource,BuildSystemBase):
         BuildSystemBase.__init__(self,"")
 
     def checkoutDir(self, index=0 ):
-        return os.path.join( emergeRoot(),"emerge")
+        return os.path.join( EmergeStandardDirs.emergeRoot(),"emerge")
 
     def configure(self):
         return True

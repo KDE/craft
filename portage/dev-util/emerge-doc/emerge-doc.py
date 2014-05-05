@@ -21,7 +21,7 @@ class Package(PackageBase,GitSource,BuildSystemBase):
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def checkoutDir(self, index=0 ):
-        return os.path.join( emergeRoot(),"emerge")
+        return os.path.join( EmergeStandardDirs.emergeRoot(),"emerge")
         
     def configure(self):
         doxygenSourcePathes = "%s %s" % (os.path.join(self.checkoutDir(),'bin'),os.path.join(self.checkoutDir(),'doc'))

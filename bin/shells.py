@@ -16,7 +16,7 @@ from options import *
 
 class MSysShell(object):
     def __init__(self):
-        self.msysdir = os.path.join( emergeRoot(), "msys" )
+        self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
         self.initEnvironment()
 
     @property
@@ -24,7 +24,7 @@ class MSysShell(object):
         return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
 
     def initEnvironment(self, cflags="", ldflags=""):
-        mergeroot = self.toNativePath(emergeRoot())
+        mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
 
         if compiler.isMinGW():
             ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
@@ -34,8 +34,8 @@ class MSysShell(object):
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
-            utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), emergeRoot()))
-            utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), emergeRoot()))
+            utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot()))
+            utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot()))
             utils.putenv("LD", "link")
             utils.putenv("CC", "/share/automake-1.13/compile cl -nologo")
             utils.putenv("CXX", "/share/automake-1.13/compile cl -nologo")
@@ -57,7 +57,7 @@ class MSysShell(object):
         #unset make to remove things like jom
         if "MAKE" in os.environ:
             del os.environ["MAKE"]
-        utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( emergeRoot(), "dev-utils", "bin" )))
+        utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "bin" )))
         utils.putenv("MSYSTEM","MINGW32")
 
 

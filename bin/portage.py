@@ -102,7 +102,7 @@ def rootDirectories():
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
-        rootDirs = [ os.path.join( emergeRoot(), "emerge", "portage" ) ]
+        rootDirs = [ os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" ) ]
     return rootDirs
 
 def rootDir():
@@ -118,7 +118,7 @@ def rootDirForCategory( category ):
         if category and os.path.exists( os.path.join( i, category ) ):
             return i
     # as a fall back return the default even if it might be wrong
-    return os.path.join( emergeRoot(), "emerge", "portage" )
+    return os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
 
 def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
@@ -134,7 +134,7 @@ def rootDirForPackage( category, package ):
                 if os.path.exists( os.path.join( i, category, package ) ):
                     return i
     # as a fall back return the default even if it might be wrong
-    return os.path.join( emergeRoot(), "emerge", "portage" )
+    return os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """

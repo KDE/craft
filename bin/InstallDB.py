@@ -101,7 +101,12 @@ class InstallDB(object):
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
 
-    def __init__( self, filename = os.path.join( etcPortageDir(False), 'install.db' ) ):
+    def __init__( self, filename = None ):
+        if filename == None:
+            EmergeStandardDirs.allowShortpaths(False)
+            filename = os.path.join( EmergeStandardDirs.etcPortageDir(), 'install.db' )
+            EmergeStandardDirs.allowShortpaths(True)
+
         self.dbfilename = filename
         self._prepareDatabase()
 
@@ -225,8 +230,9 @@ class InstallDB(object):
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
         if not os.path.exists( self.dbfilename ):
-            if not os.path.exists( etcPortageDir( False ) ):
-                os.makedirs( etcPortageDir( False ) )
+            EmergeStandardDirs.allowShortpaths(False)
+            if not os.path.exists( EmergeStandardDirs.etcPortageDir( ) ):
+                os.makedirs( EmergeStandardDirs.etcPortageDir( ) )
             print( "database does not exist yet: creating database", file = sys.stderr )
             self.connection = sqlite3.connect( self.dbfilename )
             cursor = self.connection.cursor()
@@ -244,6 +250,7 @@ class InstallDB(object):
         if not len(cursor.fetchall()) == 6:
             cursor.execute('''ALTER TABLE packageList ADD COLUMN revision TEXT''')
             self.connection.commit()
+        EmergeStandardDirs.allowShortpaths(True)
 
 
 # get a global object
@@ -259,11 +266,11 @@ def main():
     """ Testing the class"""
 
     # add two databases
-    tempdbpath1 = os.path.join( emergeRoot(), "tmp", "temp1.db" )
-    tempdbpath2 = os.path.join( emergeRoot(), "tmp", "temp2.db" )
+    tempdbpath1 = os.path.join( EmergeStandardDirs.emergeRoot(), "tmp", "temp1.db" )
+    tempdbpath2 = os.path.join( EmergeStandardDirs.emergeRoot(), "tmp", "temp2.db" )
 
-    if not os.path.exists( os.path.join( emergeRoot(), "tmp" ) ):
-        os.makedirs( os.path.join( emergeRoot(), "tmp" ) )
+    if not os.path.exists( os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) ):
+        os.makedirs( os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) )
 
     if os.path.exists( tempdbpath1 ):
         os.remove( tempdbpath1 )

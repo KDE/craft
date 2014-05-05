@@ -21,7 +21,7 @@ class Package( AutoToolsPackageBase):
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.make.supportsMultijob = False
         self.buildInSource = True
-        utils.prependPath(os.path.join( emergeRoot() , "dev-utils" , "git" , "bin" ))
+        utils.prependPath(os.path.join( EmergeStandardDirs.emergeRoot() , "dev-utils" , "git" , "bin" ))
         
     def configure(self):
         return True

@@ -14,5 +14,5 @@ class subinfo( info.infoclass ):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ' -DPHONON_BUILD_PHONON4QT5=ON -DPHONON_BUILDSYSTEM_DIR=\"%s\" ' % (os.path.join(emergeRoot(),'share','phonon','buildsystem').replace('\\','/'))
+        self.subinfo.options.configure.defines = ' -DPHONON_BUILD_PHONON4QT5=ON -DPHONON_BUILDSYSTEM_DIR=\"%s\" ' % (os.path.join(EmergeStandardDirs.emergeRoot(),'share','phonon','buildsystem').replace('\\','/'))
 

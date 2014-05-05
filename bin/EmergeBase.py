@@ -47,7 +47,7 @@ class EmergeBase(object):
             for cls in type(self).mro():
                 className = cls.__name__
                 packageName = 'internal/%s' % className
-                if os.path.exists(os.path.join(emergeRoot() , 'emerge', 'portage',
+                if os.path.exists(os.path.join(EmergeStandardDirs.emergeRoot() , 'emerge', 'portage',
                         'internal', className, '%s-internal.py' % className)):
                     if self.subinfo and not packageName in self.subinfo.buildDependencies:
                         self.subinfo.buildDependencies[packageName] = 'default'
@@ -161,7 +161,7 @@ class EmergeBase(object):
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        buildroot    = os.path.join( emergeRoot(), "build", self.category, self.package )
+        buildroot    = os.path.join( EmergeStandardDirs.emergeRoot(), "build", self.category, self.package )
         return self.__adjustPath(buildroot)
 
     def workDir(self):
@@ -215,19 +215,19 @@ class EmergeBase(object):
         """
 
         if self.subinfo.hasMergePath():
-            directory = os.path.join( emergeRoot(), self.subinfo.mergePath() )
+            directory = os.path.join( EmergeStandardDirs.emergeRoot(), self.subinfo.mergePath() )
         elif not self.subinfo.options.merge.destinationPath == None:
-            directory = os.path.join( emergeRoot(), self.subinfo.options.merge.destinationPath )
+            directory = os.path.join( EmergeStandardDirs.emergeRoot(), self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
-            directory = emergeRoot()
+            directory = EmergeStandardDirs.emergeRoot()
         elif self.buildType() == 'Debug':
-            directory = os.path.join(emergeRoot(),'debug')
+            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'debug')
         elif self.buildType() == 'Release':
-            directory = os.path.join(emergeRoot(),'release')
+            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'release')
         elif self.buildType() == 'RelWithDebInfo':
-            directory = os.path.join(emergeRoot(),'relwithdebinfo')
+            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'relwithdebinfo')
         else:
-            directory = emergeRoot()
+            directory = EmergeStandardDirs.emergeRoot()
         return self.__adjustPath(directory)
 
     def packageDestinationDir( self, withBuildType=True ):
@@ -257,7 +257,7 @@ class EmergeBase(object):
 
     @property
     def rootdir(self):
-        return emergeRoot()
+        return EmergeStandardDirs.emergeRoot()
 
     def enterBuildDir(self):
         utils.debug( "EmergeBase.enterBuildDir called", 2 )

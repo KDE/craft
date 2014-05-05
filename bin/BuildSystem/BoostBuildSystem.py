@@ -57,7 +57,7 @@ class BoostBuildSystem(BuildSystemBase):
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
                 options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % ({ "vs2008" : "9_0", "vs2010" : "10_0", "vs2012" : "11_0" }[os.getenv("INTEL_VSSHELL")])
                 options += " -sINTEL_VERSION=%s" % os.getenv("PRODUCT_NAME")[-2:]
-        emergeUserConfig = os.path.join( emergeRoot(), "etc", "emerge-boost-config.jam" )
+        emergeUserConfig = os.path.join( EmergeStandardDirs.emergeRoot(), "etc", "emerge-boost-config.jam" )
         if os.path.exists( emergeUserConfig ):
             options += " --user-config=" + os.path.join( emergeUserConfig )
         return options

@@ -381,10 +381,8 @@ def main( ):
     utils.debug( "buildTests: %s" % args.buildTests )
     utils.debug( "verbose: %d" % utils.verbose( ), 1 )
     utils.debug( "trace: %s" % args.trace, 1 )
-    utils.debug( "KDEROOT: %s\n" % emergeRoot( ), 1 )
+    utils.debug( "KDEROOT: %s\n" % EmergeStandardDirs.emergeRoot( ), 1 )
     utils.debug_line( )
-    #evenso emerge doesnt depend on the env var KDEROOT anymore there are some scripts that still need it
-    utils.putenv( "KDEROOT", emergeRoot( ) )
 
     if args.print_installed:
         printInstalled( )
@@ -421,7 +419,6 @@ if __name__ == '__main__':
     finally:
         utils.stopTimer( "Emerge" )
         doUpdateTitle = False
-        utils.setTitle( "emerge - %s %s-%s" % ( emergeRoot( ), compiler.getCompilerName( ), compiler.architecture( )) )
         if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
             emergeSettings.dump( )
     if not succes:

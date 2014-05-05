@@ -29,7 +29,7 @@ class PackageMinGW(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.shell = MSysShell()
-        self.subinfo.options.configure.defines = "--disable-static --enable-shared CPPFLAGS=-I%s " % self.shell.toNativePath(os.path.join(emergeRoot(),"include"))
+        self.subinfo.options.configure.defines = "--disable-static --enable-shared CPPFLAGS=-I%s " % self.shell.toNativePath(os.path.join(EmergeStandardDirs.emergeRoot(),"include"))
 
 
         

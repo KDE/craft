@@ -13,7 +13,7 @@ from BuildSystem.QMakeBuildSystem import *
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__( self ):
         QMakeBuildSystem.__init__(self)
-        utils.putenv( "QMAKESPEC", os.path.join(emergeRoot(), 'mkspecs', self.platform ))
+        utils.putenv( "QMAKESPEC", os.path.join(EmergeStandardDirs.emergeRoot(), 'mkspecs', self.platform ))
         
 
     def install( self, options=""):
@@ -22,8 +22,8 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
        if not QMakeBuildSystem.install( self ,options):
            return False
            
-       badPrefix = os.path.join(self.installDir(), emergeRoot()[3:])
-       if emergeRoot()[3:] != "" and os.path.exists(badPrefix):
+       badPrefix = os.path.join(self.installDir(), EmergeStandardDirs.emergeRoot()[3:])
+       if EmergeStandardDirs.emergeRoot()[3:] != "" and os.path.exists(badPrefix):
            for subdir in os.listdir(badPrefix):
                shutil.move(os.path.join(badPrefix, subdir), self.installDir())
            shutil.rmtree(badPrefix)
