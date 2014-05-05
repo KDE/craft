@@ -74,10 +74,8 @@ class SetupHelper( object ):
     def stringToEnv( self, string ):
         out = dict( )
         for line in string.split( "\n" ):
-            line = line.strip( )
-            if line != "":
-                key, value = line.split( "=", 1 )
-                out[ key ] = value
+            key, value = line.strip( ).split( "=", 1 )
+            out[ key ] = value
         return out
 
     def getEnv( self ):
@@ -85,16 +83,20 @@ class SetupHelper( object ):
         if compiler.isMSVC( ):
             compilerDirs = { "msvc2010": "VS100COMNTOOLS", "msvc2012": "VS110COMNTOOLS", "msvc2013": "VS120COMNTOOLS" }
             architectures = { "x86": "x86", "x64": "amd64" }
-            result = str( subprocess.check_output( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s && set" % (
-                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) ),
-                          'windows-1252' )
+            status, result = subprocess.getstatusoutput( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s && set" % (
+                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) )
+            if status != 0:
+                print( "Failed to setup msvc compiler", file = sys.stderr )
             out = self.stringToEnv( result )
 
         elif compiler.isIntel( ):
             architectures = { "x86": "ia32", "x64": "intel64" }
             programFiles = os.getenv( "ProgramFiles(x86)" ) or os.getenv( "ProgramFiles" )
-            result = str( subprocess.check_output( "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s && set" % (
-                programFiles, architectures[ compiler.architecture( ) ]) ), 'windows-1252' )
+            status, result = subprocess.getstatusoutput(
+                "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s && set" % (
+                    programFiles, architectures[ compiler.architecture( ) ]) )
+            if status != 0:
+                print( "Failed to setup intel compiler", file = sys.stderr )
             out = self.stringToEnv( result )
         elif compiler.isMinGW( ):
             out = { "Path": os.getenv( "Path" ) }
