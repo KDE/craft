@@ -61,7 +61,7 @@ class DependencyPackage(object):
                 try:
                     version = PortageInstance.getNewestVersion( category, package )
                 except PortageException as e:
-                    utils.warning("%s for package %s/%s" %(e, self.category , self.name))
+                    utils.warning("Could not find dependency %s/%s for package %s/%s" %(e.category, e.package, self.category , self.name))
                     continue
 
                 if not line in self._dependencyPackageDict.keys():
