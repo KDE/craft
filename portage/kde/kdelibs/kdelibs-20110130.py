@@ -29,9 +29,6 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/grantlee'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
-        if self.options.features.nepomuk:
-            self.dependencies['kdesupport/soprano'] = 'default'
-            self.dependencies['kdesupport/strigi'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
         if self.options.features.phononBackend.vlc:

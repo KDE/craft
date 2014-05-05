@@ -15,8 +15,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        if self.options.features.nepomuk:
-            self.dependencies['kde/nepomuk-core'] = 'default'
         self.dependencies['kdesupport/akonadi'] = 'default'
         self.dependencies['win32libs/cyrus-sasl'] = 'default'
         self.dependencies['win32libs/libical'] = 'default'
