@@ -41,7 +41,7 @@ class Package(BinaryPackageBase):
     def unpack( self ):
         # hopefully only one...
         for filename in self.localFileNames():
-            self.system( os.path.join( SourceBase.downloadDir(), filename ) + " /DIR=\"" + self.workDir() + "\" /SILENT")
+            self.system( os.path.join( EmergeStandardDirs.downloadDir(), filename ) + " /DIR=\"" + self.workDir() + "\" /SILENT")
         return True
 
     def install( self ):

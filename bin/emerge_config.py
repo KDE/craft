@@ -10,14 +10,17 @@ import sys
 
 emergeSettings = None
 
-def nomalizePath(path):
+
+def nomalizePath( path ):
     if path.endswith( ":" ):
         path += "\\"
     return path
 
+
 def emergeRoot( allowShortpath = True ):
-    if allowShortpath and not emergeSettings is None and emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
-        return  nomalizePath(emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ))
+    if allowShortpath and not emergeSettings is None and emergeSettings.getboolean( "ShortPath",
+                                                                                    "EMERGE_USE_SHORT_PATH", False ):
+        return nomalizePath( emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
     return os.path.abspath( os.path.join( os.path.dirname( sys.argv[ 0 ] ), "..", ".." ) )
 
 
@@ -28,6 +31,46 @@ def etcDir( allowShortpath = True ):
 def etcPortageDir( allowShortpath = True ):
     """the etc directory for portage"""
     return os.path.join( etcDir( allowShortpath ), "portage" )
+
+
+class EmergeStandardDirs( object ):
+    _downloadDir = None
+    _svnDir = None
+    _gitDir = None
+
+    @staticmethod
+    def downloadDir( ):
+        """ location of directory where fetched files are  stored """
+        if EmergeStandardDirs._downloadDir is None:
+            if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+                EmergeStandardDirs._downloadDir = nomalizePath(
+                    emergeSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
+            else:
+                EmergeStandardDirs._downloadDir = emergeSettings.get( "Paths", "DOWNLOADDIR",
+                                                                      os.path.join( emergeRoot( ), "download" ) )
+        return EmergeStandardDirs._downloadDir
+
+    @staticmethod
+    def svnDir( ):
+        if EmergeStandardDirs._svnDir is None:
+            if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+                EmergeStandardDirs._svnDir = nomalizePath( emergeSettings.get( "ShortPath", "EMERGE_SVN_DRIVE" ) )
+            else:
+                EmergeStandardDirs._svnDir = emergeSettings.get( "Paths", "KDESVNDIR",
+                                                                 os.path.join( EmergeStandardDirs.downloadDir( ),
+                                                                               "svn" ) )
+        return EmergeStandardDirs._svnDir
+
+    @staticmethod
+    def gitDir( ):
+        if EmergeStandardDirs._gitDir is None:
+            if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+                EmergeStandardDirs._gitDir = nomalizePath( emergeSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
+            else:
+                EmergeStandardDirs._gitDir = emergeSettings.get( "Paths", "KDEGITDIR",
+                                                                 os.path.join( EmergeStandardDirs.downloadDir( ),
+                                                                               "git" ) )
+        return EmergeStandardDirs._gitDir
 
 
 class EmergeConfig( object ):
@@ -80,7 +123,8 @@ class EmergeConfig( object ):
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ), file = sys.stderr )
+                print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ),
+                       file = sys.stderr )
                 return self.get( dg, dk, default )
         if default != None:
             self.set( group, key, default )
@@ -91,17 +135,17 @@ class EmergeConfig( object ):
         if self._config.has_section( group ):
             return self._config.items( group )
         else:
-            return []
+            return [ ]
 
-    def getboolean(self,  group, key, default = False):
-        val = self.get(group,key,str(default))
-        return self._config._convert_to_boolean(val)
+    def getboolean( self, group, key, default = False ):
+        val = self.get( group, key, str( default ) )
+        return self._config._convert_to_boolean( val )
 
 
     def set( self, group, key, value ):
-        if not self._config.has_section(group):
-            self._config.add_section(group)
-        self._config[ group ][ key ] = str(value)
+        if not self._config.has_section( group ):
+            self._config.add_section( group )
+        self._config[ group ][ key ] = str( value )
 
 
     def setDefault( self, group, key, value ):
@@ -109,7 +153,7 @@ class EmergeConfig( object ):
             self.set( group, key, value )
 
 
-    def dump(self):
+    def dump( self ):
         with open( self.iniPath + ".dump", 'wt+' ) as configfile:
             self._config.write( configfile )
 

@@ -113,10 +113,3 @@ class SourceBase(EmergeBase):
             return True in case it is not applicable and give out nothing """
         print(self.sourceVersion())
         return True
-
-    @staticmethod
-    def downloadDir():
-        """ location of directory where fetched files are  stored """
-        if emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
-            return nomalizePath(emergeSettings.get("ShortPath", "EMERGE_DOWNLOAD_DRIVE"))
-        return emergeSettings.get("Paths", "DOWNLOADDIR")

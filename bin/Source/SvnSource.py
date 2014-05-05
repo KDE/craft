@@ -25,9 +25,9 @@ class SvnSource (VersionSystemSourceBase):
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join(VersionSystemSourceBase.svnDir(), url )
+                sourcedir = os.path.join(EmergeStandardDirs.svnDir(), url )
             else:
-                sourcedir = os.path.join( self.downloadDir(), "svn-src" )
+                sourcedir = os.path.join( EmergeStandardDirs.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
                 _, path = self.__splitPath(url)
                 if path and emergeSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):

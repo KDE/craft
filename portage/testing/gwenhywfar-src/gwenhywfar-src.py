@@ -31,7 +31,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo.options.configure.defines = "--enable-shared --disable-static --with-guis=qt4 --with-qt4-includes=" + mergeroot + "/include --with-qt4-libs=" + mergeroot + "/lib --with-qt4-moc=" + mergeroot + "/bin/moc.exe --with-qt4-uic=" + mergeroot + "/bin/uic.exe"
 
     def fetch(self):
-        utils.wgetFile('"http://www.aquamaniac.de/sites/download/download.php?package=01&release=56&file=01&dummy=gwenhywfar-4.0.3.tar.gz"' , SourceBase.downloadDir() , "gwenhywfar-4.0.3.tar.gz")
+        utils.wgetFile('"http://www.aquamaniac.de/sites/download/download.php?package=01&release=56&file=01&dummy=gwenhywfar-4.0.3.tar.gz"' , EmergeStandardDirs.downloadDir() , "gwenhywfar-4.0.3.tar.gz")
         return True
 
 if compiler.isMinGW():

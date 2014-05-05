@@ -6,7 +6,7 @@
 import subprocess
 import argparse
 
-from Source.VersionSystemSourceBase import *
+from emerge_config import *
 import compiler
 
 
@@ -25,10 +25,13 @@ class SetupHelper( object ):
     def run( self ):
         if self.args.subst:
             if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+                useShortOld = emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
+                emergeSettings.set( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
                 self.subst( os.path.abspath( emergeRoot( False ) ), "EMERGE_ROOT_DRIVE" )
-                self.subst( emergeSettings.get( "Paths", "DOWNLOADDIR" ), "EMERGE_DOWNLOAD_DRIVE" )
-                self.subst( emergeSettings.get( "Paths", "KDESVNDIR" ), "EMERGE_SVN_DRIVE" )
-                self.subst( emergeSettings.get( "Paths", "KDEGITDIR" ), "EMERGE_GIT_DRIVE" )
+                self.subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
+                self.subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
+                self.subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
+                emergeSettings.set( "ShortPath", "EMERGE_USE_SHORT_PATH", useShortOld )
         elif self.args.get:
             default = ""
             if len( self.args.rest ) == 3:
@@ -48,9 +51,9 @@ class SetupHelper( object ):
     def printBanner( self ):
         print( "KDEROOT     : %s" % emergeRoot( ) )
         print( "KDECOMPILER : %s" % compiler.getCompilerName( ) )
-        print( "KDESVNDIR   : %s" % VersionSystemSourceBase.svnDir( ) )
-        print( "KDEGITDIR   : %s" % VersionSystemSourceBase.gitDir( ) )
-        print( "DOWNLOADDIR : %s" % SourceBase.downloadDir( ) )
+        print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ) )
+        print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ) )
+        print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ) )
         print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "PYTHONPATH" ) )
 
     def printVar( self, key, val ):

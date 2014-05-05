@@ -11,18 +11,6 @@ class VersionSystemSourceBase (SourceBase):
         utils.trace( "VersionSystemSourceBase __init__", 2 )
         SourceBase.__init__(self)
 
-    @staticmethod
-    def svnDir():
-        if emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
-            return nomalizePath(emergeSettings.get("ShortPath", "EMERGE_SVN_DRIVE"))
-        return  emergeSettings.get("Paths", "KDESVNDIR")
-
-    @staticmethod
-    def gitDir():
-        if emergeSettings.getboolean("ShortPath", "EMERGE_USE_SHORT_PATH", False):
-            return nomalizePath(emergeSettings.get("ShortPath", "EMERGE_GIT_DRIVE"))
-        return  emergeSettings.get("Paths", "KDEGITDIR")
-
     def getUrl( self, index ):
         """get the url at position 'index' from a ';' separated list of urls"""
         utils.trace( "VersionSystemSourceBase getUrl", 2 )
@@ -116,7 +104,7 @@ class VersionSystemSourceBase (SourceBase):
     def checkoutDir( self, dummyIndex=0 ):
         utils.trace( "VersionSystemSourceBase checkoutDir", 2 )
         if self.subinfo.hasSvnTarget():
-            sourcedir = os.path.join(  self.gitDir(), self.package )
+            sourcedir = os.path.join(  EmergeStandardDirs.gitDir(), self.package )
         else:
             utils.die("svnTarget property not set for this target")
 

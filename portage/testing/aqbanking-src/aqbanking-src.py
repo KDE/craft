@@ -29,7 +29,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo.options.configure.defines = "--enable-shared --disable-static"
 
     def fetch(self):
-        utils.wgetFile('"http://www.aquamaniac.de/sites/download/download.php?package=03&release=87&file=01&dummy=aqbanking-5.0.16.tar.gz"', SourceBase.downloadDir() , "aqbanking-5.0.16.tar.gz")
+        utils.wgetFile('"http://www.aquamaniac.de/sites/download/download.php?package=03&release=87&file=01&dummy=aqbanking-5.0.16.tar.gz"', EmergeStandardDirs.downloadDir() , "aqbanking-5.0.16.tar.gz")
         #utils.wgetFile('"http://www.aquamaniac.de/sites/download/download.php?package=03&release=75&file=01&dummy=aqbanking-5.0.2.tar.gz"' , self.downloadDir() , "aqbanking-5.0.2.tar.gz")
         return True
 

@@ -47,7 +47,7 @@ class ArchiveSource(SourceBase):
         """check if all files for the current target are available"""
         available = True
         for filename in filenames:
-            path = os.path.join(self.downloadDir(), filename)
+            path = os.path.join(EmergeStandardDirs.downloadDir(), filename)
             if self.subinfo.hasTargetDigests():
                 if not os.path.exists(path):
                     available = False
@@ -74,20 +74,20 @@ class ArchiveSource(SourceBase):
                 utils.debug("files and digests available, no need to download files", 1)
                 return True
 
-            result = utils.getFiles( self.subinfo.target(), self.downloadDir() , filenames = self.subinfo.archiveName() )
+            result = utils.getFiles( self.subinfo.target(), EmergeStandardDirs.downloadDir() , filenames = self.subinfo.archiveName() )
             if not result:
                 utils.debug( "failed to download files", 1 )
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
-                    return utils.getFiles( self.subinfo.target(), self.downloadDir(), ".sha1", self.subinfo.archiveName() )
+                    return utils.getFiles( self.subinfo.target(), EmergeStandardDirs.downloadDir(), ".sha1", self.subinfo.archiveName() )
                 else:
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), self.downloadDir(), filenames = '' )
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), EmergeStandardDirs.downloadDir(), filenames = '' )
             else:
                 utils.debug( "no digestUrls present", 2 )
                 return True
         else:
-            return utils.getFiles( "", self.downloadDir() )
+            return utils.getFiles( "", EmergeStandardDirs.downloadDir() )
 
     def checkDigest(self):
         utils.debug( "ArchiveSource.checkDigest called", 2 )
@@ -95,17 +95,17 @@ class ArchiveSource(SourceBase):
 
         if self.subinfo.hasTargetDigestUrls():
             utils.debug("check digests urls", 1)
-            if not utils.checkFilesDigests( self.downloadDir(), filenames):
+            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
                 utils.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
             utils.debug("check digests", 1)
-            if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
+            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
                 utils.error("invalid digest file")
                 return False
         else:
             utils.debug("print source file digests", 1)
-            digests = utils.createFilesDigests( self.downloadDir(), filenames )
+            digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
         return True
 
@@ -135,22 +135,22 @@ class ArchiveSource(SourceBase):
 
         if self.subinfo.hasTargetDigestUrls():
             utils.debug("check digests urls", 1)
-            if not utils.checkFilesDigests( self.downloadDir(), filenames):
+            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
                 utils.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
             utils.debug("check digests", 1)
-            if not utils.checkFilesDigests( self.downloadDir(), filenames, self.subinfo.targetDigest()):
+            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
                 utils.error("invalid digest file")
                 return False
         else:
             utils.debug("print source file digests", 1)
-            digests = utils.createFilesDigests( self.downloadDir(), filenames )
+            digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
 
         if self.url.find(".exe") != -1 or self.url.find(".bat") != -1 or self.url.find(".msi") != -1:
             for filename in filenames:
-                filePath = os.path.abspath( os.path.join(self.downloadDir(), filename) )
+                filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
                 if self.subinfo.options.unpack.runInstaller: 
                     _, ext = os.path.splitext( filename )
                     if ext == ".exe":
@@ -160,7 +160,7 @@ class ArchiveSource(SourceBase):
                 if not utils.copyFile( filePath, os.path.join(destdir, filename) ):
                     return False
         else:    
-            if not utils.unpackFiles( self.downloadDir(), filenames, destdir ):
+            if not utils.unpackFiles( EmergeStandardDirs.downloadDir(), filenames, destdir ):
                 return False
 
         ret = self.applyPatches()
@@ -214,7 +214,7 @@ class ArchiveSource(SourceBase):
         # unpack all packages
         for filename in filenames:
             utils.debug( "unpacking this file: %s" % filename, 1 )
-            if ( not utils.unpackFile( self.downloadDir(), filename, unpackDir ) ):
+            if ( not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, unpackDir ) ):
                 return False
 
         packagelist = os.listdir( tmpdir )
