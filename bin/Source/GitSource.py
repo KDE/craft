@@ -145,7 +145,7 @@ class GitSource ( VersionSystemSourceBase ):
     def __git(self, command, *args, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and ( "General", "EMERGE_LOG_DIR") in emergeSettings:
+        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and emergeSettings.get( "General", "EMERGE_LOG_DIR") != "":
             # if stdout/stderr is redirected, git clone qt hangs forever.
             # It does not with option -q (suppressing progress info)
             command += ' -q'
