@@ -9,18 +9,17 @@ class subinfo(info.infoclass):
                                             "[git]kde:${PACKAGE_NAME}" )
 
         self.shortDescription = "KService provides a plugin framework for handling desktop services."
-        
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["kde/kconfig"] = "default"
-        self.buildDependencies["kde/kcoreaddons"] = "default"
-        self.buildDependencies["kde/kcrash"] = "default"
-        self.buildDependencies["kde/kdbusaddons"] = "default"
-        self.buildDependencies["kde/ki18n"] = "default"
-        self.buildDependencies["kde/kdoctools"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["kde/kconfig"] = "default"
+        self.dependencies["kde/kcoreaddons"] = "default"
+        self.dependencies["kde/kcrash"] = "default"
+        self.dependencies["kde/kdbusaddons"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kdoctools"] = "default"
 
 from Package.CMakePackageBase import *
 

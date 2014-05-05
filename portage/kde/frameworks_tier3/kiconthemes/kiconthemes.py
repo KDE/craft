@@ -14,12 +14,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["libs/qtsvg"] = "default"
-        self.buildDependencies["kde/ki18n"] = "default"
-        self.buildDependencies["kde/kconfigwidgets"] = "default"
-        self.buildDependencies["kde/kwidgetsaddons"] = "default"
-        self.buildDependencies["kde/kitemviews"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtdbus"] = "default"
+        self.dependencies["libs/qtsvg"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kconfigwidgets"] = "default"
+        self.dependencies["kde/kwidgetsaddons"] = "default"
+        self.dependencies["kde/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *
 

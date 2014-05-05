@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
         self.dependencies["kde/karchive"] = "default"
         self.dependencies["kde/kcompletion"] = "default"
         self.dependencies["kde/kconfig"] = "default"

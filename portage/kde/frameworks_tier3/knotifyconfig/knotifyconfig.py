@@ -10,11 +10,10 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "Configuration system for KNotify"
 
-
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
         self.dependencies["kde/kcompletion"] = "default"
         self.dependencies["kde/kconfig"] = "default"
         self.dependencies["kde/ki18n"] = "default"
