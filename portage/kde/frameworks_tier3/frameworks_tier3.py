@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kbookmarks'] = 'default'
         self.dependencies['kde/kcmutils'] = 'default'
         self.dependencies['kde/kconfigwidgets'] = 'default'
+        self.dependencies['kde/kdesignerplugin'] = 'default'
+        self.dependencies['kde/kemoticons'] = 'default'
         self.dependencies['kde/kiconthemes'] = 'default'
         self.dependencies['kde/kinit'] = 'default'
         self.dependencies['kde/kio'] = 'default'

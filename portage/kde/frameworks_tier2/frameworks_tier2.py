@@ -13,12 +13,10 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kdnssd'] = 'default'
         self.dependencies['kde/kdoctools'] = 'default'
         self.dependencies['kde/kjobwidgets'] = 'default'
-        
-
+        self.dependencies['kde/kunitconversion'] = 'default'
 
 from Package.VirtualPackageBase import *
 
 class Package( VirtualPackageBase ):
     def __init__( self ):
         VirtualPackageBase.__init__( self )
-
