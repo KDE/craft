@@ -25,13 +25,12 @@ class SetupHelper( object ):
     def run( self ):
         if self.args.subst:
             if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
-                useShortOld = emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
-                emergeSettings.set( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
-                self.subst( os.path.abspath( emergeRoot( False ) ), "EMERGE_ROOT_DRIVE" )
+                EmergeStandardDirs.allowShortpaths( False )
+                self.subst( os.path.abspath( EmergeStandardDirs.emergeRoot( ) ), "EMERGE_ROOT_DRIVE" )
                 self.subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
                 self.subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
                 self.subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
-                emergeSettings.set( "ShortPath", "EMERGE_USE_SHORT_PATH", useShortOld )
+                EmergeStandardDirs.allowShortpaths( True )
         elif self.args.get:
             default = ""
             if len( self.args.rest ) == 3:
@@ -49,7 +48,7 @@ class SetupHelper( object ):
         subprocess.Popen( command, stdout = subprocess.PIPE )
 
     def printBanner( self ):
-        print( "KDEROOT     : %s" % emergeRoot( ) )
+        print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ) )
         print( "KDECOMPILER : %s" % compiler.getCompilerName( ) )
         print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ) )
         print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ) )
@@ -65,7 +64,7 @@ class SetupHelper( object ):
     def printEnv( self ):
         for var, value in emergeSettings.getSection( "Environment" ):
             self.printVar( var, value )
-        self.printVar( "KDEROOT", emergeRoot( ) )
+        self.printVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
 
         if self.args.mode == "bat":
             #needed for intel/msvc setup in bat
@@ -84,19 +83,20 @@ class SetupHelper( object ):
         self.printVar( "HOME", os.getenv( "USERPROFILE" ) )
 
         self.printVar( "QT_PLUGIN_PATH", "%s;%s" % (
-            os.path.join( emergeRoot( ), "plugins" ), os.path.join( emergeRoot( ), "lib", "kde4", "plugins" )) )
-        self.printVar( "XDG_DATA_DIRS", os.path.join( emergeRoot( ), "share" ) )
+            os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
+            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "kde4", "plugins" )) )
+        self.printVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
 
         if compiler.isMinGW( ):
             if compiler.isX86( ):
-                self.prependPath( os.path.join( emergeRoot( ), "mingw", "bin" ) )
+                self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
             else:
-                self.prependPath( os.path.join( emergeRoot( ), "mingw64", "bin" ) )
+                self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
 
-        self.prependPath( os.path.join( emergeRoot( ), "bin" ) )
+        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
         if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
-            self.prependPath( os.path.join( emergeRoot( ), "emerge", "bin" ) )
-        self.prependPath( os.path.join( emergeRoot( ), "dev-utils", "bin" ) )
+            self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
+        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
         self.printVar( "PATH", self.path )
 
