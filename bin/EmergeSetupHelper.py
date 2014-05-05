@@ -26,7 +26,7 @@ class SetupHelper( object ):
         if self.args.subst:
             if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
                 EmergeStandardDirs.allowShortpaths( False )
-                self.subst( os.path.abspath( EmergeStandardDirs.emergeRoot( ) ), "EMERGE_ROOT_DRIVE" )
+                self.subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
                 self.subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
                 self.subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
                 self.subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
