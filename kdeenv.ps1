@@ -44,6 +44,7 @@ if(test-path -path $EMERGE_ROOT\..\etc\kdesettings.ini)
 else
 {
     Write-Error("$EMERGE_ROOT\..\etc\kdesettings.ini Does not exist")
+    break
 }
 
 function prependPATH([string] $path)
@@ -51,12 +52,6 @@ function prependPATH([string] $path)
     $env:PATH="$path;$env:PATH"
 }
 
-
-if( $EMERGE_ARGUMENTS[0] -eq "--get")
-{
-    Write-Host($settings[$EMERGE_ARGUMENTS[1]][$EMERGE_ARGUMENTS[2]])
-    break
-}
 prependPATH $settings["Paths"]["PYTHONPATH"]
 
 (python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") | 
