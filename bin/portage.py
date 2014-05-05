@@ -12,6 +12,12 @@ import utils
 
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
+class PortageException(Exception):
+    def __init__(self, message, category, package ):
+        Exception.__init__(self, message)
+        self.category = category
+        self.package = package
+
 
 class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
@@ -52,7 +58,12 @@ class DependencyPackage(object):
             for line in deps:
                 ( category, package ) = line.split( "/" )
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
-                version = PortageInstance.getNewestVersion( category, package )
+                try:
+                    version = PortageInstance.getNewestVersion( category, package )
+                except PortageException as e:
+                    utils.warning("%s for package %s/%s" %(e, self.category , self.name))
+                    continue
+
                 if not line in self._dependencyPackageDict.keys():
                     p = DependencyPackage( category, package, version, False )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
@@ -415,11 +426,11 @@ class Portage(object):
     def getNewestVersion( self, category, package ):
         """ returns the newest version of this category/package """
         if( category == None ):
-            utils.die( "Empty category for package '%s'" % package )
+            raise PortageException( "Empty category for package '%s'" % package, category, package )
         if not self.isCategory( category ):
-            utils.die( "could not find category '%s'" % category )
+            raise PortageException( "could not find category '%s'" % category, category, package )
         if not self.isPackage( category, package ):
-            utils.die( "could not find package '%s' in category '%s'" % ( package, category ) )
+            raise PortageException( "could not find package '%s' in category '%s'" % ( package, category ), category, package )
 
         installed = InstallDB.installdb.getInstalledPackages(category, package )
         newest = PortageInstance.getDefaultTarget( category, package )
