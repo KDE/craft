@@ -18,19 +18,14 @@ class SetupHelper( object ):
         parser.add_argument( "--get", action = "store_true" )
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
+        parser.add_argument( "--setup", action = "store_true" )
         parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell" } )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
 
     def run( self ):
         if self.args.subst:
-            if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
-                EmergeStandardDirs.allowShortpaths( False )
-                self.subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
-                self.subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
-                self.subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
-                self.subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
-                EmergeStandardDirs.allowShortpaths( True )
+            self.subst( )
         elif self.args.get:
             default = ""
             if len( self.args.rest ) == 3:
@@ -40,20 +35,34 @@ class SetupHelper( object ):
             self.printBanner( )
         elif self.args.getenv:
             self.printEnv( )
+        elif self.args.setup:
+            self.subst( )
+            self.printEnv( )
+            self.printBanner( )
 
-    def subst( self, path, drive ):
-        if not os.path.exists( path ):
-            os.mkdir( path )
-        command = "subst %s %s" % ( emergeSettings.get( "ShortPath", drive ), path)
-        subprocess.Popen( command, stdout = subprocess.PIPE )
+
+    def subst( self, ):
+        def _subst( path, drive ):
+            if not os.path.exists( path ):
+                os.mkdir( path )
+            command = "subst %s %s" % ( emergeSettings.get( "ShortPath", drive ), path)
+            subprocess.getoutput( command )
+
+        if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+            EmergeStandardDirs.allowShortpaths( False )
+            _subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
+            _subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
+            _subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
+            _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
+            EmergeStandardDirs.allowShortpaths( True )
 
     def printBanner( self ):
-        print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ) )
-        print( "KDECOMPILER : %s" % compiler.getCompilerName( ) )
-        print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ) )
-        print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ) )
-        print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ) )
-        print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "PYTHONPATH" ) )
+        print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ), file = sys.stderr )
+        print( "KDECOMPILER : %s" % compiler.getCompilerName( ), file = sys.stderr )
+        print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ), file = sys.stderr )
+        print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ), file = sys.stderr )
+        print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ), file = sys.stderr )
+        print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "PYTHONPATH" ), file = sys.stderr )
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
@@ -77,7 +86,7 @@ class SetupHelper( object ):
             compilerDirs = { "msvc2010": "VS100COMNTOOLS", "msvc2012": "VS110COMNTOOLS", "msvc2013": "VS120COMNTOOLS" }
             architectures = { "x86": "x86", "x64": "amd64" }
             result = str( subprocess.check_output( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s && set" % (
-            os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) ),
+                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) ),
                           'windows-1252' )
             out = self.stringToEnv( result )
 
@@ -85,7 +94,7 @@ class SetupHelper( object ):
             architectures = { "x86": "ia32", "x64": "intel64" }
             programFiles = os.getenv( "ProgramFiles(x86)" ) or os.getenv( "ProgramFiles" )
             result = str( subprocess.check_output( "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s && set" % (
-            programFiles, architectures[ compiler.architecture( ) ]) ), 'windows-1252' )
+                programFiles, architectures[ compiler.architecture( ) ]) ), 'windows-1252' )
             out = self.stringToEnv( result )
         elif compiler.isMinGW( ):
             out = { "Path": os.getenv( "Path" ) }

@@ -59,10 +59,7 @@ if( $EMERGE_ARGUMENTS[0] -eq "--get")
 }
 prependPATH $settings["Paths"]["PYTHONPATH"]
 
-python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--subst"
-
-
-(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--getenv" "--mode" "powershell") | 
+(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") | 
 foreach {
   if ($_ -match "=") {        
     $v = $_.split("=")
@@ -70,9 +67,6 @@ foreach {
     #Write-Host("$v[0]=$v[1]")
   }
 }
-
-
-(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--print-banner")
 
 cd "$env:KDEROOT"
 }

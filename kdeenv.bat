@@ -39,17 +39,11 @@ FOR /F "tokens=1 delims=" %%A in ('powershell %~dp0kdeenv.ps1 --get Paths PYTHON
 set PATH=!_PYTHONPATH!;!PATH!
 set _PYTHONPATH=
 
-python %~dp0bin\EmergeSetupHelper.py --subst 
-
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --getenv --mode bat') do (
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --setup --mode bat') do (
     SET Z=%%A
     SET !Z!
 )
 set Z=
-
-
-
-python "%~dp0bin\EmergeSetupHelper.py" --print-banner
 
 
 %comspec% /e:on /K "cd /D %KDEROOT%"
