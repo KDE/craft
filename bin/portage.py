@@ -61,7 +61,7 @@ class DependencyPackage(object):
                 try:
                     version = PortageInstance.getNewestVersion( category, package )
                 except PortageException as e:
-                    utils.warning("Could not find dependency %s/%s for package %s/%s" %(e.category, e.package, self.category , self.name))
+                    utils.warning("%s for %s/%s as a dependency of %s/%s" %(e, e.category, e.package, self.category , self.name))
                     continue
 
                 if not line in self._dependencyPackageDict.keys():
@@ -426,11 +426,11 @@ class Portage(object):
     def getNewestVersion( self, category, package ):
         """ returns the newest version of this category/package """
         if( category == None ):
-            raise PortageException( "Empty category for package '%s'" % package, category, package )
+            raise PortageException( "Empty category", category, package )
         if not self.isCategory( category ):
-            raise PortageException( "could not find category '%s'" % category, category, package )
+            raise PortageException( "Could not find category", category, package )
         if not self.isPackage( category, package ):
-            raise PortageException( "could not find package '%s' in category '%s'" % ( package, category ), category, package )
+            raise PortageException( "Could not find package", category, package )
 
         installed = InstallDB.installdb.getInstalledPackages(category, package )
         newest = PortageInstance.getDefaultTarget( category, package )
