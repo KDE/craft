@@ -19,7 +19,7 @@ def _getGCCTarget():
     global _GCCTARGET # pylint: disable=W0603
     if not _GCCTARGET:
         try:
-            result = str(subprocess.getoutput("gcc -dumpmachine"),'windows-1252')
+            result = subprocess.getoutput("gcc -dumpmachine")
             utils.debug("GCC Target Processor:%s" % result, 1 )
             _GCCTARGET = result.strip()
         except OSError:
@@ -111,7 +111,7 @@ def getMinGWVersion():
     global _MINGW_VERSION # pylint: disable=W0603
     if not _MINGW_VERSION:
         try:
-            result = str(subprocess.getoutput("gcc --version"),'windows-1252')
+            result = subprocess.getoutput("gcc --version")
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
             utils.debug("GCC Version:%s" % result, 1 )
             _MINGW_VERSION = result.strip()
