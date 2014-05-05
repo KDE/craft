@@ -37,7 +37,7 @@ rem handle drive substitution
 rem
 FOR /F "tokens=1 delims=" %%A in ('powershell %~dp0kdeenv.ps1 --get Paths PYTHONPATH') do SET _PYTHONPATH=%%A
 set PATH=!_PYTHONPATH!;!PATH!
-set _PYTHONPATH=""
+set _PYTHONPATH=
 
 python %~dp0bin\EmergeSetupHelper.py --subst 
 
@@ -45,6 +45,7 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --getenv
     SET Z=%%A
     SET !Z!
 )
+set Z=
 
 
 
