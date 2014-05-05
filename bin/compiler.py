@@ -8,7 +8,7 @@ import subprocess
 import re
 
 import utils
-from emerge_config import *
+from EmergeConfig import *
 
 
 

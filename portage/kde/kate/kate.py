@@ -1,6 +1,6 @@
 import info
 import kdedefaults as kd
-from emerge_config import *
+from EmergeConfig import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

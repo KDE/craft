@@ -13,7 +13,7 @@ from collections import OrderedDict
 import utils
 import compiler
 from options import *
-import version_info
+import VersionInfo
 
 
 class infoclass(object):
@@ -22,7 +22,7 @@ class infoclass(object):
         ### package options
         self.parent = parent
         self.options = Options()
-        self.versionInfo = version_info.VersionInfo(self)
+        self.versionInfo = VersionInfo.VersionInfo(self)
         self.options.readFromEnv()
         self.targets = OrderedDict()
         self.archiveNames = OrderedDict()

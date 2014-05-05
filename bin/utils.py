@@ -26,7 +26,7 @@ from operator import itemgetter
 import ctypes
 
 import Notifier.NotificationLoader
-from emerge_config import *
+from EmergeConfig import *
 
 
 if os.name == 'nt':

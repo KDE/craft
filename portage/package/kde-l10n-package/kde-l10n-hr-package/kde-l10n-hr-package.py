@@ -2,7 +2,7 @@ import os
 
 import info
 import kdedefaults as kd
-from emerge_config import *
+from EmergeConfig import *
 
 
 kd.setKDEPath(os.path.join(EmergeStandardDirs.emergeRoot(),'emerge','portage','kde'))

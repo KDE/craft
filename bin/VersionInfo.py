@@ -3,7 +3,7 @@
 # copyright:
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
-from emerge_config import *
+from EmergeConfig import *
 import utils
 
 

@@ -25,7 +25,7 @@ import datetime
 import threading
 import traceback
 import argparse
-from emerge_config import *
+from EmergeConfig import *
 import compiler
 
 

@@ -34,7 +34,7 @@ import os
 import inspect
 import shlex
 
-from emerge_config import  *
+from EmergeConfig import  *
 import utils
 import portage
 

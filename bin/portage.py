@@ -6,7 +6,7 @@ import importlib
 from collections import OrderedDict
 
 from EmergePackageObject import PackageObjectBase
-from emerge_config import *
+from EmergeConfig import *
 import InstallDB
 import utils
 

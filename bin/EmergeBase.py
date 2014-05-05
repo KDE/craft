@@ -9,7 +9,7 @@ from ctypes import *
 import utils
 import portage
 import compiler
-from emerge_config import *
+from EmergeConfig import *
 import utils
 
 

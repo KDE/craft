@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import threading
-from emerge_config import *
+from EmergeConfig import *
 
 import utils
 import portage

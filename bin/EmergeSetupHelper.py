@@ -6,7 +6,7 @@
 import subprocess
 import argparse
 
-from emerge_config import *
+from EmergeConfig import *
 import compiler
 
 
