@@ -36,7 +36,6 @@ class VersionInfo( object ):
 
             for iniPath in possibleInis:
                 iniPath = os.path.abspath( iniPath )
-                print(iniPath)
                 if iniPath in VersionInfo._VERSION_INFOS.keys( ):
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
                     utils.debug( "Found a version info for %s in cache" % name, 1 )
