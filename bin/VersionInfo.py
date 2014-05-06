@@ -47,10 +47,10 @@ class VersionInfo( object ):
         return self.__defaulVersions
 
 
-    def _getVersionInfo( self, key, name = None ):
+    def _getVersionInfo( self, key, default = "" ):
         if self._defaulVersions.has_section( "General" ) and key in self._defaulVersions[ "General" ]:
             return self._defaulVersions[ "General" ][ key ]
-        return ""
+        return default
 
     def tags( self ):
         return self._getVersionInfo( "tags" ).split( ";" )
@@ -62,7 +62,7 @@ class VersionInfo( object ):
         return self._getVersionInfo( "tarballs" ).split( ";" )
 
     def defaultTarget( self ):
-        name = self._getVersionInfo( "name", "defaultTarget" )
+        name = self._getVersionInfo( "name" )
         if ("PortageVersions", name) in emergeSettings:
             return emergeSettings.get( "PortageVersions", name )
         return self._getVersionInfo( "defaulttarget" )
@@ -79,11 +79,31 @@ class VersionInfo( object ):
 
         while EmergeConfig.variablePatern.search(text):
             for match in EmergeConfig.variablePatern.findall( text ):
-                text = text.replace( match, replaces[ match[ 2:-1 ] ] )
+                text = text.replace( match, replaces[ match[ 2:-1 ].upper() ] )
         return text
 
 
     def setDefaultVersions( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
+        """
+        Set svn and tarball targets based on the settings in the next version.ini
+        Parameters may contain ${} Variables which then will be replaces.
+        Available variables:
+        ${PACKAGE_NAME} : The name of the package
+        ${VERSION} : The version of the package defined in version.ini
+        If the version matches \d.\d.\d there is also avalible:
+            ${VERSION_MAJOR} : The first part of ${VERSION}
+            ${VERSION_MINOR} : The secon part of ${VERSION}
+            ${VERSION_PATCH_LEVEL} : The the third part of ${VERSION}
+
+        """
+        if tarballUrl is None:
+            tarballUrl = self._getVersionInfo("tarballUrl", None)
+        if tarballDigestUrl is None:
+            tarballDigestUrl = self._getVersionInfo("tarballDigestUrl", None)
+        if tarballInstallSrc is None:
+            tarballInstallSrc = self._getVersionInfo("tarballInstallSrc", None)
+        if gitUrl is None:
+            gitUrl = self._getVersionInfo("gitUrl", None)
         if not tarballUrl is None:
             for ver in self.tarballs( ):
                 self.subinfo.targets[ ver ] = self._replaceVar( tarballUrl, ver )

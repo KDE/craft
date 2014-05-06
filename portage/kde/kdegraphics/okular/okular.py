@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['win32libs/chm'] = 'default'
-        self.dependencies['kde/kdelibs'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/poppler'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
@@ -30,7 +30,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/ebook-tools'] = 'default'
         self.buildDependencies['win32libs/libspectre'] = 'default'
         self.dependencies['binary/ghostscript'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 from Package.CMakePackageBase import *
 
