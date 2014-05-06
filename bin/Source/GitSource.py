@@ -237,7 +237,7 @@ class GitSource ( VersionSystemSourceBase ):
         utils.trace( 'GitSource createPatch', 2 )
         patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) )
-        with open(patchFileName,'w') as patchFile:
+        with open(patchFileName,'wt+') as patchFile:
             return self.__git('diff', stdout=patchFile)
 
     def sourceVersion( self ):

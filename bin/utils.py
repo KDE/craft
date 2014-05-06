@@ -303,10 +303,8 @@ def createFilesDigests( downloaddir, filenames ):
 def createDigestFile(path):
     """creates a sha1 diget file"""
     digets = digestFileSha1(path)
-    f = open(path + ".sha1","wb+")
-    f.write(bytes(digets,"UTF-8"))
-    f.write(bytes("\n",'UTF-8'))
-    f.close()
+    with open(path + ".sha1","wt+") as f:
+        f.write("%s\n" % digets)
 
 def printFilesDigests( digestFiles, buildTarget=None):
     size = len( digestFiles )
@@ -948,8 +946,8 @@ def putenv(name, value):
     return True
 
 def unixToDos(filename):
-    with open(filename, "rb") as f:
-        return str(f.read(),'UTF-8').replace('\n', '\r\n')
+    with open(filename, "rt+") as f:
+        return f.read().replace('\n', '\r\n')
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
