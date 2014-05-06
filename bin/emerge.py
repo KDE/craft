@@ -10,12 +10,12 @@ import sys
 
 # The minimum python version for emerge please edit here
 # if you add code that changes this requirement
-MIN_PY_VERSION = (3, 3, 0)
+MIN_PY_VERSION = (3, 4, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
-    print( "Error: Python too old!" )
-    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION )
-    print( "Please install it and adapt your kdesettings.bat" )
+    print( "Error: Python too old!", file= sys.stderr )
+    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file= sys.stderr )
+    print( "Please install it and adapt your kdesettings.bat", file= sys.stderr )
     exit( 1 )
 
 import portageSearch
