@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         if self.options.features.nepomuk:
             self.dependencies['kde/kdepimlibs'] = 'default'
             self.dependencies['kde/nepomuk-core'] = 'default'
-        if compiler.isMinGW_WXX():
+        if compiler.isMinGW():
             self.dependencies['win32libs/libbfd'] = 'default'
 
 from Package.CMakePackageBase import *

@@ -49,9 +49,6 @@ def isMinGW():
 def isMinGW32():
     return isMinGW() and _getGCCTarget() == "mingw32"
 
-def isMinGW_WXX():
-    return isMinGW_W32() or isMinGW_W64()
-
 def isMinGW_W32():
     return isMinGW() and _getGCCTarget() == "i686-w64-mingw32"
 

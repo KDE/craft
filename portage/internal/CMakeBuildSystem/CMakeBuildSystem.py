@@ -7,8 +7,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/jom'] = 'default'
 
         if compiler.isMinGW():
-            if compiler.isMinGW_WXX():
-                self.buildDependencies['dev-util/mingw-w64']    = 'default'
+            self.buildDependencies['dev-util/mingw-w64']    = 'default'
 
 from Package.InternalPackageBase import *
 
