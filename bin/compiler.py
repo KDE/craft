@@ -46,9 +46,6 @@ def _compiler():
 def isMinGW():
     return _compiler().startswith("mingw")
 
-def isMinGW32():
-    return isMinGW() and _getGCCTarget() == "mingw32"
-
 def isMinGW_W32():
     return isMinGW() and _getGCCTarget() == "i686-w64-mingw32"
 
@@ -82,8 +79,6 @@ def getCompilerName():
             return "mingw-w32"
         elif isMinGW_W64():
             return "mingw-w64"
-        elif isMinGW32():
-            return "mingw32"
     elif isMSVC():
         return _compiler()
     elif isIntel():
