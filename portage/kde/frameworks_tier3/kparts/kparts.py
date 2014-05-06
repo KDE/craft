@@ -3,10 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.versionInfo.setDefaultValues("http://download.kde.org/unstable/frameworks/${VERSION}/${PACKAGE_NAME}-${VERSION}.tar.xz",
-                                            "http://download.kde.org/unstable/frameworks/${VERSION}/${PACKAGE_NAME}-${VERSION}.tar.xz.sha1",
-                                            "${PACKAGE_NAME}-${VERSION}",
-                                            "[git]kde:${PACKAGE_NAME}" )
+        self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Plugin framework for user interface components"
         
