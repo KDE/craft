@@ -14,6 +14,7 @@ class VersionInfo( object ):
     def __init__( self, parent ):
         self.subinfo = parent
         self.__defaulVersions = None
+        self._fileName = None
 
     @property
     def _defaulVersions( self ):
@@ -27,11 +28,15 @@ class VersionInfo( object ):
                     return VersionInfo._VERSION_INFOS[ VersionInfo._VERSION_INFOS_HINTS[ name ] ]
             root = os.path.dirname( name )
 
-            dirs = [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),
-                     os.path.join( root, "..", "..", "version.ini" ) ]
+            if self._fileName is None:
+                possibleInis= [ os.path.join( root, "version.ini" ), os.path.join( root, "..", "version.ini" ),
+                         os.path.join( root, "..", "..", "version.ini" ) ]
+            else:
+                possibleInis = [self._fileName]
 
-            for iniPath in dirs:
+            for iniPath in possibleInis:
                 iniPath = os.path.abspath( iniPath )
+                print(iniPath)
                 if iniPath in VersionInfo._VERSION_INFOS.keys( ):
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
                     utils.debug( "Found a version info for %s in cache" % name, 1 )
@@ -83,7 +88,12 @@ class VersionInfo( object ):
         return text
 
 
-    def setDefaultVersions( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
+    def setDefaultValuesFromFile(self, fileName, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
+        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.filename),fileName))
+        self.setDefaultValues(tarballUrl,tarballDigestUrl,tarballInstallSrc,gitUrl)
+
+
+    def setDefaultValues( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
         """
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.

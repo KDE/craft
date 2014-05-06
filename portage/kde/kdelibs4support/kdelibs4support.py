@@ -4,7 +4,7 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.versionInfo.setDefaultVersions("http://download.kde.org/unstable/frameworks/${VERSION}/kde4support-${VERSION}.tar.xz",
+        self.versionInfo.setDefaultValues("http://download.kde.org/unstable/frameworks/${VERSION}/kde4support-${VERSION}.tar.xz",
                                             "http://download.kde.org/unstable/frameworks/${VERSION}/kde4support-${VERSION}.tar.xz.sha1",
                                             "${PACKAGE_NAME}-${VERSION}",
                                             "[git]kde:${PACKAGE_NAME}" )

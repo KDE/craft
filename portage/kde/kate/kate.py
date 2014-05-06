@@ -3,7 +3,7 @@ from EmergeConfig import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.versionInfo.setDefaultVersions( )
+        self.versionInfo.setDefaultValuesFromFile( )
 
         self.shortDescription = "the KDE text editor"
         self.defaultTarget = 'frameworks'

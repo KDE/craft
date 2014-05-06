@@ -1,7 +1,7 @@
 import info
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.versionInfo.setDefaultVersions("http://downloads.sourceforge.net/boost/boost_${VERSION}.7z",
+        self.versionInfo.setDefaultValues("http://downloads.sourceforge.net/boost/boost_${VERSION}.7z",
                                             tarballInstallSrc = "boost_${VERSION}")
 
         self.targetDigests['1_48_0'] = 'f221f067620e5af137e415869bd96ad667db9830'

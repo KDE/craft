@@ -1,7 +1,7 @@
 import info
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.versionInfo.setDefaultVersions("", tarballInstallSrc = self.package.replace("boost-","").replace("-", "_"))
+        self.versionInfo.setDefaultValues("", tarballInstallSrc = self.package.replace("boost-","").replace("-", "_"))
 
         self.homepage = 'http://www.boost.org/'
 

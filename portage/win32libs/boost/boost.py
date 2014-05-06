@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.versionInfo.setDefaultVersions("")
+        self.versionInfo.setDefaultValues("")
 
         self.homepage = 'http://www.boost.org/'
 
