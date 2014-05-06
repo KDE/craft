@@ -20,9 +20,6 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/subversion'] = 'default'
             self.buildDependencies['dev-util/git']        = 'default'
 
-        # for creating combined packages
-        self.buildDependencies['dev-util/pexports']   = 'default'
-
         if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['dev-util/putty']      = 'default'
 

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qimageblitz'
-  
+
         self.shortDescription = "Graphical effects library for KDE4"
         self.defaultTarget = 'svnHEAD'
 
