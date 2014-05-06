@@ -177,10 +177,10 @@ example:
             ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
         return ret
 
-    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler=None):
+    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler_name=None):
         """return full url of a package provided by the kdewin mirrors"""
         repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
-        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler_name=compiler )
+        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler_name=compiler_name )
 
     def getPackageList( self, baseUrl, files ):
         """returns a package url for multiple files from the same base url"""
