@@ -9,6 +9,9 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["libs/qtdeclarative"] = "default"
+        self.buildDependencies["libs/qtscript"] = "default"
+        self.buildDependencies["libs/qtwebkit"] = "default"
         self.dependencies[ 'kde/karchive' ] = 'default'
         self.dependencies[ 'kde/kcmutils' ] = 'default'
         self.dependencies[ 'kde/kconfig' ] = 'default'
@@ -19,6 +22,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kitemmodels' ] = 'default'
         self.dependencies[ 'kde/kitemviews' ] = 'default'
         self.dependencies[ 'kde/kxmlgui' ] = 'default'
+        self.dependencies[ 'kde/libkomparediff2' ] = 'default'
 
 from Package.CMakePackageBase import *
 
