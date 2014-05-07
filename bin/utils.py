@@ -906,7 +906,7 @@ def moveDir( srcdir, destdir ):
     try:
         shutil.move( srcdir, destdir )
     except Exception as e:
-        print(e)
+        warning(e)
         return False
     return True
 

@@ -120,6 +120,8 @@ class SetupHelper( object ):
         self.addEnvVar( "SVN_SSH", "plink" )
         self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
+        self.addEnvVar( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ) )
+
         self.addEnvVar( "QT_PLUGIN_PATH", "%s;%s" % (
             os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
             os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "kde4", "plugins" )) )

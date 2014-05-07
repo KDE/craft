@@ -49,8 +49,6 @@ class MSysShell(object):
             utils.putenv("FC", "no")
             cflags += " -MD -Zi"
 
-        
-        utils.putenv("PKG_CONFIG_PATH", "%s/lib/pkgconfig" % mergeroot)
 
         utils.putenv("CFLAGS", cflags)
         utils.putenv("LDFLAGS", ldflags)
