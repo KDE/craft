@@ -903,7 +903,12 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
     debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
-    shutil.move( srcdir, destdir )
+    try:
+        shutil.move( srcdir, destdir )
+    except Exception as e:
+        print(e)
+        return False
+    return True
 
 def rmtree( directory ):
     """ recursively delete directory """
