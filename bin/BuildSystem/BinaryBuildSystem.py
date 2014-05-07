@@ -16,12 +16,6 @@ class BinaryBuildSystem(BuildSystemBase):
         return True
 
     def install( self ):
-        if self.subinfo.buildTarget in self.subinfo.targetInstSrc:
-            sdir = os.path.join(self.imageDir(),self.subinfo.targetInstSrc[ self.subinfo.buildTarget ] )
-            for f in os.listdir(sdir):
-                if not utils.moveDir( os.path.join(sdir, f), self.imageDir()):
-                    return False
-
         return BuildSystemBase.install(self)
 
 
