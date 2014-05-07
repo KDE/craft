@@ -58,7 +58,7 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
                 continue
             found = True
             success = success and doExec( category, package, action )
-    elif ( buildAction == "all" or buildAction == "full-package" ):
+    elif ( buildAction in ["all", "full-package", "update", "update-all"] ):
         success = success and doExec( category, package, "fetch" )
         success = success and doExec( category, package, "unpack" )
         success = success and doExec( category, package, "compile" )
