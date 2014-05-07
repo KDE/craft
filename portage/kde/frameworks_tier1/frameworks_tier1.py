@@ -13,7 +13,6 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kconfig'] = 'default'
         self.dependencies['kde/kcoreaddons'] = 'default'
         self.dependencies['kde/kdbusaddons'] = 'default'
-        self.dependencies['kde/kf5umbrella'] = 'default'
         self.dependencies['kde/kglobalaccel'] = 'default'
         self.dependencies['kde/kguiaddons'] = 'default'
         self.dependencies['kde/ki18n'] = 'default'
