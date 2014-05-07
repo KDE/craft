@@ -34,14 +34,9 @@ if not exist %~dp0..\etc\kdesettings.ini (
 
 rem load the python path from the kdesettings.ini
 rem
-FOR /F "tokens=1 delims=" %%A in ('FINDSTR "PYTHONPATH" %~dp0..\etc\kdesettings.ini') do (
- SET Z=%%A
- rem remove whitespace
- SET Z=!Z: =!
- SET !Z!
-)
-set PATH=!PYTHONPATH!;!PATH!
-set PYTHONPATH=
+FOR /F "tokens=1 delims=" %%A in ('powershell -ExecutionPolicy RemoteSigned %~dp0kdeenv.ps1 --get Paths PYTHONPATH') do SET _PYTHONPATH=%%A
+set PATH=!_PYTHONPATH!;!PATH!
+set _PYTHONPATH=
 
 FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --setup --mode bat') do (
     SET Z=%%A

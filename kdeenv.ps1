@@ -46,6 +46,12 @@ else
     Write-Error("$EMERGE_ROOT\..\etc\kdesettings.ini Does not exist")
     break
 }
+if( $EMERGE_ARGUMENTS[0] -eq "--get")
+{
+    Write-Host($settings[$EMERGE_ARGUMENTS[1]][$EMERGE_ARGUMENTS[2]])
+    break
+}
+
 
 function prependPATH([string] $path)
 {
