@@ -44,7 +44,7 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
     if package is None:
         return False
 
-    if buildAction in [ "test", "test-direct-deps" ]:
+    if buildAction == "test":
         success = doExec( package, "test" ) or continueFlag
     elif continueFlag:
         actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'qmerge' ]
@@ -99,7 +99,7 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
     return success
 
 
-def handleSinglePackage( packageName, dependencyDepth, args ):
+def handleSinglePackage( packageName, args ):
     _deplist = [ ]
     deplist = [ ]
     packageList = [ ]
@@ -143,7 +143,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
 
     for mainCategory, entry in zip( categoryList, packageList ):
         _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, args.dependencyType,
-                                              maxDetpth = dependencyDepth )
+                                              maxDetpth = args.dependencydepth )
 
     deplist = [ p.ident( ) for p in _deplist ]
 
@@ -186,20 +186,17 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
     # package[1] -> package
     # package[2] -> version
 
-    if not args.action in [ "all", "install-deps", "update-direct-deps", "test-direct-deps" ] and not args.list_file:
+
+    mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
+    if not portage.PortageInstance.isVirtualPackage(mainCategory, mainPackage) and not args.action in [ "all", "install-deps" ] and not args.list_file:
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
         # package
         # for list files, we also want to handle fetching & packaging per package
 
-        if packageName and len( deplist ) >= 1:
-            mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
-        else:
-            mainCategory, mainPackage, mainVersion = None, None, None
-
         if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                              args.doContinue, args.skipuptodatevcs ):
+                              args.doContinue, args.update_fast ):
             utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s-%s failed" % (
                 args.action, mainCategory, mainPackage, mainVersion), args.action )
             return False
@@ -243,7 +240,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
                         args.action = "all"
 
                     if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                                          args.doContinue, args.skipuptodatevcs ):
+                                          args.doContinue, args.update_fast ):
                         utils.error( "fatal error: package %s/%s-%s %s failed" % \
                                      ( mainCategory, mainPackage, mainVersion, args.action ) )
                         utils.notify( "Emerge build failed",
@@ -335,9 +332,11 @@ def main( ):
                          help = "This will show a list of all packages that are installed currently." )
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
-    parser.add_argument( "--skipuptodatevcs", action = "store_true" )
+    parser.add_argument( "--update-fast", action = "store_true", help ="If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
+    parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default= -1,
+                         help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package")
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
-                       "install", "qmerge", "manifest", "package", "unmerge", "test", "test-direct-deps",
+                       "install", "qmerge", "manifest", "package", "unmerge", "test",
                        "checkdigest", "dumpdeps",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
                        "version-dir", "version-package", "print-targets",
@@ -345,7 +344,6 @@ def main( ):
         addBuildaAction( x )
     addBuildaAction( "print-revision", "Print the revision of the package and exit" )
     addBuildaAction( "update", "Update a single package" )
-    addBuildaAction( "update-direct-deps", "Update all direct dependencies of a package" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
@@ -377,17 +375,12 @@ def main( ):
             portageSearch.printSearch( category, package )
         return True
 
-    if args.action in [ "install-deps", "update", "update-all", "update-direct-deps" ]:
+    if args.action in [ "install-deps", "update", "update-all" ]:
         args.ignoreInstalled = True
 
     if args.action in [ "update", "update-all" ]:
         args.noclean = True
 
-    dependencyDepth = -1  #TODO
-
-    if args.action in [ "update-direct-deps", "test-direct-deps" ]:
-        args.ignoreAllInstalled = True
-        dependencyDepth = 1
 
     utils.debug( "buildAction: %s" % args.action )
     utils.debug( "doPretend: %s" % args.probe, 1 )
@@ -405,7 +398,7 @@ def main( ):
         portage.printInstallables( )
     else:
         for x in args.packageNames:
-            if not handleSinglePackage( x, dependencyDepth, args ):
+            if not handleSinglePackage( x, args ):
                 return False
     return True
 
