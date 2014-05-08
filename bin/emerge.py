@@ -8,6 +8,8 @@
 
 # The minimum python version for emerge please edit here
 # if you add code that changes this requirement
+
+import sys
 MIN_PY_VERSION = (3, 4, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
