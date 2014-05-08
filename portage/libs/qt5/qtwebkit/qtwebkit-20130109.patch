@@ -1,3 +1,29 @@
+diff --git a/Source/ThirdParty/ANGLE/DerivedSources.pri b/Source/ThirdParty/ANGLE/DerivedSources.pri
+index 8f950e8..75e487d 100644
+--- a/Source/ThirdParty/ANGLE/DerivedSources.pri
++++ b/Source/ThirdParty/ANGLE/DerivedSources.pri
+@@ -26,7 +26,7 @@ ANGLE_BISON_SOURCES = \
+ 
+ anglebison_decl.output = ${QMAKE_FILE_BASE}_tab.h
+ anglebison_decl.input = ANGLE_BISON_SOURCES
+-anglebison_decl.commands = bison --no-lines --skeleton=yacc.c --defines=${QMAKE_FILE_OUT} --output=${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_OUT_BASE}.cpp ${QMAKE_FILE_IN}
++anglebison_decl.commands = $$BISON  --no-lines --skeleton=yacc.c --defines=${QMAKE_FILE_OUT} --output=${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_OUT_BASE}.cpp ${QMAKE_FILE_IN}
+ anglebison_decl.variable_out = GENERATED_FILES
+ GENERATORS += anglebison_decl
+ 
+diff --git a/Source/WebCore/DerivedSources.pri b/Source/WebCore/DerivedSources.pri
+index 57a6b0f..199f422 100644
+--- a/Source/WebCore/DerivedSources.pri
++++ b/Source/WebCore/DerivedSources.pri
+@@ -987,7 +987,7 @@ GENERATORS += pluginsresources
+ # GENERATOR 11: XPATH grammar
+ xpathbison.output = ${QMAKE_FILE_BASE}.cpp
+ xpathbison.input = XPATHBISON
+-xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
++xpathbison.commands = $$BISON -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp && $(MOVE) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
+ xpathbison.depends = ${QMAKE_FILE_NAME}
+ GENERATORS += xpathbison
+ 
 diff --git a/Source/WebCore/html/StepRange.h b/Source/WebCore/html/StepRange.h
 index 697a7b5..28e5e7c 100644
 --- a/Source/WebCore/html/StepRange.h
@@ -41,8 +67,22 @@ index 2dbb50c..813525c 100644
  
      for(generator, GENERATORS) {
          eval($${generator}.CONFIG = target_predeps no_link)
+diff --git a/Tools/qmake/mkspecs/features/default_pre.prf b/Tools/qmake/mkspecs/features/default_pre.prf
+index 38443a4..1ab3fb7 100644
+--- a/Tools/qmake/mkspecs/features/default_pre.prf
++++ b/Tools/qmake/mkspecs/features/default_pre.prf
+@@ -106,7 +106,9 @@ if(win32|mac):!macx-xcode {
+ # A newer version of flex is required on Windows. At the moment the only
+ # one that appears to provide binaries and is not cygwin is winflex.
+ FLEX = flex
++BISON = bison
+ win32: FLEX = win_flex
++win32: BISON = win_bison
+ 
+ BIN_EXTENSION =
+ win32: BIN_EXTENSION = .exe
 diff --git a/Tools/qmake/mkspecs/features/functions.prf b/Tools/qmake/mkspecs/features/functions.prf
-index aedf000..07a1a66 100644
+index 46293fe..dd7be68 100644
 --- a/Tools/qmake/mkspecs/features/functions.prf
 +++ b/Tools/qmake/mkspecs/features/functions.prf
 @@ -202,9 +202,6 @@ defineTest(programExistsInPath) {
