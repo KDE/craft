@@ -71,12 +71,13 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
 
     elif (buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                            "dumpdeps",
-                           "package", "unmerge", "test", "cleanimage", "cleanbuild", "createpatch",
+                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                            "geturls",
                            "print-revision" ] and category and package and version ):
-        success = True
-        success = success and doExec( category, package, buildAction )
-    elif ( buildAction == "install" ):
+        success = doExec( category, package, buildAction )
+    elif buildAction in [ "test", "test-direct-deps" ] and category and package and version:
+        success = doExec( category, package, "test" )
+    elif buildAction == "install":
         success = True
         success = success and doExec( category, package, "cleanimage" )
         success = success and doExec( category, package, "install" )
@@ -144,7 +145,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
     deplist = [ p.ident( ) for p in _deplist ]
 
     for item in deplist:
-        item.append( False )
+        item.append( args.ignoreAllInstalled )
         if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
             item[ -1 ] = True
 
@@ -182,7 +183,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
     # package[1] -> package
     # package[2] -> version
 
-    if ( not args.action in [ "all", "install-deps", "update-direct-deps" ] and not args.list_file ):
+    if ( not args.action in [ "all", "install-deps", "update-direct-deps", "test-direct-deps" ] and not args.list_file ):
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -295,6 +296,9 @@ def main( ):
                          default = int( emergeSettings.get( "General", "EMERGE_TRACE", "0" ) ), type = int )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
+    parser.add_argument( "-ia", "--ignoreAllInstalled", action = "store_true",
+                         help = "ignore all install: using this option will install all package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
+
     parser.add_argument( "--target", action = "store",
                          help = "This will override the build of the default target. The default Target is marked with a star in the printout of --print-targets" )
     parser.add_argument( "--search", action = "store_true",
@@ -324,7 +328,7 @@ def main( ):
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
-                       "install", "qmerge", "manifest", "package", "unmerge", "test",
+                       "install", "qmerge", "manifest", "package", "unmerge", "test", "test-direct-deps",
                        "checkdigest", "dumpdeps",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
                        "version-dir", "version-package",
@@ -370,8 +374,8 @@ def main( ):
 
     dependencyDepth = -1  #TODO
 
-    if args.action == "update-direct-deps":
-        args.outDateVCS = True
+    if args.action in [ "update-direct-deps", "test-direct-deps" ]:
+        args.ignoreAllInstalled = True
         dependencyDepth = 1
 
     utils.debug( "buildAction: %s" % args.action )
