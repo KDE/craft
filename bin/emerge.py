@@ -6,27 +6,24 @@
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
-import sys
-
 # The minimum python version for emerge please edit here
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 4, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
-    print( "Error: Python too old!", file= sys.stderr )
-    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file= sys.stderr )
-    print( "Please install it and adapt your kdesettings.bat", file= sys.stderr )
+    print( "Error: Python too old!", file = sys.stderr )
+    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file = sys.stderr )
+    print( "Please install it and adapt your kdesettings.bat", file = sys.stderr )
     exit( 1 )
+
+import time
+import datetime
+import traceback
+import argparse
 
 import portageSearch
 from InstallDB import *
-import time
-import datetime
-import threading
-import traceback
-import argparse
 from EmergeConfig import *
-import compiler
 
 
 @utils.log
@@ -56,13 +53,13 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
                 continue
             found = True
             success = success and doExec( package, action )
-    elif ( buildAction in ["all", "full-package", "update", "update-all"] ):
+    elif buildAction in [ "all", "full-package", "update", "update-all" ]:
         success = success and doExec( package, "fetch" )
-        if success and skipUpToDateVcs and package.subinfo.hasSvnTarget():
+        if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
             done = True
-            revision = package.sourceVersion()
-            for p in installdb.getInstalledPackages(category,packageName):
-                if p.getRevision() != revision:
+            revision = package.sourceVersion( )
+            for p in installdb.getInstalledPackages( category, packageName ):
+                if p.getRevision( ) != revision:
                     done = False
             if done: return True
 
@@ -75,11 +72,11 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
         if ( buildAction == "full-package" ):
             success = success and doExec( package, "package" )
 
-    elif (buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
-                           "dumpdeps",
-                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
-                           "geturls",
-                           "print-revision" ]):
+    elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
+                          "dumpdeps",
+                          "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
+                          "geturls",
+                          "print-revision" ]:
         success = doExec( package, buildAction )
     elif buildAction == "install":
         success = True
@@ -187,7 +184,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
     # package[1] -> package
     # package[2] -> version
 
-    if ( not args.action in [ "all", "install-deps", "update-direct-deps", "test-direct-deps" ] and not args.list_file ):
+    if not args.action in [ "all", "install-deps", "update-direct-deps", "test-direct-deps" ] and not args.list_file:
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -265,6 +262,11 @@ def main( ):
                                       Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
                                       epilog = """More information see the README or http://windows.kde.org/.
     Send feedback to <kde-windows@kde.org>.""" )
+
+    def addBuildaAction( x, help = None ):
+        parser.add_argument( "--%s" % x, action = "store_const", dest = "action", const = x, default = "all",
+                             help = help )
+
     parser.add_argument( "-p", "--probe", action = "store_true",
                          help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
     parser.add_argument( "--list-file", action = "store",
@@ -331,15 +333,17 @@ def main( ):
                          help = "This will show a list of all packages that are installed currently." )
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
-    parser.add_argument("--skipuptodatevcs", action = "store_true")
+    parser.add_argument( "--skipuptodatevcs", action = "store_true" )
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
                        "install", "qmerge", "manifest", "package", "unmerge", "test", "test-direct-deps",
                        "checkdigest", "dumpdeps",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
-                       "version-dir", "version-package",
-                       "print-revision", "print-targets",
-                       "install-deps", "update", "update-direct-deps" ] ):
-        parser.add_argument( "--%s" % x, action = "store_const", dest = "action", const = x, default = "all" )
+                       "version-dir", "version-package", "print-targets",
+                       "install-deps" ] ):
+        addBuildaAction( x )
+    addBuildaAction( "print-revision", "Print the revision of the package and exit" )
+    addBuildaAction( "update", "Update a single package" )
+    addBuildaAction( "update-direct-deps", "Update all direct dependencies of a package" )
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
@@ -424,7 +428,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
-        utils.error("%s/%s failed: %s" % ( e.category, e.package, e))
+        utils.error( "%s/%s failed: %s" % ( e.category, e.package, e) )
     except Exception as e:
         print( e )
         traceback.print_tb( e.__traceback__ )
