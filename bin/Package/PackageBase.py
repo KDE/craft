@@ -230,7 +230,11 @@ class PackageBase (EmergeBase):
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:
-            ok = getattr(self, functions[command])()
+            try:
+                ok = getattr(self, functions[command])()
+            except AttributeError as e:
+                raise portage.PortageException( str( e ), self.category, self.package )
+
         else:
             ok = utils.error( "command %s not understood" % command )
 

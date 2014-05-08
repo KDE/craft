@@ -414,6 +414,8 @@ if __name__ == '__main__':
         succes = main( )
     except KeyboardInterrupt:
         pass
+    except portage.PortageException as e:
+        utils.error("%s/%s failed: %s" % ( e.category, e.package, e))
     except Exception as e:
         print( e )
         traceback.print_tb( e.__traceback__ )

@@ -143,5 +143,9 @@ class BuildSystemBase(EmergeBase):
                 filesDir = self.imageDir()
         return True
 
+    def unittest( self ):
+        """running unittests"""
+        return True
+
     def ccacheOptions(self):
         return ""
