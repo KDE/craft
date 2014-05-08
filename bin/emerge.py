@@ -49,7 +49,10 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
     utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
     success = True
 
-    if continueFlag:
+
+    if buildAction in [ "test", "test-direct-deps" ] and category and package and version:
+        success = doExec( category, package, "test" ) or continueFlag
+    elif continueFlag:
         actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'qmerge' ]
 
         found = None
@@ -75,8 +78,6 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
                            "geturls",
                            "print-revision" ] and category and package and version ):
         success = doExec( category, package, buildAction )
-    elif buildAction in [ "test", "test-direct-deps" ] and category and package and version:
-        success = doExec( category, package, "test" )
     elif buildAction == "install":
         success = True
         success = success and doExec( category, package, "cleanimage" )
