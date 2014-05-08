@@ -1,0 +1,3083 @@
+diff -Nru -x '*~' xz-5.0.5.orig/CMakeLists.txt xz-5.0.5/CMakeLists.txt
+--- xz-5.0.5.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/CMakeLists.txt	2014-05-08 18:21:20.800956300 +0200
+@@ -0,0 +1,235 @@
++cmake_minimum_required(VERSION 2.8.12)
++project(liblzma)
++include(CheckIncludeFiles)
++include(CheckFunctionExists)
++include(CheckSymbolExists)
++include(CheckTypeSize)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR} src/common src/liblzma/api src/liblzma/common src/liblzma/check src/liblzma/rangecoder src/liblzma/lz src/liblzma/lzma src/liblzma/delta src/liblzma/simple src/liblzma/subblock)
++
++check_include_files(biteswap.h HAVE_BYTESWAP_H)
++check_include_files(dlfcn.h HAVE_DLFCN_H)
++check_include_files(fcntl.h HAVE_FCNTL_H)
++check_include_files(getopt.h HAVE_GETOPT_H)
++check_include_files(inttypes.h HAVE_INTTYPES_H)
++check_include_files(limits.h HAVE_LIMITS_H)
++check_include_files(memory.h HAVE_MEMORY_H)
++check_include_files(stdbool.h HAVE_STDBOOL_H)
++check_include_files(stdint.h HAVE_STDINT_H)
++check_include_files(stdlib.h HAVE_STDLIB_H)
++check_include_files(strings.h HAVE_STRINGS_H)
++check_include_files(string.h HAVE_STRING_H)
++check_include_files(sys/param.h HAVE_SYS_PARAM_H)
++check_include_files(sys/stat.h HAVE_SYS_STAT_H)
++check_include_files(sys/sysctl.h HAVE_SYS_SYSCTL_H)
++check_include_files(sys/time.h HAVE_SYS_TIME_H)
++check_include_files(sys/types.h HAVE_SYS_TYPES_H)
++check_include_files(unistd.h HAVE_UNISTD_H)
++check_include_files(pthread.h HAVE_PTHREAD)
++
++set(HAVE_ASM_X86 1)
++set(HAVE_CHECK_CRC64 1)
++set(HAVE_CHECK_SHA256 1)
++set(HAVE_DECODER 1)
++set(HAVE_DECODER_ARM 1)
++set(HAVE_DECODER_ARMTHUMB 1)
++set(HAVE_DECODER_DELTA 1)
++set(HAVE_DECODER_IA64 1)
++set(HAVE_DECODER_LZMA1 1)
++set(HAVE_DECODER_LZMA2 1)
++set(HAVE_DECODER_POWERPC 1)
++set(HAVE_DECODER_SPARC 1)
++set(HAVE_DECODER_SUBBLOCK 0)
++set(HAVE_DECODER_X86 1)
++set(HAVE_ENCODER 1)
++set(HAVE_ENCODER_ARM 1)
++set(HAVE_ENCODER_ARMTHUMB 1)
++set(HAVE_ENCODER_DELTA 1)
++set(HAVE_ENCODER_IA64 1)
++set(HAVE_ENCODER_LZMA1 1)
++set(HAVE_ENCODER_LZMA2 1)
++set(HAVE_ENCODER_POWERPC 1)
++set(HAVE_ENCODER_SPARC 1)
++set(HAVE_ENCODER_SUBBLOCK 0)
++set(HAVE_ENCODER_X86 1)
++set(HAVE_FAST_UNALIGNED_ACCESS 1)
++set(HAVE_MF_BT2 1)
++set(HAVE_MF_BT3 1)
++set(HAVE_MF_BT4 1)
++set(HAVE_MF_HC3 1)
++set(HAVE_MF_HC4 1)
++set(HAVE_MF_BT3 1)
++set(STDC_HEADERS 1)
++
++check_function_exists(bswap_16 HAVE_BSWAP_16)
++check_function_exists(bswap_32 HAVE_BSWAP_32)
++check_function_exists(bswap_64 HAVE_BSWAP_64)
++check_function_exists(dcgettext HAVE_DCGETTEXT)
++check_function_exists(futimens HAVE_FUTIMENS)
++check_function_exists(futimes HAVE_FUTIMES)
++check_function_exists(futimesat HAVE_FUTIMESAT)
++check_function_exists(gettext HAVE_GETTEXT)
++check_function_exists(iconv HAVE_ICONV)
++check_function_exists(utime HAVE_UTIME)
++check_function_exists(utimes HAVE_UTIMES)
++
++check_symbol_exists(OPTRESET "getopt.h" HAVE_OPTRESET)
++
++set(CMAKE_EXTRA_INCLUDE_FILES "stdint.h")
++
++check_type_size(size_t SIZEOF_SIZE_T)
++check_type_size(uintptr_t UINTPTR_T)
++check_type_size(int8_t      INT8_T)
++check_type_size(uint8_t     UINT8_T)
++check_type_size(int16_t     INT16_T)
++check_type_size(uint16_t    UINT16_T)
++check_type_size(int32_t     INT32_T)
++check_type_size(uint32_t    UINT32_T)
++check_type_size(int64_t     INT64_T)
++check_type_size(uint64_t    UINT64_T)
++
++SET(CMAKE_EXTRA_INCLUDE_FILES)
++
++
++configure_file(config.h.cmake config.h)
++
++set(LZMA_SRC src/liblzma/common/alone_decoder.c
++    src/liblzma/common/alone_encoder.c
++    src/liblzma/common/auto_decoder.c
++    src/liblzma/common/block_buffer_decoder.c
++    src/liblzma/common/block_buffer_encoder.c
++    src/liblzma/common/block_decoder.c
++    src/liblzma/common/block_encoder.c
++    src/liblzma/common/block_header_decoder.c
++    src/liblzma/common/block_header_encoder.c
++    src/liblzma/common/block_util.c
++    src/liblzma/common/common.c
++    src/liblzma/common/easy_buffer_encoder.c
++    src/liblzma/common/easy_decoder_memusage.c
++    src/liblzma/common/easy_encoder.c
++    src/liblzma/common/easy_encoder_memusage.c
++    src/liblzma/common/easy_preset.c
++    src/liblzma/common/filter_common.c
++    src/liblzma/common/filter_decoder.c
++    src/liblzma/common/filter_encoder.c
++    src/liblzma/common/filter_flags_decoder.c
++    src/liblzma/common/filter_flags_encoder.c
++    src/liblzma/common/hardware_physmem.c
++    src/liblzma/common/index.c
++    src/liblzma/common/index_decoder.c
++    src/liblzma/common/index_encoder.c
++    src/liblzma/common/index_hash.c
++    src/liblzma/common/stream_buffer_decoder.c
++    src/liblzma/common/stream_buffer_encoder.c
++    src/liblzma/common/stream_decoder.c
++    src/liblzma/common/stream_encoder.c
++    src/liblzma/common/stream_flags_common.c
++    src/liblzma/common/stream_flags_decoder.c
++    src/liblzma/common/stream_flags_encoder.c
++    src/liblzma/common/vli_decoder.c
++    src/liblzma/common/vli_encoder.c
++    src/liblzma/common/vli_size.c
++    src/liblzma/check/check.c
++    src/liblzma/check/crc32_table.c
++    src/liblzma/check/crc64_table.c
++    src/liblzma/check/sha256.c
++    src/liblzma/rangecoder/price_table.c
++    src/liblzma/lz/lz_decoder.c
++    src/liblzma/lz/lz_encoder.c
++    src/liblzma/lz/lz_encoder_mf.c
++    src/liblzma/lzma/fastpos_table.c
++    src/liblzma/lzma/fastpos_tablegen.c
++    src/liblzma/lzma/lzma2_decoder.c
++    src/liblzma/lzma/lzma2_encoder.c
++    src/liblzma/lzma/lzma_decoder.c
++    src/liblzma/lzma/lzma_encoder.c
++    src/liblzma/lzma/lzma_encoder_optimum_fast.c
++    src/liblzma/lzma/lzma_encoder_optimum_normal.c
++    src/liblzma/lzma/lzma_encoder_presets.c
++    src/liblzma/delta/delta_common.c
++    src/liblzma/delta/delta_decoder.c
++    src/liblzma/delta/delta_encoder.c
++    src/liblzma/simple/arm.c
++    src/liblzma/simple/armthumb.c
++    src/liblzma/simple/ia64.c
++    src/liblzma/simple/powerpc.c
++    src/liblzma/simple/simple_coder.c
++    src/liblzma/simple/simple_decoder.c
++    src/liblzma/simple/simple_encoder.c
++    src/liblzma/simple/sparc.c
++    src/liblzma/simple/x86.c
++
++    src/liblzma/check/crc32_fast.c
++    src/liblzma/check/crc64_fast.c
++#     src/liblzma/check/crc32_x86.S
++#     src/liblzma/check/crc64_x86.S
++
++    src/common/tuklib_physmem.c
++    )
++
++add_definitions("-DHAVE_CONFIG_H")
++
++if(MSVC)
++    add_compile_options("/Ze") # we need language extensions
++else()
++    add_compile_options("-std=gnu99 -mms-bitfields")
++endif()
++
++add_library(lzma SHARED ${LZMA_SRC})
++install(TARGETS lzma RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++
++if(NOT MSVC) # uses unistd.h functions and getopt
++    set(XDEC_SRC src/xzdec/xzdec.c
++	src/common/tuklib_progname.c
++	src/common/tuklib_exit.c
++	)
++    add_executable(xzdec ${XDEC_SRC})
++    target_link_libraries(xzdec lzma)
++    install(TARGETS xzdec RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++
++    add_executable(lzmadec ${XDEC_SRC})
++    set_property(TARGET lzmadec PROPERTY COMPILE_DEFINITIONS LZMADEC)
++    target_link_libraries(lzmadec lzma)
++    install(TARGETS lzmadec RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++
++    set(XZ_SRC  src/xz/args.c
++	src/xz/hardware.c
++	src/xz/coder.c
++	src/xz/coder.h
++	src/xz/file_io.c
++	src/xz/list.c
++	src/xz/main.c
++	src/xz/message.c
++	src/xz/options.c
++	src/xz/signals.c
++	src/xz/suffix.c
++	src/xz/util.c
++    
++	src/common/tuklib_progname.c
++	src/common/tuklib_exit.c
++	src/common/tuklib_cpucores.c
++	src/common/tuklib_mbstr_fw.c
++	src/common/tuklib_mbstr_width.c
++	src/common/tuklib_open_stdxxx.c
++	)
++
++    add_executable(xz ${XZ_SRC})
++    target_link_libraries(xz lzma)
++
++    if(HAVE_PTHREAD)
++	target_link_libraries(xz pthread)
++    endif(HAVE_PTHREAD)
++
++    install(TARGETS xz RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++
++    set(LZMAINFO_SRC 
++	src/lzmainfo/lzmainfo.c
++	src/common/tuklib_progname.c
++	src/common/tuklib_exit.c
++    )
++
++    add_executable(lzmainfo ${LZMAINFO_SRC})
++    target_link_libraries(lzmainfo lzma)
++    install(TARGETS lzmainfo RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
++endif()
++install(DIRECTORY src/liblzma/api/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+diff -Nru -x '*~' xz-5.0.5.orig/CMakeLists.txt.user xz-5.0.5/CMakeLists.txt.user
+--- xz-5.0.5.orig/CMakeLists.txt.user	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/CMakeLists.txt.user	2014-05-08 18:21:20.804956500 +0200
+@@ -0,0 +1,339 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE QtCreatorProject>
++<!-- Written by QtCreator 3.1.0, 2014-05-08T16:56:25. -->
++<qtcreator>
++ <data>
++  <variable>ProjectExplorer.Project.ActiveTarget</variable>
++  <value type="int">0</value>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.EditorSettings</variable>
++  <valuemap type="QVariantMap">
++   <value type="bool" key="EditorConfiguration.AutoIndent">true</value>
++   <value type="bool" key="EditorConfiguration.AutoSpacesForTabs">false</value>
++   <value type="bool" key="EditorConfiguration.CamelCaseNavigation">true</value>
++   <valuemap type="QVariantMap" key="EditorConfiguration.CodeStyle.0">
++    <value type="QString" key="language">Cpp</value>
++    <valuemap type="QVariantMap" key="value">
++     <value type="QByteArray" key="CurrentPreferences">CppGlobal</value>
++    </valuemap>
++   </valuemap>
++   <valuemap type="QVariantMap" key="EditorConfiguration.CodeStyle.1">
++    <value type="QString" key="language">QmlJS</value>
++    <valuemap type="QVariantMap" key="value">
++     <value type="QByteArray" key="CurrentPreferences">QmlJSGlobal</value>
++    </valuemap>
++   </valuemap>
++   <value type="int" key="EditorConfiguration.CodeStyle.Count">2</value>
++   <value type="QByteArray" key="EditorConfiguration.Codec">UTF-8</value>
++   <value type="bool" key="EditorConfiguration.ConstrainTooltips">false</value>
++   <value type="int" key="EditorConfiguration.IndentSize">4</value>
++   <value type="bool" key="EditorConfiguration.KeyboardTooltips">false</value>
++   <value type="int" key="EditorConfiguration.MarginColumn">80</value>
++   <value type="bool" key="EditorConfiguration.MouseHiding">true</value>
++   <value type="bool" key="EditorConfiguration.MouseNavigation">true</value>
++   <value type="int" key="EditorConfiguration.PaddingMode">1</value>
++   <value type="bool" key="EditorConfiguration.ScrollWheelZooming">true</value>
++   <value type="bool" key="EditorConfiguration.ShowMargin">false</value>
++   <value type="int" key="EditorConfiguration.SmartBackspaceBehavior">0</value>
++   <value type="bool" key="EditorConfiguration.SpacesForTabs">true</value>
++   <value type="int" key="EditorConfiguration.TabKeyBehavior">0</value>
++   <value type="int" key="EditorConfiguration.TabSize">8</value>
++   <value type="bool" key="EditorConfiguration.UseGlobal">true</value>
++   <value type="int" key="EditorConfiguration.Utf8BomBehavior">1</value>
++   <value type="bool" key="EditorConfiguration.addFinalNewLine">true</value>
++   <value type="bool" key="EditorConfiguration.cleanIndentation">true</value>
++   <value type="bool" key="EditorConfiguration.cleanWhitespace">true</value>
++   <value type="bool" key="EditorConfiguration.inEntireDocument">false</value>
++  </valuemap>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.PluginSettings</variable>
++  <valuemap type="QVariantMap"/>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.Target.0</variable>
++  <valuemap type="QVariantMap">
++   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop</value>
++   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop</value>
++   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{0880432a-e1c4-4f10-9f54-09765dee3f65}</value>
++   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
++   <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
++   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
++    <value type="bool" key="CMakeProjectManager.CMakeBuildConfiguration.UseNinja">false</value>
++    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:/kde/build/win32libs/liblzma/work/xz-5.0.5-build</value>
++    <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
++     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
++      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments"></value>
++      <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets"/>
++      <value type="bool" key="CMakeProjectManager.MakeStep.Clean">false</value>
++      <value type="bool" key="CMakeProjectManager.MakeStep.UseNinja">false</value>
++      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.MakeStep</value>
++     </valuemap>
++     <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Build</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.BuildSteps.Build</value>
++    </valuemap>
++    <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.1">
++     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
++      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments">clean</value>
++      <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets"/>
++      <value type="bool" key="CMakeProjectManager.MakeStep.Clean">true</value>
++      <value type="bool" key="CMakeProjectManager.MakeStep.UseNinja">false</value>
++      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.MakeStep</value>
++     </valuemap>
++     <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Bereinigen</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.BuildSteps.Clean</value>
++    </valuemap>
++    <value type="int" key="ProjectExplorer.BuildConfiguration.BuildStepListCount">2</value>
++    <value type="bool" key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment">false</value>
++    <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">all</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeBuildConfiguration</value>
++   </valuemap>
++   <value type="int" key="ProjectExplorer.Target.BuildConfigurationCount">1</value>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.DeployConfiguration.0">
++    <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
++     <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">0</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Deployment</value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.BuildSteps.Deploy</value>
++    </valuemap>
++    <value type="int" key="ProjectExplorer.BuildConfiguration.BuildStepListCount">1</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Lokales Deployment</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.DefaultDeployConfiguration</value>
++   </valuemap>
++   <value type="int" key="ProjectExplorer.Target.DeployConfigurationCount">1</value>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.PluginSettings"/>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.0">
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
++    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
++    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
++    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
++    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
++    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
++    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
++    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
++    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
++     <value type="int">0</value>
++     <value type="int">1</value>
++     <value type="int">2</value>
++     <value type="int">3</value>
++     <value type="int">4</value>
++     <value type="int">5</value>
++     <value type="int">6</value>
++     <value type="int">7</value>
++     <value type="int">8</value>
++     <value type="int">9</value>
++     <value type="int">10</value>
++     <value type="int">11</value>
++     <value type="int">12</value>
++     <value type="int">13</value>
++     <value type="int">14</value>
++    </valuelist>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">lzmadec</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
++    <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
++    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
++    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">lzmadec</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.lzmadec</value>
++    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
++    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
++    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
++   </valuemap>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
++    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
++    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
++    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
++    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
++    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
++    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
++    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
++    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
++     <value type="int">0</value>
++     <value type="int">1</value>
++     <value type="int">2</value>
++     <value type="int">3</value>
++     <value type="int">4</value>
++     <value type="int">5</value>
++     <value type="int">6</value>
++     <value type="int">7</value>
++     <value type="int">8</value>
++     <value type="int">9</value>
++     <value type="int">10</value>
++     <value type="int">11</value>
++     <value type="int">12</value>
++     <value type="int">13</value>
++     <value type="int">14</value>
++    </valuelist>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">lzmainfo</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
++    <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
++    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
++    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">lzmainfo</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.lzmainfo</value>
++    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
++    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
++    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
++   </valuemap>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.2">
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
++    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
++    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
++    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
++    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
++    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
++    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
++    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
++    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
++     <value type="int">0</value>
++     <value type="int">1</value>
++     <value type="int">2</value>
++     <value type="int">3</value>
++     <value type="int">4</value>
++     <value type="int">5</value>
++     <value type="int">6</value>
++     <value type="int">7</value>
++     <value type="int">8</value>
++     <value type="int">9</value>
++     <value type="int">10</value>
++     <value type="int">11</value>
++     <value type="int">12</value>
++     <value type="int">13</value>
++     <value type="int">14</value>
++    </valuelist>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">xz</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
++    <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
++    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
++    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">xz</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.xz</value>
++    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
++    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
++    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
++   </valuemap>
++   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.3">
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
++    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
++    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
++    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
++    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
++    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
++    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
++    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
++    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
++    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
++    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
++    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
++     <value type="int">0</value>
++     <value type="int">1</value>
++     <value type="int">2</value>
++     <value type="int">3</value>
++     <value type="int">4</value>
++     <value type="int">5</value>
++     <value type="int">6</value>
++     <value type="int">7</value>
++     <value type="int">8</value>
++     <value type="int">9</value>
++     <value type="int">10</value>
++     <value type="int">11</value>
++     <value type="int">12</value>
++     <value type="int">13</value>
++     <value type="int">14</value>
++    </valuelist>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">xzdec</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
++    <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
++    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
++    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
++    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">xzdec</value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
++    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.xzdec</value>
++    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
++    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
++    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
++    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
++   </valuemap>
++   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">4</value>
++  </valuemap>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.TargetCount</variable>
++  <value type="int">1</value>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.Updater.EnvironmentId</variable>
++  <value type="QByteArray">{ca5fcc99-2136-48e3-8632-2b13dd1cb6da}</value>
++ </data>
++ <data>
++  <variable>ProjectExplorer.Project.Updater.FileVersion</variable>
++  <value type="int">15</value>
++ </data>
++</qtcreator>
+diff -Nru -x '*~' xz-5.0.5.orig/config.h.cmake xz-5.0.5/config.h.cmake
+--- xz-5.0.5.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/config.h.cmake	2014-05-08 18:21:20.806956600 +0200
+@@ -0,0 +1,398 @@
++#ifdef _MSC_VER
++// inline is not a keyword in C mode
++#define inline __inline
++#define restrict __restrict
++#endif
++
++
++/* Define to 1 if using x86 assembler optimizations. */
++#cmakedefine HAVE_ASM_X86 1
++
++/* Define to 1 if using x86_64 assembler optimizations. */
++#cmakedefine HAVE_ASM_X86_64 1
++
++/* Define to 1 if bswap_16 is available. */
++#cmakedefine HAVE_BSWAP_16 1
++
++/* Define to 1 if bswap_32 is available. */
++#cmakedefine HAVE_BSWAP_32 1
++
++/* Define to 1 if bswap_64 is available. */
++#cmakedefine HAVE_BSWAP_64 1
++
++/* Define to 1 if you have the <byteswap.h> header file. */
++#cmakedefine HAVE_BYTESWAP_H 1
++
++/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
++   CoreFoundation framework. */
++#cmakedefine HAVE_CFLOCALECOPYCURRENT 1
++
++/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
++   the CoreFoundation framework. */
++#cmakedefine HAVE_CFPREFERENCESCOPYAPPVALUE 1
++
++/* Define to 1 if crc32 integrity check is enabled. */
++#cmakedefine HAVE_CHECK_CRC32 1
++
++/* Define to 1 if crc64 integrity check is enabled. */
++#cmakedefine HAVE_CHECK_CRC64 1
++
++/* Define to 1 if sha256 integrity check is enabled. */
++#cmakedefine HAVE_CHECK_SHA256 1
++
++/* Define if the GNU dcgettext() function is already present or preinstalled. */
++#cmakedefine HAVE_DCGETTEXT 1
++
++/* Define to 1 if decoder components are enabled. */
++#cmakedefine HAVE_DECODER 1
++
++/* Define to 1 if arm decoder is enabled. */
++#cmakedefine HAVE_DECODER_ARM 1
++
++/* Define to 1 if armthumb decoder is enabled. */
++#cmakedefine HAVE_DECODER_ARMTHUMB 1
++
++/* Define to 1 if delta decoder is enabled. */
++#cmakedefine HAVE_DECODER_DELTA 1
++
++/* Define to 1 if ia64 decoder is enabled. */
++#cmakedefine HAVE_DECODER_IA64 1
++
++/* Define to 1 if lzma1 decoder is enabled. */
++#cmakedefine HAVE_DECODER_LZMA1 1
++
++/* Define to 1 if lzma2 decoder is enabled. */
++#cmakedefine HAVE_DECODER_LZMA2 1
++
++/* Define to 1 if powerpc decoder is enabled. */
++#cmakedefine HAVE_DECODER_POWERPC 1
++
++/* Define to 1 if sparc decoder is enabled. */
++#cmakedefine HAVE_DECODER_SPARC 1
++
++/* Define to 1 if subblock decoder is enabled. */
++#cmakedefine HAVE_DECODER_SUBBLOCK 1
++
++/* Define to 1 if x86 decoder is enabled. */
++#cmakedefine HAVE_DECODER_X86 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine HAVE_DLFCN_H 1
++
++/* Define to 1 if encoder components are enabled. */
++#cmakedefine HAVE_ENCODER 1
++
++/* Define to 1 if arm encoder is enabled. */
++#cmakedefine HAVE_ENCODER_ARM 1
++
++/* Define to 1 if armthumb encoder is enabled. */
++#cmakedefine HAVE_ENCODER_ARMTHUMB 1
++
++/* Define to 1 if delta encoder is enabled. */
++#cmakedefine HAVE_ENCODER_DELTA 1
++
++/* Define to 1 if ia64 encoder is enabled. */
++#cmakedefine HAVE_ENCODER_IA64 1
++
++/* Define to 1 if lzma1 encoder is enabled. */
++#cmakedefine HAVE_ENCODER_LZMA1 1
++
++/* Define to 1 if lzma2 encoder is enabled. */
++#cmakedefine HAVE_ENCODER_LZMA2 1
++
++/* Define to 1 if powerpc encoder is enabled. */
++#cmakedefine HAVE_ENCODER_POWERPC 1
++
++/* Define to 1 if sparc encoder is enabled. */
++#cmakedefine HAVE_ENCODER_SPARC 1
++
++/* Define to 1 if subblock encoder is enabled. */
++#cmakedefine HAVE_ENCODER_SUBBLOCK 1
++
++/* Define to 1 if x86 encoder is enabled. */
++#cmakedefine HAVE_ENCODER_X86 1
++
++/* Define to 1 if the system supports fast unaligned memory access. */
++#cmakedefine HAVE_FAST_UNALIGNED_ACCESS 1
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#cmakedefine HAVE_FCNTL_H 1
++
++/* Define to 1 if you have the `futimens' function. */
++#cmakedefine HAVE_FUTIMENS 1
++
++/* Define to 1 if you have the `futimes' function. */
++#cmakedefine HAVE_FUTIMES 1
++
++/* Define to 1 if you have the `futimesat' function. */
++#cmakedefine HAVE_FUTIMESAT 1
++
++/* Define to 1 if you have the <getopt.h> header file. */
++#cmakedefine HAVE_GETOPT_H 1
++
++/* Define if the GNU gettext() function is already present or preinstalled. */
++#cmakedefine HAVE_GETTEXT 1
++
++/* Define if you have the iconv() function. */
++#cmakedefine HAVE_ICONV 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the <limits.h> header file. */
++#cmakedefine HAVE_LIMITS_H 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine HAVE_MEMORY_H 1
++
++/* Define to 1 to enable bt2 match finder. */
++#cmakedefine HAVE_MF_BT2 1
++
++/* Define to 1 to enable bt3 match finder. */
++#cmakedefine HAVE_MF_BT3 1
++
++/* Define to 1 to enable bt4 match finder. */
++#cmakedefine HAVE_MF_BT4 1
++
++/* Define to 1 to enable hc3 match finder. */
++#cmakedefine HAVE_MF_HC3 1
++
++/* Define to 1 to enable hc4 match finder. */
++#cmakedefine HAVE_MF_HC4 1
++
++/* Define to 1 if the number of available CPU cores can be detected with
++   sysconf(_SC_NPROCESSORS_ONLN). */
++#cmakedefine HAVE_NCPU_SYSCONF 1
++
++/* Define to 1 if the number of available CPU cores can be detected with
++   sysctl(). */
++#cmakedefine HAVE_NCPU_SYSCTL 1
++
++/* Define to 1 if getopt.h declares extern int optreset. */
++#cmakedefine HAVE_OPTRESET 1
++
++/* Define to 1 if the amount of physical memory can be detected with
++   sysconf(_SC_PAGESIZE) and sysconf(_SC_PHYS_PAGES). */
++#cmakedefine HAVE_PHYSMEM_SYSCONF 1
++
++/* Define to 1 if the amount of physical memory can be detected with sysctl().
++   */
++#cmakedefine HAVE_PHYSMEM_SYSCTL 1
++
++/* Define if you have POSIX threads libraries and header files. */
++#cmakedefine HAVE_PTHREAD 1
++
++/* Define to 1 if optimizing for size. */
++#cmakedefine HAVE_SMALL 1
++
++/* Define to 1 if stdbool.h conforms to C99. */
++#cmakedefine HAVE_STDBOOL_H 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine HAVE_STRING_H 1
++
++/* Define to 1 if `st_atimensec' is member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_ATIMENSEC 1
++
++/* Define to 1 if `st_atimespec.tv_nsec' is member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_ATIMESPEC_TV_NSEC 1
++
++/* Define to 1 if `st_atim.st__tim.tv_nsec' is member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_ATIM_ST__TIM_TV_NSEC 1
++
++/* Define to 1 if `st_atim.tv_nsec' is member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC 1
++
++/* Define to 1 if `st_uatime' is member of `struct stat'. */
++#cmakedefine HAVE_STRUCT_STAT_ST_UATIME 1
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#cmakedefine HAVE_SYS_PARAM_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/sysctl.h> header file. */
++#cmakedefine HAVE_SYS_SYSCTL_H 1
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#cmakedefine HAVE_SYS_TIME_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if the system has the type `uintptr_t'. */
++#cmakedefine HAVE_UINTPTR_T 1 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine HAVE_UNISTD_H 1
++
++/* Define to 1 if you have the `utime' function. */
++#cmakedefine HAVE_UTIME 1
++
++/* Define to 1 if you have the `utimes' function. */
++#cmakedefine HAVE_UTIMES 1
++
++/* Define to 1 or 0, depending whether the compiler supports simple visibility
++   declarations. */
++#cmakedefine HAVE_VISIBILITY
++
++/* Define to 1 if the system has the type `_Bool'. */
++#cmakedefine HAVE__BOOL 1
++
++/* Define to 1 to disable debugging code. */
++#cmakedefine NDEBUG 1
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++#cmakedefine NO_MINUS_C_MINUS_O 1
++
++/* Name of package */
++#cmakedefine PACKAGE "xz"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT "lasse.collin@tukaani.org"
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "XZ Utils"
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING "XZ Utils 4.999.8beta"
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME "xz"
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION "5.0.5"
++
++#define PACKAGE_HOMEPAGE "http://tukaani.org/xz/"
++
++/* Define to necessary symbol if this constant uses a non-standard name on
++   your system. */
++#cmakedefine PTHREAD_CREATE_JOINABLE
++
++/* The size of `size_t', as computed by sizeof. */
++#cmakedefine SIZEOF_SIZE_T @SIZEOF_SIZE_T@
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine STDC_HEADERS 1
++
++/* Version number of package */
++#cmakedefine VERSION
++
++/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
++   significant byte first (like Motorola and SPARC, unlike Intel and VAX). */
++#if defined __BIG_ENDIAN__
++# define WORDS_BIGENDIAN 1
++#elif ! defined __LITTLE_ENDIAN__
++# undef WORDS_BIGENDIAN
++#endif
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#cmakedefine _FILE_OFFSET_BITS
++
++/* Define for large files, on AIX-style hosts. */
++#cmakedefine _LARGE_FILES
++
++/* Define to 1 if on MINIX. */
++#cmakedefine _MINIX
++
++/* Define to 2 if the system does not provide POSIX.1 features except with
++   this defined. */
++#cmakedefine _POSIX_1_SOURCE
++
++/* Define to 1 if you need to in order for `stat' and other things to work. */
++#cmakedefine _POSIX_SOURCE
++
++/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
++   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
++   #define below would cause a syntax error. */
++#cmakedefine _UINT32_T
++
++/* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
++   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
++   #define below would cause a syntax error. */
++#cmakedefine _UINT64_T
++
++/* Define for Solaris 2.5.1 so the uint8_t typedef from <sys/synch.h>,
++   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
++   #define below would cause a syntax error. */
++#cmakedefine _UINT8_T
++
++/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# undef _ALL_SOURCE
++#endif
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++/* Enable threading extensions on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# undef _POSIX_PTHREAD_SEMANTICS
++#endif
++/* Enable extensions on HP NonStop.  */
++#ifndef _TANDEM_SOURCE
++# undef _TANDEM_SOURCE
++#endif
++/* Enable general extensions on Solaris.  */
++#ifndef __EXTENSIONS__
++# undef __EXTENSIONS__
++#endif
++
++
++/* Define to rpl_ if the getopt replacement functions and variables should be
++   used. */
++#cmakedefine __GETOPT_PREFIX
++
++/* Define to the type of a signed integer type of width exactly 32 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine int32_t
++
++/* Define to the type of a signed integer type of width exactly 64 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine int64_t
++
++/* Define to the type of an unsigned integer type of width exactly 16 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine uint16_t
++
++/* Define to the type of an unsigned integer type of width exactly 32 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine uint32_t
++
++/* Define to the type of an unsigned integer type of width exactly 64 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine uint64_t
++
++/* Define to the type of an unsigned integer type of width exactly 8 bits if
++   such a type exists and the standard includes do not define it. */
++#cmakedefine uint8_t
++
++/* Define to the type of an unsigned integer type wide enough to hold a
++   pointer, if such a type exists, and if the system does not define it. */
++#cmakedefine uintptr_t
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT "lasse.collin@tukaani.org"
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME "XZ Utils"
++
++/* Define to the home page for this package. */
++#define PACKAGE_URL "http://tukaani.org/xz/"
++
++/* How many MiB of RAM to assume if the real amount cannot be determined. */
++#define ASSUME_RAM 32
++
++#ifdef __MINGW32__
++#define _POSIX_
++#endif
+diff -Nru -x '*~' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/tuklib_integer.h
+--- xz-5.0.5.orig/src/common/tuklib_integer.h	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/common/tuklib_integer.h	2014-05-08 18:21:20.809956800 +0200
+@@ -383,7 +383,7 @@
+ 	// MSVC isn't supported by tuklib, but since this code exists,
+ 	// it doesn't hurt to have it here anyway.
+ 	uint32_t i;
+-	_BitScanReverse((DWORD *)&i, n);
++    _BitScanReverse(&i, n);
+ 	return i;
+ 
+ #else
+@@ -435,7 +435,7 @@
+ 
+ #elif defined(_MSC_VER) && _MSC_VER >= 1400
+ 	uint32_t i;
+-	_BitScanReverse((DWORD *)&i, n);
++    _BitScanReverse(&i, n);
+ 	return i ^ 31U;
+ 
+ #else
+@@ -485,7 +485,7 @@
+ 
+ #elif defined(_MSC_VER) && _MSC_VER >= 1400
+ 	uint32_t i;
+-	_BitScanForward((DWORD *)&i, n);
++    _BitScanForward(&i, n);
+ 	return i;
+ 
+ #else
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/check.c xz-5.0.5/src/liblzma/check/check.c
+--- xz-5.0.5.orig/src/liblzma/check/check.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/check/check.c	2014-05-08 18:21:20.811956900 +0200
+@@ -16,9 +16,6 @@
+ extern LZMA_API(lzma_bool)
+ lzma_check_is_supported(lzma_check type)
+ {
+-	if ((unsigned int)(type) > LZMA_CHECK_ID_MAX)
+-		return false;
+-
+ 	static const lzma_bool available_checks[LZMA_CHECK_ID_MAX + 1] = {
+ 		true,   // LZMA_CHECK_NONE
+ 
+@@ -56,6 +53,9 @@
+ 		false,  // Reserved
+ 	};
+ 
++	if ((unsigned int)(type) > LZMA_CHECK_ID_MAX)
++	    return false;
++
+ 	return available_checks[(unsigned int)(type)];
+ }
+ 
+@@ -63,9 +63,6 @@
+ extern LZMA_API(uint32_t)
+ lzma_check_size(lzma_check type)
+ {
+-	if ((unsigned int)(type) > LZMA_CHECK_ID_MAX)
+-		return UINT32_MAX;
+-
+ 	// See file-format.txt section 2.1.1.2.
+ 	static const uint8_t check_sizes[LZMA_CHECK_ID_MAX + 1] = {
+ 		0,
+@@ -75,7 +72,8 @@
+ 		32, 32, 32,
+ 		64, 64, 64
+ 	};
+-
++	if ((unsigned int)(type) > LZMA_CHECK_ID_MAX)
++	    return UINT32_MAX;
+ 	return check_sizes[(unsigned int)(type)];
+ }
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/sha256.c xz-5.0.5/src/liblzma/check/sha256.c
+--- xz-5.0.5.orig/src/liblzma/check/sha256.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/check/sha256.c	2014-05-08 18:21:20.814957100 +0200
+@@ -80,7 +80,13 @@
+ 
+ 
+ static void
++#ifndef _MSC_VER
++// uint32_t state[static 8] means at least 8 elements
+ transform(uint32_t state[static 8], const uint32_t data[static 16])
++#else
++transform(uint32_t state[], const uint32_t data[])
++
++#endif
+ {
+ 	uint32_t W[16];
+ 	uint32_t T[8];
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_decoder.c xz-5.0.5/src/liblzma/common/alone_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/alone_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/alone_decoder.c	2014-05-08 18:21:20.816957200 +0200
+@@ -126,9 +126,7 @@
+ 	// Fall through
+ 
+ 	case SEQ_CODER_INIT: {
+-		if (coder->memusage > coder->memlimit)
+-			return LZMA_MEMLIMIT_ERROR;
+-
++		lzma_ret ret;
+ 		lzma_filter_info filters[2] = {
+ 			{
+ 				.init = &lzma_lzma_decoder_init,
+@@ -138,7 +136,11 @@
+ 			}
+ 		};
+ 
+-		const lzma_ret ret = lzma_next_filter_init(&coder->next,
++		if (coder->memusage > coder->memlimit)
++			return LZMA_MEMLIMIT_ERROR;
++
++
++		ret = lzma_next_filter_init(&coder->next,
+ 				allocator, filters);
+ 		if (ret != LZMA_OK)
+ 			return ret;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_encoder.c xz-5.0.5/src/liblzma/common/alone_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/alone_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/alone_encoder.c	2014-05-08 18:21:20.818957300 +0200
+@@ -78,6 +78,8 @@
+ alone_encoder_init(lzma_next_coder *next, lzma_allocator *allocator,
+ 		const lzma_options_lzma *options)
+ {
++	uint32_t d;
++
+ 	lzma_next_coder_init(&alone_encoder_init, next, allocator);
+ 
+ 	if (next->coder == NULL) {
+@@ -107,7 +109,7 @@
+ 	// one is the next unless it is UINT32_MAX. While the header would
+ 	// allow any 32-bit integer, we do this to keep the decoder of liblzma
+ 	// accepting the resulting files.
+-	uint32_t d = options->dict_size - 1;
++	d = options->dict_size - 1;
+ 	d |= d >> 2;
+ 	d |= d >> 3;
+ 	d |= d >> 4;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c xz-5.0.5/src/liblzma/common/block_buffer_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/block_buffer_decoder.c	2014-05-08 18:21:20.821957500 +0200
+@@ -18,6 +18,9 @@
+ 		const uint8_t *in, size_t *in_pos, size_t in_size,
+ 		uint8_t *out, size_t *out_pos, size_t out_size)
+ {
++        lzma_next_coder block_decoder;
++        lzma_ret ret;
++
+ 	if (in_pos == NULL || (in == NULL && *in_pos != in_size)
+ 			|| *in_pos > in_size || out_pos == NULL
+ 			|| (out == NULL && *out_pos != out_size)
+@@ -25,8 +28,8 @@
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// Initialize the Block decoder.
+-	lzma_next_coder block_decoder = LZMA_NEXT_CODER_INIT;
+-	lzma_ret ret = lzma_block_decoder_init(
++	block_decoder = LZMA_NEXT_CODER_INIT;
++	ret = lzma_block_decoder_init(
+ 			&block_decoder, allocator, block);
+ 
+ 	if (ret == LZMA_OK) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c xz-5.0.5/src/liblzma/common/block_buffer_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/block_buffer_encoder.c	2014-05-08 18:21:20.824957600 +0200
+@@ -31,6 +31,7 @@
+ static lzma_vli
+ lzma2_bound(lzma_vli uncompressed_size)
+ {
++    lzma_vli overhead;
+ 	// Prevent integer overflow in overhead calculation.
+ 	if (uncompressed_size > COMPRESSED_SIZE_MAX)
+ 		return 0;
+@@ -39,7 +40,7 @@
+ 	// uncompressed_size up to the next multiple of LZMA2_CHUNK_MAX,
+ 	// multiply by the size of per-chunk header, and add one byte for
+ 	// the end marker.
+-	const lzma_vli overhead = ((uncompressed_size + LZMA2_CHUNK_MAX - 1)
++	overhead = ((uncompressed_size + LZMA2_CHUNK_MAX - 1)
+ 				/ LZMA2_CHUNK_MAX)
+ 			* LZMA2_HEADER_UNCOMPRESSED + 1;
+ 
+@@ -164,6 +165,9 @@
+ 		const uint8_t *in, size_t in_size,
+ 		uint8_t *out, size_t *out_pos, size_t out_size)
+ {
++    lzma_next_coder raw_encoder = LZMA_NEXT_CODER_INIT;
++    lzma_ret ret;
++    size_t out_start;
+ 	// Find out the size of the Block Header.
+ 	block->compressed_size = lzma2_bound(in_size);
+ 	if (block->compressed_size == 0)
+@@ -176,7 +180,7 @@
+ 	if (out_size - *out_pos <= block->header_size)
+ 		return LZMA_BUF_ERROR;
+ 
+-	const size_t out_start = *out_pos;
++	out_start = *out_pos;
+ 	*out_pos += block->header_size;
+ 
+ 	// Limit out_size so that we stop encoding if the output would grow
+@@ -186,8 +190,7 @@
+ 
+ 	// TODO: In many common cases this could be optimized to use
+ 	// significantly less memory.
+-	lzma_next_coder raw_encoder = LZMA_NEXT_CODER_INIT;
+-	lzma_ret ret = lzma_raw_encoder_init(
++	ret = lzma_raw_encoder_init(
+ 			&raw_encoder, allocator, block->filters);
+ 
+ 	if (ret == LZMA_OK) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c xz-5.0.5/src/liblzma/common/block_header_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/block_header_decoder.c	2014-05-08 18:21:20.826957700 +0200
+@@ -34,6 +34,9 @@
+ lzma_block_header_decode(lzma_block *block,
+ 		lzma_allocator *allocator, const uint8_t *in)
+ {
++    size_t in_pos = 2;
++    size_t in_size;
++
+ 	// NOTE: We consider the header to be corrupt not only when the
+ 	// CRC32 doesn't match, but also when variable-length integers
+ 	// are invalid or over 63 bits, or if the header is too small
+@@ -56,7 +59,7 @@
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// Exclude the CRC32 field.
+-	const size_t in_size = block->header_size - 4;
++	in_size = block->header_size - 4;
+ 
+ 	// Verify CRC32
+ 	if (lzma_crc32(in, in_size, 0) != unaligned_read32le(in + in_size))
+@@ -67,7 +70,6 @@
+ 		return LZMA_OPTIONS_ERROR;
+ 
+ 	// Start after the Block Header Size and Block Flags fields.
+-	size_t in_pos = 2;
+ 
+ 	// Compressed Size
+ 	if (in[1] & 0x40) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c xz-5.0.5/src/liblzma/common/block_header_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/block_header_encoder.c	2014-05-08 18:21:20.828957900 +0200
+@@ -13,15 +13,16 @@
+ #include "common.h"
+ #include "check.h"
+ 
+-
+ extern LZMA_API(lzma_ret)
+ lzma_block_header_size(lzma_block *block)
+ {
++
++    // Block Header Size + Block Flags + CRC32.
++    uint32_t size = 1 + 1 + 4;
++
+ 	if (block->version != 0)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+-	// Block Header Size + Block Flags + CRC32.
+-	uint32_t size = 1 + 1 + 4;
+ 
+ 	// Compressed Size
+ 	if (block->compressed_size != LZMA_VLI_UNKNOWN) {
+@@ -46,11 +47,12 @@
+ 		return LZMA_PROG_ERROR;
+ 
+ 	for (size_t i = 0; block->filters[i].id != LZMA_VLI_UNKNOWN; ++i) {
++                uint32_t add;
++
+ 		// Don't allow too many filters.
+ 		if (i == LZMA_FILTERS_MAX)
+ 			return LZMA_PROG_ERROR;
+ 
+-		uint32_t add;
+ 		return_if_error(lzma_filter_flags_size(&add,
+ 				block->filters + i));
+ 
+@@ -73,20 +75,23 @@
+ extern LZMA_API(lzma_ret)
+ lzma_block_header_encode(const lzma_block *block, uint8_t *out)
+ {
++    size_t out_size;
++    size_t filter_count = 0;
++    size_t out_pos = 2;
++
+ 	// Validate everything but filters.
+ 	if (lzma_block_unpadded_size(block) == 0
+ 			|| !lzma_vli_is_valid(block->uncompressed_size))
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// Indicate the size of the buffer _excluding_ the CRC32 field.
+-	const size_t out_size = block->header_size - 4;
++	out_size = block->header_size - 4;
+ 
+ 	// Store the Block Header Size.
+ 	out[0] = out_size / 4;
+ 
+ 	// We write Block Flags in pieces.
+ 	out[1] = 0x00;
+-	size_t out_pos = 2;
+ 
+ 	// Compressed Size
+ 	if (block->compressed_size != LZMA_VLI_UNKNOWN) {
+@@ -108,7 +113,6 @@
+ 	if (block->filters == NULL || block->filters[0].id == LZMA_VLI_UNKNOWN)
+ 		return LZMA_PROG_ERROR;
+ 
+-	size_t filter_count = 0;
+ 	do {
+ 		// There can be a maximum of four filters.
+ 		if (filter_count == LZMA_FILTERS_MAX)
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_util.c xz-5.0.5/src/liblzma/common/block_util.c
+--- xz-5.0.5.orig/src/liblzma/common/block_util.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/block_util.c	2014-05-08 18:21:20.830958000 +0200
+@@ -17,11 +17,14 @@
+ extern LZMA_API(lzma_ret)
+ lzma_block_compressed_size(lzma_block *block, lzma_vli unpadded_size)
+ {
++        lzma_vli compressed_size;
++	uint32_t container_size;
++
+ 	// Validate everything but Uncompressed Size and filters.
+ 	if (lzma_block_unpadded_size(block) == 0)
+ 		return LZMA_PROG_ERROR;
+ 
+-	const uint32_t container_size = block->header_size
++	container_size = block->header_size
+ 			+ lzma_check_size(block->check);
+ 
+ 	// Validate that Compressed Size will be greater than zero.
+@@ -31,7 +34,7 @@
+ 	// Calculate what Compressed Size is supposed to be.
+ 	// If Compressed Size was present in Block Header,
+ 	// compare that the new value matches it.
+-	const lzma_vli compressed_size = unpadded_size - container_size;
++	compressed_size = unpadded_size - container_size;
+ 	if (block->compressed_size != LZMA_VLI_UNKNOWN
+ 			&& block->compressed_size != compressed_size)
+ 		return LZMA_DATA_ERROR;
+@@ -45,6 +48,8 @@
+ extern LZMA_API(lzma_vli)
+ lzma_block_unpadded_size(const lzma_block *block)
+ {
++
++    lzma_vli unpadded_size;
+ 	// Validate the values that we are interested in i.e. all but
+ 	// Uncompressed Size and the filters.
+ 	//
+@@ -66,7 +71,7 @@
+ 		return LZMA_VLI_UNKNOWN;
+ 
+ 	// Calculate Unpadded Size and validate it.
+-	const lzma_vli unpadded_size = block->compressed_size
++	unpadded_size = block->compressed_size
+ 				+ block->header_size
+ 				+ lzma_check_size(block->check);
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/common.h xz-5.0.5/src/liblzma/common/common.h
+--- xz-5.0.5.orig/src/liblzma/common/common.h	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/common.h	2014-05-08 18:21:20.833958100 +0200
+@@ -158,16 +158,16 @@
+ 
+ /// Macro to initialize lzma_next_coder structure
+ #define LZMA_NEXT_CODER_INIT \
+-	(lzma_next_coder){ \
+-		.coder = NULL, \
+-		.init = (uintptr_t)(NULL), \
+-		.id = LZMA_VLI_UNKNOWN, \
+-		.code = NULL, \
+-		.end = NULL, \
+-		.get_check = NULL, \
+-		.memconfig = NULL, \
+-		.update = NULL, \
+-	}
++    (lzma_next_coder){ \
++        .coder = NULL, \
++        .init = (uintptr_t)(NULL), \
++        .id = LZMA_VLI_UNKNOWN, \
++        .code = NULL, \
++        .end = NULL, \
++        .get_check = NULL, \
++        .memconfig = NULL, \
++        .update = NULL, \
++    }
+ 
+ 
+ /// Internal data for lzma_strm_init, lzma_code, and lzma_end. A pointer to
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_common.c xz-5.0.5/src/liblzma/common/filter_common.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_common.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/filter_common.c	2014-05-08 18:21:20.836958300 +0200
+@@ -125,11 +125,12 @@
+ lzma_filters_copy(const lzma_filter *src, lzma_filter *dest,
+ 		lzma_allocator *allocator)
+ {
++    lzma_ret ret;
++    size_t i;
+ 	if (src == NULL || dest == NULL)
+ 		return LZMA_PROG_ERROR;
+ 
+-	lzma_ret ret;
+-	size_t i;
++
+ 	for (i = 0; src[i].id != LZMA_VLI_UNKNOWN; ++i) {
+ 		// There must be a maximum of four filters plus
+ 		// the array terminator.
+@@ -193,14 +194,14 @@
+ static lzma_ret
+ validate_chain(const lzma_filter *filters, size_t *count)
+ {
++        // Number of non-last filters that may change the size of the data
++        // significantly (that is, more than 1-2 % or so).
++        size_t changes_size_count = 0;
++
+ 	// There must be at least one filter.
+ 	if (filters == NULL || filters[0].id == LZMA_VLI_UNKNOWN)
+ 		return LZMA_PROG_ERROR;
+ 
+-	// Number of non-last filters that may change the size of the data
+-	// significantly (that is, more than 1-2 % or so).
+-	size_t changes_size_count = 0;
+-
+ 	// True if it is OK to add a new filter after the current filter.
+ 	bool non_last_ok = true;
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_encoder.c xz-5.0.5/src/liblzma/common/filter_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/filter_encoder.c	2014-05-08 18:21:20.839958500 +0200
+@@ -171,6 +171,9 @@
+ extern LZMA_API(lzma_ret)
+ lzma_filters_update(lzma_stream *strm, const lzma_filter *filters)
+ {
++	size_t count = 1;
++	lzma_filter reversed_filters[LZMA_FILTERS_MAX + 1];
++
+ 	if (strm->internal->next.update == NULL)
+ 		return LZMA_PROG_ERROR;
+ 
+@@ -180,11 +183,10 @@
+ 
+ 	// The actual filter chain in the encoder is reversed. Some things
+ 	// still want the normal order chain, so we provide both.
+-	size_t count = 1;
+ 	while (filters[count].id != LZMA_VLI_UNKNOWN)
+ 		++count;
+ 
+-	lzma_filter reversed_filters[LZMA_FILTERS_MAX + 1];
++	
+ 	for (size_t i = 0; i < count; ++i)
+ 		reversed_filters[count - i - 1] = filters[i];
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c xz-5.0.5/src/liblzma/common/filter_flags_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/filter_flags_decoder.c	2014-05-08 18:21:20.841958600 +0200
+@@ -18,6 +18,9 @@
+ 		lzma_filter *filter, lzma_allocator *allocator,
+ 		const uint8_t *in, size_t *in_pos, size_t in_size)
+ {
++    lzma_ret ret;
++    lzma_vli props_size;
++    
+ 	// Set the pointer to NULL so the caller can always safely free it.
+ 	filter->options = NULL;
+ 
+@@ -29,7 +32,6 @@
+ 		return LZMA_DATA_ERROR;
+ 
+ 	// Size of Properties
+-	lzma_vli props_size;
+ 	return_if_error(lzma_vli_decode(&props_size, NULL,
+ 			in, in_pos, in_size));
+ 
+@@ -37,7 +39,7 @@
+ 	if (in_size - *in_pos < props_size)
+ 		return LZMA_DATA_ERROR;
+ 
+-	const lzma_ret ret = lzma_properties_decode(
++	ret = lzma_properties_decode(
+ 			filter, allocator, in + *in_pos, props_size);
+ 
+ 	*in_pos += props_size;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index.c xz-5.0.5/src/liblzma/common/index.c
+--- xz-5.0.5.orig/src/liblzma/common/index.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/index.c	2014-05-08 18:21:20.846958900 +0200
+@@ -398,10 +398,11 @@
+ lzma_index_init(lzma_allocator *allocator)
+ {
+ 	lzma_index *i = index_init_plain(allocator);
++	index_stream *s;
+ 	if (i == NULL)
+ 		return NULL;
+ 
+-	index_stream *s = index_stream_init(0, 0, 1, 0, allocator);
++	s = index_stream_init(0, 0, 1, 0, allocator);
+ 	if (s == NULL) {
+ 		lzma_free(i, allocator);
+ 		return NULL;
+@@ -617,11 +618,12 @@
+ extern LZMA_API(lzma_ret)
+ lzma_index_stream_padding(lzma_index *i, lzma_vli stream_padding)
+ {
++    index_stream *s;
+ 	if (i == NULL || stream_padding > LZMA_VLI_MAX
+ 			|| (stream_padding & 3) != 0)
+ 		return LZMA_PROG_ERROR;
+ 
+-	index_stream *s = (index_stream *)(i->streams.rightmost);
++	s = (index_stream *)(i->streams.rightmost);
+ 
+ 	// Check that the new value won't make the file grow too big.
+ 	const lzma_vli old_stream_padding = s->stream_padding;
+@@ -640,14 +642,16 @@
+ lzma_index_append(lzma_index *i, lzma_allocator *allocator,
+ 		lzma_vli unpadded_size, lzma_vli uncompressed_size)
+ {
++    index_stream *s;
++    index_group *g;
+ 	// Validate.
+ 	if (i == NULL || unpadded_size < UNPADDED_SIZE_MIN
+ 			|| unpadded_size > UNPADDED_SIZE_MAX
+ 			|| uncompressed_size > LZMA_VLI_MAX)
+ 		return LZMA_PROG_ERROR;
+ 
+-	index_stream *s = (index_stream *)(i->streams.rightmost);
+-	index_group *g = (index_group *)(s->groups.rightmost);
++	s = (index_stream *)(i->streams.rightmost);
++	g = (index_group *)(s->groups.rightmost);
+ 
+ 	const lzma_vli compressed_base = g == NULL ? 0
+ 			: vli_ceil4(g->records[g->last].unpadded_sum);
+@@ -861,12 +865,15 @@
+ static index_stream *
+ index_dup_stream(const index_stream *src, lzma_allocator *allocator)
+ {
++	index_stream *dest;
++	index_group *destg;
++
+ 	// Catch a somewhat theoretical integer overflow.
+ 	if (src->record_count > PREALLOC_MAX)
+ 		return NULL;
+ 
+ 	// Allocate and initialize a new Stream.
+-	index_stream *dest = index_stream_init(src->node.compressed_base,
++	dest = index_stream_init(src->node.compressed_base,
+ 			src->node.uncompressed_base, src->number,
+ 			src->block_number_base, allocator);
+ 
+@@ -884,7 +891,7 @@
+ 	// Allocate memory for the Records. We put all the Records into
+ 	// a single group. It's simplest and also tends to make
+ 	// lzma_index_locate() a little bit faster with very big Indexes.
+-	index_group *destg = lzma_alloc(sizeof(index_group)
++	destg = lzma_alloc(sizeof(index_group)
+ 			+ src->record_count * sizeof(index_record),
+ 			allocator);
+ 	if (destg == NULL) {
+@@ -1096,14 +1103,19 @@
+ extern LZMA_API(lzma_bool)
+ lzma_index_iter_next(lzma_index_iter *iter, lzma_index_iter_mode mode)
+ {
++	const lzma_index *i;
++	const index_stream *stream;
++	const index_group *group;
++	size_t record;
++
+ 	// Catch unsupported mode values.
+ 	if ((unsigned int)(mode) > LZMA_INDEX_ITER_NONEMPTY_BLOCK)
+ 		return true;
+ 
+-	const lzma_index *i = iter->internal[ITER_INDEX].p;
+-	const index_stream *stream = iter->internal[ITER_STREAM].p;
+-	const index_group *group = NULL;
+-	size_t record = iter->internal[ITER_RECORD].s;
++	i = iter->internal[ITER_INDEX].p;
++	stream = iter->internal[ITER_STREAM].p;
++	group = NULL;
++	record = iter->internal[ITER_RECORD].s;
+ 
+ 	// If we are being asked for the next Stream, leave group to NULL
+ 	// so that the rest of the this function thinks that this Stream
+@@ -1204,18 +1216,19 @@
+ lzma_index_iter_locate(lzma_index_iter *iter, lzma_vli target)
+ {
+ 	const lzma_index *i = iter->internal[ITER_INDEX].p;
+-
++	const index_stream *stream;
++	const index_group *group;
+ 	// If the target is past the end of the file, return immediately.
+ 	if (i->uncompressed_size <= target)
+ 		return true;
+ 
+ 	// Locate the Stream containing the target offset.
+-	const index_stream *stream = index_tree_locate(&i->streams, target);
++	stream = index_tree_locate(&i->streams, target);
+ 	assert(stream != NULL);
+ 	target -= stream->node.uncompressed_base;
+ 
+ 	// Locate the group containing the target offset.
+-	const index_group *group = index_tree_locate(&stream->groups, target);
++	group = index_tree_locate(&stream->groups, target);
+ 	assert(group != NULL);
+ 
+ 	// Use binary search to locate the exact Record. It is the first
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_decoder.c xz-5.0.5/src/liblzma/common/index_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/index_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/index_decoder.c	2014-05-08 18:21:20.848959000 +0200
+@@ -303,13 +303,15 @@
+ 		lzma_index **i, uint64_t *memlimit, lzma_allocator *allocator,
+ 		const uint8_t *in, size_t *in_pos, size_t in_size)
+ {
++        lzma_coder coder;
++
+ 	// Sanity checks
+ 	if (i == NULL || memlimit == NULL
+ 			|| in == NULL || in_pos == NULL || *in_pos > in_size)
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// Initialize the decoder.
+-	lzma_coder coder;
++	
+ 	return_if_error(index_decoder_reset(&coder, allocator, i, *memlimit));
+ 
+ 	// Store the input start position so that we can restore it in case
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_encoder.c xz-5.0.5/src/liblzma/common/index_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/index_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/index_encoder.c	2014-05-08 18:21:20.850959100 +0200
+@@ -220,6 +220,10 @@
+ lzma_index_buffer_encode(const lzma_index *i,
+ 		uint8_t *out, size_t *out_pos, size_t out_size)
+ {
++
++        lzma_coder coder;
++	size_t out_start;
++	lzma_ret ret;
+ 	// Validate the arguments.
+ 	if (i == NULL || out == NULL || out_pos == NULL || *out_pos > out_size)
+ 		return LZMA_PROG_ERROR;
+@@ -230,13 +234,12 @@
+ 
+ 	// The Index encoder needs just one small data structure so we can
+ 	// allocate it on stack.
+-	lzma_coder coder;
+ 	index_encoder_reset(&coder, i);
+ 
+ 	// Do the actual encoding. This should never fail, but store
+ 	// the original *out_pos just in case.
+-	const size_t out_start = *out_pos;
+-	lzma_ret ret = index_encode(&coder, NULL, NULL, NULL, 0,
++	out_start = *out_pos;
++	ret = index_encode(&coder, NULL, NULL, NULL, 0,
+ 			out, out_pos, out_size, LZMA_RUN);
+ 
+ 	if (ret == LZMA_STREAM_END) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_hash.c xz-5.0.5/src/liblzma/common/index_hash.c
+--- xz-5.0.5.orig/src/liblzma/common/index_hash.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/index_hash.c	2014-05-08 18:21:20.852959200 +0200
+@@ -173,6 +173,9 @@
+ lzma_index_hash_decode(lzma_index_hash *index_hash, const uint8_t *in,
+ 		size_t *in_pos, size_t in_size)
+ {
++
++    size_t in_start;
++    lzma_ret ret;
+ 	// Catch zero input buffer here, because in contrast to Index encoder
+ 	// and decoder functions, applications call this function directly
+ 	// instead of via lzma_code(), which does the buffer checking.
+@@ -182,8 +185,8 @@
+ 	// NOTE: This function has many similarities to index_encode() and
+ 	// index_decode() functions found from index_encoder.c and
+ 	// index_decoder.c. See the comments especially in index_encoder.c.
+-	const size_t in_start = *in_pos;
+-	lzma_ret ret = LZMA_OK;
++	in_start = *in_pos;
++	ret = LZMA_OK;
+ 
+ 	while (*in_pos < in_size)
+ 	switch (index_hash->sequence) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c	2014-05-08 18:21:20.855959400 +0200
+@@ -19,6 +19,10 @@
+ 		const uint8_t *in, size_t *in_pos, size_t in_size,
+ 		uint8_t *out, size_t *out_pos, size_t out_size)
+ {
++
++    lzma_next_coder stream_decoder = LZMA_NEXT_CODER_INIT;
++    lzma_ret ret;
++
+ 	// Sanity checks
+ 	if (in_pos == NULL || (in == NULL && *in_pos != in_size)
+ 			|| *in_pos > in_size || out_pos == NULL
+@@ -33,8 +37,7 @@
+ 	// Initialize the Stream decoder.
+ 	// TODO: We need something to tell the decoder that it can use the
+ 	// output buffer as workspace, and thus save significant amount of RAM.
+-	lzma_next_coder stream_decoder = LZMA_NEXT_CODER_INIT;
+-	lzma_ret ret = lzma_stream_decoder_init(
++	ret = lzma_stream_decoder_init(
+ 			&stream_decoder, allocator, *memlimit, flags);
+ 
+ 	if (ret == LZMA_OK) {
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c	2014-05-08 18:21:20.857959500 +0200
+@@ -45,6 +45,7 @@
+ 		lzma_allocator *allocator, const uint8_t *in, size_t in_size,
+ 		uint8_t *out, size_t *out_pos_ptr, size_t out_size)
+ {
++    size_t out_pos;
+ 	// Sanity checks
+ 	if (filters == NULL || (unsigned int)(check) > LZMA_CHECK_ID_MAX
+ 			|| (in == NULL && in_size != 0) || out == NULL
+@@ -61,7 +62,7 @@
+ 
+ 	// Use a local copy. We update *out_pos_ptr only if everything
+ 	// succeeds.
+-	size_t out_pos = *out_pos_ptr;
++	out_pos = *out_pos_ptr;
+ 
+ 	// Check that there's enough space for both Stream Header and
+ 	// Stream Footer.
+@@ -97,6 +98,8 @@
+ 
+ 	// Index
+ 	{
++
++	    lzma_ret ret;
+ 		// Create an Index. It will have one Record if there was
+ 		// at least one byte of input to encode. Otherwise the
+ 		// Index will be empty.
+@@ -104,7 +107,7 @@
+ 		if (i == NULL)
+ 			return LZMA_MEM_ERROR;
+ 
+-		lzma_ret ret = LZMA_OK;
++		ret = LZMA_OK;
+ 
+ 		if (in_size > 0)
+ 			ret = lzma_index_append(i, allocator,
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_decoder.c xz-5.0.5/src/liblzma/common/stream_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_decoder.c	2014-05-08 18:21:20.860959700 +0200
+@@ -260,6 +260,7 @@
+ 	}
+ 
+ 	case SEQ_INDEX: {
++	    lzma_ret ret;
+ 		// If we don't have any input, don't call
+ 		// lzma_index_hash_decode() since it would return
+ 		// LZMA_BUF_ERROR, which we must not do here.
+@@ -268,7 +269,7 @@
+ 
+ 		// Decode the Index and compare it to the hash calculated
+ 		// from the sizes of the Blocks (if any).
+-		const lzma_ret ret = lzma_index_hash_decode(coder->index_hash,
++		ret = lzma_index_hash_decode(coder->index_hash,
+ 				in, in_pos, in_size);
+ 		if (ret != LZMA_STREAM_END)
+ 			return ret;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_encoder.c xz-5.0.5/src/liblzma/common/stream_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_encoder.c	2014-05-08 18:21:20.862959800 +0200
+@@ -147,6 +147,7 @@
+ 	}
+ 
+ 	case SEQ_BLOCK_ENCODE: {
++		lzma_vli unpadded_size;
+ 		static const lzma_action convert[4] = {
+ 			LZMA_RUN,
+ 			LZMA_SYNC_FLUSH,
+@@ -162,7 +163,7 @@
+ 			return ret;
+ 
+ 		// Add a new Index Record.
+-		const lzma_vli unpadded_size = lzma_block_unpadded_size(
++		unpadded_size = lzma_block_unpadded_size(
+ 				&coder->block_options);
+ 		assert(unpadded_size != 0);
+ 		return_if_error(lzma_index_append(coder->index, allocator,
+@@ -174,6 +175,12 @@
+ 	}
+ 
+ 	case SEQ_INDEX_ENCODE: {
++	    const lzma_stream_flags stream_flags = {
++		.version = 0,
++		.backward_size = lzma_index_size(coder->index),
++		.check = coder->block_options.check,
++	    };
++
+ 		// Call the Index encoder. It doesn't take any input, so
+ 		// those pointers can be NULL.
+ 		const lzma_ret ret = coder->index_encoder.code(
+@@ -184,11 +191,6 @@
+ 			return ret;
+ 
+ 		// Encode the Stream Footer into coder->buffer.
+-		const lzma_stream_flags stream_flags = {
+-			.version = 0,
+-			.backward_size = lzma_index_size(coder->index),
+-			.check = coder->block_options.check,
+-		};
+ 
+ 		if (lzma_stream_footer_encode(&stream_flags, coder->buffer)
+ 				!= LZMA_OK)
+@@ -267,6 +269,12 @@
+ 		const lzma_filter *filters, lzma_check check)
+ {
+ 	lzma_next_coder_init(&lzma_stream_encoder_init, next, allocator);
++	
++	// Encode the Stream Header
++	lzma_stream_flags stream_flags = {
++	    .version = 0,
++	    .check = check,
++	};
+ 
+ 	if (filters == NULL)
+ 		return LZMA_PROG_ERROR;
+@@ -297,11 +305,6 @@
+ 	if (next->coder->index == NULL)
+ 		return LZMA_MEM_ERROR;
+ 
+-	// Encode the Stream Header
+-	lzma_stream_flags stream_flags = {
+-		.version = 0,
+-		.check = check,
+-	};
+ 	return_if_error(lzma_stream_header_encode(
+ 			&stream_flags, next->coder->buffer));
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c xz-5.0.5/src/liblzma/common/stream_flags_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_flags_decoder.c	2014-05-08 18:21:20.864959900 +0200
+@@ -30,13 +30,14 @@
+ extern LZMA_API(lzma_ret)
+ lzma_stream_header_decode(lzma_stream_flags *options, const uint8_t *in)
+ {
++	uint32_t crc;
+ 	// Magic
+ 	if (memcmp(in, lzma_header_magic, sizeof(lzma_header_magic)) != 0)
+ 		return LZMA_FORMAT_ERROR;
+ 
+ 	// Verify the CRC32 so we can distinguish between corrupt
+ 	// and unsupported files.
+-	const uint32_t crc = lzma_crc32(in + sizeof(lzma_header_magic),
++	crc = lzma_crc32(in + sizeof(lzma_header_magic),
+ 			LZMA_STREAM_FLAGS_SIZE, 0);
+ 	if (crc != unaligned_read32le(in + sizeof(lzma_header_magic)
+ 			+ LZMA_STREAM_FLAGS_SIZE))
+@@ -59,13 +60,15 @@
+ extern LZMA_API(lzma_ret)
+ lzma_stream_footer_decode(lzma_stream_flags *options, const uint8_t *in)
+ {
++    uint32_t crc;
++
+ 	// Magic
+ 	if (memcmp(in + sizeof(uint32_t) * 2 + LZMA_STREAM_FLAGS_SIZE,
+ 			lzma_footer_magic, sizeof(lzma_footer_magic)) != 0)
+ 		return LZMA_FORMAT_ERROR;
+ 
+ 	// CRC32
+-	const uint32_t crc = lzma_crc32(in + sizeof(uint32_t),
++	crc = lzma_crc32(in + sizeof(uint32_t),
+ 			sizeof(uint32_t) + LZMA_STREAM_FLAGS_SIZE, 0);
+ 	if (crc != unaligned_read32le(in))
+ 		return LZMA_DATA_ERROR;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c xz-5.0.5/src/liblzma/common/stream_flags_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/stream_flags_encoder.c	2014-05-08 18:21:20.866960000 +0200
+@@ -29,6 +29,7 @@
+ extern LZMA_API(lzma_ret)
+ lzma_stream_header_encode(const lzma_stream_flags *options, uint8_t *out)
+ {
++    uint32_t crc;
+ 	assert(sizeof(lzma_header_magic) + LZMA_STREAM_FLAGS_SIZE
+ 			+ 4 == LZMA_STREAM_HEADER_SIZE);
+ 
+@@ -43,7 +44,7 @@
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// CRC32 of the Stream Header
+-	const uint32_t crc = lzma_crc32(out + sizeof(lzma_header_magic),
++	crc = lzma_crc32(out + sizeof(lzma_header_magic),
+ 			LZMA_STREAM_FLAGS_SIZE, 0);
+ 
+ 	unaligned_write32le(out + sizeof(lzma_header_magic)
+@@ -56,6 +57,7 @@
+ extern LZMA_API(lzma_ret)
+ lzma_stream_footer_encode(const lzma_stream_flags *options, uint8_t *out)
+ {
++    uint32_t crc;
+ 	assert(2 * 4 + LZMA_STREAM_FLAGS_SIZE + sizeof(lzma_footer_magic)
+ 			== LZMA_STREAM_HEADER_SIZE);
+ 
+@@ -73,7 +75,7 @@
+ 		return LZMA_PROG_ERROR;
+ 
+ 	// CRC32
+-	const uint32_t crc = lzma_crc32(
++	crc = lzma_crc32(
+ 			out + 4, 4 + LZMA_STREAM_FLAGS_SIZE, 0);
+ 
+ 	unaligned_write32le(out, crc);
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/vli_size.c xz-5.0.5/src/liblzma/common/vli_size.c
+--- xz-5.0.5.orig/src/liblzma/common/vli_size.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/common/vli_size.c	2014-05-08 18:21:20.868960100 +0200
+@@ -16,10 +16,11 @@
+ extern LZMA_API(uint32_t)
+ lzma_vli_size(lzma_vli vli)
+ {
++    uint32_t i = 0;
++
+ 	if (vli > LZMA_VLI_MAX)
+ 		return 0;
+ 
+-	uint32_t i = 0;
+ 	do {
+ 		vli >>= 7;
+ 		++i;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_common.c xz-5.0.5/src/liblzma/delta/delta_common.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_common.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/delta/delta_common.c	2014-05-08 18:21:20.870960300 +0200
+@@ -27,6 +27,7 @@
+ lzma_delta_coder_init(lzma_next_coder *next, lzma_allocator *allocator,
+ 		const lzma_filter_info *filters)
+ {
++    const lzma_options_delta *opt;
+ 	// Allocate memory for the decoder if needed.
+ 	if (next->coder == NULL) {
+ 		next->coder = lzma_alloc(sizeof(lzma_coder), allocator);
+@@ -43,7 +44,7 @@
+ 		return LZMA_OPTIONS_ERROR;
+ 
+ 	// Set the delta distance.
+-	const lzma_options_delta *opt = filters[0].options;
++	opt = filters[0].options;
+ 	next->coder->distance = opt->dist;
+ 
+ 	// Initialize the rest of the variables.
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c xz-5.0.5/src/liblzma/delta/delta_decoder.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/delta/delta_decoder.c	2014-05-08 18:21:20.872960400 +0200
+@@ -59,11 +59,11 @@
+ lzma_delta_props_decode(void **options, lzma_allocator *allocator,
+ 		const uint8_t *props, size_t props_size)
+ {
++    lzma_options_delta *opt;
+ 	if (props_size != 1)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+-	lzma_options_delta *opt
+-			= lzma_alloc(sizeof(lzma_options_delta), allocator);
++	opt = lzma_alloc(sizeof(lzma_options_delta), allocator);
+ 	if (opt == NULL)
+ 		return LZMA_MEM_ERROR;
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c xz-5.0.5/src/liblzma/delta/delta_encoder.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/delta/delta_encoder.c	2014-05-08 18:21:20.874960500 +0200
+@@ -109,12 +109,13 @@
+ extern lzma_ret
+ lzma_delta_props_encode(const void *options, uint8_t *out)
+ {
++    const lzma_options_delta *opt = options;
++
+ 	// The caller must have already validated the options, so it's
+ 	// LZMA_PROG_ERROR if they are invalid.
+ 	if (lzma_delta_coder_memusage(options) == UINT64_MAX)
+ 		return LZMA_PROG_ERROR;
+ 
+-	const lzma_options_delta *opt = options;
+ 	out[0] = opt->dist - LZMA_DELTA_DIST_MIN;
+ 
+ 	return LZMA_OK;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c xz-5.0.5/src/liblzma/lz/lz_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lz/lz_decoder.c	2014-05-08 18:21:20.876960600 +0200
+@@ -69,13 +69,16 @@
+ 		size_t *restrict out_pos, size_t out_size)
+ {
+ 	while (true) {
++	    size_t copy_size;
++	    lzma_ret ret;
++	    size_t dict_start;
+ 		// Wrap the dictionary if needed.
+ 		if (coder->dict.pos == coder->dict.size)
+ 			coder->dict.pos = 0;
+ 
+ 		// Store the current dictionary position. It is needed to know
+ 		// where to start copying to the out[] buffer.
+-		const size_t dict_start = coder->dict.pos;
++		dict_start = coder->dict.pos;
+ 
+ 		// Calculate how much we allow coder->lz.code() to decode.
+ 		// It must not decode past the end of the dictionary
+@@ -86,13 +89,13 @@
+ 					coder->dict.size - coder->dict.pos);
+ 
+ 		// Call the coder->lz.code() to do the actual decoding.
+-		const lzma_ret ret = coder->lz.code(
++		ret = coder->lz.code(
+ 				coder->lz.coder, &coder->dict,
+ 				in, in_pos, in_size);
+ 
+ 		// Copy the decoded data from the dictionary to the out[]
+ 		// buffer.
+-		const size_t copy_size = coder->dict.pos - dict_start;
++		copy_size = coder->dict.pos - dict_start;
+ 		assert(copy_size <= out_size - *out_pos);
+ 		memcpy(out + *out_pos, coder->dict.buf + dict_start,
+ 				copy_size);
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c xz-5.0.5/src/liblzma/lz/lz_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lz/lz_encoder.c	2014-05-08 18:21:20.879960800 +0200
+@@ -80,6 +80,8 @@
+ 		size_t *in_pos, size_t in_size, lzma_action action)
+ {
+ 	assert(coder->mf.read_pos <= coder->mf.write_pos);
++	size_t write_pos = coder->mf.write_pos;
++	lzma_ret ret;
+ 
+ 	// Move the sliding window if needed.
+ 	if (coder->mf.read_pos >= coder->mf.size - coder->mf.keep_size_after)
+@@ -88,8 +90,7 @@
+ 	// Maybe this is ugly, but lzma_mf uses uint32_t for most things
+ 	// (which I find cleanest), but we need size_t here when filling
+ 	// the history window.
+-	size_t write_pos = coder->mf.write_pos;
+-	lzma_ret ret;
++
+ 	if (coder->next.code == NULL) {
+ 		// Not using a filter, simply memcpy() as much as possible.
+ 		lzma_bufcpy(in, in_pos, in_size, coder->mf.buffer,
+@@ -182,6 +183,8 @@
+ lz_encoder_prepare(lzma_mf *mf, lzma_allocator *allocator,
+ 		const lzma_lz_options *lz_options)
+ {
++    uint32_t new_count;
++    bool is_bt;
+ 	// For now, the dictionary size is limited to 1.5 GiB. This may grow
+ 	// in the future if needed, but it needs a little more work than just
+ 	// changing this check.
+@@ -288,7 +291,7 @@
+ 	if (hash_bytes > mf->nice_len)
+ 		return true;
+ 
+-	const bool is_bt = (lz_options->match_finder & 0x10) != 0;
++	is_bt = (lz_options->match_finder & 0x10) != 0;
+ 	uint32_t hs;
+ 
+ 	if (hash_bytes == 2) {
+@@ -337,7 +340,7 @@
+ 	if (is_bt)
+ 		mf->sons_count *= 2;
+ 
+-	const uint32_t new_count = mf->hash_size_sum + mf->sons_count;
++	new_count = mf->hash_size_sum + mf->sons_count;
+ 
+ 	// Deallocate the old hash array if it exists and has different size
+ 	// than what is needed now.
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c	2014-05-08 18:21:20.882960900 +0200
+@@ -54,16 +54,18 @@
+ 			// encoder or the number of bytes left in the
+ 			// dictionary, whichever is smaller.
+ 			uint32_t limit = mf_avail(mf) + 1;
++			uint8_t *p1;
++			uint8_t *p2;
+ 			if (limit > mf->match_len_max)
+ 				limit = mf->match_len_max;
+ 
+ 			// Pointer to the byte we just ran through
+ 			// the match finder.
+-			const uint8_t *p1 = mf_ptr(mf) - 1;
++			p1 = mf_ptr(mf) - 1;
+ 
+ 			// Pointer to the beginning of the match. We need -1
+ 			// here because the match distances are zero based.
+-			const uint8_t *p2 = p1 - matches[count - 1].dist - 1;
++			p2 = p1 - matches[count - 1].dist - 1;
+ 
+ 			while (len_best < limit
+ 					&& p1[len_best] == p2[len_best])
+@@ -261,10 +263,11 @@
+ 
+ 	while (true) {
+ 		const uint32_t delta = pos - cur_match;
++		const uint8_t *pb;
+ 		if (depth-- == 0 || delta >= cyclic_size)
+ 			return matches;
+ 
+-		const uint8_t *const pb = cur - delta;
++		pb = cur - delta;
+ 		cur_match = son[cyclic_pos - delta
+ 				+ (delta > cyclic_pos ? cyclic_size : 0)];
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/fastpos.h xz-5.0.5/src/liblzma/lzma/fastpos.h
+--- xz-5.0.5.orig/src/liblzma/lzma/fastpos.h	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/fastpos.h	2014-05-08 18:23:56.567456100 +0200
+@@ -75,6 +75,8 @@
+ // on all systems I have tried. The size optimized version is sometimes
+ // slightly faster, but sometimes it is a lot slower.
+ 
++#include "config.h"
++
+ #ifdef HAVE_SMALL
+ #	define get_pos_slot(pos) ((pos) <= 4 ? (pos) : get_pos_slot_2(pos))
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c xz-5.0.5/src/liblzma/lzma/lzma_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma_decoder.c	2014-05-08 18:21:20.885961100 +0200
+@@ -285,6 +285,7 @@
+ 		const uint8_t *restrict in,
+ 		size_t *restrict in_pos, size_t in_size)
+ {
++    lzma_dict dict;
+ 	////////////////////
+ 	// Initialization //
+ 	////////////////////
+@@ -299,7 +300,7 @@
+ 	// Making local copies of often-used variables improves both
+ 	// speed and readability.
+ 
+-	lzma_dict dict = *dictptr;
++	dict = *dictptr;
+ 
+ 	const size_t dict_start = dict.pos;
+ 
+@@ -1028,11 +1029,12 @@
+ lzma_lzma_props_decode(void **options, lzma_allocator *allocator,
+ 		const uint8_t *props, size_t props_size)
+ {
++    lzma_options_lzma *opt;
+ 	if (props_size != 5)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+-	lzma_options_lzma *opt
+-			= lzma_alloc(sizeof(lzma_options_lzma), allocator);
++	
++	opt = lzma_alloc(sizeof(lzma_options_lzma), allocator);
+ 	if (opt == NULL)
+ 		return LZMA_MEM_ERROR;
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c xz-5.0.5/src/liblzma/lzma/lzma_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder.c	2014-05-08 18:21:20.888961300 +0200
+@@ -313,12 +313,13 @@
+ 		uint8_t *restrict out, size_t *restrict out_pos,
+ 		size_t out_size, uint32_t limit)
+ {
++    uint32_t position;
+ 	// Initialize the stream if no data has been encoded yet.
+ 	if (!coder->is_initialized && !encode_init(coder, mf))
+ 		return LZMA_OK;
+ 
+ 	// Get the lowest bits of the uncompressed offset from the LZ layer.
+-	uint32_t position = mf_position(mf);
++	position = mf_position(mf);
+ 
+ 	while (true) {
+ 		// Encode pending bits, if any. Calling this before encoding
+@@ -625,13 +626,14 @@
+ extern uint64_t
+ lzma_lzma_encoder_memusage(const void *options)
+ {
++    lzma_lz_options lz_options;
++    uint64_t lz_memusage;
+ 	if (!is_options_valid(options))
+ 		return UINT64_MAX;
+ 
+-	lzma_lz_options lz_options;
+ 	set_lz_options(&lz_options, options);
+ 
+-	const uint64_t lz_memusage = lzma_lz_encoder_memusage(&lz_options);
++	lz_memusage = lzma_lz_encoder_memusage(&lz_options);
+ 	if (lz_memusage == UINT64_MAX)
+ 		return UINT64_MAX;
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2014-05-08 18:21:20.891961500 +0200
+@@ -456,6 +456,7 @@
+ 	uint32_t new_len = coder->longest_match_length;
+ 	uint32_t pos_prev = coder->opts[cur].pos_prev;
+ 	lzma_lzma_state state;
++        uint32_t buf_avail;
+ 
+ 	if (coder->opts[cur].prev_1_is_literal) {
+ 		--pos_prev;
+@@ -565,7 +566,7 @@
+ 	if (buf_avail_full < 2)
+ 		return len_end;
+ 
+-	const uint32_t buf_avail = my_min(buf_avail_full, nice_len);
++	buf_avail = my_min(buf_avail_full, nice_len);
+ 
+ 	if (!next_is_literal && match_byte != current_byte) { // speed optimization
+ 		// try literal + rep0
+@@ -612,6 +613,8 @@
+ 	uint32_t start_len = 2; // speed optimization
+ 
+ 	for (uint32_t rep_index = 0; rep_index < REP_DISTANCES; ++rep_index) {
++	    uint32_t len_test_2;
++	    uint32_t limit;
+ 		const uint8_t *const buf_back = buf - reps[rep_index] - 1;
+ 		if (not_equal_16(buf, buf_back))
+ 			continue;
+@@ -647,8 +650,8 @@
+ 			start_len = len_test + 1;
+ 
+ 
+-		uint32_t len_test_2 = len_test + 1;
+-		const uint32_t limit = my_min(buf_avail_full,
++		len_test_2 = len_test + 1;
++		limit = my_min(buf_avail_full,
+ 				len_test_2 + nice_len);
+ 		for (; len_test_2 < limit
+ 				&& buf[len_test_2] == buf_back[len_test_2];
+@@ -815,6 +818,10 @@
+ 		uint32_t *restrict back_res, uint32_t *restrict len_res,
+ 		uint32_t position)
+ {
++    uint32_t reps[REP_DISTANCES];
++    uint32_t len_end;
++    uint32_t cur;
++
+ 	// If we have symbols pending, return the next pending symbol.
+ 	if (coder->opts_end_index != coder->opts_current_index) {
+ 		assert(mf->read_ahead > 0);
+@@ -841,14 +848,13 @@
+ 	// the original function into two pieces makes it at least a little
+ 	// more readable, since those two parts don't share many variables.
+ 
+-	uint32_t len_end = helper1(coder, mf, back_res, len_res, position);
++	len_end = helper1(coder, mf, back_res, len_res, position);
+ 	if (len_end == UINT32_MAX)
+ 		return;
+ 
+-	uint32_t reps[REP_DISTANCES];
++
+ 	memcpy(reps, coder->reps, sizeof(reps));
+ 
+-	uint32_t cur;
+ 	for (cur = 1; cur < len_end; ++cur) {
+ 		assert(cur < OPTS);
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c	2014-05-08 18:21:20.893961600 +0200
+@@ -30,14 +30,15 @@
+ 	options->lp = LZMA_LP_DEFAULT;
+ 	options->pb = LZMA_PB_DEFAULT;
+ 
+-	options->dict_size = UINT32_C(1) << (uint8_t []){
+-			18, 20, 21, 22, 22, 23, 23, 24, 25, 26 }[level];
++        static const uint8_t dict_size_values[] = { 18, 20, 21, 22, 22, 23, 23, 24, 25, 26 };
++        options->dict_size = UINT32_C(1) << dict_size_values[level];
+ 
+ 	if (level <= 3) {
+ 		options->mode = LZMA_MODE_FAST;
+ 		options->mf = level == 0 ? LZMA_MF_HC3 : LZMA_MF_HC4;
+ 		options->nice_len = level <= 1 ? 128 : 273;
+-		options->depth = (uint8_t []){ 4, 8, 24, 48 }[level];
++                static const uint8_t depth_values[] = { 4, 8, 24, 48 };
++                options->depth = depth_values[level];
+ 	} else {
+ 		options->mode = LZMA_MODE_NORMAL;
+ 		options->mf = LZMA_MF_BT4;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c	2014-05-08 18:21:20.895961700 +0200
+@@ -272,6 +272,8 @@
+ lzma_lzma2_props_decode(void **options, lzma_allocator *allocator,
+ 		const uint8_t *props, size_t props_size)
+ {
++	lzma_options_lzma *opt;
++
+ 	if (props_size != 1)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+@@ -283,8 +285,7 @@
+ 	if (props[0] > 40)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+-	lzma_options_lzma *opt = lzma_alloc(
+-			sizeof(lzma_options_lzma), allocator);
++	opt = lzma_alloc(sizeof(lzma_options_lzma), allocator);
+ 	if (opt == NULL)
+ 		return LZMA_MEM_ERROR;
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c	2014-05-08 18:21:20.898961900 +0200
+@@ -273,6 +273,7 @@
+ static lzma_ret
+ lzma2_encoder_options_update(lzma_coder *coder, const lzma_filter *filter)
+ {
++    lzma_options_lzma *opt;
+ 	// New options can be set only when there is no incomplete chunk.
+ 	// This is the case at the beginning of the raw stream and right
+ 	// after LZMA_SYNC_FLUSH.
+@@ -281,7 +282,7 @@
+ 
+ 	// Look if there are new options. At least for now,
+ 	// only lc/lp/pb can be changed.
+-	const lzma_options_lzma *opt = filter->options;
++	opt = filter->options;
+ 	if (coder->opt_cur.lc != opt->lc || coder->opt_cur.lp != opt->lp
+ 			|| coder->opt_cur.pb != opt->pb) {
+ 		// Validate the options.
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c xz-5.0.5/src/liblzma/simple/simple_decoder.c
+--- xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/simple/simple_decoder.c	2014-05-08 18:21:20.900962000 +0200
+@@ -17,13 +17,14 @@
+ lzma_simple_props_decode(void **options, lzma_allocator *allocator,
+ 		const uint8_t *props, size_t props_size)
+ {
++    lzma_options_bcj *opt;
+ 	if (props_size == 0)
+ 		return LZMA_OK;
+ 
+ 	if (props_size != 4)
+ 		return LZMA_OPTIONS_ERROR;
+ 
+-	lzma_options_bcj *opt = lzma_alloc(
++	opt = lzma_alloc(
+ 			sizeof(lzma_options_bcj), allocator);
+ 	if (opt == NULL)
+ 		return LZMA_MEM_ERROR;
+diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/simple/x86.c xz-5.0.5/src/liblzma/simple/x86.c
+--- xz-5.0.5.orig/src/liblzma/simple/x86.c	2013-06-30 14:49:46.000000000 +0200
++++ xz-5.0.5/src/liblzma/simple/x86.c	2014-05-08 18:21:20.902962100 +0200
+@@ -36,23 +36,27 @@
+ 	uint32_t prev_mask = simple->prev_mask;
+ 	uint32_t prev_pos = simple->prev_pos;
+ 
++	size_t limit;
++	size_t buffer_pos;
++
+ 	if (size < 5)
+ 		return 0;
+ 
+ 	if (now_pos - prev_pos > 5)
+ 		prev_pos = now_pos - 5;
+ 
+-	const size_t limit = size - 5;
+-	size_t buffer_pos = 0;
++	limit = size - 5;
++	buffer_pos = 0;
+ 
+ 	while (buffer_pos <= limit) {
+ 		uint8_t b = buffer[buffer_pos];
++		uint32_t offset;
+ 		if (b != 0xE8 && b != 0xE9) {
+ 			++buffer_pos;
+ 			continue;
+ 		}
+ 
+-		const uint32_t offset = now_pos + (uint32_t)(buffer_pos)
++		offset = now_pos + (uint32_t)(buffer_pos)
+ 				- prev_pos;
+ 		prev_pos = now_pos + (uint32_t)(buffer_pos);
+ 
+diff -Nru -x '*~' xz-5.0.5.orig/src/xz/message.h.orig xz-5.0.5/src/xz/message.h.orig
+--- xz-5.0.5.orig/src/xz/message.h.orig	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xz/message.h.orig	2014-05-08 18:21:20.904962200 +0200
+@@ -0,0 +1,167 @@
++///////////////////////////////////////////////////////////////////////////////
++//
++/// \file       message.h
++/// \brief      Printing messages to stderr
++//
++//  Author:     Lasse Collin
++//
++//  This file has been put into the public domain.
++//  You can do whatever you want with this file.
++//
++///////////////////////////////////////////////////////////////////////////////
++
++/// Verbosity levels
++enum message_verbosity {
++	V_SILENT,   ///< No messages
++	V_ERROR,    ///< Only error messages
++	V_WARNING,  ///< Errors and warnings
++	V_VERBOSE,  ///< Errors, warnings, and verbose statistics
++	V_DEBUG,    ///< Very verbose
++};
++
++
++/// \brief      Signals used for progress message handling
++extern const int message_progress_sigs[];
++
++
++/// \brief      Initializes the message functions
++///
++/// If an error occurs, this function doesn't return.
++///
++extern void message_init(void);
++
++
++/// Increase verbosity level by one step unless it was at maximum.
++extern void message_verbosity_increase(void);
++
++/// Decrease verbosity level by one step unless it was at minimum.
++extern void message_verbosity_decrease(void);
++
++/// Get the current verbosity level.
++extern enum message_verbosity message_verbosity_get(void);
++
++
++/// \brief      Print a message if verbosity level is at least "verbosity"
++///
++/// This doesn't touch the exit status.
++extern void message(enum message_verbosity verbosity, const char *fmt, ...)
++		lzma_attribute((__format__(__printf__, 2, 3)));
++
++
++/// \brief      Prints a warning and possibly sets exit status
++///
++/// The message is printed only if verbosity level is at least V_WARNING.
++/// The exit status is set to WARNING unless it was already at ERROR.
++extern void message_warning(const char *fmt, ...)
++		lzma_attribute((__format__(__printf__, 1, 2)));
++
++
++/// \brief      Prints an error message and sets exit status
++///
++/// The message is printed only if verbosity level is at least V_ERROR.
++/// The exit status is set to ERROR.
++extern void message_error(const char *fmt, ...)
++		lzma_attribute((__format__(__printf__, 1, 2)));
++
++
++/// \brief      Prints an error message and exits with EXIT_ERROR
++///
++/// The message is printed only if verbosity level is at least V_ERROR.
++extern void message_fatal(const char *fmt, ...)
++		lzma_attribute((__format__(__printf__, 1, 2)))
++		lzma_attribute((__noreturn__));
++
++
++/// Print an error message that an internal error occurred and exit with
++/// EXIT_ERROR.
++extern void message_bug(void) lzma_attribute((__noreturn__));
++
++
++/// Print a message that establishing signal handlers failed, and exit with
++/// exit status ERROR.
++extern void message_signal_handler(void) lzma_attribute((__noreturn__));
++
++
++/// Convert lzma_ret to a string.
++extern const char *message_strm(lzma_ret code);
++
++
++/// Display how much memory was needed and how much the limit was.
++extern void message_mem_needed(enum message_verbosity v, uint64_t memusage);
++
++
++/// Buffer size for message_filters_to_str()
++#define FILTERS_STR_SIZE 512
++
++
++/// \brief      Get the filter chain as a string
++///
++/// \param      buf         Pointer to caller allocated buffer to hold
++///                         the filter chain string
++/// \param      filters     Pointer to the filter chain
++/// \param      all_known   If true, all filter options are printed.
++///                         If false, only the options that get stored
++///                         into .xz headers are printed.
++extern void message_filters_to_str(char buf[FILTERS_STR_SIZE],
++		const lzma_filter *filters, bool all_known);
++
++
++/// Print the filter chain.
++extern void message_filters_show(
++		enum message_verbosity v, const lzma_filter *filters);
++
++
++/// Print a message that user should try --help.
++extern void message_try_help(void);
++
++
++/// Prints the version number to stdout and exits with exit status SUCCESS.
++extern void message_version(void) lzma_attribute((__noreturn__));
++
++
++/// Print the help message.
++extern void message_help(bool long_help) lzma_attribute((__noreturn__));
++
++
++/// \brief      Set the total number of files to be processed
++///
++/// Standard input is counted as a file here. This is used when printing
++/// the filename via message_filename().
++extern void message_set_files(unsigned int files);
++
++
++/// \brief      Set the name of the current file and possibly print it too
++///
++/// The name is printed immediately if --list was used or if --verbose
++/// was used and stderr is a terminal. Even when the filename isn't printed,
++/// it is stored so that it can be printed later if needed for progress
++/// messages.
++extern void message_filename(const char *src_name);
++
++
++/// \brief      Start progress info handling
++///
++/// message_filename() must be called before this function to set
++/// the filename.
++///
++/// This must be paired with a call to message_progress_end() before the
++/// given *strm becomes invalid.
++///
++/// \param      strm      Pointer to lzma_stream used for the coding.
++/// \param      in_size   Size of the input file, or zero if unknown.
++///
++extern void message_progress_start(lzma_stream *strm, uint64_t in_size);
++
++
++/// Update the progress info if in verbose mode and enough time has passed
++/// since the previous update. This can be called only when
++/// message_progress_start() has already been used.
++extern void message_progress_update(void);
++
++
++/// \brief      Finishes the progress message if we were in verbose mode
++///
++/// \param      finished    True if the whole stream was successfully coded
++///                         and output written to the output stream.
++///
++extern void message_progress_end(bool finished);
+diff -Nru -x '*~' xz-5.0.5.orig/src/xz/message.h.rej xz-5.0.5/src/xz/message.h.rej
+--- xz-5.0.5.orig/src/xz/message.h.rej	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xz/message.h.rej	2014-05-08 18:21:20.906962300 +0200
+@@ -0,0 +1,65 @@
++***************
++*** 45,51 ****
++  ///
++  /// This doesn't touch the exit status.
++  extern void message(enum message_verbosity verbosity, const char *fmt, ...)
++- 		lzma_attribute((format(printf, 2, 3)));
++  
++  
++  /// \brief      Prints a warning and possibly sets exit status
++--- 45,51 ----
++  ///
++  /// This doesn't touch the exit status.
++  extern void message(enum message_verbosity verbosity, const char *fmt, ...)
+++ 		lzma_attribute((format(__printf__, 2, 3)));
++  
++  
++  /// \brief      Prints a warning and possibly sets exit status
++***************
++*** 53,59 ****
++  /// The message is printed only if verbosity level is at least V_WARNING.
++  /// The exit status is set to WARNING unless it was already at ERROR.
++  extern void message_warning(const char *fmt, ...)
++- 		lzma_attribute((format(printf, 1, 2)));
++  
++  
++  /// \brief      Prints an error message and sets exit status
++--- 53,59 ----
++  /// The message is printed only if verbosity level is at least V_WARNING.
++  /// The exit status is set to WARNING unless it was already at ERROR.
++  extern void message_warning(const char *fmt, ...)
+++ 		lzma_attribute((format(__printf__, 1, 2)));
++  
++  
++  /// \brief      Prints an error message and sets exit status
++***************
++*** 61,74 ****
++  /// The message is printed only if verbosity level is at least V_ERROR.
++  /// The exit status is set to ERROR.
++  extern void message_error(const char *fmt, ...)
++- 		lzma_attribute((format(printf, 1, 2)));
++  
++  
++  /// \brief      Prints an error message and exits with EXIT_ERROR
++  ///
++  /// The message is printed only if verbosity level is at least V_ERROR.
++  extern void message_fatal(const char *fmt, ...)
++- 		lzma_attribute((format(printf, 1, 2)))
++  		lzma_attribute((noreturn));
++  
++  
++--- 61,74 ----
++  /// The message is printed only if verbosity level is at least V_ERROR.
++  /// The exit status is set to ERROR.
++  extern void message_error(const char *fmt, ...)
+++ 		lzma_attribute((format(__printf__, 1, 2)));
++  
++  
++  /// \brief      Prints an error message and exits with EXIT_ERROR
++  ///
++  /// The message is printed only if verbosity level is at least V_ERROR.
++  extern void message_fatal(const char *fmt, ...)
+++ 		lzma_attribute((format(__printf__, 1, 2)))
++  		lzma_attribute((noreturn));
++  
++  
+diff -Nru -x '*~' xz-5.0.5.orig/src/xz/util.h.orig xz-5.0.5/src/xz/util.h.orig
+--- xz-5.0.5.orig/src/xz/util.h.orig	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xz/util.h.orig	2014-05-08 18:21:20.909962500 +0200
+@@ -0,0 +1,123 @@
++///////////////////////////////////////////////////////////////////////////////
++//
++/// \file       util.h
++/// \brief      Miscellaneous utility functions
++//
++//  Author:     Lasse Collin
++//
++//  This file has been put into the public domain.
++//  You can do whatever you want with this file.
++//
++///////////////////////////////////////////////////////////////////////////////
++
++/// \brief      Safe malloc() that never returns NULL
++///
++/// \note       xmalloc(), xrealloc(), and xstrdup() must not be used when
++///             there are files open for writing, that should be cleaned up
++///             before exiting.
++#define xmalloc(size) xrealloc(NULL, size)
++
++
++/// \brief      Safe realloc() that never returns NULL
++extern void *xrealloc(void *ptr, size_t size)
++		lzma_attribute((__malloc__)) lzma_attr_alloc_size(2);
++
++
++/// \brief      Safe strdup() that never returns NULL
++extern char *xstrdup(const char *src) lzma_attribute((__malloc__));
++
++
++/// \brief      Fancy version of strtoull()
++///
++/// \param      name    Name of the option to show in case of an error
++/// \param      value   String containing the number to be parsed; may
++///                     contain suffixes "k", "M", "G", "Ki", "Mi", or "Gi"
++/// \param      min     Minimum valid value
++/// \param      max     Maximum valid value
++///
++/// \return     Parsed value that is in the range [min, max]. Does not return
++///             if an error occurs.
++///
++extern uint64_t str_to_uint64(const char *name, const char *value,
++		uint64_t min, uint64_t max);
++
++
++/// \brief      Round an integer up to the next full MiB and convert to MiB
++///
++/// This is used when printing memory usage and limit.
++extern uint64_t round_up_to_mib(uint64_t n);
++
++
++/// \brief      Convert uint64_t to a string
++///
++/// Convert the given value to a string with locale-specific thousand
++/// separators, if supported by the snprintf() implementation. The string
++/// is stored into an internal static buffer indicated by the slot argument.
++/// A pointer to the selected buffer is returned.
++///
++/// This function exists, because non-POSIX systems don't support thousand
++/// separator in format strings. Solving the problem in a simple way doesn't
++/// work, because it breaks gettext (specifically, the xgettext tool).
++extern const char *uint64_to_str(uint64_t value, uint32_t slot);
++
++
++enum nicestr_unit {
++	NICESTR_B,
++	NICESTR_KIB,
++	NICESTR_MIB,
++	NICESTR_GIB,
++	NICESTR_TIB,
++};
++
++
++/// \brief      Convert uint64_t to a nice human readable string
++///
++/// This is like uint64_to_str() but uses B, KiB, MiB, GiB, or TiB suffix
++/// and optionally includes the exact size in parenthesis.
++///
++/// \param      value     Value to be printed
++/// \param      unit_min  Smallest unit to use. This and unit_max are used
++///                       e.g. when showing the progress indicator to force
++///                       the unit to MiB.
++/// \param      unit_max  Biggest unit to use. assert(unit_min <= unit_max).
++/// \param      always_also_bytes
++///                       Show also the exact byte value in parenthesis
++///                       if the nicely formatted string uses bigger unit
++///                       than bytes.
++/// \param      slot      Which static buffer to use to hold the string.
++///                       This is shared with uint64_to_str().
++///
++/// \return     Pointer to statically allocated buffer containing the string.
++///
++/// \note       This uses double_to_str() internally so the static buffer
++///             in double_to_str() will be overwritten.
++///
++extern const char *uint64_to_nicestr(uint64_t value,
++		enum nicestr_unit unit_min, enum nicestr_unit unit_max,
++		bool always_also_bytes, uint32_t slot);
++
++
++/// \brief      Wrapper for snprintf() to help constructing a string in pieces
++///
++/// A maximum of *left bytes is written starting from *pos. *pos and *left
++/// are updated accordingly.
++extern void my_snprintf(char **pos, size_t *left, const char *fmt, ...)
++		lzma_attribute((__format__(__printf__, 3, 4)));
++
++
++/// \brief      Check if filename is empty and print an error message
++extern bool is_empty_filename(const char *filename);
++
++
++/// \brief      Test if stdin is a terminal
++///
++/// If stdin is a terminal, an error message is printed and exit status set
++/// to EXIT_ERROR.
++extern bool is_tty_stdin(void);
++
++
++/// \brief      Test if stdout is a terminal
++///
++/// If stdout is a terminal, an error message is printed and exit status set
++/// to EXIT_ERROR.
++extern bool is_tty_stdout(void);
+diff -Nru -x '*~' xz-5.0.5.orig/src/xz/util.h.rej xz-5.0.5/src/xz/util.h.rej
+--- xz-5.0.5.orig/src/xz/util.h.rej	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xz/util.h.rej	2014-05-08 18:21:20.910962500 +0200
+@@ -0,0 +1,17 @@
++***************
++*** 101,107 ****
++  /// A maximum of *left bytes is written starting from *pos. *pos and *left
++  /// are updated accordingly.
++  extern void my_snprintf(char **pos, size_t *left, const char *fmt, ...)
++- 		lzma_attribute((format(printf, 3, 4)));
++  
++  
++  /// \brief      Check if filename is empty and print an error message
++--- 101,107 ----
++  /// A maximum of *left bytes is written starting from *pos. *pos and *left
++  /// are updated accordingly.
++  extern void my_snprintf(char **pos, size_t *left, const char *fmt, ...)
+++ 		lzma_attribute((format(__printf__, 3, 4)));
++  
++  
++  /// \brief      Check if filename is empty and print an error message
+diff -Nru -x '*~' xz-5.0.5.orig/src/xzdec/xzdec.c.orig xz-5.0.5/src/xzdec/xzdec.c.orig
+--- xz-5.0.5.orig/src/xzdec/xzdec.c.orig	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xzdec/xzdec.c.orig	2014-05-08 18:21:20.913962700 +0200
+@@ -0,0 +1,323 @@
++///////////////////////////////////////////////////////////////////////////////
++//
++/// \file       xzdec.c
++/// \brief      Simple single-threaded tool to uncompress .xz or .lzma files
++//
++//  Author:     Lasse Collin
++//
++//  This file has been put into the public domain.
++//  You can do whatever you want with this file.
++//
++///////////////////////////////////////////////////////////////////////////////
++
++#include "sysdefs.h"
++#include "lzma.h"
++
++#include <stdarg.h>
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++
++#include "getopt.h"
++#include "tuklib_progname.h"
++#include "tuklib_exit.h"
++
++#ifdef TUKLIB_DOSLIKE
++#	include <fcntl.h>
++#	include <io.h>
++#endif
++
++
++#ifdef LZMADEC
++#	define TOOL_FORMAT "lzma"
++#else
++#	define TOOL_FORMAT "xz"
++#endif
++
++
++/// Error messages are suppressed if this is zero, which is the case when
++/// --quiet has been given at least twice.
++static unsigned int display_errors = 2;
++
++
++static void lzma_attribute((__format__(__printf__, 1, 2)))
++my_errorf(const char *fmt, ...)
++{
++	va_list ap;
++	va_start(ap, fmt);
++
++	if (display_errors) {
++		fprintf(stderr, "%s: ", progname);
++		vfprintf(stderr, fmt, ap);
++		fprintf(stderr, "\n");
++	}
++
++	va_end(ap);
++	return;
++}
++
++
++static void lzma_attribute((__noreturn__))
++help(void)
++{
++	printf(
++"Usage: %s [OPTION]... [FILE]...\n"
++"Decompress files in the ." TOOL_FORMAT " format to standard output.\n"
++"\n"
++"  -d, --decompress   (ignored, only decompression is supported)\n"
++"  -k, --keep         (ignored, files are never deleted)\n"
++"  -c, --stdout       (ignored, output is always written to standard output)\n"
++"  -q, --quiet        specify *twice* to suppress errors\n"
++"  -Q, --no-warn      (ignored, the exit status 2 is never used)\n"
++"  -h, --help         display this help and exit\n"
++"  -V, --version      display the version number and exit\n"
++"\n"
++"With no FILE, or when FILE is -, read standard input.\n"
++"\n"
++"Report bugs to <" PACKAGE_BUGREPORT "> (in English or Finnish).\n"
++PACKAGE_NAME " home page: <" PACKAGE_URL ">\n", progname);
++
++	tuklib_exit(EXIT_SUCCESS, EXIT_FAILURE, display_errors);
++}
++
++
++static void lzma_attribute((__noreturn__))
++version(void)
++{
++	printf(TOOL_FORMAT "dec (" PACKAGE_NAME ") " LZMA_VERSION_STRING "\n"
++			"liblzma %s\n", lzma_version_string());
++
++	tuklib_exit(EXIT_SUCCESS, EXIT_FAILURE, display_errors);
++}
++
++
++/// Parses command line options.
++static void
++parse_options(int argc, char **argv)
++{
++	static const char short_opts[] = "cdkM:hqQV";
++	static const struct option long_opts[] = {
++		{ "stdout",       no_argument,         NULL, 'c' },
++		{ "to-stdout",    no_argument,         NULL, 'c' },
++		{ "decompress",   no_argument,         NULL, 'd' },
++		{ "uncompress",   no_argument,         NULL, 'd' },
++		{ "keep",         no_argument,         NULL, 'k' },
++		{ "quiet",        no_argument,         NULL, 'q' },
++		{ "no-warn",      no_argument,         NULL, 'Q' },
++		{ "help",         no_argument,         NULL, 'h' },
++		{ "version",      no_argument,         NULL, 'V' },
++		{ NULL,           0,                   NULL, 0   }
++	};
++
++	int c;
++
++	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL))
++			!= -1) {
++		switch (c) {
++		case 'c':
++		case 'd':
++		case 'k':
++		case 'Q':
++			break;
++
++		case 'q':
++			if (display_errors > 0)
++				--display_errors;
++
++			break;
++
++		case 'h':
++			help();
++
++		case 'V':
++			version();
++
++		default:
++			exit(EXIT_FAILURE);
++		}
++	}
++
++	return;
++}
++
++
++static void
++uncompress(lzma_stream *strm, FILE *file, const char *filename)
++{
++	lzma_ret ret;
++
++	// Initialize the decoder
++#ifdef LZMADEC
++	ret = lzma_alone_decoder(strm, UINT64_MAX);
++#else
++	ret = lzma_stream_decoder(strm, UINT64_MAX, LZMA_CONCATENATED);
++#endif
++
++	// The only reasonable error here is LZMA_MEM_ERROR.
++	if (ret != LZMA_OK) {
++		my_errorf("%s", ret == LZMA_MEM_ERROR ? strerror(ENOMEM)
++				: "Internal error (bug)");
++		exit(EXIT_FAILURE);
++	}
++
++	// Input and output buffers
++	uint8_t in_buf[BUFSIZ];
++	uint8_t out_buf[BUFSIZ];
++
++	strm->avail_in = 0;
++	strm->next_out = out_buf;
++	strm->avail_out = BUFSIZ;
++
++	lzma_action action = LZMA_RUN;
++
++	while (true) {
++		if (strm->avail_in == 0) {
++			strm->next_in = in_buf;
++			strm->avail_in = fread(in_buf, 1, BUFSIZ, file);
++
++			if (ferror(file)) {
++				// POSIX says that fread() sets errno if
++				// an error occurred. ferror() doesn't
++				// touch errno.
++				my_errorf("%s: Error reading input file: %s",
++						filename, strerror(errno));
++				exit(EXIT_FAILURE);
++			}
++
++#ifndef LZMADEC
++			// When using LZMA_CONCATENATED, we need to tell
++			// liblzma when it has got all the input.
++			if (feof(file))
++				action = LZMA_FINISH;
++#endif
++		}
++
++		ret = lzma_code(strm, action);
++
++		// Write and check write error before checking decoder error.
++		// This way as much data as possible gets written to output
++		// even if decoder detected an error.
++		if (strm->avail_out == 0 || ret != LZMA_OK) {
++			const size_t write_size = BUFSIZ - strm->avail_out;
++
++			if (fwrite(out_buf, 1, write_size, stdout)
++					!= write_size) {
++				// Wouldn't be a surprise if writing to stderr
++				// would fail too but at least try to show an
++				// error message.
++				my_errorf("Cannot write to standard output: "
++						"%s", strerror(errno));
++				exit(EXIT_FAILURE);
++			}
++
++			strm->next_out = out_buf;
++			strm->avail_out = BUFSIZ;
++		}
++
++		if (ret != LZMA_OK) {
++			if (ret == LZMA_STREAM_END) {
++#ifdef LZMADEC
++				// Check that there's no trailing garbage.
++				if (strm->avail_in != 0
++						|| fread(in_buf, 1, 1, file)
++							!= 0
++						|| !feof(file))
++					ret = LZMA_DATA_ERROR;
++				else
++					return;
++#else
++				// lzma_stream_decoder() already guarantees
++				// that there's no trailing garbage.
++				assert(strm->avail_in == 0);
++				assert(action == LZMA_FINISH);
++				assert(feof(file));
++				return;
++#endif
++			}
++
++			const char *msg;
++			switch (ret) {
++			case LZMA_MEM_ERROR:
++				msg = strerror(ENOMEM);
++				break;
++
++			case LZMA_FORMAT_ERROR:
++				msg = "File format not recognized";
++				break;
++
++			case LZMA_OPTIONS_ERROR:
++				// FIXME: Better message?
++				msg = "Unsupported compression options";
++				break;
++
++			case LZMA_DATA_ERROR:
++				msg = "File is corrupt";
++				break;
++
++			case LZMA_BUF_ERROR:
++				msg = "Unexpected end of input";
++				break;
++
++			default:
++				msg = "Internal error (bug)";
++				break;
++			}
++
++			my_errorf("%s: %s", filename, msg);
++			exit(EXIT_FAILURE);
++		}
++	}
++}
++
++
++int
++main(int argc, char **argv)
++{
++	// Initialize progname which we will be used in error messages.
++	tuklib_progname_init(argv);
++
++	// Parse the command line options.
++	parse_options(argc, argv);
++
++	// The same lzma_stream is used for all files that we decode. This way
++	// we don't need to reallocate memory for every file if they use same
++	// compression settings.
++	lzma_stream strm = LZMA_STREAM_INIT;
++
++	// Some systems require setting stdin and stdout to binary mode.
++#ifdef TUKLIB_DOSLIKE
++	setmode(fileno(stdin), O_BINARY);
++	setmode(fileno(stdout), O_BINARY);
++#endif
++
++	if (optind == argc) {
++		// No filenames given, decode from stdin.
++		uncompress(&strm, stdin, "(stdin)");
++	} else {
++		// Loop through the filenames given on the command line.
++		do {
++			// "-" indicates stdin.
++			if (strcmp(argv[optind], "-") == 0) {
++				uncompress(&strm, stdin, "(stdin)");
++			} else {
++				FILE *file = fopen(argv[optind], "rb");
++				if (file == NULL) {
++					my_errorf("%s: %s", argv[optind],
++							strerror(errno));
++					exit(EXIT_FAILURE);
++				}
++
++				uncompress(&strm, file, argv[optind]);
++				fclose(file);
++			}
++		} while (++optind < argc);
++	}
++
++#ifndef NDEBUG
++	// Free the memory only when debugging. Freeing wastes some time,
++	// but allows detecting possible memory leaks with Valgrind.
++	lzma_end(&strm);
++#endif
++
++	tuklib_exit(EXIT_SUCCESS, EXIT_FAILURE, display_errors);
++}
+diff -Nru -x '*~' xz-5.0.5.orig/src/xzdec/xzdec.c.rej xz-5.0.5/src/xzdec/xzdec.c.rej
+--- xz-5.0.5.orig/src/xzdec/xzdec.c.rej	1970-01-01 01:00:00.000000000 +0100
++++ xz-5.0.5/src/xzdec/xzdec.c.rej	2014-05-08 18:21:20.915962800 +0200
+@@ -0,0 +1,17 @@
++***************
++*** 40,46 ****
++  static unsigned int display_errors = 2;
++  
++  
++- static void lzma_attribute((format(printf, 1, 2)))
++  my_errorf(const char *fmt, ...)
++  {
++  	va_list ap;
++--- 40,46 ----
++  static unsigned int display_errors = 2;
++  
++  
+++ static void lzma_attribute((format(__printf__, 1, 2)))
++  my_errorf(const char *fmt, ...)
++  {
++  	va_list ap;
