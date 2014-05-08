@@ -5,13 +5,18 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "TODO"
-        
+        self.shortDescription = "Extensible deamon for providing system level services"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        # TODO
+        self.dependencies['kde/kinit'] = "default"
+        self.dependencies['kde/kconfig'] = "default"
+        self.dependencies['kde/kcoreaddons'] = "default"
+        self.dependencies['kde/kcrash'] = "default"
+        self.dependencies['kde/kdbusaddons'] = "default"
+        self.dependencies['kde/kdoctools'] = "default"
+        self.dependencies['kde/kservice'] = "default"
 
 from Package.CMakePackageBase import *
 

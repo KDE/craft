@@ -5,13 +5,13 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "TODO"
-        
+        self.shortDescription = "Plugin interface for media player features"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        # TODO
+        self.dependencies['kde/kparts'] = "default"
+        self.dependencies['kde/kxmlgui'] = "default"
 
 from Package.CMakePackageBase import *
 

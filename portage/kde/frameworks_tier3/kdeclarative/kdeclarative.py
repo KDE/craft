@@ -5,13 +5,19 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "TODO"
-        
+        self.shortDescription = "Provides integration of QML and KDE Frameworks"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        # TODO
+        self.dependencies['kde/kconfig'] = 'default'
+        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['kde/kiconthemes'] = 'default'
+        self.dependencies['kde/kio'] = 'default'
+        self.dependencies['kde/kwidgetsaddons'] = 'default'
+        self.dependencies['kde/kwindowsystem'] = 'default'
+        self.dependencies['kde/kglobalaccel'] = 'default'
+        self.dependencies['kde/kguiaddons'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -5,13 +5,16 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "TODO"
-        
+        self.shortDescription = "Runtime and library to organize the user work in separate activities"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        # TODO
+        self.dependencies['kde/kservice'] = 'default'
+        self.dependencies['win32libs/boost-headers'] = 'default'
+        # those are only needed for building the activity manager daemon
+#        self.dependencies['win32libs/boost-range'] = 'default'
+#        self.dependencies['win32libs/boost-containers'] = 'default'
 
 from Package.CMakePackageBase import *
 
