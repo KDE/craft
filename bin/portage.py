@@ -338,6 +338,8 @@ class Portage(object):
                     self._CURRENT_MODULE  = ( fileName, category, package, mod )
                     pack = mod.Package( )
                     self._packageDict[ fileName ] = pack
+                else:
+                    raise PortageException("Failed to find package", category, package)
             else:
                 pack = self._packageDict[ fileName ]
             return pack

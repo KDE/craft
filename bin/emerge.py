@@ -30,28 +30,23 @@ import compiler
 
 
 @utils.log
-def doExec( category, package, action ):
-    utils.startTimer( "%s for %s" % ( action, package), 1 )
+def doExec( package, action ):
+    utils.startTimer( "%s for %s" % ( action, package ), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
-    ret = True
-    try:
-        #Switched to import the packages only, because otherwise degugging is very hard, if it troubles switch back
-        #makes touble for xcompile -> changed back
-        pack = portage.getPackageInstance( category, package )
-        ret = pack.execute( action )
-    except OSError:
-        ret = False
-    utils.stopTimer( "%s for %s" % ( action, package) )
+    ret = package.execute( action )
+    utils.stopTimer( "%s for %s" % ( action, package ) )
     return ret
 
 
-def handlePackage( category, package, version, buildAction, continueFlag ):
-    utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, package, version, buildAction), 2 )
+def handlePackage( category, packageName, version, buildAction, continueFlag, skipUpToDateVcs ):
+    utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, packageName, version, buildAction), 2 )
     success = True
+    package = portage.getPackageInstance( category, packageName )
+    if package is None:
+        return False
 
-
-    if buildAction in [ "test", "test-direct-deps" ] and category and package and version:
-        success = doExec( category, package, "test" ) or continueFlag
+    if buildAction in [ "test", "test-direct-deps" ]:
+        success = doExec( package, "test" ) or continueFlag
     elif continueFlag:
         actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'qmerge' ]
 
@@ -60,36 +55,44 @@ def handlePackage( category, package, version, buildAction, continueFlag ):
             if not found and action != buildAction:
                 continue
             found = True
-            success = success and doExec( category, package, action )
+            success = success and doExec( package, action )
     elif ( buildAction in ["all", "full-package", "update", "update-all"] ):
-        success = success and doExec( category, package, "fetch" )
-        success = success and doExec( category, package, "unpack" )
-        success = success and doExec( category, package, "compile" )
-        success = success and doExec( category, package, "cleanimage" )
-        success = success and doExec( category, package, "install" )
+        success = success and doExec( package, "fetch" )
+        if success and skipUpToDateVcs and package.subinfo.hasSvnTarget():
+            done = True
+            revision = package.sourceVersion()
+            for p in installdb.getInstalledPackages(category,packageName):
+                if p.getRevision() != revision:
+                    done = False
+            if done: return True
+
+        success = success and doExec( package, "unpack" )
+        success = success and doExec( package, "compile" )
+        success = success and doExec( package, "cleanimage" )
+        success = success and doExec( package, "install" )
         if ( buildAction == "all" ):
-            success = success and doExec( category, package, "qmerge" )
+            success = success and doExec( package, "qmerge" )
         if ( buildAction == "full-package" ):
-            success = success and doExec( category, package, "package" )
+            success = success and doExec( package, "package" )
 
     elif (buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                            "dumpdeps",
                            "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                            "geturls",
-                           "print-revision" ] and category and package and version ):
-        success = doExec( category, package, buildAction )
+                           "print-revision" ]):
+        success = doExec( package, buildAction )
     elif buildAction == "install":
         success = True
-        success = success and doExec( category, package, "cleanimage" )
-        success = success and doExec( category, package, "install" )
+        success = success and doExec( package, "cleanimage" )
+        success = success and doExec( package, "install" )
     elif ( buildAction == "version-dir" ):
-        print( "%s-%s" % ( package, version ) )
+        print( "%s-%s" % ( packageName, version ) )
         success = True
     elif ( buildAction == "version-package" ):
-        print( "%s-%s-%s" % ( package, emergeSettings.get( "General", "KDECOMPILER" ), version ) )
+        print( "%s-%s-%s" % ( packageName, emergeSettings.get( "General", "KDECOMPILER" ), version ) )
         success = True
     elif ( buildAction == "print-targets" ):
-        portage.printTargets( category, package )
+        portage.printTargets( category, packageName )
         success = True
     else:
         success = utils.error( "could not understand this buildAction: %s" % buildAction )
@@ -197,7 +200,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
             mainCategory, mainPackage, mainVersion = None, None, None
 
         if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                              args.doContinue ):
+                              args.doContinue, args.skipuptodatevcs ):
             utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s-%s failed" % (
                 args.action, mainCategory, mainPackage, mainVersion), args.action )
             return False
@@ -241,7 +244,7 @@ def handleSinglePackage( packageName, dependencyDepth, args ):
                         args.action = "all"
 
                     if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                                          args.doContinue ):
+                                          args.doContinue, args.skipuptodatevcs ):
                         utils.error( "fatal error: package %s/%s-%s %s failed" % \
                                      ( mainCategory, mainPackage, mainVersion, args.action ) )
                         utils.notify( "Emerge build failed",
@@ -328,6 +331,7 @@ def main( ):
                          help = "This will show a list of all packages that are installed currently." )
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
+    parser.add_argument("--skipuptodatevcs", action = "store_true")
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
                        "install", "qmerge", "manifest", "package", "unmerge", "test", "test-direct-deps",
                        "checkdigest", "dumpdeps",
