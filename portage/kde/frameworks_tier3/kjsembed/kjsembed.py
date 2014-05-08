@@ -5,13 +5,14 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "TODO"
-        
+        self.shortDescription = "Embedded JS"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        # TODO
+        self.dependencies["kde/kjs"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kdoctools"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kiconthemes'] = 'default'
         self.dependencies['kde/kinit'] = 'default'
         self.dependencies['kde/kio'] = 'default'
+        self.dependencies['kde/kjsembed'] = 'default'
         self.dependencies['kde/kmediaplayer'] = 'default'
         self.dependencies['kde/knewstuff'] = 'default'
         self.dependencies['kde/knotifications'] = 'default'
