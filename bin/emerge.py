@@ -50,12 +50,10 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
     if buildAction in [ "all", "full-package", "update", "update-all" ]:
         success = success and doExec( package, "fetch", continueFlag )
         if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
-            done = True
             revision = package.sourceVersion( )
             for p in installdb.getInstalledPackages( category, packageName ):
-                if p.getRevision( ) != revision:
-                    done = False
-            if done: return True
+                if p.getRevision( ) == revision:
+                    return True
 
         success = success and doExec( package, "unpack", continueFlag )
         success = success and doExec( package, "compile", continueFlag )
