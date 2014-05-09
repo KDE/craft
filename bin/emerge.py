@@ -30,12 +30,12 @@ from EmergeConfig import *
 
 
 @utils.log
-def doExec( package, action ):
+def doExec( package, action, continueFlag ):
     utils.startTimer( "%s for %s" % ( action, package ), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
     ret = package.execute( action )
     utils.stopTimer( "%s for %s" % ( action, package ) )
-    return ret
+    return ret or continueFlag
 
 
 def handlePackage( category, packageName, version, buildAction, continueFlag, skipUpToDateVcs ):
@@ -43,21 +43,12 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
     success = True
     package = portage.getPackageInstance( category, packageName )
     if package is None:
-        return False
+        raise portage.PortageException("Package not found",category,packageName)
 
-    if buildAction == "test":
-        success = doExec( package, "test" ) or continueFlag
-    elif continueFlag:
-        actionList = [ 'fetch', 'unpack', 'configure', 'make', 'cleanimage', 'install', 'qmerge' ]
 
-        found = None
-        for action in actionList:
-            if not found and action != buildAction:
-                continue
-            found = True
-            success = success and doExec( package, action )
-    elif buildAction in [ "all", "full-package", "update", "update-all" ]:
-        success = success and doExec( package, "fetch" )
+
+    if buildAction in [ "all", "full-package", "update", "update-all" ]:
+        success = success and doExec( package, "fetch", continueFlag )
         if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
             done = True
             revision = package.sourceVersion( )
@@ -66,25 +57,24 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
                     done = False
             if done: return True
 
-        success = success and doExec( package, "unpack" )
-        success = success and doExec( package, "compile" )
-        success = success and doExec( package, "cleanimage" )
-        success = success and doExec( package, "install" )
+        success = success and doExec( package, "unpack", continueFlag )
+        success = success and doExec( package, "compile", continueFlag )
+        success = success and doExec( package, "cleanimage", continueFlag )
+        success = success and doExec( package, "install", continueFlag )
         if buildAction in [ "all", "update", "update-all" ] :
-            success = success and doExec( package, "qmerge" )
+            success = success and doExec( package, "qmerge", continueFlag )
         if buildAction == "full-package":
-            success = success and doExec( package, "package" )
+            success = success and doExec( package, "package", continueFlag )
 
     elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
-                          "dumpdeps",
+                          "dumpdeps", "test",
                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                           "geturls",
                           "print-revision" ]:
-        success = doExec( package, buildAction )
+        success = doExec( package, buildAction, continueFlag )
     elif buildAction == "install":
-        success = True
-        success = success and doExec( package, "cleanimage" )
-        success = success and doExec( package, "install" )
+        success = doExec( package, "cleanimage", continueFlag )
+        success = success and doExec( package, "install", continueFlag )
     elif buildAction == "version-dir":
         print( "%s-%s" % ( packageName, version ) )
         success = True
