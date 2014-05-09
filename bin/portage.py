@@ -10,7 +10,6 @@ from EmergeConfig import *
 import InstallDB
 import utils
 
-#a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 class PortageException(Exception):
     def __init__(self, message, category, package ):

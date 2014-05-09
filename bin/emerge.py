@@ -23,6 +23,7 @@ import datetime
 import traceback
 import argparse
 
+import compiler
 import portageSearch
 from InstallDB import *
 from EmergeConfig import *
@@ -69,9 +70,9 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
         success = success and doExec( package, "compile" )
         success = success and doExec( package, "cleanimage" )
         success = success and doExec( package, "install" )
-        if ( buildAction == "all" ):
+        if buildAction in [ "all", "update", "update-all" ] :
             success = success and doExec( package, "qmerge" )
-        if ( buildAction == "full-package" ):
+        if buildAction == "full-package":
             success = success and doExec( package, "package" )
 
     elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
@@ -84,13 +85,13 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
         success = True
         success = success and doExec( package, "cleanimage" )
         success = success and doExec( package, "install" )
-    elif ( buildAction == "version-dir" ):
+    elif buildAction == "version-dir":
         print( "%s-%s" % ( packageName, version ) )
         success = True
-    elif ( buildAction == "version-package" ):
-        print( "%s-%s-%s" % ( packageName, emergeSettings.get( "General", "KDECOMPILER" ), version ) )
+    elif buildAction == "version-package":
+        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName(), version ) )
         success = True
-    elif ( buildAction == "print-targets" ):
+    elif buildAction == "print-targets":
         portage.printTargets( category, packageName )
         success = True
     else:
