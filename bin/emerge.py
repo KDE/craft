@@ -149,6 +149,10 @@ def handleSinglePackage( packageName, args ):
 
     #no package found
     if len( deplist ) == 0:
+        category = ""
+        if not packageName.find( "/" ) == -1:
+                (category, package) = packageName.split( "/" )
+        portageSearch.printSearch( category, packageName )
         return False
 
     for item in deplist:

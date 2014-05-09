@@ -621,8 +621,6 @@ def printInstallables():
     printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
 
 
-import portageSearch
-
 def getPackagesCategories(packageName, defaultCategory = None):
     utils.debug( "getPackagesCategories for package name %s" % packageName, 1 )
     if defaultCategory is None:
@@ -644,21 +642,16 @@ def getPackagesCategories(packageName, defaultCategory = None):
                 if PortageInstance.getCategory( packageName ):
                     packageList = [ packageName ]
                     categoryList = [ PortageInstance.getCategory( packageName ) ]
-                else:
-                    portageSearch.printSearch("",packageName)
     elif len( packageName.split( "/" ) ) == 2:
         [ cat, pac ] = packageName.split( "/" )
         if PortageInstance.isCategory( cat ):
             categoryList = [ cat ]
         else:
-            portageSearch.printSearch(cat,pac)
             return packageList, categoryList
         if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
             utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
-        else:
-            portageSearch.printSearch(cat,pac)
     else:
         utils.error( "unknown packageName" )
 
