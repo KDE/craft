@@ -30,7 +30,7 @@ from EmergeConfig import *
 
 
 @utils.log
-def doExec( package, action, continueFlag ):
+def doExec( package, action, continueFlag = False ):
     utils.startTimer( "%s for %s" % ( action, package ), 1 )
     utils.debug( "emerge doExec called. action: %s" % action, 2 )
     ret = package.execute( action )
@@ -56,14 +56,14 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
                     return True
 
         success = success and doExec( package, "unpack", continueFlag )
-        success = success and doExec( package, "compile", continueFlag )
-        success = success and doExec( package, "cleanimage", continueFlag )
-        success = success and doExec( package, "install", continueFlag )
+        success = success and doExec( package, "compile" )
+        success = success and doExec( package, "cleanimage" )
+        success = success and doExec( package, "install" )
         if buildAction in [ "all", "update", "update-all" ] :
-            success = success and doExec( package, "qmerge", continueFlag )
+            success = success and doExec( package, "qmerge" )
         if buildAction == "full-package":
-            success = success and doExec( package, "package", continueFlag )
-
+            success = success and doExec( package, "package" )
+        success =  success or continueFlag
     elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                           "dumpdeps", "test",
                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
@@ -71,7 +71,7 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
                           "print-revision" ]:
         success = doExec( package, buildAction, continueFlag )
     elif buildAction == "install":
-        success = doExec( package, "cleanimage", continueFlag )
+        success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install", continueFlag )
     elif buildAction == "version-dir":
         print( "%s-%s" % ( packageName, version ) )
