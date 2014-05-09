@@ -147,6 +147,10 @@ def handleSinglePackage( packageName, args ):
 
     deplist = [ p.ident( ) for p in _deplist ]
 
+    #no package found
+    if len( deplist ) == 0:
+        return False
+
     for item in deplist:
         item.append( args.ignoreAllInstalled )
         if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
@@ -185,7 +189,6 @@ def handleSinglePackage( packageName, args ):
     # package[0] -> category
     # package[1] -> package
     # package[2] -> version
-
 
     mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage(mainCategory, mainPackage) and not args.action in [ "all", "install-deps" ] and not args.list_file:
