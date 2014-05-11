@@ -68,7 +68,7 @@ class EmergeBase(object):
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
     def __str__(self):
-        return "%s/%s" % ( self.package, self.category )
+        return "%s/%s" % ( self.category, self.package )
 
     @property
     def noFetch(self):
