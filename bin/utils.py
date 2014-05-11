@@ -986,10 +986,14 @@ def log(fn):
             except OSError:
                 die("EMERGE_LOG_DIR %s can not be created" % logdir)
 
-        logfile = "%s-%s-%s.log" % (args[0], args[1], args[2])
+        logfile = ""
+        for a in args:
+            logfile += "%s-" % a
+        logfile = logfile[:-2]#drop last -
+        logfile = "%s.log" % logfile.replace("/","_").replace("\\","_")
 
         logfile = os.path.join(logdir, logfile)
-        f = open(logfile, "a+")
+        f = open(logfile, "at")
         try:
             old_out = sys.stdout
             old_err = sys.stderr
