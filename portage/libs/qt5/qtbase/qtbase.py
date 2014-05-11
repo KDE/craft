@@ -86,11 +86,19 @@ class Package(Qt5CorePackageBase):
        
 
         if self.buildType() == "Debug":
-          command += " -debug "
+          command += "-debug "
         else:
-          command += " -release "
+          command += "-release "
+
+        if self.supportsCCACHE:
+            command != "-dont-process "
         print("command: ", command)
-        return utils.system( command )
+        if not utils.system( command ):
+            return False
+        if self.supportsCCACHE:
+            return Qt5CorePackageBase.configure(self)
+        else:
+            return True
         
 
     def make(self, unused=''):

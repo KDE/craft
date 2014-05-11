@@ -31,6 +31,7 @@ class QMakeBuildSystem(BuildSystemBase):
         elif self.buildType() == "Debug":
             configureDefines += ' "CONFIG += debug"'
             configureDefines += ' "CONFIG -= release"'
+
         
         command = "qmake -makefile %s %s" % (self.configureSourceDir(), self.configureOptions(configureDefines))
 
@@ -71,4 +72,4 @@ class QMakeBuildSystem(BuildSystemBase):
         return True
         
     def ccacheOptions(self):
-        return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
+        return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" "CONFIG -= precompile_header" '

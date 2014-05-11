@@ -22,6 +22,18 @@ index 062ab49..f5af59b 100644
  #endif
              }
              break;
+diff --git a/src/network/kernel/qnetworkinterface_win_p.h b/src/network/kernel/qnetworkinterface_win_p.h
+index d6a3366..701c03e 100644
+--- a/src/network/kernel/qnetworkinterface_win_p.h
++++ b/src/network/kernel/qnetworkinterface_win_p.h
+@@ -54,6 +54,7 @@
+ //
+ 
+ #include <winsock2.h>
++#include "qglobal.h"
+ #include <qt_windows.h>
+ #include <time.h>
+ 
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
 index 06f78b1..8772ccf 100644
 --- a/tools/configure/configureapp.cpp
