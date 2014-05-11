@@ -989,7 +989,7 @@ def log(fn):
         logfile = ""
         for a in args:
             logfile += "%s-" % a
-        logfile = logfile[:-2]#drop last -
+        logfile = logfile[:-1]#drop last -
         logfile = "%s.log" % logfile.replace("/","_").replace("\\","_")
 
         logfile = os.path.join(logdir, logfile)
