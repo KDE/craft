@@ -106,8 +106,6 @@ class SetupHelper( object ):
     def printEnv( self ):
         self.env = self.getEnv( )
 
-        for var, value in emergeSettings.getSection( "Environment" ):
-            self.addEnvVar( var, value )
         self.addEnvVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
 
         if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
@@ -138,6 +136,9 @@ class SetupHelper( object ):
             self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
         self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
+
+        for var, value in emergeSettings.getSection( "Environment" ):#set and overide existing values
+            self.addEnvVar( var, value )
         for key, val in self.env.items( ):
             print( "%s=%s" % (key, val) )
 
