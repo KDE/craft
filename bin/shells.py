@@ -36,6 +36,8 @@ class MSysShell(object):
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
             cflags += " -MD -Zi"
+            if compiler.isMSVC2013():
+                cflags += " -FS"
 
         utils.putenv("CFLAGS", cflags)
         utils.putenv("LDFLAGS", ldflags)
@@ -50,16 +52,17 @@ class MSysShell(object):
             utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot()))
             utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot()))
             utils.putenv("LD", "link")
-            utils.putenv("CC", "/share/automake-1.13/compile cl -nologo")
-            utils.putenv("CXX", "/share/automake-1.13/compile cl -nologo")
+            utils.putenv("CC", "cl -nologo")
+            utils.putenv("CXX", "cl -nologo")
             utils.putenv("NM", "dumpbin -symbols")
-            utils.putenv("AR", "/share/automake-1.13/ar-lib lib")
+            utils.putenv("AR", "lib")
             #utils.putenv("WINDRES","rc-windres")
             #utils.putenv("RC","rc-windres")
             utils.putenv("STRIP",":")
             utils.putenv("RANLIB",":")
             utils.putenv("F77", "no")
             utils.putenv("FC", "no")
+
         #unset make to remove things like jom
         if "MAKE" in os.environ:
             del os.environ["MAKE"]

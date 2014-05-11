@@ -18,11 +18,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
         else:
             self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
-
     @property
     def makeProgram(self):
         make = "make "
-        if self.subinfo.options.make.supportsMultijob:
+        if self.subinfo.options.make.supportsMultijob and not compiler.isMSVC():
             make += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
         return make
 

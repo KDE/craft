@@ -19,22 +19,11 @@ class subinfo(info.infoclass):
 from Package.AutoToolsPackageBase import *
 from Package.VirtualPackageBase import *
 
-class PackageMinGW(AutoToolsPackageBase):
+class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.shell = MSysShell()
         self.subinfo.options.configure.defines = "--disable-static --enable-shared " 
 
-
-        
-
-if compiler.isMinGW():
-    class Package(PackageMinGW):
-        def __init__( self ):
-            PackageMinGW.__init__( self )
-else:
-    class Package(VirtualPackageBase):
-        def __init__( self ):
-            VirtualPackageBase.__init__( self )
 

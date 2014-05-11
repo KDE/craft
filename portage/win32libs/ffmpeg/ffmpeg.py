@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.1.3'] = 'd82d6f53c5130ee21dcb87f76bdbdf768d3f0db9'
         self.targetDigests['2.2.2'] = '8a4f282ccb5efbec31a9747d12c8d7b07c481f2e'
         
-        self.defaultTarget = "2.2.2"
+        self.defaultTarget = "gitHEAD"
 
 
     def setDependencies( self ):
