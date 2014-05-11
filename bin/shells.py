@@ -17,23 +17,36 @@ from options import *
 class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
-        self.initEnvironment()
+        self.envirnmentIsSetup = False
 
     @property
     def buildType(self):
         return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
 
     def initEnvironment(self, cflags="", ldflags=""):
-        mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
 
+        mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
         if compiler.isMinGW():
             ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
             cflags = "-I%s/include %s" % (mergeroot, cflags)
+
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
+            cflags += " -MD -Zi"
+
+        utils.putenv("CFLAGS", cflags)
+        utils.putenv("LDFLAGS", ldflags)
+
+
+        if self.envirnmentIsSetup:
+            return
+        self.envirnmentIsSetup = True
+
+
+        if compiler.isMSVC():
             utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot()))
             utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot()))
             utils.putenv("LD", "link")
@@ -41,28 +54,24 @@ class MSysShell(object):
             utils.putenv("CXX", "/share/automake-1.13/compile cl -nologo")
             utils.putenv("NM", "dumpbin -symbols")
             utils.putenv("AR", "/share/automake-1.13/ar-lib lib")
-            utils.putenv("WINDRES","rc-windres")
-            utils.putenv("RC","rc-windres")
+            #utils.putenv("WINDRES","rc-windres")
+            #utils.putenv("RC","rc-windres")
             utils.putenv("STRIP",":")
             utils.putenv("RANLIB",":")
             utils.putenv("F77", "no")
             utils.putenv("FC", "no")
-            cflags += " -MD -Zi"
-
-
-        utils.putenv("CFLAGS", cflags)
-        utils.putenv("LDFLAGS", ldflags)
         #unset make to remove things like jom
         if "MAKE" in os.environ:
             del os.environ["MAKE"]
-        utils.putenv("PATH", "%s;%s" %  ( os.environ.get( "PATH" ), os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "bin" )))
-        utils.putenv("MSYSTEM","MINGW32")
 
 
-    def toNativePath( self, path ):
+
+    @staticmethod
+    def toNativePath( path ):
         return utils.toMSysPath( path )
 
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
+        self.initEnvironment()
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
 
         command = "%s --login -c \"cd %s && %s %s" % \
