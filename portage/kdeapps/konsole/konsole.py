@@ -7,10 +7,11 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'winport'
 
     def setDependencies( self ):
-        # self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['testing/kcwsh'] = 'default'
         self.dependencies['kde/kbookmarks'] = 'default'
-        # self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['kde/kinit'] = 'default'
+        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['kde/knotifyconfig'] = 'default'
 
 
 from Package.CMakePackageBase import *
