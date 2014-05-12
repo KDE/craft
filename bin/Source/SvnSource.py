@@ -56,12 +56,12 @@ class SvnSource (VersionSystemSourceBase):
     def setProxy(self):
         """set proxy for fetching sources from subversion repository"""
         (host, port, username, password) = self.proxySettings()
-        if host == None:
+        if host == "":
             return
 
         proxyOptions = " --config-option servers:global:http-proxy-host=%s" % host
         proxyOptions += " --config-option servers:global:http-proxy-port=%s" % port
-        if username != None:
+        if username != "":
             proxyOptions += " --config-option servers:global:http-proxy-username=%s" % username
             proxyOptions += " --config-option servers:global:http-proxy-password=%s" % password
 
