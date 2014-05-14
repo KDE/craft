@@ -23,3 +23,9 @@ class Package( BinaryPackageBase ):
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = os.path.join( "dev-utils", "rsync" )
 
+    def unpack(self):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.copyFile(os.path.join(self.packageDir(), "rsync.exe"), os.path.join(self.rootdir, "dev-utils", "bin", "rsync.exe"))
+        return True
+
