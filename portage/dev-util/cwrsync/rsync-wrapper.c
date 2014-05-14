@@ -91,7 +91,7 @@ main(void)
     len = sizeof(WCHAR) * (len + 2 * MAX_PATH);
     path2 = (LPWSTR)malloc(len);
     wcscpy(path2, exepath);
-    PathAppend(path2, L"bin;");
+    PathAppend(path2, L"rsync\\bin;");
     GetEnvironmentVariable(L"PATH", &path2[wcslen(path2)],
                            (len/sizeof(WCHAR))-wcslen(path2));
     SetEnvironmentVariable(L"PATH", path2);
