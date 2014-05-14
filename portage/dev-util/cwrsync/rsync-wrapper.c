@@ -109,11 +109,12 @@ main(void)
         wargv = CommandLineToArgvW(cmdline, &wargc);
         cmd = (LPWSTR)malloc(sizeof(WCHAR) * (wcslen(cmdline) + MAX_PATH));
         ZeroMemory(cmd, sizeof(WCHAR)*(wcslen(cmdline) + MAX_PATH));
-        wcscpy(cmd, L"rsync.exe ");
+        wcscpy(cmd, L"rsync.exe");
         endOfString = cmd + wcslen(cmd);
         for(int i = 1; i < wargc; i++) {
             LPWSTR currentPar = NULL;
             WCHAR firstChar = wargv[i][0];
+            wcscat(cmd, L" ");
             if(wargv[i][1] == L':' && ((firstChar >= L'A' && firstChar <= L'Z') || (firstChar >= L'a' && firstChar <= L'z'))) {
                 wcscat(cmd, L"/cygdrive/");
                 if(firstChar >= L'A' && firstChar <= L'Z') {
