@@ -57,7 +57,6 @@ main(void)
     /* set the default exe module */
     wcscpy(exe, exepath);
     PathAppend(exe, L"git\\bin\\git.exe");
-    OutputDebugStringW(exe);
 
     /* if not set, set TERM to msys */
     if (GetEnvironmentVariable(L"TERM", NULL, 0) == 0) {
