@@ -131,11 +131,12 @@ class SetupHelper( object ):
             else:
                 self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
 
-        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
         if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
             self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
         self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
+        #make sure thate emergeroot bin is the first to look for dlls etc
+        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
 
         for var, value in emergeSettings.getSection( "Environment" ):#set and overide existing values
             self.addEnvVar( var, value )
