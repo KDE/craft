@@ -1,7 +1,7 @@
 Index: T:/svn-src/quazip/CMakeLists.txt
 ===================================================================
---- CMakeLists.txt	(Revision 238)
-+++ CMakeLists.txt	(Arbeitskopie)
+--- T:/svn-src/quazip/CMakeLists.txt	(Revision 239)
++++ T:/svn-src/quazip/CMakeLists.txt	(Arbeitskopie)
 @@ -10,6 +10,7 @@
  
  if (Qt5Core_FOUND)
@@ -10,7 +10,7 @@ Index: T:/svn-src/quazip/CMakeLists.txt
      # if there is no QT_ROOT, try to deduce it from Qt QtCore include
      if ("${QT_ROOT}" STREQUAL "")
          set(QT_ROOT ${QT_QTCORE_INCLUDE_DIR}/../..)
-@@ -32,17 +33,9 @@
+@@ -32,22 +33,15 @@
      endmacro()
  endif()
  
@@ -30,10 +30,17 @@ Index: T:/svn-src/quazip/CMakeLists.txt
  # All build libraries are moved to this directory
  SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
  
+ set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
+-set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
++set(LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
++set(BIN_DESTINATION "bin" CACHE STRING "Executable directory name" FORCE)
+ 
+ add_subdirectory(quazip)
+ 
 Index: T:/svn-src/quazip/quazip/CMakeLists.txt
 ===================================================================
---- CMakeLists.txt	(Revision 238)
-+++ CMakeLists.txt	(Arbeitskopie)
+--- T:/svn-src/quazip/quazip/CMakeLists.txt	(Revision 239)
++++ T:/svn-src/quazip/quazip/CMakeLists.txt	(Arbeitskopie)
 @@ -17,7 +17,7 @@
  add_library(quazip SHARED ${SRCS})
  set_target_properties(quazip PROPERTIES VERSION 1.0.0 SOVERSION 1)
@@ -42,4 +49,5 @@ Index: T:/svn-src/quazip/quazip/CMakeLists.txt
 +target_link_libraries(quazip ${QT_QTMAIN_LIBRARY} ${QTCORE_LIBRARIES} ${ZLIB_LIBRARIES})
  
  install(FILES ${PUBLIC_HEADERS} DESTINATION include/quazip)
- install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${LIB_DESTINATION})
+-install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${LIB_DESTINATION})
++install(TARGETS quazip LIBRARY DESTINATION ${LIB_DESTINATION} ARCHIVE DESTINATION ${LIB_DESTINATION} RUNTIME DESTINATION ${BIN_DESTINATION})
