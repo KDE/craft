@@ -117,7 +117,7 @@ class SvnSource (VersionSystemSourceBase):
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
         tempFileName = os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" )
-        with open( tempFileName, "wb+" ) as tempfile:
+        with open( tempFileName, "wt+" ) as tempfile:
 
             # run the command
             utils.system( cmd, stdout=tempfile )
@@ -221,7 +221,7 @@ class SvnSource (VersionSystemSourceBase):
 
     def sourceVersion( self ):
         """ print the revision returned by svn info """
-        return True
+        return self.__getCurrentRevision()
 
     def getUrls( self ):
         """print the url where to check out from"""
@@ -230,7 +230,3 @@ class SvnSource (VersionSystemSourceBase):
             if self.repositoryUrlOptions(i) == 'norecursive': url = '--depth=files ' + url
             print(url)
         return True
-
-    def currentRevision(self):
-        """return the name or number of the current revision"""
-        return self.__getCurrentRevision()

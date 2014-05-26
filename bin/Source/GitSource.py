@@ -281,7 +281,3 @@ class GitSource ( VersionSystemSourceBase ):
             repoBranch = "master"
         print('|'.join([repoUrl, repoBranch, repoTag]))
         return True
-
-    def currentRevision(self):
-        """return the name or number of the current revision"""
-        return self.__getCurrentRevision()

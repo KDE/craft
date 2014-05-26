@@ -132,6 +132,4 @@ class VersionSystemSourceBase (SourceBase):
         utils.debug("using sourcedir: %s" % sourcedir, 2)
         return os.path.abspath(sourcedir)
 
-    def currentRevision(self):
-        """return the name or number of the current revision"""
-        return None
+
