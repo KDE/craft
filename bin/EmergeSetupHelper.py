@@ -110,8 +110,7 @@ class SetupHelper( object ):
 
         if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
             self.addEnvVar( "CCACHE_DIR",
-                            emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( emergeSettings.get( "ShortPath",
-                                                                                                         "EMERGE_ROOT_DRIVE" ),
+                            emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( EmergeStandardDirs.emergeRoot( ),
                                                                                      "build", "CCACHE" ) ) )
 
         self.addEnvVar( "GIT_SSH", "plink" )
@@ -138,7 +137,7 @@ class SetupHelper( object ):
         #make sure thate emergeroot bin is the first to look for dlls etc
         self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
 
-        for var, value in emergeSettings.getSection( "Environment" ):#set and overide existing values
+        for var, value in emergeSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var, value )
         for key, val in self.env.items( ):
             print( "%s=%s" % (key, val) )
