@@ -56,7 +56,8 @@ class Package(Qt5CorePackageBase):
             f = open(os.path.join(self.sourceDir(),".gitignore"),"wt+")
             f.write("Force Bootstrap")
             f.close()
-            os.remove(os.path.join(self.sourceDir(),"configure.exe"))
+            if os.path.exists(os.path.join(self.sourceDir(),"configure.exe")):
+                os.remove(os.path.join(self.sourceDir(),"configure.exe"))
         configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
         command += "-plugin-sql-odbc "
