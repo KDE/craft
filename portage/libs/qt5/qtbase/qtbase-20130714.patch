@@ -1,5 +1,5 @@
 diff --git a/mkspecs/win32-g++/qmake.conf b/mkspecs/win32-g++/qmake.conf
-index 830dde9..0bd5e1a 100644
+index d26ffb4..e59c5a0 100644
 --- a/mkspecs/win32-g++/qmake.conf
 +++ b/mkspecs/win32-g++/qmake.conf
 @@ -30,6 +30,7 @@ QMAKE_CFLAGS_DEPS       = -M
@@ -9,7 +9,7 @@ index 830dde9..0bd5e1a 100644
 +QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO = -O2 -g
  QMAKE_CFLAGS_DEBUG      = -g
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
- QMAKE_CFLAGS_SSE2       = -msse2 -mstackrealign
+ QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
 diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
 index 062ab49..f5af59b 100644
 --- a/src/corelib/io/qstandardpaths_win.cpp
@@ -35,7 +35,7 @@ index d6a3366..701c03e 100644
  #include <time.h>
  
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
-index 06f78b1..8772ccf 100644
+index b756509..c7de51f 100644
 --- a/tools/configure/configureapp.cpp
 +++ b/tools/configure/configureapp.cpp
 @@ -2940,11 +2940,11 @@ void Configure::generateOutputVars()
