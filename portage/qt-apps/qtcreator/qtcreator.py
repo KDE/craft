@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
 
 
-from Package.QMakePackageBase import *
+from Package.Qt5CorePackageBase import *
 
-class Package( QMakePackageBase ):
+class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
-        QMakePackageBase.__init__( self )
+        Qt5CorePackageBase.__init__( self )
 
