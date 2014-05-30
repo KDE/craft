@@ -243,8 +243,8 @@ for line in packagefile:
     if not line.startswith( '#' ) and len( line.strip().split( ',' ) )  == 4:
         cat, pac, target, patchlvl = line.strip().split( ',' )
         addInfo[ cat + "/" + pac ] = ( target, patchlvl )
-        portage.solveDependencies( cat, pac, "", _depList, dep_type='both' )
-        portage.solveDependencies( cat, pac, "", _runtimeDepList, dep_type='runtime' )
+        portage.solveDependencies( cat, pac, _depList, dep_type = 'both' )
+        portage.solveDependencies( cat, pac, _runtimeDepList, dep_type = 'runtime' )
 packagefile.close()
 
 _depList.reverse()

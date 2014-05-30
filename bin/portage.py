@@ -22,36 +22,43 @@ class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
-    #cache for dependency packages, to prevent loop imports
-    _dependencyPackageDict = OrderedDict()
 
-    def __init__( self, category, name, version , autoExpand = True ):
+    def __init__( self, category, name, autoExpand = True, parent = None ):
         self.category = category
         self.name = name
-        self.version = version
         self.runtimeChildren = []
         self.buildChildren = []
+        if parent is None:
+            self._dependencyList = dict()
+        else:
+            self._dependencyList = parent._dependencyList
+
         if autoExpand:
             self.__readChildren()
 
+
+
     def __hash__(self):
-        return str( self.category + "/" +  self.name).__hash__()
+        return self.__str__().__hash__()
         
     def __eq__( self, other ):
-        return self.category == other.category and self.name == other.name and self.version == other.version
+        return self.category == other.category and self.name == other.name
 
     def __ne__( self, other ):
-        return self.category != other.category or self.name != other.name or self.version != other.version
+        return self.category != other.category or self.name != other.name
+
+    def __str__(self):
+        return self.category + "/" +  self.name
 
     def ident( self ):
-        return [ self.category, self.name, self.version, PortageInstance.getDefaultTarget( self.category, self.name ) ]
+        return [ self.category, self.name, PortageInstance.getDefaultTarget( self.category, self.name ) ]
 
     def __readChildren( self ):
         runtimeDependencies, buildDependencies = readChildren( self.category, self.name )
         self.runtimeChildren = self.__readDependenciesForChildren( list(runtimeDependencies.keys()) )
         self.buildChildren = self.__readDependenciesForChildren( list(buildDependencies.keys()) )
 
-    def __readDependenciesForChildren( self, deps ):
+    def __readDependenciesForChildren( self, deps):
         children = []
         if deps:
             for line in deps:
@@ -63,41 +70,37 @@ class DependencyPackage(object):
                     utils.warning("%s for %s/%s as a dependency of %s/%s" %(e, e.category, e.package, self.category , self.name))
                     continue
 
-                if not line in self._dependencyPackageDict.keys():
-                    p = DependencyPackage( category, package, version, False )
+                if not line in self._dependencyList.keys():
+                    p = DependencyPackage( category, package, False, self )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
-                    self._dependencyPackageDict[ line ] = p
+                    self._dependencyList[ line ] = p
                     p.__readChildren()
                 else:
-                    p = self._dependencyPackageDict[ line ]
+                    p = self._dependencyList[ line ]
                 children.append( p )
         return children
 
-    def getDependencies( self, depList=None, dep_type="both", single = set(), maxDetpth = -1, depth = 0):
+    def getDependencies( self, depList = [], dep_type="both", single = set(), maxDetpth = -1, depth = 0):
         """ returns all dependencies """
-        if depList is None:
-            depList = []
         if dep_type == "runtime":
             children = self.runtimeChildren
         elif dep_type == "buildtime":
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
-            
+
         single.add(self)
         for p in children:
             if not p in single and not p in depList\
-            and not ("%s/%s" % (p.category, p.name)) in PortageInstance.ignores:
+            and not str(p) in PortageInstance.ignores:
                 if maxDetpth == -1:
                     p.getDependencies( depList, dep_type, single )
                 elif depth < maxDetpth:
                     p.getDependencies( depList, dep_type, single, maxDetpth = maxDetpth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
-        if not self in depList and not ("%s/%s" % (self.category, self.name)) in PortageInstance.ignores:
+        if not self in depList and not str(self) in PortageInstance.ignores:
             depList.append( self )
-
-
 
         return depList
 
@@ -517,17 +520,14 @@ def parseListFile( filename ):
     return categoryList, packageList, infoDict
 
 
-def solveDependencies( category, package, version, depList, dep_type='both' , maxDetpth = -1 ):
+def solveDependencies( category, package, depList, dep_type = 'both', maxDetpth = -1 ):
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         utils.debug( "found package in category %s" % category, 2 )
-    if ( version == "" ):
-        version = PortageInstance.getNewestVersion( category, package )
-        utils.debug( "found package with newest version %s" % version, 2 )
 
-    pac = DependencyPackage( category, package, version )
-    depList = pac.getDependencies( depList, dep_type=dep_type, maxDetpth = maxDetpth )
+    pac = DependencyPackage( category, package, parent = None )
+    depList = pac.getDependencies( depList, dep_type=dep_type, maxDetpth = maxDetpth, single = set() )
 
     depList.reverse()
     return depList
@@ -571,7 +571,6 @@ def readChildren( category, package ):
     commonDependencies = subinfo.dependencies
     runtimeDependencies.update(commonDependencies)
     buildDependencies.update(commonDependencies)
-
     return runtimeDependencies, buildDependencies
 
 def isPackageUpdateable( category, package ):

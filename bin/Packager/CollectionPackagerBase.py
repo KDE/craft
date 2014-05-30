@@ -96,34 +96,26 @@ class CollectionPackagerBase( PackagerBase ):
         directory += '-' + buildTarget
         return directory
 
-    def __buildRoot( self, category, package, version ):
-        """ return absolute path to the root directory of the currently active package - taken from EmergeBase """
-        return os.path.join( self.rootdir, "build", category, "%s-%s" % ( package, version ) )
 
     def __getImageDirectories( self ):
         """ return the image directories where the files are stored """
         imageDirs = []
-        runtimeDependencies = self.subinfo.runtimeDependencies
-
-        commonDependencies = self.subinfo.dependencies
-        for key in commonDependencies:
-            runtimeDependencies[ key ] = commonDependencies[ key ]
+        runtimeDependencies = portage.getDependencies(self.category, self.package)
 
         depList = []
-        for key in runtimeDependencies:
-            ( category, package ) = key.split( '/' )
-            version = portage.PortageInstance.getNewestVersion( category, package )
+        for ( category, package, _, _ ) in runtimeDependencies:
             # we only want runtime dependencies since we want to build a binary installer
-            portage.solveDependencies( category, package, version, depList, "runtime" )
+            portage.solveDependencies( category, package, depList = depList, dep_type = "runtime")
         depList.reverse()
         for x in depList:
-            ( category, package, version, _ ) = x.ident()
+            ( category, package, _ ) = x.ident()
             # Ignore dev-utils that are wrongly set as hard dependencies
-            if category == "dev-util":
+            if category == "dev-util" or portage.PortageInstance.isVirtualPackage(category, package):
                 continue
             _package = portage.getPackageInstance( category, package )
-            imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ),
-                    self.__imageDirPattern( _package, _package.buildTarget ) ), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
+
+            imageDirs.append(( os.path.join( self.rootdir, "build", category, package,
+                    self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
             utils.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % ( _package.category, package, _package.version, _package.buildTarget ), 2)
         return imageDirs

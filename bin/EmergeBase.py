@@ -237,9 +237,7 @@ class EmergeBase(object):
         Default is to optionally append build type subdirectory"""
 
         utils.debug( "EmergeBase.packageDestinationDir called", 2 )
-        dstpath = emergeSettings.get("General","EMERGE_PKGDSTDIR", "None" )
-        if not dstpath:
-            dstpath = os.path.join( self.rootdir, "tmp" )
+        dstpath = emergeSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) )
 
         if withBuildType:
             if emergeSettings.getboolean("General", "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False ):

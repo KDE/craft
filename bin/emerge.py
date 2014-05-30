@@ -38,8 +38,8 @@ def doExec( package, action, continueFlag = False ):
     return ret or continueFlag
 
 
-def handlePackage( category, packageName, version, buildAction, continueFlag, skipUpToDateVcs ):
-    utils.debug( "emerge handlePackage called: %s %s %s %s" % (category, packageName, version, buildAction), 2 )
+def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
+    utils.debug( "emerge handlePackage called: %s %s %s" % (category, packageName, buildAction), 2 )
     success = True
     package = portage.getPackageInstance( category, packageName )
     if package is None:
@@ -74,10 +74,10 @@ def handlePackage( category, packageName, version, buildAction, continueFlag, sk
         success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install", continueFlag )
     elif buildAction == "version-dir":
-        print( "%s-%s" % ( packageName, version ) )
+        print( "%s-%s" % ( packageName, package.sourceVersion() ) )
         success = True
     elif buildAction == "version-package":
-        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName(), version ) )
+        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName(), package.sourceVersion() ) )
         success = True
     elif buildAction == "print-targets":
         portage.printTargets( category, packageName )
@@ -103,10 +103,10 @@ def handleSinglePackage( packageName, args ):
         else:
             utils.debug( "Updating all installed packages", 1 )
         packageList = [ ]
-        for mainCategory, mainPackage, mainVersion in installedPackages:
+        for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
                 continue
-            if installdb.isInstalled( mainCategory, mainPackage, mainVersion, args.buildType ) \
+            if installdb.isInstalled( mainCategory, mainPackage, args.buildType ) \
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
@@ -131,7 +131,7 @@ def handleSinglePackage( packageName, args ):
     utils.debug_line( 1 )
 
     for mainCategory, entry in zip( categoryList, packageList ):
-        _deplist = portage.solveDependencies( mainCategory, entry, "", _deplist, args.dependencyType,
+        _deplist = portage.solveDependencies( mainCategory, entry, _deplist, args.dependencyType,
                                               maxDetpth = args.dependencydepth )
 
     deplist = [ p.ident( ) for p in _deplist ]
@@ -183,7 +183,7 @@ def handleSinglePackage( packageName, args ):
     # package[1] -> package
     # package[2] -> version
 
-    mainCategory, mainPackage, mainVersion, tag, ignoreInstalled = deplist[ -1 ]
+    mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage(mainCategory, mainPackage) and not args.action in [ "all", "install-deps" ] and not args.list_file:
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
@@ -191,38 +191,37 @@ def handleSinglePackage( packageName, args ):
         # package
         # for list files, we also want to handle fetching & packaging per package
 
-        if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                              args.doContinue, args.update_fast ):
-            utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s-%s failed" % (
-                args.action, mainCategory, mainPackage, mainVersion), args.action )
+        if not handlePackage( mainCategory, mainPackage, args.doContinue, args.update_fast ):
+            utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s failed" % (
+                args.action, mainCategory, mainPackage), args.action )
             return False
         utils.notify( "Emerge %s finished" % args.action,
-                      "%s of %s/%s-%s finished" % ( args.action, mainCategory, mainPackage, mainVersion),
+                      "%s of %s/%s finished" % ( args.action, mainCategory, mainPackage),
                       args.action )
 
     else:
         if args.dumpDepsFile:
             dumpDepsFileObject = open( args.dumpDepsFile, 'w+' )
             dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
-        for mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled in deplist:
+        for mainCategory, mainPackage, defaultTarget, ignoreInstalled in deplist:
             isVCSTarget = False
 
             if args.dumpDepsFile:
                 dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
 
-            isLastPackage = [ mainCategory, mainPackage, mainVersion, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
+            isLastPackage = [ mainCategory, mainPackage, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
-            isInstalled = installdb.isInstalled( mainCategory, mainPackage, mainVersion )
+            isInstalled = installdb.isInstalled( mainCategory, mainPackage)
             if args.list_file and args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList
             if ( isInstalled and not ignoreInstalled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
                 if utils.verbose( ) > 1 and mainPackage == packageName:
-                    utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
+                    utils.warning( "already installed %s/%s" % ( mainCategory, mainPackage) )
                 elif utils.verbose( ) > 2 and not mainPackage == packageName:
-                    utils.warning( "already installed %s/%s-%s" % ( mainCategory, mainPackage, mainVersion ) )
+                    utils.warning( "already installed %s/%s" % ( mainCategory, mainPackage ) )
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
@@ -235,16 +234,15 @@ def handleSinglePackage( packageName, args ):
                     if args.action in [ "install-deps", "update-direct-deps" ]:
                         args.action = "all"
 
-                    if not handlePackage( mainCategory, mainPackage, mainVersion, args.action,
-                                          args.doContinue, args.update_fast ):
-                        utils.error( "fatal error: package %s/%s-%s %s failed" % \
-                                     ( mainCategory, mainPackage, mainVersion, args.action ) )
+                    if not handlePackage( mainCategory, mainPackage, args.action, args.doContinue, args.update_fast ):
+                        utils.error( "fatal error: package %s/%s %s failed" % \
+                                     ( mainCategory, mainPackage, args.action ) )
                         utils.notify( "Emerge build failed",
-                                      "Build of %s/%s-%s failed" % ( mainCategory, mainPackage, mainVersion),
+                                      "Build of %s/%s failed" % ( mainCategory, mainPackage),
                                       args.action )
                         return False
                     utils.notify( "Emerge build finished",
-                                  "Build of %s/%s-%s finished" % ( mainCategory, mainPackage, mainVersion),
+                                  "Build of %s/%s finished" % ( mainCategory, mainPackage),
                                   args.action )
 
     utils.new_line( )
