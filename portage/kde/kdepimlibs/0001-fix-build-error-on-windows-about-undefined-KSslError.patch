@@ -1,0 +1,25 @@
+From 0663deea3d2faa18c0bbabb23bc9bc1537092834 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Sat, 21 Dec 2013 22:06:04 +0100
+Subject: [PATCH] fix build error on windows about undefined KSslErrorUiData
+
+---
+ kimap/tests/testimapidle.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kimap/tests/testimapidle.cpp b/kimap/tests/testimapidle.cpp
+index 1f443af..c71e3d6 100644
+--- a/kimap/tests/testimapidle.cpp
++++ b/kimap/tests/testimapidle.cpp
+@@ -23,7 +23,7 @@
+ #include <klocale.h>
+ #include <klocalizedstring.h>
+ #include <kdebug.h>
+-#include <qtcpsocket.h>
++#include <ktcpsocket.h>
+ #include <QCoreApplication>
+ #include <qsignalspy.h>
+ 
+-- 
+1.8.3.msysgit.0
+

@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.hardDependencies['virtual/bin-base'] = 'default'
-        self.hardDependencies['testing/libgcrypt-src'] = 'default'
+        self.hardDependencies['win32libs/gcrypt'] = 'default'
         if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
 

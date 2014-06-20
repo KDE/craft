@@ -46,6 +46,15 @@ class BoostBuildSystem(BuildSystemBase):
                 options += "msvc-9.0"
             elif compiler.isMSVC2010():
                 options += "msvc-10.0"
+            elif compiler.isMSVC2012():
+                options += "msvc-11.0"
+            elif compiler.isMSVC2013():
+                options += "msvc-12.0"
+            elif compiler.isIntel():
+                options += "intel"
+                options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
+                options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % ({ "vs2008" : "9_0", "vs2010" : "10_0", "vs2012" : "11_0" }[os.getenv("INTEL_VSSHELL")])
+                options += " -sINTEL_VERSION=%s" % os.getenv("PRODUCT_NAME")[-2:]
         emergeUserConfig = os.path.join( os.getenv( "KDEROOT" ), "etc", "emerge-boost-config.jam" )
         if os.path.exists( emergeUserConfig ):
             options += " --user-config=" + os.path.join( emergeUserConfig )
@@ -70,6 +79,9 @@ class BoostBuildSystem(BuildSystemBase):
 
     def install( self ):
         """install the target"""
+        if not BuildSystemBase.install(self):
+            return False
+
         for root, dirs, files in os.walk( self.buildDir() ):
             for f in files:
                 if f.endswith( ".dll" ):

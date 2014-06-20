@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ '2.3.1', '2.3.2', '2.4.3', '2.5.0', '2.6.0', '2.7.0' ]:
+        for ver in [ '2.3.1', '2.3.2', '2.4.3', '2.5.0', '2.6.0', '2.7.0', '2.8.0' ]:
             self.targets[ver] = 'http://download.kde.org/download.php?url=stable/amarok/' + ver + '/src/amarok-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'amarok-' + ver
         self.patchToApply[ '2.3.2' ] = [ ( 'amarok-2.3.2-20110110.diff', 1 ) ]
@@ -17,17 +17,21 @@ class subinfo(info.infoclass):
         self.patchToApply[ '2.7.0' ] = [( 'no_cd_collection.patch', 1),
                                         ( 'amarok-2.7.0-fix-compilation-with-MSCV-2010.patch', 1 ),
                                         ( 'mysqle-location-fix.diff', 1)]
+                                        
+                                        
         self.targetDigests['2.7.0'] = 'd0ae4a2cb81a54ae94ca24fdb3aed88d7f3a921e'
+        self.patchToApply[ '2.8.0' ] = [( '0001-Don-t-communicate-with-mysql-by-env-vars-and-autogen.patch', 1),
+                                        ( '0001-Don-t-add-the-analyzer-applet-when-Phonon-doesn-t-su.patch', 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '2.8.0'
 
     def setDependencies( self ):
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/taglib-extras'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['virtual/kde-runtime'] = 'default'
+        self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
@@ -39,7 +43,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__(self)
-        self.supportsNinja = False
 
 if __name__ == '__main__':
     Package().execute()

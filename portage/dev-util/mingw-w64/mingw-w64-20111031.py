@@ -7,12 +7,16 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in [ "20111031", "20111101" ]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/mingw-w64-bin_x86_64-mingw_"+ver+"_sezero.zip"
-        
-        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture()
-        self.targetDigests['4.7.2'] = 'e4cc0963bbfe632fd4f7170767f5654ee6adb3c9'
-        self.targets["4.8.0-2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.8.0-release-posix-seh-rev2.7z" % emergePlatform.buildArchitecture()
+            
+        ver = "4.8.2"
+        rev = "3"
+        self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-%s-release-posix-seh-rt_v3-rev%s.7z" % (ver, rev)
+        self.targetDigests['4.8.2-3'] = 'f36476804806fe0b87e56fe94e5b93de5314b6f0'
 
-        self.defaultTarget = "20111031"
+        if self.options.features.legacyGCC:
+            self.defaultTarget = "20111031"
+        else:
+            self.defaultTarget = "%s-%s" % ( ver, rev )
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'

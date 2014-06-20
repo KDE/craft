@@ -106,3 +106,10 @@ class SourceBase(EmergeBase):
         """ return the current revision or version of the source directory,
             return True in case it is not applicable and give out nothing """
         return True
+        
+        
+    def printSourceVersion(self):
+        """ return the current revision or version of the source directory,
+            return True in case it is not applicable and give out nothing """
+        print(self.sourceVersion())
+        return True

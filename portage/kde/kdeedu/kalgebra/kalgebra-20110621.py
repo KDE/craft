@@ -7,9 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-        self.patchToApply['4.10.0'] = [("kalgebra-4.10.0-20130301.diff", 1)]
-        self.patchToApply['4.10.1'] = [("kalgebra-4.10.0-20130301.diff", 1)]
-        self.patchToApply['4.10.2'] = [("kalgebra-4.10.0-20130301.diff", 1)]
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
 
         self.shortDescription = 'a graph calculator'
         self.defaultTarget = 'gitHEAD'
@@ -17,6 +15,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/analitza'] = 'default'
+        self.dependencies['kde/libkdeedu'] = 'default'
 
 from Package.CMakePackageBase import *
 

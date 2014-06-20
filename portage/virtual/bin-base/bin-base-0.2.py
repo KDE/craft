@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if not utils.envAsBool('EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES'):
             self.buildDependencies['gnuwin32/wget'] = 'default'
-            self.buildDependencies['gnuwin32/patch'] = 'default'
             self.buildDependencies['dev-util/7zip'] = 'default'
+            self.buildDependencies['gnuwin32/patch'] = 'default'
 
 from Package.VirtualPackageBase import *
 from Source.SourceBase import *

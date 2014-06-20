@@ -1,0 +1,14 @@
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreams/CMakeLists.txt strigi-0.7.5/libstreams/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreams/CMakeLists.txt	2011-06-02 06:28:57.000000000 -0300
++++ strigi-0.7.5/libstreams/CMakeLists.txt	2013-05-25 11:08:19.118895900 -0300
+@@ -36,9 +36,9 @@
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH  TRUE)
+ set(CMAKE_INSTALL_RPATH ${LIB_DESTINATION})
+ 
+-if(NOT MSVC AND NOT MINGW AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
++if(NOT MSVC AND NOT MINGW AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*." AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+   add_definitions(-fPIC)
+ endif()
+ 
+ ##### environment inspection #####
+ 

@@ -96,8 +96,6 @@ class HgSource ( VersionSystemSourceBase ):
                 # read the temporary file and grab the first line
                 revision = tempfile.readline().replace("changeset:", "").strip()
 
-            # print the revision - everything else should be quiet now
-            print(revision)
             os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ) )
         # always return True to not break something serious
-        return True
+        return revision

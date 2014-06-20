@@ -1,0 +1,29 @@
+diff -Nru -x '*~' kdepim-runtime-4.10.2.orig/defaultsetup/defaultaddressbook.desktop kdepim-runtime-4.10.2/defaultsetup/defaultaddressbook.desktop
+--- kdepim-runtime-4.10.2.orig/defaultsetup/defaultaddressbook.desktop	2013-03-01 07:59:42.265971000 +0100
++++ kdepim-runtime-4.10.2/defaultsetup/defaultaddressbook.desktop	2013-06-19 01:19:03.878500500 +0200
+@@ -52,4 +52,4 @@
+ 
+ [Settings]
+ IsConfigured=true
+-Path[$e]=$HOME/.local/share/contacts/
++Path[$e]=$XDG_DATA_HOME/contacts/
+diff -Nru -x '*~' kdepim-runtime-4.10.2.orig/defaultsetup/defaultcalendar.desktop kdepim-runtime-4.10.2/defaultsetup/defaultcalendar.desktop
+--- kdepim-runtime-4.10.2.orig/defaultsetup/defaultcalendar.desktop	2013-03-01 07:59:42.265971000 +0100
++++ kdepim-runtime-4.10.2/defaultsetup/defaultcalendar.desktop	2013-06-19 01:18:45.017421700 +0200
+@@ -45,5 +45,5 @@
+ Name[zh_TW]=個人行事曆
+ 
+ [Settings]
+-Path[$e]=$HOME/${KDE_DEFAULT_HOME}/share/apps/korganizer/std.ics
++Path[$e]=$KDEHOME/share/apps/korganizer/std.ics
+ 
+diff -Nru -x '*~' kdepim-runtime-4.10.2.orig/defaultsetup/defaultnotebook.desktop kdepim-runtime-4.10.2/defaultsetup/defaultnotebook.desktop
+--- kdepim-runtime-4.10.2.orig/defaultsetup/defaultnotebook.desktop	2013-03-01 07:59:42.265971000 +0100
++++ kdepim-runtime-4.10.2/defaultsetup/defaultnotebook.desktop	2013-06-19 01:19:17.173260900 +0200
+@@ -76,4 +76,4 @@
+ Name[zh_TW]=備忘錄
+ 
+ [Settings]
+-Path[$e]=$HOME/.local/share/notes/
++Path[$e]=$XDG_DATA_HOME/notes/
+

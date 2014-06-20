@@ -1,0 +1,45 @@
+From 17a81df3bd9f35b275706de70aaaefd27ad18c08 Mon Sep 17 00:00:00 2001
+From: Nico Kruber <nico.kruber@gmail.com>
+Date: Thu, 28 Nov 2013 14:00:16 +0100
+Subject: [PATCH 1/2] replace usage of unportable mkdtemp with KTempDir
+
+(from kdewin)
+---
+ importer/fileutils.cpp | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/importer/fileutils.cpp b/importer/fileutils.cpp
+index 5cc0c97..027a6f1 100644
+--- a/importer/fileutils.cpp
++++ b/importer/fileutils.cpp
+@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Cambridge, MA 02110-1301, USA
+ // KDE
+ #include <KDebug>
+ #include <KFileItem>
++#include <KTempDir>
+ #include <KIO/CopyJob>
+ #include <KIO/Job>
+ #include <KIO/JobClasses>
+@@ -128,14 +129,13 @@ QString createTempDir(const QString& baseDir, const QString& prefix, QString* er
+ {
+     Q_ASSERT(errorMessage);
+ 
+-    QByteArray name = QFile::encodeName(baseDir + '/' + prefix + "XXXXXX");
+-
+-    if (!mkdtemp(name.data())) {
+-        // Failure
+-        *errorMessage = QString::fromLocal8Bit(::strerror(errno));
++    KTempDir td(baseDir + QLatin1String("/") + prefix);
++    td.setAutoRemove(false);
++    if(td.status() != 0) {
++        *errorMessage = strerror(td.status());
+         return QString();
+     }
+-    return QFile::decodeName(name + '/');
++    return td.name();
+ }
+ 
+ } // namespace
+-- 
+1.8.3.msysgit.0
+

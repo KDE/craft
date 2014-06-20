@@ -112,15 +112,15 @@ class CollectionPackagerBase( PackagerBase ):
             portage.solveDependencies( category, package, version, depList, "runtime" )
         depList.reverse()
         for x in depList:
-            ( category, package, version, defaultTarget ) = x.ident()
+            ( category, package, version, _ ) = x.ident()
             # Ignore dev-utils that are wrongly set as hard dependencies
             if category == "dev-util":
                 continue
-            defaultTarget = portage.findPossibleTargets( category, package, version )
-            _package = portage.getPackageInstance( category, package, defaultTarget )
+            _package = portage.getPackageInstance( category, package )
             imageDirs.append( ( os.path.join( self.__buildRoot( category, package, version ),
-                    self.__imageDirPattern( _package, defaultTarget ) ), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
+                    self.__imageDirPattern( _package, _package.buildTarget ) ), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
+            utils.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % ( _package.category, package, _package.version, _package.buildTarget ), 2)
         return imageDirs
 
     def read_whitelist( self, fname ):

@@ -1,6 +1,6 @@
 diff -Nru -x '*~' akonadi-1.9.0.orig/libs/xdgbasedirs.cpp akonadi-1.9.0/libs/xdgbasedirs.cpp
 --- akonadi-1.9.0.orig/libs/xdgbasedirs.cpp	2012-12-23 11:11:44.000000000 +0100
-+++ akonadi-1.9.0/libs/xdgbasedirs.cpp	2013-03-01 00:37:01.292466300 +0100
++++ akonadi-1.9.0/libs/xdgbasedirs.cpp	2013-05-08 18:30:46.707346200 +0200
 @@ -27,6 +27,8 @@
  #include <QtCore/QFileInfo>
  #include <QtCore/QProcess>
@@ -93,7 +93,7 @@ diff -Nru -x '*~' akonadi-1.9.0.orig/libs/xdgbasedirs.cpp akonadi-1.9.0/libs/xdg
 +      if(kdeconf) {
 +         kdeconf->beginGroup(QLatin1String("XDG"));
 +         if(kdeconf->childKeys().contains(QLatin1String("XDG_DATA_HOME")))
-+           instance()->mDataHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_HOME")).toString()) + QLatin1String("/.local/share");
++           instance()->mDataHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_DATA_HOME")).toString());
 +         else
 +           instance()->mDataHome = instance()->homePath( "XDG_DATA_HOME", ".local/share" );
 +         kdeconf->endGroup();
@@ -115,7 +115,7 @@ diff -Nru -x '*~' akonadi-1.9.0.orig/libs/xdgbasedirs.cpp akonadi-1.9.0/libs/xdg
 +      if(kdeconf) {
 +         kdeconf->beginGroup(QLatin1String("XDG"));
 +         if(kdeconf->childKeys().contains(QLatin1String("XDG_CONFIG_HOME")))
-+           instance()->mDataHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString()) + QLatin1String("/.config");
++           instance()->mConfigHome = expandEnvironmentVariables(kdeconf->value(QLatin1String("XDG_CONFIG_HOME")).toString());
 +         else
 +           instance()->mConfigHome = instance()->homePath( "XDG_CONFIG_HOME", ".config" );
 +         kdeconf->endGroup();

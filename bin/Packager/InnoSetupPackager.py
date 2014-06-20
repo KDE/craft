@@ -62,17 +62,6 @@ class InnoSetupPackager (PackagerBase):
         #else:
         #    pkgName += "-x86"
 
-        # FIXME: add a test for the installer later
-
-        for pkgtype in ['bin', 'lib', 'doc', 'src']:
-            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if os.path.exists( script ):
-                if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                    os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
-                utils.copyFile( script, destscript )
-
         # todo: this is probably code for dealing with svn repositories
         # needs to be refactored
         # determine source in case MultiSource is used
@@ -89,25 +78,7 @@ class InnoSetupPackager (PackagerBase):
         #    srcCmd = ""
 
         if( self.subinfo.options.package.withCompiler ):
-            if( self.compiler() == "mingw"):
-                pkgName += "-mingw"
-            elif self.compiler() == "mingw4":
-                pkgName += "-mingw4"
-            elif self.compiler() == "msvc2005":
-                pkgName += "-msvc"
-            elif self.compiler() == "msvc2008":
-                pkgName += "-vc90"
-            elif self.compiler() == "msvc2010":
-                pkgName += "-vc100"
-            else:
-                pkgName += "-unknown "
-
-        if self.subinfo.options.package.withDigests:
-            if self.subinfo.options.package.packageFromSubDir:
-                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
-            else:
-                filesDir = self.imageDir()
-            utils.createManifestFiles(filesDir, filesDir, "", self.package, pkgVersion)
+            pkgName += "-%s" % compiler.getShortName()
 
         dstpath = self.packageDestinationDir()
 

@@ -9,11 +9,11 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
     def setTargets( self ):
-        self.targets['HEAD'] = 'ftp://ftp.qt.nokia.com/jom/jom.zip'
+        self.targets['HEAD'] = 'http://download.qt-project.org/official_releases/jom/jom.zip'
         for ver in ['0_9_04', '1_0_00', '1_0_01', '1_0_02', '1_0_03', '1_0_04',
                     '1_0_05', '1_0_06', '1_0_07', '1_0_08', '1_0_09', '1_0_10',
                     '1_0_11','1_0_12','1_0_13']:
-            self.targets[ver] = 'http://releases.qt-project.org/jom/jom_' + ver + '.zip'
+            self.targets[ver] = 'http://download.qt-project.org/official_releases/jom/jom_' + ver + '.zip'
         self.targets['unstable'] = 'ftp://ftp.qt.nokia.com/jom/unstable-jom.zip'
         self.targetDigests['0_9_04'] = '1f946283866cd6f40a5888088f6c7d840b62af2d'
         self.targetDigests['1_0_00'] = '545e964c606d28edce582f167574298589970fb4'

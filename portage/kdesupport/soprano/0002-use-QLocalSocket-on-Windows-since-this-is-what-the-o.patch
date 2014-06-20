@@ -1,0 +1,162 @@
+From 3a1ded4dd1a562f232cd737e2d10d3af6e6482d9 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Thu, 13 Jun 2013 00:32:37 +0200
+Subject: [PATCH 2/2] use QLocalSocket on Windows since this is what the other
+ side uses too
+
+---
+ client/socket.cpp | 44 ++++++++++++++++++++++++++++++++------------
+ client/socket.h   |  6 ++++++
+ 2 files changed, 38 insertions(+), 12 deletions(-)
+
+diff --git a/client/socket.cpp b/client/socket.cpp
+index c656805..1aa50e3 100644
+--- a/client/socket.cpp
++++ b/client/socket.cpp
+@@ -33,16 +33,6 @@
+ #include <unistd.h>
+ #include <sys/socket.h>
+ #include <sys/un.h>
+-#else
+-#include <io.h>
+-#include <winsock2.h>
+-/* POSIX requires only at least 100 bytes */
+-#define UNIX_PATH_LEN   108
+-
+-struct sockaddr_un {
+-  unsigned short sun_family;              /* address family AF_LOCAL/AF_UNIX */
+-  char           sun_path[UNIX_PATH_LEN]; /* 108 bytes of socket address     */
+-};
+ #endif
+ 
+ Soprano::Socket::Socket( SOCKET_HANDLE fd )
+@@ -60,21 +50,30 @@ Soprano::Socket::~Socket()
+ 
+ bool Soprano::Socket::isConnected() const
+ {
++#ifndef Q_OS_WIN
+     return m_handle > 0;
++#else
++    return m_localSocket.state() == QLocalSocket::ConnectedState;
++#endif
+ }
+ 
+ 
+ void Soprano::Socket::close()
+ {
++#ifndef Q_OS_WIN
+     if ( m_handle >= 0 ) {
+         ::close( m_handle );
+         m_handle = -1;
+     }
++#else
++    m_localSocket.close();
++#endif
+ }
+ 
+ 
+ bool Soprano::Socket::waitForReadyRead( int timeout )
+ {
++#ifndef Q_OS_WIN
+     if ( isConnected() ) {
+         fd_set fds;
+         FD_ZERO( &fds );
+@@ -95,12 +94,16 @@ bool Soprano::Socket::waitForReadyRead( int timeout )
+     else {
+         return false;
+     }
++#else
++    return m_localSocket.waitForReadyRead( timeout );
++#endif
+ }
+ 
+ 
+ qint64 Soprano::Socket::read( char* buffer, qint64 size )
+ {
+     int total = 0;
++#ifndef Q_OS_WIN
+     while ( size > 0 ) {
+         int bytesRead = ::read( m_handle, buffer, size );
+         if( bytesRead == -1 ) {
+@@ -127,6 +130,11 @@ qint64 Soprano::Socket::read( char* buffer, qint64 size )
+         size -= bytesRead;
+     }
+ 
++#else
++    total = m_localSocket.read( buffer, size );
++    if( total == -1 )
++        setError( m_localSocket.errorString() );
++#endif
+     return total;
+ }
+ 
+@@ -134,6 +142,7 @@ qint64 Soprano::Socket::read( char* buffer, qint64 size )
+ qint64 Soprano::Socket::write( const char* buffer, qint64 size )
+ {
+     int total = 0;
++#ifndef Q_OS_WIN
+     while ( size > 0 ) {
+         int written = ::write( m_handle, buffer, size );
+         if (written == -1) {
+@@ -159,7 +168,11 @@ qint64 Soprano::Socket::write( const char* buffer, qint64 size )
+         total += written;
+         size -= written;
+     }
+-
++#else
++    total = m_localSocket.write( buffer, size );
++    if( total == -1 )
++        setError( m_localSocket.errorString() );
++#endif
+     return total;
+ }
+ 
+@@ -198,6 +211,7 @@ bool Soprano::LocalSocket::open()
+ {
+     clearError();
+ 
++#ifndef Q_OS_WIN
+     // create a socket
+     m_handle = ::socket( AF_UNIX, SOCK_STREAM, 0 );
+     if ( m_handle < 0 ) {
+@@ -225,6 +239,12 @@ bool Soprano::LocalSocket::open()
+         m_handle = -1;
+         return false;
+     }
+-
++#else
++    m_localSocket.connectToServer( m_path );
++    if( !m_localSocket.waitForConnected() ) {
++        setError( m_localSocket.errorString() );
++        return false;
++    }
++#endif
+     return true;
+ }
+diff --git a/client/socket.h b/client/socket.h
+index f4a44fa..037a9a7 100644
+--- a/client/socket.h
++++ b/client/socket.h
+@@ -25,6 +25,9 @@
+ #include "error.h"
+ 
+ #include <QtCore/QMutex>
++#ifdef Q_OS_WIN
++#include <QtNetwork/QLocalSocket>
++#endif
+ 
+ typedef int SOCKET_HANDLE;
+ 
+@@ -76,6 +79,9 @@ namespace Soprano {
+         }
+ 
+         SOCKET_HANDLE m_handle;
++#ifdef Q_OS_WIN
++        QLocalSocket m_localSocket;
++#endif
+ 
+     private:
+         QMutex m_mutex;
+-- 
+1.8.1.msysgit.1
+

@@ -18,7 +18,8 @@ class BuildSystemBase(EmergeBase):
     def __init__(self, typeName=""):
         """constructor"""
         EmergeBase.__init__(self)
-        self.supportsNinja = False
+        self.supportsNinja = False        
+        self.supportsCCACHE = utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW();
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -37,7 +38,7 @@ class BuildSystemBase(EmergeBase):
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel() :
             return "nmake /NOLOGO"
         elif compiler.isMinGW():
             return "mingw32-make"
@@ -69,6 +70,9 @@ class BuildSystemBase(EmergeBase):
         """return options for configure command line"""
         if self.subinfo.options.configure.defines != None:
             defines += " %s" % self.subinfo.options.configure.defines
+        
+        if self.supportsCCACHE:
+            defines += " %s" % self.ccacheOptions()
         return defines
 
     def makeOptions(self, defines="", maybeVerbose=True):
@@ -81,7 +85,7 @@ class BuildSystemBase(EmergeBase):
             if self.supportsNinja and utils.envAsBool("EMERGE_USE_NINJA"):
                 defines += " -v "
             else:
-                defines += " VERBOSE=1"
+                defines += " VERBOSE=1 V=1"
         return defines
 
     def setupTargetToolchain(self):
@@ -117,4 +121,35 @@ class BuildSystemBase(EmergeBase):
         return True
         
     def install(self):
+        # important - remove all old manifests to not pollute merge root manifest dir with old packaging info
+        utils.cleanManifestDir( self.imageDir() )
+
+        # create post (un)install scripts
+        for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
+            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
+            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            # are there any cases there installDir should be honored ?
+            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
+            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
+                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
+            if os.path.exists( script ):
+                utils.copyFile( script, destscript )
+            script = os.path.join( self.packageDir(), "post-uninstall-%s.cmd" ) % pkgtype
+            scriptName = "post-uninstall-%s-%s-%s.cmd" % ( self.package, self.version, pkgtype )
+            # are there any cases there installDir should be honored ?
+            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
+            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
+                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
+            if os.path.exists( script ):
+                utils.copyFile( script, destscript )
+
+        if self.subinfo.options.package.withDigests:
+            if self.subinfo.options.package.packageFromSubDir:
+                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
+            else:
+                filesDir = self.imageDir()
+            utils.createManifestFiles(filesDir, filesDir, "", self.package, self.version)
         return True
+
+    def ccacheOptions(self):
+        return ""

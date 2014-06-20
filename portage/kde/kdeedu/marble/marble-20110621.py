@@ -7,11 +7,11 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+            self.patchToApply[kd.kdeversion + ver] = [("resource_fix.patch", 1),
+                                                      ("0004-listen-on-any-address-to-support-mapping-over-networ.patch_", 1)]
 
         self.patchToApply[ 'gitHEAD' ] = [("0004-listen-on-any-address-to-support-mapping-over-networ.patch_", 1)]
-        self.patchToApply[ '4.10.0' ] = [("marble-4.10.0-20130301.diff", 1)]
-        self.patchToApply[ '4.10.1' ] = [("marble-4.10.0-20130301.diff", 1)]
-        self.patchToApply[ '4.10.2' ] = [("marble-4.10.0-20130301.diff", 1)]
         self.shortDescription = 'the desktop globe'
         self.defaultTarget = 'gitHEAD'
 

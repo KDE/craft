@@ -1,0 +1,31 @@
+diff -Nru -x '*~' glib-2.36.3.orig/configure glib-2.36.3/configure
+--- glib-2.36.3.orig/configure	2013-07-26 10:11:20.940373700 +0200
++++ glib-2.36.3/configure	2013-07-26 10:09:50.202394200 +0200
+@@ -27382,7 +27382,7 @@
+ 	G_LIBS_EXTRA="-luser32 -lkernel32"
+     ;;
+   *-*-mingw*)
+-	G_LIBS_EXTRA="-lws2_32 -lole32 -lwinmm -lshlwapi"
++	G_LIBS_EXTRA="-lws2_32 -lole32 -lwinmm -lshlwapi -ldnsapi"
+     ;;
+   *)
+ 	G_LIBS_EXTRA=""
+diff -Nru -x '*~' glib-2.36.3.orig/glib/tests/gdatetime.c glib-2.36.3/glib/tests/gdatetime.c
+--- glib-2.36.3.orig/glib/tests/gdatetime.c	2013-06-03 01:20:53.000000000 +0200
++++ glib-2.36.3/glib/tests/gdatetime.c	2013-07-26 09:02:43.696224200 +0200
+@@ -801,7 +801,6 @@
+   gchar dst[64];
+   struct tm tt;
+   time_t t;
+-  gchar t_str[16];
+ 
+ #define TEST_PRINTF(f,o)                        G_STMT_START {  \
+ GDateTime *__dt = g_date_time_new_local (2009, 10, 24, 0, 0, 0);\
+@@ -844,7 +843,6 @@
+   tt.tm_min = 0;
+   tt.tm_hour = 0;
+   t = mktime (&tt);
+-  g_sprintf (t_str, "%ld", t);
+ 
+   TEST_PRINTF ("%a", "Sat");
+   TEST_PRINTF ("%A", "Saturday");

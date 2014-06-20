@@ -1,0 +1,33 @@
+diff -Nru -x '*~' telepathy-haze-0.7.0.orig/src/main.c telepathy-haze-0.7.0/src/main.c
+--- telepathy-haze-0.7.0.orig/src/main.c	2011-06-14 11:28:40.000000000 +0200
++++ telepathy-haze-0.7.0/src/main.c	2013-07-26 13:02:04.929875300 +0200
+@@ -63,6 +63,17 @@
+ #define PURPLE_GLIB_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
+ #define PURPLE_GLIB_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
+ 
++#ifdef _WIN32
++
++char *mkdtemp(char *template) 
++{ 
++    if (!*mktemp(template) || mkdir(template)) 
++        return NULL; 
++    return template; 
++} 
++
++#endif
++
+ typedef struct _PurpleGLibIOClosure {
+     PurpleInputFunction function;
+     guint result;
+@@ -258,7 +269,9 @@
+ 
+     haze_debug_set_flags_from_env ();
+ 
++#ifndef _WIN32
+     signal (SIGCHLD, SIG_IGN);
++#endif
+     init_libpurple();
+ 
+     ret = tp_run_connection_manager (UI_ID, PACKAGE_VERSION, get_cm, argc,
+Dateien telepathy-haze-0.7.0.orig/tools/libglibcodegen.pyc und telepathy-haze-0.7.0/tools/libglibcodegen.pyc sind verschieden.
+Dateien telepathy-haze-0.7.0.orig/tools/libtpcodegen.pyc und telepathy-haze-0.7.0/tools/libtpcodegen.pyc sind verschieden.

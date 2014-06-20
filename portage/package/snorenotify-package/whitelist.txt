@@ -4,6 +4,7 @@ bin\\snoreplugins\\backend\\.*
 bin\\snoreplugins\\frontend\\freedesktop\.dll
 bin\\libsnore\.dll
 bin\\snorenotify\.exe
+bin\\SnoreToast\.exe
 
 #boost
 bin\\.*boost_system*

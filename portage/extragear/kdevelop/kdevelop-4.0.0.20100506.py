@@ -6,9 +6,10 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'virtual/kde-runtime' ] = 'default'
+        self.dependencies[ 'kde/kde-runtime' ] = 'default'
         self.dependencies[ 'kde/kate' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
+        self.dependencies[ 'kde/libkomparediff2' ] = 'default'
         self.buildDependencies[ 'dev-util/zip' ] = 'default'
 
 from Package.CMakePackageBase import *

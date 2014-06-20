@@ -11,28 +11,27 @@ _VLC_VER = None
 class subinfo(info.infoclass):
   def setTargets( self ):
     self.vlcArch = "32"
-    self.vlcTagName = '1.2.0-rc1-'
     if( emergePlatform.buildArchitecture() == 'x64' ):
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
-    self.vlcTagName = '2.1.0-git-%s' % self.getVer() 
+    self.vlcTagName = 'vlc-2.2.0-git' 
     
 
-    self.targets[ self.vlcTagName ]  =  "%svlc-%s-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
+    self.targets[ self.vlcTagName ]  =  "%svlc-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
     
-    self.targetInstSrc[ self.vlcTagName ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
+    self.targetInstSrc[ self.vlcTagName ] = "vlc-%s" % (self.vlcTagName)
 
-    self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName, self.getVer(),self.vlcArch  )
-    self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s-%s" % (self.vlcTagName,self.getVer())
-    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6']:
+    self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
+    self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s" % (self.vlcTagName)
+    for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6', '2.0.8', '2.1.0','2.1.1']:
         self.targets[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
         self.targetDigestUrls[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z.sha1" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
-    for releaseTag in [ '2.0.2','2.0.5','2.0.6' ]:
+    for releaseTag in [ '2.0.2','2.0.5','2.0.6','2.1.0','2.1.1' ]:
         self.patchToApply[ releaseTag ] = [("vlc-%s.diff" % (releaseTag),1)]
     self.shortDescription = "an open-source multimedia framework"
-
-    self.defaultTarget = releaseTag
+    
+    self.defaultTarget = '2.1.1'
 
 
   def setDependencies( self ):
@@ -64,11 +63,13 @@ class Package(BinaryPackageBase):
     shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) )
     shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) )
-    shutil.copy( os.path.join( self.imageDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlc.lib" ))
-    shutil.copy( os.path.join( self.imageDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlccore.lib" ))
+    ver2 = self.subinfo.buildTarget.split('.')
+    if not (int(ver2[0]) >= 2 and int(ver2[0]) >= 1):
+      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlc.lib" ))
+      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlccore.lib" ))
     shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
     os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
-    #utils.wgetFile( "http://git.videolan.org/?p=vlc.git;a=blob_plain;f=share/vlc.desktop" , os.path.join( self.installDir() , "share" , "applications" , "kde4" ) , "vlc.desktop"  )
+    shutil.copy( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.installDir() , "share" , "applications" , "kde4" , "vlc.desktop" ))
     return True
 
 if __name__ == '__main__':

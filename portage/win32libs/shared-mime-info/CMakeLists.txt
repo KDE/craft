@@ -41,11 +41,11 @@ include_directories(
    ${CMAKE_BINARY_DIR}
 )
 
-if(MSVC)
+if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
     include_directories(
         ${CMAKE_SOURCE_DIR}/headers
     )
-endif(MSVC)
+endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 
 # configure checks
 check_include_files(inttypes.h  HAVE_INTTYPES_H)
@@ -109,10 +109,10 @@ set(GLIB_SOURCES
     ${GLIB_DIR}/glib/libcharset/localcharset.c
 )
 
-if(MSVC)
+if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
     add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -wd4018)
     set(additional_SOURCES dirent.c unistd.c)
-endif(MSVC)
+endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 
 add_definitions(-DGLIB_VAR= -DWINPOSIX_EXPORT= -DKDEWIN_EXPORT= -DG_DISABLE_DEPRECATED -DLIBDIR=\"lib\")
 

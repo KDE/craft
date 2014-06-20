@@ -17,6 +17,8 @@ class QMakeBuildSystem(BuildSystemBase):
             self.platform = "win32-%s" % self.compiler()
         elif compiler.isMinGW():
             self.platform = "win32-g++"
+        elif compiler.isIntel():
+            self.platform = "win32-icc"
         else:
             utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
 
@@ -55,8 +57,6 @@ class QMakeBuildSystem(BuildSystemBase):
         elif os.path.exists(configTool):
             command = "%s %s" % (configTool, self.configureOptions(configureDefines))
         elif os.path.exists(qmakeTool):
-            if utils.envAsBool("EMERGE_USE_CCACHE") and compiler.isMinGW():
-                configureDefines += ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '
             if self.buildType() == "Release":
                 configureDefines += ' "CONFIG -= debug"'
                 configureDefines += ' "CONFIG += release"'
@@ -88,11 +88,13 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def install( self, options=None ):
         """implements the make step for Qt projects"""
+        if not BuildSystemBase.install(self):
+            return False
 
         # There is a bug in jom that parallel installation of qmake projects
         # does not work. So just use the usual make programs. It's hacky but
         # this was decided on the 2012 Windows sprint.
-        if compiler.isMSVC():
+        if compiler.isMSVC() or compiler.isIntel():
             installmake="nmake /NOLOGO"
         elif compiler.isMinGW():
             installmake="mingw32-make"
@@ -108,3 +110,6 @@ class QMakeBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running qmake based unittests"""
         return True
+        
+    def ccacheOptions(self):
+        return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" '

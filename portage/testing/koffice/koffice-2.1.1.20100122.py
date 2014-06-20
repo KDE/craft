@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
 #        self.hardDependencies['kdesupport/eigen'] = 'default'
         self.hardDependencies['kdesupport/eigen2'] = 'default'
         self.softDependencies['kdesupport/qca'] = 'default'
-        self.softDependencies['testing/gsl'] = 'default'
+        self.softDependencies['win32libs/gsl'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -12,6 +12,7 @@ import utils
 import compiler
 from options import *
 import types
+from collections import OrderedDict
 
 class infoclass(object):
     """this module contains the information class"""
@@ -19,35 +20,35 @@ class infoclass(object):
         ### package options
         self.options = Options()
         self.options.readFromEnv()
-        self.targets = dict()
-        self.archiveNames = dict()
+        self.targets = OrderedDict()
+        self.archiveNames = OrderedDict()
         # Specifiy that the fetched source should be placed into a
         # subdirectory of the default source directory
-        self.targetInstSrc = dict()
+        self.targetInstSrc = OrderedDict()
         # Specifiy that the default source directory should have a suffix after
         # the package name. This is usefull for package which needs different sources.
-        self.targetSrcSuffix = dict()
-        self.targetConfigurePath = dict()
-        self.targetInstallPath = dict()
-        self.targetMergeSourcePath = dict()
-        self.targetMergePath = dict()
+        self.targetSrcSuffix = OrderedDict()
+        self.targetConfigurePath = OrderedDict()
+        self.targetInstallPath = OrderedDict()
+        self.targetMergeSourcePath = OrderedDict()
+        self.targetMergePath = OrderedDict()
 
-        self.targetDigests = dict()
-        self.targetDigestUrls = dict()
+        self.targetDigests = OrderedDict()
+        self.targetDigestUrls = OrderedDict()
         ## \todo prelimary
-        self.svnTargets = dict()
+        self.svnTargets = OrderedDict()
 
-        self.hardDependencies = dict()
-        self.softDependencies = dict()
+        self.hardDependencies = OrderedDict()
+        self.softDependencies = OrderedDict()
 
         # dependencies is the common way to define dependencies that are both
         # run time and build time dependencies, it is equivalent to hardDependencies
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies
-        self.dependencies = dict()
-        self.runtimeDependencies = dict()
-        self.buildDependencies = dict()
+        self.dependencies = OrderedDict()
+        self.runtimeDependencies = OrderedDict()
+        self.buildDependencies = OrderedDict()
 
         # a long and a short description for the package
         self.shortDescription = ''
@@ -59,7 +60,7 @@ class infoclass(object):
         # of the package
         self.categoryName = ''
 
-        self.patchToApply = dict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
+        self.patchToApply = OrderedDict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
         self.svnTargets['svnHEAD'] = False
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
@@ -74,13 +75,13 @@ class infoclass(object):
                 # if version is not available then set it as -1
                 self.hardDependencies[ x ] = [ -1 ]
 
-
-        self.setDependencies()
-
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
         self.setBuildOptions()
+
+        # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
+        self.setDependencies()
 
     def setDependencies( self ):
         """default method for setting dependencies, override to set individual targets"""
@@ -99,8 +100,8 @@ class infoclass(object):
         elif not os.getenv( "EMERGE_TARGET" ) == None:
             self.buildTarget = os.getenv( "EMERGE_TARGET" )
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
-            self.buildTarget = self.defaultTarget
             utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys())), 1)
+            self.buildTarget = self.defaultTarget
 
     def setBuildOptions( self ):
         """default method for setting build options, override to set individual targets"""
@@ -115,33 +116,23 @@ class infoclass(object):
             arch = "-x86"
         return arch
 
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler=None):
+    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler_name=None):
         """return archive file based package url"""
         if packagetypes is None:
             packagetypes = ['bin', 'lib']
         if not os.getenv("EMERGE_PACKAGETYPES") is None:
             packagetypes += os.getenv("EMERGE_PACKAGETYPES").split(',')
         arch = self.getArchitecture();
-        if compiler == None:
-            compilerName = "msvc"
-            if os.getenv("KDECOMPILER") == "mingw":
-                compilerName = "mingw"
-            elif os.getenv("KDECOMPILER") == "mingw4":
-                compilerName = "mingw4"
-            elif os.getenv("KDECOMPILER") == "msvc2008":
-                compilerName = "vc90"
-            elif os.getenv("KDECOMPILER") == "msvc2010":
-                compilerName = "vc100"
-        else:
-            compilerName = compiler
+        if compiler_name == None:
+            compiler_name = compiler.getShortName()
         ret = ''
         # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
         if scheme == 'sf':
             for packageType in packagetypes:
-                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
+                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
         else:
             for packageType in packagetypes:
-                ret += repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + packageType + ext + '\n'
+                ret += repoUrl + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
 
         return ret
 
@@ -175,19 +166,10 @@ example:
             arch = "-x64"
         if compiler.isMinGW_W32():
             arch = "-x86"
-        compilerName = "msvc"
-        if os.getenv("KDECOMPILER") == "mingw":
-            compilerName = "mingw"
-        elif os.getenv("KDECOMPILER") == "mingw4":
-            compilerName = "mingw4"
-        elif os.getenv("KDECOMPILER") == "msvc2008":
-            compilerName = "vc90"
-        elif os.getenv("KDECOMPILER") == "msvc2010":
-            compilerName = "vc100"
         # TODO: use list comprehension
         ret = []
         for packageType in packagetypes:
-            key = version + '-' + compilerName + '-' + packageType + arch
+            key = version + '-' + compiler.getShortName() + '-' + packageType + arch
             ret.append(self.targetDigests[key])
         return ret
 
@@ -208,7 +190,7 @@ example:
     def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler=None):
         """return full url of a package provided by the kdewin mirrors"""
         repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
-        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler=compiler )
+        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler_name=compiler )
 
     def getPackageList( self, baseUrl, files ):
         """returns a package url for multiple files from the same base url"""

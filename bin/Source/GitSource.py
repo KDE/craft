@@ -74,7 +74,7 @@ class GitSource ( VersionSystemSourceBase ):
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
                 line = tmpFile.readline()
-                return str(line, "UTF-8").replace("commit ", "").strip()
+                return "%s-%s" % (branch, str(line, "UTF-8").replace("commit ", "").strip())
         else:
             # in case this is a tag, print out the tag version
             return branch
@@ -107,6 +107,7 @@ class GitSource ( VersionSystemSourceBase ):
                 os.rmdir(checkoutDir)
             if os.path.exists(checkoutDir):
                 if not repoTag:
+                    self.__git("pull")
                     ret = self.__git("pull", "origin", repoBranch or "master" )
                     if self.subinfo.options.fetch.checkoutSubmodules:
                         self.__git("submodule update --init --recursive")
@@ -241,8 +242,7 @@ class GitSource ( VersionSystemSourceBase ):
         """print the revision returned by git show"""
         utils.trace( 'GitSource sourceVersion', 2 )
 
-        print(self.__getCurrentRevision())
-        return True
+        return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0 ):
         utils.trace( 'GitSource checkoutDir', 2 )

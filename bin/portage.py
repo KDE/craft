@@ -11,14 +11,17 @@ import sys
 import portage_versions
 import emergePlatform
 import copy
+from collections import OrderedDict
+from EmergePackageObject import PackageObjectBase
+import configparser
 #a import to portageSearch infront of def getPackagesCategories to prevent the circular import with installdb
 
 
 internalCategory = 'internal'
 ROOTDIR = os.getenv( "KDEROOT" )
 
-modDict = dict()
-packageDict = dict()
+modDict = OrderedDict()
+packageDict = OrderedDict()
 
 def __import__( module ): # pylint: disable=W0622
     utils.debug( "module to import: %s" % module, 2 )
@@ -53,14 +56,18 @@ class DependencyPackage(object):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
-    def __init__( self, category, name, version ):
+    def __init__( self, category, name, version , autoExpand = True ):
         self.category = category
         self.name = name
         self.version = version
         self.runtimeChildren = []
         self.buildChildren = []
-        self.__readChildren()
+        if autoExpand:
+            self.__readChildren()
 
+    def __hash__(self):
+        return str( self.category + "/" +  self.name).__hash__()
+        
     def __eq__( self, other ):
         return self.category == other.category and self.name == other.name and self.version == other.version
 
@@ -83,15 +90,16 @@ class DependencyPackage(object):
                 utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
                 version = PortageInstance.getNewestVersion( category, package )
                 if not line in list(packageDict.keys()):
-                    p = DependencyPackage( category, package, version )
+                    p = DependencyPackage( category, package, version, False )
                     utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
                     packageDict[ line ] = p
+                    p.__readChildren()
                 else:
                     p = packageDict[ line ]
                 children.append( p )
         return children
 
-    def getDependencies( self, depList=None, dep_type="both" ):
+    def getDependencies( self, depList=None, dep_type="both", single = set() ):
         """ returns all dependencies """
         if depList is None:
             depList = []
@@ -101,14 +109,18 @@ class DependencyPackage(object):
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
-
+            
+        single.add(self)
         for p in children:
-            if not p in depList:
-                p.getDependencies( depList, dep_type )
-
+            if not p in single and not p in depList\
+            and not ("%s/%s" % (p.category, p.name)) in PortageInstance.ignores:
+                p.getDependencies( depList, dep_type,single )
+                    
         #if self.category != internalCategory:
-        if not self in depList:
+        if not self in depList and not ("%s/%s" % (self.category, self.name)) in PortageInstance.ignores:
             depList.append( self )
+
+
 
         return depList
 
@@ -200,6 +212,27 @@ class Portage(object):
         self.categories = {}
         self.subpackages = {}
         self.portages = {}
+        self.ignores = set()
+        self._readIgnores()
+        
+    def _readIgnores(self):
+        iniPath = os.path.join(ROOTDIR, "etc", "kdesettings.ini")
+        config = configparser.ConfigParser()
+        config.optionxform = str
+        setDefautls = True
+        if os.path.exists(iniPath):
+            config.read(iniPath)
+            if config.has_section("Portage") and "PACKAGE_IGNORES" in config["Portage"]:
+                setDefautls = False
+                for p in config["Portage"]["PACKAGE_IGNORES"].split(";"):
+                    self.ignores.add(p)
+        if setDefautls:
+            if not config.has_section("Portage"):
+                config.add_section("Portage")
+            config["Portage"]["PACKAGE_IGNORES"] = ""
+            with open(iniPath, 'w') as configfile:
+                config.write(configfile)
+            
 
     def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """
@@ -212,6 +245,10 @@ class Portage(object):
         for vcsdir in VCSDirs():
             if vcsdir in categoryList:
                 categoryList.remove( vcsdir )
+        if "__pycache__" in categoryList:
+            categoryList.remove( "__pycache__" )
+
+        dontBuildCategoryList = self.getDontBuildPackagesList( os.path.join( directory ) )
 
         self.portages[ directory ] = []
         for category in categoryList:
@@ -226,23 +263,41 @@ class Portage(object):
             for vcsdir in VCSDirs():
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
+            if "__pycache__" in packageList:
+                packageList.remove( "__pycache__" )
+
+            dontBuildPackageList = self.getDontBuildPackagesList( os.path.join( directory, category ) )
 
             if not category in list(self.categories.keys()):
                 self.categories[ category ] = []
+
             for package in packageList:
                 if not os.path.isdir( os.path.join( directory, category, package ) ):
                     continue
                 if not package in self.categories[ category ]:
-                    self.categories[ category ].append( package )
+                    _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList
+                    self.categories[ category ].append( PackageObjectBase( category=category, package=package, enabled=_enabled ) )
 
                 subPackageList = os.listdir( os.path.join( directory, category, package ) )
+
+                # remove vcs directories
+                for vcsdir in VCSDirs():
+                    if vcsdir in subPackageList:
+                        subPackageList.remove( vcsdir )
+                if "__pycache__" in subPackageList:
+                    subPackageList.remove( "__pycache__" )
+
                 for subPackage in subPackageList:
                     if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in VCSDirs():
                         continue
+
+                    dontBuildSubPackageList = self.getDontBuildPackagesList( os.path.join( directory, category, package ) )
+
                     if not subPackage in list(self.subpackages.keys()):
                         self.subpackages[ subPackage ] = []
                     if not subPackage in self.categories[ category ]:
-                        self.categories[ category ].append( subPackage )
+                        _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList and not subPackage in dontBuildSubPackageList
+                        self.categories[ category ].append( PackageObjectBase( category=category, subpackage=package, package=subPackage, enabled=_enabled ) )
                     self.subpackages[ subPackage ].append( category + "/" + package )
 
 
@@ -275,24 +330,25 @@ class Portage(object):
                 if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
 
+    def getDontBuildPackagesList( self, path ):
+        """ get a list of packages from a dont_build file"""
+        plist = []
+        if os.path.exists( os.path.join( path, "dont_build.txt" ) ):
+            with open( os.path.join( path, "dont_build.txt" ), "r" ) as f:
+                for line in f:
+                    if line.strip().startswith('#'): continue
+                    if not line.strip() == "":
+                        plist.append(line.strip())
+        return plist
+
     def getAllPackages( self, category ):
         """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
         in case the category doesn't exist, nothing is returned"""
         if self.isCategory( category ):
-            plist = copy.copy(self.categories[ category ])
-            try:
-                plist.remove( "__pycache__" )
-                plist.remove( ".git" )
-            except ValueError:
-                pass
-
-            if os.path.exists( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ) ):
-                with open( os.path.join( rootDirForCategory( category ), category, "dont_build.txt" ), "r" ) as f:
-                    for line in f:
-                        try:
-                            plist.remove( line.strip() )
-                        except ValueError:
-                            utils.warning( "couldn't remove package %s from category %s's package list" % ( line.strip(), category ) )
+            plist = []
+            for _p in self.categories[ category ]:
+                if _p:
+                    plist.append(_p.package)
             return plist
         else:
             return
@@ -303,12 +359,14 @@ class Portage(object):
         fileName = getFilename( category, package, version )
         module = __import__( fileName )
         p = module.Package()
+        if buildtarget == None:
+            buildtarget = findPossibleTargets( category, package, version )
         p.setup(fileName, category, package, version, buildtarget)
         return p
 
     def getDefaultTarget( self, category, package, version ):
         """ returns the default package of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -319,7 +377,7 @@ class Portage(object):
 
     def getMetaData( self, category, package, version ):
         """ returns all targets of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getMetaData: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -342,7 +400,7 @@ class Portage(object):
 
     def getAllTargets( self, category, package, version ):
         """ returns all targets of a specified package """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package, version ), 1 )
         if not ( category and package and version ):
             return dict()
         mod = __import__( getFilename( category, package, version ) )
@@ -358,7 +416,7 @@ class Portage(object):
     def getAllVCSTargets( self, category, package, version ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        utils.debug( "importing file %s" % getFilename( category, package, version ), 1 )
+        utils.debug( "getAllVCSTargets: importing file %s" % getFilename( category, package, version ), 1 )
         mod = __import__( getFilename( category, package, version ) )
         if hasattr( mod, 'subinfo' ):
             info = mod.subinfo()
@@ -426,10 +484,10 @@ class Portage(object):
         instList = list()
         for category in list(self.categories.keys()):
             for package in self.categories[ category ]:
-                for script in os.listdir( getDirname( category, package ) ):
+                for script in os.listdir( getDirname( category, package.package ) ):
                     if script.endswith( '.py' ):
-                        version = script.replace('.py', '').replace(package + '-', '')
-                        instList.append([category, package, version])
+                        version = script.replace('.py', '').replace(package.package + '-', '')
+                        instList.append([category, package.package, version])
         return instList
 
 # when importing this, this static Object should get added
@@ -458,7 +516,13 @@ def findPossibleTargets( category, package, version, buildtype=''): # pylint: di
         if os.path.isdir( os.path.join( buildroot, directory ) ):
             if directory.startswith( "image" ) and directory != "image":
                 particles = directory.split( '-' )[ 1: ] # the first part should be image- anyway
-                if len(particles) == 3:
+                if len(particles) == 1 and \
+                   not particles[0] in [os.getenv( "KDECOMPILER" ), \
+                                        os.getenv( "EMERGE_BUILDTYPE" ), \
+                                        os.getenv( "EMERGE_TARGET_PLATFORM" ), \
+                                        "WIN32"]:
+                    return particles[0]
+                elif len(particles) == 3:
                     _platform, _buildType, _target = particles
                 elif len(particles) == 4 and emergePlatform.isCrossCompilingEnabled():
                     _platform, _buildType, _buildArch, _target = particles
@@ -504,7 +568,6 @@ def getDependencies( category, package, version, runtimeOnly=False ):
                 (category, package) = line.split( "/" )
                 version = PortageInstance.getNewestVersion( category, package )
                 deps.append( [ category, package, version, depDict[ line ] ] )
-
     return deps
 
 def parseListFile( filename ):
@@ -562,7 +625,7 @@ def readChildren( category, package, version ):
     # if we are an emerge internal package and already in the dictionary, ignore childrens
     # To avoid possible endless recursion this may be also make sense for all packages
     if category == internalCategory and identFileName in list(modDict.keys()):
-        return dict(), dict()
+        return OrderedDict(), OrderedDict()
     package, subpackage = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s-%s %s" % ( category, subpackage, package, version, getFilename( category, package, version ) ), 2 )
@@ -580,10 +643,10 @@ def readChildren( category, package, version ):
     elif hasattr( mod, 'subinfo' ):
         subinfo = mod.subinfo()
     else:
-        return dict(), dict()
+        return OrderedDict(), OrderedDict()
 
-    runtimeDependencies = subinfo.runtimeDependencies or dict()
-    buildDependencies = subinfo.buildDependencies or dict()
+    runtimeDependencies = subinfo.runtimeDependencies or OrderedDict()
+    buildDependencies = subinfo.buildDependencies or OrderedDict()
 
     # hardDependencies
     commonDependencies = subinfo.hardDependencies
@@ -622,7 +685,7 @@ def isTargetBuildEnabled( category, package, version ):
         utils.die( "This function must not be used outside of cross-compiling environments!" )
 
 def isPackageUpdateable( category, package, version ):
-    utils.debug( "importing file %s" % getFilename( category, package, version ), 2 )
+    utils.debug( "isPackageUpdateable: importing file %s" % getFilename( category, package, version ), 2 )
     mod = __import__( getFilename( category, package, version ) )
     if hasattr( mod, 'subinfo' ):
         info = mod.subinfo()

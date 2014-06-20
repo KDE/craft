@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
         self.patchToApply['4.10.2'] = [("kig-4.10.2-20130426.diff", 1), ("kig-ugly-findpython-fix.diff", 1)]
 
         self.shortDescription = 'interactive geometry'
@@ -14,6 +15,8 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
+        if self.options.features.pythonSupport:
+            self.dependencies['win32libs/boost-python'] = 'default'
 
 from Package.CMakePackageBase import *
 

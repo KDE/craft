@@ -613,7 +613,7 @@ diff -Nru -x '*~' openldap-2.4.33.orig/ConfigureChecks.cmake openldap-2.4.33/Con
 +set(LDAP_VENDOR_VERSION_MINOR 4)
 +
 +#/* Patch */
-+set(LDAP_VENDOR_VERSION_PATCH 28)
++set(LDAP_VENDOR_VERSION_PATCH 33)
 +
 +#/* Version */
 +MATH(EXPR LDAP_VENDOR_VERSION "${LDAP_VENDOR_VERSION_MAJOR} * 10000 + ${LDAP_VENDOR_VERSION_MINOR} * 100 + ${LDAP_VENDOR_VERSION_PATCH}")

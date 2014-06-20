@@ -175,9 +175,6 @@ set PATH=%KDEROOT%\dev-utils\bin;!PATH!
 rem for old packages
 set PATH=%KDEROOT%\bin;!PATH!
 
-rem for msys
-set TERM=msys
-
 rem for python
 if NOT "!EMERGE_PYTHON_PATH!" == "" ( 
    set PATH=!EMERGE_PYTHON_PATH!;!PATH!
@@ -187,16 +184,7 @@ if NOT "!EMERGE_PYTHON_PATH!" == "" (
 )
 
 if "%EMERGE_USE_CCACHE%" == "True" (
-  if "%KDECOMPILER%" == "mingw4" (
-    echo EMERGE_USE_CCACHE is active to use it "set EMERGE_MAKE_PROGRAM=jom /E" or "set EMERGE_MAKE_PROGRAM=mingw32-make -e"
-    set CCACHE_DIR=%KDEROOT%\build\CCACHE
-    set CXX=ccache g++
-    set CC=ccache gcc
-  ) else (
-    echo CCACHE only woorks with a gcc based compiler
-    set CXX=
-    set CC=
-  )
+   set CCACHE_DIR=%KDEROOT%\build\CCACHE
 )
 
 if "%KDECOMPILER%" == "mingw" ( 
@@ -205,7 +193,11 @@ if "%KDECOMPILER%" == "mingw" (
     if "%KDECOMPILER%" == "mingw4" ( 
         call :path-mingw
     ) else ( 
-        call :path-msvc 
+        if "%KDECOMPILER%" == "intel" (
+            call :path-intel
+        ) else (
+            call :path-msvc 
+        )
     )
 )
 
@@ -242,7 +234,22 @@ goto :eof
             call "!VSDIR!\VC\vcvarsall.bat" %EMERGE_ARCHITECTURE%
         )
     )
+    goto :path-common-vsshell
 
+:path-intel
+    if defined INTELDIR (
+        if "%EMERGE_ARCHITECTURE%" == "x86" (
+            call "!INTELDIR!\bin\compilervars.bat" ia32 %INTEL_VSSHELL%
+        ) else (
+            if "%EMERGE_ARCHITECTURE%" == "x64" (
+                call "!INTELDIR!\bin\compilervars.bat" intel64 %INTEL_VSSHELL%
+            )
+        )
+    )
+    goto :path-common-vsshell
+
+
+:path-common-vsshell
     if defined PSDKDIR (
         echo Using Platform SDK: !PSDKDIR!
         set PATH=!PSDKDIR!\bin;!PATH!

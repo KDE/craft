@@ -35,7 +35,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     return "Visual Studio 9 2008"
             else:
                 return "NMake Makefiles"
-        elif compiler.isMSVC():
+        elif compiler.isMSVC() or compiler.isIntel():
             return "NMake Makefiles"
         elif compiler.isMinGW():
             return "MinGW Makefiles"
@@ -121,6 +121,11 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.subinfo.options.cmake.useCTest:
             options += " -DCMAKE_PROGRAM_PATH=\"%s\" " % \
                             ( os.path.join( self.mergeDestinationDir(), "dev-utils", "svn", "bin" ).replace( "\\", "/" ) )
+        if compiler.isIntel():
+            # this is needed because otherwise it'll detect the MSVC environment
+            options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
+            options += " -DCMAKE_C_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe" ).replace( "\\", "/" )
+            options += " -DCMAKE_LINKER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "xilink.exe" ).replace( "\\", "/" )
         options += " \"%s\"" % self.configureSourceDir()
         return options
 
@@ -173,6 +178,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def install( self):
         """install the target"""
+        if not BuildSystemBase.install(self):
+            return False
+
         self.enterBuildDir()
 
         fastString = ""
@@ -235,3 +243,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         return graphviz.openOutput()
 
+    def ccacheOptions(self):
+        ccache = os.path.join(os.getenv("KDEROOT"), "bin", "ccache.exe").replace( "\\", "/" )
+        out  =  " -DCMAKE_CXX_COMPILER=%s -DCMAKE_CXX_COMPILER_ARG1=g++ "% ccache
+        out  += " -DCMAKE_C_COMPILER=%s -DCMAKE_C_COMPILER_ARG1=gcc " % ccache
+        return out

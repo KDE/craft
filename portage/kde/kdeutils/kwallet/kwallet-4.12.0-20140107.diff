@@ -1,0 +1,14 @@
+diff -Nru -x '*~' kwallet-4.12.0.orig/src/konfigurator/savehelper.cpp kwallet-4.12.0/src/konfigurator/savehelper.cpp
+--- kwallet-4.12.0.orig/src/konfigurator/savehelper.cpp	2013-12-09 07:23:12.000000000 +0100
++++ kwallet-4.12.0/src/konfigurator/savehelper.cpp	2014-01-07 18:52:26.345577400 +0100
+@@ -22,8 +22,8 @@
+ #include <kdebug.h>
+ #include <unistd.h>
+ 
+-#if defined(Q_CC_MSVC)
+-// TODO: or rather use uid_t in the getuid() call below?
++#if defined(Q_WS_WIN)
++// TODO: or rather use uid_t in the getuid() call below? or test for if __uid_t is present
+ #define __uid_t uid_t
+ #endif
+ 

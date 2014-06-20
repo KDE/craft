@@ -56,15 +56,6 @@ class KDEWinPackager (PackagerBase):
         # FIXME: add a test for the installer later
         dstpath = self.packageDestinationDir()
 
-        for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
-            script = os.path.join( self.packageDir(), "post-install-%s.cmd" ) % pkgtype
-            scriptName = "post-install-%s-%s-%s.cmd" % ( self.package, pkgVersion, pkgtype )
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if os.path.exists( script ):
-                if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                    os.mkdir( os.path.join( self.imageDir(), "manifest" ) )
-                utils.copyFile( script, destscript )
-
         if ( self.subinfo.options.package.packSources ) and os.path.exists( self.sourceDir() ):
             srcCmd = " -srcroot " + self.sourceDir()
         else:
@@ -134,22 +125,13 @@ class KDEWinPackager (PackagerBase):
             utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
 
         if( self.subinfo.options.package.withCompiler ):
-            if( self.compiler() == "mingw"):
-                cmd += " -type mingw "
-            elif self.compiler() == "mingw4" and self.buildArchitecture() == "x64":
-                cmd += " -type x64-mingw4 "
-            elif self.compiler() == "mingw4" and compiler.isMinGW_W32():
-                cmd += " -type x86-mingw4 "
-            elif self.compiler() == "mingw4":
-                cmd += " -type mingw4 "
-            elif self.compiler() == "msvc2005":
-                cmd += " -type msvc "
-            elif self.compiler() == "msvc2008":
-                cmd += " -type vc90 "
-            elif self.compiler() == "msvc2010":
-                cmd += " -type vc100 "
-            else:
-                cmd += " -type unknown "
+            cmd += " -type "
+            if compiler.isMinGW():
+                if self.buildArchitecture() == "x64":
+                    cmd += "x64-"
+                else:
+                    cmd += "x86-"                
+            cmd += compiler.getShortName()
 
 
 #        not needed anymore

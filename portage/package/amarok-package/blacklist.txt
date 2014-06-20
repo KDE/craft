@@ -98,6 +98,7 @@ bin\\plasma.*
 bin\\akonadi.*
 bin\\khelpcenter\.exe
 
+bin\\bjam\.exe
 bin\\ark\.exe
 bin\\kgpg\.exe
 bin\\sweeper\.exe

@@ -1,6 +1,6 @@
 diff -Nru -x '*~' zlib-1.2.7.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.7/cmake/modules/FindWcecompat.cmake
---- zlib-1.2.7.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ zlib-1.2.7/cmake/modules/FindWcecompat.cmake	2013-01-23 13:05:41.165165700 +0100
+--- zlib-1.2.7.orig/cmake/modules/FindWcecompat.cmake   1970-01-01 01:00:00.000000000 +0100
++++ zlib-1.2.7/cmake/modules/FindWcecompat.cmake        2013-03-23 15:14:51.969358200 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
@@ -36,8 +36,8 @@ diff -Nru -x '*~' zlib-1.2.7.orig/cmake/modules/FindWcecompat.cmake zlib-1.2.7/c
 +
 +mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff -Nru -x '*~' zlib-1.2.7.orig/CMakeLists.txt zlib-1.2.7/CMakeLists.txt
---- zlib-1.2.7.orig/CMakeLists.txt	2012-04-30 06:20:45.000000000 +0200
-+++ zlib-1.2.7/CMakeLists.txt	2013-01-23 14:27:12.151495800 +0100
+--- zlib-1.2.7.orig/CMakeLists.txt      2012-04-30 06:20:45.000000000 +0200
++++ zlib-1.2.7/CMakeLists.txt   2013-06-25 16:34:25.596516300 +0200
 @@ -1,8 +1,15 @@
 -cmake_minimum_required(VERSION 2.4.4)
 +cmake_minimum_required(VERSION 2.6)
@@ -122,26 +122,26 @@ diff -Nru -x '*~' zlib-1.2.7.orig/CMakeLists.txt zlib-1.2.7/CMakeLists.txt
  endif()
 +
 +
-+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc)
++configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc @ONLY)
 +install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc DESTINATION lib/pkgconfig)
 diff -Nru -x '*~' zlib-1.2.7.orig/win32/zlib1.rc zlib-1.2.7/win32/zlib1.rc
---- zlib-1.2.7.orig/win32/zlib1.rc	2006-05-21 05:55:00.000000000 +0200
-+++ zlib-1.2.7/win32/zlib1.rc	2013-01-23 13:05:41.190165800 +0100
+--- zlib-1.2.7.orig/win32/zlib1.rc      2006-05-21 05:55:00.000000000 +0200
++++ zlib-1.2.7/win32/zlib1.rc   2013-03-23 15:14:51.979429400 +0100
 @@ -10,9 +10,9 @@
-   PRODUCTVERSION	ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
-   FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
+   PRODUCTVERSION       ZLIB_VER_MAJOR,ZLIB_VER_MINOR,ZLIB_VER_REVISION,0
+   FILEFLAGSMASK                VS_FFI_FILEFLAGSMASK
  #ifdef _DEBUG
--  FILEFLAGS		1
-+  FILEFLAGS		0x1L
+-  FILEFLAGS            1
++  FILEFLAGS            0x1L
  #else
--  FILEFLAGS		0
-+  FILEFLAGS		0x0L
+-  FILEFLAGS            0
++  FILEFLAGS            0x0L
  #endif
-   FILEOS		VOS__WINDOWS32
-   FILETYPE		VFT_DLL
+   FILEOS               VOS__WINDOWS32
+   FILETYPE             VFT_DLL
 diff -Nru -x '*~' zlib-1.2.7.orig/zconf.h zlib-1.2.7/zconf.h
---- zlib-1.2.7.orig/zconf.h	2012-04-30 01:18:12.000000000 +0200
-+++ zlib-1.2.7/zconf.h	1970-01-01 01:00:00.000000000 +0100
+--- zlib-1.2.7.orig/zconf.h     2012-04-30 01:18:12.000000000 +0200
++++ zlib-1.2.7/zconf.h  1970-01-01 01:00:00.000000000 +0100
 @@ -1,506 +0,0 @@
 -/* zconf.h -- configuration of the zlib compression library
 - * Copyright (C) 1995-2012 Jean-loup Gailly.
@@ -650,8 +650,8 @@ diff -Nru -x '*~' zlib-1.2.7.orig/zconf.h zlib-1.2.7/zconf.h
 -
 -#endif /* ZCONF_H */
 diff -Nru -x '*~' zlib-1.2.7.orig/zlib.pc.cmake zlib-1.2.7/zlib.pc.cmake
---- zlib-1.2.7.orig/zlib.pc.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ zlib-1.2.7/zlib.pc.cmake	2013-01-23 13:05:44.130170400 +0100
+--- zlib-1.2.7.orig/zlib.pc.cmake       1970-01-01 01:00:00.000000000 +0100
++++ zlib-1.2.7/zlib.pc.cmake    2013-03-23 15:14:51.983433400 +0100
 @@ -0,0 +1,13 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +exec_prefix=@CMAKE_INSTALL_PREFIX@

@@ -463,7 +463,7 @@ def un7zip( fileName, destdir ):
         tmp = tempfile.TemporaryFile()
         return system( command, stdout=tmp )
 
-def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
+def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
     debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
     ( shortname, ext ) = os.path.splitext( fileName )
@@ -489,7 +489,7 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
         # FIXME how to handle errors here ?
             for tarMember in tar:
                 try:
-                    if not uselinks and tarMember.issym():
+                    if tarMember.issym():
                         tarDir = os.path.dirname(tarMember.name)
                         target = tarMember.linkname
                         if not target.startswith("/"):#abspath?
@@ -497,6 +497,7 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
                         if target in tar.getnames():
                             tar.extract(target, emerge_tmp )
                             shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
+                            warning("Resolved symlink %s in tarfile %s to %s" % ( tarMember.name, fileName , tarMember.linkname))
                         else:
                             warning("link target %s for %s not included in tarfile" % ( target , tarMember.name))
                     else:
@@ -504,6 +505,8 @@ def unTar( fileName, destdir,uselinks = envAsBool("EMERGE_USE_SYMLINKS") ):
                 except tarfile.TarError:
                     error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
                     return False
+                except IOError:
+                    warning("Failed to extract %s to directory %s" % ( tarMember.name, destdir ) )
         return True
     except tarfile.TarError:
         error( "could not open existing tar archive: %s" % fileName )
@@ -603,7 +606,10 @@ def debug( message, level=0 ):
 
 def warning( message ):
     if verbose() > 0:
-        print("emerge warning: %s" % message)
+        try:
+            print("emerge warning: %s" % message)
+        except UnicodeEncodeError:
+            print("emerge warning: failed to print message")
     return True
 
 def new_line( level=0 ):
@@ -787,7 +793,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
-            if currentHash == filehash or filehash == "" or os.path.islink(fullPath):
+            if currentHash == filehash or filehash == "":
                 debug( "deleting file %s" % fullPath)
                 try:
                     os.remove(fullPath)
@@ -1010,16 +1016,14 @@ def sedFile( directory, fileName, sedcommand ):
 def digestFile( filepath ):
     """ md5-digests a file """
     fileHash = hashlib.md5()
-    if os.path.islink(filepath):
-        tmp = resolveLink(filepath)
-        if not os.path.exists(tmp):
-            warning("cant resolve symbolic link target %s, returning \"\" as digests" % tmp)
-            return ""
-        filepath = tmp
-    with open( filepath, "rb" ) as digFile:
-        for line in digFile:
-            fileHash.update( line )
-        return fileHash.hexdigest()
+    try:
+        with open( filepath, "rb" ) as digFile:
+            for line in digFile:
+                fileHash.update( line )
+            return fileHash.hexdigest()
+    except IOError:
+        return ""
+        
 
 def digestFileSha1( filepath ):
     """ sha1-digests a file """
@@ -1158,7 +1162,7 @@ def createImportLibs( dll_name, basepath ):
 
 def toMSysPath( path ):
     path = path.replace( '\\', '/' )
-    if ( path[1] == ':' ):
+    if ( len(path) > 1 and path[1] == ':' ):
         path = '/' + path[0].lower() + '/' + path[3:]
     return path
 
@@ -1179,32 +1183,18 @@ def createDir(path):
         debug("creating directory %s " % ( path ), 2)
         os.makedirs( path )
     return True
-
-def resolveLink(link):
-    """tries to resolve a symlink"""
-    if not os.path.islink(link):
-        return link
-    tmp = os.path.join(os.path.abspath(os.path.dirname(link) ),os.readlink(link))
-    if not os.path.exists(tmp):
-        warning("cant resolve Link: %s" % link)
-    return tmp
     
 def copyFile(src, dest,linkOnly = envAsBool("EMERGE_USE_SYMLINKS")):
     """ copy file from src to dest"""
     debug("copy file from %s to %s" % ( src, dest ), 2)
-    destDir = os.path.dirname(dest)
-    if not os.path.exists(destDir):
-        os.makedirs(destDir)
-    if os.path.islink(src):
-        src = resolveLink(src)
+    destDir = os.path.dirname( dest )
+    if not os.path.exists( destDir ):
+        os.makedirs( destDir )
+    if os.path.exists( dest ):
+        warning( "Overriding %s" % dest )
+        os.remove( dest )
     if linkOnly:
-        if (os.path.exists(dest) or os.path.islink(dest)):#if link is invailid os.path.exists will return false
-            warning("overiding existing link or file %s with %s" % (dest,src))
-            os.remove(dest)
-        if src.endswith(".exe") or src.endswith("qt.conf"):
             os.link( src , dest )
-        else:
-            os.symlink(deSubstPath(src), dest )
     else:
         try:
             shutil.copy(src,dest)
@@ -1395,11 +1385,11 @@ def embedManifest(executable, manifest):
                 debug("embedManifest could not find a mt.exe in\n\t %s" % \
                     os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
-        system([mtExe, "-nologo", "-manifest", manifest,
+        return system([mtExe, "-nologo", "-manifest", manifest,
             "-outputresource:%s;1" % executable])
     else:
-        debug("No manifest tool found. \n Ressource manifest for %s not embedded"\
-                % executable, 1)
+        return system(["mt", "-nologo", "-manifest", manifest,
+            "-outputresource:%s;1" % executable])
 
 
 def getscriptname():

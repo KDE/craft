@@ -16,8 +16,13 @@ class subinfo(info.infoclass):
         self.targetDigests['1.8.0'] = '580804fcfcc77f1d30a9a27ff0ff85d53bea2442'
         self.targets['1.8.1.2'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.1.2-preview20130201.7z"
         self.targetDigests['1.8.1.2'] = 'b2ab1de84727466fe3830b33c47e275bbd9a8d2d'
+        self.targets['1.8.3'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.3-preview20130601.7z"
+        self.targets['1.8.5.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.8.5.2-preview20131230.7z"
+        self.targetDigests['1.8.5.2'] = 'c53de59d32a13ae892f07c6083cad68eca2dbaa2'
+        self.targets['1.9.0']  ="http://msysgit.googlecode.com/files/PortableGit-1.9.0-preview20140217.7z"
+        self.targetDigests['1.9.0'] = 'a26032341b4f3c0bb57eb298ba886438f974fc38'
         
-        self.defaultTarget = '1.8.1.2'
+        self.defaultTarget = '1.9.0'
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
@@ -38,7 +43,7 @@ class Package(BinaryPackageBase):
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
-        utils.copyFile(os.path.join(self.packageDir(),"git.bat"),os.path.join(self.rootdir,"dev-utils","bin","git.bat"))
+        utils.copyFile(os.path.join(self.packageDir(),"git.exe"),os.path.join(self.rootdir,"dev-utils","bin","git.exe"))
         utils.copyFile(os.path.join(self.packageDir(),"git.sh"),os.path.join(self.rootdir,"dev-utils","bin","git"))#bash script
         utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
         utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))

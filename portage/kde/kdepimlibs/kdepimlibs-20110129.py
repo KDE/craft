@@ -7,15 +7,15 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-        self.patchToApply['4.10.0'] = [('kdepimlibs-4.10.0.diff', 1)]
-        self.patchToApply['4.10.1'] = [('kdepimlibs-4.10.0.diff', 1)]
-        self.patchToApply['4.10.2'] = [('kdepimlibs-4.10.0.diff', 1)]
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+            self.patchToApply['4.12.0'] = [('0001-fix-wrong-MAKE_KABC_LIB-macro-this-is-now-kabc_EXPOR.patch', 1),
+                                           ('0001-fix-build-error-on-windows-about-undefined-KSslError.patch', 1)]
 
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-#        self.dependencies['kde/nepomuk-core'] = 'default'
+# Stripped down for gpg4win TODO make options out of this.
 #        self.dependencies['kdesupport/akonadi'] = 'default'
 #        self.dependencies['win32libs/cyrus-sasl'] = 'default'
 #        self.dependencies['win32libs/libical'] = 'default'

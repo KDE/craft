@@ -105,10 +105,14 @@ class EmergeBase(object):
             self.__compiler = "msvc2010"
         elif COMPILER == "msvc2012":
             self.__compiler = "msvc2012"
+        elif COMPILER == "msvc2013":
+            self.__compiler = "msvc2013"
         elif COMPILER == "mingw":
             self.__compiler = "mingw"
         elif COMPILER == "mingw4":
             self.__compiler = "mingw4"
+        elif COMPILER == "intel":
+            self.__compiler = "intel"
         else:
             print("emerge error: KDECOMPILER: '%s' not understood" % COMPILER, file=sys.stderr)
             exit( 1 )

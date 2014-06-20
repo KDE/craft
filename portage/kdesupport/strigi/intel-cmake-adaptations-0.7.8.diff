@@ -1,0 +1,82 @@
+diff -Nru -x '*~' strigi-0.7.5.orig/CMakeLists.txt strigi-0.7.5/CMakeLists.txt
+--- strigi-0.7.5.orig/CMakeLists.txt	2013-05-25 12:14:02.421439900 -0300
++++ strigi-0.7.5/CMakeLists.txt	2013-05-25 12:02:42.397544700 -0300
+@@ -46,14 +46,14 @@
+ check_subdir(strigidaemon)
+ check_subdir(strigiclient)
+ 
+-if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+   add_definitions(-wd4251)
+   add_definitions(-wd4355)
+   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+   add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+   add_definitions(-D_USE_MATH_DEFINES)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zc:wchar_t-")
+-endif(MSVC)
++endif(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ 
+ if(showError)
+   message(FATAL_ERROR "No CMakeLists.txt was found in one of your sources subdirectory\n"
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreamanalyzer/lib/CMakeLists.txt strigi-0.7.5/libstreamanalyzer/lib/CMakeLists.txt
+--- strigi-0.7.5.orig/libstreamanalyzer/lib/CMakeLists.txt	2011-06-02 06:29:26.000000000 -0300
++++ strigi-0.7.5/libstreamanalyzer/lib/CMakeLists.txt	2013-05-25 11:28:03.549641400 -0300
+@@ -60,16 +60,16 @@
+ #add the compatibility files
+ set(streamanalyzer_SRCS ${streamanalyzer_SRCS} compat.cpp)
+ 
+-if(MSVC)
++if(MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ 	list(APPEND streamanalyzer_SRCS
+ 		stgdirent.cpp
+ 		stgdirent.h
+ 	)
+ else()
+ 	list(APPEND streamanalyzer_SRCS
+ 		endanalyzers/helperendanalyzer.cpp
+ 	)
+ endif()
+ 
+ add_library(streamanalyzerstatic STATIC ${streamanalyzer_SRCS})
+ 
+diff -Nru -x '*~' strigi-0.7.5.orig/libstreams/ConfigureChecks.cmake strigi-0.7.5/libstreams/ConfigureChecks.cmake
+--- strigi-0.7.5.orig/libstreams/ConfigureChecks.cmake	2013-05-25 12:14:02.523445700 -0300
++++ strigi-0.7.5/libstreams/ConfigureChecks.cmake	2013-05-25 11:43:49.005718400 -0300
+@@ -119,6 +119,8 @@
+     SET(strigi_config_output ${libstreams_BINARY_DIR}/include/strigi/strigiconfig_mingw.h)
+   elseif(CYGWIN)
+     SET(strigi_config_output ${libstreams_BINARY_DIR}/include/strigi/strigiconfig_cygwin.h)
++  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
++    SET(strigi_config_output ${libstreams_BINARY_DIR}/include/strigi/strigiconfig_intel.h)
+   else(MINGW)
+     SET(strigi_config_output ${libstreams_BINARY_DIR}/include/strigi/strigiconfig_msvc.h)
+   endif(MINGW)
+diff -Nru -x '*~' strigi-0.7.5.orig/strigiutils/bin/CMakeLists.txt strigi-0.7.5/strigiutils/bin/CMakeLists.txt
+--- strigi-0.7.5.orig/strigiutils/bin/CMakeLists.txt	2011-04-23 08:00:17.000000000 -0300
++++ strigi-0.7.5/strigiutils/bin/CMakeLists.txt	2013-05-25 12:11:29.075669000 -0300
+@@ -2,6 +2,6 @@
+ if(HAVE_REGEX_H)
+   add_subdirectory(deepfind)
+ endif(HAVE_REGEX_H)
+-if(NOT MSVC)
++if(NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+   add_subdirectory(xmlindexer)
+-endif(NOT MSVC)
++endif(NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+diff -Nru -x '*~' strigi-0.7.5.orig/strigiutils/CMakeLists.txt strigi-0.7.5/strigiutils/CMakeLists.txt
+--- strigi-0.7.5.orig/strigiutils/CMakeLists.txt	2011-04-23 08:00:17.000000000 -0300
++++ strigi-0.7.5/strigiutils/CMakeLists.txt	2013-05-25 12:10:40.395884700 -0300
+@@ -59,11 +59,11 @@
+ 	target_link_libraries(deepgrep libdeepgrep)
+ 	install(TARGETS deepgrep RUNTIME DESTINATION bin)
+ endif(HAVE_REGEX_H)
+-if(NOT MSVC)
++if(NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ 	add_executable(xmlindexer dummy.cpp)
+ 	target_link_libraries(xmlindexer libxmlindexer)
+ 	install(TARGETS xmlindexer RUNTIME DESTINATION bin)
+ 	add_executable(rdfindexer dummy.cpp)
+ 	target_link_libraries(rdfindexer librdfindexer)
+ 	install(TARGETS rdfindexer RUNTIME DESTINATION bin)
+-endif(NOT MSVC)
++endif(NOT MSVC AND NOT (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))

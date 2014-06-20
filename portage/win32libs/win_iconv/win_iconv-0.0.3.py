@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.0.6'] = '51ce281cd8ce2debf3226482e86e0e534141ed01'
         self.patchToApply['0.0.2'] = ("win-iconv-0.0.2-20101217.diff", 1)
         self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
-        self.defaultTarget = '0.0.6'
+        self.defaultTarget = '0.0.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

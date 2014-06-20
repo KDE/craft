@@ -1,0 +1,95 @@
+diff -Nru -x '*~' telepathy-mission-control-5.15.0.orig/Makefile.am telepathy-mission-control-5.15.0/Makefile.am
+--- telepathy-mission-control-5.15.0.orig/Makefile.am	2012-10-03 20:08:52.000000000 +0200
++++ telepathy-mission-control-5.15.0/Makefile.am	2013-07-26 09:55:41.733642200 +0200
+@@ -16,7 +16,6 @@
+     src \
+     server \
+     util \
+-    tests \
+     doc
+ 
+ pkgconfigdir = $(libdir)/pkgconfig
+diff -Nru -x '*~' telepathy-mission-control-5.15.0.orig/src/mcd-account-manager-default.c telepathy-mission-control-5.15.0/src/mcd-account-manager-default.c
+--- telepathy-mission-control-5.15.0.orig/src/mcd-account-manager-default.c	2013-05-01 20:59:58.000000000 +0200
++++ telepathy-mission-control-5.15.0/src/mcd-account-manager-default.c	2013-07-26 09:41:55.580290000 +0200
+@@ -647,7 +647,7 @@
+ 
+ 
+ static gboolean
+-_commit (const McpAccountStorage *self,
++telepathy_mission_controle_comit (const McpAccountStorage *self,
+     const McpAccountManager *am,
+     const gchar *account)
+ {
+@@ -775,7 +775,7 @@
+           amd->loaded = TRUE;
+           amd->save = TRUE;
+ 
+-          if (_commit (self, am, NULL))
++          if (telepathy_mission_controle_comit (self, am, NULL))
+             {
+               DEBUG ("Migrated %s to new location: deleting old copy");
+               if (g_unlink (old_filename) != 0)
+@@ -794,7 +794,7 @@
+           G_KEY_FILE_KEEP_COMMENTS, NULL);
+       amd->loaded = TRUE;
+       amd->save = TRUE;
+-      _commit (self, am, NULL);
++      telepathy_mission_controle_comit (self, am, NULL);
+     }
+ 
+   accounts = g_key_file_get_groups (amd->keyfile, &n);
+@@ -822,7 +822,7 @@
+   iface->set = _set;
+   iface->create = _create;
+   iface->delete = _delete;
+-  iface->commit_one = _commit;
++  iface->commit_one = telepathy_mission_controle_comit;
+   iface->list = _list;
+ 
+ }
+diff -Nru -x '*~' telepathy-mission-control-5.15.0.orig/src/mcd-connection.c telepathy-mission-control-5.15.0/src/mcd-connection.c
+--- telepathy-mission-control-5.15.0.orig/src/mcd-connection.c	2013-02-13 15:47:40.000000000 +0100
++++ telepathy-mission-control-5.15.0/src/mcd-connection.c	2013-07-26 09:41:55.588291200 +0200
+@@ -48,7 +48,10 @@
+ 
+ #include <string.h>
+ #include <stdlib.h>
++
++#ifndef _WIN32
+ #include <dlfcn.h>
++#endif
+ 
+ #include <telepathy-glib/telepathy-glib.h>
+ #include <telepathy-glib/telepathy-glib-dbus.h>
+diff -Nru -x '*~' telepathy-mission-control-5.15.0.orig/src/mcd-dispatcher.c telepathy-mission-control-5.15.0/src/mcd-dispatcher.c
+--- telepathy-mission-control-5.15.0.orig/src/mcd-dispatcher.c	2012-10-08 17:18:07.000000000 +0200
++++ telepathy-mission-control-5.15.0/src/mcd-dispatcher.c	2013-07-26 09:41:55.594290300 +0200
+@@ -37,7 +37,10 @@
+ 
+ #include "config.h"
+ 
++#ifndef _WIN32
+ #include <dlfcn.h>
++#endif
++
+ #include <glib.h>
+ #include <glib/gprintf.h>
+ 
+diff -Nru -x '*~' telepathy-mission-control-5.15.0.orig/src/mcd-service.c telepathy-mission-control-5.15.0/src/mcd-service.c
+--- telepathy-mission-control-5.15.0.orig/src/mcd-service.c	2012-09-21 16:54:18.000000000 +0200
++++ telepathy-mission-control-5.15.0/src/mcd-service.c	2013-07-26 09:41:55.599290200 +0200
+@@ -42,7 +42,11 @@
+ 
+ #include <dbus/dbus.h>
+ #include <string.h>
++
++#ifndef _WIN32
+ #include <dlfcn.h>
++#endif
++
+ #include <sched.h>
+ #include <stdlib.h>
+ 
+Dateien telepathy-mission-control-5.15.0.orig/tools/libglibcodegen.pyc und telepathy-mission-control-5.15.0/tools/libglibcodegen.pyc sind verschieden.
+Dateien telepathy-mission-control-5.15.0.orig/tools/libtpcodegen.pyc und telepathy-mission-control-5.15.0/tools/libtpcodegen.pyc sind verschieden.

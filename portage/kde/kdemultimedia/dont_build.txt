@@ -1,0 +1,4 @@
+audiocd-kio
+ffmpegthumbs
+kmix
+kscd

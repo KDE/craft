@@ -1,0 +1,21 @@
+diff -Nru -x '*~' grantlee-0.3.0.orig/cmake/modules/GrantleeGenerateExportHeader.cmake grantlee-0.3.0/cmake/modules/GrantleeGenerateExportHeader.cmake
+--- grantlee-0.3.0.orig/cmake/modules/GrantleeGenerateExportHeader.cmake	2012-11-01 18:14:18.000000000 -0200
++++ grantlee-0.3.0/cmake/modules/GrantleeGenerateExportHeader.cmake	2013-05-18 15:53:31.945767100 -0300
+@@ -80,7 +80,7 @@
+     set(DEFINE_IMPORT)
+     set(DEFINE_NO_EXPORT)
+ 
+-    if (MSVC OR CYGWIN OR MINGW)
++    if (MSVC OR CYGWIN OR MINGW OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+         set(DEFINE_DEPRECATED "__declspec(deprecated)")
+     else()
+         set(DEFINE_DEPRECATED "__attribute__ ((__deprecated__))")
+@@ -89,7 +89,7 @@
+     get_property(type TARGET ${TARGET_LIBRARY} PROPERTY TYPE)
+ 
+     if (NOT ${type} STREQUAL "STATIC_LIBRARY")
+-        if (MSVC OR CYGWIN OR MINGW)
++        if (MSVC OR CYGWIN OR MINGW OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+             set(DEFINE_EXPORT "__declspec(dllexport)")
+             set(DEFINE_IMPORT "__declspec(dllimport)")
+         else()

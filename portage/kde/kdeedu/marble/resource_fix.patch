@@ -1,0 +1,50 @@
+diff -Nru -x '*~' marble-4.12.0.orig/src/apps/marble-qt/CMakeLists.txt marble-4.12.0/src/apps/marble-qt/CMakeLists.txt
+--- marble-4.12.0.orig/src/apps/marble-qt/CMakeLists.txt	2013-12-11 20:55:59.000000000 +0100
++++ marble-4.12.0/src/apps/marble-qt/CMakeLists.txt	2013-12-20 10:17:50.572008400 +0100
+@@ -2,17 +2,21 @@
+ include_directories(${CMAKE_CURRENT_BINARY_DIR}
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../marble-ui)
+ 
+-if(MSVC)
+-  set(marble_SRCS ${marble_SRCS} marble.rc)
+-endif(MSVC)
+-
+-if(MINGW)
+-   QT4_ADD_RESOURCES2(marble_SRCS marble.rc)
+-endif(MINGW)
++
+ 
+ qt_wrap_ui(marble_SRCS ${marble_UI})
+ marble_qt4_automoc(${marble_SRCS})
+ 
++if(WIN32)
++set(marble_SRCS ${marble_SRCS} marble.rc)
++if (MINGW)#tell cmake how to handle rc files on mingw
++      set (CMAKE_RC_COMPILER_INIT windres)
++      enable_language (RC)
++      set (CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
++endif()
++
++endif()
++
+ if (WIN32)
+     add_executable (marble-qt WIN32 ${marble_SRCS})
+ else (WIN32)
+diff -Nru -x '*~' marble-4.12.0.orig/src/apps/marble-ui/CMakeLists.txt marble-4.12.0/src/apps/marble-ui/CMakeLists.txt
+--- marble-4.12.0.orig/src/apps/marble-ui/CMakeLists.txt	2013-12-11 20:55:59.000000000 +0100
++++ marble-4.12.0/src/apps/marble-ui/CMakeLists.txt	2013-12-20 10:13:08.236915400 +0100
+@@ -1,14 +1,6 @@
+ set(marble_SRCS ControlView.cpp MarbleTest.cpp)
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
+-if(MSVC)
+-  set(marble_SRCS ${marble_SRCS} marble.qrc)
+-endif(MSVC)
+-
+-if(MINGW)
+-   QT4_ADD_RESOURCES2(marble_SRCS marble.qrc)
+-endif(MINGW)
+-
+ qt_add_resources(marble_SRCS marble.qrc)
+ 
+ qt_wrap_ui(marble_SRCS ${marble_UI})

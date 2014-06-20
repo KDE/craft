@@ -4,7 +4,6 @@
 
 import utils
 
-from Source.FileSource import *
 from Source.ArchiveSource import *
 from Source.SvnSource import *
 from Source.GitSource import *
@@ -21,12 +20,7 @@ def SourceFactory(settings):
             url = settings.targetAt(0)
         else:
             url = settings.target()
-        if url.startswith("[archive]"):
-            source = ArchiveSource(settings)
-        elif url.find(".exe") != -1 or url.find(".bat") != -1 or url.find(".msi") != -1:
-            source = FileSource(settings)
-        else:
-            source = ArchiveSource(settings)
+        source = ArchiveSource(settings)
 
     ## \todo move settings access into info class
     if settings.hasSvnTarget():

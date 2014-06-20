@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
         for ver in ['0', '1', '2', '3', '4', '5']:
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
+            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+        self.patchToApply["4.12.0"] = ("kde-runtime-4.12.0-20131219.diff", 1)
 
         self.shortDescription = 'Components for KDE applications required at runtime'
         self.defaultTarget = 'gitHEAD'
@@ -14,11 +16,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
 #        self.dependencies['kde/kactivities'] = 'default'
+# Stripped down for gpg4win TODO make options out of this.
         self.dependencies['kde/oxygen-icons'] = 'default'
-#        self.dependencies['win32libs/libssh'] = 'default'
-#        self.dependencies['kde/kactivities'] = 'default'
+        #self.dependencies['win32libs/libssh'] = 'default'
+        #self.dependencies['kde/kactivities'] = 'default'
+        #if self.options.features.nepomuk:
         self.dependencies['kde/kdepimlibs'] = 'default'
-#        self.dependencies['kde/nepomuk-core'] = 'default'
+         #   self.dependencies['kde/nepomuk-core'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs/libbfd'] = 'default'
 

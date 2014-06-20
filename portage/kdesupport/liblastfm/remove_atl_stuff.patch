@@ -1,0 +1,36 @@
+diff -Nru -x '*~' liblastfm-1.0.8.orig/src/CMakeLists.txt liblastfm-1.0.8/src/CMakeLists.txt
+--- liblastfm-1.0.8.orig/src/CMakeLists.txt	2013-09-03 12:43:03.000000000 -0300
++++ liblastfm-1.0.8/src/CMakeLists.txt	2014-01-03 21:17:20.466541300 -0200
+@@ -45,20 +45,6 @@
+ 
+ if(WIN32)
+     add_definitions("-DWIN32_LEAN_AND_MEAN")
+-
+-    if(NOT MINGW)
+-        add_definitions("-D_ATL_DLL -D_CRT_SECURE_NO_WARNINGS")
+-
+-        list(APPEND liblastfm_SOURCES
+-            win/WNetworkConnectionMonitor_win.cpp
+-            win/WmiSink.cpp
+-            win/NdisEvents.cpp
+-        )
+-        list(APPEND liblastfm_LIBRARIES
+-            winhttp
+-            wbemuuid
+-        )
+-    endif()
+ endif()
+ 
+ if(APPLE)
+diff -Nru -x '*~' liblastfm-1.0.8.orig/src/InternetConnectionMonitor.cpp liblastfm-1.0.8/src/InternetConnectionMonitor.cpp
+--- liblastfm-1.0.8.orig/src/InternetConnectionMonitor.cpp	2013-09-03 12:43:03.000000000 -0300
++++ liblastfm-1.0.8/src/InternetConnectionMonitor.cpp	2014-01-03 21:12:30.412805900 -0200
+@@ -133,8 +133,6 @@
+ 
+ #ifdef Q_OS_X11
+     ncm = new LNetworkConnectionMonitor( this );
+-#elif defined(Q_OS_WIN) && ! defined __MINGW32__
+-    ncm = new WNetworkConnectionMonitor( this );
+ #elif defined(Q_OS_MAC)
+     ncm = new MNetworkConnectionMonitor( this );
+ #endif

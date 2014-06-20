@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:attica'
 
-        for ver in ['0.1.3','0.2.0', '0.4.1']:
+        for ver in ['0.1.3','0.2.0', '0.4.1', '0.4.2']:
             self.targets[ver] ='http://download.kde.org/stable/attica/attica-' + ver +'.tar.bz2'
             self.targetInstSrc[ver] = 'attica-' + ver
         self.shortDescription = "implements the Open Collaboration Services API"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '0.4.2'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False

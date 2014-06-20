@@ -1,0 +1,23 @@
+diff -Nru -x '*~' calligra-2.7.90.orig/krita/image/brushengine/kis_paintop.cc calligra-2.7.90/krita/image/brushengine/kis_paintop.cc
+--- calligra-2.7.90.orig/krita/image/brushengine/kis_paintop.cc	2013-12-01 16:24:22.000000000 -0200
++++ calligra-2.7.90/krita/image/brushengine/kis_paintop.cc	2014-01-15 20:17:57.336549800 -0200
+@@ -22,7 +22,7 @@
+ 
+ #include "kis_paintop.h"
+ 
+-#include <math.h>
++#include <cmath>
+ 
+ #include <KoColor.h>
+ #include <KoColorSpace.h>
+@@ -46,8 +46,8 @@
+ #define BEZIER_FLATNESS_THRESHOLD 0.5
+ #include <kis_distance_information.h>
+ 
+-#ifdef Q_OS_WIN
+-#include <float.h>
++#ifdef Q_CC_MSVC
++#include <cfloat>
+ #define isnan _isnan
+ #endif
+ 

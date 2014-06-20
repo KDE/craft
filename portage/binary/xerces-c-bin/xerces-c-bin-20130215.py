@@ -9,16 +9,18 @@ class subinfo(info.infoclass):
             self.targets[ version ] = "http://www.apache.org/dist/xerces/c/3/binaries/xerces-c-3.1.1-x86-windows-vc-10.0.zip"
         self.targetDigests['3.1.1'] = '34df759e1ffe4acce301887007cccb62f9496ea0'
 
+        self.shortDescription = "A Validating XML Parser"
         self.defaultTarget = '3.1.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['win32libs/xerces-c'] = 'default'
 
     def setBuildOptions( self ):
         self.disableHostBuild = False
         self.disableTargetBuild = True
 
-class Package(BinaryPackageBase):
+class PackageBin(BinaryPackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         BinaryPackageBase.__init__( self )
@@ -33,5 +35,18 @@ class Package(BinaryPackageBase):
         shutil.rmtree( os.path.join( self.imageDir(), "xerces-c-3.1.1-x86-windows-vc-10.0" ) )
         return True
 
+from Package.VirtualPackageBase import *
+
+if compiler.isMSVC():
+    class Package(PackageBin):
+        def __init__( self ):
+            PackageBin.__init__( self )
+else:
+    class Package(VirtualPackageBase):
+        def __init__( self ):
+            self.subinfo = subinfo()
+            VirtualPackageBase.__init__( self )
+            
+
 if __name__ == '__main__':
-    Package().execute()
+      Package().execute()

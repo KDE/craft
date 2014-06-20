@@ -1,0 +1,21 @@
+diff -Nru -x '*~' phonon-backend-vlc-0.6.2.orig/src/CMakeLists.txt phonon-backend-vlc-0.6.2/src/CMakeLists.txt
+--- phonon-backend-vlc-0.6.2.orig/src/CMakeLists.txt	2013-01-31 21:39:46.000000000 -0200
++++ phonon-backend-vlc-0.6.2/src/CMakeLists.txt	2013-05-24 01:29:21.842722900 -0300
+@@ -2,7 +2,7 @@
+ 
+ add_definitions(-DPHONON_LIB_INSTALL_DIR="${LIB_INSTALL_DIR}")
+ 
+-if (MSVC)
++if (MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+     set (CMAKE_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/apps/cmake/modules)
+     find_package(KDEWin)
+         if (KDEWIN_FOUND)
+@@ -16,7 +16,7 @@
+                 message (FATAL_ERROR "You don't have stdint.h and inttypes.h\n\t get them from  http://code.google.com/p/baseutils/source/browse/#svn/trunk/msvc,\n\t or get kdewin http://websvn.kde.org/trunk/kdesupport/kdewin/")
+             endif ( NOT HAVE_STDINT AND NOT HAVE_INTTYPES )
+         endif (KDEWIN_FOUND)
+-endif (MSVC)
++endif (MSVC OR (WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
+ 
+ add_definitions(-D_PHONON_BACKEND_VERSION_4_2)
+ 

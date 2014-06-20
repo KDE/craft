@@ -16,42 +16,15 @@ class subinfo( info.infoclass ):
         self.defaultTarget = latest
 
     def setDependencies( self ):
-        self.buildDependencies['gnuwin32/wget'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
 
-from Source.SourceBase import *
-from Package.PackageBase import *
-from BuildSystem.BinaryBuildSystem import *
-
-class Package( PackageBase, SourceBase, BinaryBuildSystem ):
+from Package.BinaryPackageBase import *
+class Package( BinaryPackageBase ):
     def __init__( self ):
         self.subinfo = subinfo()
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
-        SourceBase.__init__( self )
-        PackageBase.__init__( self )
-        BinaryBuildSystem.__init__( self )
-
-    def fetch( self ):
-        filenames = [ os.path.basename( self.subinfo.target() ) ]
-
-        if ( self.noFetch ):
-            utils.debug( "skipping fetch (--offline)" )
-            return True
-
-        self.setProxy()
-        return utils.getFiles( self.subinfo.target(), self.downloadDir() )
-
-    def unpack( self ):
-        # XXX: There is apperantly a bug in update ressource on some Windows
-        # Systems, causing the way mt.exe form uactools calls it to produce
-        # invalid executables.
-        # FIXME: Add more versions where it works (apart from windows 7 here)
-
-        if ( utils.getWinVer() < "6.1.7600"):
-            return True
-        else:
-            return utils.unpackFiles( self.downloadDir(), [ os.path.basename( self.subinfo.target() ) ], self.imageDir() )
+        BinaryPackageBase.__init__( self )
 
 if __name__ == '__main__':
     Package().execute()

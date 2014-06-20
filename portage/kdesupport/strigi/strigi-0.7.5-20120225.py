@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:strigi'
-        for ver in ['0.7.6','0.7.7']:
+        for ver in ['0.7.6','0.7.7','0.7.8']:
             self.svnTargets[ver] = '[git]kde:strigi||v%s' % ver
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
@@ -31,7 +31,16 @@ class subinfo(info.infoclass):
           self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
           self.targetInstSrc[ver] = 'strigi-' + ver
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
-        self.patchToApply['0.7.5'] = ("strigi-0.7.5-20120225.diff", 1)
+        self.patchToApply['0.7.5'] = [("strigi-0.7.5-20120225.diff", 1),
+                                      ("add-intel-compiler-to-strigi-plugin-macros.diff", 1),
+                                      ("do-not-use-fpic-also-on-intel-compiler.diff", 1),
+                                      ("isblank-false-positive-intel-compiler.diff", 1),
+                                      ("intel-cmake-adaptations.diff", 1)]
+        self.patchToApply['0.7.8'] = [("strigi-0.7.8-20130906.diff", 1),
+                                      ("add-intel-compiler-to-strigi-plugin-macros-0.7.8.diff", 1),
+                                      ("do-not-use-fpic-also-on-intel-compiler-0.7.8.diff", 1),
+                                      ("isblank-false-positive-intel-compiler.diff", 1),
+                                      ("intel-cmake-adaptations-0.7.8.diff", 1)]
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
 
         self.shortDescription = "a desktop search engine and indexer"
@@ -39,7 +48,7 @@ class subinfo(info.infoclass):
           #FIXME make strigi svnHEAD compile on Windows
           self.defaultTarget = 'komobranch'
         else:
-          self.defaultTarget = '0.7.5'
+          self.defaultTarget = '0.7.8'
 
     def setBuildOptions( self ):
         self.disableHostBuild = True

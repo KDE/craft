@@ -11,9 +11,15 @@ class subinfo(info.infoclass):
         self.targetDigests["20111031"] = '52973249d5ee43be94bc785f9340d1c9c1fbfc3b'
         self.defaultTarget = ver
         
+        ver = "4.8.2"
+        rev = "3"
+        self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-%s-release-posix-sjlj-rt_v3-rev%s.7z" % ( ver, rev)
         
-        self.targets["4.7.2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/%s-4.7.2-release-posix-sjlj-rev3.7z" % emergePlatform.buildArchitecture()
-        self.targets["4.8.0-2"] = "http://downloads.sourceforge.net/sourceforge/mingwbuilds/x32-4.8.0-release-posix-sjlj-rev2.7z"
+#        TODO gpg4win hack ,.. if self.options.features.legacyGCC:
+
+        self.defaultTarget = "20111031"
+#        else:
+#            self.defaultTarget = "%s-%s" % ( ver, rev )
 
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
