@@ -191,7 +191,7 @@ def handleSinglePackage( packageName, args ):
         # package
         # for list files, we also want to handle fetching & packaging per package
 
-        if not handlePackage( mainCategory, mainPackage, args.doContinue, args.update_fast ):
+        if not handlePackage( mainCategory, mainPackage, args.action, args.doContinue, args.update_fast ):
             utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s failed" % (
                 args.action, mainCategory, mainPackage), args.action )
             return False
