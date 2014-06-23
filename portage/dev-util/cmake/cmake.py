@@ -10,6 +10,7 @@ class subinfo( info.infoclass ):
         self.targets['2.8.8'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.8-win32-x86.zip'
         self.targets['2.8.12.1'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.12.1-win32-x86.zip'
         self.targets['2.8.12.2'] = 'http://www.cmake.org/files/v2.8/cmake-2.8.12.2-win32-x86.zip'
+        self.targets['3.0.0'] = 'http://www.cmake.org/files/v3.0/cmake-3.0.0-win32-x86.zip'
         self.targets['v2.8.2'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-v2.8.2-bin.tar.bz2'
         self.targets['2.8.0-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.0-6-bin.tar.bz2'
         self.targets['2.8.1-ce'] = 'http://downloads.sourceforge.net/kde-windows/cmake-vc90-2.8.1-bin.tar.bz2'
@@ -24,6 +25,7 @@ class subinfo( info.infoclass ):
         self.targetMergeSourcePath['2.8.8'] = 'cmake-2.8.8-win32-x86'
         self.targetMergeSourcePath['2.8.12.1'] = 'cmake-2.8.12.1-win32-x86'
         self.targetMergeSourcePath['2.8.12.2'] = 'cmake-2.8.12.2-win32-x86'
+        self.targetMergeSourcePath['3.0.0'] = 'cmake-3.0.0-win32-x86'
         self.targetDigests['v2.8.2'] = 'de516a570808c7a022139b55e758d5f7b378ec7d'
         self.targetDigests['2.8.3-2'] = 'cba746303abb825c8549e6621da35757c039fa9e'
         self.targetDigests['2.8.4'] = '539ce250521d964a8770e0a7362db196dbc97fbc'
@@ -36,7 +38,10 @@ class subinfo( info.infoclass ):
         self.patchToApply['v2.8.2'] = ( 'findtiff.diff', 0 )
         self.patchToApply['v2.8.10.2'] = ( 'findpng16.diff', 0 )
 
-        self.defaultTarget = '2.8.12.2'
+        self.shortDescription = "CMake, the cross-platform, open-source build system."
+        self.homepage = "http://www.cmake.org/"
+
+        self.defaultTarget = '3.0.0'
 
 
     def setDependencies( self ):
