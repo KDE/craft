@@ -918,7 +918,7 @@ def rmtree( directory ):
 def moveFile(src, dest):
     """move file from src to dest"""
     debug("move file from %s to %s" % ( src, dest ), 2)
-    os.rename( src, dest )
+    shutil.move( src, dest )
     return True
 
 def deleteFile(fileName):
