@@ -24,7 +24,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.0d'] = ('openssl-1.0.0d.diff', 1)
         self.targetDigests['1.0.0d'] = '5c8472d09958c630eeb7548a1aeccb78fbd5cd10'
 
-        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c', '1.0.1c', '1.0.1e','1.0.1f','1.0.1g' ]:
+        for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c', '1.0.1c', '1.0.1e','1.0.1f','1.0.1g', '1.0.1h' ]:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
             if compiler.isMSVC() and ver not in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
@@ -33,7 +33,7 @@ class subinfo( info.infoclass ):
         self.targets[ '1.0.1-snapshot' ] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
         self.shortDescription = "The OpenSSL runtime environment"
 
-        self.defaultTarget = '1.0.1g'
+        self.defaultTarget = '1.0.1h'
         
         if compiler.isMinGW_W64():
             self.patchToApply[ '1.0.0' ] = ('openssl-1.0.0a-mingw64-asm.diff', 1)
