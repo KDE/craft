@@ -19,7 +19,8 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs/clucene-core'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
-        self.dependencies['win32libs/websocketpp'] = 'default'
+        self.buildDependencies['win32libs/websocketpp'] = 'default'
+        self.dependencies['win32libs/libsparsehash'] = 'default'
         
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/tomahawk-player/tomahawk.git'
@@ -29,5 +30,5 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " -DWITH_BREAKPAD=OFF -DWITH_CRASHREPORTER=OFF -DBUILD_WITH_QT4=OFF -DWITH_KDE4=OFF -DBUILD_HATCHET=ON"
+        self.subinfo.options.configure.defines = " -DWITH_CRASHREPORTER=OFF -DBUILD_WITH_QT4=OFF -DWITH_KDE4=OFF -DBUILD_HATCHET=ON"
 
