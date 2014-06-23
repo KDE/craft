@@ -101,7 +101,7 @@ class infoclass(object):
         elif ("PortageVersions", "DefaultTarget") in emergeSettings:
             self.buildTarget = emergeSettings.get("PortageVersions", "DefaultTarget")
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
-            utils.debug("build target %s not defined in available targets %s %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys())), 1)
+            utils.debug("build target %s not defined in available targets %s %s setting default target to %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys()), self.defaultTarget), 1)
             self.buildTarget = self.defaultTarget
 
     def setBuildOptions( self ):

@@ -29,6 +29,15 @@ from InstallDB import *
 from EmergeConfig import *
 
 
+def packageIsOutdated( category, package ):
+    newest = portage.PortageInstance.getNewestVersion( category, package )
+    installed = installdb.getInstalledPackages( category, package )
+    for pack in installed:
+        version = pack.getVersion( )
+        if newest != version:
+            return True
+        
+
 @utils.log
 def doExec( package, action, continueFlag = False ):
     utils.startTimer( "%s for %s" % ( action, package ), 1 )
@@ -43,9 +52,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
     success = True
     package = portage.getPackageInstance( category, packageName )
     if package is None:
-        raise portage.PortageException("Package not found",category,packageName)
-
-
+        raise portage.PortageException( "Package not found", category, packageName )
 
     if buildAction in [ "all", "full-package", "update", "update-all" ]:
         success = success and doExec( package, "fetch", continueFlag )
@@ -59,11 +66,11 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = success and doExec( package, "compile" )
         success = success and doExec( package, "cleanimage" )
         success = success and doExec( package, "install" )
-        if buildAction in [ "all", "update", "update-all" ] :
+        if buildAction in [ "all", "update", "update-all" ]:
             success = success and doExec( package, "qmerge" )
         if buildAction == "full-package":
             success = success and doExec( package, "package" )
-        success =  success or continueFlag
+        success = success or continueFlag
     elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                           "dumpdeps", "test",
                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
@@ -74,10 +81,10 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install", continueFlag )
     elif buildAction == "version-dir":
-        print( "%s-%s" % ( packageName, package.sourceVersion() ) )
+        print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
         success = True
     elif buildAction == "version-package":
-        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName(), package.sourceVersion() ) )
+        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
         success = True
     elif buildAction == "print-targets":
         portage.printTargets( category, packageName )
@@ -136,17 +143,19 @@ def handleSinglePackage( packageName, args ):
 
     deplist = [ p.ident( ) for p in _deplist ]
 
-    #no package found
+    # no package found
     if len( deplist ) == 0:
         category = ""
         if not packageName.find( "/" ) == -1:
-                (category, package) = packageName.split( "/" )
+            (category, package) = packageName.split( "/" )
         portageSearch.printSearch( category, packageName )
         return False
 
     for item in deplist:
         item.append( args.ignoreAllInstalled )
-        if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList:
+
+        if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList or packageIsOutdated(
+                item[ 0 ], item[ 1 ] ):
             item[ -1 ] = True
 
         if item[ 0 ] + "/" + item[ 1 ] in targetDict:
@@ -184,7 +193,8 @@ def handleSinglePackage( packageName, args ):
     # package[2] -> version
 
     mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
-    if not portage.PortageInstance.isVirtualPackage(mainCategory, mainPackage) and not args.action in [ "all", "install-deps" ] and not args.list_file:
+    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and not args.action in [ "all",
+                                                                                                          "install-deps" ] and not args.list_file:
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -212,7 +222,7 @@ def handleSinglePackage( packageName, args ):
             isLastPackage = [ mainCategory, mainPackage, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
-            isInstalled = installdb.isInstalled( mainCategory, mainPackage)
+            isInstalled = installdb.isInstalled( mainCategory, mainPackage )
             if args.list_file and args.action != "all":
                 ignoreInstalled = mainPackage in originalPackageList
             if ( isInstalled and not ignoreInstalled ) and not (
@@ -326,9 +336,10 @@ def main( ):
                          help = "This will show a list of all packages that are installed currently." )
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
-    parser.add_argument( "--update-fast", action = "store_true", help ="If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
-    parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default= -1,
-                         help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package")
+    parser.add_argument( "--update-fast", action = "store_true",
+                         help = "If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
+    parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default = -1,
+                         help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
                        "install", "qmerge", "manifest", "package", "unmerge", "test",
                        "checkdigest", "dumpdeps",
@@ -374,7 +385,6 @@ def main( ):
 
     if args.action in [ "update", "update-all" ]:
         args.noclean = True
-
 
     utils.debug( "buildAction: %s" % args.action )
     utils.debug( "doPretend: %s" % args.probe, 1 )
