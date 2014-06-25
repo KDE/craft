@@ -76,6 +76,8 @@ class MSysShell(object):
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
         self.initEnvironment()
         sh = os.path.join( self.msysdir, "bin", "sh.exe" )
+        if not os.path.exists( sh ):
+            sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
         command = "%s --login -c \"cd %s && %s %s" % \
               ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
