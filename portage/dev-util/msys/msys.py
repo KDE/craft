@@ -41,6 +41,6 @@ class Package(BinaryPackageBase):
             self.shell.execute(".","pacman -Syu --noconfirm --force") and\
             utils.system("autorebase.bat", cwd = msysDir) and
             self.shell.execute(".","pacman -Sy --noconfirm --force") and
-            self.shell.execute(".","pacman -S base-devel --noconfirm --force") and
+            self.shell.execute(".","pacman -S base-devel --noconfirm --force --needed") and
             utils.system("autorebase.bat", cwd = msysDir) )
     
