@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         """ """
         self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"        
-        for ver in ["1.1.0","1.2.0","1.3.0","1.3.1","1.3.2","1.3.3","1.3.4", "1.4.0"]:
+        for ver in ["1.1.0","1.2.0","1.3.0","1.3.1","1.3.2","1.3.3","1.3.4", "1.4.0", "1.5.1" ]:
             self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "ninja-%s" % ver
         self.targetDigests['1.2.0'] = '9ce01fdf7815f0fda4e477d7fedcd47a3d0afb51'
@@ -19,7 +19,8 @@ class subinfo(info.infoclass):
         self.patchToApply['1.4.0'] = [("0001-Fix-compilation-on-VS2013.patch", 1),
                                       ("0002-Fix-up-platform_helper-for-MSVC-with-Python-2.6.8-th.patch", 1),
                                       ("0003-fixed-platform_helper.py-msvc_needs_fs-test.patch", 1)]
-        self.defaultTarget = '1.4.0'
+        self.targetDigests['1.5.1'] = 'c5a3af39f6d7ee3a30263f34091c046964d442f0'
+        self.defaultTarget = '1.5.1'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
