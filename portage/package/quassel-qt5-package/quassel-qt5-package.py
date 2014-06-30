@@ -33,20 +33,17 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         for f in os.listdir(path):
             src = os.path.join(path, f)
             if os.path.isdir(src):
-                print(src)
-                shutil.move(src, os.path.join(self.imageDir(), "bin", f))
-        os.rmdir(path);
+                utils.moveFile(src, os.path.join(self.imageDir(), "bin", f))
+        utils.rmtree(path);
         
-        path = os.path.join(self.imageDir(),"lib","libsnore-qt5")
-        for f in os.listdir(path):
-            shutil.move(os.path.join(path, f), os.path.join(self.imageDir(), "bin", f))
-        os.rmdir(path);
-        os.rmdir(os.path.join(self.imageDir(),"lib"))
+
+        utils.moveDir( os.path.join(self.imageDir(),"lib","libsnore-qt5"), os.path.join(self.imageDir(), "bin"))
+        utils.rmtree(os.path.join(self.imageDir(),"lib"))
         
         path = os.path.join(self.imageDir(),"bin")
         for f in os.listdir(path):
-            shutil.move(os.path.join(path, f), os.path.join(self.imageDir(), f))
-        os.rmdir(path);
+            utils.moveFile(os.path.join(path, f), os.path.join(self.imageDir(), f))
+        utils.rmtree(path);
         
         return True
 
