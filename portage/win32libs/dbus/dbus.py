@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['1.6.8','1.6.14']:
+        for ver in ['1.6.8','1.6.14', '1.8.4']:
             self.targets[ver] = 'http://dbus.freedesktop.org/releases/dbus/dbus-%s.tar.gz' % ver
             self.targetInstSrc[ver] = 'dbus-%s' % ver
             self.targetConfigurePath[ver] = 'cmake'
@@ -16,7 +16,8 @@ class subinfo(info.infoclass):
         self.patchToApply['1.6.14'] = [('dont_include_afxres.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
-        self.defaultTarget = '1.6.14'
+        self.homepage = "http://www.freedesktop.org/wiki/Software/dbus/"
+        self.defaultTarget = '1.8.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
