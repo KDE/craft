@@ -17,56 +17,59 @@ from options import *
 class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
-        self.envirnmentIsSetup = False
-
-    @property
-    def buildType(self):
-        return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
-
-    def initEnvironment(self, cflags="", ldflags=""):
+        self.environment = dict()
+        self._sh = os.path.join( self.msysdir, "bin", "sh.exe" )
+        if not os.path.exists( self._sh ):
+            self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
         mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
         if compiler.isMinGW():
-            ldflags = "-L%s/lib %s" % (mergeroot, ldflags)
-            cflags = "-I%s/include %s" % (mergeroot, cflags)
+            ldflags = "-L%s/lib " % mergeroot
+            cflags = "-I%s/include " % mergeroot
 
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
-            cflags += " -MD -Zi"
+            cflags = " -MD -Zi"
             if compiler.isMSVC2013():
-                cflags += " -FS"
+                cflags = " -FS"
 
-        utils.putenv("CFLAGS", cflags)
-        utils.putenv("LDFLAGS", ldflags)
-
-
-        if self.envirnmentIsSetup:
-            return
-        self.envirnmentIsSetup = True
+        self.environment[ "CFLAGS" ] = cflags
+        self.environment[ "CXXFLAGS" ] = cflags
+        self.environment[ "LDFLAGS" ] = ldflags
 
 
         if compiler.isMSVC():
-            utils.putenv("LIB", "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot()))
-            utils.putenv("INCLUDE", "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot()))
-            utils.putenv("LD", "link")
-            utils.putenv("CC", "cl -nologo")
-            utils.putenv("CXX", "cl -nologo")
-            utils.putenv("NM", "dumpbin -symbols")
-            utils.putenv("AR", "lib")
-            #utils.putenv("WINDRES","rc-windres")
-            #utils.putenv("RC","rc-windres")
-            utils.putenv("STRIP",":")
-            utils.putenv("RANLIB",":")
-            utils.putenv("F77", "no")
-            utils.putenv("FC", "no")
+            self.environment[ "LIB" ] = "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot())
+            self.environment[ "INCLUDE" ] = "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot())
+            self.environment[ "LD" ] = "link"
+            self.environment[ "CC" ] = "cl -nologo"
+            self.environment[ "CXX" ] = "cl -nologo"
+            self.environment[ "NM" ] = "dumpbin -symbols"
+            self.environment[ "AR" ] = "lib"
+            #self.environment[ "WINDRES","rc-windres"
+            #self.environment[ "RC","rc-windres"
+            self.environment[ "STRIP"] = ":"
+            self.environment[ "RANLIB"] = ":"
+            self.environment[ "F77" ] = "no"
+            self.environment[ "FC" ] = "no"
 
-        #unset make to remove things like jom
-        if "MAKE" in os.environ:
-            del os.environ["MAKE"]
 
+    @property
+    def buildType(self):
+        return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
+
+
+    def _environmentSetup(self):
+        # unset make to remove things like jom
+        #this cant be set using export
+        utils.putenv("MAKE", "")
+        out = ""
+        for var, val in  self.environment.items():
+            out += "%s='%s' " %( var, val )
+        return out
 
 
     @staticmethod
@@ -74,25 +77,24 @@ class MSysShell(object):
         return utils.toMSysPath( path )
 
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
-        self.initEnvironment()
-        sh = os.path.join( self.msysdir, "bin", "sh.exe" )
-        if not os.path.exists( sh ):
-            sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
-
-        command = "%s --login -c \"cd %s && %s %s" % \
-              ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
-
-        command += "\""
+        command = "%s --login -c \"export %s && cd %s && %s %s\"" % \
+                  ( self._sh, self._environmentSetup(), self.toNativePath( path ), self.toNativePath( cmd ), args )
         if debugLvl == 0:
             print("%s %s" % (cmd, args))
         else:
             utils.debug( "msys execute: %s" % command, debugLvl )
         return utils.system( command, stdout=out, stderr=err )
 
+    def login(self):
+        self.environment[ "CHERE_INVOKING" ] = "1"
+        command = "%s --login -i -c \"export %s\"" % ( self._sh, self._environmentSetup() )
+        print(command)
+        return utils.system( command )
+
+
 def main():
     shell = MSysShell()
-    utils.putenv("CHERE_INVOKING","1")
-    utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login -i"))
+    shell.login()
 
 if __name__ == '__main__':
     main()

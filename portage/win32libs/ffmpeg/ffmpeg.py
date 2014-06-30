@@ -39,12 +39,9 @@ class Package(AutoToolsPackageBase):
         self.subinfo.options.configure.defines = " --disable-static --enable-shared --enable-gpl --enable-libvorbis  --disable-doc  --enable-libmp3lame --enable-libopus --enable-w32threads"
         if compiler.isMSVC():
             self.subinfo.options.configure.defines += " --toolchain=msvc"
-        
-    def configure( self):
-        cflags =""
-        if compiler.isMinGW():
-            cflags="-std=c99 "
-        return AutoToolsPackageBase.configure( self, cflags = cflags , ldflags="")
+        else:
+            self.subinfo.options.configure.cflags = "-std=c99 "
+
         
     def ccacheOptions(self):
         return " --cc='ccache gcc' --cxx='ccache g++' "

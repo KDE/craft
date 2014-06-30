@@ -12,7 +12,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "autotools")
         self.buildInSource = False
-        self.shell = MSysShell()
+        self._shell = MSysShell()
         if compiler.isX86():
             self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
         else:
@@ -25,12 +25,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
             make += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
         return make
 
+    #make sure shell cant be overwritten
+    @property
+    def shell(self):
+        return self._shell
+
     def configureDefaultDefines( self ):
 
         """defining the default cmake cmd line"""
         return ""
 
-    def configure( self, cflags="", ldflags=""):
+    def configure( self ):
         """configure the target"""
         if self.buildInSource:
             self.enterSourceDir()
@@ -43,7 +48,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             sourcedir = self.buildDir()
 
         configure = os.path.join(sourcedir, "configure")
-        self.shell.initEnvironment(cflags, ldflags)
+        self.shell.environment[ "CFLAGS" ] +=  self.subinfo.options.configure.cflags
+        self.shell.environment[ "CXXFLAGS" ] += self.subinfo.options.configure.cxxflags
+        self.shell.environment[ "LDFLAGS" ] += self.subinfo.options.configure.ldflags
         if self.subinfo.options.configure.bootstrap == True:
             autogen = os.path.join(sourcedir, "autogen.sh")
             if os.path.exists(autogen):

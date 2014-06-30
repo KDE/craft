@@ -28,9 +28,7 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = " LIBCURL_CFLAGS='-I.'  LIBCURL_LIBS=-lcurl LIBGCRYPT_LIBS='-lgcrypt -lkdewin'  LIBGCRYPT_CFLAGS='-I.' "
-        
-    def configure(self):
-      return AutoToolsPackageBase.configure( self,cflags = " -I/r/include/mingw/ ")
+
 
 if compiler.isMinGW():
     class Package(PackageMinGW):

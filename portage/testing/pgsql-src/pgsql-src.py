@@ -62,7 +62,6 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys( AutoToolsPackageBase ):
     def __init__( self ):
         AutoToolsPackageBase.__init__( self )
-        self.shell = MSysShell()
 
 #        self.buildInSource=True
 

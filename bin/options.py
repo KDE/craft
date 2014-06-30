@@ -119,6 +119,15 @@ class OptionsConfigure(OptionsBase):
         # do not add --prefix on msys
         self.noDefaultOptions = False
 
+        # cflags currently only used for autotools
+        self.cflags = ""
+
+        # cxxflags currently only used for autotools
+        self.cxxflags = ""
+
+        # ldflags currently only used for autotools
+        self.ldflags = ""
+
 
 ## options for the make action
 class OptionsMake(OptionsBase):

@@ -27,6 +27,5 @@ class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.shell = MSysShell()
         self.subinfo.options.configure.defines = "--disable-static --enable-shared --disable-doc" 
 
