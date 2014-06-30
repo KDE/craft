@@ -7,10 +7,10 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['5.0.2'] = "ftp://ftp.gmplib.org/pub/gmp-5.0.2/gmp-5.0.2.tar.bz2"
-        self.targetDigests['5.0.2'] = '2968220e1988eabb61f921d11e5d2db5431e0a35'
-        self.targetInstSrc['5.0.2'] = "gmp-5.0.2"
-        self.defaultTarget = '5.0.2'
+        self.targets[ "6.0.0" ] = "ftp://ftp.gmplib.org/pub/gmp-6.0.0/gmp-6.0.0.tar.bz2"
+        self.targetDigests['6.0.0'] = 'c4976716a277b1d3b595171143f52f8c1a788284'
+        self.targetInstSrc[ "6.0.0" ] = "gmp-6.0.0"
+        self.defaultTarget =  "6.0.0" 
 
 
     def setDependencies( self ):
@@ -27,9 +27,6 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx "
         self.buildInSource = True
-        
-    def configure( self):
-        return AutoToolsPackageBase.configure( self, cflags="-std=c99 ", ldflags="")
         
 
 if compiler.isMinGW():
