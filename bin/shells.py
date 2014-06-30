@@ -87,9 +87,8 @@ class MSysShell(object):
 
     def login(self):
         self.environment[ "CHERE_INVOKING" ] = "1"
-        command = "%s --login -i -c \"export %s\"" % ( self._sh, self._environmentSetup() )
-        print(command)
-        return utils.system( command )
+        command = "bash --login -i"
+        return self.execute( ".", command )
 
 
 def main():
