@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/liblastfm'] = 'default'
         self.dependencies['win32libs/clucene-core'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
+        self.dependencies['win32libs/gnutls'] = 'default'
         self.buildDependencies['win32libs/websocketpp'] = 'default'
         self.dependencies['win32libs/libsparsehash'] = 'default'
         
