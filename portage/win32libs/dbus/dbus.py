@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.targetConfigurePath['gitHEAD'] = 'cmake'
         
         self.patchToApply['1.6.14'] = [('dont_include_afxres.diff', 1)]
+        self.patchToApply['1.8.4'] = [('dont_include_afxres.diff', 1)]
 
         self.shortDescription = "Freedesktop message bus system (daemon and clients)"
         self.homepage = "http://www.freedesktop.org/wiki/Software/dbus/"
