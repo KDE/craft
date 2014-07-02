@@ -32,13 +32,16 @@ class MSysShell(object):
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
+            ldflags = ""
             cflags = " -MD -Zi"
             if compiler.isMSVC2013():
                 cflags = " -FS"
 
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
-        self.environment[ "LDFLAGS" ] = ldflags
+        
+        if ldflags != "":
+            self.environment[ "LDFLAGS" ] = ldflags
 
 
         if compiler.isMSVC():
