@@ -27,17 +27,6 @@ class Qt5CoreBuildSystem( QMakeBuildSystem ):
         if os.path.exists( os.path.join( self.installDir( ), "bin", "mkspecs" ) ):
             utils.moveFile( os.path.join( self.installDir( ), "bin", "mkspecs" ),
                             os.path.join( self.installDir( ), "mkspecs" ) )
-
-        # somehow qt stoped to install some achive files....
-        if compiler.isMinGW( ):
-            libdirSrc = os.path.join( self.buildDir( ), "lib" )
-            libdirDest = os.path.join( self.imageDir( ), "lib" )
-            if os.path.exists( libdirSrc ):
-                if not os.path.exists( libdirDest ):
-                    os.mkdir( libdirDest )
-                for archive in os.listdir( libdirSrc ):
-                    if archive.endswith( ".a" ) and not os.path.exists( os.path.join( libdirDest, archive ) ):
-                        utils.copyFile( os.path.join( libdirSrc, archive ), os.path.join( libdirDest, archive ), False )
         return True
 
 
