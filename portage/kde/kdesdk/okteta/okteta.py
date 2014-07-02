@@ -4,19 +4,29 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+        self.versionInfo.setDefaultValues()
 
-        self.defaultTarget = 'gitHEAD'
+        self.shortDescription = "KDE hex editor for viewing and editing the raw data of files."
+        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.shortDescription = "KDE hex editor for viewing and editing the raw data of files."
+        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["kde/kbookmarks"] = "default"
+        self.dependencies["kde/kcodecs"] = "default"
+        self.dependencies["kde/kcompletion"] = "default"
+        self.dependencies["kde/kconfigwidgets"] = "default"
+        self.dependencies["kde/kdbusaddons"] = "default"
+        self.dependencies["kde/kdoctools"] = "default"
+        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["kde/kcmutils"] = "default"
+        self.dependencies["kde/kio"] = "default"
+        self.dependencies["kde/knewstuff"] = "default"
+        self.dependencies["kde/kparts"] = "default"
+        self.dependencies["kde/kservice"] = "default"
+        self.dependencies["kde/kwidgetsaddons"] = "default"
+        self.dependencies["kde/kxmlgui"] = "default"
+        #self.dependencies["kdesupport/qca"] = 'default'
 
 from Package.CMakePackageBase import *
 
