@@ -193,7 +193,7 @@ def handleSinglePackage( packageName, args ):
     # package[2] -> version
 
     mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
-    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) or not args.action in [ "all",
+    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and not args.action in [ "all",
                                                                                                           "install-deps" ] and not args.list_file:
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
