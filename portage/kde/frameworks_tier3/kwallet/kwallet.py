@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kdbusaddons"] = "default"
         self.dependencies["kde/ki18n"] = "default"
         self.dependencies["kde/kiconthemes"] = "default"
+        self.dependencies["kde/kwindowsystem"] = "default"
         self.dependencies["win32libs/gcrypt"] = "default"
 
 from Package.CMakePackageBase import *
