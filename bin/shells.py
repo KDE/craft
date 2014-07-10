@@ -19,6 +19,9 @@ class MSysShell(object):
         self.options = Options()
         self.options.readFromEnv()
         self.initEnvironment()
+        self.sh = os.path.join( self.msysdir, "bin", "sh.exe" )
+        if not os.path.exists( self.sh ):
+            self.sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
 
     def initEnvironment(self, cflags="", ldflags=""):
@@ -72,12 +75,8 @@ class MSysShell(object):
         return utils.toMSysPath( path )
 
     def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
-        sh = os.path.join( self.msysdir, "bin", "sh.exe" )
-        if not os.path.exists( sh ):
-            sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
-
         command = "%s --login -c \"cd %s && %s %s" % \
-              ( sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
+              ( self.sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
 
         command += "\""
         if debugLvl == 0:
@@ -89,7 +88,7 @@ class MSysShell(object):
 def main():
     shell = MSysShell()
     utils.putenv("CHERE_INVOKING","1")
-    utils.system("%s %s" % (os.path.join( shell.msysdir, "bin", "sh.exe" ), "--login -i"))
+    utils.system("%s --login -i" % shell.sh)
 
 if __name__ == '__main__':
     main()
