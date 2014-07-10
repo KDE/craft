@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "20140624"
-        if os.getenv("EMERGE_ARCHITECTURE") == "x86":
+        if emergePlatform.buildArchitecture() == "x86":
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-%s.tar.xz" % ver
         else:
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-x86_64-%s.tar.xz" % ver
@@ -40,7 +40,7 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
            return False
-        msysDir = os.path.join(EmergeStandardDirs.emergeRoot(),"msys")
+        msysDir = os.path.join(os.getenv("KDEROOT"), "msys")
         return ( self.shell.execute(".","echo Firstrun") and #start and restart msys before first use
             self.shell.execute(".","pacman -Syu --noconfirm --force") and\
             utils.system("autorebase.bat", cwd = msysDir) and
