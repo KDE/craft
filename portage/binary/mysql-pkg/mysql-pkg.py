@@ -11,7 +11,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         #self.baseURL = "http://www.winkde.org/pub/kde/ports/win32/repository/other/"
-        self.baseURL = "http://ftp.gwdg.de/pub/misc/mysql/Downloads/"
+        self.baseURL = "http://cdn.mysql.com/Downloads/"
         for ver in [ '5.5.32' , '5.5.33' , '5.5.34', '5.6.14', '5.6.16', '5.6.17' ]:
             ver2 = ver.split('.')
             url = self.baseURL + "MySQL-" + ver2[0] + "." + ver2[1] + "/"
