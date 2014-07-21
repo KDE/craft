@@ -1,0 +1,184 @@
+diff --git a/kleopatra/libkleopatraclient/core/CMakeLists.txt b/kleopatra/libkleopatraclient/core/CMakeLists.txt
+index d4f1ea2..d359a39 100644
+--- a/kleopatra/libkleopatraclient/core/CMakeLists.txt
++++ b/kleopatra/libkleopatraclient/core/CMakeLists.txt
+@@ -9,11 +9,7 @@ add_definitions(
+   -DQT_NO_CAST_FROM_ASCII -DQT_NO_KEYWORDS -DQT_NO_CAST_TO_ASCII
+ )
+ 
+-if(WIN32)
+-  set(_kleopatraclientcore_extra_SRCS ../../utils/gnupg-registry.c)
+-else()
+-  set(_kleopatraclientcore_extra_SRCS)
+-endif()
++set(_kleopatraclientcore_extra_SRCS ../../utils/gnupg-helper.cpp)
+ 
+ set_source_files_properties(command.cpp PROPERTIES SKIP_AUTOMOC TRUE)
+ qt4_generate_moc(command_p.h "${CMAKE_CURRENT_BINARY_DIR}/moc_command_p.cpp")
+@@ -39,12 +35,16 @@ if(WIN32)
+     target_link_libraries(kleopatraclientcore
+       ${QT_QTCORE_LIBRARY}
+       ${ASSUAN2_LIBRARIES}
++      ${KDE4_KDECORE_LIBS}
++      ${QGPGME_LIBRARIES}
+       ws2_32
+     )
+   else()
+     target_link_libraries(kleopatraclientcore
+       ${QT_QTCORE_LIBRARY}
+       ${ASSUAN_VANILLA_LIBRARIES}
++      ${KDE4_KDECORE_LIBS}
++      ${QGPGME_LIBRARIES}
+       ws2_32
+     )
+   endif()
+@@ -53,11 +53,15 @@ else()
+     target_link_libraries(kleopatraclientcore
+       ${QT_QTCORE_LIBRARY}
+       ${ASSUAN2_LIBRARIES}
++      ${QGPGME_LIBRARIES}
++      ${KDE4_KDECORE_LIBS}
+     )
+   else()
+     target_link_libraries(kleopatraclientcore
+       ${QT_QTCORE_LIBRARY}
+       ${ASSUAN_PTHREAD_LIBRARIES}
++      ${QGPGME_LIBRARIES}
++      ${KDE4_KDECORE_LIBS}
+     )
+   endif()
+ endif()
+diff --git a/kleopatra/libkleopatraclient/core/command.cpp b/kleopatra/libkleopatraclient/core/command.cpp
+index c32de6d..6b8b88b 100644
+--- a/kleopatra/libkleopatraclient/core/command.cpp
++++ b/kleopatra/libkleopatraclient/core/command.cpp
+@@ -31,10 +31,11 @@
+ #  define _WIN32_WINDOWS 0x0500
+ #  define _WIN32_WINNT 0x0500 // good enough for Vista too
+ # endif
+-# include <utils/gnupg-registry.h>
+ # include <windows.h>
+ #endif
+ 
++#include <utils/gnupg-helper.h>
++
+ #include <QMutexLocker>
+ #include <QFile>
+ #include <QDebug>
+@@ -389,20 +390,8 @@ static QString to_error_string( int err ) {
+     return QString::fromLocal8Bit( buffer );
+ }
+ 
+-static QString gnupg_home_directory() {
+-#ifdef Q_OS_WIN
+-    return QFile::decodeName( default_homedir() );
+-#else
+-    const QByteArray gnupgHome = qgetenv( "GNUPGHOME" );
+-    if ( !gnupgHome.isEmpty() )
+-        return QFile::decodeName( gnupgHome );
+-    else
+-        return QDir::homePath() + QLatin1String( "/.gnupg" );
+-#endif
+-}
+-
+ static QString get_default_socket_name() {
+-    const QString homeDir = gnupg_home_directory();
++    const QString homeDir = Kleo::gnupgHomeDirectory();
+     if ( homeDir.isEmpty() )
+         return QString();
+     return QDir( homeDir ).absoluteFilePath( QLatin1String( "S.uiserver" ) );
+diff --git a/kleopatra/utils/gnupg-helper.cpp b/kleopatra/utils/gnupg-helper.cpp
+index e9e7b67..e207a7b 100644
+--- a/kleopatra/utils/gnupg-helper.cpp
++++ b/kleopatra/utils/gnupg-helper.cpp
+@@ -49,14 +49,17 @@
+ 
+ #include <gpg-error.h>
+ 
+-#ifdef Q_OS_WIN
+-#include "gnupg-registry.h"
+-#endif // Q_OS_WIN
++static QString cachedGnupgHome;
+ 
+ QString Kleo::gnupgHomeDirectory()
+ {
+ #ifdef Q_OS_WIN
+-    return QFile::decodeName( default_homedir() );
++    if ( cachedGnupgHome.isEmpty() ) {
++        /* Spawning processes on Windows is expensive so we only
++           do it once */
++        cachedGnupgHome = gpgConfListDir( "homedir" );
++    }
++    return cachedGnupgHome;
+ #else
+     const QByteArray gnupgHome = qgetenv( "GNUPGHOME" );
+     if ( !gnupgHome.isEmpty() )
+@@ -72,7 +75,7 @@ int Kleo::makeGnuPGError( int code ) {
+ 
+ static QString findGpgExe( GpgME::Engine engine, const QString & exe ) {
+     const GpgME::EngineInfo info = GpgME::engineInfo( engine );
+-    return info.fileName() ? QFile::decodeName( info.fileName() ) : KStandardDirs::findExe( exe ) ;
++    return info.fileName() ? QFile::decodeName( info.fileName() ) : KStandardDirs::findExe( exe  ) ;
+ }
+ 
+ QString Kleo::gpgConfPath() {
+@@ -104,6 +107,15 @@ QStringList Kleo::gnupgFileBlacklist() {
+ QString Kleo::gpg4winInstallPath() {
+     return gpgConfListDir( "bindir" );
+ }
++static unsigned char unhex2( unsigned char ch ) {
++    if ( ch >= '0' && ch <= '9' )
++        return ch - '0';
++    if ( ch >= 'A' && ch <= 'F' )
++        return ch - 'A' + 10;
++    if ( ch >= 'a' && ch <= 'f' )
++        return ch - 'a' + 10;
++    return ' ';
++}
+ 
+ QString Kleo::gpgConfListDir( const char * which ) {
+     if ( !which || !*which )
+@@ -123,12 +135,41 @@ QString Kleo::gpgConfListDir( const char * which ) {
+     Q_FOREACH( const QByteArray & line, lines )
+         if ( line.startsWith( which ) && line[qstrlen(which)] == ':' ) {
+             const int begin = qstrlen(which) + 1;
++            QString result;
+             int end = line.size();
+             while ( end && ( line[end-1] == '\n' || line[end-1] == '\r' ) )
+                 --end;
+-            const QString result = QDir::fromNativeSeparators( QFile::decodeName( hexdecode( line.mid( begin, end - begin ) ) ) );
++            {
++                QByteArray baEncoded = line.mid( begin, end - begin );
++                std::string encoded = std::string( baEncoded.constData() );
++                std::string hexdecoded;
++                hexdecoded.reserve( encoded.size() );
++                for ( std::string::const_iterator it = encoded.begin(), end = encoded.end() ; it != end ; ++it )
++                    if ( *it == '%' ) {
++                        ++it;
++                        unsigned char ch = '\0';
++                        if ( it == end ) {
++                            kDebug() << "Syntax error in input";
++                            return QString();
++                        }
++                        ch |= unhex2( *it ) << 4;
++                        ++it;
++                        if ( it == end ) {
++                            kDebug() << "Syntax error in input";
++                            return QString();
++                        }
++                        ch |= unhex2( *it );
++                        hexdecoded.push_back( ch );
++                    } else if ( *it == '+' ) {
++                        hexdecoded += ' ';
++                    } else  {
++                        hexdecoded.push_back( *it );
++                    }
++                result = QDir::fromNativeSeparators( QFile::decodeName( QByteArray( hexdecoded.data(),
++                                hexdecoded.size() ) ) );
++            }
+             kDebug() << "gpgConfListDir: found " << qPrintable( result )
+-                     << " for '" << which << "'entry";
++                << " for '" << which << "'entry";
+             return result;
+         }
+     kDebug() << "gpgConfListDir(): didn't find '" << which << "'"

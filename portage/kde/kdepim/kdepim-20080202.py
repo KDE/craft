@@ -17,7 +17,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gpg4win'
 
         self.patchToApply['gitHEAD'] = [('fix_introduction_screen.diff', 1),
-                                        ('0001-fixed-windows-x64-build.patch', 1)]
+                                        ('0001-fixed-windows-x64-build.patch', 1),
+                                        ('kleo-portable.diff', 1)]
 
     def setDependencies( self ):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
