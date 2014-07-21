@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
                                                   # Not upstream but needed for proper kleo
                                                   # behavior:
                                                   ("Call-newInstance-on-Windows-if-already-running.patch", 1)]
-        self.patchToApply['gitHEAD'] = [("kde.conf-extended-fix.diff", 1),
+        self.patchToApply['gitHEAD'] += [("kde.conf-extended-fix.diff", 1),
                                         ("fix-dir-separator.diff", 1)]
         self.shortDescription = "The KDE Library"
         self.defaultTarget = 'gitHEAD'
@@ -79,11 +79,11 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
 
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ""
+        self.subinfo.options.configure.defines = "-DKDE4_BUILD_TESTS=OFF"
         if compiler.isMinGW():
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"Gpg4Win MinGW %s\" " % compiler.getMinGWVersion()
         elif compiler.isMSVC():
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
 
     def install( self ):
         if not CMakePackageBase.install( self ):
