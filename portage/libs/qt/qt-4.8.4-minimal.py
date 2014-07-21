@@ -14,10 +14,10 @@ from Package.QMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['4.8.4']:
-            self.svnTargets[ver] = "git://gitorious.org/qt/qt.git||v4.8.4"
+        for ver in ['4.8.6']:
+            self.svnTargets[ver] = "git://gitorious.org/qt/qt.git||v4.8.6"
         self.svnTargets['wince'] = "git://gitorious.org/qt/qt.git|4.7|235d1d687dcc2d21860cd753c9d67964c5270be2"
-        self.patchToApply['4.8.4'] = [
+        self.patchToApply['4.8.6'] = [
             ('patches/4.7/out-of-source-build.patch', 1),
             ('patches/4.8/add-pdbs-on-msvc.diff', 1),
             ('patches/4.8/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "a cross-platform application framework"
         # If you change the default target here please do not forget to rename the portage file
-        self.defaultTarget = '4.8.4'
+        self.defaultTarget = '4.8.6'
 
         ## \todo this is prelimary  and may be changed
         self.options.package.packageName = 'qt'
@@ -71,6 +71,7 @@ class Package(PackageBase, GitSource, QMakeBuildSystem, KDEWinPackager):
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         command += "-no-qt3support -no-multimedia -no-declarative -no-scripttools "
         command += "-qt-style-windowsxp -qt-style-windowsvista "
+        command += "-accessibility "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
         command += "-no-phonon "
         command += "-qdbus -dbus-linked -openssl "
