@@ -3,9 +3,8 @@ from shells import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'https://mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/trunk/mingw-w64-headers'
-  
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = 'git://git.code.sf.net/p/mingw-w64/mingw-w64'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.buildDependencies['dev-util/msys'] = 'default'
@@ -20,6 +19,6 @@ class Package( AutoToolsPackageBase ):
             self.subinfo.options.merge.destinationPath = 'mingw64/x86_64-w64-mingw32'
         else:
             self.subinfo.options.merge.destinationPath = 'mingw/i686-w64-mingw32'
-        self.subinfo.options.configure.defines = " --enable-sdk=all "
+        self.subinfo.options.configure.defines = "--enable-sdk=all --enable-secure-api --without-crt"
 
 
