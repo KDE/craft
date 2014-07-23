@@ -19,6 +19,7 @@ from Package.AutoToolsPackageBase import *
 class Package( AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
+        self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.configure.defines = " --enable-static --enable-shared "
         
         
