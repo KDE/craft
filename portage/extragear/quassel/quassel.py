@@ -24,7 +24,8 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['kdesupport/phonon'] = 'default'
-        self.dependencies['kdesupport/phonon-ds9'] = 'default'
+        if not self.options.isActive('kdesupport/phonon-vlc'):
+            self.dependencies['kdesupport/phonon-ds9'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtwebkit'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
