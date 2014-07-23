@@ -11,7 +11,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies['kde/kservice'] = 'default'
+        self.dependencies['kde/kio'] = 'default'
         self.dependencies['win32libs/boost-headers'] = 'default'
+
         # those are only needed for building the activity manager daemon
 #        self.dependencies['win32libs/boost-range'] = 'default'
 #        self.dependencies['win32libs/boost-containers'] = 'default'
