@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "the KDE text editor"
-        self.defaultTarget = 'frameworks'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
