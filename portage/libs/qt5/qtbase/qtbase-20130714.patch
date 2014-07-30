@@ -24,15 +24,19 @@ index 062ab49..f5af59b 100644
              break;
 
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
-index b756509..c7de51f 100644
+index 63d9f28..792bb0d 100644
 --- a/tools/configure/configureapp.cpp
 +++ b/tools/configure/configureapp.cpp
-@@ -2940,11 +2940,11 @@ void Configure::generateOutputVars()
-     }
-     if (dictionary[ "DBUS" ] != "no" && !dbusPath.isEmpty()) {
-         qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
--        qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib").arg(dbusPath);
-+        qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib -ldbus-1").arg(dbusPath);
+@@ -2943,7 +2943,7 @@ void Configure::generateOutputVars()
+     if (dictionary[ "DBUS" ] != "no") {
+        if (!dbusPath.isEmpty()) {
+            qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
+-           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib").arg(dbusPath);
++           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib -ldbus-1").arg(dbusPath);
+            if (dbusHostPath.isEmpty())
+                qmakeVars += QString("QT_HOST_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
+        }
+@@ -2952,7 +2952,7 @@ void Configure::generateOutputVars()
      }
      if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
          qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
@@ -41,3 +45,4 @@ index b756509..c7de51f 100644
      }
      if (!psqlLibs.isEmpty())
          qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
+
