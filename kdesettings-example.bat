@@ -119,7 +119,7 @@ rem By setting this here, you don't have to change the global environment
 rem settings of Windows. In case python is distributed with emerge the
 rem following setting is not used.
 if "%EMERGE_PYTHON_PATH%" == "" (
-    set EMERGE_PYTHON_PATH="%PROGRAM_FILES%\python32"
+    set EMERGE_PYTHON_PATH=!PROGRAM_FILES!\python32
 )
 
 rem ####### Proxy Settings #######
