@@ -36,7 +36,7 @@ def packageIsOutdated( category, package ):
         version = pack.getVersion( )
         if newest != version:
             return True
-        
+
 
 @utils.log
 def doExec( package, action, continueFlag = False ):
@@ -193,8 +193,10 @@ def handleSinglePackage( packageName, args ):
     # package[2] -> version
 
     mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
-    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and not args.action in [ "all",
-                                                                                                          "install-deps" ] and not args.list_file:
+    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and \
+        not args.action in [ "all", "install-deps" ] and\
+        not args.list_file or\
+        args.action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
