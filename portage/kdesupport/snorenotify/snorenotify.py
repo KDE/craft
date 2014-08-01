@@ -7,13 +7,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
       self.shortDescription = "An application to show kde notifications with Snarl/Growl"
       self.dependencies['libs/qtbase'] = 'default'
-      self.dependencies['win32libs/boost-system'] = 'default'
-      self.dependencies['win32libs/boost-thread'] = 'default'
-      self.buildDependencies['win32libs/cryptopp'] = 'default'
 
 
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'git@github.com:TheOneRing/Snorenotify.git'
+      self.svnTargets['gitHEAD'] = 'https://github.com/Snorenotify/Snorenotify.git'
       for ver in ['0.2','0.3','0.4-beta1','0.4-beta2']:
           self.targets[ver] = 'https://github.com/TheOneRing/Snorenotify/archive/v%s.tar.gz' % ver
           self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
