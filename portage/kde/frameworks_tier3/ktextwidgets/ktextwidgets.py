@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kwidgetsaddons"] = "default"
         self.dependencies["kde/kwindowsystem"] = "default"
         self.dependencies["kde/sonnet"] = "default"
+        self.dependencies["kde/kconfigwidgets"] = "default"
 
 from Package.CMakePackageBase import *
 
