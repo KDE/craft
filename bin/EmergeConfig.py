@@ -4,6 +4,7 @@
 # Patrick von Reth <vonreth [AT] kde [DOT] org>
 
 import sys
+import subprocess
 
 # The minimum python version for emerge please edit here
 # if you add code that changes this requirement
@@ -26,7 +27,26 @@ class EmergeStandardDirs( object ):
     __pathCache = dict( )
     __noShortPathCache = dict( )
     _allowShortpaths = True
+    _SUBST = None
 
+    @staticmethod
+    def _deSubstPath(path):
+        """desubstitude emerge short path"""
+        if emergeSettings and not emergeSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
+            return path
+        drive , tail = os.path.splitdrive(path)
+        drive = drive.upper()
+        if EmergeStandardDirs._SUBST == None:
+            tmp = subprocess.getoutput("subst").split("\n")
+            EmergeStandardDirs._SUBST = dict()
+            for s in tmp:
+                if s != "":
+                    key , val = s.split("\\: => ")
+                    EmergeStandardDirs._SUBST[key] = val
+        if drive in list(EmergeStandardDirs._SUBST.keys()):
+            deSubst = EmergeStandardDirs._SUBST[drive] + tail
+            return deSubst
+        return path
 
     @staticmethod
     def _pathCache( ):
@@ -82,6 +102,12 @@ class EmergeStandardDirs( object ):
                                                                                        "git" ) )
         return EmergeStandardDirs._pathCache( )[ "GITDIR" ]
 
+    @staticmethod
+    def tmpDir():
+        if not "TMPDIR" in EmergeStandardDirs._pathCache( ):
+            EmergeStandardDirs._pathCache( )[ "TMPDIR" ] = emergeSettings.get( "Paths", "TMPDIR", os.path.join( EmergeStandardDirs.emergeRoot(), "tmp"))
+        return EmergeStandardDirs._pathCache( )[ "TMPDIR" ]
+
 
     @staticmethod
     def nomalizePath( path ):
@@ -93,15 +119,17 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def emergeRoot( ):
         if not "EMERGEROOT" in EmergeStandardDirs._pathCache( ):
+            print(EmergeStandardDirs._allowShortpaths)
+            print(EmergeStandardDirs._pathCache( ))
             if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath",
                                                                                   "EMERGE_USE_SHORT_PATH", False ):
                 EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = EmergeStandardDirs.nomalizePath(
                     emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
             else:
                 EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
-                    os.path.join( os.path.dirname( __file__ ), "..", ".." ) )
+                    os.path.join( os.path.dirname( EmergeStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
+            print(EmergeStandardDirs._pathCache( ))
         return EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ]
-
 
     @staticmethod
     def etcDir( ):

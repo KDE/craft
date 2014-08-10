@@ -30,10 +30,10 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        utils.system("regsvr32 -s -n -i:machine %s" % utils.deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
+        utils.system("regsvr32 -s -n -i:machine %s" % EmergeStandardDirs._deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
         return True
         
     def unmerge(self):
-        utils.system("regsvr32 -u -s -n -i:machine %s" % utils.deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
+        utils.system("regsvr32 -u -s -n -i:machine %s" % EmergeStandardDirs._deSubstPath(os.path.join(self.mergeDestinationDir() , "bin" , "git_shell_ext.dll" )))
         return BinaryPackageBase.unmerge(self)
 

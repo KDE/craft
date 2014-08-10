@@ -1127,26 +1127,6 @@ def stopAllTimer():
     for key , _ in keys:
         stopTimer(key)
 
-_SUBST = None
-def deSubstPath(path):
-    """desubstitude emerge short path"""
-    if not emergeSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
-        return path
-    global _SUBST # pylint: disable=W0603
-    drive , tail = os.path.splitdrive(path)
-    drive = drive.upper()
-    if _SUBST == None:
-        tmp = str(subprocess.Popen("subst", stdout=subprocess.PIPE).communicate()[0],"windows-1252").split("\r\n")
-        _SUBST = dict()
-        for s in tmp:
-            if s != "":
-                key , val = s.split("\\: => ")
-                _SUBST[key] = val
-    if drive in list(_SUBST.keys()):
-        deSubst = _SUBST[drive] + tail
-        debug("desubstituded %s to %s" % (path , deSubst) , 1)
-        return deSubst
-    return path
 
 def notify(title,message,alertClass = None):
     backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")

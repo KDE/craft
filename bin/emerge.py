@@ -10,6 +10,7 @@
 # if you add code that changes this requirement
 
 import sys
+
 MIN_PY_VERSION = (3, 4, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
@@ -27,6 +28,7 @@ import compiler
 import portageSearch
 from InstallDB import *
 from EmergeConfig import *
+import jenkins
 
 
 def packageIsOutdated( category, package ):
@@ -84,6 +86,8 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install")
         success = success and doExec( package, "qmerge" )
+    elif buildAction == "generate-jenkins-job":
+        success = jenkins.generateJob(package)
     elif buildAction == "version-dir":
         print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
         success = True
@@ -198,7 +202,7 @@ def handleSinglePackage( packageName, args ):
 
     mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and \
-        not args.action in [ "all", "install-deps" ] and\
+        not args.action in [ "all", "install-deps" ,"generate-jenkins-job"] and\
         not args.list_file or\
         args.action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
@@ -355,6 +359,7 @@ def main( ):
         addBuildaAction( x )
     addBuildaAction( "print-revision", "Print the revision of the package and exit" )
     addBuildaAction( "update", "Update a single package" )
+    addBuildaAction( "generate-jenkins-job")
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
