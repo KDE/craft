@@ -75,7 +75,7 @@ cd "$env:KDEROOT"
 
 function emerge()
 {
-    python "$env:KDEROOT\emerge\bin\emerge.py" $args
+    return python "$env:KDEROOT\emerge\bin\emerge.py" $args
 }
 
 

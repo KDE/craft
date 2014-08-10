@@ -15,7 +15,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 :nextarg
 if "%1" == "" goto :endargs
-
+set EMERGE_ARGS=%1
 
 shift
 goto :endargs
@@ -45,6 +45,9 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --setup 
 set Z=
 
 
-%comspec% /e:on /K "cd /D %KDEROOT%"
-
+if "%EMERGE_ARGS%" == "" (
+    %comspec% /e:on /K "cd /D %KDEROOT%"
+    goto :eof
+)
+%comspec% /e:on /C %EMERGE_ARGS% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
