@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kdesignerplugin'] = 'default'
         self.dependencies['kde/kdewebkit'] = 'default'
         self.dependencies['kde/kemoticons'] = 'default'
+        self.dependencies['kde/khtml'] = 'default'
         self.dependencies['kde/kiconthemes'] = 'default'
         self.dependencies['kde/kinit'] = 'default'
         self.dependencies['kde/kio'] = 'default'
