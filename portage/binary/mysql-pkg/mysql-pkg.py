@@ -28,6 +28,7 @@ class subinfo(info.infoclass):
               self.targetDigests['5.6.14'] = '85458d57aa5198da9925dd6971eced779c8366e6'
               self.targetDigests['5.6.16'] = '957dd35ed8c183a642f8fcd372368bff703aaba3'
               self.targetDigests['5.6.17'] = '0590b0661f72aec4e519261a5f29db3e57e0693c'
+              self.targetDigests['5.6.20'] = '529321ee25b2b774be532db25f2edd735345c1ba'
         else:
               self.targetDigests['5.5.32'] = '3d84eccbf05d0ef8117c0f1c1fbf5df277adacb0'
               self.targetDigests['5.5.33'] = 'fdf6523699576fe818a63722a994710b8b52f171'
