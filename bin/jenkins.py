@@ -27,13 +27,13 @@ def generateJob(package):
 </command>
     </hudson.tasks.BatchFile>
     <hudson.tasks.BatchFile>
-      <command>cd ${EMERGE_ROOT} &amp;&amp; ${EMERGE_ROOT}\kdeenv.bat emerge --package ${PACKAGE}</command>
+      <command>cd ${EMERGE_ROOT} &amp;&amp; ${EMERGE_ROOT}\kdeenv.bat emerge --test ${PACKAGE}</command>
     </hudson.tasks.BatchFile>
   </builders>
   <publishers/>
   <buildWrappers/>
 </project>""".replace("${EMERGE_ROOT}", os.path.join(EmergeStandardDirs.emergeRoot(), "emerge").replace("${PACKAGE}",
                                                                                                         package.subinfo.package).replace(
-            "${DESCRIPTION}", package.subinfo.shortDescription))
+            "${DESCRIPTION}", package.subinfo.shortDescription)))
         EmergeStandardDirs.allowShortpaths(True)
         return True

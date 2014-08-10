@@ -119,8 +119,6 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def emergeRoot( ):
         if not "EMERGEROOT" in EmergeStandardDirs._pathCache( ):
-            print(EmergeStandardDirs._allowShortpaths)
-            print(EmergeStandardDirs._pathCache( ))
             if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath",
                                                                                   "EMERGE_USE_SHORT_PATH", False ):
                 EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = EmergeStandardDirs.nomalizePath(
@@ -128,7 +126,6 @@ class EmergeStandardDirs( object ):
             else:
                 EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
                     os.path.join( os.path.dirname( EmergeStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
-            print(EmergeStandardDirs._pathCache( ))
         return EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ]
 
     @staticmethod
