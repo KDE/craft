@@ -71,7 +71,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         if buildAction == "full-package":
             success = success and doExec( package, "package" )
         success = success or continueFlag
-    elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
+    elif buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "checkdigest",
                           "dumpdeps", "test",
                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                           "geturls",
@@ -80,6 +80,10 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
     elif buildAction == "install":
         success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install", continueFlag )
+    elif buildAction == "qmerge":
+        success = doExec( package, "cleanimage" )
+        success = success and doExec( package, "install")
+        success = success and doExec( package, "qmerge" )
     elif buildAction == "version-dir":
         print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
         success = True
