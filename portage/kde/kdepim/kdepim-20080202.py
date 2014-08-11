@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
                                                       ("fixknote.diff",1)] #this needs some review
 
         self.defaultTarget = 'gpg4win'
+        self.patchToApply['gpg4win'] = [('kleo-portable.diff', 1)]
 
         self.patchToApply['gitHEAD'] = [('fix_introduction_screen.diff', 1),
                                         ('0001-fixed-windows-x64-build.patch', 1),
