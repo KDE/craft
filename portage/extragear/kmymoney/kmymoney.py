@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kdelibs4support'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
-        self.dependencies['win32libs/libofx'] = 'default'
+        #self.dependencies['win32libs/libofx'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
         self.dependencies['extragear/libalkimia'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
