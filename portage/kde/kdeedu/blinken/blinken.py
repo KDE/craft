@@ -4,17 +4,18 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+        self.svnTargets['frameworks'] = '[git]kde:blinken|frameworks'
 
         self.shortDescription = 'a memory enhancement game'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtsvg'] = 'default'
+        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['kde/kxmlgui'] = 'default'
+        self.dependencies['kde/kguiaddons'] = 'default'
+        self.dependencies['kde/kdoctools'] = 'default'
 
 from Package.CMakePackageBase import *
 
