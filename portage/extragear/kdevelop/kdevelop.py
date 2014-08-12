@@ -2,15 +2,35 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop'
+        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop|frameworks'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'kde/kde-runtime' ] = 'default'
-        self.dependencies[ 'kde/kate' ] = 'default'
-        self.dependencies[ 'extragear/kdevplatform' ] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["libs/qtdeclarative"] = "default"
+        self.buildDependencies["libs/qtscript"] = "default"
+        self.buildDependencies["libs/qtwebkit"] = "default"
+        self.dependencies[ 'kde/karchive' ] = 'default'
+        self.dependencies[ 'kde/kconfig' ] = 'default'
+        self.dependencies[ 'kde/kguiaddons' ] = 'default'
+        self.dependencies[ 'kde/ki18n' ] = 'default'
+        self.dependencies[ 'kde/kitemmodels' ] = 'default'
+        self.dependencies[ 'kde/kitemviews' ] = 'default'
+        self.dependencies[ 'kde/kjobwidgets' ] = 'default'
+        self.dependencies[ 'kde/kcmutils' ] = 'default'
+        self.dependencies[ 'kde/knewstuff' ] = 'default'
+        self.dependencies[ 'kde/knotifyconfig' ] = 'default'
+        self.dependencies[ 'kde/kparts' ] = 'default'
+        self.dependencies[ 'kde/kservice' ] = 'default'
+        self.dependencies[ 'kde/sonnet' ] = 'default'
+        self.dependencies[ 'kde/ktexteditor' ] = 'default'
+        self.dependencies[ 'kde/threadweaver' ] = 'default'
+        self.dependencies[ 'kde/kwindowsystem' ] = 'default'
+        self.dependencies[ 'kde/kxmlgui' ] = 'default'
+        self.dependencies[ 'kde/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
-        self.buildDependencies[ 'dev-util/zip' ] = 'default'
 
 from Package.CMakePackageBase import *
 

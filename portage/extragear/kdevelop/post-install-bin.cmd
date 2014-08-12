@@ -25,9 +25,9 @@ if not `"update-mime-database --help"` equ "" (
     echo        please check for correct installation
 )
 
-if not `"kbuildsycoca4 --help"` equ "" (
-    kbuildsycoca4 --noincremental
+if not `"kbuildsycoca5 --help"` equ "" (
+    kbuildsycoca5 --noincremental
 ) else (
-    echo error: kbuildsycoca4 wasn't found.
+    echo error: kbuildsycoca5 wasn't found.
     echo        please check for correct installation
 )
