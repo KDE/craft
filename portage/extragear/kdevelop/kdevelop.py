@@ -8,10 +8,11 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["libs/qtdeclarative"] = "default"
-        self.buildDependencies["libs/qtscript"] = "default"
-        self.buildDependencies["libs/qtwebkit"] = "default"
+        self.buildDependencies["dev-util/zip"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtdeclarative"] = "default"
+        self.dependencies["libs/qtscript"] = "default"
+        self.dependencies["libs/qtwebkit"] = "default"
         self.dependencies[ 'kde/karchive' ] = 'default'
         self.dependencies[ 'kde/kconfig' ] = 'default'
         self.dependencies[ 'kde/kguiaddons' ] = 'default'
