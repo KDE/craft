@@ -86,6 +86,7 @@ class GitSource ( VersionSystemSourceBase ):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
+        utils.debug( "fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace( "[git]", "" )
@@ -160,6 +161,7 @@ class GitSource ( VersionSystemSourceBase ):
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
+        utils.debug( "fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
