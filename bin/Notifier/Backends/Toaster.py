@@ -4,7 +4,7 @@ import subprocess
 from Notifier.NotificationInterface import *
 
 
-#use https://github.com/nels-o/toaster to generate windows 8 toast notifications
+#use https://github.com/Snorenotify/Snoretoast to generate windows 8 toast notifications
 class Toaster(NotificationInterface):
     def __init__(self):
         NotificationInterface.__init__(self,"Toaster")
