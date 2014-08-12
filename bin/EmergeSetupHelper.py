@@ -119,9 +119,10 @@ class SetupHelper( object ):
 
         self.addEnvVar( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ) )
 
-        self.addEnvVar( "QT_PLUGIN_PATH", "%s;%s" % (
+        self.addEnvVar( "QT_PLUGIN_PATH", "%s;%s;%s" % (
             os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
-            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "kde4", "plugins" )) )
+            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugins" ),
+            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugin" )) )
         self.addEnvVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
 
         if compiler.isMinGW( ):
