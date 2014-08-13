@@ -4,18 +4,25 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
-        self.patchToApply['4.10.2'] = [("kig-4.10.2-20130426.diff", 1), ("kig-ugly-findpython-fix.diff", 1)]
+        self.svnTargets['frameworks'] = '[git]kde:kig|frameworks'
 
         self.shortDescription = 'interactive geometry'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtsvg'] = 'default'
+        self.dependencies['kde/kparts'] = 'default'
+        self.dependencies['kde/kdoctools'] = 'default'
+        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['kde/ktexteditor'] = 'default'
+        self.dependencies['kde/kiconthemes'] = 'default'
+        self.dependencies['kde/kconfigwidgets'] = 'default'
+        self.dependencies['kde/karchive'] = 'default'
+        self.dependencies['kde/kdelibs4support'] = 'default'
+        # only needed for unit tests
+        self.buildDependencies['kde/kemoticons'] = 'default'
+        self.buildDependencies['kde/kitemmodels'] = 'default'
         if self.options.features.pythonSupport:
             self.dependencies['win32libs/boost-python'] = 'default'
 
