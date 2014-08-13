@@ -11,19 +11,26 @@ index d26ffb4..e59c5a0 100644
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
  QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
 diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
-index 062ab49..f5af59b 100644
+index 062ab49..8a75ef3 100644
 --- a/src/corelib/io/qstandardpaths_win.cpp
 +++ b/src/corelib/io/qstandardpaths_win.cpp
-@@ -212,6 +212,8 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
+@@ -212,6 +212,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
                      dirs.append(QCoreApplication::applicationDirPath());
                      dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
                  }
 +                dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../share"));
++                if (type != GenericDataLocation && type != GenericConfigLocation) {
++                    QString appData = QCoreApplication::applicationDirPath() + QLatin1String("/../share");
++                    if (!QCoreApplication::organizationName().isEmpty())
++                        appData += QLatin1Char('/') + QCoreApplication::organizationName();
++                    if (!QCoreApplication::applicationName().isEmpty())
++                        appData += QLatin1Char('/') + QCoreApplication::applicationName();
++					dirs.append(appData);
++				}
 +                dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../etc/xdg"));
  #endif
              }
              break;
-
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
 index 63d9f28..792bb0d 100644
 --- a/tools/configure/configureapp.cpp
