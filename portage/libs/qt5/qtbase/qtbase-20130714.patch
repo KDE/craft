@@ -48,14 +48,14 @@ index 63d9f28..792bb0d 100644
          qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
 
 diff --git a/src/gui/image/qiconloader.cpp b/src/gui/image/qiconloader.cpp
-index 9e97902..d8b2cd6 100644
+index 9e97902..f035e33 100644
 --- a/src/gui/image/qiconloader.cpp
 +++ b/src/gui/image/qiconloader.cpp
 @@ -165,6 +165,7 @@ QStringList QIconLoader::themeSearchPaths() const
  {
      if (m_iconDirs.isEmpty()) {
          m_iconDirs = systemIconSearchPaths();
-+        m_iconDirs.append(QLatin1String("../share/icons"));
++        m_iconDirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../share/icons"));
          // Always add resource directory as search path
          m_iconDirs.append(QLatin1String(":/icons"));
      }
