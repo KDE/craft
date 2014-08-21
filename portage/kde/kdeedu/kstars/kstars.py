@@ -4,20 +4,32 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+        self.svnTargets['gitHEAD'] = '[git]kde:kstars|frameworks|'
 
         self.shortDescription = 'a desktop planetarium'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.buildDependencies['win32libs/cfitsio'] = 'default'
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['win32libs/libnova'] = 'default'
-        self.dependencies['kdesupport/eigen2'] = 'default'
+        #self.buildDependencies['win32libs/cfitsio'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtdeclarative'] = 'default'
+        self.dependencies['libs/qtsvg'] = 'default'
+        self.dependencies['kde/kconfig'] = 'default'
+        self.dependencies['kde/kdoctools'] = 'default'
+        self.dependencies['kde/kguiaddons'] = 'default'
+        self.dependencies['kde/kwidgetsaddons'] = 'default'
+        self.dependencies['kde/knewstuff'] = 'default'
+        self.dependencies['kde/kdbusaddons'] = 'default'
+        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['kde/kinit'] = 'default'
+        self.dependencies['kde/kjobwidgets'] = 'default'
+        self.dependencies['kde/kio'] = 'default'
+        self.dependencies['kde/kwindowsystem'] = 'default'
+        self.dependencies['kde/kxmlgui'] = 'default'
+        self.dependencies['kde/kplotting'] = 'default'
+        self.dependencies['kde/ktexteditor'] = 'default'
+        self.dependencies['kde/kiconthemes'] = 'default'
+        self.dependencies['win32libs/eigen3'] = 'default'
 
 from Package.CMakePackageBase import *
 
