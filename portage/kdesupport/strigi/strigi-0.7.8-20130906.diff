@@ -127,3 +127,52 @@ diff -U 3 -H -d -r -N -- strigi.orig/libstreams/include/strigi/bufferedstream.h 
  private:
      StreamBuffer<T> buffer;
      bool finishedWritingToBuffer;
+diff -U 3 -H -d -r -N -- strigi.orig/libstreamanalyzer/plugins/eventplugins/riffeventanalyzer.cpp strigi/libstreamanalyzer/plugins/eventplugins/riffeventanalyzer.cpp
+index a5654da..9c389d9 100644
+--- strigi.orig/libstreamanalyzer/plugins/eventplugins/riffeventanalyzer.cpp
++++ strigi/libstreamanalyzer/plugins/eventplugins/riffeventanalyzer.cpp
+@@ -25,6 +25,7 @@
+ #include <strigi/analyzerplugin.h>
+ #include <stack>
+ #include <iostream>
++#include <algorithm>
+ #include "rdfnamespaces.h"
+ 
+ const std::string
+diff -U 3 -H -d -r -N -- strigi.orig/libstreams/lib/listinginprogress.cpp strigi/libstreams/lib/listinginprogress.cpp
+index 06a9605..1467398 100644
+--- strigi.orig/libstreams/lib/listinginprogress.cpp
++++ strigi/libstreams/lib/listinginprogress.cpp
+@@ -22,6 +22,7 @@
+ #include <strigi/bz2inputstream.h>
+ #include <strigi/lzmainputstream.h>
+ #include <iostream>
++#include <algorithm>
+ 
+ using namespace Strigi;
+ using namespace std;
+diff -U 3 -H -d -r -N -- strigi.orig/libstreams/lib/oleinputstream.cpp strigi/libstreams/lib/oleinputstream.cpp
+index 7059ba3..7151dc3 100644
+--- strigi.orig/libstreams/lib/oleinputstream.cpp
++++ strigi/libstreams/lib/oleinputstream.cpp
+@@ -22,6 +22,8 @@
+ #include <strigi/bufferedstream.h>
+ #include <iostream>
+ #include <set>
++#include <algorithm>
++
+ using namespace Strigi;
+ using namespace std;
+ 
+diff -U 3 -H -d -r -N -- strigi.orig/libstreams/lib/sdfinputstream.cpp strigi/libstreams/lib/sdfinputstream.cpp
+index f7a7485..f625700 100644
+--- strigi.orig/libstreams/lib/sdfinputstream.cpp
++++ strigi/libstreams/lib/sdfinputstream.cpp
+@@ -22,6 +22,7 @@
+ #include <iostream>
+ #include <sstream>
+ #include <cstring>
++#include <algorithm>
+ 
+ using namespace std;
+ using namespace Strigi;
