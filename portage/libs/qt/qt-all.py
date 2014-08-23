@@ -57,6 +57,7 @@ class subinfo(info.infoclass):
             ('patches/4.8.4/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1),
             ('patches/4.8.5/fix-defined-defined-and-do-not-include-inttypes-for-intel-compiler.patch', 1),
             ('patches/4.8.4/fix-Q_CORE_EXPORT_INLINE-for-intel-compiler.patch', 1),
+            ('patches/4.8.6/fix-webkit-msvc2013.patch', 1),
         ]
 
         self.patchToApply['master'] = [
@@ -159,7 +160,7 @@ class Package(QMakePackageBase):
             command += "-ltcg "
 
         # all builds
-        command += "-no-phonon -no-qt3support "
+        command += "-no-phonon -no-qt3support -webkit "
         if self.subinfo.options.isActive("win32libs/dbus"):
             command += "-qdbus -dbus-linked "
         command += "-openssl-linked "
