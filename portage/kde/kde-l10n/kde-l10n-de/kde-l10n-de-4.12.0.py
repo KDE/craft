@@ -3,11 +3,11 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['4.12.0', '4.12.1', '4.12.2', '4.12.3', '4.12.4']:
+        for ver in ['4.13.0', '4.13.1', '4.13.2', '4.13.3', '4.13.4']:
           self.targets[ ver] = 'ftp://ftp.kde.org/pub/kde/stable/%s/src/kde-l10n/kde-l10n-de-%s.tar.xz' % (ver , ver )
           self.targetInstSrc[ ver] = 'kde-l10n-de-%s'  % ver
 
-        self.defaultTarget = '4.12.0'
+        self.defaultTarget = '4.13.3'
 
 
     def setDependencies( self ):
