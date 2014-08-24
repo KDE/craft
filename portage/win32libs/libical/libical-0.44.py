@@ -2,14 +2,15 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'libical'
-        for v in [ '0.41', '0.42', '0.43', '0.44']:
-            self.targets[ v ] = 'http://downloads.sourceforge.net/freeassociation/libical-' + v + '.tar.gz'
-            self.targetInstSrc[ v ] = 'libical-' + v
-        self.defaultTarget = '0.44'
-        self.targetDigests['0.44'] = 'f781150e2d98806e91b7e0bee02abdc6baf9ac7d'
-        self.patchToApply['0.44'] = [ ( 'libical-0.44-20100728.diff', 1 ),
-                                      ( 'libical-0.44-20130614.diff', 1 ) ]
+        self.targets['v0.48'] = 'https://github.com/libical/libical/tarball/v0.48'
+        self.archiveNames['v0.48'] = 'libical-v0.48.tar.gz'
+        self.targetInstSrc['v0.48'] = 'libical-libical-b80a19e'
+        self.targets['v1.0.0'] = 'https://github.com/libical/libical/tarball/v1.0.0'
+        self.archiveNames['v1.0.0'] = 'libical-v1.0.0.tar.gz'
+        self.targetInstSrc['v1.0.0'] = 'libical-libical-866647f'
+
+        self.svnTargets['gitHEAD'] = '[git]https://github.com/libical/libical.git'
+        self.defaultTarget = 'v0.48'
         self.shortDescription = "reference implementation of the icalendar data type and serialization format"
 
     def setDependencies( self ):
