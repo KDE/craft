@@ -55,7 +55,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "description" ] = os.getenv("EMERGE_DESCRIPTION") or \
                                         "Kontact Enterprise 5 (beta)"
         # Version Number needs to be in the format x.x.x.x
-        self.defines[ "version_number" ] = "4.6.0.0"
+        self.defines[ "version_number" ] = "4.13.0.0"
         self.defines[ "version_date" ] = time.strftime("%Y-%m-%d-%H-%M")
         self.defines[ "branding" ] = os.getenv("EMERGE_KDEPIME5_BRANDING") or \
                                      "includes\\branding.nsi"
