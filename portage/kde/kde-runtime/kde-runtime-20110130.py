@@ -18,10 +18,6 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['kde/oxygen-icons'] = 'default'
         self.dependencies['win32libs/libssh'] = 'default'
-        self.dependencies['kde/kactivities'] = 'default'
-        if self.options.features.nepomuk:
-            self.dependencies['kde/kdepimlibs'] = 'default'
-            self.dependencies['kde/nepomuk-core'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs/libbfd'] = 'default'
 
@@ -31,6 +27,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = "-DWITH_NepomukCore=OFF"
 
 if __name__ == '__main__':
     Package().execute()
