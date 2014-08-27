@@ -5,11 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.shortDescription = "An application to show kde notifications with Snarl/Growl"
+        self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kde/ki18n'] = 'default'
-        self.dependencies['kde/kiconthemes'] = 'default'
-        self.dependencies['kde/kcoreaddons'] = 'default'
+        self.dependencies['win32libs/snoregrowl'] = 'default'
 
 
 
