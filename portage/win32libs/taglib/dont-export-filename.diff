@@ -1,0 +1,11 @@
+--- a/taglib/toolkit/tiostream.h	2012-09-06 20:03:15.000000000 +0200
++++ b/taglib/toolkit/tiostream.h	2013-03-07 01:05:33.636841800 +0100
+@@ -33,7 +33,7 @@
+ namespace TagLib {
+ 
+ #ifdef _WIN32
+-  class TAGLIB_EXPORT FileName
++  class FileName
+   {
+   public:
+     FileName(const wchar_t *name) : m_wname(name) {}

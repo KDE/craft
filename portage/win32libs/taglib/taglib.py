@@ -7,13 +7,13 @@ class subinfo(info.infoclass):
         self.shortDescriptions = "audio meta-data library"
 
     def setTargets( self ):
-        self.targets["1.8"] = 'http://github.com/downloads/taglib/taglib/taglib-1.8.tar.gz'
-        self.targetInstSrc["1.8"] = 'taglib-1.8'
-        self.patchToApply['1.8'] = [("taglib-1.8-20130307.diff", 1)]
-        self.targetDigests['1.8'] = 'bdbfd746fde42401d3a77cd930c7802d374a692d'
+        self.targets["1.9.1"] = 'https://taglib.github.io/releases/taglib-1.9.1.tar.gz'
+        self.targetInstSrc["1.9.1"] = 'taglib-1.9.1'
+        self.patchToApply['1.9.1'] = [("dont-export-filename.diff", 1)]
+        self.targetDigests['1.9.1'] = '4fa426c453297e62c1d1eff64a46e76ed8bebb45'
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
         self.shortDescription = "audio metadata library"
-        self.defaultTarget = '1.8'
+        self.defaultTarget = '1.9.1'
 
 from Package.CMakePackageBase import *
 
