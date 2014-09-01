@@ -23,5 +23,5 @@ class Package(CMakePackageBase):
         if compiler.isMinGW_W32():
             self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
         self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=OFF -DBUILD_BASE_LIB=OFF -DBUILD_TOOLS=ON -DBUILD_QT_LIB=OFF'
-        self.subinfo.options.package.version = '0.5.5'
+        self.subinfo.options.package.version = '0.5.7'
 

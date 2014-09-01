@@ -17,7 +17,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         # required for package generating because we build from svnHEAD by default
-        self.subinfo.options.package.version = '0.5.5'
+        self.subinfo.options.package.version = '0.5.7'
         self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB=ON -DBUILD_TOOLS=OFF -DBUILD_QT_LIB=OFF -DBUILD_BASE_LIB_WITH_QT=OFF '
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
