@@ -411,6 +411,8 @@ def main( ):
         printInstalled( )
     elif args.print_installable:
         portage.printInstallables( )
+    elif args.list_file:
+        handleSinglePackage( "", args )
     else:
         for x in args.packageNames:
             if not handleSinglePackage( x, args ):
@@ -449,3 +451,4 @@ if __name__ == '__main__':
             emergeSettings.dump( )
     if not succes:
         exit( 1 )
+
