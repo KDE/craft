@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/libechonest'] = 'default'
         self.dependencies['kde/attica'] = 'default'
-        self.dependencies['kdesupport/liblastfm'] = 'default'
+        self.dependencies['qt-libs/liblastfm'] = 'default'
         self.dependencies['win32libs/clucene-core'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/gnutls'] = 'default'
