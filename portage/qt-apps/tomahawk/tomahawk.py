@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['qt-libs/phonon'] = 'default'
         self.dependencies['qt-libs/phonon-vlc'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['kdesupport/libechonest'] = 'default'
+        self.dependencies['qt-libs/libechonest'] = 'default'
         self.dependencies['kde/attica'] = 'default'
         self.dependencies['qt-libs/liblastfm'] = 'default'
         self.dependencies['win32libs/clucene-core'] = 'default'
