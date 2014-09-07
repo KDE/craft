@@ -8,7 +8,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "4.9.1"
-        rev = "0"
+        rev = "1"
         if compiler.isX64():
             self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-%s-release-posix-seh-rt_v3-rev%s.7z" % ( ver, rev )
             self.targetDigests['4.9.1-0'] = 'd826187ad09ae53ae9596f8d69dd44fd944af36a'
