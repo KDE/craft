@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qjson'] = 'default'
         self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
-        self.dependencies['kdesupport/eigen2'] = 'default'
+        self.dependencies['win32libs/eigen2'] = 'default'
         self.shortDescription = "All kind of addons to improve your Plasma experience"
 
 from Package.CMakePackageBase import *
