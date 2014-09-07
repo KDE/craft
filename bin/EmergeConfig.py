@@ -151,6 +151,7 @@ class EmergeConfig( object ):
         self._readSettings( )
 
         self.setDefault( "General", "DUMP_SETTINGS", "False" )
+        self.setDefault( "General", "EMERGE_OPTIONS", "")
         self.addAlias( "EmergeDebug", "Verbose", "General", "EMERGE_VERBOSE" )
         self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
@@ -197,6 +198,7 @@ class EmergeConfig( object ):
         if default != None:
             self.set( group, key, default )
             return default
+        print(group, key)
         self._config[ group ][ key ]
 
     def getSection( self, group ):
