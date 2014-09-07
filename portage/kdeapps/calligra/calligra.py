@@ -43,7 +43,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs/lcms2'] = 'default'
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['kdesupport/poppler'] = 'default'
+        self.dependencies['qt-libs/poppler'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['win32libs/gsl'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'

@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         # these dependencies are optional
-        #self.dependencies['kdesupport/poppler'] = 'default'
+        #self.dependencies['qt-libs/poppler'] = 'default'
         #self.dependencies['win32libs/taglib'] = 'default'
         #self.dependencies['win32libs/exiv2'] = 'default'
         ##self.dependencies['win32libs/ffmpeg'] = 'default'

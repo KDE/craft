@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '0.14.5'
 
     def setDependencies( self ):
-        self.dependencies[ 'kdesupport/poppler' ] = 'default'
+        self.dependencies[ 'qt-libs/poppler' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
