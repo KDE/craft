@@ -23,9 +23,9 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
-        self.dependencies['kdesupport/phonon'] = 'default'
-        if not self.options.isActive('kdesupport/phonon-vlc'):
-            self.dependencies['kdesupport/phonon-ds9'] = 'default'
+        self.dependencies['qt-libs/phonon'] = 'default'
+        if not self.options.isActive('qt-libs/phonon-vlc'):
+            self.dependencies['qt-libs/phonon-ds9'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtwebkit'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'

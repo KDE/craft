@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'libs/runtime' ] = 'default'
         #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
         #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default
-        self.dependencies[ 'kdesupport/phonon-vlc'] = 'default'
+        self.dependencies[ 'qt-libs/phonon-vlc'] = 'default'
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):

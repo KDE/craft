@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kiconthemes"] = "default"
         self.dependencies["kde/kcodecs"] = "default"
         self.dependencies["kde/kcoreaddons"] = "default"
-        self.dependencies["kdesupport/phonon"] = "default"
+        self.dependencies["qt-libs/phonon"] = "default"
 
 from Package.CMakePackageBase import *
 

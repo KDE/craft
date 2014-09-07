@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/taglib-extras'] = 'default'
-        self.dependencies['kdesupport/phonon'] = 'default'
+        self.dependencies['qt-libs/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kde/kde-runtime'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'

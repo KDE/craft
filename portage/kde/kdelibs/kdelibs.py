@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
         # self.dependencies['kdesupport/hupnp'] = 'default'
         self.dependencies['kdesupport/kdewin'] = 'default'
-        self.dependencies['kdesupport/phonon'] = 'default'
+        self.dependencies['qt-libs/phonon'] = 'default'
         self.dependencies['kdesupport/attica'] = 'default'
         # self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
         #self.dependencies['kdesupport/grantlee'] = 'default'
@@ -39,9 +39,9 @@ class subinfo(info.infoclass):
         self.dependencies['data/docbook-xsl'] = 'default'
         self.dependencies['data/shared-desktop-ontologies'] = 'default'
         if self.options.features.phononBackend.vlc:
-            self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
+            self.runtimeDependencies['qt-libs/phonon-vlc'] = 'default'
         elif self.options.features.phononBackend.ds9:
-            self.runtimeDependencies['kdesupport/phonon-ds9'] = 'default'
+            self.runtimeDependencies['qt-libs/phonon-ds9'] = 'default'
         self.dependencies['win32libs/aspell']  = 'default'
 #        self.dependencies['win32libs/enchant']  = 'default'
         self.dependencies['win32libs/gettext']  = 'default'

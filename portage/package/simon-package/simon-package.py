@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kde-workspace' ] = 'default'
         self.dependencies[ 'kde/kdepim-runtime' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
-        #self.dependencies[ 'kdesupport/phonon-ds9' ] = 'default'
+        #self.dependencies[ 'qt-libs/phonon-ds9' ] = 'default'
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
