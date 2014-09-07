@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.shortDescription = "A command line interface for libsnore"
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kdesupport/snorenotify'] = 'default'
+        self.dependencies['qt-libs/snorenotify'] = 'default'
 
 
 

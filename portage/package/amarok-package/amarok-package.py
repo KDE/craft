@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies[ 'extragear/amarok' ] = 'default'
         self.dependencies[ 'kde/kde-workspace' ] = 'default'
-        # self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
+        # self.dependencies[ 'qt-libs/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         #self.dependencies[ 'win32libs-bin/liblzma' ] = 'default'
         #self.dependencies[ 'kdesupport/hupnp' ] = 'default'#the packages are optional and not installed by default

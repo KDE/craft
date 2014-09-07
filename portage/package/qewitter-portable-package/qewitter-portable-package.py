@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'qt-apps/qewitter' ] = 'default'
-        self.dependencies[ 'kdesupport/snorenotify' ] = 'default'
+        self.dependencies[ 'qt-libs/snorenotify' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         
 class Package( PortablePackager, VirtualPackageBase ):

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['qt-apps/libaccu'] = 'default'
-        self.dependencies['kdesupport/snorenotify'] = 'default'
+        self.dependencies['qt-libs/snorenotify'] = 'default'
 
         
     def setTargets( self ):

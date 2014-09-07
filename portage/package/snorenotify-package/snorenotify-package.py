@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
 
 
     def setDependencies( self ):
-        self.dependencies['kdesupport/snorenotify'] = 'default'
+        self.dependencies['qt-libs/snorenotify'] = 'default'
 
 
 from Package.VirtualPackageBase import *
