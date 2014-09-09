@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:kdevplatform|frameworks'
+        self.svnTargets['frameworks'] = '[git]kde:kdevplatform'
         self.shortDescription = 'Framework to build IDE-like applications'
         self.defaultTarget = 'frameworks'
 
