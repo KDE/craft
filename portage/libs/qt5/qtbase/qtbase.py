@@ -65,7 +65,6 @@ class Package(Qt5CorePackageBase):
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-zlib "
-        command += "-no-vcproj "
         command += "-nomake examples "
         command += "-c++11 "
         if self.buildType() == "RelWithDebInfo":
