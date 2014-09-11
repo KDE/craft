@@ -5,8 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
+        self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtquick1'] = 'default'
         self.dependencies['win32libs/snoregrowl'] = 'default'
 
 
@@ -18,6 +19,7 @@ class subinfo(info.infoclass):
             self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
             self.targetInstSrc[ver] = 'Snorenotify-%s' % ver
         self.targetDigests['0.4-beta1'] = '76996e2ebd23fa7b99b68e743c880b3fa0d724af'
+        self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
         self.defaultTarget = 'gitHEAD'
 
 
