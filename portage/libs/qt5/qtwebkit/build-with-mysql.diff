@@ -1,0 +1,26 @@
+diff --git a/Source/WebCore/html/StepRange.h b/Source/WebCore/html/StepRange.h
+index 697a7b5..28e5e7c 100644
+--- a/Source/WebCore/html/StepRange.h
++++ b/Source/WebCore/html/StepRange.h
+@@ -21,7 +21,7 @@
+ #ifndef StepRange_h
+ #define StepRange_h
+ 
+-#include "Decimal.h"
++#include "platform/Decimal.h"
+ #include <wtf/Forward.h>
+ #include <wtf/Noncopyable.h>
+ 
+diff --git a/Source/WebCore/html/parser/HTMLParserIdioms.cpp b/Source/WebCore/html/parser/HTMLParserIdioms.cpp
+index e10a5cd..33ddcf1 100644
+--- a/Source/WebCore/html/parser/HTMLParserIdioms.cpp
++++ b/Source/WebCore/html/parser/HTMLParserIdioms.cpp
+@@ -25,7 +25,7 @@
+ #include "config.h"
+ #include "HTMLParserIdioms.h"
+ 
+-#include "Decimal.h"
++#include "platform/Decimal.h"
+ #include "HTMLIdentifier.h"
+ #include "QualifiedName.h"
+ #include <limits>

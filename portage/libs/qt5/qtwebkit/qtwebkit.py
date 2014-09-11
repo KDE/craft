@@ -6,13 +6,19 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
         for ver in self.versionInfo.tarballs():
-            self.patchToApply[ ver ] = ("qtwebkit-20130109.patch" , 1)
+            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
             
         for ver in self.versionInfo.branches():
-            self.patchToApply[ ver ] = ("qtwebkit-20130109.patch" , 1)
+            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
             
         for ver in self.versionInfo.tags():
-            self.patchToApply[ ver ] = ("qtwebkit-20130109.patch" , 1)
+            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
+
+        self.patchToApply[ "5.3" ] += ("qtwebkit-20130109.patch" , 1)
+        self.patchToApply[ "5.3.0" ] += ("qtwebkit-20130109.patch" , 1)
+        self.patchToApply[ "5.3.1" ] += ("qtwebkit-20130109.patch" , 1)
+        self.patchToApply[ "v5.3.0" ] += ("qtwebkit-20130109.patch" , 1)
+        self.patchToApply[ "v5.3.1" ] += ("qtwebkit-20130109.patch" , 1)
 
     def setDependencies( self ):
         self.dependencies['win32libs/sqlite'] = 'default'
