@@ -12,7 +12,7 @@ class Snore(NotificationInterface):
         path = os.path.dirname(os.path.realpath(__file__))
         icon = os.path.join(path, "..", "kde-logo.png" )
         try:
-            subprocess.Popen( """snore-send -t "%s" -m "%s" -i "%s" -a "Emerge" -c "%s" --silent """ % (title , message , icon, alertClass))
+            subprocess.Popen( """snore-send -t "%s" -m "%s" -i "%s" -a "Emerge" -c "%s" --silent -b Snore""" % (title , message , icon, alertClass))
         except Exception:
             return
 
