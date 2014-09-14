@@ -10,8 +10,6 @@ class subinfo(info.infoclass):
         for ver in ['2.7.0-alpha10']:
             self.targets[ver] = 'http://www.mpir.org/mpir-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = "mpir-" + ver
-        self.targetDigests['2.6.0'] = '28a91eb4d2315a9a73dc39771acf2b99838b9d72'
-        self.patchToApply['2.6.0'] = ('mpir-2.6.0-20131003.diff', 1)
         self.targetDigests['2.7.0-alpha10'] = '815fee928c9ba5f444457144dd037300cb8f4ca4'
         self.targetInstSrc['2.7.0-alpha10'] = 'mpir-2.7.0'
 
