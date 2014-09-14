@@ -1,6 +1,6 @@
-diff -Nru OpenSP-1.5.2.orig/CMakeLists.txt OpenSP-1.5.2/CMakeLists.txt
+diff -Nru -x '*~' OpenSP-1.5.2.orig/CMakeLists.txt OpenSP-1.5.2/CMakeLists.txt
 --- OpenSP-1.5.2.orig/CMakeLists.txt	1970-01-01 02:00:00.000000000 +0200
-+++ OpenSP-1.5.2/CMakeLists.txt	2011-01-10 23:54:57.526164100 +0200
++++ OpenSP-1.5.2/CMakeLists.txt	2014-08-24 17:23:19.941495700 +0300
 @@ -0,0 +1,260 @@
 +project(opensp)
 +
@@ -262,9 +262,9 @@ diff -Nru OpenSP-1.5.2.orig/CMakeLists.txt OpenSP-1.5.2/CMakeLists.txt
 +install(TARGETS opensp RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 +install(FILES ${libopensp_HEADERS} DESTINATION include/opensp)
 +
-diff -Nru OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
+diff -Nru -x '*~' OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
 --- OpenSP-1.5.2.orig/config.h	2005-12-23 16:16:30.000000000 +0200
-+++ OpenSP-1.5.2/config.h	2011-01-10 23:54:57.526164100 +0200
++++ OpenSP-1.5.2/config.h	2014-08-24 17:26:33.724698900 +0300
 @@ -26,6 +26,12 @@
  #endif
  #endif /* __GNUG__ */
@@ -278,7 +278,19 @@ diff -Nru OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
  #if defined(sun) || defined(__sun)
  // struct stat has st_blksize member
  #define SP_STAT_BLKSIZE
-@@ -301,15 +307,8 @@
+@@ -80,6 +86,11 @@
+ #define SP_HAVE_TYPENAME
+ #endif
+ 
++#if _MSC_VER >=1800
++// Visual Studio 2013
++#define SP_ANSI_FOR_SCOPE
++#endif
++
+ #define SP_HAVE_SETMODE
+ #define SP_DLLEXPORT __declspec(dllexport)
+ #define SP_DLLIMPORT __declspec(dllimport)
+@@ -301,15 +312,8 @@
  #define PATH_SEPARATOR ':'
  #endif
  
@@ -296,9 +308,9 @@ diff -Nru OpenSP-1.5.2.orig/config.h OpenSP-1.5.2/config.h
 +#define SP_VERSION "@VERSION@"
  
  #endif /* not config_INCLUDED */
-diff -Nru OpenSP-1.5.2.orig/generic/SGMLApplication.h OpenSP-1.5.2/generic/SGMLApplication.h
+diff -Nru -x '*~' OpenSP-1.5.2.orig/generic/SGMLApplication.h OpenSP-1.5.2/generic/SGMLApplication.h
 --- OpenSP-1.5.2.orig/generic/SGMLApplication.h	2005-05-14 12:17:41.000000000 +0300
-+++ OpenSP-1.5.2/generic/SGMLApplication.h	2011-01-11 00:10:03.865031300 +0200
++++ OpenSP-1.5.2/generic/SGMLApplication.h	2014-08-24 17:23:19.957120700 +0300
 @@ -269,6 +269,7 @@
      unsigned count_;
      friend class OpenEntityPtr;
@@ -307,10 +319,10 @@ diff -Nru OpenSP-1.5.2.orig/generic/SGMLApplication.h OpenSP-1.5.2/generic/SGMLA
    virtual ~SGMLApplication();
    virtual void appinfo(const AppinfoEvent &);
    virtual void startDtd(const StartDtdEvent &);
-diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
+diff -Nru -x '*~' OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
 --- OpenSP-1.5.2.orig/include/config.h	1970-01-01 02:00:00.000000000 +0200
-+++ OpenSP-1.5.2/include/config.h	2011-01-10 23:54:57.526164100 +0200
-@@ -0,0 +1,314 @@
++++ OpenSP-1.5.2/include/config.h	2014-08-24 17:26:44.693448900 +0300
+@@ -0,0 +1,319 @@
 +// Copyright (c) 1994, 1995, 1996 James Clark
 +// See the file COPYING for copying permission.
 +
@@ -397,6 +409,11 @@ diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
 +// Visual C++ 6.0
 +#define SP_HAVE_PLACEMENT_OPERATOR_DELETE
 +#define SP_HAVE_TYPENAME
++#endif
++
++#if _MSC_VER >=1800
++// Visual Studio 2013
++#define SP_ANSI_FOR_SCOPE
 +#endif
 +
 +#define SP_HAVE_SETMODE
@@ -625,9 +642,9 @@ diff -Nru OpenSP-1.5.2.orig/include/config.h OpenSP-1.5.2/include/config.h
 +#define SP_VERSION "@VERSION@"
 +
 +#endif /* not config_INCLUDED */
-diff -Nru OpenSP-1.5.2.orig/include/OutputCharStream.h OpenSP-1.5.2/include/OutputCharStream.h
---- OpenSP-1.5.2.orig/include/OutputCharStream.h	2005-07-21 16:04:39.000000000 +0200
-+++ OpenSP-1.5.2/include/OutputCharStream.h	2011-01-15 02:35:26.188865600 +0100
+diff -Nru -x '*~' OpenSP-1.5.2.orig/include/OutputCharStream.h OpenSP-1.5.2/include/OutputCharStream.h
+--- OpenSP-1.5.2.orig/include/OutputCharStream.h	2005-07-21 17:04:39.000000000 +0300
++++ OpenSP-1.5.2/include/OutputCharStream.h	2014-08-24 17:23:19.957120700 +0300
 @@ -31,6 +31,7 @@
    OutputCharStream &operator<<(const char *);
    OutputCharStream &operator<<(const StringC &);
@@ -636,9 +653,9 @@ diff -Nru OpenSP-1.5.2.orig/include/OutputCharStream.h OpenSP-1.5.2/include/Outp
    OutputCharStream &operator<<(int);
    OutputCharStream &operator<<(Newline);
  private:
-diff -Nru OpenSP-1.5.2.orig/lib/MessageReporter.cxx OpenSP-1.5.2/lib/MessageReporter.cxx
---- OpenSP-1.5.2.orig/lib/MessageReporter.cxx	2005-07-21 16:05:17.000000000 +0200
-+++ OpenSP-1.5.2/lib/MessageReporter.cxx	2011-01-15 02:34:20.893130900 +0100
+diff -Nru -x '*~' OpenSP-1.5.2.orig/lib/MessageReporter.cxx OpenSP-1.5.2/lib/MessageReporter.cxx
+--- OpenSP-1.5.2.orig/lib/MessageReporter.cxx	2005-07-21 17:05:17.000000000 +0300
++++ OpenSP-1.5.2/lib/MessageReporter.cxx	2014-08-24 17:23:19.957120700 +0300
 @@ -123,7 +123,11 @@
      os() << ':';
    }
@@ -651,9 +668,9 @@ diff -Nru OpenSP-1.5.2.orig/lib/MessageReporter.cxx OpenSP-1.5.2/lib/MessageRepo
        << (unsigned long)message.type->number() << ":";
    switch (message.type->severity()) {
    case MessageType::info:
-diff -Nru OpenSP-1.5.2.orig/lib/OutputCharStream.cxx OpenSP-1.5.2/lib/OutputCharStream.cxx
---- OpenSP-1.5.2.orig/lib/OutputCharStream.cxx	2005-07-21 16:05:17.000000000 +0200
-+++ OpenSP-1.5.2/lib/OutputCharStream.cxx	2011-01-15 02:37:56.844482600 +0100
+diff -Nru -x '*~' OpenSP-1.5.2.orig/lib/OutputCharStream.cxx OpenSP-1.5.2/lib/OutputCharStream.cxx
+--- OpenSP-1.5.2.orig/lib/OutputCharStream.cxx	2005-07-21 17:05:17.000000000 +0300
++++ OpenSP-1.5.2/lib/OutputCharStream.cxx	2014-08-24 17:23:19.957120700 +0300
 @@ -61,6 +61,13 @@
    return *this << buf;
  }
@@ -668,9 +685,9 @@ diff -Nru OpenSP-1.5.2.orig/lib/OutputCharStream.cxx OpenSP-1.5.2/lib/OutputChar
  OutputCharStream &OutputCharStream::operator<<(int n)
  {
    char buf[sizeof(int)*3 + 2];
-diff -Nru OpenSP-1.5.2.orig/lib/SGMLApplication.cxx OpenSP-1.5.2/lib/SGMLApplication.cxx
+diff -Nru -x '*~' OpenSP-1.5.2.orig/lib/SGMLApplication.cxx OpenSP-1.5.2/lib/SGMLApplication.cxx
 --- OpenSP-1.5.2.orig/lib/SGMLApplication.cxx	2005-07-21 17:05:18.000000000 +0300
-+++ OpenSP-1.5.2/lib/SGMLApplication.cxx	2011-01-11 00:10:12.724406300 +0200
++++ OpenSP-1.5.2/lib/SGMLApplication.cxx	2014-08-24 17:23:19.972745700 +0300
 @@ -9,6 +9,10 @@
  #include "Boolean.h"
  #include "SGMLApplication.h"
