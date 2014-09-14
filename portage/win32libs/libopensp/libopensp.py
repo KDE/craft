@@ -1,12 +1,8 @@
 import info
 
-SRC_URI= """
-http://surfnet.dl.sourceforge.net/project/openjade/opensp/1.5.2/OpenSP-1.5.2.tar.gz
-"""
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets['1.5.2'] = SRC_URI
+        self.targets['1.5.2'] = "http://downloads.sourceforge.net/project/openjade/opensp/1.5.2/OpenSP-1.5.2.tar.gz"
         self.targetInstSrc['1.5.2'] = "OpenSP-1.5.2"
         self.patchToApply['1.5.2'] = ( "OpenSP-1.5.2-20110111.diff", 1)
         self.targetDigests['1.5.2'] = 'b4e903e980f8a8b3887396a24e067bef126e97d5'
