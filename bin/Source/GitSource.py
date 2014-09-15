@@ -111,7 +111,8 @@ class GitSource ( VersionSystemSourceBase ):
             if os.path.exists(checkoutDir):
                 if not repoTag:
                     self.__git("pull")
-                    ret = self.__git("pull", "origin", repoBranch or "master" )
+                    ret = self.__git("checkout", repoBranch or "master") and \
+                          self.__git("pull")
                     if self.subinfo.options.fetch.checkoutSubmodules:
                         self.__git("submodule update --init --recursive")
             else:
