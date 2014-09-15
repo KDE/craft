@@ -7,14 +7,14 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['2.7.0-alpha10']:
+        for ver in ['2.7.0-alpha11']:
             self.targets[ver] = 'http://www.mpir.org/mpir-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = "mpir-" + ver
-        self.targetDigests['2.7.0-alpha10'] = '815fee928c9ba5f444457144dd037300cb8f4ca4'
-        self.targetInstSrc['2.7.0-alpha10'] = 'mpir-2.7.0'
+        self.targetDigests['2.7.0-alpha11'] = 'bceecda34e8a6f45f04efa46ce98955f457aea89'
+        self.targetInstSrc['2.7.0-alpha11'] = 'mpir-2.7.0'
 
         self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
-        self.defaultTarget = '2.7.0-alpha10'
+        self.defaultTarget = '2.7.0-alpha11'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
