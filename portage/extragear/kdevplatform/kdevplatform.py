@@ -10,6 +10,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["dev-util/zip"] = "default"
+        self.buildDependencies["win32libs/boost-headers"] = "default"
         self.dependencies["libs/qtdeclarative"] = "default"
         self.dependencies["libs/qtscript"] = "default"
         self.dependencies["libs/qtwebkit"] = "default"
@@ -33,6 +34,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kxmlgui' ] = 'default'
         self.dependencies[ 'kde/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
+        self.dependencies[ 'kde/kdeclarative' ] = 'default'
 
 from Package.CMakePackageBase import *
 
