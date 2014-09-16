@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["win32libs/libbzip2"] = "default"
         self.dependencies["win32libs/zlib"] = "default"
-        if not compiler.isMSVC2010():
+        if not compiler.isMSVC2010() and not compiler.isMSVC2012():
             self.dependencies["win32libs/liblzma"] = "default"
 
 from Package.CMakePackageBase import *
