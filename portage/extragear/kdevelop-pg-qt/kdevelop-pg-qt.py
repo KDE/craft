@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'extragear/kdevelop' ] = 'default'
+        self.dependencies[ 'extragear/kdevplatform' ] = 'default'
 
 from Package.CMakePackageBase import *
 
