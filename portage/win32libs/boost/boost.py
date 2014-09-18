@@ -19,6 +19,9 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/boost-system'] = 'default'
         self.dependencies['win32libs/boost-thread'] = 'default'
         self.dependencies['win32libs/boost-random'] = 'default'
+        self.dependencies['win32libs/boost-iostreams'] = 'default'
+        self.dependencies['win32libs/boost-filesystem'] = 'default'
+        self.dependencies['win32libs/boost-date-time'] = 'default'
 
 from Package.VirtualPackageBase import *
 
