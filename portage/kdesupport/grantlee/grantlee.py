@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://gitorious.org/grantlee/grantlee.git| volatile_qt5_port"
+        self.svnTargets['gitHEAD'] = "git://gitorious.org/grantlee/grantlee.git"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
