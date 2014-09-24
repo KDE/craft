@@ -14,13 +14,13 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'https://github.com/Snorenotify/Snorenotify.git'
-        for ver in ['0.2','0.3','0.4-beta1','0.4-beta2']:
+        for ver in ['0.5.1']:
             self.targets[ver] = 'https://github.com/TheOneRing/Snorenotify/archive/v%s.tar.gz' % ver
             self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
             self.targetInstSrc[ver] = 'Snorenotify-%s' % ver
-        self.targetDigests['0.4-beta1'] = '76996e2ebd23fa7b99b68e743c880b3fa0d724af'
+        self.targetDigests['0.5.1'] = 'eb83e0b7bccfc1c307a8457265dc4a5607a8b877'
         self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '0.5.1'
 
 
 class Package( CMakePackageBase ):
