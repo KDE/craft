@@ -28,6 +28,7 @@ bin\\icudt\d+\.dll
 #
 #qt
 bin\\Qt5Core\.dll
+bin\\Qt5Declarative\.dll
 bin\\Qt5Gui\.dll
 bin\\Qt5Network\.dll
 bin\\Qt5Opengl\.dll
@@ -35,8 +36,9 @@ bin\\Qt5Printsupport\.dll
 bin\\Qt5Script\.dll
 bin\\Qt5Sql\.dll
 bin\\Qt5Widgets\.dll
-bin\\libglesv.*\.dll
-bin\\libEGL\.dll
+bin\\Qt5XmlPatterns\.dll
+bin\\.*libglesv.*\.dll
+bin\\.*libEGL\.dll
 #bin\\QtXml\.dll
 #
 plugins\\imageformats\\.*
