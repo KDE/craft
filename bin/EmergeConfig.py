@@ -176,7 +176,11 @@ class EmergeConfig( object ):
                         clean = False
                         match = self.variablePatern.findall( val )[ 0 ]
                         self._config[ section ][ key ] = val.replace( match, self._config[ section ][ match[ 2:-1 ] ] )
-
+                        
+        if self.getboolean("QtSDK", "Enabled", "false"):
+            self.set("Portage", "PACKAGE_IGNORES", self.get("Portage", "PACKAGE_IGNORES") + ";libs/qt;libs/qt5;libs/qtbase;libs/qtwebkit;libs/qttools;libs/qtscript;libs/qtactiveqt;libs/qtxmlpatterns;" +
+            "libs/qtdeclarative;libs/qtsvg;libs/qtgraphicaleffects;libs/qtimageformats;libs/qtmultimedia;libs/qtquick1;libs/qtwinextras;dev-util/mingw-w64;binary/mysql-pkg")
+        
 
     def __contains__( self, key ):
         return self._config and self._config.has_section( key[ 0 ] ) and key[ 1 ] in self._config[ key[ 0 ] ]

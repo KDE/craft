@@ -125,12 +125,18 @@ class SetupHelper( object ):
             os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugin" )) )
         self.addEnvVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
 
+        if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
+            self.prependPath( os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
+        
         if compiler.isMinGW( ):
-            if compiler.isX86( ):
-                self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
+            if not emergeSettings.getboolean("QtSDK", "Enabled", "false"):
+                if compiler.isX86( ):
+                    self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
+                else:
+                    self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
             else:
-                self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
-
+                self.prependPath( os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
+        
         if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
             self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
         self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
