@@ -441,6 +441,7 @@ class Portage(object):
 
         for pack in installed:
             version = pack.getVersion()
+            if not version or not newest: continue
             if utils.parse_version(newest) < utils.parse_version(version):
                 newest = version
         return newest
