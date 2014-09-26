@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.shortDescription = "ruby support for kdevelop"
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/bison'] = 'default'
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.dependencies['extragear/kdevplatform'] = 'default'
 
 from Package.CMakePackageBase import *
