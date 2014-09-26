@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
         for i in ( '0.18.0', '0.18.1', '0.18.2', '0.20.3', '0.22.3' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.gz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
-        for i in ( '0.24.3', '0.24.5' ):
+        for i in ( '0.24.3', '0.24.5', '0.26.4' ):
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.xz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
-            
+
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.svnTargets['0.18-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.18"
         self.svnTargets['0.20-branch'] = "git://git.freedesktop.org/git/poppler/poppler|poppler-0.20"
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.patchToApply["0.24.5"] = [("poppler-0.24.5-20131110.diff",1)]
 
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
-        self.defaultTarget = "0.24.5"
+        self.defaultTarget = "0.26.4"
 
     def setDependencies( self ):
         self.dependencies['win32libs/freetype'] = 'default'
@@ -36,7 +36,6 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/jpeg'] = 'default'
         self.dependencies['win32libs/libpng'] = 'default'
         self.dependencies['win32libs/libcurl'] = 'default'
-        self.dependencies['win32libs/libxml2'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'
         self.runtimeDependencies['data/poppler-data'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
