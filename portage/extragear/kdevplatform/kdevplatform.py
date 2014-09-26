@@ -35,7 +35,6 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/kdeclarative' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
-        self.dependencies[ 'kde/kdeclarative' ] = 'default'
 
 from Package.CMakePackageBase import *
 
