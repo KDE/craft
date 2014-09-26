@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libxml2'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'
         self.runtimeDependencies['data/poppler-data'] = 'default'
-        self.dependencies['libs/qt'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
