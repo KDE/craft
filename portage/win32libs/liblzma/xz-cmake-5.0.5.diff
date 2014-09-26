@@ -1,7 +1,7 @@
 diff -Nru -x '*~' xz-5.0.5.orig/CMakeLists.txt xz-5.0.5/CMakeLists.txt
 --- xz-5.0.5.orig/CMakeLists.txt    1970-01-01 01:00:00.000000000 +0100
 +++ xz-5.0.5/CMakeLists.txt 2014-05-08 19:00:58.250071500 +0200
-@@ -0,0 +1,235 @@
+@@ -0,0 +1,237 @@
 +cmake_minimum_required(VERSION 2.8.12)
 +project(liblzma)
 +include(CheckIncludeFiles)
@@ -32,6 +32,7 @@ diff -Nru -x '*~' xz-5.0.5.orig/CMakeLists.txt xz-5.0.5/CMakeLists.txt
 +check_include_files(pthread.h HAVE_PTHREAD)
 +
 +set(HAVE_ASM_X86 1)
++set(HAVE_CHECK_CRC32 1)
 +set(HAVE_CHECK_CRC64 1)
 +set(HAVE_CHECK_SHA256 1)
 +set(HAVE_DECODER 1)
@@ -174,12 +175,13 @@ diff -Nru -x '*~' xz-5.0.5.orig/CMakeLists.txt xz-5.0.5/CMakeLists.txt
 +add_definitions("-DHAVE_CONFIG_H")
 +
 +if(MSVC)
-+    add_compile_options("/Ze") # we need language extensions
++    add_compile_options(-wd4244)
 +else()
 +    add_compile_options("-std=gnu99")
 +endif()
 +
 +add_library(lzma SHARED ${LZMA_SRC})
++set_target_properties(lzma PROPERTIES DEFINE_SYMBOL DLL_EXPORT)
 +install(TARGETS lzma RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
 +
 +if(NOT MSVC) # uses unistd.h functions and getopt
