@@ -32,7 +32,8 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/kxmlgui' ] = 'default'
         self.dependencies[ 'kde/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
-        self.dependencies[ 'kde/krunner' ] = 'default'
+	# krunner is an optional dependency now
+        #self.dependencies[ 'kde/krunner' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
 
 
