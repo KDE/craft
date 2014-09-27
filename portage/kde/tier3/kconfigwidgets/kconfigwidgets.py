@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.dependencies["kde/kauth"] = "default"
+        self.dependencies["frameworks/kauth"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
         self.dependencies["frameworks/kcodecs"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["kde/kdoctools"] = "default"
+        self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["frameworks/kwidgetsaddons"] = "default"

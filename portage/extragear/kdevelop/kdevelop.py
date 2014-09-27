@@ -19,7 +19,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/ki18n' ] = 'default'
         self.dependencies[ 'frameworks/kitemmodels' ] = 'default'
         self.dependencies[ 'frameworks/kitemviews' ] = 'default'
-        self.dependencies[ 'kde/kjobwidgets' ] = 'default'
+        self.dependencies[ 'frameworks/kjobwidgets' ] = 'default'
         self.dependencies[ 'kde/kcmutils' ] = 'default'
         self.dependencies[ 'kde/knewstuff' ] = 'default'
         self.dependencies[ 'kde/knotifyconfig' ] = 'default'

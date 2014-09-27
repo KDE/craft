@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kinit'] = "default"
         self.dependencies['frameworks/kconfig'] = "default"
         self.dependencies['frameworks/kcoreaddons'] = "default"
-        self.dependencies['kde/kcrash'] = "default"
+        self.dependencies['frameworks/kcrash'] = "default"
         self.dependencies['frameworks/kdbusaddons'] = "default"
-        self.dependencies['kde/kdoctools'] = "default"
+        self.dependencies['frameworks/kdoctools'] = "default"
         self.dependencies['kde/kservice'] = "default"
 
 from Package.CMakePackageBase import *

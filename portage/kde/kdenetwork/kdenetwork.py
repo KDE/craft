@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
 #        self.dependencies['kde/kdenetwork-filesharing'] = 'default'
         self.dependencies['kde/kdenetwork-strigi-analyzers'] = 'default'
-        self.dependencies['kde/kdnssd'] = 'default' # this builds fine, but is it really useful?
+        self.dependencies['frameworks/kdnssd'] = 'default' # this builds fine, but is it really useful?
         self.dependencies['kde/kget'] = 'default'
         self.dependencies['kde/kopete'] = 'default'
 #        self.dependencies['kde/kppp'] = 'default' # doesn't build on windows

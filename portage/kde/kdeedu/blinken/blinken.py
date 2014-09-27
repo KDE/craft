@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['kde/kxmlgui'] = 'default'
         self.dependencies['frameworks/kguiaddons'] = 'default'
-        self.dependencies['kde/kdoctools'] = 'default'
+        self.dependencies['frameworks/kdoctools'] = 'default'
 
 from Package.CMakePackageBase import *
 

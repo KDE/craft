@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["kde/kdoctools"] = "default"
+        self.dependencies["frameworks/kdoctools"] = "default"
 
 from Package.CMakePackageBase import *
 

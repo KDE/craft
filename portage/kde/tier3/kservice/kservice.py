@@ -13,10 +13,10 @@ class subinfo(info.infoclass):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["kde/kcrash"] = "default"
+        self.dependencies["frameworks/kcrash"] = "default"
         self.dependencies["frameworks/kdbusaddons"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["kde/kdoctools"] = "default"
+        self.dependencies["frameworks/kdoctools"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kitemviews'] = 'default'
         self.dependencies['kde/kiconthemes'] = 'default'
         self.dependencies['kde/kservice'] = 'default'
-        self.dependencies['kde/kdoctools'] = 'default'
+        self.dependencies['frameworks/kdoctools'] = 'default'
 
 from Package.CMakePackageBase import *
 

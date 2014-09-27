@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['kde/kcrash'] = 'default'
+        self.dependencies['frameworks/kcrash'] = 'default'
         self.dependencies['frameworks/sonnet'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kconfigwidgets'] = 'default'

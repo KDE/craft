@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['kde/kparts'] = 'default'
-        self.dependencies['kde/kdoctools'] = 'default'
+        self.dependencies['frameworks/kdoctools'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['kde/ktexteditor'] = 'default'
         self.dependencies['kde/kiconthemes'] = 'default'

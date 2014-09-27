@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kconfig'] = "default"
         self.dependencies['frameworks/kcoreaddons'] = "default"
         self.dependencies['kde/kio'] = "default"
-        self.dependencies['kde/kjobwidgets'] = "default"
+        self.dependencies['frameworks/kjobwidgets'] = "default"
         self.dependencies['kde/kparts'] = "default"
         self.dependencies['kde/kservice'] = "default"
         self.dependencies['kde/kwallet'] = "default"
