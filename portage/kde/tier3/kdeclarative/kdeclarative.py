@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['kde/kwindowsystem'] = 'default'
         self.dependencies['kde/kglobalaccel'] = 'default'
-        self.dependencies['kde/kguiaddons'] = 'default'
+        self.dependencies['frameworks/kguiaddons'] = 'default'
 
 from Package.CMakePackageBase import *
 

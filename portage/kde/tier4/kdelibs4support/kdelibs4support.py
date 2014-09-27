@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kglobalaccel"] = 'default'
         self.dependencies["kde/kdoctools"] = 'default'
         self.dependencies["kde/kemoticons"] = 'default'
-        self.dependencies["kde/kguiaddons"] = 'default'
+        self.dependencies["frameworks/kguiaddons"] = 'default'
         self.dependencies["kde/ki18n"] = 'default'
         self.dependencies["kde/kiconthemes"] = 'default'
         self.dependencies["kde/kinit"] = 'default'

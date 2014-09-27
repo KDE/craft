@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kcodecs"] = "default"
         self.dependencies["kde/kconfig"] = "default"
         self.dependencies["kde/kdoctools"] = "default"
-        self.dependencies["kde/kguiaddons"] = "default"
+        self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["kde/ki18n"] = "default"
         self.dependencies["frameworks/kwidgetsaddons"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"

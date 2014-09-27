@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['kde/kconfig'] = 'default'
         self.dependencies['kde/kdoctools'] = 'default'
-        self.dependencies['kde/kguiaddons'] = 'default'
+        self.dependencies['frameworks/kguiaddons'] = 'default'
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['kde/knewstuff'] = 'default'
         self.dependencies['kde/kdbusaddons'] = 'default'

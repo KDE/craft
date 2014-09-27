@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies["libs/qtwebkit"] = "default"
         self.dependencies[ 'kde/karchive' ] = 'default'
         self.dependencies[ 'kde/kconfig' ] = 'default'
-        self.dependencies[ 'kde/kguiaddons' ] = 'default'
+        self.dependencies[ 'frameworks/kguiaddons' ] = 'default'
         self.dependencies[ 'kde/ki18n' ] = 'default'
         self.dependencies[ 'kde/kitemmodels' ] = 'default'
         self.dependencies[ 'kde/kitemviews' ] = 'default'
