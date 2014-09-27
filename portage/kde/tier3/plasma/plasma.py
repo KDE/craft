@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/karchive'] = "default"
         self.dependencies['kde/kconfig'] = "default"
         self.dependencies['kde/kconfigwidgets'] = "default"
-        self.dependencies['kde/kcoreaddons'] = "default"
+        self.dependencies['frameworks/kcoreaddons'] = "default"
         self.dependencies['kde/kdbusaddons'] = "default"
         self.dependencies['kde/kdeclarative'] = "default"
         self.dependencies['kde/kglobalaccel'] = "default"

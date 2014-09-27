@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kservice"] = 'default'
         self.dependencies["kde/ktextwidgets"] = 'default'
         self.dependencies["kde/kunitconversion"] = 'default'
-        self.dependencies["kde/kwidgetsaddons"] = 'default'
+        self.dependencies["frameworks/kwidgetsaddons"] = 'default'
         self.dependencies["kde/kwindowsystem"] = 'default'
         self.dependencies["kde/kxmlgui"] = 'default'
 

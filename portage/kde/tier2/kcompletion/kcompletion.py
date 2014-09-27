@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["kde/kconfig"] = "default"
-        self.dependencies["kde/kwidgetsaddons"] = "default"
+        self.dependencies["frameworks/kwidgetsaddons"] = "default"
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

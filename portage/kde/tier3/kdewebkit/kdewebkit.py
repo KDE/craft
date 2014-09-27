@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
 #        self.dependencies['libs/qtwebkit-widgets'] = "default"
         self.dependencies['kde/kconfig'] = "default"
-        self.dependencies['kde/kcoreaddons'] = "default"
+        self.dependencies['frameworks/kcoreaddons'] = "default"
         self.dependencies['kde/kio'] = "default"
         self.dependencies['kde/kjobwidgets'] = "default"
         self.dependencies['kde/kparts'] = "default"

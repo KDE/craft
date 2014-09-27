@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["kde/kconfig"] = "default"
-        self.dependencies["kde/kcoreaddons"] = "default"
+        self.dependencies["frameworks/kcoreaddons"] = "default"
         self.dependencies["kde/kdbusaddons"] = "default"
         self.dependencies["kde/ki18n"] = "default"
         self.dependencies["kde/kiconthemes"] = "default"

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/analitza'] = 'default'
         self.dependencies['kde/ki18n'] = 'default'
         self.dependencies['kde/kconfigwidgets'] = 'default'
-        self.dependencies['kde/kwidgetsaddons'] = 'default'
+        self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['kde/kio'] = 'default'
         self.dependencies['kde/kdoctools'] = 'default'
 

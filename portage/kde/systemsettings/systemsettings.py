@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
         self.dependencies['kde/ki18n'] = 'default'
         self.dependencies['kde/kconfig'] = 'default'
         self.dependencies['kde/kguiaddons'] = 'default'
-        self.dependencies["kde/kwidgetsaddons"] = 'default'
+        self.dependencies["frameworks/kwidgetsaddons"] = 'default'
         self.dependencies['kde/kservice'] = 'default'
         self.dependencies['kde/kcompletion'] = 'default'
         self.dependencies['kde/frameworkintegration'] = 'default'

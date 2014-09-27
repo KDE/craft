@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/solid'] = 'default'
         self.dependencies['kde/sonnet'] = 'default'
         self.dependencies['kde/kwallet'] = 'default'
-        self.dependencies['kde/kwidgetsaddons'] = 'default'
+        self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['qt-libs/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.shortDescription = "a KDE based irc client"

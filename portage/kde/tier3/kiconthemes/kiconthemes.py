@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies["libs/qtsvg"] = "default"
         self.dependencies["kde/ki18n"] = "default"
         self.dependencies["kde/kconfigwidgets"] = "default"
-        self.dependencies["kde/kwidgetsaddons"] = "default"
+        self.dependencies["frameworks/kwidgetsaddons"] = "default"
         self.dependencies["kde/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *

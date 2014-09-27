@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies["kde/kiconthemes"] = 'default'
         self.dependencies["kde/kio"] = 'default'
         self.dependencies["kde/knotifications"] = 'default'
-        self.dependencies["kde/kwidgetsaddons"] = 'default'
+        self.dependencies["frameworks/kwidgetsaddons"] = 'default'
 
 
 from Package.CMakePackageBase import *
