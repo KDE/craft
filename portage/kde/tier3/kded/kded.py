@@ -11,10 +11,10 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies['kde/kinit'] = "default"
-        self.dependencies['kde/kconfig'] = "default"
+        self.dependencies['frameworks/kconfig'] = "default"
         self.dependencies['frameworks/kcoreaddons'] = "default"
         self.dependencies['kde/kcrash'] = "default"
-        self.dependencies['kde/kdbusaddons'] = "default"
+        self.dependencies['frameworks/kdbusaddons'] = "default"
         self.dependencies['kde/kdoctools'] = "default"
         self.dependencies['kde/kservice'] = "default"
 

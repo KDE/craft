@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kcompletion'] = "default"
         self.dependencies['frameworks/kcoreaddons'] = "default"
         self.dependencies['kde/kdoctools'] = "default"
-        self.dependencies['kde/ki18n'] = "default"
+        self.dependencies['frameworks/ki18n'] = "default"
         self.dependencies['kde/kiconthemes'] = "default"
         self.dependencies['kde/kio'] = "default"
         self.dependencies['kde/kparts'] = "default"

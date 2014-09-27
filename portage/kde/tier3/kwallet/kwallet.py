@@ -11,13 +11,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.dependencies["kde/kconfig"] = "default"
+        self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["kde/kdbusaddons"] = "default"
-        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["frameworks/kdbusaddons"] = "default"
+        self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["kde/kiconthemes"] = "default"
         self.dependencies["kde/knotifications"] = "default"
-        self.dependencies["kde/kwindowsystem"] = "default"
+        self.dependencies["frameworks/kwindowsystem"] = "default"
         self.dependencies["win32libs/gcrypt"] = "default"
 
 from Package.CMakePackageBase import *

@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kde/kconfig'] = 'default'
-        self.dependencies['kde/ki18n'] = 'default'
-        self.dependencies['kde/karchive'] = 'default'
+        self.dependencies['frameworks/kconfig'] = 'default'
+        self.dependencies['frameworks/ki18n'] = 'default'
+        self.dependencies['frameworks/karchive'] = 'default'
         self.dependencies['kde/kio'] = 'default'
 
 from Package.CMakePackageBase import *

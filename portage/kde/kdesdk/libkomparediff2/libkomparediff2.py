@@ -18,9 +18,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["kde/kcodecs"] = "default"
+        self.dependencies["frameworks/kcodecs"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["kde/ki18n"] = "default"
+        self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["kde/kio"] = "default"
         self.dependencies["kde/kxmlgui"] = "default"
 

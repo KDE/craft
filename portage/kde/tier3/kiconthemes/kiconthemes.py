@@ -13,10 +13,10 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qtsvg"] = "default"
-        self.dependencies["kde/ki18n"] = "default"
-        self.dependencies["kde/kconfigwidgets"] = "default"
+        self.dependencies["frameworks/ki18n"] = "default"
+        self.dependencies["frameworks/kconfigwidgets"] = "default"
         self.dependencies["frameworks/kwidgetsaddons"] = "default"
-        self.dependencies["kde/kitemviews"] = "default"
+        self.dependencies["frameworks/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *
 

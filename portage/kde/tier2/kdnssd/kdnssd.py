@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.dependencies["kde/kconfig"] = "default"
+        self.dependencies["frameworks/kconfig"] = "default"
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

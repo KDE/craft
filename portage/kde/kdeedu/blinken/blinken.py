@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
-        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['kde/kxmlgui'] = 'default'
         self.dependencies['frameworks/kguiaddons'] = 'default'
         self.dependencies['kde/kdoctools'] = 'default'

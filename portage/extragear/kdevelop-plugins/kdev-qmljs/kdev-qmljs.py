@@ -11,10 +11,10 @@ class subinfo( info.infoclass ):
         # python interpreter is needed?!?
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
-        self.dependencies['kde/threadweaver'] = 'default'
+        self.dependencies['frameworks/threadweaver'] = 'default'
         self.dependencies['kde/ktexteditor'] = 'default'
         self.dependencies['kde/kdeclarative'] = 'default'
-        self.dependencies['kde/ki18n'] = 'default'
+        self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['kde/kdelibs4support'] = 'default'
         self.dependencies['extragear/kdevplatform'] = 'default'
         self.dependencies['extragear/kdevelop'] = 'default'
