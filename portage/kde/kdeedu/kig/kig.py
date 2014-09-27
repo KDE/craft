@@ -12,16 +12,16 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
-        self.dependencies['kde/kparts'] = 'default'
+        self.dependencies['frameworks/kparts'] = 'default'
         self.dependencies['frameworks/kdoctools'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['kde/ktexteditor'] = 'default'
-        self.dependencies['kde/kiconthemes'] = 'default'
+        self.dependencies['frameworks/ktexteditor'] = 'default'
+        self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/kconfigwidgets'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
         self.dependencies['kde/kdelibs4support'] = 'default'
         # only needed for unit tests
-        self.buildDependencies['kde/kemoticons'] = 'default'
+        self.buildDependencies['frameworks/kemoticons'] = 'default'
         self.buildDependencies['frameworks/kitemmodels'] = 'default'
         if self.options.features.pythonSupport:
             self.dependencies['win32libs/boost-python'] = 'default'

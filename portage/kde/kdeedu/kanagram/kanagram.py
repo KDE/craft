@@ -17,9 +17,9 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/sonnet'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kconfigwidgets'] = 'default'
-        self.dependencies['kde/kdeclarative'] = 'default'
-        self.dependencies['kde/kio'] = 'default'
-        self.dependencies['kde/knewstuff'] = 'default'
+        self.dependencies['frameworks/kdeclarative'] = 'default'
+        self.dependencies['frameworks/kio'] = 'default'
+        self.dependencies['frameworks/knewstuff'] = 'default'
         self.dependencies['kde/kdelibs4support'] = 'default'
         self.dependencies['kde/libkeduvocdocument'] = 'default'
 

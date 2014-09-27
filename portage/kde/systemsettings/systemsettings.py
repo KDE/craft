@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kguiaddons'] = 'default'
         self.dependencies["frameworks/kwidgetsaddons"] = 'default'
-        self.dependencies['kde/kservice'] = 'default'
+        self.dependencies['frameworks/kservice'] = 'default'
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['kde/frameworkintegration'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'

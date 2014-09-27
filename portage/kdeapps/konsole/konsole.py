@@ -8,10 +8,10 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies['testing/kcwsh'] = 'default'
-        self.dependencies['kde/kbookmarks'] = 'default'
-        self.dependencies['kde/kinit'] = 'default'
+        self.dependencies['frameworks/kbookmarks'] = 'default'
+        self.dependencies['frameworks/kinit'] = 'default'
         self.dependencies['kde/kdelibs4support'] = 'default'
-        self.dependencies['kde/knotifyconfig'] = 'default'
+        self.dependencies['frameworks/knotifyconfig'] = 'default'
 
 
 from Package.CMakePackageBase import *

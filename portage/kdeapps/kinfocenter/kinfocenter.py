@@ -8,10 +8,10 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['kde/kiconthemes'] = 'default'
-        self.dependencies['kde/kcmutils'] = 'default'
+        self.dependencies['frameworks/kiconthemes'] = 'default'
+        self.dependencies['frameworks/kcmutils'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
-        self.dependencies['kde/plasma'] = 'default'
+        self.dependencies['frameworks/plasma'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
         self.dependencies['kde/kdelibs4support'] = 'default'

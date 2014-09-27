@@ -11,14 +11,14 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kde/kxmlgui'] = 'default'
+        self.dependencies['frameworks/kxmlgui'] = 'default'
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['frameworks/kcoreaddons'] = 'default'
         self.dependencies['frameworks/kconfigwidgets'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kitemviews'] = 'default'
-        self.dependencies['kde/kiconthemes'] = 'default'
-        self.dependencies['kde/kservice'] = 'default'
+        self.dependencies['frameworks/kiconthemes'] = 'default'
+        self.dependencies['frameworks/kservice'] = 'default'
         self.dependencies['frameworks/kdoctools'] = 'default'
 
 from Package.CMakePackageBase import *

@@ -22,8 +22,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/ebook-tools'] = 'default'
         self.buildDependencies['win32libs/libspectre'] = 'default'
         self.dependencies['binary/ghostscript'] = 'default'
-        self.dependencies['kde/khtml'] = 'default'
-        self.dependencies['kde/kactivities'] = 'default'
+        self.dependencies['frameworks/khtml'] = 'default'
+        self.dependencies['frameworks/kactivities'] = 'default'
 
 from Package.CMakePackageBase import *
 

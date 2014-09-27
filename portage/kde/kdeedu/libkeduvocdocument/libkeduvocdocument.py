@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
-        self.dependencies['kde/kio'] = 'default'
+        self.dependencies['frameworks/kio'] = 'default'
 
 from Package.CMakePackageBase import *
 

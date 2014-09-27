@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["frameworks/kconfig"] = 'default'
         self.dependencies["frameworks/ki18n"] = 'default'
-        self.dependencies["kde/kiconthemes"] = 'default'
-        self.dependencies["kde/kio"] = 'default'
-        self.dependencies["kde/knotifications"] = 'default'
+        self.dependencies["frameworks/kiconthemes"] = 'default'
+        self.dependencies["frameworks/kio"] = 'default'
+        self.dependencies["frameworks/knotifications"] = 'default'
         self.dependencies["frameworks/kwidgetsaddons"] = 'default'
 
 

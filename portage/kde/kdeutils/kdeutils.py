@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kcharselect'] = 'default'
         self.dependencies['kde/kgpg'] = 'default'
         self.dependencies['kde/ktimer'] = 'default'
-        self.dependencies['kde/kwallet'] = 'default'
+        self.dependencies['frameworks/kwallet'] = 'default'
         self.dependencies['kde/sweeper'] = 'default'
 #        self.dependencies['kde/kdf'] = 'default'
 #        self.dependencies['kde/kfloppy'] = 'default'
