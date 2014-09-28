@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['qt-libs/libechonest'] = 'default'
         self.dependencies['frameworks/attica'] = 'default'
         self.dependencies['qt-libs/liblastfm'] = 'default'
-        self.dependencies['win32libs/clucene-core'] = 'default'
+        self.dependencies['win32libs/luceneplusplus'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/gnutls'] = 'default'
         self.buildDependencies['win32libs/websocketpp'] = 'default'
