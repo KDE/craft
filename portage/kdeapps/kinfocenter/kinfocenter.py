@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/plasma'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
 
 
 

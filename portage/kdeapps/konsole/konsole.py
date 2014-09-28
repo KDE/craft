@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
         self.dependencies['testing/kcwsh'] = 'default'
         self.dependencies['frameworks/kbookmarks'] = 'default'
         self.dependencies['frameworks/kinit'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/knotifyconfig'] = 'default'
 
 

@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.shortDescription = 'kf5 tier4'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
    
 
 from Package.VirtualPackageBase import *

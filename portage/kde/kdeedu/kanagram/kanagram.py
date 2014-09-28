@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kdeclarative'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/knewstuff'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['kde/libkeduvocdocument'] = 'default'
 
 from Package.CMakePackageBase import *

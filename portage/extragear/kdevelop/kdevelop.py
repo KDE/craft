@@ -30,7 +30,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/threadweaver' ] = 'default'
         self.dependencies[ 'frameworks/kwindowsystem' ] = 'default'
         self.dependencies[ 'frameworks/kxmlgui' ] = 'default'
-        self.dependencies[ 'kde/kdelibs4support' ] = 'default'
+        self.dependencies[ 'frameworks/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
 	# krunner is an optional dependency now
         #self.dependencies[ 'frameworks/krunner' ] = 'default'

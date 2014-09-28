@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/ktexteditor'] = 'default'
         self.dependencies['frameworks/kdeclarative'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['extragear/kdevplatform'] = 'default'
         self.dependencies['extragear/kdevelop'] = 'default'
 

@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/kconfigwidgets'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
         # only needed for unit tests
         self.buildDependencies['frameworks/kemoticons'] = 'default'
         self.buildDependencies['frameworks/kitemmodels'] = 'default'

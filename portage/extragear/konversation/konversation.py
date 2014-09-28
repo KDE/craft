@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kidletime'] = 'default'
         self.dependencies['frameworks/knotifyconfig'] = 'default'
-        self.dependencies['kde/kdelibs4support'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/kparts'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
