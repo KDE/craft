@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.buildDependencies['win32libs/boost-bjam'] = 'default'
+        self.dependencies['win32libs/zlib'] = 'default'
 
 
 from Package.BoostPackageBase import *
