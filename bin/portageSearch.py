@@ -10,18 +10,18 @@ def printSearch(search_category, search_package,maxDist = 2):
         similar = []
         match = None
         package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
-        for p in installable:
-            if search_category == "" or search_category == p.category:
-                package = portage.PortageInstance.getPackageInstance( p.category, p.package)
+        for _p in installable:
+            if search_category == "" or search_category == _p.category:
+                package = portage.PortageInstance.getPackageInstance( _p.category, _p.package)
                 if not package:
                     continue
                 levDist = utils.levenshtein(search_package.lower(),package.package.lower())
                 if levDist == 0 :
                     match = (levDist,package)
-                    break;
+                    break
                 elif package_re.match(package.package):
                     similar.append((levDist-maxDist,package))
-                elif len(p.package)>maxDist and levDist <= maxDist:
+                elif len(package.package)>maxDist and levDist <= maxDist:
                     similar.append((levDist,package))
                 else:
                     if package_re.match(package.subinfo.shortDescription):
@@ -39,7 +39,7 @@ def printSearch(search_category, search_package,maxDist = 2):
         
         for levDist,package in similar:
             utils.debug((package,levDist),1)
-            print(p)
+            print(package)
             print("\t Homepage: %s" % package.subinfo.homepage)
             print("\t Description: %s" % package.subinfo.shortDescription)
             print("\t Latest version: %s" % package.subinfo.defaultTarget)
