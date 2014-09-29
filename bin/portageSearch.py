@@ -26,11 +26,11 @@ def printSearch(search_category, search_package,maxDist = 2):
                 else:
                     if package_re.match(package.subinfo.shortDescription):
                         similar.append((100,package))
-                
+
         if match == None:
             if len(similar)>0:
                 print("Emerge was unable to find %s, similar packages are:" % search_package) 
-                similar.sort()
+                similar.sort( key = lambda x: x[0])
             else:
                 print("Emerge was unable to find %s" % search_package)
         else:
