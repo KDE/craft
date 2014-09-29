@@ -8,6 +8,16 @@ class PackageObjectBase(object):
         self.package = package
         self.enabled = enabled
 
+
+    def fullName(self):
+        if not self.category or not self.package:
+            return ""
+        if self.subpackage:
+            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
+        else:
+            return "%s/%s" % (self.category,self.package)
+
+
     def __eq__(self, other):
         #print("eq", type(other), other)
         if isinstance(other, PackageObjectBase):
@@ -23,12 +33,7 @@ class PackageObjectBase(object):
         return False
 
     def __str__(self):
-        if not self.category or not self.package:
-            return ""
-        if self.subpackage:
-            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
-        else:
-            return "%s/%s" % (self.category,self.package)
+        return self.fullName()
 
     def __bool__(self):
         #print("bool:", self.enabled)
