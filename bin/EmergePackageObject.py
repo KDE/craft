@@ -10,8 +10,6 @@ class PackageObjectBase(object):
 
 
     def fullName(self):
-        if not self.category or not self.package:
-            return ""
         if self.subpackage:
             return "%s/%s/%s" % (self.category,self.subpackage,self.package)
         else:
