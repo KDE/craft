@@ -26,9 +26,7 @@ class PackageObjectBase(object):
         if isinstance(other, str):
             if other == self.package:
                 return True
-            if other == self.category + "/" + self.package:
-                return True
-            if self.subpackage and other == self.category + "/" + self.subpackage + "/" + self.package:
+            if other == self.fullName():
                 return True
         return False
 
