@@ -10,6 +10,8 @@ from EmergeConfig import *
 import InstallDB
 import utils
 
+class PortageCache(object):
+    _rootDirCache = dict()
 
 class PortageException(Exception,PackageObjectBase):
     def __init__(self, message, category, package ):
@@ -145,18 +147,21 @@ def rootDirForCategory( category ):
 def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
     # first occurance of a package or the default value
-    subpackage, package = getSubPackage( category, package )
-    if category and package:
-        if subpackage:
-            for i in rootDirectories():
-                if os.path.exists( os.path.join( i, category, package, subpackage ) ):
-                    return i
-        else:
-            for i in rootDirectories():
-                if os.path.exists( os.path.join( i, category, package ) ):
-                    return i
-    # as a fall back return the default even if it might be wrong
-    return os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
+    name = "%s/%s" % ( category,package)
+    if not name in PortageCache._rootDirCache:
+        subpackage, package = getSubPackage( category, package )
+        if category and package:
+            if subpackage:
+                for i in rootDirectories():
+                    if os.path.exists( os.path.join( i, category, package, subpackage ) ):
+                        PortageCache._rootDirCache[name] = i
+            else:
+                for i in rootDirectories():
+                    if os.path.exists( os.path.join( i, category, package ) ):
+                        PortageCache._rootDirCache[name] = i
+        # as a fall back return the default even if it might be wrong
+        PortageCache._rootDirCache[name] = os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
+    return PortageCache._rootDirCache[name]
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
@@ -172,24 +177,6 @@ def getDirname( category, package ):
 def getFilename( category, package ):
     """ return absolute filename for a given category, package  """
     return os.path.join( getDirname( category, package ), "%s.py" % package  )
-
-def getCategoryPackageVersion( path ):
-    utils.debug( "getCategoryPackageVersion: %s" % path, 2 )
-    head, fullFileName = os.path.split( path )
-    for rd in rootDirectories():
-        if head.startswith(rd):
-            head = head.replace(rd + os.sep, "")
-            break
-
-    if len( head.split( os.sep ) )  == 3:
-        category, _dummy, package = head.split( os.sep )
-    else:
-        head, package = os.path.split( head )
-        head, category = os.path.split( head )
-
-    package = os.path.splitext( fullFileName )[0]
-    utils.debug( "category: %s, package: %s" % ( category, package ), 1 )
-    return [ category, package ] # TODO: why a list and not a tuple?
 
 def VCSDirs():
     return [ '.svn', 'CVS', '.hg', '.git' ]
