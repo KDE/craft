@@ -318,7 +318,7 @@ class Portage(object):
         else:
             return
 
-    def getPackageInstance(self, category, package, buildtarget=None):
+    def getPackageInstance(self, category, package):
         """return instance of class Package from package file"""
         fileName =  getFilename( category, package )
         pack = None
@@ -337,7 +337,8 @@ class Portage(object):
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
                     mod = loader.load_module(modulename)
                 if not mod is None:
-                    self._CURRENT_MODULE  = ( fileName, category, package, mod )
+                    _, subpackage = getSubPackage( category, package )
+                    self._CURRENT_MODULE  = ( fileName, category,subpackage, package, mod )
                     pack = mod.Package( )
                     self._packageDict[ fileName ] = pack
                 else:
@@ -357,27 +358,6 @@ class Portage(object):
             return info.defaultTarget
         else:
             return None
-
-    def getMetaData( self, category, package ):
-        """ returns all targets of a specified package """
-        utils.debug( "getMetaData: importing file %s" % getFilename( category, package ), 1 )
-        if not ( category and package ):
-            return dict()
-        info = _getSubinfo(  category, package  )
-        if not info is None:
-            tmpdict = dict()
-            tmpdict['categoryName'] = info.category
-            if not info.shortDescription == "":
-                tmpdict['shortDescription'] = info.shortDescription
-            if not info.description == "":
-                tmpdict['description'] = info.description
-            if not info.homepage == "":
-                tmpdict['homepage'] = info.homepage
-            tmpdict['withCompiler'] = info.options.package.withCompiler
-            utils.debug( tmpdict, 2 )
-            return tmpdict
-        else:
-            return {'withCompiler': True}
 
     def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
@@ -451,9 +431,7 @@ class Portage(object):
         instList = list()
         for category in list(self.categories.keys()):
             for package in self.categories[ category ]:
-                version = PortageInstance.getDefaultTarget( category, package.package )
-                if version:
-                    instList.append([category, package.package, version])
+                instList.append(package)
         return instList
 
 # when importing this, this static Object should get added
@@ -472,9 +450,9 @@ def getSubPackage( category, package ):
 
 
 
-def getPackageInstance(category, package, buildtarget=None):
+def getPackageInstance(category, package):
     """return instance of class Package from package file"""
-    return PortageInstance.getPackageInstance(category, package, buildtarget)
+    return PortageInstance.getPackageInstance(category, package)
 
 def getDependencies( category, package, runtimeOnly = False ):
     """returns the dependencies of this package as list of strings:

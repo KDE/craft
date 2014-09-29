@@ -10,21 +10,22 @@ def printSearch(search_category, search_package,maxDist = 2):
         similar = []
         match = None
         package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
-        for category,package,version in installable:
-            if search_category == "" or search_category == category:
-                meta = portage.PortageInstance.getMetaData( category, package )
-                levDist = utils.levenshtein(search_package.lower(),package.lower())
+        for p in installable:
+            if search_category == "" or search_category == p.category:
+                package = portage.PortageInstance.getPackageInstance( p.category, p.package)
+                if not package:
+                    continue
+                levDist = utils.levenshtein(search_package.lower(),package.package.lower())
                 if levDist == 0 :
-                    match = (levDist,category,package,version,meta)
+                    match = (levDist,package)
                     break;
-                elif package_re.match(package):
-                    similar.append((levDist-maxDist,category,package,version,meta))
-                elif len(package)>maxDist and levDist <= maxDist:
-                    similar.append((levDist,category,package,version,meta))
+                elif package_re.match(package.package):
+                    similar.append((levDist-maxDist,package))
+                elif len(p.package)>maxDist and levDist <= maxDist:
+                    similar.append((levDist,package))
                 else:
-                    if "shortDescription" in meta:
-                        if package_re.match(meta["shortDescription"]):
-                            similar.append((100,category,package,version,meta))
+                    if package_re.match(package.subinfo.shortDescription):
+                        similar.append((100,package))
                 
         if match == None:
             if len(similar)>0:
@@ -36,21 +37,14 @@ def printSearch(search_category, search_package,maxDist = 2):
             print("Package %s found:" % search_package)
             similar = [match]
         
-        for levDist,category,package,version,meta in similar:
-            utils.debug((category,package,version,levDist),1)
-            description = ""
-            if "shortDescription" in meta:
-                description = meta["shortDescription"]
-            homepage = ""
-            if "homepage" in meta:
-                homepage = meta["homepage"]
-            #print(levDist)
-            print("%s/%s" % (category,package))
-            print("\t Homepage: %s" % homepage)
-            print("\t Description: %s" % description)
-            print("\t Latest version: %s" % version)
+        for levDist,package in similar:
+            utils.debug((package,levDist),1)
+            print(p)
+            print("\t Homepage: %s" % package.subinfo.homepage)
+            print("\t Description: %s" % package.subinfo.shortDescription)
+            print("\t Latest version: %s" % package.subinfo.defaultTarget)
             installed = None
-            for pack in InstallDB.installdb.getInstalledPackages(category,package):
+            for pack in InstallDB.installdb.getInstalledPackages(package.category,package.package):
                 if installed:
                     installed += ", %s" % ( pack.getVersion())
                 else:

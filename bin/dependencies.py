@@ -413,6 +413,29 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
+    def getMetaData( self, category, package ):
+        """ returns all targets of a specified package """
+        utils.debug( "getMetaData: importing file %s" % portage.getFilename( category, package ), 1 )
+        if not ( category and package ):
+            return dict()
+        info = portage._getSubinfo(  category, package  )
+        if not info is None:
+            tmpdict = dict()
+            tmpdict['categoryName'] = info.category
+            tmpdict['version'] = info.defaultTarget
+            if not info.shortDescription == "":
+                tmpdict['shortDescription'] = info.shortDescription
+            if not info.description == "":
+                tmpdict['description'] = info.description
+            if not info.homepage == "":
+                tmpdict['homepage'] = info.homepage
+            tmpdict['withCompiler'] = info.options.package.withCompiler
+            utils.debug( tmpdict, 2 )
+            return tmpdict
+        else:
+            return {'withCompiler': True}
+
+
 
     def __buildSubNodes(self, rootnode, converter):
         if rootnode.package not in converter.packageDepsList:
@@ -455,7 +478,7 @@ class DependenciesTree(object):
             pass
 
         rootnode = DependenciesNode(category, package, version, tag, [])
-        rootnode.metaData = portage.PortageInstance.getMetaData( category, package )
+        rootnode.metaData = self.getMetaData( category, package )
 
         if package == converter.moduleMetaName: rootnode.virtual = True
         self.__buildSubNodes(rootnode, converter)
@@ -508,7 +531,7 @@ class DependenciesTree(object):
             sub_node = self.buildDepNode(t[0], t[1], t[2], tag, dep_type)
             children.append(sub_node)
         node = DependenciesNode(category, package, version, tag, children)
-        node.metaData = pi.getMetaData( category, package )
+        node.metaData = self.getMetaData( category, package )
 
         for child in children:
             child.parents.append(node)
