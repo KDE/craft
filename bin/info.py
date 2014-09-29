@@ -63,9 +63,8 @@ class infoclass(object):
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
         self.svnTargets['svnHEAD'] = False
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
-        self.defaultTarget = 'svnHEAD'
+        self._defaultTarget = None
         self.buildTarget = 'svnHEAD'
-
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
@@ -82,6 +81,21 @@ class infoclass(object):
     def category(self):
         return self.parent.category
 
+    @property
+    def defaultTarget(self):
+        target = None
+        if ("PortageVersions", "%s/%s" % ( self.category, self.package )) in emergeSettings:
+            target = emergeSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
+        elif ("PortageVersions", "DefaultTarget") in emergeSettings:
+            target = emergeSettings.get("PortageVersions", "DefaultTarget")
+        if target in list(self.targets.keys()) or target in list(self.svnTargets.keys()) :
+            return target
+        return self._defaultTarget
+
+    @defaultTarget.setter
+    def defaultTarget(self, value):
+        self._defaultTarget = value
+
     def setDependencies( self ):
         """default method for setting dependencies, override to set individual targets"""
 
@@ -96,10 +110,6 @@ class infoclass(object):
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
             self.buildTarget = buildTarget
-        elif ("PortageVersions", "%s/%s" % ( self.category, self.package )) in emergeSettings:
-            self.buildTarget = emergeSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
-        elif ("PortageVersions", "DefaultTarget") in emergeSettings:
-            self.buildTarget = emergeSettings.get("PortageVersions", "DefaultTarget")
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
             utils.debug("build target %s not defined in available targets %s %s setting default target to %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys()), self.defaultTarget), 1)
             self.buildTarget = self.defaultTarget
