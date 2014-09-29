@@ -33,7 +33,6 @@ class EmergeBase(object):
         utils.debug( "EmergeBase.__init__ called", 2 )
         self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
 
-
         if not hasattr(self, 'subinfo'):
             self.subinfo = mod.subinfo(self)
 
@@ -68,7 +67,10 @@ class EmergeBase(object):
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
     def __str__(self):
-        return "%s/%s" % ( self.category, self.package )
+        if self.subpackage:
+            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
+        else:
+            return "%s/%s" % (self.category,self.package)
 
     @property
     def noFetch(self):

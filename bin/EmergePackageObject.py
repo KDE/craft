@@ -25,10 +25,10 @@ class PackageObjectBase(object):
     def __str__(self):
         if not self.category or not self.package:
             return ""
-        ret = self.category
-        if self.subpackage: ret += "/" + self.subpackage
-        ret += "/" + self.package
-        return ret
+        if self.subpackage:
+            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
+        else:
+            return "%s/%s" % (self.category,self.package)
 
     def __bool__(self):
         #print("bool:", self.enabled)

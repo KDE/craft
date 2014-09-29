@@ -104,7 +104,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
 
 
 def handleSinglePackage( packageName, args ):
-    _deplist = [ ]
     deplist = [ ]
     packageList = [ ]
     originalPackageList = [ ]
@@ -146,11 +145,8 @@ def handleSinglePackage( packageName, args ):
     utils.debug_line( 1 )
 
     for mainCategory, entry in zip( categoryList, packageList ):
-        _deplist = portage.solveDependencies( mainCategory, entry, _deplist, args.dependencyType,
+        deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
                                               maxDetpth = args.dependencydepth )
-
-    deplist = [ p.ident( ) for p in _deplist ]
-
     # no package found
     if len( deplist ) == 0:
         category = ""
@@ -160,19 +156,19 @@ def handleSinglePackage( packageName, args ):
         return False
 
     for item in deplist:
-        item.append( args.ignoreAllInstalled )
+        item.enabled = args.ignoreAllInstalled
 
-        if args.ignoreInstalled and item[ 0 ] in categoryList and item[ 1 ] in packageList or packageIsOutdated(
-                item[ 0 ], item[ 1 ] ):
-            item[ -1 ] = True
+        if args.ignoreInstalled and item.category in categoryList and item.package in packageList or packageIsOutdated(
+                item.category, item.package ):
+            item.enabled = True
 
-        if item[ 0 ] + "/" + item[ 1 ] in targetDict:
-            item[ 3 ] = targetDict[ item[ 0 ] + "/" + item[ 1 ] ]
+        if item.category + "/" + item.package in targetDict:
+            item.target = targetDict[ item.category + "/" + item.package ]
 
         if args.target in list(
-                portage.PortageInstance.getAllTargets( item[ 0 ], item[ 1 ] ).keys( ) ):
+                portage.PortageInstance.getAllTargets( item.category, item.package ).keys( ) ):
             # if no target or a wrong one is defined, simply set the default target here
-            item[ 3 ] = args.target
+            item.target = args.target
 
         utils.debug( "dependency: %s" % item, 1 )
 
@@ -192,7 +188,7 @@ def handleSinglePackage( packageName, args ):
         del deplist[ 0 ]
     elif args.action == "update-direct-deps":
         for item in deplist:
-            item[ -1 ] = True
+            item.enabled = True
 
     deplist.reverse( )
 
@@ -200,8 +196,8 @@ def handleSinglePackage( packageName, args ):
     # package[1] -> package
     # package[2] -> version
 
-    mainCategory, mainPackage, tag, ignoreInstalled = deplist[ -1 ]
-    if not portage.PortageInstance.isVirtualPackage( mainCategory, mainPackage ) and \
+    info = deplist[ -1 ]
+    if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
         not args.action in [ "all", "install-deps" ,"generate-jenkins-job"] and\
         not args.list_file or\
         args.action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
@@ -211,58 +207,55 @@ def handleSinglePackage( packageName, args ):
         # package
         # for list files, we also want to handle fetching & packaging per package
 
-        if not handlePackage( mainCategory, mainPackage, args.action, args.doContinue, args.update_fast ):
+        if not handlePackage( info.category, info.package, args.action, args.doContinue, args.update_fast ):
             utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s failed" % (
-                args.action, mainCategory, mainPackage), args.action )
+                args.action, info.category, info.package), args.action )
             return False
         utils.notify( "Emerge %s finished" % args.action,
-                      "%s of %s/%s finished" % ( args.action, mainCategory, mainPackage),
+                      "%s of %s/%s finished" % ( args.action, info.category, info.package),
                       args.action )
 
     else:
         if args.dumpDepsFile:
             dumpDepsFileObject = open( args.dumpDepsFile, 'w+' )
             dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
-        for mainCategory, mainPackage, defaultTarget, ignoreInstalled in deplist:
+        for info in deplist:
             isVCSTarget = False
 
             if args.dumpDepsFile:
-                dumpDepsFileObject.write( ",".join( [ mainCategory, mainPackage, defaultTarget, "" ] ) + "\n" )
+                dumpDepsFileObject.write( ",".join( [ info.category, info.package, info.target, "" ] ) + "\n" )
 
-            isLastPackage = [ mainCategory, mainPackage, defaultTarget, ignoreInstalled ] == deplist[ -1 ]
+            isLastPackage = info == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
-                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( mainCategory, mainPackage ) != [ ]
-            isInstalled = installdb.isInstalled( mainCategory, mainPackage )
+                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( info.category, info.package ) != [ ]
+            isInstalled = installdb.isInstalled( info.category, info.package )
             if args.list_file and args.action != "all":
-                ignoreInstalled = mainPackage in originalPackageList
-            if ( isInstalled and not ignoreInstalled ) and not (
+                info.enabled = info.package in originalPackageList
+            if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
-                if utils.verbose( ) > 1 and mainPackage == packageName:
-                    utils.warning( "already installed %s/%s" % ( mainCategory, mainPackage) )
-                elif utils.verbose( ) > 2 and not mainPackage == packageName:
-                    utils.warning( "already installed %s/%s" % ( mainCategory, mainPackage ) )
+                if utils.verbose( ) > 1 and info.package == packageName:
+                    utils.warning( "already installed %s/%s" % ( info.category, info.package) )
+                elif utils.verbose( ) > 2 and not info.package == packageName:
+                    utils.warning( "already installed %s/%s" % ( info.category, info.package ) )
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
                     if utils.verbose( ) > 0:
-                        msg = " "
-                        targetMsg = ":default"
-                        if defaultTarget: targetMsg = ":" + defaultTarget
-                        utils.warning( "pretending %s/%s%s %s" % ( mainCategory, mainPackage, targetMsg, msg ) )
+                        utils.warning( "pretending %s" % info )
                 else:
                     if args.action in [ "install-deps", "update-direct-deps" ]:
                         args.action = "all"
 
-                    if not handlePackage( mainCategory, mainPackage, args.action, args.doContinue, args.update_fast ):
+                    if not handlePackage( info.category, info.package, args.action, args.doContinue, args.update_fast ):
                         utils.error( "fatal error: package %s/%s %s failed" % \
-                                     ( mainCategory, mainPackage, args.action ) )
+                                     ( info.category, info.package, args.action ) )
                         utils.notify( "Emerge build failed",
-                                      "Build of %s/%s failed" % ( mainCategory, mainPackage),
+                                      "Build of %s/%s failed" % ( info.category, info.package),
                                       args.action )
                         return False
                     utils.notify( "Emerge build finished",
-                                  "Build of %s/%s finished" % ( mainCategory, mainPackage),
+                                  "Build of %s/%s finished" % ( info.category, info.package),
                                   args.action )
 
     utils.new_line( )
@@ -440,7 +433,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
-        utils.error( "%s/%s failed: %s" % ( e.category, e.package, e) )
+        utils.error(e)
     except Exception as e:
         print( e )
         traceback.print_tb( e.__traceback__ )

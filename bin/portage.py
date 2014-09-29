@@ -11,23 +11,27 @@ import InstallDB
 import utils
 
 
-class PortageException(Exception):
+class PortageException(Exception,PackageObjectBase):
     def __init__(self, message, category, package ):
         Exception.__init__(self, message)
-        self.category = category
-        self.package = package
+        subpackage, package = getSubPackage(category,package)
+        PackageObjectBase.__init__(self,category,subpackage,package)
 
+    def __str__(self):
+        return "%s failed: %s" % (PackageObjectBase.__str__(self),Exception.__str__(self))
 
-class DependencyPackage(object):
+class DependencyPackage(PackageObjectBase):
     """ This class wraps each package and constructs the dependency tree
         original code is from dependencies.py, integration will come later...
         """
 
     def __init__( self, category, name, autoExpand = True, parent = None ):
+        subpackage, package = getSubPackage(category,name)
+        PackageObjectBase.__init__(self,category,subpackage,package)
         self.category = category
-        self.name = name
         self.runtimeChildren = []
         self.buildChildren = []
+        self.target = None
         if parent is None:
             self._dependencyList = dict()
         else:
@@ -36,11 +40,13 @@ class DependencyPackage(object):
         if autoExpand:
             self.__readChildren()
 
-
+    @property
+    def name(self):
+        return self.package
 
     def __hash__(self):
         return self.__str__().__hash__()
-        
+
     def __eq__( self, other ):
         return self.category == other.category and self.name == other.name
 
@@ -48,10 +54,9 @@ class DependencyPackage(object):
         return self.category != other.category or self.name != other.name
 
     def __str__(self):
-        return self.category + "/" +  self.name
-
-    def ident( self ):
-        return [ self.category, self.name, PortageInstance.getDefaultTarget( self.category, self.name ) ]
+        if self.target:
+            return "%s: %s" % (PackageObjectBase.__str__(self), self.target)
+        return PackageObjectBase.__str__(self)
 
     def __readChildren( self ):
         runtimeDependencies, buildDependencies = readChildren( self.category, self.name )
@@ -136,7 +141,7 @@ def rootDirForCategory( category ):
 def rootDirForPackage( category, package ):
     # this function should return the portage directory where it finds the
     # first occurance of a package or the default value
-    package, subpackage = getSubPackage( category, package )
+    subpackage, package = getSubPackage( category, package )
     if category and package:
         if subpackage:
             for i in rootDirectories():
@@ -151,10 +156,10 @@ def rootDirForPackage( category, package ):
 
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
-    _package, _subpackage = getSubPackage( category, package )
-    if category and _package:
-        if _subpackage:
-            return os.path.join( rootDirForPackage( category, package ), category, _package, _subpackage )
+    subpackage, package = getSubPackage( category, package )
+    if category and package:
+        if subpackage:
+            return os.path.join( rootDirForPackage( category, subpackage), category, subpackage, package )
         else:
             return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
@@ -337,7 +342,7 @@ class Portage(object):
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
                     mod = loader.load_module(modulename)
                 if not mod is None:
-                    _, subpackage = getSubPackage( category, package )
+                    subpackage, package = getSubPackage( category, package )
                     self._CURRENT_MODULE  = ( fileName, category,subpackage, package, mod )
                     pack = mod.Package( )
                     self._packageDict[ fileName ] = pack
@@ -446,7 +451,7 @@ def getSubPackage( category, package ):
         for entry in PortageInstance.subpackages[ package ]:
             cat, pac = entry.split("/")
             if cat == category: return pac, package
-    return package, None
+    return None, package
 
 
 
@@ -458,7 +463,7 @@ def getDependencies( category, package, runtimeOnly = False ):
     """returns the dependencies of this package as list of strings:
     category/package"""
 
-    package, subpackage = getSubPackage( category, package )
+    subpackage, package = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s %s" % ( category, subpackage, package,
                                                           getFilename( category, package ) ), 0 )
@@ -533,13 +538,8 @@ def _getSubinfo( category, package  ):
 
 
 def readChildren( category, package ):
-    package, subpackage = getSubPackage( category, package )
-    if subpackage:
-        utils.debug( "solving package %s/%s/%s %s" % ( category,  package, subpackage, getFilename( category, subpackage ) ), 2 )
-        subinfo = _getSubinfo( category, subpackage  )
-    else:
-        utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 2 )
-        subinfo = _getSubinfo( category, package  )
+    utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 2 )
+    subinfo = _getSubinfo( category, package  )
 
     if subinfo is None:
         return OrderedDict(), OrderedDict()
