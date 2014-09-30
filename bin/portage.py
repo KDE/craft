@@ -29,11 +29,10 @@ class DependencyPackage(PackageObjectBase):
 
     def __init__( self, category, name, autoExpand = True, parent = None ):
         subpackage, package = getSubPackage(category,name)
-        PackageObjectBase.__init__(self,category,subpackage,package)
+        PackageObjectBase.__init__(self,category,subpackage,package,version = PortageInstance.getDefaultTarget(self.category,self.package))
         self.category = category
         self.runtimeChildren = []
         self.buildChildren = []
-        self._target = None
         if parent is None:
             self._dependencyList = dict()
         else:
@@ -46,12 +45,6 @@ class DependencyPackage(PackageObjectBase):
     def name(self):
         return self.package
 
-    @property
-    def target(self):
-        if not self._target:
-            self._target = PortageInstance.getDefaultTarget(self.category,self.package)
-        return self._target
-
     def __hash__(self):
         return self.__str__().__hash__()
 
@@ -62,7 +55,7 @@ class DependencyPackage(PackageObjectBase):
         return self.category != other.category or self.name != other.name
 
     def __str__(self):
-        return "%s: %s" % (PackageObjectBase.__str__(self), self.target)
+        return "%s: %s" % (PackageObjectBase.__str__(self), self.version)
 
     def __readChildren( self ):
         runtimeDependencies, buildDependencies = readChildren( self.category, self.name )
@@ -586,7 +579,10 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
 
 def printInstallables():
     """get all the packages that can be installed"""
-    printCategoriesPackagesAndVersions( PortageInstance.getInstallables(), alwaysTrue )
+    data = list()
+    for p in PortageInstance.getInstallables():
+        data.append((p.category,p.package, p.version))
+    printCategoriesPackagesAndVersions( data, alwaysTrue )
 
 
 def getPackagesCategories(packageName, defaultCategory = None):

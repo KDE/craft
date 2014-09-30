@@ -2,12 +2,12 @@
 
 class PackageObjectBase(object):
 
-    def __init__(self, category=None, subpackage=None, package=None, enabled=False):
+    def __init__(self, category=None, subpackage=None, package=None, enabled=False, version = ""):
         self.category = category
         self.subpackage = subpackage
         self.package = package
         self.enabled = enabled
-
+        self.version = version
 
     def fullName(self):
         if self.subpackage:
