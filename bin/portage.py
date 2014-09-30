@@ -29,7 +29,7 @@ class DependencyPackage(PackageObjectBase):
 
     def __init__( self, category, name, autoExpand = True, parent = None ):
         subpackage, package = getSubPackage(category,name)
-        PackageObjectBase.__init__(self,category,subpackage,package,version = PortageInstance.getDefaultTarget(self.category,self.package))
+        PackageObjectBase.__init__(self,category,subpackage,package,version = PortageInstance.getDefaultTarget(category,package))
         self.category = category
         self.runtimeChildren = []
         self.buildChildren = []
