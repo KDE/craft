@@ -384,7 +384,7 @@ def main( ):
             portageSearch.printSearch( category, package )
         return True
 
-    if args.action in [ "install-deps", "update", "update-all" ] or args.update_fast:
+    if args.action in [ "install-deps", "update", "update-all", "package" ] or args.update_fast:
         args.ignoreInstalled = True
 
     if args.action in [ "update", "update-all" ]:
