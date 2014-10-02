@@ -130,11 +130,11 @@ SectionEnd
 Section "Quassel"  QUASSEL_ALL_IN_ONE
     SectionIn 1 2
     SetOutPath $INSTDIR
-    StrCpy $ToBeRunned "$INSTDIR\bin\quassel.exe"
+    StrCpy $ToBeRunned "$INSTDIR\quassel.exe"
     StrCpy $nameOfToBeRunend "Run Quassel"
-    File /a /oname=bin\quassel.exe "${srcdir}\bin\quassel.exe"
+    File /a /oname=quassel.exe "${srcdir}\quassel.exe"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "$INSTDIR\bin\quassel.exe"
+        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "$INSTDIR\quassel.exe"
         WinShell::SetLnkAUMI "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "${MyApp_AppUserModelId}"
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -143,12 +143,12 @@ Section /o "QuasselClient"  QUASSEL_CLIENT
     SectionIn 2
     SetOutPath $INSTDIR
     ${If} $ToBeRunned == ""
-        StrCpy $ToBeRunned "$INSTDIR\bin\quasselclient.exe"
+        StrCpy $ToBeRunned "$INSTDIR\quasselclient.exe"
         StrCpy $nameOfToBeRunend "Run QuasselClient"
     ${Endif}
-    File /a /oname=bin\quasselclient.exe "${srcdir}\bin\quasselclient.exe"
+    File /a /oname=quasselclient.exe "${srcdir}\quasselclient.exe"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "$INSTDIR\bin\quasselclient.exe"
+        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "$INSTDIR\quasselclient.exe"
         WinShell::SetLnkAUMI "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "${MyApp_AppUserModelId}"
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -157,12 +157,12 @@ Section /o "QuasselCore"  QUASSEL_CORE
     SectionIn 2
     SetOutPath $INSTDIR
     ${If} $ToBeRunned == ""
-        StrCpy $ToBeRunned "$INSTDIR\bin\quasselcore.exe"
+        StrCpy $ToBeRunned "$INSTDIR\quasselcore.exe"
         StrCpy $nameOfToBeRunend "Run QuasselCore"
     ${Endif}
-     File /a /oname=bin\quasselcore.exe "${srcdir}\bin\quasselcore.exe"
+     File /a /oname=quasselcore.exe "${srcdir}\quasselcore.exe"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel Core.lnk" "$INSTDIR\bin\quasselcore.exe"
+        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel Core.lnk" "$INSTDIR\quasselcore.exe"
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
