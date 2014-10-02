@@ -1,0 +1,42 @@
+diff -Nru -x '*~' quassel-0.11.0.orig/CMakeLists.txt quassel-0.11.0/CMakeLists.txt
+--- quassel-0.11.0.orig/CMakeLists.txt	2014-09-23 23:54:20.000000000 +0200
++++ quassel-0.11.0/CMakeLists.txt	2014-10-02 15:03:48.228831000 +0200
+@@ -237,12 +237,12 @@
+ 
+         # While QCA2 seems to support Qt5, it is not actually co-installable or distinguishable from the Qt4 version...
+         # In order to avoid linking against the Qt4 version (which is probably the one installed), disable this for now
+-        #find_package(QCA2 QUIET)
+-        #set_package_properties(QCA2 PROPERTIES TYPE RECOMMENDED
+-        #    URL "https://projects.kde.org/projects/kdesupport/qca"
+-        #    DESCRIPTION "Qt Cryptographic Architecture"
+-        #    PURPOSE "Required for encryption support"
+-        #)
++        find_package(QCA2 QUIET)
++        set_package_properties(QCA2 PROPERTIES TYPE RECOMMENDED
++           URL "https://projects.kde.org/projects/kdesupport/qca"
++           DESCRIPTION "Qt Cryptographic Architecture"
++           PURPOSE "Required for encryption support"
++        )
+ 
+     endif(BUILD_CORE)
+ 
+diff -Nru -x '*~' quassel-0.11.0.orig/src/core/cipher.cpp quassel-0.11.0/src/core/cipher.cpp
+--- quassel-0.11.0.orig/src/core/cipher.cpp	2014-09-23 23:54:20.000000000 +0200
++++ quassel-0.11.0/src/core/cipher.cpp	2014-10-02 15:27:25.034124700 +0200
+@@ -420,13 +420,13 @@
+         right += v;
+ 
+         for (int i = 0; i < 6; i++) {
+-            encoded.append(base64.at(right & 0x3F).toAscii());
++            encoded.append(base64.at(right & 0x3F).toLatin1());
+             right = right >> 6;
+         }
+ 
+-        //TODO make sure the .toascii doesn't break anything
++        //TODO make sure the .toLatin1 doesn't break anything
+         for (int i = 0; i < 6; i++) {
+-            encoded.append(base64.at(left & 0x3F).toAscii());
++            encoded.append(base64.at(left & 0x3F).toLatin1());
+             left = left >> 6;
+         }
+     }
