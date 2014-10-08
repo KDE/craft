@@ -7,24 +7,10 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.6.3'] = "http://winkde.org/pub/kde/ports/win32/repository/other/Git-1.6.3-preview20090507-2.tar.bz2"
-        self.targetInstSrc['1.6.3'] = ""
-        self.targets['1.6.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.6.4-preview20090729.7z"
-        self.targets['1.7.0.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.0.2-preview20100309.7z" 
-        self.targetDigests['1.7.0.2'] = '96c3720dec940c4b8da8a09bfdcfa7ed56c2f016'
-        self.targets['1.7.4'] = "http://msysgit.googlecode.com/files/PortableGit-1.7.4-preview20110204.7z"
-        self.targetDigests['1.7.4'] = 'bc470ba225666a60eed3d4fac544ce2a5611546b'
-        self.targets['1.8.0'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.0-preview20121022.7z"
-        self.targetDigests['1.8.0'] = '580804fcfcc77f1d30a9a27ff0ff85d53bea2442'
-        self.targets['1.8.1.2'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.1.2-preview20130201.7z"
-        self.targetDigests['1.8.1.2'] = 'b2ab1de84727466fe3830b33c47e275bbd9a8d2d'
-        self.targets['1.8.3'] = "https://msysgit.googlecode.com/files/PortableGit-1.8.3-preview20130601.7z"
-        self.targets['1.8.5.2'] = "http://msysgit.googlecode.com/files/PortableGit-1.8.5.2-preview20131230.7z"
-        self.targetDigests['1.8.5.2'] = 'c53de59d32a13ae892f07c6083cad68eca2dbaa2'
-        self.targets['1.9.0']  ="http://msysgit.googlecode.com/files/PortableGit-1.9.0-preview20140217.7z"
-        self.targetDigests['1.9.0'] = 'a26032341b4f3c0bb57eb298ba886438f974fc38'
+        self.targets['1.9.4']  ="https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140929/PortableGit-1.9.4-preview20140929.7z"
+        self.targetDigests['1.9.4'] = '4b0698f2bf96b0dd64ecec477b3db9e3b3d46085'
         
-        self.defaultTarget = '1.9.0'
+        self.defaultTarget = '1.9.4'
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
