@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['1.9.4']  ="https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140929/PortableGit-1.9.4-preview20140929.7z"
         self.targetDigests['1.9.4'] = '4b0698f2bf96b0dd64ecec477b3db9e3b3d46085'
-        
+
         self.defaultTarget = '1.9.4'
 
     def setDependencies(self):
