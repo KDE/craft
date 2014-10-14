@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.10.0'] = '305d56774b1af2a891775a5637174d9048d875a7'
         self.targetDigests['0.11.0'] = 'd7b31f8e1ee4465ec33dd77f689fec59f4b78a36'
         self.patchToApply['0.11.0'] = ('quassel-0.11.0-20141002.diff',1)
+        self.patchToApply['gitHEAD'] = ('quassel-0.11.0-20141002.diff',1)
         self.defaultTarget = 'gitHEAD'
 
 
