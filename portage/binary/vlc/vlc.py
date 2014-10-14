@@ -9,24 +9,26 @@ from Package.BinaryPackageBase import *
 import info
 import compiler
 
-
-_VLC_VER = None
-
 class subinfo(info.infoclass):
+  vlc_ver = None
+  
   def setTargets( self ):
     self.vlcArch = "32"
     if compiler.isX64():
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
-    self.vlcTagName = 'vlc-2.2.0-git' 
+    self.vlcTagName = '3.0.0-git' 
+    self.gitVer = self.getGitVer()
     
 
-    self.targets[ self.vlcTagName ]  =  "%svlc-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
+    self.targets[ self.vlcTagName ]  =  "%svlc-%s-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName, self.gitVer, self.vlcArch  )
+    self.targetInstSrc[ self.vlcTagName ] = "vlc-%s-%s" % (self.vlcTagName, self.gitVer)
+    self.patchToApply[ self.vlcTagName ] = [("vlc-2.1.5.diff" ,1)]
     
-    self.targetInstSrc[ self.vlcTagName ] = "vlc-%s" % (self.vlcTagName)
-
-    self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName,self.vlcArch  )
-    self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s" % (self.vlcTagName)
+    self.targets[ self.vlcTagName +"-debug" ]  = "%svlc-%s-%s-win%s-debug.7z" % (self.vlcBaseUrl, self.vlcTagName, self.gitVer, self.vlcArch  )
+    self.targetInstSrc[ self.vlcTagName + "-debug" ] = "vlc-%s-%s" % (self.vlcTagName,self.gitVer)
+    self.patchToApply[ self.vlcTagName + "-debug" ] = [("vlc-2.1.5.diff" ,1)]
+    
     for releaseTag in [ '1.1.11','2.0.0','2.0.1','2.0.2','2.0.5','2.0.6', '2.0.8', '2.1.0','2.1.1','2.1.5']:
         self.targets[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z" % ( releaseTag ,self.vlcArch,releaseTag , self.vlcArch )
         self.targetInstSrc[ releaseTag ] = 'vlc-' + releaseTag
@@ -41,19 +43,19 @@ class subinfo(info.infoclass):
   def setDependencies( self ):
     self.buildDependencies['virtual/bin-base'] = 'default'
 
-  def getVer( self ):
-    global _VLC_VER
-    if _VLC_VER != None :
-      return _VLC_VER
+  def getGitVer( self ):
+    if subinfo.vlc_ver != None :
+      return subinfo.vlc_ver
     else:
       try:
         fh = urllib.request.urlopen(self.vlcBaseUrl , timeout = 10)
       except Exception as e:
-        return "Nightlys Unavailible:"+str(e)
+        print("Nightlys Unavailible:"+str(e))
+        return None
       m = re.search( "\d\d\d\d\d\d\d\d-\d\d\d\d"  , str(fh.read(),'UTF-8' ))
       fh.close()
-      _VLC_VER = m.group(0)
-      return _VLC_VER 
+      subinfo.vlc_ver = m.group(0)
+      return subinfo.vlc_ver 
 
 class Package(BinaryPackageBase):
   def __init__(self):
