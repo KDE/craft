@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
         self.shortDescription = "KDE hex editor for viewing and editing the raw data of files."
-        self.defaultTarget = 'frameworks'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
