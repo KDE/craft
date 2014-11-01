@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
+        self.dependencies['libs/qtmultimedia'] = 'default'
         self.buildDependencies['frameworks/kdoctools'] = 'default'
         self.dependencies['frameworks/kcoreaddons'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
@@ -19,7 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/knewstuff'] = 'default'
-        #self.dependencies['frameworks/kross'] = 'default'
+        self.dependencies['frameworks/kross'] = 'default'
         self.dependencies['frameworks/khtml'] = 'default'
         self.dependencies['frameworks/sonnet'] = 'default'
         self.dependencies['frameworks/kcmutils'] = 'default'
