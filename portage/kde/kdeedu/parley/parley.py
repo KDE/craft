@@ -4,7 +4,7 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, "frameworks")
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, "master")
 
         self.shortDescription = 'a vocabulary trainer'
         self.defaultTarget = 'gitHEAD'
