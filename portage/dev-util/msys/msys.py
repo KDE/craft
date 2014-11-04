@@ -38,8 +38,8 @@ class Package(BinaryPackageBase):
            return False
         msysDir = os.path.join(EmergeStandardDirs.emergeRoot(),"msys")
         return ( self.shell.execute(".","echo Firstrun") and #start and restart msys before first use
-            utils.system("autorebase.bat", cwd = msysDir) )
-            self.shell.execute(".","pacman -Syu --noconfirm --force") and\
+            utils.system("autorebase.bat", cwd = msysDir) and
+            self.shell.execute(".","pacman -Syu --noconfirm --force") and
             utils.system("autorebase.bat", cwd = msysDir) and
             self.shell.execute(".","pacman -Sy --noconfirm --force") and
             self.shell.execute(".","pacman -S base-devel --noconfirm --force --needed") and
