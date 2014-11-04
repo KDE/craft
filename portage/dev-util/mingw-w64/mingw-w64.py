@@ -31,7 +31,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         if compiler.isX86():
-            return utils.move( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
+            return utils.moveDir( os.path.join( self.installDir() , "mingw32" ) , os.path.join( self.installDir(), "mingw" ) )
         return True
 
 
