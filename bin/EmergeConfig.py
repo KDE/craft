@@ -157,7 +157,7 @@ class EmergeConfig( object ):
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
         self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
         self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
-        self.addAlias( "Paths", "PYTHONPATH", "Paths", "Python" )
+        self.addAlias( "Paths", "Python", "Paths", "PYTHONPATH" )
         self.addAlias( "General", "Architecture", "General", "EMERGE_ARCHITECTURE" )
 
 
