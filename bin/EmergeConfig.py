@@ -158,6 +158,7 @@ class EmergeConfig( object ):
         self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
         self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
         self.addAlias( "Paths", "PYTHONPATH", "Paths", "Python" )
+        self.addAlias( "General", "Architecture", "General", "EMERGE_ARCHITECTURE" )
 
 
     def _readSettings( self ):

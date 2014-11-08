@@ -31,7 +31,7 @@ def _getGCCTarget():
     return _GCCTARGET
 
 def architecture():
-    return emergeSettings.get("General", "EMERGE_ARCHITECTURE" )
+    return emergeSettings.get("General", "Architecture" )
 
 def isX64():
     return architecture() == "x64"
