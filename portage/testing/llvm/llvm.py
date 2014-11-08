@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from BuildSystem import CMakeBuildSystem
 import info
 
 class subinfo(info.infoclass):
@@ -15,5 +16,9 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
         # this program needs python 2.7
-        self.subinfo.options.configure.defines = "-DPYTHON_EXECUTABLE=C:/python27_x86/python.exe"
+        self.subinfo.options.configure.defines = "-DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
 
+    def configure(self):
+        if not ("Paths","Python27") in emergeSettings:
+            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+        return CMakeBuildSystem.configure(self)

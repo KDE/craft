@@ -202,9 +202,7 @@ class EmergeConfig( object ):
                        file = sys.stderr )
                 return self.get( dg, dk, default )
         if default != None:
-            self.set( group, key, default )
             return default
-        print(group, key)
         self._config[ group ][ key ]
 
     def getSection( self, group ):
