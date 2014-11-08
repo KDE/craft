@@ -157,6 +157,7 @@ class EmergeConfig( object ):
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
         self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
         self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
+        self.addAlias( "Paths", "PYTHONPATH", "Paths", "Python" )
 
 
     def _readSettings( self ):
@@ -185,14 +186,17 @@ class EmergeConfig( object ):
                 ";libs/qt5/".join(["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns", "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]))
 
     def __contains__( self, key ):
-        return self._config and self._config.has_section( key[ 0 ] ) and key[ 1 ] in self._config[ key[ 0 ] ]
+        return self.__contains_no_alias(key) or \
+               (key in self._alias and self.__contains__(self._alias[key]))
 
+    def __contains_no_alias( self, key ):
+        return self._config and self._config.has_section( key[ 0 ] ) and key[ 1 ] in self._config[ key[ 0 ] ]
 
     def addAlias( self, group, key, destGroup, destKey ):
         self._alias[ (group, key) ] = (destGroup, destKey)
 
     def get( self, group, key, default = None ):
-        if (group, key) in self:
+        if self.__contains_no_alias((group, key)):
             #print((group,key,self._config[ group ][ key ]))
             return self._config[ group ][ key ]
         if (group, key) in self._alias:
@@ -200,7 +204,9 @@ class EmergeConfig( object ):
             if (dg, dk) in self:
                 print( "Warning: %s/%s is deprecated and has ben renamed to %s/%s" % (dg, dk, group, key ),
                        file = sys.stderr )
-                return self.get( dg, dk, default )
+                val = self.get( dg, dk, default )
+                self._config[ group ][ key ] = val
+                return val
         if default != None:
             return default
         self._config[ group ][ key ]
@@ -217,6 +223,8 @@ class EmergeConfig( object ):
 
 
     def set( self, group, key, value ):
+        if value is None:
+            return
         if not self._config.has_section( group ):
             self._config.add_section( group )
         self._config[ group ][ key ] = str( value )

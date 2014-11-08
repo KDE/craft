@@ -62,7 +62,7 @@ class SetupHelper( object ):
         print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ), file = sys.stderr )
         print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ), file = sys.stderr )
         print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ), file = sys.stderr )
-        print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "PYTHONPATH" ), file = sys.stderr )
+        print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "Python" ), file = sys.stderr )
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
