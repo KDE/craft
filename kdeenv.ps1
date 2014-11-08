@@ -58,7 +58,7 @@ function prependPATH([string] $path)
     $env:PATH="$path;$env:PATH"
 }
 
-prependPATH $settings["Paths"]["PYTHONPATH"]
+prependPATH $settings["Paths"]["Python"]
 
 (python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") | 
 foreach {
