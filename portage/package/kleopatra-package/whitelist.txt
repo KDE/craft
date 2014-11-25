@@ -79,8 +79,6 @@ share\\icons\\hicolor\\48x48\\apps\\kleopatra.png
 
 share\\icons\\hicolor\\64x64\\apps\\kleopatra.png
 
-share\\icons\\oxygen\\.*\\edit-paste.png
-
 share\\icons\\hicolor\\scalable\\apps\\kleopatra.svgz
 share\\icons\\hicolor\\index.theme
 
