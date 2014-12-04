@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20140624"
+        ver = "20141113"
         if emergePlatform.buildArchitecture() == "x86":
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-%s.tar.xz" % ver
         else:
@@ -42,7 +42,8 @@ class Package(BinaryPackageBase):
            return False
         msysDir = os.path.join(os.getenv("KDEROOT"), "msys")
         return ( self.shell.execute(".","echo Firstrun") and #start and restart msys before first use
-            self.shell.execute(".","pacman -Syu --noconfirm --force") and\
+            utils.system("autorebase.bat", cwd = msysDir) and
+            self.shell.execute(".","pacman -Syu --noconfirm --force") and
             utils.system("autorebase.bat", cwd = msysDir) and
             self.shell.execute(".","pacman -Sy --noconfirm --force") and
             self.shell.execute(".","pacman -S base-devel --noconfirm --force") and
