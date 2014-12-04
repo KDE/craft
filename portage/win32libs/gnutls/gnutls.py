@@ -7,13 +7,13 @@ from Package.VirtualPackageBase import VirtualPackageBase
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in [ "3.3.1" ]:
+        for ver in [ "3.3.10" ]:
             self.targets[ ver ]= "ftp://ftp.gnutls.org/gcrypt/gnutls/v3.3/gnutls-%s.tar.xz" % ver
             self.targetInstSrc[ ver ] = "gnutls-%s" % ver
-        self.patchToApply[ "3.3.1" ] = ("0005-fix-strtok-conflict.mingw.patch", 1)
-        self.targetDigests["3.3.1"] = "705846005198110a0d49aca21adafa34873d9092"
+        self.patchToApply[ "3.3.10" ] = ("0005-fix-strtok-conflict.mingw.patch", 1)
+        self.targetDigests['3.3.10'] = 'b47af4ee116ba2099a24ff7a8e686079f80ec23a'
         self.shortDescription = "A library which provides a secure layer over a reliable transport layer"
-        self.defaultTarget = "3.3.1"
+        self.defaultTarget = "3.3.10"
 
     def setDependencies( self ):
         self.dependencies["win32libs/gcrypt"] = "default"
