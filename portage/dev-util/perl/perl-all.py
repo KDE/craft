@@ -21,6 +21,9 @@ class subinfo(info.infoclass):
            self.targets['5.16.3'] = "http://downloads.activestate.com/ActivePerl/releases/5.16.3.1603/ActivePerl-5.16.3.1603-MSWin32-x64-296746.zip"
            self.targetDigests['5.16.3'] = '9cae0a0e24a86a26814206ff1bf02a7e7cfea4ba'
            self.targetMergeSourcePath['5.16.3'] = "ActivePerl-5.16.3.1603-MSWin32-x64-296746\\perl"
+           self.targets['5.20.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.20.1.2000/ActivePerl-5.20.1.2000-MSWin32-x64-298557.zip"
+           self.targetDigests['5.20.1'] = '53e840d2c95c5cda335069371b9da1109ec264ce'
+           self.targetMergeSourcePath['5.20.1'] = "ActivePerl-5.20.1.2000-MSWin32-x64-298557\\perl"
         else:
            self.targets['5.10.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x86-291969.zip"
            self.targetDigests['5.10.1'] = '9122a828b32d8b8499c73b61972eaec303698961'
@@ -37,7 +40,10 @@ class subinfo(info.infoclass):
            self.targets['5.16.3'] = "http://downloads.activestate.com/ActivePerl/releases/5.16.3.1603/ActivePerl-5.16.3.1603-MSWin32-x86-296746.zip"
            self.targetDigests['5.16.3'] = 'c85063396993a6bf4989970585b0d3a21c7a2a8c'
            self.targetMergeSourcePath['5.16.3'] = "ActivePerl-5.16.3.1603-MSWin32-x86-296746\\perl"
-        self.defaultTarget = '5.16.3'
+           self.targets['5.20.1'] = "http://downloads.activestate.com/ActivePerl/releases/5.20.1.2000/ActivePerl-5.20.1.2000-MSWin32-x86-64int-298557.zip"
+           self.targetDigests['5.20.1'] = '75e2b0c635e16693e2146fed65ba5e98d387a2bd'
+           self.targetMergeSourcePath['5.20.1'] = "ActivePerl-5.20.1.2000-MSWin32-x86-64int-298557\\perl"
+        self.defaultTarget = '5.20.1'
     def setDependencies( self ):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
