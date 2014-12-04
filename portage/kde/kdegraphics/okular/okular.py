@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies['binary/ghostscript'] = 'default'
         self.dependencies['frameworks/khtml'] = 'default'
         self.dependencies['frameworks/kactivities'] = 'default'
+        self.dependencies['frameworks/kdelibs4support'] = 'default'
 
 from Package.CMakePackageBase import *
 
