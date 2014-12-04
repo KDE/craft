@@ -4,12 +4,13 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in ( '0.28.1' ):
+        for i in [ '0.28.1' ]:
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.xz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
 
         self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
         self.targetDigests['0.28.1'] = '017258af51cb556dc53af630c50165bb9fd76e4f'
+        self.patchToApply['0.28.1'] =  ("poppler-0.28.1-20141204.diff",1)
 
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
         self.defaultTarget = "0.28.1"
