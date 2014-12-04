@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:konversation|frameworks'
-        self.defaultTarget = 'frameworks'
+        self.svnTargets['1.6'] = '[git]kde:konversation|1.6'
+        self.defaultTarget = '1.6'
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kidletime'] = 'default'
         self.dependencies['frameworks/knotifyconfig'] = 'default'
-        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/kparts'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
