@@ -4,7 +4,7 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://git.samba.org/ccache.git"
+        self.svnTargets['gitHEAD'] = "https://github.com/jrosdahl/ccache.git"
         self.defaultTarget = 'gitHEAD'
 
 
