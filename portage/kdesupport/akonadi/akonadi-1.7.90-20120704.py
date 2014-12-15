@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/shared-mime-info'] = 'default'
+        self.dependencies['kdesupport/soprano'] = 'default'
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
