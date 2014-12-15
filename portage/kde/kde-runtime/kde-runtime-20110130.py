@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['kde/oxygen-icons'] = 'default'
         self.dependencies['win32libs/libssh'] = 'default'
+        self.dependencies['win32libs/gcrypt'] = 'default'
+        self.dependencies['kde/kdepimlibs'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs/libbfd'] = 'default'
 
