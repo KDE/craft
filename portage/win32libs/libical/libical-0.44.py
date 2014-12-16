@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['v1.0.0'] = 'libical-libical-866647f'
 
         self.svnTargets['gitHEAD'] = '[git]https://github.com/libical/libical.git'
-        self.defaultTarget = 'v0.48'
+        self.defaultTarget = 'v1.0.0'
         self.shortDescription = "reference implementation of the icalendar data type and serialization format"
 
     def setDependencies( self ):
