@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = "http://llvm.org/svn/llvm-project/llvm/trunk"
+        self.svnTargets['gitHEAD'] = "http://llvm.org/git/llvm.git"
         self.targets[ "3.5.0" ] = "http://llvm.org/releases/3.5.0/llvm-3.5.0.src.tar.xz"
         self.targetInstSrc[ "3.5.0" ] = "llvm-3.5.0.src"
         self.targetDigests['3.5.0'] = '58d817ac2ff573386941e7735d30702fe71267d5'
@@ -24,4 +24,6 @@ class Package(CMakePackageBase):
     def configure(self):
         if not ("Paths","Python27") in emergeSettings:
             utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+        if compiler.isMinGW() and not self.buildType() == "Release":
+            utils.die("You should build clang only in Release mode as it will use up to 10gb disk space if build as RelWithDebInfo, see emerge --buildtype Release")
         return CMakeBuildSystem.configure(self)
