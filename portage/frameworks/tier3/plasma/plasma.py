@@ -26,6 +26,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwindowsystem'] = "default"
         self.dependencies['frameworks/kxmlgui'] = "default"
         self.dependencies['frameworks/kdoctools'] = "default"
+        self.dependencies['frameworks/kpackage'] = "default"
 
 from Package.CMakePackageBase import *
 
