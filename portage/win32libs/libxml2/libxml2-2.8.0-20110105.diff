@@ -1,6 +1,6 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..6756848
+index 0000000..a55b979
 --- /dev/null
 +++ b/CMakeLists.txt
 @@ -0,0 +1,298 @@
@@ -164,9 +164,9 @@ index 0000000..6756848
 +    endif(ENABLE_THREADS AND MINGW)
 +endif(WIN32)
 +
-+if(ZLIB_FOUND)
++if(WITH_ZLIB)
 +    target_link_libraries(xml2 ${ZLIB_LIBRARIES})
-+endif(ZLIB_FOUND)
++endif(WITH_ZLIB)
 +
 +if(WITH_ICONV)
 +    target_link_libraries(xml2 ${LIBICONV_LIBRARIES})
