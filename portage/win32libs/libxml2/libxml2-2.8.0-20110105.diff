@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..fa04fce
+index 0000000..0f08a49
 --- /dev/null
 +++ b/CMakeLists.txt
-@@ -0,0 +1,292 @@
+@@ -0,0 +1,287 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -25,7 +25,6 @@ index 0000000..fa04fce
 +    ${CMAKE_SOURCE_DIR}/include 
 +    ${ZLIB_INCLUDE_DIR}
 +    ${Libiconv_INCLUDE_DIR}
-+    ${CMAKE_SOURCE_DIR}/win32/wince
 +)
 +
 +option(SUPPORT_IP6 "support IPv6" ON)
@@ -166,7 +165,6 @@ index 0000000..fa04fce
 +
 +######################################### Utilities ###############################################
 +
-+# For WINCE the utils are not compiled
 +add_executable(xmllint xmllint.c)
 +target_link_libraries(xmllint xml2)
 +install(TARGETS xmllint RUNTIME DESTINATION bin
@@ -260,9 +258,6 @@ index 0000000..fa04fce
 +    foreach(target ${ARGN})
 +        add_executable(${target} ${target}.c)
 +        target_link_libraries(${target} xml2)
-+        if(WINCE)
-+            target_link_libraries(${target} ${WCECOMPAT_LIBRARIES})
-+        endif(WINCE)
 +    endforeach(target ${ARGN})
 +endmacro(buildTests)
 +
