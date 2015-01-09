@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..9c393b0
+index 0000000..6756848
 --- /dev/null
 +++ b/CMakeLists.txt
-@@ -0,0 +1,289 @@
+@@ -0,0 +1,298 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -17,16 +17,18 @@ index 0000000..9c393b0
 +set(VERSION "2.8.0")
 +
 +find_package(ZLIB)
-+find_package(Libiconv REQUIRED)
++find_package(Libiconv)
 +
 +include_directories(
 +    ${CMAKE_BINARY_DIR} 
 +    ${CMAKE_BINARY_DIR}/include
 +    ${CMAKE_SOURCE_DIR}/include 
-+    ${Libiconv_INCLUDE_DIR}
 +)
 +if(ZLIB_FOUND)
 +    include_directories(${ZLIB_INCLUDE_DIR})
++endif()
++if(LIBICONV_FOUND)
++    include_directories(${Libiconv_INCLUDE_DIR})
 +endif()
 +
 +option(SUPPORT_IP6 "support IPv6" ON)
@@ -64,7 +66,11 @@ index 0000000..9c393b0
 +set(WITH_XPATH 1)
 +set(WITH_XPTR 1)
 +set(WITH_XINCLUDE 1)
-+set(WITH_ICONV 1)
++if(LIBICONV_FOUND)
++    set(WITH_ICONV 1)
++else()
++    set(WITH_ICONV 0)
++endif()
 +set(WITH_ISO8859X 1)
 +set(WITH_DEBUG 0) #setting to one may result into a crash in case http://mail.gnome.org/archives/xml/2011-April/msg00011.html has not been fixed
 +set(WITH_MEM_DEBUG 0)
@@ -144,7 +150,6 @@ index 0000000..9c393b0
 +endif(ENABLE_TRIO)
 +
 +add_library(xml2 SHARED ${libxml2_SRCS})
-+target_link_libraries(xml2 ${LIBICONV_LIBRARIES})
 +install(TARGETS xml2    RUNTIME DESTINATION bin
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
@@ -162,6 +167,10 @@ index 0000000..9c393b0
 +if(ZLIB_FOUND)
 +    target_link_libraries(xml2 ${ZLIB_LIBRARIES})
 +endif(ZLIB_FOUND)
++
++if(WITH_ICONV)
++    target_link_libraries(xml2 ${LIBICONV_LIBRARIES})
++endif()
 +
 +
 +
