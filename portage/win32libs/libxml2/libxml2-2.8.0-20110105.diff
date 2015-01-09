@@ -1,6 +1,6 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..0f08a49
+index 0000000..af6f29a
 --- /dev/null
 +++ b/CMakeLists.txt
 @@ -0,0 +1,287 @@
@@ -14,7 +14,7 @@ index 0000000..0f08a49
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
 +set(PACKAGE "libxml2")
-+set(VERSION "2.7.8")
++set(VERSION "2.8.0")
 +
 +find_package(ZLIB)
 +find_package(Libiconv REQUIRED)
