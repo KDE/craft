@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..af6f29a
+index 0000000..9c393b0
 --- /dev/null
 +++ b/CMakeLists.txt
-@@ -0,0 +1,287 @@
+@@ -0,0 +1,289 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -23,9 +23,11 @@ index 0000000..af6f29a
 +    ${CMAKE_BINARY_DIR} 
 +    ${CMAKE_BINARY_DIR}/include
 +    ${CMAKE_SOURCE_DIR}/include 
-+    ${ZLIB_INCLUDE_DIR}
 +    ${Libiconv_INCLUDE_DIR}
 +)
++if(ZLIB_FOUND)
++    include_directories(${ZLIB_INCLUDE_DIR})
++endif()
 +
 +option(SUPPORT_IP6 "support IPv6" ON)
 +option(ENABLE_THREADS "enable threading in libxml" ON)
