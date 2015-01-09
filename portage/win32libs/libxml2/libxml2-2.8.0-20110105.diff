@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 new file mode 100644
-index 0000000..cbba752
+index 0000000..fa04fce
 --- /dev/null
 +++ b/CMakeLists.txt
-@@ -0,0 +1,315 @@
+@@ -0,0 +1,292 @@
 +# This file is copyrighted under the BSD-license for buildsystem files of KDE
 +# copyright 2010, Patrick Spendrin <ps_ml@gmx.de>
 +
@@ -27,13 +27,6 @@ index 0000000..cbba752
 +    ${Libiconv_INCLUDE_DIR}
 +    ${CMAKE_SOURCE_DIR}/win32/wince
 +)
-+
-+if(WINCE)
-+    find_package(Wcecompat REQUIRED)
-+    include_directories(${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_INCLUDES ${WCECOMPAT_INCLUDE_DIR})
-+    set(CMAKE_REQUIRED_LIBRARIES ${WCECOMPAT_LIBRARIES})
-+endif(WINCE)
 +
 +option(SUPPORT_IP6 "support IPv6" ON)
 +option(ENABLE_THREADS "enable threading in libxml" ON)
@@ -149,11 +142,7 @@ index 0000000..cbba752
 +    )
 +endif(ENABLE_TRIO)
 +
-+if(WINCE)
-+add_library(xml2 STATIC ${libxml2_SRCS})
-+else(WINCE)
 +add_library(xml2 SHARED ${libxml2_SRCS})
-+endif(WINCE)
 +target_link_libraries(xml2 ${LIBICONV_LIBRARIES})
 +install(TARGETS xml2    RUNTIME DESTINATION bin
 +                        LIBRARY DESTINATION lib
@@ -163,11 +152,7 @@ index 0000000..cbba752
 +    if(MSVC)
 +        set_target_properties(xml2 PROPERTIES OUTPUT_NAME libxml2)
 +    endif(MSVC)
-+    if(WINCE)
-+        target_link_libraries(xml2 ws2)
-+    else(WINCE)
-+        target_link_libraries(xml2 ws2_32)
-+    endif(WINCE)
++    target_link_libraries(xml2 ws2_32)
 +    if(ENABLE_THREADS AND MINGW)
 +        target_link_libraries(xml2 winpthread)
 +    endif(ENABLE_THREADS AND MINGW)
@@ -182,7 +167,6 @@ index 0000000..cbba752
 +######################################### Utilities ###############################################
 +
 +# For WINCE the utils are not compiled
-+if(NOT WINCE)
 +add_executable(xmllint xmllint.c)
 +target_link_libraries(xmllint xml2)
 +install(TARGETS xmllint RUNTIME DESTINATION bin
@@ -195,7 +179,6 @@ index 0000000..cbba752
 +                            LIBRARY DESTINATION lib
 +                            ARCHIVE DESTINATION lib)
 +                            
-+endif(NOT WINCE)
 +
 +######################################### headers & docs ###############################################
 +set(libxml2_HDRS
@@ -246,12 +229,6 @@ index 0000000..cbba752
 +include/libxml/pattern.h
 +include/libxml/xmlsave.h
 +include/libxml/schematron.h)
-+
-+if(WINCE)
-+set(libxml2_HDRS
-+    ${libxml2_HDRS}
-+    win32/wince/wincecompat.h)
-+endif(WINCE)
 +
 +install(FILES ${libxml2_HDRS} DESTINATION include/libxml)
 +
@@ -466,44 +443,6 @@ index 0000000..da20541
 +
 +configure_file(include/libxml/xmlversion.h.in ${CMAKE_BINARY_DIR}/include/libxml/xmlversion.h)
 +
-diff --git a/catalog.c b/catalog.c
-index fb586c1..be1afe6 100644
---- a/catalog.c
-+++ b/catalog.c
-@@ -79,8 +79,31 @@
- static char XML_XML_DEFAULT_CATALOG[256] = "file:///etc/xml/catalog";
- #if defined(_WIN32_WCE)
- /* Windows CE don't have a A variant */
--#define GetModuleHandleA GetModuleHandle
--#define GetModuleFileNameA GetModuleFileName
-+
-+static void *
-+my_GetModuleHandleA(const char* path)
-+{
-+  TCHAR pathUnc[MAX_PATH+1];
-+  if (!path)
-+    return GetModuleHandle(NULL);
-+  MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
-+  return GetModuleHandle(pathUnc);
-+}
-+#undef GetModuleHandleA
-+#define GetModuleHandleA my_GetModuleHandleA
-+
-+static unsigned long
-+my_GetModuleFileNameA(void *handle, char *buf, unsigned long bufsize)
-+{
-+  /* FIXME: Error checking and size length comparison.  */
-+  unsigned long res;
-+  TCHAR pathUnc[MAX_PATH+1];
-+  res = GetModuleFileName (handle, pathUnc, MAX_PATH);
-+  WideCharToMultiByte(CP_ACP, 0, pathUnc, -1, buf, bufsize, 0, 0);
-+  return res;
-+}
-+#undef GetModuleFileNameA
-+#define GetModuleFileNameA my_GetModuleFileNameA
- #else
- void* __stdcall GetModuleHandleA(const char*);
- unsigned long __stdcall GetModuleFileNameA(void*, char*, unsigned long);
 diff --git a/cmake/modules/FindLibiconv.cmake b/cmake/modules/FindLibiconv.cmake
 new file mode 100644
 index 0000000..321b71d
@@ -543,45 +482,6 @@ index 0000000..321b71d
 +find_package_handle_standard_args(Libiconv  DEFAULT_MSG  LIBICONV_LIBRARIES  LIBICONV_LIB_FOUND)
 +
 +mark_as_advanced(LIBICONV_INCLUDE_DIR  LIBICONV_LIBRARIES  LIBICONV_CONST  LIBICONV_LIB_FOUND)
-diff --git a/cmake/modules/FindWcecompat.cmake b/cmake/modules/FindWcecompat.cmake
-new file mode 100644
-index 0000000..4276975
---- /dev/null
-+++ b/cmake/modules/FindWcecompat.cmake
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
 diff --git a/config.h.cmake b/config.h.cmake
 new file mode 100644
 index 0000000..7a062b5
@@ -1408,34 +1308,6 @@ index 863c422..0000000
 -#endif
 -
 -
-diff --git a/include/win32config.h b/include/win32config.h
-index 3fc9be5..ba3b367 100644
---- a/include/win32config.h
-+++ b/include/win32config.h
-@@ -9,7 +9,9 @@
- #if defined(_WIN32_WCE)
- #undef HAVE_ERRNO_H
- #include <windows.h>
--#include "wincecompat.h"
-+#include <io.h>
-+#include <errno.h>
-+#include <fcntl.h>
- #else
- #define HAVE_SYS_STAT_H
- #define HAVE__STAT
-diff --git a/include/wsockcompat.h b/include/wsockcompat.h
-index c762a64..7657dc3 100644
---- a/include/wsockcompat.h
-+++ b/include/wsockcompat.h
-@@ -6,7 +6,7 @@
- #define __XML_WSOCKCOMPAT_H__
- 
- #ifdef _WIN32_WCE
--#include <winsock.h>
-+#include <winsock2.h>
- #else
- #undef HAVE_ERRNO_H
- #include <winsock2.h>
 diff --git a/nanoftp.c b/nanoftp.c
 index 9b32d66..e76410f 100644
 --- a/nanoftp.c
@@ -1463,35 +1335,10 @@ index 2437fed..58ef50b 100644
  #define _WINSOCKAPI_
  #endif
 diff --git a/threads.c b/threads.c
-index 1eeac0e..8759006 100644
+index 1eeac0e..583b0c7 100644
 --- a/threads.c
 +++ b/threads.c
-@@ -28,6 +28,9 @@
- #include <pthread.h>
- #elif defined HAVE_WIN32_THREADS
- #include <windows.h>
-+#if _WIN32_WCE
-+#include <process.h>
-+#endif
- #ifndef HAVE_COMPILER_TLS
- #include <process.h>
- #endif
-@@ -141,6 +144,14 @@ struct _xmlRMutex {
-  *   - xmlLibraryLock a global lock
-  *   - globalkey used for per-thread data
-  */
-+ 
-+#ifdef _WIN32_WCE
-+/* TLS_OUT_OF_INDEXES not defined on WinCE */
-+#ifndef TLS_OUT_OF_INDEXES
-+#define TLS_OUT_OF_INDEXES 0xffffffff
-+#endif
-+#endif
-+
- 
- #ifdef HAVE_PTHREAD_H
- static pthread_key_t globalkey;
-@@ -414,8 +425,10 @@ xmlRMutexUnlock(xmlRMutexPtr tok ATTRIBUTE_UNUSED)
+@@ -414,8 +414,10 @@ xmlRMutexUnlock(xmlRMutexPtr tok ATTRIBUTE_UNUSED)
      }
      pthread_mutex_unlock(&tok->lock);
  #elif defined HAVE_WIN32_THREADS
@@ -1503,23 +1350,6 @@ index 1eeac0e..8759006 100644
  #elif defined HAVE_BEOS_THREADS
      if (tok->lock->tid == find_thread(NULL)) {
          tok->count--;
-@@ -708,11 +721,16 @@ xmlGetGlobalState(void)
- 	}
-         p->memory = tsd;
- #if defined(LIBXML_STATIC) && !defined(LIBXML_STATIC_FOR_DLL)
-+#ifndef _WIN32_WCE
-+	/* Windows CE can't duplicate thread handles.  */
-         DuplicateHandle(GetCurrentProcess(), GetCurrentThread(),
-                         GetCurrentProcess(), &p->thread, 0, TRUE,
-                         DUPLICATE_SAME_ACCESS);
-+#endif
-         TlsSetValue(globalkey, tsd);
-+#ifndef _WIN32_WCE
-         _beginthread(xmlGlobalStateCleanupHelper, 0, p);
-+#endif
- #else
-         EnterCriticalSection(&cleanup_helpers_cs);
-         if (cleanup_helpers_head != NULL) {
 diff --git a/tree.c b/tree.c
 index 8baae3d..f958ad3 100644
 --- a/tree.c
@@ -1554,33 +1384,8 @@ index 8baae3d..f958ad3 100644
      }
  
      /*
-diff --git a/trio.c b/trio.c
-index b116ccc..da09214 100644
---- a/trio.c
-+++ b/trio.c
-@@ -76,7 +76,7 @@
- #endif
- 
- #if defined(_WIN32_WCE)
--#include <wincecompat.h>
-+#include <io.h>
- #endif
- 
- /*************************************************************************
-diff --git a/win32/wince/wincecompat.h b/win32/wince/wincecompat.h
-index aa0f3dc..a61a573 100644
---- a/win32/wince/wincecompat.h
-+++ b/win32/wince/wincecompat.h
-@@ -14,6 +14,7 @@
- #include <stdio.h>
- #include <winbase.h>
- 
-+/* FIXME: Not true anymore, but not used in _WIN32_WCE port.  */
- #define MAX_STRERROR 31
- 
- #define O_RDONLY       0x0000  /* open for reading only */
 diff --git a/xmlIO.c b/xmlIO.c
-index 73a995d..a73698a 100644
+index 73a995d..07b149b 100644
 --- a/xmlIO.c
 +++ b/xmlIO.c
 @@ -40,6 +40,7 @@
@@ -1590,70 +1395,4 @@ index 73a995d..a73698a 100644
 +#define _WINSOCKAPI_
  #include <windows.h>
  #endif
- 
-@@ -3775,10 +3776,12 @@ xmlParserGetDirectory(const char *filename) {
- 	else *cur = 0;
- 	ret = xmlMemStrdup(dir);
-     } else {
-+#ifndef _WIN32_WCE
-         if (getcwd(dir, 1024) != NULL) {
- 	    dir[1023] = 0;
- 	    ret = xmlMemStrdup(dir);
- 	}
-+#endif
-     }
-     return(ret);
- #undef IS_XMLPGD_SEP
-diff --git a/xmlmodule.c b/xmlmodule.c
-index 9ffd610..cca2252 100644
---- a/xmlmodule.c
-+++ b/xmlmodule.c
-@@ -297,10 +297,35 @@ xmlModulePlatformSymbol(void *handle, const char *name, void **symbol)
-  * returns a handle on success, and zero on error.
-  */
- 
-+#ifdef _WIN32_WCE
-+static int
-+my_LoadLibraryA(const char* path)
-+{
-+  TCHAR pathUnc[MAX_PATH+1];
-+  MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
-+  return LoadLibrary(pathUnc);
-+}
-+#undef LoadLibraryA
-+#define LoadLibraryA my_LoadLibraryA
-+
-+static unsigned long
-+my_GetModuleFileNameA(void *handle, char *buf, unsigned long bufsize)
-+{
-+  /* FIXME: Error checking and size length comparison.  */
-+  unsigned long res;
-+  TCHAR pathUnc[MAX_PATH+1];
-+  res = GetModuleFileName (handle, pathUnc, MAX_PATH);
-+  WideCharToMultiByte(CP_ACP, 0, pathUnc, -1, buf, bufsize, 0, 0);
-+  return res;
-+}
-+#undef GetModuleFileNameA
-+#define GetModuleFileNameA my_GetModuleFileNameA
-+#endif
-+
- static void *
- xmlModulePlatformOpen(const char *name)
- {
--    return LoadLibrary(name);
-+    return LoadLibraryA(name);
- }
- 
- /*
-@@ -326,7 +351,11 @@ xmlModulePlatformClose(void *handle)
- static int
- xmlModulePlatformSymbol(void *handle, const char *name, void **symbol)
- {
-+#ifdef _WIN32_WCE
-+    *symbol = GetProcAddressA(handle, name);
-+#else
-     *symbol = GetProcAddress(handle, name);
-+#endif
-     return (NULL == *symbol) ? -1 : 0;
- }
  
