@@ -304,10 +304,10 @@ index 0000000..6756848
 +endif(BUILD_tests)
 diff --git a/ConfigureChecks.cmake b/ConfigureChecks.cmake
 new file mode 100644
-index 0000000..da20541
+index 0000000..b240007
 --- /dev/null
 +++ b/ConfigureChecks.cmake
-@@ -0,0 +1,141 @@
+@@ -0,0 +1,157 @@
 +#some configure checks
 +
 +# LIBXML_ENABLE_THREADS
@@ -347,6 +347,7 @@ index 0000000..da20541
 +include(CheckIncludeFile)
 +include(CheckFunctionExists)
 +include(CheckSymbolExists)
++include(CheckCSourceCompiles)
 +
 +check_include_file("fcntl.h" HAVE_FCNTL_H)
 +check_include_file("pthread.h" HAVE_PTHREAD_H)
@@ -428,9 +429,24 @@ index 0000000..da20541
 +check_function_exists("vfprintf" HAVE_VFPRINTF)
 +check_function_exists("vsnprintf" HAVE_VSNPRINTF)
 +check_function_exists("vsprintf" HAVE_VSPRINTF)
-+check_function_exists("va_copy" HAVE_VA_COPY)
 +check_function_exists("_stat" HAVE__STAT)
-+check_function_exists("__va_copy" HAVE___VA_COPY)
++
++check_c_source_compiles("
++#include <stdarg.h>
++int main() {
++    va_list ap1, ap2;
++    va_copy(ap1, ap2);
++}"
++HAVE_VA_COPY)
++if(NOT HAVE_VA_COPY)
++    check_c_source_compiles("
++    #include <stdarg.h>
++    int main() {
++        va_list ap1, ap2;
++        __va_copy(ap1, ap2);
++    }"
++    HAVE___VA_COPY)
++endif()
 +
 +if(MSVC)
 +    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
