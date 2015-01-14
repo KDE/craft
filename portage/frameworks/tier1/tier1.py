@@ -13,7 +13,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kcoreaddons'] = 'default'
         self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/kglobalaccel'] = 'default'
         self.dependencies['frameworks/kguiaddons'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kidletime'] = 'default'

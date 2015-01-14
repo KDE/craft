@@ -34,6 +34,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwallet'] = 'default'
         self.dependencies['frameworks/kxmlgui'] = 'default'
         self.dependencies['frameworks/plasma'] = 'default'
+        self.dependencies['frameworks/kglobalaccel'] = 'default'
 
 from Package.VirtualPackageBase import *
 
