@@ -27,8 +27,10 @@ class subinfo( info.infoclass ):
         for ver in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c', '1.0.1c', '1.0.1e','1.0.1f','1.0.1g', '1.0.1h', '1.0.1i', '1.0.1j', '1.0.1k']:
             self.targets[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ ver ] = 'openssl-' + ver
-            if compiler.isMSVC() and ver not in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
-              self.patchToApply[ ver ] = ('openssl-with-pdbs.diff', 1)
+            #if compiler.isMSVC() and ver not in [ '0.9.8k' , '0.9.8m' ,'1.0.0', '1.0.0a', '1.0.0b', '1.0.0c' ]:
+              #self.patchToApply[ ver ] = ('openssl-with-pdbs.diff', 1)
+            if compiler.isMSVC2013() and ver in ['1.0.1k']:
+                self.patchToApply[ ver ] = ('openssl-1.0.1k.diff', 1)
             self.targetDigestUrls[ ver ] = 'http://www.openssl.org/source/openssl-' + ver + '.tar.gz.sha1'
         self.targets[ '1.0.1-snapshot' ] = 'ftp://ftp.openssl.org/snapshot/openssl-1.0.1-stable-SNAP-20101028.tar.gz'
         self.shortDescription = "The OpenSSL runtime environment"
