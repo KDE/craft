@@ -1375,40 +1375,6 @@ index 1eeac0e..583b0c7 100644
  #elif defined HAVE_BEOS_THREADS
      if (tok->lock->tid == find_thread(NULL)) {
          tok->count--;
-diff --git a/tree.c b/tree.c
-index 8baae3d..f958ad3 100644
---- a/tree.c
-+++ b/tree.c
-@@ -3320,6 +3320,29 @@ xmlAddChild(xmlNodePtr parent, xmlNodePtr cur) {
- 	    xmlFreeNode(cur);
- 	    return(parent->last);
- 	}
-+
-+    /*
-+     * If cur is nbktext, merge with previous node
-+     */
-+	if ((parent->last != NULL) && (parent->last->type == XML_TEXT_NODE) &&
-+	    (xmlStrEqual(cur->name, "nbktext")) &&
-+	    (parent->last != cur)) {
-+	    xmlNodeAddContent(parent->last, cur->content);
-+	    xmlFreeNode(cur);
-+	    return(parent->last);
-+	}
-+
-+    /*
-+     * If parent->last is nbktext and we're not, merge with current node
-+     */
-+	if ((parent->last != NULL) && (parent->last->type == XML_TEXT_NODE) &&
-+	    (xmlStrEqual(parent->last->name, "nbktext")) &&
-+	    (parent->last != cur)) {
-+	    xmlNodeAddContent(parent->last, cur->content);
-+        parent->last->name = xmlStringText;
-+	    xmlFreeNode(cur);
-+	    return(parent->last);
-+	}
-     }
- 
-     /*
 diff --git a/xmlIO.c b/xmlIO.c
 index 73a995d..07b149b 100644
 --- a/xmlIO.c

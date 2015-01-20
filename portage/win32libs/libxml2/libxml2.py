@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'ftp://xmlsoft.org/libxml2/libxml2-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libxml2-' + ver
         self.patchToApply['2.8.0'] = [("libxml2-2.8.0-20110105.diff", 1),
-                                     ("fix-mingw-catalog.diff", 0)]
+                                     ("fix-mingw-catalog.diff", 1)]
         self.targetDigests['2.8.0'] = 'a0c553bd51ba79ab6fff26dc700004c6a41f5250'
         self.shortDescription = "XML C parser and toolkit (runtime and applications)"
 
@@ -22,7 +22,7 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'libxml2'
-        self.subinfo.options.configure.defines = "-DBUILD_tests=OFF"
+        #self.subinfo.options.configure.defines = "-DBUILD_tests=OFF"
 
 
 
