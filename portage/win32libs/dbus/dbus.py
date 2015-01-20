@@ -37,7 +37,7 @@ class Package(CMakePackageBase):
                 "-DDBUS_USE_EXPAT=ON "
                 "-DDBUS_REPLACE_LOCAL_DIR=ON ")
 
-        if (self.buildType == "Release"):
+        if (self.buildType() == "Release"):
             self.subinfo.options.configure.defines += (
                     "-DDBUS_ENABLE_VERBOSE_MODE=OFF "
                     "-DDBUS_DISABLE_ASSERTS=ON ")
@@ -59,4 +59,17 @@ class Package(CMakePackageBase):
             # not sure if this works for wince too, so limited to win32
             self.subinfo.options.configure.defines += (
                     "-DDBUS_USE_OUTPUT_DEBUG_STRING=ON ")
+
+    def install( self ):
+        if not CMakePackageBase.install( self ): return False
+
+        if compiler.isMSVC() and self.buildType() == "Debug":
+            imagedir = os.path.join( self.installDir(), "lib" )
+            filelist = os.listdir( imagedir )
+            for f in filelist:
+                if f.endswith( "d.lib" ):
+                    utils.copyFile( os.path.join( imagedir, f ), os.path.join( imagedir, f.replace( "d.lib", ".lib" ) ) )
+
+        return True
+
 

@@ -50,6 +50,14 @@ class PackageCMake(CMakePackageBase):
         utils.copyDir(os.path.join(self.sourceDir(), "..", "include"), os.path.join(self.imageDir(), "include"))
         utils.copyDir(os.path.join(self.sourceDir(), "..", "lib"), os.path.join(self.imageDir(), "lib"))
         utils.copyDir(os.path.join(self.sourceDir(), "..", "lib64"), os.path.join(self.imageDir(), "lib"))
+
+        if compiler.isMSVC() and self.buildType() == "Debug":
+            imagedir = os.path.join( self.installDir(), "lib" )
+            filelist = os.listdir( imagedir )
+            for f in filelist:
+                if f.endswith( "d.lib" ):
+                    utils.copyFile( os.path.join( imagedir, f ), os.path.join( imagedir, f.replace( "d.lib", ".lib" ) ) )
+
         return True
 
 from Package.AutoToolsPackageBase import *
