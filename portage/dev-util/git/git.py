@@ -7,10 +7,10 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.9.4']  ="https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140929/PortableGit-1.9.4-preview20140929.7z"
-        self.targetDigests['1.9.4'] = '4b0698f2bf96b0dd64ecec477b3db9e3b3d46085'
-
-        self.defaultTarget = '1.9.4'
+        ver = "1.9.5-preview20141217"
+        self.targets['1.9.5']  ="https://github.com/msysgit/msysgit/releases/download/Git-%s/PortableGit-%s.7z" % (ver, ver)
+        self.targetDigests['1.9.5'] = '19c755a0679cd7801594b4d2dd53dde3ca1dc5b9'
+        self.defaultTarget = '1.9.5'
 
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
