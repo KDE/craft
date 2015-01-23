@@ -4,12 +4,14 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['3.2.1'] = 'http://bitbucket.org/eigen/eigen/get/3.2.1.tar.bz2'
-        self.targetInstSrc['3.2.1'] = 'eigen-eigen-6b38706d90a9'
-        self.targetDigests['3.2.1'] = '17aca570d647b25cb3d9dac54b480cfecf402ed9'
+        for ver in ['3.2.4']:
+            self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/%s.tar.bz2' % ver
+            self.archiveNames[ver] = "eigen-%s.tar.bz2" % ver
+        self.targetInstSrc['3.2.4'] = 'eigen-eigen-10219c95fe65'
+        self.targetDigests['3.2.4'] = '64ea809acc449adbd8fe616def7d48ff4f0776a8'
 
         self.shortDescription = 'C++ template library for linear algebra'
-        self.defaultTarget = '3.2.1'
+        self.defaultTarget = '3.2.4'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
