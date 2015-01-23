@@ -1,10 +1,9 @@
 import info
-import kdedefaults as kd
 from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, "frameworks")
+        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, "master")
 
         self.shortDescription = 'an interactive physical simulator'
         self.defaultTarget = 'gitHEAD'
@@ -19,7 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/knewstuff'] = 'default'
         self.dependencies['frameworks/kplotting'] = 'default'
-        self.dependencies['win32libs/eigen2'] = 'default'
+        self.dependencies['win32libs/eigen3'] = 'default'
 
 from Package.CMakePackageBase import *
 
