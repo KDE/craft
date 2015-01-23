@@ -423,8 +423,8 @@ def unTar( fileName, destdir ):
                 except IOError:
                     warning("Failed to extract %s to directory %s" % ( tarMember.name, destdir ) )
         return True
-    except tarfile.TarError:
-        error( "could not open existing tar archive: %s" % fileName )
+    except tarfile.TarError as e:
+        error( "could not open existing tar archive: %s error: %s" % (fileName,e) )
         return False
     finally:
         if os.path.exists(emerge_tmp):
