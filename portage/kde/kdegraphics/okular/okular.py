@@ -25,7 +25,8 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/khtml'] = 'default'
         self.dependencies['frameworks/kactivities'] = 'default'
         self.dependencies['frameworks/kdelibs4support'] = 'default'
-
+        self.dependencies['kde/libkexiv2'] = 'default'
+        
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
