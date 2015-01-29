@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
             if emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
                 self.buildDependencies['dev-util/ninja'] = 'default'
             if emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False):
-                self.buildDependencies['win32libs/ccache'] = 'default'
+                self.buildDependencies['dev-util/ccache'] = 'default'
 
 
 class Package( VirtualPackageBase ):
