@@ -23,6 +23,7 @@ if __name__ == "__main__":
     del InstallDB.installdb
     backup()
     removeFromDB("dev-util")
+    removeFromDB("gnuwin32")
     with open( os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini.backup"),"rt+") as fin:
         text = fin.read()
         reg = re.compile("^PACKAGE_IGNORES.*$", re.MULTILINE)
