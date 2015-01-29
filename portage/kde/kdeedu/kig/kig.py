@@ -4,10 +4,10 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:kig|frameworks'
+        self.svnTargets['master'] = '[git]kde:kig|master'
 
         self.shortDescription = 'interactive geometry'
-        self.defaultTarget = 'frameworks'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
