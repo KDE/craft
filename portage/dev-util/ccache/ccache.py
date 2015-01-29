@@ -20,6 +20,7 @@ from Package.VirtualPackageBase import *
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
+        self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.configure.defines = "--with-bundled-zlib "
         self.supportsCCACHE = False
 
