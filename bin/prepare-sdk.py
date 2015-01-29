@@ -40,6 +40,7 @@ if __name__ == "__main__":
     removeFromDB("gnuwin32")
     # we cant use the ini support to modify the settings as it would kill the comments
     resetSettings()
+    utils.system("cd %s && git clean -xdf" % os.path.join(EmergeStandardDirs.emergeRoot(), "emerge"))
     utils.createDir(EmergeStandardDirs.tmpDir())
     archiveName = os.path.join(EmergeStandardDirs.tmpDir(), "framewroks-sdk.7z")
     utils.deleteFile(archiveName)
