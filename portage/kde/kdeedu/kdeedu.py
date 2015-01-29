@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/kbruch'] = 'default'
         self.dependencies['kde/kgeography'] = 'default'
         self.dependencies['kde/khangman'] = 'default'
+        self.dependencies['kde/kdeedu-data'] = 'default'
         self.dependencies['kde/kig'] = 'default'
         self.dependencies['kde/kiten'] = 'default'
         self.dependencies['kde/klettres'] = 'default'
