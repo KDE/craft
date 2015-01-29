@@ -2,17 +2,16 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        if compiler.isX64():
-            self.targets['938'] = "http://winkde.org/~pvonreth/downloads/winkde/7za-938-x64.zip"
-            self.targetDigests['938'] = '479036267973def3943aff826b847a15d70882f5'
-        else:
-            self.targets['938'] = "http://winkde.org/~pvonreth/downloads/winkde/7za-938-x86.zip"
-        self.targetInstallPath['938'] = "bin"
-        self.defaultTarget = '938'
+        for ver in [ '916' , '920']:
+            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7za%s.zip" % ver
+            self.targetInstallPath[ ver ] = "bin"
+        self.targetDigests[ '916' ] = 'b389a6e2f93c18daae20393532af0e4e85ebe6f4'
+        self.targetDigests[ '920' ] = '9ce9ce89ebc070fea5d679936f21f9dde25faae0'
+        self.defaultTarget = '920'
 
 
     def setDependencies( self ):
-        self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
+        self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'
 
 from Package.BinaryPackageBase import *
 
@@ -21,8 +20,4 @@ class Package( BinaryPackageBase ):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.merge.ignoreBuildType = True
-
-
-
-        
 
