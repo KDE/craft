@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20141003"
+        ver = "20141113"
         if compiler.isX86():
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-%s.tar.xz" % ver
         else:
