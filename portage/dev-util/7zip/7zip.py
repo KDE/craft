@@ -2,11 +2,12 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['938']:
-            self.targets[ ver ] = "http://www.7-zip.org/a/7z%s-extra.7z" % ver
-            self.targetInstallPath[ ver ] = "bin"
-    
-        self.targetDigests['938'] = '089d6bddd45614dd543a32b12f54b17eeee5764c'
+        if compiler.isX64():
+            self.targets['938'] = "http://winkde.org/~pvonreth/downloads/winkde/7za-938-x64.zip"
+            self.targetDigests['938'] = '479036267973def3943aff826b847a15d70882f5'
+        else:
+            self.targets['938'] = "http://winkde.org/~pvonreth/downloads/winkde/7za-938-x86.zip"
+        self.targetInstallPath['938'] = "bin"
         self.defaultTarget = '938'
 
 
@@ -22,18 +23,6 @@ class Package( BinaryPackageBase ):
         self.subinfo.options.merge.ignoreBuildType = True
 
 
-    def unpack(self):
-        if not BinaryPackageBase.unpack(self):
-            return False
-        utils.rmtree(os.path.join( self.imageDir(), "bin", "Far"))
-        if compiler.isX64():
-            for f in os.listdir( self.imageDir() ):
-                name = os.path.join( self.imageDir(), f)
-                if os.path.isfile(name):
-                    utils.deleteFile(name)
-            utils.moveEntries(os.path.join( self.imageDir(), "bin", "x64"), os.path.join(self.imageDir(), "bin"))
-        utils.rmtree(os.path.join( self.imageDir(), "bin", "x64"))
-        return True
 
         
 
