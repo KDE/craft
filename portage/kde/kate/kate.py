@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.dependencies["frameworks/kxmlgui"] = "default"
         self.dependencies["frameworks/kdbusaddons"] = "default"
         self.dependencies["frameworks/kitemmodels"] = "default"
-        self.dependencies["frameworks/plasma"] = "default"
+        self.dependencies["frameworks/plasma-framework"] = "default"
         self.dependencies["frameworks/threadweaver"] = "default"
         self.dependencies["frameworks/knewstuff"] = "default"
 

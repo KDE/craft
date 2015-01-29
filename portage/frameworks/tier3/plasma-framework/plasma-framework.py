@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.versionInfo.setDefaultValues( gitUrl="[git]kde:plasma-framework" )
+        self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Plugin based UI runtime used to write primary user interfaces"
 

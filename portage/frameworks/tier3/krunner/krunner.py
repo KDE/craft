@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/ki18n'] = "default"
         self.dependencies['frameworks/kio'] = "default"
         self.dependencies['frameworks/kservice'] = "default"
-        self.dependencies['frameworks/plasma'] = "default"
+        self.dependencies['frameworks/plasma-framework'] = "default"
         self.dependencies['frameworks/solid'] = "default"
         self.dependencies['frameworks/threadweaver'] = "default"
 
