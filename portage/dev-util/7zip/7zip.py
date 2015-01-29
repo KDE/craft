@@ -2,21 +2,16 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in [ '916' , '920']:
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7za%s.zip" % ver
-            self.targetInstallPath[ ver ] = "bin"
         for ver in ['938']:
             self.targets[ ver ] = "http://www.7-zip.org/a/7z%s-extra.7z" % ver
             self.targetInstallPath[ ver ] = "bin"
     
-        self.targetDigests[ '916' ] = 'b389a6e2f93c18daae20393532af0e4e85ebe6f4'
-        self.targetDigests[ '920' ] = '9ce9ce89ebc070fea5d679936f21f9dde25faae0'
         self.targetDigests['938'] = '089d6bddd45614dd543a32b12f54b17eeee5764c'
         self.defaultTarget = '938'
 
 
     def setDependencies( self ):
-        self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'
+        self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
 
 from Package.BinaryPackageBase import *
 
@@ -25,4 +20,20 @@ class Package( BinaryPackageBase ):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.merge.ignoreBuildType = True
+
+
+    def unpack(self):
+        if not BinaryPackageBase.unpack(self):
+            return False
+        utils.rmtree(os.path.join( self.imageDir(), "bin", "Far"))
+        if compiler.isX64():
+            for f in os.listdir( self.imageDir() ):
+                name = os.path.join( self.imageDir(), f)
+                if os.path.isfile(name):
+                    utils.deleteFile(name)
+            utils.moveEntries(os.path.join( self.imageDir(), "bin", "x64"), os.path.join(self.imageDir(), "bin"))
+        utils.rmtree(os.path.join( self.imageDir(), "bin", "x64"))
+        return True
+
+        
 
