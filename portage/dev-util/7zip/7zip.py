@@ -5,9 +5,14 @@ class subinfo( info.infoclass ):
         for ver in [ '916' , '920']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7za%s.zip" % ver
             self.targetInstallPath[ ver ] = "bin"
+        for ver in ['938']:
+            self.targets[ ver ] = "http://www.7-zip.org/a/7z%s-extra.7z" % ver
+            self.targetInstallPath[ ver ] = "bin"
+    
         self.targetDigests[ '916' ] = 'b389a6e2f93c18daae20393532af0e4e85ebe6f4'
         self.targetDigests[ '920' ] = '9ce9ce89ebc070fea5d679936f21f9dde25faae0'
-        self.defaultTarget = '920'
+        self.targetDigests['938'] = '089d6bddd45614dd543a32b12f54b17eeee5764c'
+        self.defaultTarget = '938'
 
 
     def setDependencies( self ):
