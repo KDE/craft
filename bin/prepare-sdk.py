@@ -11,13 +11,16 @@ def restore():
     utils.moveFile(os.path.join( EmergeStandardDirs.etcPortageDir(), "install.db.backup"), os.path.join( EmergeStandardDirs.etcPortageDir(), "install.db"))
 
 def removeFromDB(category):
-    list = InstallDB.installdb.getDistinctInstalled(category)
+    db = InstallDB.InstallDB()
+    list = db.getDistinctInstalled(category)
     for c,p,_ in list:
-        for package in InstallDB.installdb.getInstalledPackages( c, p ):
+        for package in db.getInstalledPackages( c, p ):
             package.uninstall()
 
 if __name__ == "__main__":
     utils.setVerbose(3)
+    # we don't use the db directly and the file must not be locked
+    del InstallDB.installdb
     backup()
     removeFromDB("dev-util")
     with open( os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini.backup"),"rt+") as fin:
@@ -27,5 +30,7 @@ if __name__ == "__main__":
         with open( os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini"),"wt+") as fout:
             fout.write(text)
     utils.createDir(EmergeStandardDirs.tmpDir())
-    utils.system("7za  a %s/framewroks-sdk.7z %s -x!build -x!msys -x!dev-utils -x!tmp -x!mingw* -x!etc/kdesettings.ini.backup -x!etc/portage/install.db.backup" % ( EmergeStandardDirs.tmpDir(), EmergeStandardDirs.emergeRoot()))
+    archiveName = os.path.join(EmergeStandardDirs.tmpDir(), "framewroks-sdk.7z")
+    utils.deleteFile(archiveName)
+    utils.system("7za  a %s %s -x!build -x!msys -x!dev-utils -x!tmp -x!mingw* -x!etc/kdesettings.ini.backup -x!etc/portage/install.db.backup" % ( archiveName, EmergeStandardDirs.emergeRoot()))
     restore()
