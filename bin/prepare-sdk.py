@@ -24,10 +24,11 @@ if __name__ == "__main__":
     backup()
     removeFromDB("dev-util")
     removeFromDB("gnuwin32")
+    # we cant use the ini support to modify the settings as it would kill the comments
     with open( os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini.backup"),"rt+") as fin:
         text = fin.read()
-        reg = re.compile("^PACKAGE_IGNORES.*$", re.MULTILINE)
-        text = reg.sub("PACKAGE_IGNORES =",text)
+        text = re.compile("^PACKAGE_IGNORES.*$", re.MULTILINE).sub("PACKAGE_IGNORES =",text)
+        text = re.compile("^EMERGE_USE_CCACHE.*$", re.MULTILINE).sub("EMERGE_USE_CCACHE = False",text)
         with open( os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini"),"wt+") as fout:
             fout.write(text)
     utils.createDir(EmergeStandardDirs.tmpDir())
