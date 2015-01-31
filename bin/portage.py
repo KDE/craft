@@ -103,7 +103,7 @@ class DependencyPackage(PackageObjectBase):
                     p.getDependencies( depList, dep_type, single, maxDetpth = maxDetpth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
-        if not self in depList and not str(self) in PortageInstance.ignores:
+        if not self in depList and not PackageObjectBase.__str__(self) in PortageInstance.ignores:
             depList.append( self )
 
         return depList
@@ -186,8 +186,7 @@ class Portage(object):
         self._CURRENT_MODULE = ()#todo refactor package constructor
         self.ignores = set()
         if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
-            for p in emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"):
-                self.ignores.add(p)
+            self.ignores.update(emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"))
             
 
     def addPortageDir( self, directory ):
