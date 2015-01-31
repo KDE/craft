@@ -874,7 +874,7 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
             os.link( src , dest )
             return True
         except:
-            pass
+            warning("Failed to create hardlink %s for %s" % (dest, src))
     try:
         shutil.copy(src,dest)
     except OSError:
