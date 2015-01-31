@@ -870,13 +870,16 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
         warning( "Overriding %s" % dest )
         os.remove( dest )
     if linkOnly:
-        os.link( src , dest )
-    else:
         try:
-            shutil.copy(src,dest)
-        except OSError:
-            system("cmd /C \"attrib -R %s\"" % dest)
-            shutil.copy(src,dest)
+            os.link( src , dest )
+            return True
+        except:
+            pass
+    try:
+        shutil.copy(src,dest)
+    except OSError:
+        system("cmd /C \"attrib -R %s\"" % dest)
+        shutil.copy(src,dest)
     return True
     
 def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
