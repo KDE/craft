@@ -22,8 +22,8 @@ from Packager.SevenZipPackager import *
 
 class Package( SevenZipPackager, VirtualPackageBase ):
     def __init__( self, **args ):
-        VirtualPackageBase.__init__( self )
         SevenZipPackager.__init__( self )
+        VirtualPackageBase.__init__( self )
         #self.subinfo.options.package.packageName = "test"
 
 
