@@ -51,6 +51,7 @@ class SevenZipPackager (PackagerBase):
                 pkgName += "-x86"
 
         dstpath = self.packageDestinationDir()
+        print(dstpath)
 
         if self.subinfo.options.package.withCompiler:
             if( self.compiler() == "mingw"):
@@ -68,7 +69,7 @@ class SevenZipPackager (PackagerBase):
         else:
             pkgCompiler = ""
 
-        if self.subinfo.options.package.packageSuffix:
+        if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
             pkgSuffix = self.subinfo.options.package.packageSuffix
         else:
             pkgSuffix = ''
