@@ -10,7 +10,6 @@ class subinfo(info.infoclass):
       
     def setDependencies( self ):
       self.buildDependencies['dev-util/winflexbison'] = 'default'
-      self.dependencies['win32libs/libfl'] = 'default'
       self.buildDependencies['dev-util/gettext-tools'] = 'default'
       self.dependencies['libs/qt'] = 'default'
       self.dependencies['win32libs/gettext'] = 'default'
