@@ -18,12 +18,14 @@ class subinfo( info.infoclass ):
 
 
 from Package.VirtualPackageBase import *
-from Packager.SevenZipPackager import *
+from Packager.PortablePackager import *
 
-class Package( SevenZipPackager, VirtualPackageBase ):
+class Package( VirtualPackageBase, PortablePackager ):
     def __init__( self, **args ):
-        SevenZipPackager.__init__( self )
+        PortablePackager.__init__( self )
         VirtualPackageBase.__init__( self )
         #self.subinfo.options.package.packageName = "test"
 
+    def createPackage( self ):
+        PortablePackager.createPackage( self )
 
