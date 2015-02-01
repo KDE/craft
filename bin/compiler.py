@@ -75,10 +75,7 @@ def isIntel():
 
 def getCompilerName():
     if isMinGW():
-        if isMinGW_W32():
-            return "mingw-w32"
-        elif isMinGW_W64():
-            return "mingw-w64"
+        return "mingw-w64"
     elif isMSVC():
         return _compiler()
     elif isIntel():
@@ -88,10 +85,7 @@ def getCompilerName():
 
 def getSimpleCompilerName():
     if isMinGW():
-        if isMinGW_W64():
-            return "mingw64"
-        else:
-            return "mingw"
+        return "mingw64"
     elif isMSVC():
         return "msvc"
     elif isIntel():
@@ -121,7 +115,7 @@ def getVersion():
     
 def getShortName():
     if isMinGW():
-        return "mingw4"
+        return getCompilerName()
     elif isMSVC2008():
         return "vc90"
     elif isMSVC2010():
