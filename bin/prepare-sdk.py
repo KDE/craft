@@ -2,6 +2,8 @@ import utils
 from EmergeConfig import *
 import InstallDB
 import compiler
+import time
+import datetime
 
 def backup():
     utils.copyFile(os.path.join( EmergeStandardDirs.etcPortageDir(), "install.db"), os.path.join( EmergeStandardDirs.etcPortageDir(), "install.db.backup"),linkOnly=False)
@@ -43,7 +45,7 @@ if __name__ == "__main__":
     resetSettings()
     utils.system("cd %s && git clean -xdf" % os.path.join(EmergeStandardDirs.emergeRoot(), "emerge"))
     utils.createDir(EmergeStandardDirs.tmpDir())
-    archiveName = os.path.join(EmergeStandardDirs.tmpDir(), "framewroks-sdk-%s-%s.7z" % (compiler.getCompilerName(), compiler.architecture())))
+    archiveName = os.path.join(EmergeStandardDirs.tmpDir(), "framewroks-sdk-%s-%s-%s.7z" % (compiler.getCompilerName(), compiler.architecture(), datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d')))
     utils.deleteFile(archiveName)
     utils.system("7za  a %s %s -x!build -x!msys -x!dev-utils -x!tmp -x!mingw* -x!etc/kdesettings.ini.backup -x!etc/portage/install.db.backup" % ( archiveName, EmergeStandardDirs.emergeRoot()))
     #utils.copyFile(os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini"), os.path.join( EmergeStandardDirs.etcDir(), "kdesettings.ini.backup2"),linkOnly=False)
