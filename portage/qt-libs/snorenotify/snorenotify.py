@@ -21,13 +21,13 @@ class subinfo(info.infoclass):
         self.targetDigests['0.5.1'] = 'eb83e0b7bccfc1c307a8457265dc4a5607a8b877'
         self.targetDigests['0.5.2'] = '9aa4409422872dd32bd5f831a6201820994065a1'
         self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
-        self.defaultTarget = '0.5.2'
+        self.defaultTarget = 'gitHEAD'
 
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = '-DWITH_QT4=OFF -DWITH_FRONTENDS=ON -DWITH_SNORE_DEAMON=ON '
+        self.subinfo.options.configure.defines = '-DWITH_FRONTENDS=ON -DWITH_SNORE_DAEMON=ON '
         if self.subinfo.options.isActive("win32libs/dbus"):
             self.subinfo.options.configure.defines += '-DWITH_FREEDESKTOP_FRONTEND=ON '
 
