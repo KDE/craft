@@ -4,6 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
+        self.targets[ '5.2.0' ] = "ftp://ftp.kde.org/pub/kde/stable/plasma/5.2.0/breeze-5.2.0.tar.xz"
+        self.targetInstSrc[ '5.2.0' ] = "breeze-5.2.0"
+        self.defaultTarget = "5.2.0"
 
 
     def setDependencies( self ):
