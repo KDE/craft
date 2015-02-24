@@ -7,14 +7,14 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['2.7.0-alpha11']:
+        for ver in ['2.7.0-alpha12']:
             self.targets[ver] = 'http://www.mpir.org/mpir-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = "mpir-" + ver
-        self.targetDigests['2.7.0-alpha11'] = 'bceecda34e8a6f45f04efa46ce98955f457aea89'
-        self.targetInstSrc['2.7.0-alpha11'] = 'mpir-2.7.0'
+        self.targetDigests['2.7.0-alpha12'] = '6a46071d007a5284dbb67c4db70306deeb3e6513'
+        self.targetInstSrc['2.7.0-alpha12'] = 'mpir-2.7.0'
 
         self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
-        self.defaultTarget = '2.7.0-alpha11'
+        self.defaultTarget = '2.7.0-alpha12'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -62,6 +62,22 @@ class PackageMSVC(MakeFilePackageBase):
         ) and utils.system("msbuild /target:dll_mpir_gc \"%s\" /p:Configuration=%s %s" %
                 (os.path.join(self.sourceDir(), "build.vc12", "mpir.sln"), bt, toolsetSwitches)
         )
+
+    def unittest( self ):
+        os.chdir( os.path.join( self.sourceDir(), 'build.vc12') )
+        if self.buildType() == "Debug":
+            bt = "Debug"
+        else:
+            bt = "Release"
+
+        toolsetSwitches = ""
+        if compiler.isMSVC2012():
+            toolsetSwitches = "/property:PlatformToolset=v110"
+        elif compiler.isMSVC2013():
+            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
+        return utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), "build.vc12", "mpir-tests.sln"), bt, toolsetSwitches)
+        ) and utils.system(os.path.join("mpir-tests", "run-tests.py"));
 
     def install( self ):
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
