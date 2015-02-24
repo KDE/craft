@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/khtml'] = 'default'
         self.dependencies['testing/kdiagram'] = 'default'
+        self.dependencies['testing/gpgmepp'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         #self.dependencies['win32libs/libofx'] = 'default'
