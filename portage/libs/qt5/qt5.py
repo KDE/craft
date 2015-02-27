@@ -29,6 +29,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['libs/qttools'] = 'default'
         self.dependencies['libs/qtwebkit'] = 'default'
+        self.dependencies['libs/qtwebchannel'] = 'default'
         self.dependencies['libs/qtxmlpatterns'] = 'default'
         self.dependencies['libs/qtwinextras'] = 'default'
         
