@@ -1209,10 +1209,6 @@ def parse_version(s):
 
         yield '*final'  # ensure that alpha/beta/candidate are before final
 
-    if s == "gitHEAD":
-        return tuple(["9999999"])
-    if s == "svnHEAD":
-        return tuple(["9999998"])
     parts = []
     for part in _parse_version_parts(s.lower()):
         if part.startswith('*'):
