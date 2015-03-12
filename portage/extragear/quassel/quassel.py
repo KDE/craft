@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://gitorious.org/quassel/quassel.git'
         self.svnTargets['0.6'] = 'git://gitorious.org/quassel/quassel.git|0.6|'
-        for ver in ['0.7.1','0.7.2','0.7.3','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3', '0.10.0', '0.11.0']:
+        for ver in ['0.7.1','0.7.2','0.7.3','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3', '0.10.0', '0.11.0', '0.12-rc1']:
             self.targets[ver] = 'http://quassel-irc.org/pub/quassel-%s.tar.bz2' % ver
             self.targetInstSrc[ver] = 'quassel-%s' % ver
         self.targetDigests['0.7.1'] = '791086da977033a1bbee3effa317668b3726bd7f'
@@ -40,7 +40,7 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = " -DUSE_QT5=ON -DCMAKE_DISABLE_FIND_PACKAGE_Qt5DBus=ON"
-        if not self.subinfo.options.isActive("libs/qtwebkit"):
+        if not self.subinfo.options.isActive("libs/qt/qtwebkit"):
             self.subinfo.options.configure.defines += " -DWITH_WEBKIT=OFF"
         
         
