@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'https://github.com/Snorenotify/snore-send.git'
+        self.svnTargets['0.5'] = 'https://github.com/Snorenotify/snore-send.git|0.5'
         self.defaultTarget = 'gitHEAD'
 
 
