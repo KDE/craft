@@ -117,6 +117,8 @@ class CollectionPackagerBase( PackagerBase ):
                     self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
             utils.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % ( _package.category, x.package, _package.version, _package.buildTarget ), 2)
+        if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
+            imageDirs.append((os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler")), None, False))
         return imageDirs
 
     def read_whitelist( self, fname ):
