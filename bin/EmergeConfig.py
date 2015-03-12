@@ -183,7 +183,7 @@ class EmergeConfig( object ):
             self._blacklistQt()
 
     def _blacklistQt(self):
-        ignores = ";libs/qt;libs/qt5;dev-util/mingw-w64;binary/mysql-pkg;win32libs/icu"
+        ignores = ";libs/qt;libs/qt5;dev-util/mingw-w64;binary/mysql-pkg;win32libs/icu;libs/runtime"
         for s in ["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns",
                 "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]:
             ignores += ";libs/qt5/%s" % s
