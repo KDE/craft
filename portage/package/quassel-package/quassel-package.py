@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
             if not gitVersion is None:
                 self.svnTargets[ gitVersion  ] = ""
                 self.defaultTarget = gitVersion
-        self.targets[ '0.11.0-1'] = ""
-        self.defaultTarget = '0.11.0-1'
+        self.targets[ '0.12-rc1'] = ""
+        self.defaultTarget = '0.12-rc1'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/quassel' ] = 'default'
@@ -37,6 +37,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         utils.rmtree(path);
         
 
+        utils.moveDir( os.path.join(self.imageDir(),"lib","qca-qt5", "crypto"), os.path.join(self.imageDir(), "bin", "crypto"))
         utils.moveDir( os.path.join(self.imageDir(),"lib","libsnore-qt5"), os.path.join(self.imageDir(), "bin"))
         utils.rmtree(os.path.join(self.imageDir(),"lib"))
         
