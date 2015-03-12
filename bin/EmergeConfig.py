@@ -183,9 +183,12 @@ class EmergeConfig( object ):
             self._blacklistQt()
 
     def _blacklistQt(self):
-        self.set("Portage", "PACKAGE_IGNORES", self.get("Portage", "PACKAGE_IGNORES") + ";libs/qt;libs/qt5;dev-util/mingw-w64;binary/mysql-pkg" +
-                ";libs/qt5/".join(["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns", "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]))
-
+        ignores = ";libs/qt;libs/qt5;dev-util/mingw-w64;binary/mysql-pkg;win32libs/icu"
+        for s in ["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns",
+                "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]:
+            ignores += ";libs/qt5/%s" % s
+        self.set("Portage", "PACKAGE_IGNORES", self.get("Portage", "PACKAGE_IGNORES") + ignores)
+        
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \
                (key in self._alias and self.__contains__(self._alias[key]))
