@@ -121,14 +121,16 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.package.packageName = 'openssl'
         self.subinfo.options.package.packSources = False
-        self.platform = compiler.getSimpleCompilerName()
+        if compiler.architecture() == "x64":
+            self.platform = "mingw64"
+        else:
+            self.platform = "mingw"
         self.supportsCCACHE = False
 
         self.buildInSource = True
 
         # target install needs perl with native path on configure time
-        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic --with-zlib-lib=libzlib.dll.a --with-zlib-include=%s" % (
-            self.shell.toNativePath(os.path.join( self.mergeDestinationDir() ,"include" ))  )
+        self.subinfo.options.configure.defines = " shared enable-md2 zlib-dynamic "
 
 
     def make( self, dummyBuildType=None ):
