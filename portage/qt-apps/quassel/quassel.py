@@ -7,7 +7,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/quassel/quassel.git'
+        self.svnTargets['gitHEAD'] = 'https://github.com/quassel/quassel.git'
         self.svnTargets['0.6'] = 'git://gitorious.org/quassel/quassel.git|0.6|'
         for ver in ['0.7.1','0.7.2','0.7.3','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3', '0.10.0', '0.11.0', '0.12-rc1']:
             self.targets[ver] = 'http://quassel-irc.org/pub/quassel-%s.tar.bz2' % ver
