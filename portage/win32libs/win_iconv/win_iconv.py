@@ -2,19 +2,15 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'http://win-iconv.googlecode.com/svn/trunk'
-        for ver in ['0.0.1', '0.0.2', '0.0.3', '0.0.4', '0.0.6']:
-            self.targets[ver] = 'http://win-iconv.googlecode.com/files/win-iconv-' + ver + '.tar.bz2'
-            self.targetInstSrc[ver] = 'win-iconv-' + ver
+        self.svnTargets['gitHEAD'] = 'https://github.com/win-iconv/win-iconv.git'
+        for ver in ['0.0.4', '0.0.6']:
+            self.targets[ver] = 'https://github.com/win-iconv/win-iconv/archive/%s.tar.gz' % ver
+            self.archiveNames[ver] = "win-iconv-%s.tar.gz" % ver
+            self.targetInstSrc[ver] = 'win-iconv-%s' % ver
 
-        self.targetDigests['0.0.1'] = 'faf4f1f311f92f2a80afe275f43fabb047f23308'
-        self.targetDigests['0.0.2'] = 'd61714a4708d76537600782eb72ccb3cbc89b4b5'
-        self.targetDigests['0.0.3'] = '4af3a4b8632dfa35baca8a8ed57bb874f8ac4eb4'
-        self.targetDigests['0.0.4'] = 'f9a5421f520a2fd37d6dbd1f7bf710ab67dec96b'
-        self.targetDigests['0.0.6'] = '51ce281cd8ce2debf3226482e86e0e534141ed01'
-        self.patchToApply['0.0.2'] = ("win-iconv-0.0.2-20101217.diff", 1)
+        self.targetDigests['0.0.6'] = '731bd257920ade27375e3794447d2b291ebfe751'
         self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
-        self.defaultTarget = '0.0.4'
+        self.defaultTarget = '0.0.6'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -24,5 +20,4 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__(self)
-
 
