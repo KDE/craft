@@ -1094,7 +1094,7 @@ def prependPath(*parts):
         if old[0] != fullPath:
             debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
-            os.putenv( "PATH", ";".join(old))
+            putenv( "PATH", ";".join(old))
 
 def setTitle(title):
     ctypes.windll.kernel32.SetConsoleTitleW(title)
