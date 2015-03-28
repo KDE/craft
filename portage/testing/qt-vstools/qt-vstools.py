@@ -8,7 +8,7 @@ from Package.QMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['HEAD'] = 'git://gitorious.org/qt-labs/vstools.git'
+        self.svnTargets['HEAD'] = 'git://code.qt.io/qt-labs/vstools.git'
         self.svnTargets['TEMP'] = 'git@gitorious.org:~rhabacker/qt-labs/rhabackers-vstools.git'
         self.defaultTarget = 'HEAD'
 

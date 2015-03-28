@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = '%s-opensource-src-%s' % ( self.versionInfo.packageName(), ver)
             
         for ver in self.versionInfo.branches():
-            self.svnTargets[ver] = '[git]git://gitorious.org/qt/%s.git|%s' % ( self.versionInfo.packageName(), ver)
+            self.svnTargets[ver] = '[git]git://code.qt.io/qt/%s.git|%s' % ( self.versionInfo.packageName(), ver)
             
         for ver in self.versionInfo.tags():
-            self.svnTargets[ver] = '[git]git://gitorious.org/qt/%s.git||%s' % ( self.versionInfo.packageName(), ver)
+            self.svnTargets[ver] = '[git]git://code.qt.io/qt/%s.git||%s' % ( self.versionInfo.packageName(), ver)
             
 
         self.defaultTarget = self.versionInfo.defaultTarget()
