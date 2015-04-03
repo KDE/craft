@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/kconfigwidgets"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
+        self.dependencies["frameworks/kdeclarative"] = "default"
         self.dependencies["frameworks/kiconthemes"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["frameworks/kitemviews"] = "default"
