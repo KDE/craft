@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["win32libs/pcre"] = "default"
 from Package.CMakePackageBase import *
 

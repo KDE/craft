@@ -19,7 +19,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kimageformats'] = 'default'
         self.dependencies['frameworks/kitemmodels'] = 'default'
         self.dependencies['frameworks/kitemviews'] = 'default'
-        self.dependencies['frameworks/kjs'] = 'default'
         self.dependencies['frameworks/kplotting'] = 'default'
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'

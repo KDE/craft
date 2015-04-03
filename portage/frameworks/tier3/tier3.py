@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/kinit'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
+        self.dependencies['frameworks/kjs'] = 'default'
         self.dependencies['frameworks/kjsembed'] = 'default'
         self.dependencies['frameworks/kmediaplayer'] = 'default'
         self.dependencies['frameworks/knewstuff'] = 'default'
