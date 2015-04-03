@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs/sqlite'] = 'default'
+        self.dependencies['win32libs/icu'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
