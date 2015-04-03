@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwindowsystem'] = 'default'
         self.dependencies['frameworks/kglobalaccel'] = 'default'
         self.dependencies['frameworks/kguiaddons'] = 'default'
+        self.dependencies['frameworks/kpackage'] = 'default'
 
 from Package.CMakePackageBase import *
 
