@@ -4,9 +4,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.targets[ '5.2.0' ] = "ftp://ftp.kde.org/pub/kde/stable/plasma/5.2.0/breeze-5.2.0.tar.xz"
-        self.targetInstSrc[ '5.2.0' ] = "breeze-5.2.0"
-        self.defaultTarget = "5.2.0"
+        self.targets[ '5.2.2' ] = "http://download.kde.org/stable/plasma/5.2.2/breeze-5.2.2.tar.xz"
+        self.targetInstSrc[ '5.2.2' ] = "breeze-5.2.2"
+        self.targetDigests['5.2.2'] = '54b4952cc3b7e8c02ce626637c1b3b4ecd748a30'
+        self.defaultTarget = "5.2.2"
 
 
     def setDependencies( self ):
