@@ -1,0 +1,1965 @@
+diff -Nru -x '*~' gloox-1.0.13.orig/cmake/modules/FindIDN.cmake gloox-1.0.13/cmake/modules/FindIDN.cmake
+--- gloox-1.0.13.orig/cmake/modules/FindIDN.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/cmake/modules/FindIDN.cmake	2015-04-07 15:20:13.411054500 +0200
+@@ -0,0 +1,44 @@
++# cmake macro to test IDN library
++
++# Copyright (c) 2006, Will Stephenson <wstephenson@kde.org>
++
++#  IDN_FOUND - Test has found IDN dependencies
++#  IDN_INCLUDE_DIR - Include needed for IDN
++#  IDN_LIBRARIES - Libraries needed for IDN
++#  IDN_DEFINITIONS - Compiler switches required for using IDN
++
++# Redistribution and use is allowed according to the terms of the BSD license.
++# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
++
++if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        # cached
++        SET(IDN_FOUND TRUE)
++else (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        if (NOT WIN32)
++                find_package(PkgConfig)
++                if(PKG_CONFIG_EXECUTABLE)
++                        pkg_check_modules(IDN libidn)
++                endif(PKG_CONFIG_EXECUTABLE)
++        endif (NOT WIN32)
++
++        if(NOT IDN_FOUND)
++                find_path(IDN_INCLUDEDIR idna.h)
++                find_library(IDN_LIBRARIES NAMES idn libidn idn-11 libidn-11)
++                if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++                        SET(IDN_FOUND TRUE)
++                endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
++        endif(NOT IDN_FOUND)
++
++        if(IDN_FOUND)
++                set(IDN_DEFINITIONS ${IDN_CFLAGS})
++                if(NOT IDN_FIND_QUIETLY)
++                        message(STATUS "Found libidn: ${IDN_LIBRARIES}")
++                endif(NOT IDN_FIND_QUIETLY)
++                set(IDN_INCLUDE_DIR ${IDN_INCLUDEDIR})
++                mark_as_advanced( IDN_INCLUDE_DIR )
++        else(IDN_FOUND)
++                if (IDN_FIND_REQUIRED)
++                        message(FATAL_ERROR "Not found required libidn")
++                endif (IDN_FIND_REQUIRED)
++        endif(IDN_FOUND)
++endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' gloox-1.0.13.orig/CMakeLists.txt gloox-1.0.13/CMakeLists.txt
+--- gloox-1.0.13.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/CMakeLists.txt	2015-04-08 01:04:09.072804600 +0200
+@@ -0,0 +1,287 @@
++project(gloox)
++
++cmake_minimum_required(VERSION 2.6)
++
++include(ConfigureChecks.cmake)
++
++enable_testing()
++
++set(libgloox_HEADERS
++    adhoccommandprovider.h
++    privacymanager.h
++    tag.h
++    adhoc.h
++    attention.h
++    iqhandler.h
++    privatexml.h
++    annotations.h
++    client.h
++    privatexmlhandler.h
++    annotationshandler.h
++    component.h
++    registration.h
++    bookmarkhandler.h
++    registrationhandler.h
++    jid.h
++    bookmarkstorage.h
++    messagehandler.h
++    rosteritem.h
++    clientbase.h
++    rosterlistener.h
++    taghandler.h
++    connectionlistener.h
++    rostermanager.h
++    gloox.h
++    glooxversion.h
++    disco.h
++    presencehandler.h
++    subscriptionhandler.h
++    discohandler.h
++    privacyitem.h
++    stanza.h
++    disconodehandler.h
++    privacylisthandler.h
++    loghandler.h
++    lastactivity.h
++    lastactivityhandler.h
++    flexoff.h
++    flexoffhandler.h
++    dataform.h
++    dataformfield.h
++    dataformitem.h
++    dataformfieldcontainer.h
++    dataformreported.h
++    macros.h
++    logsink.h
++    messagesession.h
++    messageeventhandler.h
++    messagesessionhandler.h
++    chatstatehandler.h
++    chatstatefilter.h
++    messageeventfilter.h
++    inbandbytestream.h
++    messagefilter.h
++    vcard.h
++    vcardmanager.h
++    vcardhandler.h
++    adhochandler.h
++    search.h
++    searchhandler.h
++    statisticshandler.h
++    resource.h
++    mucroom.h
++    mucroomhandler.h
++    mucroomconfighandler.h
++    parser.h
++    mucinvitationhandler.h
++    stanzaextension.h
++    oob.h
++    vcardupdate.h
++    delayeddelivery.h
++    base64.h
++    gpgencrypted.h
++    gpgsigned.h
++    md5.h
++    sha.h
++    uniquemucroom.h
++    instantmucroom.h
++    tlsbase.h
++    tlshandler.h
++    connectionbase.h
++    connectiondatahandler.h
++    compressiondatahandler.h
++    compressionbase.h
++    connectiontcpclient.h
++    connectionhttpproxy.h
++    tlsdefault.h
++    simanager.h
++    siprofilehandler.h
++    sihandler.h
++    siprofileft.h
++    siprofilefthandler.h
++    socks5bytestreammanager.h
++    connectionsocks5proxy.h
++    event.h
++    socks5bytestream.h
++    socks5bytestreamserver.h
++    softwareversion.h
++    eventhandler.h
++    mutex.h
++    mutexguard.h
++    connectiontcpbase.h
++    connectiontcpserver.h
++    amp.h
++    pubsubmanager.h
++    iq.h
++    pubsub.h
++    pubsubresulthandler.h
++    error.h
++    chatstate.h
++    connectionhandler.h
++    message.h
++    presence.h
++    subscription.h
++    bytestream.h
++    bytestreamdatahandler.h
++    bytestreamhandler.h
++    capabilities.h
++    connectionbosh.h
++    featureneg.h
++    connectiontls.h
++    messageevent.h
++    receipt.h
++    nickname.h
++    pubsubevent.h
++    xhtmlim.h
++    eventdispatcher.h
++    pubsubitem.h
++    shim.h
++    util.h
++    connectiontlsserver.h
++    compressiondefault.h
++)
++
++set(libgloox_FILES 
++    jid.cpp
++    parser.cpp
++    connectiontcpclient.cpp
++    clientbase.cpp
++    tag.cpp
++    stanza.cpp
++    logsink.cpp
++    dns.cpp
++    prep.cpp
++    base64.cpp
++    client.cpp
++    component.cpp
++    disco.cpp
++    adhoc.cpp
++    privatexml.cpp
++    registration.cpp
++    nonsaslauth.cpp
++    rosteritem.cpp
++    rostermanager.cpp
++    privacyitem.cpp
++    bookmarkstorage.cpp
++    annotations.cpp
++    privacymanager.cpp
++    lastactivity.cpp
++    flexoff.cpp
++    dataform.cpp
++    dataformfield.cpp
++    dataformfieldcontainer.cpp
++    messagesession.cpp
++    messageeventfilter.cpp
++    chatstatefilter.cpp
++    gloox.cpp
++    inbandbytestream.cpp
++    messagefilter.cpp
++    vcard.cpp
++    vcardmanager.cpp
++    md5.cpp
++    sha.cpp
++    search.cpp
++    dataformreported.cpp
++    dataformitem.cpp
++    mucroom.cpp
++    mucmessagesession.cpp
++    oob.cpp
++    vcardupdate.cpp
++    stanzaextensionfactory.cpp
++    mucinvitationhandler.cpp
++    delayeddelivery.cpp
++    gpgencrypted.cpp
++    gpgsigned.cpp
++    uniquemucroom.cpp
++    instantmucroom.cpp
++    compressionzlib.cpp
++    tlsgnutlsclient.cpp
++    connectionhttpproxy.cpp
++    tlsgnutlsserveranon.cpp
++    tlsgnutlsbase.cpp
++    tlsgnutlsclientanon.cpp
++    tlsschannel.cpp
++    tlsdefault.cpp
++    simanager.cpp
++    siprofileft.cpp
++    mutex.cpp
++    connectionsocks5proxy.cpp
++    socks5bytestreammanager.cpp
++    socks5bytestream.cpp
++    connectiontcpbase.cpp
++    connectiontcpserver.cpp
++    socks5bytestreamserver.cpp
++    amp.cpp
++    pubsubitem.cpp
++    pubsubmanager.cpp
++    error.cpp
++    util.cpp
++    iq.cpp
++    message.cpp
++    presence.cpp
++    subscription.cpp
++    capabilities.cpp
++    chatstate.cpp
++    connectionbosh.cpp
++    connectiontls.cpp
++    messageevent.cpp
++    receipt.cpp
++    nickname.cpp
++    eventdispatcher.cpp
++    pubsubevent.cpp
++    xhtmlim.cpp
++    featureneg.cpp
++    shim.cpp
++    softwareversion.cpp
++    attention.cpp
++    tlsopensslclient.cpp
++    tlsopensslbase.cpp
++    tlsopensslserver.cpp
++    compressiondefault.cpp
++    connectiontlsserver.cpp
++    atomicrefcount.cpp
++    linklocalmanager.cpp
++    linklocalclient.cpp
++    forward.cpp
++    jinglesession.cpp
++    jinglecontent.cpp
++    jinglesessionmanager.cpp
++    carbons.cpp
++    jinglepluginfactory.cpp
++    jingleiceudp.cpp
++    jinglefiletransfer.cpp
++    iodata.cpp
++)
++
++foreach(_file ${libgloox_FILES})
++    list(APPEND libgloox_SRCS src/${_file})
++endforeach(_file ${libgloox_FILES})
++
++foreach(_file ${libgloox_HEADERS})
++    list(APPEND libgloox_HDRS src/${_file})
++endforeach(_file ${libgloox_HEADERS})
++
++add_library(gloox SHARED ${libgloox_SRCS})
++set_target_properties(gloox PROPERTIES DEFINE_SYMBOL GLOOX_EXPORTS)
++if(ZLIB_FOUND)
++    target_link_libraries(gloox ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(gloox ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(gloox ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++
++add_library(gloox_static STATIC ${libgloox_SRCS})
++set_target_properties(gloox_static PROPERTIES COMPILE_FLAGS -DGLOOX_STATIC)
++add_library(gloox_static_test STATIC ${libgloox_SRCS})
++set_target_properties(gloox_static_test PROPERTIES COMPILE_FLAGS "-DGLOOX_STATIC -DADHOC_COMMANDS_TEST=1 -DADHOC_TEST=1 -DCLIENT_TEST=1 -DCLIENTBASE_TEST=1 -DDISCO_INFO_TEST=1 -DDISCO_ITEMS_TEST=1 -DDISCO_TEST=1 -DFLEXOFF_TEST=1 -DINBANDBYTESTREAM_TEST=1 -DIQ_TEST=1 -DJINGLE_TEST=1 -DLASTACTIVITY_TEST=1 -DMESSAGE_TEST=1 -DMUCROOM_TEST=1 -DNONSASLAUTH_TEST=1 -DPRESENCE_TEST=1 -DPRIVATEXML_TEST=1 -DPUBSUBMANAGER_TEST=1 -DREGISTRATION_TEST=1 -DROSTERMANAGER_TEST=1 -DSEARCH_TEST=1 -DSIMANAGER_TEST=1 -DSOCKS5BYTESTREAMMANAGER_TEST=1 -DSUBSCRIPTION_TEST=1 -DUNIQUEMUCROOM_TEST=1")
++
++install(TARGETS gloox gloox_static  RUNTIME DESTINATION bin
++                                    LIBRARY DESTINATION lib
++                                    ARCHIVE DESTINATION lib)
++
++install(FILES ${libgloox_HDRS} DESTINATION include/gloox)
++
++add_subdirectory(src/tests)
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' gloox-1.0.13.orig/config.h.win.cmake gloox-1.0.13/config.h.win.cmake
+--- gloox-1.0.13.orig/config.h.win.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/config.h.win.cmake	2015-04-07 15:20:13.423055200 +0200
+@@ -0,0 +1,45 @@
++
++/**
++ * Uncomment whichever lib you have installed.
++ */
++
++/* Uncomment if you have zlib available and want to use it */
++#cmakedefine HAVE_ZLIB 1
++
++/* Comment out if you don't want to use Win's native TLS functions */
++#cmakedefine HAVE_WINTLS 1
++
++/* Uncomment if you have GnuTLS available and want to use it */
++// #define HAVE_GNUTLS 1
++
++/* Uncomment if you have OpenSSL available and want to use it */
++#cmakedefine HAVE_OPENSSL 1
++
++/* Uncomment if you have LibIDN available and want to use it */
++#cmakedefine HAVE_LIBIDN 1
++
++/* Uncomment if you have the getaddrinfo function and want IPv6 support (XP and up) */
++#cmakedefine HAVE_GETADDRINFO 1
++
++/* Comment out if you don't have windns.h (e.g. if you use an old Platform SDK) */
++#cmakedefine HAVE_WINDNS_H 1
++
++/* Comment out if you don't have the `setsockopt' function. Usually available. */
++#cmakedefine HAVE_SETSOCKOPT 1
++
++#ifdef _MSC_VER
++#pragma comment( lib, "Dnsapi.lib" )
++#pragma comment( lib, "Secur32.lib" )
++#pragma comment( lib, "Crypt32.lib" )
++#pragma comment( lib, "ws2_32.lib" )
++
++/* The following silences a few C4355 warnings ('this' : used in member initializer list).
++   This is only used with Parser which doesn't do anything with its TagHandler in the ctor,
++   so muting C4355 is safe. */
++#pragma warning( disable : 4355 )
++
++/* The following silcences warnings concerning "unsafe" functions (sprintf, strncpy, etc.).
++   They are used in a safe way here, though. */
++#pragma warning( disable : 4996 )
++#define _WIN32_WINNT 0x0400
++#endif
+diff -Nru -x '*~' gloox-1.0.13.orig/ConfigureChecks.cmake gloox-1.0.13/ConfigureChecks.cmake
+--- gloox-1.0.13.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/ConfigureChecks.cmake	2015-04-08 00:59:08.577617200 +0200
+@@ -0,0 +1,41 @@
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
++find_package(ZLIB)
++find_package(OpenSSL)
++find_package(IDN)
++
++#/* Uncomment if you have zlib available and want to use it */
++set( HAVE_ZLIB ${ZLIB_FOUND} )
++if(ZLIB_FOUND)
++    include_directories(${ZLIB_INCLUDE_DIR})
++endif(ZLIB_FOUND)
++
++#/* Comment out if you don't want to use Win's native TLS functions */
++set( HAVE_WINTLS 1 )
++
++#/* Uncomment if you have GnuTLS available and want to use it */
++#set( HAVE_GNUTLS 1 )
++
++#/* Uncomment if you have OpenSSL available and want to use it */
++set( HAVE_OPENSSL ${OPENSSL_FOUND} )
++if(OPENSSL_FOUND)
++    include_directories(${OPENSSL_INCLUDE_DIR})
++endif(OPENSSL_FOUND)
++
++#/* Uncomment if you have LibIDN available and want to use it */
++set( HAVE_LIBIDN ${IDN_FOUND} )
++if(IDN_FOUND)
++    include_directories(${IDN_INCLUDE_DIR})
++endif(IDN_FOUND)
++
++#/* Uncomment if you have the getaddrinfo function and want IPv6 support (XP and up) */
++# set( HAVE_GETADDRINFO 1 )
++
++#/* Comment out if you don't have windns.h (e.g. if you use an old Platform SDK) */
++set( HAVE_WINDNS_H 1 )
++
++#/* Comment out if you don't have the `setsockopt' function. Usually available. */
++set( HAVE_SETSOCKOPT 1 )
++
++configure_file(config.h.win.cmake config.h)
++
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
+\ Kein Zeilenumbruch am Dateiende.
+diff -Nru -x '*~' gloox-1.0.13.orig/src/config.h gloox-1.0.13/src/config.h
+--- gloox-1.0.13.orig/src/config.h	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/config.h	1970-01-01 01:00:00.000000000 +0100
+@@ -1,27 +0,0 @@
+-/*
+-  Copyright (c) 2009-2015 by Jakob Schröter <js@camaya.net>
+-  This file is part of the gloox library. http://camaya.net/gloox
+-
+-  This software is distributed under a license. The full license
+-  agreement can be found in the file LICENSE in this distribution.
+-  This software may not be copied, modified, sold or distributed
+-  other than expressed in the named license agreement.
+-
+-  This software is distributed without any warranty.
+-*/
+-
+-
+-#ifndef CONFIG_H__
+-#define CONFIG_H__
+-
+-#if ( defined _WIN32 ) && !defined( __SYMBIAN32__ )
+-# include "../config.h.win"
+-#elif defined( _WIN32_WCE )
+-# include "../config.h.win"
+-#elif defined( __SYMBIAN32__ )
+-# include "../config.h.symbian"
+-#else
+-# include "config.h.unix" // run ./configure to create config.h.unix
+-#endif
+-
+-#endif // CONFIG_H__
+diff -Nru -x '*~' gloox-1.0.13.orig/src/dns.h gloox-1.0.13/src/dns.h
+--- gloox-1.0.13.orig/src/dns.h	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/dns.h	2015-04-08 00:59:10.959753500 +0200
+@@ -17,7 +17,7 @@
+ #include "macros.h"
+ #include "logsink.h"
+ 
+-#ifdef __MINGW32__
++#ifdef _WIN32
+ # include <windows.h>
+ # include <windns.h>
+ #endif
+diff -Nru -x '*~' gloox-1.0.13.orig/src/macros.h gloox-1.0.13/src/macros.h
+--- gloox-1.0.13.orig/src/macros.h	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/macros.h	2015-04-07 16:05:28.468346900 +0200
+@@ -20,6 +20,7 @@
+ #endif
+ 
+ #if defined( _WIN32 ) && !defined( __SYMBIAN32__ )
++# if !defined(GLOOX_STATIC)
+ #  if defined( GLOOX_EXPORTS ) || defined( DLL_EXPORT )
+ #    define GLOOX_API __declspec( dllexport )
+ #  else
+@@ -27,6 +28,9 @@
+ #      define GLOOX_API __declspec( dllimport )
+ #    endif
+ #  endif
++# else
++#  define GLOOX_API
++# endif
+ #endif
+ 
+ #ifndef GLOOX_API
+diff -Nru -x '*~' gloox-1.0.13.orig/src/mutex.cpp gloox-1.0.13/src/mutex.cpp
+--- gloox-1.0.13.orig/src/mutex.cpp	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/mutex.cpp	2015-04-07 15:20:18.497345500 +0200
+@@ -17,6 +17,7 @@
+ 
+ #if defined( _WIN32 ) && !defined( __SYMBIAN32__ )
+ # include <windows.h>
++# include <winbase.h>
+ #endif
+ 
+ #ifdef _WIN32_WCE
+diff -Nru -x '*~' gloox-1.0.13.orig/src/test.txt gloox-1.0.13/src/test.txt
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/adhoc/CMakeLists.txt gloox-1.0.13/src/tests/adhoc/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/adhoc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/adhoc/CMakeLists.txt	2015-04-08 01:05:26.446230100 +0200
+@@ -0,0 +1,13 @@
++# adhoc
++add_executable(adhoc_test adhoc_test.cpp)
++target_link_libraries(adhoc_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(adhoc_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(adhoc_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(adhoc_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(adhoc_test adhoc_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/adhoccommand/CMakeLists.txt gloox-1.0.13/src/tests/adhoccommand/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/adhoccommand/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/adhoccommand/CMakeLists.txt	2015-04-08 01:05:26.451230400 +0200
+@@ -0,0 +1,13 @@
++# adhoccommand
++add_executable(adhoccommand_test adhoccommand_test.cpp)
++target_link_libraries(adhoccommand_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(adhoccommand_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(adhoccommand_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(adhoccommand_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(adhoccommand_test adhoccommand_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/adhoccommandnote/CMakeLists.txt gloox-1.0.13/src/tests/adhoccommandnote/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/adhoccommandnote/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/adhoccommandnote/CMakeLists.txt	2015-04-08 01:05:26.455230600 +0200
+@@ -0,0 +1,13 @@
++# adhoccommandnote
++add_executable(adhoccommandnote_test adhoccommandnote_test.cpp)
++target_link_libraries(adhoccommandnote_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(adhoccommandnote_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(adhoccommandnote_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(adhoccommandnote_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(adhoccommandnote_test adhoccommandnote_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/amp/CMakeLists.txt gloox-1.0.13/src/tests/amp/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/amp/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/amp/CMakeLists.txt	2015-04-08 01:05:26.460230900 +0200
+@@ -0,0 +1,13 @@
++# amp
++add_executable(amp_test amp_test.cpp)
++target_link_libraries(amp_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(amp_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(amp_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(amp_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(amp_test amp_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/amprule/CMakeLists.txt gloox-1.0.13/src/tests/amprule/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/amprule/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/amprule/CMakeLists.txt	2015-04-08 01:05:26.464231100 +0200
+@@ -0,0 +1,13 @@
++# amprule
++add_executable(amprule_test amprule_test.cpp)
++target_link_libraries(amprule_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(amprule_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(amprule_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(amprule_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(amprule_test amprule_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/base64/CMakeLists.txt gloox-1.0.13/src/tests/base64/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/base64/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/base64/CMakeLists.txt	2015-04-08 01:05:26.469231400 +0200
+@@ -0,0 +1,13 @@
++# base64
++add_executable(base64_test base64_test.cpp)
++target_link_libraries(base64_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(base64_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(base64_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(base64_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(base64_test base64_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/capabilities/CMakeLists.txt gloox-1.0.13/src/tests/capabilities/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/capabilities/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/capabilities/CMakeLists.txt	2015-04-08 01:05:26.473231600 +0200
+@@ -0,0 +1,13 @@
++# capabilities
++add_executable(capabilities_test capabilities_test.cpp)
++target_link_libraries(capabilities_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(capabilities_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(capabilities_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(capabilities_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(capabilities_test capabilities_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/carbons/CMakeLists.txt gloox-1.0.13/src/tests/carbons/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/carbons/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/carbons/CMakeLists.txt	2015-04-08 01:05:26.478231900 +0200
+@@ -0,0 +1,13 @@
++# carbons
++add_executable(carbons_test carbons_test.cpp)
++target_link_libraries(carbons_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(carbons_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(carbons_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(carbons_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(carbons_test carbons_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/chatstatefilter/CMakeLists.txt gloox-1.0.13/src/tests/chatstatefilter/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/chatstatefilter/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/chatstatefilter/CMakeLists.txt	2015-04-08 01:05:26.482232100 +0200
+@@ -0,0 +1,13 @@
++# chatstatefilter
++add_executable(chatstatefilter_test chatstatefilter_test.cpp)
++target_link_libraries(chatstatefilter_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(chatstatefilter_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(chatstatefilter_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(chatstatefilter_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(chatstatefilter_test chatstatefilter_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/client/CMakeLists.txt gloox-1.0.13/src/tests/client/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/client/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/client/CMakeLists.txt	2015-04-08 01:05:26.487232400 +0200
+@@ -0,0 +1,13 @@
++# client
++add_executable(client_test client_test.cpp)
++target_link_libraries(client_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(client_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(client_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(client_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(client_test client_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/clientbase/CMakeLists.txt gloox-1.0.13/src/tests/clientbase/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/clientbase/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/clientbase/CMakeLists.txt	2015-04-08 01:05:26.492232700 +0200
+@@ -0,0 +1,13 @@
++# clientbase
++add_executable(clientbase_test clientbase_test.cpp)
++target_link_libraries(clientbase_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(clientbase_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(clientbase_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(clientbase_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(clientbase_test clientbase_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/CMakeLists.txt gloox-1.0.13/src/tests/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/CMakeLists.txt	2015-04-08 00:28:45.854363400 +0200
+@@ -0,0 +1,7 @@
++file(GLOB_RECURSE test_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *_test.cpp)
++add_definitions(-DGLOOX_STATIC -DADHOC_COMMANDS_TEST=1 -DADHOC_TEST=1 -DCLIENT_TEST=1 -DCLIENTBASE_TEST=1 -DDISCO_INFO_TEST=1 -DDISCO_ITEMS_TEST=1 -DDISCO_TEST=1 -DFLEXOFF_TEST=1 -DINBANDBYTESTREAM_TEST=1 -DIQ_TEST=1 -DJINGLE_TEST=1 -DLASTACTIVITY_TEST=1 -DMESSAGE_TEST=1 -DMUCROOM_TEST=1 -DNONSASLAUTH_TEST=1 -DPRESENCE_TEST=1 -DPRIVATEXML_TEST=1 -DPUBSUBMANAGER_TEST=1 -DREGISTRATION_TEST=1 -DROSTERMANAGER_TEST=1 -DSEARCH_TEST=1 -DSIMANAGER_TEST=1 -DSOCKS5BYTESTREAMMANAGER_TEST=1 -DSUBSCRIPTION_TEST=1 -DUNIQUEMUCROOM_TEST=1)
++include_directories(${CMAKE_CURRENT_BINARY_DIR})
++foreach(_test ${test_files})
++    string(REGEX REPLACE "([^/]*)/([^\\.]*).cpp" "\\1" _testname ${_test})
++    add_subdirectory(${_testname})
++endforeach()
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/connectionbosh/CMakeLists.txt gloox-1.0.13/src/tests/connectionbosh/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/connectionbosh/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/connectionbosh/CMakeLists.txt	2015-04-08 01:05:26.497233000 +0200
+@@ -0,0 +1,13 @@
++# connectionbosh
++add_executable(connectionbosh_test connectionbosh_test.cpp)
++target_link_libraries(connectionbosh_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(connectionbosh_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(connectionbosh_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(connectionbosh_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(connectionbosh_test connectionbosh_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/dataform/CMakeLists.txt gloox-1.0.13/src/tests/dataform/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/dataform/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/dataform/CMakeLists.txt	2015-04-08 01:05:26.501233200 +0200
+@@ -0,0 +1,13 @@
++# dataform
++add_executable(dataform_test dataform_test.cpp)
++target_link_libraries(dataform_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(dataform_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(dataform_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(dataform_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(dataform_test dataform_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/dataformfield/CMakeLists.txt gloox-1.0.13/src/tests/dataformfield/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/dataformfield/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/dataformfield/CMakeLists.txt	2015-04-08 01:05:26.505233500 +0200
+@@ -0,0 +1,13 @@
++# dataformfield
++add_executable(dataformfield_test dataformfield_test.cpp)
++target_link_libraries(dataformfield_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(dataformfield_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(dataformfield_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(dataformfield_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(dataformfield_test dataformfield_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/dataformitem/CMakeLists.txt gloox-1.0.13/src/tests/dataformitem/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/dataformitem/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/dataformitem/CMakeLists.txt	2015-04-08 01:05:26.509233700 +0200
+@@ -0,0 +1,13 @@
++# dataformitem
++add_executable(dataformitem_test dataformitem_test.cpp)
++target_link_libraries(dataformitem_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(dataformitem_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(dataformitem_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(dataformitem_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(dataformitem_test dataformitem_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/dataformreported/CMakeLists.txt gloox-1.0.13/src/tests/dataformreported/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/dataformreported/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/dataformreported/CMakeLists.txt	2015-04-08 01:05:26.514234000 +0200
+@@ -0,0 +1,13 @@
++# dataformreported
++add_executable(dataformreported_test dataformreported_test.cpp)
++target_link_libraries(dataformreported_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(dataformreported_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(dataformreported_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(dataformreported_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(dataformreported_test dataformreported_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/delayeddelivery/CMakeLists.txt gloox-1.0.13/src/tests/delayeddelivery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/delayeddelivery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/delayeddelivery/CMakeLists.txt	2015-04-08 01:05:26.518234200 +0200
+@@ -0,0 +1,13 @@
++# delayeddelivery
++add_executable(delayeddelivery_test delayeddelivery_test.cpp)
++target_link_libraries(delayeddelivery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(delayeddelivery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(delayeddelivery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(delayeddelivery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(delayeddelivery_test delayeddelivery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/disco/CMakeLists.txt gloox-1.0.13/src/tests/disco/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/disco/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/disco/CMakeLists.txt	2015-04-08 01:05:26.522234400 +0200
+@@ -0,0 +1,13 @@
++# disco
++add_executable(disco_test disco_test.cpp)
++target_link_libraries(disco_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(disco_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(disco_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(disco_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(disco_test disco_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/discoinfo/CMakeLists.txt gloox-1.0.13/src/tests/discoinfo/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/discoinfo/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/discoinfo/CMakeLists.txt	2015-04-08 01:05:26.530234900 +0200
+@@ -0,0 +1,13 @@
++# discoinfo
++add_executable(discoinfo_test discoinfo_test.cpp)
++target_link_libraries(discoinfo_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(discoinfo_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(discoinfo_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(discoinfo_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(discoinfo_test discoinfo_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/discoitems/CMakeLists.txt gloox-1.0.13/src/tests/discoitems/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/discoitems/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/discoitems/CMakeLists.txt	2015-04-08 01:05:26.534235100 +0200
+@@ -0,0 +1,13 @@
++# discoitems
++add_executable(discoitems_test discoitems_test.cpp)
++target_link_libraries(discoitems_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(discoitems_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(discoitems_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(discoitems_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(discoitems_test discoitems_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/error/CMakeLists.txt gloox-1.0.13/src/tests/error/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/error/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/error/CMakeLists.txt	2015-04-08 01:05:26.538235300 +0200
+@@ -0,0 +1,13 @@
++# error
++add_executable(error_test error_test.cpp)
++target_link_libraries(error_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(error_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(error_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(error_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(error_test error_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/featureneg/CMakeLists.txt gloox-1.0.13/src/tests/featureneg/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/featureneg/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/featureneg/CMakeLists.txt	2015-04-08 01:05:26.543235600 +0200
+@@ -0,0 +1,13 @@
++# featureneg
++add_executable(featureneg_test featureneg_test.cpp)
++target_link_libraries(featureneg_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(featureneg_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(featureneg_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(featureneg_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(featureneg_test featureneg_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/flexoffline/CMakeLists.txt gloox-1.0.13/src/tests/flexoffline/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/flexoffline/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/flexoffline/CMakeLists.txt	2015-04-08 01:05:26.548235900 +0200
+@@ -0,0 +1,13 @@
++# flexoffline
++add_executable(flexoffline_test flexoffline_test.cpp)
++target_link_libraries(flexoffline_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(flexoffline_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(flexoffline_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(flexoffline_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(flexoffline_test flexoffline_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/flexofflineoffline/CMakeLists.txt gloox-1.0.13/src/tests/flexofflineoffline/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/flexofflineoffline/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/flexofflineoffline/CMakeLists.txt	2015-04-08 01:05:26.554236300 +0200
+@@ -0,0 +1,13 @@
++# flexofflineoffline
++add_executable(flexofflineoffline_test flexofflineoffline_test.cpp)
++target_link_libraries(flexofflineoffline_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(flexofflineoffline_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(flexofflineoffline_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(flexofflineoffline_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(flexofflineoffline_test flexofflineoffline_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/forward/CMakeLists.txt gloox-1.0.13/src/tests/forward/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/forward/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/forward/CMakeLists.txt	2015-04-08 01:05:26.561236700 +0200
+@@ -0,0 +1,13 @@
++# forward
++add_executable(forward_test forward_test.cpp)
++target_link_libraries(forward_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(forward_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(forward_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(forward_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(forward_test forward_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/generate_subtargets.py gloox-1.0.13/src/tests/generate_subtargets.py
+--- gloox-1.0.13.orig/src/tests/generate_subtargets.py	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/generate_subtargets.py	2015-04-08 01:05:20.695901200 +0200
+@@ -0,0 +1,53 @@
++#!/usr/bin/python
++import os
++import string
++
++def parseMakefileLinkage(testname, filepath):
++	linkerLine = ""
++	f = file(filepath)
++	anchor = testname + '_test_LDADD'
++	for line in f:
++		if line.startswith(anchor):
++			while line[-2] == '\\':
++				linkerLine = linkerLine[0:-1] + line.strip()
++				line  = f.next()
++			try:
++				if linkerLine[-1] == '\\':
++					linkerLine = linkerLine[0:-1]
++			except:
++				pass
++			linkerLine += line.strip()
++			break
++	linkerLine = linkerLine.replace(anchor + ' =', '').replace('.o', '.cpp').strip()
++	return linkerLine.split()
++
++def writeCMakeList(testname, additionalLinkerFiles):
++	ourTemplate = string.Template("""# ${testname}
++add_executable(${testname}_test ${testname}_test.cpp)
++target_link_libraries(${testname}_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(${testname}_test $${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(${testname}_test $${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(${testname}_test $${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(${testname}_test ${testname}_test)
++""")
++	try: 
++		os.remove(testname + '/CMakeLists.txt')
++	except:
++		pass
++	f = file(testname + '/CMakeLists.txt', 'wb')
++	mapping = { 'testname': testname, 'linkerFiles': '\n\t'.join(additionalLinkerFiles) }
++	f.write(ourTemplate.substitute(mapping))
++
++#####################################################
++
++for root, dirs, files in os.walk('.'):
++	if root == '.': continue
++	testname = root[2:]
++	linkerFiles = parseMakefileLinkage(testname, testname + '/Makefile.am')
++	writeCMakeList(testname, linkerFiles)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/gpgencrypted/CMakeLists.txt gloox-1.0.13/src/tests/gpgencrypted/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/gpgencrypted/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/gpgencrypted/CMakeLists.txt	2015-04-08 01:05:26.567237000 +0200
+@@ -0,0 +1,13 @@
++# gpgencrypted
++add_executable(gpgencrypted_test gpgencrypted_test.cpp)
++target_link_libraries(gpgencrypted_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(gpgencrypted_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(gpgencrypted_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(gpgencrypted_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(gpgencrypted_test gpgencrypted_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/gpgsigned/CMakeLists.txt gloox-1.0.13/src/tests/gpgsigned/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/gpgsigned/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/gpgsigned/CMakeLists.txt	2015-04-08 01:05:26.574237400 +0200
+@@ -0,0 +1,13 @@
++# gpgsigned
++add_executable(gpgsigned_test gpgsigned_test.cpp)
++target_link_libraries(gpgsigned_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(gpgsigned_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(gpgsigned_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(gpgsigned_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(gpgsigned_test gpgsigned_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/inbandbytestream/CMakeLists.txt gloox-1.0.13/src/tests/inbandbytestream/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/inbandbytestream/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/inbandbytestream/CMakeLists.txt	2015-04-08 01:05:26.580237700 +0200
+@@ -0,0 +1,13 @@
++# inbandbytestream
++add_executable(inbandbytestream_test inbandbytestream_test.cpp)
++target_link_libraries(inbandbytestream_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(inbandbytestream_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(inbandbytestream_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(inbandbytestream_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(inbandbytestream_test inbandbytestream_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/inbandbytestreamibb/CMakeLists.txt gloox-1.0.13/src/tests/inbandbytestreamibb/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/inbandbytestreamibb/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/inbandbytestreamibb/CMakeLists.txt	2015-04-08 01:05:26.595238600 +0200
+@@ -0,0 +1,13 @@
++# inbandbytestreamibb
++add_executable(inbandbytestreamibb_test inbandbytestreamibb_test.cpp)
++target_link_libraries(inbandbytestreamibb_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(inbandbytestreamibb_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(inbandbytestreamibb_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(inbandbytestreamibb_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(inbandbytestreamibb_test inbandbytestreamibb_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/iodata/CMakeLists.txt gloox-1.0.13/src/tests/iodata/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/iodata/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/iodata/CMakeLists.txt	2015-04-08 01:05:26.602239000 +0200
+@@ -0,0 +1,13 @@
++# iodata
++add_executable(iodata_test iodata_test.cpp)
++target_link_libraries(iodata_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(iodata_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(iodata_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(iodata_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(iodata_test iodata_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/iq/CMakeLists.txt gloox-1.0.13/src/tests/iq/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/iq/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/iq/CMakeLists.txt	2015-04-08 01:05:26.608239300 +0200
+@@ -0,0 +1,13 @@
++# iq
++add_executable(iq_test iq_test.cpp)
++target_link_libraries(iq_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(iq_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(iq_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(iq_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(iq_test iq_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/jid/CMakeLists.txt gloox-1.0.13/src/tests/jid/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/jid/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/jid/CMakeLists.txt	2015-04-08 01:05:26.615239700 +0200
+@@ -0,0 +1,13 @@
++# jid
++add_executable(jid_test jid_test.cpp)
++target_link_libraries(jid_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(jid_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(jid_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(jid_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(jid_test jid_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/jingleiceudp/CMakeLists.txt gloox-1.0.13/src/tests/jingleiceudp/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/jingleiceudp/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/jingleiceudp/CMakeLists.txt	2015-04-08 01:05:26.620240000 +0200
+@@ -0,0 +1,13 @@
++# jingleiceudp
++add_executable(jingleiceudp_test jingleiceudp_test.cpp)
++target_link_libraries(jingleiceudp_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(jingleiceudp_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(jingleiceudp_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(jingleiceudp_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(jingleiceudp_test jingleiceudp_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/jinglesession/CMakeLists.txt gloox-1.0.13/src/tests/jinglesession/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/jinglesession/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/jinglesession/CMakeLists.txt	2015-04-08 01:05:26.626240400 +0200
+@@ -0,0 +1,13 @@
++# jinglesession
++add_executable(jinglesession_test jinglesession_test.cpp)
++target_link_libraries(jinglesession_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(jinglesession_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(jinglesession_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(jinglesession_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(jinglesession_test jinglesession_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/jinglesessionjingle/CMakeLists.txt gloox-1.0.13/src/tests/jinglesessionjingle/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/jinglesessionjingle/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/jinglesessionjingle/CMakeLists.txt	2015-04-08 01:05:26.631240700 +0200
+@@ -0,0 +1,13 @@
++# jinglesessionjingle
++add_executable(jinglesessionjingle_test jinglesessionjingle_test.cpp)
++target_link_libraries(jinglesessionjingle_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(jinglesessionjingle_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(jinglesessionjingle_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(jinglesessionjingle_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(jinglesessionjingle_test jinglesessionjingle_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/jinglesessionmanager/CMakeLists.txt gloox-1.0.13/src/tests/jinglesessionmanager/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/jinglesessionmanager/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/jinglesessionmanager/CMakeLists.txt	2015-04-08 01:05:26.637241000 +0200
+@@ -0,0 +1,13 @@
++# jinglesessionmanager
++add_executable(jinglesessionmanager_test jinglesessionmanager_test.cpp)
++target_link_libraries(jinglesessionmanager_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(jinglesessionmanager_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(jinglesessionmanager_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(jinglesessionmanager_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(jinglesessionmanager_test jinglesessionmanager_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/lastactivity/CMakeLists.txt gloox-1.0.13/src/tests/lastactivity/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/lastactivity/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/lastactivity/CMakeLists.txt	2015-04-08 01:05:26.643241400 +0200
+@@ -0,0 +1,13 @@
++# lastactivity
++add_executable(lastactivity_test lastactivity_test.cpp)
++target_link_libraries(lastactivity_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(lastactivity_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(lastactivity_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(lastactivity_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(lastactivity_test lastactivity_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/lastactivityquery/CMakeLists.txt gloox-1.0.13/src/tests/lastactivityquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/lastactivityquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/lastactivityquery/CMakeLists.txt	2015-04-08 01:05:26.648241600 +0200
+@@ -0,0 +1,13 @@
++# lastactivityquery
++add_executable(lastactivityquery_test lastactivityquery_test.cpp)
++target_link_libraries(lastactivityquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(lastactivityquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(lastactivityquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(lastactivityquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(lastactivityquery_test lastactivityquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/md5/CMakeLists.txt gloox-1.0.13/src/tests/md5/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/md5/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/md5/CMakeLists.txt	2015-04-08 01:05:26.653241900 +0200
+@@ -0,0 +1,13 @@
++# md5
++add_executable(md5_test md5_test.cpp)
++target_link_libraries(md5_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(md5_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(md5_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(md5_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(md5_test md5_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/message/CMakeLists.txt gloox-1.0.13/src/tests/message/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/message/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/message/CMakeLists.txt	2015-04-08 01:05:26.658242200 +0200
+@@ -0,0 +1,13 @@
++# message
++add_executable(message_test message_test.cpp)
++target_link_libraries(message_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(message_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(message_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(message_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(message_test message_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/messageeventfilter/CMakeLists.txt gloox-1.0.13/src/tests/messageeventfilter/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/messageeventfilter/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/messageeventfilter/CMakeLists.txt	2015-04-08 01:05:26.663242500 +0200
+@@ -0,0 +1,13 @@
++# messageeventfilter
++add_executable(messageeventfilter_test messageeventfilter_test.cpp)
++target_link_libraries(messageeventfilter_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(messageeventfilter_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(messageeventfilter_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(messageeventfilter_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(messageeventfilter_test messageeventfilter_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/mucroommuc/CMakeLists.txt gloox-1.0.13/src/tests/mucroommuc/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/mucroommuc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/mucroommuc/CMakeLists.txt	2015-04-08 01:05:26.669242800 +0200
+@@ -0,0 +1,13 @@
++# mucroommuc
++add_executable(mucroommuc_test mucroommuc_test.cpp)
++target_link_libraries(mucroommuc_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(mucroommuc_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(mucroommuc_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(mucroommuc_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(mucroommuc_test mucroommuc_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/mucroommucadmin/CMakeLists.txt gloox-1.0.13/src/tests/mucroommucadmin/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/mucroommucadmin/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/mucroommucadmin/CMakeLists.txt	2015-04-08 01:05:26.675243200 +0200
+@@ -0,0 +1,13 @@
++# mucroommucadmin
++add_executable(mucroommucadmin_test mucroommucadmin_test.cpp)
++target_link_libraries(mucroommucadmin_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(mucroommucadmin_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(mucroommucadmin_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(mucroommucadmin_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(mucroommucadmin_test mucroommucadmin_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/mucroommucowner/CMakeLists.txt gloox-1.0.13/src/tests/mucroommucowner/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/mucroommucowner/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/mucroommucowner/CMakeLists.txt	2015-04-08 01:05:26.680243500 +0200
+@@ -0,0 +1,13 @@
++# mucroommucowner
++add_executable(mucroommucowner_test mucroommucowner_test.cpp)
++target_link_libraries(mucroommucowner_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(mucroommucowner_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(mucroommucowner_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(mucroommucowner_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(mucroommucowner_test mucroommucowner_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/mucroommucuser/CMakeLists.txt gloox-1.0.13/src/tests/mucroommucuser/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/mucroommucuser/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/mucroommucuser/CMakeLists.txt	2015-04-08 01:05:26.685243800 +0200
+@@ -0,0 +1,13 @@
++# mucroommucuser
++add_executable(mucroommucuser_test mucroommucuser_test.cpp)
++target_link_libraries(mucroommucuser_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(mucroommucuser_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(mucroommucuser_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(mucroommucuser_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(mucroommucuser_test mucroommucuser_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/nickname/CMakeLists.txt gloox-1.0.13/src/tests/nickname/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/nickname/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/nickname/CMakeLists.txt	2015-04-08 01:05:26.690244000 +0200
+@@ -0,0 +1,13 @@
++# nickname
++add_executable(nickname_test nickname_test.cpp)
++target_link_libraries(nickname_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(nickname_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(nickname_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(nickname_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(nickname_test nickname_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/nonsaslauth/CMakeLists.txt gloox-1.0.13/src/tests/nonsaslauth/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/nonsaslauth/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/nonsaslauth/CMakeLists.txt	2015-04-08 01:05:26.696244400 +0200
+@@ -0,0 +1,13 @@
++# nonsaslauth
++add_executable(nonsaslauth_test nonsaslauth_test.cpp)
++target_link_libraries(nonsaslauth_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(nonsaslauth_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(nonsaslauth_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(nonsaslauth_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(nonsaslauth_test nonsaslauth_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/nonsaslauthquery/CMakeLists.txt gloox-1.0.13/src/tests/nonsaslauthquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/nonsaslauthquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/nonsaslauthquery/CMakeLists.txt	2015-04-08 01:05:26.701244700 +0200
+@@ -0,0 +1,13 @@
++# nonsaslauthquery
++add_executable(nonsaslauthquery_test nonsaslauthquery_test.cpp)
++target_link_libraries(nonsaslauthquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(nonsaslauthquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(nonsaslauthquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(nonsaslauthquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(nonsaslauthquery_test nonsaslauthquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/oob/CMakeLists.txt gloox-1.0.13/src/tests/oob/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/oob/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/oob/CMakeLists.txt	2015-04-08 01:05:26.705244900 +0200
+@@ -0,0 +1,13 @@
++# oob
++add_executable(oob_test oob_test.cpp)
++target_link_libraries(oob_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(oob_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(oob_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(oob_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(oob_test oob_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/parser/CMakeLists.txt gloox-1.0.13/src/tests/parser/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/parser/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/parser/CMakeLists.txt	2015-04-08 01:05:26.709245100 +0200
+@@ -0,0 +1,13 @@
++# parser
++add_executable(parser_test parser_test.cpp)
++target_link_libraries(parser_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(parser_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(parser_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(parser_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(parser_test parser_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/prep/CMakeLists.txt gloox-1.0.13/src/tests/prep/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/prep/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/prep/CMakeLists.txt	2015-04-08 01:05:26.714245400 +0200
+@@ -0,0 +1,13 @@
++# prep
++add_executable(prep_test prep_test.cpp)
++target_link_libraries(prep_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(prep_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(prep_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(prep_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(prep_test prep_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/presence/CMakeLists.txt gloox-1.0.13/src/tests/presence/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/presence/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/presence/CMakeLists.txt	2015-04-08 01:05:26.718245600 +0200
+@@ -0,0 +1,13 @@
++# presence
++add_executable(presence_test presence_test.cpp)
++target_link_libraries(presence_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(presence_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(presence_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(presence_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(presence_test presence_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/privacymanager/CMakeLists.txt gloox-1.0.13/src/tests/privacymanager/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/privacymanager/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/privacymanager/CMakeLists.txt	2015-04-08 01:05:26.722245900 +0200
+@@ -0,0 +1,13 @@
++# privacymanager
++add_executable(privacymanager_test privacymanager_test.cpp)
++target_link_libraries(privacymanager_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(privacymanager_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(privacymanager_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(privacymanager_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(privacymanager_test privacymanager_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/privacymanagerquery/CMakeLists.txt gloox-1.0.13/src/tests/privacymanagerquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/privacymanagerquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/privacymanagerquery/CMakeLists.txt	2015-04-08 01:05:26.726246100 +0200
+@@ -0,0 +1,13 @@
++# privacymanagerquery
++add_executable(privacymanagerquery_test privacymanagerquery_test.cpp)
++target_link_libraries(privacymanagerquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(privacymanagerquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(privacymanagerquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(privacymanagerquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(privacymanagerquery_test privacymanagerquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/privatexml/CMakeLists.txt gloox-1.0.13/src/tests/privatexml/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/privatexml/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/privatexml/CMakeLists.txt	2015-04-08 01:05:26.730246300 +0200
+@@ -0,0 +1,13 @@
++# privatexml
++add_executable(privatexml_test privatexml_test.cpp)
++target_link_libraries(privatexml_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(privatexml_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(privatexml_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(privatexml_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(privatexml_test privatexml_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/pubsubevent/CMakeLists.txt gloox-1.0.13/src/tests/pubsubevent/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/pubsubevent/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/pubsubevent/CMakeLists.txt	2015-04-08 01:05:26.736246700 +0200
+@@ -0,0 +1,13 @@
++# pubsubevent
++add_executable(pubsubevent_test pubsubevent_test.cpp)
++target_link_libraries(pubsubevent_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(pubsubevent_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(pubsubevent_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(pubsubevent_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(pubsubevent_test pubsubevent_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/pubsubmanager/CMakeLists.txt gloox-1.0.13/src/tests/pubsubmanager/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/pubsubmanager/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/pubsubmanager/CMakeLists.txt	2015-04-08 01:05:26.740246900 +0200
+@@ -0,0 +1,13 @@
++# pubsubmanager
++add_executable(pubsubmanager_test pubsubmanager_test.cpp)
++target_link_libraries(pubsubmanager_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(pubsubmanager_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(pubsubmanager_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(pubsubmanager_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(pubsubmanager_test pubsubmanager_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/pubsubmanagerpubsub/CMakeLists.txt gloox-1.0.13/src/tests/pubsubmanagerpubsub/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/pubsubmanagerpubsub/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/pubsubmanagerpubsub/CMakeLists.txt	2015-04-08 01:05:26.745247200 +0200
+@@ -0,0 +1,13 @@
++# pubsubmanagerpubsub
++add_executable(pubsubmanagerpubsub_test pubsubmanagerpubsub_test.cpp)
++target_link_libraries(pubsubmanagerpubsub_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(pubsubmanagerpubsub_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(pubsubmanagerpubsub_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(pubsubmanagerpubsub_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(pubsubmanagerpubsub_test pubsubmanagerpubsub_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/receipt/CMakeLists.txt gloox-1.0.13/src/tests/receipt/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/receipt/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/receipt/CMakeLists.txt	2015-04-08 01:05:26.749247400 +0200
+@@ -0,0 +1,13 @@
++# receipt
++add_executable(receipt_test receipt_test.cpp)
++target_link_libraries(receipt_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(receipt_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(receipt_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(receipt_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(receipt_test receipt_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/registration/CMakeLists.txt gloox-1.0.13/src/tests/registration/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/registration/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/registration/CMakeLists.txt	2015-04-08 01:05:26.753247600 +0200
+@@ -0,0 +1,13 @@
++# registration
++add_executable(registration_test registration_test.cpp)
++target_link_libraries(registration_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(registration_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(registration_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(registration_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(registration_test registration_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/registrationquery/CMakeLists.txt gloox-1.0.13/src/tests/registrationquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/registrationquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/registrationquery/CMakeLists.txt	2015-04-08 01:05:26.758247900 +0200
+@@ -0,0 +1,13 @@
++# registrationquery
++add_executable(registrationquery_test registrationquery_test.cpp)
++target_link_libraries(registrationquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(registrationquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(registrationquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(registrationquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(registrationquery_test registrationquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/rostermanager/CMakeLists.txt gloox-1.0.13/src/tests/rostermanager/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/rostermanager/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/rostermanager/CMakeLists.txt	2015-04-08 01:05:26.762248200 +0200
+@@ -0,0 +1,13 @@
++# rostermanager
++add_executable(rostermanager_test rostermanager_test.cpp)
++target_link_libraries(rostermanager_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(rostermanager_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(rostermanager_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(rostermanager_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(rostermanager_test rostermanager_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/rostermanagerquery/CMakeLists.txt gloox-1.0.13/src/tests/rostermanagerquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/rostermanagerquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/rostermanagerquery/CMakeLists.txt	2015-04-08 01:05:26.766248400 +0200
+@@ -0,0 +1,13 @@
++# rostermanagerquery
++add_executable(rostermanagerquery_test rostermanagerquery_test.cpp)
++target_link_libraries(rostermanagerquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(rostermanagerquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(rostermanagerquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(rostermanagerquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(rostermanagerquery_test rostermanagerquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/search/CMakeLists.txt gloox-1.0.13/src/tests/search/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/search/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/search/CMakeLists.txt	2015-04-08 01:05:26.771248700 +0200
+@@ -0,0 +1,13 @@
++# search
++add_executable(search_test search_test.cpp)
++target_link_libraries(search_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(search_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(search_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(search_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(search_test search_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/searchquery/CMakeLists.txt gloox-1.0.13/src/tests/searchquery/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/searchquery/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/searchquery/CMakeLists.txt	2015-04-08 01:05:26.775248900 +0200
+@@ -0,0 +1,13 @@
++# searchquery
++add_executable(searchquery_test searchquery_test.cpp)
++target_link_libraries(searchquery_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(searchquery_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(searchquery_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(searchquery_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(searchquery_test searchquery_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/sha/CMakeLists.txt gloox-1.0.13/src/tests/sha/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/sha/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/sha/CMakeLists.txt	2015-04-08 01:05:26.779249100 +0200
+@@ -0,0 +1,13 @@
++# sha
++add_executable(sha_test sha_test.cpp)
++target_link_libraries(sha_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(sha_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(sha_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(sha_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(sha_test sha_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/shim/CMakeLists.txt gloox-1.0.13/src/tests/shim/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/shim/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/shim/CMakeLists.txt	2015-04-08 01:05:26.784249400 +0200
+@@ -0,0 +1,13 @@
++# shim
++add_executable(shim_test shim_test.cpp)
++target_link_libraries(shim_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(shim_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(shim_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(shim_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(shim_test shim_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/simanager/CMakeLists.txt gloox-1.0.13/src/tests/simanager/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/simanager/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/simanager/CMakeLists.txt	2015-04-08 01:05:26.788249600 +0200
+@@ -0,0 +1,13 @@
++# simanager
++add_executable(simanager_test simanager_test.cpp)
++target_link_libraries(simanager_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(simanager_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(simanager_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(simanager_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(simanager_test simanager_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/simanagersi/CMakeLists.txt gloox-1.0.13/src/tests/simanagersi/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/simanagersi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/simanagersi/CMakeLists.txt	2015-04-08 01:05:26.792249900 +0200
+@@ -0,0 +1,13 @@
++# simanagersi
++add_executable(simanagersi_test simanagersi_test.cpp)
++target_link_libraries(simanagersi_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(simanagersi_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(simanagersi_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(simanagersi_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(simanagersi_test simanagersi_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/stanzaextensionfactory/CMakeLists.txt gloox-1.0.13/src/tests/stanzaextensionfactory/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/stanzaextensionfactory/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/stanzaextensionfactory/CMakeLists.txt	2015-04-08 01:05:26.796250100 +0200
+@@ -0,0 +1,13 @@
++# stanzaextensionfactory
++add_executable(stanzaextensionfactory_test stanzaextensionfactory_test.cpp)
++target_link_libraries(stanzaextensionfactory_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(stanzaextensionfactory_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(stanzaextensionfactory_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(stanzaextensionfactory_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(stanzaextensionfactory_test stanzaextensionfactory_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/subscription/CMakeLists.txt gloox-1.0.13/src/tests/subscription/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/subscription/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/subscription/CMakeLists.txt	2015-04-08 01:05:26.803250500 +0200
+@@ -0,0 +1,13 @@
++# subscription
++add_executable(subscription_test subscription_test.cpp)
++target_link_libraries(subscription_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(subscription_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(subscription_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(subscription_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(subscription_test subscription_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/tag/CMakeLists.txt gloox-1.0.13/src/tests/tag/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/tag/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/tag/CMakeLists.txt	2015-04-08 01:05:26.807250700 +0200
+@@ -0,0 +1,13 @@
++# tag
++add_executable(tag_test tag_test.cpp)
++target_link_libraries(tag_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(tag_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(tag_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(tag_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(tag_test tag_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/tlsgnutls/CMakeLists.txt gloox-1.0.13/src/tests/tlsgnutls/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/tlsgnutls/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/tlsgnutls/CMakeLists.txt	2015-04-08 01:05:26.812251000 +0200
+@@ -0,0 +1,13 @@
++# tlsgnutls
++add_executable(tlsgnutls_test tlsgnutls_test.cpp)
++target_link_libraries(tlsgnutls_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(tlsgnutls_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(tlsgnutls_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(tlsgnutls_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(tlsgnutls_test tlsgnutls_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/uniquemucroomunique/CMakeLists.txt gloox-1.0.13/src/tests/uniquemucroomunique/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/uniquemucroomunique/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/uniquemucroomunique/CMakeLists.txt	2015-04-08 01:05:26.816251200 +0200
+@@ -0,0 +1,13 @@
++# uniquemucroomunique
++add_executable(uniquemucroomunique_test uniquemucroomunique_test.cpp)
++target_link_libraries(uniquemucroomunique_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(uniquemucroomunique_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(uniquemucroomunique_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(uniquemucroomunique_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(uniquemucroomunique_test uniquemucroomunique_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/util/CMakeLists.txt gloox-1.0.13/src/tests/util/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/util/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/util/CMakeLists.txt	2015-04-08 01:05:26.821251500 +0200
+@@ -0,0 +1,13 @@
++# util
++add_executable(util_test util_test.cpp)
++target_link_libraries(util_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(util_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(util_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(util_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(util_test util_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/vcard/CMakeLists.txt gloox-1.0.13/src/tests/vcard/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/vcard/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/vcard/CMakeLists.txt	2015-04-08 01:05:26.825251800 +0200
+@@ -0,0 +1,13 @@
++# vcard
++add_executable(vcard_test vcard_test.cpp)
++target_link_libraries(vcard_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(vcard_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(vcard_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(vcard_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(vcard_test vcard_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/vcardupdate/CMakeLists.txt gloox-1.0.13/src/tests/vcardupdate/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/vcardupdate/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/vcardupdate/CMakeLists.txt	2015-04-08 01:05:26.829252000 +0200
+@@ -0,0 +1,13 @@
++# vcardupdate
++add_executable(vcardupdate_test vcardupdate_test.cpp)
++target_link_libraries(vcardupdate_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(vcardupdate_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(vcardupdate_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(vcardupdate_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(vcardupdate_test vcardupdate_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/xpath/CMakeLists.txt gloox-1.0.13/src/tests/xpath/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/xpath/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/xpath/CMakeLists.txt	2015-04-08 01:05:26.833252200 +0200
+@@ -0,0 +1,13 @@
++# xpath
++add_executable(xpath_test xpath_test.cpp)
++target_link_libraries(xpath_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(xpath_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(xpath_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(xpath_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(xpath_test xpath_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/zlib/CMakeLists.txt gloox-1.0.13/src/tests/zlib/CMakeLists.txt
+--- gloox-1.0.13.orig/src/tests/zlib/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/tests/zlib/CMakeLists.txt	2015-04-08 01:05:26.838252500 +0200
+@@ -0,0 +1,13 @@
++# zlib
++add_executable(zlib_test zlib_test.cpp)
++target_link_libraries(zlib_test gloox_static_test)
++if(ZLIB_FOUND)
++    target_link_libraries(zlib_test ${ZLIB_LIBRARY})
++endif(ZLIB_FOUND)
++if(OPENSSL_FOUND)
++    target_link_libraries(zlib_test ${OPENSSL_LIBRARIES})
++endif(OPENSSL_FOUND)
++if(IDN_FOUND)
++    target_link_libraries(zlib_test ${IDN_LIBRARIES})
++endif(IDN_FOUND)
++add_test(zlib_test zlib_test)
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tlsopensslclient.h gloox-1.0.13/src/tlsopensslclient.h
+--- gloox-1.0.13.orig/src/tlsopensslclient.h	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/tlsopensslclient.h	2015-04-07 15:26:22.649173800 +0200
+@@ -53,7 +53,7 @@
+       // reimplemented from TLSBase
+       virtual const std::string channelBinding() const;
+ 
+-  private:
++  protected:
+       // reimplemented from OpenSSLBase
+       virtual bool setType();
+ 
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tlsopensslserver.h gloox-1.0.13/src/tlsopensslserver.h
+--- gloox-1.0.13.orig/src/tlsopensslserver.h	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/tlsopensslserver.h	2015-04-07 15:20:18.518346700 +0200
+@@ -46,7 +46,7 @@
+        */
+       virtual ~OpenSSLServer();
+ 
+-    private:
++    protected:
+       // reimplemented from OpenSSLBase
+       virtual bool privateInit();
+       // reimplemented from OpenSSLBase
+diff -Nru -x '*~' gloox-1.0.13.orig/src/tlsschannel.cpp gloox-1.0.13/src/tlsschannel.cpp
+--- gloox-1.0.13.orig/src/tlsschannel.cpp	2015-02-01 00:02:28.000000000 +0100
++++ gloox-1.0.13/src/tlsschannel.cpp	2015-04-07 15:44:42.256067700 +0200
+@@ -661,12 +661,14 @@
+         case CALG_3DES:
+           m_certInfo.cipher = "3DES";
+           break;
++/*
+         case CALG_AES_128:
+           m_certInfo.cipher = "AES_128";
+           break;
+         case CALG_AES_256:
+           m_certInfo.cipher = "AES_256";
+           break;
++*/
+         case CALG_DES:
+           m_certInfo.cipher = "DES";
+           break;
