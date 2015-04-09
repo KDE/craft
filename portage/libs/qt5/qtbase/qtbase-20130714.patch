@@ -1,5 +1,5 @@
 diff --git a/mkspecs/win32-g++/qmake.conf b/mkspecs/win32-g++/qmake.conf
-index 9f0188b..8125bf9 100644
+index c6ff808..3bb1920 100644
 --- a/mkspecs/win32-g++/qmake.conf
 +++ b/mkspecs/win32-g++/qmake.conf
 @@ -30,6 +30,7 @@ QMAKE_CFLAGS_DEPS       = -M
@@ -10,11 +10,24 @@ index 9f0188b..8125bf9 100644
  QMAKE_CFLAGS_DEBUG      = -g
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
  QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
+diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
+index f2decd7..d8ec64f 100644
+--- a/qmake/generators/makefile.cpp
++++ b/qmake/generators/makefile.cpp
+@@ -1172,7 +1172,7 @@ MakefileGenerator::filePrefixRoot(const QString &root, const QString &path)
+ {
+     QString ret(path);
+     if(path.length() > 2 && path[1] == ':') //c:\foo
+-        ret.insert(2, root);
++        ret.replace(0, 2, root);
+     else
+         ret.prepend(root);
+     while (ret.endsWith('\\'))
 diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
-index 5e56db3..4d46430 100644
+index b1d5821..1682e2c 100644
 --- a/src/corelib/io/qstandardpaths_win.cpp
 +++ b/src/corelib/io/qstandardpaths_win.cpp
-@@ -214,6 +214,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
+@@ -216,6 +216,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
                      dirs.append(QCoreApplication::applicationDirPath());
                      dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
                  }
@@ -32,7 +45,7 @@ index 5e56db3..4d46430 100644
              }
              break;
 diff --git a/src/gui/image/qiconloader.cpp b/src/gui/image/qiconloader.cpp
-index 06491f1..ef9436f 100644
+index fa14c84..d853dcc 100644
 --- a/src/gui/image/qiconloader.cpp
 +++ b/src/gui/image/qiconloader.cpp
 @@ -157,6 +157,7 @@ QStringList QIconLoader::themeSearchPaths() const
@@ -44,10 +57,10 @@ index 06491f1..ef9436f 100644
          m_iconDirs.append(QLatin1String(":/icons"));
      }
 diff --git a/src/plugins/platforms/windows/qwindowstheme.cpp b/src/plugins/platforms/windows/qwindowstheme.cpp
-index 66735d8..9d8036a 100644
+index d3f67e9..e4f277f 100644
 --- a/src/plugins/platforms/windows/qwindowstheme.cpp
 +++ b/src/plugins/platforms/windows/qwindowstheme.cpp
-@@ -321,6 +321,8 @@ static inline QStringList iconThemeSearchPaths()
+@@ -332,6 +332,8 @@ static inline QStringList iconThemeSearchPaths()
  static inline QStringList styleNames()
  {
      QStringList result;
@@ -56,7 +69,7 @@ index 66735d8..9d8036a 100644
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA)
          result.append(QStringLiteral("WindowsVista"));
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_XP)
-@@ -382,6 +384,8 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
+@@ -393,6 +395,8 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
          return QVariant(booleanSystemParametersInfo(SPI_GETSNAPTODEFBUTTON, false));
      case ContextMenuOnMouseRelease:
          return QVariant(true);
@@ -66,10 +79,10 @@ index 66735d8..9d8036a 100644
          break;
      }
 diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
-index 6e9d4aa..9fff1aa 100644
+index 0490952..76ffc68 100644
 --- a/tools/configure/configureapp.cpp
 +++ b/tools/configure/configureapp.cpp
-@@ -2942,7 +2942,7 @@ void Configure::generateOutputVars()
+@@ -2987,7 +2987,7 @@ void Configure::generateOutputVars()
      if (dictionary[ "DBUS" ] != "no") {
         if (!dbusPath.isEmpty()) {
             qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
@@ -78,7 +91,7 @@ index 6e9d4aa..9fff1aa 100644
             if (dbusHostPath.isEmpty())
                 qmakeVars += QString("QT_HOST_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
         }
-@@ -2951,7 +2951,7 @@ void Configure::generateOutputVars()
+@@ -2996,7 +2996,7 @@ void Configure::generateOutputVars()
      }
      if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
          qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
@@ -87,4 +100,3 @@ index 6e9d4aa..9fff1aa 100644
      }
      if (!psqlLibs.isEmpty())
          qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
-
