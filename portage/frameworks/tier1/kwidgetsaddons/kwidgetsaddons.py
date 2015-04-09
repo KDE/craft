@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qttools"] = "default"
+        self.dependencies["libs/qttools"] = "default"
 
 from Package.CMakePackageBase import *
 

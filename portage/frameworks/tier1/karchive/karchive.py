@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qttools"] = "default"
         self.dependencies["win32libs/libbzip2"] = "default"
         self.dependencies["win32libs/zlib"] = "default"
         if not compiler.isMSVC2010() and not compiler.isMSVC2012():
