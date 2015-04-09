@@ -4,7 +4,7 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|frameworks|' % (self.package)
+        self.svnTargets['gitHEAD'] = '[git]kde:%s' % (self.package)
         for ver in ['0', '1', '2', '3', '4', '5']:
             # let's see if this is the URL from 4.12 on...
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
