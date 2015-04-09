@@ -39,6 +39,8 @@ class PackageCMake(CMakePackageBase):
             toolsetSwitches = "/property:PlatformToolset=v110"
         elif compiler.isMSVC2013():
             toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
+        elif compiler.isMSVC2015():
+            toolsetSwitches = "/tv:14.0 /property:PlatformToolset=v140"
           
         return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s %s" %
                 (os.path.join(self.sourceDir(), "allinone", "allinone.sln"), bt, toolsetSwitches)
