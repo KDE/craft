@@ -78,10 +78,7 @@ class Package(Qt5CorePackageBase):
         if self.subinfo.options.isActive("win32libs/icu"):
             command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
         if os.getenv("DXSDK_DIR") == None:
-            command += "-opengl desktop "
-        else:
-            command += "-opengl es2 "
-       
+            command += "-angle "
         command += "-ltcg "
        
 
