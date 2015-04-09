@@ -81,7 +81,12 @@ class SetupHelper( object ):
     def getEnv( self ):
         out = dict( )
         if compiler.isMSVC( ):
-            compilerDirs = { "msvc2010": "VS100COMNTOOLS", "msvc2012": "VS110COMNTOOLS", "msvc2013": "VS120COMNTOOLS" }
+            compilerDirs = {
+                "msvc2010": "VS100COMNTOOLS",
+                "msvc2012": "VS110COMNTOOLS",
+                "msvc2013": "VS120COMNTOOLS",
+                "msvc2015": "VS140COMNTOOLS"
+            }
             architectures = { "x86": "x86", "x64": "amd64" }
             status, result = subprocess.getstatusoutput( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s > NUL && set" % (
                 os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) )

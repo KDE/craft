@@ -66,9 +66,12 @@ def isMSVC2010():
 
 def isMSVC2012():
     return _compiler() == "msvc2012"
-    
+
 def isMSVC2013():
     return _compiler() == "msvc2013"
+
+def isMSVC2015():
+    return _compiler() == "msvc2015"
 
 def isIntel():
     return _compiler() == "intel"
