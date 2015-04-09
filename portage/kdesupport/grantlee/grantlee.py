@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://gitorious.org/grantlee/grantlee.git"
+        self.svnTargets['gitHEAD'] = "https://github.com/steveire/grantlee.git"
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
@@ -16,5 +16,3 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self):
         CMakePackageBase.__init__(self)
-        #self.subinfo.options.configure.defines = '-DBUILD_TESTS=OFF'
-
