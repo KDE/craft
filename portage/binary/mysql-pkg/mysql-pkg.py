@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         #self.baseURL = "http://www.winkde.org/pub/kde/ports/win32/repository/other/"
         self.baseURL = "http://cdn.mysql.com/Downloads/"
-        for ver in [ '5.6.22' ]:
+        for ver in [ '5.6.24' ]:
             ver2 = ver.split('.')
             url = self.baseURL + "MySQL-" + ver2[0] + "." + ver2[1] + "/"
             if compiler.isX64():
@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
               self.targetDigests['5.5.32'] = '3d84eccbf05d0ef8117c0f1c1fbf5df277adacb0'
              
         self.shortDescription = "MySql database server and embedded library"
-        self.defaultTarget = '5.6.22'
+        self.defaultTarget = '5.6.24'
 
 
     def setDependencies( self ):
