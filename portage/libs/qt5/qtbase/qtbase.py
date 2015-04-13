@@ -80,7 +80,7 @@ class Package(Qt5CorePackageBase):
         if os.getenv("DXSDK_DIR") == None and not compiler.isMSVC2015():
             command += "-angle "
         else:
-            command += "-no-angle "
+            command += "-no-angle -opengl desktop"
         command += "-ltcg "
        
 
