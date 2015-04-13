@@ -1,0 +1,14 @@
+diff -Nru -x '*~' icu.orig/source/io/ufile.c icu/source/io/ufile.c
+--- source.orig/io/ufile.c	2015-03-27 22:11:22.000000000 +0100
++++ source/io/ufile.c	2015-04-14 00:35:42.934366200 +0200
+@@ -66,7 +66,9 @@
+ #if U_PLATFORM_USES_ONLY_WIN32_API
+     if (0 <= result->fFileno && result->fFileno <= 2) {
+         /* stdin, stdout and stderr need to be special cased for Windows 98 */
+-#if _MSC_VER >= 1400
++#if  _MSC_VER >= 1900
++		result->fFile = __acrt_iob_func(_fileno(f));
++#elif _MSC_VER >= 1400
+         result->fFile = &__iob_func()[_fileno(f)];
+ #else
+         result->fFile = &_iob[_fileno(f)];

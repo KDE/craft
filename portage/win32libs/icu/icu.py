@@ -15,7 +15,9 @@ class subinfo(info.infoclass):
         self.targetDigests['55.1'] = '3bb301c11be0e239c653e8aa2925c53f6f4dc88d'
         self.defaultTarget = '53.1'
         if compiler.isMSVC2015():
+            self.patchToApply['55.1'] = ("icu-20150414.diff", 1)
             self.defaultTarget = '55.1'
+            
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
