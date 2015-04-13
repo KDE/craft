@@ -15,7 +15,6 @@ class Snore(NotificationInterface):
         wid = ctypes.windll.kernel32.GetConsoleWindow()
         try:
             subprocess.Popen( """snore-send -t "%s" -m "%s" -i "%s" -a "Emerge" -c "%s" --silent --bring-window-to-front %s""" % (title , message , icon, alertClass, wid))
-        except Exception as e:
-            print(e)
+        except Exception:
             return
 
