@@ -79,6 +79,8 @@ class Package(Qt5CorePackageBase):
             command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
         if os.getenv("DXSDK_DIR") == None and not compiler.isMSVC2015():
             command += "-angle "
+        else:
+            command += "-no-angle "
         command += "-ltcg "
        
 
