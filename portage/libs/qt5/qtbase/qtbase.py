@@ -77,7 +77,7 @@ class Package(Qt5CorePackageBase):
             command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
         if self.subinfo.options.isActive("win32libs/icu"):
             command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
-        if os.getenv("DXSDK_DIR") == None:
+        if os.getenv("DXSDK_DIR") == None and not compiler.isMSVC2015():
             command += "-angle "
         command += "-ltcg "
        
