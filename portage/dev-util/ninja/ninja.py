@@ -14,7 +14,11 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "ninja-%s" % ver
         self.targetDigests['1.5.3'] = 'b3ff794461ff5e4e1e73fe6bd11e653bbe509e63'
         self.patchToApply['1.5.3'] = ("ninja-1.5.3-20141203.diff",1)
-        self.defaultTarget = '1.5.3'
+
+        if compiler.isMSVC2015():
+            self.defaultTarget = 'gitHEAD'
+        else:
+            self.defaultTarget = '1.5.3'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
