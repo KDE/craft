@@ -43,11 +43,13 @@ def printSearch(search_category, search_package,maxDist = 2):
             print("\t Homepage: %s" % package.subinfo.homepage)
             print("\t Description: %s" % package.subinfo.shortDescription)
             print("\t Latest version: %s" % package.subinfo.defaultTarget)
-            installed = None
+            installed = False
             for pack in InstallDB.installdb.getInstalledPackages(package.category,package.package):
-                if installed:
-                    installed += ", %s" % ( pack.getVersion())
-                else:
-                    installed = pack.getVersion()
-            print("\t Installed versions: %s" % installed)
+                if pack.getVersion():
+                    installed = True
+                    print("\t Installed versions: %s" % pack.getVersion())
+                if pack.getRevision():
+                    print("\t Installed revision: %s" % pack.getRevision())
+            if not installed:
+                print("\t Installed versions: None")
     
