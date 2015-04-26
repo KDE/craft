@@ -256,3 +256,16 @@ Function .onSelChange
         EnableWindow $0 0
     ${EndIf}
 FunctionEnd
+
+
+Function .onInit
+    
+    ReadRegStr $R0 HKLM "${uninstkey}" "UninstallString"
+    StrCmp $R0 "" done
+    ReadRegStr $INSTDIR HKLM "${regkey}" "Install_Dir"
+    ;Run the uninstaller
+    ;uninst:
+    ClearErrors
+    ExecWait '$R0 _?=$INSTDIR' ;Do not copy the uninstaller to a temp file
+    done:
+FunctionEnd

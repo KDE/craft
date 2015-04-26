@@ -11,6 +11,7 @@ bin\\libstdc.*\.dll
 #snore
 bin\\libsnore.*\.dll
 lib\\libsnore.*\\libsnore_backend.*\.dll
+lib\\plugins\\libsnore.*\\libsnore_backend.*\.dll
 bin\\SnoreToast\.exe
 #
 #Growl

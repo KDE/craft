@@ -7,16 +7,19 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for pack in installdb.getInstalledPackages('extragear','quassel'):
+        for pack in installdb.getInstalledPackages('qt-apps','quassel'):
+            version = pack.getVersion()
+            if version:
+                self.targets[ version ] = ""
+                self.defaultTarget = version
             gitVersion = pack.getRevision()
-            if not gitVersion is None:
+            if gitVersion:
                 self.svnTargets[ gitVersion  ] = ""
                 self.defaultTarget = gitVersion
-        self.targets[ '0.12-rc1'] = ""
-        self.defaultTarget = '0.12-rc1'
+            
 
     def setDependencies( self ):
-        self.dependencies[ 'extragear/quassel' ] = 'default'
+        self.dependencies[ 'qt-apps/quassel' ] = 'default'
         self.dependencies[ 'libs/runtime' ] = 'default'
         
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
@@ -39,6 +42,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
 
         utils.moveDir( os.path.join(self.imageDir(),"lib","qca-qt5", "crypto"), os.path.join(self.imageDir(), "bin", "crypto"))
         utils.moveDir( os.path.join(self.imageDir(),"lib","libsnore-qt5"), os.path.join(self.imageDir(), "bin"))
+        utils.moveDir( os.path.join(self.imageDir(),"lib", "plugins", "libsnore-qt5"), os.path.join(self.imageDir(), "bin"))
         utils.rmtree(os.path.join(self.imageDir(),"lib"))
         
         path = os.path.join(self.imageDir(),"bin")
