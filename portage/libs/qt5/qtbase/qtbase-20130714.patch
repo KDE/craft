@@ -57,7 +57,7 @@ index 06491f1..ef9436f 100644
          m_iconDirs.append(QLatin1String(":/icons"));
      }
 diff --git a/src/plugins/platforms/windows/qwindowstheme.cpp b/src/plugins/platforms/windows/qwindowstheme.cpp
-index 66735d8..9d8036a 100644
+index 66735d8..5731560 100644
 --- a/src/plugins/platforms/windows/qwindowstheme.cpp
 +++ b/src/plugins/platforms/windows/qwindowstheme.cpp
 @@ -321,6 +321,8 @@ static inline QStringList iconThemeSearchPaths()
@@ -69,12 +69,14 @@ index 66735d8..9d8036a 100644
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA)
          result.append(QStringLiteral("WindowsVista"));
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_XP)
-@@ -382,6 +384,8 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
+@@ -382,6 +384,10 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
          return QVariant(booleanSystemParametersInfo(SPI_GETSNAPTODEFBUTTON, false));
      case ContextMenuOnMouseRelease:
          return QVariant(true);
-+     case QPlatformTheme::SystemIconThemeName:
++    case QPlatformTheme::SystemIconThemeName:
 +         return QVariant(QLatin1String("breeze"));
++    case QPlatformTheme::SystemIconFallbackThemeName:
++        return QVariant(QLatin1String("oxygen"));
      default:
          break;
      }
