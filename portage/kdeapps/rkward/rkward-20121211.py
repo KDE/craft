@@ -3,7 +3,7 @@ import os
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.gitTargets[ 'gitHEAD' ] = '[git]kde:rkward'
+        self.svnTargets[ 'gitHEAD' ] = '[git]kde:rkward'
         for ver in ['0.5.7', '0.6.0', '0.6.1', '0.6.2']:
             self.targets[ver] = 'http://downloads.sourceforge.net/rkward/rkward-' + ver + '.tar.gz'
             self.targetInstSrc[ ver] = 'rkward-' + ver
