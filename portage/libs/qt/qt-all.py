@@ -26,6 +26,9 @@ class subinfo(info.infoclass):
         self.targets['4.8.5'] = "http://download.qt-project.org/archive/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.tar.gz"
         self.targetInstSrc[ '4.8.5' ] = 'qt-everywhere-opensource-src-4.8.5'
         self.targetDigests['4.8.5'] = '745f9ebf091696c0d5403ce691dc28c039d77b9e'
+        self.targets['4.8.7'] = "http://download.qt-project.org/official_releases/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz"
+        self.targetInstSrc[ '4.8.7' ] = 'qt-everywhere-opensource-src-4.8.7'
+        self.targetDigests['4.8.7'] = '76aef40335c0701e5be7bb3a9101df5d22fe3666'
 
         self.patchToApply['4.8.4'] = [
             ('patches/4.8.4/out-of-source-build.patch', 1),
@@ -47,6 +50,14 @@ class subinfo(info.infoclass):
             ('patches/4.8.5/0001-fixed-build-with-new-mingw.patch', 1)
         ]
         
+        self.patchToApply['4.8.7'] = [
+            ('patches/4.8.4/out-of-source-build.patch', 1),
+            ('patches/4.8.4/add-pdbs-on-msvc.diff', 1),
+            ('patches/4.8.4/fix-debug-webkit-linkage-QTBUG-20556.patch', 0),
+            ('patches/4.8.4/Use-windows-path-for-pkgconfig-mkdir_p_asstring.patch', 1),
+            ('patches/4.8.4/fix-Q_CORE_EXPORT_INLINE-for-intel-compiler.patch', 1)
+        ]
+        
         self.patchToApply['master'] = [
             ('patches/4.8.4/out-of-source-build.patch', 1),
             ('patches/4.8.4/add-pdbs-on-msvc.diff', 1),
@@ -60,7 +71,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "a cross-platform application framework"
         # If you change the default target here please do not forget to rename the portage file
-        self.defaultTarget = '4.8.5'
+        self.defaultTarget = '4.8.7'
 
         ## \todo this is prelimary  and may be changed
         self.options.package.packageName = 'qt'
@@ -95,9 +106,9 @@ class Package(QMakePackageBase):
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ): return False
-        if self.subinfo.buildTarget != "master":
-            utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
-                    os.path.join( self.sourceDir(), "configure.exe" ) )
+       if self.subinfo.buildTarget != "master" and self.subinfo.buildTarget != '4.8.7':
+           utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
+                   os.path.join( self.sourceDir(), "configure.exe" ) )
         return True
 
     def configure( self, unused1=None, unused2=""):
