@@ -106,8 +106,8 @@ class Package(QMakePackageBase):
         
     def unpack( self ):
         if not QMakePackageBase.unpack( self ): return False
-       if self.subinfo.buildTarget != "master" and self.subinfo.buildTarget != '4.8.7':
-           utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
+        if self.subinfo.buildTarget != "master" and self.subinfo.buildTarget != '4.8.7':
+            utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
                    os.path.join( self.sourceDir(), "configure.exe" ) )
         return True
 
