@@ -14,13 +14,29 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         for ver in self.versionInfo.tarballs():
-            self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
+            self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
+           
+            if ver.startswith("5.4"):
+                self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
+            if ver.startswith("5.5"):
+                self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
             
         for ver in self.versionInfo.branches():
-            self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
+            self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
+            
+            if ver.startswith("5.4"):
+                self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
+            if ver.startswith("5.5"):
+                self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
             
         for ver in self.versionInfo.tags():
-            self.patchToApply[ ver ] = ("qtbase-20130714.patch" , 1)
+            self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
+            
+            if ver.startswith("v5.4"):
+                self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
+            if ver.startswith("v5.5"):
+                self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
+        
             
         
         self.shortDescription = "a cross-platform application framework"
