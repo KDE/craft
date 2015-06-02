@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests['53.1'] = '7eca017fdd101e676d425caaf28ef862d3655e0f'
         self.targetDigests['55.1'] = '3bb301c11be0e239c653e8aa2925c53f6f4dc88d'
         self.defaultTarget = '53.1'
-        if compiler.isMSVC2015():
+        if compiler.isMSVC2015() or compiler.isMinGW():
             self.patchToApply['55.1'] = ("icu-20150414.diff", 1)
             self.defaultTarget = '55.1'
             
