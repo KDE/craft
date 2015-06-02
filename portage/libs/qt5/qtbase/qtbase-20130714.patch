@@ -10,19 +10,6 @@ index 9f0188b..8125bf9 100644
  QMAKE_CFLAGS_DEBUG      = -g
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
  QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
-diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
-index 804eab9..ad44e87 100644
---- a/qmake/generators/makefile.cpp
-+++ b/qmake/generators/makefile.cpp
-@@ -1214,7 +1214,7 @@ MakefileGenerator::filePrefixRoot(const QString &root, const QString &path)
- {
-     QString ret(root + path);
-     if(path.length() > 2 && path[1] == ':') //c:\foo
--        ret = QString(path.mid(0, 2) + root + path.mid(2));
-+        ret = QString(root + path.mid(2));
-     while(ret.endsWith("\\"))
-         ret = ret.left(ret.length()-1);
-     return ret;
 diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
 index 5e56db3..4d46430 100644
 --- a/src/corelib/io/qstandardpaths_win.cpp
