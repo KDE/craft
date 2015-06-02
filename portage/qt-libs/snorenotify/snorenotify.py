@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
+        self.dependencies['libs/qttools'] = 'default'
         self.dependencies['win32libs/snoregrowl'] = 'default'
 
 
