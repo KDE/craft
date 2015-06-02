@@ -7,14 +7,14 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "4.9.2"
+        ver = "5.1.0"
         rev = "0"
         if compiler.isX64():
-            self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-%s-release-posix-seh-rt_v3-rev%s.7z" % ( ver, rev )
-            self.targetDigests['4.9.1-0'] = 'd826187ad09ae53ae9596f8d69dd44fd944af36a'
+            self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-%s-release-posix-seh-rt_v4-rev%s.7z" % ( ver, rev )
+            self.targetDigests['5.1.0-0'] = 'fd8313c9016172fe59a21afa00ad412c039e1fc6'            
         else:
-            self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-%s-release-posix-sjlj-rt_v3-rev%s.7z" % ( ver, rev )
-            self.targetDigests['4.9.1-0'] = 'c4560bef20eef59bb886feccb2e0eb51f8d27f8b'
+            self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-%s-release-posix-sjlj-rt_v4-rev%s.7z" % ( ver, rev )
+            
         self.defaultTarget = "%s-%s" % ( ver, rev )
 
     def setDependencies( self ):
