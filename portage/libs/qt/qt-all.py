@@ -157,6 +157,7 @@ class Package(QMakePackageBase):
         else:
             command += "-ltcg "
 
+        command += "-webkit "
         # all builds
         command += "-no-phonon "
         if self.subinfo.options.isActive("win32libs/dbus"):
