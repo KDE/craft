@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/phonon-%s.tar.xz' % (ver ,ver)
             self.targetInstSrc[ver] = 'phonon-%s' % ver
         self.patchToApply['4.7.0'] = ("phonon-4.7.0-fix-dll-linkage.diff", 1) # upstream
+        self.patchToApply['4.7.1'] = [("phonon-4.7.1-20150602.diff", 1)]
         self.targetDigests['4.7.0'] = 'feda28afe016fe38eb253f2be01973fc0226d10f'
         self.targetDigests['4.7.1'] = 'f1d3214a752d97028dc4ed910a832c1272951522'
 
