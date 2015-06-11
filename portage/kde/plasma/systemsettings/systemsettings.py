@@ -2,9 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:systemsettings'
-        self.defaultTarget = 'gitHEAD'
-
+        self.versionInfo.setDefaultValues( )
+        
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'

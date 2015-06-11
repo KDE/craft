@@ -1,9 +1,10 @@
 import info
 
-class subinfo( info.infoclass ):
+
+class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:oxygen'
-        self.defaultTarget = 'gitHEAD'
+        self.versionInfo.setDefaultValues( )
+
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
@@ -15,12 +16,15 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['frameworks/frameworkintegration'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
-
+        self.dependencies['frameworks/kdecoration'] = 'default'
 
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
+class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+
+
+    
 
