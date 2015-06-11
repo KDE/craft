@@ -4,6 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
+        self.defaultTarget = self.versionInfo.tarballs()[-1]#use latest tarball, we need to resolve the symlinks which currently is only implemented for tarballs.
 
 
     def setDependencies( self ):
