@@ -79,19 +79,16 @@ class MSysShell(object):
     def toNativePath( path ):
         return utils.toMSysPath( path )
 
-    def execute( self, path, cmd, args = "", out=sys.stdout, err=sys.stderr, debugLvl=1 ):
+    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr):
         command = "%s --login -c \"export %s && cd %s && %s %s\"" % \
                   ( self._sh, self._environmentSetup(), self.toNativePath( path ), self.toNativePath( cmd ), args )
-        if debugLvl == 0:
-            print("%s %s" % (cmd, args))
-        else:
-            utils.debug( "msys execute: %s" % command, debugLvl )
+        utils.info( "msys execute: %s" % command)
         return utils.system( command, stdout=out, stderr=err )
 
     def login(self):
         self.environment[ "CHERE_INVOKING" ] = "1"
         command = "bash --login -i"
-        return self.execute( ".", command )
+        return self.execute(".", command)
 
 
 def main():

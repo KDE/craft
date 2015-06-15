@@ -54,15 +54,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.configure.bootstrap == True:
             autogen = os.path.join(sourcedir, "autogen.sh")
             if os.path.exists(autogen):
-                self.shell.execute(self.sourceDir(), autogen, debugLvl=0)
+                self.shell.execute(self.sourceDir(), autogen)
         #else:
             #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
 
 
         if self.buildInSource:
-            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self), debugLvl=0 )
+            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
         else:
-            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self), debugLvl=0  )
+            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
         return ret
 
     def make( self, dummyBuildType=None ):
@@ -77,14 +77,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         # adding Targets later
         if self.buildInSource:
-            if not self.shell.execute(self.sourceDir(), self.makeProgram , "clean"):
+            if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean"):
                 print( "while Make'ing. cmd: %s clean" % self.makeProgram)
                 return False
-            if not self.shell.execute(self.sourceDir(), command, args ):
+            if not self.shell.execute(self.sourceDir(), command, args):
                 print( "while Make'ing. cmd: %s" % command )
                 return False
         else:
-            if not self.shell.execute(self.buildDir(), command, args ):
+            if not self.shell.execute(self.buildDir(), command, args):
                 print( "while Make'ing. cmd: %s" % command )
                 return False
         return True
@@ -116,7 +116,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 print( "while installing. cmd: %s %s" % (command, args) )
                 return False
         if os.path.exists(os.path.join(self.imageDir(),"lib")):
-            return self.shell.execute(os.path.join(self.imageDir(),"lib"), "rm", " -Rf *.la")
+            return self.shell.execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la")
         else:
             return True
 
