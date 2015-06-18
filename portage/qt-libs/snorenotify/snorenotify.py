@@ -15,13 +15,14 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'https://github.com/Snorenotify/Snorenotify.git'
-        for ver in ['0.5.1', '0.5.2']:
+        for ver in ['0.5.1', '0.5.2', '0.5.3']:
             self.targets[ver] = 'https://github.com/Snorenotify/Snorenotify/archive/v%s.tar.gz' % ver
             self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
             self.targetInstSrc[ver] = 'Snorenotify-%s' % ver
         self.targetDigests['0.5.1'] = 'eb83e0b7bccfc1c307a8457265dc4a5607a8b877'
         self.targetDigests['0.5.2'] = '9aa4409422872dd32bd5f831a6201820994065a1'
-        self.shortDescription = "An application to show kde notifications with Win8, Snarl or Growl"
+        self.targetDigests['0.5.3'] = '542991b86ac0124e4f8d7ffec7783a2449f655f3'
+        self.shortDescription = "Snorenotify is a multi platform Qt notification framework. Using a plugin system it is possible to create notifications with many different notification systems on Windows, Mac OS and Unix."
         self.defaultTarget = 'gitHEAD'
 
 
