@@ -4,9 +4,14 @@
 ; Copyright 2010 Patrick Spendrin <ps_ml@gmx.de>
 ; adapted from marble.nsi
 
-; depends on http://nsis.sourceforge.net/WinShell_plug-in
 var ToBeRunned
 var nameOfToBeRunend
+
+!define SnoreToastExe "$INSTDIR\SnoreToast.exe"
+!macro SnoreShortcut path exe appID
+    nsExec::ExecToLog '"${SnoreToastExe}" -install "${path}" "${exe}" "${appID}"'
+!macroend
+
 
 ; registry stuff
 !define regkey "Software\${company}\${productname}"
@@ -64,7 +69,7 @@ ${license}
 !define MUI_FINISHPAGE_RUN_TEXT $nameOfToBeRunend
 !define MUI_FINISHPAGE_LINK "Visit project homepage"
 !define MUI_FINISHPAGE_LINK_LOCATION "${PRODUCT_WEB_SITE}"
-!insertmacro MUI_PAGE_FINISH
+#!insertmacro MUI_PAGE_FINISH
 
 ;uninstaller
 !insertmacro MUI_UNPAGE_WELCOME
@@ -82,7 +87,6 @@ SilentInstall normal
  
 InstallDir "$PROGRAMFILES\${productname}"
 InstallDirRegKey HKLM "${regkey}" ""
- 
 
  
 ;--------------------------------
@@ -134,8 +138,7 @@ Section "Quassel"  QUASSEL_ALL_IN_ONE
     StrCpy $nameOfToBeRunend "Run Quassel"
     File /a /oname=quassel.exe "${srcdir}\quassel.exe"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "$INSTDIR\quassel.exe"
-        WinShell::SetLnkAUMI "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "${MyApp_AppUserModelId}"
+        !insertmacro SnoreShortcut "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk" "$INSTDIR\quassel.exe" "${MyApp_AppUserModelId}"
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -147,9 +150,8 @@ Section /o "QuasselClient"  QUASSEL_CLIENT
         StrCpy $nameOfToBeRunend "Run QuasselClient"
     ${Endif}
     File /a /oname=quasselclient.exe "${srcdir}\quasselclient.exe"
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "$INSTDIR\quasselclient.exe"
-        WinShell::SetLnkAUMI "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "${MyApp_AppUserModelId}"
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application        
+        !insertmacro SnoreShortcut "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk" "$INSTDIR\quasselclient.exe" "${MyApp_AppUserModelId}"
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -236,11 +238,7 @@ Section "Uninstall"
         ; ${EndIf}
     ; ${EndIf}
   ; ${EndIf}
-    
-    WinShell::UninstAppUserModelId ""${MyApp_AppUserModelId}"
-    WinShell::UninstShortcut "$SMPROGRAMS\$StartMenuFolder\Quassel Client.lnk"
-    WinShell::UninstShortcut "$SMPROGRAMS\$StartMenuFolder\Quassel.lnk"
-  
+      
     RMDir /r "$SMPROGRAMS\$StartMenuFolder"
     RMDir /r "$INSTDIR"
 SectionEnd

@@ -7,14 +7,18 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
+        patchlvl = 1
         for pack in installdb.getInstalledPackages('qt-apps','quassel'):
             version = pack.getVersion()
             if version:
+                if patchlvl:
+                    version += "-%s" % patchlvl
                 self.targets[ version ] = ""
                 self.defaultTarget = version
             gitVersion = pack.getRevision()
             if gitVersion:
                 self.svnTargets[ gitVersion  ] = ""
+                print("git", gitVersion)
                 self.defaultTarget = gitVersion
             
 

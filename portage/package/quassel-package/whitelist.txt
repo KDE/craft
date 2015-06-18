@@ -12,6 +12,7 @@ bin\\libstdc.*\.dll
 bin\\libsnore.*\.dll
 lib\\libsnore.*\\libsnore_backend.*\.dll
 lib\\plugins\\libsnore.*\\libsnore_backend.*\.dll
+lib\\plugins\\libsnore.*\\libsnore_secondary_backend.*\.dll
 bin\\SnoreToast\.exe
 #
 #Growl
@@ -32,7 +33,10 @@ bin\\Qt5Declarative\.dll
 bin\\Qt5Gui\.dll
 bin\\Qt5Network\.dll
 bin\\Qt5Opengl\.dll
+bin\\Qt5Multimedia\.dll
 bin\\Qt5Printsupport\.dll
+bin\\Qt5Qml\.dll
+bin\\Qt5Quick\.dll
 bin\\Qt5Script\.dll
 bin\\Qt5Sql\.dll
 bin\\Qt5Widgets\.dll
