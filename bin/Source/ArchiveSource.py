@@ -246,7 +246,7 @@ class ArchiveSource(SourceBase):
             if not patchName:
                 patchName = os.path.join( self.buildRoot(), "%s-%s.diff" % ( directory, \
                 str( datetime.date.today() ).replace('-', '') ) )
-            cmd = "diff -Nru -x *~ %s.orig %s > %s || echo 0" % ( directory, directory, patchName )
+            cmd = "diff -Nrub -x *~ -x *\.orig -x*\.o %s.orig %s > %s || echo 0" % ( directory, directory, patchName )
             if not self.system( cmd ):
                 return False
 
