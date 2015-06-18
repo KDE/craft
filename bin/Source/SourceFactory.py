@@ -7,7 +7,6 @@ import utils
 from Source.ArchiveSource import *
 from Source.SvnSource import *
 from Source.GitSource import *
-from Source.CvsSource import *
 from Source.HgSource import *
 
 def SourceFactory(settings):
@@ -32,9 +31,6 @@ def SourceFactory(settings):
             source = HgSource(settings)
         elif sourceType == "git":
             source = GitSource(settings)
-        ## \todo complete more cvs access schemes
-        elif sourceType == "cvs":
-            source = CvsSource(settings)
 
     if source == None:
         utils.die("none or unsupported source system set")
