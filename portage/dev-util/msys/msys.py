@@ -1,4 +1,5 @@
 import info
+import shells
 
 
 class subinfo(info.infoclass):
@@ -21,7 +22,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
-        self.shell = MSysShell()
+        self.shell = shells.MSysShell()
 
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
