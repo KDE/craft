@@ -106,8 +106,13 @@ class SourceBase(EmergeBase):
         """ return the current revision or version of the source directory,
             return True in case it is not applicable and give out nothing """
         return True
-        
-        
+
+    def sourceRevision(self):
+        """
+        :return: Same as sourceVersion for Cvs systems, None for all other
+        """
+        return None
+
     def printSourceVersion(self):
         """ return the current revision or version of the source directory,
             return True in case it is not applicable and give out nothing """

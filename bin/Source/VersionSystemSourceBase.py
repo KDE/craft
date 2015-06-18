@@ -132,4 +132,9 @@ class VersionSystemSourceBase (SourceBase):
         utils.debug("using sourcedir: %s" % sourcedir, 2)
         return os.path.abspath(sourcedir)
 
+    def sourceRevision(self):
+        utils.trace( "VersionSystemSourceBase sourceRevision", 2 )
+        return self.sourceVersion()
+
+
 

@@ -77,6 +77,11 @@ class MultiSource(object):
     def sourceVersion(self):
         utils.trace( "MultiSource sourceVersion", 2 )
         return self.source.sourceVersion()
+
+    def sourceRevision(self):
+        utils.trace( "MultiSource sourceVersion", 2 )
+        return self.source.sourceRevision()
+
         
     def printSourceVersion(self):
         utils.trace( "MultiSource printSourceVersion", 2 )
