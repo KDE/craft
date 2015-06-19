@@ -69,7 +69,7 @@ ${license}
 !define MUI_FINISHPAGE_RUN_TEXT $nameOfToBeRunend
 !define MUI_FINISHPAGE_LINK "Visit project homepage"
 !define MUI_FINISHPAGE_LINK_LOCATION "${PRODUCT_WEB_SITE}"
-#!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_PAGE_FINISH
 
 ;uninstaller
 !insertmacro MUI_UNPAGE_WELCOME
