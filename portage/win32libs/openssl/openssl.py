@@ -50,6 +50,8 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
+        elif compiler.isMSVC() and compiler.isX86():
+            self.buildDependencies['dev-util/nasm'] = 'default'
 
 
 from Package.CMakePackageBase import *
@@ -75,7 +77,7 @@ class PackageCMake(CMakePackageBase):
             if not self.system("ms\do_win64a.bat", "configure"):
                 return False
         else:
-            if not self.system("ms\do_ms.bat", "configure"):
+            if not self.system("ms\do_nasm.bat", "configure"):
                 return False
 
         if self.staticBuild:
