@@ -127,6 +127,8 @@ def getShortName():
         return "vc110"
     elif isMSVC2013():
         return "vc120"
+    elif isMSVC2015():
+        return "vc140"
     else:
         utils.die("Unknown Compiler %s" %  _compiler())
 
