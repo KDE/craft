@@ -7,11 +7,15 @@
 var ToBeRunned
 var nameOfToBeRunend
 
+!include WinVer.nsh
 !define SnoreToastExe "$INSTDIR\SnoreToast.exe"
 !macro SnoreShortcut path exe appID
-    nsExec::ExecToLog '"${SnoreToastExe}" -install "${path}" "${exe}" "${appID}"'
+    ${If} ${AtLeastWin8}
+        nsExec::ExecToLog '"${SnoreToastExe}" -install "${path}" "${exe}" "${appID}"'
+    ${Else}
+        CreateShortCut "${path}" "${exe}"
+    ${EndIf}
 !macroend
-
 
 ; registry stuff
 !define regkey "Software\${company}\${productname}"
