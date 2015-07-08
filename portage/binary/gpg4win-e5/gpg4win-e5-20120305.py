@@ -2,11 +2,11 @@
 #
 # This Package contains the headers and libraries for the gnupg software:
 #
-# libgpg-error-1.8
-# libgcrypt-1.4.5
-# libassuan-2.0.0
-# libksba-1.0.7
-# gpgme-1.3.0
+# libgpg-error
+# libgcrypt
+# libassuan
+# libksba
+# gpgme
 #
 # The intention is that they should keep up with the recent versions of gpg4win
 # (www.gpg4win.de) which packages gnupg seperatly so KDE software can interact
@@ -20,11 +20,11 @@ import compiler
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        version="201305281338"
+        version="201507081029"
         self.targets[version] = \
                 "http://files.kolab.org/local/gpg4win/gpg4win-dev-"+version+".tar.bz2"
         self.defaultTarget = version
-        self.targetDigests[version] = '28280da78a53704a6e59d3d80a56a91bb3630bc1'
+        self.targetDigests[version] = 'e67e160af3d3f1373b6a9e5eb27582ef1123d2a0'
 
     def setDependencies( self ):
         self.hardDependencies['virtual/base'] = 'default'
