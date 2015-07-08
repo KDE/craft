@@ -1,0 +1,12 @@
+diff --git a/libkleo/backends/qgpgme/qgpgmebackend.cpp b/libkleo/backends/qgpgme/qgpgmebackend.cpp
+index 260a411..f98c3a7 100644
+--- a/libkleo/backends/qgpgme/qgpgmebackend.cpp
++++ b/libkleo/backends/qgpgme/qgpgmebackend.cpp
+@@ -122,6 +122,7 @@ namespace {
+       if ( includeSigs ) mode |= GpgME::Signatures;
+       if ( validate ) mode |= GpgME::Validate;
+       context->setKeyListMode( mode );
++      context->setOffline( true );
+       return new Kleo::QGpgMEListAllKeysJob( context );
+     }
+ 
