@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
             self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
             self.patchToApply['4.12.0'] = [('0001-fix-wrong-MAKE_KABC_LIB-macro-this-is-now-kabc_EXPOR.patch', 1),
                                            ('0001-fix-build-error-on-windows-about-undefined-KSslError.patch', 1)]
+        self.patchToApply['gitHEAD'] = [('0001-Add-support-for-gpgme_set_offline.patch', 1),
+                                        ('0001-Fix-generate_export_header-port.patch',1)]
 
         self.defaultTarget = 'gitHEAD'
 

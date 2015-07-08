@@ -1,0 +1,91 @@
+From 486ba9ac9d1a7b80987819cba6bf6ffdc65feff8 Mon Sep 17 00:00:00 2001
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Wed, 16 Jul 2014 11:21:29 +0200
+Subject: [PATCH] Fix generate_export_header port
+
+    GPGME does not build completly different libraries but rather 5
+    variants that only differ in the context.
+    commit f8d8a1d64aab678b5fd380d5b9e85b6729d90cc0
+    introduced the usage of generate_export_header for all those
+    variants although it did not change the sources to actually
+    use those export headers / macros.
+
+    Previously all variants used gpgme++_export.h and defined
+    MAKE_GPGME___LIB to correctly select the export setting.
+
+    We now fall back on that behavior by defining gpgmepp_EXPORTS
+    when building the variants.
+
+    The dependency to GPGME_VANILLA_FOUND for all variants was
+    already there as the gpgme++_export.h header was installed
+    unconditionally.
+---
+ gpgme++/CMakeLists.txt | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/gpgme++/CMakeLists.txt b/gpgme++/CMakeLists.txt
+index 7cc551e..302e179 100644
+--- a/gpgme++/CMakeLists.txt
++++ b/gpgme++/CMakeLists.txt
+@@ -65,12 +65,11 @@ endif()
+ 
+ if ( GPGME_GLIB_FOUND )
+    add_library( gpgmepp-glib ${LIBRARY_TYPE} ${gpgme_LIB_SRCS} context_glib.cpp )
+-   generate_export_header(gpgmepp-glib)
+    target_link_libraries( gpgmepp-glib ${GPGME_GLIB_LIBRARIES} )
+    set_target_properties( gpgmepp-glib PROPERTIES
+                                        VERSION     ${_gpgmepp_version}
+                                        SOVERSION   ${_gpgmepp_soversion}
+-                                       OUTPUT_NAME gpgme++-glib DEFINE_SYMBOL MAKE_GPGME___LIB
++                                       OUTPUT_NAME gpgme++-glib DEFINE_SYMBOL gpgmepp_EXPORTS
+    )
+    get_target_property( GPGMEPP_GLIB_LIBRARY gpgmepp LOCATION )
+    install(TARGETS gpgmepp-glib EXPORT kdepimlibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
+@@ -79,7 +78,6 @@ endif()
+ 
+ if ( GPGME_QT_FOUND )
+    add_library( gpgmepp-qt ${LIBRARY_TYPE} ${gpgme_LIB_SRCS} context_qt.cpp )
+-   generate_export_header(gpgmepp-qt)
+    target_link_libraries( gpgmepp-qt ${GPGME_QT_LIBRARIES} )
+    if(WIN32)
+       target_link_libraries( gpgmepp-qt ${GPGME_VANILLA_LIBRARIES} )
+@@ -87,7 +85,7 @@ if ( GPGME_QT_FOUND )
+    set_target_properties( gpgmepp-qt PROPERTIES
+                                      VERSION     ${_gpgmepp_version}
+                                      SOVERSION   ${_gpgmepp_soversion}
+-                                     OUTPUT_NAME gpgme++-qt DEFINE_SYMBOL MAKE_GPGME___LIB
++                                     OUTPUT_NAME gpgme++-qt DEFINE_SYMBOL gpgmepp_EXPORTS
+    )
+    get_target_property( GPGMEPP_QT_LIBRARY gpgmepp LOCATION )
+    install(TARGETS gpgmepp-qt EXPORT kdepimlibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
+@@ -96,12 +94,11 @@ endif()
+ 
+ if ( GPGME_PTHREAD_FOUND )
+    add_library( gpgmepp-pthread ${LIBRARY_TYPE} ${gpgme_LIB_SRCS} context_vanilla.cpp )
+-   generate_export_header(gpgmepp-pthread)
+    target_link_libraries( gpgmepp-pthread ${GPGME_PTHREAD_LIBRARIES} )
+    set_target_properties( gpgmepp-pthread PROPERTIES
+                                           VERSION     ${_gpgmepp_version}
+                                           SOVERSION   ${_gpgmepp_soversion}
+-                                          OUTPUT_NAME gpgme++-pthread DEFINE_SYMBOL MAKE_GPGME___LIB
++                                          OUTPUT_NAME gpgme++-pthread DEFINE_SYMBOL gpgmepp_EXPORTS
+    )
+    get_target_property( GPGMEPP_PTHREAD_LIBRARY gpgmepp LOCATION )
+    install(TARGETS gpgmepp-pthread EXPORT kdepimlibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
+@@ -109,12 +106,11 @@ endif()
+ 
+ if ( GPGME_PTH_FOUND )
+    add_library( gpgmepp-pth ${LIBRARY_TYPE} ${gpgme_LIB_SRCS} context_vanilla.cpp )
+-   generate_export_header(gpgmepp-pth)
+    target_link_libraries( gpgmepp-pth ${GPGME_PTH_LIBRARIES} )
+    set_target_properties( gpgmepp-pth PROPERTIES
+                                       VERSION     ${_gpgmepp_version}
+                                       SOVERSION   ${_gpgmepp_soversion}
+-                                      OUTPUT_NAME gpgme++-pth DEFINE_SYMBOL MAKE_GPGME___LIB
++                                      OUTPUT_NAME gpgme++-pth DEFINE_SYMBOL gpgmepp_EXPORTS
+    )
+    get_target_property( GPGMEPP_PTH_LIBRARY gpgmepp LOCATION )
+    install(TARGETS gpgmepp-pth EXPORT kdepimlibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
+-- 
+1.9.1
+
