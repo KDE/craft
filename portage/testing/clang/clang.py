@@ -5,10 +5,15 @@ import portage
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "http://llvm.org/git/clang.git"
-        self.targets[ "3.5.0" ] = "http://llvm.org/releases/3.5.0/cfe-3.5.0.src.tar.xz"
-        self.targetInstSrc[ "3.5.0" ] = "cfe-3.5.0.src"
-        self.targetDigests['3.5.0'] = '834cee2ed8dc6638a486d8d886b6dce3db675ffa'
-        self.defaultTarget = "3.5.0"
+        releaseVersion = "3.5.0"
+        self.targets[releaseVersion] = "http://llvm.org/releases/" + releaseVersion + "/cfe-" + releaseVersion + ".src.tar.xz"
+        self.targetInstSrc[releaseVersion] = "cfe-" + releaseVersion + ".src"
+        self.targetDigests[releaseVersion] = '7a00257eb2bc9431e4c77c3a36b033072c54bc7e'
+
+        if compiler.isMSVC2015():
+            self.defaultTarget = 'gitHEAD'
+        else:
+            self.defaultTarget = releaseVersion
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
@@ -19,7 +24,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-
 
     def configure(self):
         if compiler.isMinGW() and not self.buildType() == "Release":

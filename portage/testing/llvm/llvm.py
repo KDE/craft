@@ -5,11 +5,16 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "http://llvm.org/git/llvm.git"
-        releaseVersion = "3.6.2"
+        releaseVersion = "3.5.0"
         self.targets[releaseVersion] = "http://llvm.org/releases/" + releaseVersion + "/llvm-" + releaseVersion + ".src.tar.xz"
         self.targetInstSrc[releaseVersion] = "llvm-" + releaseVersion + ".src"
-        self.targetDigests[releaseVersion] = '7a00257eb2bc9431e4c77c3a36b033072c54bc7e'
+        self.targetDigests[releaseVersion] = '834cee2ed8dc6638a486d8d886b6dce3db675ffa'
         self.defaultTarget = releaseVersion
+
+        if compiler.isMSVC2015():
+            self.defaultTarget = 'gitHEAD'
+        else:
+            self.defaultTarget = releaseVersion
 
     def setBuildOptions(self):
         info.infoclass.setBuildOptions(self)
