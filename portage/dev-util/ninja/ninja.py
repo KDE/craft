@@ -13,6 +13,10 @@ class subinfo(info.infoclass):
             self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "ninja-%s" % ver
             self.archiveNames[ ver] = "ninja-%s.tar.gz" % ver
+
+        if compiler.isMSVC2015():
+            self.defaultTarget = 'gitHEAD'
+        else:
             self.defaultTarget = ver
         self.targetDigests['1.6.0'] = 'a6ff055691f6d355234298c21cc18961b4ca2ed9'
 
