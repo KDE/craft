@@ -8,6 +8,8 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'http://source.icu-project.org/repos/icu/icu/trunk'
+        self.targetInstSrc['svnHEAD'] = "source"
         for ver in ['53.1', '55.1']:
             self.targets[ver] = 'http://download.icu-project.org/files/icu4c/%s/icu4c-%s-src.tgz' % ( ver, ver.replace(".", "_"))
             self.targetInstSrc[ver] = "icu\\source"
