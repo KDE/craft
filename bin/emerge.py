@@ -423,7 +423,7 @@ if __name__ == '__main__':
         def updateTitle( startTime, title ):
             while ( doUpdateTitle ):
                 delta = datetime.datetime.now( ) - startTime
-                utils.setTitle( "emerge %s %s" % (title, delta) )
+                utils.setConsoleTitle( "emerge %s %s" % (title, delta) )
                 time.sleep( 1 )
 
         tittleThread = threading.Thread( target = updateTitle,

@@ -1096,9 +1096,10 @@ def prependPath(*parts):
             old.insert(0, fullPath)
             putenv( "PATH", ";".join(old))
 
-def setTitle(title):
-    ctypes.windll.kernel32.SetConsoleTitleW(title)
-    
+def setConsoleTitle(title):
+    if platform.system() == 'Windows':
+        ctypes.windll.kernel32.SetConsoleTitleW(title)
+
 _TIMERS = dict()    
 def startTimer(name, level = 0):
     """starts a timer for meassurement"""

@@ -18,6 +18,7 @@ if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
 
 import configparser
 import os
+import platform
 import re
 
 emergeSettings = None
@@ -32,6 +33,10 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def _deSubstPath(path):
         """desubstitude emerge short path"""
+
+        if platform.system() != 'Windows':
+            return path
+
         if emergeSettings and not emergeSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
             return path
         drive , tail = os.path.splitdrive(path)
