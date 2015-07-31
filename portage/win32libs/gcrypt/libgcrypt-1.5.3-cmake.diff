@@ -671,7 +671,7 @@ Index: libgcrypt-1.5.3/config.h.cmake
 +   we define it here with the usual gcry prefix.  */
 +#define GCRY_GPG_ERR_NOT_OPERATIONAL  176
 +
-+#ifdef _MSC_VER
++#if defined(_MSC_VER) && (_MSC_VER < 1900)
 +# define snprintf _snprintf
 +#endif
 +

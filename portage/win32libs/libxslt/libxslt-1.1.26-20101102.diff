@@ -578,7 +578,7 @@ diff -Nru -x '*~' libxslt-1.1.28.orig/libxslt/win32config.h libxslt-1.1.28/libxs
  
  #include <direct.h>
 -#if defined(_MSC_VER) || defined(__MINGW32__)
-+#if (defined(_MSC_VER) || defined(__MINGW32__)) && !defined(_WIN32_WCE)
++#if ((defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__MINGW32__)) && !defined(_WIN32_WCE)
  #define mkdir(p,m) _mkdir(p)
  #define snprintf _snprintf
  #if _MSC_VER < 1500
@@ -629,7 +629,7 @@ diff -Nru -x '*~' libxslt-1.1.28.orig/xsltproc/xsltproc.c libxslt-1.1.28/xsltpro
   */
  
 +#if defined(WIN32) && !defined (__CYGWIN__)
-+#if defined(_MSC_VER) || defined(__MINGW32__)
++#if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__MINGW32__)
 +#include <winsock2.h>
 +#define gettimeofday(p1,p2)
 +#define snprintf _snprintf

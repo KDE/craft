@@ -822,7 +822,7 @@ index 0000000..7a062b5
 +/* Win32 Std C name mangling work-around */
 +#cmakedefine vsnprintf
 +
-+#ifdef _MSC_VER
++#if defined(_MSC_VER) && (_MSC_VER < 1900)
 +#define snprintf _snprintf
 +#endif
 diff --git a/debugXML.c b/debugXML.c
