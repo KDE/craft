@@ -172,7 +172,7 @@ diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeL
 +    
 +    if(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
-+        if ((MSVC AND MSVC_VERSION < 1900)  OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
++        if ((MSVC AND MSVC_VERSION LESS 1900)  OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +            add_definitions(-Dsnprintf=_snprintf)
 +        endif()
 +    endif(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
