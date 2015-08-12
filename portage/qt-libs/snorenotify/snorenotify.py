@@ -32,7 +32,7 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines = ''
         if self.buildTarget.startswith("0.5"):
             if self.subinfo.options.isActive("win32libs/dbus"):
-            self.subinfo.options.configure.defines += '-DWITH_FREEDESKTOP_FRONTEND=ON '
+                self.subinfo.options.configure.defines += '-DWITH_FREEDESKTOP_FRONTEND=ON '
             self.subinfo.options.configure.defines += '-DWITH_FRONTENDS=ON -DWITH_SNORE_DAEMON=ON '
             self.subinfo.options.configure.defines += "-DWITH_QT4=OFF "
 
