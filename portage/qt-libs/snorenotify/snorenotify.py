@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/Snorenotify/Snorenotify.git'
+        self.svnTargets['gitHEAD'] = 'kde:snorenotify'
         for ver in ['0.5.1', '0.5.2', '0.5.3']:
             self.targets[ver] = 'https://github.com/Snorenotify/Snorenotify/archive/v%s.tar.gz' % ver
             self.archiveNames[ver] = "snorenotify-%s.tar.gz" % ver
@@ -29,9 +29,10 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = '-DWITH_FRONTENDS=ON -DWITH_SNORE_DAEMON=ON '
-        if self.subinfo.options.isActive("win32libs/dbus"):
-            self.subinfo.options.configure.defines += '-DWITH_FREEDESKTOP_FRONTEND=ON '
+        self.subinfo.options.configure.defines = ''
         if self.buildTarget.startswith("0.5"):
+            if self.subinfo.options.isActive("win32libs/dbus"):
+            self.subinfo.options.configure.defines += '-DWITH_FREEDESKTOP_FRONTEND=ON '
+            self.subinfo.options.configure.defines += '-DWITH_FRONTENDS=ON -DWITH_SNORE_DAEMON=ON '
             self.subinfo.options.configure.defines += "-DWITH_QT4=OFF "
 
