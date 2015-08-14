@@ -67,9 +67,11 @@ class SetupHelper( object ):
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
 
-    def prependPath( self, var ):
-        self.env[ "Path" ] = "%s;%s" % (var, self.env[ "Path" ])
-
+    def prependPath( self, key, var ):
+        if key in self.env:
+            self.env[ key ] = "%s;%s" % (var, self.env[ key ])
+        else:
+            self.env[ key ] = var
 
     def stringToEnv( self, string ):
         out = dict( )
@@ -131,23 +133,26 @@ class SetupHelper( object ):
         self.addEnvVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
 
         if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath( os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
+            self.prependPath( "Path", os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
         
         if compiler.isMinGW( ):
             if not emergeSettings.getboolean("QtSDK", "Enabled", "false"):
                 if compiler.isX86( ):
-                    self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
+                    self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
                 else:
-                    self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
+                    self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
             else:
-                self.prependPath( os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
+                self.prependPath( "Path", os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
         
         if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
-            self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
-        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
+            self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
+        self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
         #make sure thate emergeroot bin is the first to look for dlls etc
-        self.prependPath( os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
+        self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
+
+        # add python site packages to pythonpath
+        self.prependPath( "PythonPath",  os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "site-packages"))
 
         for var, value in emergeSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var, value )
