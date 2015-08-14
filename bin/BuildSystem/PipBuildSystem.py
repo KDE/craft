@@ -5,6 +5,7 @@ class PipBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "pip")
         self.python2 = True
         self.python3 = True
+        self.allowExternal = False
 
     def configure( self ):
         return True
@@ -19,8 +20,12 @@ class PipBuildSystem(BuildSystemBase):
             pythons.append(emergeSettings.get("Paths","PYTHON27"))
         if self.python3:
             pythons.append(emergeSettings.get("Paths","PYTHON"))
+
+        args = ""
+        if self.allowExternal:
+            args += " --allow-all-external "
         for path  in pythons:
-            command = "%s install --upgrade %s" % (os.path.join(path, "Scripts", "pip"), self.subinfo.package)
+            command = "%s install --upgrade %s %s" % (os.path.join(path, "Scripts", "pip"), args, self.subinfo.package)
             utils.debug(command)
             ok = ok and utils.system(command)
         return ok
