@@ -1220,3 +1220,9 @@ def parse_version(s):
                 parts.pop()
         parts.append(part)
     return tuple(parts)
+
+def createBat(fileName, command):
+    with open(fileName, "wt+") as bat:
+        bat.write("@echo off\r\n")
+        bat.write(command)
+        bat.write("\r\n")

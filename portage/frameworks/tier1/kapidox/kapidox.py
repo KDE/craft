@@ -32,4 +32,10 @@ class Package(CMakePackageBase):
 
 
     
-
+    def install(self):
+        python = "%s/python.exe" % emergeSettings.get("Paths","PYTHON27","")
+        os.makedirs(os.path.join(self.imageDir(), "bin"))
+        for script in ["depdiagram-generate", "depdiagram-prepare", "kgenapidox", "kgenframeworksapidox"]:
+            utils.createBat(os.path.join(self.imageDir(), "bin", "%s.bat" % script),
+                            "%s %s %%*" % (python, os.path.join(EmergeStandardDirs.emergeRoot( ), "scripts", script)))
+        return CMakeBuildSystem.install(self)
