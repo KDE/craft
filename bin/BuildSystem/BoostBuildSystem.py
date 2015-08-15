@@ -32,12 +32,14 @@ class BoostBuildSystem(BuildSystemBase):
         else:
             options += (" link=static"
                        " runtime-link=static")
+        if compiler.isX64():
+            options += " address-model=64"
 
-        options += " variant="
         if self.buildType() == "Debug":
-            options += "debug"
+            options += " variant=debug"
         else:
-            options += "release"
+            options += " variant=release"
+
         options += " toolset="
         if compiler.isMinGW():
             options += "gcc"
