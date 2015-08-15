@@ -73,8 +73,7 @@ cd "$env:KDEROOT"
 }
 
 
-function emerge()
-{
+function Global:emerge() {
     return python "$env:KDEROOT\emerge\bin\emerge.py" $args
 }
 
