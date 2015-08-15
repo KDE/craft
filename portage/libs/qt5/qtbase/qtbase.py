@@ -81,6 +81,7 @@ class Package(Qt5CorePackageBase):
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-zlib "
+        command += "-qt-pcre "
         command += "-nomake examples "
         command += "-c++11 "
         command += "-opengl dynamic "
