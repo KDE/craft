@@ -165,10 +165,10 @@ diff -Nru -x '*~' libassuan-2.1.1.orig/CMakeLists.txt libassuan-2.1.1/CMakeLists
 +                                        ARCHIVE DESTINATION lib)
 +endif(WINCE)
 +install(FILES ${CMAKE_CURRENT_BINARY_DIR}/assuan.h DESTINATION include)
-diff -Nru -x '*~' libassuan-2.1.1.orig/config.h.cmake libassuan-2.1.1/config.h.cmake
---- libassuan-2.1.1.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libassuan-2.1.1/config.h.cmake	2013-09-06 23:26:31.430798300 +0200
-@@ -0,0 +1,234 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' libassuan-2.1.1.orig/config.h.cmake libassuan-2.1.1/config.h.cmake
+--- libassuan-2.1.1.orig/config.h.cmake	1969-12-31 19:00:00.000000000 -0500
++++ libassuan-2.1.1/config.h.cmake	2015-08-22 09:06:50.197710800 -0400
+@@ -0,0 +1,236 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
 +/* Define to 1 if you have the declaration of `sys_siglist', and to 0 if you
@@ -398,7 +398,9 @@ diff -Nru -x '*~' libassuan-2.1.1.orig/config.h.cmake libassuan-2.1.1/config.h.c
 +# ifndef ENOFILE
 +#  define ENOFILE ENOENT
 +# endif
-+# define snprintf _snprintf
++# if _MSC_VER < 1900
++#  define snprintf _snprintf
++# endif
 +typedef int pid_t;
 +#define GPG_ERR_ENABLE_ERRNO_MACROS 1
 +#endif
