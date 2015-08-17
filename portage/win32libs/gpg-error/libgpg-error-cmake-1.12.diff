@@ -1,7 +1,7 @@
 diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeLists.txt
 --- libgpg-error-1.12.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ libgpg-error-1.12/CMakeLists.txt	2013-09-01 15:12:27.375043900 +0200
-@@ -0,0 +1,223 @@
+@@ -0,0 +1,226 @@
 +project(gpg-error)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -171,7 +171,10 @@ diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeL
 +    )
 +    
 +    if(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
-+        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dsnprintf=_snprintf -Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
++        add_definitions(-D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -D__inline__=__inline -wd4996 -Dstrncasecmp=_strnicmp -Dstrcasecmp=_stricmp)
++        if ((MSVC AND MSVC_VERSION LESS 1900)  OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
++            add_definitions(-Dsnprintf=_snprintf)
++        endif()
 +    endif(MSVC OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"))
 +	if(WINCE)
 +		set(gpg_error_SRCS

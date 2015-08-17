@@ -8,6 +8,8 @@ import compiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'http://source.icu-project.org/repos/icu/icu/trunk'
+        self.targetInstSrc['svnHEAD'] = "source"
         for ver in ['53.1', '55.1']:
             self.targets[ver] = 'http://download.icu-project.org/files/icu4c/%s/icu4c-%s-src.tgz' % ( ver, ver.replace(".", "_"))
             self.targetInstSrc[ver] = "icu\\source"
@@ -45,8 +47,6 @@ class PackageCMake(CMakePackageBase):
             toolsetSwitches = "/property:PlatformToolset=v110"
         elif compiler.isMSVC2013():
             toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
-        elif compiler.isMSVC2015():
-            toolsetSwitches = "/tv:14.0 /property:PlatformToolset=v140"
           
         return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s %s" %
                 (os.path.join(self.sourceDir(), "allinone", "allinone.sln"), bt, toolsetSwitches)

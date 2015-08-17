@@ -10,16 +10,15 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        #self.baseURL = "http://www.winkde.org/pub/kde/ports/win32/repository/other/"
-        self.baseURL = "http://cdn.mysql.com/Downloads/"
+        self.baseURL = "http://downloads.mysql.com/archives/get/file/"
         for ver in [ '5.6.24' ]:
             ver2 = ver.split('.')
-            url = self.baseURL + "MySQL-" + ver2[0] + "." + ver2[1] + "/"
+            url = self.baseURL
             if compiler.isX64():
-              self.targets[ ver ] = url+"mysql-" + ver + "-winx64.zip"
+              self.targets[ ver ] = url + "mysql-" + ver + "-winx64.zip"
               self.targetInstSrc[ ver ] = "mysql-" + ver + "-winx64"
             else:
-              self.targets[ ver ] = url+"mysql-" + ver + "-win32.zip"
+              self.targets[ ver ] = url + "mysql-" + ver + "-win32.zip"
               self.targetInstSrc[ ver ] = "mysql-" + ver + "-win32"
         if compiler.isX64():
               self.targetDigests['5.6.20'] = '529321ee25b2b774be532db25f2edd735345c1ba'

@@ -83,6 +83,7 @@ class Package(Qt5CorePackageBase):
         command += "-qt-zlib "
         command += "-nomake examples "
         command += "-c++11 "
+        command += "-opengl dynamic "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
         

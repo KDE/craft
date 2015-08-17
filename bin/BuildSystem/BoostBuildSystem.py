@@ -32,12 +32,14 @@ class BoostBuildSystem(BuildSystemBase):
         else:
             options += (" link=static"
                        " runtime-link=static")
+        if compiler.isX64():
+            options += " address-model=64"
 
-        options += " variant="
         if self.buildType() == "Debug":
-            options += "debug"
+            options += " variant=debug"
         else:
-            options += "release"
+            options += " variant=release"
+
         options += " toolset="
         if compiler.isMinGW():
             options += "gcc"
@@ -52,6 +54,8 @@ class BoostBuildSystem(BuildSystemBase):
                 options += "msvc-11.0"
             elif compiler.isMSVC2013():
                 options += "msvc-12.0"
+            elif compiler.isMSVC2015():
+                options += "msvc-15.0"
             elif compiler.isIntel():
                 options += "intel"
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )

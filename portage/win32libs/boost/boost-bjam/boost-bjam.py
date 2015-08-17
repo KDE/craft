@@ -64,6 +64,8 @@ class Package(BoostPackageBase):
                     cmd += "vc11"
                 elif compiler.isMSVC2013():
                     cmd += "vc12"
+                elif compiler.isMSVC2015():
+                    cmd += "vc14"
             if utils.verbose() >= 1:
                 print(cmd)
             utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',

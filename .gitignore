@@ -1,5 +1,7 @@
 # general
 *.orig
+*.bak
+*.rej
 
 # python
 *.pyc

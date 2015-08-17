@@ -17,6 +17,8 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/kconfig' ] = 'default'
         self.dependencies[ 'frameworks/kguiaddons' ] = 'default'
         self.dependencies[ 'frameworks/ki18n' ] = 'default'
+        self.dependencies[ 'frameworks/kiconthemes' ] = 'default'
+        self.dependencies[ 'frameworks/kinit' ] = 'default' # runtime dep
         self.dependencies[ 'frameworks/kitemmodels' ] = 'default'
         self.dependencies[ 'frameworks/kitemviews' ] = 'default'
         self.dependencies[ 'frameworks/kjobwidgets' ] = 'default'
@@ -30,7 +32,6 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/threadweaver' ] = 'default'
         self.dependencies[ 'frameworks/kwindowsystem' ] = 'default'
         self.dependencies[ 'frameworks/kxmlgui' ] = 'default'
-        self.dependencies[ 'frameworks/kdelibs4support' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
 	# krunner is an optional dependency now
         #self.dependencies[ 'frameworks/krunner' ] = 'default'

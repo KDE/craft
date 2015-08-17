@@ -6,13 +6,13 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "KGlobalAccel"
-        
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
+        self.dependencies["frameworks/kcrash"] = "default"
         self.dependencies["frameworks/kdbusaddons"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["frameworks/kwindowsystem"] = "default"
