@@ -60,9 +60,9 @@ function prependPATH([string] $path)
 
 prependPATH $settings["Paths"]["Python"]
 
-(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") | 
+(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") |
 foreach {
-  if ($_ -match "=") {        
+  if ($_ -match "=") {
     $v = $_.split("=")
     set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
     #Write-Host("$v[0]=$v[1]")
