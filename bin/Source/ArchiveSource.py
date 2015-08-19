@@ -148,7 +148,9 @@ class ArchiveSource(SourceBase):
             digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
 
-        if self.url.find(".exe") != -1 or self.url.find(".bat") != -1 or self.url.find(".msi") != -1:
+        binEndings = (".exe", ".bat", ".msi")
+        print(self.subinfo.archiveName())
+        if (not self.subinfo.archiveName() == "" and self.subinfo.archiveName().endswith(binEndings)) or self.url.endswith(binEndings):
             for filename in filenames:
                 filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
                 if self.subinfo.options.unpack.runInstaller: 
