@@ -20,6 +20,7 @@ import configparser
 import os
 import platform
 import re
+import utils
 
 emergeSettings = None
 
@@ -218,7 +219,10 @@ class EmergeConfig( object ):
                 return val
         if default != None:
             return default
-        self._config[ group ][ key ]
+        try:
+            self._config[ group ][ key ]
+        except KeyError as e:
+            utils.die("No such entry in %s: %s/%s" % (self.iniPath, group, key))
 
     def getSection( self, group ):
         if self._config.has_section( group ):
