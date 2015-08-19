@@ -149,7 +149,6 @@ class ArchiveSource(SourceBase):
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
 
         binEndings = (".exe", ".bat", ".msi")
-        print(self.subinfo.archiveName())
         if (self.subinfo.archiveName() == "" and self.url.endswith(binEndings)) or self.subinfo.archiveName().endswith(binEndings):
             for filename in filenames:
                 filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
