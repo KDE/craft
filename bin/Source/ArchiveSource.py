@@ -150,7 +150,7 @@ class ArchiveSource(SourceBase):
 
         binEndings = (".exe", ".bat", ".msi")
         print(self.subinfo.archiveName())
-        if (not self.subinfo.archiveName() == "" and self.subinfo.archiveName().endswith(binEndings)) or self.url.endswith(binEndings):
+        if (self.subinfo.archiveName() == "" and self.url.endswith(binEndings)) or self.subinfo.archiveName().endswith(binEndings):
             for filename in filenames:
                 filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
                 if self.subinfo.options.unpack.runInstaller: 
