@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
-        for ver in ['1.10.2','1.10.80', '1.12.1']:
+        for ver in ['1.10.2','1.10.80', '1.12.1', '1.13.0']:
             self.targets[ver] = baseurl % ver
             self.targetInstSrc[ver] = 'akonadi-' + ver
         for ver in ['1.10.3']:
@@ -26,13 +26,15 @@ class subinfo(info.infoclass):
         self.targetDigests['1.10.2'] = '97660e2a4fc8797ae86ac2981490d3868c6085ff'
         self.targetDigests['1.10.3'] = '701fbdde01a2787ec47fc085da02ad6238cf3b92'
         self.targetDigests['1.10.80'] = '016ff1d137af37dc1a295958e612cfd92075c3f8'
+        self.targetDigests['1.12.1'] = '1ad560a83f08521592b1041c49b5415ffbb2581b'
+        self.targetDigests['1.13.0'] = '9d594b5840e2e5d90057a7e5d8545004a3476bc0'
 
         self.patchToApply['1.10.2'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.3'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.80'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
-#        self.patchToApply['1.12.1'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
-        self.patchToApply['1.12.1'] = [("akonadi-1.12.1-20140419.diff", 1)]
-        self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
+        self.patchToApply['1.12.1'] = [("akonadi-1.12.1-20140419.diff", 1), ("akonadi-kde.conf-fix-1.12.1.diff", 1)]
+        self.patchToApply['1.13.0'] = [("akonadi-kde.conf-fix-1.12.1.diff", 1)]
+        self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.12.1.diff", 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
