@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.patchToApply['3.7.2']    = [("sqlite_cmake_and_wince_20100923.diff", 1)]
         self.patchToApply['3.7.15.2'] = [("sqlite_cmake_and_wince_20130124.diff", 1)]
         self.patchToApply['3.8.0.1'] = [("sqlite_cmake_and_wince_20130124.diff", 1)]
-        self.patchToApply['3.8.1.0'] = [("sqlite_cmake_and_wince_20130124.diff", 1)]
+        self.patchToApply['3.8.1.0'] = [("sqlite_cmake_20150814.diff", 1)]
         
         self.targetInstSrc['3.6.23.1'] = "sqlite-3.6.23.1"
         self.targetInstSrc['3.7.15.2'] = "sqlite-amalgamation-3071502"
@@ -32,24 +32,11 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        if emergePlatform.isCrossCompilingEnabled():
-            self.dependencies['win32libs/wcecompat'] = 'default'
 
 class Package(CMakePackageBase):
   def __init__( self ):
     self.subinfo = subinfo()
     CMakePackageBase.__init__(self)
-    if emergePlatform.isCrossCompilingEnabled() and self.isTargetBuild():
-        self.subinfo.options.configure.defines = "-DSTATIC_LIBRARY=ON"
-
-  def make(self, unused=''):
-    if self.isTargetBuild():
-        # Set the include path for the wcecompat files (e.g. errno.h). Setting it through
-        # the Configure script generates errors due to the the backslashes in the path
-        wcecompatincdir = os.path.join( os.path.join( self.mergeDestinationDir(), "include" ), "wcecompat" )
-        os.environ["TARGET_INCLUDE"] = wcecompatincdir + ";" + os.getenv("TARGET_INCLUDE")
-
-    return CMakePackageBase.make( self )
 
 if __name__ == '__main__':
     Package().execute()
