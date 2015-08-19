@@ -8,9 +8,12 @@ class subinfo(info.infoclass):
         self.targets['v1.0.0'] = 'https://github.com/libical/libical/tarball/v1.0.0'
         self.archiveNames['v1.0.0'] = 'libical-v1.0.0.tar.gz'
         self.targetInstSrc['v1.0.0'] = 'libical-libical-866647f'
+        self.targets['v1.0.1'] = 'https://github.com/libical/libical/releases/download/v1.0.1/libical-1.0.1.tar.gz'
+        self.targetDigests['v1.0.1'] = '904b2c2b5c2b30f0a508f9d56eaf316dd42fc923'
+        self.targetInstSrc['v1.0.1'] = 'libical-1.0.1'
 
         self.svnTargets['gitHEAD'] = '[git]https://github.com/libical/libical.git'
-        self.defaultTarget = 'v1.0.0'
+        self.defaultTarget = 'v1.0.1'
         self.shortDescription = "reference implementation of the icalendar data type and serialization format"
 
     def setDependencies( self ):
