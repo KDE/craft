@@ -53,9 +53,7 @@ class Package( CMakePackageBase ):
         return True
 
     def _getConfig( self ):
-        cfg = "Win32"
-        # for x64:
-        # cfg = "x64"
+        cfg = "x64" if compiler.isX64() else "Win32"
         if self.buildType() in ["Release", "RelWithDebInfo", "MinSizeRel"]:
             cfg += " Release"
         else:
@@ -66,12 +64,12 @@ class Package( CMakePackageBase ):
         self.enterSourceDir()
         os.chdir("apr-util")
 
-        self.system( "%s -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=\"%s\" buildall" % ( self.makeProgramm, self._getConfig(), self.imageDir() ) )
+        self.system( "nmake -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=\"%s\" buildall" % ( self._getConfig(), self.imageDir() ) )
         return True
 
     def install( self ):
         self.enterSourceDir()
         os.chdir("apr-util")
-        self.system( "%s -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=%s install" % ( self.makeProgramm, self._getConfig(), self.imageDir() ) )
+        self.system( "nmake -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=%s install" % ( self._getConfig(), self.imageDir() ) )
         return True
 
