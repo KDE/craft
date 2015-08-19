@@ -4,7 +4,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.targets['1.2.16'] = 'http://oligarchy.co.uk/xapian/1.2.16/xapian-core-1.2.16.tar.xz'
         self.targetInstSrc['1.2.16'] = 'xapian-core-1.2.16'
-        self.patchToApply['1.2.16'] = [('xapian-core-1.2.16-20131221.diff', 1)]
+        self.patchToApply['1.2.16'] = [('xapian-core-1.2.16-20131221.diff', 1), ("xapian-core-msvc2013.diff", 1)]
+        self.targetDigests['1.2.16'] = 'c280ee15b14416043874f7754e0b054ac0624e7b'
         self.defaultTarget = '1.2.16'
 
     def setDependencies( self ):

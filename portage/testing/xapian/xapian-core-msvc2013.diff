@@ -1,0 +1,22 @@
+diff -Nru -x '*~' xapian-core-1.2.16.orig/api/omdatabase.cc xapian-core-1.2.16/api/omdatabase.cc
+--- xapian-core-1.2.16.orig/api/omdatabase.cc	2013-12-04 01:13:22.000000000 +0100
++++ xapian-core-1.2.16/api/omdatabase.cc	2015-06-24 00:01:26.958587400 +0200
+@@ -47,6 +47,7 @@
+ 
+ #include <cstring>
+ #include <vector>
++#include <algorithm>
+ 
+ using namespace std;
+ 
+diff -Nru -x '*~' xapian-core-1.2.16.orig/weight/tradweight.cc xapian-core-1.2.16/weight/tradweight.cc
+--- xapian-core-1.2.16.orig/weight/tradweight.cc	2013-12-04 01:13:16.000000000 +0100
++++ xapian-core-1.2.16/weight/tradweight.cc	2015-06-24 00:06:48.436974900 +0200
+@@ -29,6 +29,7 @@
+ #include "xapian/error.h"
+ 
+ #include <cmath>
++#include <algorithm>
+ 
+ using namespace std;
+ 
