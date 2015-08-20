@@ -6,9 +6,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         baseUrl = "http://mirror.netcologne.de/apache.org/subversion/"
-        self.targets['1.8.14'] = baseUrl + "subversion-1.8.14.tar.gz"
-        self.targetDigests['1.8.14'] = 'cf29fd809927727300a083f7d14028b52258a190'
-        self.defaultTarget = '1.8.14'
+        self.targets['1.9.0'] = baseUrl + "subversion-1.9.0.tar.gz"
+        self.targetDigests['1.9.0'] = '59958ee5e112a242c37d829331dde38affe2337a'
+        self.defaultTarget = '1.9.0'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -24,13 +24,14 @@ class Package(CMakePackageBase):
 
     def configure( self ):
         self.enterSourceDir()
-        os.chdir("subversion-1.8.14")
+        os.chdir("subversion-1.9.0")
 
         self.apr = portage.getPackageInstance('testing', 'apr-src')
         self.openssl = portage.getPackageInstance('win32libs', 'openssl')
         self.sqlite = portage.getPackageInstance('win32libs', 'sqlite')
 
-        includeDir = os.path.join(EmergeStandardDirs.emergeRoot(), "include")
+        emergeRoot = EmergeStandardDirs.emergeRoot()
+        includeDir = os.path.join(emergeRoot, "include")
 
         pythonPath = emergeSettings.get("Paths","PYTHON27")
         python = os.path.join(emergeSettings.get("Paths","PYTHON27"), "python")
@@ -38,10 +39,10 @@ class Package(CMakePackageBase):
         cmd += " gen-make.py -t vcproj"
 #        if compiler.isMSVC():          # doesn't work for 2k10
 #            cmd += " --vsnet-version=" + compiler.getCompilerName()[-4:]
-        cmd += " --vsnet-version=2008"
+        cmd += " --vsnet-version=2015"
         for aprpac in ['apr', 'apr-iconv', 'apr-util']:
-            cmd += " --with-" + aprpac + "=" + os.path.join( self.apr.sourceDir(), aprpac )
-        cmd += " --with-openssl=" + self.openssl.buildDir()
+            cmd += " --with-" + aprpac + "=" + emergeRoot
+        cmd += " --with-openssl=" + emergeRoot
         cmd += " --with-sqlite=" + self.sqlite.sourceDir()
         cmd += " --with-zlib=" + includeDir
         return self.system( cmd )
@@ -62,15 +63,15 @@ class Package(CMakePackageBase):
         svn_wc
         """
         self.enterSourceDir()
-        os.chdir("subversion-1.8.14")
+        os.chdir("subversion-1.9.0")
 
         print(libs.split())
-        cmd = "msbuild /m /p:Platform=Win32 /target:Libraries\\" + ":rebuild,Libraries\\".join(libs.split()) + ":rebuild subversion_vcnet.sln"
+        cmd = "msbuild /m /target:Libraries\\" + ":rebuild,Libraries\\".join(libs.split()) + ":rebuild subversion_vcnet.sln"
         print(cmd)
         return self.system( cmd )
 
     def install(self):
-        sourceDir = os.path.join(self.sourceDir(), "subversion-1.8.14")
+        sourceDir = os.path.join(self.sourceDir(), "subversion-1.9.0")
         imageDir = self.imageDir()
 
         utils.copyDir(os.path.join(sourceDir, "subversion", "include"), os.path.join(imageDir, "include", "subversion-1"))
