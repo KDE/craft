@@ -28,6 +28,8 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
+        self.dependencies['libs/qtmultimedia'] = 'default'
+        self.dependencies['libs/qtwebchannel'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
