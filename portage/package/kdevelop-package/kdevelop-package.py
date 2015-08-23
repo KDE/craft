@@ -22,6 +22,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         NullsoftInstallerPackager.__init__( self, blacklists=blacklists )
         VirtualPackageBase.__init__( self )
         self.scriptname = os.path.join( os.path.dirname( __file__ ), "kdevelop.nsi" )
+        self.defines[ "productname" ] = "KDevelop"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
 
     def preArchive(self):
