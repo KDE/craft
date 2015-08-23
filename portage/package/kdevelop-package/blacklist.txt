@@ -1,6 +1,7 @@
 # blacklist
 # manifest files may be there because of lousy system
 manifest\\.*
+.*\.exp
 .*\.pdb
 .*\.la
 .*\.nsis
@@ -17,6 +18,17 @@ share\\apps\\cmake\\.*
 # common app stuff
 share\\apps\\ark\\.*
 share\\apps\\kgpg\\.*
+share\\kf5\\kdoctools\\.*
+
+# Unused Qt modules
+qml\\QtMultimedia
+qml\\QtWebChannel
+qml\\QtWebKit
+qml\\QtWinExtras
+qml\\QtTest
+
+# unrelated
+dev-utils
 
 # cut the big oxygen icons: this can lead to errors though if used!!!!
 share\\icons\\oxygen\\64x64\\.*
@@ -32,7 +44,8 @@ phrasebooks\\.*
 # qt mkspecs
 mkspecs\\.*
 
-# unneeded binaries:
-bin\\QtTest4\.dll
+# unneeded stuff from bin\
+bin\\qt\.conf
+bin\\syncqt\.pl
 
 bin\\(?!(kdevelop|kbuildsycoca5|update-mime-database|kdeinit5|kglobalaccel5|kded5|dbus-daemon|klauncher|kioslave)).*\.exe
