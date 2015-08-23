@@ -19,25 +19,21 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef SMI_DIRENT_H
-#define SMI_DIRENT_H
+#ifndef KDEWIN_DIRENT_H
+#define KDEWIN_DIRENT_H
+
+// include everywhere
+#include <sys/types.h>
 
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 
-#include <sys/types.h>
+#ifdef _WIN32_WCE
+#include <altcecrt.h>
+#endif
 
-//#ifdef HAVE_CONFIG_H
-//#include "config.h"
-//#endif
-//#ifdef HAVE_STDINT_H
-//#include <stdint.h>
-//#else
-//typedef off_t long int
-//#endif
-
-#define KDEWIN_HAVE_DIRENT_D_TYPE
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,6 +45,7 @@ extern "C" {
 
 #define __dirfd(dir) (dir)->dd_fd
 
+#define KDEWIN_HAVE_DIRENT_D_TYPE
 enum
   {
     DT_UNKNOWN = 0,
@@ -73,13 +70,60 @@ struct dirent {
 
 /* typedef DIR - not the same as Unix */
 typedef struct {
-    long handle;                /* _findfirst/_findnext handle */
-    short offset;                /* offset into directory */
+    HANDLE handle;              /* FindFirst/FindNext handle */
+    short offset;               /* offset into directory */
     short finished;             /* 1 if there are not more files */
-    struct _finddata_t fileinfo;  /* from _findfirst/_findnext */
+    WIN32_FIND_DATAA fileinfo;  /* from FindFirst/FindNext */
     char *dir;                  /* the dir we are reading */
     struct dirent dent;         /* the dirent to return */
 } DIR;
+
+#ifdef _WIN32_WCE
+# define FindFirstFileA _kdewin_wince_FindFirstFileA
+HANDLE FindFirstFileA(LPCSTR,LPWIN32_FIND_DATAA);
+
+# define FindNextFileA _kdewin_wince_FindNextFileA
+BOOL FindNextFileA(HANDLE,LPWIN32_FIND_DATAA);
+
+static BOOL
+convert_find_data (LPWIN32_FIND_DATAW fdw, LPWIN32_FIND_DATAA fda);
+
+# define strAtoW _kdewin_wince_strAtoW
+static LPWSTR strAtoW( LPCSTR str );
+
+# define strWtoA _kdewin_wince_strWtoA
+static LPSTR strWtoA( LPCWSTR str );
+#endif
+
+/* --- redundant --- */
+
+//DIR *opendir(const char *);
+//struct dirent *readdir(DIR *);
+//void rewinddir(DIR *);
+//int closedir(DIR *);
+
+/* internal prototype */
+void _seekdir(DIR *dir,off_t offset);
+
+//#ifndef _POSIX_SOURCE
+//long telldir (DIR *);
+//void seekdir (DIR *, off_t loc);
+
+KDEWIN_EXPORT int scandir (const char *__dir,
+             struct dirent ***__namelist,
+             int (*select) (const struct dirent *),
+             int (*compar) (const struct dirent **, const struct dirent **));
+
+KDEWIN_EXPORT DIR * opendir(const char *);
+KDEWIN_EXPORT int closedir(DIR *);
+KDEWIN_EXPORT struct dirent* readdir(DIR *);
+
+// Implement readdir_r(). For now do not provide dummy function to avoid setting HAVE_READDIR_R.
+// Code like DirectoryListThread::run() in kio/kio/kurlcompletion.cpp uses readdir() when !HAVE_READDIR_R.
+
+// KDEWIN_EXPORT struct dirent* readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
+int alphasort (const struct dirent **__a, const struct dirent **__b);
 
 #ifdef __cplusplus
 }
