@@ -28,14 +28,19 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
 
     def preArchive(self):
-        # TODO: Can we generalize this for other apps?
-        pluginsPath = os.path.join(self.imageDir(), "bin")
-        otherPluginsPath = os.path.join(self.imageDir(), "lib", "plugins")
-
         # TODO: Why is that needed?
         os.mkdir(os.path.join(self.imageDir(), "etc", "dbus-1", "session.d"))
 
+        # TODO: Can we generalize this for other apps?
         # move all plugins to the default plugins path
-        for filename in os.listdir(otherPluginsPath):
-            src = os.path.join(otherPluginsPath, filename)
-            utils.moveFile(src, pluginsPath)
+        binPath = os.path.join(self.imageDir(), "bin")
+        pluginsPaths = [
+            os.path.join(self.imageDir(), "plugins"),
+            os.path.join(self.imageDir(), "lib", "plugins")
+        ]
+        for pluginsPath in pluginsPaths:
+            for filename in os.listdir(pluginsPath):
+                src = os.path.join(pluginsPath, filename)
+                utils.moveFile(src, binPath)
+
+            os.rmdir(pluginsPath)
