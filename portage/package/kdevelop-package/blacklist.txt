@@ -1,6 +1,9 @@
 # blacklist
 # manifest files may be there because of lousy system
 manifest\\.*
+.*\.pdb
+.*\.la
+.*\.nsis
 
 # multiple docs
 doc\\.*
