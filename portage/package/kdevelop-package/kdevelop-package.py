@@ -27,10 +27,13 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
 
     def preArchive(self):
         # TODO: Can we generalize this for other apps?
-        defaultPluginsPath = os.path.join(self.imageDir(), "plugins")
+        pluginsPath = os.path.join(self.imageDir(), "bin")
         otherPluginsPath = os.path.join(self.imageDir(), "lib", "plugins")
+
+        # TODO: Why is that needed?
+        os.mkdir(os.path.join(self.imageDir(), "etc", "dbus-1", "session.d"))
 
         # move all plugins to the default plugins path
         for filename in os.listdir(otherPluginsPath):
             src = os.path.join(otherPluginsPath, filename)
-            utils.moveFile(src, defaultPluginsPath)
+            utils.moveFile(src, pluginsPath)

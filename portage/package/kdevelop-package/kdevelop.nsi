@@ -71,7 +71,6 @@ Section
 ; assume files are in the correct places
 
 File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*"
-CreateDirectory $INSTDIR\etc\dbus-1\session.d
 
 WriteUninstaller "${uninstaller}"
   
