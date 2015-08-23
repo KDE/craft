@@ -7,8 +7,8 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '4.1.1' ] = ""
-        self.defaultTarget = '4.1.1'
+        self.svnTargets[ '5.0.0' ] = ""
+        self.defaultTarget = '5.0.0'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
