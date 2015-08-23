@@ -3,6 +3,8 @@ import info
 from Package.VirtualPackageBase import *
 from Packager.NullsoftInstallerPackager import *
 
+import os
+
 # This is an example package for building
 
 class subinfo( info.infoclass ):
@@ -22,3 +24,12 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.scriptname = os.path.join( os.path.dirname( __file__ ), "kdevelop.nsi" )
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
 
+    def preArchive(self):
+        # TODO: Can we generalize this for other apps?
+        defaultPluginsPath = os.path.join(self.imageDir(), "plugins")
+        otherPluginsPath = os.path.join(self.imageDir(), "lib", "plugins")
+
+        # move all plugins to the default plugins path
+        for filename in os.listdir(otherPluginsPath):
+            src = os.path.join(otherPluginsPath, filename)
+            utils.moveFile(src, defaultPluginsPath)
