@@ -3,17 +3,22 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.targets[ '1.4.5' ] = ['http://apache.mirror.digionline.de/apr/apr-util-1.3.12.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-1.4.5.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-iconv-1.2.1.tar.bz2'
+        baseUrl = "http://archive.apache.org/dist/apr/"
+        self.targets[ '1.4.5' ] = [baseUrl + 'apr-util-1.3.12.tar.bz2',
+                                   baseUrl + 'apr-1.4.5.tar.bz2',
+                                   baseUrl + 'apr-iconv-1.2.1.tar.bz2'
                                    ]
-        self.targets[ '1.4.8' ] = ['http://apache.mirror.digionline.de/apr/apr-util-1.3.12.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-1.4.8.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-iconv-1.2.1.tar.bz2'
+        self.targets[ '1.4.8' ] = [baseUrl + 'apr-util-1.3.12.tar.bz2',
+                                   baseUrl + 'apr-1.4.8.tar.bz2',
+                                   baseUrl + 'apr-iconv-1.2.1.tar.bz2'
                                    ]
-        self.targets[ '1.5.0' ] = ['http://apache.mirror.digionline.de/apr/apr-util-1.5.3.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-1.5.0.tar.bz2',
-                                   'http://apache.mirror.digionline.de/apr/apr-iconv-1.2.1.tar.bz2'
+        self.targets[ '1.5.0' ] = [baseUrl + 'apr-util-1.5.3.tar.bz2',
+                                   baseUrl + 'apr-1.5.0.tar.bz2',
+                                   baseUrl + 'apr-iconv-1.2.1.tar.bz2'
+                                   ]
+        self.targets[ '1.5.2' ] = [baseUrl + 'apr-util-1.5.4.tar.bz2',
+                                   baseUrl + 'apr-1.5.2.tar.bz2',
+                                   baseUrl + 'apr-iconv-1.2.1.tar.bz2'
                                    ]
         self.targetDigests['1.4.5'] = ['4902165fc5f2f077afbcc7ddf7ebbf61556a1cda',
                                        '517de5e3cc1e3be810d9bc95508ab66bb8ebe7cb',
@@ -24,7 +29,8 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.4.5'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.3.12-20110524.diff', 0)]
         self.patchToApply['1.4.8'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.3.12-20110524.diff', 0)]
         self.patchToApply['1.5.0'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.5.3-20131125.diff', 0)]
-        self.defaultTarget = '1.5.0'
+        self.patchToApply['1.5.2'] = [('apr-iconv-1.2.1-20110521.diff', 0), ('apr-util-1.5.3-20131125.diff', 0)]
+        self.defaultTarget = '1.5.2'
         self.options.make.supportsMultijob = False
 
     def setDependencies( self ):
@@ -52,9 +58,7 @@ class Package( CMakePackageBase ):
         return True
 
     def _getConfig( self ):
-        cfg = "Win32"
-        # for x64:
-        # cfg = "x64"
+        cfg = "x64" if compiler.isX64() else "Win32"
         if self.buildType() in ["Release", "RelWithDebInfo", "MinSizeRel"]:
             cfg += " Release"
         else:
@@ -65,12 +69,12 @@ class Package( CMakePackageBase ):
         self.enterSourceDir()
         os.chdir("apr-util")
 
-        self.system( "%s -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=\"%s\" buildall" % ( self.makeProgramm, self._getConfig(), self.imageDir() ) )
+        self.system( "nmake -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=\"%s\" buildall" % ( self._getConfig(), self.imageDir() ) )
         return True
 
     def install( self ):
         self.enterSourceDir()
         os.chdir("apr-util")
-        self.system( "%s -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=%s install" % ( self.makeProgramm, self._getConfig(), self.imageDir() ) )
+        self.system( "nmake -f Makefile.win USEMAK=1 ARCH=\"%s\" PREFIX=%s install" % ( self._getConfig(), self.imageDir() ) )
         return True
 

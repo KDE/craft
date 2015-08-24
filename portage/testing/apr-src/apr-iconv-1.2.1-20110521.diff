@@ -1096,3 +1096,16 @@ diff -Nru apr-iconv-1.2.1.orig/libapriconv.mak apr-iconv-1.2.1/libapriconv.mak
 +
 +!ENDIF 
 +
+diff -u apr-iconv-1.2.1.orig/build/modules.mk.win apr-iconv-1.2.1/build/modules.mk.win
+--- apr-iconv-1.2.1.orig/build/modules.mk.win   2007-10-19 11:49:36.000000000 +0200
++++ apr-iconv-1.2.1/build/modules.mk.win      2015-08-20 08:43:30.954931000 +0200
+@@ -218,7 +218,7 @@
+ 
+ .c{$(OUTPUT_DIR)}.so:
+ 	$(SILENT)cl $(ALL_CFLAGS) /Fo$*.obj /Yuiconv.h /c $<
+-	$(SILENT)link $(ALL_LDFLAGS) $*.obj $(API_LIBS) /out:$@ \
++	$(SILENT)link $(ALL_LDFLAGS) $*.obj $(MODRES).obj $(API_LIBS) /out:$@ \
+ 		/base:@"..\build\BaseAddr.ref",$(@F)
+ 	$(SILENT)if exist $@.manifest \
+ 		$(SILENT)mt -nologo -manifest $@.manifest -outputresource:$@;2 \
+ 

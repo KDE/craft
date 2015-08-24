@@ -7,8 +7,13 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "1.9.5-preview20150319"
-        self.targets[ver]  ="https://github.com/msysgit/msysgit/releases/download/Git-%s/PortableGit-%s.7z" % (ver, ver)
+        ver = "2.5.0"
+        arch = 32
+        if compiler.isX64():
+            arch = 64
+           
+        self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)
+        self.archiveNames[ver] = "PortableGit-%s-%s-bit.7z" % (ver, arch)
         self.defaultTarget = ver
 
     def setDependencies(self):

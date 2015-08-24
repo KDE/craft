@@ -79,14 +79,113 @@
 
 #ifndef __MINGW32__
 
-DIR * opendir(const char *dir)
+#ifdef _WIN32_WCE
+/* Wrap ASCII functions to UNICODE */
+
+static BOOL
+convert_find_data (LPWIN32_FIND_DATAW fdw, LPWIN32_FIND_DATAA fda)
+{
+    char *filename;
+    int len;
+
+    fda->dwFileAttributes = fdw->dwFileAttributes;
+    fda->ftCreationTime = fdw->ftCreationTime;
+    fda->ftLastAccessTime = fdw->ftLastAccessTime;
+    fda->ftLastWriteTime = fdw->ftLastWriteTime;
+    fda->nFileSizeHigh = fdw->nFileSizeHigh;
+    fda->nFileSizeLow = fdw->nFileSizeLow;
+
+    filename = strWtoA (fdw->cFileName);
+    if (!filename)
+        return FALSE;
+
+    len = sizeof (fda->cFileName);
+    strncpy (fda->cFileName, filename, len);
+    fda->cFileName[len - 1] = '\0';
+
+    return TRUE;
+}
+
+static LPWSTR
+strAtoW( LPCSTR str )
+{
+    LPWSTR ret = NULL;
+    if (str)
+    {
+        DWORD len = MultiByteToWideChar( CP_ACP, 0, str, -1, NULL, 0 );
+        if ((ret = ( WCHAR* )malloc( len * sizeof(WCHAR) )))
+            MultiByteToWideChar( CP_ACP, 0, str, -1, ret, len );
+    }
+    return ret;
+}
+
+static LPSTR
+strWtoA( LPCWSTR str )
+{
+    LPSTR ret = NULL;
+    if (str)
+    {
+        DWORD len = WideCharToMultiByte( CP_ACP, 0, str, -1, NULL, 0, NULL, NULL );
+        if ((ret = ( char* )malloc( len )))
+            WideCharToMultiByte( CP_ACP, 0, str, -1, ret, len, NULL, NULL );
+    }
+    return ret;
+}
+
+HANDLE
+FindFirstFileA (LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindFileData)
+{
+    wchar_t *pathname;
+    WIN32_FIND_DATAW find_file_data;
+    HANDLE result;
+    int err;
+
+    pathname = strAtoW (lpFileName);
+    if (!pathname)
+        return INVALID_HANDLE_VALUE;
+
+    result = FindFirstFileW (pathname, &find_file_data);
+    if (result != INVALID_HANDLE_VALUE)
+    {
+        BOOL res = convert_find_data (&find_file_data, lpFindFileData);
+        if (! res)
+        {
+            err = GetLastError ();
+            FindClose (result);
+            SetLastError (err);
+            result = INVALID_HANDLE_VALUE;
+        }
+    }
+
+    err = GetLastError ();
+    free (pathname);
+    SetLastError (err);
+    return result;
+}
+
+    BOOL
+FindNextFileA (HANDLE hFindFile, LPWIN32_FIND_DATAA lpFindFileData)
+{
+    WIN32_FIND_DATAW find_file_data;
+    BOOL result;
+    int err;
+
+    result = FindNextFileW (hFindFile, &find_file_data);
+    if (result)
+        result = convert_find_data (&find_file_data, lpFindFileData);
+
+    return result;
+}
+#endif
+
+KDEWIN_EXPORT DIR * opendir(const char *dir)
 {
     DIR *dp;
     char *filespec;
-    long handle;
+    HANDLE handle;
     int index;
 
-    filespec = malloc(strlen(dir) + 2 + 1);
+    filespec = (char * )malloc(strlen(dir) + 2 + 1);
     strcpy(filespec, dir);
     index = strlen(filespec) - 1;
     if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
@@ -98,37 +197,43 @@ DIR * opendir(const char *dir)
     dp->finished = 0;
     dp->dir = strdup(dir);
 
-    if ((handle = _findfirst(filespec, &(dp->fileinfo))) < 0) {
-        if (errno == ENOENT)
+    handle = FindFirstFileA(filespec, &(dp->fileinfo));
+    if (handle == INVALID_HANDLE_VALUE)
+    {
+        if (GetLastError() == ERROR_NO_MORE_FILES) {
             dp->finished = 1;
+        }
         else
-        return NULL;
+            return NULL;
     }
 
     dp->handle = handle;
     free(filespec);
-
     return dp;
 }
 
-struct dirent * readdir(DIR *dp)
+KDEWIN_EXPORT struct dirent * readdir(DIR *dp)
 {
-    if (!dp || dp->finished) return NULL;
+    int saved_err = GetLastError();
 
-    if (dp->offset != 0) {
-        if (_findnext(dp->handle, &(dp->fileinfo)) < 0) {
-            dp->finished = 1;
-            /* posix does not set errno in this case */
-            errno = 0;
+    if (!dp || dp->finished)
+        return NULL;
+
+    if (dp->offset != 0)
+    {
+        if (FindNextFileA(dp->handle, &(dp->fileinfo)) == 0)
+        {
+            if (GetLastError() == ERROR_NO_MORE_FILES)
+            {
+                SetLastError(saved_err);
+                dp->finished = 1;
+            }
             return NULL;
         }
     }
     dp->offset++;
 
-    strncpy(dp->dent.d_name, dp->fileinfo.name, _MAX_FNAME);
-#ifdef KDEWIN_HAVE_DIRENT_D_TYPE
-    dp->dent.d_type = DT_UNKNOWN;
-#endif    
+    strncpy(dp->dent.d_name, dp->fileinfo.cFileName, _MAX_FNAME);
     dp->dent.d_ino = 1;
     dp->dent.d_reclen = strlen(dp->dent.d_name);
     dp->dent.d_off = dp->offset;
@@ -136,14 +241,17 @@ struct dirent * readdir(DIR *dp)
     return &(dp->dent);
 }
 
-int closedir(DIR *dp)
+KDEWIN_EXPORT int closedir(DIR *dp)
 {
-    if (!dp) return 0;
-    if ((HANDLE)dp->handle != INVALID_HANDLE_VALUE) _findclose(dp->handle);
-    if (dp->dir) free(dp->dir);
-    if (dp) free(dp);
+    if (!dp)
+        return 0;
+    FindClose(dp->handle);
+    if (dp->dir)
+        free(dp->dir);
+    if (dp)
+        free(dp);
 
     return 0;
 }
 
-#endif // #ifndef __MINGW32__
+#endif /* #ifndef __MINGW32__ */

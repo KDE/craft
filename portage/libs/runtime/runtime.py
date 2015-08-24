@@ -34,6 +34,7 @@ class Package( BinaryPackageBase ):
         if self.buildType() == "Debug":
             postfix = "d"
 
+        srcdir = None
         files = []
         if compiler.isMinGW():
             if self.subinfo.options.features.legacyGCC:
@@ -42,7 +43,7 @@ class Package( BinaryPackageBase ):
                 elif compiler.isMinGW_W64():
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
                 files = [ 'libgcc_s_sjlj-1.dll', 'libgomp-1.dll' ]
-            else:                
+            else:
                 files = [ 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
                 if compiler.isMinGW_W32():
                     files.append('libgcc_s_sjlj-1.dll')
@@ -50,13 +51,25 @@ class Package( BinaryPackageBase ):
                 elif compiler.isMinGW_W64():
                     files.append('libgcc_s_seh-1.dll')
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
-                
-        elif compiler.isMSVC2010():
+
+        elif compiler.isMSVC():
             if compiler.isX86() and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
                 srcdir = os.path.join( os.environ["SystemRoot"], "SysWOW64") 
             else:
-                srcdir = os.path.join( os.environ["SystemRoot"], "System32") 
-            files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix ]
+                srcdir = os.path.join( os.environ["SystemRoot"], "System32")
+
+            if compiler.isMSVC2010():
+                files = [
+                    "msvcr100%s.dll" % postfix,
+                    "msvcp100%s.dll" % postfix
+                ]
+            elif compiler.isMSVC2015():
+                files = [
+                    "concrt140%s.dll" % postfix,
+                    "msvcp140%s.dll" % postfix,
+                    "vccorlib140%s.dll" % postfix,
+                    "vcruntime140%s.dll" % postfix
+                ]
 
         for file in files:
             utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)       

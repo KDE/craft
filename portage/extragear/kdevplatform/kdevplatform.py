@@ -13,6 +13,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["win32libs/boost-headers"] = "default"
         self.dependencies["libs/qtdeclarative"] = "default"
         self.dependencies["libs/qtscript"] = "default"
+        self.dependencies["libs/qtquickcontrols"] = "default"
         self.dependencies["libs/qtwebkit"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies[ 'frameworks/karchive' ] = 'default'
