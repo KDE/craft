@@ -16,7 +16,6 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'kde/breeze' ] = 'default'
         self.dependencies[ 'kde/oxygen-icons' ] = 'default'
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
-        self.dependencies[ 'libs/runtime' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
@@ -27,6 +26,11 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.scriptname = os.path.join( os.path.dirname( __file__ ), "kdevelop.nsi" )
         self.defines[ "productname" ] = "KDevelop"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
+        self.defines[ "vcredist" ] = "none"
+        if compiler.isX64():
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\VC\redist\1033\vcredist_x64.exe"
+        if compiler.isX86():
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\VC\redist\1033\vcredist_x86.exe"
 
     def preArchive(self):
         # TODO: Why is that needed?

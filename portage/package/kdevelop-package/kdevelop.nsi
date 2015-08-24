@@ -23,6 +23,7 @@ Caption "${productname} ${version}"
  
 OutFile "${setupname}"
 !include "MUI2.nsh"
+!include "LogicLib.nsh"
 
 ;!define MUI_ICON
 ${icon}
@@ -88,6 +89,10 @@ SectionEnd
 ;post install
 Section
 SetOutPath "$INSTDIR"
+${IfNot} ${vcredist} == "none"
+    File /nonfatal /a /oname=vcredist.exe "${vcredist}"
+    ExecWait '"$INSTDIR\vcredist.exe" /passive'
+${EndIf}
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
 ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
 SectionEnd
