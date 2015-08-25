@@ -49,3 +49,6 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
                 utils.moveFile(src, binPath)
 
             os.rmdir(pluginsPath)
+        
+        utils.moveFile(os.path.join(self.imageDir(), "lib", "qml"),
+                       os.path.join(self.imageDir(), "qml"))
