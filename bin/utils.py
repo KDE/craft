@@ -583,7 +583,6 @@ def unmergeFileList(rootdir, fileList, forced=False):
         elif not os.path.isdir(fullPath):
             warning( "file %s does not exist" % fullPath)
 
-
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)
 
@@ -902,6 +901,26 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
                 debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
 
+def mergeTree(srcdir, destdir):
+    """ copy directory from @p srcdir to @p destdir
+
+    If a directory in @p destdir exists, just write into it
+    """
+
+    fileList = os.listdir(srcdir)
+    for i in fileList:
+        src = os.path.join(srcdir, i)
+        dest = os.path.join(destdir, i)
+        if os.path.exists(dest):
+            if os.path.isdir(dest):
+                mergeTree(src, dest)
+                continue
+            else:
+                os.remove(dest)
+        shutil.move(src, destdir)
+
+    # Cleanup (only removing empty folders)
+    os.rmdir(srcdir)
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
