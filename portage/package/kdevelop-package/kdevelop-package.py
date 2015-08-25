@@ -5,8 +5,6 @@ from Packager.NullsoftInstallerPackager import *
 
 import os
 
-# This is an example package for building
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ '5.0.0' ] = ""
@@ -39,21 +37,11 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         os.mkdir(os.path.join(self.imageDir(), "etc", "dbus-1", "session.d"))
 
         # TODO: Can we generalize this for other apps?
-        # move all plugins to the default plugins path
+        # move everything to the location where Qt expects it
         binPath = os.path.join(self.imageDir(), "bin")
-        pluginsPaths = [
-            os.path.join(self.imageDir(), "plugins"),
-            os.path.join(self.imageDir(), "lib", "plugins")
-        ]
-        for pluginsPath in pluginsPaths:
-            for filename in os.listdir(pluginsPath):
-                src = os.path.join(pluginsPath, filename)
-                utils.moveFile(src, binPath)
-
-            os.rmdir(pluginsPath)
+        utils.mergeTree(os.path.join(self.imageDir(), "plugins"), binPath)
+        utils.mergeTree(os.path.join(self.imageDir(), "lib", "plugins"), binPath)
+        utils.mergeTree(os.path.join(self.imageDir(), "lib", "qml"), os.path.join(self.imageDir(), "qml"))
         
-        oldQmlPath = os.path.join(self.imageDir(), "lib", "qml")
-        for filename in os.listdir(oldQmlPath):
-            src = os.path.join(oldQmlPath, filename)
-            utils.moveFile(src, os.path.join(self.imageDir(), "qml"))
-        os.rmdir(oldQmlPath)
+        # TODO: Just blacklisting this doesn't work. WTF?
+        utils.rmtree(os.path.join(self.imageDir(), "dev-utils"))
