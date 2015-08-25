@@ -89,7 +89,7 @@ SectionEnd
 ;post install
 Section
 SetOutPath "$INSTDIR"
-${IfNot} ${vcredist} == "none"
+${IfNot} "${vcredist}" == "none"
     File /nonfatal /a /oname=vcredist.exe "${vcredist}"
     ExecWait '"$INSTDIR\vcredist.exe" /passive'
 ${EndIf}

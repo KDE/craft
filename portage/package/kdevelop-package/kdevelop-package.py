@@ -28,9 +28,9 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
         self.defines[ "vcredist" ] = "none"
         if compiler.isX64():
-            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\VC\redist\1033\vcredist_x64.exe"
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x64.exe"
         if compiler.isX86():
-            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\VC\redist\1033\vcredist_x86.exe"
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x86.exe"
 
     def preArchive(self):
         # TODO: Why is that needed?
