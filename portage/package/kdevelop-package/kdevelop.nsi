@@ -105,7 +105,6 @@ UninstallText "This will uninstall ${productname}."
  
 Section "Uninstall"
 SetShellVarContext all
-ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
 
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
