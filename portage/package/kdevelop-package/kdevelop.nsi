@@ -95,6 +95,7 @@ ${IfNot} "${vcredist}" == "none"
 ${EndIf}
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
 ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
+Delete "$INSTDIR\vcredist.exe"
 SectionEnd
  
 ; Uninstaller
