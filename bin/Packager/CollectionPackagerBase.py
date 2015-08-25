@@ -14,7 +14,7 @@ class PackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
     @staticmethod
     def runtimeBlacklist():
-        blacklisted = [ "include\\.*",
+        blacklisted = [ "include\\\\.*",
                         "lib\\\\.*\.lib",
                         "lib\\\\.*\.dll\.a",
                         "lib\\\\cmake\\.*",
