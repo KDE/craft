@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kcrash'] = 'default'
         self.dependencies['frameworks/kdnssd'] = 'default'
         self.dependencies['frameworks/kdoctools'] = 'default'
+        self.dependencies['frameworks/kfilemetadata'] = 'default'
         self.dependencies['frameworks/kjobwidgets'] = 'default'
         self.dependencies['frameworks/kpackage'] = 'default'
         self.dependencies['frameworks/kunitconversion'] = 'default'
