@@ -39,9 +39,11 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         # TODO: Can we generalize this for other apps?
         # move everything to the location where Qt expects it
         binPath = os.path.join(self.imageDir(), "bin")
+
         utils.mergeTree(os.path.join(self.imageDir(), "plugins"), binPath)
         utils.mergeTree(os.path.join(self.imageDir(), "lib", "plugins"), binPath)
-        utils.mergeTree(os.path.join(self.imageDir(), "lib", "qml"), os.path.join(self.imageDir(), "qml"))
+        utils.mergeTree(os.path.join(self.imageDir(), "qml"), os.path.join(self.imageDir(), binPath))
+        utils.mergeTree(os.path.join(self.imageDir(), "lib", "qml"), os.path.join(self.imageDir(), binPath))
         
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(self.imageDir(), "dev-utils"))
