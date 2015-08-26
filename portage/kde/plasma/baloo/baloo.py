@@ -8,8 +8,8 @@ class subinfo( info.infoclass ):
         self.shortDescription = "the next generation nepomuk"
         
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['frameworks/kfilemetadata'] = 'default'
 
 from Package.CMakePackageBase import *
 
