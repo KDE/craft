@@ -26,6 +26,9 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwindowsystem'] = 'default'
         self.dependencies['frameworks/knotifications'] = 'default'
         
+        self.dependencies['kde/baloo'] = 'default'
+        
+        
 
 from Package.CMakePackageBase import *
 
