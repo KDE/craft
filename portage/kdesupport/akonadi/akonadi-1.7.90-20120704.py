@@ -12,7 +12,8 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/shared-mime-info'] = 'default'
-        self.dependencies['kdesupport/soprano'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kdesupport/soprano'] = 'default'
 
     def setTargets( self ):
         baseurl = 'http://download.kde.org/stable/akonadi/src/akonadi-%s.tar.bz2'
@@ -38,7 +39,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = '1.12.1'
+        self.defaultTarget = '1.13.0'
 
 from Package.CMakePackageBase import *
 
@@ -47,7 +48,7 @@ class Package(CMakePackageBase):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        if self.subinfo.options.features.akonadiBackendSqlite:
+        if self.subinfo.options.features.akonadiBackendSqlite or self.subinfo.options.features.nomysql:
             self.subinfo.options.configure.defines += (
                     " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
                     " -DDATABASE_BACKEND=SQLITE " )
