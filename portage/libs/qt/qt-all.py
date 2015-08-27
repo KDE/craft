@@ -83,7 +83,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/dbus'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
-        self.dependencies['binary/mysql-pkg'] = 'default'
+        if not self.options.features.nomysql:
+            self.dependencies['binary/mysql-pkg'] = 'default'
 
 class Package(QMakePackageBase):
     def __init__( self, **args ):
@@ -101,7 +102,7 @@ class Package(QMakePackageBase):
         if self.subinfo.options.isActive("win32libs/dbus"):
             self.dbus = portage.getPackageInstance('win32libs', 'dbus')
         self.sqlite = portage.getPackageInstance('win32libs', 'sqlite')
-        if self.subinfo.options.isActive("binary/mysql-pkg"):
+        if self.subinfo.options.isActive("binary/mysql-pkg") and not self.subinfo.options.features.nomysql:
             self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
         
     def unpack( self ):
@@ -138,7 +139,7 @@ class Package(QMakePackageBase):
             incdirs += " -I \"" + os.path.join( self.wcecompat.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.wcecompat.installDir(), "lib" ) + "\""
 
-        if self.subinfo.options.isActive("binary/mysql-pkg"):
+        if self.subinfo.options.isActive("binary/mysql-pkg") and not self.subinfo.options.features.nomysql:
             incdirs += " -I \"" + os.path.join( self.mysql_server.installDir(), "include" ) + "\""
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
@@ -146,7 +147,7 @@ class Package(QMakePackageBase):
         configure = os.path.join( self.sourceDir(), "configure.exe" ).replace( "/", "\\" )
         command = r"echo %s | %s -opensource -prefix %s -platform %s " % ( userin, configure, self.installDir(), self.platform )
         command += "-plugin-sql-odbc -system-sqlite "
-        if self.subinfo.options.isActive("binary/mysql-pkg"):
+        if self.subinfo.options.isActive("binary/mysql-pkg") and not self.subinfo.options.features.nomysql:
             command += "-plugin-sql-mysql "
         command += "-qt-style-windowsxp -qt-style-windowsvista "
         command += "-qt-libpng -qt-libjpeg -qt-libtiff "
