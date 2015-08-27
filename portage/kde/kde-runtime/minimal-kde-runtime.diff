@@ -1,0 +1,138 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1967a29..974e5d2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -51,12 +51,12 @@ set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma wi
+                        TYPE OPTIONAL
+                       )
+ 
+-find_package(LibGcrypt 1.5.0 REQUIRED QUIET)
+-set_package_properties(LibGcrypt PROPERTIES DESCRIPTION "Libgcrypt is a general purpose cryptographic library based on the code from GnuPG."
+-                       URL "http://www.gnu.org/software/libgcrypt/"
+-                       TYPE REQUIRED
+-                       PURPOSE "kwalletd needs libgcrypt to perform PBKDF2-SHA512 hashing"
+-                      )
++#find_package(LibGcrypt 1.5.0 REQUIRED QUIET)
++#set_package_properties(LibGcrypt PROPERTIES DESCRIPTION "Libgcrypt is a general purpose cryptographic library based on the code from GnuPG."
++#                       URL "http://www.gnu.org/software/libgcrypt/"
++#                       TYPE REQUIRED
++#                       PURPOSE "kwalletd needs libgcrypt to perform PBKDF2-SHA512 hashing"
++#                      )
+ # Build options
+ option(KDERUNTIME_BUILD_NEPOMUK "Build the Nepomuk KCM and kioslaves" FALSE)
+ 
+@@ -74,16 +74,16 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCL
+ add_subdirectory(cmake)
+ 
+ # Background processes
+-add_subdirectory(kpasswdserver)
+-add_subdirectory(kdontchangethehostname)
+-add_subdirectory(kglobalaccel)
+-add_subdirectory(knotify)
+-add_subdirectory(ktimezoned)
++#add_subdirectory(kpasswdserver)
++#add_subdirectory(kdontchangethehostname)
++#add_subdirectory(kglobalaccel)
++#add_subdirectory(knotify)
++#add_subdirectory(ktimezoned)
+ 
+ if(NOT WINCE)
+-add_subdirectory(kuiserver)
++#add_subdirectory(kuiserver)
+ endif(NOT WINCE)
+-add_subdirectory(kwalletd)
++#add_subdirectory(kwalletd)
+ 
+ if ( UNIX )
+    add_subdirectory(soliduiserver)
+@@ -98,22 +98,22 @@ endif()
+ 
+ # Plugins/components required for basic utility
+ if ( NOT WINCE )
+-    add_subdirectory(kcontrol)
++#    add_subdirectory(kcontrol)
+ endif ( NOT WINCE )
+-add_subdirectory(kioslave)
+-add_subdirectory(kurifilter-plugins)
+-add_subdirectory(phonon)
+-add_subdirectory(kimgio)
+-macro_optional_add_subdirectory(renamedlgplugins)
++#add_subdirectory(kioslave)
++#add_subdirectory(kurifilter-plugins)
++#add_subdirectory(phonon)
++#add_subdirectory(kimgio)
++#macro_optional_add_subdirectory(renamedlgplugins)
+ 
+ # UI Helper applications
+-add_subdirectory(drkonqi)
++#add_subdirectory(drkonqi)
+ add_subdirectory(kcmshell)
+ add_subdirectory(kdebugdialog)
+-add_subdirectory(khelpcenter)
+-add_subdirectory(knetattach)
+-add_subdirectory(knewstuff)
+-macro_optional_add_subdirectory(keditfiletype)
++#add_subdirectory(khelpcenter)
++#add_subdirectory(knetattach)
++#add_subdirectory(knewstuff)
++#macro_optional_add_subdirectory(keditfiletype)
+ if ( UNIX )
+    add_subdirectory(kdesu)
+ endif ( UNIX )
+@@ -122,32 +122,32 @@ endif ( UNIX )
+ if ( UNIX )
+    add_subdirectory(kdeeject)
+ endif ( UNIX )
+-add_subdirectory(kfile)
+-add_subdirectory(kiconfinder)
+-add_subdirectory(kioclient)
+-add_subdirectory(kioexec)
+-add_subdirectory(ktraderclient)
+-add_subdirectory(kreadconfig)
+-add_subdirectory(kmimetypefinder)
++#add_subdirectory(kfile)
++#add_subdirectory(kiconfinder)
++#add_subdirectory(kioclient)
++#add_subdirectory(kioexec)
++#add_subdirectory(ktraderclient)
++#add_subdirectory(kreadconfig)
++#add_subdirectory(kmimetypefinder)
+ if (Q_WS_X11)
+   add_subdirectory(kstart)
+ endif (Q_WS_X11)
+ add_subdirectory(kquitapp)
+-add_subdirectory(menu)
++#add_subdirectory(menu)
+ if ( NOT WINCE )
+-    add_subdirectory(plasma)
++#    add_subdirectory(plasma)
+ endif ( NOT WINCE )
+-add_subdirectory(solid-hardware)
++#add_subdirectory(solid-hardware)
+ 
+ # Platform-specific integration
+-add_subdirectory(platforms)
++#add_subdirectory(platforms)
+ 
+ # Default settings, content and config
+-add_subdirectory(l10n)
+-add_subdirectory(localization)
++#add_subdirectory(l10n)
++#add_subdirectory(localization)
+ if(NOT WINCE)
+-  add_subdirectory(kde-menu)
+-macro_optional_add_subdirectory(doc)
++#  add_subdirectory(kde-menu)
++#macro_optional_add_subdirectory(doc)
+ endif(NOT WINCE)
+ 
+ # Artwork
+@@ -158,7 +158,7 @@ endif ( NOT WINCE )
+ 
+ # KDE integration for attica
+ if(LIBATTICA_FOUND)
+-  macro_optional_add_subdirectory(attica)
++#  macro_optional_add_subdirectory(attica)
+ endif(LIBATTICA_FOUND)
+ 
+ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

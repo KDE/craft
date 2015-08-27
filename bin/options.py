@@ -70,6 +70,9 @@ class OptionsFeatures(OptionsBase):
         ## do not use mysql
         self.nomysql = False
 
+        ## build a minimal kde-runtime and a restricted kdepim-runtime build
+        self.runtimeMinimal = False
+
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):

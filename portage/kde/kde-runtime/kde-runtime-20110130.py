@@ -8,17 +8,20 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
             self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
-        self.patchToApply["4.12.0"] = ("kde-runtime-4.12.0-20131219.diff", 1)
+        self.patchToApply["4.12.0"] = [("kde-runtime-4.12.0-20131219.diff", 1)]
+        if self.options.features.runtimeMinimal:
+            self.patchToApply['gitHEAD'] = [("minimal-kde-runtime.diff", 1)]
 
         self.shortDescription = 'Components for KDE applications required at runtime'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kde/kactivities'] = 'default'
         self.dependencies['kde/oxygen-icons'] = 'default'
-        self.dependencies['win32libs/libssh'] = 'default'
-        self.dependencies['win32libs/gcrypt'] = 'default'
+        if not self.options.features.runtimeMinimal:
+            self.dependencies['kde/kactivities'] = 'default'
+            self.dependencies['win32libs/libssh'] = 'default'
+            self.dependencies['win32libs/gcrypt'] = 'default'
         self.dependencies['kde/kdepimlibs'] = 'default'
         if compiler.isMinGW_WXX():
             self.dependencies['win32libs/libbfd'] = 'default'
@@ -29,7 +32,8 @@ class Package(CMakePackageBase):
     def __init__( self ):
         self.subinfo = subinfo()
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DWITH_NepomukCore=OFF"
+        if not self.subinfo.options.features.nepomuk:
+            self.subinfo.options.configure.defines = "-DWITH_NepomukCore=OFF"
 
 if __name__ == '__main__':
     Package().execute()

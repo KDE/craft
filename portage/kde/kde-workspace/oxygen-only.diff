@@ -1,0 +1,169 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 92e8b45..b779095 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,12 +20,12 @@ include(KDE4Defaults)
+ 
+ option(WITH_XINERAMA "Xinerama support for multi-headed X displays" ON)
+ 
+-find_package(Strigi)
++#find_package(Strigi)
+ 
+-set_package_properties(Strigi PROPERTIES DESCRIPTION "Desktop indexing and search support"
+-                       URL "http://strigi.sourceforge.net"
+-                       TYPE REQUIRED
+-                      )
++#set_package_properties(Strigi PROPERTIES DESCRIPTION "Desktop indexing and search support"
++#                       URL "http://strigi.sourceforge.net"
++#                       TYPE REQUIRED
++#                      )
+ 
+ find_package(ZLIB)
+ set_package_properties(ZLIB PROPERTIES DESCRIPTION "Support for gzip compressed files and data streams"
+@@ -33,30 +33,30 @@ set_package_properties(ZLIB PROPERTIES DESCRIPTION "Support for gzip compressed
+                        TYPE REQUIRED
+                       )
+ 
+-find_package(KActivities 6.0.0 CONFIG)
+-set_package_properties(KActivities PROPERTIES DESCRIPTION "Interface library for the activity manager"
+-                       URL "https://projects.kde.org/kactivities"
+-                       TYPE REQUIRED
+-                      )
+-
+-find_package(DBusMenuQt 0.6.0)
+-set_package_properties(DBusMenuQt PROPERTIES DESCRIPTION "Support for notification area menus via the DBusMenu protocol"
+-                       URL "https://launchpad.net/libdbusmenu-qt"
+-                       TYPE REQUIRED
+-                      )
+-
+-find_package(QImageBlitz)
+-set_package_properties(QImageBlitz PROPERTIES DESCRIPTION "An image effects library"
+-                       URL "http://sourceforge.net/projects/qimageblitz"
+-                       TYPE REQUIRED
+-                      )
+-
+-find_package(KDeclarative QUIET CONFIG)
+-set_package_properties(KDeclarative PROPERTIES DESCRIPTION "KDE Declarative (QML) support from kdelibs"
+-                       URL "http://www.kde.org"
+-                       TYPE REQUIRED
+-                       PURPOSE "Required for building ksmserver"
+-                      )
++#find_package(KActivities 6.0.0 CONFIG)
++#set_package_properties(KActivities PROPERTIES DESCRIPTION "Interface library for the activity manager"
++#                       URL "https://projects.kde.org/kactivities"
++#                       TYPE REQUIRED
++#                      )
++
++#find_package(DBusMenuQt 0.6.0)
++#set_package_properties(DBusMenuQt PROPERTIES DESCRIPTION "Support for notification area menus via the DBusMenu protocol"
++#                       URL "https://launchpad.net/libdbusmenu-qt"
++#                       TYPE REQUIRED
++#                      )
++
++#find_package(QImageBlitz)
++#set_package_properties(QImageBlitz PROPERTIES DESCRIPTION "An image effects library"
++#                       URL "http://sourceforge.net/projects/qimageblitz"
++#                       TYPE REQUIRED
++#                      )
++
++#find_package(KDeclarative QUIET CONFIG)
++#set_package_properties(KDeclarative PROPERTIES DESCRIPTION "KDE Declarative (QML) support from kdelibs"
++#                       URL "http://www.kde.org"
++#                       TYPE REQUIRED
++#                       PURPOSE "Required for building ksmserver"
++#                      )
+ 
+ macro_optional_find_package(OpenGL)
+ set_package_properties(OpenGL PROPERTIES DESCRIPTION "The OpenGL libraries"
+@@ -216,7 +216,7 @@ add_subdirectory(libs)
+ 
+ # system settings (kcontrol replacement)
+ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+-   macro_optional_add_subdirectory( systemsettings )
++#   macro_optional_add_subdirectory( systemsettings )
+ endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+ 
+ # core apps
+@@ -237,21 +237,21 @@ if(NOT WIN32)
+ endif(NOT WIN32)
+ 
+ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+-   macro_optional_add_subdirectory(kcontrol)
+-   macro_optional_add_subdirectory(klipper)
+-   macro_optional_add_subdirectory(kmenuedit)
+-   macro_optional_add_subdirectory(krunner)
+-   macro_optional_add_subdirectory(solid-actions-kcm)
+-   macro_optional_add_subdirectory(kstartupconfig)
+-   macro_optional_add_subdirectory(freespacenotifier)
+-   macro_optional_add_subdirectory(kscreensaver)
+-   macro_optional_add_subdirectory(kinfocenter)
++#   macro_optional_add_subdirectory(kcontrol)
++#   macro_optional_add_subdirectory(klipper)
++#   macro_optional_add_subdirectory(kmenuedit)
++#   macro_optional_add_subdirectory(krunner)
++#   macro_optional_add_subdirectory(solid-actions-kcm)
++#   macro_optional_add_subdirectory(kstartupconfig)
++#   macro_optional_add_subdirectory(freespacenotifier)
++#   macro_optional_add_subdirectory(kscreensaver)
++#   macro_optional_add_subdirectory(kinfocenter)
+ 
+    # data
+-   macro_optional_add_subdirectory(doc)
++#   macro_optional_add_subdirectory(doc)
+ 
+    if (Q_WS_X11)
+-      macro_optional_add_subdirectory(ktouchpadenabler)
++#      macro_optional_add_subdirectory(ktouchpadenabler)
+    endif (Q_WS_X11)
+ 
+    if(NOT WIN32)
+@@ -271,11 +271,11 @@ endif(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+ 
+ if(NOT WIN32)
+     # data
+-    macro_optional_add_subdirectory(cursors)
++#    macro_optional_add_subdirectory(cursors)
+ endif(NOT WIN32)
+ 
+-macro_optional_add_subdirectory(plasma)
+-macro_optional_add_subdirectory(statusnotifierwatcher)
++#macro_optional_add_subdirectory(plasma)
++#macro_optional_add_subdirectory(statusnotifierwatcher)
+ macro_optional_add_subdirectory(kstyles)
+ 
+ ########### install files ###############
+@@ -352,9 +352,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfig.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfigVersion.cmake
+         DESTINATION ${_KDE4WorkspaceConfig_INSTALL_DIR})
+ 
+-install(EXPORT kdeworkspaceLibraryTargets 
+-        NAMESPACE ${KDE4WORKSPACE_TARGET_PREFIX}
+-        DESTINATION ${_KDE4WorkspaceConfig_INSTALL_DIR}
+-        FILE KDE4WorkspaceLibraryTargets.cmake )
++#install(EXPORT kdeworkspaceLibraryTargets 
++#        NAMESPACE ${KDE4WORKSPACE_TARGET_PREFIX}
++#        DESTINATION ${_KDE4WorkspaceConfig_INSTALL_DIR}
++#        FILE KDE4WorkspaceLibraryTargets.cmake )
+ 
+ 
+diff --git a/libs/CMakeLists.txt b/libs/CMakeLists.txt
+index c0576fe..da72cc7 100644
+--- a/libs/CMakeLists.txt
++++ b/libs/CMakeLists.txt
+@@ -1,11 +1,11 @@
+-add_subdirectory(kephal)
+-add_subdirectory(kworkspace)
++#add_subdirectory(kephal)
++#add_subdirectory(kworkspace)
+ add_subdirectory(oxygen)
+-add_subdirectory(plasmaclock)
++#add_subdirectory(plasmaclock)
+ 
+ if(${KDE_PLATFORM_PROFILE} STREQUAL "Desktop")
+-   add_subdirectory(kdm)
+-   add_subdirectory(plasmagenericshell)
++#   add_subdirectory(kdm)
++#   add_subdirectory(plasmagenericshell)
+    if(NOT WIN32)
+         add_subdirectory(taskmanager)
+    endif(NOT WIN32)

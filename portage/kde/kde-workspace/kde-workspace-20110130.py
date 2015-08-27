@@ -9,15 +9,18 @@ class subinfo(info.infoclass):
             self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
             self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
             self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
+        if self.options.features.runtimeMinimal:
+            self.patchToApply['gitHEAD'] = [("oxygen-only.diff", 1)]
 
         self.shortDescription = 'the KDE workspace including the oxygen style'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['win32libs/freetype'] = 'default'
-        self.dependencies['win32libs/boost'] = 'default'
-        self.dependencies['kdesupport/akonadi'] = 'default'
+        if not self.options.features.runtimeMinimal:
+            self.dependencies['win32libs/freetype'] = 'default'
+            self.dependencies['win32libs/boost'] = 'default'
+            self.dependencies['kdesupport/akonadi'] = 'default'
 
 from Package.CMakePackageBase import *
 

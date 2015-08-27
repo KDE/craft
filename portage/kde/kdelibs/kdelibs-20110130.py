@@ -30,7 +30,9 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.dependencies['data/docbook-xsl'] = 'default'
-        self.dependencies['data/shared-desktop-ontologies'] = 'default'
+        if self.options.features.nepomuk:
+            self.dependencies['kdesupport/soprano'] = 'default'
+            self.dependencies['data/shared-desktop-ontologies'] = 'default'
         if self.options.features.phononBackend.vlc:
             self.runtimeDependencies['kdesupport/phonon-vlc'] = 'default'
         elif self.options.features.phononBackend.ds9:
@@ -64,7 +66,9 @@ class Package(CMakePackageBase):
         if compiler.isMinGW():
           self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"MinGW %s\" " % compiler.getMinGWVersion()
         elif compiler.isMSVC():
-          self.subinfo.options.configure.defines = " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
+          self.subinfo.options.configure.defines += " -DKDE_DISTRIBUTION_TEXT=\"%s\" " % compiler.getVersion()
+        if not self.subinfo.options.features.nepomuk:
+            self.subinfo.options.configure.defines += ""
 
     def install( self ):
         if not CMakePackageBase.install( self ):
