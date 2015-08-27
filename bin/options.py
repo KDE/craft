@@ -67,6 +67,9 @@ class OptionsFeatures(OptionsBase):
         ## stick to the gcc 4.4.7 version
         self.legacyGCC = False
 
+        ## do not use mysql
+        self.nomysql = False
+
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):
