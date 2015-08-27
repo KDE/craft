@@ -24,6 +24,7 @@ Caption "${productname} ${version}"
 OutFile "${setupname}"
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
+!include "x64.nsh"
 
 ;!define MUI_ICON
 ${icon}
@@ -50,6 +51,14 @@ SilentInstall normal
 InstallDir "${defaultinstdir}\${productname}"
 InstallDirRegKey HKLM "${regkey}" ""
  
+Function .onInit
+!if ${compilingFor} == "x64"
+  ${IfNot} ${RunningX64}
+  MessageBox MB_OK|MB_ICONEXCLAMATION "This installer can only be run on 64-bit Windows."
+  Abort
+  ${EndIf}
+!endif
+FunctionEnd
 
  
 ;--------------------------------
