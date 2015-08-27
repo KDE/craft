@@ -51,16 +51,20 @@ class Package( BinaryPackageBase ):
                 elif compiler.isMinGW_W64():
                     files.append('libgcc_s_seh-1.dll')
                     srcdir = os.path.join( self.rootdir, "mingw64", "bin" )
-                
-        elif compiler.isMSVC2010():
+
+        elif compiler.isMSVC():
             if os.environ["EMERGE_ARCHITECTURE"] == "x86" and os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
                 srcdir = os.path.join( os.environ["SystemRoot"], "SysWOW64") 
             else:
-                srcdir = os.path.join( os.environ["SystemRoot"], "System32") 
-            files = [ "msvcr100%s.dll" % postfix, "msvcp100%s.dll" % postfix ]
+                srcdir = os.path.join( os.environ["SystemRoot"], "System32")
+
+            files = [
+                "msvcr%s%s.dll" % (compiler.getShortName()[2:], postfix),
+                "msvcp%s%s.dll" % (compiler.getShortName()[2:], postfix)
+            ]
 
         for file in files:
-            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)
+            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ), False)
 
         # extract pthread package.
         if compiler.isMinGW_WXX() and compiler.getMinGWVersion() == "4.4.7":
