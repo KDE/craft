@@ -1,0 +1,37 @@
+From b60702e0b7041c56a3cb52c209204d28406f3ce5 Mon Sep 17 00:00:00 2001
+From: Raphael Kubo da Costa <rakuco@FreeBSD.org>
+Date: Wed, 13 Aug 2014 14:43:04 +0300
+Subject: [PATCH] FindSqlite: Use CMAKE_FLAGS the right way in try_compile().
+
+This fixes f90774f1 ("Check whether Sqlite is compiled with
+SQLITE_ENABLE_UNLOCK_NOTIFY"), so that SQLITE_INCLUDE_DIR is really
+passed to the try_compile() call. So far, it was just a NOP and the
+compilation only worked if sqlite3.h was in a directory the compiler
+uses automatically.
+
+try_compile()'s syntax is a bit complicated, and CMAKE_FLAGS expects a
+series of arguments as if they had been passed to the command line, so
+instead of "CMAKE_FLAGS INCLUDE_DIRECTORIES /some/dir" one needs to use
+"CMAKE_FLAGS -DINCLUDE_DIRECTORIES:PATH=/some/dir".
+
+REVIEW: 119762
+---
+ cmake/modules/FindSqlite.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/modules/FindSqlite.cmake b/cmake/modules/FindSqlite.cmake
+index ad8cdb4..c43a7b5 100644
+--- a/cmake/modules/FindSqlite.cmake
++++ b/cmake/modules/FindSqlite.cmake
+@@ -94,7 +94,7 @@ if(EXISTS ${SQLITE_INCLUDE_DIR}/sqlite3.h)
+                 ${CMAKE_BINARY_DIR}/sqlite_check_unlock_notify
+                 ${CMAKE_BINARY_DIR}/sqlite_check_unlock_notify.cpp
+                 LINK_LIBRARIES ${SQLITE_LIBRARIES}
+-                CMAKE_FLAGS INCLUDE_DIRECTORIES ${SQLITE_INCLUDE_DIR})
++                CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:PATH=${SQLITE_INCLUDE_DIR}")
+     if (NOT SQLITE_HAS_UNLOCK_NOTIFY)
+         message(STATUS "Sqlite ${SQLITE_VERSION} was found, but it is not compiled with -DSQLITE_ENABLE_UNLOCK_NOTIFY")
+     endif()
+-- 
+1.9.0.msysgit.0
+

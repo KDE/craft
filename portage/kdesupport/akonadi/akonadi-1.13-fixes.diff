@@ -1,0 +1,110 @@
+diff -Nru -x '*~' akonadi-1.13.0.orig/server/src/storage/dbconfigpostgresql.cpp akonadi-1.13.0/server/src/storage/dbconfigpostgresql.cpp
+--- akonadi-1.13.0.orig/server/src/storage/dbconfigpostgresql.cpp	2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/server/src/storage/dbconfigpostgresql.cpp	2015-08-28 12:43:57.432653600 +0200
+@@ -29,7 +29,6 @@
+ #include <QtSql/QSqlDriver>
+ #include <QtSql/QSqlError>
+ #include <QtSql/QSqlQuery>
+-#include <unistd.h>
+ 
+ 
+ using namespace Akonadi::Server;
+diff -Nru -x '*~' akonadi-1.13.0.orig/server/src/storage/partstreamer.cpp akonadi-1.13.0/server/src/storage/partstreamer.cpp
+--- akonadi-1.13.0.orig/server/src/storage/partstreamer.cpp	2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/server/src/storage/partstreamer.cpp	2015-08-28 12:46:43.097129000 +0200
+@@ -31,7 +31,6 @@
+ #include <libs/protocol_p.h>
+ #include <shared/akstandarddirs.h>
+ 
+-#include <unistd.h>
+ 
+ #include <QFile>
+ #include <QFileInfo>
+diff -Nru -x '*~' akonadi-1.13.0.orig/server/tests/unittest/fakesearchmanager.cpp akonadi-1.13.0/server/tests/unittest/fakesearchmanager.cpp
+--- akonadi-1.13.0.orig/server/tests/unittest/fakesearchmanager.cpp	2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/server/tests/unittest/fakesearchmanager.cpp	2015-08-28 12:54:17.831138300 +0200
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include "fakesearchmanager.h"
++#include <entities.h>
+ 
+ using namespace Akonadi::Server;
+ 
+diff -Nru -x '*~' akonadi-1.13.0.orig/shared/akcrash.cpp akonadi-1.13.0/shared/akcrash.cpp
+--- akonadi-1.13.0.orig/shared/akcrash.cpp	2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/shared/akcrash.cpp	2015-08-28 12:36:44.960917600 +0200
+@@ -39,7 +39,7 @@
+   QString s;
+ 
+ /* FIXME: is there an equivalent for windows? */
+-#ifdef Backtrace_FOUND
++#if Backtrace_FOUND
+   void *trace[256];
+   int n = backtrace( trace, 256 );
+   if ( !n ) {
+diff -Nru -x '*~' akonadi-1.13.0.orig/server/CMakeLists.txt akonadi-1.13.0/server/CMakeLists.txt
+--- akonadi-1.13.0.orig/server/CMakeLists.txt   2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/server/CMakeLists.txt    2015-08-28 13:00:57.982025600 +0200
+@@ -1,25 +1,27 @@
+-find_program(MYSQLD_EXECUTABLE NAMES mysqld
+-              PATHS /usr/sbin /usr/local/sbin /usr/libexec /usr/local/libexec /opt/mysql/libexec /usr/mysql/bin /opt/mysql/sbin
+-              DOC "The mysqld executable path. ONLY needed at runtime"
+-            )
+-
+-if(MYSQLD_EXECUTABLE)
+-   message(STATUS "MySQL Server found: ${MYSQLD_EXECUTABLE}")
+-else()
+-   message(STATUS "MySQL Server wasn't found. it is required to use the MySQL backend.")
+-endif()
+-
+-find_path(POSTGRES_PATH NAMES pg_ctl
+-              HINTS /usr/lib${LIB_SUFFIX}/postgresql/8.4/bin
+-                    /usr/lib${LIB_SUFFIX}/postgresql/9.0/bin
+-                    /usr/lib${LIB_SUFFIX}/postgresql/9.1/bin
+-              DOC "The pg_ctl executable path. ONLY needed at runtime by the PostgreSQL backend"
+-         )
+-
+-if(POSTGRES_PATH)
+-   message(STATUS "PostgreSQL Server found.")
+-else()
+-   message(STATUS "PostgreSQL wasn't found. it is required to use the Postgres backend.")
++if(NOT WIN32)
++  find_program(MYSQLD_EXECUTABLE NAMES mysqld
++                PATHS /usr/sbin /usr/local/sbin /usr/libexec /usr/local/libexec /opt/mysql/libexec /usr/mysql/bin /opt/mysql/sbin
++                DOC "The mysqld executable path. ONLY needed at runtime"
++              )
++
++  if(MYSQLD_EXECUTABLE)
++    message(STATUS "MySQL Server found: ${MYSQLD_EXECUTABLE}")
++  else()
++    message(STATUS "MySQL Server wasn't found. it is required to use the MySQL backend.")
++  endif()
++
++  find_path(POSTGRES_PATH NAMES pg_ctl
++                HINTS /usr/lib${LIB_SUFFIX}/postgresql/8.4/bin
++                      /usr/lib${LIB_SUFFIX}/postgresql/9.0/bin
++                      /usr/lib${LIB_SUFFIX}/postgresql/9.1/bin
++                DOC "The pg_ctl executable path. ONLY needed at runtime by the PostgreSQL backend"
++          )
++
++  if(POSTGRES_PATH)
++    message(STATUS "PostgreSQL Server found.")
++  else()
++    message(STATUS "PostgreSQL wasn't found. it is required to use the Postgres backend.")
++  endif()
+ endif()
+ 
+ include_directories(${Akonadi_SOURCE_DIR}/libs)
+diff -Nru -x '*~' akonadi-1.13.0.orig/server/src/storage/dbconfigmysql.cpp akonadi-1.13.0/server/src/storage/dbconfigmysql.cpp
+--- akonadi-1.13.0.orig/server/src/storage/dbconfigmysql.cpp    2014-08-10 12:38:58.000000000 +0200
++++ akonadi-1.13.0/server/src/storage/dbconfigmysql.cpp 2015-08-28 13:00:57.992026200 +0200
+@@ -66,7 +66,7 @@
+ #endif
+ 
+   const bool defaultInternalServer = true;
+-#ifdef MYSQLD_EXECUTABLE
++#if defined(MYSQLD_EXECUTABLE) && !defined(Q_OS_WIN)
+    if ( QFile::exists( QLatin1String( MYSQLD_EXECUTABLE ) ) ) {
+      defaultServerPath = QLatin1String( MYSQLD_EXECUTABLE );
+    }

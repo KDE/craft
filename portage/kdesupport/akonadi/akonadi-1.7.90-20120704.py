@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.10.3'] = [("akonadi-kde.conf-fix.diff", 1)]
         self.patchToApply['1.10.80'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
         self.patchToApply['1.12.1'] = [("akonadi-1.12.1-20140419.diff", 1), ("akonadi-kde.conf-fix-1.12.1.diff", 1)]
-        self.patchToApply['1.13.0'] = [("akonadi-kde.conf-fix-1.12.1.diff", 1)]
+        self.patchToApply['1.13.0'] = [("0001-FindSqlite-Use-CMAKE_FLAGS-the-right-way-in-try_comp.patch", 1), ("akonadi-1.13-fixes.diff", 1), ("akonadi-kde.conf-fix-1.13.0.diff", 1)]
         self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.12.1.diff", 1)]
 
         self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
