@@ -98,13 +98,13 @@ SectionEnd
 ;post install
 Section
 SetOutPath "$INSTDIR"
-${IfNot} "${vcredist}" == "none"
-    File /nonfatal /a /oname=vcredist.exe "${vcredist}"
+!if "${vcredist}" != "none"
+    File /a /oname=vcredist.exe "${vcredist}"
     ExecWait '"$INSTDIR\vcredist.exe" /passive'
-${EndIf}
+    Delete "$INSTDIR\vcredist.exe"
+!endif
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
 ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
-Delete "$INSTDIR\vcredist.exe"
 SectionEnd
  
 ; Uninstaller
