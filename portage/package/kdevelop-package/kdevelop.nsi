@@ -49,8 +49,8 @@ CRCCheck on
 SilentInstall normal
  
 InstallDir "${defaultinstdir}\${productname}"
-InstallDirRegKey HKLM "${regkey}" ""
- 
+InstallDirRegKey HKLM "${regkey}" "Install_Dir"
+
 Function .onInit
 !if ${compilingFor} == "x64"
   ${IfNot} ${RunningX64}
