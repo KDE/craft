@@ -69,6 +69,7 @@ AutoCloseWindow false
 ; beginning (invisible) section
 Section
   ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
+  ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname} (remove only)"
@@ -114,6 +115,8 @@ UninstallText "This will uninstall ${productname}."
  
 Section "Uninstall"
 SetShellVarContext all
+
+ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
 
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
