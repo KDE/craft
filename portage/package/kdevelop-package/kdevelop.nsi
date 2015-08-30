@@ -51,6 +51,8 @@ SilentInstall normal
 InstallDir "${defaultinstdir}\${productname}"
 InstallDirRegKey HKLM "${regkey}" "Install_Dir"
 
+Var /global ExistingInstallation
+
 Function .onInit
 !if ${compilingFor} == "x64"
   ${IfNot} ${RunningX64}
@@ -58,6 +60,10 @@ Function .onInit
   Abort
   ${EndIf}
 !endif
+ReadRegStr $R0 HKLM ${regkey} "Install_Dir"
+${IfNot} $R0 == ""
+  StrCpy $ExistingInstallation $R0
+${EndIf}
 FunctionEnd
 
  
@@ -68,8 +74,9 @@ AutoCloseWindow false
  
 ; beginning (invisible) section
 Section
-  ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
-  ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
+${IfNot} $ExistingInstallation == ""
+  ExecWait '"$ExistingInstallation\${uninstaller}" /S _?=$ExistingInstallation'
+${EndIf}
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname} (remove only)"
@@ -102,10 +109,10 @@ SetOutPath "$INSTDIR"
 !if "${vcredist}" != "none"
     File /a /oname=vcredist.exe "${vcredist}"
     ExecWait '"$INSTDIR\vcredist.exe" /passive'
-    Delete "$INSTDIR\vcredist.exe"
 !endif
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
 ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
+Delete "$INSTDIR\vcredist.exe"
 SectionEnd
  
 ; Uninstaller
@@ -115,7 +122,7 @@ UninstallText "This will uninstall ${productname}."
  
 Section "Uninstall"
 SetShellVarContext all
-
+ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
 ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
 
 DeleteRegKey HKLM "${uninstkey}"
