@@ -300,7 +300,8 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS", ""))
+        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
+        self.__readFromList(["options.packages." + x.split('/')[-1] + "=False" for x in emergeSettings.get( "Portage", "PACKAGE_IGNORES", "").split(";")])
         self.readFromEnv()
         self.__readFromList(optionslist)
         portage.PortageInstance.ignores.update(self.packages.getPackageIgnores())

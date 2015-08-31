@@ -278,8 +278,11 @@ def main( ):
                          help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
     parser.add_argument( "--list-file", action = "store",
                          help = "Build all packages from the csv file provided" )
+    _def = emergeSettings.get( "General", "EMERGE_OPTIONS", "" )
+    if _def == "": _def = []
+    else: _def = _def.split( ";" )
     parser.add_argument( "--options", action = "append",
-                         default = emergeSettings.get( "General", "EMERGE_OPTIONS", "" ).split( ";" ),
+                         default = _def,
                          help = "Set emerge property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations." )
     parser.add_argument( "-z", "--outDateVCS", action = "store_true",
                          help = "if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date)." )

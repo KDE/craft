@@ -18,10 +18,10 @@ import VersionInfo
 
 class infoclass(object):
     """this module contains the information class"""
-    def __init__( self, parent, option_string=None):
+    def __init__( self, parent, optionList=[]):
         ### package options
         self.parent = parent
-        self.options = Options(option_string)
+        self.options = Options(optionList)
         self.versionInfo = VersionInfo.VersionInfo(self)
         self.targets = OrderedDict()
         self.archiveNames = OrderedDict()
