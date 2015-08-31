@@ -1,10 +1,12 @@
 # blacklist
-# manifest files may be there because of lousy system
+
+# general
 manifest\\.*
 .*\.exp
 .*\.pdb
 .*\.la
 .*\.nsis
+.*\.prl
 
 # multiple docs
 doc\\.*
@@ -30,6 +32,8 @@ qml\\QtTest
 # unrelated
 dev-utils\\.*
 data\\.*
+share\\dbus-1\\services\\.*
+share\\pkgconfig\\.*
 
 # cleanup breeze stuff
 share\\wallpapers\\.*
@@ -40,18 +44,17 @@ share\\icons\\breeze-dark\\.*
 share\\icons\\oxygen\\64x64\\.*
 share\\icons\\oxygen\\128x128\\.*
 share\\icons\\oxygen\\256x256\\.*
+
 # doubled qt dlls
 lib\\[^\\]*\.dll
 # more qt leftovers
-.*\.prl
-# qt translations
 translations\\.*
 phrasebooks\\.*
-# qt mkspecs
 mkspecs\\.*
 
 # unneeded stuff from bin\
 bin\\qt\.conf
 bin\\syncqt\.pl
 
+# strip most executables
 bin\\(?!(kdevelop|kbuildsycoca5|update-mime-database|dbus-daemon|kioslave)).*\.exe
