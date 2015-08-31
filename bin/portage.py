@@ -203,7 +203,6 @@ class Portage(object):
         self.ignores = set()
         if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
             self.ignores.update(emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"))
-            
 
     def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """
@@ -270,7 +269,6 @@ class Portage(object):
                         _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList and not subPackage in dontBuildSubPackageList
                         self.categories[ category ].append( PackageObjectBase( category=category, subpackage=package, package=subPackage, enabled=_enabled ) )
                     self.subpackages[ subPackage ].append( category + "/" + package )
-
 
     def getCategory( self, package ):
         """ returns the category of this package """
@@ -339,7 +337,10 @@ class Portage(object):
                 else:
                     modulename = os.path.basename( fileName )[:-3].replace('.', '_')
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
-                    mod = loader.load_module(modulename)
+                    try:
+                        mod = loader.load_module()
+                    except:
+                        raise PortageException("Failed to load file %s" % fileName, category, package)
                 if not mod is None:
                     subpackage, package = getSubPackage( category, package )
                     self._CURRENT_MODULE  = ( fileName, category,subpackage, package, mod )

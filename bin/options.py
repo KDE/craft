@@ -93,13 +93,15 @@ class OptionsFeatures(OptionsBase):
 
         ## whether to build the sqlite backend in akonadi instead of the mysql one
         self.akonadiBackendSqlite = False
-        
+
         ## enable python support in several packages.
         self.pythonSupport = False
 
-        
         ## stick to the gcc 4.4.7 version
         self.legacyGCC = False
+
+        ## enable or disable the dependency to plasma
+        self.fullplasma = False
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
@@ -221,8 +223,6 @@ class OptionsPackage(OptionsBase):
         ##disable stripping of binary files
         #needed for mysql, striping make the library unusable
         self.disableStriping = False
-        
-        
 
 class OptionsCMake(OptionsBase):
     def __init__(self):
@@ -341,18 +341,12 @@ class Options(object):
             value = value in ['True', 'true', '1', 'ON', 'on']
 
         setattr( currentObject, currentKey, value )
-
-#        p = ""
-#        if self.__instances[a][0]:
-#            p += self.__instances[a][0] + '.'
-#        if self.__verbose:
-#            print("mapped %s to %s%s with value %s" % (origKey, p, self.__instances[a][2][b][0], value))
         return True
 
 
 
     def __readFromList( self, opts ):
-        """collect properties from a list of key=valule string"""
+        """collect properties from a list of key=value string"""
         if opts == None:
             return False
         result = False
@@ -361,7 +355,7 @@ class Options(object):
                 utils.debug('incomplete option %s' % entry, 3)
                 continue
             (key, value) = entry.split( '=', 1 )
-            if self.__setInstanceAttribute(key, value ):
+            if self.__setInstanceAttribute(key, value):
                 result = True
                 continue
         return result
