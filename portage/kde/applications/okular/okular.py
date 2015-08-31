@@ -1,5 +1,4 @@
 import info
-import kdedefaults as kd
 from EmergeConfig import *
 
 class subinfo(info.infoclass):
