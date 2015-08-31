@@ -4,10 +4,8 @@ from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:okular|frameworks'
-        self.shortDescription = 'Framework to build IDE-like applications'
+        self.versionInfo.setDefaultValues( )
         self.shortDescription = "KDE document viewer"
-        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
         self.buildDependencies['win32libs/chm'] = 'default'
