@@ -18,12 +18,11 @@ import VersionInfo
 
 class infoclass(object):
     """this module contains the information class"""
-    def __init__( self, parent):
+    def __init__( self, parent, option_string=None):
         ### package options
         self.parent = parent
-        self.options = Options()
+        self.options = Options(option_string)
         self.versionInfo = VersionInfo.VersionInfo(self)
-        self.options.readFromEnv()
         self.targets = OrderedDict()
         self.archiveNames = OrderedDict()
         # Specifiy that the fetched source should be placed into a

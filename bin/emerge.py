@@ -377,6 +377,7 @@ def main( ):
     emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
     emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
 
+    portage.PortageInstance.options = args.options
     if args.search:
         for package in args.packageNames:
             category = ""

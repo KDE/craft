@@ -43,6 +43,39 @@ class OptionsBase(object):
     def __init__(self):
         pass
 
+class OptionsPortage(OptionsBase):
+    def __init__(self):
+        self._packages = dict()
+
+    def __setattr__(self, name, value):
+        if name == "_packages":
+            object.__setattr__(self, name, value)
+        else:
+            self._packages[name] = value
+
+    def __getattr__(self, name):
+        if name in self._packages:
+            return self._packages[name]
+        else:
+            return True
+
+    def getPackageIgnores(self):
+        """this results in a list, suitable for updating the portage.ignores"""
+        ret = []
+        for p in self._packages:
+            _c = portage.PortageInstance.getCategory(p)
+            if not _c:
+                _c = portage.PortageInstance.getCategory(p + "-pkg")
+                if not _c:
+                    _c = portage.PortageInstance.getCategory(p.replace("_", "-"))
+                    if _c: p = p.replace("_", "-")
+                else:
+                    p += "-pkg"
+            if not _c:
+                continue
+            ret.append("/".join(portage.getFullPackage(p)))
+        return ret
+
 ## options for enabling or disabling features of KDE
 ## in the future, a certain set of features make up a 'profile' together
 class OptionsFeatures(OptionsBase):
@@ -207,9 +240,11 @@ class OptionsGit(OptionsBase):
 
 ## main option class
 class Options(object):
-    def __init__(self):
+    def __init__(self, optionslist=None):
         ## options for the dependency generation
         self.features = OptionsFeatures()
+        ## options for package exclusion
+        self.packages = OptionsPortage()
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
@@ -263,60 +298,43 @@ class Options(object):
         self.buildStatic = False
 
         #### end of user configurable part
-        self.__instances = dict()
         self.__verbose = False
         self.__errors = False
+        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS", ""))
+        self.readFromEnv()
+        self.__readFromList(optionslist)
+        portage.PortageInstance.ignores.update(self.packages.getPackageIgnores())
 
     def readFromEnv( self ):
         """ read emerge related variables from environment and map them to public
         attributes in the option class and sub classes """
-        self.__collectAttributes()
-        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS").split(";"))
-            
+        _o = os.getenv("EMERGE_OPTIONS")
+        if _o:
+            _o = _o.split(" ")
+        else:
+            _o = []
+        self.__readFromList(_o)
+
     def isActive(self, package):
         return not package in portage.PortageInstance.ignores
 
-    def __collectAttributes( self, instance=None, container=None ):
-        """ collect all public attributes this class and subclasses
-        """
-        if instance == None: instance = self
-        if container == None: container = self.__instances
-        # first save instance object
-        container['.'] = [instance, dict()]
-
-        # now check all children
-        for key, value in inspect.getmembers(instance):
-            if key.startswith('__') or type(value).__name__.startswith('instance'):
-                continue
-            if inspect.ismethod(value):
-                continue
-            # we have found a child that in itself could have children again
-            if isinstance(value, OptionsBase):
-                container[key.lower()] = dict()
-                self.__collectAttributes(value, container[key.lower()])
-            else:
-                # simply append properties here
-                container['.'][1][key.lower()] = [key, value]
-
-        if self.__verbose:
-            for key in container:
-                print(container[key])
-
     def __setInstanceAttribute( self, key, value ):
         """set attribute in an instance"""
-        currentObject = None
+        currentObject = self
         currentKey = None
-        currentDict = self.__instances
-        for keyparticle in key.split('.'):
-            if keyparticle.lower() in currentDict:
-                #print("found keyparticle as branch", keyparticle)
-                currentDict = currentDict[keyparticle.lower()]
-            elif keyparticle.lower() in currentDict['.'][1]:
-                #print("found keyparticle as node", keyparticle)
-                currentObject = currentDict['.'][0]
-                currentKey = currentDict['.'][1][keyparticle.lower()][0]
-        if not currentObject or not currentKey:
-            return False
+        for currentKey in key.split('.'):
+            if currentKey == "options": continue
+
+            if hasattr(currentObject, currentKey):
+                o = getattr(currentObject, currentKey)
+                if not isinstance(o, OptionsBase):
+                    continue
+                else:
+                    currentObject = o
+            else:
+                if isinstance(currentObject, OptionsPortage):
+                    break
+                return False
 
         # if the type is already bool, we'll keep it that way and interpret the string accordingly
         if type(getattr(currentObject, currentKey)) is bool:

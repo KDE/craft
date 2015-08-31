@@ -34,7 +34,7 @@ class EmergeBase(object):
         self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
 
         if not hasattr(self, 'subinfo'):
-            self.subinfo = mod.subinfo(self)
+            self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
 
 
         if not hasattr(self, 'buildSystemType'):

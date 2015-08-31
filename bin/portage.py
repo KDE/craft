@@ -156,6 +156,21 @@ def rootDirForPackage( category, package ):
         PortageCache._rootDirCache[name] = os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
     return PortageCache._rootDirCache[name]
 
+def getFullPackage( package ):
+    """tries to find a package and returns either category / subpackage / package or category / package
+
+returns an empty list if not found
+"""
+    category = PortageInstance.getCategory( package )
+    if not category: return []
+    if package in PortageInstance.subpackages:
+        _cat, subpackage = PortageInstance.subpackages[ package ][0].split('/')
+        if not _cat == category: return []
+        return [category, subpackage, package]
+    else:
+        return [category, package]
+
+
 def getDirname( category, package ):
     """ return absolute pathname for a given category and package """
     subpackage, package = getSubPackage( category, package )
@@ -177,6 +192,7 @@ def VCSDirs():
 class Portage(object):
     #cache for pacages
     _packageDict = OrderedDict()
+    options = ""
 
     def __init__( self ):
         """ """
