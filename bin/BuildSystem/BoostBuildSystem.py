@@ -33,7 +33,7 @@ class BoostBuildSystem(BuildSystemBase):
             options += (" link=static"
                        " runtime-link=static")
         if compiler.isX64():
-            options += " address-model=64"
+            options += " address-model=64 architecture=x86"
 
         if self.buildType() == "Debug":
             options += " variant=debug"
