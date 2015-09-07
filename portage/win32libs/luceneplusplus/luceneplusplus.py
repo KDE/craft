@@ -13,17 +13,18 @@ class subinfo (info.infoclass):
 
 
     def setTargets( self ):
-        # for ver in [ "3.0.6" ]:
-        #     self.targets[ ver ] = "https://github.com/luceneplusplus/LucenePlusPlus/archive/rel_%s.tar.gz" % ver
-        #     self.archiveNames[ ver ] = "luceneplusplus-%s.tar.gz" % ver
-        #     self.targetInstSrc[ ver ] = "LucenePlusPlus-rel_%s" % ver
-        # self.targetDigests['3.0.6'] = 'a4504f82075bf715a156e8e81404758ddf5e44b0'
+        for ver in [ "3.0.7" ]:
+            self.targets[ ver ] = "https://github.com/luceneplusplus/LucenePlusPlus/archive/rel_%s.tar.gz" % ver
+            self.archiveNames[ ver ] = "luceneplusplus-%s.tar.gz" % ver
+            self.targetInstSrc[ ver ] = "LucenePlusPlus-rel_%s" % ver
+        self.targetDigests['3.0.7'] = 'b2c38e7ca5056934a5bdb1a69ea251110e3c0377'
+        # self.patchToApply['3.0.7'] = ('fix-build.diff', 1)
 
         self.svnTargets[ "gitHEAD" ] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
         
         self.shortDescription = "Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine."
         self.homepage = "https://github.com/luceneplusplus/LucenePlusPlus/"
-        self.defaultTarget = "gitHEAD"
+        self.defaultTarget = "3.0.7"
 
 
 from Package.CMakePackageBase import *
@@ -31,5 +32,4 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-         self.supportsNinja = False
         self.subinfo.options.configure.defines = "-DENABLE_TEST=OFF"
