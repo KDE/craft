@@ -11,9 +11,7 @@ class subinfo(info.infoclass):
         #self.dependencies['qt-libs/qtsparkle'] = 'default
         self.dependencies['qt-libs/qtkeychain'] = 'default'
         # self.dependencies['qt-libs/qtweetlib'] = 'default'
-        self.dependencies['qt-libs/phonon'] = 'default'
-        self.dependencies['qt-libs/phonon-vlc'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
+        self.dependencies['binary/vlc'] = 'default'
         self.dependencies['qt-libs/libechonest'] = 'default'
         self.dependencies['frameworks/attica'] = 'default'
         self.dependencies['qt-libs/liblastfm'] = 'default'
