@@ -30,7 +30,7 @@ class SevenZipPackager (PackagerBase):
 
     def _archiveName(self, pkgSuffix):
         pkgVersion, _ = self.getPackageVersion()
-        return "%s-%s-%s%s%s.7z" % (self.package, compiler.architecture(), pkgVersion, compiler.getCompilerName(), pkgSuffix)
+        return "%s-%s-%s%s%s.%s" % (self.package, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, emergeSettings.get("Packager", "7ZipArchiveType"))
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
