@@ -28,67 +28,37 @@ class SevenZipPackager (PackagerBase):
         if self.packagerExe:
             utils.debug("using 7za from %s" % self.packagerExe, 2)
 
+    def _archiveName(self, pkgSuffix):
+        pkgVersion, _ = self.getPackageVersion()
+        return "%s-%s-%s%s%s.7z" % (self.package, compiler.architecture(), pkgVersion, compiler.getCompilerName(), pkgSuffix)
+
+    def _compress(self, archiveName, sourceDir, destDir):
+        utils.deleteFile(archiveName)
+        cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
+        if not utils.system(cmd):
+            utils.die( "while packaging. cmd: %s" % cmd )
+
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
             utils.die("could not find 7za in your path!")
 
-        if self.subinfo.options.package.packageName != None:
-            pkgName = self.subinfo.options.package.packageName
-        else:
-            pkgName = self.package
-
-        if pkgName.endswith('-src') or pkgName.endswith('-pkg'):
-            pkgName = pkgName[:-4]
-
-        pkgVersion, _ = self.getPackageVersion()
-
-        if self.subinfo.options.package.withArchitecture:
-            if self.buildArchitecture() == "x64":
-                pkgName += "-x64"
-            else:
-                pkgName += "-x86"
 
         dstpath = self.packageDestinationDir()
         print(dstpath)
 
-        if self.subinfo.options.package.withCompiler:
-            if( self.compiler() == "mingw"):
-                pkgCompiler = "-mingw"
-            elif self.compiler() == "mingw4":
-                pkgCompiler = "-mingw4 "
-            elif self.compiler() == "msvc2005":
-                pkgCompiler = "-msvc"
-            elif self.compiler() == "msvc2008":
-                pkgCompiler = "-vc90"
-            elif self.compiler() == "msvc2010":
-                pkgCompiler = "-vc100"
-            else:
-                pkgCompiler = "-unknown"
-        else:
-            pkgCompiler = ""
-
+        pkgSuffix = ''
         if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
             pkgSuffix = self.subinfo.options.package.packageSuffix
-        else:
-            pkgSuffix = ''
 
-        archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(dstpath, archiveName)
-        utils.deleteFile(fileName)
-        cmd = "cd %s && %s a -r %s %s" % (filesDir, self.packagerExe, fileName, '*')
-        if not utils.system(cmd):
-            utils.die( "while packaging. cmd: %s" % cmd )
+
+        self._compress(self._archiveName( pkgSuffix), self.imageDir(), dstpath)
+
+
 
         if not self.subinfo.options.package.packSources:
             return True
 
-        pkgSuffix = '-src'
-        archiveName = "%s-%s%s%s.7z" % (self.package, pkgVersion, pkgCompiler, pkgSuffix)
-        fileName = os.path.join(dstpath, archiveName)
-        utils.deleteFile(fileName)
-        cmd = "cd %s && %s a -x!.svn -x!.git -r %s %s" % (self.sourceDir(), self.packagerExe, fileName, '*')
-        if not utils.system(cmd):
-            utils.die( "while packaging. cmd: %s" % cmd )
+        self._compress(self._archiveName( "-src"), self.sourceDir(), dstpath)
         return True

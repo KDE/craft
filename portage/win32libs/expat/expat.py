@@ -27,8 +27,3 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.toolsDefine = "-DBUILD_tools=ON" # available only from 2.1.0-beta3
         self.subinfo.options.configure.staticDefine = "-DBUILD_shared=OFF" # available only from 2.1.0-beta3
 
-    def createPackage( self ):
-        libName="libexpat"
-        self.stripLibs( libName )
-        return KDEWinPackager.createPackage( self )
-
