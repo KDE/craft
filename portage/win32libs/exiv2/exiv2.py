@@ -28,6 +28,5 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.supportsNinja = False#something is wrong with cmake here
         self.subinfo.options.configure.defines = "-DEXIV2_ENABLE_BUILD_SAMPLES=OFF"
 

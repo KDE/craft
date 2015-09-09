@@ -1,6 +1,33 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' exiv2-0.25.orig/include/exiv2/exv_msvc.h exiv2-0.25/include/exiv2/exv_msvc.h
+--- exiv2-0.25.orig/include/exiv2/exv_msvc.h	2015-06-15 17:32:21.000000000 +0200
++++ exiv2-0.25/include/exiv2/exv_msvc.h	2015-09-09 11:08:09.687643600 +0200
+@@ -113,9 +113,6 @@
+ #define CURL_STATICLIB
+ #endif
+ 
+-#pragma comment(lib, "ws2_32.lib")
+-#pragma comment(lib, "wldap32.lib")
+-
+ /* File path separator */
+ #define EXV_SEPARATOR_STR "\\"
+ #define EXV_SEPARATOR_CHR '\\'
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' exiv2-0.25.orig/src/CMakeLists.txt exiv2-0.25/src/CMakeLists.txt
+--- exiv2-0.25.orig/src/CMakeLists.txt	2015-06-14 11:12:19.000000000 +0200
++++ exiv2-0.25/src/CMakeLists.txt	2015-09-09 11:08:04.896101500 +0200
+@@ -257,6 +257,10 @@
+     endif()
+ endif()
+ 
++if(WIN32)
++    TARGET_LINK_LIBRARIES( exiv2lib ws2_32 wldap32)
++endif()
++
+ if( EXIV2_ENABLE_LIBXMP )
+     ADD_DEPENDENCIES( exiv2lib xmp )
+     if  ( MSVC )
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' exiv2-0.25.orig/src/localtime.c exiv2-0.25/src/localtime.c
 --- exiv2-0.25.orig/src/localtime.c	2014-12-25 14:55:57.000000000 +0100
-+++ exiv2-0.25/src/localtime.c	2015-08-26 15:24:48.918725100 +0200
++++ exiv2-0.25/src/localtime.c	2015-09-09 11:05:51.042738900 +0200
 @@ -105,6 +105,13 @@
  #define MY_TZNAME_MAX	255
  #endif /* !defined TZNAME_MAX */
