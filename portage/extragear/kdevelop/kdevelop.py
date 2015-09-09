@@ -33,6 +33,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/kwindowsystem' ] = 'default'
         self.dependencies[ 'frameworks/kxmlgui' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
+        self.dependencies[ 'data/hicolor-icon-theme'] = "default"
         # krunner is an optional dependency now
         #self.dependencies[ 'frameworks/krunner' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
