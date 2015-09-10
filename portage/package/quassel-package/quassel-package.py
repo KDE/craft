@@ -18,7 +18,6 @@ class subinfo( info.infoclass ):
             gitVersion = pack.getRevision()
             if gitVersion:
                 self.svnTargets[ gitVersion  ] = ""
-                print("git", gitVersion)
                 self.defaultTarget = gitVersion
             
 
