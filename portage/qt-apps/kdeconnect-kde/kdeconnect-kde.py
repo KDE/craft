@@ -20,6 +20,9 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kconfigwidgets'] = 'default'
         self.dependencies['frameworks/kdbusaddons'] = 'default'
         self.dependencies['frameworks/kiconthemes'] = 'default'
+        self.dependencies['frameworks/knotifications'] = 'default'
+        self.dependencies['qt-libs/snorenotify'] = 'default'
+        self.dependencies['frameworks/kcmutils'] = 'default'
 
 
 class Package( CMakePackageBase ):

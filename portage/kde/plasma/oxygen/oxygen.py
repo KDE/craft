@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['frameworks/frameworkintegration'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
+        self.dependencies['frameworks/kdecoration'] = 'default'
 
 
 
