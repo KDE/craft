@@ -31,7 +31,6 @@ qml\\QtTest
 
 # unrelated
 dev-utils\\.*
-data\\.*
 share\\dbus-1\\services\\.*
 share\\pkgconfig\\.*
 
