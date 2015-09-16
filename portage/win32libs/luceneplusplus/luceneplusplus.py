@@ -24,7 +24,7 @@ class subinfo (info.infoclass):
         
         self.shortDescription = "Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine."
         self.homepage = "https://github.com/luceneplusplus/LucenePlusPlus/"
-        self.defaultTarget = "3.0.7"
+        self.defaultTarget = "gitHEAD"
 
 
 from Package.CMakePackageBase import *
