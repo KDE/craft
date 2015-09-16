@@ -13,12 +13,11 @@ class subinfo (info.infoclass):
 
 
     def setTargets( self ):
-        for ver in [ "3.0.7" ]:
+        for ver in [ ]:
             self.targets[ ver ] = "https://github.com/luceneplusplus/LucenePlusPlus/archive/rel_%s.tar.gz" % ver
             self.archiveNames[ ver ] = "luceneplusplus-%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "LucenePlusPlus-rel_%s" % ver
-        self.targetDigests['3.0.7'] = 'b2c38e7ca5056934a5bdb1a69ea251110e3c0377'
-        # self.patchToApply['3.0.7'] = ('fix-build.diff', 1)
+        #self.patchToApply["gitHEAD"] = ("fix-build.diff", 1)
 
         self.svnTargets[ "gitHEAD" ] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
         
