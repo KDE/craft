@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.8'] = [ ('remove_atl_stuff.patch', 1) ]
         
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
-        self.defaultTarget = '1.0.9'
+        self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'
