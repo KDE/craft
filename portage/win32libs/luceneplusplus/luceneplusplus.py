@@ -17,7 +17,7 @@ class subinfo (info.infoclass):
             self.targets[ ver ] = "https://github.com/luceneplusplus/LucenePlusPlus/archive/rel_%s.tar.gz" % ver
             self.archiveNames[ ver ] = "luceneplusplus-%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "LucenePlusPlus-rel_%s" % ver
-        #self.patchToApply["gitHEAD"] = ("fix-build.diff", 1)
+        self.patchToApply["gitHEAD"] = ("luceneplusplus-20150916.patch", 1)
 
         self.svnTargets[ "gitHEAD" ] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
         
