@@ -4,7 +4,7 @@ import shells
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20150512"
+        ver = "20150916"
         if compiler.isX86():
             self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-%s.tar.xz" % ver
         else:
@@ -31,7 +31,7 @@ class Package(BinaryPackageBase):
            shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
         else:
            shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
-        utils.copyFile(os.path.join(self.packageDir(),"msys.bat"),os.path.join(self.rootdir,"dev-utils","bin","msys.bat"))
+        utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","msys.bat"),"python %KDEROOT%\emerge\bin\shells.py")
         return True
     
     def qmerge(self):
@@ -45,4 +45,3 @@ class Package(BinaryPackageBase):
                  self.shell.execute(".", "pacman -Sy --noconfirm --force") and
                  self.shell.execute(".", "pacman -S base-devel --noconfirm --force --needed") and
             utils.system("autorebase.bat", cwd = msysDir) )
-    
