@@ -4,8 +4,8 @@ from EmergeConfig import *
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/oxygen-icons'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets['gitHEAD'] = '[git]kde:oxygen-icons'
+        self.defaultTarget = 'gitHEAD'
         self.shortDescription = "icons and bitmaps for the oxygen style"
 
     def setDependencies( self ):
