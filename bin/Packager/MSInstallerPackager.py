@@ -138,7 +138,7 @@ class MSInstallerPackager( CollectionPackagerBase ):
     def createPackage( self ):
         """ create a package """
         print("packaging using the MSInstallerPackager")
-        
+
         self.internalCreatePackage()
 
         self.generateMSInstaller()
