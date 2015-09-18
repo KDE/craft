@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs/libxml2'] = 'default'
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

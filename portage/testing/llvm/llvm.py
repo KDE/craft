@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from BuildSystem import CMakeBuildSystem
 import info
 
 class subinfo(info.infoclass):
@@ -22,7 +21,7 @@ class subinfo(info.infoclass):
         self.options.configure.defines = '-DLLVM_TARGETS_TO_BUILD="X86"'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libvorbis'] = 'default'
         self.dependencies['win32libs/openal-soft'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'

@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/libidn'] = 'default'

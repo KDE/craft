@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '20100211'
 
     def setDependencies( self ):
-        self.dependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
 
 class Package(BinaryPackageBase):
   def __init__(self):
