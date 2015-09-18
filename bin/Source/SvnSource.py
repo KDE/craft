@@ -193,7 +193,7 @@ class SvnSource (VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if utils.verbose() < 2 and not emergeSettings.getboolean("General", "KDESVNVERBOSE",False):
+        if utils.verbose() < 2 and not emergeSettings.getboolean("General", "KDESVNVERBOSE",True):
             option += " --quiet"
 
         self.setProxy()
