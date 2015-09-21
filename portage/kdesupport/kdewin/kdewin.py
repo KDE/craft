@@ -34,5 +34,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
         if compiler.isMinGW_W32():
           self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
+        if compiler.isMinGW():
+            self.subinfo.options.configure.defines += ' -DKDEWIN_DEFINITIONS="-DKDEWIN_NO_LOCALTIME_R -DKDEWIN_NO_GMTIME_R" '
 
 
