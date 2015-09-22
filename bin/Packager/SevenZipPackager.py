@@ -16,8 +16,8 @@ from Packager.PackagerBase import *
 
 class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
-    def __init__(self):
-        PackagerBase.__init__( self )
+    def __init__( self, initialized = False ):
+        if not initialized: PackagerBase.__init__( self )
         fileName = "bin\\7za.exe"
         self.packagerExe = None
         for directory in [".", "dev-utils", "release", "debug"]:

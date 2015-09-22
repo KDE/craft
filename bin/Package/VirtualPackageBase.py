@@ -55,7 +55,7 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
 # from PackagerBase:
     def createPackage( self ):
         for dep in self.subinfo.dependencies:
-            category,package = dep.split("/")            
+            category,package = dep.split( "/" )
             if not portage.getPackageInstance(category,package).createPackage():
                 return False
         return True

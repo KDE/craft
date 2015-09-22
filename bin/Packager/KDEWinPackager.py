@@ -11,8 +11,8 @@ import compiler
 
 class KDEWinPackager (PackagerBase):
     """Packager for KDEWin installer"""
-    def __init__(self):
-        PackagerBase.__init__( self )
+    def __init__( self, initialized = False ):
+        if not initialized: PackagerBase.__init__( self )
         fileName = "bin\\kdewin-packager.exe"
         self.packagerExe = None
         self.useDebugPackages = False
