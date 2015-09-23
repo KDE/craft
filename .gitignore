@@ -17,3 +17,9 @@ test.outlog
 
 # pycharm
 .idea/workspace.xml
+
+# kdevelop
+.kdev4/
+.kdev5/
+*.kdev4
+*.kdev5
