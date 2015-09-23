@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
-        self.buildDependencies['gnuwin32/bison'] = 'default'
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
 
     def setTargets( self ):
         for ver in ['5.6.26']:
@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
+        self.supportsNinja = False
         # both examples and tests can be run here
         self.subinfo.options.configure.defines = "-DWITH_UNIT_TESTS=OFF"
         #self.subinfo.options.configure.testDefine = "-DBUILD_tests=ON  -DBUILD_examples=ON"
