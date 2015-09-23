@@ -9,7 +9,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['frameworks/attica'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
-        self.dependencies['frameworks/kapidox'] = 'default'
+        # kapidox doesn't work as we are not tied to a python interpreter / library
+        #self.dependencies['frameworks/kapidox'] = 'default'
         self.dependencies['frameworks/kcodecs'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kcoreaddons'] = 'default'
