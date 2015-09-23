@@ -25,12 +25,8 @@ class PackageMSys(AutoToolsPackageBase):
 
 
 if compiler.isMinGW():
-    class Package(PackageMSys):
-        def __init__( self ):
-            PackageMSys.__init__( self )
+    class Package(PackageMSys): pass
 else:
-    class Package(VirtualPackageBase):
-        def __init__( self ):
-            VirtualPackageBase.__init__( self )
+    class Package(VirtualPackageBase): pass
             
 

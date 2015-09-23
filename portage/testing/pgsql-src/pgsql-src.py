@@ -35,7 +35,7 @@ class PackageMSVC( CMakePackageBase ):
     def compile( self ):
         self.enterSourceDir()
         os.chdir( r"src\tools\msvc" )
-        
+
         # write the local config file which includes all the paths to the libraries
         f = open( "config.pl", "wb+" )
         f.write( """# configuration written by emerge\n"""
@@ -65,13 +65,8 @@ class PackageMSys( AutoToolsPackageBase ):
 
 #        self.buildInSource=True
 
-      
+
 if compiler.isMinGW():
-    class Package( PackageMSys ):
-        def __init__( self ):
-            PackageMSys.__init__( self )
+    class Package( PackageMSys ): pass
 else:
-    class Package( PackageMSVC ):
-        def __init__( self ):
-            PackageMSVC.__init__( self )
-            
+    class Package( PackageMSVC ): pass

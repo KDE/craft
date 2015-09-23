@@ -19,7 +19,6 @@ class subinfo(info.infoclass):
         if compiler.isMSVC2015() or compiler.isMinGW():
             self.patchToApply['55.1'] = ("icu-20150414.diff", 1)
             self.defaultTarget = '55.1'
-            
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -47,7 +46,7 @@ class PackageCMake(CMakePackageBase):
             toolsetSwitches = "/property:PlatformToolset=v110"
         elif compiler.isMSVC2013():
             toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
-          
+
         return utils.system("msbuild /t:Rebuild \"%s\" /p:Configuration=%s %s" %
                 (os.path.join(self.sourceDir(), "allinone", "allinone.sln"), bt, toolsetSwitches)
         )
@@ -84,11 +83,7 @@ class PackageMSys(AutoToolsPackageBase):
         return True
 
 if compiler.isMinGW():
-    class Package(PackageMSys):
-        def __init__( self ):
-            PackageMSys.__init__( self )
+    class Package(PackageMSys): pass
 else:
-    class Package(PackageCMake):
-        def __init__( self ):
-            PackageCMake.__init__( self )
+    class Package(PackageCMake): pass
 

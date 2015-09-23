@@ -138,7 +138,7 @@ class PackageMSys(AutoToolsPackageBase):
     def make(self, dummyBuildType=None):
         return self.shell.execute(self.sourceDir(), self.makeProgram, "depend") and \
                AutoToolsPackageBase.make(self, dummyBuildType)
-        
+
     def install(self):
         self.enterSourceDir()
         self.shell.execute(self.sourceDir(), self.makeProgram,
@@ -154,10 +154,6 @@ class PackageMSys(AutoToolsPackageBase):
 
 
 if compiler.isMinGW():
-    class Package(PackageMSys):
-        def __init__(self):
-            PackageMSys.__init__(self)
+    class Package(PackageMSys): pass
 else:
-    class Package(PackageCMake):
-        def __init__(self):
-            PackageCMake.__init__(self)
+    class Package(PackageCMake): pass
