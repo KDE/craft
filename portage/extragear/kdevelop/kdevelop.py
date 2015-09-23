@@ -34,8 +34,9 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/kxmlgui' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
         self.dependencies[ 'data/hicolor-icon-theme'] = "default"
-        # krunner is an optional dependency now
-        #self.dependencies[ 'frameworks/krunner' ] = 'default'
+        if self.options.features.fullplasma:
+            self.dependencies[ 'frameworks/krunner' ] = 'default'
+            self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
 
 
