@@ -49,8 +49,8 @@ diff -Nru -x '*~' gloox-1.0.13.orig/cmake/modules/FindIDN.cmake gloox-1.0.13/cma
 \ Kein Zeilenumbruch am Dateiende.
 diff -Nru -x '*~' gloox-1.0.13.orig/CMakeLists.txt gloox-1.0.13/CMakeLists.txt
 --- gloox-1.0.13.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ gloox-1.0.13/CMakeLists.txt	2015-04-08 01:04:09.072804600 +0200
-@@ -0,0 +1,287 @@
++++ gloox-1.0.13/CMakeLists.txt	2015-04-08 10:04:49.200053300 +0200
+@@ -0,0 +1,304 @@
 +project(gloox)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -192,6 +192,23 @@ diff -Nru -x '*~' gloox-1.0.13.orig/CMakeLists.txt gloox-1.0.13/CMakeLists.txt
 +    util.h
 +    connectiontlsserver.h
 +    compressiondefault.h
++    atomicrefcount.h
++    linklocalmanager.h
++    linklocalhandler.h
++    linklocalclient.h
++    linklocal.h
++    forward.h
++    jinglesession.h
++    jinglecontent.h
++    jingleplugin.h
++    jinglesessionhandler.h
++    jinglesessionmanager.h
++    carbons.h
++    jinglepluginfactory.h
++    jingleiceudp.h
++    jinglefiletransfer.h
++    iodata.h
++    adhocplugin.h
 +)
 +
 +set(libgloox_FILES 
@@ -510,6 +527,11 @@ diff -Nru -x '*~' gloox-1.0.13.orig/src/mutex.cpp gloox-1.0.13/src/mutex.cpp
  
  #ifdef _WIN32_WCE
 diff -Nru -x '*~' gloox-1.0.13.orig/src/test.txt gloox-1.0.13/src/test.txt
+--- gloox-1.0.13.orig/src/test.txt	1970-01-01 01:00:00.000000000 +0100
++++ gloox-1.0.13/src/test.txt	2015-04-08 00:06:43.474727600 +0200
+@@ -0,0 +1 @@
++-DADHOC_COMMANDS_TEST=1 -DADHOC_TEST=1 -DCLIENT_TEST=1 -DCLIENTBASE_TEST=1 -DDISCO_INFO_TEST=1 -DDISCO_ITEMS_TEST=1 -DDISCO_TEST=1 -DFLEXOFF_TEST=1 -DINBANDBYTESTREAM_TEST=1 -DIQ_TEST=1 -DJINGLE_TEST=1 -DLASTACTIVITY_TEST=1 -DMESSAGE_TEST=1 -DMUCROOM_TEST=1 -DNONSASLAUTH_TEST=1 -DPRESENCE_TEST=1 -DPRIVATEXML_TEST=1 -DPUBSUBMANAGER_TEST=1 -DREGISTRATION_TEST=1 -DROSTERMANAGER_TEST=1 -DSEARCH_TEST=1 -DSIMANAGER_TEST=1 -DSOCKS5BYTESTREAMMANAGER_TEST=1 -DSUBSCRIPTION_TEST=1 -DUNIQUEMUCROOM_TEST=1
+Dateien gloox-1.0.13.orig/src/tests/.generate_subtargets.py.swp und gloox-1.0.13/src/tests/.generate_subtargets.py.swp sind verschieden.
 diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/adhoc/CMakeLists.txt gloox-1.0.13/src/tests/adhoc/CMakeLists.txt
 --- gloox-1.0.13.orig/src/tests/adhoc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ gloox-1.0.13/src/tests/adhoc/CMakeLists.txt	2015-04-08 01:05:26.446230100 +0200
@@ -700,13 +722,15 @@ diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/clientbase/CMakeLists.txt gloox-1.
 diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/CMakeLists.txt gloox-1.0.13/src/tests/CMakeLists.txt
 --- gloox-1.0.13.orig/src/tests/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
 +++ gloox-1.0.13/src/tests/CMakeLists.txt	2015-04-08 00:28:45.854363400 +0200
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,9 @@
 +file(GLOB_RECURSE test_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *_test.cpp)
 +add_definitions(-DGLOOX_STATIC -DADHOC_COMMANDS_TEST=1 -DADHOC_TEST=1 -DCLIENT_TEST=1 -DCLIENTBASE_TEST=1 -DDISCO_INFO_TEST=1 -DDISCO_ITEMS_TEST=1 -DDISCO_TEST=1 -DFLEXOFF_TEST=1 -DINBANDBYTESTREAM_TEST=1 -DIQ_TEST=1 -DJINGLE_TEST=1 -DLASTACTIVITY_TEST=1 -DMESSAGE_TEST=1 -DMUCROOM_TEST=1 -DNONSASLAUTH_TEST=1 -DPRESENCE_TEST=1 -DPRIVATEXML_TEST=1 -DPUBSUBMANAGER_TEST=1 -DREGISTRATION_TEST=1 -DROSTERMANAGER_TEST=1 -DSEARCH_TEST=1 -DSIMANAGER_TEST=1 -DSOCKS5BYTESTREAMMANAGER_TEST=1 -DSUBSCRIPTION_TEST=1 -DUNIQUEMUCROOM_TEST=1)
 +include_directories(${CMAKE_CURRENT_BINARY_DIR})
 +foreach(_test ${test_files})
 +    string(REGEX REPLACE "([^/]*)/([^\\.]*).cpp" "\\1" _testname ${_test})
-+    add_subdirectory(${_testname})
++#    if(NOT _testname MATCHES "(client)")
++        add_subdirectory(${_testname})
++#    endif()
 +endforeach()
 diff -Nru -x '*~' gloox-1.0.13.orig/src/tests/connectionbosh/CMakeLists.txt gloox-1.0.13/src/tests/connectionbosh/CMakeLists.txt
 --- gloox-1.0.13.orig/src/tests/connectionbosh/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
@@ -1948,6 +1972,15 @@ diff -Nru -x '*~' gloox-1.0.13.orig/src/tlsopensslserver.h gloox-1.0.13/src/tlso
 diff -Nru -x '*~' gloox-1.0.13.orig/src/tlsschannel.cpp gloox-1.0.13/src/tlsschannel.cpp
 --- gloox-1.0.13.orig/src/tlsschannel.cpp	2015-02-01 00:02:28.000000000 +0100
 +++ gloox-1.0.13/src/tlsschannel.cpp	2015-04-07 15:44:42.256067700 +0200
+@@ -13,7 +13,7 @@
+ #include "tlsschannel.h"
+ 
+ #ifdef HAVE_WINTLS
+-
++#include <wincrypt.h>
+ #include <stdio.h> // just for debugging output
+ 
+ namespace gloox
 @@ -661,12 +661,14 @@
          case CALG_3DES:
            m_certInfo.cipher = "3DES";
