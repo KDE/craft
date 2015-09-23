@@ -33,8 +33,8 @@ The packager used can be decided at runtime
         else:
             """ the default !!! """
             TypePackager.__bases__ = ( SevenZipPackager, )
+        TypePackager.__bases__[ 0 ].__init__( self, True )
 
     def createPackage( self ):
         result = False
-        TypePackager.__bases__[ 0 ].__init__( self, True )
         return TypePackager.__bases__[ 0 ].createPackage( self )
