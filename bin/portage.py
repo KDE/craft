@@ -277,7 +277,7 @@ class Portage(object):
 
         for cat in list(self.categories.keys()):
             if package in self.categories[ cat ]:
-                utils.debug( "found: category %s for package %s" % ( cat, package ), 1 )
+                utils.debug( "getCategory: found category %s for package %s" % ( cat, package ), 3 )
                 return cat
         return False
 
