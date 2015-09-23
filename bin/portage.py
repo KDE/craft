@@ -14,10 +14,11 @@ class PortageCache(object):
     _rootDirCache = dict()
 
 class PortageException(Exception,PackageObjectBase):
-    def __init__(self, message, category, package ):
+    def __init__(self, message, category, package , exception = None):
         Exception.__init__(self, message)
         subpackage, package = getSubPackage(category,package)
         PackageObjectBase.__init__(self,category,subpackage,package)
+        self.exception = exception
 
     def __str__(self):
         return "%s failed: %s" % (PackageObjectBase.__str__(self),Exception.__str__(self))
@@ -339,8 +340,8 @@ class Portage(object):
                     loader = importlib.machinery.SourceFileLoader(modulename, fileName)
                     try:
                         mod = loader.load_module()
-                    except:
-                        raise PortageException("Failed to load file %s" % fileName, category, package)
+                    except Exception as e:
+                        raise PortageException("Failed to load file %s" % fileName, category, package, e)
                 if not mod is None:
                     subpackage, package = getSubPackage( category, package )
                     self._CURRENT_MODULE  = ( fileName, category,subpackage, package, mod )

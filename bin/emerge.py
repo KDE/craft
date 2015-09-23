@@ -438,6 +438,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
+        utils.debug(e.exception, 1)
         utils.error(e)
     except Exception as e:
         print( e )
