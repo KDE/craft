@@ -27,7 +27,5 @@ class Package(CMakePackageBase):
             self.subinfo.options.configure.defines += (
                     " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
                     " -DDATABASE_BACKEND=SQLITE " )
-        if not self.subinfo.options.features.nepomuk:
-            self.subinfo.options.configure.defines += " -DWITH_SOPRANO=FALSE"
 
 
