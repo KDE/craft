@@ -70,11 +70,11 @@ class MSIFragmentPackager( PackagerBase ):
                 currentFile.setAttribute( "Source", os.path.join( "$(var.%sImageDir)" % self.package, relDir, _f ) )
                 currentComponent.appendChild( currentFile )
 
-        #out = open( self.outfile, 'w' )
-        #wxs.writexml( out, "", "    ", "\n", encoding = "utf-8" )
-        #out.close()
+        out = open( self.outfile, 'w' )
+        wxs.writexml( out, "", "    ", "\n", encoding = "utf-8" )
+        out.close()
 
-        #utils.system( "candle -o %s -d%sImageDir=%s %s" % ( self.objfile, self.package, self.imageDir(), self.outfile ) )
+        utils.system( "candle -o %s -d%sImageDir=%s %s" % ( self.objfile, self.package, self.imageDir(), self.outfile ) )
 
 
     def createPackage( self ):
