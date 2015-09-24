@@ -31,8 +31,8 @@ class MSIFragmentPackager( PackagerBase ):
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
         utils.debug( "MSIFragmentPackager __init__", 2 )
-        self.outfile = os.path.join( self.packageDestinationDir(), "%s.wxs" % self.package )
-        self.objfile = self.outfile.replace( "wxs", "wix" ) + "obj"
+        self.outDestination = self.packageDestinationDir()
+        self.objectFiles = []
 
 
     def generateFragment( self ):
@@ -70,11 +70,14 @@ class MSIFragmentPackager( PackagerBase ):
                 currentFile.setAttribute( "Source", os.path.join( "$(var.%sImageDir)" % self.package, relDir, _f ) )
                 currentComponent.appendChild( currentFile )
 
-        out = open( self.outfile, 'w' )
+        outfile = os.path.join( self.outDestination, "%s.wxs" % self.package )
+        out = open( outfile, 'w' )
         wxs.writexml( out, "", "    ", "\n", encoding = "utf-8" )
         out.close()
+        objfile = outfile.replace(".wxs", ".wixobj")
 
-        utils.system( "candle -o %s -d%sImageDir=%s %s" % ( self.objfile, self.package, self.imageDir(), self.outfile ) )
+        utils.system( "candle -o %s -d%sImageDir=%s %s" % ( objfile, self.package, self.imageDir(), outfile ) )
+        self.objectFiles.append( objfile )
 
 
     def createPackage( self ):
