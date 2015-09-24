@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Name='frameworks SDK' Id='bf3b68f5-6ef2-498d-ba65-4ef819d5808f' UpgradeCode='b89e7ce6-80d5-4f09-91c7-afa6925236e0'
+    Language='1033' Codepage='1252' Version='1.0.0' Manufacturer='The KDE Windows Team'>
+
+    <Package Id='*' Keywords='Installer'
+      Description="frameworks SDK Installer"
+      Comments='frameworks SDK installer' Manufacturer='The KDE Windows Team'
+      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+        <Directory Id='INSTALLDIR' Name='KF5'>
+        </Directory>
+    </Directory>
+
+    <Feature Id='Complete' Title='KDE Frameworks SDK' Description='The complete package.'
+      Display='expand' Level='1' ConfigurableDirectory='INSTALLDIR'>
+      <Feature Id='Dependencies' Title='the 3rdparty dependencies' Description='the 3rdparty dependencies' Display='hidden' Level='1'>
+${dependenciesCode}      </Feature>
+      <Feature Id='Qt5Frameworks' Title='Qt5 Frameworks' Description='The KDE build of Qt5' Level='1'>
+${qtFrameworksCode}      </Feature>
+      <Feature Id='KF5Frameworks' Title='KF5 Frameworks' Description='The KDE Frameworks' Level='1'>
+${kfFrameworksCode}      </Feature>
+    </Feature>
+
+    <UIRef Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+${iconCode}
+
+    <Icon Id="test_package.ico" SourceFile="test-package.ico" />
+    <Property Id="ARPPRODUCTICON" Value="test_package.ico" />
+  </Product>
+</Wix>
