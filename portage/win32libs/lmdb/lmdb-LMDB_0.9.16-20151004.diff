@@ -1,0 +1,433 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/CMakeLists.txt lmdb-LMDB_0.9.16/libraries/liblmdb/CMakeLists.txt
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/CMakeLists.txt	2015-10-04 22:52:27.947936800 +0200
+@@ -0,0 +1,72 @@
++project(liblmdb)
++
++cmake_minimum_required(VERSION 2.8)
++
++option(BUILD_TESTS "build unittests" ON)
++option(BUILD_TOOLS "build mdb tools" ON)
++option(BUILD_STATIC "build a static library" ON)
++option(BUILD_SHARED "build a shared library" ON)
++
++if(BUILD_TESTS)
++    enable_testing()
++endif()
++
++set(mdb_SRCS
++    mdb.c
++    midl.c
++)
++
++set(binarylist
++    mdb_stat
++    mdb_copy
++    mdb_dump
++    mdb_load
++)
++set(testlist
++    mtest
++    mtest2
++    mtest3
++    mtest4
++    mtest5
++)
++
++if(MSVC)
++    add_definitions(-wd4996)
++endif()
++
++if(WIN32)
++    set(mdb_SRCS ${mdb_SRCS} liblmdb.def)
++endif()
++
++set(mdb_TARGETS)
++if(BUILD_STATIC)
++    add_library(mdb-static ${mdb_SRCS})
++    set(mdb_TARGETS ${mdb_TARGETS} mdb-static)
++endif()
++if(BUILD_SHARED)
++    add_library(mdb SHARED ${mdb_SRCS})
++    set(mdb_TARGETS ${mdb_TARGETS} mdb)
++endif()
++
++if(BUILD_TOOLS)
++    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
++    foreach(_binary ${binarylist})
++        add_executable(${_binary} ${_binary}.c getopt.c)
++        target_link_libraries(${_binary} mdb-static)
++        set(mdb_TARGETS ${mdb_TARGETS} ${_binary})
++    endforeach()
++endif()
++
++install(TARGETS ${mdb_TARGETS} RUNTIME DESTINATION bin
++                               LIBRARY DESTINATION lib
++                               ARCHIVE DESTINATION lib)
++
++install(FILES lmdb.h DESTINATION include)
++if(BUILD_TESTS)
++    foreach(_test ${testlist})
++        add_executable(${_test} ${_test}.c)
++        target_link_libraries(${_test} mdb-static)
++        add_test(NAME ${_test}
++        COMMAND "${CMAKE_COMMAND}" -DCMD=${_test} -P ${CMAKE_CURRENT_SOURCE_DIR}/runtests.cmake)
++    endforeach()
++endif()
+\ No newline at end of file
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.c lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.c	1970-01-01 01:00:00.000000000 +0100
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.c	2015-10-01 13:40:46.097912200 +0200
+@@ -0,0 +1,117 @@
++/*
++ * getopt.c --
++ *
++ *      Standard UNIX getopt function.  Code is from BSD.
++ *
++ * Copyright (c) 1987-2002 The Regents of the University of California.
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ * A. Redistributions of source code must retain the above copyright notice,
++ *    this list of conditions and the following disclaimer.
++ * B. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution.
++ * C. Neither the names of the copyright holders nor the names of its
++ *    contributors may be used to endorse or promote products derived from this
++ *    software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
++ * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/* #if !defined(lint)
++ * static char sccsid[] = "@(#)getopt.c 8.2 (Berkeley) 4/2/94";
++ * #endif
++ */
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "getopt.h"
++
++int     opterr = 1,             /* if error message should be printed */
++        optind = 1,             /* index into parent argv vector */
++        optopt,                 /* character checked for validity */
++        optreset;               /* reset getopt */
++char    *optarg;                /* argument associated with option */
++
++#define BADCH   (int)'?'
++#define BADARG  (int)':'
++#define EMSG    ""
++
++/*
++ * getopt --
++ *      Parse argc/argv argument vector.
++ */
++int
++getopt( int nargc,
++            char * const *nargv,
++        const char *ostr)
++{
++        static char *place = EMSG;              /* option letter processing */
++        char *oli;                              /* option letter list index */
++
++        if (optreset || !*place) {              /* update scanning pointer */
++                optreset = 0;
++                if (optind >= nargc || *(place = nargv[optind]) != '-') {
++                        place = EMSG;
++                        return (EOF);
++                }
++                if (place[1] && *++place == '-') {      /* found "--" */
++                        ++optind;
++                        place = EMSG;
++                        return (EOF);
++                }
++        }                                       /* option letter okay? */
++        if ((optopt = (int)*place++) == (int)':' ||
++            !(oli = (char*) strchr(ostr, optopt))) {
++                /*
++                 * if the user didn't specify '-' as an option,
++                 * assume it means EOF.
++                 */
++                 if (optopt == (int)'-')
++                        return (EOF);
++                if (!*place)
++                        ++optind;
++                 if (opterr && *ostr != ':')
++                         (void)fprintf(stderr,
++                             "illegal option -- %c\n", optopt);
++                 return (BADCH);
++         }
++         if (*++oli != ':') {                    /* don't need argument */
++                 optarg = NULL;
++                if (!*place)
++                        ++optind;
++        }
++        else {                                  /* need an argument */
++                if (*place)                     /* no white space */
++                        optarg = place;
++                else if (nargc <= ++optind) {   /* no arg */
++                        place = EMSG;
++                        if (*ostr == ':')
++                                return (BADARG);
++                        if (opterr)
++                                (void)fprintf(stderr,
++                                    "option requires an argument -- %c\n",
++                                     optopt);
++                        return (BADCH);
++                }
++                else                            /* white space */
++                        optarg = nargv[optind];
++                place = EMSG;
++                ++optind;
++        }
++        return (optopt);                        /* dump back option letter */
++}
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.h lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.h
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.h	1970-01-01 01:00:00.000000000 +0100
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.h	2015-10-01 14:25:15.400587500 +0200
+@@ -0,0 +1,51 @@
++#ifndef _HAD_GETOPT_H
++#define _HAD_GETOPT_H
++
++/*
++  getopt.h -- header for getopt() replacement function
++  Copyright (C) 1999-2011 Dieter Baron and Thomas Klausner
++
++  This file is part of libzip, a library to manipulate ZIP archives.
++  The authors can be contacted at <libzip@nih.at>
++
++  Redistribution and use in source and binary forms, with or without
++  modification, are permitted provided that the following conditions
++  are met:
++  1. Redistributions of source code must retain the above copyright
++     notice, this list of conditions and the following disclaimer.
++  2. Redistributions in binary form must reproduce the above copyright
++     notice, this list of conditions and the following disclaimer in
++     the documentation and/or other materials provided with the
++     distribution.
++  3. The names of the authors may not be used to endorse or promote
++     products derived from this software without specific prior
++     written permission.
++
++  THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS
++  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
++  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++  IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++*/
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++extern char *optarg;
++extern int optind;
++extern int opterr;
++
++extern int getopt(int, char * const *, const char *);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _HAD_GETOPT_H */
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/liblmdb.def lmdb-LMDB_0.9.16/libraries/liblmdb/liblmdb.def
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/liblmdb.def	1970-01-01 01:00:00.000000000 +0100
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/liblmdb.def	2015-10-04 22:51:18.518965700 +0200
+@@ -0,0 +1,71 @@
++LIBRARY "liblmdb.dll"
++EXPORTS
++mdb_cmp
++mdb_cursor_close
++mdb_cursor_count
++mdb_cursor_dbi
++mdb_cursor_del
++mdb_cursor_get
++mdb_cursor_open
++mdb_cursor_put
++mdb_cursor_renew
++mdb_cursor_txn
++mdb_dbi_close
++mdb_dbi_flags
++mdb_dbi_open
++mdb_dcmp
++mdb_del
++mdb_drop
++mdb_env_close
++mdb_env_copy
++mdb_env_copy2
++mdb_env_copyfd
++mdb_env_copyfd2
++mdb_env_create
++mdb_env_get_fd
++mdb_env_get_flags
++mdb_env_get_maxkeysize
++mdb_env_get_maxreaders
++mdb_env_get_path
++mdb_env_get_userctx
++mdb_env_info
++mdb_env_open
++mdb_env_set_assert
++mdb_env_set_flags
++mdb_env_set_mapsize
++mdb_env_set_maxdbs
++mdb_env_set_maxreaders
++mdb_env_set_userctx
++mdb_env_stat
++mdb_env_sync
++mdb_get
++mdb_mid2l_append
++mdb_mid2l_insert
++mdb_mid2l_search
++mdb_midl_alloc
++mdb_midl_append
++mdb_midl_append_list
++mdb_midl_append_range
++mdb_midl_free
++mdb_midl_need
++mdb_midl_search
++mdb_midl_shrink
++mdb_midl_sort
++mdb_midl_xmerge
++mdb_put
++mdb_reader_check
++mdb_reader_list
++mdb_set_compare
++mdb_set_dupsort
++mdb_set_relctx
++mdb_set_relfunc
++mdb_stat
++mdb_strerror
++mdb_tls_cbp DATA
++mdb_txn_abort
++mdb_txn_begin
++mdb_txn_commit
++mdb_txn_env
++mdb_txn_renew
++mdb_txn_reset
++mdb_version
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb.c lmdb-LMDB_0.9.16/libraries/liblmdb/mdb.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb.c	2015-08-14 02:00:38.000000000 +0200
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/mdb.c	2015-10-01 13:26:24.081607700 +0200
+@@ -55,6 +55,7 @@
+ # ifndef SSIZE_MAX
+ #  define SSIZE_MAX	INT_MAX
+ # endif
++#define ssize_t SSIZE_T
+ #endif
+ #else
+ #include <sys/types.h>
+@@ -96,7 +97,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <time.h>
++#ifndef _WIN32
+ #include <unistd.h>
++#endif
+ 
+ #if defined(__sun) || defined(ANDROID)
+ /* Most platforms have posix_memalign, older may only have memalign */
+@@ -229,7 +232,7 @@
+ #define pthread_mutex_lock(x)	WaitForSingleObject(*x, INFINITE)
+ #define pthread_cond_signal(x)	SetEvent(*x)
+ #define pthread_cond_wait(cond,mutex)	do{SignalObjectAndWait(*mutex, *cond, INFINITE, FALSE); WaitForSingleObject(*mutex, INFINITE);}while(0)
+-#define THREAD_CREATE(thr,start,arg)	thr=CreateThread(NULL,0,start,arg,0,NULL)
++#define THREAD_CREATE(thr,start,arg)	thr=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)start,arg,0,NULL)
+ #define THREAD_FINISH(thr)	WaitForSingleObject(thr, INFINITE)
+ #define LOCK_MUTEX_R(env)	pthread_mutex_lock(&(env)->me_rmutex)
+ #define UNLOCK_MUTEX_R(env)	pthread_mutex_unlock(&(env)->me_rmutex)
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_copy.c lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_copy.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_copy.c	2015-08-14 02:00:38.000000000 +0200
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_copy.c	2015-10-01 14:22:15.830316700 +0200
+@@ -20,6 +20,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <signal.h>
++#ifndef _WIN32
++#include <unistd.h>
++#endif
+ #include "lmdb.h"
+ 
+ static void
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_dump.c lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_dump.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_dump.c	2015-08-14 02:00:38.000000000 +0200
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_dump.c	2015-10-01 14:21:15.252851900 +0200
+@@ -16,7 +16,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
++#ifndef _WIN32
+ #include <unistd.h>
++#else
++#include "getopt.h"
++#endif
+ #include <signal.h>
+ #include "lmdb.h"
+ 
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_load.c lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_load.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_load.c	2015-08-14 02:00:38.000000000 +0200
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_load.c	2015-10-01 14:21:29.738680400 +0200
+@@ -16,7 +16,11 @@
+ #include <errno.h>
+ #include <string.h>
+ #include <ctype.h>
++#ifndef _WIN32
+ #include <unistd.h>
++#else
++#include "getopt.h"
++#endif
+ #include "lmdb.h"
+ 
+ #define PRINT	1
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_stat.c lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_stat.c
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/mdb_stat.c	2015-08-14 02:00:38.000000000 +0200
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/mdb_stat.c	2015-10-01 14:26:22.411420300 +0200
+@@ -14,7 +14,13 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifndef _WIN32
+ #include <unistd.h>
++#else
++#include <windows.h>
++#include "getopt.h"
++#define ssize_t SSIZE_T
++#endif
+ #include "lmdb.h"
+ 
+ #ifdef	_WIN32
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/runtests.cmake lmdb-LMDB_0.9.16/libraries/liblmdb/runtests.cmake
+--- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/runtests.cmake	1970-01-01 01:00:00.000000000 +0100
++++ lmdb-LMDB_0.9.16/libraries/liblmdb/runtests.cmake	2015-10-01 22:14:08.183607200 +0200
+@@ -0,0 +1,11 @@
++# test script for cmake
++execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory testdb)
++execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory testdb)
++execute_process(COMMAND ${CMD} RESULT_VARIABLE CMD_RESULT)
++if(CMD_RESULT)
++    message(FATAL_ERROR "Error running ${CMD}")
++endif()
++execute_process(COMMAND mdb_stat testdb RESULT_VARIABLE CMD_RESULT)
++if(CMD_RESULT)
++    message(FATAL_ERROR "Error running ${CMD}")
++endif()
