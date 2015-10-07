@@ -13,6 +13,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         
+        self.dependencies["frameworks/karchive"] = "default"
+        self.dependencies["frameworks/ki18n"] = "default"
+        
         # self.dependencies['qt-libs/poppler'] = 'default'
         self.dependencies['win32libs/taglib'] = 'default'
         self.dependencies['win32libs/exiv2'] = 'default'
