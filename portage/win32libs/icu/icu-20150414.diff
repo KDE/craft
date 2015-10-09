@@ -1,6 +1,6 @@
 diff -Nru -x '*~' icu.orig/source/io/ufile.c icu/source/io/ufile.c
 --- source.orig/io/ufile.c	2015-03-27 22:11:22.000000000 +0100
-+++ source/io/ufile.c	2015-04-14 00:35:42.934366200 +0200
++++ icu/source/io/ufile.c	2015-04-14 00:35:42.934366200 +0200
 @@ -66,7 +66,9 @@
  #if U_PLATFORM_USES_ONLY_WIN32_API
      if (0 <= result->fFileno && result->fFileno <= 2) {
@@ -14,9 +14,9 @@ diff -Nru -x '*~' icu.orig/source/io/ufile.c icu/source/io/ufile.c
          result->fFile = &_iob[_fileno(f)];
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/common/common.vcxproj icu/source/common/common.vcxproj
 --- icu.orig/source/common/common.vcxproj	2015-03-28 00:10:38.000000000 +0300
-+++ source/common/common.vcxproj	2015-08-10 16:17:25.346056100 +0300
++++ icu/source/common/common.vcxproj	2015-08-10 16:17:25.346056100 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -57,9 +57,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/common/common.vcxproj i
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/extra/uconv/uconv.vcxproj icu/source/extra/uconv/uconv.vcxproj
 --- icu.orig/source/extra/uconv/uconv.vcxproj	2015-03-28 00:10:14.000000000 +0300
-+++ source/extra/uconv/uconv.vcxproj	2015-08-10 16:17:47.891280800 +0300
++++ icu/source/extra/uconv/uconv.vcxproj	2015-08-10 16:17:47.891280800 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -91,11 +91,47 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/extra/uconv/uconv.vcxpr
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -92,7 +96,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release/uconv.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release/</AssemblerListingLocation>
+@@ -134,7 +138,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug/uconv.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
+@@ -178,7 +182,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Release/uconv.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Release/</AssemblerListingLocation>
+@@ -219,7 +223,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Debug/uconv.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/i18n/i18n.vcxproj icu/source/i18n/i18n.vcxproj
 --- icu.orig/source/i18n/i18n.vcxproj	2015-03-28 00:09:56.000000000 +0300
-+++ source/i18n/i18n.vcxproj	2015-08-10 16:17:53.868301800 +0300
++++ icu/source/i18n/i18n.vcxproj	2015-08-10 16:17:53.868301800 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -136,9 +172,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/i18n/i18n.vcxproj icu/s
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/io/io.vcxproj icu/source/io/io.vcxproj
 --- icu.orig/source/io/io.vcxproj	2015-03-28 00:11:22.000000000 +0300
-+++ source/io/io.vcxproj	2015-08-10 16:17:59.348050000 +0300
++++ icu/source/io/io.vcxproj	2015-08-10 16:17:59.348050000 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -172,9 +208,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/io/io.vcxproj icu/sourc
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/layout/layout.vcxproj icu/source/layout/layout.vcxproj
 --- icu.orig/source/layout/layout.vcxproj	2015-03-28 00:17:44.000000000 +0300
-+++ source/layout/layout.vcxproj	2015-08-10 16:18:03.308630800 +0300
++++ icu/source/layout/layout.vcxproj	2015-08-10 16:18:03.308630800 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -251,9 +287,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/layout/layout.vcxproj i
        <AssemblerListingLocation>.\x64\Release/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/layoutex/layoutex.vcxproj icu/source/layoutex/layoutex.vcxproj
 --- icu.orig/source/layoutex/layoutex.vcxproj	2015-03-28 00:17:32.000000000 +0300
-+++ source/layoutex/layoutex.vcxproj	2015-08-10 16:18:06.621492200 +0300
++++ icu/source/layoutex/layoutex.vcxproj	2015-08-10 16:18:06.621492200 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -330,60 +366,60 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/layoutex/layoutex.vcxpr
        <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/samples/cal/cal.vcxproj icu/source/samples/cal/cal.vcxproj
 --- icu.orig/source/samples/cal/cal.vcxproj	2015-03-28 00:11:06.000000000 +0300
-+++ source/samples/cal/cal.vcxproj	2015-08-10 16:28:53.880730500 +0300
++++ icu/source/samples/cal/cal.vcxproj	2015-08-10 16:28:53.880730500 +0300
 @@ -1,6 +1,6 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
-
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ 
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+ 
    <ItemGroup Label="ProjectConfigurations">
-
+ 
 @@ -41,6 +41,7 @@
    <PropertyGroup Label="Globals">
-
+ 
      <ProjectGuid>{F7659D77-09CF-4FE9-ACEE-927287AA9509}</ProjectGuid>
 +    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-
+ 
    </PropertyGroup>
-
+ 
 @@ -53,6 +54,7 @@
      <UseOfMfc>false</UseOfMfc>
-
+ 
      <CharacterSet>MultiByte</CharacterSet>
 +    <PlatformToolset>v140</PlatformToolset>
-
+ 
    </PropertyGroup>
-
+ 
 @@ -63,6 +65,7 @@
      <UseOfMfc>false</UseOfMfc>
-
+ 
      <CharacterSet>MultiByte</CharacterSet>
 +    <PlatformToolset>v140</PlatformToolset>
-
+ 
    </PropertyGroup>
-
+ 
 @@ -73,6 +76,7 @@
      <UseOfMfc>false</UseOfMfc>
-
+ 
      <CharacterSet>MultiByte</CharacterSet>
 +    <PlatformToolset>v140</PlatformToolset>
-
+ 
    </PropertyGroup>
-
+ 
 @@ -83,6 +87,7 @@
      <UseOfMfc>false</UseOfMfc>
-
+ 
      <CharacterSet>MultiByte</CharacterSet>
 +    <PlatformToolset>v140</PlatformToolset>
-
+ 
    </PropertyGroup>
-
+ 
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/samples/date/date.vcxproj icu/source/samples/date/date.vcxproj
 --- icu.orig/source/samples/date/date.vcxproj	2015-03-28 00:11:18.000000000 +0300
-+++ source/samples/date/date.vcxproj	2015-08-10 16:18:42.080127100 +0300
++++ icu/source/samples/date/date.vcxproj	2015-08-10 16:18:42.080127100 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -424,9 +460,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/samples/date/date.vcxpr
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/stubdata/stubdata.vcxproj icu/source/stubdata/stubdata.vcxproj
 --- icu.orig/source/stubdata/stubdata.vcxproj	2015-03-28 00:11:24.000000000 +0300
-+++ source/stubdata/stubdata.vcxproj	2015-08-10 16:18:45.553208500 +0300
++++ icu/source/stubdata/stubdata.vcxproj	2015-08-10 16:18:45.553208500 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -476,11 +512,29 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/stubdata/stubdata.vcxpr
        <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
        <PrecompiledHeaderOutputFile>.\x86\Debug/stubdata.pch</PrecompiledHeaderOutputFile>
        <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
+@@ -189,7 +193,7 @@
+       </ExceptionHandling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Release\stubdata.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Release/</AssemblerListingLocation>
+@@ -234,7 +238,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Debug/stubdata.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/cintltst/cintltst.vcxproj icu/source/test/cintltst/cintltst.vcxproj
 --- icu.orig/source/test/cintltst/cintltst.vcxproj	2015-03-28 00:08:46.000000000 +0300
-+++ source/test/cintltst/cintltst.vcxproj	2015-08-10 16:18:48.857276600 +0300
++++ icu/source/test/cintltst/cintltst.vcxproj	2015-08-10 16:18:48.857276600 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -521,9 +575,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/cintltst/cintltst.
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/intltest/intltest.vcxproj icu/source/test/intltest/intltest.vcxproj
 --- icu.orig/source/test/intltest/intltest.vcxproj	2015-03-28 00:09:02.000000000 +0300
-+++ source/test/intltest/intltest.vcxproj	2015-08-10 16:18:52.177950900 +0300
++++ icu/source/test/intltest/intltest.vcxproj	2015-08-10 16:18:52.177950900 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -562,6 +616,15 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/intltest/intltest.
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -89,7 +94,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug/intltest.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
 @@ -129,7 +134,7 @@
        <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
        <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -571,6 +634,15 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/intltest/intltest.
        <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
        <PrecompiledHeaderOutputFile>.\x64\Debug/intltest.pch</PrecompiledHeaderOutputFile>
        <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
+@@ -164,7 +169,7 @@
+       <PreprocessorDefinitions>U_ATTRIBUTE_DEPRECATED=;WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release/intltest.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release/</AssemblerListingLocation>
 @@ -199,7 +204,7 @@
        <PreprocessorDefinitions>U_ATTRIBUTE_DEPRECATED=;WIN64;WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
        <StringPooling>true</StringPooling>
@@ -582,9 +654,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/intltest/intltest.
        <AssemblerListingLocation>.\x64\Release/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/iotest/iotest.vcxproj icu/source/test/iotest/iotest.vcxproj
 --- icu.orig/source/test/iotest/iotest.vcxproj	2015-03-28 00:09:10.000000000 +0300
-+++ source/test/iotest/iotest.vcxproj	2015-08-10 16:18:55.554312700 +0300
++++ icu/source/test/iotest/iotest.vcxproj	2015-08-10 16:18:55.554312700 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -618,9 +690,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/iotest/iotest.vcxp
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/letest/letest.vcxproj icu/source/test/letest/letest.vcxproj
 --- icu.orig/source/test/letest/letest.vcxproj	2015-03-28 00:08:38.000000000 +0300
-+++ source/test/letest/letest.vcxproj	2015-08-10 16:18:58.986362800 +0300
++++ icu/source/test/letest/letest.vcxproj	2015-08-10 16:18:58.986362800 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -654,9 +726,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/test/letest/letest.vcxp
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/ctestfw/ctestfw.vcxproj icu/source/tools/ctestfw/ctestfw.vcxproj
 --- icu.orig/source/tools/ctestfw/ctestfw.vcxproj	2015-03-28 00:10:44.000000000 +0300
-+++ source/tools/ctestfw/ctestfw.vcxproj	2015-08-10 16:19:01.970964000 +0300
++++ icu/source/tools/ctestfw/ctestfw.vcxproj	2015-08-10 16:19:01.970964000 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -695,6 +767,24 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/ctestfw/ctestfw.v
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -92,7 +97,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release/icutest.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release/</AssemblerListingLocation>
+@@ -133,7 +138,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug/icutest.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
 @@ -175,7 +180,7 @@
        <StringPooling>true</StringPooling>
        <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -715,9 +805,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/ctestfw/ctestfw.v
        <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genbrk/genbrk.vcxproj icu/source/tools/genbrk/genbrk.vcxproj
 --- icu.orig/source/tools/genbrk/genbrk.vcxproj	2015-03-28 00:10:52.000000000 +0300
-+++ source/tools/genbrk/genbrk.vcxproj	2015-08-10 16:19:04.946773300 +0300
++++ icu/source/tools/genbrk/genbrk.vcxproj	2015-08-10 16:19:04.946773300 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -758,9 +848,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genbrk/genbrk.vcx
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genccode/genccode.vcxproj icu/source/tools/genccode/genccode.vcxproj
 --- icu.orig/source/tools/genccode/genccode.vcxproj	2015-03-28 00:10:52.000000000 +0300
-+++ source/tools/genccode/genccode.vcxproj	2015-08-10 16:19:08.483355900 +0300
++++ icu/source/tools/genccode/genccode.vcxproj	2015-08-10 16:19:08.483355900 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -801,9 +891,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genccode/genccode
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencfu/gencfu.vcxproj icu/source/tools/gencfu/gencfu.vcxproj
 --- icu.orig/source/tools/gencfu/gencfu.vcxproj	2015-03-28 00:10:52.000000000 +0300
-+++ source/tools/gencfu/gencfu.vcxproj	2015-08-10 16:19:11.491404700 +0300
++++ icu/source/tools/gencfu/gencfu.vcxproj	2015-08-10 16:19:11.491404700 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -843,9 +933,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencfu/gencfu.vcx
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencmn/gencmn.vcxproj icu/source/tools/gencmn/gencmn.vcxproj
 --- icu.orig/source/tools/gencmn/gencmn.vcxproj	2015-03-28 00:10:52.000000000 +0300
-+++ source/tools/gencmn/gencmn.vcxproj	2015-08-10 16:19:14.227860600 +0300
++++ icu/source/tools/gencmn/gencmn.vcxproj	2015-08-10 16:19:14.227860600 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -886,9 +976,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencmn/gencmn.vcx
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencnval/gencnval.vcxproj icu/source/tools/gencnval/gencnval.vcxproj
 --- icu.orig/source/tools/gencnval/gencnval.vcxproj	2015-03-28 00:10:48.000000000 +0300
-+++ source/tools/gencnval/gencnval.vcxproj	2015-08-10 16:19:17.372426100 +0300
++++ icu/source/tools/gencnval/gencnval.vcxproj	2015-08-10 16:19:17.372426100 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -929,9 +1019,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gencnval/gencnval
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gendict/gendict.vcxproj icu/source/tools/gendict/gendict.vcxproj
 --- icu.orig/source/tools/gendict/gendict.vcxproj	2015-03-28 00:10:58.000000000 +0300
-+++ source/tools/gendict/gendict.vcxproj	2015-08-10 16:19:19.812862900 +0300
++++ icu/source/tools/gendict/gendict.vcxproj	2015-08-10 16:19:19.812862900 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -965,9 +1055,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gendict/gendict.v
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gennorm2/gennorm2.vcxproj icu/source/tools/gennorm2/gennorm2.vcxproj
 --- icu.orig/source/tools/gennorm2/gennorm2.vcxproj	2015-03-28 00:10:46.000000000 +0300
-+++ source/tools/gennorm2/gennorm2.vcxproj	2015-08-10 16:19:23.732413000 +0300
++++ icu/source/tools/gennorm2/gennorm2.vcxproj	2015-08-10 16:19:23.732413000 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1000,9 +1090,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gennorm2/gennorm2
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genrb/derb.vcxproj icu/source/tools/genrb/derb.vcxproj
 --- icu.orig/source/tools/genrb/derb.vcxproj	2015-03-28 00:10:50.000000000 +0300
-+++ source/tools/genrb/derb.vcxproj	2015-08-10 16:19:26.749256900 +0300
++++ icu/source/tools/genrb/derb.vcxproj	2015-08-10 16:19:26.749256900 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1041,11 +1131,47 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genrb/derb.vcxpro
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -96,7 +101,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release_derb/derb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release_derb/</AssemblerListingLocation>
+@@ -140,7 +145,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug_derb/derb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug_derb/</AssemblerListingLocation>
+@@ -185,7 +190,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Release_derb/derb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Release_derb/</AssemblerListingLocation>
+@@ -227,7 +232,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x64\Debug_derb/derb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x64\Debug_derb/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genrb/genrb.vcxproj icu/source/tools/genrb/genrb.vcxproj
 --- icu.orig/source/tools/genrb/genrb.vcxproj	2015-03-28 00:10:50.000000000 +0300
-+++ source/tools/genrb/genrb.vcxproj	2015-08-10 16:19:30.653174500 +0300
++++ icu/source/tools/genrb/genrb.vcxproj	2015-08-10 16:19:30.653174500 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1084,6 +1210,24 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genrb/genrb.vcxpr
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -91,7 +96,7 @@
+       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release/genrb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release/</AssemblerListingLocation>
+@@ -131,7 +136,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug/genrb.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
 @@ -173,7 +178,7 @@
        <PreprocessorDefinitions>WIN64;WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
        <StringPooling>true</StringPooling>
@@ -1104,9 +1248,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/genrb/genrb.vcxpr
        <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gensprep/gensprep.vcxproj icu/source/tools/gensprep/gensprep.vcxproj
 --- icu.orig/source/tools/gensprep/gensprep.vcxproj	2015-03-28 00:10:46.000000000 +0300
-+++ source/tools/gensprep/gensprep.vcxproj	2015-08-10 16:19:34.221997000 +0300
++++ icu/source/tools/gensprep/gensprep.vcxproj	2015-08-10 16:19:34.221997000 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1140,9 +1284,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gensprep/gensprep
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gentest/gentest.vcxproj icu/source/tools/gentest/gentest.vcxproj
 --- icu.orig/source/tools/gentest/gentest.vcxproj	2015-03-28 00:10:52.000000000 +0300
-+++ source/tools/gentest/gentest.vcxproj	2015-08-10 16:19:36.926210300 +0300
++++ icu/source/tools/gentest/gentest.vcxproj	2015-08-10 16:19:36.926210300 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1183,9 +1327,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/gentest/gentest.v
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icuinfo/icuinfo.vcxproj icu/source/tools/icuinfo/icuinfo.vcxproj
 --- icu.orig/source/tools/icuinfo/icuinfo.vcxproj	2015-03-28 00:10:48.000000000 +0300
-+++ source/tools/icuinfo/icuinfo.vcxproj	2015-08-10 16:19:39.918628100 +0300
++++ icu/source/tools/icuinfo/icuinfo.vcxproj	2015-08-10 16:19:39.918628100 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1237,9 +1381,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icuinfo/icuinfo.v
        <AssemblerListingLocation>Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icuinfo/testplug.vcxproj icu/source/tools/icuinfo/testplug.vcxproj
 --- icu.orig/source/tools/icuinfo/testplug.vcxproj	2015-03-28 00:10:48.000000000 +0300
-+++ source/tools/icuinfo/testplug.vcxproj	2015-08-10 16:19:43.254933400 +0300
++++ icu/source/tools/icuinfo/testplug.vcxproj	2015-08-10 16:19:43.254933400 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1273,9 +1417,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icuinfo/testplug.
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icupkg/icupkg.vcxproj icu/source/tools/icupkg/icupkg.vcxproj
 --- icu.orig/source/tools/icupkg/icupkg.vcxproj	2015-03-28 00:10:44.000000000 +0300
-+++ source/tools/icupkg/icupkg.vcxproj	2015-08-10 16:19:45.934727300 +0300
++++ icu/source/tools/icupkg/icupkg.vcxproj	2015-08-10 16:19:45.934727300 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1327,9 +1471,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/icupkg/icupkg.vcx
        <AssemblerListingLocation>Debug/</AssemblerListingLocation>
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/makeconv/makeconv.vcxproj icu/source/tools/makeconv/makeconv.vcxproj
 --- icu.orig/source/tools/makeconv/makeconv.vcxproj	2015-03-28 00:10:50.000000000 +0300
-+++ source/tools/makeconv/makeconv.vcxproj	2015-08-10 16:19:52.440280200 +0300
++++ icu/source/tools/makeconv/makeconv.vcxproj	2015-08-10 16:19:52.440280200 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1363,9 +1507,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/makeconv/makeconv
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/pkgdata/pkgdata.vcxproj icu/source/tools/pkgdata/pkgdata.vcxproj
 --- icu.orig/source/tools/pkgdata/pkgdata.vcxproj	2015-03-28 00:10:54.000000000 +0300
-+++ source/tools/pkgdata/pkgdata.vcxproj	2015-08-10 16:19:56.232359000 +0300
++++ icu/source/tools/pkgdata/pkgdata.vcxproj	2015-08-10 16:19:56.232359000 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1399,9 +1543,9 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/pkgdata/pkgdata.v
    <ImportGroup Label="ExtensionSettings">
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/toolutil/toolutil.vcxproj icu/source/tools/toolutil/toolutil.vcxproj
 --- icu.orig/source/tools/toolutil/toolutil.vcxproj	2015-03-28 00:10:56.000000000 +0300
-+++ source/tools/toolutil/toolutil.vcxproj	2015-08-10 16:19:59.232594900 +0300
++++ icu/source/tools/toolutil/toolutil.vcxproj	2015-08-10 16:19:59.232594900 +0300
 @@ -1,5 +1,5 @@
- ï»¿<?xml version="1.0" encoding="utf-8"?>
+ ﻿<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup Label="ProjectConfigurations">
@@ -1433,6 +1577,24 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' icu.orig/source/tools/toolutil/toolutil
    </PropertyGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
+@@ -92,7 +96,7 @@
+       <StringPooling>true</StringPooling>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Release/toolutil.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Release/</AssemblerListingLocation>
+@@ -135,7 +139,7 @@
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+       <BufferSecurityCheck>true</BufferSecurityCheck>
+-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
++      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+       <PrecompiledHeaderOutputFile>.\x86\Debug/toolutil.pch</PrecompiledHeaderOutputFile>
+       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
 @@ -178,7 +182,7 @@
        <StringPooling>true</StringPooling>
        <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
