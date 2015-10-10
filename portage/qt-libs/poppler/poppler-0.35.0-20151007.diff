@@ -1,0 +1,138 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/CMakeLists.txt poppler-0.35.0/CMakeLists.txt
+--- poppler-0.35.0.orig/CMakeLists.txt	2015-08-09 19:28:07.000000000 +0300
++++ poppler-0.35.0/CMakeLists.txt	2015-10-11 19:43:29.691406800 +0300
+@@ -471,7 +471,7 @@
+ endif()
+ 
+ if(MSVC)
+-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
++add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN)
+ set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
+ add_library(poppler STATIC ${poppler_SRCS})
+ else(MSVC)
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/config.h.cmake poppler-0.35.0/config.h.cmake
+--- poppler-0.35.0.orig/config.h.cmake	2015-07-17 01:19:38.000000000 +0300
++++ poppler-0.35.0/config.h.cmake	2015-10-11 19:44:04.804880000 +0300
+@@ -221,8 +221,11 @@
+ 
+ /* MS has defined snprintf as deprecated */
+ #ifdef _MSC_VER
++#include <algorithm>
++#if _MSC_VER < 1900
+ #define snprintf _snprintf
+ #endif
++#endif
+ 
+ /* Number of bits in a file offset, on hosts where this is settable. */
+ #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/DCTStream.cc poppler-0.35.0/poppler/DCTStream.cc
+--- poppler-0.35.0.orig/poppler/DCTStream.cc	2014-02-09 18:10:32.000000000 +0300
++++ poppler-0.35.0/poppler/DCTStream.cc	2015-10-11 19:43:29.693360700 +0300
+@@ -14,6 +14,7 @@
+ //
+ //========================================================================
+ 
++#include <algorithm>
+ #include "DCTStream.h"
+ 
+ static void str_init_source(j_decompress_ptr cinfo)
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/FlateStream.cc poppler-0.35.0/poppler/FlateStream.cc
+--- poppler-0.35.0.orig/poppler/FlateStream.cc	2014-02-09 18:10:32.000000000 +0300
++++ poppler-0.35.0/poppler/FlateStream.cc	2015-10-11 19:43:29.694337600 +0300
+@@ -8,6 +8,7 @@
+ // This file is under the GPLv2 or later license
+ //
+ //========================================================================
++#include <algorithm>
+ #include "FlateStream.h"
+ FlateStream::FlateStream(Stream *strA, int predictor, int columns, int colors, int bits) :
+   FilterStream(strA)
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/Linearization.cc poppler-0.35.0/poppler/Linearization.cc
+--- poppler-0.35.0.orig/poppler/Linearization.cc	2014-02-20 02:56:36.000000000 +0300
++++ poppler-0.35.0/poppler/Linearization.cc	2015-10-11 19:43:29.695314300 +0300
+@@ -8,6 +8,7 @@
+ //
+ //========================================================================
+ 
++#include <algorithm>
+ #include "Linearization.h"
+ #include "Parser.h"
+ #include "Lexer.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/MarkedContentOutputDev.cc poppler-0.35.0/poppler/MarkedContentOutputDev.cc
+--- poppler-0.35.0.orig/poppler/MarkedContentOutputDev.cc	2014-02-09 18:10:32.000000000 +0300
++++ poppler-0.35.0/poppler/MarkedContentOutputDev.cc	2015-10-11 19:43:29.696291800 +0300
+@@ -8,6 +8,7 @@
+ //
+ //========================================================================
+ 
++#include <algorithm>
+ #include "MarkedContentOutputDev.h"
+ #include "GlobalParams.h"
+ #include "UnicodeMap.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/Sound.cc poppler-0.35.0/poppler/Sound.cc
+--- poppler-0.35.0.orig/poppler/Sound.cc	2012-12-28 03:17:03.000000000 +0300
++++ poppler-0.35.0/poppler/Sound.cc	2015-10-11 19:43:29.696291800 +0300
+@@ -17,6 +17,7 @@
+  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+  */
+ 
++#include <algorithm>
+ #include "GooString.h"
+ #include "Object.h"
+ #include "Sound.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/StructElement.cc poppler-0.35.0/poppler/StructElement.cc
+--- poppler-0.35.0.orig/poppler/StructElement.cc	2015-07-06 01:28:17.000000000 +0300
++++ poppler-0.35.0/poppler/StructElement.cc	2015-10-11 19:43:29.698245500 +0300
+@@ -15,6 +15,7 @@
+ #pragma interface
+ #endif
+ 
++#include <algorithm>
+ #include "StructElement.h"
+ #include "StructTreeRoot.h"
+ #include "GlobalParams.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/poppler/StructTreeRoot.cc poppler-0.35.0/poppler/StructTreeRoot.cc
+--- poppler-0.35.0.orig/poppler/StructTreeRoot.cc	2014-03-27 02:51:52.000000000 +0300
++++ poppler-0.35.0/poppler/StructTreeRoot.cc	2015-10-11 19:43:29.699222400 +0300
+@@ -13,6 +13,8 @@
+ #pragma interface
+ #endif
+ 
++#include <algorithm>
++
+ #include "goo/GooString.h"
+ #include "StructTreeRoot.h"
+ #include "StructElement.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/test/pdf-fullrewrite.cc poppler-0.35.0/test/pdf-fullrewrite.cc
+--- poppler-0.35.0.orig/test/pdf-fullrewrite.cc	2014-02-09 18:10:34.000000000 +0300
++++ poppler-0.35.0/test/pdf-fullrewrite.cc	2015-10-11 19:43:29.700199100 +0300
+@@ -7,6 +7,7 @@
+ //
+ //========================================================================
+ 
++#include <algorithm>
+ #include "GlobalParams.h"
+ #include "Error.h"
+ #include "Object.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/utils/HtmlFonts.h poppler-0.35.0/utils/HtmlFonts.h
+--- poppler-0.35.0.orig/utils/HtmlFonts.h	2014-02-09 18:10:35.000000000 +0300
++++ poppler-0.35.0/utils/HtmlFonts.h	2015-10-11 19:43:29.700199100 +0300
+@@ -30,6 +30,7 @@
+ 
+ #ifndef _HTML_FONTS_H
+ #define _HTML_FONTS_H
++#include <algorithm>
+ #include "goo/GooString.h"
+ #include "GfxState.h"
+ #include "CharTypes.h"
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.35.0.orig/utils/pdfunite.cc poppler-0.35.0/utils/pdfunite.cc
+--- poppler-0.35.0.orig/utils/pdfunite.cc	2014-12-23 17:51:08.000000000 +0300
++++ poppler-0.35.0/utils/pdfunite.cc	2015-10-11 19:43:29.701176600 +0300
+@@ -13,6 +13,7 @@
+ //
+ //========================================================================
+ 
++#include <algorithm>
+ #include <PDFDoc.h>
+ #include <GlobalParams.h>
+ #include "parseargs.h"
