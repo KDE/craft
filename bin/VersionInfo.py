@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # this package contains functions to easily set versions for packages like qt5 or kde
 # copyright:
-# Patrick von Reth <vonreth [AT] kde [DOT] org>
+# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 from EmergeConfig import *
 import utils

@@ -1,4 +1,4 @@
-From: Patrick von Reth <vonreth@kde.org>
+From: Hannah von Reth <vonreth@kde.org>
 Date: Mon, 18 Mar 2013 14:34:41 +0000
 Subject: disable the audio cd collection on windows, it would build but not work
 X-Git-Url: http://quickgit.kde.org/?p=amarok.git&a=commitdiff&h=a7d330ed8e78374c3117ca0c292916d269a3dd15

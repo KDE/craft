@@ -1,6 +1,6 @@
 ; basic script template for NullsoftInstallerPackager
 ;
-; Copyright 2013 Patrick von Reth <vonreth@kde.org>
+; Copyright 2013 Hannah von Reth <vonreth@kde.org>
 ; Copyright 2010 Patrick Spendrin <ps_ml@gmx.de>
 ; adapted from marble.nsi
 

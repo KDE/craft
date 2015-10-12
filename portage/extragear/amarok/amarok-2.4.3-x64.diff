@@ -1,5 +1,5 @@
 commit 5961904ec96a09d46b0c4bf143e8cb546a5586d7
-Author: Patrick von Reth <patrick.vonreth@gmail.com>
+Author: Hannah von Reth <vonreth@kde.org>
 Date:   Fri Aug 19 11:43:37 2011 +0200
 
     fixed windows x64 build

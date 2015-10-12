@@ -9,7 +9,7 @@
    
    contact: Ralf Habacker
    
-   tester: Patrick von Reth
+   tester: Hannah von Reth
    
    state: started 
           initial implementation is in trunk and could be enabled by setting the following 

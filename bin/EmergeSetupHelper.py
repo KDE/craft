@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Helper script for substitution of paths, independent of cmd or powershell
 # copyright:
-# Patrick von Reth <vonreth [AT] kde [DOT] org>
+# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 import subprocess
 import argparse

@@ -1,5 +1,5 @@
 #
-# copyright (c) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
+# copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
 
 import utils

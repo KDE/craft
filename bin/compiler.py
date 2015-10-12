@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # this package contains functions to check the current compiler
 # copyright:
-# Patrick von Reth <patrick.vonreth [AT] gmail [DOT] com>
+# Hannah von Reth <vonreth@kde.org>
 
 import os
 import subprocess

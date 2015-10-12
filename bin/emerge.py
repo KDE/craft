@@ -5,7 +5,7 @@
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
-# Patrick von Reth <vonreth [AT] kde [DOT] org>
+# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 # The minimum python version for emerge please edit here
 # if you add code that changes this requirement

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # central instance for managing settings regarding emerge
 # copyright:
-# Patrick von Reth <vonreth [AT] kde [DOT] org>
+# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 import sys
 import subprocess

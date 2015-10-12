@@ -1,5 +1,5 @@
 #
-# copyright (c) 2012 Patrick von Reth <vonreth@kde.org>
+# copyright (c) 2012 Hannah von Reth <vonreth@kde.org>
 #
 # definitions for the qt5 modules 
 
