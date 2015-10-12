@@ -1,12 +1,12 @@
 import info
-from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:kexiv2|frameworks'
+        self.versionInfo.setDefaultValues( )
+        self.svnTargets['frameworks'] = '[git]kde:libkexiv2|frameworks'
+        self.defaultTarget = 'frameworks'
         
         self.shortDescription = "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
-        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
         self.dependencies['win32libs/exiv2'] = 'default'
