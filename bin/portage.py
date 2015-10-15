@@ -123,39 +123,27 @@ def rootDirectories():
         rootDirs = [ os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" ) ]
     return rootDirs
 
-def rootDir():
-    # this function should return the portage directory, either the first set
-    # via the environment, or the default one
-    # keep this function for compat reasons
-    return rootDirectories()[0]
-
 def rootDirForCategory( category ):
+    """this function should return the portage directory where it finds the first occurance of the category
+
+throws exception if not found
+"""
     # this function should return the portage directory where it finds the
     # first occurance of a category or the default value
     for i in rootDirectories():
         if category and os.path.exists( os.path.join( i, category ) ):
             return i
-    # as a fall back return the default even if it might be wrong
-    return os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
+    utils.die( "can't find category %s" % category )
 
 def rootDirForPackage( category, package ):
-    # this function should return the portage directory where it finds the
-    # first occurance of a package or the default value
-    name = "%s/%s" % ( category,package)
+    """returns the portage directory where it finds the first occurance of this package
+"""
+    name = "%s/%s" % ( category, package )
     if not name in PortageCache._rootDirCache:
-        subpackage, package = getSubPackage( category, package )
-        if category and package:
-            if subpackage:
-                for i in rootDirectories():
-                    if os.path.exists( os.path.join( i, category, package, subpackage ) ):
-                        PortageCache._rootDirCache[name] = i
-            else:
-                for i in rootDirectories():
-                    if os.path.exists( os.path.join( i, category, package ) ):
-                        PortageCache._rootDirCache[name] = i
-        # as a fall back return the default even if it might be wrong
-        PortageCache._rootDirCache[name] = os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" )
-    return PortageCache._rootDirCache[name]
+        for i in rootDirectories():
+            if os.path.exists( os.path.join( i, category, package ) ):
+                PortageCache._rootDirCache[ name ] = i
+    return PortageCache._rootDirCache[ name ]
 
 def getFullPackage( package ):
     """tries to find a package and returns either category / subpackage / package or category / package
@@ -177,11 +165,11 @@ def getDirname( category, package ):
     subpackage, package = getSubPackage( category, package )
     if category and package:
         if subpackage:
-            return os.path.join( rootDirForPackage( category, subpackage), category, subpackage, package )
+            return os.path.join( rootDirForPackage( category, subpackage ), category, subpackage, package )
         else:
             return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
-        return ""
+        utils.die( "broken category or package %s/%s" % ( category, package ) )
 
 def getFilename( category, package ):
     """ return absolute filename for a given category, package  """
