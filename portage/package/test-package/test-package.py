@@ -57,7 +57,9 @@ class Package( VirtualPackageBase, CollectionPackagerBase ):
 
 
     def getFeatureXML( self, wxs, package, description, hidden=False ):
-        componentRoot = wxs.createElement( "Feature" )
+        if not wxs.ownerDocument: doc = wxs
+        else: doc = wxs.ownerDocument
+        componentRoot = doc.createElement( "Feature" )
 
         componentRoot.setAttribute( "Id", "%sFeature" % package.replace( '-', '_' ) )
         componentRoot.setAttribute( "Title", "%s" % package )
@@ -67,16 +69,11 @@ class Package( VirtualPackageBase, CollectionPackagerBase ):
         else: display = "collapse"
         componentRoot.setAttribute( "Display", display )
 
-        componentGroupRef = wxs.createElement( "ComponentGroupRef" )
+        componentGroupRef = doc.createElement( "ComponentGroupRef" )
         componentGroupRef.setAttribute( "Id", "%sComponentGroup" % package.replace( '-', '_' ) )
         componentRoot.appendChild( componentGroupRef )
 
-        componentlistString = StringIO()
-        componentRoot.writexml( componentlistString, " " * , "  ", "\n" )
-        s = componentlistString.getvalue()
-        componentlistString.close()
-
-        return s
+        wxs.appendChild(componentRoot)
 
     def generateDirectoryFragments( self ):
         wxs = Document()
@@ -127,19 +124,50 @@ class Package( VirtualPackageBase, CollectionPackagerBase ):
         # run heat on all image directories
         _packages = self.__getPackages()
 
-        binwxs = Document()
-        qt5wxs = Document()
-        kf5wxs = Document()
+        def generateFeature(base, id, title, description):
+            if not base.ownerDocument: base.ownerDocument = base
+            t = base.ownerDocument.createElement( "Feature" )
+            t.setAttribute( "Id", id )
+            t.setAttribute( "Title", title )
+            t.setAttribute( "Description", description )
+            t.setAttribute( "Level", "1" )
+            return t
+
+        binwxsdoc = Document()
+        qt5wxsdoc = Document()
+        kf5wxsdoc = Document()
+
+        kf5wxs = generateFeature(kf5wxsdoc, 'KF5Frameworks', 'KF5 Frameworks', 'The KDE Frameworks')
+        binwxs = generateFeature(binwxsdoc, 'Dependencies', 'the 3rdparty dependencies', 'the 3rdparty dependencies')
+        binwxs.setAttribute("Display", "hidden")
+        qt5wxs = generateFeature(qt5wxsdoc, 'Qt5Frameworks', 'Qt5 Frameworks', 'The KDE build of Qt5KF5Frameworks')
+        tiers = dict()
+        _descriptions = { 'tier1': 'Tier 1 - only Qt dependencies',
+                          'tier2': 'Tier 2 - Qt and Tier 1 dependencies',
+                          'tier3': 'Tier 3 - Qt, Tier 1 and Tier 2 dependencies',
+                          'tier4': 'Tier 4 - Qt, Tier 1, Tier 2 and Tier 3 dependencies' }
+        for i in range( 4 ):
+            tiername = 'tier' + str( i + 1 )
+            print( tiername )
+            t = generateFeature( kf5wxs, tiername, "Tier " + str( i + 1 ), _descriptions[ tiername ] )
+            print( t )
+            kf5wxs.appendChild( t )
+            tiers[ tiername ] = t
+
         for package in _packages:
-            if not package.package in frameworks and package.category != "libs":
+            tiername, _ = portage.getSubPackage( package.category, package.package )
+            if not (tiername and tiername.startswith("tier")) and package.category != "libs":
                 basePackages.append( package.package )
-                dependenciesCode += self.getFeatureXML( binwxs, package.package, package.subinfo.shortDescription, True )
+                self.getFeatureXML( binwxs, package.package, package.subinfo.shortDescription, True )
             elif package.category == "libs":
                 qtFrameworks.append( package.package )
-                qtFrameworksCode += self.getFeatureXML( qt5wxs, package.package, package.subinfo.shortDescription )
+                self.getFeatureXML( qt5wxs, package.package, package.subinfo.shortDescription )
             else:
                 # assume this is a kf5 framework
-                kfFrameworksCode += self.getFeatureXML( kf5wxs, package.package, package.subinfo.shortDescription )
+                if tiername in tiers:
+                    self.getFeatureXML( tiers[ tiername ], package.package, package.subinfo.shortDescription )
+                else:
+                    self.getFeatureXML( kf5wxs, package.package, package.subinfo.shortDescription )
 
             package.changePackager( "MSIFragmentPackager" )
             package.outDestination = self.imageDir()
@@ -171,6 +199,16 @@ class Package( VirtualPackageBase, CollectionPackagerBase ):
 
         iconCode = """<Icon Id="Foobar10.exe" SourceFile="FoobarAppl10.exe" />"""
         iconCode = ""
+        
+        s = StringIO()
+        qt5wxs.writexml(s, " " * 8, " " * 4, "\n")
+        qtFrameworksCode = s.getvalue()
+        s = StringIO()
+        kf5wxs.writexml(s, " " * 8, " " * 4, "\n")
+        kfFrameworksCode = s.getvalue()
+        s = StringIO()
+        binwxs.writexml(s, " " * 8, " " * 4, "\n")
+        dependenciesCode = s.getvalue()
 
         substitutedScript = scriptTemplate.safe_substitute( { 'dependenciesCode': dependenciesCode, 'qtFrameworksCode': qtFrameworksCode, 'kfFrameworksCode': kfFrameworksCode, 'iconCode': iconCode } )
 
