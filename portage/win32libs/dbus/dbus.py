@@ -42,7 +42,7 @@ class Package(CMakePackageBase):
                     "-DDBUS_ENABLE_VERBOSE_MODE=OFF "
                     "-DDBUS_DISABLE_ASSERTS=ON ")
 
-        if self.buildTarget == "gitHEAD":
+        if self.buildTarget == "gitHEAD" or self.buildTarget == "1.8.4":
             self.subinfo.options.configure.defines += (
                 "-DDBUS_SESSION_BUS_LISTEN_ADDRESS:STRING=autolaunch:scope=*install-path "
                 "-DDBUS_SESSION_BUS_CONNECT_ADDRESS:STRING=autolaunch:scope=*install-path ")
