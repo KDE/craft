@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop-pg-qt'
+        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop-pg-qt|2.0'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
