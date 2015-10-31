@@ -1,7 +1,7 @@
-diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeLists.txt
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeLists.txt
 --- libgpg-error-1.12.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.12/CMakeLists.txt	2013-09-01 15:12:27.375043900 +0200
-@@ -0,0 +1,226 @@
++++ libgpg-error-1.12/CMakeLists.txt	2015-10-31 12:26:35.536969300 +0100
+@@ -0,0 +1,232 @@
 +project(gpg-error)
 +
 +cmake_minimum_required(VERSION 2.6)
@@ -108,11 +108,17 @@ diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeL
 +awk_generate(code-to-errno.h mkerrnos.awk ${SRC_DIR}/errnos.in)
 +awk_generate(gpg-error.h mkheader.awk ${SRC_DIR}/err-sources.h.in ${SRC_DIR}/err-codes.h.in ${SRC_DIR}/errnos.in ${BIN_DIR}/extra-h.in ${SRC_DIR}/gpg-error.h.in)
 +
++if(MSVC)
++    # TODO: Rename to a not that crappy name.
++    set(COMPILER_SPECIFIC_PREPROCECC_COMMAND -E)
++else()
++    set(COMPILER_SPECIFIC_PREPROCECC_COMMAND -E -P)
++endif()
 +add_custom_command(OUTPUT ${BIN_DIR}/mkerrcodes.h  COMMAND ${AWK_EXECUTABLE} -f ${SRC_DIR}/mkerrcodes1.awk ${SRC_DIR}/errnos.in > ${BIN_DIR}/_mkerrcodes.h
 +                                                   #COMMAND set INCLUDE="\"${INCLUDE_STRING}\""
-+                                                   COMMAND ${ERR_COMPILER} -E -P ${BIN_DIR}/_mkerrcodes.h ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
++                                                   COMMAND ${ERR_COMPILER} ${COMPILER_SPECIFIC_PREPROCECC_COMMAND} ${BIN_DIR}/_mkerrcodes.h ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" GPG_ERR_ | 
 +                                                       "\"${AWK_EXECUTABLE}\"" -f ${SRC_DIR}/mkerrcodes.awk > ${BIN_DIR}/mkerrcodes.h)
-+add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${ERR_COMPILER} -E -P -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
++add_custom_command(OUTPUT ${BIN_DIR}/mkw32errmap.tab.h COMMAND ${ERR_COMPILER} ${COMPILER_SPECIFIC_PREPROCECC_COMMAND} -DRESOLVE_MACROS ${SRC_DIR}/mkw32errmap.c ${NULL_DEVICE} | "\"${GREP_EXECUTABLE}\"" \"{&mkw32errmap_marker\" > ${BIN_DIR}/mkw32errmap.tab.h)
 +
 +if(BUILD_CROSS_TOOLS)
 +    add_executable(mkw32errmap src/mkw32errmap.c ${BIN_DIR}/mkw32errmap.tab.h)
@@ -228,9 +234,9 @@ diff -Nru -x '*~' libgpg-error-1.12.orig/CMakeLists.txt libgpg-error-1.12/CMakeL
 +if(WIN32 AND NOT BUILD_STATIC)
 +    install(FILES ${BIN_DIR}/gpg-error.def DESTINATION lib)
 +endif(WIN32 AND NOT BUILD_STATIC)
-diff -Nru -x '*~' libgpg-error-1.12.orig/config.h.cmake libgpg-error-1.12/config.h.cmake
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' libgpg-error-1.12.orig/config.h.cmake libgpg-error-1.12/config.h.cmake
 --- libgpg-error-1.12.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.12/config.h.cmake	2013-09-01 15:32:03.047288500 +0200
++++ libgpg-error-1.12/config.h.cmake	2015-10-12 11:46:07.769385900 +0200
 @@ -0,0 +1,162 @@
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -394,9 +400,9 @@ diff -Nru -x '*~' libgpg-error-1.12.orig/config.h.cmake libgpg-error-1.12/config
 +#define uint32_t unsigned __int32
 +#define uint16_t unsigned __int16
 +#endif
-diff -Nru -x '*~' libgpg-error-1.12.orig/ConfigureChecks.cmake libgpg-error-1.12/ConfigureChecks.cmake
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' libgpg-error-1.12.orig/ConfigureChecks.cmake libgpg-error-1.12/ConfigureChecks.cmake
 --- libgpg-error-1.12.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libgpg-error-1.12/ConfigureChecks.cmake	2013-09-01 15:32:28.694755500 +0200
++++ libgpg-error-1.12/ConfigureChecks.cmake	2015-10-12 11:46:07.779393900 +0200
 @@ -0,0 +1,98 @@
 +#undef ENABLE_NLS
 +

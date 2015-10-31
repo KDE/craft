@@ -1,7 +1,7 @@
 
 #    this file sets some environment variables that are needed
 #    for finding programs and libraries etc.
-#    by patrick von Reth <vonreth@kde.org>
+#    by Hannah von Reth <vonreth@kde.org>
 #    you should copy kdesettings.ini to ..\etc\kdesettings.ini
 #    and adapt it to your needs (see that file for more info)
 
