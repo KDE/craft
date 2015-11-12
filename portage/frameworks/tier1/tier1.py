@@ -27,6 +27,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/solid'] = 'default'
         self.dependencies['frameworks/sonnet'] = 'default'
         self.dependencies['frameworks/threadweaver'] = 'default'
+        self.dependencies['frameworks/breeze-icons'] = 'default'
 
 
 from Package.VirtualPackageBase import *
