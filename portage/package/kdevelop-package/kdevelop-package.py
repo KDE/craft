@@ -12,7 +12,6 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.dependencies[ 'kde/breeze' ] = 'default'
-        self.dependencies[ 'kde/oxygen-icons' ] = 'default'
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
