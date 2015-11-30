@@ -4,18 +4,15 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for i in [ '0.28.1', '0.35.0' ]:
+        self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler"
+        for i in [ '0.38.0' ]:
             self.targets[ i ] = 'http://poppler.freedesktop.org/poppler-%s.tar.xz' % i
             self.targetInstSrc[ i ] = 'poppler-%s' % i
-
-        self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler|master"
-        self.targetDigests['0.28.1'] = '017258af51cb556dc53af630c50165bb9fd76e4f'
-        self.patchToApply['0.28.1'] =  ("poppler-0.28.1-20141204.diff",1)
-        self.patchToApply['0.35.0'] =  ("poppler-0.35.0-20151007.diff",1)
-        self.targetDigests['0.35.0'] = 'ad16c9674e7048ecd4e9225fc00f7ac07669e17d'
+        self.patchToApply['0.38.0'] = ("poppler-0.38.0-20151130.diff", 1)
+        self.targetDigests['0.38.0'] = '62d334116e509d59cd1d8f172f02c0a81e73182f'
 
         self.shortDescription = "PDF rendering library based on xpdf-3.0"
-        self.defaultTarget = "0.35.0"
+        self.defaultTarget = "0.38.0"
 
     def setDependencies( self ):
         self.dependencies['win32libs/freetype'] = 'default'

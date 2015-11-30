@@ -1,0 +1,11 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.38.0.orig/config.h.cmake poppler-0.38.0/config.h.cmake
+--- poppler-0.38.0.orig/config.h.cmake	2015-10-28 23:11:49.000000000 +0100
++++ poppler-0.38.0/config.h.cmake	2015-11-30 11:36:47.305064800 +0100
+@@ -232,3 +232,6 @@
+ 
+ /* Define for large files, on AIX-style hosts. */
+ /* TODO This is wrong, port if needed #undef _LARGE_FILES */
++
++#cmakedefine HAVE_STRCAT_S 1
++#cmakedefine HAVE_STRCPY_S 1
+\ Kein Zeilenumbruch am Dateiende.
