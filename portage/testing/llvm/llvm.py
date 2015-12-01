@@ -24,8 +24,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.defines = '-DLLVM_TARGETS_TO_BUILD="CppBackend;X86"'
-        # this program needs python 2.7
-        self.subinfo.options.configure.defines += " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
@@ -35,6 +33,4 @@ class Package(CMakePackageBase):
         return options
 
     def configure(self):
-        if not ("Paths","Python27") in emergeSettings:
-            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         return CMakeBuildSystem.configure(self)

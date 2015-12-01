@@ -25,8 +25,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        # this program needs python 2.7
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
@@ -36,8 +34,6 @@ class Package(CMakePackageBase):
         return options
 
     def configure(self):
-        if not ("Paths","Python27") in emergeSettings:
-            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         if compiler.isMinGW() and not self.buildType() == "Release":
             utils.die("You should build clang only in Release mode as it will use up to 10gb disk space if build as RelWithDebInfo, see emerge --buildtype Release")
         return CMakeBuildSystem.configure(self)
