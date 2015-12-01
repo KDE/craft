@@ -5,10 +5,10 @@ import portage
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = "http://llvm.org/git/clang.git"
-        releaseVersion = "3.5.0"
+        releaseVersion = "3.7.0"
         self.targets[releaseVersion] = "http://llvm.org/releases/" + releaseVersion + "/cfe-" + releaseVersion + ".src.tar.xz"
         self.targetInstSrc[releaseVersion] = "cfe-" + releaseVersion + ".src"
-        self.targetDigests[releaseVersion] = '7a00257eb2bc9431e4c77c3a36b033072c54bc7e'
+        self.targetDigests['3.7.0'] = '4ff8100565528b13d99a73f807e9b426c3b3bed9'
 
         if compiler.isMSVC2015():
             self.defaultTarget = 'gitHEAD'
@@ -18,14 +18,19 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['testing/llvm'] = 'default'
+        self.dependencies['win32libs/libxml2'] = 'default'
 
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        # this program needs python 2.7
+        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
 
     def configure(self):
+        if not ("Paths","Python27") in emergeSettings:
+            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         if compiler.isMinGW() and not self.buildType() == "Release":
             utils.die("You should build clang only in Release mode as it will use up to 10gb disk space if build as RelWithDebInfo, see emerge --buildtype Release")
         return CMakeBuildSystem.configure(self)
