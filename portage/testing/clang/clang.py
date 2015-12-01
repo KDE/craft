@@ -4,7 +4,7 @@ import portage
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "http://llvm.org/git/clang.git"
+        self.svnTargets['gitHEAD'] = "[git]http://llvm.org/git/clang.git|release_37"
         releaseVersion = "3.7.0"
         self.targets[releaseVersion] = "http://llvm.org/releases/" + releaseVersion + "/cfe-" + releaseVersion + ".src.tar.xz"
         self.targetInstSrc[releaseVersion] = "cfe-" + releaseVersion + ".src"
@@ -27,6 +27,13 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         # this program needs python 2.7
         self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
+
+    def configureOptions(self, defines=""):
+        options = CMakePackageBase.configureOptions(self, defines)
+        if self.buildType().startswith("Rel"):
+            # forcing build in Release mode, RelWithDebInfo would take lots of memory
+            options += ' -DCMAKE_BUILD_TYPE=Release'
+        return options
 
     def configure(self):
         if not ("Paths","Python27") in emergeSettings:
