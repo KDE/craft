@@ -25,6 +25,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON","").replace("\\","/")
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
@@ -32,8 +33,3 @@ class Package(CMakePackageBase):
             # forcing build in Release mode, RelWithDebInfo would take lots of disk space and memory during link
             options += ' -DCMAKE_BUILD_TYPE=Release'
         return options
-
-    def configure(self):
-        if compiler.isMinGW() and not self.buildType() == "Release":
-            utils.die("You should build clang only in Release mode as it will use up to 10gb disk space if build as RelWithDebInfo, see emerge --buildtype Release")
-        return CMakeBuildSystem.configure(self)
