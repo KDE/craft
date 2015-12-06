@@ -21,7 +21,7 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = "dev-utils/arcanist/arcanist"
 
     def unpack(self):
-        BinaryPackageBase.cleanImage()
+        BinaryPackageBase.cleanImage(self)
         utils.copyDir(self.sourceDir(), self.imageDir())
         arc_dir = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "arcanist", "arcanist", "bin")
         utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","arc.bat"), """

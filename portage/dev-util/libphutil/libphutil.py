@@ -20,7 +20,7 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = "dev-utils/arcanist/libphutil";
 
     def unpack(self):
-        BinaryPackageBase.cleanImage()
+        BinaryPackageBase.cleanImage(self)
         utils.copyDir(self.sourceDir(), self.imageDir())
         return True
     
