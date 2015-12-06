@@ -48,5 +48,4 @@ class Package(CMakePackageBase):
                         utils.deleteFile(path)
                         utils.copyFile( toReplace, path)
 
-        exit(1)
         return True
