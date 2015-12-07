@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
         self.targetDigests['3.7.0'] = '0355c2fe01a8d17c3315069e6f2ef80c281e7dad'
         self.defaultTarget = releaseVersion
 
+        for ver in ["gitHEAD", "3.7.0"]:
+            self.patchToApply[ ver ] = [("0002-use-DESTDIR-on-windows.patch", 1)]
+
         if compiler.isMSVC2015():
             self.defaultTarget = 'gitHEAD'
         else:

@@ -10,6 +10,16 @@ class subinfo(info.infoclass):
         self.targetInstSrc[releaseVersion] = "cfe-" + releaseVersion + ".src"
         self.targetDigests['3.7.0'] = '4ff8100565528b13d99a73f807e9b426c3b3bed9'
 
+
+        for ver in ["gitHEAD", "3.7.0"]:
+            self.patchToApply[ ver ] = [("0014-use-DESTDIR-on-windows.patch", 1), ("fix_shortpath.patch", 1)]
+            if compiler.isMinGW():
+                self.patchToApply[ ver ] += [("0012-Set-the-x86-arch-name-to-i686-for-mingw-w64.patch", 1),
+                                             ("0015-Fix-the-calling-convention-of-Mingw64-long-double-va.patch", 1),
+                                             ("0016-Teach-mingw-toolchain-driver-to-properly-emit-static.patch", 1),
+                                             ("0017-Fix-PR23472-by-emitting-initialized-variable-and-its.patch", 1)]
+
+
         if compiler.isMSVC2015():
             self.defaultTarget = 'gitHEAD'
         else:
