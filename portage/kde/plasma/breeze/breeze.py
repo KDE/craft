@@ -4,8 +4,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.defaultTarget = self.versionInfo.tarballs()[-1]#use latest tarball, we need to resolve the symlinks which currently is only implemented for tarballs.
-
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
@@ -16,8 +14,10 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kservice'] = 'default'
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['frameworks/frameworkintegration'] = 'default'
+        self.dependencies['frameworks/kcmutils'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
         self.dependencies['frameworks/kdecoration'] = 'default'
+        self.dependencies['frameworks/plasma-framework'] = 'default'
 
 
 from Package.CMakePackageBase import *
