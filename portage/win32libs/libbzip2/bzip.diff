@@ -1,6 +1,141 @@
-diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
---- bzip2-1.0.5.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ bzip2-1.0.5/CMakeLists.txt	Mon May 17 12:52:18 2010
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/bzip2.c bzip2-1.0.6/bzip2.c
+--- bzip2-1.0.6.orig/bzip2.c	2010-09-11 01:04:53.000000000 +0200
++++ bzip2-1.0.6/bzip2.c	2015-12-07 19:22:47.826796200 +0100
+@@ -153,6 +153,10 @@
+ #endif /* BZ_LCCWIN32 */
+ 
+ 
++#ifdef _WIN32_WCE
++#define setmode _setmode
++#endif
++
+ /*---------------------------------------------*/
+ /*--
+   Some more stuff for all platforms :-)
+@@ -1805,7 +1809,9 @@
+    i = j = 0; /* avoid bogus warning from egcs-1.1.X */
+ 
+    /*-- Set up signal handlers for mem access errors --*/
++#ifndef _WIN32_WCE
+    signal (SIGSEGV, mySIGSEGVorSIGBUScatcher);
++#endif
+ #  if BZ_UNIX
+ #  ifndef __DJGPP__
+    signal (SIGBUS,  mySIGSEGVorSIGBUScatcher);
+@@ -1949,8 +1955,10 @@
+    if (opMode != OM_Z) blockSize100k = 0;
+ 
+    if (srcMode == SM_F2F) {
++#ifndef _WIN32_WCE
+       signal (SIGINT,  mySignalCatcher);
+       signal (SIGTERM, mySignalCatcher);
++#endif
+ #     if BZ_UNIX
+       signal (SIGHUP,  mySignalCatcher);
+ #     endif
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/bzlib.c bzip2-1.0.6/bzlib.c
+--- bzip2-1.0.6.orig/bzlib.c	2010-09-11 00:38:23.000000000 +0200
++++ bzip2-1.0.6/bzlib.c	2015-12-07 19:22:47.836294300 +0100
+@@ -30,6 +30,10 @@
+ 
+ #include "bzlib_private.h"
+ 
++#ifdef _WIN32_WCE
++#define setmode _setmode
++#endif
++
+ 
+ /*---------------------------------------------------*/
+ /*--- Compression stuff                           ---*/
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/bzlib.h bzip2-1.0.6/bzlib.h
+--- bzip2-1.0.6.orig/bzlib.h	2010-09-11 01:08:42.000000000 +0200
++++ bzip2-1.0.6/bzlib.h	2015-12-07 19:23:12.838721100 +0100
+@@ -81,19 +81,35 @@
+       /* windows.h define small to char */
+ #      undef small
+ #   endif
+-#   ifdef BZ_EXPORT
+-#   define BZ_API(func) WINAPI func
+-#   define BZ_EXTERN extern
+-#   else
+-   /* import windows dll dynamically */
+-#   define BZ_API(func) (WINAPI * func)
+-#   define BZ_EXTERN
+-#   endif
++#endif
++
++#ifndef __GNUC__
++# define __DLL_IMPORT__ __declspec(dllimport)
++# define __DLL_EXPORT__ __declspec(dllexport)
+ #else
+-#   define BZ_API(func) func
+-#   define BZ_EXTERN extern
++# define __DLL_IMPORT__ __attribute__((dllimport)) extern
++# define __DLL_EXPORT__ __attribute__((dllexport)) extern
+ #endif
+ 
++#if (defined __WIN32__) || (defined _WIN32)
++# if defined BUILD_BZIP2_DLL  || defined BZ_EXPORT
++#  define BZIP2_DLL_IMPEXP __DLL_EXPORT__
++# elif defined(BZIP2_STATIC)
++#  define BZIP2_DLL_IMPEXP  
++# elif defined (USE_BZIP2_DLL) || defined BZ_IMPORT
++#  define BZIP2_DLL_IMPEXP __DLL_IMPORT__
++# elif defined (USE_BZIP2_STATIC)
++#  define BZIP2_DLL_IMPEXP   
++# else /* assume USE_BZIP2_DLL */
++#  define BZIP2_DLL_IMPEXP __DLL_IMPORT__
++# endif
++#else /* __WIN32__ */
++# define BZIP2_DLL_IMPEXP  
++#endif
++
++#define BZ_API(func) func
++#define BZ_EXTERN BZIP2_DLL_IMPEXP
++
+ 
+ /*-- Core (low-level) library functions --*/
+ 
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/cmake/modules/FindWcecompat.cmake bzip2-1.0.6/cmake/modules/FindWcecompat.cmake
+--- bzip2-1.0.6.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ bzip2-1.0.6/cmake/modules/FindWcecompat.cmake	2015-12-07 19:22:47.845794400 +0100
+@@ -0,0 +1,33 @@
++# Try to find Wcecompat functionality
++# Once done this will define
++#
++#  WCECOMPAT_FOUND - system has Wcecompat
++#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
++#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
++#
++# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
++#
++# Redistribution and use is allowed according to the terms of the BSD license.
++
++if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++  set(Wcecompat_FIND_QUIETLY TRUE)
++endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
++
++find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
++
++set(WCECOMPAT_LIB_FOUND FALSE)
++
++if(WCECOMPAT_INCLUDE_DIR)
++    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
++    if(WCECOMPAT_LIBRARIES)
++      set(WCECOMPAT_LIB_FOUND TRUE)
++    endif(WCECOMPAT_LIBRARIES)
++endif(WCECOMPAT_INCLUDE_DIR)
++
++# I have no idea what this is about, but it seems to be used quite often, so I add this here
++set(WCECOMPAT_CONST const)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
++
++mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/CMakeLists.txt bzip2-1.0.6/CMakeLists.txt
+--- bzip2-1.0.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ bzip2-1.0.6/CMakeLists.txt	2015-12-07 19:22:47.818292000 +0100
 @@ -0,0 +1,88 @@
 +project(bzip2)
 +cmake_minimum_required(VERSION 2.6)
@@ -90,147 +225,3 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +# nm bzip2.dll | grep ' T _' | sed 's/.* T _//' >> bzip2.def
 +# pexports bzip2.dll > bzip2.def
 +# lib /def:bzip2.def /machine:x86
-diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
---- bzip2-1.0.5.orig/bzip2.c	Sun Dec  9 12:22:06 2007
-+++ bzip2-1.0.5/bzip2.c	Mon May 17 12:44:37 2010
-@@ -153,6 +153,10 @@
- #endif /* BZ_LCCWIN32 */
- 
- 
-+#ifdef _WIN32_WCE
-+#define setmode _setmode
-+#endif
-+
- /*---------------------------------------------*/
- /*--
-   Some more stuff for all platforms :-)
-@@ -1805,7 +1809,9 @@
-    i = j = 0; /* avoid bogus warning from egcs-1.1.X */
- 
-    /*-- Set up signal handlers for mem access errors --*/
-+#ifndef _WIN32_WCE
-    signal (SIGSEGV, mySIGSEGVorSIGBUScatcher);
-+#endif
- #  if BZ_UNIX
- #  ifndef __DJGPP__
-    signal (SIGBUS,  mySIGSEGVorSIGBUScatcher);
-@@ -1949,8 +1955,10 @@
-    if (opMode != OM_Z) blockSize100k = 0;
- 
-    if (srcMode == SM_F2F) {
-+#ifndef _WIN32_WCE
-       signal (SIGINT,  mySignalCatcher);
-       signal (SIGTERM, mySignalCatcher);
-+#endif
- #     if BZ_UNIX
-       signal (SIGHUP,  mySignalCatcher);
- #     endif
-diff -Nru bzip2-1.0.5.orig/bzlib.c bzip2-1.0.5/bzlib.c
---- bzip2-1.0.5.orig/bzlib.c	Sun Dec  9 13:57:21 2007
-+++ bzip2-1.0.5/bzlib.c	Mon May 17 12:31:17 2010
-@@ -30,6 +30,10 @@
- 
- #include "bzlib_private.h"
- 
-+#ifdef _WIN32_WCE
-+#define setmode _setmode
-+#endif
-+
- 
- /*---------------------------------------------------*/
- /*--- Compression stuff                           ---*/
-diff -Nru bzip2-1.0.5.orig/bzlib.h bzip2-1.0.5/bzlib.h
---- bzip2-1.0.5.orig/bzlib.h	Sun Dec  9 12:34:39 2007
-+++ bzip2-1.0.5/bzlib.h	Mon May 17 12:54:09 2010
-@@ -81,18 +81,45 @@
-       /* windows.h define small to char */
- #      undef small
- #   endif
--#   ifdef BZ_EXPORT
--#   define BZ_API(func) WINAPI func
--#   define BZ_EXTERN extern
--#   else
-+// #   ifdef BZ_EXPORT
-+// #   define BZ_API(func) WINAPI func
-+// #   define BZ_EXTERN extern
-+// #   else
-    /* import windows dll dynamically */
--#   define BZ_API(func) (WINAPI * func)
--#   define BZ_EXTERN
--#   endif
-+// #   define BZ_API(func) (WINAPI * func)
-+// #   define BZ_EXTERN
-+// #   endif
-+// #else
-+// #   define BZ_API(func) func
-+// #   define BZ_EXTERN extern
-+#endif
-+
-+#ifndef __GNUC__
-+# define __DLL_IMPORT__ __declspec(dllimport)
-+# define __DLL_EXPORT__ __declspec(dllexport)
- #else
--#   define BZ_API(func) func
--#   define BZ_EXTERN extern
-+# define __DLL_IMPORT__ __attribute__((dllimport)) extern
-+# define __DLL_EXPORT__ __attribute__((dllexport)) extern
-+#endif 
-+
-+#if (defined __WIN32__) || (defined _WIN32)
-+# if defined BUILD_BZIP2_DLL  || defined BZ_EXPORT
-+#  define BZIP2_DLL_IMPEXP __DLL_EXPORT__
-+# elif defined(BZIP2_STATIC)
-+#  define BZIP2_DLL_IMPEXP  
-+# elif defined (USE_BZIP2_DLL) || defined BZ_IMPORT
-+#  define BZIP2_DLL_IMPEXP __DLL_IMPORT__
-+# elif defined (USE_BZIP2_STATIC)
-+#  define BZIP2_DLL_IMPEXP   
-+# else /* assume USE_BZIP2_DLL */
-+#  define BZIP2_DLL_IMPEXP __DLL_IMPORT__
-+# endif
-+#else /* __WIN32__ */
-+# define BZIP2_DLL_IMPEXP  
- #endif
-+
-+#define BZ_API(func) func
-+#define BZ_EXTERN BZIP2_DLL_IMPEXP
- 
- 
- /*-- Core (low-level) library functions --*/
-diff -Nru bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake bzip2-1.0.5/cmake/modules/FindWcecompat.cmake
---- bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ bzip2-1.0.5/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
-@@ -0,0 +1,33 @@
-+# Try to find Wcecompat functionality
-+# Once done this will define
-+#
-+#  WCECOMPAT_FOUND - system has Wcecompat
-+#  WCECOMPAT_INCLUDE_DIR - Wcecompat include directory
-+#  WCECOMPAT_LIBRARIES - Libraries needed to use Wcecompat
-+#
-+# Copyright (c) 2010, Andreas Holzammer, <andy@kdab.com>
-+#
-+# Redistribution and use is allowed according to the terms of the BSD license.
-+
-+if(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+  set(Wcecompat_FIND_QUIETLY TRUE)
-+endif(WCECOMPAT_INCLUDE_DIR AND WCECOMPAT_LIB_FOUND)
-+
-+find_path(WCECOMPAT_INCLUDE_DIR errno.h PATH_SUFFIXES wcecompat)
-+
-+set(WCECOMPAT_LIB_FOUND FALSE)
-+
-+if(WCECOMPAT_INCLUDE_DIR)
-+    find_library(WCECOMPAT_LIBRARIES NAMES wcecompat wcecompatex )
-+    if(WCECOMPAT_LIBRARIES)
-+      set(WCECOMPAT_LIB_FOUND TRUE)
-+    endif(WCECOMPAT_LIBRARIES)
-+endif(WCECOMPAT_INCLUDE_DIR)
-+
-+# I have no idea what this is about, but it seems to be used quite often, so I add this here
-+set(WCECOMPAT_CONST const)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(Wcecompat  DEFAULT_MSG  WCECOMPAT_LIBRARIES  WCECOMPAT_LIB_FOUND)
-+
-+mark_as_advanced(WCECOMPAT_INCLUDE_DIR  WCECOMPAT_LIBRARIES  WCECOMPAT_CONST  WCECOMPAT_LIB_FOUND)
