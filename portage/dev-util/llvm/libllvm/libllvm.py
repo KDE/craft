@@ -9,6 +9,10 @@ class subinfo(info.infoclass):
         for ver in self.svnTargets.keys() | self.targets.keys():
             self.patchToApply[ ver ] = [("0002-use-DESTDIR-on-windows.patch", 1)]
 
+        for ver in self.svnTargets.keys() :
+            self.patchToApply[ ver ] = [("use-DESTDIR-on-windows-3.8.patch", 1)]
+
+
         if compiler.isMSVC2015():
             self.defaultTarget = 'release_37'
 
