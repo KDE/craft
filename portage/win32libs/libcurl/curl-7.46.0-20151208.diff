@@ -1,0 +1,29 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' curl-7.46.0.orig/CMakeLists.txt curl-7.46.0/CMakeLists.txt
+--- curl-7.46.0.orig/CMakeLists.txt	2015-11-27 16:00:14.000000000 +0100
++++ curl-7.46.0/CMakeLists.txt	2015-12-08 15:02:05.157445300 +0100
+@@ -290,6 +290,16 @@
+ 
+ check_function_exists(gethostname HAVE_GETHOSTNAME)
+ 
++if(NOT CURL_RUNTIME_INSTALL_DESTINATION)
++  set(CURL_RUNTIME_INSTALL_DESTINATION bin)
++endif()
++if(NOT CURL_LIBRARY_INSTALL_DESTINATION)
++  set(CURL_LIBRARY_INSTALL_DESTINATION lib)
++endif()
++if(NOT CURL_ARCHIVE_INSTALL_DESTINATION)
++  set(CURL_ARCHIVE_INSTALL_DESTINATION lib)
++endif()
++
+ if(WIN32)
+   check_library_exists_concat("ws2_32" getch        HAVE_LIBWS2_32)
+   check_library_exists_concat("winmm"  getch        HAVE_LIBWINMM)
+@@ -569,7 +580,7 @@
+     if(HAVE_SSPI_H)
+       check_include_file_concat("schannel.h" HAVE_SCHANNEL_H)
+       set(USE_WINDOWS_SSPI ON)
+-      if(HAVE_SCHANNEL_H)
++      if(HAVE_SCHANNEL_H AND NOT CMAKE_USE_OPENSSL)
+         set(USE_SCHANNEL ON)
+         set(SSL_ENABLED ON)
+       endif()
