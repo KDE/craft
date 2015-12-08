@@ -72,8 +72,8 @@ class VersionInfo( object ):
         return self._getVersionInfo( "defaulttarget" )
 
 
-    def _replaceVar( self, text, ver ):
-        replaces = { "VERSION": ver, "PACKAGE_NAME": self.subinfo.package }
+    def _replaceVar( self, text, ver, name ):
+        replaces = { "VERSION": ver, "PACKAGE_NAME": name}
 
         split_ver = ver.split(".")
         if len(split_ver) == 3:
@@ -92,7 +92,7 @@ class VersionInfo( object ):
         self.setDefaultValues(tarballUrl,tarballDigestUrl,tarballInstallSrc,gitUrl)
 
 
-    def setDefaultValues( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None ):
+    def setDefaultValues( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None, packageName = None ):
         """
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.
@@ -105,6 +105,8 @@ class VersionInfo( object ):
             ${VERSION_PATCH_LEVEL} : The the third part of ${VERSION}
 
         """
+        if packageName is None:
+            packageName = self.subinfo.package
         if tarballUrl is None:
             tarballUrl = self._getVersionInfo("tarballUrl", None)
         if tarballDigestUrl is None:
@@ -115,18 +117,18 @@ class VersionInfo( object ):
             gitUrl = self._getVersionInfo("gitUrl", None)
         if not tarballUrl is None:
             for ver in self.tarballs( ):
-                self.subinfo.targets[ ver ] = self._replaceVar( tarballUrl, ver )
+                self.subinfo.targets[ ver ] = self._replaceVar( tarballUrl, ver, packageName )
                 if not tarballDigestUrl is None:
-                    self.subinfo.targetDigestUrls[ ver ] = self._replaceVar( tarballDigestUrl, ver )
+                    self.subinfo.targetDigestUrls[ ver ] = self._replaceVar( tarballDigestUrl, ver, packageName )
                 if not tarballInstallSrc is None:
-                    self.subinfo.targetInstSrc[ ver ] = self._replaceVar( tarballInstallSrc, ver )
+                    self.subinfo.targetInstSrc[ ver ] = self._replaceVar( tarballInstallSrc, ver, packageName)
 
         if not gitUrl is None:
             for ver in self.branches( ):
-                self.subinfo.svnTargets[ ver ] = "%s|%s|" % ( self._replaceVar( gitUrl, ver ), ver)
+                self.subinfo.svnTargets[ ver ] = "%s|%s|" % ( self._replaceVar( gitUrl, ver, packageName ), ver)
 
             for ver in self.tags( ):
-                self.subinfo.svnTargets[ ver ] = "%s||%s" % ( self._replaceVar( gitUrl, ver ), ver)
+                self.subinfo.svnTargets[ ver ] = "%s||%s" % ( self._replaceVar( gitUrl, ver, packageName ), ver)
 
         self.subinfo.defaultTarget = self.defaultTarget( )
 

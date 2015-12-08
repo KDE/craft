@@ -34,7 +34,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/kxmlgui' ] = 'default'
         self.dependencies[ 'kde/libkomparediff2' ] = 'default'
         self.dependencies[ 'data/hicolor-icon-theme'] = "default"
-        self.dependencies[ 'testing/clang'] = "default"
+        self.dependencies[ 'dev-util/clang'] = "default"
         if self.options.features.fullplasma:
             self.dependencies[ 'frameworks/krunner' ] = 'default'
             self.dependencies[ 'frameworks/plasma-framework' ] = 'default'

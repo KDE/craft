@@ -3,20 +3,14 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "[git]http://llvm.org/git/llvm.git|release_37"
-        releaseVersion = "3.7.0"
-        self.targets[releaseVersion] = "http://llvm.org/releases/" + releaseVersion + "/llvm-" + releaseVersion + ".src.tar.xz"
-        self.targetInstSrc[releaseVersion] = "llvm-" + releaseVersion + ".src"
+        self.versionInfo.setDefaultValues( packageName="llvm" )
         self.targetDigests['3.7.0'] = '0355c2fe01a8d17c3315069e6f2ef80c281e7dad'
-        self.defaultTarget = releaseVersion
 
-        for ver in ["gitHEAD", "3.7.0"]:
+        for ver in self.svnTargets.keys() | self.targets.keys():
             self.patchToApply[ ver ] = [("0002-use-DESTDIR-on-windows.patch", 1)]
 
         if compiler.isMSVC2015():
-            self.defaultTarget = 'gitHEAD'
-        else:
-            self.defaultTarget = releaseVersion
+            self.defaultTarget = 'release_37'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

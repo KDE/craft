@@ -84,8 +84,8 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = doExec( package, "cleanimage" )
         success = success and doExec( package, "install", continueFlag )
     elif buildAction == "qmerge":
-        success = doExec( package, "cleanimage" )
-        success = success and doExec( package, "install")
+        #success = doExec( package, "cleanimage" )
+        #success = success and doExec( package, "install")
         success = success and doExec( package, "qmerge" )
     elif buildAction == "generate-jenkins-job":
         success = jenkins.generateJob(package)

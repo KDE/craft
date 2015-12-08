@@ -6,7 +6,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
       self.buildDependencies['virtual/base'] = 'default'
-      self.dependencies['testing/clang'] = 'default'
+      self.dependencies['dev-util/clang'] = 'default'
 
         
     def setTargets( self ):
