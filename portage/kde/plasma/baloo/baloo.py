@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['frameworks/kfilemetadata'] = 'default'
+        self.dependencies['win32libs/lmdb'] = 'default'
 
 from Package.CMakePackageBase import *
 
