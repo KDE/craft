@@ -35,7 +35,9 @@ class Package(BoostPackageBase):
     def make(self):
         if self.buildTarget == "1_55_0":
             cmd  = "build.bat "
-            if compiler.isMinGW():
+            if compiler.isClang():
+                cmd += "clang"
+            elif compiler.isMinGW():
                 cmd += "gcc"
             else:
                 if compiler.isMSVC2005():

@@ -18,8 +18,9 @@ class BuildSystemBase(EmergeBase):
     def __init__(self, typeName=""):
         """constructor"""
         EmergeBase.__init__(self)
-        self.supportsNinja = False        
-        self.supportsCCACHE = emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False ) and compiler.isMinGW();
+        self.supportsNinja = False
+        self.supportsCCACHE = emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False ) and compiler.isMinGW()
+        self.supportsClang = emergeSettings.getboolean("General","UseClang", False )
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -73,6 +74,8 @@ class BuildSystemBase(EmergeBase):
         
         if self.supportsCCACHE:
             defines += " %s" % self.ccacheOptions()
+        if self.supportsClang:
+            defines += " %s" % self.clangOptions()
         return defines
 
     def makeOptions(self, defines="", maybeVerbose=True):
@@ -148,4 +151,7 @@ class BuildSystemBase(EmergeBase):
         return True
 
     def ccacheOptions(self):
+        return ""
+
+    def clangOptions(self):
         return ""

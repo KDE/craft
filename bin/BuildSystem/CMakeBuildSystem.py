@@ -219,3 +219,8 @@ class CMakeBuildSystem(BuildSystemBase):
         out  =  " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ "
         out  += " -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1=gcc "
         return out
+
+    def clangOptions(self):
+        out  =  " -DCMAKE_CXX_COMPILER=clang++"
+        out  += " -DCMAKE_C_COMPILER=clang"
+        return out

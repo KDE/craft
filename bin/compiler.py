@@ -55,6 +55,9 @@ def isMinGW_W64():
 def isMSVC():
     return _compiler().startswith("msvc")
 
+def isClang():
+    return emergeSettings.getboolean("General","UseClang", False )
+
 def isMSVC2005():
     return _compiler() == "msvc2005"
 

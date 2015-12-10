@@ -43,7 +43,11 @@ class BoostBuildSystem(BuildSystemBase):
             options += " variant=release"
 
         options += " toolset="
-        if compiler.isMinGW():
+        if compiler.isClang():
+            options += "clang"
+            if compiler.isMinGW():
+                options += " threadapi=pthread"
+        elif compiler.isMinGW():
             options += "gcc"
         else:
             if compiler.isMSVC2005():
@@ -99,5 +103,4 @@ class BoostBuildSystem(BuildSystemBase):
 
     def unittest( self ):
         return True
-
 
