@@ -44,12 +44,12 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb
 +
 +set(mdb_TARGETS)
 +if(BUILD_STATIC)
-+    add_library(mdb-static ${mdb_SRCS})
-+    set(mdb_TARGETS ${mdb_TARGETS} mdb-static)
++    add_library(lmdb-static ${mdb_SRCS})
++    set(mdb_TARGETS ${mdb_TARGETS} lmdb-static)
 +endif()
 +if(BUILD_SHARED)
-+    add_library(mdb SHARED ${mdb_SRCS})
-+    set(mdb_TARGETS ${mdb_TARGETS} mdb)
++    add_library(lmdb SHARED ${mdb_SRCS})
++    set(mdb_TARGETS ${mdb_TARGETS} lmdb)
 +endif()
 +
 +if(BUILD_TOOLS)
@@ -69,12 +69,11 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb
 +if(BUILD_TESTS)
 +    foreach(_test ${testlist})
 +        add_executable(${_test} ${_test}.c)
-+        target_link_libraries(${_test} mdb-static)
++        target_link_libraries(${_test} lmdb-static)
 +        add_test(NAME ${_test}
 +        COMMAND "${CMAKE_COMMAND}" -DCMD=${_test} -P ${CMAKE_CURRENT_SOURCE_DIR}/runtests.cmake)
 +    endforeach()
 +endif()
-\ No newline at end of file
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.c lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.c
 --- lmdb-LMDB_0.9.16.orig/libraries/liblmdb/getopt.c	1970-01-01 01:00:00.000000000 +0100
 +++ lmdb-LMDB_0.9.16/libraries/liblmdb/getopt.c	2015-10-01 13:40:46.097912200 +0200
