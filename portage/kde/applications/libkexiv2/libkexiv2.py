@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs/exiv2'] = 'default'
+        self.dependencies['dev-util/extra-cmake-modules'] = 'default'
 
 from Package.CMakePackageBase import *
 
