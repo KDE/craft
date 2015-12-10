@@ -1,22 +1,22 @@
 import info
-import kdedefaults as kd
-from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:%s|%s|' % (self.package, kd.kdebranch)
-        for ver in ['0', '1', '2', '3', '4', '5']:
-            self.targets[kd.kdeversion + ver] = "http://download.kde.org/stable/" + kd.kdeversion + ver + "/src/" + self.package + "-" + kd.kdeversion + ver + ".tar.xz"
-            self.targetInstSrc[kd.kdeversion + ver] = self.package + '-' + kd.kdeversion + ver
-            self.targetDigestUrls[ kd.kdeversion + ver  ] = 'http://download.kde.org/stable/' + kd.kdeversion + ver + '/src/' + self.package + '-' + kd.kdeversion + ver + '.tar.xz.sha1'
-
-        self.defaultTarget = 'gitHEAD'
+        self.versionInfo.setDefaultValues( )
+        self.shortDescription = "Graphical File Differences Tool"
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['kde/libkomparediff2'] = 'default'
-        self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.shortDescription = "Graphical File Differences Tool"
+        self.dependencies['frameworks/kcoreaddons'] = 'default'
+        self.dependencies['frameworks/kcodecs'] = 'default'
+        self.dependencies['frameworks/kdoctools'] = 'default'
+        self.dependencies['frameworks/kiconthemes'] = 'default'
+        self.dependencies['frameworks/kjobwidgets'] = 'default'
+        self.dependencies['frameworks/kconfig'] = 'default'
+        self.dependencies['frameworks/kparts'] = 'default'
+        self.dependencies['frameworks/ktexteditor'] = 'default'
+        self.dependencies['frameworks/kwidgetsaddons'] = 'default'
 
 from Package.CMakePackageBase import *
 
