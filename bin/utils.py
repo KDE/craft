@@ -353,7 +353,7 @@ def unpackFile( downloaddir, filename, workdir ):
     if ( ext == ".zip" ):
         return unZip( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".7z" ):
-        return un7zip( os.path.join( downloaddir, filename ), workdir )
+        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     elif ( ext == ".tgz" ):
         return unTar( os.path.join( downloaddir, filename ), workdir )
     elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" or ext == ".xz" ):
@@ -370,9 +370,15 @@ def unpackFile( downloaddir, filename, workdir ):
         error( "dont know how to unpack this file: %s" % filename )
     return False
 
-def un7zip( fileName, destdir ):
+def un7zip( fileName, destdir, flag = None ):
     command = "7za x -r -y -o%s %s" % ( destdir, fileName )
-    if verbose() > 1:
+
+    if flag == ".7z":
+        # Actually this is not needed for a normal archive.
+        # But git is an exe file renamed to 7z and we need to specify the type.
+        # Yes it is an ugly hack.
+        command += " -t7z"
+    if verbose() > 0:
         return system( command )
     else:
         tmp = tempfile.TemporaryFile()

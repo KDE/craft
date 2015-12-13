@@ -7,7 +7,7 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.5.0"
+        ver = "2.6.3"
         arch = 32
         if compiler.isX64():
             arch = 64
@@ -41,10 +41,12 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
+        if not utils.system( "git-bash.exe --no-needs-console --hide --no-cd --command=post-install.bat", cwd = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "git")):
+            return False
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
-            stdout=tmpFile, stderr=tmpFile  )
+                      stdout=tmpFile, stderr=tmpFile  )
         tmpFile.seek( 0 )
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:
