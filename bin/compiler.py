@@ -33,6 +33,9 @@ def _getGCCTarget():
 def architecture():
     return emergeSettings.get("General", "Architecture" )
 
+def isNative():
+    return emergeSettings.getboolean("General", "Native", True)
+
 def isX64():
     return architecture() == "x64"
 
@@ -140,5 +143,6 @@ if __name__ == '__main__':
     print("Testing Compiler.py")
     print("Version: %s" % getVersion())
     print("Compiler Name: %s" % getCompilerName())
+    print("Native compiler: %s" % ("No", "Yes")[isNative()])
     print("Compiler Version: %s" % getMinGWVersion())
 

@@ -89,9 +89,11 @@ class SetupHelper( object ):
                 "msvc2013": "VS120COMNTOOLS",
                 "msvc2015": "VS140COMNTOOLS"
             }
-            architectures = { "x86": "x86", "x64": "amd64" }
+            architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
+            crossmodifier = ""
+            if not compiler.isNative(): crossmodifier="_cross"
             status, result = subprocess.getstatusoutput( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s > NUL && set" % (
-                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) ]) )
+                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) + crossmodifier ]) )
             if status != 0:
                 print( "Failed to setup msvc compiler", file = sys.stderr )
             out = self.stringToEnv( result )
