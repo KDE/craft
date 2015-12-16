@@ -41,8 +41,8 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        if not utils.system( "git-bash.exe --no-needs-console --hide --no-cd --command=post-install.bat", cwd = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "git")):
-            return False
+        gitbash = os.path.join(self.rootdir, "dev-utils", "git", "git-bash.exe")
+        utils.system( "%s --no-needs-console --hide --no-cd --command=post-install.bat" % gitbash, cwd = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "git"))
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
