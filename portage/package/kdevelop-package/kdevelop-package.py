@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '5.0.0'
 
     def setDependencies( self ):
-        self.dependencies[ 'tier1/oxygen-icons5' ] = 'default'
+        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
