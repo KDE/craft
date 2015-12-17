@@ -48,9 +48,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             sourcedir = self.buildDir()
 
         configure = os.path.join(sourcedir, "configure")
-        self.shell.environment[ "CFLAGS" ] +=  self.subinfo.options.configure.cflags
-        self.shell.environment[ "CXXFLAGS" ] += self.subinfo.options.configure.cxxflags
-        self.shell.environment[ "LDFLAGS" ] += self.subinfo.options.configure.ldflags
+        self.shell.environment[ "CFLAGS" ] =  self.subinfo.options.configure.cflags + self.shell.environment[ "CFLAGS" ]
+        self.shell.environment[ "CXXFLAGS" ] = self.subinfo.options.configure.cxxflags + self.shell.environment[ "CXXFLAGS" ]
+        self.shell.environment[ "LDFLAGS" ] = self.subinfo.options.configure.ldflags + self.shell.environment[ "LDFLAGS" ]
         if self.subinfo.options.configure.bootstrap == True:
             autogen = os.path.join(sourcedir, "autogen.sh")
             if os.path.exists(autogen):
