@@ -14,7 +14,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["win32libs/giflib"] = "default"
         self.dependencies["win32libs/jpeg"] = "default"
-        self.dependencies["kdesupport/kdewin"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/karchive"] = "default"
         self.dependencies["frameworks/kcodecs"] = "default"
