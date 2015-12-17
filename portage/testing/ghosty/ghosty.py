@@ -1,15 +1,21 @@
 import info
 import compiler
+import os
+import utils
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies['dev-util/msys'] = 'default'
 
     def setTargets( self ):
         for ver in ['9.18']:
             self.targets[ ver ] = "http://downloads.ghostscript.com/public/ghostscript-" + ver + ".tar.gz"
             self.targetInstSrc[ ver ] = "ghostscript-" + ver
+        if compiler.isMinGW():
+            self.patchToApply['9.18'] = [("ghostscript-9.18-20151217.diff", 1)]
         self.targetDigests['9.18'] = '761c9c25b9f5fe01197bd1510f527b3c1b6eb9de'
         self.defaultTarget = '9.18'
 
@@ -45,13 +51,13 @@ class PackageMSVC(CMakePackageBase):
             os.mkdir(os.path.join(dst, "include", "ghostscript"))
 
         if compiler.isX64():
-            shutil.copy(os.path.join(src, "bin", "gsdll64.dll"), os.path.join(dst, "bin"))
-            shutil.copy(os.path.join(src, "bin", "gsdll64.lib"), os.path.join(dst, "lib"))
+            _bit = "64"
         else:
-            shutil.copy(os.path.join(src, "bin", "gsdll32.dll"), os.path.join(dst, "bin"))
-            shutil.copy(os.path.join(src, "bin", "gsdll32.lib"), os.path.join(dst, "lib"))
-        shutil.copy(os.path.join(src, "bin", "gswin64.exe"), os.path.join(dst, "bin"))
-        shutil.copy(os.path.join(src, "bin", "gswin64c.exe"), os.path.join(dst, "bin"))
+            _bit = "32"
+        shutil.copy(os.path.join(src, "bin", "gsdll%s.dll" % _bit), os.path.join(dst, "bin"))
+        shutil.copy(os.path.join(src, "bin", "gsdll%s.lib" % _bit), os.path.join(dst, "lib"))
+        shutil.copy(os.path.join(src, "bin", "gswin%s.exe" % _bit), os.path.join(dst, "bin"))
+        shutil.copy(os.path.join(src, "bin", "gswin%sc.exe" % _bit), os.path.join(dst, "bin"))
         shutil.copy(os.path.join(src, "psi", "iapi.h"), os.path.join(dst, "include", "ghostscript"))
         shutil.copy(os.path.join(src, "psi", "ierrors.h"), os.path.join(dst, "include", "ghostscript"))
         shutil.copy(os.path.join(src, "devices", "gdevdsp.h"), os.path.join(dst, "include", "ghostscript"))
@@ -68,10 +74,12 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.package.packageName = 'ghostscript'
         self.subinfo.options.package.packSources = False
-        if compiler.architecture() == "x64":
-            self.platform = "mingw64"
-        else:
-            self.platform = "mingw"
+        self.subinfo.options.configure.cflags = "-I%s" % utils.toMSysPath( os.path.join( self.sourceDir(), "libpng" ) )
+        self.subinfo.options.configure.cxxflags = "-I%s" % utils.toMSysPath( os.path.join( self.sourceDir(), "libpng" ) )
+#        if compiler.architecture() == "x64":
+#            self.platform = "mingw64"
+#        else:
+#            self.platform = "mingw"
         self.supportsCCACHE = False
 
         self.buildInSource = True
