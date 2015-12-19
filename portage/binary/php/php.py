@@ -7,11 +7,12 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "7.0.0"
+        ver = "7.0.1"
         self.targets[ver]  ="http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
 
         if compiler.isX64():
             self.targetDigests['7.0.0'] = '651a0aad1522ea8c6568f3153f0a4de742d880be'
+            self.targetDigests['7.0.1'] = '0cf3e2c53d3d54a94044b993115e5f5cc425b511'
 
         self.defaultTarget = ver
 
