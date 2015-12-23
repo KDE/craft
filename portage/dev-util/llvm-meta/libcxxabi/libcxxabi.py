@@ -5,7 +5,7 @@ import portage
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues()
-        self.targetDigests['3.7.0'] = 'b61362b409bb7909a6d11097b5f69fded061073c'
+        self.targetDigests['3.7.0'] = '2a5e0f6f9d59f9cda41dbe87c4b30f4226c5b5eb'
         
         for ver in self.svnTargets.keys() | self.targets.keys():
             self.patchToApply[ ver ] = [("fix_shortpath.patch", 1)]
@@ -15,14 +15,17 @@ class subinfo(info.infoclass):
         
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['dev-util/libllvm'] = 'default'
+        self.dependencies['dev-util/llvm'] = 'default'
+        self.dependencies['dev-util/libcxx'] = 'default'
+
 
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON","").replace("\\","/")
+        self.subinfo.options.configure.defines = '-DLIBCXXABI_ENABLE_SHARED=OFF '
+
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
