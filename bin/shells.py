@@ -37,6 +37,11 @@ class MSysShell(object):
             if compiler.isMSVC2013():
                 cflags = " -FS"
 
+        if compiler.isMinGW():
+            arch = "32"
+            if compiler.isX64():
+                arch = "64"
+            self.environment[ "MSYSTEM" ] = "MINGW%s_EMERGE" % arch
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
         
