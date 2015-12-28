@@ -31,7 +31,7 @@ class Package(BinaryPackageBase):
            shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
         else:
            shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
-        utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","msys.bat"),"python %KDEROOT%\emerge\bin\shells.py")
+        utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","msys.bat"),"python %KDEROOT%\\emerge\\bin\\shells.py")
         return True
     
     def qmerge(self):
