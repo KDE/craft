@@ -24,7 +24,8 @@ class subinfo(info.infoclass):
             self.patchToApply['9.18'] = [
                 #("mingw-build.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          #("ghostscript-sys-zlib.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
-                                         ("ghostscript-9.18-20151217.diff", 1)
+                                         ("ghostscript-9.18-20151217.diff", 1),
+                                         ("libspectre.patch", 1)# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          ]
         self.targetDigests['9.18'] = '761c9c25b9f5fe01197bd1510f527b3c1b6eb9de'
         self.defaultTarget = '9.18'
