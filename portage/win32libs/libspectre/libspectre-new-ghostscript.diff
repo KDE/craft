@@ -1,0 +1,52 @@
+diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' libspectre-0.2.7.orig/libspectre/spectre-gs.c libspectre-0.2.7/libspectre/spectre-gs.c
+--- libspectre-0.2.7.orig/libspectre/spectre-gs.c	2015-12-17 15:59:37.529703600 +0100
++++ libspectre-0.2.7/libspectre/spectre-gs.c	2015-12-17 15:57:37.938863400 +0100
+@@ -31,6 +31,12 @@
+ 
+ #define BUFFER_SIZE 32768
+ 
++#if 1
++#define GS_E(err) gs_error_##err
++#else
++#define GS_E(err) e_##err
++#endif
++
+ struct SpectreGS {
+ 	void *ghostscript_instance;
+ };
+@@ -43,12 +49,12 @@
+ 	
+ 	if (code <= -100) {
+ 		switch (code) {
+-			case e_Fatal:
++			case GS_E(Fatal):
+ 				fprintf (stderr, "fatal internal error %d", code);
+ 				return TRUE;
+ 				break;
+ 
+-			case e_ExecStackUnderflow:
++			case GS_E(ExecStackUnderflow):
+ 				fprintf (stderr, "stack overflow %d", code);
+ 				return TRUE;
+ 				break;
+@@ -109,9 +115,9 @@
+ 		set = _spectre_strdup_printf ("%d %d translate\n", -x, -y);
+ 		error = gsapi_run_string_continue (ghostscript_instance, set, strlen (set),
+ 						   0, &exit_code);
+-		error = error == e_NeedInput ? 0 : error;
++		error = error == GS_E(NeedInput) ? 0 : error;
+ 		free (set);
+-		if (error != e_NeedInput && critic_error_code (error)) {
++		if (error != GS_E(NeedInput) && critic_error_code (error)) {
+ 			fclose (fd);
+ 			return FALSE;
+ 		}
+@@ -126,7 +132,7 @@
+ 		read = fread (buf, sizeof (char), to_read, fd);
+ 		error = gsapi_run_string_continue (ghostscript_instance,
+ 						   buf, read, 0, &exit_code);
+-		error = error == e_NeedInput ? 0 : error;
++		error = error == GS_E(NeedInput) ? 0 : error;
+ 		left -= read;
+ 	}
+ 	

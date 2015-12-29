@@ -86,16 +86,16 @@ diff -Nru libspectre-0.2.6.orig/CMakeLists.txt libspectre-0.2.6/CMakeLists.txt
 +install(FILES ${spectre_HDRS} DESTINATION include/libspectre)
 +
 +if(ENABLE_TESTS)
-+    find_package(Qt4)
++    find_package(Qt5Gui)
 +
 +    add_executable(parser-test test/parser-test.c)
 +    target_link_libraries(parser-test spectre)
-+    if(QT4_FOUND)
-+        include_directories(${QT_INCLUDES})
++    if(Qt5Gui_FOUND)
++        include_directories(${Qt5Gui_INCLUDE_DIRS})
 +        add_executable(spectre-test test/spectre-test.cpp)
-+        target_link_libraries(spectre-test spectre ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
-+    endif(QT4_FOUND)
-+endif(ENABLE_TESTS)
++        target_link_libraries(spectre-test spectre ${Qt5Gui_LIBRARIES})
++    endif()
++endif()
 diff -Nru libspectre-0.2.6.orig/config.h.cmake libspectre-0.2.6/config.h.cmake
 --- libspectre-0.2.6.orig/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ libspectre-0.2.6/config.h.cmake	2010-11-17 03:10:16.223170600 +0100
