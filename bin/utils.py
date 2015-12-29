@@ -10,6 +10,8 @@ this file contains some helper functions for emerge
 
 import http.client
 import ftplib
+import urllib.request
+import urllib.error
 import urllib.parse
 import shutil
 import zipfile
@@ -1251,3 +1253,20 @@ def createBat(fileName, command):
         bat.write("@echo off\r\n")
         bat.write(command)
         bat.write("\r\n")
+
+
+# TODO: clanup and speedup (see vlc and cmake)
+_NIGTHLY_URLS = dict()
+def getNightlyVersionsFromUrl(url, pattern, timeout = 10, dataLimit = 1024):
+    global _NIGTHLY_URLS
+    if url in _NIGTHLY_URLS:
+      return _NIGTHLY_URLS[url]
+    else:
+      try:
+        with urllib.request.urlopen(url, timeout = timeout) as fh:
+            vers = re.findall( pattern , str(fh.read(dataLimit), "UTF-8"))
+            _NIGTHLY_URLS[url] = vers
+            return vers
+      except Exception as e:
+        print("Nightlys Unavailible for %s: %s" % (url, e))
+        return [None]

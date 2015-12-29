@@ -1,9 +1,6 @@
 import shutil
 import os
 import re
-import urllib.request
-import urllib.error
-import urllib.parse
 
 from Package.BinaryPackageBase import *
 import info
@@ -18,7 +15,7 @@ class subinfo(info.infoclass):
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = '3.0.0-git' 
-    self.gitVer = self.getGitVer()
+    self.gitVer = utils.getNightlyVersionsFromUrl(self.vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d" )[0]
     
 
     self.targets[ self.vlcTagName ]  =  "%svlc-%s-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName, self.gitVer, self.vlcArch  )
@@ -42,20 +39,6 @@ class subinfo(info.infoclass):
 
   def setDependencies( self ):
     self.buildDependencies['virtual/bin-base'] = 'default'
-
-  def getGitVer( self ):
-    if subinfo.vlc_ver != None :
-      return subinfo.vlc_ver
-    else:
-      try:
-        fh = urllib.request.urlopen(self.vlcBaseUrl , timeout = 10)
-      except Exception as e:
-        print("Nightlys Unavailible:"+str(e))
-        return None
-      m = re.search( "\d\d\d\d\d\d\d\d-\d\d\d\d"  , str(fh.read(),'UTF-8' ))
-      fh.close()
-      subinfo.vlc_ver = m.group(0)
-      return subinfo.vlc_ver 
 
 class Package(BinaryPackageBase):
   def __init__(self):
