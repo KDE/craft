@@ -25,6 +25,11 @@ class CMakeBuildSystem(BuildSystemBase):
         """return cmake related make file generator"""
         if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
             return "Ninja"
+        if compiler.isMSVC2015():
+            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+                return "Visual Studio 14 2015" + " Win64" if compiler.isX64() else ""
+            else:
+                return "NMake Makefiles"
         if compiler.isMSVC2010():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
                 return "Visual Studio 10"
@@ -143,6 +148,8 @@ class CMakeBuildSystem(BuildSystemBase):
         elif self.subinfo.options.cmake.useIDE:
             if compiler.isMSVC2008():
                 command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
+            elif compiler.isMSVC2015():
+                command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
                 EmergeDebug.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
@@ -169,6 +176,8 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.subinfo.options.install.useMakeToolForInstall:
             if compiler.isMSVC2008() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
+            elif compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+                command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
                 os.putenv("DESTDIR",self.installDir())
                 command = "%s install%s" % ( self.makeProgramm, fastString )
