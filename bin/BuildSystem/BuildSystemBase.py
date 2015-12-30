@@ -12,7 +12,6 @@ import dependencies
 
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    noClean = False
     debug = True
 
     def __init__(self, typeName=""):
