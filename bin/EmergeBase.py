@@ -90,6 +90,10 @@ class EmergeBase(object):
         return emergeSettings.getboolean("General", "EMERGE_NOCLEAN", False )
 
     @property
+    def compileFast(self):
+        return emergeSettings.getboolean("General", "CompileFast", False )
+
+    @property
     def forced(self):
         return emergeSettings.getboolean("General", "EMERGE_FORCED", False )
 
