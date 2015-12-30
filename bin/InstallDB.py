@@ -51,7 +51,7 @@ class InstallPackage(object):
     def getFiles( self ):
         """ get a list of files that will be uninstalled """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 2 )
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
@@ -62,10 +62,10 @@ class InstallPackage(object):
     def uninstall( self ):
         """ really uninstall that package """
         cmd = '''DELETE FROM fileList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 2 )
         self.cursor.execute(cmd, (self.packageId,))
         cmd = '''DELETE FROM packageList WHERE packageId=?;'''
-        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameter %s" % ( cmd, str( self.packageId ) ), 2 )
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
@@ -78,7 +78,7 @@ class InstallPackage(object):
         dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
-        utils.debug( "executing sqlcmd '%s' %s times" % ( cmd, len( self.fileDict ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' %s times" % ( cmd, len( self.fileDict ) ), 2 )
         self.cursor.executemany( cmd, dataList )
 
         # at last, commit all the changes so that they are committed only after everything is written to the
@@ -146,14 +146,14 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 2 )
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
             utils.debug( """The package %s/%s has been installed in prefix '%s' with
-                            version '%s'.""" % ( category, package, prefix, version ), 1 )
+                            version '%s'.""" % ( category, package, prefix, version ), 2 )
         else:
             utils.debug( """Couldn't find a trace that the package %s/%s has been installed in
                             prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1 )
@@ -168,7 +168,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 2 )
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -184,7 +184,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 2 )
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -200,7 +200,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 2 )
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -217,7 +217,7 @@ class InstallDB(object):
 
         params = [ None, prefix, category, package, version, revision ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
-        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 1 )
+        utils.debug( "executing sqlcmd '%s' with parameters: %s" % ( cmd, tuple( params ) ), 2 )
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 

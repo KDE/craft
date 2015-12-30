@@ -44,14 +44,16 @@ def packageIsOutdated( category, package ):
 @utils.log
 def doExec( package, action, continueFlag = False ):
     utils.startTimer( "%s for %s" % ( action, package ), 1 )
-    utils.debug( "emerge doExec called. action: %s" % action, 2 )
+    utils.info("Action: %s for %s" % (action, package))
     ret = package.execute( action )
     utils.stopTimer( "%s for %s" % ( action, package ) )
     return ret or continueFlag
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
-    utils.debug( "emerge handlePackage called: %s %s %s" % (category, packageName, buildAction), 2 )
+    utils.debug_line( )
+    utils.info("Handling package: %s, build action: %s" % (packageName, buildAction))
+
     success = True
     package = portage.getPackageInstance( category, packageName )
     if package is None:
@@ -63,6 +65,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             revision = package.sourceVersion( )
             for p in installdb.getInstalledPackages( category, packageName ):
                 if p.getRevision( ) == revision:
+                    utils.info("Skipping further actions, package is up-to-date")
                     return True
 
         success = success and doExec( package, "unpack", continueFlag )
@@ -142,8 +145,7 @@ def handleSinglePackage( packageName, args ):
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
     for entry in packageList:
-        utils.debug( "%s" % entry, 1 )
-    utils.debug_line( 1 )
+        utils.debug("Checking dependencies for: %s" % entry, 1)
 
     for mainCategory, entry in zip( categoryList, packageList ):
         deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
@@ -173,6 +175,10 @@ def handleSinglePackage( packageName, args ):
 
         utils.debug( "dependency: %s" % item, 1 )
 
+    if not deplist:
+        utils.debug("<none>", 1)
+
+    utils.debug_line( 1 )
 
     #for item in deplist:
     #    cat = item[ 0 ]
@@ -305,7 +311,7 @@ def main( ):
                          default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
                          help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
     parser.add_argument( "-v", "--verbose", action = "count",
-                         default = int( emergeSettings.get( "EmergeDebug", "Verbose", "1" ) ),
+                         default = int( emergeSettings.get( "EmergeDebug", "Verbose", "0" ) ),
                          help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
     parser.add_argument( "--trace", action = "store",
@@ -364,7 +370,7 @@ def main( ):
     if args.stayQuiet == True or args.action in [ "version-dir", "version-package",
                                                   "print-installable", "print-installed",
                                                   "print-targets" ]:
-        utils.setVerbose( 0 )
+        utils.setVerbose( -1 )
     elif args.verbose:
         utils.setVerbose( args.verbose )
 

@@ -23,7 +23,6 @@ class GitSource ( VersionSystemSourceBase ):
         gitInstallDir = os.path.join( self.rootdir, 'dev-utils', 'git' )
         if os.path.exists( gitInstallDir ):
             self.gitPath = os.path.join(gitInstallDir, 'bin', 'git')
-            utils.debug( 'using git from %s' % gitInstallDir, 1 )
         else:
             self.gitPath = 'git'
 
@@ -155,7 +154,7 @@ class GitSource ( VersionSystemSourceBase ):
         parts.extend(args)
         if not kwargs.get('cwd'):
             kwargs['cwd'] = self.checkoutDir()
-        return utils.system(' '.join(parts), **kwargs)
+        return self.system(' '.join(parts), **kwargs)
 
     def __fetchMultipleBranch(self, repopath=None):
         utils.trace( 'GitSource __fetchMultipleBranch', 2 )

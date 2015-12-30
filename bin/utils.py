@@ -85,7 +85,7 @@ class Verbose(object):
         There is only one verbosity value for all parts of emerge.
         Always updates the shell variable EMERGE_VERBOSE.
     """
-    __level = 1
+    __level = 0
 
     @staticmethod
     def increase():
@@ -104,7 +104,7 @@ class Verbose(object):
     @staticmethod
     def setLevel(newLevel):
         """ set the level by hand for quick and dirty changes """
-        Verbose.__level = max(0, newLevel)
+        Verbose.__level = max(-1, newLevel)
 
     def verbose( self ):
         """ returns the verbosity level for the application """
@@ -465,14 +465,14 @@ def unZip( fileName, destdir ):
 
 
 def info( message ):
-    if verbose() > 0:
-        print("emerge info: %s" % message)
+    if verbose() >= 0:
+        print("*** %s ***" % message)
     return True
 
-def debug( message, level=0 ):
+def debug( message, level=1 ):
     if verbose() > level and verbose() > 0:
-        print("emerge debug:", message)
-    sys.stdout.flush()
+        print("emerge debug (%s): %s" % (level, message))
+        sys.stdout.flush()
     return True
 
 def warning( message ):
@@ -570,7 +570,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
             if currentHash == filehash or filehash == "":
-                debug( "deleting file %s" % fullPath)
+                debug( "deleting file %s" % fullPath, 2)
                 try:
                     os.remove(fullPath)
                 except OSError:
@@ -596,11 +596,9 @@ def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboo
 
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
-        #print "rootdir:", root
-        debug( "entry: %s" % entry, 1 )
         src = os.path.join( srcdir, entry )
         dest = os.path.join( destdir, entry )
-        debug( "src: %s dest: %s" %( src, dest ), 1 )
+        debug("move: %s -> %s" %( src, dest ), 1)
         if( os.path.isfile( dest ) ):
             os.remove( dest )
         if( os.path.isdir( dest ) ):
@@ -1160,6 +1158,8 @@ def stopAllTimer():
 
 
 def notify(title,message,alertClass = None):
+    info("%s: %s" % (title, message))
+
     backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")
     if backends == "":
         return

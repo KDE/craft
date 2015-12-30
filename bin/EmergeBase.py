@@ -108,8 +108,7 @@ class EmergeBase(object):
             return directory
         buf = create_string_buffer('\000' * (length + 1))
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        if utils.verbose() > 0:
-            print("converting " + directory + " to " + buf.value)
+        utils.debug("converting " + directory + " to " + buf.value)
         return buf.value
 
     def buildType(self):
@@ -262,24 +261,21 @@ class EmergeBase(object):
         return EmergeStandardDirs.emergeRoot()
 
     def enterBuildDir(self):
-        utils.debug( "EmergeBase.enterBuildDir called", 2 )
+        utils.trace( "EmergeBase.enterBuildDir called")
 
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
-            if utils.verbose() > 0:
-                print("creating: %s" % self.buildDir())
+            utils.debug("creating: %s" % self.buildDir())
 
         os.chdir( self.buildDir() )
-        if utils.verbose() > 0:
-            print("entering: %s" % self.buildDir())
+        utils.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if ( not os.path.exists( self.sourceDir() ) ):
             return False
         utils.warning("entering the source directory!")
         os.chdir( self.sourceDir() )
-        if utils.verbose() > 0:
-            print("entering: %s" % self.sourceDir())
+        utils.debug("entering: %s" % self.sourceDir())
 
     def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
@@ -287,7 +283,6 @@ class EmergeBase(object):
         If the system command returns with errors the method prints an error
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
 
-        utils.debug( str(command), debuglevel )
         if utils.system( command, **kw):
             return True
         if self.subinfo.options.exitOnErrors:

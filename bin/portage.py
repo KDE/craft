@@ -68,7 +68,7 @@ class DependencyPackage(PackageObjectBase):
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                utils.debug( "category: %s, name: %s" % ( category, package ), 1 )
+                utils.debug( "category: %s, name: %s" % ( category, package ), 2 )
                 try:
                     version = PortageInstance.getNewestVersion( category, package )
                 except PortageException as e:
@@ -77,7 +77,7 @@ class DependencyPackage(PackageObjectBase):
 
                 if not line in self._dependencyList.keys():
                     p = DependencyPackage( category, package, False, self )
-                    utils.debug( "adding package p %s/%s-%s" % ( category, package, version ), 1 )
+                    utils.debug( "adding package %s/%s-%s" % ( category, package, version ), 2 )
                     self._dependencyList[ line ] = p
                     p.__readChildren()
                 else:
@@ -343,7 +343,7 @@ class Portage(object):
 
     def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
-        utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package ), 1 )
+        utils.debug( "getDefaultTarget: importing file %s" % getFilename( category, package ), 2 )
         if not ( category and package ):
             return dict()
 
@@ -355,7 +355,7 @@ class Portage(object):
 
     def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
-        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package ), 1 )
+        utils.debug( "getAllTargets: importing file %s" % getFilename( category, package ), 2 )
         if not ( category and package ):
             return dict()
         info = _getSubinfo( category, package )
@@ -591,7 +591,7 @@ def printInstallables():
 
 
 def getPackagesCategories(packageName, defaultCategory = None):
-    utils.debug( "getPackagesCategories for package name %s" % packageName, 1 )
+    utils.trace("getPackagesCategories for package name %s" % packageName)
     if defaultCategory is None:
         defaultCategory = emergeSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
 
