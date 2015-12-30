@@ -15,7 +15,6 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kcoreaddons"] = "default"
         self.dependencies["frameworks/kcodecs"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kconfigwidgets"] = "default"
         self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
