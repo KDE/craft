@@ -460,6 +460,6 @@ if __name__ == '__main__':
         doUpdateTitle = False
         if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
             emergeSettings.dump( )
-    if not succes:
+    if not success:
         exit( 1 )
 
