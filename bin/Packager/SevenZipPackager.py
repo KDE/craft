@@ -12,6 +12,7 @@
 # - self extraction archives
 #
 #
+import EmergeDebug
 from Packager.PackagerBase import *
 
 class SevenZipPackager (PackagerBase):
@@ -26,7 +27,7 @@ class SevenZipPackager (PackagerBase):
                 self.packagerExe = path
                 break
         if self.packagerExe:
-            utils.debug("using 7za from %s" % self.packagerExe, 2)
+            EmergeDebug.debug("using 7za from %s" % self.packagerExe, 2)
 
     def _archiveName(self, pkgSuffix):
         pkgVersion, _ = self.getPackageVersion()
@@ -41,13 +42,13 @@ class SevenZipPackager (PackagerBase):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
         if not utils.system(cmd):
-            utils.die( "while packaging. cmd: %s" % cmd )
+            EmergeDebug.die("while packaging. cmd: %s" % cmd)
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
-            utils.die("could not find 7za in your path!")
+            EmergeDebug.die("could not find 7za in your path!")
 
 
         dstpath = self.packageDestinationDir()

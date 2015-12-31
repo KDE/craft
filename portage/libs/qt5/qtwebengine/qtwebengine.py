@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import EmergeDebug
 import info
 
 
@@ -19,7 +20,7 @@ class Package( Qt5CorePackageBase ):
         
     def compile(self):
         if not ("Paths","Python27") in emergeSettings:
-            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+            EmergeDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         utils.prependPath(emergeSettings.get("Paths","PYTHON27",""))
         return Qt5CorePackageBase.compile(self)
        

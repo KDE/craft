@@ -1,3 +1,4 @@
+import EmergeDebug
 from Package.PackageBase import *
 from Source.SourceBase import *
 from BuildSystem.PipBuildSystem import *
@@ -6,7 +7,7 @@ from Packager.PackagerBase import *
 class PipPackageBase (PackageBase, SourceBase, PipBuildSystem, PackagerBase):
     """provides a base class for pip packages"""
     def __init__(self):
-        utils.debug("PipPackageBase.__init__ called", 2)
+        EmergeDebug.debug("PipPackageBase.__init__ called", 2)
         PackageBase.__init__(self)
         SourceBase.__init__(self)
         PipBuildSystem.__init__(self)

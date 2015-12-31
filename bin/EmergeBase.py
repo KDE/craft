@@ -6,6 +6,7 @@ import sys
 import datetime
 from ctypes import *
 
+import EmergeDebug
 import utils
 import portage
 import compiler
@@ -30,7 +31,7 @@ class EmergeBase(object):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
-        utils.debug( "EmergeBase.__init__ called", 2 )
+        EmergeDebug.debug("EmergeBase.__init__ called", 2)
         self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
 
         if not hasattr(self, 'subinfo'):
@@ -112,7 +113,7 @@ class EmergeBase(object):
             return directory
         buf = create_string_buffer('\000' * (length + 1))
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        utils.debug("converting " + directory + " to " + buf.value)
+        EmergeDebug.debug("converting " + directory + " to " + buf.value)
         return buf.value
 
     def buildType(self):
@@ -177,11 +178,11 @@ class EmergeBase(object):
         return self.__adjustPath(_workDir)
 
     def buildDir(self):
-        utils.debug("EmergeBase.buildDir() called", 2)
+        EmergeDebug.debug("EmergeBase.buildDir() called", 2)
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
-        utils.debug("package builddir is: %s" % builddir, 2)
+        EmergeDebug.debug("package builddir is: %s" % builddir, 2)
         return self.__adjustPath(builddir)
 
     def imageDir(self):
@@ -241,7 +242,7 @@ class EmergeBase(object):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
-        utils.debug( "EmergeBase.packageDestinationDir called", 2 )
+        EmergeDebug.debug("EmergeBase.packageDestinationDir called", 2)
         dstpath = emergeSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) )
 
         if withBuildType:
@@ -265,21 +266,21 @@ class EmergeBase(object):
         return EmergeStandardDirs.emergeRoot()
 
     def enterBuildDir(self):
-        utils.trace( "EmergeBase.enterBuildDir called")
+        EmergeDebug.trace("EmergeBase.enterBuildDir called")
 
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
-            utils.debug("creating: %s" % self.buildDir())
+            EmergeDebug.debug("creating: %s" % self.buildDir())
 
         os.chdir( self.buildDir() )
-        utils.debug("entering: %s" % self.buildDir())
+        EmergeDebug.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if ( not os.path.exists( self.sourceDir() ) ):
             return False
-        utils.warning("entering the source directory!")
+        EmergeDebug.warning("entering the source directory!")
         os.chdir( self.sourceDir() )
-        utils.debug("entering: %s" % self.sourceDir())
+        EmergeDebug.debug("entering: %s" % self.sourceDir())
 
     def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
@@ -290,9 +291,9 @@ class EmergeBase(object):
         if utils.system( command, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
-            utils.warning( "while running %s cmd: %s" % (errorMessage, str(command)) )
+            EmergeDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         else:
-            utils.warning( "while running %s cmd: %s" % (errorMessage, str(command)) )
+            EmergeDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         return False
 
     def proxySettings(self):

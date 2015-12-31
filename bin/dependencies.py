@@ -44,6 +44,7 @@
 
    $ dot -T svg -o deps.svg deps.dot
 """
+import EmergeDebug
 
 __author__  = "Sascha L. Teichmann <sascha.teichmann@intevation.de>"
 __license__ = "New-style BSD"
@@ -415,7 +416,7 @@ class DependenciesTree(object):
 
     def getMetaData( self, category, package ):
         """ returns all targets of a specified package """
-        utils.debug( "getMetaData: importing file %s" % portage.getFilename( category, package ), 1 )
+        EmergeDebug.debug("getMetaData: importing file %s" % portage.getFilename(category, package), 1)
         if not ( category and package ):
             return dict()
         info = portage._getSubinfo(  category, package  )
@@ -430,7 +431,7 @@ class DependenciesTree(object):
             if not info.homepage == "":
                 tmpdict['homepage'] = info.homepage
             tmpdict['withCompiler'] = info.options.package.withCompiler
-            utils.debug( tmpdict, 2 )
+            EmergeDebug.debug(tmpdict, 2)
             return tmpdict
         else:
             return {'withCompiler': True}
@@ -593,7 +594,7 @@ def main():
     elif rest:
         output = dumpDependencies(rest[0], output_type, depstyle)
     else:
-        utils.error("missing package list file or package/category")
+        EmergeDebug.error("missing package list file or package/category")
         sys.exit(1)
 
     if hasattr(args, "outputname") and args.outputname:

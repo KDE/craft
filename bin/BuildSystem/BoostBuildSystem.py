@@ -7,6 +7,7 @@
 
 import os
 
+import EmergeDebug
 import utils
 from BuildSystem.BuildSystemBase import *
 
@@ -83,7 +84,7 @@ class BoostBuildSystem(BuildSystemBase):
         self.enterSourceDir()
         cmd  = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
-        if utils.verbose() >= 1:
+        if EmergeDebug.verbose() >= 1:
             print(cmd)
         return self.system(cmd)
 

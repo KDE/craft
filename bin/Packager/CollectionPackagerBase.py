@@ -7,6 +7,7 @@ import re
 import types
 import fileinput
 
+import EmergeDebug
 from Packager.PackagerBase import *
 
 
@@ -24,9 +25,9 @@ class PackagerLists(object):
             try:
                 exp = re.compile( line, re.IGNORECASE )
                 ret.append( exp )
-                utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
+                EmergeDebug.debug("%s added to blacklist as %s" % (line, exp.pattern), 2)
             except re.error:
-                utils.debug( "%s is not a valid regexp" % line, 1 )
+                EmergeDebug.debug("%s is not a valid regexp" % line, 1)
         return ret
 
     @staticmethod
@@ -57,7 +58,7 @@ class CollectionPackagerBase( PackagerBase ):
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
-                utils.debug( "reading whitelist: %s" % entry, 2 )
+                EmergeDebug.debug("reading whitelist: %s" % entry, 2)
                 if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                     for line in entry():
                         self._whitelist.append( line )
@@ -69,7 +70,7 @@ class CollectionPackagerBase( PackagerBase ):
     def blacklist(self):
         if not self._blacklist:
             for entry in self.blacklist_file:
-                utils.debug( "reading blacklist: %s" % entry, 2 )
+                EmergeDebug.debug("reading blacklist: %s" % entry, 2)
                 if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                     for line in entry():
                         self._blacklist.append( line )
@@ -116,7 +117,7 @@ class CollectionPackagerBase( PackagerBase ):
             imageDirs.append(( os.path.join( self.rootdir, "build", x.category, x.package,
                     self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
-            utils.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % ( _package.category, x.package, _package.version, _package.buildTarget ), 2)
+            EmergeDebug.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (_package.category, x.package, _package.version, _package.buildTarget), 2)
         if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
             imageDirs.append((os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler")), None, False))
         return imageDirs
@@ -125,7 +126,7 @@ class CollectionPackagerBase( PackagerBase ):
         """ Read regular expressions from fname """
         fname = os.path.join( self.packageDir(), fname )
         if not os.path.isfile( fname ):
-            utils.die( "Whitelist not found at: %s" % os.path.abspath( fname ) )
+            EmergeDebug.die("Whitelist not found at: %s" % os.path.abspath(fname))
             return False
         for line in fileinput.input( fname ):
             # Cleanup white spaces / line endings
@@ -136,15 +137,15 @@ class CollectionPackagerBase( PackagerBase ):
             try:
                 exp = re.compile( line, re.IGNORECASE )
                 self._whitelist.append( exp )
-                utils.debug( "%s added to whitelist as %s" % ( line, exp.pattern ), 2 )
+                EmergeDebug.debug("%s added to whitelist as %s" % (line, exp.pattern), 2)
             except re.error:
-                utils.debug( "%s is not a valid regexp" % line, 1 )
+                EmergeDebug.debug("%s is not a valid regexp" % line, 1)
 
     def read_blacklist( self, fname ):
         """ Read regular expressions from fname """
         fname = os.path.join( self.packageDir(), fname )
         if not os.path.isfile( fname ):
-            utils.die( "Blacklist not found at: %s" % os.path.abspath( fname ) )
+            EmergeDebug.die("Blacklist not found at: %s" % os.path.abspath(fname))
             return False
         for line in fileinput.input( fname ):
             # Cleanup white spaces / line endings
@@ -155,9 +156,9 @@ class CollectionPackagerBase( PackagerBase ):
             try:
                 exp = re.compile( line, re.IGNORECASE )
                 self._blacklist.append( exp )
-                utils.debug( "%s added to blacklist as %s" % ( line, exp.pattern ), 2 )
+                EmergeDebug.debug("%s added to blacklist as %s" % (line, exp.pattern), 2)
             except re.error:
-                utils.debug( "%s is not a valid regexp" % line, 1 )
+                EmergeDebug.debug("%s is not a valid regexp" % line, 1)
 
     def whitelisted( self, pathname ):
         """ return True if pathname is included in the pattern, and False if not """
@@ -200,14 +201,14 @@ class CollectionPackagerBase( PackagerBase ):
             directory
         """
         utils.createDir( destDir )
-        utils.debug( "Copying from %s ..." % ( srcDir ) )
+        EmergeDebug.debug("Copying from %s ..." % (srcDir))
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
 
         for entry in self.traverse( srcDir, self.whitelisted, self.blacklisted ):
             if os.path.basename( entry ) in uniquebasenames:
-                utils.debug( "Found duplicate filename: %s" % os.path.basename( entry ), 2 )
+                EmergeDebug.debug("Found duplicate filename: %s" % os.path.basename(entry), 2)
                 duplicates.append( entry )
             else:
                 self.unique_names.append( entry )
@@ -218,7 +219,7 @@ class CollectionPackagerBase( PackagerBase ):
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
-            utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
+            EmergeDebug.debug("Copied %s to %s" % (entry, entry_target), 2)
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
         for entry in duplicates:
@@ -226,14 +227,14 @@ class CollectionPackagerBase( PackagerBase ):
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
-            utils.debug( "Copied %s to %s" % ( entry, entry_target ), 2 )
+            EmergeDebug.debug("Copied %s to %s" % (entry, entry_target), 2)
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
           
     def internalCreatePackage( self ):
         """ create a package """
         if not self.noClean:
-            utils.debug( "cleaning imagedir: %s" % self.imageDir() )
+            EmergeDebug.debug("cleaning imagedir: %s" % self.imageDir())
             utils.cleanDirectory( self.imageDir() )
             for directory, mergeDir, strip  in self.__getImageDirectories():
                 imageDir = self.imageDir()
@@ -242,7 +243,7 @@ class CollectionPackagerBase( PackagerBase ):
                 if os.path.exists( directory ):
                     self.copyFiles(directory, imageDir, strip)
                 else:
-                    utils.die( "image directory %s does not exist!" % directory )
+                    EmergeDebug.die("image directory %s does not exist!" % directory)
 
         if not os.path.exists( self.imageDir() ):
             os.makedirs( self.imageDir() )

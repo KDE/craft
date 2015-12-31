@@ -1,3 +1,4 @@
+import EmergeDebug
 import utils
 
 class PackageListParser(object):
@@ -10,7 +11,7 @@ class PackageListParser(object):
         try:
             _listfile = open(self.filename, 'r')
         except:
-            utils.error("couldn't open listfile")
+            EmergeDebug.error("couldn't open listfile")
             return
         for line in _listfile:
             line = line.strip()

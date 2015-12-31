@@ -1,3 +1,4 @@
+import EmergeDebug
 from BuildSystem.BuildSystemBase import *
 
 class PipBuildSystem(BuildSystemBase):
@@ -26,7 +27,7 @@ class PipBuildSystem(BuildSystemBase):
             args += " --allow-all-external "
         for path  in pythons:
             command = "%s install --upgrade %s %s" % (os.path.join(path, "Scripts", "pip"), args, self.subinfo.package)
-            utils.debug(command)
+            EmergeDebug.debug(command)
             ok = ok and utils.system(command)
         return ok
 

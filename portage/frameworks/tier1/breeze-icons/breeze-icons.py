@@ -1,3 +1,4 @@
+import EmergeDebug
 import info
 
 
@@ -42,7 +43,7 @@ class Package(CMakePackageBase):
                 if path.endswith(".svg") and os.path.isfile(path):
                     toReplace = self.resolveGitSymLink(path)
                     if not os.path.exists(toReplace):
-                        utils.warning("Resolving %s failed: %s does not exists." % (path, toReplace))
+                        EmergeDebug.warning("Resolving %s failed: %s does not exists." % (path, toReplace))
                         continue
                     if toReplace != path:
                         utils.deleteFile(path)

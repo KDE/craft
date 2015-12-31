@@ -12,6 +12,8 @@
 
 import sys
 
+import EmergeDebug
+
 MIN_PY_VERSION = (3, 4, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
@@ -44,15 +46,15 @@ def packageIsOutdated( category, package ):
 @utils.log
 def doExec( package, action, continueFlag = False ):
     utils.startTimer( "%s for %s" % ( action, package ), 1 )
-    utils.info("Action: %s for %s" % (action, package))
+    EmergeDebug.info("Action: %s for %s" % (action, package))
     ret = package.execute( action )
     utils.stopTimer( "%s for %s" % ( action, package ) )
     return ret or continueFlag
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
-    utils.debug_line( )
-    utils.info("Handling package: %s, build action: %s" % (packageName, buildAction))
+    EmergeDebug.debug_line()
+    EmergeDebug.info("Handling package: %s, build action: %s" % (packageName, buildAction))
 
     success = True
     package = portage.getPackageInstance( category, packageName )
@@ -65,7 +67,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             revision = package.sourceVersion( )
             for p in installdb.getInstalledPackages( category, packageName ):
                 if p.getRevision( ) == revision:
-                    utils.info("Skipping further actions, package is up-to-date")
+                    EmergeDebug.info("Skipping further actions, package is up-to-date")
                     return True
 
         success = success and doExec( package, "unpack", continueFlag )
@@ -102,7 +104,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         portage.printTargets( category, packageName )
         success = True
     else:
-        success = utils.error( "could not understand this buildAction: %s" % buildAction )
+        success = EmergeDebug.error("could not understand this buildAction: %s" % buildAction)
 
     return success
 
@@ -117,9 +119,9 @@ def handleSinglePackage( packageName, args ):
     if args.action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
-            utils.debug( "Updating installed packages from category " + packageName, 1 )
+            EmergeDebug.debug("Updating installed packages from category " + packageName, 1)
         else:
-            utils.debug( "Updating all installed packages", 1 )
+            EmergeDebug.debug("Updating all installed packages", 1)
         packageList = [ ]
         for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
@@ -128,7 +130,7 @@ def handleSinglePackage( packageName, args ):
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
-        utils.debug( "Will update packages: " + str( packageList ), 1 )
+        EmergeDebug.debug("Will update packages: " + str(packageList), 1)
     elif args.list_file:
         listFileObject = open( args.list_file, 'r' )
         for line in listFileObject:
@@ -145,7 +147,7 @@ def handleSinglePackage( packageName, args ):
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
     for entry in packageList:
-        utils.debug("Checking dependencies for: %s" % entry, 1)
+        EmergeDebug.debug("Checking dependencies for: %s" % entry, 1)
 
     for mainCategory, entry in zip( categoryList, packageList ):
         deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
@@ -173,12 +175,12 @@ def handleSinglePackage( packageName, args ):
             # if no target or a wrong one is defined, simply set the default target here
             item.target = args.target
 
-        utils.debug( "dependency: %s" % item, 1 )
+        EmergeDebug.debug("dependency: %s" % item, 1)
 
     if not deplist:
-        utils.debug("<none>", 1)
+        EmergeDebug.debug("<none>", 1)
 
-    utils.debug_line( 1 )
+    EmergeDebug.debug_line(1)
 
     #for item in deplist:
     #    cat = item[ 0 ]
@@ -241,22 +243,22 @@ def handleSinglePackage( packageName, args ):
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
-                if utils.verbose( ) > 1 and info.package == packageName:
-                    utils.warning( "already installed %s/%s" % ( info.category, info.package) )
-                elif utils.verbose( ) > 2 and not info.package == packageName:
-                    utils.warning( "already installed %s/%s" % ( info.category, info.package ) )
+                if EmergeDebug.verbose() > 1 and info.package == packageName:
+                    EmergeDebug.warning("already installed %s/%s" % (info.category, info.package))
+                elif EmergeDebug.verbose() > 2 and not info.package == packageName:
+                    EmergeDebug.warning("already installed %s/%s" % (info.category, info.package))
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                    if utils.verbose( ) > 0:
-                        utils.warning( "pretending %s" % info )
+                    if EmergeDebug.verbose() > 0:
+                        EmergeDebug.warning("pretending %s" % info)
                 else:
                     if args.action in [ "install-deps", "update-direct-deps" ]:
                         args.action = "all"
 
                     if not handlePackage( info.category, info.package, args.action, args.doContinue, args.update_fast ):
-                        utils.error( "fatal error: package %s/%s %s failed" % \
-                                     ( info.category, info.package, args.action ) )
+                        EmergeDebug.error("fatal error: package %s/%s %s failed" % \
+                                          ( info.category, info.package, args.action ))
                         utils.notify( "Emerge build failed",
                                       "Build of %s/%s failed" % ( info.category, info.package),
                                       args.action )
@@ -265,7 +267,7 @@ def handleSinglePackage( packageName, args ):
                                   "Build of %s/%s finished" % ( info.category, info.package),
                                   args.action )
 
-    utils.new_line( )
+    EmergeDebug.new_line()
     return True
 
 
@@ -373,9 +375,9 @@ def main( ):
     if args.stayQuiet == True or args.action in [ "version-dir", "version-package",
                                                   "print-installable", "print-installed",
                                                   "print-targets" ]:
-        utils.setVerbose( -1 )
+        EmergeDebug.setVerbose(-1)
     elif args.verbose:
-        utils.setVerbose( args.verbose )
+        EmergeDebug.setVerbose(args.verbose)
 
     emergeSettings.set( "General", "WorkOffline", args.offline )
     emergeSettings.set( "General", "EMERGE_NOCOPY", args.nocopy )
@@ -405,15 +407,15 @@ def main( ):
     if args.action in [ "update", "update-all" ]:
         args.noclean = True
 
-    utils.debug( "buildAction: %s" % args.action )
-    utils.debug( "doPretend: %s" % args.probe, 1 )
-    utils.debug( "packageName: %s" % args.packageNames )
-    utils.debug( "buildType: %s" % args.buildType )
-    utils.debug( "buildTests: %s" % args.buildTests )
-    utils.debug( "verbose: %d" % utils.verbose( ), 1 )
-    utils.debug( "trace: %s" % args.trace, 1 )
-    utils.debug( "KDEROOT: %s" % EmergeStandardDirs.emergeRoot( ), 1 )
-    utils.debug_line( )
+    EmergeDebug.debug("buildAction: %s" % args.action)
+    EmergeDebug.debug("doPretend: %s" % args.probe, 1)
+    EmergeDebug.debug("packageName: %s" % args.packageNames)
+    EmergeDebug.debug("buildType: %s" % args.buildType)
+    EmergeDebug.debug("buildTests: %s" % args.buildTests)
+    EmergeDebug.debug("verbose: %d" % EmergeDebug.verbose(), 1)
+    EmergeDebug.debug("trace: %s" % args.trace, 1)
+    EmergeDebug.debug("KDEROOT: %s" % EmergeStandardDirs.emergeRoot(), 1)
+    EmergeDebug.debug_line()
 
     if args.print_installed:
         printInstalled( )
@@ -448,8 +450,8 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
-        utils.debug(e.exception, 1)
-        utils.error(e)
+        EmergeDebug.debug(e.exception, 1)
+        EmergeDebug.error(e)
     except Exception as e:
         print( e )
         traceback.print_tb( e.__traceback__ )

@@ -7,6 +7,7 @@ from string import Template
 from io import StringIO
 import re
 
+import EmergeDebug
 from .CollectionPackagerBase import *
 
 
@@ -64,8 +65,8 @@ class MSInstallerPackager( CollectionPackagerBase ):
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        utils.new_line()
-        utils.debug( "generating installer %s" % self.defines[ "setupname" ] )
+        EmergeDebug.new_line()
+        EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
 
         wxs = Document()
         componentRefs = Document()

@@ -1,13 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-
+import EmergeDebug
 from EmergeBase import *
 
 class SourceBase(EmergeBase):
     """ implements basic stuff required for all sources"""
     def __init__(self):
-        utils.trace( "SourceBase.__init__ called", 2 )
+        EmergeDebug.trace("SourceBase.__init__ called", 2)
         EmergeBase.__init__(self)
         self.url = ""
 
@@ -56,12 +56,12 @@ class SourceBase(EmergeBase):
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-        utils.debug( "using sourcedir: " + sourcedir, 1 )
+        EmergeDebug.debug("using sourcedir: " + sourcedir, 1)
         return sourcedir
 
     def applyPatches(self):
         """apply patches if available"""
-        utils.trace( "SourceBase.applyPatches called", 0 )
+        EmergeDebug.trace("SourceBase.applyPatches called", 0)
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
@@ -73,7 +73,7 @@ class SourceBase(EmergeBase):
 
     def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
-        utils.trace( "SourceBase.applyPatch called", 2 )
+        EmergeDebug.trace("SourceBase.applyPatch called", 2)
         if not fileName:
             return True
         if not srcdir:

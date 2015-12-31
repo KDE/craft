@@ -1,3 +1,4 @@
+import EmergeDebug
 from Package.PackageBase import *
 from Source.SourceBase import *
 from BuildSystem.BuildSystemBase import *
@@ -8,7 +9,7 @@ import portage
 class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase ):
     """provides a base class for virtual packages"""
     def __init__( self ):
-        utils.debug( "VirtualPackageBase.__init__ called", 2 )
+        EmergeDebug.debug("VirtualPackageBase.__init__ called", 2)
         PackageBase.__init__( self )
         SourceBase.__init__( self )
         BuildSystemBase.__init__( self, "" )

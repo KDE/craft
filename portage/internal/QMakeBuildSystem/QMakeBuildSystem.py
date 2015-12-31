@@ -1,12 +1,13 @@
 import os
 
+import EmergeDebug
 import info
 import compiler
 
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        utils.debug("emergebuildsystem:subinfo.setDependencies not implemented yet",1)
+        EmergeDebug.debug("emergebuildsystem:subinfo.setDependencies not implemented yet", 1)
         # we need at least qmake
         #self.dependencies['libs/qt'] = 'default'
         self.buildDependencies['dev-util/jom'] = 'default'

@@ -1,3 +1,4 @@
+import EmergeDebug
 import info
 
 
@@ -35,7 +36,7 @@ class Package(CMakePackageBase):
             return False
         # Check whether compiler is mingw or not...
         if self.compiler() != "mingw" and self.compiler() != "mingw4":
-            utils.die("This package is currently only compiled with mingw.")
+            EmergeDebug.die("This package is currently only compiled with mingw.")
 
         return True
 

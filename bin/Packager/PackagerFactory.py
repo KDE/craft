@@ -1,7 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-
+import EmergeDebug
 from Packager.KDEWinPackager import *
 from Packager.CPackPackager import *
 from Packager.SevenZipPackager import *
@@ -20,13 +20,13 @@ def init(packager, parent):
 def PackagerFactory(parent, packagerType):
     """provides multi packager type api
     return PackagerBase derived instance for recent settings"""
-    utils.debug( "PackagerFactory called", 2 )
+    EmergeDebug.debug("PackagerFactory called", 2)
     packagers = []
 
     if packagerType:
         for packagerClass in packagerType:
             if not issubclass(packagerClass, PackagerBase):
-                utils.die("PackagerFactory: unsupported packager %s" % packagerClass)
+                EmergeDebug.die("PackagerFactory: unsupported packager %s" % packagerClass)
             else:
                 packager = packagerClass()
                 init(packager, parent)

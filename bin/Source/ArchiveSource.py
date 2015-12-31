@@ -4,6 +4,7 @@
 
 import shutil
 
+import EmergeDebug
 from Source.SourceBase import *
 
 
@@ -11,7 +12,7 @@ class ArchiveSource(SourceBase):
     """ file download source"""
     filenames = []
     def __init__(self, subinfo=None):
-        utils.debug( "ArchiveSource.__init__ called", 2 )
+        EmergeDebug.debug("ArchiveSource.__init__ called", 2)
         if subinfo:
             self.subinfo = subinfo
         SourceBase.__init__( self )
@@ -36,7 +37,7 @@ class ArchiveSource(SourceBase):
 
     def localFileNamesBase(self):
         """ collect local filenames """
-        utils.debug( "ArchiveSource.localFileNamesBase called", 2 )
+        EmergeDebug.debug("ArchiveSource.localFileNamesBase called", 2)
 
         filenames = []
         for i in range(self.repositoryUrlCount()):
@@ -60,23 +61,23 @@ class ArchiveSource(SourceBase):
 
     def fetch( self, dummyRepopath = None ):
         """fetch normal tarballs"""
-        utils.debug( "ArchiveSource.fetch called", 2 )
+        EmergeDebug.debug("ArchiveSource.fetch called", 2)
 
         filenames = self.localFileNames()
 
         if ( self.noFetch ):
-            utils.debug( "skipping fetch (--offline)" )
+            EmergeDebug.debug("skipping fetch (--offline)")
             return True
 
         self.setProxy()
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
-                utils.debug("files and digests available, no need to download files", 1)
+                EmergeDebug.debug("files and digests available, no need to download files", 1)
                 return True
 
             result = utils.getFiles( self.subinfo.target(), EmergeStandardDirs.downloadDir() , filenames = self.subinfo.archiveName() )
             if not result:
-                utils.debug( "failed to download files", 1 )
+                EmergeDebug.debug("failed to download files", 1)
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if self.subinfo.targetDigestUrl() == "auto":
@@ -84,34 +85,34 @@ class ArchiveSource(SourceBase):
                 else:
                     return utils.getFiles( self.subinfo.targetDigestUrl(), EmergeStandardDirs.downloadDir(), filenames = '' )
             else:
-                utils.debug( "no digestUrls present", 2 )
+                EmergeDebug.debug("no digestUrls present", 2)
                 return True
         else:
             return utils.getFiles( "", EmergeStandardDirs.downloadDir() )
 
     def checkDigest(self):
-        utils.debug( "ArchiveSource.checkDigest called", 2 )
+        EmergeDebug.debug("ArchiveSource.checkDigest called", 2)
         filenames = self.localFileNames()
 
         if self.subinfo.hasTargetDigestUrls():
-            utils.debug("check digests urls", 1)
+            EmergeDebug.debug("check digests urls", 1)
             if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
-                utils.error("invalid digest file")
+                EmergeDebug.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
-            utils.debug("check digests", 1)
+            EmergeDebug.debug("check digests", 1)
             if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
-                utils.error("invalid digest file")
+                EmergeDebug.error("invalid digest file")
                 return False
         else:
-            utils.debug("print source file digests", 1)
+            EmergeDebug.debug("print source file digests", 1)
             digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
         return True
 
     def unpack(self):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
-        utils.debug( "ArchiveSource.unpack called", 2 )
+        EmergeDebug.debug("ArchiveSource.unpack called", 2)
 
         filenames = self.localFileNames()
         ## @todo: unpack destination is probably sourceDir()
@@ -121,30 +122,30 @@ class ArchiveSource(SourceBase):
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if self.buildSystemType == 'binary':
             destdir = self.installDir()
-            utils.debug("unpacking files into image root %s" % destdir, 1)
+            EmergeDebug.debug("unpacking files into image root %s" % destdir, 1)
         # tempory solution
         elif self.subinfo.options.unpack.unpackIntoBuildDir:
             destdir = self.buildDir()
-            utils.debug("unpacking files into build dir %s" % destdir, 1)
+            EmergeDebug.debug("unpacking files into build dir %s" % destdir, 1)
         else:
             destdir = self.workDir()
-            utils.debug("unpacking files into work root %s" % destdir, 1)
+            EmergeDebug.debug("unpacking files into work root %s" % destdir, 1)
 
         if hasattr(self.subinfo.options.unpack, 'unpackDir'):
             destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
 
         if self.subinfo.hasTargetDigestUrls():
-            utils.debug("check digests urls", 1)
+            EmergeDebug.debug("check digests urls", 1)
             if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
-                utils.error("invalid digest file")
+                EmergeDebug.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
-            utils.debug("check digests", 1)
+            EmergeDebug.debug("check digests", 1)
             if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
-                utils.error("invalid digest file")
+                EmergeDebug.error("invalid digest file")
                 return False
         else:
-            utils.debug("print source file digests", 1)
+            EmergeDebug.debug("print source file digests", 1)
             digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
             utils.printFilesDigests( digests, self.subinfo.buildTarget)
 
@@ -179,7 +180,7 @@ class ArchiveSource(SourceBase):
         
         diffExe = os.path.join( self.rootdir, "dev-utils", "bin", "diff.exe" )
         if not os.path.exists( diffExe ):
-            utils.die("could not find diff tool, please run 'emerge diffutils'")
+            EmergeDebug.die("could not find diff tool, please run 'emerge diffutils'")
         
         # get the file paths of the tarballs
         filenames = self.localFileNames()
@@ -187,16 +188,16 @@ class ArchiveSource(SourceBase):
         # if using BinaryBuildSystem the files should be unpacked into imagedir
         if self.buildSystemType == 'binary':
             destdir = self.installDir()
-            utils.debug( "unpacking files into image root %s" % destdir, 1 )
+            EmergeDebug.debug("unpacking files into image root %s" % destdir, 1)
         else:
             destdir = self.workDir()
 
         # it makes no sense to make a diff against nothing
         if ( not os.path.exists( self.sourceDir() ) ):
-            utils.error( "source directory doesn't exist, please run unpack first" )
+            EmergeDebug.error("source directory doesn't exist, please run unpack first")
             return False
 
-        utils.debug( "unpacking files into work root %s" % destdir, 1 )
+        EmergeDebug.debug("unpacking files into work root %s" % destdir, 1)
 
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
@@ -214,7 +215,7 @@ class ArchiveSource(SourceBase):
 
         # unpack all packages
         for filename in filenames:
-            utils.debug( "unpacking this file: %s" % filename, 1 )
+            EmergeDebug.debug("unpacking this file: %s" % filename, 1)
             if ( not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, unpackDir ) ):
                 return False
 
@@ -229,7 +230,7 @@ class ArchiveSource(SourceBase):
             if not isinstance(patches, list):
                 patches = list([patches])
             for fileName, patchdepth in patches[:-1]:
-                utils.debug( "applying patch %s with patchlevel: %s" % ( fileName, patchdepth ) )
+                EmergeDebug.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
                 if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                     return False
             if patches[-1][0]:
@@ -251,7 +252,7 @@ class ArchiveSource(SourceBase):
             if not self.system( cmd ):
                 return False
 
-        utils.debug( "patch created at %s" % patchName )
+        EmergeDebug.debug("patch created at %s" % patchName)
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         #for directory in packagelist:

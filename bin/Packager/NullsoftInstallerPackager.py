@@ -4,6 +4,7 @@
 #
 from winreg import * # pylint: disable=F0401
 
+import EmergeDebug
 import utils
 from Packager.CollectionPackagerBase import *
 
@@ -51,10 +52,10 @@ file collection process is skipped, and only the installer is generated.
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                utils.die( "could not find installed nsis package, "
+                EmergeDebug.die("could not find installed nsis package, "
                            "you can install it using emerge nsis or"
                            "download and install it from "
-                           "http://sourceforge.net/projects/nsis/" )
+                           "http://sourceforge.net/projects/nsis/")
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
@@ -124,13 +125,13 @@ file collection process is skipped, and only the installer is generated.
         for key in self.defines:
             definestring += " /D" + key + "=\"" + self.defines[ key ] + "\""
 
-        utils.new_line()
-        utils.debug( "generating installer %s" % self.defines[ "setupname" ] )
+        EmergeDebug.new_line()
+        EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
         if self.isInstalled:
             if not utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join(
                     self.nsisInstallPath, 'makensis.exe' ), definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
-                utils.die("Error in makensis execution")
+                EmergeDebug.die("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """

@@ -3,7 +3,7 @@
 #
 
 """ \package BuildSystemBase"""
-
+import EmergeDebug
 from EmergeBase import *
 import compiler
 from graphviz import *
@@ -33,7 +33,7 @@ class BuildSystemBase(EmergeBase):
             return "ninja"
         EMERGE_MAKE_PROGRAM = emergeSettings.get("General", "EMERGE_MAKE_PROGRAM", "" )
         if EMERGE_MAKE_PROGRAM != "" and self.subinfo.options.make.supportsMultijob:
-            utils.debug( "set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1 )
+            EmergeDebug.debug("set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1)
             return EMERGE_MAKE_PROGRAM
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
@@ -43,7 +43,7 @@ class BuildSystemBase(EmergeBase):
         elif compiler.isMinGW():
             return "mingw32-make"
         else:
-            utils.die( "unknown %s compiler" % self.compiler() )
+            EmergeDebug.die("unknown %s compiler" % self.compiler())
     makeProgramm = property(_getmakeProgram)
 
     def compile(self):
@@ -90,7 +90,7 @@ class BuildSystemBase(EmergeBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if maybeVerbose and utils.verbose() > 1:
+        if maybeVerbose and EmergeDebug.verbose() > 1:
             if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False ):
                 defines += " -v "
             else:

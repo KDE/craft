@@ -1,3 +1,4 @@
+import EmergeDebug
 import info
 
 
@@ -27,7 +28,7 @@ class Package(CMakePackageBase):
     
     def configure(self):
         if not ("Paths","Python27") in emergeSettings:
-            utils.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+            EmergeDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         return CMakeBuildSystem.configure(self)
 
 

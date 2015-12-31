@@ -1,4 +1,4 @@
-
+import EmergeDebug
 from Packager.PackagerBase import *
 
 class CPackPackager (PackagerBase):
@@ -6,6 +6,6 @@ class CPackPackager (PackagerBase):
         PackagerBase.__init__(self)
 
     def createPackage(self):
-        utils.die("not implemented yet")
+        EmergeDebug.die("not implemented yet")
 
 

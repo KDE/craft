@@ -3,13 +3,13 @@
 #
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
-
+import EmergeDebug
 from Source.VersionSystemSourceBase import *
 
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self, subinfo=None):
-        utils.trace( "SvnSource.__init__", 2 )
+        EmergeDebug.trace("SvnSource.__init__", 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -19,7 +19,7 @@ class SvnSource (VersionSystemSourceBase):
 
 
     def checkoutDir( self, index=0 ):
-        utils.trace( "SvnSource.checkoutDir", 2 )
+        EmergeDebug.trace("SvnSource.checkoutDir", 2)
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (url, dummy) = self.splitUrl(u)
@@ -33,7 +33,7 @@ class SvnSource (VersionSystemSourceBase):
                 if path and emergeSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
                     sourcedir = os.path.join( sourcedir, path )
         else:
-            utils.die("svnTarget property not set for this target")
+            EmergeDebug.die("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
@@ -42,7 +42,7 @@ class SvnSource (VersionSystemSourceBase):
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a svn repository checkout"""
-        utils.trace( "SvnSource.applyPatch", 2 )
+        EmergeDebug.trace("SvnSource.applyPatch", 2)
         if fileName:
             patchfile = os.path.join (self.packageDir(), fileName)
             # @todo check if this could be merged into SourceBase.applyPatch
@@ -69,13 +69,13 @@ class SvnSource (VersionSystemSourceBase):
 
     def fetch( self, repopath = None ):
         """ checkout or update an existing repository path """
-        utils.trace( "SvnSource.fetch", 2 )
+        EmergeDebug.trace("SvnSource.fetch", 2)
         if self.noFetch:
-            utils.debug( "skipping svn fetch (--offline)" )
+            EmergeDebug.debug("skipping svn fetch (--offline)")
             return True
 
         if not os.path.exists(self.svnInstallDir):
-            utils.die("required subversion package not installed in %s" % self.svnInstallDir)
+            EmergeDebug.die("required subversion package not installed in %s" % self.svnInstallDir)
 
         for i in range(self.repositoryUrlCount()):
             if repopath:
@@ -193,7 +193,7 @@ class SvnSource (VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if utils.verbose() < 2 and not emergeSettings.getboolean("General", "KDESVNVERBOSE",True):
+        if EmergeDebug.verbose() < 2 and not emergeSettings.getboolean("General", "KDESVNVERBOSE", True):
             option += " --quiet"
 
         self.setProxy()

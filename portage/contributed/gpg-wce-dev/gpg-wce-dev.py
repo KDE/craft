@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+import EmergeDebug
 from Package.BinaryPackageBase import *
 import info
 import utils
@@ -66,7 +67,7 @@ class Package(BinaryPackageBase):
         (command, option) = self.getAction()
         if command == "install":
             self.runAction(command)
-            utils.debug("Generating libgpgme.lib", 2)
+            EmergeDebug.debug("Generating libgpgme.lib", 2)
             deffile = os.path.join(self.imageDir(), "lib", "gpgme.def")
             outfile = os.path.join(self.imageDir(), "lib", "libgpgme.lib")
             args = ["lib", "/machine:thumb", "/name:libgpgme-11",

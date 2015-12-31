@@ -1,3 +1,4 @@
+import EmergeDebug
 import info
 class subinfo(info.infoclass):
     def setTargets(self):
@@ -46,10 +47,10 @@ class Package(BoostPackageBase):
                     cmd += "vc9"
                 elif compiler.isMSVC2010():
                     cmd += "vc10"
-            if utils.verbose() >= 1:
+            if EmergeDebug.verbose() >= 1:
                 print(cmd)
             utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
-                    'boost-headers').sourceDir(),"tools","build","v2","engine")) or utils.die(
+                    'boost-headers').sourceDir(),"tools","build","v2","engine")) or EmergeDebug.die(
                     "command: %s failed" % (cmd))
         else:
             cmd = "bootstrap.bat "
@@ -68,10 +69,10 @@ class Package(BoostPackageBase):
                     cmd += "vc12"
                 elif compiler.isMSVC2015():
                     cmd += "vc14"
-            if utils.verbose() >= 1:
+            if EmergeDebug.verbose() >= 1:
                 print(cmd)
             utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
-                    'boost-headers').sourceDir(),"tools","build")) or utils.die(
+                    'boost-headers').sourceDir(),"tools","build")) or EmergeDebug.die(
                     "command: %s failed" % (cmd))
         return True
 

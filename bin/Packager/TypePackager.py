@@ -1,7 +1,7 @@
 #
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
-
+import EmergeDebug
 from Packager.PackagerBase import *
 
 from Packager.KDEWinPackager import *
@@ -17,7 +17,7 @@ The packager used can be decided at runtime
     PackagerTypes = [ "SevenZipPackager", "KDEWinPackager", "MSIFragmentPackager", "InnoSetupPackager" ]
 
     def __init__( self, defaultType = "MSIFragmentPackager" ):
-        utils.debug( "TypePackager __init__ %s" % defaultType, 2 )
+        EmergeDebug.debug("TypePackager __init__ %s" % defaultType, 2)
         self.defaultPackager = defaultType
 
     def changePackager( self, packager=None ):

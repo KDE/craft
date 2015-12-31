@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import tempfile
 
+import EmergeDebug
 import info
 import utils
 
@@ -51,7 +52,7 @@ class Package(BinaryPackageBase):
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:
                 return True
-        utils.debug( "adding kde related settings to global git config file",1 )
+        EmergeDebug.debug("adding kde related settings to global git config file", 1)
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
         utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
         utils.system( "%s config --global core.autocrlf false" % git)

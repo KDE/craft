@@ -7,6 +7,7 @@ import os
 import subprocess
 import re
 
+import EmergeDebug
 import utils
 from EmergeConfig import *
 
@@ -20,7 +21,7 @@ def _getGCCTarget():
     if not _GCCTARGET:
         status, result = subprocess.getstatusoutput("gcc -dumpmachine")
         if status == 0:
-            utils.debug("GCC Target Processor:%s" % result, 1 )
+            EmergeDebug.debug("GCC Target Processor:%s" % result, 1)
             _GCCTARGET = result.strip()
         else:
             #if no mingw is installed return mingw-w32 it is part of base
@@ -90,7 +91,7 @@ def getCompilerName():
     elif isIntel():
         return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
     else:
-        utils.die("Unknown Compiler %s" %  _compiler())
+        EmergeDebug.die("Unknown Compiler %s" % _compiler())
 
 def getSimpleCompilerName():
     if isMinGW():
@@ -100,7 +101,7 @@ def getSimpleCompilerName():
     elif isIntel():
         return "intel"
     else:
-        utils.die("Unknown Compiler %s" %  _compiler())
+        EmergeDebug.die("Unknown Compiler %s" % _compiler())
 
 def getMinGWVersion():
     global _MINGW_VERSION # pylint: disable=W0603
@@ -108,7 +109,7 @@ def getMinGWVersion():
         status, result = subprocess.getstatusoutput("gcc --version")
         if status == 0:
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
-            utils.debug("GCC Version:%s" % result, 1 )
+            EmergeDebug.debug("GCC Version:%s" % result, 1)
             _MINGW_VERSION = result.strip()
         else:
             #if no mingw is installed return 0
@@ -136,7 +137,7 @@ def getShortName():
     elif isMSVC2015():
         return "vc140"
     else:
-        utils.die("Unknown Compiler %s" %  _compiler())
+        EmergeDebug.die("Unknown Compiler %s" % _compiler())
 
 
 if __name__ == '__main__':

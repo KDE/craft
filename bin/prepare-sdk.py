@@ -1,3 +1,4 @@
+import EmergeDebug
 import utils
 from EmergeConfig import *
 import InstallDB
@@ -35,7 +36,7 @@ def resetSettings():
         fout.write(text)
 
 if __name__ == "__main__":
-    utils.setVerbose(3)
+    EmergeDebug.setVerbose(3)
     # we don't use the db directly and the file must not be locked
     del InstallDB.installdb
     backup()

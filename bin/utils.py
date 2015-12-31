@@ -8,33 +8,29 @@ this file contains some helper functions for emerge
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
-import http.client
+import ctypes
+import datetime
 import ftplib
-import urllib.request
+import hashlib
+import http.client
+import inspect
+import shutil
+import tarfile
+import tempfile
 import urllib.error
 import urllib.parse
-import shutil
+import urllib.request
 import zipfile
-import tarfile
-import hashlib
-import traceback
-import tempfile
-import getpass
-import subprocess
-import re
-import inspect
-import datetime
 from operator import itemgetter
-import ctypes
 
 import Notifier.NotificationLoader
 from EmergeConfig import *
-
+from EmergeDebug import verbose, setVerbose, info, debug, warning, error, die
 
 if os.name == 'nt':
-    import msvcrt # pylint: disable=F0401
+    pass
 else:
-    import fcntl # pylint: disable=F0401
+    pass
 
 import configparser
 
@@ -74,41 +70,9 @@ def test4application( appname):
         p.wait()
         return True
     except OSError:
-        debug( "could not find application %s" % appname, 1 )
+        debug("could not find application %s" % appname, 1)
         return False
 
-class Verbose(object):
-    """
-        This class will work on the overall output verbosity
-        It defines the interface for the option parser but before the default
-        value is taken from the environment variable.
-        There is only one verbosity value for all parts of emerge.
-        Always updates the shell variable EMERGE_VERBOSE.
-    """
-    __level = 0
-
-    @staticmethod
-    def increase():
-        """increase verbosity"""
-        Verbose.setLevel(Verbose.__level + 1)
-
-    @staticmethod
-    def decrease():
-        """decrease verbosity"""
-        Verbose.setLevel(Verbose.__level - 1)
-
-    @staticmethod
-    def level():
-        return Verbose.__level
-
-    @staticmethod
-    def setLevel(newLevel):
-        """ set the level by hand for quick and dirty changes """
-        Verbose.__level = max(-1, newLevel)
-
-    def verbose( self ):
-        """ returns the verbosity level for the application """
-        return Verbose.__level
 
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
@@ -123,16 +87,9 @@ class TemporaryVerbosity(object):
         setVerbose(self.prevLevel)
 
 
-def verbose():
-    """return the value of the verbose level"""
-    return Verbose.level()
-
-def setVerbose( _verbose ):
-    Verbose.setLevel(_verbose)
-
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
-    debug( "getfiles called. urls: %s, filenames: %s, suffix: %s" % ( urls, filenames, suffix ), 1 )
+    debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix), 1)
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
@@ -160,9 +117,9 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
 
 def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
-    debug( "getFile called. url: %s" % url, 1 )
+    debug("getFile called. url: %s" % url, 1)
     if url == "":
-        error( "fetch: no url given" )
+        error("fetch: no url given")
         return False
 
 
@@ -174,14 +131,14 @@ def getFile( url, destdir , filename='' ):
 
 
     filename = os.path.basename( path )
-    debug( "%s\n%s\n%s\n%s" % ( scheme, host, path, filename ) )
+    debug("%s\n%s\n%s\n%s" % (scheme, host, path, filename))
 
     if ( scheme == "http" ):
         return getHttpFile( host, path, destdir, filename )
     elif ( scheme == "ftp" ):
         return getFtpFile( host, path, destdir, filename )
     else:
-        error( "getFile: protocol not understood" )
+        error("getFile: protocol not understood")
         return False
 
 def wgetFile( url, destdir, filename=''):
@@ -195,15 +152,15 @@ def wgetFile( url, destdir, filename=''):
     else:
         command += " -O %s" % os.path.join( destdir, filename )
     command += " %s" % url
-    debug( "wgetfile called", 1 )
+    debug("wgetfile called", 1)
     ret = system( command )
-    debug( "wget ret: %s" % ret, 2)
+    debug("wget ret: %s" % ret, 2)
     return ret
 
 def getFtpFile( host, path, destdir, filename ):
     """download file from a ftp host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
-    debug( "FIXME getFtpFile called. %s %s" % ( host, path ), 1 )
+    debug("FIXME getFtpFile called. %s %s" % (host, path), 1)
 
     ftp = ftplib.FTP( host )
     ftp.login( "anonymous", "johndoe" )
@@ -215,25 +172,25 @@ def getFtpFile( host, path, destdir, filename ):
 def getHttpFile( host, path, destdir, filename ):
     """download file from a http host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
-    debug( "getHttpFile called. %s %s" % ( host, path ), 1 )
+    debug("getHttpFile called. %s %s" % (host, path), 1)
 
     conn = http.client.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
-    debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
+    debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
 
     count = 0
     while r1.status == 302:
         if count > 10:
-            debug( "Redirect loop" )
+            debug("Redirect loop")
             return False
         count += 1
         _, host, path, _, _, _ = urllib.parse.urlparse( r1.getheader( "Location" ) )
-        debug( "Redirection: %s %s" % ( host, path ), 1 )
+        debug("Redirection: %s %s" % (host, path), 1)
         conn = http.client.HTTPConnection( host )
         conn.request( "GET", path )
         r1 = conn.getresponse()
-        debug( "status: %s; reason: %s" % ( str( r1.status ), str( r1.reason ) ) )
+        debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
 
 
     data = r1.read()
@@ -258,7 +215,7 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
 
     i = 0
     for filename in filenames:
-        debug( "checking digest of: %s" % filename, 1 )
+        debug("checking digest of: %s" % filename, 1)
         pathName = os.path.join( downloaddir, filename )
         if digests == None:
             digestFileName = pathName + '.sha1'
@@ -266,27 +223,27 @@ def checkFilesDigests( downloaddir, filenames, digests=None ):
                 digestFileName, _ = os.path.splitext( pathName )
                 digestFileName += '.sha1'
                 if not os.path.exists( digestFileName ):
-                    error( "digest validation request for file %s, but no digest  file present" %
-                            pathName )
+                    error("digest validation request for file %s, but no digest  file present" %
+                          pathName)
                     return False
             currentHash = digestFileSha1( pathName )
             with open( digestFileName, "r" ) as f:
                 line = f.readline()
             digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
             if not digest:
-                error( " digestFile %s for file %s does not contain a valid SHA1 hash" % (digestFileName,
-                        pathName,) )
+                error(" digestFile %s for file %s does not contain a valid SHA1 hash" % (digestFileName,
+                                                                                         pathName,))
                 return False
             digest = digest.group(0)
             if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error( "SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest) )
+                error("SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest))
                 return False
         # digest provided in digests parameter
         else:
             currentHash = digestFileSha1( pathName )
             digest = digestList[i].strip()
             if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error( "SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest) )
+                error("SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest))
                 return False
         i = i + 1
     return True
@@ -343,7 +300,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
     cleanDirectory( workdir )
 
     for filename in filenames:
-        debug( "unpacking this file: %s" % filename, 1 )
+        debug("unpacking this file: %s" % filename, 1)
         if ( not unpackFile( downloaddir, filename, workdir ) ):
             return False
 
@@ -363,13 +320,13 @@ def unpackFile( downloaddir, filename, workdir ):
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
         else:
-            error( "unpacking %s" % myext )
+            error("unpacking %s" % myext)
             return False
     elif ( ext == ".exe" ):
-        warning( "unpack ignoring exe file" )
+        warning("unpack ignoring exe file")
         return True
     else:
-        error( "dont know how to unpack this file: %s" % filename )
+        error("dont know how to unpack this file: %s" % filename)
     return False
 
 def un7zip( fileName, destdir, flag = None ):
@@ -388,7 +345,7 @@ def un7zip( fileName, destdir, flag = None ):
 
 def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
-    debug( "unTar called. file: %s, destdir: %s" % ( fileName, destdir ), 1 )
+    debug("unTar called. file: %s, destdir: %s" % (fileName, destdir), 1)
     ( shortname, ext ) = os.path.splitext( fileName )
     emerge_tmp = os.path.join(destdir,"emerge_tmp")
 
@@ -404,7 +361,7 @@ def unTar( fileName, destdir ):
 
 
     if not os.path.exists( fileName ):
-        error( "couldn't find file %s" % fileName )
+        error("couldn't find file %s" % fileName)
         return False
 
     try:
@@ -420,19 +377,19 @@ def unTar( fileName, destdir ):
                         if target in tar.getnames():
                             tar.extract(target, emerge_tmp )
                             shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
-                            warning("Resolved symlink %s in tarfile %s to %s" % ( tarMember.name, fileName , tarMember.linkname))
+                            warning("Resolved symlink %s in tarfile %s to %s" % (tarMember.name, fileName , tarMember.linkname))
                         else:
-                            warning("link target %s for %s not included in tarfile" % ( target , tarMember.name))
+                            warning("link target %s for %s not included in tarfile" % (target , tarMember.name))
                     else:
                         tar.extract(tarMember, destdir )
                 except tarfile.TarError:
-                    error( "couldn't extract file %s to directory %s" % ( fileName, destdir ) )
+                    error("couldn't extract file %s to directory %s" % (fileName, destdir))
                     return False
                 except IOError:
-                    warning("Failed to extract %s to directory %s" % ( tarMember.name, destdir ) )
+                    warning("Failed to extract %s to directory %s" % (tarMember.name, destdir))
         return True
     except tarfile.TarError as e:
-        error( "could not open existing tar archive: %s error: %s" % (fileName,e) )
+        error("could not open existing tar archive: %s error: %s" % (fileName, e))
         return False
     finally:
         if os.path.exists(emerge_tmp):
@@ -440,7 +397,7 @@ def unTar( fileName, destdir ):
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
-    debug( "unZip called: file %s to destination %s" % ( fileName, destdir ), 1 )
+    debug("unZip called: file %s to destination %s" % (fileName, destdir), 1)
 
     if not os.path.exists( destdir ):
         os.makedirs( destdir )
@@ -448,7 +405,7 @@ def unZip( fileName, destdir ):
     try:
         zipObj = zipfile.ZipFile( fileName )
     except (zipfile.BadZipfile, IOError):
-        error( "couldn't extract file %s" % fileName )
+        error("couldn't extract file %s" % fileName)
         return False
 
     for name in zipObj.namelist():
@@ -464,52 +421,6 @@ def unZip( fileName, destdir ):
     return True
 
 
-def info( message ):
-    if verbose() >= 0:
-        print("*** %s ***" % message)
-    return True
-
-def debug( message, level=1 ):
-    if verbose() > level and verbose() > 0:
-        print("emerge debug (%s): %s" % (level, message))
-        sys.stdout.flush()
-    return True
-
-def warning( message ):
-    if verbose() > 0:
-        try:
-            print("emerge warning: %s" % message)
-        except UnicodeEncodeError:
-            print("emerge warning: failed to print message")
-    return True
-
-def new_line( level=0 ):
-    if verbose() > level and verbose() > 0:
-        print()
-
-def debug_line( level=0 ):
-    if verbose() > level and verbose() > 0:
-        print("_" * 80)
-
-def error( message ):
-    if verbose() > 0:
-        print("emerge error: %s" % message, file=sys.stderr)
-    return False
-
-def die( message ):
-    raise Exception("emerge fatal error: %s" % message)
-
-
-def traceMode():
-    """return the value of the trace level"""
-    return int(emergeSettings.get( "General", "EMERGE_TRACE", "0" ))
-
-def trace( message, dummyLevel=0 ):
-    if traceMode(): #> level:
-        print("emerge trace:", message)
-    sys.stdout.flush()
-    return True
-
 def system(cmd, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
@@ -520,7 +431,7 @@ def systemWithoutShell(cmd, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
 
-    debug( "executing command: %s" % cmd, 1 )
+    debug("executing command: %s" % cmd, 1)
 
     if kw.get('stdout') is None:
         kw['stdout'] = sys.stdout
@@ -570,7 +481,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
         if os.path.isfile(fullPath):
             currentHash = digestFile(fullPath)
             if currentHash == filehash or filehash == "":
-                debug( "deleting file %s" % fullPath, 2)
+                debug("deleting file %s" % fullPath, 2)
                 try:
                     os.remove(fullPath)
                 except OSError:
@@ -578,18 +489,18 @@ def unmergeFileList(rootdir, fileList, forced=False):
                     os.remove(fullPath)
             else:
                 if forced:
-                    warning( "file %s has different hash: %s %s, deleting anyway" % \
-                            (fullPath, currentHash, filehash ) )
+                    warning("file %s has different hash: %s %s, deleting anyway" % \
+                            (fullPath, currentHash, filehash ))
                 try:
                     os.remove(fullPath)
                 except OSError:
                     system( "cmd /C \"attrib -R %s\"" % fullPath )
                     os.remove(fullPath)
                 else:
-                    warning( "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                            (fullPath, currentHash, filehash ) )
+                    warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                            (fullPath, currentHash, filehash ))
         elif not os.path.isdir(fullPath):
-            warning( "file %s does not exist" % fullPath)
+            warning("file %s does not exist" % fullPath)
 
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)
@@ -598,7 +509,7 @@ def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
         src = os.path.join( srcdir, entry )
         dest = os.path.join( destdir, entry )
-        debug("move: %s -> %s" %( src, dest ), 1)
+        debug("move: %s -> %s" % (src, dest), 1)
         if( os.path.isfile( dest ) ):
             os.remove( dest )
         if( os.path.isdir( dest ) ):
@@ -623,7 +534,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     so when we want to be able to install imagedir into KDEROOT,
     we have to move things around...
     """
-    debug( "fixImageDir: %s %s" % ( imagedir, rootdir ), 1 )
+    debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
     # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
     # rootdir  = e:\foo\thirdroot
     # files are installed to
@@ -640,7 +551,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     if len(rootpath) == 0:
         return
     tmp = os.path.join( imagedir, rootpath )
-    debug( "tmp: %s" % tmp, 1 )
+    debug("tmp: %s" % tmp, 1)
     tmpdir = os.path.join( imagedir, "tMpDiR" )
 
     if ( not os.path.isdir( tmpdir ) ):
@@ -665,7 +576,7 @@ def cleanDirectory( directory ):
                     try:
                         os.remove( os.path.join(root, name) )
                     except OSError:
-                        die( "couldn't delete file %s\n ( %s )" % ( name, os.path.join( root, name ) ) )
+                        die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
@@ -674,7 +585,7 @@ def cleanDirectory( directory ):
                     try:
                         os.rmdir( os.path.join(root, name) )
                     except OSError:
-                        die( "couldn't delete directory %s\n( %s )" % ( name, os.path.join( root, name ) ) )
+                        die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs( directory )
 
@@ -813,12 +724,12 @@ def createImportLibs( dll_name, basepath ):
         HAVE_GENDEF = True
         USE_GENDEF = False
     if not HAVE_GENDEF:
-        warning( "system does not have gendef.exe" )
+        warning("system does not have gendef.exe")
         return False
     if not HAVE_LIB  and not os.path.isfile( imppath ):
-        warning( "system does not have lib.exe (from msvc)" )
+        warning("system does not have lib.exe (from msvc)")
     if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
-        warning( "system does not have dlltool.exe" )
+        warning("system does not have dlltool.exe")
 
     # create .def
     if USE_GENDEF:
@@ -852,7 +763,7 @@ def cleanPackageName( basename, packagename ):
 
 def renameDir(src, dest):
     """ rename a directory """
-    debug("rename directory from %s to %s" % ( src, dest ), 2)
+    debug("rename directory from %s to %s" % (src, dest), 2)
     if os.rename( src, dest ) == 0:
         return False
     else:
@@ -861,18 +772,18 @@ def renameDir(src, dest):
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
-        debug("creating directory %s " % ( path ), 2)
+        debug("creating directory %s " % (path), 2)
         os.makedirs( path )
     return True
     
 def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
-    debug("copy file from %s to %s" % ( src, dest ), 2)
+    debug("copy file from %s to %s" % (src, dest), 2)
     destDir = os.path.dirname( dest )
     if not os.path.exists( destDir ):
         os.makedirs( destDir )
     if os.path.exists( dest ):
-        warning( "Overriding %s" % dest )
+        warning("Overriding %s" % dest)
         os.remove( dest )
     if linkOnly:
         try:
@@ -889,7 +800,7 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
     
 def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
-    debug( "copyDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 2)
+    debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
 
     if ( not srcdir.endswith( "\\" ) ):
         srcdir += "\\"
@@ -905,7 +816,7 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
                 os.makedirs( tmpdir )
             for fileName in files:
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
-                debug( "copy %s to %s" % ( os.path.join( root, fileName ), os.path.join( tmpdir, fileName ) ), 2)
+                debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
 
 def mergeTree(srcdir, destdir):
     """ copy directory from @p srcdir to @p destdir
@@ -930,7 +841,7 @@ def mergeTree(srcdir, destdir):
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
-    debug( "moveDir called. srcdir: %s, destdir: %s" % ( srcdir, destdir ), 1 )
+    debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 1)
     try:
         shutil.move( srcdir, destdir )
     except Exception as e:
@@ -940,12 +851,12 @@ def moveDir( srcdir, destdir ):
 
 def rmtree( directory ):
     """ recursively delete directory """
-    debug( "rmtree called. directory: %s" % ( directory ), 2 )
+    debug("rmtree called. directory: %s" % (directory), 2)
     shutil.rmtree ( directory, True ) # ignore errors
 
 def moveFile(src, dest):
     """move file from src to dest"""
-    debug("move file from %s to %s" % ( src, dest ), 2)
+    debug("move file from %s to %s" % (src, dest), 2)
     shutil.move( src, dest )
     return True
 
@@ -953,7 +864,7 @@ def deleteFile(fileName):
     """delete file """
     if not os.path.exists( fileName ):
         return False
-    debug("delete file %s " % ( fileName ), 2)
+    debug("delete file %s " % (fileName), 2)
     os.remove( fileName )
     return True
 
@@ -974,7 +885,7 @@ def findFiles( directory, pattern=None, fileNames=None):
 
 def putenv(name, value):
     """set environment variable"""
-    debug("set environment variable -- set %s=%s" % ( name, value ), 2)
+    debug("set environment variable -- set %s=%s" % (name, value), 2)
     os.putenv( name, value )
     return True
 
@@ -995,7 +906,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
     else:
         result = system( cmd )
     if not result:
-        warning( "applying %s failed!" % f)
+        warning("applying %s failed!" % f)
     return result
 
 def log(fn):
@@ -1079,7 +990,7 @@ def embedManifest(executable, manifest):
         # We die here because this is a problem with the portage files
         die("embedManifest %s or %s do not exist" % (executable, manifest))
     debug("embedding ressource manifest %s into %s" % \
-            (manifest, executable), 2)
+          (manifest, executable), 2)
     mtExe = None
     mtExe = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "mt.exe")
 
@@ -1095,7 +1006,7 @@ def embedManifest(executable, manifest):
             mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
             if not os.path.isfile(os.path.normpath(mtExe)):
                 debug("embedManifest could not find a mt.exe in\n\t %s" % \
-                    os.path.dirname(mtExe), 2)
+                      os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
         return system([mtExe, "-nologo", "-manifest", manifest,
             "-outputresource:%s;1" % executable])
@@ -1140,7 +1051,7 @@ def stopTimer(name):
     """stops a timer for meassurement"""
     if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
         if not name in _TIMERS:
-            debug( "%s not in timers" % name )
+            debug("%s not in timers" % name)
             return
         startTime , level = _TIMERS[name]
         if verbose() > 0  and (level == 0 or verbose() > level):

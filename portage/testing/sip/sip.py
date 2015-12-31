@@ -1,6 +1,7 @@
 import sys
 import os
 
+import EmergeDebug
 import utils
 import info
 import compiler
@@ -44,18 +45,18 @@ class Package(CMakePackageBase):
 
         cmd = "python configure.py"
         cmd += self.subinfo.options.configure.defines
-        os.system(cmd) and utils.die("command: %s failed" % (cmd))
+        os.system(cmd) and EmergeDebug.die("command: %s failed" % (cmd))
         return True
         
     def make( self ):
         self.enterSourceDir()
-        os.system(self.makeProgramm) and utils.die("command: %s failed" % self.makeProgramm)
+        os.system(self.makeProgramm) and EmergeDebug.die("command: %s failed" % self.makeProgramm)
         return True
 
     def install( self ):
         self.enterSourceDir()
         cmd = self.makeProgramm + " install"
-        os.system(cmd) and utils.die("command: %s failed" % cmd)
+        os.system(cmd) and EmergeDebug.die("command: %s failed" % cmd)
         
         # fix problem with not copying manifest file
         if not compiler.isMinGW():

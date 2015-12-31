@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
-
+import EmergeDebug
 import utils
 import compiler
 
@@ -19,7 +19,7 @@ class QMakeBuildSystem(BuildSystemBase):
         elif compiler.isIntel():
             self.platform = "win32-icc"
         else:
-            utils.die( "QMakeBuildSystem: unsupported compiler platform %s" % self.compiler() )
+            EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
 
 
     def configure( self, configureDefines="" ):

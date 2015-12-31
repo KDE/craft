@@ -5,6 +5,7 @@
 
 import subprocess
 
+import EmergeDebug
 from Packager.PackagerBase import *
 import compiler
 
@@ -22,7 +23,7 @@ class KDEWinPackager (PackagerBase):
                 self.packagerExe = path
                 break
         if self.packagerExe:
-            utils.debug("using kdewin packager from %s" % self.packagerExe, 2)
+            EmergeDebug.debug("using kdewin packager from %s" % self.packagerExe, 2)
             _,tmp = subprocess.Popen(self.packagerExe, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             tmp = str(tmp,"windows-1252")
             self.useDebugPackages = "symroot" in tmp
@@ -39,7 +40,7 @@ class KDEWinPackager (PackagerBase):
         This requires the kdewin-packager"""
 
         if not self.packagerExe:
-            utils.die("could not find kdewin-packager in your path!")
+            EmergeDebug.die("could not find kdewin-packager in your path!")
 
         if self.subinfo.options.package.packageName != None:
             pkgName = self.subinfo.options.package.packageName
@@ -62,7 +63,7 @@ class KDEWinPackager (PackagerBase):
             srcCmd = " -srcroot " + self.sourceDir()
         else:
             if not os.path.exists( self.sourceDir() ):
-                utils.warning( "The source directory %s doesn't exist and can't be used for packaging." % self.sourceDir() )
+                EmergeDebug.warning("The source directory %s doesn't exist and can't be used for packaging." % self.sourceDir())
             srcCmd = ""
 
         # copy pdb/sym files to a temporary directory, because they can be scattered all over the build directory
@@ -82,7 +83,7 @@ class KDEWinPackager (PackagerBase):
             # shouldn't be needed, usually; but if files are present, that could lead to errors
             utils.cleanDirectory ( symRoot )
 
-            utils.debug( "Copying debugging files to 'dbg'..." )
+            EmergeDebug.debug("Copying debugging files to 'dbg'...")
             for path, _, files in os.walk( path ):
                 found = 0
                 for directory in range( 0, len( dirsToIgnore ) ):
@@ -91,7 +92,7 @@ class KDEWinPackager (PackagerBase):
                         break
                 if found == 1:
                     continue
-                utils.debug( "Checking: %s" % path, 3 )
+                EmergeDebug.debug("Checking: %s" % path, 3)
                 for fileName in files:
                     if ( fileName.endswith( ".pdb" ) ):
                         utils.copyFile( os.path.join( path, fileName ), os.path.join( symPath, fileName ) )
@@ -108,7 +109,7 @@ class KDEWinPackager (PackagerBase):
                 symCmd += "-strip "
             symCmd += "-debug-package "
             symCmd += "-symroot " + symRoot
-            utils.debug ( symCmd, 2 )
+            EmergeDebug.debug(symCmd, 2)
 
         cmd = "-name %s -root %s -version %s -destdir %s %s %s -checksum sha1 " % \
                   ( pkgName, self.imageDir(), pkgVersion, dstpath, srcCmd, symCmd )
@@ -116,15 +117,15 @@ class KDEWinPackager (PackagerBase):
         if os.path.exists(xmltemplate):
             cmd = self.packagerExe + " " + cmd + " -template " + xmltemplate + " -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug("using xml template for package generating", 1)
+            EmergeDebug.debug("using xml template for package generating", 1)
         elif self.package == "qt":
             cmd = self.packagerExe + " " + cmd + " -template :/template-qt.xml -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug("using xml template for package generating", 1)
+            EmergeDebug.debug("using xml template for package generating", 1)
         else:
             cmd = self.packagerExe + " " + cmd + " -verbose -notes " + \
                     "%s/%s:%s:unknown " % ( self.category, self.package, pkgNotesVersion ) + "-compression 2 "
-            utils.debug(" xml template %s for package generating not found" % xmltemplate, 1)
+            EmergeDebug.debug(" xml template %s for package generating not found" % xmltemplate, 1)
 
         if( self.subinfo.options.package.withCompiler ):
             cmd += " -type "
@@ -141,7 +142,7 @@ class KDEWinPackager (PackagerBase):
 #            cmd += " -special"
 
         if not utils.system(cmd):
-            utils.die( "while packaging. cmd: %s" % cmd )
+            EmergeDebug.die("while packaging. cmd: %s" % cmd)
 
         if self.useDebugPackages:
             utils.rmtree( symPath )

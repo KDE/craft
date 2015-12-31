@@ -1,7 +1,7 @@
 #
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
-
+import EmergeDebug
 import utils
 from .CollectionPackagerBase import *
 from .SevenZipPackager import *
@@ -22,7 +22,7 @@ Packager for portal 7zip archives
         """create portable 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
-            utils.die("could not find 7za in your path!")
+            EmergeDebug.die("could not find 7za in your path!")
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:

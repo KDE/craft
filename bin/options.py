@@ -34,6 +34,7 @@ import os
 import inspect
 import shlex
 
+import EmergeDebug
 from EmergeConfig import  *
 import utils
 import portage
@@ -353,7 +354,7 @@ class Options(object):
         result = False
         for entry in opts:
             if entry.find('=') == -1:
-                utils.debug('incomplete option %s' % entry, 3)
+                EmergeDebug.debug('incomplete option %s' % entry, 3)
                 continue
             (key, value) = entry.split( '=', 1 )
             if self.__setInstanceAttribute(key, value):

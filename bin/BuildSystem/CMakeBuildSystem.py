@@ -6,6 +6,7 @@
 
 import os
 
+import EmergeDebug
 import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
@@ -39,7 +40,7 @@ class CMakeBuildSystem(BuildSystemBase):
         elif compiler.isMinGW():
             return "MinGW Makefiles"
         else:
-            utils.die( "unknown %s compiler" % self.compiler() )
+            EmergeDebug.die("unknown %s compiler" % self.compiler())
 
     def __onlyBuildDefines( self, buildOnlyTargets ):
         """This method returns a list of cmake defines to exclude targets from build"""
@@ -143,7 +144,7 @@ class CMakeBuildSystem(BuildSystemBase):
             if compiler.isMSVC2008():
                 command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
-                utils.die("has to be implemented");
+                EmergeDebug.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" )
@@ -200,12 +201,12 @@ class CMakeBuildSystem(BuildSystemBase):
         outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir):
-            utils.debug("could not find source files for generating cmake dependencies")
+            EmergeDebug.debug("could not find source files for generating cmake dependencies")
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         a.toPackageList(title, srcDir)
         if not a.toDot(title, srcDir, outFile):
-            utils.debug("could not create dot file")
+            EmergeDebug.debug("could not create dot file")
             return False
 
         graphviz = GraphViz(self)

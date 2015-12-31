@@ -6,6 +6,7 @@
 
 import os
 
+import EmergeDebug
 import utils
 
 try:
@@ -51,7 +52,7 @@ class GraphViz(object):
         if not self.isInstalled():
             utils.system("emerge.bat graphviz")
             if not self.isInstalled():
-                utils.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
+                EmergeDebug.die("could not find installed graphviz package, you may download and install it from http://www.graphviz.org/Download.php")
 
     def isInstalled(self):
         if HAS_REGISTRY:
@@ -65,7 +66,7 @@ class GraphViz(object):
         if utils.system( command ):
             return True
         else:
-            utils.die( "while running %s cmd: %s" % ( errorMessage, str( command ) ) )
+            EmergeDebug.die("while running %s cmd: %s" % (errorMessage, str(command)))
 
     def runDot(self, inFile, outFile, dotFormat="pdf"):
         dotExecutable = self.graphVizInstallPath
