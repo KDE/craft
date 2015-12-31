@@ -455,9 +455,9 @@ def getDependencies( category, package, runtimeOnly = False ):
     subpackage, package = getSubPackage( category, package )
     if subpackage:
         utils.debug( "solving package %s/%s/%s %s" % ( category, subpackage, package,
-                                                          getFilename( category, package ) ), 0 )
+                                                          getFilename( category, package ) ) )
     else:
-        utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ), 0 )
+        utils.debug( "solving package %s/%s %s" % ( category, package, getFilename( category, package ) ) )
         subpackage = package
 
     deps = []

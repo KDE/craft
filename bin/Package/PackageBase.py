@@ -68,7 +68,7 @@ class PackageBase (EmergeBase):
                 else:
                     utils.debug("post install script '%s' not found" % script , 2)
         else:
-            utils.debug("running of post install scripts disabled!", 0)
+            utils.debug("running of post install scripts disabled!")
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -134,7 +134,7 @@ class PackageBase (EmergeBase):
                 else:
                     utils.debug("post uninstall script '%s' not found" % script , 2)
         else:
-            utils.debug("running of post uninstall scripts disabled!", 0)
+            utils.debug("running of post uninstall scripts disabled!")
 
         return True
 

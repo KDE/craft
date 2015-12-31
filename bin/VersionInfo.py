@@ -24,7 +24,7 @@ class VersionInfo( object ):
                 if VersionInfo._VERSION_INFOS_HINTS[ name ] == None:
                     return None
                 else:
-                    #utils.debug("Using cached version info for %s in %s" % (name, _VERSION_INFOS_HINTS[ name ]),0)
+                    #utils.debug("Using cached version info for %s in %s" % (name, _VERSION_INFOS_HINTS[ name ]))
                     return VersionInfo._VERSION_INFOS[ VersionInfo._VERSION_INFOS_HINTS[ name ] ]
             root = os.path.dirname( name )
 

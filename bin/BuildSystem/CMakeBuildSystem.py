@@ -200,12 +200,12 @@ class CMakeBuildSystem(BuildSystemBase):
         outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir):
-            utils.debug("could not find source files for generating cmake dependencies", 0)
+            utils.debug("could not find source files for generating cmake dependencies")
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         a.toPackageList(title, srcDir)
         if not a.toDot(title, srcDir, outFile):
-            utils.debug("could not create dot file", 0)
+            utils.debug("could not create dot file")
             return False
 
         graphviz = GraphViz(self)
