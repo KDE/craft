@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['3.4.1'] = '4894baeafc0368d6530bf2c6bfe4fc94056bd04a'
 
         nightlyUrl = "https://cmake.org/files/dev/"
-        nightlyVer = utils.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{7}")[0]
+        nightlyVer = utils.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}")[0]
         self.targets["gitHEAD"] = "%s/cmake-%s-win32-x86.zip" %(nightlyUrl, nightlyVer)
         self.targetMergeSourcePath["gitHEAD"] = 'cmake-%s-win32-x86' % nightlyVer
 
