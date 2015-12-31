@@ -429,7 +429,7 @@ def main( ):
 
 
 if __name__ == '__main__':
-    succes = True
+    success= True
     try:
         utils.startTimer( "Emerge" )
         doUpdateTitle = True
@@ -444,7 +444,7 @@ if __name__ == '__main__':
                                          args = (datetime.datetime.now( ), " ".join( sys.argv[ 1: ] ),) )
         tittleThread.setDaemon( True )
         tittleThread.start( )
-        succes = main( )
+        success = main()
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
