@@ -1169,6 +1169,17 @@ def createBat(fileName, command):
 # TODO: clanup and speedup (see vlc and cmake)
 _NIGTHLY_URLS = dict()
 def getNightlyVersionsFromUrl(url, pattern, timeout = 10, dataLimit = 1024):
+    """
+    Returns a list of possible version number matching the regular expression in pattern.
+    :param url: The url to look for the nightly builds.
+    :param pattern: A regular expression to match the version.
+    :param timeout:
+    :param dataLimit:
+    :return: A list of matching strings or [None]
+    """
+    if emergeSettings.getboolean("General", "WorkOffline"):
+        info("Nightly builds unavailible for %s in offline mode." % url)
+        return [None]
     global _NIGTHLY_URLS
     if url in _NIGTHLY_URLS:
       return _NIGTHLY_URLS[url]
@@ -1179,5 +1190,5 @@ def getNightlyVersionsFromUrl(url, pattern, timeout = 10, dataLimit = 1024):
             _NIGTHLY_URLS[url] = vers
             return vers
       except Exception as e:
-        print("Nightlys Unavailible for %s: %s" % (url, e))
+        warning("Nightly builds unavailible for %s: %s" % (url, e))
         return [None]
