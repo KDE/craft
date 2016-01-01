@@ -16,7 +16,7 @@ test.outlog
 *.REMOTE.*
 
 # pycharm
-.idea/workspace.xml
+.idea/
 
 # kdevelop
 .kdev4/
