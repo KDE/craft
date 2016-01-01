@@ -50,14 +50,7 @@ class BuildSystemBase(EmergeBase):
         """convencience method - runs configure() and make()"""
         configure = getattr(self, 'configure')
         make = getattr(self, 'make')
-
-        if not configure():
-            return False
-
-        if not self.compileFast:
-            return make()
-
-        return True
+        return configure() and make()
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""

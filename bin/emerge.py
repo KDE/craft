@@ -337,9 +337,6 @@ def main( ):
                          help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
     parser.add_argument( "--clean", action = "store_false", dest = "noclean",
                          help = "oposite of --noclean" )
-    parser.add_argument( "--compile-fast", action = "store_true",
-                         default = emergeSettings.getboolean( "General", "CompileFast", False ),
-                         help = "skip make() entirely (useful in case of `make` and `make install` redudancy) -- handle with care" )
     parser.add_argument( "--patchlevel", action = "store",
                          default = emergeSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
                          help = "This will add a patch level when used together with --package" )
@@ -382,7 +379,6 @@ def main( ):
     emergeSettings.set( "General", "WorkOffline", args.offline )
     emergeSettings.set( "General", "EMERGE_NOCOPY", args.nocopy )
     emergeSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
-    emergeSettings.set( "General", "CompileFast", args.compile_fast )
     emergeSettings.set( "General", "EMERGE_FORCED", args.forced )
     emergeSettings.set( "General", "EMERGE_BUILDTESTS", args.buildTests )
     emergeSettings.set( "General", "EMERGE_BUILDTYPE", args.buildType )
