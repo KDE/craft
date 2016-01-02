@@ -111,14 +111,14 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
     return success
 
 
-def handleSinglePackage( packageName, args ):
+def handleSinglePackage( packageName, action, args ):
     deplist = [ ]
     packageList = [ ]
     originalPackageList = [ ]
     categoryList = [ ]
     targetDict = dict( )
 
-    if args.action == "update-all":
+    if action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
             EmergeDebug.debug("Updating installed packages from category " + packageName, 1)
@@ -193,11 +193,11 @@ def handleSinglePackage( packageName, args ):
     #        print "remove:", cat, pac, ver
     #        deplist.remove( item )
 
-    if args.action == "install-deps":
+    if action == "install-deps":
         # the first dependency is the package itself - ignore it
         # TODO: why are we our own dependency?
         del deplist[ 0 ]
-    elif args.action == "update-direct-deps":
+    elif action == "update-direct-deps":
         for item in deplist:
             item.enabled = True
 
@@ -209,22 +209,22 @@ def handleSinglePackage( packageName, args ):
 
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
-        not args.action in [ "all", "install-deps" ,"generate-jenkins-job"] and\
+        not action in [ "all", "install-deps" ,"generate-jenkins-job"] and\
         not args.list_file or\
-        args.action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
+        action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
         # package
         # for list files, we also want to handle fetching & packaging per package
 
-        if not handlePackage( info.category, info.package, args.action, args.doContinue, args.update_fast ):
-            utils.notify( "Emerge %s failed" % args.action, "%s of %s/%s failed" % (
-                args.action, info.category, info.package), args.action )
+        if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
+            utils.notify( "Emerge %s failed" % action, "%s of %s/%s failed" % (
+                action, info.category, info.package), action )
             return False
-        utils.notify( "Emerge %s finished" % args.action,
-                      "%s of %s/%s finished" % ( args.action, info.category, info.package),
-                      args.action )
+        utils.notify( "Emerge %s finished" % action,
+                      "%s of %s/%s finished" % ( action, info.category, info.package),
+                      action )
 
     else:
         if args.dumpDepsFile:
@@ -240,7 +240,7 @@ def handleSinglePackage( packageName, args ):
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( info.category, info.package ) != [ ]
             isInstalled = installdb.isInstalled( info.category, info.package )
-            if args.list_file and args.action != "all":
+            if args.list_file and action != "all":
                 info.enabled = info.package in originalPackageList
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
@@ -255,22 +255,55 @@ def handleSinglePackage( packageName, args ):
                     if EmergeDebug.verbose() > 0:
                         EmergeDebug.warning("pretending %s" % info)
                 else:
-                    if args.action in [ "install-deps", "update-direct-deps" ]:
-                        args.action = "all"
+                    if action in [ "install-deps", "update-direct-deps" ]:
+                        action = "all"
 
-                    if not handlePackage( info.category, info.package, args.action, args.doContinue, args.update_fast ):
+                    if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
                         EmergeDebug.error("fatal error: package %s/%s %s failed" % \
-                                          ( info.category, info.package, args.action ))
+                                          ( info.category, info.package, action ))
                         utils.notify( "Emerge build failed",
                                       "Build of %s/%s failed" % ( info.category, info.package),
-                                      args.action )
+                                      action )
                         return False
                     utils.notify( "Emerge build finished",
                                   "Build of %s/%s finished" % ( info.category, info.package),
-                                  args.action )
+                                  action )
 
     EmergeDebug.new_line()
     return True
+
+class ActionHandler:
+    def __init__(self, parser):
+        self.parser = parser
+        self.actions = {}
+
+    def _addAction(self, actionName, help = None, **kwargs):
+        arg = self.parser.add_argument("--%s" % actionName,
+                                       help = "[Action] %s" % (help if help else ""), **kwargs)
+        self.actions[arg.dest] = actionName
+
+    def addAction(self, actionName, **kwargs):
+        self._addAction(actionName, action = "store_true", **kwargs)
+
+    def addActionWithArg(self, actionName, **kwargs):
+        self._addAction(actionName, action = "store", **kwargs)
+
+    def parseFinalAction(self, args, defaultAction):
+        '''Returns the final action deduced from the args, returns None in case of error'''
+
+        finalAction = None
+
+        argsDict = vars(args)
+        for dest, actionName in self.actions.items():
+            val = argsDict[dest]
+            isSet = val is True if isinstance(val, bool) else val is not None
+            if isSet:
+                if finalAction:
+                    return None, "Only one action at a time, passed: --%s and --%s" % (finalAction, actionName)
+
+                finalAction = actionName
+
+        return finalAction or defaultAction, None
 
 
 def main( ):
@@ -279,10 +312,6 @@ def main( ):
                                       Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
                                       epilog = """More information see the README or http://windows.kde.org/.
     Send feedback to <kde-windows@kde.org>.""" )
-
-    def addBuildaAction( x, help = None ):
-        parser.add_argument( "--%s" % x, action = "store_const", dest = "action", const = x, default = "all",
-                             help = help )
 
     parser.add_argument( "-p", "--probe", action = "store_true",
                          help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
@@ -345,38 +374,45 @@ def main( ):
     parser.add_argument( "--log-dir", action = "store",
                          default = emergeSettings.get( "General", "EMERGE_LOG_DIR", "" ),
                          help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
-    parser.add_argument( "--dump-deps-file", action = "store", dest = "dumpDepsFile",
-                         help = "Output the dependencies of this package as a csv file suitable for emerge server." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
-    parser.add_argument( "--print-installed", action = "store_true",
-                         help = "This will show a list of all packages that are installed currently." )
-    parser.add_argument( "--print-installable", action = "store_true",
-                         help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
-    parser.add_argument( "--search-file", action = "store", dest = "searchFile",
-                         help = "Print packages owning the file" )
     parser.add_argument( "--update-fast", action = "store_true",
                          help = "If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
     parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default = -1,
                          help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
+
+    actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "unpack", "preconfigure", "configure", "compile", "make",
                        "install", "qmerge", "manifest", "package", "unmerge", "test",
                        "checkdigest", "dumpdeps",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
                        "version-dir", "version-package", "print-targets",
                        "install-deps" ] ):
-        addBuildaAction( x )
-    addBuildaAction( "print-revision", "Print the revision of the package and exit" )
-    addBuildaAction( "print-files", "Print the files installed by the package and exit" )
-    addBuildaAction( "update", "Update a single package" )
-    addBuildaAction( "generate-jenkins-job")
+        actionHandler.addAction( x )
+    actionHandler.addAction( "update", help = "Update a single package" )
+    actionHandler.addAction( "generate-jenkins-job")
+    actionHandler.addAction( "print-installed",
+                             help = "This will show a list of all packages that are installed currently." )
+    actionHandler.addAction( "print-installable",
+                             help = "This will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
+    actionHandler.addAction( "print-revision", help = "Print the revision of the package and exit" )
+    actionHandler.addAction( "print-files", help = "Print the files installed by the package and exit" )
+    actionHandler.addActionWithArg( "search-file", help = "Print packages owning the file" )
+    actionHandler.addActionWithArg( "dump-deps-file", dest = "dumpDepsFile",
+                                    help = "Output the dependencies of this package as a csv file suitable for emerge server." )
+
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
 
-    if args.stayQuiet == True or args.action in [ "version-dir", "version-package",
-                                                  "print-installable", "print-installed",
-                                                  "print-targets" ]:
+    action, error = actionHandler.parseFinalAction(args, "all")
+    if not action:
+        EmergeDebug.error("Failed to parse arguments: %s" % error)
+        return False
+
+    if args.stayQuiet == True or action in [ "version-dir", "version-package",
+                                             "print-installable", "print-installed",
+                                             "print-targets" ]:
         EmergeDebug.setVerbose(-1)
     elif args.verbose:
         EmergeDebug.setVerbose(args.verbose)
@@ -402,13 +438,13 @@ def main( ):
             portageSearch.printSearch( category, package )
         return True
 
-    if args.action in [ "install-deps", "update", "update-all", "package" ] or args.update_fast:
+    if action in [ "install-deps", "update", "update-all", "package" ] or args.update_fast:
         args.ignoreInstalled = True
 
-    if args.action in [ "update", "update-all" ]:
+    if action in [ "update", "update-all" ]:
         args.noclean = True
 
-    EmergeDebug.debug("buildAction: %s" % args.action)
+    EmergeDebug.debug("buildAction: %s" % action)
     EmergeDebug.debug("doPretend: %s" % args.probe, 1)
     EmergeDebug.debug("packageName: %s" % args.packageNames)
     EmergeDebug.debug("buildType: %s" % args.buildType)
@@ -422,13 +458,13 @@ def main( ):
         printInstalled( )
     elif args.print_installable:
         portage.printInstallables( )
-    elif args.searchFile:
-        portage.printPackagesForFileSearch(args.searchFile)
+    elif args.search_file:
+        portage.printPackagesForFileSearch(args.search_file)
     elif args.list_file:
-        handleSinglePackage( "", args )
+        handleSinglePackage( "", action, args )
     else:
-        for x in args.packageNames:
-            if not handleSinglePackage( x, args ):
+        for packageName in args.packageNames:
+            if not handleSinglePackage( packageName, action, args ):
                 return False
     return True
 
