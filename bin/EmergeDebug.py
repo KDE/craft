@@ -60,11 +60,10 @@ def debug( message, level=1 ):
 
 
 def warning( message ):
-    if verbose() > 0:
-        try:
-            print("emerge warning: %s" % message)
-        except UnicodeEncodeError:
-            print("emerge warning: failed to print message")
+    try:
+        print("emerge warning: %s" % message)
+    except UnicodeEncodeError:
+        print("emerge warning: failed to print message")
     return True
 
 
@@ -79,8 +78,7 @@ def debug_line( level=0 ):
 
 
 def error( message ):
-    if verbose() > 0:
-        print("emerge error: %s" % message, file=sys.stderr)
+    print("emerge error: %s" % message, file=sys.stderr)
     return False
 
 
