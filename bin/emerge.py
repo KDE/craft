@@ -353,6 +353,8 @@ def main( ):
                          help = "This will show a list of all packages that are installed currently." )
     parser.add_argument( "--print-installable", action = "store_true",
                          help = "his will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
+    parser.add_argument( "--search-file", action = "store", dest = "searchFile",
+                         help = "Print packages owning the file" )
     parser.add_argument( "--update-fast", action = "store_true",
                          help = "If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
     parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default = -1,
@@ -420,6 +422,8 @@ def main( ):
         printInstalled( )
     elif args.print_installable:
         portage.printInstallables( )
+    elif args.searchFile:
+        portage.printPackagesForFileSearch(args.searchFile)
     elif args.list_file:
         handleSinglePackage( "", args )
     else:

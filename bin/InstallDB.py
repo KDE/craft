@@ -64,6 +64,11 @@ class InstallPackage(object):
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
+    def getPackageInfo(self):
+        cmd = '''SELECT category, packageName, version FROM packageList WHERE packageId=?'''
+        self.cursor.execute(cmd, (self.packageId,))
+        return self.cursor.fetchall()[0]
+
     def revert( self ):
         """ revert all changes made to the database, use with care """
         self.cursor.connection.rollback()
@@ -218,6 +223,16 @@ class InstallDB(object):
             values.append( row[0] )
         return values
 
+    def getPackagesForFileSearch(self, filename, prefix = None ):
+        """ returns a list of tuple(InstallPackage(), filename) for packages providing a given file """
+
+        cursor = self.connection.cursor()
+        cmd = '''SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;'''
+        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)), 2)
+        cursor.execute(cmd, ("%" + filename + "%",))
+        rows = cursor.fetchall()
+        return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
+
     def addInstalled( self, category, package, version, prefix=None, ignoreInstalled=False, revision = "" ):
         """ adds an installed package """
         cursor = self.connection.cursor()
@@ -234,7 +249,6 @@ class InstallDB(object):
         """ return an installed package """
         cursor = self.connection.cursor()
         return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
-
 
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """

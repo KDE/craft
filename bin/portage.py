@@ -590,6 +590,11 @@ def printInstallables():
         data.append((p.category,p.package, p.version))
     printCategoriesPackagesAndVersions( data, alwaysTrue )
 
+def printPackagesForFileSearch(filename):
+    packages = InstallDB.installdb.getPackagesForFileSearch(filename)
+    for pId, filename in packages:
+        category, packageName, version = pId.getPackageInfo()
+        print("%s/%s: %s" % (category, packageName, filename))
 
 def getPackagesCategories(packageName, defaultCategory = None):
     EmergeDebug.trace("getPackagesCategories for package name %s" % packageName)
