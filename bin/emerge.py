@@ -83,7 +83,9 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                           "dumpdeps", "test",
                           "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                           "geturls",
-                          "print-revision" ]:
+                          "print-revision",
+                          "print-files"
+                        ]:
         success = doExec( package, buildAction, continueFlag )
     elif buildAction == "install":
         success = doExec( package, "cleanimage" )
@@ -363,6 +365,7 @@ def main( ):
                        "install-deps" ] ):
         addBuildaAction( x )
     addBuildaAction( "print-revision", "Print the revision of the package and exit" )
+    addBuildaAction( "print-files", "Print the files installed by the package and exit" )
     addBuildaAction( "update", "Update a single package" )
     addBuildaAction( "generate-jenkins-job")
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )

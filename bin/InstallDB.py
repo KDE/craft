@@ -31,7 +31,7 @@ class InstallPackage(object):
         Deinstallation works similar:
         p = InstallDB.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
         # get the files ( including the hash )
-        f = p.getFiles()
+        f = p.getFilesWithHashes()
         # f now contains [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ]
         if failed:
             # in case we somehow need to go back
@@ -50,9 +50,16 @@ class InstallPackage(object):
         """ appends files to the list of files to be installed """
         self.fileDict.update( fileDict )
 
-    def getFiles( self ):
-        """ get a list of files that will be uninstalled """
+    def getFilesWithHashes( self ):
+        """ get the list of files (filename, fileHash tuples) for the given package """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
+        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        self.cursor.execute(cmd, (self.packageId,))
+        return self.cursor.fetchall()
+
+    def getFiles( self ):
+        """ get the list of files for the given package """
+        cmd = '''SELECT filename FROM fileList WHERE packageId=?;'''
         EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
@@ -349,7 +356,7 @@ def main():
     EmergeDebug.debug('now really remove the package')
     packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
-        EmergeDebug.debug('removing %s files' % len(pac.getFiles()))
+        EmergeDebug.debug('removing %s files' % len(pac.getFilesWithHashes()))
         pac.uninstall()
 
     EmergeDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))

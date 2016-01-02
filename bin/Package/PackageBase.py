@@ -102,13 +102,13 @@ class PackageBase (EmergeBase):
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( prefix ) )
                 for package in packageList:
-                    fileList = package.getFiles()
+                    fileList = package.getFilesWithHashes()
                     utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                     package.uninstall()
         else:
             packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
             for package in packageList:
-                fileList = package.getFiles()
+                fileList = package.getFilesWithHashes()
                 utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
                 package.uninstall()
 
@@ -179,6 +179,15 @@ class PackageBase (EmergeBase):
         basepath = os.path.join( self.installDir() )
         utils.createImportLibs( pkgName, basepath )
 
+    def printFiles(self):
+        packageList = installdb.getInstalledPackages(self.category, self.package, self._installedDBPrefix())
+        for package in packageList:
+            fileList = package.getFiles()
+            fileList.sort()
+            for file in fileList:
+                print(file[0])
+        return True
+
     def getAction(self, cmd = None ):
         if not cmd:
             command = sys.argv[ 1 ]
@@ -226,7 +235,8 @@ class PackageBase (EmergeBase):
                      "package":        "createPackage",
                      "createpatch":    "createPatch",
                      "geturls":        "getUrls",
-                     "print-revision":       "printSourceVersion",
+                     "print-revision": "printSourceVersion",
+                     "print-files":    "printFiles",
                      "checkdigest":    "checkDigest",
                      "dumpdeps":       "dumpDependencies"}
         if command in functions:
