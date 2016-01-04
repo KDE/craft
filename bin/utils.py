@@ -329,25 +329,10 @@ def systemWithoutShell(cmd, **kw):
     might be changed depending on the chosen logging options."""
 
     debug("executing command: %s" % cmd, 1)
+    if verbose() == 0 and not 'stdout' in kw and not 'stderr' in kw:
+        kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
 
-    if kw.get('stdout') is None:
-        kw['stdout'] = sys.stdout
-    if kw.get('stderr') is None:
-        kw['stderr'] = sys.stderr
-
-    redirected = False
-    prevStreams = sys.stdout,  sys.stderr
-    try:
-        if verbose() == 0 and kw['stdout']== sys.stdout and kw['stderr'] == sys.stderr:
-            redirected = True
-            sys.stderr = sys.stdout = open('test.outlog', 'wb')
-        ret = subprocess.call( cmd, **kw )
-    finally:
-        if redirected:
-            sys.stderr.close()
-            sys.stdout,  sys.stderr = prevStreams
-
-    return ( ret == 0 )
+    return subprocess.call(cmd, **kw) == 0
 
 def copySrcDirToDestDir( srcdir, destdir ):
     """ deprecated """
