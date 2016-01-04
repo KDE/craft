@@ -2,6 +2,7 @@
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import builtins
+from enum import Enum
 import importlib
 from collections import OrderedDict
 
@@ -10,6 +11,11 @@ from EmergePackageObject import PackageObjectBase
 from EmergeConfig import *
 import InstallDB
 import utils
+
+class DependencyType(Enum):
+    Runtime     = "runtime"
+    Buildtime   = "buildtime"
+    Both        = "both"
 
 class PortageCache(object):
     _rootDirCache = dict()
@@ -86,11 +92,11 @@ class DependencyPackage(PackageObjectBase):
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = [], dep_type="both", single = set(), maxDetpth = -1, depth = 0):
+    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDetpth = -1, depth = 0):
         """ returns all dependencies """
-        if dep_type == "runtime":
+        if depType == DependencyType.Runtime:
             children = self.runtimeChildren
-        elif dep_type == "buildtime":
+        elif depType == DependencyType.Buildtime:
             children = self.buildChildren
         else:
             children = self.runtimeChildren + self.buildChildren
@@ -100,9 +106,9 @@ class DependencyPackage(PackageObjectBase):
             if not p in single and not p in depList\
             and not p.fullName() in PortageInstance.ignores:
                 if maxDetpth == -1:
-                    p.getDependencies( depList, dep_type, single )
+                    p.getDependencies( depList, depType, single )
                 elif depth < maxDetpth:
-                    p.getDependencies( depList, dep_type, single, maxDetpth = maxDetpth, depth = depth + 1 )
+                    p.getDependencies( depList, depType, single, maxDetpth = maxDetpth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
         if not self in depList and not PackageObjectBase.__str__(self) in PortageInstance.ignores:
@@ -494,14 +500,14 @@ def parseListFile( filename ):
     return categoryList, packageList, infoDict
 
 
-def solveDependencies( category, package, depList, dep_type = 'both', maxDetpth = -1 ):
+def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDetpth = -1 ):
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         EmergeDebug.debug("found package in category %s" % category, 2)
 
     pac = DependencyPackage( category, package, parent = None )
-    depList = pac.getDependencies( depList, dep_type=dep_type, maxDetpth = maxDetpth, single = set() )
+    depList = pac.getDependencies( depList, depType=depType, maxDetpth = maxDetpth, single = set() )
 
     depList.reverse()
     return depList
