@@ -329,7 +329,7 @@ def systemWithoutShell(cmd, **kw):
     might be changed depending on the chosen logging options."""
 
     EmergeDebug.debug("executing command: %s" % cmd, 1)
-    if EmergeDebug.verbose() == 0 and not 'stdout' in kw and not 'stderr' in kw:
+    if EmergeDebug.verbose() == -1 and not 'stdout' in kw and not 'stderr' in kw:
         kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
 
     return subprocess.call(cmd, **kw) == 0
