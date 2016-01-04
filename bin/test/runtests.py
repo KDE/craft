@@ -39,14 +39,12 @@ import os
 import sys
 import unittest
 import optparse
-import tempfile
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+thisdir = os.path.dirname(__file__)
+sys.path.append(os.path.join(thisdir, os.pardir))
 
 import EmergeDebug
 import EmergeConfig
-
 
 def main():
     """Run all the tests in the emerge test suite"""
@@ -57,17 +55,11 @@ def main():
                       dest="verbosity")
     opts, rest = parser.parse_args()
 
-
     EmergeDebug.setVerbose(opts.verbosity)
     os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
 
-    files = os.listdir(os.path.dirname(__file__))
-    names = []
-    for file in files:
-        if file[:4] == "test" and file[-3:] == ".py":
-            names.append(file[:-3])
-
-    suite = unittest.defaultTestLoader.loadTestsFromNames(names)
+    loader = unittest.TestLoader()
+    suite = loader.discover(start_dir=thisdir)
     runner = unittest.TextTestRunner(verbosity = opts.verbosity)
     result = runner.run(suite)
 
