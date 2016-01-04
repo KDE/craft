@@ -8,7 +8,7 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.6.3"
+        ver = "2.6.4"
         arch = 32
         if compiler.isX64():
             arch = 64
