@@ -7,6 +7,7 @@ import re
 import types
 import fileinput
 
+from portage import DependencyType
 import EmergeDebug
 from Packager.PackagerBase import *
 

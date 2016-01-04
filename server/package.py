@@ -12,6 +12,7 @@ import socket;
 # extend sys.path so that we can use the emerge stuff
 sys.path = [ os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", "bin" ) ) ] + sys.path
 import portage;
+from portage import DependencyType
 from InstallDB import *;
 
 # our own headers
