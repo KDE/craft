@@ -6,6 +6,7 @@ import shutil
 
 import EmergeDebug
 from Source.SourceBase import *
+import EmergeHash
 
 
 class ArchiveSource(SourceBase):
@@ -46,18 +47,20 @@ class ArchiveSource(SourceBase):
 
     def __checkFilesPresent(self, filenames):
         """check if all files for the current target are available"""
-        available = True
         for filename in filenames:
             path = os.path.join(EmergeStandardDirs.downloadDir(), filename)
             if self.subinfo.hasTargetDigests():
                 if not os.path.exists(path):
-                    available = False
+                    return False
             elif self.subinfo.hasTargetDigestUrls():
-                if not os.path.exists("%s.sha1" % path):
-                    available = False
+                algorithm = EmergeHash.HashAlgorithm.SHA1
+                if  type(self.subinfo.targetDigestUrl()) == tuple:
+                    _, algorithm = self.subinfo.targetDigestUrl()
+                if not os.path.exists(path + algorithm.fileEnding()):
+                    return False
             elif not os.path.exists(path):
-                available = False
-        return available
+                return False
+        return True
 
     def fetch( self, dummyRepopath = None ):
         """fetch normal tarballs"""
@@ -80,8 +83,11 @@ class ArchiveSource(SourceBase):
                 EmergeDebug.debug("failed to download files", 1)
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
-                if self.subinfo.targetDigestUrl() == "auto":
-                    return utils.getFiles( self.subinfo.target(), EmergeStandardDirs.downloadDir(), ".sha1", self.subinfo.archiveName() )
+                if type(self.subinfo.targetDigestUrl()) == tuple:
+                    url, alg = self.subinfo.targetDigestUrl()
+                    return utils.getFiles(url, EmergeStandardDirs.downloadDir(),
+                                          filenames = self.subinfo.archiveName()
+                                                        + EmergeHash.HashAlgorithm.fileEndings().get(alg))
                 else:
                     return utils.getFiles( self.subinfo.targetDigestUrl(), EmergeStandardDirs.downloadDir(), filenames = '' )
             else:
@@ -96,18 +102,20 @@ class ArchiveSource(SourceBase):
 
         if self.subinfo.hasTargetDigestUrls():
             EmergeDebug.debug("check digests urls", 1)
-            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
+            if not EmergeHash.checkFilesDigests(EmergeStandardDirs.downloadDir(), filenames):
                 EmergeDebug.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
             EmergeDebug.debug("check digests", 1)
-            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
+            digests = self.subinfo.targetDigest()
+            if type(digests) == tuple:
+                digests, algorithm = digests
+            if not EmergeHash.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, digests, algorithm):
                 EmergeDebug.error("invalid digest file")
                 return False
         else:
             EmergeDebug.debug("print source file digests", 1)
-            digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
-            utils.printFilesDigests( digests, self.subinfo.buildTarget)
+            EmergeHash.printFilesDigests(EmergeStandardDirs.downloadDir(), filenames, self.subinfo.buildTarget, algorithm = EmergeHash.HashAlgorithm.SHA256)
         return True
 
     def unpack(self):
@@ -134,20 +142,7 @@ class ArchiveSource(SourceBase):
         if hasattr(self.subinfo.options.unpack, 'unpackDir'):
             destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
 
-        if self.subinfo.hasTargetDigestUrls():
-            EmergeDebug.debug("check digests urls", 1)
-            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames):
-                EmergeDebug.error("invalid digest file")
-                return False
-        elif self.subinfo.hasTargetDigests():
-            EmergeDebug.debug("check digests", 1)
-            if not utils.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, self.subinfo.targetDigest()):
-                EmergeDebug.error("invalid digest file")
-                return False
-        else:
-            EmergeDebug.debug("print source file digests", 1)
-            digests = utils.createFilesDigests( EmergeStandardDirs.downloadDir(), filenames )
-            utils.printFilesDigests( digests, self.subinfo.buildTarget)
+        self.checkDigest()
 
         binEndings = (".exe", ".bat", ".msi")
         if (self.subinfo.archiveName() == "" and self.url.endswith(binEndings)) or self.subinfo.archiveName().endswith(binEndings):

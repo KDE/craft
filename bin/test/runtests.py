@@ -39,6 +39,13 @@ import os
 import sys
 import unittest
 import optparse
+import tempfile
+
+
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+
+import EmergeDebug
+import EmergeConfig
 
 
 def main():
@@ -50,9 +57,11 @@ def main():
                       dest="verbosity")
     opts, rest = parser.parse_args()
 
-    os.environ["EMERGE_VERBOSE"] = str(opts.verbosity)
 
-    files = os.listdir(os.curdir)
+    EmergeDebug.setVerbose(opts.verbosity)
+    os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
+
+    files = os.listdir(os.path.dirname(__file__))
     names = []
     for file in files:
         if file[:4] == "test" and file[-3:] == ".py":

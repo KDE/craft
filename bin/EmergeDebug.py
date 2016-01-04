@@ -37,6 +37,19 @@ class Verbose(object):
         return Verbose.__level
 
 
+class TemporaryVerbosity(object):
+    """Context handler for temporarily different verbosity"""
+    def __init__(self, tempLevel):
+        self.prevLevel = verbose()
+        setVerbose(tempLevel)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        setVerbose(self.prevLevel)
+
+
 def verbose():
     """return the value of the verbose level"""
     return Verbose.level()

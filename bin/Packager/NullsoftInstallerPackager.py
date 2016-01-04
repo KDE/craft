@@ -5,6 +5,7 @@
 from winreg import * # pylint: disable=F0401
 
 import EmergeDebug
+import EmergeHash
 import utils
 from Packager.CollectionPackagerBase import *
 
@@ -141,5 +142,5 @@ file collection process is skipped, and only the installer is generated.
         self.internalCreatePackage()
         self.preArchive()
         self.generateNSISInstaller()
-        utils.createDigestFile( self.defines[ "setupname" ])
+        EmergeHash.createDigestFile(self.defines["setupname"])
         return True

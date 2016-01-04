@@ -11,7 +11,6 @@ this file contains some helper functions for emerge
 import ctypes
 import datetime
 import ftplib
-import hashlib
 import http.client
 import inspect
 import shutil
@@ -23,6 +22,7 @@ import urllib.request
 import zipfile
 from operator import itemgetter
 
+import EmergeHash
 import Notifier.NotificationLoader
 from EmergeConfig import *
 from EmergeDebug import verbose, setVerbose, info, debug, warning, error, die
@@ -72,20 +72,6 @@ def test4application( appname):
     except OSError:
         debug("could not find application %s" % appname, 1)
         return False
-
-
-class TemporaryVerbosity(object):
-    """Context handler for temporarily different verbosity"""
-    def __init__(self, tempLevel):
-        self.prevLevel = verbose()
-        setVerbose(tempLevel)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, trback):
-        setVerbose(self.prevLevel)
-
 
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
@@ -203,95 +189,6 @@ def isCrEol(filename):
     with open(filename, "rb") as f:
         return str(f.readline(),'UTF-8').endswith("\r\n")
 
-def checkFilesDigests( downloaddir, filenames, digests=None ):
-    """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
-    if digests != None:
-        if type(digests) == list:
-            digestList = digests
-        elif digests.find("\n") != -1:
-            digestList = digests.splitLines()
-        else:
-            digestList = [digests]
-
-    i = 0
-    for filename in filenames:
-        debug("checking digest of: %s" % filename, 1)
-        pathName = os.path.join( downloaddir, filename )
-        if digests == None:
-            digestFileName = pathName + '.sha1'
-            if not os.path.exists( digestFileName ):
-                digestFileName, _ = os.path.splitext( pathName )
-                digestFileName += '.sha1'
-                if not os.path.exists( digestFileName ):
-                    error("digest validation request for file %s, but no digest  file present" %
-                          pathName)
-                    return False
-            currentHash = digestFileSha1( pathName )
-            with open( digestFileName, "r" ) as f:
-                line = f.readline()
-            digest = re.search('\\b[0-9a-fA-F]{40}\\b', line)
-            if not digest:
-                error(" digestFile %s for file %s does not contain a valid SHA1 hash" % (digestFileName,
-                                                                                         pathName,))
-                return False
-            digest = digest.group(0)
-            if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error("SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest))
-                return False
-        # digest provided in digests parameter
-        else:
-            currentHash = digestFileSha1( pathName )
-            digest = digestList[i].strip()
-            if len(digest) != len(currentHash) or digest.find(currentHash) == -1:
-                error("SHA1 hash for file %s (%s) does not match (%s)" % (pathName, currentHash, digest))
-                return False
-        i = i + 1
-    return True
-
-
-def createFilesDigests( downloaddir, filenames ):
-    """create digests of (multiple) files specified by 'filenames' from 'downloaddir'"""
-    digestList = list()
-    for filename in filenames:
-        pathName = os.path.join( downloaddir, filename )
-        digest = digestFileSha1( pathName )
-        entry = filename, digest
-        digestList.append(entry)
-    return digestList
-    
-def createDigestFile(path):
-    """creates a sha1 diget file"""
-    digets = digestFileSha1(path)
-    with open(path + ".sha1","wt+") as f:
-        f.write("%s\n" % digets)
-
-def printFilesDigests( digestFiles, buildTarget=None):
-    size = len( digestFiles )
-    i = 0
-    for (fileName, digest) in digestFiles:
-        print("%40s %s" % ( fileName, digest ), end=' ')
-        if size == 1:
-            if buildTarget == None:
-                print("      '%s'" % ( digest ))
-            else:
-                print("self.targetDigests['%s'] = '%s'" % ( buildTarget, digest ))
-        else:
-            if buildTarget == None:
-                if i == 0:
-                    print("      ['%s'," % ( digest ))
-                elif i == size-1:
-                    print("       '%s']" % ( digest ))
-                else:
-                    print("       '%s'," % ( digest ))
-                i = i + 1
-            else:
-                if i == 0:
-                    print("self.targetDigests['%s'] = ['%s'," % ( buildTarget, digest ))
-                elif i == size-1:
-                    print("                             '%s']" % ( digest ))
-                else:
-                    print("                             '%s'," % ( digest ))
-                i = i + 1
 
 ### unpack functions
 
@@ -468,9 +365,10 @@ def getFileListFromDirectory( imagedir ):
     if ( not imagedir.endswith( "\\" ) ):
         myimagedir = myimagedir + "\\"
 
+    algorithm = EmergeHash.HashAlgorithm.SHA256
     for root, _, files in os.walk( imagedir ):
         for fileName in files:
-            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), digestFile( os.path.join( root, fileName ) ) ) )
+            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), algorithm.stringPrefix() + EmergeHash.digestFile( os.path.join( root, fileName), algorithm) ) )
     return ret
 
 
@@ -479,7 +377,11 @@ def unmergeFileList(rootdir, fileList, forced=False):
     for filename, filehash in fileList:
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
-            currentHash = digestFile(fullPath)
+            algorithm = EmergeHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
+            if not algorithm:
+                currentHash = EmergeHash.digestFile(fullPath, EmergeHash.HashAlgorithm.MD5)
+            else:
+                currentHash = algorithm.stringPrefix() + EmergeHash.digestFile(fullPath, algorithm)
             if currentHash == filehash or filehash == "":
                 debug("deleting file %s" % fullPath, 2)
                 try:
@@ -603,26 +505,6 @@ def sedFile( directory, fileName, sedcommand ):
         system( command )
     finally:
         os.chdir( olddir )
-
-def digestFile( filepath ):
-    """ md5-digests a file """
-    fileHash = hashlib.md5()
-    try:
-        with open( filepath, "rb" ) as digFile:
-            for line in digFile:
-                fileHash.update( line )
-            return fileHash.hexdigest()
-    except IOError:
-        return ""
-        
-
-def digestFileSha1( filepath ):
-    """ sha1-digests a file """
-    fileHash = hashlib.sha1()
-    with open( filepath, "rb" ) as hashFile:
-        for line in hashFile:
-            fileHash.update( line )
-    return fileHash.hexdigest()
 
 def getVCSType( url ):
     """ return the type of the vcs url """

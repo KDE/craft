@@ -178,7 +178,6 @@ def handleSinglePackage( packageName, action, args ):
             item.target = args.target
 
         EmergeDebug.debug("dependency: %s" % item, 1)
-
     if not deplist:
         EmergeDebug.debug("<none>", 1)
 
@@ -489,7 +488,9 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except portage.PortageException as e:
-        EmergeDebug.debug(e.exception, 1)
+        if e.exception:
+            EmergeDebug.debug(e.exception, 0)
+            traceback.print_tb( e.exception.__traceback__)
         EmergeDebug.error(e)
     except Exception as e:
         print( e )

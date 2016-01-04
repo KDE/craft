@@ -37,24 +37,20 @@ import os
 import sys
 import unittest
 
-test_dir = os.path.dirname(__file__)
-sys.path.append(os.path.join(test_dir, os.pardir))
-os.environ["KDEROOT"] = test_dir
-
 import InstallDB
+import EmergeConfig
+import EmergeTestBase
 
-tmp_dir = os.path.join(test_dir, "tmp")
 
-class DatabaseTest(unittest.TestCase):
+class DatabaseTest(EmergeTestBase.EmergeTestBase):
 
     def setUp(self):
-        if not os.path.isdir(tmp_dir):
-            os.mkdir(tmp_dir)
-        self.db = InstallDB.InstallDB(os.path.join(tmp_dir, "test.db"))
+        super().setUp()
+        self.db = InstallDB.InstallDB(os.path.join(EmergeConfig.EmergeStandardDirs.etcDir(), "test.db"))
 
     def tearDown(self):
-        os.remove(os.path.join(tmp_dir, "test.db"))
-        os.rmdir(tmp_dir)
+        del self.db
+        super().tearDown()
 
 class TestAPI(DatabaseTest):
 

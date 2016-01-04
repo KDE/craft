@@ -23,7 +23,6 @@ import re
 
 emergeSettings = None
 
-
 class EmergeStandardDirs( object ):
     __pathCache = dict( )
     __noShortPathCache = dict( )
@@ -62,7 +61,9 @@ class EmergeStandardDirs( object ):
 
     @staticmethod
     def allowShortpaths( allowd ):
+        old = EmergeStandardDirs._allowShortpaths
         EmergeStandardDirs._allowShortpaths = allowd
+        return old
 
     @staticmethod
     def downloadDir( ):
@@ -149,9 +150,8 @@ class EmergeConfig( object ):
 
     def __init__( self ):
         self._config = None
-        EmergeStandardDirs.allowShortpaths( False )
-        self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
-        EmergeStandardDirs.allowShortpaths( True )
+        with TemporaryUseShortpath(False):
+            self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
         self._alias = dict( )
         self._readSettings( )
 
@@ -248,6 +248,27 @@ class EmergeConfig( object ):
             self._config.write( configfile )
 
 
+class TemporaryUseShortpath(object):
+    """Context handler for temporarily different shortpath setting"""
+    def __init__(self, enabled):
+        self.prev = EmergeStandardDirs.allowShortpaths(enabled)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        EmergeStandardDirs.allowShortpaths(self.prev)
+
+
+
 emergeSettings = EmergeConfig( )
+
+
+
+
+
+
+
+
 
 

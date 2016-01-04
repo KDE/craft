@@ -630,7 +630,7 @@ def createOutput(output_type, dep_tree):
 
 def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
     """without displaying debuginfo in generated output"""
-    with utils.TemporaryVerbosity(0):
+    with EmergeDebug.TemporaryVerbosity(0):
         packageList, categoryList = portage.getPackagesCategories(category)
         dep_tree = DependenciesTree()
         for _category, _package in zip(categoryList, packageList):
@@ -640,7 +640,7 @@ def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
 
 def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
     """without displaying debuginfo in generated output"""
-    with utils.TemporaryVerbosity(0):
+    with EmergeDebug.TemporaryVerbosity(0):
         dep_tree = DependenciesTree()
         for category, package, dummyTarget, dummyPatchlevel in packageList:
             dep_tree.addDependencies(category, package, dep_type=dep_type)

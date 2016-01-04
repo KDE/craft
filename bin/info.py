@@ -10,6 +10,7 @@ import datetime
 import os
 from collections import OrderedDict
 
+import EmergeDebug
 import utils
 import compiler
 from options import *
@@ -110,7 +111,7 @@ class infoclass(object):
         if not buildTarget == None:
             self.buildTarget = buildTarget
         if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
-            utils.debug("build target %s not defined in available targets %s %s setting default target to %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys()), self.defaultTarget), 1)
+            EmergeDebug.debug("build target %s not defined in available targets %s %s setting default target to %s" % (self.buildTarget, list(self.targets.keys()), list(self.svnTargets.keys()), self.defaultTarget), 1)
             self.buildTarget = self.defaultTarget
 
     def setBuildOptions( self ):
@@ -214,7 +215,7 @@ example:
         """returns the archive file name"""
         if self.buildTarget in list(self.archiveNames.keys()):
             return self.archiveNames[self.buildTarget]
-        return ""
+        return os.path.split(self.targets[self.buildTarget])[-1]
 
     def hasMultipleTargets( self ):
         """return whether we used a list of targets"""
@@ -285,7 +286,7 @@ example:
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetInstallPath.keys()):
             return self.targetInstallPath[ self.buildTarget ]
-        utils.die("no install path for this build target defined")
+        EmergeDebug.die("no install path for this build target defined")
 
     def hasMergePath(self):
         """return true if relative path appendable to local merge path is given for the recent target"""

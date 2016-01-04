@@ -2,6 +2,7 @@
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
 import EmergeDebug
+import EmergeHash
 import utils
 from .CollectionPackagerBase import *
 from .SevenZipPackager import *
@@ -40,5 +41,5 @@ Packager for portal 7zip archives
         self.internalCreatePackage()
 
         self.createPortablePackage()
-        utils.createDigestFile( os.path.join(self.packageDestinationDir(), self.defines[ "setupname" ]))
+        EmergeHash.createDigestFile(os.path.join(self.packageDestinationDir(), self.defines["setupname"]))
         return True
