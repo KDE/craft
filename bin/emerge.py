@@ -54,7 +54,7 @@ def doExec( package, action, continueFlag = False ):
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
     EmergeDebug.debug_line()
-    EmergeDebug.info("Handling package: %s, build action: %s" % (packageName, buildAction))
+    EmergeDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
 
     success = True
     package = portage.getPackageInstance( category, packageName )
@@ -415,9 +415,7 @@ def main( ):
         EmergeDebug.error("Failed to parse arguments: %s" % error)
         return False
 
-    if args.stayQuiet == True or action in [ "version-dir", "version-package",
-                                             "print-installable", "print-installed",
-                                             "print-targets" ]:
+    if args.stayQuiet:
         EmergeDebug.setVerbose(-1)
     elif args.verbose:
         EmergeDebug.setVerbose(args.verbose)
