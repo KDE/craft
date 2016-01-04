@@ -467,7 +467,7 @@ class DependenciesTree(object):
                 self.key2node[subkey] = subnode
             rootnode.children.append( subnode )
 
-    def buildVirtualNodes(self, category, package, version, tag, dep_type="both"):
+    def buildVirtualNodes(self, category, package, version, tag, depType="both"):
         converter = xml2conf.Xml2Conf()
         converter.parseFile(os.path.join(portage.getDirname(category, package), package + "-package.xml"))
 
@@ -486,7 +486,7 @@ class DependenciesTree(object):
         return rootnode
 
 
-    def addDependencies(self, category, package, version = "", dep_type="both"):
+    def addDependencies(self, category, package, version = "", depType="both"):
         """Add a new root dependency tree to this graph."""
 
         pi = portage.PortageInstance
@@ -503,14 +503,14 @@ class DependenciesTree(object):
             tag = "1"
 
         if not os.path.exists( os.path.join( portage.getDirname( category, package ), package + "-package.xml" ) ):
-            node = self.buildDepNode( category, package, version, tag, dep_type )
+            node = self.buildDepNode( category, package, version, tag, depType )
         else:
-            node = self.buildVirtualNodes( category, package, version, tag, dep_type )
+            node = self.buildVirtualNodes( category, package, version, tag, depType )
 
         if not node in self.roots:
             self.roots.append(node)
 
-    def buildDepNode(self, category, package, version, tag, dep_type="both"):
+    def buildDepNode(self, category, package, version, tag, depType="both"):
         """Recursive method to construct the nodes of the dependency tree."""
 
         pi = portage.PortageInstance
@@ -528,8 +528,8 @@ class DependenciesTree(object):
 
         children = []
 
-        for t in portage.getDependencies( category, package, (dep_type == "runtime") ):
-            sub_node = self.buildDepNode(t[0], t[1], t[2], tag, dep_type)
+        for t in portage.getDependencies( category, package, (depType == "runtime") ):
+            sub_node = self.buildDepNode(t[0], t[1], t[2], tag, depType)
             children.append(sub_node)
         node = DependenciesNode(category, package, version, tag, children)
         node.metaData = self.getMetaData( category, package )
@@ -628,22 +628,22 @@ def createOutput(output_type, dep_tree):
 
     return creator.createOutput(dep_tree)
 
-def dumpDependencies(category, output_type=OUTPUT_DOT, dep_type="both"):
+def dumpDependencies(category, output_type=OUTPUT_DOT, depType="both"):
     """without displaying debuginfo in generated output"""
     with EmergeDebug.TemporaryVerbosity(0):
         packageList, categoryList = portage.getPackagesCategories(category)
         dep_tree = DependenciesTree()
         for _category, _package in zip(categoryList, packageList):
-            dep_tree.addDependencies(_category, _package, dep_type=dep_type)
+            dep_tree.addDependencies(_category, _package, depType=depType)
 
     return createOutput(output_type, dep_tree)
 
-def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, dep_type="both"):
+def dumpDependenciesForPackageList(packageList, output_type=OUTPUT_DOT, depType="both"):
     """without displaying debuginfo in generated output"""
     with EmergeDebug.TemporaryVerbosity(0):
         dep_tree = DependenciesTree()
         for category, package, dummyTarget, dummyPatchlevel in packageList:
-            dep_tree.addDependencies(category, package, dep_type=dep_type)
+            dep_tree.addDependencies(category, package, depType=depType)
 
     return createOutput(output_type, dep_tree)
 

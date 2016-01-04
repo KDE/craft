@@ -106,7 +106,7 @@ class CollectionPackagerBase( PackagerBase ):
         depList = []
         for ( category, package, _, _ ) in runtimeDependencies:
             # we only want runtime dependencies since we want to build a binary installer
-            portage.solveDependencies( category, package, depList = depList, dep_type = "runtime")
+            portage.solveDependencies( category, package, depList = depList, depType = DependencyType.Runtime)
         depList.reverse()
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
