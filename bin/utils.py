@@ -234,11 +234,10 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    if EmergeDebug.verbose() > 0:
-        return system( command )
-    else:
-        tmp = tempfile.TemporaryFile()
-        return system( command, stdout=tmp )
+    command += " -bsp1"
+    if EmergeDebug.verbose() <= 1:
+        command += " -bso0"
+    return system( command )
 
 def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
@@ -331,7 +330,6 @@ def systemWithoutShell(cmd, **kw):
     EmergeDebug.debug("executing command: %s" % cmd, 1)
     if EmergeDebug.verbose() == -1 and not 'stdout' in kw and not 'stderr' in kw:
         kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
-
     return subprocess.call(cmd, **kw) == 0
 
 def copySrcDirToDestDir( srcdir, destdir ):
