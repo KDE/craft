@@ -109,9 +109,10 @@ class CollectionPackagerBase( PackagerBase ):
             portage.solveDependencies( category, package, depList = depList, dep_type = "runtime")
         depList.reverse()
         for x in depList:
-            # Ignore dev-utils that are wrongly set as hard dependencies
-            if x.category == "dev-util" or portage.PortageInstance.isVirtualPackage(x.category, x.package):
+            if portage.PortageInstance.isVirtualPackage(x.category, x.package):
+                EmergeDebug.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
                 continue
+
             _package = portage.getPackageInstance( x.category, x.package )
 
             imageDirs.append(( os.path.join( self.rootdir, "build", x.category, x.package,
