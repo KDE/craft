@@ -156,7 +156,7 @@ def handleSinglePackage( packageName, action, args ):
 
     for mainCategory, entry in zip( categoryList, packageList ):
         deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
-                                              maxDetpth = args.dependencydepth )
+                                              maxDepth = args.dependencydepth )
     # no package found
     if len( deplist ) == 0:
         category = ""

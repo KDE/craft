@@ -92,7 +92,7 @@ class DependencyPackage(PackageObjectBase):
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDetpth = -1, depth = 0):
+    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDepth = -1, depth = 0):
         """ returns all dependencies """
         if depType == DependencyType.Runtime:
             children = self.runtimeChildren
@@ -105,10 +105,10 @@ class DependencyPackage(PackageObjectBase):
         for p in children:
             if not p in single and not p in depList\
             and not p.fullName() in PortageInstance.ignores:
-                if maxDetpth == -1:
+                if maxDepth == -1:
                     p.getDependencies( depList, depType, single )
-                elif depth < maxDetpth:
-                    p.getDependencies( depList, depType, single, maxDetpth = maxDetpth, depth = depth + 1 )
+                elif depth < maxDepth:
+                    p.getDependencies( depList, depType, single, maxDepth = maxDepth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
         if not self in depList and not PackageObjectBase.__str__(self) in PortageInstance.ignores:
@@ -500,14 +500,14 @@ def parseListFile( filename ):
     return categoryList, packageList, infoDict
 
 
-def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDetpth = -1 ):
+def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDepth = -1 ):
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         EmergeDebug.debug("found package in category %s" % category, 2)
 
     pac = DependencyPackage( category, package, parent = None )
-    depList = pac.getDependencies( depList, depType=depType, maxDetpth = maxDetpth, single = set() )
+    depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set() )
 
     depList.reverse()
     return depList
