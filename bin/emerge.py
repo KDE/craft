@@ -29,14 +29,17 @@ import argparse
 
 import compiler
 import portageSearch
-from InstallDB import *
+import InstallDB
+import portage
+import utils
+import threading
 from EmergeConfig import *
 import jenkins
 
 
 def packageIsOutdated( category, package ):
     newest = portage.PortageInstance.getNewestVersion( category, package )
-    installed = installdb.getInstalledPackages( category, package )
+    installed = InstallDB.installdb.getInstalledPackages( category, package )
     for pack in installed:
         version = pack.getVersion( )
         if newest != version:
@@ -65,7 +68,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = success and doExec( package, "fetch", continueFlag )
         if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
             revision = package.sourceVersion( )
-            for p in installdb.getInstalledPackages( category, packageName ):
+            for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
                 if p.getRevision( ) == revision:
                     EmergeDebug.info("Skipping further actions, package is up-to-date")
                     return True
@@ -128,7 +131,7 @@ def handleSinglePackage( packageName, action, args ):
         for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
                 continue
-            if installdb.isInstalled( mainCategory, mainPackage, args.buildType ) \
+            if InstallDB.installdb.isInstalled( mainCategory, mainPackage, args.buildType ) \
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
@@ -238,7 +241,7 @@ def handleSinglePackage( packageName, action, args ):
             isLastPackage = info == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( info.category, info.package ) != [ ]
-            isInstalled = installdb.isInstalled( info.category, info.package )
+            isInstalled = InstallDB.installdb.isInstalled( info.category, info.package )
             if args.list_file and action != "all":
                 info.enabled = info.package in originalPackageList
             if ( isInstalled and not info.enabled ) and not (
@@ -458,7 +461,7 @@ def main( ):
     EmergeDebug.debug_line()
 
     if args.print_installed:
-        printInstalled( )
+        InstallDB.printInstalled( )
     elif args.print_installable:
         portage.printInstallables( )
     elif args.search_file:
