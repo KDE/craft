@@ -11,8 +11,11 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '5.0.0'
 
     def setDependencies( self ):
-        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
         self.dependencies[ 'extragear/kdevelop' ] = 'default'
+        # Install proper theme
+        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
+        # Install extra plugins shipped by Kate
+        self.dependencies[ 'kde/kate' ] = 'default'
 
 class Package( NullsoftInstallerPackager, VirtualPackageBase ):
     def __init__( self, **args ):
