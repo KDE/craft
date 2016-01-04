@@ -96,10 +96,10 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         success = success and doExec( package, "qmerge" )
     elif buildAction == "generate-jenkins-job":
         success = jenkins.generateJob(package)
-    elif buildAction == "version-dir":
+    elif buildAction == "print-source-version":
         print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
         success = True
-    elif buildAction == "version-package":
+    elif buildAction == "print-package-version":
         print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
         success = True
     elif buildAction == "print-targets":
@@ -382,14 +382,17 @@ def main( ):
 
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "unpack", "configure", "compile", "make",
-                       "install", "qmerge", "manifest", "package", "unmerge", "test",
+                       "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
                        "checkdigest", "dumpdeps",
-                       "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls",
-                       "version-dir", "version-package", "print-targets",
-                       "install-deps" ] ):
+                       "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"] ):
         actionHandler.addAction( x )
     actionHandler.addAction( "update", help = "Update a single package" )
-    actionHandler.addAction( "generate-jenkins-job")
+
+    # read-only actions
+    actionHandler.addAction( "print-source-version" )
+    actionHandler.addAction( "print-package-version" )
+    actionHandler.addAction( "print-targets",
+                             help = "This will show a list of available targets for the package" )
     actionHandler.addAction( "print-installed",
                              help = "This will show a list of all packages that are installed currently." )
     actionHandler.addAction( "print-installable",
@@ -397,8 +400,11 @@ def main( ):
     actionHandler.addAction( "print-revision", help = "Print the revision of the package and exit" )
     actionHandler.addAction( "print-files", help = "Print the files installed by the package and exit" )
     actionHandler.addActionWithArg( "search-file", help = "Print packages owning the file" )
+
+    # other actions
     actionHandler.addActionWithArg( "dump-deps-file", dest = "dumpDepsFile",
                                     help = "Output the dependencies of this package as a csv file suitable for emerge server." )
+    actionHandler.addAction( "generate-jenkins-job")
 
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
