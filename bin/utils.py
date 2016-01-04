@@ -22,10 +22,10 @@ import urllib.request
 import zipfile
 from operator import itemgetter
 
+import EmergeDebug
 import EmergeHash
 import Notifier.NotificationLoader
 from EmergeConfig import *
-from EmergeDebug import verbose, setVerbose, info, debug, warning, error, die
 
 if os.name == 'nt':
     pass
@@ -70,12 +70,12 @@ def test4application( appname):
         p.wait()
         return True
     except OSError:
-        debug("could not find application %s" % appname, 1)
+        EmergeDebug.debug("could not find application %s" % appname, 1)
         return False
 
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
-    debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix), 1)
+    EmergeDebug.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix), 1)
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
@@ -103,9 +103,9 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
 
 def getFile( url, destdir , filename='' ):
     """download file from 'url' into 'destdir'"""
-    debug("getFile called. url: %s" % url, 1)
+    EmergeDebug.debug("getFile called. url: %s" % url, 1)
     if url == "":
-        error("fetch: no url given")
+        EmergeDebug.error("fetch: no url given")
         return False
 
 
@@ -117,14 +117,14 @@ def getFile( url, destdir , filename='' ):
 
 
     filename = os.path.basename( path )
-    debug("%s\n%s\n%s\n%s" % (scheme, host, path, filename))
+    EmergeDebug.debug("%s\n%s\n%s\n%s" % (scheme, host, path, filename))
 
     if ( scheme == "http" ):
         return getHttpFile( host, path, destdir, filename )
     elif ( scheme == "ftp" ):
         return getFtpFile( host, path, destdir, filename )
     else:
-        error("getFile: protocol not understood")
+        EmergeDebug.error("getFile: protocol not understood")
         return False
 
 def wgetFile( url, destdir, filename=''):
@@ -138,15 +138,15 @@ def wgetFile( url, destdir, filename=''):
     else:
         command += " -O %s" % os.path.join( destdir, filename )
     command += " %s" % url
-    debug("wgetfile called", 1)
+    EmergeDebug.debug("wgetfile called", 1)
     ret = system( command )
-    debug("wget ret: %s" % ret, 2)
+    EmergeDebug.debug("wget ret: %s" % ret, 2)
     return ret
 
 def getFtpFile( host, path, destdir, filename ):
     """download file from a ftp host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
-    debug("FIXME getFtpFile called. %s %s" % (host, path), 1)
+    EmergeDebug.debug("FIXME getFtpFile called. %s %s" % (host, path), 1)
 
     ftp = ftplib.FTP( host )
     ftp.login( "anonymous", "johndoe" )
@@ -158,25 +158,25 @@ def getFtpFile( host, path, destdir, filename ):
 def getHttpFile( host, path, destdir, filename ):
     """download file from a http host specified by 'host' and 'path' into 'destdir' using 'filename' as file name"""
     # FIXME check return values here (implement useful error handling)...
-    debug("getHttpFile called. %s %s" % (host, path), 1)
+    EmergeDebug.debug("getHttpFile called. %s %s" % (host, path), 1)
 
     conn = http.client.HTTPConnection( host )
     conn.request( "GET", path )
     r1 = conn.getresponse()
-    debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
+    EmergeDebug.debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
 
     count = 0
     while r1.status == 302:
         if count > 10:
-            debug("Redirect loop")
+            EmergeDebug.debug("Redirect loop")
             return False
         count += 1
         _, host, path, _, _, _ = urllib.parse.urlparse( r1.getheader( "Location" ) )
-        debug("Redirection: %s %s" % (host, path), 1)
+        EmergeDebug.debug("Redirection: %s %s" % (host, path), 1)
         conn = http.client.HTTPConnection( host )
         conn.request( "GET", path )
         r1 = conn.getresponse()
-        debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
+        EmergeDebug.debug("status: %s; reason: %s" % (str(r1.status), str(r1.reason)))
 
 
     data = r1.read()
@@ -197,7 +197,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
     cleanDirectory( workdir )
 
     for filename in filenames:
-        debug("unpacking this file: %s" % filename, 1)
+        EmergeDebug.debug("unpacking this file: %s" % filename, 1)
         if ( not unpackFile( downloaddir, filename, workdir ) ):
             return False
 
@@ -217,13 +217,13 @@ def unpackFile( downloaddir, filename, workdir ):
         if ( myext == ".tar" ):
             return unTar( os.path.join( downloaddir, filename ), workdir )
         else:
-            error("unpacking %s" % myext)
+            EmergeDebug.error("unpacking %s" % myext)
             return False
     elif ( ext == ".exe" ):
-        warning("unpack ignoring exe file")
+        EmergeDebug.warning("unpack ignoring exe file")
         return True
     else:
-        error("dont know how to unpack this file: %s" % filename)
+        EmergeDebug.error("dont know how to unpack this file: %s" % filename)
     return False
 
 def un7zip( fileName, destdir, flag = None ):
@@ -234,7 +234,7 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    if verbose() > 0:
+    if EmergeDebug.verbose() > 0:
         return system( command )
     else:
         tmp = tempfile.TemporaryFile()
@@ -242,7 +242,7 @@ def un7zip( fileName, destdir, flag = None ):
 
 def unTar( fileName, destdir ):
     """unpack tar file specified by 'file' into 'destdir'"""
-    debug("unTar called. file: %s, destdir: %s" % (fileName, destdir), 1)
+    EmergeDebug.debug("unTar called. file: %s, destdir: %s" % (fileName, destdir), 1)
     ( shortname, ext ) = os.path.splitext( fileName )
     emerge_tmp = os.path.join(destdir,"emerge_tmp")
 
@@ -258,7 +258,7 @@ def unTar( fileName, destdir ):
 
 
     if not os.path.exists( fileName ):
-        error("couldn't find file %s" % fileName)
+        EmergeDebug.error("couldn't find file %s" % fileName)
         return False
 
     try:
@@ -274,19 +274,19 @@ def unTar( fileName, destdir ):
                         if target in tar.getnames():
                             tar.extract(target, emerge_tmp )
                             shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
-                            warning("Resolved symlink %s in tarfile %s to %s" % (tarMember.name, fileName , tarMember.linkname))
+                            EmergeDebug.warning("Resolved symlink %s in tarfile %s to %s" % (tarMember.name, fileName , tarMember.linkname))
                         else:
-                            warning("link target %s for %s not included in tarfile" % (target , tarMember.name))
+                            EmergeDebug.warning("link target %s for %s not included in tarfile" % (target , tarMember.name))
                     else:
                         tar.extract(tarMember, destdir )
                 except tarfile.TarError:
-                    error("couldn't extract file %s to directory %s" % (fileName, destdir))
+                    EmergeDebug.error("couldn't extract file %s to directory %s" % (fileName, destdir))
                     return False
                 except IOError:
-                    warning("Failed to extract %s to directory %s" % (tarMember.name, destdir))
+                    EmergeDebug.warning("Failed to extract %s to directory %s" % (tarMember.name, destdir))
         return True
     except tarfile.TarError as e:
-        error("could not open existing tar archive: %s error: %s" % (fileName, e))
+        EmergeDebug.error("could not open existing tar archive: %s error: %s" % (fileName, e))
         return False
     finally:
         if os.path.exists(emerge_tmp):
@@ -294,7 +294,7 @@ def unTar( fileName, destdir ):
 
 def unZip( fileName, destdir ):
     """unzip file specified by 'file' into 'destdir'"""
-    debug("unZip called: file %s to destination %s" % (fileName, destdir), 1)
+    EmergeDebug.debug("unZip called: file %s to destination %s" % (fileName, destdir), 1)
 
     if not os.path.exists( destdir ):
         os.makedirs( destdir )
@@ -302,7 +302,7 @@ def unZip( fileName, destdir ):
     try:
         zipObj = zipfile.ZipFile( fileName )
     except (zipfile.BadZipfile, IOError):
-        error("couldn't extract file %s" % fileName)
+        EmergeDebug.error("couldn't extract file %s" % fileName)
         return False
 
     for name in zipObj.namelist():
@@ -328,8 +328,8 @@ def systemWithoutShell(cmd, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
 
-    debug("executing command: %s" % cmd, 1)
-    if verbose() == 0 and not 'stdout' in kw and not 'stderr' in kw:
+    EmergeDebug.debug("executing command: %s" % cmd, 1)
+    if EmergeDebug.verbose() == 0 and not 'stdout' in kw and not 'stderr' in kw:
         kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
 
     return subprocess.call(cmd, **kw) == 0
@@ -368,7 +368,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
             else:
                 currentHash = algorithm.stringPrefix() + EmergeHash.digestFile(fullPath, algorithm)
             if currentHash == filehash or filehash == "":
-                debug("deleting file %s" % fullPath, 2)
+                EmergeDebug.debug("deleting file %s" % fullPath, 2)
                 try:
                     os.remove(fullPath)
                 except OSError:
@@ -376,7 +376,7 @@ def unmergeFileList(rootdir, fileList, forced=False):
                     os.remove(fullPath)
             else:
                 if forced:
-                    warning("file %s has different hash: %s %s, deleting anyway" % \
+                    EmergeDebug.warning("file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ))
                 try:
                     os.remove(fullPath)
@@ -384,10 +384,10 @@ def unmergeFileList(rootdir, fileList, forced=False):
                     system( "cmd /C \"attrib -R %s\"" % fullPath )
                     os.remove(fullPath)
                 else:
-                    warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                    EmergeDebug.warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ))
         elif not os.path.isdir(fullPath):
-            warning("file %s does not exist" % fullPath)
+            EmergeDebug.warning("file %s does not exist" % fullPath)
 
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)
@@ -396,7 +396,7 @@ def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
         src = os.path.join( srcdir, entry )
         dest = os.path.join( destdir, entry )
-        debug("move: %s -> %s" % (src, dest), 1)
+        EmergeDebug.debug("move: %s -> %s" % (src, dest), 1)
         if( os.path.isfile( dest ) ):
             os.remove( dest )
         if( os.path.isdir( dest ) ):
@@ -421,7 +421,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     so when we want to be able to install imagedir into KDEROOT,
     we have to move things around...
     """
-    debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
+    EmergeDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
     # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
     # rootdir  = e:\foo\thirdroot
     # files are installed to
@@ -438,7 +438,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     if len(rootpath) == 0:
         return
     tmp = os.path.join( imagedir, rootpath )
-    debug("tmp: %s" % tmp, 1)
+    EmergeDebug.debug("tmp: %s" % tmp, 1)
     tmpdir = os.path.join( imagedir, "tMpDiR" )
 
     if ( not os.path.isdir( tmpdir ) ):
@@ -452,7 +452,7 @@ def fixCmakeImageDir( imagedir, rootdir ):
     os.rmdir( tmpdir )
 
 def cleanDirectory( directory ):
-    debug("clean directory %s" % directory, 1)
+    EmergeDebug.debug("clean directory %s" % directory, 1)
     if ( os.path.exists( directory ) ):
         for root, dirs, files in os.walk( directory, topdown=False):
             for name in files:
@@ -463,7 +463,7 @@ def cleanDirectory( directory ):
                     try:
                         os.remove( os.path.join(root, name) )
                     except OSError:
-                        die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
+                        EmergeDebug.die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
             for name in dirs:
                 try:
                     os.rmdir( os.path.join(root, name) )
@@ -472,7 +472,7 @@ def cleanDirectory( directory ):
                     try:
                         os.rmdir( os.path.join(root, name) )
                     except OSError:
-                        die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
+                        EmergeDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs( directory )
 
@@ -575,7 +575,7 @@ def createImportLibs( dll_name, basepath ):
     USE_GENDEF = HAVE_GENDEF
     HAVE_LIB = test4application( "lib" )
     HAVE_DLLTOOL = test4application( "dlltool" )
-    if verbose() > 1:
+    if EmergeDebug.verbose() > 1:
         print("gendef found:", HAVE_GENDEF)
         print("gendef used:", USE_GENDEF)
         print("lib found:", HAVE_LIB)
@@ -591,12 +591,12 @@ def createImportLibs( dll_name, basepath ):
         HAVE_GENDEF = True
         USE_GENDEF = False
     if not HAVE_GENDEF:
-        warning("system does not have gendef.exe")
+        EmergeDebug.warning("system does not have gendef.exe")
         return False
     if not HAVE_LIB  and not os.path.isfile( imppath ):
-        warning("system does not have lib.exe (from msvc)")
+        EmergeDebug.warning("system does not have lib.exe (from msvc)")
     if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
-        warning("system does not have dlltool.exe")
+        EmergeDebug.warning("system does not have dlltool.exe")
 
     # create .def
     if USE_GENDEF:
@@ -630,7 +630,7 @@ def cleanPackageName( basename, packagename ):
 
 def renameDir(src, dest):
     """ rename a directory """
-    debug("rename directory from %s to %s" % (src, dest), 2)
+    EmergeDebug.debug("rename directory from %s to %s" % (src, dest), 2)
     if os.rename( src, dest ) == 0:
         return False
     else:
@@ -639,25 +639,25 @@ def renameDir(src, dest):
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
-        debug("creating directory %s " % (path), 2)
+        EmergeDebug.debug("creating directory %s " % (path), 2)
         os.makedirs( path )
     return True
     
 def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
-    debug("copy file from %s to %s" % (src, dest), 2)
+    EmergeDebug.debug("copy file from %s to %s" % (src, dest), 2)
     destDir = os.path.dirname( dest )
     if not os.path.exists( destDir ):
         os.makedirs( destDir )
     if os.path.exists( dest ):
-        warning("Overriding %s" % dest)
+        EmergeDebug.warning("Overriding %s" % dest)
         os.remove( dest )
     if linkOnly:
         try:
             os.link( src , dest )
             return True
         except:
-            warning("Failed to create hardlink %s for %s" % (dest, src))
+            EmergeDebug.warning("Failed to create hardlink %s for %s" % (dest, src))
     try:
         shutil.copy(src,dest)
     except OSError:
@@ -667,7 +667,7 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
     
 def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
-    debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
+    EmergeDebug.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
 
     if ( not srcdir.endswith( "\\" ) ):
         srcdir += "\\"
@@ -683,7 +683,7 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
                 os.makedirs( tmpdir )
             for fileName in files:
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
-                debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
+                EmergeDebug.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
 
 def mergeTree(srcdir, destdir):
     """ copy directory from @p srcdir to @p destdir
@@ -708,22 +708,22 @@ def mergeTree(srcdir, destdir):
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
-    debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 1)
+    EmergeDebug.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 1)
     try:
         shutil.move( srcdir, destdir )
     except Exception as e:
-        warning(e)
+        EmergeDebug.warning(e)
         return False
     return True
 
 def rmtree( directory ):
     """ recursively delete directory """
-    debug("rmtree called. directory: %s" % (directory), 2)
+    EmergeDebug.debug("rmtree called. directory: %s" % (directory), 2)
     shutil.rmtree ( directory, True ) # ignore errors
 
 def moveFile(src, dest):
     """move file from src to dest"""
-    debug("move file from %s to %s" % (src, dest), 2)
+    EmergeDebug.debug("move file from %s to %s" % (src, dest), 2)
     shutil.move( src, dest )
     return True
 
@@ -731,7 +731,7 @@ def deleteFile(fileName):
     """delete file """
     if not os.path.exists( fileName ):
         return False
-    debug("delete file %s " % (fileName), 2)
+    EmergeDebug.debug("delete file %s " % (fileName), 2)
     os.remove( fileName )
     return True
 
@@ -752,7 +752,7 @@ def findFiles( directory, pattern=None, fileNames=None):
 
 def putenv(name, value):
     """set environment variable"""
-    debug("set environment variable -- set %s=%s" % (name, value), 2)
+    EmergeDebug.debug("set environment variable -- set %s=%s" % (name, value), 2)
     os.putenv( name, value )
     return True
 
@@ -763,7 +763,7 @@ def unixToDos(filename):
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = 'patch -d "%s" -p%s < "%s"' % (sourceDir, patchLevel, f)
-    debug("applying %s" % cmd)
+    EmergeDebug.debug("applying %s" % cmd)
     if not isCrEol(f):
         p = subprocess.Popen([
             "patch", "-d", sourceDir, "-p", str(patchLevel)],
@@ -773,7 +773,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
     else:
         result = system( cmd )
     if not result:
-        warning("applying %s failed!" % f)
+        EmergeDebug.warning("applying %s failed!" % f)
     return result
 
 def log(fn):
@@ -784,13 +784,13 @@ def log(fn):
             return fn(*args, **argv)
 
         if os.path.isfile(logdir):
-            die("EMERGE_LOG_DIR %s is a file" % logdir)
+            EmergeDebug.die("EMERGE_LOG_DIR %s is a file" % logdir)
 
         if not os.path.exists(logdir):
             try:
                 os.mkdir(logdir)
             except OSError:
-                die("EMERGE_LOG_DIR %s can not be created" % logdir)
+                EmergeDebug.die("EMERGE_LOG_DIR %s can not be created" % logdir)
 
         logfile = ""
         for a in args:
@@ -821,12 +821,12 @@ def getWinVer():
     try:
         result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0],"windows-1252")
     except OSError:
-        debug("Windows Version can not be determined", 1)
+        EmergeDebug.debug("Windows Version can not be determined", 1)
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
     if(version):
         return version.group(0)
-    debug("Windows Version can not be determined", 1)
+    EmergeDebug.debug("Windows Version can not be determined", 1)
     return "0"
 
 def regQuery(key, value):
@@ -835,7 +835,7 @@ def regQuery(key, value):
     the result.
     '''
     query = 'reg query "%s" /v "%s"' % (key, value)
-    debug("Executing registry query %s " % query, 2)
+    EmergeDebug.debug("Executing registry query %s " % query, 2)
     result = subprocess.Popen(query,
                 stdout = subprocess.PIPE).communicate()[0]
     # Output of this command is either an error to stderr
@@ -855,8 +855,8 @@ def embedManifest(executable, manifest):
     '''
     if not os.path.isfile(executable) or not os.path.isfile(manifest):
         # We die here because this is a problem with the portage files
-        die("embedManifest %s or %s do not exist" % (executable, manifest))
-    debug("embedding ressource manifest %s into %s" % \
+        EmergeDebug.die("embedManifest %s or %s do not exist" % (executable, manifest))
+    EmergeDebug.debug("embedding ressource manifest %s into %s" % \
           (manifest, executable), 2)
     mtExe = None
     mtExe = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "mt.exe")
@@ -867,12 +867,12 @@ def embedManifest(executable, manifest):
         sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
             "CurrentInstallFolder")
         if not sdkdir:
-            debug("embedManifest could not find the Registry Key"
+            EmergeDebug.debug("embedManifest could not find the Registry Key"
                   " for the Windows SDK", 2)
         else:
             mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
             if not os.path.isfile(os.path.normpath(mtExe)):
-                debug("embedManifest could not find a mt.exe in\n\t %s" % \
+                EmergeDebug.debug("embedManifest could not find a mt.exe in\n\t %s" % \
                       os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
         return system([mtExe, "-nologo", "-manifest", manifest,
@@ -895,7 +895,7 @@ def prependPath(*parts):
         fullPath = os.path.join(*parts)
         old = os.getenv("PATH").split(';')
         if old[0] != fullPath:
-            debug("adding %s to system path" % fullPath, 2)
+            EmergeDebug.debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
             putenv( "PATH", ";".join(old))
 
@@ -908,20 +908,20 @@ def startTimer(name, level = 0):
     """starts a timer for meassurement"""
     if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
         if name in _TIMERS:
-            die("%s already in timers" % name)
+            EmergeDebug.die("%s already in timers" % name)
         _TIMERS[name] = (datetime.datetime.now() , level)
-        #if verbose() > 0 and ( level == 0 or verbose() > level):
-            #debug( "Task: %s started" % name )
+        #if EmergeDebug.verbose() > 0 and ( level == 0 or EmergeDebug.verbose() > level):
+            #EmergeDebug.debug( "Task: %s started" % name )
             #sys.stdout.flush()
     
 def stopTimer(name):
     """stops a timer for meassurement"""
     if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
         if not name in _TIMERS:
-            debug("%s not in timers" % name)
+            EmergeDebug.debug("%s not in timers" % name)
             return
         startTime , level = _TIMERS[name]
-        if verbose() > 0  and (level == 0 or verbose() > level):
+        if EmergeDebug.verbose() > 0  and (level == 0 or EmergeDebug.verbose() > level):
             delta = datetime.datetime.now() - startTime
             print( "Task: %s stopped after: %s" % (name , delta) )
             sys.stdout.flush()
@@ -936,7 +936,7 @@ def stopAllTimer():
 
 
 def notify(title,message,alertClass = None):
-    info("%s: %s" % (title, message))
+    EmergeDebug.info("%s: %s" % (title, message))
 
     backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")
     if backends == "":
@@ -1044,7 +1044,7 @@ def getNightlyVersionsFromUrl(url, pattern, timeout = 10):
     :return: A list of matching strings or [None]
     """
     if emergeSettings.getboolean("General", "WorkOffline"):
-        info("Nightly builds unavailable for %s in offline mode." % url)
+        EmergeDebug.info("Nightly builds unavailable for %s in offline mode." % url)
         return [None]
     global _NIGTHLY_URLS
     if url in _NIGTHLY_URLS:
@@ -1060,5 +1060,5 @@ def getNightlyVersionsFromUrl(url, pattern, timeout = 10):
             _NIGTHLY_URLS[url] = vers
             return vers
       except Exception as e:
-        warning("Nightly builds unavailable for %s: %s" % (url, e))
+        EmergeDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return [None]
