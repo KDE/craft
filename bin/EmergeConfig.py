@@ -149,7 +149,7 @@ class EmergeConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
 
     def __init__( self ):
-        self._config = None
+        self._config = configparser.ConfigParser( )
         with TemporaryUseShortpath(False):
             self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
         self._alias = dict( )
@@ -167,9 +167,9 @@ class EmergeConfig( object ):
 
     def _readSettings( self ):
         if not os.path.exists( self.iniPath ):
-            print( "Could not find %s" % self.iniPath )
-            exit( 1 )
-        self._config = configparser.ConfigParser( )
+            print( "Could not find config: %s" % self.iniPath )
+            return
+
         self._config.read( self.iniPath )
         clean = False
         #replace possible vatiables within a section
