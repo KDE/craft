@@ -44,9 +44,7 @@ class SourceBase(EmergeBase):
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
         controls parts of the name of the generated path. """
 
-        if self.buildSystemType == 'binary':
-            sourcedir = self.imageDir()
-        elif self.subinfo.options.unpack.unpackIntoBuildDir:
+        if self.subinfo.options.unpack.unpackIntoBuildDir:
             sourcedir = self.buildDir()
         else:
             sourcedir = self.workDir()

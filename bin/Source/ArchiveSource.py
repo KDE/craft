@@ -127,12 +127,7 @@ class ArchiveSource(SourceBase):
         # unfortunally subinfo.targetInstSrc attribute is only for accessing a source subdir
         # for unpacking into a subdir we need an additional property
 
-        # if using BinaryBuildSystem the files should be unpacked into imagedir
-        if self.buildSystemType == 'binary':
-            destdir = self.installDir()
-            EmergeDebug.debug("unpacking files into image root %s" % destdir, 1)
-        # tempory solution
-        elif self.subinfo.options.unpack.unpackIntoBuildDir:
+        if self.subinfo.options.unpack.unpackIntoBuildDir:
             destdir = self.buildDir()
             EmergeDebug.debug("unpacking files into build dir %s" % destdir, 1)
         else:
@@ -180,12 +175,7 @@ class ArchiveSource(SourceBase):
         # get the file paths of the tarballs
         filenames = self.localFileNames()
 
-        # if using BinaryBuildSystem the files should be unpacked into imagedir
-        if self.buildSystemType == 'binary':
-            destdir = self.installDir()
-            EmergeDebug.debug("unpacking files into image root %s" % destdir, 1)
-        else:
-            destdir = self.workDir()
+        destdir = self.workDir()
 
         # it makes no sense to make a diff against nothing
         if ( not os.path.exists( self.sourceDir() ) ):

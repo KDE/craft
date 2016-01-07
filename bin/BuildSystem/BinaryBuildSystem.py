@@ -16,6 +16,7 @@ class BinaryBuildSystem(BuildSystemBase):
         return True
 
     def install( self ):
+        utils.copyDir(self.sourceDir(), self.imageDir())
         return BuildSystemBase.install(self)
 
 

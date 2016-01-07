@@ -144,11 +144,6 @@ class EmergeBase(object):
         """return base directory name for package related image directory"""
         directory = "image"
 
-        # we assume that binary packages are for all compiler and targets
-        ## \todo add image directory support for using binary packages for a specific compiler and build type
-        if self.buildSystemType == 'binary':
-            return directory
-
         if self.subinfo.options.useCompilerType == True:
             directory += '-' + compiler.getCompilerName()
         if self.subinfo.options.useBuildType == True:
