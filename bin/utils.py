@@ -8,7 +8,6 @@ this file contains some helper functions for emerge
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
-import ctypes
 import datetime
 import ftplib
 import http.client
@@ -26,11 +25,7 @@ import EmergeDebug
 import EmergeHash
 import Notifier.NotificationLoader
 from EmergeConfig import *
-
-if os.name == 'nt':
-    pass
-else:
-    pass
+from EmergeOS.osutils import OsUtils
 
 import configparser
 
@@ -365,21 +360,12 @@ def unmergeFileList(rootdir, fileList, forced=False):
             else:
                 currentHash = algorithm.stringPrefix() + EmergeHash.digestFile(fullPath, algorithm)
             if currentHash == filehash or filehash == "":
-                EmergeDebug.debug("deleting file %s" % fullPath, 2)
-                try:
-                    os.remove(fullPath)
-                except OSError:
-                    system( "cmd /C \"attrib -R %s\"" % fullPath )
-                    os.remove(fullPath)
+                OsUtils.rm(fullPath, True)
             else:
                 if forced:
                     EmergeDebug.warning("file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ))
-                try:
-                    os.remove(fullPath)
-                except OSError:
-                    system( "cmd /C \"attrib -R %s\"" % fullPath )
-                    os.remove(fullPath)
+                    OsUtils.rm(fullPath, True)
                 else:
                     EmergeDebug.warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ))
@@ -453,23 +439,11 @@ def cleanDirectory( directory ):
     if ( os.path.exists( directory ) ):
         for root, dirs, files in os.walk( directory, topdown=False):
             for name in files:
-                try:
-                    os.remove( os.path.join(root, name) )
-                except OSError:
-                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
-                    try:
-                        os.remove( os.path.join(root, name) )
-                    except OSError:
-                        EmergeDebug.die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
+                if not OsUtils.rm(os.path.join(root, name), True):
+                    EmergeDebug.die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
             for name in dirs:
-                try:
-                    os.rmdir( os.path.join(root, name) )
-                except OSError:
-                    system( "cmd /C \"attrib -R %s\"" % os.path.join(root, name) )
-                    try:
-                        os.rmdir( os.path.join(root, name) )
-                    except OSError:
-                        EmergeDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
+                if not OsUtils.rmDir(os.path.join(root, name), True):
+                    EmergeDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs( directory )
 
@@ -648,20 +622,16 @@ def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardl
         os.makedirs( destDir )
     if os.path.exists( dest ):
         EmergeDebug.warning("Overriding %s" % dest)
-        os.remove( dest )
+        OsUtils.rm( dest, True )
     if linkOnly:
         try:
             os.link( src , dest )
             return True
         except:
             EmergeDebug.warning("Failed to create hardlink %s for %s" % (dest, src))
-    try:
-        shutil.copy(src,dest)
-    except OSError:
-        system("cmd /C \"attrib -R %s\"" % dest)
-        shutil.copy(src,dest)
+    shutil.copy(src,dest)
     return True
-    
+
 def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
     EmergeDebug.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
@@ -895,10 +865,6 @@ def prependPath(*parts):
             EmergeDebug.debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
             putenv( "PATH", ";".join(old))
-
-def setConsoleTitle(title):
-    if platform.system() == 'Windows':
-        ctypes.windll.kernel32.SetConsoleTitleW(title)
 
 _TIMERS = dict()    
 def startTimer(name, level = 0):
