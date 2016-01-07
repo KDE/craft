@@ -48,15 +48,17 @@ class Package(BinaryPackageBase):
 
 
   def install( self ):
-    shutil.move( os.path.join( self.installDir() , self.subinfo.targetInstSrc[ self.subinfo.buildTarget ]) , os.path.join( self.installDir(), "bin" ) )
-    shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) )
-    shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) )
+    utils.copyDir(   self.sourceDir() , os.path.join( self.imageDir(), "bin" ) )
+    if compiler.isMinGW():
+      utils.deleteFile(os.path.join( self.imageDir(), "bin", "libgcc_s_seh-1.dll" ) )
+    shutil.move( os.path.join( self.imageDir() , "bin" , "sdk" , "include") , os.path.join( self.imageDir(), "include" ) )
+    shutil.move( os.path.join( self.imageDir() , "bin" , "sdk" , "lib") , os.path.join( self.imageDir(), "lib" ) )
     ver2 = self.subinfo.buildTarget.split('.')
     if not (int(ver2[0]) >= 2 and int(ver2[0]) >= 1):
-      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlc.lib" ))
-      shutil.copy( os.path.join( self.installDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.installDir() , "lib" ,"libvlccore.lib" ))
-    shutil.rmtree( os.path.join( self.installDir() , "bin" , "sdk" ) )
-    os.makedirs( os.path.join( self.installDir() , "share" , "applications" , "kde4" ) )
-    shutil.copy( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.installDir() , "share" , "applications" , "kde4" , "vlc.desktop" ))
+      utils.copyFile( os.path.join( self.imageDir() , "lib" ,"libvlc.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlc.lib" ))
+      utils.copyFile( os.path.join( self.imageDir() , "lib" ,"libvlccore.dll.a" ) , os.path.join( self.imageDir() , "lib" ,"libvlccore.lib" ))
+    shutil.rmtree( os.path.join( self.imageDir() , "bin" , "sdk" ) )
+    os.makedirs( os.path.join( self.imageDir() , "share" , "applications") )
+    utils.copyFile( os.path.join( self.packageDir() ,  "vlc.desktop" ) , os.path.join( self.imageDir() , "share" , "applications", "vlc.desktop" ))
     return True
 
