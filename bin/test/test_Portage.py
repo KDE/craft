@@ -11,14 +11,7 @@ import EmergeTestBase
 import EmergeConfig
 import portage
 
-class EmergeHashTest(EmergeTestBase.EmergeTestBase):
-
-    def setUp(self):
-        super().setUp()
-
-    def tearDown(self):
-        super().tearDown()
-
+class EmergePortageTest(EmergeTestBase.EmergeTestBase):
 
     def portageTest(self, compiler, architecture):
         EmergeConfig.emergeSettings.set("General", "KDECOMPILER", compiler)
@@ -31,7 +24,7 @@ class EmergeHashTest(EmergeTestBase.EmergeTestBase):
 
 
 
-class TestAPI(EmergeHashTest):
+class TestAPI(EmergePortageTest):
 
     def test_mingw_x86(self):
         self.portageTest("mingw4", "x86")
