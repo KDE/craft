@@ -60,7 +60,7 @@ def main():
 
     loader = unittest.TestLoader()
     suite = loader.discover(start_dir=thisdir)
-    runner = unittest.TextTestRunner(verbosity = opts.verbosity)
+    runner = unittest.TextTestRunner(verbosity = opts.verbosity + 1)
     result = runner.run(suite)
 
     sys.exit(not result.wasSuccessful())

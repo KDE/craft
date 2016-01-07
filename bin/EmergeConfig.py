@@ -148,10 +148,13 @@ class EmergeStandardDirs( object ):
 class EmergeConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
 
-    def __init__( self ):
+    def __init__( self, iniPath=None ):
         self._config = configparser.ConfigParser( )
-        with TemporaryUseShortpath(False):
-            self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
+        if iniPath:
+            self.iniPath = iniPath
+        else:
+            with TemporaryUseShortpath(False):
+                self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
         self._alias = dict( )
         self._readSettings( )
 
