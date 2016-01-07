@@ -8,11 +8,11 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.6.4"
+        ver = "2.7.0"
         arch = 32
         if compiler.isX64():
             arch = 64
-           
+
         self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)
         self.archiveNames[ver] = "PortableGit-%s-%s-bit.7z" % (ver, arch)
         self.defaultTarget = ver
@@ -25,18 +25,13 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.merge.destinationPath = "dev-utils//git";
-        self.subinfo.options.merge.ignoreBuildType = True
+        self.subinfo.options.merge.destinationPath = "dev-utils"
+        self.subinfo.options.unpack.unpackDir = "git"
 
-    def unpack(self):
-        if not BinaryPackageBase.unpack(self):
+    def install( self ):
+        if not BinaryPackageBase.install(self):
             return False
-        utils.copyFile(os.path.join(self.packageDir(),"git.exe"),os.path.join(self.rootdir,"dev-utils","bin","git.exe"))
-        utils.copyFile(os.path.join(self.packageDir(),"git.sh"),os.path.join(self.rootdir,"dev-utils","bin","git"))#bash script
-        utils.copyFile(os.path.join(self.packageDir(),"gb.bat"),os.path.join(self.rootdir,"dev-utils","bin","gb.bat"))
-        utils.copyFile(os.path.join(self.packageDir(),"gitk.bat"),os.path.join(self.rootdir,"dev-utils","bin","gitk.bat"))
-        utils.copyFile(os.path.join(self.packageDir(),"vi.bat"),os.path.join(self.rootdir,"dev-utils","bin","vi.bat"))
-        utils.copyFile(os.path.join(self.packageDir(),"vim.bat"),os.path.join(self.rootdir,"dev-utils","bin","vim.bat"))
+        utils.copyFile(os.path.join(self.packageDir(),"git.exe"),os.path.join(self.imageDir(),"bin","git.exe"))
         return True
 
     def qmerge(self):
