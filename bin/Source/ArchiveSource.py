@@ -123,21 +123,16 @@ class ArchiveSource(SourceBase):
         EmergeDebug.debug("ArchiveSource.unpack called", 2)
 
         filenames = self.localFileNames()
-        ## @todo: unpack destination is probably sourceDir()
-        # unfortunally subinfo.targetInstSrc attribute is only for accessing a source subdir
-        # for unpacking into a subdir we need an additional property
 
-        if self.subinfo.options.unpack.unpackIntoBuildDir:
-            destdir = self.buildDir()
-            EmergeDebug.debug("unpacking files into build dir %s" % destdir, 1)
-        else:
-            destdir = self.workDir()
-            EmergeDebug.debug("unpacking files into work root %s" % destdir, 1)
+        destdir = self.sourceDir()
+        utils.cleanDirectory(destdir)
 
         if hasattr(self.subinfo.options.unpack, 'unpackDir'):
             destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
 
         self.checkDigest()
+
+
 
         binEndings = (".exe", ".bat", ".msi")
         if (self.subinfo.archiveName() == "" and self.url.endswith(binEndings)) or self.subinfo.archiveName().endswith(binEndings):
@@ -188,6 +183,8 @@ class ArchiveSource(SourceBase):
         # make a temporary directory so the original packages don't overwrite the already existing ones
         tmpdir = os.path.join( destdir, "tmp" )
         unpackDir = tmpdir
+
+        utils.cleanDirectory( unpackDir )
 
         if ( not os.path.exists( unpackDir ) ):
             os.mkdir( unpackDir )

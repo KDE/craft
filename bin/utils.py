@@ -194,7 +194,6 @@ def isCrEol(filename):
 
 def unpackFiles( downloaddir, filenames, workdir ):
     """unpack (multiple) files specified by 'filenames' from 'downloaddir' into 'workdir'"""
-    cleanDirectory( workdir )
 
     for filename in filenames:
         EmergeDebug.debug("unpacking this file: %s" % filename, 1)

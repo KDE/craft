@@ -26,15 +26,11 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
 
     def fetch(self):
         return True
 
     def unpack(self):
-        self.localwget = os.path.join(self.packageDir(),'wget.exe')
-        dest = os.path.join(self.installDir(),'wget.exe')
-        if not os.path.exists(self.installDir()):
-            os.makedirs(self.installDir())
-        return utils.copyFile(self.localwget,os.path.join(self.installDir(),'wget.exe'))
+        utils.cleanDirectory(self.sourceDir())
+        return utils.copyFile(os.path.join(self.packageDir(),'wget.exe'), os.path.join(self.sourceDir(), "bin",'wget.exe'))
 
