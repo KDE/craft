@@ -3,12 +3,12 @@ import abc
 class OsUtilsBase(metaclass=abc.ABCMeta):
 
     @abc.abstractstaticmethod
-    def rm(path, force):
+    def rm(path, force=False):
         """ Removes a file"""
         pass
 
     @abc.abstractstaticmethod
-    def rmDir(path, force):
+    def rmDir(path, force=False):
         """ Removes a file"""
         pass
 
