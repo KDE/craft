@@ -12,6 +12,7 @@ from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from graphviz import *
 import compiler
+from utils import moveEntries, cleanDirectory
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -187,7 +188,7 @@ class CMakeBuildSystem(BuildSystemBase):
         self.system( command, "install" )
 
         if self.subinfo.options.install.useMakeToolForInstall and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-            utils.fixCmakeImageDir( self.installDir(), self.mergeDestinationDir() )
+            self._fixCmakeImageDir(self.installDir(), self.mergeDestinationDir())
         return True
 
     def unittest( self ):
@@ -234,3 +235,41 @@ class CMakeBuildSystem(BuildSystemBase):
         out  =  " -DCMAKE_CXX_COMPILER=clang++"
         out  += " -DCMAKE_C_COMPILER=clang"
         return out
+
+
+    def _fixCmakeImageDir(self, imagedir, rootdir ):
+        """
+        when using DESTDIR=foo under windows, it does not _replace_
+        CMAKE_INSTALL_PREFIX with it, but prepends destdir to it.
+        so when we want to be able to install imagedir into KDEROOT,
+        we have to move things around...
+        """
+        EmergeDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
+        # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
+        # rootdir  = e:\foo\thirdroot
+        # files are installed to
+        # e:\foo\thirdroot\tmp\dbus-0\image\foo\thirdroot
+        _, rootpath = os.path.splitdrive( rootdir )
+        #print "rp:", rootpath
+        if ( rootpath.startswith( "\\" ) ):
+            rootpath = rootpath[1:]
+        # CMAKE_INSTALL_PREFIX = X:\
+        # -> files are installed to
+        # x:\build\foo\dbus\image\
+        # --> all fine in this case
+        #print "rp:", rootpath
+        if len(rootpath) == 0:
+            return
+        tmp = os.path.join( imagedir, rootpath )
+        EmergeDebug.debug("tmp: %s" % tmp, 1)
+        tmpdir = os.path.join( imagedir, "tMpDiR" )
+
+        if ( not os.path.isdir( tmpdir ) ):
+            os.mkdir( tmpdir )
+
+        moveEntries( tmp, tmpdir )
+        os.chdir( imagedir )
+        os.removedirs( rootpath )
+        moveEntries( tmpdir, imagedir )
+        cleanDirectory( tmpdir )
+        os.rmdir( tmpdir )

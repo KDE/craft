@@ -94,7 +94,7 @@ class PackageCMake(CMakePackageBase):
             shutil.copy(os.path.join(src, outdir, "ssleay32.dll"), os.path.join(dst, "bin"))
         shutil.copy(os.path.join(src, outdir, "libeay32.lib"), os.path.join(dst, "lib"))
         shutil.copy(os.path.join(src, outdir, "ssleay32.lib"), os.path.join(dst, "lib"))
-        utils.copySrcDirToDestDir(os.path.join(src, "include"), os.path.join(dst, "include"))
+        utils.copyDir(os.path.join(src, "include"), os.path.join(dst, "include"))
 
         return True
 

@@ -49,6 +49,21 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
 
 
+    def sedFile(self, directory, fileName, sedcommand ):
+        """ runs the given sed command on the given file """
+        olddir = os.getcwd()
+        try:
+            os.chdir( directory )
+            backup = "%s.orig" % fileName
+            if( os.path.isfile( backup ) ):
+                os.remove( backup )
+
+            command = "sed -i.orig %s %s" % ( sedcommand, fileName )
+
+            utils.system( command )
+        finally:
+            os.chdir( olddir )
+
     def unpack( self ):
       if(not CMakePackageBase.unpack( self ) ):
          return False;
@@ -62,7 +77,7 @@ class Package(CMakePackageBase):
               print(root)
               for name in files:
                   if( p.match( name ) ):
-                      utils.sedFile( root, name, sedcmd )
+                      self.sedFile( root, name, sedcmd )
 
       # we have an own cmake script - copy it to the right place
       src = os.path.join( self.packageDir() , "CMakeLists.txt" )

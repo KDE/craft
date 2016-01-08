@@ -22,7 +22,7 @@ class Package(QMakePackageBase):
         return QMakePackageBase.configure(self)
 
     def install( self ):
-        utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
+        utils.copyDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
         return QMakePackageBase.install(self)
 
     def setPathes( self ):

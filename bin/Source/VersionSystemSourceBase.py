@@ -56,7 +56,7 @@ class VersionSystemSourceBase (SourceBase):
             sourceDir = self.checkoutDir()
             if EmergeDebug.verbose() > 0:
                 print("copying %s to %s" % (sourceDir, self.buildDir()))
-            utils.copySrcDirToDestDir(sourceDir, self.buildDir())
+            utils.copyDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
         if emergeSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret

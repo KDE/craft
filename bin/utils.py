@@ -8,13 +8,13 @@ this file contains some helper functions for emerge
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
+import configparser
 import datetime
 import ftplib
 import http.client
 import inspect
 import shutil
 import tarfile
-import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -27,7 +27,6 @@ import Notifier.NotificationLoader
 from EmergeConfig import *
 from EmergeOS.osutils import OsUtils
 
-import configparser
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -326,14 +325,6 @@ def systemWithoutShell(cmd, **kw):
         kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
     return subprocess.call(cmd, **kw) == 0
 
-def copySrcDirToDestDir( srcdir, destdir ):
-    """ deprecated """
-    return copyDir( srcdir, destdir )
-
-def moveSrcDirToDestDir( srcdir, destdir ):
-    """ deprecated """
-    return moveDir( srcdir, destdir )
-
 def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """
     ret = []
@@ -386,54 +377,6 @@ def moveEntries( srcdir, destdir ):
             continue
         os.rename( src, dest )
 
-def moveImageDirContents( imagedir, relSrcDir, relDestDir ):
-    srcdir = os.path.join( imagedir, relSrcDir )
-    destdir = os.path.join( imagedir, relDestDir )
-
-    if ( not os.path.isdir( destdir ) ):
-        os.mkdir( destdir )
-
-    moveEntries( srcdir, destdir )
-    os.chdir( imagedir )
-    os.removedirs( relSrcDir )
-
-def fixCmakeImageDir( imagedir, rootdir ):
-    """
-    when using DESTDIR=foo under windows, it does not _replace_
-    CMAKE_INSTALL_PREFIX with it, but prepends destdir to it.
-    so when we want to be able to install imagedir into KDEROOT,
-    we have to move things around...
-    """
-    EmergeDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
-    # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
-    # rootdir  = e:\foo\thirdroot
-    # files are installed to
-    # e:\foo\thirdroot\tmp\dbus-0\image\foo\thirdroot
-    _, rootpath = os.path.splitdrive( rootdir )
-    #print "rp:", rootpath
-    if ( rootpath.startswith( "\\" ) ):
-        rootpath = rootpath[1:]
-    # CMAKE_INSTALL_PREFIX = X:\
-    # -> files are installed to
-    # x:\build\foo\dbus\image\
-    # --> all fine in this case
-    #print "rp:", rootpath
-    if len(rootpath) == 0:
-        return
-    tmp = os.path.join( imagedir, rootpath )
-    EmergeDebug.debug("tmp: %s" % tmp, 1)
-    tmpdir = os.path.join( imagedir, "tMpDiR" )
-
-    if ( not os.path.isdir( tmpdir ) ):
-        os.mkdir( tmpdir )
-
-    moveEntries( tmp, tmpdir )
-    os.chdir( imagedir )
-    os.removedirs( rootpath )
-    moveEntries( tmpdir, imagedir )
-    cleanDirectory( tmpdir )
-    os.rmdir( tmpdir )
-
 def cleanDirectory( directory ):
     EmergeDebug.debug("clean directory %s" % directory, 1)
     if ( os.path.exists( directory ) ):
@@ -446,21 +389,6 @@ def cleanDirectory( directory ):
                     EmergeDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs( directory )
-
-def sedFile( directory, fileName, sedcommand ):
-    """ runs the given sed command on the given file """
-    olddir = os.getcwd()
-    try:
-        os.chdir( directory )
-        backup = "%s.orig" % fileName
-        if( os.path.isfile( backup ) ):
-            os.remove( backup )
-
-        command = "sed -i.orig %s %s" % ( sedcommand, fileName )
-
-        system( command )
-    finally:
-        os.chdir( olddir )
 
 def getVCSType( url ):
     """ return the type of the vcs url """
@@ -598,14 +526,6 @@ def toMSysPath( path ):
 
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
-
-def renameDir(src, dest):
-    """ rename a directory """
-    EmergeDebug.debug("rename directory from %s to %s" % (src, dest), 2)
-    if os.rename( src, dest ) == 0:
-        return False
-    else:
-        return True
 
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
