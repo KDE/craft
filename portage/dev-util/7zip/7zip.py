@@ -3,15 +3,15 @@ import lzma
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in [ "1512"]:
+        for ver in [ "1512", "1514"]:
             self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7z%s-extra.7z" % ver
             self.targetInstallPath[ ver ] = "bin"
         self.targetDigests['1512'] = '0772dcf51fd7d22ac8ac04976e8c2a2f8cbe5ccd'
-        self.defaultTarget = '1512'
+        self.defaultTarget = '1514'
 
 
     def setDependencies( self ):
-        self.buildDependencies[ 'gnuwin32/wget' ]       = 'default'
+        self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
 
 from Package.BinaryPackageBase import *
 
@@ -21,9 +21,9 @@ class Package( BinaryPackageBase ):
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def unpack(self):
-        utils.cleanDirectory(self.imageDir())
+        utils.cleanDirectory(self.sourceDir())
         self.checkDigest()
-        bin = os.path.join(self.imageDir(), "bin")
+        bin = os.path.join(self.sourceDir(), "bin")
         os.makedirs(bin)
         path = "7za.exe"
         if compiler.isX64():
