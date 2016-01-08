@@ -243,6 +243,6 @@ class PackageBase (EmergeBase):
                 raise portage.PortageException( str( e ), self.category, self.package )
 
         else:
-            ok = utils.error( "command %s not understood" % command )
+            ok = EmergeDebug.error( "command %s not understood" % command )
 
         return ok
