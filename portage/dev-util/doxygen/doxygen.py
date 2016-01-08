@@ -2,22 +2,16 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['1.5.9', '1.7.1', '1.7.3', '1.7.4', '1.8.1.2', '1.8.2', '1.8.3.1', '1.8.4', '1.8.5', '1.8.6', '1.8.7','1.8.9.1']:
+        for ver in ['1.8.7','1.8.9.1','1.8.11']:
             self.targets[ ver ] = 'ftp://ftp.stack.nl/pub/users/dimitri/doxygen-%s.windows.bin.zip' % ver
             self.targetInstallPath[ ver ] = "bin"
-            
-        self.targetDigests['1.7.1'] = '29d2a80444300e5de383fb79bf096d2af05c55ce'
-        self.targetDigests['1.7.3'] = '9dfe3c48f674900fba7537a47706feb6a1bed528'
-        self.targetDigests['1.7.4'] = 'd3e869a5c04796115c5121911ac5f371481ba7f6'
-        self.targetDigests['1.8.2'] = '95eb9882ea105435556c92d71acb19150fd6c76b'
-        self.targetDigests['1.8.4'] = 'e12c1eb90de5800a0dc0124c855b7e51c622e7be'
-        self.targetDigests['1.8.5'] = '2102a49c05b36b1ca945c433eaf02845b7ea895c'
-        self.targetDigests['1.8.6'] = '13e651244021462ad52054f93806d030c03555f0'
+
         self.targetDigests['1.8.7'] = 'ca9640fbb28695f16521e5eacf49f278ff192d1c'
         self.targetDigests['1.8.9.1'] = '942a40755c537ad31cc18c8e519377db66edff29'
+        self.targetDigests['1.8.11'] = (['f25964e0203739d77e79d74bafdbef212bd97748e20fdafad078a8e2d315a7ff'], EmergeHash.HashAlgorithm.SHA256)
 
         self.shortDescription = 'Automated C, C++, and Java Documentation Generator'
-        self.defaultTarget = '1.8.9.1'
+        self.defaultTarget = '1.8.11'
 
 from Package.BinaryPackageBase import *
 
@@ -26,4 +20,5 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
+        self.subinfo.options.unpack.unpackDir = "bin"
 
