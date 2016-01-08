@@ -57,32 +57,31 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
     else:
         digestList = [digests]
 
-    for digests in digestList:
-        for filename in filenames:
-            EmergeDebug.debug("checking digest of: %s" % filename, 1)
-            pathName = os.path.join(downloaddir, filename)
-            if digests == None:
-                for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
-                    digestFileName = pathName + digestFileEnding
+    for digests, filename in zip(digestList, filenames):
+        EmergeDebug.debug("checking digest of: %s" % filename, 1)
+        pathName = os.path.join(downloaddir, filename)
+        if digests == None:
+            for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
+                digestFileName = pathName + digestFileEnding
+                if not os.path.exists(digestFileName):
+                    digestFileName, _ = os.path.splitext(pathName)
+                    digestFileName += digestFileEnding
                     if not os.path.exists(digestFileName):
-                        digestFileName, _ = os.path.splitext(pathName)
-                        digestFileName += digestFileEnding
-                        if not os.path.exists(digestFileName):
-                            continue
-                    currentHash = digestFile(pathName, digestAlgorithm)
-                    with open(digestFileName, "rt+") as f:
-                        data = f.read()
-                    if not re.findall(currentHash, data):
-                        EmergeDebug.error("%s hash for file %s (%s) does not match (%s)" % (
-                        digestAlgorithm.name, pathName, currentHash, data))
-                        return False
-                        # digest provided in digests parameter
-            else:
+                        continue
                 currentHash = digestFile(pathName, digestAlgorithm)
-                if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
+                with open(digestFileName, "rt+") as f:
+                    data = f.read()
+                if not re.findall(currentHash, data):
                     EmergeDebug.error("%s hash for file %s (%s) does not match (%s)" % (
-                    digestAlgorithm.name, pathName, currentHash, digests))
+                    digestAlgorithm.name, pathName, currentHash, data))
                     return False
+                    # digest provided in digests parameter
+        else:
+            currentHash = digestFile(pathName, digestAlgorithm)
+            if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
+                EmergeDebug.error("%s hash for file %s (%s) does not match (%s)" % (
+                digestAlgorithm.name, pathName, currentHash, digests))
+                return False
     return True
 
 

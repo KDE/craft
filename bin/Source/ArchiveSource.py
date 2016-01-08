@@ -136,8 +136,8 @@ class ArchiveSource(SourceBase):
 
 
         binEndings = (".exe", ".bat", ".msi")
-        if (self.subinfo.archiveName() == "" and self.url.endswith(binEndings)) or self.subinfo.archiveName().endswith(binEndings):
-            for filename in filenames:
+        for filename in filenames:
+            if filename.endswith(binEndings):
                 filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
                 if self.subinfo.options.unpack.runInstaller: 
                     _, ext = os.path.splitext( filename )
@@ -147,9 +147,9 @@ class ArchiveSource(SourceBase):
                         return utils.system("msiexec /package %s" % filePath )
                 if not utils.copyFile( filePath, os.path.join(destdir, filename) ):
                     return False
-        else:    
-            if not utils.unpackFiles( EmergeStandardDirs.downloadDir(), filenames, destdir ):
-                return False
+            else:
+                if not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, destdir ):
+                    return False
 
         ret = self.applyPatches()
         if emergeSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL",False):

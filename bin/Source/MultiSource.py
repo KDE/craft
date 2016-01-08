@@ -22,7 +22,10 @@ class MultiSource(object):
         EmergeDebug.trace("MultiSource localFileNames", 2)
         if self.subinfo.archiveName() == "":
             return self.source.localFileNamesBase()
-        return  (self.subinfo.archiveName(),)
+        if isinstance(self.subinfo.archiveName(), (list, tuple)):
+            return self.subinfo.archiveName()
+        else:
+            return (self.subinfo.archiveName(), )
 
     def fetch( self, repopath = None ):
         EmergeDebug.trace("MultiSource fetch", 2)

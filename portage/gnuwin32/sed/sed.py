@@ -3,6 +3,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in [ '4.1.5' , '4.2.1' ]:
+            self.archiveNames[ver] = [
+                'sed-' + ver + '-bin.zip',
+                'sed-' + ver + '-dep.zip'
+            ]
             self.targets[ver] = """
 http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-""" + ver + """-bin.zip
 http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-""" + ver + """-dep.zip
