@@ -108,6 +108,7 @@ class ArchiveSource(SourceBase):
         elif self.subinfo.hasTargetDigests():
             EmergeDebug.debug("check digests", 1)
             digests = self.subinfo.targetDigest()
+            algorithm = EmergeHash.HashAlgorithm.SHA1
             if type(digests) == tuple:
                 digests, algorithm = digests
             if not EmergeHash.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, digests, algorithm):
