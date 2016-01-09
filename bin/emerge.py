@@ -34,7 +34,6 @@ import portage
 import utils
 import threading
 from EmergeConfig import *
-import jenkins
 
 
 def packageIsOutdated( category, package ):
@@ -97,8 +96,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         #success = doExec( package, "cleanimage" )
         #success = success and doExec( package, "install")
         success = success and doExec( package, "qmerge" )
-    elif buildAction == "generate-jenkins-job":
-        success = jenkins.generateJob(package)
     elif buildAction == "print-source-version":
         print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
         success = True
@@ -211,7 +208,7 @@ def handleSinglePackage( packageName, action, args ):
 
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
-        not action in [ "all", "install-deps" ,"generate-jenkins-job"] and\
+        not action in [ "all", "install-deps"] and\
         not args.list_file or\
         action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
@@ -407,7 +404,6 @@ def main( ):
     # other actions
     actionHandler.addActionWithArg( "dump-deps-file", dest = "dumpDepsFile",
                                     help = "Output the dependencies of this package as a csv file suitable for emerge server." )
-    actionHandler.addAction( "generate-jenkins-job")
 
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
