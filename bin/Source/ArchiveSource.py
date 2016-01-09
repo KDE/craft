@@ -126,6 +126,9 @@ class ArchiveSource(SourceBase):
         filenames = self.localFileNames()
 
         destdir = self.sourceDir()
+        # self.sourceDir() will already contain targetInstSrc so we have to remove it
+        if self.subinfo.hasTargetSourcePath():
+            destdir = destdir[:-len(self.subinfo.targetSourcePath())]
         utils.cleanDirectory(destdir)
 
         if hasattr(self.subinfo.options.unpack, 'unpackDir'):
