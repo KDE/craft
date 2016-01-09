@@ -2,7 +2,11 @@
 # copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-from winreg import * # pylint: disable=F0401
+
+import os
+
+if os.name == 'nt':
+    from winreg import * # pylint: disable=F0401
 
 import EmergeDebug
 import EmergeHash
@@ -60,6 +64,9 @@ file collection process is skipped, and only the installer is generated.
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
+        if os.name != 'nt':
+            return False
+
         # pylint: disable=E0602
         # if pylint is done on linux, we don't have those toys
         if os.path.exists(os.path.join(self.rootdir, "dev-utils", "makensis.exe")):

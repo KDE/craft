@@ -27,6 +27,9 @@ class PortageException(Exception,PackageObjectBase):
         PackageObjectBase.__init__(self,category,subpackage,package)
         self.exception = exception
 
+    def __hash__(self):
+        return self.__str__().__hash__()
+
     def __str__(self):
         return "%s failed: %s" % (PackageObjectBase.__str__(self),Exception.__str__(self))
 

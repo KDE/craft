@@ -7,7 +7,7 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         arch = "x86"
-        if os.path.exists(os.getenv("SystemDrive")+"/Program Files (x86)"):
+        if os.path.exists(os.getenv("SystemDrive") or "" +"/Program Files (x86)"):
               arch = 'x64'
         self.targets[ '20110703' ] = 'http://downloads.sourceforge.net/kde-windows/git-cheetah-%s-20110703-bin.tar.bz2' % arch
         self.targetDigestUrls[ '20110703' ] = 'http://downloads.sourceforge.net/kde-windows/git-cheetah-%s-20110703-bin.tar.bz2.sha1' % arch
