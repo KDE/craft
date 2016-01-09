@@ -251,7 +251,6 @@ def handleSinglePackage( packageName, action, args ):
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                    if EmergeDebug.verbose() > 0:
                         EmergeDebug.warning("pretending %s" % info)
                 else:
                     if action in [ "install-deps", "update-direct-deps" ]:
