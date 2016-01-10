@@ -192,25 +192,12 @@ def unpackFiles( downloaddir, filenames, workdir ):
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     ( shortname, ext ) = os.path.splitext( filename )
-    if ( ext == ".zip" ):
-        return unZip( os.path.join( downloaddir, filename ), workdir )
-    elif ( ext == ".7z" ):
+
+    if ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
-    elif ( ext == ".tgz" ):
-        return unTar( os.path.join( downloaddir, filename ), workdir )
-    elif ( ext == ".gz" or ext == ".bz2" or ext == ".lzma" or ext == ".xz" ):
-        _, myext = os.path.splitext( shortname )
-        if ( myext == ".tar" ):
-            return unTar( os.path.join( downloaddir, filename ), workdir )
-        else:
-            EmergeDebug.error("unpacking %s" % myext)
-            return False
-    elif ( ext == ".exe" ):
-        EmergeDebug.warning("unpack ignoring exe file")
-        return True
     else:
-        EmergeDebug.error("dont know how to unpack this file: %s" % filename)
-    return False
+        shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
+        return True
 
 def un7zip( fileName, destdir, flag = None ):
     command = "7za x -r -y -o%s %s" % ( destdir, fileName )
@@ -224,84 +211,6 @@ def un7zip( fileName, destdir, flag = None ):
     if EmergeDebug.verbose() <= 1:
         command += " -bso0"
     return system( command )
-
-def unTar( fileName, destdir ):
-    """unpack tar file specified by 'file' into 'destdir'"""
-    EmergeDebug.debug("unTar called. file: %s, destdir: %s" % (fileName, destdir), 1)
-    ( shortname, ext ) = os.path.splitext( fileName )
-    emerge_tmp = os.path.join(destdir,"emerge_tmp")
-
-    mode = "r"
-    if ( ext == ".gz" ):
-        mode = "r:gz"
-    #elif(ext == ".bz2"):
-        #mode = "r:bz2"
-    elif(ext == ".lzma" or ext == ".xz" or ext == ".bz2"):
-        un7zip( fileName, emerge_tmp )
-        _, tarname = os.path.split( shortname )
-        fileName = os.path.join( emerge_tmp , tarname )
-
-
-    if not os.path.exists( fileName ):
-        EmergeDebug.error("couldn't find file %s" % fileName)
-        return False
-
-    try:
-        with tarfile.open( fileName, mode ) as tar:
-        # FIXME how to handle errors here ?
-            for tarMember in tar:
-                try:
-                    if tarMember.issym():
-                        tarDir = os.path.dirname(tarMember.name)
-                        target = tarMember.linkname
-                        if not target.startswith("/"):#abspath?
-                            target = os.path.normpath("%s/%s"%(tarDir, target)).replace("\\","/")
-                        if target in tar.getnames():
-                            tar.extract(target, emerge_tmp )
-                            shutil.move(os.path.join( emerge_tmp , tarDir , tarMember.linkname ),os.path.join( destdir , tarMember.name ))
-                            EmergeDebug.warning("Resolved symlink %s in tarfile %s to %s" % (tarMember.name, fileName , tarMember.linkname))
-                        else:
-                            EmergeDebug.warning("link target %s for %s not included in tarfile" % (target , tarMember.name))
-                    else:
-                        tar.extract(tarMember, destdir )
-                except tarfile.TarError:
-                    EmergeDebug.error("couldn't extract file %s to directory %s" % (fileName, destdir))
-                    return False
-                except IOError:
-                    EmergeDebug.warning("Failed to extract %s to directory %s" % (tarMember.name, destdir))
-        return True
-    except tarfile.TarError as e:
-        EmergeDebug.error("could not open existing tar archive: %s error: %s" % (fileName, e))
-        return False
-    finally:
-        if os.path.exists(emerge_tmp):
-            shutil.rmtree(emerge_tmp)
-
-def unZip( fileName, destdir ):
-    """unzip file specified by 'file' into 'destdir'"""
-    EmergeDebug.debug("unZip called: file %s to destination %s" % (fileName, destdir), 1)
-
-    if not os.path.exists( destdir ):
-        os.makedirs( destdir )
-
-    try:
-        zipObj = zipfile.ZipFile( fileName )
-    except (zipfile.BadZipfile, IOError):
-        EmergeDebug.error("couldn't extract file %s" % fileName)
-        return False
-
-    for name in zipObj.namelist():
-        if not name.endswith( '/' ):
-            dirname = os.path.join( destdir, os.path.dirname( name ) )
-
-            if not os.path.exists( dirname ):
-                os.makedirs( dirname )
-
-            with open( os.path.join( destdir, name ), 'wb' ) as outfile:
-                outfile.write( zipObj.read( name ) )
-
-    return True
-
 
 def system(cmd, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
