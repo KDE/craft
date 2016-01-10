@@ -240,7 +240,7 @@ class PackageBase (EmergeBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise portage.PortageException( str( e ), self.category, self.package )
+                raise portage.PortageException( str( e ), self.category, self.package, e )
 
         else:
             ok = EmergeDebug.error( "command %s not understood" % command )
