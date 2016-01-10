@@ -215,7 +215,7 @@ example:
         """returns the archive file name"""
         if self.buildTarget in list(self.archiveNames.keys()):
             return self.archiveNames[self.buildTarget]
-        return os.path.split(self.targets[self.buildTarget])[-1]
+        return [os.path.split(x)[-1] for x in [] + self.targets[self.buildTarget] ]
 
     def hasMultipleTargets( self ):
         """return whether we used a list of targets"""
