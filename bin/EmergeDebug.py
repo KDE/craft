@@ -66,7 +66,7 @@ def info( message ):
 
 
 def debug( message, level=1 ):
-    if verbose() > level and verbose() > 0:
+    if verbose() >= level and verbose() > 0:
         print("emerge debug (%s): %s" % (level, message))
         sys.stdout.flush()
     return True
@@ -80,15 +80,13 @@ def warning( message ):
     return True
 
 
-def new_line( level=0 ):
-    if verbose() > level and verbose() > 0:
+def new_line( level=1 ):
+    if verbose() >= level and verbose() > 0:
         print()
 
-
-def debug_line( level=0 ):
-    if verbose() > level and verbose() > 0:
+def debug_line( level=1 ):
+    if verbose() >= level and verbose() > 0:
         print("_" * 80)
-
 
 def error( message ):
     print("emerge error: %s" % message, file=sys.stderr)
