@@ -12,7 +12,7 @@ from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from graphviz import *
 import compiler
-from utils import moveEntries, cleanDirectory
+import utils
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -251,25 +251,24 @@ class CMakeBuildSystem(BuildSystemBase):
         # e:\foo\thirdroot\tmp\dbus-0\image\foo\thirdroot
         _, rootpath = os.path.splitdrive( rootdir )
         #print "rp:", rootpath
-        if ( rootpath.startswith( "\\" ) ):
+        if ( rootpath.startswith( os.path.sep ) ):
             rootpath = rootpath[1:]
         # CMAKE_INSTALL_PREFIX = X:\
         # -> files are installed to
         # x:\build\foo\dbus\image\
         # --> all fine in this case
-        #print "rp:", rootpath
+        #print("rp:", rootpath)
         if len(rootpath) == 0:
             return
+        
         tmp = os.path.join( imagedir, rootpath )
         EmergeDebug.debug("tmp: %s" % tmp, 1)
         tmpdir = os.path.join( imagedir, "tMpDiR" )
-
         if ( not os.path.isdir( tmpdir ) ):
             os.mkdir( tmpdir )
-
-        moveEntries( tmp, tmpdir )
+        utils.moveEntries( tmp, tmpdir )
         os.chdir( imagedir )
         os.removedirs( rootpath )
-        moveEntries( tmpdir, imagedir )
-        cleanDirectory( tmpdir )
+        utils.moveEntries( tmpdir, imagedir )
+        utils.cleanDirectory( tmpdir )
         os.rmdir( tmpdir )
