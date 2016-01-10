@@ -51,11 +51,6 @@ def getCallerFilename():
 
 ### fetch functions
 
-#FIXME: get this from somewhere else:
-WGetExecutable = os.path.join( EmergeStandardDirs.emergeRoot(), "bin", "wget.exe" )
-if not os.path.exists( WGetExecutable ):
-    WGetExecutable = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "wget.exe" )
-
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
     try:
@@ -103,9 +98,7 @@ def getFile( url, destdir , filename='' ):
         return False
 
 
-    wgetpath = WGetExecutable
-    if ( os.path.exists( wgetpath ) ):
-        return wgetFile( url, destdir , filename )
+    return wgetFile( url, destdir , filename )
 
     scheme, host, path, _, _, _ = urllib.parse.urlparse( url )
 
@@ -123,7 +116,7 @@ def getFile( url, destdir , filename='' ):
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    compath = WGetExecutable
+    compath = "wget"
     command = "%s --no-check-certificate -c -t 10" % compath
     if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "

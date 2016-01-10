@@ -20,13 +20,6 @@ class GitSource ( VersionSystemSourceBase ):
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
 
-        # detect git installation
-        gitInstallDir = os.path.join( self.rootdir, 'dev-utils', 'git' )
-        if os.path.exists( gitInstallDir ):
-            self.gitPath = os.path.join(gitInstallDir, 'bin', 'git')
-        else:
-            self.gitPath = 'git'
-
     def __getCurrentBranch( self ):
         branch = None
         if os.path.exists( self.checkoutDir() ):
@@ -106,7 +99,7 @@ class GitSource ( VersionSystemSourceBase ):
             # if we only have the checkoutdir but no .git within,
             # clean this up first
             if os.path.exists(checkoutDir) \
-                    and not os.path.exists(checkoutDir + "\.git"):
+                    and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
             if os.path.exists(checkoutDir):
                 if not repoTag:
@@ -151,7 +144,7 @@ class GitSource ( VersionSystemSourceBase ):
             # if stdout/stderr is redirected, git clone qt hangs forever.
             # It does not with option -q (suppressing progress info)
             command += ' -q'
-        parts = [self.gitPath, command]
+        parts = ["git", command]
         parts.extend(args)
         if not kwargs.get('cwd'):
             kwargs['cwd'] = self.checkoutDir()

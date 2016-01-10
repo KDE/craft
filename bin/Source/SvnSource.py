@@ -14,8 +14,6 @@ class SvnSource (VersionSystemSourceBase):
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
         self.options = None
-        ## \todo add internal dependency for subversion package
-        self.svnInstallDir = os.path.join(self.rootdir, 'dev-utils', 'svn', 'bin')
 
 
     def checkoutDir( self, index=0 ):
@@ -74,9 +72,6 @@ class SvnSource (VersionSystemSourceBase):
             EmergeDebug.debug("skipping svn fetch (--offline)")
             return True
 
-        if not os.path.exists(self.svnInstallDir):
-            EmergeDebug.die("required subversion package not installed in %s" % self.svnInstallDir)
-
         for i in range(self.repositoryUrlCount()):
             if repopath:
                 url = repopath
@@ -113,10 +108,10 @@ class SvnSource (VersionSystemSourceBase):
             sourcedir = self.checkoutDir()
 
         # set up the command
-        cmd = "%s/svn info %s" % ( self.svnInstallDir, sourcedir )
+        cmd = "svn info %s" % ( sourcedir )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempFileName = os.path.join( self.checkoutDir().replace('/', '\\'), ".emergesvninfo.tmp" )
+        tempFileName = os.path.normpath(os.path.join( self.checkoutDir(), ".emergesvninfo.tmp" ))
         with open( tempFileName, "wt+" ) as tempfile:
 
             # run the command
@@ -207,15 +202,15 @@ class SvnSource (VersionSystemSourceBase):
         url = utils.replaceVCSUrl( url )
 
         if os.path.exists( sourcedir ):
-            cmd = "%s/svn update %s %s" % ( self.svnInstallDir, option, sourcedir )
+            cmd = "svn update %s %s" % ( option, sourcedir )
         else:
-            cmd = "%s/svn checkout %s %s %s" % (self.svnInstallDir, option, url, sourcedir )
+            cmd = "svn checkout %s %s %s" % ( option, url, sourcedir )
 
         return utils.system( cmd )
 
     def createPatch( self ):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
-        cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.checkoutDir(), os.path.join( self.packageDir(), "%s-%s.patch" % \
+        cmd = "svn diff %s > %s" % ( self.checkoutDir(), os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
         return utils.system( cmd )
 
