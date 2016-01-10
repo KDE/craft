@@ -26,6 +26,7 @@ class Package( NullsoftInstallerPackager, VirtualPackageBase ):
         self.scriptname = os.path.join( os.path.dirname( __file__ ), "kdevelop.nsi" )
         self.defines[ "productname" ] = "KDevelop"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
+        self.defines[ "icon" ] = "kdevelop.ico"
         self.defines[ "vcredist" ] = "none"
         if compiler.isX64():
             self.defines[ "compilingFor" ] = "x64"
