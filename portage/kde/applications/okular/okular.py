@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/freetype'] = 'default'
         self.dependencies['win32libs/ebook-tools'] = 'default'
         self.buildDependencies['win32libs/libspectre'] = 'default'
-        self.dependencies['binary/ghostscript'] = 'default'
+        self.dependencies['win32libs/ghostscript'] = 'default'
         self.dependencies['kde/libkexiv2'] = 'default'
         self.dependencies['frameworks/kactivities'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
