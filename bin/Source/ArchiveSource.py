@@ -86,7 +86,7 @@ class ArchiveSource(SourceBase):
                 if type(self.subinfo.targetDigestUrl()) == tuple:
                     url, alg = self.subinfo.targetDigestUrl()
                     return utils.getFiles(url, EmergeStandardDirs.downloadDir(),
-                                          filenames = self.subinfo.archiveName()
+                                          filenames = self.subinfo.archiveName()[0]
                                                         + EmergeHash.HashAlgorithm.fileEndings().get(alg))
                 else:
                     return utils.getFiles( self.subinfo.targetDigestUrl(), EmergeStandardDirs.downloadDir(), filenames = '' )
