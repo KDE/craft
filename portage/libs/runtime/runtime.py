@@ -26,8 +26,8 @@ class Package( BinaryPackageBase ):
         return True
 
     def unpack( self ):
-        destdir = os.path.join( self.installDir(), "bin" )
-        utils.createDir( self.workDir() )
+        destdir = os.path.join( self.sourceDir(), "bin" )
+        utils.createDir( self.sourceDir() )
         utils.createDir( destdir )
 
         postfix = ""
