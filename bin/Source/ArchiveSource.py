@@ -32,7 +32,7 @@ class ArchiveSource(SourceBase):
         # pylint: disable=E0202
         # but I have no idea why pylint thinks this overrides
         # MultiSource.localFileNames
-        if self.subinfo.archiveName() == "":
+        if self.subinfo.archiveName() == [""]:
             return self.localFileNamesBase()
         return self.subinfo.archiveName()
 
@@ -135,8 +135,6 @@ class ArchiveSource(SourceBase):
             destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
 
         self.checkDigest()
-
-
 
         binEndings = (".exe", ".bat", ".msi")
         for filename in filenames:

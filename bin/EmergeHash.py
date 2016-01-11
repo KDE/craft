@@ -93,8 +93,10 @@ def createDigestFile(path, algorithm=HashAlgorithm.SHA1):
 
 
 def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorithm.SHA256):
-    out = "self.targetDigests['%s'] = ([" % buildTarget
+    out = ""
     for filename in filenames:
-        out += "'%s'," % digestFile(os.path.join(downloaddir, filename), algorithm)
-    print(out[:-1] + "], EmergeHash.%s)" % (algorithm))
+        if not filename == "":
+            out += "'%s'," % digestFile(os.path.join(downloaddir, filename), algorithm)
+    if not out == "":
+        print("self.targetDigests['%s'] = ([%s], EmergeHash.%s)" % (buildTarget, out[:-1], algorithm))
 

@@ -192,9 +192,9 @@ def unpackFile( downloaddir, filename, workdir ):
 
     if ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
-    else:
+    elif not ext == "":
         shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
-        return True
+    return True
 
 def un7zip( fileName, destdir, flag = None ):
     command = "7za x -r -y -o%s %s" % ( destdir, fileName )
