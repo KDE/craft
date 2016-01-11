@@ -13,9 +13,6 @@ class subinfo(info.infoclass):
         self.patchToApply['1.0.12'] = ('lloyd-yajl-17b1790-20110725.diff', 1)
         self.targetInstSrc['1.0.12'] = 'lloyd-yajl-17b1790'
 
-        self.targets['1.0.12-kde'] = self.getKDEPackageUrl(name='yajl',version='1.0.12',packagetypes=['src'])
-        self.targetDigests['1.0.12-kde'] = 'efa8720bda5e4c146260a505a018dc2617be98b9'
-
         self.defaultTarget = '1.0.12'
 
     def setDependencies( self ):

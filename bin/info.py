@@ -74,15 +74,15 @@ class infoclass(object):
         self.setDependencies()
 
     @property
-    def package(self):
+    def package(self) -> str:
         return self.parent.package
 
     @property
-    def category(self):
+    def category(self) -> str:
         return self.parent.category
 
     @property
-    def defaultTarget(self):
+    def defaultTarget(self) -> str:
         target = None
         if ("PortageVersions", "%s/%s" % ( self.category, self.package )) in emergeSettings:
             target = emergeSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
@@ -118,99 +118,20 @@ class infoclass(object):
         return
 
     @staticmethod
-    def getArchitecture():
+    def getArchitecture() -> str:
         return "-%s" % compiler.architecture()
 
-    def getPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None, scheme=None, compiler_name=None):
-        """return archive file based package url"""
-        if packagetypes is None:
-            packagetypes = ['bin', 'lib']
-        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
-            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
-        arch = self.getArchitecture();
-        if compiler_name == None:
-            compiler_name = compiler.getShortName()
-        ret = ''
-        # TODO: return '\n'.join(repoUrl + '/' + name + arch + '-' + compilerName + '-' + version + '-' + p + ext for p in packagetypes)
-        if scheme == 'sf':
-            for packageType in packagetypes:
-                ret += repoUrl + '/' + name + '/' + version + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
-        else:
-            for packageType in packagetypes:
-                ret += repoUrl + '/' + name + arch + '-' + compiler_name + '-' + version + '-' + packageType + ext + '\n'
-
-        return ret
-
-    def packageDigests( self, name, version, ext='.tar.bz2', packagetypes=None ): # pylint: disable=W0613
-        """ return archive file based package digests relating to info.infoclass.packageUrls()
-
-The expected digest keys are build in the form <version>[<architecture>]-<compiler>-<packagetype> where
-version=<value from version parameter>
-compiler='vc90'|'mingw4'
-packagetype=<keys from packagestypes parameter>
-architecture=<empty for x86>|'-x64'
-exception: the mingw-w32 compiler uses x86-mingw4 to not collide with the mingw.org compiler
-
-example:
-    # for x86
-    self.targetDigests['2.4.2-3-vc90-bin'] = '1b7c2171fb60669924c9d7174fc2e39161f7ef7b'
-    self.targetDigests['2.4.2-3-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
-    # for x64
-    self.targetDigests['2.4.2-3-x64-vc90-lib'] = 'e48d8c535cd245bfcc617590d3142035c77b8aa2'
-
-    self.targets['2.4.2-3'] = self.packageUrls(repoUrl, "fontconfig", "2.4.2-3")
-    self.targetDigests['2.4.2-3'] = self.packageDigests("fontconfig", "2.4.2-3")
-
-        """
-        if packagetypes is None:
-            packagetypes = ['bin', 'lib']
-        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
-            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
-        arch = infoclass.getArchitecture()
-        # TODO: use list comprehension
-        ret = []
-        for packageType in packagetypes:
-            key = version + '-' + compiler.getShortName() + '-' + packageType + arch
-            ret.append(self.targetDigests[key])
-        return ret
-
-    def getUnifiedPackage( self, repoUrl, name, version, ext='.tar.bz2', packagetypes=None):
-        """return archive file based package url for unified packages"""
-        if packagetypes is None:
-            packagetypes = ['bin', 'lib']
-        if ("General", "EMERGE_PACKAGETYPES") in emergeSettings:
-            packagetypes += emergeSettings.get("General", "EMERGE_PACKAGETYPES").split(',')
-        arch = infoclass.getArchitecture()
-        ret = ''
-        for packageType in packagetypes:
-            ret += repoUrl + '/' + name + arch + '-' + version + '-' + packageType + ext + '\n'
-        return ret
-
-    def getKDEPackageUrl(self, name, version, ext='.tar.bz2', packagetypes=None, compiler_name=None):
-        """return full url of a package provided by the kdewin mirrors"""
-        repoUrl = "http://downloads.sourceforge.net/project/kde-windows"
-        return self.getPackage( repoUrl, name, version, ext, packagetypes, scheme='sf', compiler_name=compiler_name )
-
-    def getPackageList( self, baseUrl, files ):
-        """returns a package url for multiple files from the same base url"""
-        # TODO: replace the entire function by
-        # return '\n'.join(baseUrl + '/' + fileName)
-        retFiles = ""
-        for fileName in files :
-            retFiles += baseUrl+'/'+fileName+'\n'
-        return retFiles
-
-    def hasTarget( self ):
+    def hasTarget( self ) -> bool:
         """return true if archive targets for the currently selected build target is available"""
         return self.buildTarget in list(self.targets.keys())
 
-    def target( self ):
+    def target( self ) -> str:
         """return archive target"""
         if self.buildTarget in list(self.targets.keys()):
             return self.targets[self.buildTarget]
         return ""
-    
-    def archiveName( self ):
+
+    def archiveName( self ) -> [str]:
         """returns the archive file name"""
         if self.buildTarget in list(self.archiveNames.keys()):
             return self.archiveNames[self.buildTarget]
@@ -219,18 +140,18 @@ example:
         else:
             return [os.path.split(self.targets[self.buildTarget])[-1]]
 
-    def hasMultipleTargets( self ):
+    def hasMultipleTargets( self ) -> bool:
         """return whether we used a list of targets"""
         return type( self.targets[self.buildTarget] ) == list
 
-    def targetCount( self ):
+    def targetCount( self ) -> int:
         """return the number of targets given either in a list, or split by a space character"""
         if self.hasMultipleTargets():
             return len( self.targets[self.buildTarget] )
         else:
             return len( self.targets[self.buildTarget].split() )
 
-    def targetAt( self, index ):
+    def targetAt( self, index ) -> str:
         """return the specified target at a specific position, or an empty string if out of bounds"""
         if self.targetCount() <= index:
             return ""
@@ -240,109 +161,112 @@ example:
         else:
             return self.targets[self.buildTarget].split()[index]
 
-    def hasSvnTarget( self ):
+    def hasSvnTarget( self ) -> bool:
         """return true if version system based target for the currently selected build target is available"""
         return self.buildTarget in list(self.svnTargets.keys())
 
-    def svnTarget( self ):
+    def svnTarget( self ) -> str:
         """return version system based target for the currently selected build target"""
         if self.buildTarget in list(self.svnTargets.keys()):
             return self.svnTargets[self.buildTarget]
         return ""
 
-    def targetSourceSuffix(self):
+    def targetSourceSuffix(self) -> str:
         """return local source path suffix for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetSrcSuffix.keys()):
             return self.targetSrcSuffix[ self.buildTarget ]
 
-    def hasTargetSourcePath(self):
+    def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetInstSrc.keys())
 
-    def targetSourcePath(self):
+    def targetSourcePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetInstSrc.keys()):
             return self.targetInstSrc[ self.buildTarget ]
 
-    def hasConfigurePath(self):
+    def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetConfigurePath.keys())
 
-    def configurePath(self):
+    def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) and \
                 self.buildTarget in list(self.targetConfigurePath.keys()):
             return self.targetConfigurePath[ self.buildTarget ]
 
-    def hasInstallPath(self):
+    def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetInstallPath.keys())
 
-    def installPath(self):
+    def installPath(self) -> str:
         """return relative path appendable to local install path for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetInstallPath.keys()):
             return self.targetInstallPath[ self.buildTarget ]
         EmergeDebug.die("no install path for this build target defined")
 
-    def hasMergePath(self):
+    def hasMergePath(self) -> bool:
         """return true if relative path appendable to local merge path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetMergePath.keys())
 
-    def mergePath(self):
+    def mergePath(self) -> str:
         """return relative path appendable to local merge path for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetMergePath.keys()):
             return self.targetMergePath[ self.buildTarget ]
 
-    def hasMergeSourcePath(self):
+    def hasMergeSourcePath(self) -> bool:
         """return true if relative path appendable to local merge source path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetMergeSourcePath.keys())
 
-    def mergeSourcePath(self):
+    def mergeSourcePath(self) -> str:
         """return relative path appendable to local merge source path for the recent target"""
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetMergeSourcePath.keys()):
             return self.targetMergeSourcePath[ self.buildTarget ]
 
-    def hasPatches(self):
+    def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
         return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in list(self.patchToApply.keys())
 
-    def patchesToApply(self):
+    def patchesToApply(self) -> [tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
-            return self.patchToApply[ self.buildTarget ]
-        return ("", "")
+            out = self.patchToApply[ self.buildTarget ]
+            return out if type(out) == list else [out]
+        return [("", "")]
 
-    def hasTargetDigests(self):
+    def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetDigests.keys())
 
-    def targetDigest(self):
+    def targetDigest(self) -> [str]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            return self.targetDigests[ self.buildTarget ]
-        return ''
+            out = self.targetDigests[ self.buildTarget ]
+            return out if type(out) == list else [out]
+        return ['']
 
-    def hasTargetDigestUrls(self):
+    def hasTargetDigestUrls(self) -> bool:
         """return state if target has digest url(s) for the recent build target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetDigestUrls.keys())
 
-    def targetDigestUrl(self):
+    def targetDigestUrl(self) -> [str]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
-            return self.targetDigestUrls[ self.buildTarget ]
-        return ''
+            out = self.targetDigestUrls[ self.buildTarget ]
+            return out if type(out) == list else [out]
+        return ['']
         
         
 
