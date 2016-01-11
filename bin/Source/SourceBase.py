@@ -54,7 +54,7 @@ class SourceBase(EmergeBase):
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-        EmergeDebug.debug("using sourcedir: " + sourcedir, 1)
+        EmergeDebug.debug("using sourcedir: " + sourcedir, 2)
         return sourcedir
 
     def applyPatches(self):
