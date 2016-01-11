@@ -27,6 +27,15 @@ import Notifier.NotificationLoader
 from EmergeConfig import *
 from EmergeOS.osutils import OsUtils
 
+class UtilsCache():
+    _appCache = {}
+
+    @staticmethod
+    def findApplication(app):
+        if not app in UtilsCache._appCache:
+            UtilsCache._appCache[app] = shutil.which(app)
+        print(UtilsCache._appCache)
+        return UtilsCache._appCache[app]
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -50,16 +59,6 @@ def getCallerFilename():
     return filename
 
 ### fetch functions
-
-def test4application( appname):
-    """check if the application specified by 'appname' is available"""
-    try:
-        p = subprocess.Popen( appname, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL )
-        p.wait()
-        return True
-    except OSError:
-        EmergeDebug.debug("could not find application %s" % appname, 1)
-        return False
 
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
@@ -96,7 +95,7 @@ def getFile( url, destdir , filename='' ):
         EmergeDebug.error("fetch: no url given")
         return False
 
-    if shutil.which("wget"):
+    if UtilsCache.findApplication("wget"):
         return wgetFile( url, destdir , filename )
 
     scheme, host, path, _, _, _ = urllib.parse.urlparse( url )
@@ -115,7 +114,7 @@ def getFile( url, destdir , filename='' ):
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    command = "wget -c -t 10"
+    command = "%s -c -t 10" % UtilsCache.findApplication("wget")
     if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
@@ -370,10 +369,10 @@ def createImportLibs( dll_name, basepath ):
         os.mkdir( dst )
 
     # check whether the required binary tools exist
-    HAVE_GENDEF = test4application( "gendef" )
+    HAVE_GENDEF = not UtilsCache.findApplication( "gendef" )
     USE_GENDEF = HAVE_GENDEF
-    HAVE_LIB = test4application( "lib" )
-    HAVE_DLLTOOL = test4application( "dlltool" )
+    HAVE_LIB = not  UtilsCache.findApplication( "lib" )
+    HAVE_DLLTOOL = not UtilsCache.findApplication( "dlltool" )
     if EmergeDebug.verbose() > 1:
         print("gendef found:", HAVE_GENDEF)
         print("gendef used:", USE_GENDEF)
