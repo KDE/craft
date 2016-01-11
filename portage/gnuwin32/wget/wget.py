@@ -1,36 +1,31 @@
 import info
 
-# notes:
-# 1. because the python http implementation do not support
-#    proxies a local copy of wget is used for downloading
-#    the all inclusive wget binary is taken from
-#    http://users.ugent.be/~bpuype/wget/
-#    and do not have the multiple dll installation
-#    problem normal gnuwin32 package have
-#
-# 2. This package do not use the class base class BinaryPackageBase
-#    because of not wanted cyclic dependencies
-#
-#3. current version is from http://opensourcepack.blogspot.com/2010/05/wget-112-for-windows.html
 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['dummy'] = 'empty'
-        self.defaultTarget = 'dummy'
+        self.targets[ "1.17.1" ] = "http://downloads.sourceforge.net/sourceforge/tumagcc/wget-1.17.1_curl-7.46.0_win32_win64.7z"
+        self.targetInstallPath[ "1.17.1" ] = "bin"
+        self.targetDigests['1.17.1'] = (['0974c4576f24d38289b9958cc7fc41a64ef49e916ac7d4c148d741cd4981dac6'], EmergeHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "1.17.1"
 
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-
-    def fetch(self):
-        return True
+        self.subinfo.options.unpack.unpackDir = "bin"
 
     def unpack(self):
-        utils.cleanDirectory(self.sourceDir())
-        return utils.copyFile(os.path.join(self.packageDir(),'wget.exe'), os.path.join(self.sourceDir(), "bin",'wget.exe'))
-
+        if not BinaryPackageBase.unpack(self):
+            return False
+        if compiler.isX64():
+            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "curl.exe"))
+            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "wget.exe"))
+            utils.moveFile(os.path.join(self.sourceDir(), "bin", "curl64.exe"), os.path.join(self.sourceDir(), "bin", "curl.exe"))
+            utils.moveFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"), os.path.join(self.sourceDir(), "bin", "wget.exe"))
+        else:
+            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "curl64.exe"))
+            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"))
+        return True

@@ -54,8 +54,7 @@ def getCallerFilename():
 def test4application( appname):
     """check if the application specified by 'appname' is available"""
     try:
-        f = open('NUL:')
-        p = subprocess.Popen( appname, stdout=f, stderr=f )
+        p = subprocess.Popen( appname, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL )
         p.wait()
         return True
     except OSError:
@@ -97,8 +96,8 @@ def getFile( url, destdir , filename='' ):
         EmergeDebug.error("fetch: no url given")
         return False
 
-
-    return wgetFile( url, destdir , filename )
+    if shutil.which("wget"):
+        return wgetFile( url, destdir , filename )
 
     scheme, host, path, _, _, _ = urllib.parse.urlparse( url )
 
@@ -116,8 +115,7 @@ def getFile( url, destdir , filename='' ):
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    compath = "wget"
-    command = "%s --no-check-certificate -c -t 10" % compath
+    command = "wget -c -t 10"
     if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
