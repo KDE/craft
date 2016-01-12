@@ -107,10 +107,7 @@ class ArchiveSource(SourceBase):
                 return False
         elif self.subinfo.hasTargetDigests():
             EmergeDebug.debug("check digests", 1)
-            digests = self.subinfo.targetDigest()
-            algorithm = EmergeHash.HashAlgorithm.SHA1
-            if type(digests) == tuple:
-                digests, algorithm = digests
+            digests, algorithm = self.subinfo.targetDigest()
             if not EmergeHash.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, digests, algorithm):
                 EmergeDebug.error("invalid digest file")
                 return False
@@ -134,7 +131,8 @@ class ArchiveSource(SourceBase):
         if hasattr(self.subinfo.options.unpack, 'unpackDir'):
             destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
 
-        self.checkDigest()
+        if not self.checkDigest():
+            return False
 
         binEndings = (".exe", ".bat", ".msi")
         for filename in filenames:

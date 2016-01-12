@@ -15,6 +15,7 @@ import utils
 import compiler
 from options import *
 import VersionInfo
+import EmergeHash
 
 
 class infoclass(object):
@@ -249,24 +250,32 @@ class infoclass(object):
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetDigests.keys())
 
-    def targetDigest(self) -> [str]:
+    def targetDigest(self) -> ([str], EmergeHash.HashAlgorithm):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
             out = self.targetDigests[ self.buildTarget ]
-            return out if type(out) == list else [out]
-        return ['']
+            if type(out) == str:
+                out = [out]
+            if not type(out) == tuple:
+                out = (out, EmergeHash.HashAlgorithm.SHA1)
+            return out
+        return None
 
     def hasTargetDigestUrls(self) -> bool:
         """return state if target has digest url(s) for the recent build target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetDigestUrls.keys())
 
-    def targetDigestUrl(self) -> [str]:
+    def targetDigestUrl(self) -> ([str], EmergeHash.HashAlgorithm):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[ self.buildTarget ]
-            return out if type(out) == list else [out]
-        return ['']
+            if type(out) == str:
+                out = [out]
+            if not type(out) == tuple:
+                out = (out, EmergeHash.HashAlgorithm.SHA1)
+            return out
+        return None
         
         
 
