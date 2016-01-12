@@ -22,4 +22,5 @@ class Package(BinaryPackageBase):
             utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
         else:
             utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
+        utils.copyFile(os.path.join(self.sourceDir(), "bin", "curl-ca-bundle.crt"), os.path.join(self.imageDir(), "bin", "curl-ca-bundle.crt"))
         return True
