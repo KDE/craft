@@ -3,15 +3,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "5.20.2.2001"
-        build = "298913"
+        ver = "5.22.1.2201"
+        build = "299574"
         arch = "x86-64int"
         if compiler.isX64():
             arch = "x64"
-            self.targetDigests['5.20.2.2001'] = '91e37d112c58659f14063c541efeefee3499046f'
-        else:
-            self.targetDigests['5.20.2.2001'] = '5b51bbb4e06c0850dfe76814e775224ee235dcbb'
         self.targets[ver] = "http://downloads.activestate.com/ActivePerl/releases/%s/ActivePerl-%s-MSWin32-%s-%s.zip" % (ver, ver, arch, build)
+        self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/%s/SHA256SUM" % ver], EmergeHash.HashAlgorithm.SHA256)
         self.targetMergeSourcePath[ver] = "ActivePerl-%s-MSWin32-%s-%s\\perl" % (ver, arch, build)
         self.defaultTarget = ver
 
