@@ -168,12 +168,6 @@ def wgetFile( url, destdir, filename=''):
     EmergeDebug.debug("wget ret: %s" % ret, 2)
     return ret
 
-
-def isCrEol(filename):
-    with open(filename, "rb") as f:
-        return str(f.readline(),'UTF-8').endswith("\r\n")
-
-
 ### unpack functions
 
 def unpackFiles( downloaddir, filenames, workdir ):
@@ -542,22 +536,11 @@ def putenv(name, value):
     os.putenv( name, value )
     return True
 
-def unixToDos(filename):
-    with open(filename, "rt+") as f:
-        return f.read().replace('\n', '\r\n')
-
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    cmd = 'patch -d "%s" -p%s < "%s"' % (sourceDir, patchLevel, f)
+    cmd = 'patch -d "%s" -p%s -i "%s"' % (sourceDir, patchLevel, f)
     EmergeDebug.debug("applying %s" % cmd)
-    if not isCrEol(f):
-        p = subprocess.Popen([
-            "patch", "-d", sourceDir, "-p", str(patchLevel)],
-            stdin = subprocess.PIPE)
-        p.communicate(bytes(unixToDos(f),'UTF-8'))
-        result = p.wait() == 0
-    else:
-        result = system( cmd )
+    result = system( cmd )
     if not result:
         EmergeDebug.warning("applying %s failed!" % f)
     return result
