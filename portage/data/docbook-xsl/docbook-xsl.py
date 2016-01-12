@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in ['1.75.2', '1.78.0', '1.78.1']:
             self.targets[ ver ] = 'http://downloads.sourceforge.net/docbook/docbook-xsl-' + ver + '.tar.bz2'
+            self.targetInstSrc[ ver ] = "docbook-xsl-%s" % ver
         self.targetDigests['1.75.2'] = 'cd146012c07f3c2c79c1cd927ad1faf5bee6cc74'
         self.targetDigests['1.78.0'] = '39a62791e7c1479e22d13d12a9ecbb2273d66229'
         self.targetDigests['1.78.1'] = '1d668c845bb43c65115d1a1d9542f623801cfb6f'
@@ -28,15 +29,12 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
+        self.subinfo.options.install.installPath = 'share/xml/docbook'
 
     def unpack( self ):
         """rename the directory here"""
-        self.subinfo.options.install.installPath = 'share/xml/docbook'
         if not BinaryPackageBase.unpack(self):
             return False
-        os.rename(os.path.join(self.installDir(), os.path.basename(self.repositoryUrl()).replace(".tar.bz2", "")),
-                  os.path.join(self.installDir(), "xsl-stylesheets-" + self.subinfo.buildTarget))
-        self.subinfo.options.install.installPath = ''
-        utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.installDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
+        utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.sourceDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
         return True
 
