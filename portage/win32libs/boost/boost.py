@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['win32libs/boost-headers'] = 'default'
         self.dependencies['win32libs/boost-bjam'] = 'default'
+        self.dependencies['win32libs/boost-atomic'] = 'default'
         self.dependencies['win32libs/boost-graph'] = 'default'
         self.dependencies['win32libs/boost-program-options'] = 'default'
         if self.options.features.pythonSupport:
