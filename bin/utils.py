@@ -455,10 +455,10 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
     """ copy directory from srcdir to destdir """
     EmergeDebug.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
 
-    if ( not srcdir.endswith( "\\" ) ):
-        srcdir += "\\"
-    if ( not destdir.endswith( "\\" ) ):
-        destdir += "\\"
+    if ( not srcdir.endswith( os.path.sep ) ):
+        srcdir += os.path.sep
+    if ( not destdir.endswith( os.path.sep ) ):
+        destdir += os.path.sep
 
     for root, _, files in os.walk( srcdir ):
         # do not copy files under .svn directories, because they are write-protected
