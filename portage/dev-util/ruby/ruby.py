@@ -22,7 +22,7 @@ class Package(BinaryPackageBase):
         # ruby package contains a file called MANIFEST that we need to get
         # out of the way so we can make the manifest dir
         if res:
-          os.remove( os.path.join( self.installDir(), "MANIFEST" ) )
+          os.remove( os.path.join( self.sourceDir(), "MANIFEST" ) )
         return res
 
 
