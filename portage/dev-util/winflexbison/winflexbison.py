@@ -21,7 +21,7 @@ class Package( BinaryPackageBase ):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.install.installPath = "bin"
+        self.subinfo.options.unpack.unpackDir = "bin"
 
     def install( self ):
         if not BinaryPackageBase.install( self ): return False
