@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.8.3'] = 'aac5dc44ae4821e6165c6735b9c6063dd111ac03'
         
         self.shortDescription = "a Qt based multimedia framework"
-        self.defaultTarget = '4.8.3'
+        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
