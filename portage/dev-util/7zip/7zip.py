@@ -20,13 +20,4 @@ class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.destinationPath = "dev-utils"
-
-    def unpack(self):
-        utils.cleanDirectory(self.sourceDir())
-        self.checkDigest()
-        bin = os.path.join(self.sourceDir(), "bin")
-        os.makedirs(bin)
-        path = "7za.exe"
-        if compiler.isX64():
-            path = "x64/7za.exe"
-        return utils.system("%s/7za.exe e %s %s" %( self.packageDir(), os.path.join(EmergeStandardDirs.downloadDir(), self.localFileNames()[0]), path), cwd = bin)
+        self.subinfo.options.unpack.unpackDir = "bin"

@@ -35,8 +35,12 @@ class UtilsCache():
     @staticmethod
     def findApplication(app) -> str:
         if not app in UtilsCache._appCache:
-            UtilsCache._appCache[app] = shutil.which(app)
-            EmergeDebug.warning("Emerge was unable to locate: %s" % app)
+            appLocation = shutil.which(app)
+            if appLocation:
+                UtilsCache._appCache[app] = appLocation
+            else:
+                EmergeDebug.warning("Emerge was unable to locate: %s" % app)
+                return None
         return UtilsCache._appCache[app]
     
     
@@ -191,7 +195,8 @@ def unpackFile( downloaddir, filename, workdir ):
     return True
 
 def un7zip( fileName, destdir, flag = None ):
-    command = "7za x -r -y -o%s %s" % ( destdir, fileName )
+    command = UtilsCache.findApplication("7za") or os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
+    command += " x -r -y -o%s %s" % ( destdir, fileName )
 
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
