@@ -21,3 +21,9 @@ class Package( BinaryPackageBase ):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.unpack.unpackDir = "bin"
+
+    def install( self ):
+        if compiler.isX64():
+            return utils.copyFile(os.path.join(self.sourceDir(), "bin", "x64", "7za.exe"), os.path.join(self.imageDir(), "bin", "7za.exe"))
+        else:
+            return utils.copyFile(os.path.join(self.sourceDir(), "bin", "7za.exe"), os.path.join(self.imageDir(), "bin", "7za.exe"))
