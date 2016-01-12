@@ -23,6 +23,3 @@ class Package(CMakePackageBase):
 
     def install( self):
         return True
-
-    def qmerge( self ):
-        return True
