@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
             self.targetDigestUrls[ver] = ("https://cmake.org/files/v%s/cmake-%s-SHA-256.txt"% (ver[:3], ver), EmergeHash.HashAlgorithm.SHA256)
 
         nightlyUrl = "https://cmake.org/files/dev/"
-        nightlyVer = utils.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape("-win32-x86"))[0]
+        nightlyVer = utils.UtilsCache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape("-win32-x86"))[0]
         self.targets["gitHEAD"] = "%s/cmake-%s.zip" %(nightlyUrl, nightlyVer)
         self.targetMergeSourcePath["gitHEAD"] = 'cmake-%s' % nightlyVer
 

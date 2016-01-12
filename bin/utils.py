@@ -27,15 +27,47 @@ import Notifier.NotificationLoader
 from EmergeConfig import *
 from EmergeOS.osutils import OsUtils
 
+# TODO: Rename
 class UtilsCache():
     _appCache = {}
+    _NIGTHLY_URLS = dict()
 
     @staticmethod
-    def findApplication(app):
+    def findApplication(app) -> str:
         if not app in UtilsCache._appCache:
             UtilsCache._appCache[app] = shutil.which(app)
-        print(UtilsCache._appCache)
+            EmergeDebug.warning("Emerge was unable to locate: %s" % app)
         return UtilsCache._appCache[app]
+    
+    
+    @staticmethod
+    def getNightlyVersionsFromUrl(url, pattern, timeout = 10) -> [str]:
+        """
+        Returns a list of possible version number matching the regular expression in pattern.
+        :param url: The url to look for the nightly builds.
+        :param pattern: A regular expression to match the version.
+        :param timeout:
+        :return: A list of matching strings or [None]
+        """
+        if emergeSettings.getboolean("General", "WorkOffline"):
+            EmergeDebug.info("Nightly builds unavailable for %s in offline mode." % url)
+            return [None]
+        if url in UtilsCache._NIGTHLY_URLS:
+            return UtilsCache._NIGTHLY_URLS[url]
+        else:
+            try:
+                with urllib.request.urlopen(url, timeout = timeout) as fh:
+                    data = str(fh.read(), "UTF-8")
+                    vers = re.findall( pattern , data)
+                    if not vers:
+                        print(data)
+                        raise Exception("Pattern %s does not match." % pattern)
+                    UtilsCache._NIGTHLY_URLS[url] = vers
+                    return vers
+            except Exception as e:
+                EmergeDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
+                return [None]
+
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -782,33 +814,3 @@ def createBat(fileName, command):
         bat.write(command)
         bat.write("\r\n")
 
-
-# TODO: clanup and speedup (see vlc and cmake)
-_NIGTHLY_URLS = dict()
-def getNightlyVersionsFromUrl(url, pattern, timeout = 10):
-    """
-    Returns a list of possible version number matching the regular expression in pattern.
-    :param url: The url to look for the nightly builds.
-    :param pattern: A regular expression to match the version.
-    :param timeout:
-    :return: A list of matching strings or [None]
-    """
-    if emergeSettings.getboolean("General", "WorkOffline"):
-        EmergeDebug.info("Nightly builds unavailable for %s in offline mode." % url)
-        return [None]
-    global _NIGTHLY_URLS
-    if url in _NIGTHLY_URLS:
-      return _NIGTHLY_URLS[url]
-    else:
-      try:
-        with urllib.request.urlopen(url, timeout = timeout) as fh:
-            data = str(fh.read(), "UTF-8")
-            vers = re.findall( pattern , data)
-            if not vers:
-                print(data)
-                raise Exception("Pattern %s does not match." % pattern)
-            _NIGTHLY_URLS[url] = vers
-            return vers
-      except Exception as e:
-        EmergeDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
-        return [None]

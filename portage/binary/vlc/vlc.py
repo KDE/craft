@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.vlcArch = "64"        
     self.vlcBaseUrl = 'http://nightlies.videolan.org/build/win'+self.vlcArch+'/last/'
     self.vlcTagName = '3.0.0-git' 
-    self.gitVer = utils.getNightlyVersionsFromUrl(self.vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d" )[0]
+    self.gitVer = utils.UtilsCache.getNightlyVersionsFromUrl(self.vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d" )[0]
     
 
     self.targets[ self.vlcTagName ]  =  "%svlc-%s-%s-win%s.7z" % (self.vlcBaseUrl, self.vlcTagName, self.gitVer, self.vlcArch  )
