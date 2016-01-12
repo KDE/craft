@@ -17,15 +17,9 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.unpack.unpackDir = "bin"
 
-    def unpack(self):
-        if not BinaryPackageBase.unpack(self):
-            return False
+    def install( self ):
         if compiler.isX64():
-            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "curl.exe"))
-            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "wget.exe"))
-            utils.moveFile(os.path.join(self.sourceDir(), "bin", "curl64.exe"), os.path.join(self.sourceDir(), "bin", "curl.exe"))
-            utils.moveFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"), os.path.join(self.sourceDir(), "bin", "wget.exe"))
+            utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
         else:
-            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "curl64.exe"))
-            utils.deleteFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"))
+            utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
         return True
