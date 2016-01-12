@@ -368,10 +368,10 @@ def createImportLibs( dll_name, basepath ):
         os.mkdir( dst )
 
     # check whether the required binary tools exist
-    HAVE_GENDEF = not UtilsCache.findApplication( "gendef" )
+    HAVE_GENDEF = UtilsCache.findApplication( "gendef" ) is not None
     USE_GENDEF = HAVE_GENDEF
-    HAVE_LIB = not  UtilsCache.findApplication( "lib" )
-    HAVE_DLLTOOL = not UtilsCache.findApplication( "dlltool" )
+    HAVE_LIB = UtilsCache.findApplication( "lib" ) is not None
+    HAVE_DLLTOOL = UtilsCache.findApplication( "dlltool" ) is not None
     if EmergeDebug.verbose() > 1:
         print("gendef found:", HAVE_GENDEF)
         print("gendef used:", USE_GENDEF)
