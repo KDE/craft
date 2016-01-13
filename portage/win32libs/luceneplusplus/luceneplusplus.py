@@ -10,6 +10,7 @@ class subinfo (info.infoclass):
         self.dependencies['win32libs/boost-iostreams'] = 'default'
         self.dependencies['win32libs/boost-date-time'] = 'default'
         self.dependencies['win32libs/boost-filesystem'] = 'default'
+        self.dependencies['win32libs/boost-atomic'] = 'default'
 
 
     def setTargets( self ):

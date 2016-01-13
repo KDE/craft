@@ -8,12 +8,15 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['dev-util/llvm'] = 'default'
+        self.dependencies['dev-util/clang'] = 'default'
 
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        self.subinfo.options.configure.defines ="-DLLDB_PATH_TO_LLVM_BUILD=\"%s\"" % portage.getPackageInstance('dev-util', 'llvm').buildDir().replace("\\", "/")
+        self.subinfo.options.configure.defines +=" -DLLDB_PATH_TO_CLANG_BUILD=\"%s\"" % portage.getPackageInstance('dev-util', 'clang').buildDir().replace("\\", "/")
 
 
 
