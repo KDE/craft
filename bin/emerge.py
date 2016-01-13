@@ -51,6 +51,8 @@ def doExec( package, action, continueFlag = False ):
     with EmergeTimer.Timer("%s for %s" % ( action, package ), 1 ):
         EmergeDebug.info("Action: %s for %s" % (action, package))
         ret = package.execute( action )
+        if not ret:
+            EmergeDebug.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
 
