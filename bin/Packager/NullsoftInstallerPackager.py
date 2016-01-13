@@ -103,7 +103,7 @@ file collection process is skipped, and only the installer is generated.
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = "%s-%s-setup-%s.exe" % ( shortPackage, compiler.architecture(), self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
-            self.defines[ "srcdir" ] = self.imageDir()
+            self.defines[ "srcdir" ] = self.archiveDir()
         if not "company" in self.defines or not self.defines[ "company" ]:
             self.defines[ "company" ] = "KDE"
         if not "productname" in self.defines or not self.defines[ "productname" ]:

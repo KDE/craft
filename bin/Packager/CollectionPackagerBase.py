@@ -245,11 +245,14 @@ class CollectionPackagerBase( PackagerBase ):
           
     def internalCreatePackage( self ):
         """ create a package """
+
+        archiveDir = self.archiveDir()
+
         if not self.noClean:
-            EmergeDebug.debug("cleaning imagedir: %s" % self.imageDir())
-            utils.cleanDirectory( self.imageDir() )
+            EmergeDebug.debug("cleaning package dir: %s" % archiveDir)
+            utils.cleanDirectory(archiveDir)
             for directory, mergeDir, strip  in self.__getImageDirectories():
-                imageDir = self.imageDir()
+                imageDir = archiveDir
                 if mergeDir:
                     imageDir = os.path.join( imageDir, mergeDir )
                 if os.path.exists( directory ):
@@ -257,8 +260,8 @@ class CollectionPackagerBase( PackagerBase ):
                 else:
                     EmergeDebug.die("image directory %s does not exist!" % directory)
 
-        if not os.path.exists( self.imageDir() ):
-            os.makedirs( self.imageDir() )
+        if not os.path.exists( archiveDir ):
+            os.makedirs( archiveDir )
 
         return True
 

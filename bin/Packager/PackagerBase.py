@@ -10,6 +10,12 @@ class PackagerBase(EmergeBase):
     def __init__(self):
         EmergeBase.__init__(self)
 
+    def archiveDir(self):
+        if self.package.endswith( "-package" ):
+            return self.imageDir() # compat behavior
+
+        return os.path.join( self.buildRoot(), "archiveDir" )
+
     def getPackageVersion(self):
         """ return version information for the currently used package"""
         if self.subinfo.options.package.version != None:
