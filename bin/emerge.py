@@ -28,7 +28,6 @@ import utils
 import threading
 from EmergeConfig import *
 
-
 def packageIsOutdated( category, package ):
     newest = portage.PortageInstance.getNewestVersion( category, package )
     installed = InstallDB.installdb.getInstalledPackages( category, package )
