@@ -15,14 +15,6 @@ import sys
 import EmergeDebug
 import EmergeTimer
 
-MIN_PY_VERSION = (3, 5, 0)
-
-if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
-    print( "Error: Python too old!", file = sys.stderr )
-    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file = sys.stderr )
-    print( "Please install it and adapt your kdesettings.bat", file = sys.stderr )
-    exit( 1 )
-
 import time
 import datetime
 import traceback
