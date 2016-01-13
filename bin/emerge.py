@@ -13,6 +13,7 @@
 import sys
 
 import EmergeDebug
+import EmergeTimer
 
 MIN_PY_VERSION = (3, 4, 0)
 
@@ -47,11 +48,10 @@ def packageIsOutdated( category, package ):
 
 @utils.log
 def doExec( package, action, continueFlag = False ):
-    utils.startTimer( "%s for %s" % ( action, package ), 1 )
-    EmergeDebug.info("Action: %s for %s" % (action, package))
-    ret = package.execute( action )
-    utils.stopTimer( "%s for %s" % ( action, package ) )
-    return ret or continueFlag
+    with EmergeTimer.Timer("%s for %s" % ( action, package ), 1 ):
+        EmergeDebug.info("Action: %s for %s" % (action, package))
+        ret = package.execute( action )
+        return ret or continueFlag
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
@@ -472,36 +472,35 @@ def main( ):
 
 if __name__ == '__main__':
     success= True
-    try:
-        utils.startTimer( "Emerge" )
-        doUpdateTitle = True
+    with EmergeTimer.Timer("Emerge", 0):
+        try:
+            doUpdateTitle = True
 
-        def updateTitle( startTime, title ):
-            while ( doUpdateTitle ):
-                delta = datetime.datetime.now( ) - startTime
-                utils.OsUtils.setConsoleTitle( "emerge %s %s" % (title, delta) )
-                time.sleep( 1 )
+            def updateTitle( startTime, title ):
+                while ( doUpdateTitle ):
+                    delta = datetime.datetime.now( ) - startTime
+                    utils.OsUtils.setConsoleTitle( "emerge %s %s" % (title, delta) )
+                    time.sleep( 1 )
 
-        tittleThread = threading.Thread( target = updateTitle,
-                                         args = (datetime.datetime.now( ), " ".join( sys.argv[ 1: ] ),) )
-        tittleThread.setDaemon( True )
-        tittleThread.start( )
-        success = main()
-    except KeyboardInterrupt:
-        pass
-    except portage.PortageException as e:
-        if e.exception:
-            EmergeDebug.debug(e.exception, 0)
-            traceback.print_tb( e.exception.__traceback__)
-        EmergeDebug.error(e)
-    except Exception as e:
-        print( e )
-        traceback.print_tb( e.__traceback__ )
-    finally:
-        utils.stopTimer( "Emerge" )
-        doUpdateTitle = False
-        if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
-            emergeSettings.dump( )
+            tittleThread = threading.Thread( target = updateTitle,
+                                             args = (datetime.datetime.now( ), " ".join( sys.argv[ 1: ] ),) )
+            tittleThread.setDaemon( True )
+            tittleThread.start( )
+            success = main()
+        except KeyboardInterrupt:
+            pass
+        except portage.PortageException as e:
+            if e.exception:
+                EmergeDebug.debug(e.exception, 0)
+                traceback.print_tb( e.exception.__traceback__)
+            EmergeDebug.error(e)
+        except Exception as e:
+            print( e )
+            traceback.print_tb( e.__traceback__ )
+        finally:
+            doUpdateTitle = False
+            if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
+                emergeSettings.dump( )
     if not success:
         exit( 1 )
 

@@ -673,49 +673,14 @@ def prependPath(*parts):
             old.insert(0, fullPath)
             putenv( "PATH", ";".join(old))
 
-_TIMERS = dict()    
-def startTimer(name, level = 0):
-    """starts a timer for meassurement"""
-    if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
-        if name in _TIMERS:
-            EmergeDebug.die("%s already in timers" % name)
-        _TIMERS[name] = (datetime.datetime.now() , level)
-        #if EmergeDebug.verbose() > 0 and ( level == 0 or EmergeDebug.verbose() > level):
-            #EmergeDebug.debug( "Task: %s started" % name )
-            #sys.stdout.flush()
-    
-def stopTimer(name):
-    """stops a timer for meassurement"""
-    if emergeSettings.getboolean( "EmergeDebug", "MeasureTime", False ):
-        if not name in _TIMERS:
-            EmergeDebug.debug("%s not in timers" % name)
-            return
-        startTime , level = _TIMERS[name]
-        if EmergeDebug.verbose() > 0  and (level == 0 or EmergeDebug.verbose() > level):
-            delta = datetime.datetime.now() - startTime
-            print( "Task: %s stopped after: %s" % (name , delta) )
-            sys.stdout.flush()
-        del _TIMERS[name]
-    
-
-def stopAllTimer():
-    """stops all timer for meassurement"""
-    keys = sorted(list(_TIMERS.items()) , key=itemgetter(1) , reverse=True)
-    for key , _ in keys:
-        stopTimer(key)
-
-
 def notify(title,message,alertClass = None):
     EmergeDebug.info("%s: %s" % (title, message))
-
     backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")
     if backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():
         backend.notify(title,message,alertClass)
-
-    
 
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
