@@ -15,7 +15,7 @@ import sys
 import EmergeDebug
 import EmergeTimer
 
-MIN_PY_VERSION = (3, 4, 0)
+MIN_PY_VERSION = (3, 5, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
     print( "Error: Python too old!", file = sys.stderr )
