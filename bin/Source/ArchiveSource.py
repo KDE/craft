@@ -122,14 +122,8 @@ class ArchiveSource(SourceBase):
 
         filenames = self.localFileNames()
 
-        destdir = self.sourceDir()
-        # self.sourceDir() will already contain targetInstSrc so we have to remove it
-        if self.subinfo.hasTargetSourcePath():
-            destdir = destdir[:-len(self.subinfo.targetSourcePath())]
-        utils.cleanDirectory(destdir)
-
-        if hasattr(self.subinfo.options.unpack, 'unpackDir'):
-            destdir = os.path.join(destdir, self.subinfo.options.unpack.unpackDir)
+        # TODO: this might delete generated patches
+        utils.cleanDirectory(self.workDir())
 
         if not self.checkDigest():
             return False
@@ -138,16 +132,16 @@ class ArchiveSource(SourceBase):
         for filename in filenames:
             if filename.endswith(binEndings):
                 filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
-                if self.subinfo.options.unpack.runInstaller: 
+                if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext( filename )
                     if ext == ".exe":
                         return utils.system("%s" % filePath )
                     elif ( ext == ".msi" ):
                         return utils.system("msiexec /package %s" % filePath )
-                if not utils.copyFile( filePath, os.path.join(destdir, filename) ):
+                if not utils.copyFile( filePath, os.path.join(self.workDir(), filename) ):
                     return False
             else:
-                if not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, destdir ):
+                if not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, self.workDir()):
                     return False
 
         ret = self.applyPatches()
@@ -188,9 +182,6 @@ class ArchiveSource(SourceBase):
 
         if ( not os.path.exists( unpackDir ) ):
             os.mkdir( unpackDir )
-
-        if hasattr( self.subinfo.options.unpack, 'unpackDir' ):
-            unpackDir = os.path.join( unpackDir, self.subinfo.options.unpack.unpackDir )
 
             if ( not os.path.exists( unpackDir ) ):
                 os.mkdir( unpackDir )

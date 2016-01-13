@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
 
         self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)
         self.archiveNames[ver] = "PortableGit-%s-%s-bit.7z" % (ver, arch)
+        self.targetInstallPath[ ver ] = "git"
         self.defaultTarget = ver
 
     def setDependencies(self):
@@ -26,7 +27,6 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.unpack.unpackDir = "git"
 
     def install( self ):
         if not BinaryPackageBase.install(self):

@@ -15,12 +15,11 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = "dev-utils"
-        self.subinfo.options.unpack.unpackDir = "bin"
 
     def install( self ):
         if compiler.isX64():
-            utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget64.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
+            utils.copyFile(os.path.join(self.sourceDir(), "wget64.exe"), os.path.join(self.installDir(), "wget.exe"))
         else:
-            utils.copyFile(os.path.join(self.sourceDir(), "bin", "wget.exe"), os.path.join(self.imageDir(), "bin", "wget.exe"))
-        utils.copyFile(os.path.join(self.sourceDir(), "bin", "curl-ca-bundle.crt"), os.path.join(self.imageDir(), "bin", "curl-ca-bundle.crt"))
+            utils.copyFile(os.path.join(self.sourceDir(), "wget.exe"), os.path.join(self.installDir(), "wget.exe"))
+        utils.copyFile(os.path.join(self.sourceDir(), "curl-ca-bundle.crt"), os.path.join(self.installDir(), "curl-ca-bundle.crt"))
         return True

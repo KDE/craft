@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         
         # we only use the filename from the url for unpacking
         self.targets['3.5'] = "http://wix.codeplex.com/releases/acceptLicense/wix35-binaries.zip"
+        self.targetInstallPath['3.5'] = "bin"
         self.targetDigests['3.5'] = '7e9bfd9935d9d61751dbf5163155cf75e8635f0d'
         self.defaultTarget = '3.5'
 
@@ -20,8 +21,6 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.unpack.unpackDir = "bin"
-        self.subinfo.options.merge.ignoreBuildType = True
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def fetch( self ):
