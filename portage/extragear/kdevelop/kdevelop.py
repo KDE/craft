@@ -1,9 +1,10 @@
 import info
+from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop|5.0'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets[ '5.0' ] = '[git]kde:kdevelop|5.0'
+        self.defaultTarget = '5.0'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
@@ -40,10 +41,53 @@ class subinfo( info.infoclass ):
             self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
 
+        # Install proper theme
+        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
+        # Install extra plugins shipped by Kate
+        self.dependencies[ 'kde/kate' ] = 'default'
+
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
+class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def __init__( self):
         CMakePackageBase.__init__( self )
+        blacklists = [
+            NSIPackagerLists.runtimeBlacklist,
+            os.path.join(os.path.dirname(__file__), 'blacklist.txt')
+        ]
+        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
 
+    def createPackage(self):
+        self.defines[ "productname" ] = "KDevelop"
+        self.defines[ "executable" ] = "bin\\kdevelop.exe"
+        self.defines[ "vcredist" ] = "none"
+        if compiler.isX64():
+            self.defines[ "compilingFor" ] = "x64"
+            self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64"
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x64.exe"
+        elif compiler.isX86():
+            self.defines[ "compilingFor" ] = "x32"
+            self.defines[ "defaultinstdir" ] = "$PROGRAMFILES"
+            self.defines[ "vcredist" ] = "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x86.exe"
+
+        self.ignoredPackages.append("binary/mysql-pkg")
+
+        return NullsoftInstallerPackager.createPackage(self)
+
+    def preArchive(self):
+        archiveDir = self.archiveDir()
+        # TODO: Why is that needed?
+        os.mkdir(os.path.join(archiveDir, "etc", "dbus-1", "session.d"))
+
+        # TODO: Can we generalize this for other apps?
+        # move everything to the location where Qt expects it
+        binPath = os.path.join(archiveDir, "bin")
+
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "lib", "plugins"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
+        utils.mergeTree(os.path.join(archiveDir, "lib", "qml"), os.path.join(archiveDir, binPath))
+
+        # TODO: Just blacklisting this doesn't work. WTF?
+        utils.rmtree(os.path.join(archiveDir, "dev-utils"))
