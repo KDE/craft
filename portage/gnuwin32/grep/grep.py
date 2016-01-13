@@ -3,16 +3,11 @@ import os
 import info
 
 
-## \todo the dep files will let into have dll's installed multiple times
-SRC_URI = """
-http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-bin.zip
-http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-dep.zip
-"""
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         for t in ( '2.5.1a', '2.5.4' ):
-          self.targets[ t ] = SRC_URI % ( t, t )
+          self.targets[ t ] = ["http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-bin.zip" % t,
+                               "http://downloads.sourceforge.net/sourceforge/gnuwin32/grep-%s-dep.zip" % t]
         self.defaultTarget = '2.5.4'
         self.targetDigests['2.5.4'] = ['56f41d351b3ed8ac671df4dd3bbd4c4d3b9190a2',
                                        '6dc3a0d1a1751c731fb680a01650a1396c76648c']
