@@ -8,12 +8,15 @@ class subinfo(info.infoclass):
 
         self.svnTargets['gitHEAD'] = 'git://github.com/lloyd/yajl'
 
-        self.targets['1.0.12'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/lloyd-yajl-1.0.12-0-g17b1790.tar.gz"
-        self.targetDigests['1.0.12'] = 'f0177e3a946d6ae9a0a963695b2c143a03219bf2'
-        self.patchToApply['1.0.12'] = ('lloyd-yajl-17b1790-20110725.diff', 1)
-        self.targetInstSrc['1.0.12'] = 'lloyd-yajl-17b1790'
+        ver = '1.0.12'
 
-        self.defaultTarget = '1.0.12'
+        self.targets[ver] = 'http://github.com/lloyd/yajl/tarball/%s' % ver
+        self.archiveNames[ver] = 'lloyd-yajl-%s.tar.gz' % ver
+        self.targetDigests[ver] = 'f0177e3a946d6ae9a0a963695b2c143a03219bf2'
+        self.patchToApply[ver] = ('lloyd-yajl-17b1790-20110725.diff', 1)
+        self.targetInstSrc[ver] = 'lloyd-yajl-17b1790'
+
+        self.defaultTarget = ver
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
