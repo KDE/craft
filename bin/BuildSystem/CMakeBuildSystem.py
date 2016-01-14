@@ -196,7 +196,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        return self.system( "%s test" % ( self.makeProgramm ), "test" )
+        return self.system("ctest --output-on-failure")
 
     def dumpDependencies( self ):
         self.dumpCMakeDependencies()
