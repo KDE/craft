@@ -24,14 +24,13 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.ignoreBuildType = True
         self.shell = shells.MSysShell()
 
-    def unpack(self):
-        if not BinaryPackageBase.unpack(self):
-          return False
+    def install( self ):
         if compiler.isX64():
-           shutil.move(os.path.join( self.imageDir(), "msys64"), os.path.join( self.imageDir(), "msys"))
+           utils.copyDir(os.path.join( self.sourceDir(), "msys64"), os.path.join( self.installDir(), "msys"))
         else:
-           shutil.move(os.path.join( self.imageDir(), "msys32"), os.path.join( self.imageDir(), "msys"))
-        utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","msys.bat"),"python %KDEROOT%\\emerge\\bin\\shells.py")
+           shutil.move(os.path.join( self.sourceDir(), "msys32"), os.path.join( self.installDir(), "msys"))
+        os.makedirs(os.path.join(self.installDir(),"dev-utils","bin"))
+        utils.createBat(os.path.join(self.installDir(),"dev-utils","bin","msys.bat"),"python %KDEROOT%\\emerge\\bin\\shells.py")
         return True
     
     def qmerge(self):
