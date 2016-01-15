@@ -2,7 +2,6 @@
 $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1.exe"
 
 $Script:installRoot = "C:\kde"
-$Script:client = new-object net.webclient
 #####
 $Script:python = where.exe python 2>$NULL
 $Script:pythonVersion = "0"
@@ -18,7 +17,7 @@ function FetchPython()
                 $installer = "$Script:installRoot\download\{0}" -f ( $Script:pythonUrl.SubString($Script:pythonUrl.LastIndexOf("/")+1))
                 if(!(Test-Path -Path $installer))
                 {
-                    $Script:client.DownloadFile($Script:pythonUrl,$installer)
+                    Invoke-WebRequest $Script:pythonUrl -OutFile $installer
                 }
                 $Script:python = "$Script:installRoot\python\python.exe"
                 & "$installer" "/quiet" "InstallAllUsers=0" "TargetDir=$Script:installRoot\python\" "Shortcuts=0" "AssociateFiles=0" "Include_launcher=0"
@@ -88,6 +87,6 @@ mkdir $Script:installRoot\download -Force | Out-Null
 
 TestAndFetchPython
 
-$Script:client.DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
+(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
 & "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" "$Script:installRoot"
 cd $Script:installRoot
