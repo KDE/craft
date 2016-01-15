@@ -89,5 +89,5 @@ mkdir $Script:installRoot\download -Force | Out-Null
 TestAndFetchPython
 
 $Script:client.DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
-& $Script:python "$Script:installRoot\download\EmergeBootstrap.py" $Script:installRoot
+& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" "$Script:installRoot"
 cd $Script:installRoot
