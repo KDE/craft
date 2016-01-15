@@ -2,7 +2,7 @@
 $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1.exe"
 
 $Script:installRoot = "C:\kde"
-$Script:clien = new-object net.webclient
+$Script:client = new-object net.webclient
 #####
 $Script:python = where.exe python 2>$NULL
 $Script:pythonVersion = "0"
