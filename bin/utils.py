@@ -160,6 +160,8 @@ def getFile( url, destdir , filename='' ):
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     command = "%s -c -t 10" % UtilsCache.findApplication("wget")
+    if EmergeDebug.Verbose().level() < 1:
+        command += " -q --show-progress"
     if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
