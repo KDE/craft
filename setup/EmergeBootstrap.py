@@ -40,7 +40,6 @@ class EmergeBootsrtap(object):
                         return drive + ":"
                     return drive[:2]
         return { "EMERGE_ROOT_DRIVE" : promptDriveLetter("the build root", "R:"),
-                 "EMERGE_SVN_DRIVE" : promptDriveLetter("the deprecated KDE svn checkouts", "S:"),
                  "EMERGE_DOWNLOAD_DRIVE" : promptDriveLetter("the location where files are downloaded to", "T:"),
                  "EMERGE_GIT_DRIVE" : promptDriveLetter("the location where the git checkouts are located", "Q:")}
 

@@ -72,15 +72,10 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def svnDir( ):
         if not "SVNDIR" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH",
-                                                                                  False ):
-                EmergeStandardDirs._pathCache( )[ "SVNDIR" ] = EmergeStandardDirs.nomalizePath(
-                    emergeSettings.get( "ShortPath", "EMERGE_SVN_DRIVE" ) )
-            else:
-                EmergeStandardDirs._pathCache( )[ "SVNDIR" ] = emergeSettings.get( "Paths", "KDESVNDIR",
+            EmergeStandardDirs._pathCache( )[ "SVNDIR" ] = emergeSettings.get( "Paths", "KDESVNDIR",
                                                                                    os.path.join(
-                                                                                       EmergeStandardDirs.downloadDir( ),
-                                                                                       "svn" ) )
+                                                                                   EmergeStandardDirs.downloadDir( ),
+                                                                                   "svn" ) )
         return EmergeStandardDirs._pathCache( )[ "SVNDIR" ]
 
     @staticmethod

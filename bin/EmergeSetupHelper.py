@@ -62,7 +62,6 @@ class SetupHelper( object ):
             with TemporaryUseShortpath( False):
                 _subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
                 _subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
-                _subst( EmergeStandardDirs.svnDir( ), "EMERGE_SVN_DRIVE" )
                 _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
 
     def printBanner( self ):
