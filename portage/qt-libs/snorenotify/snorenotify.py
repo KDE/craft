@@ -17,13 +17,13 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:snorenotify'
-        for ver in ['0.6.0']:
+        for ver in ['0.6.0', '0.7.0']:
             self.targets[ ver ] = "http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz" % ( ver ,ver )
             self.targetInstSrc[ ver ] = "snorenotify-%s" % ver
-        self.targetDigests['0.6.0'] = 'f2c28962ba6548829ba50c906b95068d3ef7aa1f'
+            self.targetDigestUrls[ ver ] = ("http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz.sha256" % (ver, ver), EmergeHash.HashAlgorithm.SHA256)
 
         self.shortDescription = "Snorenotify is a multi platform Qt notification framework. Using a plugin system it is possible to create notifications with many different notification systems on Windows, Mac OS and Unix."
-        self.defaultTarget = '0.6.0'
+        self.defaultTarget = '0.7.0'
 
 
 class Package( CMakePackageBase ):
