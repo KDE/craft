@@ -99,6 +99,7 @@ if __name__ == "__main__":
     os.chdir(os.path.join(kdeRoot,"emerge" ))
 
     boot = EmergeBootsrtap(kdeRoot)
+    boot.setSettignsValue("Python", os.path.dirname(sys.executable))
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECOMPILER", compiler)
 
