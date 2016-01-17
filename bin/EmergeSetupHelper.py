@@ -125,6 +125,7 @@ class SetupHelper( object ):
 
     def printEnv( self ):
         self.env = self.getEnv( )
+        self.version = int(emergeSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
 
         self.addEnvVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
 
@@ -133,9 +134,12 @@ class SetupHelper( object ):
                             emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( EmergeStandardDirs.emergeRoot( ),
                                                                                      "build", "CCACHE" ) ) )
 
-        self.addEnvVar( "GIT_SSH", "plink" )
-        self.addEnvVar( "SVN_SSH", "plink" )
-        self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
+        if self.version < 2:
+            self.addEnvVar( "GIT_SSH", "plink" )
+            self.addEnvVar( "SVN_SSH", "plink" )
+
+        if not "HOME" in self.env.keys():
+            self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
         self.addEnvVar( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ) )
 
