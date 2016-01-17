@@ -60,9 +60,12 @@ class SetupHelper( object ):
 
         if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
             with TemporaryUseShortpath( False):
-                _subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
-                _subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
-                _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
+                if ("ShortPath", "EMERGE_ROOT_DRIVE") in emergeSettings:
+                    _subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
+                if ("ShortPath", "EMERGE_DOWNLOAD_DRIVE") in emergeSettings:
+                    _subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
+                if ("ShortPath", "EMERGE_GIT_DRIVE") in emergeSettings:
+                    _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
 
     def printBanner( self ):
         print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ), file = sys.stderr )
