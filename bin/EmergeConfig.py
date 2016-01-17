@@ -55,11 +55,14 @@ class EmergeStandardDirs( object ):
         return old
 
     @staticmethod
+    def isShortPathEnabled():
+        return EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
+
+    @staticmethod
     def downloadDir( ):
         """ location of directory where fetched files are  stored """
         if not "DOWNLOADDIR" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH",
-                                                                                  False ):
+            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) in emergeSettings:
                 EmergeStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = EmergeStandardDirs.nomalizePath(
                     emergeSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
             else:
@@ -81,8 +84,7 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def gitDir( ):
         if not "GITDIR" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH",
-                                                                                  False ):
+            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_GIT_DRIVE" ) in emergeSettings:
                 EmergeStandardDirs._pathCache( )[ "GITDIR" ] = EmergeStandardDirs.nomalizePath(
                     emergeSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
             else:
@@ -109,8 +111,7 @@ class EmergeStandardDirs( object ):
     @staticmethod
     def emergeRoot( ):
         if not "EMERGEROOT" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath",
-                                                                                  "EMERGE_USE_SHORT_PATH", False ):
+            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_ROOT_DRIVE" ) in emergeSettings:
                 EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = EmergeStandardDirs.nomalizePath(
                     emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
             else:
