@@ -19,6 +19,8 @@ import time
 import datetime
 import traceback
 import argparse
+import collections
+import copy
 
 import compiler
 import portageSearch
@@ -264,6 +266,24 @@ def handleSinglePackage( packageName, action, args ):
     return True
 
 class ActionHandler:
+    class StoreTrueAction(argparse._StoreTrueAction):
+        def __call__(self, parser, namespace, values, option_string=None):
+            ActionHandler.StoreAction._addOrdered(namespace, self.dest, self.const)
+            super().__call__(parser, namespace, values, option_string)
+
+    class StoreAction(argparse._StoreAction):
+        """http://stackoverflow.com/a/9028031"""
+        def __call__(self, parser, namespace, values, option_string=None):
+            ActionHandler.StoreAction._addOrdered(namespace, self.dest, values)
+            super().__call__(parser, namespace, values, option_string)
+
+        @staticmethod
+        def _addOrdered(namespace, key, value):
+            if not 'ordered_args' in namespace:
+                setattr(namespace, 'ordered_args', collections.OrderedDict())
+            namespace.ordered_args[key] = value
+
+
     def __init__(self, parser):
         self.parser = parser
         self.actions = {}
@@ -274,27 +294,14 @@ class ActionHandler:
         self.actions[arg.dest] = actionName
 
     def addAction(self, actionName, **kwargs):
-        self._addAction(actionName, action = "store_true", **kwargs)
+        self._addAction(actionName, action = ActionHandler.StoreTrueAction, **kwargs)
 
     def addActionWithArg(self, actionName, **kwargs):
-        self._addAction(actionName, action = "store", **kwargs)
+        self._addAction(actionName, action = ActionHandler.StoreAction, **kwargs)
 
     def parseFinalAction(self, args, defaultAction):
-        '''Returns the final action deduced from the args, returns None in case of error'''
-
-        finalAction = None
-
-        argsDict = vars(args)
-        for dest, actionName in self.actions.items():
-            val = argsDict[dest]
-            isSet = val is True if isinstance(val, bool) else val is not None
-            if isSet:
-                if finalAction:
-                    return None, "Only one action at a time, passed: --%s and --%s" % (finalAction, actionName)
-
-                finalAction = actionName
-
-        return finalAction or defaultAction, None
+        '''Returns the list of actions or [defaultAction]'''
+        return [self.actions[x] for x in args.ordered_args.keys()] if hasattr(args, "ordered_args") else [defaultAction]
 
 
 def main( ):
@@ -401,11 +408,6 @@ def main( ):
 
     args = parser.parse_args( )
 
-    action, error = actionHandler.parseFinalAction(args, "all")
-    if not action:
-        EmergeDebug.error("Failed to parse arguments: %s" % error)
-        return False
-
     if args.stayQuiet:
         EmergeDebug.setVerbose(-1)
     elif args.verbose:
@@ -432,34 +434,38 @@ def main( ):
             portageSearch.printSearch( category, package )
         return True
 
-    if action in [ "install-deps", "update", "update-all", "package" ] or args.update_fast:
-        args.ignoreInstalled = True
 
-    if action in [ "update", "update-all" ]:
-        args.noclean = True
+    for action in actionHandler.parseFinalAction(args, "all"):
+        tempArgs = copy.deepcopy(args)
 
-    EmergeDebug.debug("buildAction: %s" % action)
-    EmergeDebug.debug("doPretend: %s" % args.probe, 1)
-    EmergeDebug.debug("packageName: %s" % args.packageNames)
-    EmergeDebug.debug("buildType: %s" % args.buildType)
-    EmergeDebug.debug("buildTests: %s" % args.buildTests)
-    EmergeDebug.debug("verbose: %d" % EmergeDebug.verbose(), 1)
-    EmergeDebug.debug("trace: %s" % args.trace, 1)
-    EmergeDebug.debug("KDEROOT: %s" % EmergeStandardDirs.emergeRoot(), 1)
-    EmergeDebug.debug_line()
+        if action in [ "install-deps", "update", "update-all", "package" ] or tempArgs.update_fast:
+            tempArgs.ignoreInstalled = True
 
-    if args.print_installed:
-        InstallDB.printInstalled( )
-    elif args.print_installable:
-        portage.printInstallables( )
-    elif args.search_file:
-        portage.printPackagesForFileSearch(args.search_file)
-    elif args.list_file:
-        handleSinglePackage( "", action, args )
-    else:
-        for packageName in args.packageNames:
-            if not handleSinglePackage( packageName, action, args ):
-                return False
+        if action in [ "update", "update-all" ]:
+            tempArgs.noclean = True
+
+        EmergeDebug.debug("buildAction: %s" % action)
+        EmergeDebug.debug("doPretend: %s" % tempArgs.probe, 1)
+        EmergeDebug.debug("packageName: %s" % tempArgs.packageNames)
+        EmergeDebug.debug("buildType: %s" % tempArgs.buildType)
+        EmergeDebug.debug("buildTests: %s" % tempArgs.buildTests)
+        EmergeDebug.debug("verbose: %d" % EmergeDebug.verbose(), 1)
+        EmergeDebug.debug("trace: %s" % tempArgs.trace, 1)
+        EmergeDebug.debug("KDEROOT: %s" % EmergeStandardDirs.emergeRoot(), 1)
+        EmergeDebug.debug_line()
+
+        if action == "print-installed":
+            InstallDB.printInstalled( )
+        elif action == "print-installable":
+            portage.printInstallables( )
+        elif action == "search-file":
+            portage.printPackagesForFileSearch(tempArgs.search_file)
+        elif tempArgs.list_file:
+            handleSinglePackage( "", action, tempArgs )
+        else:
+            for packageName in tempArgs.packageNames:
+                if not handleSinglePackage( packageName, action, tempArgs ):
+                    return False
     return True
 
 
