@@ -107,14 +107,14 @@ class DependencyPackage(PackageObjectBase):
         single.add(self)
         for p in children:
             if not p in single and not p in depList\
-            and not p.fullName() in PortageInstance.ignores:
+            and not PortageInstance.ignores.match(p.fullName()):
                 if maxDepth == -1:
                     p.getDependencies( depList, depType, single )
                 elif depth < maxDepth:
                     p.getDependencies( depList, depType, single, maxDepth = maxDepth, depth = depth + 1 )
                     
         #if self.category != internalCategory:
-        if not self in depList and not PackageObjectBase.__str__(self) in PortageInstance.ignores:
+        if not self in depList and not PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
             depList.append( self )
 
         return depList
@@ -199,9 +199,14 @@ class Portage(object):
         self.subpackages = {}
         self.portages = {}
         self._CURRENT_MODULE = ()#todo refactor package constructor
-        self.ignores = set()
+        self.ignores = re.compile("")
         if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
-            self.ignores.update(emergeSettings.get("Portage","PACKAGE_IGNORES").split(";"))
+            self.ignores = Portage.generateIgnoreList(emergeSettings.get("Portage", "PACKAGE_IGNORES").split(";"))
+
+
+    @staticmethod
+    def generateIgnoreList(ignores):
+        return re.compile("(%s)" % "|".join( ["^%s$" % entry for entry in ignores]))
 
     def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """

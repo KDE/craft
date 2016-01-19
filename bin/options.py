@@ -60,22 +60,6 @@ class OptionsPortage(OptionsBase):
         else:
             return True
 
-    def getPackageIgnores(self):
-        """this results in a list, suitable for updating the portage.ignores"""
-        ret = []
-        for p in self._packages:
-            _c = portage.PortageInstance.getCategory(p)
-            if not _c:
-                _c = portage.PortageInstance.getCategory(p + "-pkg")
-                if not _c:
-                    _c = portage.PortageInstance.getCategory(p.replace("_", "-"))
-                    if _c: p = p.replace("_", "-")
-                else:
-                    p += "-pkg"
-            if not _c:
-                continue
-            ret.append("/".join(portage.getFullPackage(p)))
-        return ret
 
 ## options for enabling or disabling features of KDE
 ## in the future, a certain set of features make up a 'profile' together
@@ -302,10 +286,8 @@ class Options(object):
         self.__verbose = False
         self.__errors = False
         self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
-        self.__readFromList(["options.packages." + x.split('/')[-1] + "=False" for x in emergeSettings.get( "Portage", "PACKAGE_IGNORES", "").split(";")])
         self.readFromEnv()
         self.__readFromList(optionslist)
-        portage.PortageInstance.ignores.update(self.packages.getPackageIgnores())
 
     def readFromEnv( self ):
         """ read emerge related variables from environment and map them to public
@@ -318,7 +300,7 @@ class Options(object):
         self.__readFromList(_o)
 
     def isActive(self, package):
-        return not package in portage.PortageInstance.ignores
+        return not portage.PortageInstance.ignores.match(package)
 
     def __setInstanceAttribute( self, key, value ):
         """set attribute in an instance"""
