@@ -95,7 +95,7 @@ class DependencyPackage(PackageObjectBase):
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDepth = -1, depth = 0):
+    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDepth = -1, depth = 0, ignoredPackages = None):
         """ returns all dependencies """
         if depType == DependencyType.Runtime:
             children = self.runtimeChildren
@@ -107,7 +107,8 @@ class DependencyPackage(PackageObjectBase):
         single.add(self)
         for p in children:
             if not p in single and not p in depList\
-            and not PortageInstance.ignores.match(p.fullName()):
+                    and not PortageInstance.ignores.match(p.fullName())\
+                    and not p.fullName() in (ignoredPackages or []):
                 if maxDepth == -1:
                     p.getDependencies( depList, depType, single )
                 elif depth < maxDepth:
@@ -508,14 +509,14 @@ def parseListFile( filename ):
     return categoryList, packageList, infoDict
 
 
-def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDepth = -1 ):
+def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDepth = -1, ignoredPackages = None ):
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         EmergeDebug.debug("found package in category %s" % category, 2)
 
     pac = DependencyPackage( category, package, parent = None )
-    depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set() )
+    depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set(), ignoredPackages = ignoredPackages )
 
     depList.reverse()
     return depList

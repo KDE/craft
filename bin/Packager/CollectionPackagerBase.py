@@ -53,6 +53,8 @@ class CollectionPackagerBase( PackagerBase ):
         self._whitelist = []
         self._blacklist = []
 
+        self.ignoredPackages = []
+
         self.scriptname = None
 
     @property
@@ -107,7 +109,8 @@ class CollectionPackagerBase( PackagerBase ):
         depList = []
         for ( category, package, _, _ ) in runtimeDependencies:
             # we only want runtime dependencies since we want to build a binary installer
-            portage.solveDependencies( category, package, depList = depList, depType = DependencyType.Runtime)
+            portage.solveDependencies(category, package, depList = depList,
+                                      depType = DependencyType.Runtime, ignoredPackages = self.ignoredPackages)
         depList.reverse()
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
