@@ -135,16 +135,20 @@ file collection process is skipped, and only the installer is generated.
 
         EmergeDebug.new_line()
         EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
+
+        verboseString = "/V4" if EmergeDebug.verbose() > 0 else "/V3"
+
         if self.isInstalled:
-            if not utils.systemWithoutShell( "\"%s\" %s %s" % ( os.path.join(
-                    self.nsisInstallPath, 'makensis.exe' ), definestring,
+            makensisExe = os.path.join(self.nsisInstallPath, 'makensis.exe')
+            if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (makensisExe, verboseString, definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
                 EmergeDebug.die("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """
         self.isInstalled()
-        print("packaging using the NullsoftInstallerPackager")
+
+        EmergeDebug.debug("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
         self.preArchive()
