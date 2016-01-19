@@ -129,7 +129,7 @@ class SetupHelper( object ):
 
         self.addEnvVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
 
-        if emergeSettings.getboolean( "General", "EMERGE_USE_CCACHE", False ):
+        if emergeSettings.getboolean( "Compile", "UseCCache", False ):
             self.addEnvVar( "CCACHE_DIR",
                             emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( EmergeStandardDirs.emergeRoot( ),
                                                                                      "build", "CCACHE" ) ) )

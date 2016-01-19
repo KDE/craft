@@ -151,6 +151,8 @@ class EmergeConfig( object ):
         self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
         self.addAlias( "Paths", "Python", "Paths", "PYTHONPATH" )
         self.addAlias( "General", "Architecture", "General", "EMERGE_ARCHITECTURE" )
+        self.addAlias( "Compile", "UseNinja", "General", "EMERGE_USE_NINJA" )
+        self.addAlias( "Compile", "UseCCache", "General", "EMERGE_USE_CCACHE" )
 
 
     def _readSettings( self ):

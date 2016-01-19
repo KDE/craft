@@ -42,21 +42,16 @@ class AutoToolsBuildSystem(BuildSystemBase):
         else:
             self.enterBuildDir()
 
-        if self.noCopy:
-            sourcedir = self.sourceDir()
-        else:
-            sourcedir = self.buildDir()
-
-        configure = os.path.join(sourcedir, "configure")
+        configure = os.path.join(self.sourceDir(), "configure")
         self.shell.environment[ "CFLAGS" ] =  self.subinfo.options.configure.cflags + self.shell.environment[ "CFLAGS" ]
         self.shell.environment[ "CXXFLAGS" ] = self.subinfo.options.configure.cxxflags + self.shell.environment[ "CXXFLAGS" ]
         self.shell.environment[ "LDFLAGS" ] = self.subinfo.options.configure.ldflags + self.shell.environment[ "LDFLAGS" ]
         if self.subinfo.options.configure.bootstrap == True:
-            autogen = os.path.join(sourcedir, "autogen.sh")
+            autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)
-        #else:
-            #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
+                #else:
+                #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
 
 
         if self.buildInSource:

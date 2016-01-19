@@ -52,11 +52,6 @@ class VersionSystemSourceBase (SourceBase):
             if EmergeDebug.verbose() > 0:
                 print("cleaning %s" % self.buildDir())
             utils.cleanDirectory( self.buildDir() )
-        if not self.noCopy:
-            sourceDir = self.checkoutDir()
-            if EmergeDebug.verbose() > 0:
-                print("copying %s to %s" % (sourceDir, self.buildDir()))
-            utils.copyDir(sourceDir, self.buildDir())
         ret = self.applyPatches()
         if emergeSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret
@@ -115,16 +110,7 @@ class VersionSystemSourceBase (SourceBase):
 
     def sourceDir(self, index=0 ):
         EmergeDebug.trace("VersionSystemSourceBase sourceDir", 2)
-        if not self.noCopy:
-            # need to check index ?
-            sourcedir = self.workDir()
-
-            if self.subinfo.targetSourceSuffix() != None:
-                sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
-
-            return sourcedir
-        else:
-            sourcedir = self.checkoutDir( index )
+        sourcedir = self.checkoutDir( index )
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())

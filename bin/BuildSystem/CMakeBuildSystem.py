@@ -24,7 +24,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
+        if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
             return "Ninja"
         if compiler.isMSVC2015():
             if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:

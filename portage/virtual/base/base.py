@@ -27,9 +27,9 @@ class subinfo(info.infoclass):
                 self.buildDependencies['dev-util/mingw-w64']    = 'default'
             if emergeSettings.get("General","EMERGE_MAKE_PROGRAM" ,"" ) != "":
                 self.buildDependencies['dev-util/jom'] = 'default'
-            if emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
+            if emergeSettings.getboolean("Compile","UseNinja", False):
                 self.buildDependencies['dev-util/ninja'] = 'default'
-            if emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False):
+            if emergeSettings.getboolean("Compile","UseCCache", False):
                 self.buildDependencies['dev-util/ccache'] = 'default'
 
 

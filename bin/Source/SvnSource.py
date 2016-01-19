@@ -42,13 +42,7 @@ class SvnSource (VersionSystemSourceBase):
         """apply a patch to a svn repository checkout"""
         EmergeDebug.trace("SvnSource.applyPatch", 2)
         if fileName:
-            patchfile = os.path.join (self.packageDir(), fileName)
-            # @todo check if this could be merged into SourceBase.applyPatch
-            if self.noCopy:
-                srcdir = self.sourceDir()
-            else:
-                srcdir = self.buildDir()
-            return utils.applyPatch(srcdir, patchfile, patchdepth)
+            return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
 
     def setProxy(self):

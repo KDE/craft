@@ -18,8 +18,8 @@ class BuildSystemBase(EmergeBase):
         """constructor"""
         EmergeBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = emergeSettings.getboolean("General","EMERGE_USE_CCACHE", False ) and compiler.isMinGW()
-        self.supportsClang = emergeSettings.getboolean("General","UseClang", False )
+        self.supportsCCACHE = emergeSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
+        self.supportsClang = emergeSettings.getboolean("Compile","UseClang", False )
         self.buildSystemType = typeName
         self.envPath = ""
         if self.compiler() == "mingw":
@@ -29,7 +29,7 @@ class BuildSystemBase(EmergeBase):
 
 
     def _getmakeProgram(self):
-        if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False):
+        if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
             return "ninja"
         EMERGE_MAKE_PROGRAM = emergeSettings.get("General", "EMERGE_MAKE_PROGRAM", "" )
         if EMERGE_MAKE_PROGRAM != "" and self.subinfo.options.make.supportsMultijob:
@@ -84,7 +84,7 @@ class BuildSystemBase(EmergeBase):
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
         if maybeVerbose and EmergeDebug.verbose() > 1:
-            if self.supportsNinja and emergeSettings.getboolean("General","EMERGE_USE_NINJA", False ):
+            if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False ):
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

@@ -78,11 +78,6 @@ class EmergeBase(object):
         return emergeSettings.getboolean("General", "WorkOffline", False)
 
     @property
-    def noCopy(self):
-        return emergeSettings.getboolean("General", "EMERGE_NOCOPY", False)
-
-
-    @property
     def noFast(self):
         return emergeSettings.getboolean("General", "EMERGE_NOFAST", True )
 
