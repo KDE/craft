@@ -7,7 +7,7 @@ import re
 import types
 import fileinput
 
-from portage import DependencyType
+from portage import DependencyPackage, DependencyType
 import EmergeDebug
 from Packager.PackagerBase import *
 
@@ -112,6 +112,11 @@ class CollectionPackagerBase( PackagerBase ):
             portage.solveDependencies(category, package, depList = depList,
                                       depType = DependencyType.Runtime, ignoredPackages = self.ignoredPackages)
         depList.reverse()
+
+        # make sure current package is added to the list, too
+        if not self.package.endswith("-package"):
+            depList.append(DependencyPackage(self.category, self.package))
+
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
                 EmergeDebug.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
@@ -123,8 +128,10 @@ class CollectionPackagerBase( PackagerBase ):
                     self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
             EmergeDebug.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (_package.category, x.package, _package.version, _package.buildTarget), 2)
+
         if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
             imageDirs.append((os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler")), None, False))
+
         return imageDirs
 
     def read_whitelist( self, fname ):
