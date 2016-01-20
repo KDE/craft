@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
 
             if compiler.isMinGW():
                 self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            if emergeSettings.get("General","EMERGE_MAKE_PROGRAM" ,"" ) != "":
+            if emergeSettings.get("Compile","MakeProgram" ,"" ) == "jom":
                 self.buildDependencies['dev-util/jom'] = 'default'
             if emergeSettings.getboolean("Compile","UseNinja", False):
                 self.buildDependencies['dev-util/ninja'] = 'default'

@@ -122,7 +122,7 @@ class DependencyPackage(PackageObjectBase):
 
 def buildType():
     """return currently selected build type"""
-    return emergeSettings.get("General","EMERGE_BUILDTYPE")
+    return emergeSettings.get("Compile","BuildType")
 
 def rootDirectories():
     # this function should return all currently set portage directories
@@ -201,8 +201,8 @@ class Portage(object):
         self.portages = {}
         self._CURRENT_MODULE = ()#todo refactor package constructor
         self.ignores = re.compile("")
-        if ("Portage", "PACKAGE_IGNORES") in emergeSettings:
-            self.ignores = Portage.generateIgnoreList(emergeSettings.get("Portage", "PACKAGE_IGNORES").split(";"))
+        if ("Portage", "Ignores") in emergeSettings:
+            self.ignores = Portage.generateIgnoreList(emergeSettings.get("Portage", "Ignores").split(";"))
 
 
     @staticmethod

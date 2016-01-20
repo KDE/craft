@@ -91,7 +91,7 @@ class EmergeBase(object):
 
     @property
     def buildTests(self):
-        return emergeSettings.getboolean("General", "EMERGE_BUILDTESTS", False )
+        return emergeSettings.getboolean("Compile", "BuildTests", False )
 
 
     def __adjustPath(self, directory):
@@ -109,7 +109,7 @@ class EmergeBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        return emergeSettings.get("General","EMERGE_BUILDTYPE")
+        return emergeSettings.get("Compile","BuildType")
 
     def compiler(self):
         """deprecated"""

@@ -329,7 +329,7 @@ def main( ):
                          dest = "stayQuiet",
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
-                         default = emergeSettings.getboolean( "General", "EMERGE_BUILDTESTS", False ) )
+                         default = emergeSettings.getboolean( "Compile", "BuildTests", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument( "--offline", action = "store_true",
                          default = emergeSettings.getboolean( "General", "WorkOffline", False ),
@@ -339,8 +339,8 @@ def main( ):
                          default = emergeSettings.getboolean( "General", "EMERGE_FORCED", False ) )
     parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel", "Debug" ],
                          dest = "buildType",
-                         default = emergeSettings.get( "General", "EMERGE_BUILDTYPE", "RelWithDebInfo" ),
-                         help = "This will override the build type set by the environment option EMERGE_BUILDTYPE ." )
+                         default = emergeSettings.get( "Compile", "BuildType", "RelWithDebInfo" ),
+                         help = "This will override the build type set in your kdesettings.ini." )
     parser.add_argument( "-v", "--verbose", action = "count",
                          default = int( emergeSettings.get( "EmergeDebug", "Verbose", "0" ) ),
                          help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
@@ -412,7 +412,7 @@ def main( ):
     emergeSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
     emergeSettings.set( "General", "EMERGE_FORCED", args.forced )
     emergeSettings.set( "General", "EMERGE_BUILDTESTS", args.buildTests )
-    emergeSettings.set( "General", "EMERGE_BUILDTYPE", args.buildType )
+    emergeSettings.set( "Compile", "BuildType", args.buildType )
     emergeSettings.set( "PortageVersions", "DefaultTarget", args.target )
     emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
     emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )

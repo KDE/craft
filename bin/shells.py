@@ -68,7 +68,7 @@ class MSysShell(object):
 
     @property
     def buildType(self):
-        return emergeSettings.get("General", "EMERGE_BUILDTYPE","RelWithDebInfo")
+        return emergeSettings.get("Compile", "BuildType","RelWithDebInfo")
 
 
     def _environmentSetup(self):

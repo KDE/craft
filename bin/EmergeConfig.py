@@ -143,6 +143,19 @@ class EmergeConfig( object ):
         self._alias = dict( )
         self._readSettings( )
 
+        if self.version < 2:
+            self._setAliasesV1()
+        if self.version < 3:
+            self._setAliasesV2()
+
+    def _setAliasesV2(self):
+        self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )
+        self.addAlias( "Compile", "BuildTests", "General", "EMERGE_BUILDTESTS" )
+        self.addAlias( "Compile", "BuildType", "General", "EMERGE_BUILDTYPE" )
+        self.addAlias( "Portage", "Ignores", "Portage", "PACKAGE_IGNORES" )
+
+
+    def _setAliasesV1(self):
         self.setDefault( "General", "DUMP_SETTINGS", "False" )
         self.addAlias( "EmergeDebug", "Verbose", "General", "EMERGE_VERBOSE" )
         self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
@@ -153,7 +166,6 @@ class EmergeConfig( object ):
         self.addAlias( "General", "Architecture", "General", "EMERGE_ARCHITECTURE" )
         self.addAlias( "Compile", "UseNinja", "General", "EMERGE_USE_NINJA" )
         self.addAlias( "Compile", "UseCCache", "General", "EMERGE_USE_CCACHE" )
-
 
     def _readSettings( self ):
         if not os.path.exists( self.iniPath ):
@@ -181,7 +193,7 @@ class EmergeConfig( object ):
         for s in ["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns",
                 "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]:
             ignores += ";libs/qt5/%s" % s
-        self.set("Portage", "PACKAGE_IGNORES", self.get("Portage", "PACKAGE_IGNORES") + ignores)
+        self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ignores)
         
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \
@@ -189,6 +201,10 @@ class EmergeConfig( object ):
 
     def __contains_no_alias( self, key ):
         return self._config and self._config.has_section( key[ 0 ] ) and key[ 1 ] in self._config[ key[ 0 ] ]
+
+    @property
+    def version(self):
+        return int(self.get("Version", "EMERGE_SETTINGS_VERSION"))
 
     def addAlias( self, group, key, destGroup, destKey ):
         self._alias[ (group, key) ] = (destGroup, destKey)
@@ -200,13 +216,16 @@ class EmergeConfig( object ):
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                print( "Warning: %s/%s is deprecated and has been renamed to %s/%s" % (dg, dk, group, key ),
+                print( "Warning: %s/%s is deprecated and has been renamed to %s/%s, please update your kdesettings.ini" % (dg, dk, group, key ),
                        file = sys.stderr )
                 val = self.get( dg, dk, default )
+                if not group in self._config.sections():
+                    self._config.add_section(group)
                 self._config[ group ][ key ] = val
                 return val
         if default != None:
             return default
+        print(group, key)
         self._config[ group ][ key ]
 
     def getSection( self, group ):

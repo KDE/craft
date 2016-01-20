@@ -31,10 +31,10 @@ class BuildSystemBase(EmergeBase):
     def _getmakeProgram(self):
         if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
             return "ninja"
-        EMERGE_MAKE_PROGRAM = emergeSettings.get("General", "EMERGE_MAKE_PROGRAM", "" )
-        if EMERGE_MAKE_PROGRAM != "" and self.subinfo.options.make.supportsMultijob:
-            EmergeDebug.debug("set custom make program: %s" % EMERGE_MAKE_PROGRAM, 1)
-            return EMERGE_MAKE_PROGRAM
+        makeProgram = emergeSettings.get("Compile", "MakeProgram", "" )
+        if makeProgram != "" and self.subinfo.options.make.supportsMultijob:
+            EmergeDebug.debug("set custom make program: %s" % makeProgram, 1)
+            return makeProgram
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]

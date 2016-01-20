@@ -17,7 +17,7 @@ class EmergeTestBase(unittest.TestCase):
         EmergeConfig.EmergeStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
         os.environ["KDEROOT"] = self.kdeRoot.name
         EmergeConfig.emergeSettings.set("General", "EMERGE_PORTAGE_ROOT", os.path.join(emergeRoot, "emerge", "portage") )
-        EmergeConfig.emergeSettings.set("General","EMERGE_BUILDTYPE", "RelWithDebInfo")
+        EmergeConfig.emergeSettings.set("Compile","BuildType", "RelWithDebInfo")
 
     def tearDown(self):
         del self.kdeRoot
