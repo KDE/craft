@@ -204,7 +204,7 @@ class EmergeConfig( object ):
 
     @property
     def version(self):
-        return int(self.get("Version", "EMERGE_SETTINGS_VERSION"))
+        return int(self.get("Version", "EMERGE_SETTINGS_VERSION", 1))
 
     def addAlias( self, group, key, destGroup, destKey ):
         self._alias[ (group, key) ] = (destGroup, destKey)
@@ -213,6 +213,7 @@ class EmergeConfig( object ):
         if self.__contains_no_alias((group, key)):
             #print((group,key,self._config[ group ][ key ]))
             return self._config[ group ][ key ]
+
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
@@ -223,9 +224,10 @@ class EmergeConfig( object ):
                     self._config.add_section(group)
                 self._config[ group ][ key ] = val
                 return val
+
         if default != None:
             return default
-        print(group, key)
+
         self._config[ group ][ key ]
 
     def getSection( self, group ):
