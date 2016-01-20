@@ -3,10 +3,6 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'git://github.com/KDAB/GammaRay.git'
-        self.targets['1.0.1'] = 'https://github.com/KDAB/GammaRay/tarball/v1.0.1'
-        self.archiveNames['1.0.1'] = 'GammaRay-v1.0.1.tar.gz'
-        self.targetInstSrc['1.0.1'] = 'KDAB-GammaRay-6d4549b'
-        self.targetDigests['1.0.1'] = 'bccded4e9764c69774811826497c133985e8dc53'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
