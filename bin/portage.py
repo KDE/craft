@@ -200,10 +200,9 @@ class Portage(object):
         self.subpackages = {}
         self.portages = {}
         self._CURRENT_MODULE = ()#todo refactor package constructor
-        self.ignores = re.compile("")
+        self.ignores = re.compile("a^")
         if ("Portage", "Ignores") in emergeSettings:
             self.ignores = Portage.generateIgnoreList(emergeSettings.get("Portage", "Ignores").split(";"))
-
 
     @staticmethod
     def generateIgnoreList(ignores):
