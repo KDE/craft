@@ -85,11 +85,14 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
     return True
 
 
-def createDigestFile(path, algorithm=HashAlgorithm.SHA1):
+def createDigestFiles(path, algorithms=None):
     """creates a sha1 diget file"""
-    digets = digestFile(path, algorithm)
-    with open(path + algorithm.fileEnding(), "wt+") as f:
-        f.write("%s\n" % digets)
+    if algorithms == None:
+        algorithms = HashAlgorithm.__members__.values()
+    for algorithm in algorithms:
+        digets = digestFile(path, algorithm)
+        with open(path + algorithm.fileEnding(), "wt+") as f:
+            f.write("%s\n" % digets)
 
 
 def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorithm.SHA256):

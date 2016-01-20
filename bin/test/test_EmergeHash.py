@@ -5,7 +5,7 @@ import random
 import tempfile
 import contextlib
 import io
-
+import collections
 import EmergeHash
 import EmergeDebug
 import EmergeTestBase
@@ -18,18 +18,21 @@ class EmergeHashTest(EmergeTestBase.EmergeTestBase):
         data = ""
         for i in range(0, 1000):
             data += str(random.random())
-        self.tmpFile = tempfile.NamedTemporaryFile("wt+", delete=False)
-        self.tmpFile.write(data)
-        self.tmpFile.close()
+        self.tmpDir = tempfile.TemporaryDirectory()
+        #self.tmpDir = collections.namedtuple("tmp", ["name"])
+        #self.tmpDir.name = "R:/tmp"
+        self.tmpFile = os.path.join(self.tmpDir.name, "tmpFile")
+        with open(self.tmpFile, "wt+") as tmpFIle:
+            tmpFIle.write(data)
 
 
     def tearDown(self):
-        del self.tmpFile
+        del self.tmpDir
         super().tearDown()
 
 
     def hashTest(self, hash, algorithm):
-        path, name = os.path.split(self.tmpFile.name)
+        path, name = os.path.split(self.tmpFile)
         self.assertEquals(EmergeHash.checkFilesDigests(path, [name], hash, algorithm), True)
 
 
@@ -53,9 +56,15 @@ class TestAPI(EmergeHashTest):
             EmergeHash.HashAlgorithm.SHA512)
 
     def test_printFilesDigests(self):
-        path, name = os.path.split(self.tmpFile.name)
+        path, name = os.path.split(self.tmpFile)
         log = io.StringIO()
         with contextlib.redirect_stdout(log):
             EmergeHash.printFilesDigests(path, [name], "test", EmergeHash.HashAlgorithm.SHA256)
         self.assertEquals("self.targetDigests['test'] = (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], EmergeHash.HashAlgorithm.SHA256)\n",
                           log.getvalue())
+
+    def test_createDigestFiles(self):
+        # TODO: check file content
+        EmergeHash.createDigestFiles(self.tmpFile)
+        for algorithms in EmergeHash.HashAlgorithm.__members__.values():
+            self.assertEquals(os.path.exists(self.tmpFile + algorithms.fileEnding()), True)

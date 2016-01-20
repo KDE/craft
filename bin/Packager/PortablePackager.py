@@ -41,5 +41,5 @@ Packager for portal 7zip archives
         self.internalCreatePackage()
 
         self.createPortablePackage()
-        EmergeHash.createDigestFile(os.path.join(self.packageDestinationDir(), self.defines["setupname"]))
+        EmergeHash.createDigestFiles(os.path.join(self.packageDestinationDir(), self.defines["setupname"]))
         return True

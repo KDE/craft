@@ -172,5 +172,5 @@ file collection process is skipped, and only the installer is generated.
         self.internalCreatePackage()
         self.preArchive()
         self.generateNSISInstaller()
-        EmergeHash.createDigestFile(self.defines["setupname"])
+        EmergeHash.createDigestFiles(self.defines["setupname"])
         return True
