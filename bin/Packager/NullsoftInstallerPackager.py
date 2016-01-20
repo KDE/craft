@@ -93,13 +93,31 @@ file collection process is skipped, and only the installer is generated.
         CloseKey(key)
         return True
 
+    def getVCRedistLocation(self, compiler):
+        if not compiler.isMSVC():
+            return None;
+
+        if compiler.isMSVC2015():
+            if compiler.isX64():
+                return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x64.exe"
+            elif compiler.isX86():
+                return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x86.exe"
+
+        raise NotImplementedError("Unsupported compiler: %s" % compiler.getCompilerName())
+
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
+
         self.isInstalled()
+
+        if not self.scriptname:
+            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
+
         if self.package.endswith( "-package" ):
             shortPackage = self.package[ : -8 ]
         else:
             shortPackage = self.package
+
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = "%s-%s-setup-%s.exe" % ( shortPackage, compiler.architecture(), self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
@@ -120,9 +138,10 @@ file collection process is skipped, and only the installer is generated.
             self.defines[ "icon" ] = "!define MUI_ICON \"%s\"" % self.defines[ "icon" ]
         else:
             self.defines[ "icon" ] = ""
-        if not self.scriptname:
-            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
         self.defines[ "architecture" ] = compiler.architecture()
+        self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
+
+        self.defines[ "vcredist" ] = self.getVCRedistLocation(compiler) or "none"
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):

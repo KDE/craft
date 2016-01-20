@@ -54,7 +54,7 @@ InstallDirRegKey HKLM "${regkey}" "Install_Dir"
 Var /global ExistingInstallation
 
 Function .onInit
-!if ${compilingFor} == "x64"
+!if ${architecture} == "x64"
   ${IfNot} ${RunningX64}
   MessageBox MB_OK|MB_ICONEXCLAMATION "This installer can only be run on 64-bit Windows."
   Abort
