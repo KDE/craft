@@ -213,7 +213,7 @@ class CollectionPackagerBase( PackagerBase ):
             directory
         """
         utils.createDir( destDir )
-        EmergeDebug.debug("Copying from %s ..." % (srcDir))
+        EmergeDebug.debug("Copying %s -> %s" % (srcDir, destDir))
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
