@@ -14,7 +14,7 @@ class PackagerBase(EmergeBase):
         if self.package.endswith( "-package" ):
             return self.imageDir() # compat behavior
 
-        return os.path.join( self.buildRoot(), "archiveDir" )
+        return os.path.join( self.buildRoot(), "archive" )
 
     def getPackageVersion(self):
         """ return version information for the currently used package"""
