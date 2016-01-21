@@ -61,7 +61,7 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def createPackage(self):
         self.defines[ "productname" ] = "KDevelop"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
-        self.defines[ "icon" ] = "kdevelop.ico"
+        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
