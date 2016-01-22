@@ -94,16 +94,12 @@ file collection process is skipped, and only the installer is generated.
         return True
 
     def getVCRedistLocation(self, compiler):
-        if not compiler.isMSVC():
-            return None;
-
         if compiler.isMSVC2015():
             if compiler.isX64():
                 return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x64.exe"
             elif compiler.isX86():
                 return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x86.exe"
-
-        raise NotImplementedError("Unsupported compiler: %s" % compiler.getCompilerName())
+        return None
 
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
