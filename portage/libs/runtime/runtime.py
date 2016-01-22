@@ -63,6 +63,11 @@ class Package( BinaryPackageBase ):
                     "msvcr100%s.dll" % postfix,
                     "msvcp100%s.dll" % postfix
                 ]
+            elif compiler.isMSVC2013():
+                files = [
+                    "msvcr120%s.dll" % postfix,
+                    "msvcp120%s.dll" % postfix
+                ]
             elif compiler.isMSVC2015():
                 files = [
                     "concrt140%s.dll" % postfix,
@@ -70,9 +75,8 @@ class Package( BinaryPackageBase ):
                     "vccorlib140%s.dll" % postfix,
                     "vcruntime140%s.dll" % postfix
                 ]
-
         for file in files:
-            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) ,False)       
+            utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ), False )
 
         return True
 
