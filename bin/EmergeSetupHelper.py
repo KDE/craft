@@ -107,6 +107,7 @@ class SetupHelper( object ):
                 os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) + crossmodifier ]) )
             if status != 0:
                 print( "Failed to setup msvc compiler", file = sys.stderr )
+                exit(1)
             out = self.stringToEnv( result )
 
         elif compiler.isIntel( ):
@@ -117,6 +118,7 @@ class SetupHelper( object ):
                     programFiles, architectures[ compiler.architecture( ) ]) )
             if status != 0:
                 print( "Failed to setup intel compiler", file = sys.stderr )
+                exit(1)
             out = self.stringToEnv( result )
         elif compiler.isMinGW( ):
             out = { "Path": os.getenv( "Path" ) }
