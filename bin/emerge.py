@@ -50,60 +50,65 @@ def doExec( package, action, continueFlag = False ):
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
-    EmergeDebug.debug_line()
-    EmergeDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
+    with EmergeTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
+        EmergeDebug.debug_line()
+        EmergeDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
 
-    success = True
-    package = portage.getPackageInstance( category, packageName )
-    if package is None:
-        raise portage.PortageException( "Package not found", category, packageName )
+        success = True
+        package = portage.getPackageInstance( category, packageName )
+        if package is None:
+            raise portage.PortageException( "Package not found", category, packageName )
 
-    if buildAction in [ "all", "full-package", "update", "update-all" ]:
-        success = success and doExec( package, "fetch", continueFlag )
-        if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
-            revision = package.sourceVersion( )
-            for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
-                if p.getRevision( ) == revision:
-                    EmergeDebug.info("Skipping further actions, package is up-to-date")
-                    return True
-
-        success = success and doExec( package, "unpack", continueFlag )
-        success = success and doExec( package, "compile" )
-        success = success and doExec( package, "cleanimage" )
-        success = success and doExec( package, "install" )
-        if buildAction in [ "all", "update", "update-all" ]:
+        if buildAction in [ "all", "full-package", "update", "update-all" ]:
+            success = success and doExec( package, "fetch", continueFlag )
+            skip = False
+            if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
+                revision = package.sourceVersion( )
+                for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
+                    if p.getRevision( ) == revision:
+                        EmergeDebug.info("Skipping further actions, package is up-to-date")
+                        skip = True
+            if not skip:
+                success = success and doExec( package, "unpack", continueFlag )
+                success = success and doExec( package, "compile" )
+                success = success and doExec( package, "cleanimage" )
+                success = success and doExec( package, "install" )
+                if buildAction in [ "all", "update", "update-all" ]:
+                    success = success and doExec( package, "qmerge" )
+                if buildAction == "full-package":
+                    success = success and doExec( package, "package" )
+                success = success or continueFlag
+        elif buildAction in [ "fetch", "unpack", "configure", "compile", "make", "checkdigest",
+                              "dumpdeps", "test",
+                              "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
+                              "geturls",
+                              "print-revision",
+                              "print-files"
+                            ]:
+            success = doExec( package, buildAction, continueFlag )
+        elif buildAction == "install":
+            success = doExec( package, "cleanimage" )
+            success = success and doExec( package, "install", continueFlag )
+        elif buildAction == "qmerge":
+            #success = doExec( package, "cleanimage" )
+            #success = success and doExec( package, "install")
             success = success and doExec( package, "qmerge" )
-        if buildAction == "full-package":
-            success = success and doExec( package, "package" )
-        success = success or continueFlag
-    elif buildAction in [ "fetch", "unpack", "configure", "compile", "make", "checkdigest",
-                          "dumpdeps", "test",
-                          "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
-                          "geturls",
-                          "print-revision",
-                          "print-files"
-                        ]:
-        success = doExec( package, buildAction, continueFlag )
-    elif buildAction == "install":
-        success = doExec( package, "cleanimage" )
-        success = success and doExec( package, "install", continueFlag )
-    elif buildAction == "qmerge":
-        #success = doExec( package, "cleanimage" )
-        #success = success and doExec( package, "install")
-        success = success and doExec( package, "qmerge" )
-    elif buildAction == "print-source-version":
-        print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
-        success = True
-    elif buildAction == "print-package-version":
-        print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
-        success = True
-    elif buildAction == "print-targets":
-        portage.printTargets( category, packageName )
-        success = True
-    else:
-        success = EmergeDebug.error("could not understand this buildAction: %s" % buildAction)
+        elif buildAction == "print-source-version":
+            print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
+            success = True
+        elif buildAction == "print-package-version":
+            print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
+            success = True
+        elif buildAction == "print-targets":
+            portage.printTargets( category, packageName )
+            success = True
+        else:
+            success = EmergeDebug.error("could not understand this buildAction: %s" % buildAction)
 
-    return success
+        timer.stop()
+        utils.notify( "Emerge %s %s" % (buildAction, "succeeded" if success else "failed"),
+                      "%s of %s/%s %s after %s" % ( buildAction, category, packageName, "succeeded" if success else "failed", timer), buildAction)
+        return success
 
 
 def handleSinglePackage( packageName, action, args ):
@@ -211,14 +216,8 @@ def handleSinglePackage( packageName, action, args ):
         # This is still a bit problematic since packageName might not be a valid
         # package
         # for list files, we also want to handle fetching & packaging per package
-
         if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
-            utils.notify( "Emerge %s failed" % action, "%s of %s/%s failed" % (
-                action, info.category, info.package), action )
             return False
-        utils.notify( "Emerge %s finished" % action,
-                      "%s of %s/%s finished" % ( action, info.category, info.package),
-                      action )
 
     else:
         if args.dumpDepsFile:
@@ -254,13 +253,7 @@ def handleSinglePackage( packageName, action, args ):
                     if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
                         EmergeDebug.error("fatal error: package %s/%s %s failed" % \
                                           ( info.category, info.package, action ))
-                        utils.notify( "Emerge build failed",
-                                      "Build of %s/%s failed" % ( info.category, info.package),
-                                      action )
                         return False
-                    utils.notify( "Emerge build finished",
-                                  "Build of %s/%s finished" % ( info.category, info.package),
-                                  action )
 
     EmergeDebug.new_line()
     return True
