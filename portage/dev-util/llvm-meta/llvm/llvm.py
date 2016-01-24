@@ -13,9 +13,6 @@ class subinfo(info.infoclass):
             self.patchToApply[ ver ] = [("use-DESTDIR-on-windows-3.8.patch", 1)]
 
 
-        if compiler.isMSVC2015():
-            self.defaultTarget = 'release_37'
-
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/lld'] = 'default'
