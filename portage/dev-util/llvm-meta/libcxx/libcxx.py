@@ -9,10 +9,7 @@ class subinfo(info.infoclass):
         
         for ver in self.svnTargets.keys() | self.targets.keys():
             self.patchToApply[ ver ] = [("fix_shortpath.patch", 1), ("0041-libcxx-add-support-for-mingw-w64.patch", 1)]
-        
-        if compiler.isMSVC2015():
-            self.defaultTarget = 'release_37'
-        
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['dev-util/llvm'] = 'default'

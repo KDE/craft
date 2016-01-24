@@ -17,9 +17,6 @@ class subinfo(info.infoclass):
                                              ("0017-Fix-PR23472-by-emitting-initialized-variable-and-its.patch", 1)]
 
 
-        if compiler.isMSVC2015():
-            self.defaultTarget = 'release_37'
-
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['dev-util/llvm'] = 'default'
