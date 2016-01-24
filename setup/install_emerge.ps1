@@ -1,11 +1,24 @@
-﻿$Script:minPythonVersion = "3.5.0"
-$Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1.exe"
-
+$Script:minPythonVersion = "3.5.0"
+if($env:PROCESSOR_ARCHITECTURE.contains("64"))
+{
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1-embed-amd64.zip"
+}
+else
+{
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1-embed-win32.zip"
+}
+Write-Host $Script:pythonUrl
 $Script:installRoot = "C:\kde"
 #####
 $Script:python = where.exe python 2>$NULL
 $Script:pythonVersion = "0"
 
+#http://stackoverflow.com/a/27768628
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+function Unzip([string]$zipfile, [string]$outpath)
+{
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
 
 function FetchPython()
 {
@@ -14,13 +27,13 @@ function FetchPython()
         0))
         {
             0 {
-                $installer = "$Script:installRoot\download\{0}" -f ( $Script:pythonUrl.SubString($Script:pythonUrl.LastIndexOf("/")+1))
-                if(!(Test-Path -Path $installer))
+                $archive = "$Script:installRoot\download\{0}" -f ( $Script:pythonUrl.SubString($Script:pythonUrl.LastIndexOf("/")+1))
+                if(!(Test-Path -Path $archive))
                 {
-                    Invoke-WebRequest $Script:pythonUrl -OutFile $installer
+                    Invoke-WebRequest $Script:pythonUrl -OutFile $archive
                 }
                 $Script:python = "$Script:installRoot\python\python.exe"
-                & "$installer" "/quiet" "InstallAllUsers=0" "TargetDir=$Script:installRoot\python\" "Shortcuts=0" "AssociateFiles=0" "Include_launcher=0"
+                Unzip "$archive" "$Script:installRoot\python\"
                 break
             }
             1 {
