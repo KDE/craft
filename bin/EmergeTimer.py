@@ -20,7 +20,8 @@ class Timer(object):
             EmergeDebug.info( "Task: %s stopped after: %s" % (self.name , self))
 
     def __str__(self):
-        return datetime.time(0, 0, self.duration.seconds).strftime("%H:%M:%S")
+        out = str(self.duration)
+        return out[:out.rfind(".")]#remove milli seconds
 
     @property
     def duration(self):
