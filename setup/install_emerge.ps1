@@ -22,7 +22,7 @@ function Unzip([string]$zipfile, [string]$outpath)
 
 function FetchPython()
 {
-    switch($host.UI.PromptForChoice("Get python", "Do you wan't us to isnatll python for you or do you want to manually specify the location of your python installation?",
+    switch($host.UI.PromptForChoice("Get python", "Do you wan't us to install python for you or do you want to manually specify the location of your python installation?",
          @("&Install Python", "&Specify Installation", "&Quit"),
         0))
         {
