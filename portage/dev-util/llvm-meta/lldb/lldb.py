@@ -15,8 +15,8 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines ="-DLLDB_PATH_TO_LLVM_BUILD=\"%s\"" % portage.getPackageInstance('dev-util', 'llvm').buildDir().replace("\\", "/")
-        self.subinfo.options.configure.defines +=" -DLLDB_PATH_TO_CLANG_BUILD=\"%s\"" % portage.getPackageInstance('dev-util', 'clang').buildDir().replace("\\", "/")
+        self.subinfo.options.configure.defines ="-DLLDB_PATH_TO_LLVM_BUILD=\"%s\" -DLLDB_PATH_TO_LLVM_SOURCE=\"%s\"" % (EmergeStandardDirs.emergeRoot().replace("\\", "/"), portage.getPackageInstance('dev-util', 'llvm').sourceDir().replace("\\", "/"))
+        self.subinfo.options.configure.defines +=" -DLLDB_PATH_TO_CLANG_BUILD=\"%s\" -DLLDB_PATH_TO_CLANG_SOURCE=\"%s\"" % (EmergeStandardDirs.emergeRoot().replace("\\", "/"), portage.getPackageInstance('dev-util', 'clang').sourceDir().replace("\\", "/"))
 
 
 
