@@ -218,6 +218,12 @@ class OptionsCMake(OptionsBase):
         ## use CTest instead of the make utility
         self.useCTest = emergeSettings.getboolean("General","EMERGE_USECTEST", False )
 
+
+class OptionsQMake(OptionsBase):
+    def __init__(self):
+        ## specify a special .pro file if multiple are avalible
+        self.proFile = None
+
 class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
@@ -246,6 +252,8 @@ class Options(object):
         self.merge = OptionsMerge()
         ## options of the cmake buildSystem
         self.cmake = OptionsCMake()
+        ## options of the cmake buildSystem
+        self.qmake = OptionsQMake()
         ## options of the git module
         self.git = OptionsGit()
 

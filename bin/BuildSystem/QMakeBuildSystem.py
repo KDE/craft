@@ -32,8 +32,10 @@ class QMakeBuildSystem(BuildSystemBase):
             configureDefines += ' "CONFIG += debug"'
             configureDefines += ' "CONFIG -= release"'
 
-        
-        command = "qmake -makefile %s %s" % (self.configureSourceDir(), self.configureOptions(configureDefines))
+        proFile = self.configureSourceDir()
+        if self.subinfo.options.qmake.proFile:
+            proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.qmake.proFile)
+        command = "qmake -makefile %s %s" % (proFile, self.configureOptions(configureDefines))
 
         return self.system( command, "configure" )
 
