@@ -15,10 +15,12 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
 
 
-from Package.QMakePackageBase import *
+from Package.Qt5CorePackageBase import *
 
-class Package( QMakePackageBase ):
+class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
-        QMakePackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = "dev-utils"
+        Qt5CorePackageBase.__init__( self )
         self.subinfo.options.qmake.proFile = "qbs.pro"
+        self.subinfo.options.configure.defines = " \"QBS_INSTALL_PREFIX = %s\" " % EmergeStandardDirs.emergeRoot().replace("\\", "/")
+
+
