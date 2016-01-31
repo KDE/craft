@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "CMake, the cross-platform, open-source build system."
         self.homepage = "http://www.cmake.org/"
 
-        self.defaultTarget = '3.4.3'
+        self.defaultTarget = 'gitHEAD'
 
 
     def setDependencies( self ):
