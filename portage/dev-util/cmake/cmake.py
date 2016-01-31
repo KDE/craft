@@ -3,7 +3,7 @@ import EmergeHash
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ['3.2.1', '3.2.2', '3.2.3', '3.3.1', '3.4.1']:
+        for ver in ['3.2.1', '3.2.2', '3.2.3', '3.3.1', '3.4.1','3.4.3']:
             self.targets[ver] = 'http://www.cmake.org/files/v%s/cmake-%s-win32-x86.zip' % (ver[:3], ver)
             self.targetMergeSourcePath[ver] = 'cmake-%s-win32-x86' % ver
             self.targetDigestUrls[ver] = ("https://cmake.org/files/v%s/cmake-%s-SHA-256.txt"% (ver[:3], ver), EmergeHash.HashAlgorithm.SHA256)
@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "CMake, the cross-platform, open-source build system."
         self.homepage = "http://www.cmake.org/"
 
-        self.defaultTarget = '3.4.1'
+        self.defaultTarget = '3.4.3'
 
 
     def setDependencies( self ):
