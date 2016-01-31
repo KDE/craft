@@ -12,20 +12,11 @@ from Package.Qt5CorePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-
-        for ver in self.versionInfo.tarballs():
-            if ver.startswith("5.6"):
-                self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
-            else:
-                self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
-                if ver.startswith("5.4"):
-                    self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
-                if ver.startswith("5.5"):
-                    self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
-                
             
-        for ver in self.versionInfo.branches():
-            if ver.startswith("5.6"):
+        for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
+            if ver.startswith("5.6.0"):
+                self.patchToApply[ ver ] = [("qtbase-5.6.0.patch" , 1)]
+            elif ver.startswith("5.6"):
                 self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
             else:
                 self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
@@ -33,17 +24,6 @@ class subinfo(info.infoclass):
                     self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
                 if ver.startswith("5.5"):
                     self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
-            
-        for ver in self.versionInfo.tags():
-            if ver.startswith("5.6"):
-                self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
-            else:
-                self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
-                if ver.startswith("5.4"):
-                    self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
-                if ver.startswith("5.5"):
-                    self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
-        
             
         
         self.shortDescription = "a cross-platform application framework"
