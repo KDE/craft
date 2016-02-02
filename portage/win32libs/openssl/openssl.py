@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         def addTarget(baseUrl, ver):
             self.targets[ver] = baseUrl + 'openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'openssl-' + ver
-            self.targetDigestUrls[ver] = baseUrl + 'openssl-' + ver + '.tar.gz.sha1'
+            self.targetDigestUrls[ver] = ([baseUrl + 'openssl-' + ver + '.tar.gz.sha256'], EmergeHash.HashAlgorithm.SHA256)
 
         # older versions  -> inside old/major.minor.patch/
         for ver in ['1.0.2a', '1.0.2c', '1.0.2d']:
@@ -20,13 +20,13 @@ class subinfo(info.infoclass):
             addTarget(baseUrl, ver)
 
         # latest versions -> inside source/
-        for ver in ['0.9.8zh', '1.0.0t', '1.0.1q', '1.0.2e']:
+        for ver in ['0.9.8zh', '1.0.0t', '1.0.1q', '1.0.2e','1.0.2f']:
             baseUrl = 'ftp://ftp.openssl.org/source/'
             addTarget(baseUrl, ver)
 
         self.shortDescription = "The OpenSSL runtime environment"
 
-        self.defaultTarget = '1.0.2d'
+        self.defaultTarget = '1.0.2f'
 
     def setDependencies(self):
         self.buildDependencies['virtual/base'] = 'default'
