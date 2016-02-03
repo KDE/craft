@@ -23,8 +23,10 @@ class subinfo(info.infoclass):
                 if ver.startswith("5.4"):
                     self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
                 if ver.startswith("5.5"):
-                    self.patchToApply[ ver ].append(("qmake-5.5.patch" , 1))
-            
+                    self.patchToApply[ ver ] += [
+                        ("qmake-5.5.patch" , 1),
+                        ("0001-Fix-toDisplayString-QUrl-PreferLocalFile-on-Win.patch", 1)
+                    ]
         
         self.shortDescription = "a cross-platform application framework"
 
