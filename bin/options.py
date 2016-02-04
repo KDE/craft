@@ -111,6 +111,7 @@ class OptionsConfigure(OptionsBase):
     def __init__(self):
         ## with this option additional definitions could be added to the configure commmand line
         self.defines = None
+        self.staticDefine = None
         ## set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of
@@ -219,6 +220,7 @@ class OptionsCMake(OptionsBase):
         self.useCTest = emergeSettings.getboolean("General","EMERGE_USECTEST", False )
 
 
+
 class OptionsQMake(OptionsBase):
     def __init__(self):
         ## specify a special .pro file if multiple are avalible
@@ -288,7 +290,7 @@ class Options(object):
 
         ## there is a special option available already
         self.buildTools = False
-        self.buildStatic = False
+        self.buildStatic = emergeSettings.getboolean("Compile", "Static")
 
         #### end of user configurable part
         self.__verbose = False

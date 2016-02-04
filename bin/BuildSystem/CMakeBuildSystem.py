@@ -107,7 +107,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 options += " -DKDE4_BUILD_TESTS=1 "
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
-        if self.subinfo.options.buildStatic:
+        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticDefine:
             options += " " + self.subinfo.options.configure.staticDefine + " "
         if self.subinfo.options.configure.onlyBuildTargets :
             options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
