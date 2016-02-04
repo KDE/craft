@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
-        self.dependencies['libs/qtwebkit'] = 'default'
+        #self.dependencies['libs/qtwebkit'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *
