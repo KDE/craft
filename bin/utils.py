@@ -180,7 +180,6 @@ def unpackFiles( downloaddir, filenames, workdir ):
     """unpack (multiple) files specified by 'filenames' from 'downloaddir' into 'workdir'"""
 
     for filename in filenames:
-        EmergeDebug.debug("unpacking this file: %s" % filename, 1)
         if ( not unpackFile( downloaddir, filename, workdir ) ):
             return False
 
@@ -188,8 +187,9 @@ def unpackFiles( downloaddir, filenames, workdir ):
 
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
-    ( shortname, ext ) = os.path.splitext( filename )
+    EmergeDebug.debug("unpacking this file: %s" % filename)
 
+    ( shortname, ext ) = os.path.splitext( filename )
     if ( ext == ".7z" ):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     elif not ext == "":
