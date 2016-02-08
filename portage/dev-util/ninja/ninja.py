@@ -1,45 +1,29 @@
 # -*- coding: utf-8 -*-
+
 import os
 
 import info
-from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        """ """
-        self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"        
-        for ver in ["1.6.0" ]:
-            self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
-            self.targetInstSrc[ ver ] = "ninja-%s" % ver
-            self.archiveNames[ ver] = "ninja-%s.tar.gz" % ver
-
-        if compiler.isMSVC2015():
-            self.defaultTarget = 'gitHEAD'
-        else:
-            self.defaultTarget = ver
-        self.targetDigests['1.6.0'] = 'a6ff055691f6d355234298c21cc18961b4ca2ed9'
-
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies['virtual/bin-base'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
+    def setTargets( self ):
+        for ver in ["1.6.0" ]:
+            self.targets[ ver ] = "https://github.com/ninja-build/ninja/releases/download/v%s/ninja-win.zip" % ver
+            self.targetInstallPath[ ver ] = "bin"
+            self.archiveNames[ ver] = "ninja-win%s.zip" % ver
+
+        self.targetDigests['1.6.0'] = (['18f55bc5de27c20092e86ace8ef3dd3311662dc6193157e3b65c6bc94ce006d5'], EmergeHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "1.6.0"
+
+
+
+from Package.BinaryPackageBase import *
+
+class Package(BinaryPackageBase):
+    def __init__( self):
+        BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
-    def configure(self):
-        return True
-        
-    def make(self):
-        self.enterSourceDir()
-        command = "python configure.py --bootstrap"
-        if compiler.isMinGW():
-            command += " --platform=mingw"
-        print(command)
-        return self.system( command, "make" )
-        
-    def install(self):
-        utils.copyFile(os.path.join(self.sourceDir(),"ninja.exe"),os.path.join(self.imageDir(),"bin","ninja.exe"))
-        return True
-        
