@@ -21,9 +21,4 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def install(self):
-        if not BinaryPackageBase.install(self):
-            return False
-        if not utils.moveDir(os.path.join(self.imageDir(),self.subinfo.targetInstSrc[self.buildTarget] ),os.path.join(self.imageDir(), "bin")) :
-            return False
-        utils.rmtree(os.path.join(self.imageDir(),self.subinfo.targetInstSrc[self.buildTarget] ))
-        return True
+        return utils.copyDir(self.sourceDir(), os.path.join(self.imageDir(), "bin"))

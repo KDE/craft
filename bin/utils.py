@@ -472,6 +472,8 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
                 EmergeDebug.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
 
+    return True
+
 def mergeTree(srcdir, destdir):
     """ copy directory from @p srcdir to @p destdir
 
