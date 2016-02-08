@@ -88,11 +88,6 @@ class CollectionPackagerBase( PackagerBase ):
         """ return base directory name for package related image directory """
         directory = "image"
 
-        # we assume that binary packages are for all compiler and targets
-        ## \todo add image directory support for using binary packages for a specific compiler and build type
-        if package.buildSystemType == 'binary':
-            return directory
-
         if package.subinfo.options.useCompilerType == True:
             directory += '-' + compiler.getCompilerName()
         if package.subinfo.options.useBuildType == True:
