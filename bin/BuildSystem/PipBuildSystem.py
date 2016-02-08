@@ -26,8 +26,11 @@ class PipBuildSystem(BuildSystemBase):
         if self.allowExternal:
             args += " --allow-all-external "
         for path  in pythons:
-            command = "%s install --upgrade %s %s" % (os.path.join(path, "Scripts", "pip"), args, self.subinfo.package)
-            EmergeDebug.debug(command)
+            pipExe = os.path.join(path, "Scripts", "pip.exe")
+            if not os.path.exists(pipExe):
+                pipExe = os.path.join(path, "pip.exe") # Chocolatey installs pip.exe next to python.exe
+
+            command = "%s install --upgrade %s %s" % (pipExe, args, self.subinfo.package)
             ok = ok and utils.system(command)
         return ok
 
