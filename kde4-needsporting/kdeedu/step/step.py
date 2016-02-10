@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
+        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'

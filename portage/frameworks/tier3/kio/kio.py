@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["frameworks/karchive"] = "default"
         self.dependencies["frameworks/kbookmarks"] = "default"
         self.dependencies["frameworks/kcodecs"] = "default"

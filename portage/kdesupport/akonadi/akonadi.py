@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
+        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'

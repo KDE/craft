@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qttools"] = "default" # for Qt5Designer
         self.dependencies["frameworks/kitemviews"] = "default"

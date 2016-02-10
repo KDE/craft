@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.buildDependencies['dev-util/extra-cmake-modules'] = 'default'
+        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.dependencies['libs/qttools'] = 'default'

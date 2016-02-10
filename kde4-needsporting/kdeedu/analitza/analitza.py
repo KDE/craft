@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['dev-util/extra-cmake-modules'] = 'default'
+        self.dependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['win32libs/glew'] = 'default'
         self.dependencies['win32libs/eigen3'] = 'default'
 

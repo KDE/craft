@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.buildDependencies["win32libs/gpgme"] = "default"
         self.buildDependencies["win32libs/boost-headers"] = "default"
         self.buildDependencies["kdesupport/kdewin"] = "default"

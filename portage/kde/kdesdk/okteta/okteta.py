@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/kbookmarks"] = "default"
         self.dependencies["frameworks/kcodecs"] = "default"
