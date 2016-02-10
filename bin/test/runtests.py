@@ -59,7 +59,7 @@ def main():
     os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
 
     loader = unittest.TestLoader()
-    suite = loader.discover(start_dir=thisdir,pattern="test_EmergeHash.py")
+    suite = loader.discover(start_dir=thisdir)
     runner = unittest.TextTestRunner(verbosity = opts.verbosity + 1)
     result = runner.run(suite)
 
