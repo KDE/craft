@@ -82,7 +82,7 @@ class SetupHelper( object ):
         if not type(var) == list:
             var = [var]
         if key in self.env:
-            var += [self.env[ key ]]
+            var += list(set(self.env[ key ].split(os.path.pathsep)))
         self.env[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
