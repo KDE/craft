@@ -124,17 +124,9 @@ class SetupHelper( object ):
 
 
     def setXDG(self):
-        self.addEnvVar( "XDG_DATA_DIRS", os.path.pathsep.join(
-            [
-                os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ),
-                os.getenv("XDG_DATA_DIRS")
-            ]))
+        self.prependPath( "XDG_DATA_DIRS", [os.path.join( EmergeStandardDirs.emergeRoot( ), "share" )])
         if self.args.mode == "bash":
-            self.addEnvVar( "XDG_CONFIG_DIRS", os.path.pathsep.join(
-                [
-                    os.path.join( EmergeStandardDirs.emergeRoot( ), "etc", "xdg" ),
-                    os.getenv("XDG_CONFIG_DIRS")
-                ]))
+            self.prependPath( "XDG_CONFIG_DIRS", [os.path.join( EmergeStandardDirs.emergeRoot( ), "etc", "xdg" )])
             self.addEnvVar( "XDG_DATA_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
             self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".config" ))
             self.addEnvVar( "XDG_CACHE_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".cache" ))
