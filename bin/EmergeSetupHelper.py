@@ -29,7 +29,7 @@ class SetupHelper( object ):
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
         parser.add_argument( "--setup", action = "store_true" )
-        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell" } )
+        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" } )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
 
@@ -79,10 +79,11 @@ class SetupHelper( object ):
         self.env[ key ] = val
 
     def prependPath( self, key, var ):
+        if not type(var) == list:
+            var = [var]
         if key in self.env:
-            self.env[ key ] = "%s;%s" % (var, self.env[ key ])
-        else:
-            self.env[ key ] = var
+            var += [self.env[ key ]]
+        self.env[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
         out = dict( )
@@ -92,7 +93,6 @@ class SetupHelper( object ):
         return out
 
     def getEnv( self ):
-        out = dict( )
         if compiler.isMSVC( ):
             compilerDirs = {
                 "msvc2010": "VS100COMNTOOLS",
@@ -108,7 +108,7 @@ class SetupHelper( object ):
             if status != 0:
                 print( "Failed to setup msvc compiler", file = sys.stderr )
                 exit(1)
-            out = self.stringToEnv( result )
+            return self.stringToEnv( result )
 
         elif compiler.isIntel( ):
             architectures = { "x86": "ia32", "x64": "intel64" }
@@ -119,10 +119,27 @@ class SetupHelper( object ):
             if status != 0:
                 print( "Failed to setup intel compiler", file = sys.stderr )
                 exit(1)
-            out = self.stringToEnv( result )
-        elif compiler.isMinGW( ):
-            out = { "Path": os.getenv( "Path" ) }
-        return out
+            return self.stringToEnv( result )
+        return os.environ
+
+
+    def setXDG(self):
+        self.addEnvVar( "XDG_DATA_DIRS", os.path.pathsep.join(
+            [
+                os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ),
+                os.getenv("XDG_DATA_DIRS")
+            ]))
+        if self.args.mode == "bash":
+            self.addEnvVar( "XDG_CONFIG_DIRS", os.path.pathsep.join(
+                [
+                    os.path.join( EmergeStandardDirs.emergeRoot( ), "etc", "xdg" ),
+                    os.getenv("XDG_CONFIG_DIRS")
+                ]))
+            self.addEnvVar( "XDG_DATA_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
+            self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".config" ))
+            self.addEnvVar( "XDG_CACHE_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".cache" ))
+
+
 
 
     def printEnv( self ):
@@ -143,32 +160,46 @@ class SetupHelper( object ):
         if not "HOME" in self.env.keys():
             self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
-        self.addEnvVar( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ) )
+        self.prependPath( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ))
 
-        self.addEnvVar( "QT_PLUGIN_PATH", "%s;%s;%s" % (
-            os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
-            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugins" ),
-            os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugin" )) )
-        self.addEnvVar( "XDG_DATA_DIRS", os.path.join( EmergeStandardDirs.emergeRoot( ), "share" ) )
+        self.prependPath( "QT_PLUGIN_PATH", [ os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
+                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugins" ),
+                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib64", "plugins" ),
+                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "x86_64-linux-gnu", "plugins" ),
+                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugin" )
+                                            ])
+
+        self.prependPath( "QML2_IMPORT_PATH", [ os.path.join( EmergeStandardDirs.emergeRoot(), "lib", "qml"),os.path.join( EmergeStandardDirs.emergeRoot(), "lib64", "qml"),
+                                                os.path.join( EmergeStandardDirs.emergeRoot(), "lib", "x86_64-linux-gnu", "qml")
+                                                ])
+        self.prependPath("QML_IMPORT_PATH", self.env["QML2_IMPORT_PATH"])
+
+
+
+        if self.args.mode == "bash":
+            self.prependPath("LD_LIBRARY_PATH", [os.path.join(EmergeStandardDirs.emergeRoot(), "lib")])
+
+        self.setXDG()
 
         if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath( "Path", os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
-        
+            self.prependPath( "PATH", os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
+
         if compiler.isMinGW( ):
             if not emergeSettings.getboolean("QtSDK", "Enabled", "false"):
                 if compiler.isX86( ):
-                    self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
+                    self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
                 else:
-                    self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
+                    self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
             else:
-                self.prependPath( "Path", os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
-        
-        if self.args.mode == "bat":  #don't put emerge.bat in path when using powershell
-            self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
-        self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
+                self.prependPath( "PATH", os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
+
+        if self.args.mode in ["bat", "bash"]:  #don't put emerge.bat in path when using powershell
+            self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
+        self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
+
 
         #make sure thate emergeroot bin is the first to look for dlls etc
-        self.prependPath( "Path", os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
+        self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
 
         # add python site packages to pythonpath
         self.prependPath( "PythonPath",  os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "site-packages"))
