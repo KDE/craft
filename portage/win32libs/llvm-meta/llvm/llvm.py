@@ -47,7 +47,7 @@ class Package(CMakePackageBase):
             if not p.unpack():
                 return False
         return True
-
+    
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
         # just expect that we don't want to debug our compiler
