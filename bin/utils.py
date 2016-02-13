@@ -190,11 +190,11 @@ def unpackFile( downloaddir, filename, workdir ):
     EmergeDebug.debug("unpacking this file: %s" % filename)
 
     ( shortname, ext ) = os.path.splitext( filename )
-    if ( ext == ".7z" ):
-        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
-    elif not ext == "":
+    if re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
         shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
-    return True
+    elif ext == "":
+        return True
+    return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
     command = UtilsCache.findApplication("7za") or os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
