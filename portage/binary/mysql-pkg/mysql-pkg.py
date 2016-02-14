@@ -1,7 +1,7 @@
 import shutil
 import os
 
-from Package.CMakePackageBase import *
+from Package.BinaryPackageBase import *
 import info
 
 
@@ -33,19 +33,14 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
 
-class Package(CMakePackageBase):
+class Package(BinaryPackageBase):
   def __init__(self):
-    CMakePackageBase.__init__( self )
+    BinaryPackageBase.__init__( self )
     self.subinfo.options.package.disableStriping = True
     self.subinfo.options.package.packSources = False
 
 
-  def compile( self ):
-    return True
-
   def install( self ):
-    if( not self.cleanImage()):
-      return False
     if self.subinfo.buildTarget.startswith("5.1"):
         shutil.copytree( os.path.join( self.sourceDir() , "bin" ) , os.path.join( self.installDir(), "bin") , ignore=shutil.ignore_patterns('*.pdb','*.map','*test.exe','mysqld-debug.exe') )
         # do not create lib files, just take the given ones, because of the stdcall problem
