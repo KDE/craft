@@ -149,7 +149,10 @@ class SetupHelper( object ):
                 print( "Failed to setup intel compiler", file = sys.stderr )
                 exit(1)
             return self.stringToEnv( result )
-        return CaseInsensitiveDict(os.environ)
+        out = CaseInsensitiveDict()
+        for k,v in os.environ.items():
+            out[k] = v
+        return out
 
 
     def setXDG(self):
