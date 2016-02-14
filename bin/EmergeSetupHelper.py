@@ -5,6 +5,7 @@
 
 import subprocess
 import argparse
+import collections
 
 from EmergeConfig import *
 import compiler
@@ -109,7 +110,8 @@ class SetupHelper( object ):
         if not type(var) == list:
             var = [var]
         if key in self.env:
-            var += list(set(self.env[ key ].split(os.path.pathsep)))
+            env = self.env[ key ].split(os.path.pathsep)
+            var += list(collections.OrderedDict(zip(env, [[True] for x in range(0,len(env))])))
         self.env[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
