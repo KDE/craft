@@ -20,6 +20,33 @@ if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
     print( "Please install it and adapt your kdesettings.ini", file= sys.stderr )
     exit( 1 )
 
+# based on http://stackoverflow.com/a/30221547
+class CaseInsensitiveKey(object):
+    def __init__(self, key):
+        self.key = key
+
+    def __hash__(self):
+        return hash(self.key.lower())
+
+    def __eq__(self, other):
+        return self.key.lower() == other.key.lower()
+
+    def __str__(self):
+        return self.key
+
+
+class CaseInsensitiveDict(dict):
+    def __setitem__(self, key, value):
+        key = CaseInsensitiveKey(key)
+        super(CaseInsensitiveDict, self).__setitem__(key, value)
+
+    def __getitem__(self, key):
+        key = CaseInsensitiveKey(key)
+        return super(CaseInsensitiveDict, self).__getitem__(key)
+
+    def __contains__(self, item):
+        return super(CaseInsensitiveDict, self).__contains__(CaseInsensitiveKey(item))
+
 class SetupHelper( object ):
     def __init__( self ):
         self.env = None
@@ -86,7 +113,7 @@ class SetupHelper( object ):
         self.env[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
-        out = dict( )
+        out = CaseInsensitiveDict( )
         for line in string.split( "\n" ):
             key, value = line.strip( ).split( "=", 1 )
             out[ key ] = value
@@ -120,7 +147,7 @@ class SetupHelper( object ):
                 print( "Failed to setup intel compiler", file = sys.stderr )
                 exit(1)
             return self.stringToEnv( result )
-        return os.environ
+        return CaseInsensitiveDict(os.environ)
 
 
     def setXDG(self):
