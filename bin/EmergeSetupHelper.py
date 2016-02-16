@@ -181,7 +181,7 @@ class SetupHelper( object ):
             self.addEnvVar( "GIT_SSH", "plink" )
             self.addEnvVar( "SVN_SSH", "plink" )
 
-        if not "HOME" in self.env.keys():
+        if not "HOME" in self.env:
             self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
         self.prependPath( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ))
