@@ -92,9 +92,6 @@ class GitSource ( VersionSystemSourceBase ):
         # only run if wanted (e.g. no --offline is given on the commandline)
         if ( not self.noFetch ):
             self.setProxy()
-            safePath = os.environ[ "PATH" ]
-            # add the git path to the PATH variable so that git can be called without path
-            os.environ[ "PATH" ] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
@@ -166,9 +163,6 @@ class GitSource ( VersionSystemSourceBase ):
         # only run if wanted (e.g. no --offline is given on the commandline)
         if ( not self.noFetch ):
             self.setProxy()
-            safePath = os.environ["PATH"]
-            # add the git path to the PATH variable so that git can be called without path
-            os.environ["PATH"] = os.path.join( self.rootdir, "git", "bin" ) + ";" + safePath
             rootCheckoutDir = os.path.join(self.checkoutDir(), '.git')
             if not os.path.exists( rootCheckoutDir ):
                 # it doesn't exist so clone the repo
