@@ -43,7 +43,7 @@ class QMakeBuildSystem(BuildSystemBase):
         proFile = self.configureSourceDir()
         if self.subinfo.options.qmake.proFile:
             proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.qmake.proFile)
-        command = "qmake -makefile %s %s" % (proFile, self.configureOptions(configureDefines))
+        command = "%s -makefile %s %s" % (utils.UtilsCache.findApplication("qmake") ,proFile, self.configureOptions(configureDefines))
 
         return self.system( command, "configure" )
 
