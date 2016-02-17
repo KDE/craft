@@ -131,8 +131,6 @@ class CMakeBuildSystem(BuildSystemBase):
         """implements configure step for cmake projects"""
 
         self.enterBuildDir()
-
-        utils.prependPath(self.rootdir, self.envPath)
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
@@ -144,7 +142,6 @@ class CMakeBuildSystem(BuildSystemBase):
         """implements the make step for cmake projects"""
 
         self.enterBuildDir()
-        utils.prependPath(self.rootdir, self.envPath)
 
         if self.subinfo.options.cmake.openIDE:
             if compiler.isMSVC2008():

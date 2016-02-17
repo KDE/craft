@@ -24,11 +24,6 @@ class BuildSystemBase(EmergeBase):
         self.supportsCCACHE = emergeSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
         self.supportsClang = emergeSettings.getboolean("Compile","UseClang", False )
         self.buildSystemType = typeName
-        self.envPath = ""
-        if self.compiler() == "mingw":
-            self.envPath = "mingw/bin"
-        if self.compiler() == "mingw4":
-            self.envPath = "mingw4/bin"
 
 
     def _getmakeProgram(self):

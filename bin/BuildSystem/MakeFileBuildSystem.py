@@ -23,7 +23,6 @@ class MakeFileBuildSystem(BuildSystemBase):
         """implements the make step for Makefile projects"""
 
         self.enterBuildDir()
-        utils.prependPath(self.rootdir, self.envPath)
 
         command = ' '.join([self.makeProgramm, self.makeOptions()])
 
