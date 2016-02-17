@@ -10,9 +10,6 @@ import os
 import platform
 import re
 
-from EmergeOS import osutils
-from EmergeOS.unix.osutils import OsUtils
-
 emergeSettings = None
 
 class EmergeStandardDirs( object ):
@@ -187,7 +184,7 @@ class EmergeConfig( object ):
                         clean = False
                         match = self.variablePatern.findall( val )[ 0 ]
                         self._config[ section ][ key ] = val.replace( match, self._config[ section ][ match[ 2:-1 ] ] )
-        if OsUtils.isUnix():
+        if not os.name == "nt":
             self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*;binary/.*;win32libs/.*")
                         
         if self.getboolean("QtSDK", "Enabled", "False"):
