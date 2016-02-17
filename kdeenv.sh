@@ -6,4 +6,3 @@ for line in $EMERGE_ENV; do
     export $line
   fi
 done
-echo "PATH=$PATH"
