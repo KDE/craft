@@ -10,6 +10,9 @@ import os
 import platform
 import re
 
+from EmergeOS import osutils
+from EmergeOS.unix.osutils import OsUtils
+
 emergeSettings = None
 
 class EmergeStandardDirs( object ):
@@ -184,17 +187,12 @@ class EmergeConfig( object ):
                         clean = False
                         match = self.variablePatern.findall( val )[ 0 ]
                         self._config[ section ][ key ] = val.replace( match, self._config[ section ][ match[ 2:-1 ] ] )
+        if OsUtils.isUnix():
+            self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*;binary/.*;win32libs/.*")
                         
-        if self.getboolean("QtSDK", "Enabled", "false"):
-            self._blacklistQt()
+        if self.getboolean("QtSDK", "Enabled", "False"):
+            self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ";libs/qt.*")
 
-    def _blacklistQt(self):
-        ignores = ";libs/qt;libs/qt5;dev-util/mingw-w64;binary/mysql-pkg;win32libs/icu;libs/runtime"
-        for s in ["qtbase", "qtwebkit", "qttools", "qtscript", "qtactiveqt", "qtxmlpatterns",
-                "qtdeclarative", "qtsvg", "qtgraphicaleffects", "qtimageformats", "qtmultimedia", "qtquick1", "qtwinextras"]:
-            ignores += ";libs/qt5/%s" % s
-        self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ignores)
-        
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \
                (key in self._alias and self.__contains__(self._alias[key]))
