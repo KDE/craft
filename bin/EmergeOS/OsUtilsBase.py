@@ -1,4 +1,5 @@
 import abc
+import os
 
 class OsUtilsBase(metaclass=abc.ABCMeta):
 
@@ -25,3 +26,11 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     def setConsoleTitle(title):
         """ Set the console title """
         return True
+
+    @staticmethod
+    def isWin():
+        return os.name == 'nt'
+
+    @staticmethod
+    def isUnix():
+        return os.name == 'posix'

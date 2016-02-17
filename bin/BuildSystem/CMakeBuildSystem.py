@@ -13,6 +13,8 @@ from BuildSystem.BuildSystemBase import *
 from graphviz import *
 import compiler
 import utils
+from EmergeOS.osutils import OsUtils
+
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -26,25 +28,28 @@ class CMakeBuildSystem(BuildSystemBase):
         """return cmake related make file generator"""
         if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
             return "Ninja"
-        if compiler.isMSVC2015():
-            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                return "Visual Studio 14 2015" + " Win64" if compiler.isX64() else ""
-            else:
+        if OsUtils.isWin():
+            if compiler.isMSVC2015():
+                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+                    return "Visual Studio 14 2015" + " Win64" if compiler.isX64() else ""
+                else:
+                    return "NMake Makefiles"
+            if compiler.isMSVC2010():
+                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+                    return "Visual Studio 10"
+                else:
+                    return "NMake Makefiles"
+            elif compiler.isMSVC2008():
+                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
+                    return "Visual Studio 9 2008"
+                else:
+                    return "NMake Makefiles"
+            elif compiler.isMSVC() or compiler.isIntel():
                 return "NMake Makefiles"
-        if compiler.isMSVC2010():
-            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                return "Visual Studio 10"
-            else:
-                return "NMake Makefiles"
-        elif compiler.isMSVC2008():
-            if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                return "Visual Studio 9 2008"
-            else:
-                return "NMake Makefiles"
-        elif compiler.isMSVC() or compiler.isIntel():
-            return "NMake Makefiles"
-        elif compiler.isMinGW():
-            return "MinGW Makefiles"
+            elif compiler.isMinGW():
+                return "MinGW Makefiles"
+        elif OsUtils.isUnix():
+            return "Unix Makefiles"
         else:
             EmergeDebug.die("unknown %s compiler" % self.compiler())
 

@@ -17,17 +17,20 @@ class Qt5CoreBuildSystem( QMakeBuildSystem ):
         options += " INSTALL_ROOT=%s install" % self.imageDir( )
         if not QMakeBuildSystem.install( self, options ):
             return False
-            
-        badPrefix = os.path.join( self.installDir( ), EmergeStandardDirs.emergeRoot( )[ 3: ] )
+        if OsUtils.isWin():
+            badPrefix = os.path.join( self.installDir( ), EmergeStandardDirs.emergeRoot( )[ 3: ] )
+        else:
+            badPrefix = os.path.join( self.installDir( ), EmergeStandardDirs.emergeRoot( )[1:] )
+            print(badPrefix)
         if EmergeStandardDirs.emergeRoot( )[ 3: ] != "" and os.path.exists( badPrefix ):
             for subdir in os.listdir( badPrefix ):
                 utils.moveFile( os.path.join( badPrefix, subdir ), self.installDir( ) )
             utils.rmtree( badPrefix )
  
-
-        if os.path.exists( os.path.join( self.installDir( ), "bin", "mkspecs" ) ):
-            utils.moveFile( os.path.join( self.installDir( ), "bin", "mkspecs" ),
-                            os.path.join( self.installDir( ), "mkspecs" ) )
+        if OsUtils.isWin():
+            if os.path.exists( os.path.join( self.installDir( ), "bin", "mkspecs" ) ):
+                utils.moveFile( os.path.join( self.installDir( ), "bin", "mkspecs" ),
+                                os.path.join( self.installDir( ), "mkspecs" ) )
         return True
 
 

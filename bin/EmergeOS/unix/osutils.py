@@ -2,6 +2,7 @@ import EmergeOS.OsUtilsBase
 import EmergeDebug
 import shutil
 import os
+import sys
 
 class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
 
@@ -21,9 +22,8 @@ class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
         try:
             shutil.rmtree(path)
             return True
-        except OSError as e:
-            EmergeDebug.warning("could not delete directory %s: %s" % (path, e))
-            return False
+        except OSError:
+            return OsUtils.rm(path, force)
         return False
 
     @staticmethod
@@ -32,4 +32,7 @@ class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def setConsoleTitle(title):
-        return True # pass
+         # TODO: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html
+        #sys.stdout.write( "\033]2;%s\007" % title)
+        #sys.stdout.flush()
+        return True

@@ -6,23 +6,28 @@ import EmergeDebug
 import utils
 import compiler
 
+from EmergeOS.osutils import OsUtils
+
 from BuildSystem.BuildSystemBase import *
 
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
-        if compiler.isMSVC():
-            if compiler.isClang():
-                self.platform = "win32-clang-%s" % self.compiler()
+        if OsUtils.isWin():
+            if compiler.isMSVC():
+                if compiler.isClang():
+                    self.platform = "win32-clang-%s" % self.compiler()
+                else:
+                    self.platform = "win32-%s" % self.compiler()
+            elif compiler.isMinGW():
+                self.platform = "win32-g++"
+            elif compiler.isIntel():
+                self.platform = "win32-icc"
             else:
-                self.platform = "win32-%s" % self.compiler()
-        elif compiler.isMinGW():
-            self.platform = "win32-g++"
-        elif compiler.isIntel():
-            self.platform = "win32-icc"
-        else:
-            EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
+                EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
+        elif OsUtils.isUnix():
+            self.platform = "linux-g++"
 
 
     def configure( self, configureDefines="" ):
@@ -55,13 +60,16 @@ class QMakeBuildSystem(BuildSystemBase):
         if not BuildSystemBase.install(self):
             return False
 
-        # There is a bug in jom that parallel installation of qmake projects
-        # does not work. So just use the usual make programs. It's hacky but
-        # this was decided on the 2012 Windows sprint.
-        if compiler.isMSVC() or compiler.isIntel():
-            installmake="nmake /NOLOGO"
-        elif compiler.isMinGW():
-            installmake="mingw32-make"
+        if OsUtils.isWin():
+            # There is a bug in jom that parallel installation of qmake projects
+            # does not work. So just use the usual make programs. It's hacky but
+            # this was decided on the 2012 Windows sprint.
+            if compiler.isMSVC() or compiler.isIntel():
+                installmake="nmake /NOLOGO"
+            elif compiler.isMinGW():
+                installmake="mingw32-make"
+        else:
+            installmake = self.makeProgramm
 
         self.enterBuildDir()
         if options != None:

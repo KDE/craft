@@ -4,8 +4,6 @@ EMERGE_ENV=($(python3.5 $(dirname $(realpath $(which $0)))/bin/EmergeSetupHelper
 for line in $EMERGE_ENV; do
   if [[ $line  =~ "=" ]];then
     export $line
-    echo "export $line"
-    #echo "PATH=$PATH"
   fi
 done
 echo "PATH=$PATH"

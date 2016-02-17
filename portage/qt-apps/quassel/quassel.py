@@ -4,6 +4,8 @@ import os
 import info
 from Package.CMakePackageBase import *
 
+from EmergeOS.osutils import OsUtils
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -47,10 +49,11 @@ class Package( CMakePackageBase ):
     def install(self):
         if not CMakePackageBase.install(self):
             return False
-        os.makedirs(os.path.join(self.installDir(),"bin"))
-        shutil.move(os.path.join(self.installDir(),"quassel.exe"),os.path.join(self.installDir(),"bin","quassel.exe"))
-        shutil.move(os.path.join(self.installDir(),"quasselcore.exe"),os.path.join(self.installDir(),"bin","quasselcore.exe"))
-        shutil.move(os.path.join(self.installDir(),"quasselclient.exe"),os.path.join(self.installDir(),"bin","quasselclient.exe"))
+        if OsUtils.isWin():
+            os.makedirs(os.path.join(self.installDir(),"bin"))
+            shutil.move(os.path.join(self.installDir(),"quassel.exe"),os.path.join(self.installDir(),"bin","quassel.exe"))
+            shutil.move(os.path.join(self.installDir(),"quasselcore.exe"),os.path.join(self.installDir(),"bin","quasselcore.exe"))
+            shutil.move(os.path.join(self.installDir(),"quasselclient.exe"),os.path.join(self.installDir(),"bin","quasselclient.exe"))
         return True
 
 

@@ -10,6 +10,9 @@ from graphviz import *
 import dependencies
 
 
+from EmergeOS.osutils import OsUtils
+
+
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
     debug = True
@@ -38,12 +41,16 @@ class BuildSystemBase(EmergeBase):
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
-        if compiler.isMSVC() or compiler.isIntel() :
-            return "nmake /NOLOGO"
-        elif compiler.isMinGW():
-            return "mingw32-make"
-        else:
-            EmergeDebug.die("unknown %s compiler" % self.compiler())
+
+        if OsUtils.isWin():
+            if compiler.isMSVC() or compiler.isIntel() :
+                return "nmake /NOLOGO"
+            elif compiler.isMinGW():
+                return "mingw32-make"
+            else:
+                EmergeDebug.die("unknown %s compiler" % self.compiler())
+        elif OsUtils.isUnix():
+            return "make"
     makeProgramm = property(_getmakeProgram)
 
     def compile(self):

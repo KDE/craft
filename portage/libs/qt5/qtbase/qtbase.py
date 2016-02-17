@@ -6,6 +6,7 @@ import utils
 import info
 import portage
 import compiler
+from EmergeOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
 
@@ -61,47 +62,55 @@ class Package(Qt5CorePackageBase):
     def configure( self, unused1=None, unused2=""):
         self.enterBuildDir()
         self.setPathes()
-        if not os.path.exists(os.path.join(self.sourceDir(),".gitignore")):#force bootstrap of configure.exe
-            with open(os.path.join(self.sourceDir(),".gitignore"),"wt+") as bootstrap:
-                bootstrap.write("Force Bootstrap")
-            if os.path.exists(os.path.join(self.sourceDir(),"configure.exe")):
-                os.remove(os.path.join(self.sourceDir(),"configure.exe"))
-        configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
-        command += "-plugin-sql-odbc "
-        command += "-qt-style-windowsxp  -qt-style-windowsvista "
-        command += "-qt-libpng "
-        command += "-qt-libjpeg "
-        command += "-qt-zlib "
-        command += "-qt-pcre "
-        command += "-nomake examples "
-        # can we drop that in general?
-        if not self.subinfo.buildTarget.startswith("5.7"):
-            command += "-c++11 "
-        command += "-opengl dynamic "
-        command += "-ltcg "
-        if self.buildType() == "RelWithDebInfo":
-            command += "-force-debug-info "
+        if OsUtils.isWin():
+            configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
+        elif OsUtils.isUnix():
+            configure = os.path.join( self.sourceDir() ,"configure" )
 
-        if not self.subinfo.options.buildStatic:
-            command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
-            if self.subinfo.options.isActive("binary/mysql-pkg"):
-                command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
-            if self.subinfo.options.isActive("win32libs/dbus"):
-                command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
-            if self.subinfo.options.isActive("win32libs/icu"):
-                command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
-        else:
-            command += " -static -static-runtime "
+
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
         if self.buildType() == "Debug":
             command += "-debug "
         else:
             command += "-release "
 
+        if self.buildType() == "RelWithDebInfo":
+                command += "-force-debug-info "
 
+        if self.subinfo.options.buildStatic:
+                command += " -static -static-runtime "
+
+        command += "-nomake examples "
+        command += "-nomake tests "
+
+
+        if OsUtils.isWin():
+            if not os.path.exists(os.path.join(self.sourceDir(),".gitignore")):#force bootstrap of configure.exe
+                with open(os.path.join(self.sourceDir(),".gitignore"),"wt+") as bootstrap:
+                    bootstrap.write("Force Bootstrap")
+                if os.path.exists(os.path.join(self.sourceDir(), "configure.exe")):
+                    os.remove(os.path.join(self.sourceDir(),"configure.exe"))
+            command += "-plugin-sql-odbc "
+            command += "-qt-style-windowsxp  -qt-style-windowsvista "
+            command += "-qt-libpng "
+            command += "-qt-libjpeg "
+            command += "-qt-zlib "
+            command += "-qt-pcre "
+            command += "-c++11 "
+            command += "-opengl dynamic "
+            command += "-ltcg "
+
+            if not self.subinfo.options.buildStatic:
+                command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
+                if self.subinfo.options.isActive("binary/mysql-pkg"):
+                    command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
+                if self.subinfo.options.isActive("win32libs/dbus"):
+                    command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+                if self.subinfo.options.isActive("win32libs/icu"):
+                    command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
 
         if self.supportsCCACHE:
-            command != "-dont-process "
+            command += "-dont-process "
         print("command: ", command)
         if not utils.system( command ):
             return False
@@ -109,7 +118,7 @@ class Package(Qt5CorePackageBase):
             return Qt5CorePackageBase.configure(self)
         else:
             return True
-        
+
 
     def make(self, unused=''):
         self.setPathes()
