@@ -28,7 +28,7 @@ class Package(BinaryPackageBase):
         if compiler.isX64():
            utils.copyDir(os.path.join( self.sourceDir(), "msys64"), os.path.join( self.installDir(), "msys"))
         else:
-           shutil.move(os.path.join( self.sourceDir(), "msys32"), os.path.join( self.installDir(), "msys"))
+           utils.copyDir(os.path.join( self.sourceDir(), "msys32"), os.path.join( self.installDir(), "msys"))
         os.makedirs(os.path.join(self.installDir(),"dev-utils","bin"))
         utils.createBat(os.path.join(self.installDir(),"dev-utils","bin","msys.bat"),"python %KDEROOT%\\emerge\\bin\\shells.py")
         return True
