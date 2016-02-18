@@ -27,7 +27,10 @@ class QMakeBuildSystem(BuildSystemBase):
             else:
                 EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
         elif OsUtils.isUnix():
-            self.platform = "linux-g++"
+            if compiler.isClang():
+                self.platform = "linux-clang"
+            else:
+                self.platform = "linux-g++"
 
 
     def configure( self, configureDefines="" ):
