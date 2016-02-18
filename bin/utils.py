@@ -684,7 +684,7 @@ def prependPath(*parts):
         if old[0] != fullPath:
             EmergeDebug.debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
-            putenv( "PATH", ";".join(old))
+            putenv( "PATH", os.path.pathsep.join(old))
 
 def notify(title,message,alertClass = None):
     EmergeDebug.info("%s: %s" % (title, message))
