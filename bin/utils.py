@@ -30,7 +30,8 @@ from EmergeOS.osutils import OsUtils
 # TODO: Rename
 class UtilsCache():
     _appCache = {}
-    _NIGTHLY_URLS = dict()
+    _helpCache = {}
+    _NIGTHLY_URLS = {}
 
     @staticmethod
     def findApplication(app) -> str:
@@ -42,6 +43,13 @@ class UtilsCache():
                 EmergeDebug.warning("Emerge was unable to locate: %s" % app)
                 return None
         return UtilsCache._appCache[app]
+
+    # TODO: rename, cleanup
+    @staticmethod
+    def appSupportsCommand(app, command, helpCommand = "-h") -> str:
+        if not (app, command) in UtilsCache._helpCache:
+            UtilsCache._helpCache[(app, command)] = subprocess.getoutput("%s %s" %(app, helpCommand)).find( command ) != -1
+        return UtilsCache._helpCache[(app, command)]
     
     
     @staticmethod
@@ -205,9 +213,10 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    command += " -bsp1"
-    if EmergeDebug.verbose() <= 1:
-        command += " -bso0"
+    if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bsp" ):
+        command += " -bsp1"
+        if EmergeDebug.verbose() <= 1:
+            command += " -bso0"
     return system( command )
 
 def system(cmd, **kw ):
