@@ -18,7 +18,7 @@ class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
         if compiler.isMinGW():
-            self.subinfo.options.package.version = compiler.getMinGWVersion()
+            self.subinfo.options.package.version = compiler.getGCCVersion()
 #        elif compiler.isMSVC2008():
 #            self.subinfo.options.package.version = '9.0.30729.1'
 

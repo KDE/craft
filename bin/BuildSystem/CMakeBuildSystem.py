@@ -103,6 +103,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
+            
+        if compiler.isGCC() and not compiler.isNative():
+            options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % compiler.architecture())
 
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case

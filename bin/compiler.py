@@ -47,6 +47,9 @@ def isX86():
 def _compiler():
     return emergeSettings.get("General","KDECOMPILER")
 
+def isGCC():
+    return isMinGW() or _compiler().endswith("-gcc")
+
 def isMinGW():
     return _compiler().startswith("mingw")
 
@@ -90,6 +93,8 @@ def getCompilerName():
         return _compiler()
     elif isIntel():
         return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
+    elif isGCC():
+        return "gcc"
     else:
         EmergeDebug.die("Unknown Compiler %s" % _compiler())
 
@@ -101,9 +106,9 @@ def getSimpleCompilerName():
     elif isIntel():
         return "intel"
     else:
-        EmergeDebug.die("Unknown Compiler %s" % _compiler())
+        return getCompilerName()
 
-def getMinGWVersion():
+def getGCCVersion():
     global _MINGW_VERSION # pylint: disable=W0603
     if not _MINGW_VERSION:
         status, result = subprocess.getstatusoutput("gcc --version")
@@ -117,8 +122,8 @@ def getMinGWVersion():
     return _MINGW_VERSION
 
 def getVersion():
-    if isMinGW():
-        return "%s %s" % ( getCompilerName(), getMinGWVersion() )
+    if isGCC():
+        return "%s %s" % (getCompilerName(), getGCCVersion())
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
     return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
@@ -145,5 +150,5 @@ if __name__ == '__main__':
     print("Version: %s" % getVersion())
     print("Compiler Name: %s" % getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[isNative()])
-    print("Compiler Version: %s" % getMinGWVersion())
+    print("Compiler Version: %s" % getGCCVersion())
 
