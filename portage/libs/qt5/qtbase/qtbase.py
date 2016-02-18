@@ -84,7 +84,6 @@ class Package(Qt5CorePackageBase):
         command += "-nomake tests "
 
 
-        command += "-ltcg "
 
 
         if OsUtils.isWin():
@@ -101,6 +100,7 @@ class Package(Qt5CorePackageBase):
             command += "-qt-pcre "
             command += "-c++11 "
             command += "-opengl dynamic "
+            command += "-ltcg "
 
             if not self.subinfo.options.buildStatic:
                 command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
