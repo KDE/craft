@@ -84,6 +84,9 @@ class Package(Qt5CorePackageBase):
         command += "-nomake tests "
 
 
+        command += "-ltcg "
+
+
         if OsUtils.isWin():
             if not os.path.exists(os.path.join(self.sourceDir(),".gitignore")):#force bootstrap of configure.exe
                 with open(os.path.join(self.sourceDir(),".gitignore"),"wt+") as bootstrap:
@@ -98,7 +101,6 @@ class Package(Qt5CorePackageBase):
             command += "-qt-pcre "
             command += "-c++11 "
             command += "-opengl dynamic "
-            command += "-ltcg "
 
             if not self.subinfo.options.buildStatic:
                 command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
