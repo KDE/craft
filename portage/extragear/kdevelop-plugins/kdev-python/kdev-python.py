@@ -9,6 +9,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "python support for kdevelop"
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['extragear/kdevplatform'] = 'default'
+        self.dependencies['binary/python-libs'] = 'default'
 
 from Package.CMakePackageBase import *
 
