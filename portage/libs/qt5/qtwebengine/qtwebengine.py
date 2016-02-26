@@ -16,6 +16,7 @@ from Package.Qt5CorePackageBase import *
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
+        self.supportsNinja = False  # Includes its own ninja, not to be confused with ours
         self.subinfo.options.fetch.checkoutSubmodules = True
         
     def compile(self):
