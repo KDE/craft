@@ -1,7 +1,6 @@
 import os
-
+import subprocess
 import info
-
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -28,9 +27,30 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         if compiler.isX64():
-            r_executable = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "x64", "R.exe" )
+            self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "x64" )
         else:
-            r_executable = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "i386", "R.exe" )
-        self.subinfo.options.configure.defines = " -DR_EXECUTABLE=" + r_executable.replace( "\\\\", "/" )
+            self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "i386" )
+        self.subinfo.options.configure.defines = " -DR_EXECUTABLE=" + os.path.join (self.r_dir, "R.exe").replace( "\\\\", "/" )
+        if compiler.isMSVC():
+            self.realconfigure = self.configure
+            self.configure = self.msvcconfigure
 
+    def msvcconfigure( self ):
+        # Need to create a .lib-file for R.dll, first
+        dump = subprocess.check_output(["dumpbin", "/exports", os.path.join(self.r_dir, "R.dll")]).decode("latin1").splitlines ()
+        exports = []
+        for line in dump:
+            fields = line.split ()
+            if len (fields) != 4:
+                continue
+            exports.append(fields[3])
+        self.enterBuildDir()
+        deffile = open(os.path.join(self.buildDir(), "R.def"), 'w')
+        deffile.write("EXPORTS\r\n")
+        deffile.write("\r\n".join(exports) + "\r\n")
+        deffile.close()
+        subprocess.call(["lib", "/def:R.def", "/out:R.lib", "/machine:x86"])
+
+        # Now configure as usual.
+        return self.realconfigure()
 
