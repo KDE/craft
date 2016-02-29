@@ -72,6 +72,9 @@ file collection process is skipped, and only the installer is generated.
         if os.path.exists(os.path.join(self.rootdir, "dev-utils", "makensis.exe")):
             self.nsisInstallPath = os.path.join(self.rootdir, "dev-utils")
             return True
+        elif os.path.exists(os.path.join(self.rootdir, "dev-utils", "nsis", "makensis.exe")):
+            self.nsisInstallPath = os.path.join(self.rootdir, "dev-utils", "nsis")
+            return True
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ )
             [_,self.nsisInstallPath,_] = EnumValue( key, 0 )#????

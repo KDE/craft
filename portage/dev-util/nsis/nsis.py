@@ -21,13 +21,14 @@ class Package(BinaryPackageBase):
         self.subinfo.options.merge.destinationPath = os.path.join("dev-utils")
         self.subinfo.options.merge.ignoreBuildType = True
 
-    def unpack( self ):
-        if not BinaryPackageBase.unpack(self):
-            return False
+    def install( self ):
         localFileDir = self.localFileNames()[0].replace(".zip", "")
-        for f in os.listdir(os.path.join(self.imageDir(), localFileDir)):
-            shutil.move(os.path.join(self.imageDir(), localFileDir, f), self.imageDir())
-        os.rmdir(os.path.join(self.imageDir(), localFileDir))
+        destPath = os.path.join (self.imageDir(), "nsis")
+        os.makedirs (destPath, exist_ok=True)
+        for f in os.listdir(os.path.join(self.workDir(), localFileDir)):
+            shutil.move(os.path.join(self.workDir(), localFileDir, f), destPath)
+        os.rmdir(os.path.join(self.workDir(), localFileDir))
+        os.makedirs (os.path.join (self.imageDir(), "bin"), exist_ok=True)
         for f in ['makensis', 'makensisw', 'nsis']:
             shutil.copy(os.path.join(self.packageDir(), "wrapper.bat"), os.path.join(self.imageDir(), "bin", f + ".bat"))
         return True
