@@ -22,10 +22,16 @@ class subinfo( info.infoclass ):
             self.dependencies["frameworks/kdewebkit"] = "default"
 
 from Package.CMakePackageBase import *
+from Packager.NullsoftInstallerPackager import *
 
-class Package( CMakePackageBase ):
+class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        blacklists = [
+            NSIPackagerLists.runtimeBlacklist  #, os.path.join(os.path.dirname(__file__), 'blacklist.txt')
+        ]
+        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
+
         if compiler.isX64():
             self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "x64" )
         else:
@@ -54,3 +60,11 @@ class Package( CMakePackageBase ):
         # Now configure as usual.
         return self.realconfigure()
 
+    def createPackage(self):
+        self.defines[ "productname" ] = "RKWard"
+        self.defines[ "executable" ] = "bin\\rkward.exe"
+        self.defines[ "icon" ] = os.path.join(self.sourceDir(), "rkward", "icons", "app-icon", "rkward.ico")
+
+        self.ignoredPackages.append("binary/mysql-pkg")
+
+        return NullsoftInstallerPackager.createPackage(self)
