@@ -1,13 +1,10 @@
 import info
-import kdedefaults as kd
-from EmergeConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kstars|frameworks|'
-
+        self.versionInfo.setDefaultValues()
         self.shortDescription = 'a desktop planetarium'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         #self.buildDependencies['win32libs/cfitsio'] = 'default'
@@ -36,4 +33,3 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-
