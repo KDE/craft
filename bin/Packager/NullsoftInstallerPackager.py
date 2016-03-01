@@ -11,6 +11,7 @@ if os.name == 'nt':
 import EmergeDebug
 import EmergeHash
 import utils
+import shutil
 from Packager.CollectionPackagerBase import *
 
 
@@ -96,12 +97,16 @@ file collection process is skipped, and only the installer is generated.
         CloseKey(key)
         return True
 
+    def getVCRuntimeLibrariesLocation(self):
+        """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
+        return os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "redist" )
+
     def getVCRedistLocation(self, compiler):
         if compiler.isMSVC2015():
             if compiler.isX64():
-                return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x64.exe"
+                return os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x64.exe" )
             elif compiler.isX86():
-                return "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\1033\\vcredist_x86.exe"
+                return os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
         return None
 
     def generateNSISInstaller( self ):
@@ -140,7 +145,21 @@ file collection process is skipped, and only the installer is generated.
         self.defines[ "architecture" ] = compiler.architecture()
         self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
 
-        self.defines[ "vcredist" ] = self.getVCRedistLocation(compiler) or "none"
+        # runtime distributable files
+        self.defines[ "vcredist" ] = self.getVCRedistLocation(compiler)
+        if not self.defines[ "vcredist" ]:
+            self.defines[ "vcredist" ] = "none"
+            # for earlier versions of MSVC, simply copy the redist files to the "bin" folder of the installation
+            if compiler.isMSVC():
+                if compiler.isX64():
+                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x64" ) )
+                else:
+                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x86" ) )
+                for root, subdirs, files in os.walk( redistPath ):
+                    for f in files:
+                        shutil.copy( os.path.join( root, f ), os.path.join( self.archiveDir(), "bin" ) )
+            else:
+                EmergeDebug.die( "Fixme: copy MinGW runtime (listdc++.dll, etc." )
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
