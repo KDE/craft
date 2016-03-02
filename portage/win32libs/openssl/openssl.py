@@ -20,13 +20,13 @@ class subinfo(info.infoclass):
             addTarget(baseUrl, ver)
 
         # latest versions -> inside source/
-        for ver in ['0.9.8zh', '1.0.0t', '1.0.1q', '1.0.2e','1.0.2f']:
+        for ver in ['0.9.8zh', '1.0.0t', '1.0.1s', '1.0.2g']:
             baseUrl = 'ftp://ftp.openssl.org/source/'
             addTarget(baseUrl, ver)
 
         self.shortDescription = "The OpenSSL runtime environment"
 
-        self.defaultTarget = '1.0.2f'
+        self.defaultTarget = '1.0.2g'
 
     def setDependencies(self):
         self.buildDependencies['virtual/base'] = 'default'
