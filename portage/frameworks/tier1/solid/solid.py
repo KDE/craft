@@ -28,3 +28,4 @@ class Package(CMakePackageBase):
         #     moc: Cannot create R:/build/frameworks/solid/work/msvc2015-RelWithDebInfo-master/src/solid/moc_devicemanager.cpp
         #     moc failed...
         self.subinfo.options.make.supportsMultijob = False
+        self.supportsNinja = False
