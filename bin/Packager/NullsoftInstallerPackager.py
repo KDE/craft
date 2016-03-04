@@ -12,6 +12,7 @@ import EmergeDebug
 import EmergeHash
 import utils
 import shutil
+import glob
 from Packager.CollectionPackagerBase import *
 
 
@@ -158,8 +159,11 @@ file collection process is skipped, and only the installer is generated.
                 for root, subdirs, files in os.walk( redistPath ):
                     for f in files:
                         shutil.copy( os.path.join( root, f ), os.path.join( self.archiveDir(), "bin" ) )
+            elif compiler.isMinGW():
+                for f in glob.glob( os.path.join( self.rootdir, "mingw", "bin", "*.dll") ):
+                    shutil.copy( f, os.path.join( self.archiveDir(), "bin" ) )
             else:
-                EmergeDebug.die( "Fixme: copy MinGW runtime (listdc++.dll, etc." )
+                EmergeDebug.die( "Fixme: Copy runtime libraries for this compiler" )
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
