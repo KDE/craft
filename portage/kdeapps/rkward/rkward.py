@@ -20,6 +20,26 @@ class subinfo( info.infoclass ):
             self.dependencies["frameworks/ktexteditor"] = "default"
             self.dependencies["frameworks/kwindowsystem"] = "default"
             self.dependencies["frameworks/kdewebkit"] = "default"
+            # not strictly dependencies, but should be included in the package
+            self.dependencies["kde/kate"] = "default"
+            self.dependencies["frameworks/breeze-icons"] = "default"
+
+from Source.GitSource import *
+
+class RKTranslations( GitSource ):
+    def __init__( self, rkwardPackage ):
+        GitSource.__init__( self )
+        self.rkwardPackage = rkwardPackage
+
+    def repositoryUrl( self ):
+        return "[git]kde:scratch/tfry/rkward-po-export"
+
+    def checkoutDir( self ):
+        """ clone _into_ the RKWard source tree """
+        return os.path.join( self.rkwardPackage.checkoutDir(), "i18n", "po")
+
+    def sourceDir( self ):
+        return self.checkoutDir( self )
 
 from Package.CMakePackageBase import *
 from Packager.NullsoftInstallerPackager import *
@@ -40,6 +60,23 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
         if compiler.isMSVC():
             self.realconfigure = self.configure
             self.configure = self.msvcconfigure
+
+    def fetch( self ):
+        ret = CMakePackageBase.fetch( self )
+        EmergeDebug.info( "Fetching translations" )
+        RKTranslations( self ).fetch()
+        return ret
+
+    def install( self ):
+        # Make installation movable, by providing rkward.ini with relative path to R
+        ret = CMakePackageBase.install( self )
+        rkward_ini = open( os.path.join( self.imageDir(), "bin", "rkward.ini" ), "w" )
+        if compiler.isX64():
+            rkward_ini.write( "R executable=../lib/R/bin/x64/R.exe\n" )
+        else:
+            rkward_ini.write( "R executable=../lib/R/bin/i386/R.exe\n" )
+        rkward_ini.close()
+        return ret
 
     def msvcconfigure( self ):
         # Need to create a .lib-file for R.dll, first
