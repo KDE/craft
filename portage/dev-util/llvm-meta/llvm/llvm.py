@@ -7,7 +7,8 @@ class subinfo(info.infoclass):
         self.targetDigests['3.7.0'] = '0355c2fe01a8d17c3315069e6f2ef80c281e7dad'
 
         for ver in self.svnTargets.keys() | self.targets.keys():
-            self.patchToApply[ ver ] = [("0002-use-DESTDIR-on-windows.patch", 1)]
+            if not ver.startswith("3.8"):
+                self.patchToApply[ ver ] = [("0002-use-DESTDIR-on-windows.patch", 1)]
 
         for ver in self.svnTargets.keys() :
             self.patchToApply[ ver ] = [("use-DESTDIR-on-windows-3.8.patch", 1)]

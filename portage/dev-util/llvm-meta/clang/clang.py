@@ -9,7 +9,9 @@ class subinfo(info.infoclass):
 
 
         for ver in self.svnTargets.keys() | self.targets.keys():
-            self.patchToApply[ ver ] = [("0014-use-DESTDIR-on-windows.patch", 1), ("fix_shortpath.patch", 1)]
+            self.patchToApply[ver] = [("fix_shortpath.patch", 1)]
+            if not ver.startswith("3.8"):
+                self.patchToApply[ ver ] += [("0014-use-DESTDIR-on-windows.patch", 1)]
             if compiler.isMinGW():
                 self.patchToApply[ ver ] += [("0012-Set-the-x86-arch-name-to-i686-for-mingw-w64.patch", 1),
                                              ("0015-Fix-the-calling-convention-of-Mingw64-long-double-va.patch", 1),
