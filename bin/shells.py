@@ -18,7 +18,7 @@ from options import *
 class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
-        self.environment = dict()
+        self.environment = os.environ.copy()
         self._sh = os.path.join( self.msysdir, "bin", "sh.exe" )
         if not os.path.exists( self._sh ):
             self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
@@ -38,6 +38,9 @@ class MSysShell(object):
             if compiler.isMSVC2013():
                 cflags = " -FS"
 
+        self.environment[ "SET_FULL_PATH" ] = "1"#inherit the windows path
+        if "make" in self.environment:
+            del self.environment[ "make" ]
         if compiler.isMinGW():
             arch = "32"
             if compiler.isX64():
@@ -45,7 +48,7 @@ class MSysShell(object):
             self.environment[ "MSYSTEM" ] = "MINGW%s_EMERGE" % arch
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
-        
+
         if ldflags != "":
             self.environment[ "LDFLAGS" ] = ldflags
 
@@ -70,26 +73,16 @@ class MSysShell(object):
     def buildType(self):
         return emergeSettings.get("Compile", "BuildType","RelWithDebInfo")
 
-
-    def _environmentSetup(self):
-        # unset make to remove things like jom
-        #this cant be set using export
-        utils.putenv("MAKE", "")
-        out = ""
-        for var, val in  self.environment.items():
-            out += "%s='%s' " %( var, val )
-        return out
-
-
     @staticmethod
     def toNativePath( path ):
         return utils.toMSysPath( path )
 
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr):
-        command = "%s --login -c \"export %s && cd %s && %s %s\"" % \
-                  ( self._sh, self._environmentSetup(), self.toNativePath( path ), self.toNativePath( cmd ), args )
+        command = "%s --login -c \"cd %s && %s %s\"" % \
+                  ( self._sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
         EmergeDebug.info("msys execute: %s" % command)
-        return utils.system( command, stdout=out, stderr=err )
+        EmergeDebug.debug("msys environment: %s" % self.environment)
+        return utils.system( command, stdout=out, stderr=err , env=self.environment)
 
     def login(self):
         self.environment[ "CHERE_INVOKING" ] = "1"
