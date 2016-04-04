@@ -1,0 +1,74 @@
+diff --git a/docs/ClangPlugins.rst b/docs/ClangPlugins.rst
+index f83bb66..c9781cc 100644
+--- a/docs/ClangPlugins.rst
++++ b/docs/ClangPlugins.rst
+@@ -37,11 +37,14 @@ Registering a plugin
+ ====================
+ 
+ A plugin is loaded from a dynamic library at runtime by the compiler. To
+-register a plugin in a library, use ``FrontendPluginRegistry::Add<>``:
++register a plugin in a library, use ``FrontendPluginRegistry::Add<>``.
++On Windows, you also need to export your plugin registry using
++``LLVM_EXPORT_REGISTRY``.  Here is an example:
+ 
+ .. code-block:: c++
+ 
+   static FrontendPluginRegistry::Add<MyPlugin> X("my-plugin-name", "my plugin description");
++  LLVM_EXPORT_REGISTRY(FrontendPluginRegistry)
+ 
+ Putting it all together
+ =======================
+diff --git a/examples/PrintFunctionNames/PrintFunctionNames.cpp b/examples/PrintFunctionNames/PrintFunctionNames.cpp
+index 9f8f6e3..e2834b9 100644
+--- a/examples/PrintFunctionNames/PrintFunctionNames.cpp
++++ b/examples/PrintFunctionNames/PrintFunctionNames.cpp
+@@ -121,3 +121,4 @@ protected:
+ 
+ static FrontendPluginRegistry::Add<PrintFunctionNamesAction>
+ X("print-fns", "print function names");
++LLVM_EXPORT_REGISTRY(FrontendPluginRegistry)
+diff --git a/lib/FrontendTool/ExecuteCompilerInvocation.cpp b/lib/FrontendTool/ExecuteCompilerInvocation.cpp
+index 509c326..47d5dc3 100644
+--- a/lib/FrontendTool/ExecuteCompilerInvocation.cpp
++++ b/lib/FrontendTool/ExecuteCompilerInvocation.cpp
+@@ -191,9 +191,16 @@ bool clang::ExecuteCompilerInvocation(CompilerInstance *Clang) {
+          e = Clang->getFrontendOpts().Plugins.size(); i != e; ++i) {
+     const std::string &Path = Clang->getFrontendOpts().Plugins[i];
+     std::string Error;
+-    if (llvm::sys::DynamicLibrary::LoadLibraryPermanently(Path.c_str(), &Error))
++    llvm::sys::DynamicLibrary DL(
++        llvm::sys::DynamicLibrary::getPermanentLibrary(Path.c_str(), &Error));
++    if (DL.isValid()) {
++      // On Windows, we need to import the plugin front-end action
++      // dynamically.
++      LLVM_IMPORT_REGISTRY(FrontendPluginRegistry, DL);
++    } else {
+       Clang->getDiagnostics().Report(diag::err_fe_unable_to_load_plugin)
+         << Path << Error;
++    }
+   }
+ 
+   // Check if any of the loaded plugins replaces the main AST action
+diff --git a/test/Frontend/plugins.c b/test/Frontend/plugins.c
+index 8117f72..ab5d623 100644
+--- a/test/Frontend/plugins.c
++++ b/test/Frontend/plugins.c
+@@ -1,4 +1,5 @@
+ // RUN: %clang_cc1 -load %llvmshlibdir/PrintFunctionNames%pluginext -plugin print-fns %s 2>&1 | FileCheck %s
++// RUN: %clang_cl -Xclang -load -Xclang %llvmshlibdir/PrintFunctionNames%pluginext -Xclang -plugin -Xclang print-fns %s 2>&1 | FileCheck %s
+ // REQUIRES: plugins, examples
+ 
+ // CHECK: top-level-decl: "x"
+diff --git a/test/lit.cfg b/test/lit.cfg
+index e216634..dddab3e 100644
+--- a/test/lit.cfg
++++ b/test/lit.cfg
+@@ -196,7 +196,7 @@ if not lit_config.quiet:
+ 
+ # Plugins (loadable modules)
+ # TODO: This should be supplied by Makefile or autoconf.
+-if sys.platform in ['win32', 'cygwin']:
++if sys.platform in ['cygwin']:
+     has_plugins = (config.enable_shared == 1)
+ else:
+     has_plugins = True
