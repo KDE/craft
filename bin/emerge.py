@@ -404,7 +404,7 @@ def main( ):
     emergeSettings.set( "General", "WorkOffline", args.offline )
     emergeSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
     emergeSettings.set( "General", "EMERGE_FORCED", args.forced )
-    emergeSettings.set( "General", "EMERGE_BUILDTESTS", args.buildTests )
+    emergeSettings.set( "Compile", "BuildTests", args.buildTests )
     emergeSettings.set( "Compile", "BuildType", args.buildType )
     emergeSettings.set( "PortageVersions", "DefaultTarget", args.target )
     emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
