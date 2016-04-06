@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kcrash"] = 'default'
         self.dependencies["frameworks/kdesignerplugin"] = 'default'
         self.dependencies["frameworks/kglobalaccel"] = 'default'
+        self.dependencies['frameworks/kded'] = 'default'
         self.dependencies["frameworks/kdoctools"] = 'default'
         self.dependencies["frameworks/kemoticons"] = 'default'
         self.dependencies["frameworks/kguiaddons"] = 'default'
