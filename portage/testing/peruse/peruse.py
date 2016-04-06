@@ -3,17 +3,13 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ '1.0' ] = '[git]kde:peruse|1.0'
-        self.defaultTarget = '1.0'
+        self.svnTargets[ 'master' ] = '[git]kde:peruse|master'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/qtgui"] = "default"
-        self.dependencies["libs/qtqml"] = "default"
-        self.dependencies["libs/qtquick"] = "default"
-        self.dependencies["libs/qtwidgets"] = "default"
         self.dependencies[ 'frameworks/karchive' ] = 'default'
         self.dependencies[ 'frameworks/kconfig' ] = 'default'
         self.dependencies[ 'frameworks/kdeclarative' ] = 'default'
@@ -23,6 +19,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/kio' ] = 'default'
         self.dependencies[ 'data/hicolor-icon-theme'] = "default"
         self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
+        self.dependencies[ 'testing/kirigami' ] = 'default'
 
         # Install proper theme
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
@@ -33,6 +30,7 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def __init__( self):
         CMakePackageBase.__init__( self )
+        self.subinfo.options.fetch.checkoutSubmodules = True
         blacklists = [
             NSIPackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
