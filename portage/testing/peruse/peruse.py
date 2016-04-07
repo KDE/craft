@@ -21,6 +21,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'testing/kirigami' ] = 'default'
         self.dependencies[ 'kde/okular' ] = 'default'
+        self.dependencies[ 'kde/kio-extras' ] = 'default'
 
         # Install proper theme
         self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
