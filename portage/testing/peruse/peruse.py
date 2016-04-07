@@ -20,8 +20,10 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'data/hicolor-icon-theme'] = "default"
         self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'testing/kirigami' ] = 'default'
+        self.dependencies[ 'kde/okular' ] = 'default'
 
         # Install proper theme
+        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
 
 
