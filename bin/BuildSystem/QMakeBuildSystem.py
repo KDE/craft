@@ -13,7 +13,10 @@ class QMakeBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "qmake")
         self.platform = ""
         if compiler.isMSVC():
-            self.platform = "win32-%s" % self.compiler()
+            if compiler.isClang():
+                self.platform = "win32-clang-%s" % self.compiler()
+            else:
+                self.platform = "win32-%s" % self.compiler()
         elif compiler.isMinGW():
             self.platform = "win32-g++"
         elif compiler.isIntel():

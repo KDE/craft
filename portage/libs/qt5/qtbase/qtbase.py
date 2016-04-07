@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
                 self.patchToApply[ ver ] = [("qtbase-5.6.0.patch" , 1)]
             elif ver.startswith("5.6"):
                 self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
+            elif ver.startswith("5.7"):
+                self.patchToApply[ver] = [("qtbase-5.7.patch", 1)]
             else:
                 self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
                 if ver.startswith("5.4"):
@@ -73,7 +75,9 @@ class Package(Qt5CorePackageBase):
         command += "-qt-zlib "
         command += "-qt-pcre "
         command += "-nomake examples "
-        command += "-c++11 "
+        # can we drop that in general?
+        if not self.subinfo.buildTarget.startswith("5.7"):
+            command += "-c++11 "
         command += "-opengl dynamic "
         command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":

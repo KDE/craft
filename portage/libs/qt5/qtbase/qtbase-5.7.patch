@@ -1,0 +1,91 @@
+diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
+index dffc3d6..28deab2 100644
+--- a/qmake/generators/makefile.cpp
++++ b/qmake/generators/makefile.cpp
+@@ -1182,7 +1182,7 @@ MakefileGenerator::filePrefixRoot(const QString &root, const QString &path)
+ {
+     QString ret(path);
+     if(path.length() > 2 && path[1] == ':') //c:\foo
+-        ret.insert(2, root);
++        ret.replace(0, 2, root);
+     else
+         ret.prepend(root);
+     while (ret.endsWith('\\'))
+diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
+index 9bd5a9e..13025c1 100644
+--- a/src/corelib/io/qstandardpaths_win.cpp
++++ b/src/corelib/io/qstandardpaths_win.cpp
+@@ -277,6 +277,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
+ #  ifndef QT_BOOTSTRAPPED
+         dirs.append(QCoreApplication::applicationDirPath());
+         dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
++        dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../share"));
++        if (type != GenericDataLocation && type != GenericConfigLocation) {
++            QString appData = QCoreApplication::applicationDirPath() + QLatin1String("/../share");
++            if (!QCoreApplication::organizationName().isEmpty())
++                appData += QLatin1Char('/') + QCoreApplication::organizationName();
++            if (!QCoreApplication::applicationName().isEmpty())
++                appData += QLatin1Char('/') + QCoreApplication::applicationName();
++           dirs.append(appData);
++       }
++        dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../etc/xdg"));
+ #  endif // !QT_BOOTSTRAPPED
+     } // isConfigLocation()
+ #endif // !Q_OS_WINCE
+diff --git a/src/gui/image/qiconloader.cpp b/src/gui/image/qiconloader.cpp
+index a600aa3..bc9b12e 100644
+--- a/src/gui/image/qiconloader.cpp
++++ b/src/gui/image/qiconloader.cpp
+@@ -151,6 +151,7 @@ QStringList QIconLoader::themeSearchPaths() const
+ {
+     if (m_iconDirs.isEmpty()) {
+         m_iconDirs = systemIconSearchPaths();
++        m_iconDirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/../share/icons"));
+         // Always add resource directory as search path
+         m_iconDirs.append(QLatin1String(":/icons"));
+     }
+diff --git a/src/plugins/platforms/windows/qwindowstheme.cpp b/src/plugins/platforms/windows/qwindowstheme.cpp
+index c64955b..cccd9d2 100644
+--- a/src/plugins/platforms/windows/qwindowstheme.cpp
++++ b/src/plugins/platforms/windows/qwindowstheme.cpp
+@@ -344,6 +344,8 @@ static inline QStringList iconThemeSearchPaths()
+ static inline QStringList styleNames()
+ {
+     QStringList result;
++    result.append(QStringLiteral("breeze"));
++    result.append(QStringLiteral("oxygen"));
+     if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA)
+         result.append(QStringLiteral("WindowsVista"));
+     if (QSysInfo::WindowsVersion >= QSysInfo::WV_XP)
+@@ -407,6 +409,9 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
+         return QVariant(true);
+     case WheelScrollLines:
+         return QVariant(int(dWordSystemParametersInfo(SPI_GETWHEELSCROLLLINES, 3)));
++    case QPlatformTheme::SystemIconThemeName:
++    case QPlatformTheme::SystemIconFallbackThemeName:
++        return QVariant(QLatin1String("breeze"));
+     default:
+         break;
+     }
+diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
+index 466be70..9d084b0 100644
+--- a/tools/configure/configureapp.cpp
++++ b/tools/configure/configureapp.cpp
+@@ -2998,7 +2998,7 @@ void Configure::generateOutputVars()
+     if (dictionary[ "DBUS" ] == "linked") {
+        if (!dbusPath.isEmpty()) {
+            qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
+-           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib").arg(dbusPath);
++           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib -ldbus-1").arg(dbusPath);
+            if (dbusHostPath.isEmpty())
+                qmakeVars += QString("QT_HOST_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
+        }
+@@ -3007,7 +3007,7 @@ void Configure::generateOutputVars()
+     }
+     if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
+         qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
+-        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib").arg(mysqlPath);
++        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib -llibmysql").arg(mysqlPath);
+     }
+     if (!psqlLibs.isEmpty())
+         qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
