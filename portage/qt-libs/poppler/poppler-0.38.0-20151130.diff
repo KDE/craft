@@ -1,15 +1,17 @@
 diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' poppler-0.38.0.orig/config.h.cmake poppler-0.38.0/config.h.cmake
 --- poppler-0.38.0.orig/config.h.cmake	2015-10-28 23:11:49.000000000 +0100
 +++ poppler-0.38.0/config.h.cmake	2015-12-08 23:42:24.499813200 +0100
-@@ -222,6 +222,7 @@
+@@ -222,6 +222,9 @@
  /* MS has defined snprintf as deprecated */
  #ifdef _MSC_VER
++#if _MSC_VER < 1900
  #define snprintf _snprintf
++#endif
 +#include <algorithm>
  #endif
  
  /* Number of bits in a file offset, on hosts where this is settable. */
-@@ -232,3 +233,6 @@
+@@ -232,3 +235,6 @@
  
  /* Define for large files, on AIX-style hosts. */
  /* TODO This is wrong, port if needed #undef _LARGE_FILES */
