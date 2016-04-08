@@ -42,8 +42,12 @@ class PackageMSVC(CMakePackageBase):
     def make( self ):
         self.enterSourceDir()
         _win64 = ""
+        _rcomp = ""
         if compiler.isX64(): _win64 = " WIN64="
-        self.system( "nmake -f psi\\msvc.mak" + _win64 )
+        # because ghostscript doesn't know about msvc2015, it guesses wrong on this. But,
+        # because of where we are, rc /should/ be in the path, so we'll just use that.
+        if compiler.isMSVC2015(): _rcomp = " RCOMP=rc.exe"
+        self.system( "nmake -f psi\\msvc.mak" + _rcomp + _win64 )
         return True
 
     def install( self ):
