@@ -60,7 +60,7 @@ Function .onInit
   Abort
   ${EndIf}
 !endif
-ReadRegStr $R0 HKLM ${regkey} "Install_Dir"
+ReadRegStr $R0 HKLM "${regkey}" "Install_Dir"
 ${IfNot} $R0 == ""
   StrCpy $ExistingInstallation $R0
 ${EndIf}
