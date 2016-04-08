@@ -100,15 +100,23 @@ file collection process is skipped, and only the installer is generated.
 
     def getVCRuntimeLibrariesLocation(self):
         """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
-        return os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "redist" )
+        _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "redist" )
+        if not os.path.isfile(_path):
+            _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "..", "redist" )
+        return _path
 
     def getVCRedistLocation(self, compiler):
+        _file = None
         if compiler.isMSVC2015():
             if compiler.isX64():
-                return os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x64.exe" )
+                _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x64.exe" )
             elif compiler.isX86():
-                return os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
-        return None
+                _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
+            if not os.path.isfile(_file):
+                _file = None
+                EmergeDebug.new_line()
+                EmergeDebug.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
+        return _file
 
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
