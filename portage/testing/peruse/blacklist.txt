@@ -13,6 +13,13 @@ doc\\.*
 share\\man\\.*
 share\\xml\\.*
 share\\locale\\.*
+man\\.*
+
+# don't ship any data potential created by running the app in situ before packaging
+data\\ib.*
+data\\mysql\\.*
+data\\performance\_schema\\.*
+data\\test\\.*
 
 # cmake stuff
 share\\apps\\cmake\\.*
@@ -33,6 +40,9 @@ qml\\QtTest
 dev-utils\\.*
 share\\dbus-1\\services\\.*
 share\\pkgconfig\\.*
+share\\ECM\\.*
+share\\emoticons\\.*
+share\\kdeappwizard\\.*
 
 # cleanup breeze stuff
 share\\wallpapers\\.*
@@ -41,9 +51,9 @@ share\\icons\\breeze-dark\\.*
 
 # cut the big oxygen icons: this can lead to errors though if used!!!!
 # leaving this bit in, need a more proper filter for these, as we really don't need the majority of these...
-# share\\icons\\oxygen\\64x64\\.*
-# share\\icons\\oxygen\\128x128\\.*
-# share\\icons\\oxygen\\256x256\\.*
+share\\icons\\oxygen\\base\\64x64\\.*
+share\\icons\\oxygen\\base\\128x128\\.*
+share\\icons\\oxygen\\base\\256x256\\.*
 
 # doubled qt dlls
 lib\\[^\\]*\.dll

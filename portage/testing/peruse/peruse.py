@@ -34,6 +34,7 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def __init__( self):
         CMakePackageBase.__init__( self )
         self.subinfo.options.fetch.checkoutSubmodules = True
+        whitelists = []
         blacklists = [
             NSIPackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
@@ -57,9 +58,14 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
         binPath = os.path.join(archiveDir, "bin")
 
         utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "imports"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "lib", "plugins"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "lib", "plugin"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "lib", "qca-qt5"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
         utils.mergeTree(os.path.join(archiveDir, "lib", "qml"), os.path.join(archiveDir, binPath))
+
+        utils.rmtree(os.path.join(self.archiveDir(),"lib"))
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
