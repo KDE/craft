@@ -7,6 +7,8 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Extra plugins for KIO (thumbnail generators, archives, remote filesystems and more)"
         
     def setDependencies( self ):
+        self.buildDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['frameworks/kactivities'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
