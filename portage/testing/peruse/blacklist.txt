@@ -67,4 +67,4 @@ bin\\qt\.conf
 bin\\syncqt\.pl
 
 # strip most executables
-bin\\(?!(peruse|kbuildsycoca5|update-mime-database|dbus-daemon|kioslave)).*\.exe 
+bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
