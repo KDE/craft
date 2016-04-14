@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
+        self.dependencies['util/llvm'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import info
+from Package import CMakePackageBase
+
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -15,19 +17,36 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/lld'] = 'default'
-        self.buildDependencies['dev-util/clang'] = 'default'
 
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        self.clang = portage.getPackageInstance('dev-util', 'clang')
+        self.lld = portage.getPackageInstance('dev-util', 'lld')
+        self.subPackages = [self.clang, self.lld]
         self.subinfo.options.configure.defines = '-DLLVM_TARGETS_TO_BUILD="X86"'
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % portage.getPackageInstance('dev-util', 'lld').sourceDir().replace("\\", "/")
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % portage.getPackageInstance('dev-util', 'clang').sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
         if compiler.isMinGW():
             self.subinfo.options.configure.defines += " -DBUILD_SHARED_LIBS=ON"
+
+    def fetch(self):
+        if not CMakePackageBase.fetch(self):
+            return False
+        for p in self.subPackages:
+            if not p.fetch():
+                return False
+        return True
+
+    def unpack(self):
+        if not CMakePackageBase.unpack(self):
+            return False
+        for p in self.subPackages:
+            if not p.unpack():
+                return False
+        return True
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
