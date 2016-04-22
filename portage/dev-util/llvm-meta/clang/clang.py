@@ -26,18 +26,8 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libxml2'] = 'default'
         self.dependencies['util/llvm'] = 'default'
 
-from Package.CMakePackageBase import *
+from Package.SourceOnlyPackageBase import *
 
-class Package(CMakePackageBase):
+class Package(SourceOnlyPackageBase):
     def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
-
-
-    def configure( self, defines=""):
-        return True
-
-    def make( self ):
-        return True
-
-    def install( self):
-        return True
+        SourceOnlyPackageBase.__init__(self)

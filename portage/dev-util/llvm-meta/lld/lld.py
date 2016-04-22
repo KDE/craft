@@ -9,18 +9,9 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies["dev-util/llvm"] = "default"
 
-from Package.CMakePackageBase import *
+from Package.SourceOnlyPackageBase import *
 
-class Package(CMakePackageBase):
+class Package(SourceOnlyPackageBase):
     def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
+        SourceOnlyPackageBase.__init__(self)
 
-
-    def configure( self, defines=""):
-        return True
-
-    def make( self ):
-        return True
-
-    def install( self):
-        return True
