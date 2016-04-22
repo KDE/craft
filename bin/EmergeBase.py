@@ -32,11 +32,13 @@ class EmergeBase(object):
         # called here. That is really the wrong way round.
         object.__init__(self)
         EmergeDebug.debug("EmergeBase.__init__ called", 2)
-        self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
 
         if not hasattr(self, 'subinfo'):
+            self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
             self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
-
+            self.subinfo.__evilHack = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
+        else:
+            self.filename, self.category, self.subpackage, self.package, mod = self.subinfo.__evilHack
 
         if not hasattr(self, 'buildSystemType'):
             self.buildSystemType = None

@@ -11,12 +11,18 @@ class MultiSource(object):
     def __init__(self):
         object.__init__(self)
         EmergeDebug.trace("MultiSource __init__", 2)
+        self.__source = None
+
+    @property
+    def source(self):
         # pylint: disable=E1101
         # multiple inheritance: MultiSource is never the only
         # superclass, others define self.source, self.subinfo etc.
         # TODO: This code should mostly be in the class defining self.source etc.
-        self.source = SourceFactory(self.subinfo)
-        self.source.localFileNames = self.localFileNames.__get__(self, MultiSource)
+        if not self.__source:
+            self.__source = SourceFactory(self.subinfo)
+            self.__source.localFileNames = self.localFileNames.__get__(self, MultiSource)
+        return self.__source
 
     def localFileNames( self ):
         EmergeDebug.trace("MultiSource localFileNames", 2)
