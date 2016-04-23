@@ -11,7 +11,6 @@ import EmergeHash
 
 class ArchiveSource(SourceBase):
     """ file download source"""
-    filenames = []
     def __init__(self, subinfo=None):
         EmergeDebug.debug("ArchiveSource.__init__ called", 2)
         if subinfo:

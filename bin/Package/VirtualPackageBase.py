@@ -1,19 +1,12 @@
-import EmergeDebug
-from Package.PackageBase import *
-from Source.SourceBase import *
-from BuildSystem.BuildSystemBase import *
-from Packager.PackagerBase import *
+from Package.SourceOnlyPackageBase import *
 import portage
 
 
-class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase ):
+class VirtualPackageBase( SourceOnlyPackageBase):
     """provides a base class for virtual packages"""
     def __init__( self ):
         EmergeDebug.debug("VirtualPackageBase.__init__ called", 2)
-        PackageBase.__init__( self )
-        SourceBase.__init__( self )
-        BuildSystemBase.__init__( self, "" )
-        PackagerBase.__init__( self )
+        SourceOnlyPackageBase.__init__( self )
 
 # from SourceBase:
     def fetch( self, dummyRepoSource=None):
@@ -37,21 +30,6 @@ class VirtualPackageBase( PackageBase, SourceBase, BuildSystemBase, PackagerBase
     def localFileNamesBase( self ):
         return []
 
-# from BuildSystemBase:
-    def configure( self ):
-        return True
-
-    def install( self ):
-        return True
-
-    def uninstall( self ):
-        return True
-
-    def runTests( self ):
-        return True
-
-    def make( self ):
-        return True
 
 # from PackagerBase:
     def createPackage( self ):

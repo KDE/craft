@@ -375,7 +375,7 @@ class Portage(object):
             return dict()
         info = _getSubinfo( category, package )
         if not info is None:
-            tagDict = info.svnTargets
+            tagDict = info.svnTargets.copy()
             tagDict.update( info.targets )
             EmergeDebug.debug(tagDict, 2)
             return tagDict

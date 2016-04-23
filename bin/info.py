@@ -67,7 +67,6 @@ class infoclass(object):
         self._defaultTarget = None
         self.buildTarget = 'svnHEAD'
         self.setTargets()
-        self.setSVNTargets()
         self.setBuildTarget()
         self.setBuildOptions()
 
@@ -102,9 +101,6 @@ class infoclass(object):
 
     def setTargets( self ):
         """default method for setting targets, override to set individual targets"""
-
-    def setSVNTargets( self ):
-        """default method for setting svn targets, override to set individual targets"""
 
     def setBuildTarget( self, buildTarget = None):
         """setup current build target"""
