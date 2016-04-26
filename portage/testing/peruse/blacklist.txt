@@ -49,8 +49,35 @@ share\\wallpapers\\.*
 share\\icons\\Breeze_Snow\\.*
 share\\icons\\breeze-dark\\.*
 
+share\\icons\\breeze\\applets\\.*
+share\\icons\\breeze\\apps\\.*
+share\\icons\\breeze\\mimetypes\\(16|22|32|64)\\(?!(application-pdf|none|unknown)).*\.(png|svg)
+
+share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previous|action-next|action-open|system-search|edit-delete|dialog-ok|dialog-ok-apply|dialog-cancel|edit-clear-locationbar-rtl|appointment-new|view-media-title|actor|edit-group|view-media-publisher|tag-folder|document-open|configure)).*\.(png|svg)
+
+# Don't blacklist the following action icons, just everything else...
+# action-close
+# action-previous
+# action-next
+# action-open
+# system-search
+# edit-delete
+# dialog-ok
+# dialog-ok-apply
+# dialog-cancel
+# edit-clear-locationbar-rtl
+# appointment-new
+# view-media-title
+# actor
+# edit-group
+# view-media-publisher
+# tag-folder
+# document-open
+# configure
+
 # cut the big oxygen icons: this can lead to errors though if used!!!!
 # leaving this bit in, need a more proper filter for these, as we really don't need the majority of these...
+share\\icons\\oxygen\\base\\48x48\\.*
 share\\icons\\oxygen\\base\\64x64\\.*
 share\\icons\\oxygen\\base\\128x128\\.*
 share\\icons\\oxygen\\base\\256x256\\.*
