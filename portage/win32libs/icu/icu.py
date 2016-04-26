@@ -41,6 +41,13 @@ class PackageCMake(CMakePackageBase):
         else:
             bt = "Release"
 
+        datafile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icudt55l.dat")
+        if os.path.exists(datafile):
+            datafileDestination = os.path.join(self.sourceDir(), "data", "in", "icudt55l.dat")
+            if os.path.exists(datafileDestination):
+                os.remove(datafileDestination)
+            utils.copyFile( datafile, datafileDestination)
+
         toolsetSwitches = ""
         if compiler.isMSVC2012():
             toolsetSwitches = "/property:PlatformToolset=v110"
