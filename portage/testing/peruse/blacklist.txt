@@ -44,6 +44,9 @@ share\\ECM\\.*
 share\\emoticons\\.*
 share\\kdeappwizard\\.*
 
+# not running a desktop, don't need the plasma desktop theme
+share\\plasma\\desktoptheme\\.*
+
 # cleanup breeze stuff
 share\\wallpapers\\.*
 share\\icons\\Breeze_Snow\\.*
@@ -77,6 +80,20 @@ share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previou
 
 # cut the big oxygen icons: this can lead to errors though if used!!!!
 # leaving this bit in, need a more proper filter for these, as we really don't need the majority of these...
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\emotes\\(?!(face-smile-big)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\categories\\(?!(applications-education-mathematics)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\places\\(?!(stock-folder)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\devices\\(?!(audio-input-line)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\status\\(?!(cloudstatus)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\emblems\\(?!(emblem-remove)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\actions\\(?!(activity-fork)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\mimetypes\\(?!(audio-x-mp2)).*
+share\\icons\\oxygen\\base\\16x16\\apps\\(?!(kdeconnect)).*
+share\\icons\\oxygen\\base\\22x22\\apps\\(?!(kget)).*
+share\\icons\\oxygen\\base\\32x32\\apps\\(?!(amarok_change_language)).*
+share\\icons\\oxygen\\base\\32x32\\emblems\\(?!(vcs-conflicting)).*
+share\\icons\\oxygen\\base\\32x32\\actions\\(?!(blurimage)).*
+share\\icons\\oxygen\\base\\32x32\\status\\(?!(weather-mist)).*
 share\\icons\\oxygen\\base\\48x48\\.*
 share\\icons\\oxygen\\base\\64x64\\.*
 share\\icons\\oxygen\\base\\128x128\\.*
@@ -95,3 +112,6 @@ bin\\syncqt\.pl
 
 # strip most executables
 bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
+
+# some unneeded libraries
+bin\\libmysqld\.dll
