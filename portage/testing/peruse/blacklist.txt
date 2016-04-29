@@ -28,6 +28,7 @@ share\\apps\\cmake\\.*
 share\\apps\\ark\\.*
 share\\apps\\kgpg\\.*
 share\\kf5\\kdoctools\\.*
+share\\kf5\\kcharselect\\.*
 
 # Unused Qt modules
 qml\\QtMultimedia
@@ -43,9 +44,10 @@ share\\pkgconfig\\.*
 share\\ECM\\.*
 share\\emoticons\\.*
 share\\kdeappwizard\\.*
+share\\kdevappwizard\\.*
 
 # not running a desktop, don't need the plasma desktop theme
-share\\plasma\\desktoptheme\\.*
+share\\plasma\\desktoptheme\\(?!(default)).*
 
 # cleanup breeze stuff
 share\\wallpapers\\.*
@@ -54,7 +56,7 @@ share\\icons\\breeze-dark\\.*
 
 share\\icons\\breeze\\applets\\.*
 share\\icons\\breeze\\apps\\.*
-share\\icons\\breeze\\mimetypes\\(16|22|32|64)\\(?!(application-pdf|none|unknown)).*\.(png|svg)
+share\\icons\\breeze\\mimetypes\\(16|22|32|64)\\(?!(image-vnd\.djvu|application-epub\+zip|application-pdf|none|unknown)).*\.(png|svg)
 
 share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previous|action-next|action-open|system-search|edit-delete|dialog-ok|dialog-ok-apply|dialog-cancel|edit-clear-locationbar-rtl|appointment-new|view-media-title|actor|edit-group|view-media-publisher|tag-folder|document-open|configure)).*\.(png|svg)
 
@@ -110,8 +112,14 @@ mkspecs\\.*
 bin\\qt\.conf
 bin\\syncqt\.pl
 
+# unneeded kio slaves
+lib\\plugins\\kf5\\kio\\(?!(file|thumbnail)).*
+
 # strip most executables
 bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
 
-# some unneeded libraries
+# some unneeded mysql things
 bin\\libmysqld\.dll
+share\\fill_help_tables\.sql
+share\\errmsg-utf8\.txt
+share\\[^\\]*\\errmsg\.sys
