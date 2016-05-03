@@ -5,7 +5,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtquick1'] = 'default'
+        # qtquick1 is optional
+        #self.dependencies['libs/qtquick1'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = '[git]kde:phonon'        
