@@ -38,7 +38,7 @@ class MSysShell(object):
             if compiler.isMSVC2013():
                 cflags = " -FS"
 
-        self.environment[ "SET_FULL_PATH" ] = "1"#inherit the windows path
+        self.environment[ "MSYS2_PATH_TYPE" ] = "inherit"#inherit the windows path
         if "make" in self.environment:
             del self.environment[ "make" ]
         if compiler.isMinGW():
