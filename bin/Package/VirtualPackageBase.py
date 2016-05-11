@@ -30,6 +30,11 @@ class VirtualPackageBase( SourceOnlyPackageBase):
     def localFileNamesBase( self ):
         return []
 
+    def sourceVersion( self ):
+        return ""
+
+    def sourceRevision( self ):
+        return ""
 
 # from PackagerBase:
     def createPackage( self ):
