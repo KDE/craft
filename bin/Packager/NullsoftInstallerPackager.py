@@ -101,7 +101,7 @@ file collection process is skipped, and only the installer is generated.
     def getVCRuntimeLibrariesLocation(self):
         """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
         _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "redist" )
-        if not os.path.isfile(_path):
+        if not os.path.exists(_path):
             _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "..", "redist" )
         return _path
 
