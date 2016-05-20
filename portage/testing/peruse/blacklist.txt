@@ -37,6 +37,17 @@ qml\\QtWebKit
 qml\\QtWinExtras
 qml\\QtTest
 
+# Unused Qt and KF5 libraries
+bin\\KF5Khtml\.dll
+bin\\Qt5CLucene\.dll
+bin\\Qt5Declarative\.dll
+bin\\Qt5Designer\.dll
+bin\\Qt5DesignerComponents\.dll
+#bin\\Qt5Sql\.dll
+bin\\Qt5Test\.dll
+bin\\Qt5QuickTest\.dll
+bin\\Qt5XmlPatterns\.dll
+
 # unrelated
 dev-utils\\.*
 share\\dbus-1\\services\\.*
@@ -58,7 +69,7 @@ share\\icons\\breeze\\applets\\.*
 share\\icons\\breeze\\apps\\.*
 share\\icons\\breeze\\mimetypes\\(16|22|32|64)\\(?!(image-vnd\.djvu|application-epub\+zip|application-pdf|none|unknown)).*\.(png|svg)
 
-share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previous|action-next|action-open|system-search|edit-delete|dialog-ok|dialog-ok-apply|dialog-cancel|edit-clear-locationbar-rtl|appointment-new|view-media-title|actor|edit-group|view-media-publisher|tag-folder|document-open|configure)).*\.(png|svg)
+share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previous|action-next|action-open|system-search|edit-delete|dialog-ok|dialog-ok-apply|dialog-cancel|edit-clear-locationbar-rtl|appointment-new|view-media-title|actor|edit-group|view-media-publisher|tag-folder|document-open|configure|list-remove|list-add|handle-right|handle-left|go-up|view-fullscreen)).*\.(png|svg)
 
 # Don't blacklist the following action icons, just everything else...
 # action-close
@@ -79,6 +90,12 @@ share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(action-close|action-previou
 # tag-folder
 # document-open
 # configure
+# list-remove
+# list-add
+# handle-right
+# handle-left
+# go-up
+# view-fullscreen
 
 # cut the big oxygen icons: this can lead to errors though if used!!!!
 # leaving this bit in, need a more proper filter for these, as we really don't need the majority of these...
@@ -114,12 +131,15 @@ bin\\syncqt\.pl
 
 # unneeded kio slaves
 lib\\plugins\\kf5\\kio\\(?!(file|thumbnail)).*
+plugins\\kf5\\kio\\(?!(file|thumbnail)).*
 
 # strip most executables
-bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
+bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave|gswin32c|gswin64c)).*\.exe
 
-# some unneeded mysql things
+# some unneeded mysql things, because things further up pulls it in and we don't actually use it...
+bin\\libmysql\.dll
 bin\\libmysqld\.dll
 share\\fill_help_tables\.sql
 share\\errmsg-utf8\.txt
 share\\[^\\]*\\errmsg\.sys
+scripts\\.*
