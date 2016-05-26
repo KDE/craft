@@ -237,7 +237,7 @@ class CMakeBuildSystem(BuildSystemBase):
         return out
 
     def clangOptions(self):
-        if compiler.isMinGW():
+        if compiler.isGCC():
             out  =  " -DCMAKE_CXX_COMPILER=clang++"
             out  += " -DCMAKE_C_COMPILER=clang"
         elif compiler.isMSVC():
