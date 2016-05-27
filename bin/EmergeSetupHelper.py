@@ -54,7 +54,7 @@ class SetupHelper( object ):
     def subst( self, ):
         def _subst( path, drive ):
             if not os.path.exists( path ):
-                os.mkdir( path )
+                os.makedirs( path )
             command = "subst %s %s" % ( emergeSettings.get( "ShortPath", drive ), path)
             subprocess.getoutput( command )
 
