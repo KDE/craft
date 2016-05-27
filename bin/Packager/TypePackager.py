@@ -16,9 +16,10 @@ The packager used can be decided at runtime
 
     PackagerTypes = [ "SevenZipPackager", "KDEWinPackager", "MSIFragmentPackager", "InnoSetupPackager" ]
 
-    def __init__( self, defaultType = "MSIFragmentPackager" ):
+    def __init__( self, defaultType = "SevenZipPackager" ):
         EmergeDebug.debug("TypePackager __init__ %s" % defaultType, 2)
         self.defaultPackager = defaultType
+        self.changePackager()
 
     def changePackager( self, packager=None ):
         if packager == None: packager = self.defaultPackager
@@ -36,5 +37,4 @@ The packager used can be decided at runtime
         TypePackager.__bases__[ 0 ].__init__( self, True )
 
     def createPackage( self ):
-        result = False
         return TypePackager.__bases__[ 0 ].createPackage( self )
