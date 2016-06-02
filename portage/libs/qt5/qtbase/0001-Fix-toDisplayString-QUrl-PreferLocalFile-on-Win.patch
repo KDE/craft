@@ -1,46 +1,19 @@
-From 8dad3bf2121e3ad5e405665fefa28c4d53192bf7 Mon Sep 17 00:00:00 2001
-From: Kevin Funk <kevin.funk@kdab.com>
-Date: Thu, 14 Jan 2016 23:33:28 +0100
-Subject: [PATCH] Fix toDisplayString(QUrl::PreferLocalFile) on Win
-
-When using QUrl::PreferLocalFile we do want to strip the leading slash,
-as toLocalFile() would do as well.
-
-Behavior change by means of an example:
-  QUrl url(QUrl::fromLocalFile("C:/file.txt")
-  url.toLocalFile() --> "C:/file.txt"
-
-Before:
-  url.toDisplayString(QUrl::PreferLocalFile) --> "/C:/file.txt"
-
-After:
-  url.toDisplayString(QUrl::PreferLocalFile) --> "C:/file.txt"
-
-Task-number: QTBUG-41729
-Change-Id: I7d425541f6077ebcf3fcf46feeb7e0f03a0d7fe2
-Reviewed-by: Dominik Haumann <dhaumann@kde.org>
-Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
----
- src/corelib/io/qurl.cpp                 | 53 +++++++++++++++++++--------------
- tests/auto/corelib/io/qurl/tst_qurl.cpp | 25 ++++++++++++++++
- 2 files changed, 55 insertions(+), 23 deletions(-)
-
 diff --git a/src/corelib/io/qurl.cpp b/src/corelib/io/qurl.cpp
-index 775a870..b51119c 100644
+index 89f5aad..5c98c70 100644
 --- a/src/corelib/io/qurl.cpp
 +++ b/src/corelib/io/qurl.cpp
 @@ -556,6 +556,7 @@ public:
      inline bool hasFragment() const { return sectionIsPresent & Fragment; }
-
+ 
      inline bool isLocalFile() const { return flags & IsLocalFile; }
-+    QString toLocalFile(QUrl::FormattingOptions options) const;
-
++	QString toLocalFile(QUrl::FormattingOptions options) const;
+ 
      QString mergePaths(const QString &relativePath) const;
-
+ 
 @@ -1460,6 +1461,33 @@ inline void QUrlPrivate::parse(const QString &url, QUrl::ParsingMode parsingMode
          validateComponent(Fragment, url, hash + 1, len);
  }
-
+ 
 +QString QUrlPrivate::toLocalFile(QUrl::FormattingOptions options) const
 +{
 +    QString tmp;
@@ -52,11 +25,11 @@ index 775a870..b51119c 100644
 +        tmp = QStringLiteral("//") + host;
 +#ifdef Q_OS_WIN // QTBUG-42346, WebDAV is visible as local file on Windows only.
 +        if (scheme == webDavScheme())
-+            tmp += webDavSslTag();
++            tmp = webDavSslTag();
 +#endif
 +        if (!ourPath.isEmpty() && !ourPath.startsWith(QLatin1Char('/')))
-+            tmp += QLatin1Char('/');
-+        tmp += ourPath;
++            tmp = QLatin1Char('/');
++        tmp = ourPath;
 +    } else {
 +        tmp = ourPath;
 +#ifdef Q_OS_WIN
@@ -70,20 +43,21 @@ index 775a870..b51119c 100644
 +
  /*
      From http://www.ietf.org/rfc/rfc3986.txt, 5.2.3: Merge paths
-
-@@ -3257,7 +3285,7 @@ QString QUrl::toString(FormattingOptions options) const
+ 
+@@ -3255,7 +3283,7 @@ QString QUrl::toString(FormattingOptions options) const
              && (!d->hasQuery() || options.testFlag(QUrl::RemoveQuery))
              && (!d->hasFragment() || options.testFlag(QUrl::RemoveFragment))
              && isLocalFile()) {
 -        return path(options);
 +        return d->toLocalFile(options);
      }
-
+ 
      QString url;
-@@ -3820,28 +3848,7 @@ QString QUrl::toLocalFile() const
+@@ -3817,29 +3845,8 @@ QString QUrl::toLocalFile() const
+     // the call to isLocalFile() also ensures that we're parsed
      if (!isLocalFile())
          return QString();
-
+-
 -    QString tmp;
 -    QString ourPath = path(QUrl::FullyDecoded);
 -
@@ -106,27 +80,28 @@ index 775a870..b51119c 100644
 -#endif
 -    }
 -    return tmp;
++    
 +    return d->toLocalFile(QUrl::FullyDecoded);
  }
-
+ 
  /*!
 diff --git a/tests/auto/corelib/io/qurl/tst_qurl.cpp b/tests/auto/corelib/io/qurl/tst_qurl.cpp
-index 031a35b..519b05f 100644
+index 7579c67..4dd3963 100644
 --- a/tests/auto/corelib/io/qurl/tst_qurl.cpp
 +++ b/tests/auto/corelib/io/qurl/tst_qurl.cpp
 @@ -69,6 +69,8 @@ private slots:
      void resolving();
      void toString_data();
      void toString();
-+    void toString_PreferLocalFile_data();
-+    void toString_PreferLocalFile();
++	void toString_PreferLocalFile_data();
++	void toString_PreferLocalFile();
      void toString_constructed_data();
      void toString_constructed();
      void toAndFromStringList_data();
-@@ -1050,6 +1052,29 @@ void tst_QUrl::toString()
-
+@@ -1049,6 +1051,30 @@ void tst_QUrl::toString()
      QCOMPARE(url.adjusted(opt).toString(), string);
  }
+ 
 +void tst_QUrl::toString_PreferLocalFile_data()
 +{
 +    QTest::addColumn<QUrl>("url");
@@ -150,8 +125,7 @@ index 031a35b..519b05f 100644
 +
 +    QCOMPARE(url.toString(QUrl::PreferLocalFile), string);
 +}
-
++
  void tst_QUrl::toAndFromStringList_data()
  {
---
-2.7.0.windows.1
+     QTest::addColumn<QStringList>("strings");
