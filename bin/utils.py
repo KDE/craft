@@ -170,9 +170,9 @@ def wgetFile( url, destdir, filename=''):
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
-        command += "  -P %s" % destdir
+        command += "  -P \"%s\"" % destdir
     else:
-        command += " -O %s" % os.path.join( destdir, filename )
+        command += " -O \"%s\"" % os.path.join( destdir, filename )
     command += " %s" % url
     craftDebug.log.debug("wgetfile called")
 
@@ -209,7 +209,7 @@ def unpackFile( downloaddir, filename, workdir ):
 
 def un7zip( fileName, destdir, flag = None ):
     command = UtilsCache.findApplication("7za") or os.path.join(CraftStandardDirs.craftBin(), "craft_7za")
-    command += " x -r -y -o%s %s" % ( destdir, fileName )
+    command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
 
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
