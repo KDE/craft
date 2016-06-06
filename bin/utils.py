@@ -205,7 +205,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
-    command = os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
+    command = UtilsCache.findApplication("7za") or os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
     command += " x -r -y -o%s %s" % ( destdir, fileName )
 
     if flag == ".7z":
