@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
 
     def setTargets( self ):
       self.svnTargets[ 'svnHEAD' ] = 'https://quazip.svn.sourceforge.net/svnroot/quazip/trunk/quazip'
-      self.patchToApply['svnHEAD'] = ('quazip-20160511.patch',0)
+      self.patchToApply['svnHEAD'] = ('quazip-20160511.patch',1)
       self.targets['0.4.4'] = 'http://heanet.dl.sourceforge.net/project/quazip/quazip/0.4.4/quazip-0.4.4.zip'
       self.targetDigests['0.4.4'] = 'cfc5ca35ff157e77328fc55de40b73591f425592'
       self.targetInstSrc['0.4.4'] = 'quazip-0.4.4'

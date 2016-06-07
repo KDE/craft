@@ -1,7 +1,7 @@
-Index: C:/kde/download/svn-src/quazip/CMakeLists.txt
+Index: a/CMakeLists.txt
 ===================================================================
---- C:/kde/download/svn-src/quazip/CMakeLists.txt	(revision 274)
-+++ C:/kde/download/svn-src/quazip/CMakeLists.txt	(working copy)
+--- a/CMakeLists.txt	(revision 274)
++++ b/CMakeLists.txt	(working copy)
 @@ -9,13 +9,8 @@
  endif()
  
@@ -33,10 +33,10 @@ Index: C:/kde/download/svn-src/quazip/CMakeLists.txt
  
  # All build libraries are moved to this directory
  SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-Index: C:/kde/download/svn-src/quazip/quazip/CMakeLists.txt
+Index: a/quazip/CMakeLists.txt
 ===================================================================
---- C:/kde/download/svn-src/quazip/quazip/CMakeLists.txt	(revision 274)
-+++ C:/kde/download/svn-src/quazip/quazip/CMakeLists.txt	(working copy)
+--- a/quazip/CMakeLists.txt	(revision 274)
++++ a/quazip/CMakeLists.txt	(working copy)
 @@ -15,17 +15,10 @@
  set(SRCS ${SRCS} ${MOC_SRCS})
  
