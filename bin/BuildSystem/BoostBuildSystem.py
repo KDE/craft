@@ -9,6 +9,7 @@ import os
 
 import EmergeDebug
 import utils
+from EmergeOS.osutils import OsUtils
 from BuildSystem.BuildSystemBase import *
 
 
@@ -21,11 +22,20 @@ class BoostBuildSystem(BuildSystemBase):
     def configureOptions( self, defines="" ):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
+                
+        if OsUtils.isWin():
+            options += " -j"+ os.getenv("NUMBER_OF_PROCESSORS")
+            options += " --build-dir=" + self.buildDir()
+        else:
+            # TODO: real value
+            options += " install --prefix=%s" % self.buildDir()
+            options += " -j10"
+            
+            
         options += (" --build-type=minimal"
 #                " --debug-configuration"
-                " --build-dir=" + self.buildDir() + \
                 " threading=multi"
-                " -j"+ os.getenv("NUMBER_OF_PROCESSORS"))
+                )
                 
         if not self.subinfo.options.buildStatic:
             options += (" link=shared"
@@ -46,7 +56,7 @@ class BoostBuildSystem(BuildSystemBase):
         options += " toolset="
         if compiler.isClang():
             options += "clang"
-            if compiler.isMinGW():
+            if compiler.isGCC():
                 options += " threadapi=pthread"
         elif compiler.isMinGW():
             options += "gcc"
@@ -90,17 +100,27 @@ class BoostBuildSystem(BuildSystemBase):
 
     def install( self ):
         """install the target"""
-        if not BuildSystemBase.install(self):
-            return False
+        if OsUtils.isUnix():
+            if not os.path.exists(self.installDir()):
+                os.makedirs(self.installDir())
+            utils.copyDir(self.buildDir(), self.installDir())
+            return BuildSystemBase.install(self)
+        else:
+            if not BuildSystemBase.install(self):
+                return False
+            
 
-        for root, dirs, files in os.walk( self.buildDir() ):
-            for f in files:
-                if f.endswith( ".dll" ):
-                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "lib", f ) )
-                    utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "bin", f ) )
-                elif f.endswith( ".a" ) or f.endswith( ".lib" ):
-                    utils.copyFile( os.path.join( root, f ), os.path.join( self.imageDir(), "lib", f ) )
-        return True
+            for root, dirs, files in os.walk( self.buildDir() ):
+                for f in files:
+                    if f.endswith( ".dll" ):
+                        utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "lib", f ) )
+                        utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "bin", f ) )
+                    elif f.endswith( ".a" ) or f.endswith( ".lib" ):
+                        utils.copyFile( os.path.join( root, f ), os.path.join( self.imageDir(), "lib", f ) )
+                    
+                        
+                        
+            return True
 
     def unittest( self ):
         return True
