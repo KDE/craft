@@ -110,17 +110,14 @@ class Package(Qt5CorePackageBase):
                     command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
                 if self.subinfo.options.isActive("win32libs/icu"):
                     command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
+        
+        if OsUtils.isUnix() or self.supportsCCACHE:
+            command += "-no-pch "
 
-        if self.supportsCCACHE:
-            command += "-dont-process "
         print("command: ", command)
         if not utils.system( command ):
             return False
-        if self.supportsCCACHE:
-            return Qt5CorePackageBase.configure(self)
-        else:
-            return True
-
+        return True
 
     def make(self, unused=''):
         self.setPathes()

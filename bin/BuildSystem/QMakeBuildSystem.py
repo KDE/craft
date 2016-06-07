@@ -36,12 +36,6 @@ class QMakeBuildSystem(BuildSystemBase):
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
         self.enterBuildDir()
-        if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
-            configureDefines += ' "CONFIG -= debug"'
-            configureDefines += ' "CONFIG += release"'
-        elif self.buildType() == "Debug":
-            configureDefines += ' "CONFIG += debug"'
-            configureDefines += ' "CONFIG -= release"'
 
         proFile = self.configureSourceDir()
         if self.subinfo.options.qmake.proFile:
@@ -86,6 +80,24 @@ class QMakeBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running qmake based unittests"""
         return True
+    
+    
+    def configureOptions( self, defines=""):
+        """returns default configure options"""
+        defines += BuildSystemBase.configureOptions(self, defines)
+        if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
+            defines += ' "CONFIG -= debug"'
+            defines += ' "CONFIG += release"'
+        elif self.buildType() == "Debug":
+            defines += ' "CONFIG += debug"'
+            defines += ' "CONFIG -= release"'
+            
+        return defines
         
     def ccacheOptions(self):
         return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" "CONFIG -= precompile_header" '
+    
+    def clangOptions(self):
+        if OsUtils.isUnix():
+            return ' "CONFIG -= precompile_header" '
+        return ''
