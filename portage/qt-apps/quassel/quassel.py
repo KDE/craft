@@ -41,6 +41,7 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        self.supportsNinja = OsUtils.isWin()
         self.subinfo.options.configure.defines = " -DUSE_QT5=ON -DCMAKE_DISABLE_FIND_PACKAGE_Qt5DBus=ON"
         if not self.subinfo.options.isActive("libs/qt5/qtwebkit"):
             self.subinfo.options.configure.defines += " -DWITH_WEBKIT=OFF"
