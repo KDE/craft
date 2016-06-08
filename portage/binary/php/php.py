@@ -7,7 +7,7 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "7.0.3"
+        ver = "7.0.7"
         self.targets[ver]  ="http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
         self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", EmergeHash.HashAlgorithm.SHA1)
 
