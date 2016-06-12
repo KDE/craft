@@ -19,6 +19,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies[ 'qt-apps/kdeconnect-kde' ] = 'default'
         self.dependencies[ 'kde/kde-cli-tools' ] = 'default'
+        self.dependencies[ 'kde/breeze' ] = 'default'
 
 class Package( PortablePackager, VirtualPackageBase ):
     def __init__( self, **args ):

@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
+        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtquick1'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
@@ -21,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kdbusaddons'] = 'default'
         self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/knotifications'] = 'default'
-        self.dependencies['qt-libs/snorenotify'] = 'default'
+        #self.dependencies['qt-libs/snorenotify'] = 'default'
         self.dependencies['frameworks/kcmutils'] = 'default'
 
 
