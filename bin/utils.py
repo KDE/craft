@@ -29,21 +29,16 @@ from EmergeOS.osutils import OsUtils
 
 # TODO: Rename
 class UtilsCache():
-    _appCache = {}
     _NIGTHLY_URLS = dict()
 
     @staticmethod
     def findApplication(app) -> str:
-        if not app in UtilsCache._appCache:
-            appLocation = shutil.which(app)
-            if appLocation:
-                UtilsCache._appCache[app] = appLocation
-            else:
-                EmergeDebug.warning("Emerge was unable to locate: %s" % app)
-                return None
-        return UtilsCache._appCache[app]
-    
-    
+        appLocation = shutil.which(app)
+        if not appLocation:
+            EmergeDebug.warning("Emerge was unable to locate: %s" % app)
+            return None
+        return appLocation
+
     @staticmethod
     def getNightlyVersionsFromUrl(url, pattern, timeout = 10) -> [str]:
         """
