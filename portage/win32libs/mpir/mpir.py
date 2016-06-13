@@ -73,9 +73,13 @@ class PackageMSVC(MakeFilePackageBase):
     def unittest( self ):
         build, bt, toolsetSwitches = self.getBuildSettings();
 
-        return utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
+        return utils.system("msbuild /target:lib_mpir_gc \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
+        ) and utils.system("msbuild /target:lib_mpir_cxx \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
+        ) and utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
                 (os.path.join(self.sourceDir(), build, "mpir-tests.sln"), bt, toolsetSwitches)
-        ) and utils.system(os.path.join("mpir-tests", "run-tests.py"));
+        ) and utils.system(os.path.join(self.sourceDir(), build, "mpir-tests", "run-tests.py"));
 
     def install( self ):
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
