@@ -1,0 +1,5 @@
+include\\.*
+mkspecs\\.*
+dev-utils\\.*
+doc\\.*
+manifest\\.*
