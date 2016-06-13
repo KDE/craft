@@ -10,23 +10,21 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.baseURL = "http://downloads.mysql.com/archives/get/file/"
-        for ver in [ '5.6.24' ]:
-            ver2 = ver.split('.')
-            url = self.baseURL
-            if compiler.isX64():
-              self.targets[ ver ] = url + "mysql-" + ver + "-winx64.zip"
-              self.targetInstSrc[ ver ] = "mysql-" + ver + "-winx64"
-            else:
-              self.targets[ ver ] = url + "mysql-" + ver + "-win32.zip"
-              self.targetInstSrc[ ver ] = "mysql-" + ver + "-win32"
+        self.baseURL = "http://dev.mysql.com/get/Downloads/MySQL-5.6/"
+        ver = '5.6.31'
         if compiler.isX64():
-              self.targetDigests['5.6.20'] = '529321ee25b2b774be532db25f2edd735345c1ba'
+          self.targets[ ver ] = self.baseURL + "mysql-" + ver + "-winx64.zip"
+          self.targetInstSrc[ ver ] = "mysql-" + ver + "-winx64"
         else:
-              self.targetDigests['5.5.32'] = '3d84eccbf05d0ef8117c0f1c1fbf5df277adacb0'
-             
+          self.targets[ ver ] = self.baseURL + "mysql-" + ver + "-win32.zip"
+          self.targetInstSrc[ ver ] = "mysql-" + ver + "-win32"
+        if compiler.isX64():
+              self.targetDigests[ver] = 'f5ac341ca3364d8fd53e38808bde976950111438'
+        else:
+              self.targetDigests[ver] = 'fcf126875ecf1d749d13cacd2faae50a82252b66'
+
         self.shortDescription = "MySql database server and embedded library"
-        self.defaultTarget = '5.6.24'
+        self.defaultTarget = ver
 
 
     def setDependencies( self ):
