@@ -43,9 +43,6 @@ class subinfo(info.infoclass):
             self.dependencies['binary/mysql-pkg'] = 'default'
             self.dependencies['win32libs/icu'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
-            self.dependencies['win32libs/libpng'] = 'default'
-            self.dependencies['win32libs/libjpeg'] = 'default'
-            self.dependencies['win32libs/libpcre'] = 'default'
 
 class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
@@ -65,6 +62,9 @@ class Package(Qt5CorePackageBase):
         command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
+        command += "-qt-libpng "
+        command += "-qt-libjpeg "
+        command += "-qt-pcre "
         command += "-nomake examples "
         # can we drop that in general?
         if not self.subinfo.buildTarget.startswith("5.7"):
@@ -87,12 +87,6 @@ class Package(Qt5CorePackageBase):
                 command += " -system-zlib "
                 if compiler.isMSVC():
                     command += " ZLIB_LIBS=zlib.lib "
-            if self.subinfo.options.isActive("win32libs/libpng"):
-                command += "-system-libpng "
-            if self.subinfo.options.isActive("win32libs/libjpeg"):
-                command += "-system-libjpeg "
-            if self.subinfo.options.isActive("win32libs/pcre"):
-                command += "-system-pcre "
         else:
             command += " -static -static-runtime "
         if self.buildType() == "Debug":
