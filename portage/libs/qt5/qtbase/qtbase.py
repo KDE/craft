@@ -42,20 +42,11 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/dbus'] = 'default'
             self.dependencies['binary/mysql-pkg'] = 'default'
             self.dependencies['win32libs/icu'] = 'default'
+            self.dependencies['win32libs/zlib'] = 'default'
 
 class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__(self)
-
-        if not self.subinfo.options.buildStatic:
-            # get instance of dbus and openssl package
-            self.openssl = portage.getPackageInstance('win32libs', 'openssl')
-            if self.subinfo.options.isActive("win32libs/dbus"):
-                self.dbus = portage.getPackageInstance('win32libs', 'dbus')
-            if self.subinfo.options.isActive("binary/mysql-pkg"):
-                self.mysql_server = portage.getPackageInstance('binary', 'mysql-pkg')
-            if self.subinfo.options.isActive("win32libs/icu"):
-                self.icu = portage.getPackageInstance('win32libs','icu')
 
 
     def configure( self, unused1=None, unused2=""):
@@ -68,11 +59,11 @@ class Package(Qt5CorePackageBase):
                 os.remove(os.path.join(self.sourceDir(),"configure.exe"))
         configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
+        command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
         command += "-qt-libjpeg "
-        command += "-qt-zlib "
         command += "-qt-pcre "
         command += "-nomake examples "
         # can we drop that in general?
@@ -82,15 +73,20 @@ class Package(Qt5CorePackageBase):
         command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
+        command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
 
         if not self.subinfo.options.buildStatic:
-            command += " -openssl-linked OPENSSL_PATH=%s " % self.openssl.installDir()
+            command += " -openssl-linked "
             if self.subinfo.options.isActive("binary/mysql-pkg"):
-                command += " -plugin-sql-mysql MYSQL_PATH=%s " %  self.mysql_server.installDir()
+                command += " -plugin-sql-mysql "
             if self.subinfo.options.isActive("win32libs/dbus"):
-                command += " -qdbus -dbus-linked DBUS_PATH=%s " % self.dbus.installDir()
+                command += " -qdbus -dbus-linked "
             if self.subinfo.options.isActive("win32libs/icu"):
-                command += " -icu -I \"%s\" -L \"%s\" " % (os.path.join(self.icu.imageDir(),"include"),os.path.join(self.icu.imageDir(),"lib"))
+                command += " -icu "
+            if self.subinfo.options.isActive("win32libs/zip"):
+                command += " -system-zlib "
+                if compiler.isMSVC():
+                    command += " ZLIB_LIBS=zlib.lib "
         else:
             command += " -static -static-runtime "
         if self.buildType() == "Debug":

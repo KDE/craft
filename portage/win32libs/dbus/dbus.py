@@ -51,12 +51,17 @@ class Package(CMakePackageBase):
     def install( self ):
         if not CMakePackageBase.install( self ): return False
 
-        if compiler.isMSVC() and self.buildType() == "Debug":
+        # TODO: fix
+        if self.buildType() == "Debug":
             imagedir = os.path.join( self.installDir(), "lib" )
-            filelist = os.listdir( imagedir )
-            for f in filelist:
-                if f.endswith( "d.lib" ):
-                    utils.copyFile( os.path.join( imagedir, f ), os.path.join( imagedir, f.replace( "d.lib", ".lib" ) ) )
+            if compiler.isMSVC():
+                if os.path.exists(os.path.join(imagedir, "dbus-1d.lib")):
+                    utils.copyFile(os.path.join(imagedir, "dbus-1d.lib"), os.path.join(imagedir, "dbus-1.lib"))
+                if not os.path.exists(os.path.join(imagedir, "dbus-1d.lib")):
+                    utils.copyFile(os.path.join(imagedir, "dbus-1.lib"), os.path.join(imagedir, "dbus-1d.lib"))
+            if compiler.isMinGW():
+                if os.path.exists(os.path.join(imagedir, "libdbus-1.dll.a")):
+                        utils.copyFile( os.path.join(imagedir, "libdbus-1.dll.a"), os.path.join(imagedir, "libdbus-1d.dll.a") )
 
         return True
 

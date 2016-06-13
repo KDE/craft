@@ -1,5 +1,18 @@
+diff --git a/mkspecs/features/qt_build_extra.prf b/mkspecs/features/qt_build_extra.prf
+index 378f5bb..4e53f8c 100644
+--- a/mkspecs/features/qt_build_extra.prf
++++ b/mkspecs/features/qt_build_extra.prf
+@@ -13,7 +13,7 @@ equals(TEMPLATE, subdirs): return()
+ 
+ # It's likely that these extra flags will be wrong for host builds,
+ # and the bootstrapped tools usually don't need them anyway.
+-host_build:force_bootstrap: return()
++# host_build:force_bootstrap: return()
+ 
+ # The headersclean check needs defines and includes even for
+ # header-only modules.
 diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
-index 4dfe69f..d3b368f 100644
+index a596474..b5e26f3 100644
 --- a/qmake/generators/makefile.cpp
 +++ b/qmake/generators/makefile.cpp
 @@ -1183,7 +1183,7 @@ MakefileGenerator::filePrefixRoot(const QString &root, const QString &path)
@@ -12,10 +25,10 @@ index 4dfe69f..d3b368f 100644
          ret.prepend(root);
      while (ret.endsWith('\\'))
 diff --git a/src/corelib/io/qstandardpaths_win.cpp b/src/corelib/io/qstandardpaths_win.cpp
-index 73d49cb..50f8e6a 100644
+index c1b34d1..6002b0b 100644
 --- a/src/corelib/io/qstandardpaths_win.cpp
 +++ b/src/corelib/io/qstandardpaths_win.cpp
-@@ -249,6 +249,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
+@@ -271,6 +271,16 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
  #  ifndef QT_BOOTSTRAPPED
          dirs.append(QCoreApplication::applicationDirPath());
          dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
@@ -45,10 +58,10 @@ index 3ead72d..7d39e3d 100644
          m_iconDirs.append(QLatin1String(":/icons"));
      }
 diff --git a/src/plugins/platforms/windows/qwindowstheme.cpp b/src/plugins/platforms/windows/qwindowstheme.cpp
-index cc367ff..c9fdab2 100644
+index f673ce5..f219ee0 100644
 --- a/src/plugins/platforms/windows/qwindowstheme.cpp
 +++ b/src/plugins/platforms/windows/qwindowstheme.cpp
-@@ -332,6 +332,8 @@ static inline QStringList iconThemeSearchPaths()
+@@ -347,6 +347,8 @@ static inline QStringList iconThemeSearchPaths()
  static inline QStringList styleNames()
  {
      QStringList result;
@@ -57,7 +70,7 @@ index cc367ff..c9fdab2 100644
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA)
          result.append(QStringLiteral("WindowsVista"));
      if (QSysInfo::WindowsVersion >= QSysInfo::WV_XP)
-@@ -395,6 +397,9 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
+@@ -410,6 +412,9 @@ QVariant QWindowsTheme::themeHint(ThemeHint hint) const
          return QVariant(true);
      case WheelScrollLines:
          return QVariant(int(dWordSystemParametersInfo(SPI_GETWHEELSCROLLLINES, 3)));
@@ -67,25 +80,3 @@ index cc367ff..c9fdab2 100644
      default:
          break;
      }
-diff --git a/tools/configure/configureapp.cpp b/tools/configure/configureapp.cpp
-index 555ccbf..45a9e7a 100644
---- a/tools/configure/configureapp.cpp
-+++ b/tools/configure/configureapp.cpp
-@@ -3090,7 +3090,7 @@ void Configure::generateOutputVars()
-     if (dictionary[ "DBUS" ] == "linked") {
-        if (!dbusPath.isEmpty()) {
-            qmakeVars += QString("QT_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
--           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib").arg(dbusPath);
-+           qmakeVars += QString("QT_LIBS_DBUS = -L%1/lib -ldbus-1").arg(dbusPath);
-            if (dbusHostPath.isEmpty())
-                qmakeVars += QString("QT_HOST_CFLAGS_DBUS = -I%1/include").arg(dbusPath);
-        }
-@@ -3099,7 +3099,7 @@ void Configure::generateOutputVars()
-     }
-     if (dictionary[ "SQL_MYSQL" ] != "no" && !mysqlPath.isEmpty()) {
-         qmakeVars += QString("QT_CFLAGS_MYSQL = -I%1/include").arg(mysqlPath);
--        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib").arg(mysqlPath);
-+        qmakeVars += QString("QT_LFLAGS_MYSQL = -L%1/lib -llibmysql").arg(mysqlPath);
-     }
-     if (!psqlLibs.isEmpty())
-         qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
