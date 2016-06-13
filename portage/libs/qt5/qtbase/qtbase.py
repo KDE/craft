@@ -45,6 +45,7 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/zlib'] = 'default'
             self.dependencies['win32libs/libpng'] = 'default'
             self.dependencies['win32libs/jpeg'] = 'default'
+            self.dependencies['win32libs/pcre'] = 'default'
             self.dependencies['win32libs/freetype'] = 'default'
 
 
@@ -66,7 +67,6 @@ class Package(Qt5CorePackageBase):
         command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
         command += "-plugin-sql-odbc "
         command += "-qt-style-windowsxp  -qt-style-windowsvista "
-        command += "-qt-pcre "# don't use system pcre as qt doesn't know about the debug d suffix -.-
         command += "-nomake examples "
         # can we drop that in general?
         if not self.subinfo.buildTarget.startswith("5.7"):
@@ -93,6 +93,8 @@ class Package(Qt5CorePackageBase):
                 command += "-system-libpng "
             if self.subinfo.options.isActive("win32libs/jpeg"):
                 command += "-system-libjpeg "
+            if self.subinfo.options.isActive("win32libs/pcre"):
+                command += "-system-pcre "
             if self.subinfo.options.isActive("win32libs/freetype"):
                 command += "-system-freetype "
         else:
