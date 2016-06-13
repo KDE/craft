@@ -44,8 +44,8 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/icu'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
             self.dependencies['win32libs/libpng'] = 'default'
-            self.dependencies['win32libs/jpeg'] = 'default'
-            self.dependencies['win32libs/pcre'] = 'default'
+            self.dependencies['win32libs/libjpeg'] = 'default'
+            self.dependencies['win32libs/libpcre'] = 'default'
 
 class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
@@ -89,7 +89,7 @@ class Package(Qt5CorePackageBase):
                     command += " ZLIB_LIBS=zlib.lib "
             if self.subinfo.options.isActive("win32libs/libpng"):
                 command += "-system-libpng "
-            if self.subinfo.options.isActive("win32libs/jpeg"):
+            if self.subinfo.options.isActive("win32libs/libjpeg"):
                 command += "-system-libjpeg "
             if self.subinfo.options.isActive("win32libs/pcre"):
                 command += "-system-pcre "
