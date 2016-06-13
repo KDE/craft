@@ -26,7 +26,6 @@ class Package( CMakePackageBase ):
         defines  = "-DBUILD_SHARED_LIBS=ON "
         defines += "-DPCRE_SUPPORT_UNICODE_PROPERTIES=ON "
         defines += "-DPCRE_SUPPORT_UTF8=ON "
-        defines += "-DPCRE_BUILD_PCRE16=ON "
         defines += "-DPCRE_EBCDIC=OFF "
         self.subinfo.options.configure.defines = defines
 
