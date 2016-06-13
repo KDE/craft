@@ -4,15 +4,14 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+        self.svnTargets["frameworks"] = "[git]kde:kolourpaint|frameworks"
+        self.defaultTarget = "frameworks"
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
-        self.svnTargets['master'] = "[git]kde:kolourpaint|frameworks"
 
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
-        self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["kdesupport/qimageblitz"] = 'default'
         self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
@@ -27,32 +26,23 @@ class subinfo( info.infoclass ):
         self.dependencies["frameworks/kxmlgui"] = "default"
         self.dependencies["frameworks/kdbusaddons"] = "default"
         self.dependencies["frameworks/threadweaver"] = "default"
+        self.dependencies["frameworks/breeze-icons"] = 'default'
 
 class Package( CMakePackageBase, NullsoftInstallerPackager ):
     def __init__( self):
         CMakePackageBase.__init__( self )
         blacklists = [
             NSIPackagerLists.runtimeBlacklist,
-            os.path.join(os.path.dirname(__file__), 'blacklist.txt')
+            os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
         NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
 
     def createPackage(self):
         self.defines[ "productname" ] = "Kolourpaint"
         self.defines[ "executable" ] = "bin\\kolourpaint.exe"
-        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "icon.ico")
+        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kolourpaint.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
         return NullsoftInstallerPackager.createPackage(self)
-
-    def preArchive(self):
-        archiveDir = self.archiveDir()
-
-        # TODO: Can we generalize this for other apps?
-        # move everything to the location where Qt expects it
-        binPath = os.path.join(archiveDir, "bin")
-
-        # TODO: Just blacklisting this doesn't work. WTF?
-        utils.rmtree(os.path.join(archiveDir, "dev-utils"))
 
