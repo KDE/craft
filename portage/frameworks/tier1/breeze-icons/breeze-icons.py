@@ -20,8 +20,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 
 
-
-
     #def cleanImage( self ):
      #   return True
 
@@ -30,8 +28,9 @@ class Package(CMakePackageBase):
             return path
         with open(path) as f:
             line = f.readline()
-        if not line.startswith("<?xml"):
-            return self.resolveGitSymLink( os.path.join(os.path.split(path)[0], line))
+        newPath = os.path.join(os.path.split(path)[0], line)
+        if os.path.exists(newPath):
+            return self.resolveGitSymLink(newPath)
         return path
 
     def install( self):
