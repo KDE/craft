@@ -46,6 +46,8 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/libpng'] = 'default'
             self.dependencies['win32libs/jpeg'] = 'default'
             self.dependencies['win32libs/pcre'] = 'default'
+            self.dependencies['win32libs/freetype'] = 'default'
+
 
 class Package(Qt5CorePackageBase):
     def __init__( self, **args ):
@@ -93,6 +95,8 @@ class Package(Qt5CorePackageBase):
                 command += "-system-libjpeg "
             if self.subinfo.options.isActive("win32libs/pcre"):
                 command += "-system-pcre "
+            if self.subinfo.options.isActive("win32libs/freetype"):
+                command += "-system-freetype "
         else:
             command += " -static -static-runtime "
         if self.buildType() == "Debug":
