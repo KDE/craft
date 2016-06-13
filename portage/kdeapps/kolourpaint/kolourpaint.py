@@ -11,21 +11,15 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
         self.dependencies["kdesupport/qimageblitz"] = 'default'
         self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["frameworks/kdelibs4support"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kinit"] = "default"
-        self.dependencies["frameworks/kjobwidgets"] = "default"
         self.dependencies["frameworks/kio"] = "default"
         self.dependencies["frameworks/kparts"] = "default"
-        self.dependencies["frameworks/ktexteditor"] = "default"
-        self.dependencies["frameworks/kwindowsystem"] = "default"
         self.dependencies["frameworks/kxmlgui"] = "default"
-        self.dependencies["frameworks/kdbusaddons"] = "default"
-        self.dependencies["frameworks/threadweaver"] = "default"
         self.dependencies["frameworks/breeze-icons"] = 'default'
 
 class Package( CMakePackageBase, NullsoftInstallerPackager ):
@@ -43,6 +37,8 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kolourpaint.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("gnuwin32/sed")
+        self.ignoredPackages.append("frameworks/kdesignerplugin")
+        self.ignoredPackages.append("frameworks/kemoticons")
 
         return NullsoftInstallerPackager.createPackage(self)
-
