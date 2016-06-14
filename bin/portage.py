@@ -267,7 +267,7 @@ class Portage(object):
 
                     dontBuildSubPackageList = self.getDontBuildPackagesList( os.path.join( directory, category, package ) )
 
-                    if not subPackage in list(self.subpackages.keys()):
+                    if not subPackage in self.subpackages:
                         self.subpackages[ subPackage ] = []
                     if not subPackage in self.categories[ category ]:
                         _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList and not subPackage in dontBuildSubPackageList
@@ -451,7 +451,8 @@ for _dir in rootDirectories():
 def getSubPackage( category, package ):
     """ returns package and subpackage names """
     """ in case no subpackage could be found, None is returned """
-    if package in list(PortageInstance.subpackages.keys()):
+    #print(category, package )
+    if package in PortageInstance.subpackages:
         for entry in PortageInstance.subpackages[ package ]:
             cat, pac = entry.split("/")
             if cat == category: return pac, package
@@ -473,21 +474,19 @@ def getDependencies( category, package, runtimeOnly = False ):
                                                            getFilename( category, package )))
     else:
         EmergeDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
-        subpackage = package
 
     deps = []
-    for pkg in [ subpackage ]:
-        info = _getSubinfo(category, pkg)
-        if not info is None:
-            depDict = info.dependencies
-            depDict.update( info.runtimeDependencies )
-            if not runtimeOnly:
-                depDict.update( info.buildDependencies )
+    info = _getSubinfo(category, package)
+    if not info is None:
+        depDict = info.dependencies
+        depDict.update( info.runtimeDependencies )
+        if not runtimeOnly:
+            depDict.update( info.buildDependencies )
 
-            for line in list(depDict.keys()):
-                (category, package) = line.split( "/" )
-                version = PortageInstance.getNewestVersion( category, package )
-                deps.append( [ category, package, version, depDict[ line ] ] )
+        for line in depDict:
+            (category, package) = line.split( "/" )
+            version = PortageInstance.getNewestVersion( category, package )
+            deps.append( [ category, package, version, depDict[ line ] ] )
     return deps
 
 def parseListFile( filename ):
