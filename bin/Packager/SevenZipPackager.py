@@ -42,13 +42,8 @@ class SevenZipPackager (PackagerBase):
             EmergeDebug.die("could not find 7za in your path!")
 
 
-        dstpath = self.packageDestinationDir()
-        print(dstpath)
-
+        dstpath = os.path.join(EmergeStandardDirs.downloadDir(), "binary")
         self._compress(self.binaryArchiveName(), self.imageDir(), dstpath)
-
-
-
         if not self.subinfo.options.package.packSources:
             return True
 
