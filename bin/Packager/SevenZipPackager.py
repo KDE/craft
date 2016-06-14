@@ -29,15 +29,6 @@ class SevenZipPackager (PackagerBase):
         if self.packagerExe:
             EmergeDebug.debug("using 7za from %s" % self.packagerExe, 2)
 
-    def _archiveName(self, pkgSuffix):
-        pkgVersion, _ = self.getPackageVersion()
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
-
-        return "%s-%s-%s%s%s.%s" % (shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, emergeSettings.get("Packager", "7ZipArchiveType", "7z"))
-
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
@@ -54,17 +45,12 @@ class SevenZipPackager (PackagerBase):
         dstpath = self.packageDestinationDir()
         print(dstpath)
 
-        pkgSuffix = ''
-        if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
-            pkgSuffix = self.subinfo.options.package.packageSuffix
-
-
-        self._compress(self._archiveName( pkgSuffix), self.imageDir(), dstpath)
+        self._compress(self.binaryArchiveName(), self.imageDir(), dstpath)
 
 
 
         if not self.subinfo.options.package.packSources:
             return True
 
-        self._compress(self._archiveName( "-src"), self.sourceDir(), dstpath)
+        self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
         return True

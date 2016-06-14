@@ -78,7 +78,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 if buildAction == "full-package":
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
-        elif buildAction in [ "fetch", "unpack", "configure", "compile", "make", "checkdigest",
+        elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
                               "dumpdeps", "test",
                               "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                               "geturls",
@@ -368,7 +368,7 @@ def main( ):
                          help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
 
     actionHandler = ActionHandler(parser)
-    for x in sorted( [ "fetch", "unpack", "configure", "compile", "make",
+    for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                        "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
                        "checkdigest", "dumpdeps",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"] ):
