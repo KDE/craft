@@ -233,8 +233,11 @@ class PackageBase (EmergeBase):
         downloadFolder = os.path.join(EmergeStandardDirs.downloadDir(), "binary")
         if not os.path.exists(downloadFolder):
             os.mkdir(downloadFolder)
-        return utils.getFile("%s/%s" % (emergeSettings.get("ContinuousIntegration", "BinaryUrl"), archiveName), downloadFolder )\
-               and self.cleanImage()\
+        if not os.path.exists(os.path.join(downloadFolder, archiveName)):
+            if not utils.getFile("%s/%s" % (emergeSettings.get("ContinuousIntegration", "BinaryUrl"), archiveName),
+                          downloadFolder):
+                return False
+        return self.cleanImage()\
                and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
                and self.qmerge()
 

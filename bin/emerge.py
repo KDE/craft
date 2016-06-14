@@ -60,6 +60,9 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             raise portage.PortageException( "Package not found", category, packageName )
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
+            if emergeSettings.get("ContinuousIntegration", "Cache"):
+                if doExec( package, "fetch-binary"):
+                    return True
             success = success and doExec( package, "fetch", continueFlag )
             skip = False
             if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
@@ -75,7 +78,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 success = success and doExec( package, "install" )
                 if buildAction in [ "all", "update", "update-all" ]:
                     success = success and doExec( package, "qmerge" )
-                if buildAction == "full-package":
+                if buildAction == "full-package" or emergeSettings.get("ContinuousIntegration", "Cache"):
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
@@ -324,6 +327,7 @@ def main( ):
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = emergeSettings.getboolean( "Compile", "BuildTests", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
+    parser.add_argument( "-ca", "--cache", action = "store_true", dest = "doCache", default="False")
     parser.add_argument( "--offline", action = "store_true",
                          default = emergeSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
@@ -411,6 +415,7 @@ def main( ):
     emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
     emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
+    emergeSettings.set( "ContinuousIntegration", "Cache", args.doCache )
 
     portage.PortageInstance.options = args.options
     if args.search:
