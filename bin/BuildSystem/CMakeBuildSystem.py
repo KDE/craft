@@ -99,6 +99,8 @@ class CMakeBuildSystem(BuildSystemBase):
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
 
+        options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
+
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case
             if not self.subinfo.options.configure.testDefine == None:
