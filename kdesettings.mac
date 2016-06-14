@@ -98,7 +98,7 @@ EMERGE_GIT_DRIVE = q:
 ## For portage recipes configure options can be added by 
 ## "if self.subinfo.options.isActive("binary/mysql-pkg"):"
 ## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
-Ignores = binary/.*;dev-util/.*;win32libs/.*;libs/qt5.*;libs/qt;.*kdoctools.*
+Ignores = binary/.*;dev-util/.*;win32libs/.*;libs/qt5.*;libs/qt;.*kdoctools.*;.*kwallet.*
 
 [PortageVersions]
 ## Override the default target if this version is available.
