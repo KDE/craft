@@ -4,6 +4,7 @@ from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
+        self.versionInfo.setDefaultValues( )
         self.svnTargets["frameworks"] = "[git]kde:kolourpaint|frameworks"
         self.defaultTarget = "frameworks"
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
