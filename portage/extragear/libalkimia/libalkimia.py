@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:alkimia|frameworks'
-        self.defaultTarget = 'frameworks'
+        self.svnTargets['master'] = '[git]kde:alkimia|master'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'

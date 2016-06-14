@@ -49,7 +49,3 @@ class PackagerBase(EmergeBase):
     #""" create a package """
     def createPackage(self):
         utils.abstract()
-
-    # for compatibility
-    def make_package(self):
-        return self.createPackage()

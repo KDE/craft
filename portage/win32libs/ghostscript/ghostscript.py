@@ -17,18 +17,20 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/tiff'] = 'default'
 
     def setTargets( self ):
-        for ver in ['9.18']:
-            self.targets[ ver ] = "http://downloads.ghostscript.com/public/ghostscript-%s.tar.gz" % ver
-            self.targetInstSrc[ ver ] = "ghostscript-" + ver
+        for ver in ['9.19']:
+
+            self.targets[ ver ] = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/ghostscript-%s.tar.gz" % (ver.replace(".",""), ver)
+            self.targetInstSrc[ver] = 'ghostscript-%s' % ver
+            self.targetDigestUrls[ver] = (["https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/SHA1SUMS" % ver.replace(".","")], EmergeHash.HashAlgorithm.SHA1)
+
         if compiler.isMinGW():
-            self.patchToApply['9.18'] = [
+            self.patchToApply['9.19'] = [
                 #("mingw-build.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          #("ghostscript-sys-zlib.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          ("ghostscript-9.18-20151217.diff", 1),
                                          ("libspectre.patch", 1)# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          ]
-        self.targetDigests['9.18'] = '761c9c25b9f5fe01197bd1510f527b3c1b6eb9de'
-        self.defaultTarget = '9.18'
+        self.defaultTarget = '9.19'
 
 from Package.CMakePackageBase import *
 

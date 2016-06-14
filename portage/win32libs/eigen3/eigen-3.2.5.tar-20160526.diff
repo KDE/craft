@@ -1,0 +1,12 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' eigen-eigen-bdd17ee3b1b3.orig/cmake/EigenTesting.cmake eigen-eigen-bdd17ee3b1b3/cmake/EigenTesting.cmake
+--- eigen-eigen-bdd17ee3b1b3.orig/cmake/EigenTesting.cmake	2015-06-16 11:53:07.000000000 +0200
++++ eigen-eigen-bdd17ee3b1b3/cmake/EigenTesting.cmake	2016-05-26 08:12:15.345091800 +0200
+@@ -324,7 +324,7 @@
+     # on all other system we rely on ${CMAKE_CXX_COMPILER}
+     # supporting a "--version" or "/version" flag
+     
+-    if(WIN32 AND NOT CYGWIN)
++    if(MSVC)
+       set(EIGEN_CXX_FLAG_VERSION "/version")
+     else()
+       set(EIGEN_CXX_FLAG_VERSION "--version")

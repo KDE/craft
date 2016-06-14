@@ -29,20 +29,16 @@ from EmergeOS.osutils import OsUtils
 
 # TODO: Rename
 class UtilsCache():
-    _appCache = {}
     _helpCache = {}
-    _NIGTHLY_URLS = {}
+    _NIGTHLY_URLS = dict()
 
     @staticmethod
     def findApplication(app) -> str:
-        if not app in UtilsCache._appCache:
-            appLocation = shutil.which(app)
-            if appLocation:
-                UtilsCache._appCache[app] = appLocation
-            else:
-                EmergeDebug.warning("Emerge was unable to locate: %s" % app)
-                return None
-        return UtilsCache._appCache[app]
+        appLocation = shutil.which(app)
+        if not appLocation:
+            EmergeDebug.warning("Emerge was unable to locate: %s" % app)
+            return None
+        return appLocation
 
     # TODO: rename, cleanup
     @staticmethod
@@ -50,8 +46,8 @@ class UtilsCache():
         if not (app, command) in UtilsCache._helpCache:
             UtilsCache._helpCache[(app, command)] = subprocess.getoutput("%s %s" %(app, helpCommand)).find( command ) != -1
         return UtilsCache._helpCache[(app, command)]
-    
-    
+
+
     @staticmethod
     def getNightlyVersionsFromUrl(url, pattern, timeout = 10) -> [str]:
         """
@@ -167,7 +163,7 @@ def getFile( url, destdir , filename='' ):
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    command = "%s -c -t 10" % UtilsCache.findApplication("wget")
+    command = "\"%s\" -c -t 10" % UtilsCache.findApplication("wget")
     if EmergeDebug.Verbose().level() < 1:
         command += " -q --show-progress"
     if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):

@@ -1,4 +1,0 @@
-cervisia
-kde-dev-scripts
-kde-dev-utils
-kdesdk-thumbnailers

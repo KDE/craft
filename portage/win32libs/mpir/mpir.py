@@ -7,14 +7,14 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['2.7.0-alpha12']:
+        for ver in ['2.7.2']:
             self.targets[ver] = 'http://www.mpir.org/mpir-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = "mpir-" + ver
-        self.targetDigests['2.7.0-alpha12'] = '6a46071d007a5284dbb67c4db70306deeb3e6513'
-        self.targetInstSrc['2.7.0-alpha12'] = 'mpir-2.7.0'
+        self.targetDigests['2.7.2'] = 'a285352d4299eb18d4f02a97e3232efab225e174'
+        self.targetInstSrc['2.7.2'] = 'mpir-2.7.2'
 
         self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
-        self.defaultTarget = '2.7.0-alpha12'
+        self.defaultTarget = '2.7.2'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -38,46 +38,48 @@ class PackageMinGW(AutoToolsPackageBase):
 class PackageMSVC(MakeFilePackageBase):
     def __init__( self, **args ):
             MakeFilePackageBase.__init__( self )
-            
+
+    def getBuildSettings( self ):
+        build = ""
+        toolsetSwitches = ""
+        if compiler.isMSVC2012():
+            build = "build.vc11"
+            toolsetSwitches = "/property:PlatformToolset=v110"
+        elif compiler.isMSVC2013():
+            build = "build.vc12"
+            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
+        elif compiler.isMSVC2015():
+            build = "build.vc14"
+            toolsetSwitches = "/tv:14.0 /property:PlatformToolset=v140"
+        if self.buildType() == "Debug":
+            bt = "Debug"
+        else:
+            bt = "Release"
+        return build, bt, toolsetSwitches
+
     def configure( self ):
-        os.chdir( os.path.join( self.sourceDir(), 'build.vc12') )
         os.putenv('YASMPATH', os.path.join(self.rootdir, 'dev-utils', 'bin'))
         return True
 
     def make( self ):
-        os.chdir( os.path.join( self.sourceDir(), 'build.vc12') )
-        if self.buildType() == "Debug":
-            bt = "Debug"
-        else:
-            bt = "Release"
-
-        toolsetSwitches = ""
-        if compiler.isMSVC2012():
-            toolsetSwitches = "/property:PlatformToolset=v110"
-        elif compiler.isMSVC2013():
-            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
+        build, bt, toolsetSwitches = self.getBuildSettings();
 
         return utils.system("msbuild /target:lib_mpir_gc \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), "build.vc12", "mpir.sln"), bt, toolsetSwitches)
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
         ) and utils.system("msbuild /target:dll_mpir_gc \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), "build.vc12", "mpir.sln"), bt, toolsetSwitches)
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
         )
 
     def unittest( self ):
-        os.chdir( os.path.join( self.sourceDir(), 'build.vc12') )
-        if self.buildType() == "Debug":
-            bt = "Debug"
-        else:
-            bt = "Release"
+        build, bt, toolsetSwitches = self.getBuildSettings();
 
-        toolsetSwitches = ""
-        if compiler.isMSVC2012():
-            toolsetSwitches = "/property:PlatformToolset=v110"
-        elif compiler.isMSVC2013():
-            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
-        return utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), "build.vc12", "mpir-tests.sln"), bt, toolsetSwitches)
-        ) and utils.system(os.path.join("mpir-tests", "run-tests.py"));
+        return utils.system("msbuild /target:lib_mpir_gc \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
+        ) and utils.system("msbuild /target:lib_mpir_cxx \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
+        ) and utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
+                (os.path.join(self.sourceDir(), build, "mpir-tests.sln"), bt, toolsetSwitches)
+        ) and utils.system(os.path.join(self.sourceDir(), build, "mpir-tests", "run-tests.py"));
 
     def install( self ):
         if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):

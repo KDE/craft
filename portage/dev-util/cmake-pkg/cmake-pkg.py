@@ -29,4 +29,4 @@ class Package(CMakePackageBase):
     def __init__( self):
         CMakePackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = "dev-utils"
-
+        self.subinfo.options.configure.defines = "-DKWSYS_INSTALL_LIB_DIR=lib -DKWSYS_INSTALL_INCLUDE_DIR=include"
