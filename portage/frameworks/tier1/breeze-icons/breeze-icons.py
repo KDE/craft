@@ -19,6 +19,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
 
+        self.subinfo.options.configure.defines = " -DBINARY_ICONS_RESOURCE=ON"
 
     #def cleanImage( self ):
      #   return True
