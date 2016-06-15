@@ -35,6 +35,6 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.imageDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
-        return True
+        return utils.moveDir(os.path.join(self.imageDir(), "share"), os.path.join(self.imageDir(), "bin", "data")) \
+                and utils.copyFile(os.path.join(self.packageDir(), "docbook-xsl-stylesheets-1.78.1.xml"), os.path.join(self.imageDir(), "etc", "xml", "docbook-xsl-stylesheets.xml"))
 
