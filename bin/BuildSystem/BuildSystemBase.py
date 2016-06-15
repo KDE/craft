@@ -137,12 +137,6 @@ class BuildSystemBase(EmergeBase):
                 utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
             if os.path.exists( script ):
                 utils.copyFile( script, destscript )
-
-        if self.subinfo.options.package.withDigests:
-            if self.subinfo.options.package.packageFromSubDir:
-                filesDir = os.path.join(self.imageDir(), self.subinfo.options.package.packageFromSubDir)
-            else:
-                filesDir = self.imageDir()
         return True
 
     def unittest( self ):
