@@ -327,7 +327,8 @@ def main( ):
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = emergeSettings.getboolean( "Compile", "BuildTests", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
-    parser.add_argument( "-ca", "--cache", action = "store_true", dest = "doCache", default="False")
+    parser.add_argument( "-ca", "--cache", action = "store_true", dest = "doCache",
+                         default= emergeSettings.getboolean("ContinuousIntegration", "Cache", "False"))
     parser.add_argument( "--offline", action = "store_true",
                          default = emergeSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
