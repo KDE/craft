@@ -18,18 +18,20 @@ The packager used can be decided at runtime
         PackagerBase.__init__(self)
         self.defaultPackager = defaultType
         self.__packager = None
-        self.changePackager(None)
 
     def changePackager(self, packager=None):
         if not packager == None and ("Packager", "PackageType") in emergeSettings:
             EmergeDebug.info("Packager setting %s overriten by with %s" % (packager, emergeSettings.get("Packager", "PackageType")))
             packager = eval(emergeSettings.get("Packager", "PackageType"))
-        if packager == None: packager = self.defaultPackager
 
-        if self.__packager != packager:
-            TypePackager.__bases__ = (packager,)
-            TypePackager.__bases__[0].__init__(self, initialized=True)
-            self.__packager = packager
+        if packager == None:
+            packager = self.defaultPackager
+
+        self.__packager = packager
 
     def createPackage( self ):
+        # slightly awkward: change base to the desired packager dynamically at runtime
+        TypePackager.__bases__ = (self.__packager,)
+        TypePackager.__bases__[0].__init__(self, initialized=True)
+
         return TypePackager.__bases__[0].createPackage(self)
