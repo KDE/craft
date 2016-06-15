@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kconfigwidgets"] = "default"
         self.dependencies["frameworks/kwidgetsaddons"] = "default"
         self.dependencies["frameworks/kitemviews"] = "default"
+        self.dependencies["frameworks/breeze-icons"] = "default"
 
 from Package.CMakePackageBase import *
 
