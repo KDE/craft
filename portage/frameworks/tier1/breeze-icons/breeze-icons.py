@@ -21,32 +21,10 @@ class Package(CMakePackageBase):
 
         self.subinfo.options.configure.defines = " -DBINARY_ICONS_RESOURCE=ON"
 
-    #def cleanImage( self ):
-     #   return True
-
-    def resolveGitSymLink(self, path):
-        if not os.path.exists(path):
-            return path
-        with open(path) as f:
-            line = f.readline()
-        newPath = os.path.join(os.path.split(path)[0], line)
-        if os.path.exists(newPath):
-            return self.resolveGitSymLink(newPath)
-        return path
-
-    def install( self):
-        if not CMakeBuildSystem.install(self):
-            return False
-        for root, _, svgs in os.walk(self.imageDir(), ):
-            for svg in svgs:
-                path = os.path.join( root, svg)
-                if path.endswith(".svg") and os.path.isfile(path):
-                    toReplace = self.resolveGitSymLink(path)
-                    if not os.path.exists(toReplace):
-                        EmergeDebug.warning("Resolving %s failed: %s does not exists." % (path, toReplace))
-                        continue
-                    if toReplace != path:
-                        utils.deleteFile(path)
-                        utils.copyFile( toReplace, path)
-
+    def install(self):
+        dest = os.path.join(self.installDir(), "bin","data")
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+        utils.copyFile(os.path.join(self.buildDir(), "icons", "breeze-icons.rcc"),
+                       os.path.join(dest, "icontheme.rcc"))
         return True

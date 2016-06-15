@@ -78,7 +78,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 success = success and doExec( package, "install" )
                 if buildAction in [ "all", "update", "update-all" ]:
                     success = success and doExec( package, "qmerge" )
-                if buildAction == "full-package" or emergeSettings.get("ContinuousIntegration", "Cache"):
+                if buildAction == "full-package" or emergeSettings.getboolean("ContinuousIntegration", "Cache"):
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
@@ -415,7 +415,6 @@ def main( ):
     emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
     emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
-    emergeSettings.set( "ContinuousIntegration", "Cache", args.doCache )
 
     portage.PortageInstance.options = args.options
     if args.search:
@@ -428,6 +427,7 @@ def main( ):
 
 
     for action in actionHandler.parseFinalAction(args, "all"):
+        emergeSettings.set("ContinuousIntegration", "Cache", args.doCache and action != "all")
         tempArgs = copy.deepcopy(args)
 
         if action in [ "install-deps", "update", "update-all", "package" ] or tempArgs.update_fast:

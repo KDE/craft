@@ -4,7 +4,6 @@
 import EmergeDebug
 from Packager.PackagerBase import *
 
-from Packager.KDEWinPackager import *
 from Packager.SevenZipPackager import *
 from Packager.MSIFragmentPackager import *
 from Packager.InnoSetupPackager import *
