@@ -16,9 +16,15 @@ class subinfo(info.infoclass):
             
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
             if ver.startswith("5.6"):
-                self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
+                self.patchToApply[ ver ] = [
+                    ("qtbase-5.6.patch" , 1),
+                    ("do-not-spawn-console-qprocess-startdetached.patch", 1)
+                ]
             elif ver.startswith("5.7"):
-                self.patchToApply[ver] = [("qtbase-5.7.patch", 1)]
+                self.patchToApply[ver] = [
+                    ("qtbase-5.7.patch", 1),
+                    ("do-not-spawn-console-qprocess-startdetached.patch", 1)
+                ]
 
         self.shortDescription = "a cross-platform application framework"
 
