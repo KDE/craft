@@ -27,7 +27,7 @@ Packager for portal 7zip archives
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = self._archiveName("")
+            self.defines[ "setupname" ] = self.binaryArchiveName("")
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
             self.defines[ "srcdir" ] = self.imageDir()
             

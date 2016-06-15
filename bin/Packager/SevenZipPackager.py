@@ -19,28 +19,14 @@ class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
-        fileName = "bin\\7za.exe"
-        self.packagerExe = None
-        for directory in [".", "dev-utils", "release", "debug"]:
-            path = os.path.join(self.rootdir, directory, fileName )
-            if os.path.exists(path):
-                self.packagerExe = path
-                break
-        if self.packagerExe:
-            EmergeDebug.debug("using 7za from %s" % self.packagerExe, 2)
-
-    def _archiveName(self, pkgSuffix):
-        pkgVersion, _ = self.getPackageVersion()
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
-
-        return "%s-%s-%s%s%s.%s" % (shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, emergeSettings.get("Packager", "7ZipArchiveType", "7z"))
+        self.packagerExe = utils.UtilsCache.findApplication("7za")
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
+        cmd += " -bsp1"
+        if EmergeDebug.verbose() <= 1:
+            cmd += " -bso0"
         if not utils.system(cmd):
             EmergeDebug.die("while packaging. cmd: %s" % cmd)
 
@@ -50,21 +36,14 @@ class SevenZipPackager (PackagerBase):
         if not self.packagerExe:
             EmergeDebug.die("could not find 7za in your path!")
 
-
-        dstpath = self.packageDestinationDir()
-        print(dstpath)
-
-        pkgSuffix = ''
-        if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
-            pkgSuffix = self.subinfo.options.package.packageSuffix
-
-
-        self._compress(self._archiveName( pkgSuffix), self.imageDir(), dstpath)
-
-
-
+        if emergeSettings.get("ContinuousIntegration", "Cache"):
+            dstpath = os.path.join(EmergeStandardDirs.downloadDir(), "binary")
+        else:
+            dstpath = self.packageDestinationDir()
+        self._compress(self.binaryArchiveName(), self.imageDir(), dstpath)
         if not self.subinfo.options.package.packSources:
             return True
 
-        self._compress(self._archiveName( "-src"), self.sourceDir(), dstpath)
+        self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
         return True
+

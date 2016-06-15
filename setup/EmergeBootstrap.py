@@ -45,8 +45,8 @@ class EmergeBootsrtap(object):
 
 
     def setSettignsValue(self, key, value):
-        regex = re.compile("^\s*%s\s*=.*$" % key, re.MULTILINE)
-        self.settings= regex.sub("%s = %s" % (key, value ), self.settings)
+        regex = re.compile("^\s*%s\s*=.*$" % key, re.MULTILINE | re.IGNORECASE )
+        self.settings = regex.sub("%s = %s" % (key, value), self.settings)
 
     def writeSettings(self):
         os.makedirs(os.path.join(self.kdeRoot, "etc"))
@@ -97,9 +97,9 @@ if __name__ == "__main__":
     os.chdir(os.path.join(kdeRoot,"emerge" ))
 
     boot = EmergeBootsrtap(kdeRoot)
-    boot.setSettignsValue("Python", os.path.dirname(sys.executable))
+    boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("Architecture", architecture)
-    boot.setSettignsValue("KDECOMPILER", compiler)
+    boot.setSettignsValue("KDECompiler", compiler)
 
     if compiler == "mingw4":
         boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")

@@ -50,7 +50,7 @@ class PackageBase (EmergeBase):
             ignoreInstalled = True
             self.unmerge()
 
-        
+
 
         EmergeDebug.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
@@ -138,7 +138,7 @@ class PackageBase (EmergeBase):
 
         return True
 
-    def cleanImage( self ):
+    def cleanImage( self ) -> bool:
         """cleanup before install to imagedir"""
         if ( os.path.exists( self.imageDir() ) ):
             EmergeDebug.debug("cleaning image dir: %s" % self.imageDir(), 1)
@@ -146,7 +146,7 @@ class PackageBase (EmergeBase):
             os.rmdir(self.imageDir())
         return True
 
-    def cleanBuild( self ):
+    def cleanBuild( self ) -> bool:
         """cleanup currently used build dir"""
         if os.path.exists( self.buildDir() ):
             utils.cleanDirectory( self.buildDir() )
@@ -156,11 +156,11 @@ class PackageBase (EmergeBase):
 
     def stripLibs( self, pkgName ):
         """strip debugging informations from shared libraries - mingw only!!! """
-        return self.strip(pkgName + ".dll" ) 
-        
+        return self.strip(pkgName + ".dll" )
+
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
-        if self.subinfo.options.package.disableStriping or not isMinGW(): 
+        if self.subinfo.options.package.disableStriping or not isMinGW():
             EmergeDebug.debug("Skiping stipping of " + fileName, 2)
             return True
         basepath = os.path.join( self.installDir() )
@@ -213,6 +213,34 @@ class PackageBase (EmergeBase):
 
         return self.runAction(command)
 
+
+    def binaryArchiveName(self, pkgSuffix = None):
+        if not pkgSuffix:
+            pkgSuffix = ''
+            if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
+                pkgSuffix = self.subinfo.options.package.packageSuffix
+
+        pkgVersion, _ = self.getPackageVersion()
+        if self.package.endswith( "-package" ):
+            shortPackage = self.package[ : -8 ]
+        else:
+            shortPackage = self.package
+
+        return "%s-%s-%s%s%s.%s" % (shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, emergeSettings.get("Packager", "7ZipArchiveType", "7z"))
+
+    def fetchBinary(self) -> bool:
+        archiveName = self.binaryArchiveName()
+        downloadFolder = os.path.join(EmergeStandardDirs.downloadDir(), "binary")
+        if not os.path.exists(downloadFolder):
+            os.mkdir(downloadFolder)
+        if not os.path.exists(os.path.join(downloadFolder, archiveName)):
+            if not utils.getFile("%s/%s" % (emergeSettings.get("ContinuousIntegration", "BinaryUrl"), archiveName),
+                          downloadFolder):
+                return False
+        return self.cleanImage()\
+               and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
+               and self.qmerge()
+
     def runAction( self, command ):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
         then we get by without this dict:
@@ -235,7 +263,8 @@ class PackageBase (EmergeBase):
                      "print-revision": "printSourceVersion",
                      "print-files":    "printFiles",
                      "checkdigest":    "checkDigest",
-                     "dumpdeps":       "dumpDependencies"}
+                     "dumpdeps":       "dumpDependencies",
+                     "fetch-binary":   "fetchBinary"}
         if command in functions:
             try:
                 ok = getattr(self, functions[command])()

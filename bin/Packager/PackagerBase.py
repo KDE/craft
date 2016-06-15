@@ -9,6 +9,13 @@ class PackagerBase(EmergeBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
     def __init__(self):
         EmergeBase.__init__(self)
+        self.whitelist_file = None
+        self.blacklist_file = None
+        self.defines = {}
+        self.ignoredPackages = []
+
+    def preArchive(self):
+        utils.abstract()
 
     def archiveDir(self):
         if self.package.endswith( "-package" ):

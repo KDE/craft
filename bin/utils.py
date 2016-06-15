@@ -128,7 +128,7 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
 
     return True
 
-def getFile( url, destdir , filename='' ):
+def getFile( url, destdir , filename='' ) -> bool:
     """download file from 'url' into 'destdir'"""
     EmergeDebug.debug("getFile called. url: %s" % url, 1)
     if url == "":

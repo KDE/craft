@@ -41,8 +41,8 @@ class PackagerLists(object):
 
 
 class CollectionPackagerBase( PackagerBase ):
-    def __init__( self, whitelists=None, blacklists=None):
-        PackagerBase.__init__( self )
+    def __init__( self, whitelists=None, blacklists=None, initialized = False):
+        if not initialized: PackagerBase.__init__(self)
         if whitelists is None:
             whitelists = [ PackagerLists.defaultWhitelist ]
         if blacklists is None:
@@ -80,9 +80,6 @@ class CollectionPackagerBase( PackagerBase ):
                 else:
                     self.read_blacklist( entry )
         return self._blacklist
-
-    def __isInstalled( self ):
-        return abstract()
 
     def __imageDirPattern( self, package, buildTarget ):
         """ return base directory name for package related image directory """

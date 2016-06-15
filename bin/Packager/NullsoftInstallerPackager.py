@@ -50,12 +50,12 @@ The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
 if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Packagename), the
 file collection process is skipped, and only the installer is generated.
 """
-    def __init__( self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__( self, whitelists, blacklists )
+    def __init__( self, whitelists=None, blacklists=None, initialized = False):
+        CollectionPackagerBase.__init__( self, whitelists, blacklists, initialized )
         self.nsisInstallPath = None
         self._isInstalled = False
 
-    def isInstalled(self):
+    def isNsisInstalled(self):
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
@@ -71,11 +71,7 @@ file collection process is skipped, and only the installer is generated.
 
         # pylint: disable=E0602
         # if pylint is done on linux, we don't have those toys
-        if os.path.exists(os.path.join(self.rootdir, "dev-utils", "makensis.exe")):
-            self.nsisInstallPath = os.path.join(self.rootdir, "dev-utils")
-            return True
-        elif os.path.exists(os.path.join(self.rootdir, "dev-utils", "nsis", "makensis.exe")):
-            self.nsisInstallPath = os.path.join(self.rootdir, "dev-utils", "nsis")
+        if utils.UtilsCache.findApplication("makensis"):
             return True
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ )
@@ -121,7 +117,7 @@ file collection process is skipped, and only the installer is generated.
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
 
-        self.isInstalled()
+        self.isNsisInstalled()
 
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
@@ -187,7 +183,7 @@ file collection process is skipped, and only the installer is generated.
 
         verboseString = "/V4" if EmergeDebug.verbose() > 0 else "/V3"
 
-        if self.isInstalled:
+        if self.isNsisInstalled:
             makensisExe = os.path.join(self.nsisInstallPath, 'makensis.exe')
             if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (makensisExe, verboseString, definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
@@ -195,7 +191,9 @@ file collection process is skipped, and only the installer is generated.
 
     def createPackage( self ):
         """ create a package """
-        self.isInstalled()
+        print(dir(self))
+        #exit()
+        self.isNsisInstalled()
 
         EmergeDebug.debug("packaging using the NullsoftInstallerPackager")
 
