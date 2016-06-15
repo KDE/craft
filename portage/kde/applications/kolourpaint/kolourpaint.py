@@ -29,7 +29,7 @@ class Package( CMakePackageBase ):
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
-        #self.changePackager( NullsoftInstallerPackager )
+        self.changePackager( NullsoftInstallerPackager )
 
     def createPackage(self):
         self.defines[ "productname" ] = "Kolourpaint"
