@@ -8,33 +8,47 @@ from Packager.KDEWinPackager import *
 from Packager.SevenZipPackager import *
 from Packager.MSIFragmentPackager import *
 from Packager.InnoSetupPackager import *
+from Packager.NullsoftInstallerPackager import *
 
 class TypePackager( PackagerBase ):
     """packager that is used in place of different other packagers
 The packager used can be decided at runtime
 """
 
-    PackagerTypes = [ "SevenZipPackager", "KDEWinPackager", "MSIFragmentPackager", "InnoSetupPackager" ]
+    PackagerTypes = [ "SevenZipPackager", "KDEWinPackager", "MSIFragmentPackager",
+                      "InnoSetupPackager", "NullsoftInstallerPackager" ]
 
-    def __init__( self, defaultType = "SevenZipPackager" ):
+    def __init__( self, defaultType = emergeSettings.get("Packager", "PackageType", "SevenZipPackager") ):
         EmergeDebug.debug("TypePackager __init__ %s" % defaultType, 2)
+        PackagerBase.__init__(self)
         self.defaultPackager = defaultType
-        self.changePackager()
+        self.packager = None
+        self.changePackager(None)
 
-    def changePackager( self, packager=None ):
-        if packager == None: packager = self.defaultPackager
-        if packager == "SevenZipPackager":
-            TypePackager.__bases__ = ( SevenZipPackager, )
-        elif packager == "KDEWinPackager":
-            TypePackager.__bases__ = ( KDEWinPackager, )
-        elif packager == "MSIFragmentPackager":
-            TypePackager.__bases__ = ( MSIFragmentPackager, )
-        elif packager == "InnoSetupPackager":
-            TypePackager.__bases__ = ( InnoSetupPackager, )
+    def changePackager(self, packagerName=None):
+        if not packagerName == None and ("Packager", "PackageType") in emergeSettings:
+            EmergeDebug.info("Packager setting %s overriten by with %s" % (packagerName, emergeSettings.get("Packager", "PackageType")))
+            packagerName = emergeSettings.get("Packager", "PackageType")
+        if packagerName == None: packagerName = self.defaultPackager
+
+        package = None
+        if packagerName == "SevenZipPackager":
+            package = SevenZipPackager
+        elif packagerName == "NullsoftInstallerPackager":
+            package = NullsoftInstallerPackager
+        elif packagerName == "KDEWinPackager":
+            Tpackage  = KDEWinPackager
+        elif packagerName == "MSIFragmentPackager":
+            package = MSIFragmentPackager
+        elif packagerName == "InnoSetupPackager":
+            package = InnoSetupPackager
         else:
             """ the default !!! """
-            TypePackager.__bases__ = ( SevenZipPackager, )
-        TypePackager.__bases__[ 0 ].__init__( self, True )
+            package = SevenZipPackager
+        if self.packager != package:
+            self.packager = package
+            TypePackager.__bases__ = ( self.packager, )
+            self.packager.__init__( self, initialized = True )
 
     def createPackage( self ):
-        return TypePackager.__bases__[ 0 ].createPackage( self )
+        return self.packager.createPackage( self )

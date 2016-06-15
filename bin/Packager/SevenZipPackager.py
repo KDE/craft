@@ -46,3 +46,4 @@ class SevenZipPackager (PackagerBase):
 
         self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
         return True
+

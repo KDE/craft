@@ -50,8 +50,8 @@ The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
 if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Packagename), the
 file collection process is skipped, and only the installer is generated.
 """
-    def __init__( self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__( self, whitelists, blacklists )
+    def __init__( self, whitelists=None, blacklists=None, initialized = False):
+        CollectionPackagerBase.__init__( self, whitelists, blacklists, initialized )
         self.nsisInstallPath = None
         self._isInstalled = False
 

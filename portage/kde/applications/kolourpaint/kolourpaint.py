@@ -1,6 +1,5 @@
 import info
 from Package.CMakePackageBase import *
-from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -23,14 +22,14 @@ class subinfo( info.infoclass ):
         self.dependencies["frameworks/kxmlgui"] = "default"
         self.dependencies["frameworks/breeze-icons"] = 'default'
 
-class Package( CMakePackageBase, NullsoftInstallerPackager ):
+class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
-        blacklists = [
-            NSIPackagerLists.runtimeBlacklist,
+        self.blacklist_file = [
+            PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
-        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
+        self.changePackager( "NullsoftInstallerPackager" )
 
     def createPackage(self):
         self.defines[ "productname" ] = "Kolourpaint"
@@ -42,4 +41,4 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
         self.ignoredPackages.append("frameworks/kdesignerplugin")
         self.ignoredPackages.append("frameworks/kemoticons")
 
-        return NullsoftInstallerPackager.createPackage(self)
+        return TypePackager.createPackage(self)
