@@ -29,6 +29,8 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
+        if OsUtils.isUnix():
+            return True
         return utils.moveDir(os.path.join(self.imageDir(), "share"), os.path.join(self.imageDir(), "bin", "data"))\
                and utils.copyFile(os.path.join(self.packageDir(), "docbook-dtd-4.2.xml"), os.path.join(self.imageDir(), "etc", "xml", "docbook-dtd-4.5.xml"))
 
