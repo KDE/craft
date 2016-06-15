@@ -60,7 +60,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             raise portage.PortageException( "Package not found", category, packageName )
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
-            if emergeSettings.get("ContinuousIntegration", "Cache"):
+            if emergeSettings.getboolean("ContinuousIntegration", "Cache", "False"):
                 if doExec( package, "fetch-binary"):
                     return True
             success = success and doExec( package, "fetch", continueFlag )
