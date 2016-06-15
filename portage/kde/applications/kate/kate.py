@@ -1,5 +1,6 @@
 import info
 from EmergeConfig import *
+from EmergeOS.osutils import OsUtils
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -34,4 +35,5 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_gdbplugin=OFF -DBUILD_konsole=OFF -DBUILD_katebuild-plugin=OFF"
+        if OsUtils.isWin():
+            self.subinfo.options.configure.defines = "-DBUILD_gdbplugin=OFF -DBUILD_konsole=OFF -DBUILD_katebuild-plugin=OFF"
