@@ -25,7 +25,7 @@ Architecture = x64
 ##            If using pushover, you may also need to set EMERGE_PUSHOVER_APP_TOKEN (emerge will use a default Token if unset) and EMERGE_PUSHOVER_USER_KEY, which is your user key
 #EMERGE_USE_NOTIFY = Snarl;Toaster;Pushover
 #EMERGE_PUSHOVER_APP_TOKEN = aJU9PRUb6nGUUM2idyLfXdU8S5q18i
-#EMERGE_PUSHOVER_USER_KEY = 
+#EMERGE_PUSHOVER_USER_KEY =
 
 ## Speed up the merging of packages by using hard links
 UseHardlinks = False
@@ -34,7 +34,7 @@ UseHardlinks = False
 [Paths]
 ## This is the location of your python installation.
 ## This value must be set.
-Python = C:\ProgramFiles\Python 
+Python = C:\ProgramFiles\Python
 
 ## Some applications may need python 2.7
 #Python27 = C:\python27
@@ -95,10 +95,10 @@ EMERGE_GIT_DRIVE = q:
 
 [Portage]
 ## This adds the possibility to disable cretin packages
-## For portage recipes configure options can be added by 
+## For portage recipes configure options can be added by
 ## "if self.subinfo.options.isActive("binary/mysql-pkg"):"
 ## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
-Ignores = binary/.*;dev-util/.*;win32libs/.*;libs/qt5.*;libs/qt;.*kdoctools.*;.*kwallet.*;.*kactivities.*;.*plasma-framework.*
+Ignores = binary/.*;dev-util/.*;win32libs/.*;libs/qt5.*;libs/qt;.*kwallet.*;.*kactivities.*;.*plasma-framework.*
 
 [PortageVersions]
 ## Override the default target if this version is available.
