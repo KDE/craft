@@ -2,6 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
+import os
 import shutil
 
 import EmergeDebug
@@ -45,20 +46,30 @@ class ArchiveSource(SourceBase):
         return filenames
 
     def __checkFilesPresent(self, filenames):
+        def isFileValid(path):
+            if not os.path.exists(path):
+                return False
+
+            return os.path.getsize(path) > 0
+
         """check if all files for the current target are available"""
         for filename in filenames:
             path = os.path.join(EmergeStandardDirs.downloadDir(), filename)
+
+            # check file
+            if not isFileValid(path):
+                return False
+
+            # check digests
             if self.subinfo.hasTargetDigests():
-                if not os.path.exists(path):
+                if not isFileValid(path):
                     return False
             elif self.subinfo.hasTargetDigestUrls():
                 algorithm = EmergeHash.HashAlgorithm.SHA1
                 if  type(self.subinfo.targetDigestUrl()) == tuple:
                     _, algorithm = self.subinfo.targetDigestUrl()
-                if not os.path.exists(path + algorithm.fileEnding()):
+                if not isFileValid(path + algorithm.fileEnding()):
                     return False
-            elif not os.path.exists(path):
-                return False
         return True
 
     def fetch( self, dummyRepopath = None ):
