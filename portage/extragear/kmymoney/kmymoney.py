@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['frameworks'] = '[git]kde:kmymoney|frameworks'
-        self.defaultTarget = 'frameworks'
+        self.svnTargets['master'] = '[git]kde:kmymoney|master'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['frameworks/kcmutils'] = 'default'
