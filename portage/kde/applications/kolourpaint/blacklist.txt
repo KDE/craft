@@ -49,18 +49,15 @@ share\\icons\\oxygen\\256x256\\.*
 
 # doubled qt dlls
 lib\\[^\\]*\.dll
-lib\\[^\\]*\.a
+#lib\\[^\\]*\.a
 # more qt leftovers
 translations\\.*
 phrasebooks\\.*
 mkspecs\\.*
 
 # unneeded stuff from bin\
-bin\\qt\.conf
+# bin\\qt\.conf
 bin\\syncqt\.pl
-
-bin\\dbus-*\.exe
-bin\\dbus-env\.bat
 
 # strip most executables
 bin\\(?!(kolourpaint|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
