@@ -32,6 +32,9 @@ class SevenZipPackager (PackagerBase):
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
+        cmd += " -bsp1"
+        if EmergeDebug.verbose() <= 1:
+            cmd += " -bso0"
         if not utils.system(cmd):
             EmergeDebug.die("while packaging. cmd: %s" % cmd)
 
