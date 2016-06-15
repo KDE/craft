@@ -19,15 +19,7 @@ class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
-        fileName = "bin\\7za.exe"
-        self.packagerExe = None
-        for directory in [".", "dev-utils", "release", "debug"]:
-            path = os.path.join(self.rootdir, directory, fileName )
-            if os.path.exists(path):
-                self.packagerExe = path
-                break
-        if self.packagerExe:
-            EmergeDebug.debug("using 7za from %s" % self.packagerExe, 2)
+        self.packagerExe = utils.UtilsCache.findApplication("7za")
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
