@@ -14,14 +14,6 @@ class subinfo(info.infoclass):
         for ver in self.versionInfo.tags():
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
 
-        self.patchToApply[ "5.3" ] += [("qtwebkit-20130109.patch" , 1)]
-        self.patchToApply[ "5.3.0" ] += [("qtwebkit-20130109.patch" , 1)]
-        self.patchToApply[ "5.3.1" ] += [("qtwebkit-20130109.patch" , 1)]
-        self.patchToApply[ "v5.3.0" ] += [("qtwebkit-20130109.patch" , 1)]
-        self.patchToApply[ "v5.3.1" ] += [("qtwebkit-20130109.patch" , 1)]
-
-        self.patchToApply[ "5.4" ] += [("qtwebkit-5.4.patch" , 1)]
-
     def setDependencies( self ):
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/icu'] = 'default'

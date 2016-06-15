@@ -15,22 +15,11 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
             
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
-            if ver.startswith("5.6.0"):
-                self.patchToApply[ ver ] = [("qtbase-5.6.0.patch" , 1)]
-            elif ver.startswith("5.6"):
+            if ver.startswith("5.6"):
                 self.patchToApply[ ver ] = [("qtbase-5.6.patch" , 1)]
             elif ver.startswith("5.7"):
                 self.patchToApply[ver] = [("qtbase-5.7.patch", 1)]
-            else:
-                self.patchToApply[ ver ] = [("qtbase-20130714.patch" , 1),]
-                if ver.startswith("5.4"):
-                    self.patchToApply[ ver ].append(("qmake-5.4.patch" , 1))
-                if ver.startswith("5.5"):
-                    self.patchToApply[ ver ] += [
-                        ("qmake-5.5.patch" , 1),
-                        ("0001-Fix-toDisplayString-QUrl-PreferLocalFile-on-Win.patch", 1)
-                    ]
-        
+
         self.shortDescription = "a cross-platform application framework"
 
 
