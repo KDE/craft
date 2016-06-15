@@ -81,9 +81,6 @@ class CollectionPackagerBase( PackagerBase ):
                     self.read_blacklist( entry )
         return self._blacklist
 
-    def __isInstalled( self ):
-        return utils.abstract()
-
     def __imageDirPattern( self, package, buildTarget ):
         """ return base directory name for package related image directory """
         directory = "image"

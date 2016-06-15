@@ -56,7 +56,7 @@ class Package( CMakePackageBase ):
             NSIPackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
-        self.changePackager( "NullsoftInstallerPackager" )
+        self.changePackager( NullsoftInstallerPackager )
 
     def createPackage(self):
         self.defines[ "productname" ] = "KDevelop"
