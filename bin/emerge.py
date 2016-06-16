@@ -38,9 +38,15 @@ def destroyEmergeRoot():
         if path == EmergeStandardDirs.etcDir():
             for entry in os.listdir(path):
                 if not entry == "kdesettings.ini":
-                    utils.cleanDirectory(os.path.join(path, entry))
+                    etcPath = os.path.join(path, entry)
+                    if os.path.isdir(etcPath):
+                        utils.cleanDirectory(etcPath)
+                        utils.OsUtils.rmDir(etcPath, True)
+                    else:
+                        utils.OsUtils.rm(etcPath, True)
         elif not path in [ EmergeStandardDirs.downloadDir(), EmergeStandardDirs.emergeRepositoryDir()]:
             utils.cleanDirectory(path)
+            utils.OsUtils.rmDir(path, True)
 
 def packageIsOutdated( category, package ):
     newest = portage.PortageInstance.getNewestVersion( category, package )
