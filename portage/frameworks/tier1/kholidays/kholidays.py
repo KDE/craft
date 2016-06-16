@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['master'] = '[git]kde:kholidays|master'
-        self.defaultTarget = 'master'
+        self.versionInfo.setDefaultValues( )
+        self.shortDescription = "Holiday calculation library"
 
 
     def setDependencies( self ):
