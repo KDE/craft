@@ -34,7 +34,7 @@ class Package( CMakePackageBase ):
     def createPackage(self):
         self.defines[ "productname" ] = "Kolourpaint"
         self.defines[ "executable" ] = "bin\\kolourpaint.exe"
-        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kolourpaint.ico")
+        self.defines[ "icon" ] = os.path.join(self.packageDir(), "kolourpaint.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
         self.ignoredPackages.append("gnuwin32/sed")
