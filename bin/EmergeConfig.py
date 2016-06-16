@@ -123,6 +123,9 @@ class EmergeStandardDirs( object ):
     def etcDir( ):
         return os.path.join( EmergeStandardDirs.emergeRoot( ), "etc" )
 
+    @staticmethod
+    def emergeRepositoryDir( ):
+        return os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge" )
 
     @staticmethod
     def etcPortageDir( ):
