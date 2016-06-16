@@ -25,7 +25,7 @@ The packager used can be decided at runtime
 
         if packager == None:
             return
-        
+
         self.__packager = packager
 
     def createPackage( self ):

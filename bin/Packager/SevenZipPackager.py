@@ -20,6 +20,8 @@ class SevenZipPackager (PackagerBase):
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
         self.packagerExe = utils.UtilsCache.findApplication("7za")
+        if not self.packagerExe:
+            self.packagerExe = os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
