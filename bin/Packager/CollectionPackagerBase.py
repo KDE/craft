@@ -125,43 +125,34 @@ class CollectionPackagerBase( PackagerBase ):
 
         return imageDirs
 
-    def read_whitelist( self, fname ):
+    def __toRegExp(self, fname, targetName) -> re:
         """ Read regular expressions from fname """
-        fname = os.path.join( self.packageDir(), fname )
-        if not os.path.isfile( fname ):
-            EmergeDebug.die("Whitelist not found at: %s" % os.path.abspath(fname))
-            return False
-        for line in fileinput.input( fname ):
+        fname = os.path.join(self.packageDir(), fname)
+        if not os.path.isfile(fname):
+            EmergeDebug.die("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+        regex = "("
+        for line in fileinput.input(fname):
             # Cleanup white spaces / line endings
             line = line.splitlines()
-            line = line[ 0 ].rstrip()
-            if line.startswith( "#" ) or len( line ) == 0:
+            line = line[0].rstrip()
+            if line.startswith("#") or len(line) == 0:
                 continue
             try:
-                exp = re.compile( line, re.IGNORECASE )
-                self._whitelist.append( exp )
-                EmergeDebug.debug("%s added to whitelist as %s" % (line, exp.pattern), 2)
+                tmp = "^%s$" % line
+                regex += "%s|" % tmp
+                re.compile(tmp, re.IGNORECASE) #for debug
+                EmergeDebug.debug("%s added to %s as %s" % (line, targetName, tmp), 2)
             except re.error:
-                EmergeDebug.debug("%s is not a valid regexp" % line, 1)
+                EmergeDebug.die("%s is not a valid regexp" % tmp)
+        return re.compile("%s)" % regex[:-2], re.IGNORECASE)
+
+    def read_whitelist( self, fname ):
+        """ Read regular expressions from fname """
+        self._whitelist.append(self.__toRegExp(fname,"whitelist"))
 
     def read_blacklist( self, fname ):
         """ Read regular expressions from fname """
-        fname = os.path.join( self.packageDir(), fname )
-        if not os.path.isfile( fname ):
-            EmergeDebug.die("Blacklist not found at: %s" % os.path.abspath(fname))
-            return False
-        for line in fileinput.input( fname ):
-            # Cleanup white spaces / line endings
-            line = line.splitlines()
-            line = line[ 0 ].rstrip()
-            if line.startswith( "#" ) or len( line ) == 0:
-                continue
-            try:
-                exp = re.compile( line, re.IGNORECASE )
-                self._blacklist.append( exp )
-                EmergeDebug.debug("%s added to blacklist as %s" % (line, exp.pattern), 2)
-            except re.error:
-                EmergeDebug.debug("%s is not a valid regexp" % line, 1)
+        self._blacklist.append(self.__toRegExp(fname, "blacklist"))
 
     def whitelisted( self, pathname ):
         """ return True if pathname is included in the pattern, and False if not """
