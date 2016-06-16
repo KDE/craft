@@ -103,12 +103,15 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
-            
+
         if compiler.isGCC() and not compiler.isNative():
             options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % compiler.architecture())
 
         if OsUtils.isWin():
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
+
+        if OsUtils.isMac():
+            options += " -DAPPLE_SUPPRESS_X11_WARNING=ON"
 
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case
@@ -272,7 +275,7 @@ class CMakeBuildSystem(BuildSystemBase):
         #print("rp:", rootpath)
         if len(rootpath) == 0:
             return
-        
+
         tmp = os.path.join( imagedir, rootpath )
         EmergeDebug.debug("tmp: %s" % tmp, 1)
         tmpdir = os.path.join( imagedir, "tMpDiR" )

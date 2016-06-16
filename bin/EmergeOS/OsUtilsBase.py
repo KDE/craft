@@ -1,5 +1,6 @@
 import abc
 import os
+import platform
 
 class OsUtilsBase(metaclass=abc.ABCMeta):
 
@@ -34,3 +35,7 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     @staticmethod
     def isUnix():
         return os.name == 'posix'
+
+    @staticmethod
+    def isMac():
+        return OsUtilsBase.isUnix() and platform.system() == 'Darwin'
