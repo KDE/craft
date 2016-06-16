@@ -29,6 +29,8 @@ class subinfo( info.infoclass ):
         self.dependencies["frameworks/plasma-framework"] = "default"
         self.dependencies["frameworks/threadweaver"] = "default"
         self.dependencies["frameworks/knewstuff"] = "default"
+        if OsUtils.isUnix():
+            self.dependencies["kde/konsole"] = "default"
 
 from Package.CMakePackageBase import *
 
@@ -36,4 +38,4 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         if OsUtils.isWin():
-            self.subinfo.options.configure.defines = "-DBUILD_gdbplugin=OFF -DBUILD_konsole=OFF -DBUILD_katebuild-plugin=OFF"
+            self.subinfo.options.configure.defines = "-DBUILD_konsole=OFF"
