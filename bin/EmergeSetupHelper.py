@@ -174,7 +174,7 @@ class SetupHelper( object ):
         self.prependPath( "PythonPath",  os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "site-packages"))
 
         for var, value in emergeSettings.getSection( "Environment" ):  #set and overide existing values
-            self.addEnvVar( var, value )
+            self.addEnvVar( var.upper(), value )
         for key, val in self.env.items( ):
             print( "%s=%s" % (key, val) )
 
