@@ -16,8 +16,7 @@ The packager used can be decided at runtime
     def __init__( self, defaultType = eval(emergeSettings.get("Packager", "PackageType", "SevenZipPackager")) ):
         EmergeDebug.debug("TypePackager __init__ %s" % defaultType, 2)
         PackagerBase.__init__(self)
-        self.defaultPackager = defaultType
-        self.__packager = None
+        self.__packager = defaultType
 
     def changePackager(self, packager=None):
         if not packager == None and ("Packager", "PackageType") in emergeSettings:
@@ -25,7 +24,7 @@ The packager used can be decided at runtime
             packager = eval(emergeSettings.get("Packager", "PackageType"))
 
         if packager == None:
-            packager = self.defaultPackager
+            return
 
         self.__packager = packager
 
