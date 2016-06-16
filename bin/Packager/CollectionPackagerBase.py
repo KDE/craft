@@ -43,13 +43,14 @@ class PackagerLists(object):
 class CollectionPackagerBase( PackagerBase ):
     def __init__( self, whitelists=None, blacklists=None, initialized = False):
         if not initialized: PackagerBase.__init__(self)
-        if whitelists is None:
+        if not whitelists:
             whitelists = [ PackagerLists.defaultWhitelist ]
-        if blacklists is None:
+        if not blacklists:
             blacklists = [ PackagerLists.defaultBlacklist ]
-        self.defines = dict()
-        self.whitelist_file = whitelists
-        self.blacklist_file = blacklists
+        if not self.whitelist_file:
+            self.whitelist_file = whitelists
+        if not self.blacklist_file:
+            self.blacklist_file = blacklists
         self._whitelist = []
         self._blacklist = []
 
