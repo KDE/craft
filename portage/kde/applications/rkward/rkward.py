@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'testing/r-base' ] = 'default'
+        self.dependencies[ 'binary/r-base' ] = 'default'
         if self.buildTarget in ['0.6.4', '0.6.5']:
             # Hm, will this still work at all? kate port does not seem to provide KDE 4 version, anymore
             self.dependencies[ 'kde/kate' ] = 'default'  # provides katepart
