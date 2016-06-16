@@ -79,8 +79,11 @@ ${IfNot} $ExistingInstallation == ""
 ${EndIf}
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname} (remove only)"
+  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname}"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
+  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
+  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "https://www.kde.org/"
+  WriteRegStr HKLM "${uninstkey}" "Publisher" "KDE"
 
   SetOutPath $INSTDIR
 
