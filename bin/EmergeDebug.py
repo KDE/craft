@@ -94,7 +94,8 @@ def error( message ):
 
 
 def die( message ):
-    raise Exception("emerge fatal error: %s" % message)
+    print("emerge fatal error: %s" % message)
+    exit(1)
 
 
 def traceMode():
