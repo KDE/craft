@@ -54,8 +54,6 @@ class CollectionPackagerBase( PackagerBase ):
         self._whitelist = []
         self._blacklist = []
 
-        self.ignoredPackages = []
-
         self.scriptname = None
 
     @property
