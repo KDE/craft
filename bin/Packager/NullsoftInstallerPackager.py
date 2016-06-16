@@ -52,7 +52,7 @@ file collection process is skipped, and only the installer is generated.
 """
     def __init__( self, whitelists=None, blacklists=None, initialized = False):
         CollectionPackagerBase.__init__( self, whitelists, blacklists, initialized )
-        self.nsisInstallPath = None
+        self.nsisExe = None
         self._isInstalled = False
 
     def isNsisInstalled(self):
@@ -71,24 +71,26 @@ file collection process is skipped, and only the installer is generated.
 
         # pylint: disable=E0602
         # if pylint is done on linux, we don't have those toys
-        if utils.UtilsCache.findApplication("makensis"):
+        self.nsisExe = utils.UtilsCache.findApplication("makensis")
+        if self.nsisExe:
             return True
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ )
-            [_,self.nsisInstallPath,_] = EnumValue( key, 0 )#????
+            [_,self.nsisExe,_] = EnumValue( key, 0 )#????
         except WindowsError:
             try:
                 key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ )
-                [ self.nsisInstallPath, dummyType ] = QueryValueEx( key, "" )
+                [ self.nsisExe, dummyType ] = QueryValueEx( key, "" )
             except WindowsError:
                 try:
                     key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS\Unicode', 0, KEY_READ )
-                    [_,self.nsisInstallPath,_] = EnumValue( key, 0 )#????
+                    [_,self.nsisExe,_] = EnumValue( key, 0 )#????
                 except WindowsError:
                     try:
                         key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS', 0, KEY_READ )
-                        [ self.nsisInstallPath, dummyType ] = QueryValueEx( key, "" )
+                        [self.nsisExe, dummyType] = QueryValueEx(key, "")
                     except WindowsError:
+                        os.path.join(self.nsisExe, "makensis")
                         return False        
         
         CloseKey(key)
@@ -184,15 +186,12 @@ file collection process is skipped, and only the installer is generated.
         verboseString = "/V4" if EmergeDebug.verbose() > 0 else "/V3"
 
         if self.isNsisInstalled:
-            makensisExe = os.path.join(self.nsisInstallPath, 'makensis.exe')
-            if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (makensisExe, verboseString, definestring,
+            if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (self.nsisExe, verboseString, definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
                 EmergeDebug.die("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """
-        print(dir(self))
-        #exit()
         self.isNsisInstalled()
 
         EmergeDebug.debug("packaging using the NullsoftInstallerPackager")

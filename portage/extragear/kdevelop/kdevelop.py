@@ -41,8 +41,6 @@ class subinfo( info.infoclass ):
             self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
 
-        # Install proper theme
-        self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
         # Install extra plugins shipped by Kate
         self.dependencies[ 'kde/kate' ] = 'default'
 
