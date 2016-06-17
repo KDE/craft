@@ -55,19 +55,19 @@ file collection process is skipped, and only the installer is generated.
         self.nsisExe = None
         self._isInstalled = False
 
-        self.defines[ "architecture" ] = compiler.architecture()
-        self.defines[ "company" ] = "KDE"
-        self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
-        self.defines[ "executable" ] = ""
-        self.defines[ "icon" ] = ""
-        self.defines[ "license" ] = ""
-        self.defines[ "productname" ] = self.package.capitalize()
-        self.defines["setupname"] = self.binaryArchiveName(fileType="exe")
-        self.defines[ "srcdir" ] = self.archiveDir()
-        self.defines[ "version" ],_ = self.getPackageVersion()
-        self.defines[ "website" ] = "https://www.kde.org/"
+        self.defines.setdefault( "architecture", compiler.architecture())
+        self.defines.setdefault( "company", "KDE")
+        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES")
+        self.defines.setdefault( "executable",  "")
+        self.defines.setdefault( "icon",  "")
+        self.defines.setdefault( "license",  "")
+        self.defines.setdefault( "productname",  self.package.capitalize())
+        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
+        self.defines.setdefault( "srcdir",  self.archiveDir())
+        self.defines.setdefault( "version", self.getPackageVersion()[0])
+        self.defines.setdefault( "website",  "https://www.kde.org/")
         # runtime distributable files
-        self.defines[ "vcredist" ] = self.getVCRedistLocation()
+        self.defines.setdefault( "vcredist",  self.getVCRedistLocation())
 
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
@@ -153,7 +153,7 @@ file collection process is skipped, and only the installer is generated.
 
         definestring = ""
         for key in self.defines:
-            definestring += " /D" + key + "=\"" + self.defines[ key ] + "\""
+            definestring += " /D%s=\"%s\"" % (key , self.defines[ key ] )
 
         EmergeDebug.new_line()
         EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
