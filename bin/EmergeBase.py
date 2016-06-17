@@ -304,5 +304,5 @@ class EmergeBase(object):
         else:
             shortPackage = self.package
 
-        return "%s-%s-%s%s%s.%s" % (
+        return "%s-%s-%s-%s%s.%s" % (
         shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, fileType)
