@@ -82,8 +82,9 @@ ${EndIf}
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname}"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
   WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
-  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "https://www.kde.org/"
+  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "${website}"
   WriteRegStr HKLM "${uninstkey}" "Publisher" "KDE"
+  WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "${version}"
 
   SetOutPath $INSTDIR
 

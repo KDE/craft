@@ -55,6 +55,25 @@ file collection process is skipped, and only the installer is generated.
         self.nsisExe = None
         self._isInstalled = False
 
+        self.defines[ "architecture" ] = compiler.architecture()
+        self.defines[ "company" ] = "KDE"
+        self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
+        self.defines[ "executable" ] = ""
+        self.defines[ "icon" ] = ""
+        self.defines[ "license" ] = ""
+        self.defines[ "productname" ] = self.package.capitalize()
+        self.defines["setupname"] = self.binaryArchiveName(fileType="exe")
+        self.defines[ "srcdir" ] = self.archiveDir()
+        self.defines[ "version" ],_ = self.getPackageVersion()
+        self.defines[ "website" ] = "https://www.kde.org/"
+        # runtime distributable files
+        self.defines[ "vcredist" ] = self.getVCRedistLocation()
+
+        if not self.scriptname:
+            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
+
+
+
     def isNsisInstalled(self):
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
@@ -103,7 +122,9 @@ file collection process is skipped, and only the installer is generated.
             _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "..", "redist" )
         return _path
 
-    def getVCRedistLocation(self, compiler):
+    def getVCRedistLocation(self):
+        if not compiler.isMSVC():
+            return "none"
         _file = None
         if compiler.isMSVC2015():
             if compiler.isX64():
@@ -121,52 +142,9 @@ file collection process is skipped, and only the installer is generated.
 
         self.isNsisInstalled()
 
-        if not self.scriptname:
-            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
+        if self.defines["icon"] != "":
+            self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
 
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
-
-        if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-%s-setup-%s.exe" % ( shortPackage, compiler.architecture(), self.buildTarget )
-        if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
-            self.defines[ "srcdir" ] = self.archiveDir()
-        if not "company" in self.defines or not self.defines[ "company" ]:
-            self.defines[ "company" ] = "KDE"
-        if not "productname" in self.defines or not self.defines[ "productname" ]:
-            self.defines[ "productname" ] = shortPackage.capitalize()
-        if not "version" in self.defines or not self.defines[ "version" ]:
-            self.defines[ "version" ] = self.buildTarget
-        if not "executable" in self.defines or not self.defines[ "executable" ]:
-            self.defines[ "executable" ] = ""
-        if "license" in self.defines and self.defines[ "license" ]:
-            self.defines[ "license" ] = "!insertmacro MUI_PAGE_LICENSE \"%s\"" %  self.defines[ "license" ] 
-        else:
-            self.defines[ "license" ] = ""
-        if "icon" in self.defines and self.defines[ "icon" ]:
-            self.defines[ "icon" ] = "!define MUI_ICON \"%s\"" % self.defines[ "icon" ]
-        else:
-            self.defines[ "icon" ] = ""
-        self.defines[ "architecture" ] = compiler.architecture()
-        self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
-
-        # runtime distributable files
-        self.defines[ "vcredist" ] = self.getVCRedistLocation(compiler)
-        if not self.defines[ "vcredist" ]:
-            self.defines[ "vcredist" ] = "none"
-            # for earlier versions of MSVC, simply copy the redist files to the "bin" folder of the installation
-            if compiler.isMSVC():
-                if compiler.isX64():
-                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x64" ) )
-                else:
-                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x86" ) )
-                for root, subdirs, files in os.walk( redistPath ):
-                    for f in files:
-                        shutil.copy( os.path.join( root, f ), os.path.join( self.archiveDir(), "bin" ) )
-            else:
-                EmergeDebug.die( "Fixme: Copy runtime libraries for this compiler" )
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
