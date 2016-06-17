@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.svnTargets["frameworks"] = "[git]kde:kolourpaint|frameworks"
         self.defaultTarget = "frameworks"
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
+        self.homepage = "https://www.kde.org/applications/graphics/kolourpaint/"
 
     def setDependencies( self ):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"

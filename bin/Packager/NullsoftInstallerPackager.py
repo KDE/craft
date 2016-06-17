@@ -65,7 +65,7 @@ file collection process is skipped, and only the installer is generated.
         self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
         self.defines.setdefault( "srcdir",  self.archiveDir())
         self.defines.setdefault( "version", self.getPackageVersion()[0])
-        self.defines.setdefault( "website",  "https://www.kde.org/")
+        self.defines.setdefault( "website",  self.subinfo.homepage if not self.subinfo.homepage == "" else "https://www.kde.org/")
         # runtime distributable files
         self.defines.setdefault( "vcredist",  self.getVCRedistLocation())
 
@@ -142,9 +142,8 @@ file collection process is skipped, and only the installer is generated.
 
         self.isNsisInstalled()
 
-        if self.defines["icon"] != "":
+        if not self.defines["icon"] == "":
             self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
-
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
