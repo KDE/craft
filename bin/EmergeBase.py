@@ -291,3 +291,18 @@ class EmergeBase(object):
         password = emergeSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
         return [host, port, username, password]
 
+
+    def binaryArchiveName(self, pkgSuffix=None, fileType=emergeSettings.get("Packager", "7ZipArchiveType", "7z")):
+        if not pkgSuffix:
+            pkgSuffix = ''
+            if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
+                pkgSuffix = self.subinfo.options.package.packageSuffix
+
+        pkgVersion, _ = self.getPackageVersion()
+        if self.package.endswith("-package"):
+            shortPackage = self.package[: -8]
+        else:
+            shortPackage = self.package
+
+        return "%s-%s-%s%s%s.%s" % (
+        shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, fileType)
