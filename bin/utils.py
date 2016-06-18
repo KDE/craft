@@ -187,6 +187,7 @@ def unpackFile( downloaddir, filename, workdir ):
     ( shortname, ext ) = os.path.splitext( filename )
     if re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
         shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
+        return True
     elif ext == "":
         return True
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
