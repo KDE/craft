@@ -111,7 +111,8 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
 
         if OsUtils.isMac():
-            options += " -DAPPLE_SUPPRESS_X11_WARNING=ON"
+            options += " -DBUNDLE_INSTALL_DIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
+                self.mergeDestinationDir().replace( "\\", "/" )
 
         if self.buildTests:
             # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case
