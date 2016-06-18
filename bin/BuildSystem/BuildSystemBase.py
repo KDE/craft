@@ -6,9 +6,6 @@
 import EmergeDebug
 from EmergeBase import *
 import compiler
-from graphviz import *
-import dependencies
-
 
 class BuildSystemBase(EmergeBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
