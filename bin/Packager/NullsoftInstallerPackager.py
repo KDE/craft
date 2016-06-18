@@ -55,6 +55,8 @@ file collection process is skipped, and only the installer is generated.
         self.nsisExe = None
         self._isInstalled = False
 
+
+    def _setDefaults(self):
         self.defines.setdefault( "architecture", compiler.architecture())
         self.defines.setdefault( "company", "KDE")
         self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES")
@@ -71,7 +73,6 @@ file collection process is skipped, and only the installer is generated.
 
         if not self.scriptname:
             self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
-
 
 
     def isNsisInstalled(self):
@@ -141,6 +142,7 @@ file collection process is skipped, and only the installer is generated.
         """ runs makensis to generate the installer itself """
 
         self.isNsisInstalled()
+        self._setDefaults()
 
         if not self.defines["icon"] == "":
             self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
