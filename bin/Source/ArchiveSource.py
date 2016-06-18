@@ -211,7 +211,7 @@ class ArchiveSource(SourceBase):
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
-                patches = list([patches])
+                patches = [patches]
             for fileName, patchdepth in patches[:-1]:
                 EmergeDebug.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
                 if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
