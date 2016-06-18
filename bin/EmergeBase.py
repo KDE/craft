@@ -298,11 +298,5 @@ class EmergeBase(object):
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
-        pkgVersion, _ = self.getPackageVersion()
-        if self.package.endswith("-package"):
-            shortPackage = self.package[: -8]
-        else:
-            shortPackage = self.package
-
         return "%s-%s-%s-%s%s.%s" % (
-        shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, fileType)
+            self.package, compiler.architecture(), self.getPackageVersion()[0], compiler.getShortName(), pkgSuffix, fileType)

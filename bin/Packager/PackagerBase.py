@@ -18,9 +18,6 @@ class PackagerBase(EmergeBase):
         utils.abstract()
 
     def archiveDir(self):
-        if self.package.endswith( "-package" ):
-            return self.imageDir() # compat behavior
-
         return os.path.join( self.buildRoot(), "archive" )
 
     def getPackageVersion(self):

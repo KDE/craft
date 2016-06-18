@@ -105,8 +105,7 @@ class CollectionPackagerBase( PackagerBase ):
         depList.reverse()
 
         # make sure current package is added to the list, too
-        if not self.package.endswith("-package"):
-            depList.append(DependencyPackage(self.category, self.package))
+        depList.append(DependencyPackage(self.category, self.package))
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):

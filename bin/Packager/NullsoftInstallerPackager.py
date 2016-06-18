@@ -35,8 +35,7 @@ You can override the .nsi default script and you will get the following defines
 given into the nsis generator via commandline if you do not override the attributes
 of the same name in the dictionary self.defines:
 setupname:      PACKAGENAME-setup-BUILDTARGET.exe
-                PACKAGENAME is the name of the package, if the package ends with "-package",
-                that part is removed
+                PACKAGENAME is the name of the package
 srcdir:         is set to the image directory, where all files from the image directories
                 of all dependencies are gathered. You shouldn't normally have to set this.
 company:        sets the company name used for the registry key of the installer. Default
