@@ -36,14 +36,14 @@ class subinfo(info.infoclass):
 from Package.CMakePackageBase import *
 from Packager.NullsoftInstallerPackager import *
 
-class Package( CMakePackageBase, NullsoftInstallerPackager ):
+class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
-        blacklists = [
+        self.blacklist_file = [
             NSIPackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
-        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
+        self.changePackager( NullsoftInstallerPackager )
 
     def createPackage(self):
         self.defines[ "productname" ] = "KMyMoney"
@@ -52,7 +52,7 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
-        return NullsoftInstallerPackager.createPackage(self)
+        return TypePackager.createPackage(self)
 
     def preArchive(self):
         archiveDir = self.archiveDir()
@@ -70,4 +70,4 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
-
+        return TypePackager.preArchive(self)

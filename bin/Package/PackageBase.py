@@ -213,21 +213,6 @@ class PackageBase (EmergeBase):
 
         return self.runAction(command)
 
-
-    def binaryArchiveName(self, pkgSuffix = None):
-        if not pkgSuffix:
-            pkgSuffix = ''
-            if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
-                pkgSuffix = self.subinfo.options.package.packageSuffix
-
-        pkgVersion, _ = self.getPackageVersion()
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
-
-        return "%s-%s-%s%s%s.%s" % (shortPackage, compiler.architecture(), pkgVersion, compiler.getShortName(), pkgSuffix, emergeSettings.get("Packager", "7ZipArchiveType", "7z"))
-
     def fetchBinary(self) -> bool:
         archiveName = self.binaryArchiveName()
         downloadFolder = os.path.join(EmergeStandardDirs.downloadDir(), "binary")

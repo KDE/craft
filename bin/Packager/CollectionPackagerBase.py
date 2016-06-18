@@ -105,8 +105,7 @@ class CollectionPackagerBase( PackagerBase ):
         depList.reverse()
 
         # make sure current package is added to the list, too
-        if not self.package.endswith("-package"):
-            depList.append(DependencyPackage(self.category, self.package))
+        depList.append(DependencyPackage(self.category, self.package))
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
@@ -217,7 +216,7 @@ class CollectionPackagerBase( PackagerBase ):
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
         for entry in duplicates:
-            entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
+            entry_target = entry.replace( srcDir, destDir + os.path.sep)
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )

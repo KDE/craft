@@ -33,10 +33,7 @@ class MSInstallerPackager( CollectionPackagerBase ):
 
     def generateMSInstaller( self ):
         """ runs tools to generate the installer itself """
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
+        shortPackage = self.package
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = "%s-setup-%s.msi" % ( shortPackage, self.buildTarget )
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:

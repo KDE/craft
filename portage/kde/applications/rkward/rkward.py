@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
-        self.dependencies[ 'testing/r-base' ] = 'default'
+        self.dependencies[ 'binary/r-base' ] = 'default'
         if self.buildTarget in ['0.6.4', '0.6.5']:
             # Hm, will this still work at all? kate port does not seem to provide KDE 4 version, anymore
             self.dependencies[ 'kde/kate' ] = 'default'  # provides katepart
@@ -44,13 +44,13 @@ class RKTranslations( GitSource ):
 from Package.CMakePackageBase import *
 from Packager.NullsoftInstallerPackager import *
 
-class Package( CMakePackageBase, NullsoftInstallerPackager ):
+class Package( CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        blacklists = [
+        self.blacklist_file = [
             NSIPackagerLists.runtimeBlacklist  #, os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
-        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
+        self.changePackager(NullsoftInstallerPackager)
 
         if compiler.isX64():
             self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "x64" )
@@ -104,4 +104,4 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
-        return NullsoftInstallerPackager.createPackage(self)
+        return TypePackager.createPackage(self)

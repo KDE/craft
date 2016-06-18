@@ -40,6 +40,11 @@ ${license}
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN_TEXT "Run ${productname}"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\${executable}"
+!define MUI_FINISHPAGE_LINK "Visit project homepage"
+!define MUI_FINISHPAGE_LINK_LOCATION "${website}"
+!insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_LANGUAGE "English"
 
@@ -82,8 +87,9 @@ ${EndIf}
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname}"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
   WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
-  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "https://www.kde.org/"
+  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "${website}"
   WriteRegStr HKLM "${uninstkey}" "Publisher" "KDE"
+  WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "${version}"
 
   SetOutPath $INSTDIR
 

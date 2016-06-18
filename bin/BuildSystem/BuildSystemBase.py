@@ -6,9 +6,6 @@
 import EmergeDebug
 from EmergeBase import *
 import compiler
-from graphviz import *
-import dependencies
-
 
 from EmergeOS.osutils import OsUtils
 

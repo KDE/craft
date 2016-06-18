@@ -37,7 +37,6 @@ class Package( CMakePackageBase ):
         self.defines[ "icon" ] = os.path.join(self.packageDir(), "kolourpaint.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
-        self.ignoredPackages.append("gnuwin32/sed")
         self.ignoredPackages.append("frameworks/kdesignerplugin")
         self.ignoredPackages.append("frameworks/kemoticons")
 
@@ -50,6 +49,6 @@ class Package( CMakePackageBase ):
         binPath = os.path.join(archiveDir, "bin")
         utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
-
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
+        return TypePackager.preArchive(self)

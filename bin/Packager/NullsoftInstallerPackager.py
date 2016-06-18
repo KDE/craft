@@ -35,8 +35,7 @@ You can override the .nsi default script and you will get the following defines
 given into the nsis generator via commandline if you do not override the attributes
 of the same name in the dictionary self.defines:
 setupname:      PACKAGENAME-setup-BUILDTARGET.exe
-                PACKAGENAME is the name of the package, if the package ends with "-package",
-                that part is removed
+                PACKAGENAME is the name of the package
 srcdir:         is set to the image directory, where all files from the image directories
                 of all dependencies are gathered. You shouldn't normally have to set this.
 company:        sets the company name used for the registry key of the installer. Default
@@ -54,6 +53,26 @@ file collection process is skipped, and only the installer is generated.
         CollectionPackagerBase.__init__( self, whitelists, blacklists, initialized )
         self.nsisExe = None
         self._isInstalled = False
+
+
+    def _setDefaults(self):
+        self.defines.setdefault( "architecture", compiler.architecture())
+        self.defines.setdefault( "company", "KDE")
+        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES")
+        self.defines.setdefault( "executable",  "")
+        self.defines.setdefault( "icon",  "")
+        self.defines.setdefault( "license",  "")
+        self.defines.setdefault( "productname",  self.package.capitalize())
+        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
+        self.defines.setdefault( "srcdir",  self.archiveDir())
+        self.defines.setdefault( "version", self.getPackageVersion()[0])
+        self.defines.setdefault( "website",  self.subinfo.homepage if not self.subinfo.homepage == "" else "https://community.kde.org/Windows")
+        # runtime distributable files
+        self.defines.setdefault( "vcredist",  self.getVCRedistLocation())
+
+        if not self.scriptname:
+            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
+
 
     def isNsisInstalled(self):
         if not self._isInstalled:
@@ -103,7 +122,9 @@ file collection process is skipped, and only the installer is generated.
             _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "..", "redist" )
         return _path
 
-    def getVCRedistLocation(self, compiler):
+    def getVCRedistLocation(self):
+        if not compiler.isMSVC():
+            return "none"
         _file = None
         if compiler.isMSVC2015():
             if compiler.isX64():
@@ -120,56 +141,10 @@ file collection process is skipped, and only the installer is generated.
         """ runs makensis to generate the installer itself """
 
         self.isNsisInstalled()
+        self._setDefaults()
 
-        if not self.scriptname:
-            self.scriptname = os.path.join( os.path.dirname( __file__ ), "NullsoftInstaller.nsi" )
-
-        if self.package.endswith( "-package" ):
-            shortPackage = self.package[ : -8 ]
-        else:
-            shortPackage = self.package
-
-        if not "setupname" in self.defines or not self.defines[ "setupname" ]:
-            self.defines[ "setupname" ] = "%s-%s-setup-%s.exe" % ( shortPackage, compiler.architecture(), self.buildTarget )
-        if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
-            self.defines[ "srcdir" ] = self.archiveDir()
-        if not "company" in self.defines or not self.defines[ "company" ]:
-            self.defines[ "company" ] = "KDE"
-        if not "productname" in self.defines or not self.defines[ "productname" ]:
-            self.defines[ "productname" ] = shortPackage.capitalize()
-        if not "version" in self.defines or not self.defines[ "version" ]:
-            self.defines[ "version" ] = self.buildTarget
-        if not "executable" in self.defines or not self.defines[ "executable" ]:
-            self.defines[ "executable" ] = ""
-        if "license" in self.defines and self.defines[ "license" ]:
-            self.defines[ "license" ] = "!insertmacro MUI_PAGE_LICENSE \"%s\"" %  self.defines[ "license" ] 
-        else:
-            self.defines[ "license" ] = ""
-        if "icon" in self.defines and self.defines[ "icon" ]:
-            self.defines[ "icon" ] = "!define MUI_ICON \"%s\"" % self.defines[ "icon" ]
-        else:
-            self.defines[ "icon" ] = ""
-        self.defines[ "architecture" ] = compiler.architecture()
-        self.defines[ "defaultinstdir" ] = "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES"
-
-        # runtime distributable files
-        self.defines[ "vcredist" ] = self.getVCRedistLocation(compiler)
-        if not self.defines[ "vcredist" ]:
-            self.defines[ "vcredist" ] = "none"
-            # for earlier versions of MSVC, simply copy the redist files to the "bin" folder of the installation
-            if compiler.isMSVC():
-                if compiler.isX64():
-                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x64" ) )
-                else:
-                    redistPath = os.path.join( os.path.join( self.getVCRuntimeLibrariesLocation(), "x86" ) )
-                for root, subdirs, files in os.walk( redistPath ):
-                    for f in files:
-                        shutil.copy( os.path.join( root, f ), os.path.join( self.archiveDir(), "bin" ) )
-            elif compiler.isMinGW():
-                for f in glob.glob( os.path.join( self.rootdir, "mingw", "bin", "*.dll") ):
-                    shutil.copy( f, os.path.join( self.archiveDir(), "bin" ) )
-            else:
-                EmergeDebug.die( "Fixme: Copy runtime libraries for this compiler" )
+        if not self.defines["icon"] == "":
+            self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
@@ -178,7 +153,7 @@ file collection process is skipped, and only the installer is generated.
 
         definestring = ""
         for key in self.defines:
-            definestring += " /D" + key + "=\"" + self.defines[ key ] + "\""
+            definestring += " /D%s=\"%s\"" % (key , self.defines[ key ] )
 
         EmergeDebug.new_line()
         EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
