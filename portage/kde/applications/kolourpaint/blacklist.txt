@@ -21,7 +21,7 @@ share\\apps\\cmake\\.*
 # common app stuff
 
 lib\\.*
-bin\\data\\(?!(icontheme\.rcc|icons|kolourpaint)).*
+bin\\data\\(?!(icontheme\.rcc)).*
 
 dev-utils\\.*
 share\\dbus-1\\services\\.*
