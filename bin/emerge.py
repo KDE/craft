@@ -78,7 +78,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             raise portage.PortageException( "Package not found", category, packageName )
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
-            if buildAction != "all" and emergeSettings.getboolean("ContinuousIntegration", "Cache", "False"):
+            if emergeSettings.getboolean("ContinuousIntegration", "UseCache", "False"):
                 if doExec( package, "fetch-binary"):
                     return True
             success = success and doExec( package, "fetch", continueFlag )
@@ -96,7 +96,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 success = success and doExec( package, "install" )
                 if buildAction in [ "all", "update", "update-all" ]:
                     success = success and doExec( package, "qmerge" )
-                if buildAction == "full-package" or emergeSettings.getboolean("ContinuousIntegration", "Cache"):
+                if buildAction == "full-package" or emergeSettings.getboolean("ContinuousIntegration", "CreateCache"):
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
@@ -345,8 +345,10 @@ def main( ):
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = emergeSettings.getboolean( "Compile", "BuildTests", False ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
-    parser.add_argument( "-ca", "--cache", action = "store_true", dest = "doCache",
-                         default= emergeSettings.getboolean("ContinuousIntegration", "Cache", "False"))
+    parser.add_argument("-cc", "--create-cache", action="store_true", dest="createCache",
+                        default=emergeSettings.getboolean("ContinuousIntegration", "CreateCache", "False"))
+    parser.add_argument("-uc", "--use-cache", action="store_true", dest="useCache",
+                        default=emergeSettings.getboolean("ContinuousIntegration", "UseCache", "False"))
     parser.add_argument( "--destroy-emerge-root", action = "store_true", dest = "doDestroyEmergeRoot",
                          default=False)
     parser.add_argument( "--offline", action = "store_true",
@@ -441,6 +443,8 @@ def main( ):
     emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
     emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
+    emergeSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
+    emergeSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
 
     portage.PortageInstance.options = args.options
     if args.search:
