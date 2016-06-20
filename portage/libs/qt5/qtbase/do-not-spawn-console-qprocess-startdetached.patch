@@ -6,7 +6,7 @@ index 592bee5..de1a259 100644
      bool success = false;
      PROCESS_INFORMATION pinfo;
  
-+    DWORD dwCreationFlags = (GetConsoleWindow() ? 0 : CREATE_NO_WINDOW);
++    DWORD dwCreationFlags = (GetConsoleWindow() ? CREATE_NEW_CONSOLE : CREATE_NO_WINDOW);
 +    dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
      STARTUPINFOW startupInfo = { sizeof( STARTUPINFO ), 0, 0, 0,
                                   (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
