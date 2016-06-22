@@ -27,11 +27,13 @@ class QMakeBuildSystem(BuildSystemBase):
             else:
                 EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
         elif OsUtils.isUnix():
-            if compiler.isClang():
-                self.platform = "linux-clang"
+            if not OsUtils.isFreeBSD():
+                if compiler.isClang():
+                    self.platform = "linux-clang"
+                else:
+                    self.platform = "linux-g++"
             else:
-                self.platform = "linux-g++"
-
+                self.platform = "freebsd-clang"
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""

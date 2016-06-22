@@ -35,6 +35,10 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     @staticmethod
     def isUnix():
         return os.name == 'posix'
+    
+    @staticmethod
+    def isFreeBSD():
+        return OsUtilsBase.isUnix() and platform.system() == 'FreeBSD'
 
     @staticmethod
     def isMac():
