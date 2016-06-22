@@ -5,14 +5,21 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        for ver in self.versionInfo.tarballs():
-            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
-            
+
         for ver in self.versionInfo.branches():
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
-            
+
+        branchRegEx = re.compile("\d\.\d")
+        for ver in self.versionInfo.tarballs():
+            branch = branchRegEx.findall(ver)[0]
+            del self.targets[ver]
+            self.svnTargets[ver] = self.svnTargets[branch]
+            self.patchToApply[ver] = self.patchToApply[branch]
+
         for ver in self.versionInfo.tags():
-            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
+            branch = branchRegEx.findall(ver)[0]
+            self.svnTargets[ver] = self.svnTargets[ branch ]
+            self.patchToApply[ ver ] = self.patchToApply[ branch ] 
 
     def setDependencies( self ):
         self.dependencies['win32libs/sqlite'] = 'default'
