@@ -7,7 +7,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtquick1'] = 'default'
         self.dependencies['libs/qttools'] = 'default'
         self.dependencies['libs/qtwebsockets'] = 'default'
         self.dependencies['libs/qtmultimedia'] = 'default'
