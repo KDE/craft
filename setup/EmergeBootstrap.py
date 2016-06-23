@@ -109,7 +109,8 @@ if __name__ == "__main__":
     subprocess.call("%s emerge git" % os.path.join(kdeRoot, "emerge", "kdeenv.bat"))
     os.chdir(kdeRoot)
     shutil.rmtree( os.path.join(kdeRoot, "emerge") )
-    subprocess.call("%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
-
+    subprocess.check_call("%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
+    print("Setup complete")
+    print("Please run %s/emerge/kdeenv.ps1" % kdeRoot)
 
 
