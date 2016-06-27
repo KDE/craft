@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+PROJECT(indi C CXX)
+
+SET(INDI_BUILD_QT5 ON CACHE BOOL "Build INDI with Qt5 backend")
+
+add_subdirectory(libindi)
