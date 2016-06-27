@@ -1,0 +1,57 @@
+# blacklist
+
+# general
+manifest\\.*
+.*\.exp
+.*\.pdb
+.*\.la
+.*\.nsis
+.*\.prl
+
+# QSL data
+data\\.*
+
+# multiple docs
+doc\\.*
+share\\man\\.*
+share\\xml\\.*
+share\\locale\\.*
+
+# common app stuff
+share\\apps\\ark\\.*
+share\\apps\\kgpg\\.*
+share\\kf5\\kdoctools\\.*
+
+# Unused Qt modules
+qml\\QtMultimedia
+qml\\QtWebChannel
+qml\\QtWebKit
+qml\\QtWinExtras
+qml\\QtTest
+
+# unrelated
+dev-utils\\.*
+#share\\dbus-1\\services\\.*
+share\\pkgconfig\\.*
+
+# cleanup breeze stuff
+share\\wallpapers\\.*
+share\\icons\\Breeze_Snow\\.*
+share\\icons\\breeze-dark\\.*
+
+# cut the oxygen icons
+share\\icons\\oxygen\\.*
+
+# doubled qt dlls
+lib\\[^\\]*\.dll
+# more qt leftovers
+translations\\.*
+phrasebooks\\.*
+mkspecs\\.*
+
+# unneeded stuff from bin\
+bin\\qt\.conf
+bin\\syncqt\.pl
+
+# strip most executables
+#bin\\(?!(kdevelop|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
