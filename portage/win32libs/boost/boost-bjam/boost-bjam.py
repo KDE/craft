@@ -34,7 +34,9 @@ class Package(BoostPackageBase):
     def make(self):
         if OsUtils.isUnix():
             cmd = "./bootstrap.sh  --with-toolset="
-            if compiler.isClang():
+            if OsUtils.isFreeBSD():
+                cmd += "clang"
+            elif compiler.isClang():
                 cmd += "clang"
             elif compiler.isGCC():
                 cmd += "gcc"
