@@ -51,9 +51,6 @@ class Package(BinaryPackageBase):
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
         utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
         utils.system( "%s config --global core.autocrlf false" % git)
-        # fix `git merge` not working on Git versions < 2.0
-        # see http://stackoverflow.com/questions/16223561/no-commit-specified-and-merge-defaulttoupstream-not-set/16223995#16223995
-        utils.system( "%s config --global merge.defaultToUpstream true" % git )
         utils.system( "%s config --system core.autocrlf false" % git)
         return True
 
