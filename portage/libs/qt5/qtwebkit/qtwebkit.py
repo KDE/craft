@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in self.versionInfo.branches():
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
 
-        branchRegEx = re.compile("\d\.\d")
+        branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
             branch = branchRegEx.findall(ver)[0]
             del self.targets[ver]
