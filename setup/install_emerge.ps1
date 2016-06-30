@@ -13,13 +13,6 @@ $Script:installRoot = "C:\kde"
 $Script:python = where.exe python 2>$NULL
 $Script:pythonVersion = "0"
 
-#http://stackoverflow.com/a/27768628
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-function Unzip([string]$zipfile, [string]$outpath)
-{
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-}
-
 function FetchPython()
 {
     switch($host.UI.PromptForChoice("Get python", "Do you wan't us to install python for you or do you want to manually specify the location of your python installation?",
@@ -33,7 +26,7 @@ function FetchPython()
                     Invoke-WebRequest $Script:pythonUrl -OutFile $archive
                 }
                 $Script:python = "$Script:installRoot\python\python.exe"
-                Unzip "$archive" "$Script:installRoot\python\"
+                Expand-Archive "$archive" "$Script:installRoot\python\"
                 break
             }
             1 {

@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in self.versionInfo.branches():
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
 
-        branchRegEx = re.compile("\d\.\d")
+        branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
             branch = branchRegEx.findall(ver)[0]
             del self.targets[ver]
@@ -38,7 +38,8 @@ from Package.Qt5CorePackageBase import *
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
-        os.putenv("SQLITE3SRCDIR",EmergeStandardDirs.emergeRoot())
+        utils.putenv("SQLITE3SRCDIR",EmergeStandardDirs.emergeRoot())
+        self.subinfo.options.configure.defines = """ "QT_CONFIG+=no-pkg-config" """
         if compiler.isMinGW():
-            self.subinfo.options.configure.defines = """ "QMAKE_CXXFLAGS += -g0 -O3" """
+            self.subinfo.options.configure.defines += """ "QMAKE_CXXFLAGS += -g0 -O3" """
 

@@ -227,8 +227,11 @@ class EmergeConfig( object ):
 
         if default != None:
             return default
-
-        self._config[ group ][ key ]
+        print("Failed to find")
+        print("\t[%s]" % group)
+        print("\t%s = ..." % key)
+        print("in your kdesettings.ini")
+        exit(1)
 
     def getSection( self, group ):
         if self._config.has_section( group ):

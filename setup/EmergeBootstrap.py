@@ -86,10 +86,11 @@ if __name__ == "__main__":
         compiler = "mingw4"
     else:
         compiler = "msvc2015"
-    if compiler == "mingw4":
-        print("The Qt buildsystem with Mingw-w64 has problems on Windows with to long commands.")
-        print("For that reason we mount emerge directories to drive letters.")
-        shortPath = EmergeBootsrtap.promptShortPath()
+
+    print("Windows has problems with too long commands.")
+    print("For that reason we mount emerge directories to drive letters.")
+    print("Tha justs maps a folder to a drive letter.")
+    shortPath = EmergeBootsrtap.promptShortPath()
 
     EmergeBootsrtap.downlaodFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"), "emerge.zip")
     shutil.unpack_archive(os.path.join(kdeRoot, "download", "emerge.zip" ), kdeRoot)
@@ -101,15 +102,15 @@ if __name__ == "__main__":
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
 
-    if compiler == "mingw4":
-        boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
-        for key, value in shortPath.items():
-            boot.setSettignsValue(key, value)
+    boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
+    for key, value in shortPath.items():
+        boot.setSettignsValue(key, value)
     boot.writeSettings()
     subprocess.call("%s emerge git" % os.path.join(kdeRoot, "emerge", "kdeenv.bat"))
     os.chdir(kdeRoot)
     shutil.rmtree( os.path.join(kdeRoot, "emerge") )
-    subprocess.call("%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
-
+    subprocess.check_call("%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
+    print("Setup complete")
+    print("Please run %s/emerge/kdeenv.ps1" % kdeRoot)
 
 
