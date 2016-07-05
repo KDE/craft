@@ -4,6 +4,7 @@ from Packager.NullsoftInstallerPackager import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets[ '5.0' ] = '[git]kde:kdevelop|5.0'
+        self.svnTargets[ 'master' ] = '[git]kde:kdevelop|master'
         self.defaultTarget = '5.0'
 
     def setDependencies( self ):
