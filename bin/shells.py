@@ -24,7 +24,12 @@ class MSysShell(object):
             self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
         mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
-        if compiler.isMinGW():
+        if compiler.isMSVC():
+            ldflags = ""
+            cflags = " -MD -Zi"
+            if compiler.isMSVC2013():
+                cflags = " -FS"
+        else:
             ldflags = "-L%s/lib " % mergeroot
             cflags = "-I%s/include " % mergeroot
 
@@ -32,11 +37,6 @@ class MSysShell(object):
                 cflags += " -O2 -g "
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
-        elif compiler.isMSVC():
-            ldflags = ""
-            cflags = " -MD -Zi"
-            if compiler.isMSVC2013():
-                cflags = " -FS"
 
         self.environment[ "MSYS2_PATH_TYPE" ] = "inherit"#inherit the windows path
         if "make" in self.environment:
