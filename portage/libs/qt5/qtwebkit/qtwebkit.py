@@ -7,7 +7,8 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         for ver in self.versionInfo.branches():
-            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1)]
+            self.patchToApply[ ver ] = [("build-with-mysql.diff", 1),
+                                         ("disable-icu-test.diff", 1)]
 
         branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
