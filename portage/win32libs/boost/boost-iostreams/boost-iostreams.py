@@ -20,5 +20,6 @@ from Package.BoostPackageBase import *
 class Package( BoostPackageBase ):
     def __init__(self, **args):
         BoostPackageBase.__init__(self)
+        self.subinfo.options.configure.defines = "-s NO_BZIP2=1"
 
 
