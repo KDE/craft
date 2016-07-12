@@ -190,7 +190,7 @@ class EmergeConfig( object ):
         if not os.name == "nt":
             self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*")
             if self.get("General", "KDECompiler") == "linux-gcc":
-                self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";binary/.*;win32libs/.*")
+                self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";binary/.*")
                         
         if self.getboolean("QtSDK", "Enabled", "False"):
             self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ";libs/qt.*")
