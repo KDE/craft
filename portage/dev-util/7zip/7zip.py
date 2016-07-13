@@ -4,7 +4,7 @@ import lzma
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in [ "1602"]:
-            self.targets[ ver ] = "http://downloads.sourceforge.net/sourceforge/sevenzip/7z%s-extra.7z" % ver
+            self.targets[ ver ] = "http://www.7-zip.org/a/7z%s-extra.7z" % ver
             self.targetInstallPath[ ver ] = "bin"
         self.targetDigests['1602'] = (['f6c412e8bc45e4a88e675976024c21ed7a23eeb7eb0af452aa7a9b9a97843aa2'], EmergeHash.HashAlgorithm.SHA256)
         self.defaultTarget = '1602'
