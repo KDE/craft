@@ -201,7 +201,8 @@ class SetupHelper( object ):
 
 
         if self.args.mode == "bash":
-            self.prependPath("LD_LIBRARY_PATH", [os.path.join(EmergeStandardDirs.emergeRoot(), "lib")])
+            self.prependPath("LD_LIBRARY_PATH", [ os.path.join(EmergeStandardDirs.emergeRoot(), "lib"),
+                                                  os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "x86_64-linux-gnu") ])
 
         self.setXDG()
 
