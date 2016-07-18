@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://github.com/KDAB/KDStateMachineEditor.git'
+        self.svnTargets['gitHEAD'] = 'https://github.com/KDAB/KDStateMachineEditor.git'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):

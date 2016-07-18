@@ -8,7 +8,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         """ """
-        self.svnTargets['gitHEAD'] = "git://github.com/martine/ninja.git"
+        self.svnTargets['gitHEAD'] = "https://github.com/martine/ninja.git"
         for ver in ["1.6.0" ]:
             self.targets[ ver ] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "ninja-%s" % ver

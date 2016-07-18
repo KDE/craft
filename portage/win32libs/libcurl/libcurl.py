@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://github.com/bagder/curl.git"
+        self.svnTargets['gitHEAD'] = "https://github.com/bagder/curl.git"
         for ver in [ '7.20.0', '7.28.1', '7.32.0', '7.46.0' ]:
             self.targets[ver] = 'http://curl.haxx.se/download/curl-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'curl-' + ver
