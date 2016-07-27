@@ -25,6 +25,7 @@ from Package.BoostPackageBase import *
 class Package(BoostPackageBase):
     def __init__(self, **args):
         BoostPackageBase.__init__(self)
+        self.subinfo.options.package.packSources = True
 
     def make(self):
         return True
