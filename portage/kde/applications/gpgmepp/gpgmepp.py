@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["libs/qtbase"] = "default"
         self.dependencies["win32libs/gpgme"] = "default"
-        self.dependencies["win32libs/boost"] = "default"
+        self.dependencies["win32libs/boost-headers"] = "default"
         
 from Package.CMakePackageBase import *
 
