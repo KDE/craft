@@ -1,0 +1,167 @@
+[General]
+
+## Here you set the compiler to be used.
+## mingw4   - use the mingw gcc compiler (recommended)
+## msvc2010, msvc2012, msvc2013 or msvc2015 - use the Microsoft Visual C++ compiler
+KDECompiler = mingw4
+
+##  possible values x86 or x64
+Architecture = x64
+## This option should be set to False if you use the msvc 201X Express Edition 64bit compiler
+## in all other cases, simply keep this option commented out
+#Native=False
+
+## This option can be used to enable a notification backend.
+## As soon as the buildprocess of a project has finished a notification will be displayed.
+## Possible Backends:
+## Snarl      http://snarl.fullphat.net/
+## Toaster    Toaster will display a Windows 8 toast notification
+## Snore      https://github.com/Snorenotify/Snorenotify. Snore supports multiple backends. You need to install snore-send using emerge.
+## Pushover   https://pushover.net - Pushover is a service to receive instant push notifications on your phone or tablet from a variety of sources.
+##            If using pushover, you may also need to set EMERGE_PUSHOVER_APP_TOKEN (emerge will use a default Token if unset) and EMERGE_PUSHOVER_USER_KEY, which is your user key
+#EMERGE_USE_NOTIFY = Snarl;Toaster;Pushover
+#EMERGE_PUSHOVER_APP_TOKEN = aJU9PRUb6nGUUM2idyLfXdU8S5q18i
+#EMERGE_PUSHOVER_USER_KEY = 
+
+## Speed up the merging of packages by using hard links
+UseHardlinks = False
+
+
+[Paths]
+## This is the location of your python installation.
+## This value must be set.
+Python = C:\ProgramFiles\Python 
+
+## Some applications may need python 2.7
+#Python27 = C:\python27
+
+## Here you change the download directory.
+## If you want, so you can share the same download directory between
+## mingw and msvc.
+## The default value is emerge/../download
+#DownloadDir = C:\kde\download
+
+## This option defines the location for git checkouts.
+## The default value is emerge/../download/git
+#KDEGitDir = ${DOWNLOADDIR}\git
+
+## This option defines the location for svn checkouts.
+## The default value is emerge/../download/svn
+#KDESVNDir = ${DOWNLOADDIR}\svn
+
+## This option defines the location where the ccache files are stored.
+## The default location is KDEROOT/build/ccache
+#CCACHE_DIR = C:\CCACHE\kf5
+
+[Compile]
+## Whether to build tests (default: True)
+#BuildTests = False
+
+## This only reminds emerge that we are using Clang. Switching compiler isn't supported yet.
+UseClang = True
+
+## the buildtype of this installation
+## Possible Values:
+## Release
+## RelWithDebInfo
+## Debug
+## MinSizeRel
+BuildType = RelWithDebInfo
+
+## Whether to use ninja (default: False)
+UseNinja = False
+
+## Whether to use ccache (only avalible with mingw compiler)
+#UseCCache = True
+
+## This option can be used to override the default make program
+## change the value to the path of the executable you want to use instead.
+MakeProgram = gmake -j2
+
+[ShortPath]
+## substitute pathes by drives
+## This option is needed to avoid path limit problems in case of long base pathes
+## and compiling big packages like qt
+## If you disable it do _not_ use any paths longer than 6 letters in the
+## directory settings
+EMERGE_USE_SHORT_PATH = False
+
+## each drive could be commented out to skip substution
+EMERGE_ROOT_DRIVE = r:
+EMERGE_GIT_DRIVE = q:
+#EMERGE_DOWNLOAD_DRIVE = t:
+
+
+[Portage]
+## This adds the possibility to disable cretin packages
+## For portage recipes configure options can be added by 
+## "if self.subinfo.options.isActive("binary/mysql-pkg"):"
+## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
+Ignores = dev-util/.*;win32libs/(?!(boost)).*;binary/.*;kdesupport/kdewin
+
+[PortageVersions]
+## Override the default target if this version is available.
+#DefaultTarget = 5.0
+
+## Overide the default version for a package.
+## For a normal package add category/package, like win32libs/libpng and set the Version
+## For meta packages like Qt5 you can directly set the version for the whole package
+#Qt5 = 5.2.1
+#KF5 = 5.2.0
+#KDE = 4.89.0
+#Boost = 1_55_0
+#win32libs/libpng = 1.2.43
+#binary/vlc = 3.0.0-git
+
+[Packager]
+## The archive type for packages.
+## Possible values are: zip, 7z
+## Todo: rename
+7ZipArchiveType = zip
+
+## If set this will override the default package type.
+## Possible values are: SevenZipPackager,  MSIFragmentPackager,
+##                      InnoSetupPackager, NullsoftInstallerPackager
+#PackageType = SevenZipPackager
+
+## Package the Source files too.
+#PackageSrc=False
+
+[EmergeDebug]
+## If you want to have verbose output, uncomment the following option
+## and set it to positive integer for verbose output and to 0
+## (or disable it) for normal output. Currently the highest verbosity level
+## is 3 (equal to 'emerge -v -v -v'). level -1 equals 'emerge -q'
+## Default is Verbose = 0
+#Verbose = 1
+
+## Prints time spend on various emerge tasks
+MeasureTime = False
+
+## Dump internal state of emergeSettings to kdesettings.ini.dump
+#DumpSettings = True
+
+[Environment]
+## All values defined here will be populated to the environment
+#GIT_COMMITTER_EMAIL = foo@bar.com
+
+## Set the ssh client for git and svn.
+#GIT_SSH = plink
+#SVN_SSH = plink
+
+
+[QtSDK]
+## This is higly experimental and you will miss certain features like dbus or mysql support.
+## Whether to use prebuild Qt binaries.
+Enabled = False
+## The path to the Qt sdk.
+Path = D:\Qt
+## The version of Qt.
+Version = 5.3
+## The compiler version, if you are not sure what to use, have a look into the derectory set in QtSDK/Path.
+## The compiler must be of the same type as General/KDECOMPILER.
+## If you are using mingw please make sure you have installed the mingw using the Qt installer.
+Compiler = mingw482_32
+
+[Version]
+EMERGE_SETTINGS_VERSION = 2
