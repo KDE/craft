@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kcrash"] = "default"
         self.dependencies["frameworks/kdbusaddons"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
+        self.dependencies["frameworks/kservice"] = "default"
         self.dependencies["frameworks/kwindowsystem"] = "default"
 
 from Package.CMakePackageBase import *
