@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libsparsehash'] = 'default'
         
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://github.com/tomahawk-player/tomahawk.git'
+        self.svnTargets['gitHEAD'] = 'https://github.com/tomahawk-player/tomahawk.git'
         self.defaultTarget = 'gitHEAD'
          
 

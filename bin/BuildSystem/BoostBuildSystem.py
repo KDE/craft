@@ -18,6 +18,7 @@ class BoostBuildSystem(BuildSystemBase):
     def __init__( self ):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "boost")
+        self.subinfo.options.package.packSources = False
 
     def configureOptions( self, defines="" ):
         """returns default configure options"""

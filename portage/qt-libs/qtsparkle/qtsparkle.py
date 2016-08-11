@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
       self.dependencies[ 'libs/qt' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'gitHEAD' ] = 'git://github.com/davidsansome/qtsparkle.git'
+      self.svnTargets[ 'gitHEAD' ] = 'https://github.com/davidsansome/qtsparkle.git'
       self.defaultTarget = 'gitHEAD'
 
 
