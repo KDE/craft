@@ -16,8 +16,14 @@ $EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definiti
 
 $EMERGE_ARGUMENTS = $args
 
-&{
+$env:EMERGE_PYTHON = (Get-Command python3 -ErrorAction SilentlyContinue).Source
 
+if( -Not $env:EMERGE_PYTHON)
+{
+    $env:EMERGE_PYTHON = (Get-Command python -ErrorAction SilentlyContinue).Source
+}
+
+&{
 function readINI([string] $fileName)
 {
    $ini = @{}
@@ -55,12 +61,12 @@ if( $EMERGE_ARGUMENTS[0] -eq "--get")
 
 function prependPATH([string] $path)
 {
-    $env:PATH="$path;$env:PATH"
+    $env:PATH="$path{0}$env:PATH" -f [IO.Path]::PathSeparator
 }
 
 prependPATH $settings["Paths"]["Python"]
 
-(python "$EMERGE_ROOT\bin\EmergeSetupHelper.py" "--setup" "--mode" "powershell") |
+(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$EMERGE_ROOT", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=")
@@ -74,17 +80,15 @@ cd "$env:KDEROOT"
 
 
 function Global:emerge() {
-    return python "$env:KDEROOT\emerge\bin\emerge.py" $args
+    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:KDEROOT", "emerge", "bin", "emerge.py")) $args
 }
 
 
-# make sure term is not defined by any script
-$env:TERM=""
 $EMERGE_ARGUMENTS=$null
 
 if($args.Length -eq 2 -and $args[0] -eq "--package")
 {
-    python "$env:KDEROOT\emerge\server\package.py" $args[1]
+    & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:KDEROOT", "emerge", "server", "package.py")) $args[1]
 }
 else
 {
