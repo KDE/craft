@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
             self.patchToApply[ver] = [("fix_shortpath.patch", 1)]
             if ver in ["3.7.0", "3.7.1", "release_37"]:
                 self.patchToApply[ ver ] += [("0014-use-DESTDIR-on-windows.patch", 1)]
-            else:
+            else if not ver in ["3.7.0", "3.7.1", "release_37", "3.8.0", "3.8.1", "release_38"]:
                 self.patchToApply[ver] += [("fix-plugins.diff", 1)]
             if compiler.isMinGW():
                 self.patchToApply[ ver ] += [("0012-Set-the-x86-arch-name-to-i686-for-mingw-w64.patch", 1),
