@@ -63,6 +63,8 @@ class Package(Qt5CorePackageBase):
         command += "-qt-libjpeg "
         command += "-qt-pcre "
         command += "-nomake examples "
+        if compiler.isMSVC() and compiler.isClang():
+            command += "-no-pch "
         # can we drop that in general?
         if not self.subinfo.buildTarget.startswith("5.7"):
             command += "-c++11 "
