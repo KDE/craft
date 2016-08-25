@@ -28,8 +28,34 @@ class subinfo(info.infoclass):
         self.dependencies['kdesupport/qca'] = 'default'
         self.shortDescription = "a KDE based irc client"
 
-class Package(CMakePackageBase):
+class Package( CMakePackageBase ):
     def __init__( self):
-        CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DBUILD_doc=OFF "
+        CMakePackageBase.__init__( self )
+        self.blacklist_file = [
+            NSIPackagerLists.runtimeBlacklist,
+            os.path.join(os.path.dirname(__file__), 'blacklist.txt')
+        ]
+        self.changePackager( NullsoftInstallerPackager )
 
+    def createPackage(self):
+        self.defines[ "productname" ] = "Konversation"
+        self.defines[ "executable" ] = "bin\\konversation.exe"
+        #self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "konversation.ico")
+
+        self.ignoredPackages.append("binary/mysql-pkg")
+
+        return TypePackager.createPackage(self)
+
+    def preArchive(self):
+        archiveDir = self.archiveDir()
+        # TODO: Why is that needed?
+        os.mkdir(os.path.join(archiveDir, "etc", "dbus-1", "session.d"))
+
+        # TODO: Can we generalize this for other apps?
+        # move everything to the location where Qt expects it
+        binPath = os.path.join(archiveDir, "bin")
+
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
+
+        # TODO: Just blacklisting this doesn't work. WTF?
+        utils.rmtree(os.path.join(archiveDir, "dev-utils"))
