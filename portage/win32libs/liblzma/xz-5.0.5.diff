@@ -1,7 +1,17 @@
-diff -Nru -x '*~' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/tuklib_integer.h
---- xz-5.0.5.orig/src/common/tuklib_integer.h	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/common/tuklib_integer.h	2014-05-08 18:46:59.470443500 +0200
-@@ -383,7 +383,7 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/tuklib_integer.h
+--- xz-5.0.5.orig/src/common/tuklib_integer.h	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/common/tuklib_integer.h	2016-08-25 14:01:05.315093900 +0300
+@@ -359,6 +359,9 @@
+ 
+ #endif
+ 
++#if defined(_MSC_VER) && _MSC_VER >= 1400
++#include <intrin.h>
++#endif
+ 
+ static inline uint32_t
+ bsr32(uint32_t n)
+@@ -383,7 +386,7 @@
  	// MSVC isn't supported by tuklib, but since this code exists,
  	// it doesn't hurt to have it here anyway.
  	uint32_t i;
@@ -10,7 +20,7 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/
  	return i;
  
  #else
-@@ -435,7 +435,7 @@
+@@ -435,7 +438,7 @@
  
  #elif defined(_MSC_VER) && _MSC_VER >= 1400
  	uint32_t i;
@@ -19,7 +29,7 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/
  	return i ^ 31U;
  
  #else
-@@ -485,7 +485,7 @@
+@@ -485,7 +488,7 @@
  
  #elif defined(_MSC_VER) && _MSC_VER >= 1400
  	uint32_t i;
@@ -28,9 +38,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/common/tuklib_integer.h xz-5.0.5/src/common/
  	return i;
  
  #else
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/check.c xz-5.0.5/src/liblzma/check/check.c
---- xz-5.0.5.orig/src/liblzma/check/check.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/check/check.c	2014-05-08 18:46:59.477443900 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/check/check.c xz-5.0.5/src/liblzma/check/check.c
+--- xz-5.0.5.orig/src/liblzma/check/check.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/check/check.c	2016-08-25 13:59:23.777942400 +0300
 @@ -16,9 +16,6 @@
  extern LZMA_API(lzma_bool)
  lzma_check_is_supported(lzma_check type)
@@ -71,9 +81,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/check.c xz-5.0.5/src/liblzma/c
  	return check_sizes[(unsigned int)(type)];
  }
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/sha256.c xz-5.0.5/src/liblzma/check/sha256.c
---- xz-5.0.5.orig/src/liblzma/check/sha256.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/check/sha256.c	2014-05-08 18:46:59.482441800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/check/sha256.c xz-5.0.5/src/liblzma/check/sha256.c
+--- xz-5.0.5.orig/src/liblzma/check/sha256.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/check/sha256.c	2016-08-25 13:59:23.778918100 +0300
 @@ -80,7 +80,13 @@
  
  
@@ -88,9 +98,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/check/sha256.c xz-5.0.5/src/liblzma/
  {
  	uint32_t W[16];
  	uint32_t T[8];
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_decoder.c xz-5.0.5/src/liblzma/common/alone_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/alone_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/alone_decoder.c	2014-05-08 18:46:59.488444400 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/alone_decoder.c xz-5.0.5/src/liblzma/common/alone_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/alone_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/alone_decoder.c	2016-08-25 13:59:23.778918100 +0300
 @@ -126,9 +126,7 @@
  	// Fall through
  
@@ -115,9 +125,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_decoder.c xz-5.0.5/src/
  				allocator, filters);
  		if (ret != LZMA_OK)
  			return ret;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_encoder.c xz-5.0.5/src/liblzma/common/alone_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/alone_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/alone_encoder.c	2014-05-08 18:46:59.495444800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/alone_encoder.c xz-5.0.5/src/liblzma/common/alone_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/alone_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/alone_encoder.c	2016-08-25 13:59:23.779896000 +0300
 @@ -78,6 +78,8 @@
  alone_encoder_init(lzma_next_coder *next, lzma_allocator *allocator,
  		const lzma_options_lzma *options)
@@ -136,9 +146,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/alone_encoder.c xz-5.0.5/src/
  	d |= d >> 2;
  	d |= d >> 3;
  	d |= d >> 4;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c xz-5.0.5/src/liblzma/common/block_buffer_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/block_buffer_decoder.c	2014-05-08 18:46:59.501443000 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c xz-5.0.5/src/liblzma/common/block_buffer_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/block_buffer_decoder.c	2016-08-25 13:59:23.780874800 +0300
 @@ -18,6 +18,9 @@
  		const uint8_t *in, size_t *in_pos, size_t in_size,
  		uint8_t *out, size_t *out_pos, size_t out_size)
@@ -160,9 +170,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_decoder.c xz-5.0
  			&block_decoder, allocator, block);
  
  	if (ret == LZMA_OK) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c xz-5.0.5/src/liblzma/common/block_buffer_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/block_buffer_encoder.c	2014-05-08 18:46:59.507515900 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c xz-5.0.5/src/liblzma/common/block_buffer_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/block_buffer_encoder.c	2016-08-25 13:59:23.781849600 +0300
 @@ -31,6 +31,7 @@
  static lzma_vli
  lzma2_bound(lzma_vli uncompressed_size)
@@ -209,9 +219,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_buffer_encoder.c xz-5.0
  			&raw_encoder, allocator, block->filters);
  
  	if (ret == LZMA_OK) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c xz-5.0.5/src/liblzma/common/block_header_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/block_header_decoder.c	2014-05-08 18:46:59.513443700 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c xz-5.0.5/src/liblzma/common/block_header_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/block_header_decoder.c	2016-08-25 13:59:23.781849600 +0300
 @@ -34,6 +34,9 @@
  lzma_block_header_decode(lzma_block *block,
  		lzma_allocator *allocator, const uint8_t *in)
@@ -239,10 +249,10 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_decoder.c xz-5.0
  
  	// Compressed Size
  	if (in[1] & 0x40) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c xz-5.0.5/src/liblzma/common/block_header_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/block_header_encoder.c	2014-05-08 18:46:59.520514000 +0200
-@@ -13,15 +13,16 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c xz-5.0.5/src/liblzma/common/block_header_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/block_header_encoder.c	2016-08-25 13:59:23.782826000 +0300
+@@ -13,16 +13,17 @@
  #include "common.h"
  #include "check.h"
  
@@ -250,18 +260,19 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c xz-5.0
  extern LZMA_API(lzma_ret)
  lzma_block_header_size(lzma_block *block)
  {
-+
-+    // Block Header Size + Block Flags + CRC32.
-+    uint32_t size = 1 + 1 + 4;
-+
- 	if (block->version != 0)
- 		return LZMA_OPTIONS_ERROR;
+-	if (block->version != 0)
+-		return LZMA_OPTIONS_ERROR;
  
--	// Block Header Size + Block Flags + CRC32.
--	uint32_t size = 1 + 1 + 4;
+ 	// Block Header Size + Block Flags + CRC32.
+ 	uint32_t size = 1 + 1 + 4;
  
++	if (block->version != 0)
++		return LZMA_OPTIONS_ERROR;
++
++
  	// Compressed Size
  	if (block->compressed_size != LZMA_VLI_UNKNOWN) {
+ 		const uint32_t add = lzma_vli_size(block->compressed_size);
 @@ -46,11 +47,12 @@
  		return LZMA_PROG_ERROR;
  
@@ -310,9 +321,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_header_encoder.c xz-5.0
  	do {
  		// There can be a maximum of four filters.
  		if (filter_count == LZMA_FILTERS_MAX)
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_util.c xz-5.0.5/src/liblzma/common/block_util.c
---- xz-5.0.5.orig/src/liblzma/common/block_util.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/block_util.c	2014-05-08 18:46:59.526447200 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/block_util.c xz-5.0.5/src/liblzma/common/block_util.c
+--- xz-5.0.5.orig/src/liblzma/common/block_util.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/block_util.c	2016-08-25 13:59:23.783802900 +0300
 @@ -17,11 +17,14 @@
  extern LZMA_API(lzma_ret)
  lzma_block_compressed_size(lzma_block *block, lzma_vli unpadded_size)
@@ -356,39 +367,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/block_util.c xz-5.0.5/src/lib
  				+ block->header_size
  				+ lzma_check_size(block->check);
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/common.h xz-5.0.5/src/liblzma/common/common.h
---- xz-5.0.5.orig/src/liblzma/common/common.h	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/common.h	2014-05-08 18:46:59.532446800 +0200
-@@ -158,16 +158,16 @@
- 
- /// Macro to initialize lzma_next_coder structure
- #define LZMA_NEXT_CODER_INIT \
--	(lzma_next_coder){ \
--		.coder = NULL, \
--		.init = (uintptr_t)(NULL), \
--		.id = LZMA_VLI_UNKNOWN, \
--		.code = NULL, \
--		.end = NULL, \
--		.get_check = NULL, \
--		.memconfig = NULL, \
--		.update = NULL, \
--	}
-+    (lzma_next_coder){ \
-+        .coder = NULL, \
-+        .init = (uintptr_t)(NULL), \
-+        .id = LZMA_VLI_UNKNOWN, \
-+        .code = NULL, \
-+        .end = NULL, \
-+        .get_check = NULL, \
-+        .memconfig = NULL, \
-+        .update = NULL, \
-+    }
- 
- 
- /// Internal data for lzma_strm_init, lzma_code, and lzma_end. A pointer to
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_common.c xz-5.0.5/src/liblzma/common/filter_common.c
---- xz-5.0.5.orig/src/liblzma/common/filter_common.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/filter_common.c	2014-05-08 18:46:59.539445300 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/filter_common.c xz-5.0.5/src/liblzma/common/filter_common.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_common.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/filter_common.c	2016-08-25 13:59:23.784780200 +0300
 @@ -125,11 +125,12 @@
  lzma_filters_copy(const lzma_filter *src, lzma_filter *dest,
  		lzma_allocator *allocator)
@@ -408,24 +389,24 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_common.c xz-5.0.5/src/
  static lzma_ret
  validate_chain(const lzma_filter *filters, size_t *count)
  {
-+        // Number of non-last filters that may change the size of the data
-+        // significantly (that is, more than 1-2 % or so).
-+        size_t changes_size_count = 0;
-+
- 	// There must be at least one filter.
- 	if (filters == NULL || filters[0].id == LZMA_VLI_UNKNOWN)
- 		return LZMA_PROG_ERROR;
- 
--	// Number of non-last filters that may change the size of the data
--	// significantly (that is, more than 1-2 % or so).
--	size_t changes_size_count = 0;
+-	// There must be at least one filter.
+-	if (filters == NULL || filters[0].id == LZMA_VLI_UNKNOWN)
+-		return LZMA_PROG_ERROR;
 -
+ 	// Number of non-last filters that may change the size of the data
+ 	// significantly (that is, more than 1-2 % or so).
+ 	size_t changes_size_count = 0;
+ 
++	// There must be at least one filter.
++	if (filters == NULL || filters[0].id == LZMA_VLI_UNKNOWN)
++		return LZMA_PROG_ERROR;
++
  	// True if it is OK to add a new filter after the current filter.
  	bool non_last_ok = true;
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_encoder.c xz-5.0.5/src/liblzma/common/filter_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/filter_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/filter_encoder.c	2014-05-08 18:46:59.545445900 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/filter_encoder.c xz-5.0.5/src/liblzma/common/filter_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/filter_encoder.c	2016-08-25 13:59:23.784780200 +0300
 @@ -171,6 +171,9 @@
  extern LZMA_API(lzma_ret)
  lzma_filters_update(lzma_stream *strm, const lzma_filter *filters)
@@ -449,9 +430,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_encoder.c xz-5.0.5/src
  	for (size_t i = 0; i < count; ++i)
  		reversed_filters[count - i - 1] = filters[i];
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c xz-5.0.5/src/liblzma/common/filter_flags_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/filter_flags_decoder.c	2014-05-08 18:46:59.551448000 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c xz-5.0.5/src/liblzma/common/filter_flags_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/filter_flags_decoder.c	2016-08-25 13:59:23.785757700 +0300
 @@ -18,6 +18,9 @@
  		lzma_filter *filter, lzma_allocator *allocator,
  		const uint8_t *in, size_t *in_pos, size_t in_size)
@@ -479,9 +460,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/filter_flags_decoder.c xz-5.0
  			filter, allocator, in + *in_pos, props_size);
  
  	*in_pos += props_size;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index.c xz-5.0.5/src/liblzma/common/index.c
---- xz-5.0.5.orig/src/liblzma/common/index.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/index.c	2014-05-08 18:46:59.559448600 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/index.c xz-5.0.5/src/liblzma/common/index.c
+--- xz-5.0.5.orig/src/liblzma/common/index.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/index.c	2016-08-25 13:59:23.786734700 +0300
 @@ -398,10 +398,11 @@
  lzma_index_init(lzma_allocator *allocator)
  {
@@ -601,9 +582,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index.c xz-5.0.5/src/liblzma/
  	assert(group != NULL);
  
  	// Use binary search to locate the exact Record. It is the first
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_decoder.c xz-5.0.5/src/liblzma/common/index_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/index_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/index_decoder.c	2014-05-08 18:46:59.565519200 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/index_decoder.c xz-5.0.5/src/liblzma/common/index_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/index_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/index_decoder.c	2016-08-25 13:59:23.787711400 +0300
 @@ -303,13 +303,15 @@
  		lzma_index **i, uint64_t *memlimit, lzma_allocator *allocator,
  		const uint8_t *in, size_t *in_pos, size_t in_size)
@@ -621,9 +602,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_decoder.c xz-5.0.5/src/
  	return_if_error(index_decoder_reset(&coder, allocator, i, *memlimit));
  
  	// Store the input start position so that we can restore it in case
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_encoder.c xz-5.0.5/src/liblzma/common/index_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/index_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/index_encoder.c	2014-05-08 18:46:59.571447000 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/index_encoder.c xz-5.0.5/src/liblzma/common/index_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/index_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/index_encoder.c	2016-08-25 13:59:23.787711400 +0300
 @@ -220,6 +220,10 @@
  lzma_index_buffer_encode(const lzma_index *i,
  		uint8_t *out, size_t *out_pos, size_t out_size)
@@ -651,9 +632,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_encoder.c xz-5.0.5/src/
  			out, out_pos, out_size, LZMA_RUN);
  
  	if (ret == LZMA_STREAM_END) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_hash.c xz-5.0.5/src/liblzma/common/index_hash.c
---- xz-5.0.5.orig/src/liblzma/common/index_hash.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/index_hash.c	2014-05-08 18:46:59.578448800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/index_hash.c xz-5.0.5/src/liblzma/common/index_hash.c
+--- xz-5.0.5.orig/src/liblzma/common/index_hash.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/index_hash.c	2016-08-25 13:59:23.788688300 +0300
 @@ -173,6 +173,9 @@
  lzma_index_hash_decode(lzma_index_hash *index_hash, const uint8_t *in,
  		size_t *in_pos, size_t in_size)
@@ -675,9 +656,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/index_hash.c xz-5.0.5/src/lib
  
  	while (*in_pos < in_size)
  	switch (index_hash->sequence) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c	2014-05-08 18:46:59.585447800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_buffer_decoder.c	2016-08-25 13:59:23.789665600 +0300
 @@ -19,6 +19,10 @@
  		const uint8_t *in, size_t *in_pos, size_t in_size,
  		uint8_t *out, size_t *out_pos, size_t out_size)
@@ -699,9 +680,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_decoder.c xz-5.
  			&stream_decoder, allocator, *memlimit, flags);
  
  	if (ret == LZMA_OK) {
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c	2014-05-08 18:46:59.591450300 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_buffer_encoder.c	2016-08-25 13:59:23.789665600 +0300
 @@ -45,6 +45,7 @@
  		lzma_allocator *allocator, const uint8_t *in, size_t in_size,
  		uint8_t *out, size_t *out_pos_ptr, size_t out_size)
@@ -737,9 +718,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_buffer_encoder.c xz-5.
  
  		if (in_size > 0)
  			ret = lzma_index_append(i, allocator,
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_decoder.c xz-5.0.5/src/liblzma/common/stream_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_decoder.c	2014-05-08 18:46:59.599448600 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_decoder.c xz-5.0.5/src/liblzma/common/stream_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_decoder.c	2016-08-25 13:59:23.790642200 +0300
 @@ -260,6 +260,7 @@
  	}
  
@@ -757,9 +738,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_decoder.c xz-5.0.5/src
  				in, in_pos, in_size);
  		if (ret != LZMA_STREAM_END)
  			return ret;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_encoder.c xz-5.0.5/src/liblzma/common/stream_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_encoder.c	2014-05-08 18:46:59.607449200 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_encoder.c xz-5.0.5/src/liblzma/common/stream_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_encoder.c	2016-08-25 13:59:23.791619200 +0300
 @@ -147,6 +147,7 @@
  	}
  
@@ -802,19 +783,19 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_encoder.c xz-5.0.5/src
  
  		if (lzma_stream_footer_encode(&stream_flags, coder->buffer)
  				!= LZMA_OK)
-@@ -267,6 +269,12 @@
- 		const lzma_filter *filters, lzma_check check)
+@@ -268,6 +270,12 @@
  {
  	lzma_next_coder_init(&lzma_stream_encoder_init, next, allocator);
-+	
+ 
 +	// Encode the Stream Header
 +	lzma_stream_flags stream_flags = {
 +	    .version = 0,
 +	    .check = check,
 +	};
- 
++
  	if (filters == NULL)
  		return LZMA_PROG_ERROR;
+ 
 @@ -297,11 +305,6 @@
  	if (next->coder->index == NULL)
  		return LZMA_MEM_ERROR;
@@ -827,9 +808,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_encoder.c xz-5.0.5/src
  	return_if_error(lzma_stream_header_encode(
  			&stream_flags, next->coder->buffer));
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c xz-5.0.5/src/liblzma/common/stream_flags_decoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_flags_decoder.c	2014-05-08 18:46:59.612519500 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c xz-5.0.5/src/liblzma/common/stream_flags_decoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_flags_decoder.c	2016-08-25 13:59:23.792595300 +0300
 @@ -30,13 +30,14 @@
  extern LZMA_API(lzma_ret)
  lzma_stream_header_decode(lzma_stream_flags *options, const uint8_t *in)
@@ -863,9 +844,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_decoder.c xz-5.0
  			sizeof(uint32_t) + LZMA_STREAM_FLAGS_SIZE, 0);
  	if (crc != unaligned_read32le(in))
  		return LZMA_DATA_ERROR;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c xz-5.0.5/src/liblzma/common/stream_flags_encoder.c
---- xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/stream_flags_encoder.c	2014-05-08 18:46:59.618450200 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c xz-5.0.5/src/liblzma/common/stream_flags_encoder.c
+--- xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/stream_flags_encoder.c	2016-08-25 13:59:23.792595300 +0300
 @@ -29,6 +29,7 @@
  extern LZMA_API(lzma_ret)
  lzma_stream_header_encode(const lzma_stream_flags *options, uint8_t *out)
@@ -900,9 +881,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/stream_flags_encoder.c xz-5.0
  			out + 4, 4 + LZMA_STREAM_FLAGS_SIZE, 0);
  
  	unaligned_write32le(out, crc);
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/vli_size.c xz-5.0.5/src/liblzma/common/vli_size.c
---- xz-5.0.5.orig/src/liblzma/common/vli_size.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/common/vli_size.c	2014-05-08 18:46:59.624450300 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/common/vli_size.c xz-5.0.5/src/liblzma/common/vli_size.c
+--- xz-5.0.5.orig/src/liblzma/common/vli_size.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/common/vli_size.c	2016-08-25 13:59:23.793573400 +0300
 @@ -16,10 +16,11 @@
  extern LZMA_API(uint32_t)
  lzma_vli_size(lzma_vli vli)
@@ -916,9 +897,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/common/vli_size.c xz-5.0.5/src/liblz
  	do {
  		vli >>= 7;
  		++i;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_common.c xz-5.0.5/src/liblzma/delta/delta_common.c
---- xz-5.0.5.orig/src/liblzma/delta/delta_common.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/delta/delta_common.c	2014-05-08 18:46:59.630451000 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/delta/delta_common.c xz-5.0.5/src/liblzma/delta/delta_common.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_common.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/delta/delta_common.c	2016-08-25 13:59:23.794550700 +0300
 @@ -27,6 +27,7 @@
  lzma_delta_coder_init(lzma_next_coder *next, lzma_allocator *allocator,
  		const lzma_filter_info *filters)
@@ -936,9 +917,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_common.c xz-5.0.5/src/li
  	next->coder->distance = opt->dist;
  
  	// Initialize the rest of the variables.
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c xz-5.0.5/src/liblzma/delta/delta_decoder.c
---- xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/delta/delta_decoder.c	2014-05-08 18:46:59.635450800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c xz-5.0.5/src/liblzma/delta/delta_decoder.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/delta/delta_decoder.c	2016-08-25 13:59:23.794550700 +0300
 @@ -59,11 +59,11 @@
  lzma_delta_props_decode(void **options, lzma_allocator *allocator,
  		const uint8_t *props, size_t props_size)
@@ -953,9 +934,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_decoder.c xz-5.0.5/src/l
  	if (opt == NULL)
  		return LZMA_MEM_ERROR;
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c xz-5.0.5/src/liblzma/delta/delta_encoder.c
---- xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/delta/delta_encoder.c	2014-05-08 18:46:59.642456600 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c xz-5.0.5/src/liblzma/delta/delta_encoder.c
+--- xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/delta/delta_encoder.c	2016-08-25 13:59:23.795527900 +0300
 @@ -109,12 +109,13 @@
  extern lzma_ret
  lzma_delta_props_encode(const void *options, uint8_t *out)
@@ -971,9 +952,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/delta/delta_encoder.c xz-5.0.5/src/l
  	out[0] = opt->dist - LZMA_DELTA_DIST_MIN;
  
  	return LZMA_OK;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c xz-5.0.5/src/liblzma/lz/lz_decoder.c
---- xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lz/lz_decoder.c	2014-05-08 18:46:59.648451900 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c xz-5.0.5/src/liblzma/lz/lz_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lz/lz_decoder.c	2016-08-25 13:59:23.796504900 +0300
 @@ -69,13 +69,16 @@
  		size_t *restrict out_pos, size_t out_size)
  {
@@ -1008,9 +989,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_decoder.c xz-5.0.5/src/liblzma
  		assert(copy_size <= out_size - *out_pos);
  		memcpy(out + *out_pos, coder->dict.buf + dict_start,
  				copy_size);
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c xz-5.0.5/src/liblzma/lz/lz_encoder.c
---- xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lz/lz_encoder.c	2014-05-08 18:46:59.654457400 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c xz-5.0.5/src/liblzma/lz/lz_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lz/lz_encoder.c	2016-08-25 13:59:23.797481800 +0300
 @@ -80,6 +80,8 @@
  		size_t *in_pos, size_t in_size, lzma_action action)
  {
@@ -1057,9 +1038,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder.c xz-5.0.5/src/liblzma
  
  	// Deallocate the old hash array if it exists and has different size
  	// than what is needed now.
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c
---- xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c	2014-05-08 18:46:59.661456800 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c
+--- xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lz/lz_encoder_mf.c	2016-08-25 13:59:23.798458500 +0300
 @@ -54,16 +54,18 @@
  			// encoder or the number of bytes left in the
  			// dictionary, whichever is smaller.
@@ -1094,9 +1075,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lz/lz_encoder_mf.c xz-5.0.5/src/libl
  		cur_match = son[cyclic_pos - delta
  				+ (delta > cyclic_pos ? cyclic_size : 0)];
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/fastpos.h xz-5.0.5/src/liblzma/lzma/fastpos.h
---- xz-5.0.5.orig/src/liblzma/lzma/fastpos.h	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/fastpos.h	2014-05-08 18:46:59.667453000 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/fastpos.h xz-5.0.5/src/liblzma/lzma/fastpos.h
+--- xz-5.0.5.orig/src/liblzma/lzma/fastpos.h	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/fastpos.h	2016-08-25 13:59:23.799435200 +0300
 @@ -75,6 +75,8 @@
  // on all systems I have tried. The size optimized version is sometimes
  // slightly faster, but sometimes it is a lot slower.
@@ -1106,9 +1087,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/fastpos.h xz-5.0.5/src/liblzma/
  #ifdef HAVE_SMALL
  #	define get_pos_slot(pos) ((pos) <= 4 ? (pos) : get_pos_slot_2(pos))
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c xz-5.0.5/src/liblzma/lzma/lzma_decoder.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma_decoder.c	2014-05-08 18:46:59.673452700 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c xz-5.0.5/src/liblzma/lzma/lzma_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma_decoder.c	2016-08-25 13:59:23.800412400 +0300
 @@ -285,6 +285,7 @@
  		const uint8_t *restrict in,
  		size_t *restrict in_pos, size_t in_size)
@@ -1141,9 +1122,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_decoder.c xz-5.0.5/src/lib
  	if (opt == NULL)
  		return LZMA_MEM_ERROR;
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c xz-5.0.5/src/liblzma/lzma/lzma_encoder.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma_encoder.c	2014-05-08 18:46:59.679458700 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c xz-5.0.5/src/liblzma/lzma/lzma_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder.c	2016-08-25 13:59:23.800412400 +0300
 @@ -313,12 +313,13 @@
  		uint8_t *restrict out, size_t *restrict out_pos,
  		size_t out_size, uint32_t limit)
@@ -1176,9 +1157,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder.c xz-5.0.5/src/lib
  	if (lz_memusage == UINT64_MAX)
  		return UINT64_MAX;
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2014-05-08 18:46:59.685453900 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_optimum_normal.c	2016-08-25 13:59:23.801389400 +0300
 @@ -456,6 +456,7 @@
  	uint32_t new_len = coder->longest_match_length;
  	uint32_t pos_prev = coder->opts[cur].pos_prev;
@@ -1244,9 +1225,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_optimum_normal.c x
  	for (cur = 1; cur < len_end; ++cur) {
  		assert(cur < OPTS);
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c	2014-05-08 18:46:59.691483400 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma_encoder_presets.c	2016-08-25 13:59:23.802366300 +0300
 @@ -30,14 +30,15 @@
  	options->lp = LZMA_LP_DEFAULT;
  	options->pb = LZMA_PB_DEFAULT;
@@ -1266,9 +1247,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma_encoder_presets.c xz-5.0.5
  	} else {
  		options->mode = LZMA_MODE_NORMAL;
  		options->mf = LZMA_MF_BT4;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c	2014-05-08 18:46:59.698454400 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma2_decoder.c	2016-08-25 13:59:23.803343300 +0300
 @@ -272,6 +272,8 @@
  lzma_lzma2_props_decode(void **options, lzma_allocator *allocator,
  		const uint8_t *props, size_t props_size)
@@ -1288,9 +1269,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_decoder.c xz-5.0.5/src/li
  	if (opt == NULL)
  		return LZMA_MEM_ERROR;
  
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c
---- xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c	2014-05-08 18:46:59.704457500 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c
+--- xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/lzma/lzma2_encoder.c	2016-08-25 13:59:23.804319700 +0300
 @@ -273,6 +273,7 @@
  static lzma_ret
  lzma2_encoder_options_update(lzma_coder *coder, const lzma_filter *filter)
@@ -1308,9 +1289,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/lzma/lzma2_encoder.c xz-5.0.5/src/li
  	if (coder->opt_cur.lc != opt->lc || coder->opt_cur.lp != opt->lp
  			|| coder->opt_cur.pb != opt->pb) {
  		// Validate the options.
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c xz-5.0.5/src/liblzma/simple/simple_decoder.c
---- xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/simple/simple_decoder.c	2014-05-08 18:46:59.710456200 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c xz-5.0.5/src/liblzma/simple/simple_decoder.c
+--- xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/simple/simple_decoder.c	2016-08-25 13:59:23.804319700 +0300
 @@ -17,13 +17,14 @@
  lzma_simple_props_decode(void **options, lzma_allocator *allocator,
  		const uint8_t *props, size_t props_size)
@@ -1327,9 +1308,9 @@ diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/simple/simple_decoder.c xz-5.0.5/src
  			sizeof(lzma_options_bcj), allocator);
  	if (opt == NULL)
  		return LZMA_MEM_ERROR;
-diff -Nru -x '*~' xz-5.0.5.orig/src/liblzma/simple/x86.c xz-5.0.5/src/liblzma/simple/x86.c
---- xz-5.0.5.orig/src/liblzma/simple/x86.c	2013-06-30 14:49:46.000000000 +0200
-+++ xz-5.0.5/src/liblzma/simple/x86.c	2014-05-08 18:46:59.717455600 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xz-5.0.5.orig/src/liblzma/simple/x86.c xz-5.0.5/src/liblzma/simple/x86.c
+--- xz-5.0.5.orig/src/liblzma/simple/x86.c	2013-06-30 15:49:46.000000000 +0300
++++ xz-5.0.5/src/liblzma/simple/x86.c	2016-08-25 13:59:23.805297200 +0300
 @@ -36,23 +36,27 @@
  	uint32_t prev_mask = simple->prev_mask;
  	uint32_t prev_pos = simple->prev_pos;
