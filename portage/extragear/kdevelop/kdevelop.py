@@ -74,9 +74,7 @@ class Package( CMakePackageBase ):
         binPath = os.path.join(archiveDir, "bin")
 
         utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
-        utils.mergeTree(os.path.join(archiveDir, "lib", "plugins"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
-        utils.mergeTree(os.path.join(archiveDir, "lib", "qml"), os.path.join(archiveDir, binPath))
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
