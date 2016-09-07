@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
             if ver.startswith("5.6") or ver.startswith("v5.6"):
                 self.patchToApply[ ver ] = [
+                    ("qmake-fix-install-root.patch", 1),
                     ("qtbase-5.6.patch" , 1),#https://codereview.qt-project.org/#/c/141254/
                                              #https://codereview.qt-project.org/#/c/149550/
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1)#https://codereview.qt-project.org/#/c/162585/
