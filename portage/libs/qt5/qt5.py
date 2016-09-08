@@ -31,7 +31,9 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtwebchannel'] = 'default'
         self.dependencies['libs/qtxmlpatterns'] = 'default'
         self.dependencies['libs/qtwinextras'] = 'default'
-        
+        self.dependencies['libs/qtquickcontrols'] = 'default'
+        self.dependencies['libs/qtquickcontrols2'] = 'default'
+
         
         
 
