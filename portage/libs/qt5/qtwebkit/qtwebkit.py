@@ -12,12 +12,16 @@ class subinfo(info.infoclass):
 
         branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
+            if ver.startswith("5.5"):
+                continue
             branch = branchRegEx.findall(ver)[0]
             del self.targets[ver]
             self.svnTargets[ver] = self.svnTargets[branch]
             self.patchToApply[ver] = self.patchToApply[branch]
 
         for ver in self.versionInfo.tags():
+            if ver.startswith("5.5"):
+                continue
             branch = branchRegEx.findall(ver)[0]
             self.svnTargets[ver] = self.svnTargets[ branch ]
             self.patchToApply[ ver ] = self.patchToApply[ branch ] 
