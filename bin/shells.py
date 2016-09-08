@@ -18,7 +18,7 @@ from options import *
 class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
-        self.environment = os.environ.copy()
+        self.environment = {}
         self._sh = os.path.join( self.msysdir, "bin", "sh.exe" )
         if not os.path.exists( self._sh ):
             self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
@@ -34,11 +34,13 @@ class MSysShell(object):
                 cflags += " -O0 -g3 "
         elif compiler.isMSVC():
             ldflags = ""
-            cflags = " -MD -Zi"
-            if compiler.isMSVC2013():
-                cflags = " -FS"
+            cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX" #dynamic and exceptions enabled
+            if compiler.isMSVC2013() or compiler.isMSVC2015():
+                cflags += " -FS"
 
         self.environment[ "MSYS2_PATH_TYPE" ] = "inherit"#inherit the windows path
+        self.environment[ "PKG_CONFIG_PATH" ] = self.toNativePath(os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ))
+
         if "make" in self.environment:
             del self.environment[ "make" ]
         if compiler.isMinGW():
@@ -48,20 +50,23 @@ class MSysShell(object):
             self.environment[ "MSYSTEM" ] = "MINGW%s_EMERGE" % arch
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
-
-        if ldflags != "":
-            self.environment[ "LDFLAGS" ] = ldflags
-
+        self.environment[ "LDFLAGS" ] = ldflags
 
         if compiler.isMSVC():
+            if False:
+                cl = "clang-cl"
+            else:
+                cl = "cl"
             self.environment[ "LIB" ] = "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot())
             self.environment[ "INCLUDE" ] = "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot())
-            self.environment[ "LD" ] = "link"
-            self.environment[ "CC" ] = "cl -nologo"
-            self.environment[ "CXX" ] = "cl -nologo"
+            self.environment[ "LD" ] = "link -NOLOGO"
+            self.environment[ "CC" ] = "%s -nologo" % cl
+            self.environment[ "CXX" ] = self.environment[ "CC" ]
+            self.environment[ "CPP"] = "%s -nologo -EP" %cl
+            self.environment[ "CXXCPP"] = self.environment[ "CPP"]
             self.environment[ "NM" ] = "dumpbin -symbols"
             self.environment[ "AR" ] = "lib"
-            #self.environment[ "WINDRES","rc-windres"
+            self.environment[ "WINDRES"] = "rc"
             #self.environment[ "RC","rc-windres"
             self.environment[ "STRIP"] = ":"
             self.environment[ "RANLIB"] = ":"
@@ -78,11 +83,16 @@ class MSysShell(object):
         return utils.toMSysPath( path )
 
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr):
-        command = "%s --login -c \"cd %s && %s %s\"" % \
-                  ( self._sh, self.toNativePath( path ), self.toNativePath( cmd ), args )
+        export = ""
+        env = os.environ.copy()
+        for k,v in self.environment.items():
+            export += "%s='%s' " % (k, v)
+            env[k] = v
+        command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
+                  ( self._sh, export, self.toNativePath( path ), self.toNativePath( cmd ), args )
         EmergeDebug.info("msys execute: %s" % command)
         EmergeDebug.debug("msys environment: %s" % self.environment)
-        return utils.system( command, stdout=out, stderr=err , env=self.environment)
+        return utils.system( command, stdout=out, stderr=err, env = env )
 
     def login(self):
         self.environment[ "CHERE_INVOKING" ] = "1"
