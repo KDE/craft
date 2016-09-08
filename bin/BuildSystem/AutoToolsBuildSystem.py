@@ -50,8 +50,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)
-            else:
-                self.shell.execute(self.sourceDir(), "autoreconf -f -i")
+                #else:
+                #self.shell.execute(self.sourceDir(), "autoreconf -f -i", debugLvl=0)
 
 
         if self.buildInSource:
