@@ -18,6 +18,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        self.subinfo.options.make.supportsMultijob = False
 
 
     
