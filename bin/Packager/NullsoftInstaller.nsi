@@ -117,7 +117,7 @@ Section
 SetOutPath "$INSTDIR"
 !if "${vcredist}" != "none"
     File /a /oname=vcredist.exe "${vcredist}"
-    ExecWait '"$INSTDIR\vcredist.exe" /passive'
+    ExecWait '"$INSTDIR\vcredist.exe" /passive /norestart'
 !endif
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
 ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
