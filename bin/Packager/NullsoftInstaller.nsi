@@ -109,7 +109,8 @@ SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
 CreateShortCut "${startmenu}\${productname}.lnk" "$INSTDIR\${executable}"
-CreateShortCut "${startmenu}\Uninstall.lnk" $INSTDIR\uninstall.exe"
+CreateShortCut "${startmenu}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+${extrashortcuts}
 SectionEnd
 
 ;post install
