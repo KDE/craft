@@ -6,7 +6,7 @@ import urllib.parse
 import urllib.request
 import shutil
 
-class EmergeBootsrtap(object):
+class EmergeBootstrap(object):
     def __init__(self, kdeRoot):
         self.kdeRoot = kdeRoot
         with open(os.path.join(kdeRoot, "emerge", "kdesettings.ini"),  "rt+") as ini:
@@ -54,7 +54,7 @@ class EmergeBootsrtap(object):
             out.write(self.settings)
 
     @staticmethod
-    def downlaodFile(url, destdir, filename = None):
+    def downloadFile(url, destdir, filename = None):
         if not filename:
             _, _, path, _, _, _ = urllib.parse.urlparse( url )
             filename = os.path.basename( path )
@@ -80,8 +80,8 @@ if __name__ == "__main__":
     kdeRoot = sys.argv[1]
     os.chdir(kdeRoot)
 
-    architecture = EmergeBootsrtap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
-    compiler = EmergeBootsrtap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"], "Mingw-w64")
+    architecture = EmergeBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
+    compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"], "Mingw-w64")
     if compiler == "Mingw-w64":
         compiler = "mingw4"
     else:
@@ -89,15 +89,15 @@ if __name__ == "__main__":
 
     print("Windows has problems with too long commands.")
     print("For that reason we mount emerge directories to drive letters.")
-    print("Tha justs maps a folder to a drive letter.")
-    shortPath = EmergeBootsrtap.promptShortPath()
+    print("It just maps the folder to a drive letter you will assign.")
+    shortPath = EmergeBootstrap.promptShortPath()
 
-    EmergeBootsrtap.downlaodFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"), "emerge.zip")
+    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"), "emerge.zip")
     shutil.unpack_archive(os.path.join(kdeRoot, "download", "emerge.zip" ), kdeRoot)
     shutil.move(os.path.join(kdeRoot,"emerge-master" ), os.path.join(kdeRoot,"emerge" ))
     os.chdir(os.path.join(kdeRoot,"emerge" ))
 
-    boot = EmergeBootsrtap(kdeRoot)
+    boot = EmergeBootstrap(kdeRoot)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
