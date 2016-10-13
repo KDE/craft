@@ -57,6 +57,7 @@ class Package( CMakePackageBase ):
 
     def createPackage(self):
         self.defines[ "productname" ] = "KDevelop"
+        self.defines[ "website" ] = "https://kdevelop.org"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
         self.defines[ "extrashortcuts" ] = r'CreateShortCut \"${startmenu}\KDevelop - Microsoft Visual C++ compiler.lnk\" \"$INSTDIR\\bin\\kdevelop-msvc.bat\"'
