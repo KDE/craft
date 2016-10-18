@@ -23,8 +23,8 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.clang = portage.getPackageInstance('dev-util', 'clang')
-        self.lld = portage.getPackageInstance('dev-util', 'lld')
+        self.clang = portage.getPackageInstance('win32libs', 'clang')
+        self.lld = portage.getPackageInstance('win32libs', 'lld')
         self.subPackages = [self.clang, self.lld]
         self.subinfo.options.configure.defines = '-DLLVM_TARGETS_TO_BUILD="X86"'
         self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
