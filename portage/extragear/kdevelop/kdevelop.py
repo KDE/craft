@@ -39,6 +39,7 @@ class subinfo( info.infoclass ):
             self.dependencies[ 'frameworks/krunner' ] = 'default'
             self.dependencies[ 'frameworks/plasma-framework' ] = 'default'
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'
+        self.dependencies[ 'extragear/kdevelop-pg-qt' ] = 'default'
 
         # Install extra plugins shipped by Kate
         self.dependencies[ 'kde/kate' ] = 'default'
