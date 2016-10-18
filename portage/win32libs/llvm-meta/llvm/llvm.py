@@ -66,12 +66,17 @@ class Package(CMakePackageBase):
                     if not os.path.exists(dest):
                         utils.copyFile(src, dest, False)
 
+        if OsUtils.isWin():
+            exeSuffix = ".exe"
+        else:
+            exeSuffix = ""
+
         # the build system is broken so....
-        src = os.path.join(self.imageDir(), "bin", "clang.exe")
+        src = os.path.join(self.imageDir(), "bin", "clang" + exeSuffix)
         if compiler.isMinGW():
-            dest = os.path.join(self.imageDir(), "bin", "clang++.exe")
+            dest = os.path.join(self.imageDir(), "bin", "clang++" + exeSuffix)
         elif compiler.isMSVC():
-            dest = os.path.join(self.imageDir(), "bin", "clang-cl.exe")
+            dest = os.path.join(self.imageDir(), "bin", "clang-cl" + exeSuffix)
         else:
             EmergeDebug.error("Unknown compiler")
         if not os.path.exists(dest):
