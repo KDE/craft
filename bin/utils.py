@@ -215,7 +215,7 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bsp" ):
+    if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
         command += " -bsp1"
         if EmergeDebug.verbose() <= 1:
             command += " -bso0"
