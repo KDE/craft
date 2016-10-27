@@ -27,6 +27,7 @@ class subinfo( info.infoclass ):
 		self.dependencies['win32libs/cfitsio'] = 'default'
 		self.dependencies['win32libs/wcslib'] = 'default'
 		self.dependencies['win32libs/indiclient'] = 'default'
+        self.dependencies['win32libs/libraw'] = 'default'
 
         # Install proper theme
 		#self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
