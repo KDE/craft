@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/jasper'] = 'default'
         self.dependencies['win32libs/lcms'] = 'default'
-        self.dependencies['win32libs/jpeg'] = 'default'
+        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self ):
