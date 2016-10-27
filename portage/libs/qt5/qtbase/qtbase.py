@@ -30,6 +30,12 @@ class subinfo(info.infoclass):
                                             #https://codereview.qt-project.org/#/c/149550/
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1)#https://codereview.qt-project.org/#/c/162585/
                 ]
+            elif ver.startswith("5.8") or ver.startswith("v5.8"):
+                self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
+                    ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
+                                            #https://codereview.qt-project.org/#/c/149550/
+                ]
 
         self.shortDescription = "a cross-platform application framework"
 
@@ -67,13 +73,14 @@ class Package(Qt5CorePackageBase):
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
         command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
         command += "-plugin-sql-odbc "
-        command += "-qt-style-windowsxp  -qt-style-windowsvista "
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-pcre "
         # can we drop that in general?
-        if not self.subinfo.buildTarget.startswith("5.7"):
+        if not ("5.7" in self.subinfo.buildTarget or "5.8" in self.subinfo.buildTarget):
             command += "-c++11 "
+        if "5.8" in self.subinfo.buildTarget:
+            command += "-mp "
         command += "-opengl dynamic "
         command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
@@ -82,10 +89,11 @@ class Package(Qt5CorePackageBase):
             command += "-debug "
         else:
             command += "-release "
-        command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
 
         if not self.subinfo.options.buildStatic:
-            command += " -openssl-linked "
+            command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
+            if self.subinfo.options.isActive("win32libs/openssl"):
+                command += " -openssl-linked "
             if self.subinfo.options.isActive("binary/mysql-pkg"):
                 command += " -plugin-sql-mysql "
             if self.subinfo.options.isActive("win32libs/dbus"):
