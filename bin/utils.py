@@ -44,7 +44,12 @@ class UtilsCache():
     @staticmethod
     def appSupportsCommand(app, command, helpCommand = "-h") -> str:
         if not (app, command) in UtilsCache._helpCache:
-            UtilsCache._helpCache[(app, command)] = subprocess.getoutput("%s %s" %(app, helpCommand)).find( command ) != -1
+            EmergeDebug.debug("%s %s" %(app, helpCommand), 1)
+            output = subprocess.getoutput("%s %s" %(app, helpCommand))
+            supports = output.find( command ) != -1
+            UtilsCache._helpCache[(app, command)] = supports
+            EmergeDebug.debug(output, 1)
+            EmergeDebug.debug("%s %s %s" % (app, "supports" if supports else "does not support", command), 1)
         return UtilsCache._helpCache[(app, command)]
 
 
