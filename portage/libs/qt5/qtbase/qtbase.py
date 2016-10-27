@@ -13,16 +13,19 @@ from Package.Qt5CorePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-            
+
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
             if ver.startswith("5.6") or ver.startswith("v5.6"):
                 self.patchToApply[ ver ] = [
+                    ("qmake-fix-install-root.patch", 1),
                     ("qtbase-5.6.patch" , 1),#https://codereview.qt-project.org/#/c/141254/
                                              #https://codereview.qt-project.org/#/c/149550/
-                    ("do-not-spawn-console-qprocess-startdetached.patch", 1)#https://codereview.qt-project.org/#/c/162585/
+                    ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
+                    ("fix-angle-mingw-5.6.2-20161027.diff", 1)
                 ]
             elif ver.startswith("5.7") or ver.startswith("v5.7"):
                 self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.7.patch", 1),#https://codereview.qt-project.org/#/c/141254/
                                             #https://codereview.qt-project.org/#/c/149550/
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1)#https://codereview.qt-project.org/#/c/162585/
@@ -52,74 +55,59 @@ class Package(Qt5CorePackageBase):
         self.setPathes()
         if OsUtils.isWin():
             configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
-        elif OsUtils.isUnix():
-            configure = os.path.join( self.sourceDir() ,"configure" )
-
-
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
-        if self.buildType() == "Debug":
-            command += "-debug "
-        else:
-            command += "-release "
-
-        if self.buildType() == "RelWithDebInfo":
-                command += "-force-debug-info "
-
-        if self.subinfo.options.buildStatic:
-                command += " -static -static-runtime "
-
-        command += "-nomake examples "
-        command += "-nomake tests "
-
-
-
-
-        if OsUtils.isWin():
             if not os.path.exists(os.path.join(self.sourceDir(), ".gitignore")):  # force bootstrap of configure.exe
                 with open(os.path.join(self.sourceDir(), ".gitignore"), "wt+") as bootstrap:
                     bootstrap.write("Force Bootstrap")
                 if os.path.exists(os.path.join(self.sourceDir(), "configure.exe")):
                     os.remove(os.path.join(self.sourceDir(), "configure.exe"))
-            configure = os.path.join(self.sourceDir(), "configure.bat").replace("/", "\\")
-            command = " %s -opensource  -confirm-license -prefix %s -platform %s " % (
-            configure, EmergeStandardDirs.emergeRoot(), self.platform)
-            command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
-            command += "-plugin-sql-odbc "
-            command += "-qt-style-windowsxp  -qt-style-windowsvista "
-            command += "-qt-libpng "
-            command += "-qt-libjpeg "
-            command += "-qt-pcre "
-            command += "-nomake examples "
-            # can we drop that in general?
-            if not self.subinfo.buildTarget.startswith("5.7"):
-                command += "-c++11 "
-            command += "-opengl dynamic "
-            command += "-ltcg "
-            if self.buildType() == "RelWithDebInfo":
-                command += "-force-debug-info "
-            command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"),
-                                                 os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
+        elif OsUtils.isUnix():
+            configure = os.path.join( self.sourceDir() ,"configure" )
 
-            if not self.subinfo.options.buildStatic:
-                command += " -openssl-linked "
-                if self.subinfo.options.isActive("binary/mysql-pkg"):
-                    command += " -plugin-sql-mysql "
-                if self.subinfo.options.isActive("win32libs/dbus"):
-                    command += " -qdbus -dbus-linked "
-                if self.subinfo.options.isActive("win32libs/icu"):
-                    command += " -icu "
-                if self.subinfo.options.isActive("win32libs/zip"):
-                    command += " -system-zlib "
-                    if compiler.isMSVC():
-                        command += " ZLIB_LIBS=zlib.lib "
 
-        if OsUtils.isUnix() or self.supportsCCACHE:
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
+        command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
+        command += "-plugin-sql-odbc "
+        command += "-qt-style-windowsxp  -qt-style-windowsvista "
+        command += "-qt-libpng "
+        command += "-qt-libjpeg "
+        command += "-qt-pcre "
+        # can we drop that in general?
+        if not self.subinfo.buildTarget.startswith("5.7"):
+            command += "-c++11 "
+        command += "-opengl dynamic "
+        command += "-ltcg "
+        if self.buildType() == "RelWithDebInfo":
+            command += "-force-debug-info "
+        if self.buildType() == "Debug":
+            command += "-debug "
+        else:
+            command += "-release "
+        command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
+
+        if not self.subinfo.options.buildStatic:
+            command += " -openssl-linked "
+            if self.subinfo.options.isActive("binary/mysql-pkg"):
+                command += " -plugin-sql-mysql "
+            if self.subinfo.options.isActive("win32libs/dbus"):
+                command += " -qdbus -dbus-linked "
+            if self.subinfo.options.isActive("win32libs/icu"):
+                command += " -icu "
+            if self.subinfo.options.isActive("win32libs/zip"):
+                command += " -system-zlib "
+                if compiler.isMSVC():
+                    command += " ZLIB_LIBS=zlib.lib "
+        else:
+            command += " -static -static-runtime "
+
+
+        command += "-nomake examples "
+        command += "-nomake tests "
+
+        if (compiler.isMSVC() and compiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
             command += "-no-pch "
 
         print("command: ", command)
-        if not utils.system( command ):
-            return False
-        return True
+        return utils.system( command )
 
     def make(self, unused=''):
         self.setPathes()

@@ -65,6 +65,7 @@ file collection process is skipped, and only the installer is generated.
         self.defines.setdefault( "productname",  self.package.capitalize())
         self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
         self.defines.setdefault( "srcdir",  self.archiveDir())
+        self.defines.setdefault( "extrashortcuts", "")
         self.defines.setdefault( "version", self.getPackageVersion()[0])
         self.defines.setdefault( "website",  self.subinfo.homepage if not self.subinfo.homepage == "" else "https://community.kde.org/Windows")
         # runtime distributable files

@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['frameworks/kdelibs4support'] = 'default'
-        self.dependencies['frameworks/libkdcraw'] = 'default'
+        #self.dependencies['frameworks/libkdcraw'] = 'default'
 
 
 from Package.VirtualPackageBase import *

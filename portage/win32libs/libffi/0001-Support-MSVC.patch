@@ -1,0 +1,198 @@
+From f0627cd357082ba27e914810bdfbc47e80e37c92 Mon Sep 17 00:00:00 2001
+From: "K.Takata" <kentkt@csc.jp>
+Date: Sat, 25 Jul 2015 21:09:11 +0900
+Subject: [PATCH] Support MSVC
+
+Based on Ruby 2.2's patch:
+https://github.com/ruby/ruby/blob/ruby_2_2/ext/fiddle/win32/libffi-3.2.1-mswin.patch
+---
+ src/x86/ffi.c       | 21 +++++++++++++++------
+ src/x86/ffitarget.h |  2 ++
+ src/x86/win64.S     | 25 ++++++++++++-------------
+ 3 files changed, 29 insertions(+), 19 deletions(-)
+
+diff --git a/src/x86/ffi.c b/src/x86/ffi.c
+index 006c95d..9345677 100644
+--- a/src/x86/ffi.c
++++ b/src/x86/ffi.c
+@@ -99,11 +99,13 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
+        i != 0;
+        i--, p_arg += dir, p_argv += dir)
+     {
++      size_t z;
++
+       /* Align if necessary */
+       if ((sizeof(void*) - 1) & (size_t) argp)
+         argp = (char *) ALIGN(argp, sizeof(void*));
+ 
+-      size_t z = (*p_arg)->size;
++      z = (*p_arg)->size;
+ 
+ #ifdef X86_WIN64
+       if (z > FFI_SIZEOF_ARG
+@@ -202,6 +204,8 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
+      on top of stack, so that those can be moved to registers by call-handler.  */
+   if (stack_args_count > 0)
+     {
++      int i;
++
+       if (dir < 0 && stack_args_count > 1)
+         {
+           /* Reverse order if iterating arguments backwards */
+@@ -210,7 +214,6 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
+           *(ffi_arg*) p_stack_data[stack_args_count - 1] = tmp;
+         }
+       
+-      int i;
+       for (i = 0; i < stack_args_count; i++)
+         {
+           if (p_stack_data[i] != argp2)
+@@ -569,11 +572,13 @@ ffi_prep_incoming_args(char *stack, void **rvalue, void **avalue,
+        i < cif->nargs && passed_regs < max_stack_count;
+        i++, p_arg++)
+     {
++      size_t sz;
++
+       if ((*p_arg)->type == FFI_TYPE_FLOAT
+          || (*p_arg)->type == FFI_TYPE_STRUCT)
+         continue;
+ 
+-      size_t sz = (*p_arg)->size;
++      sz = (*p_arg)->size;
+       if(sz == 0 || sz > FFI_SIZEOF_ARG)
+         continue;
+ 
+@@ -599,11 +604,13 @@ ffi_prep_incoming_args(char *stack, void **rvalue, void **avalue,
+        i != 0;
+        i--, p_arg += dir, p_argv += dir)
+     {
++      size_t z;
++
+       /* Align if necessary */
+       if ((sizeof(void*) - 1) & (size_t) argp)
+         argp = (char *) ALIGN(argp, sizeof(void*));
+ 
+-      size_t z = (*p_arg)->size;
++      z = (*p_arg)->size;
+ 
+ #ifdef X86_WIN64
+       if (z > FFI_SIZEOF_ARG
+@@ -642,7 +649,7 @@ ffi_prep_incoming_args(char *stack, void **rvalue, void **avalue,
+ #endif
+     }
+ 
+-  return (size_t)argp - (size_t)stack;
++  return (int)((size_t)argp - (size_t)stack);
+ }
+ 
+ #define FFI_INIT_TRAMPOLINE_WIN64(TRAMP,FUN,CTX,MASK) \
+@@ -855,11 +862,13 @@ ffi_prep_args_raw(char *stack, extended_cif *ecif)
+   
+   for (i = 0; i < cif->nargs && passed_regs <= max_regs; i++)
+     {
++      size_t sz;
++
+       if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
+          || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
+         continue;
+ 
+-      size_t sz = cif->arg_types[i]->size;
++      sz = cif->arg_types[i]->size;
+       if (sz == 0 || sz > FFI_SIZEOF_ARG)
+         continue;
+ 
+diff --git a/src/x86/ffitarget.h b/src/x86/ffitarget.h
+index a236677..28618d0 100644
+--- a/src/x86/ffitarget.h
++++ b/src/x86/ffitarget.h
+@@ -50,7 +50,9 @@
+ #endif
+ 
+ #define FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
++#if !defined(_MSC_VER)
+ #define FFI_TARGET_HAS_COMPLEX_TYPE
++#endif
+ 
+ /* ---- Generic type definitions ----------------------------------------- */
+ 
+diff --git a/src/x86/win64.S b/src/x86/win64.S
+index 687f97c..347a26a 100644
+--- a/src/x86/win64.S
++++ b/src/x86/win64.S
+@@ -127,7 +127,7 @@ ret_struct4b$:
+ 
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	mov	DWORD PTR [rcx], eax
+-	jmp	ret_void$
++	jmp	SHORT ret_void$
+ 
+ ret_struct2b$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SMALL_STRUCT_2B
+@@ -135,7 +135,7 @@ ret_struct2b$:
+ 
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	mov	WORD PTR [rcx], ax
+-	jmp	ret_void$
++	jmp	SHORT ret_void$
+ 
+ ret_struct1b$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SMALL_STRUCT_1B
+@@ -143,7 +143,7 @@ ret_struct1b$:
+ 
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	mov	BYTE PTR [rcx], al
+-	jmp	ret_void$
++	jmp	SHORT ret_void$
+ 
+ ret_uint8$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_UINT8
+@@ -152,7 +152,7 @@ ret_uint8$:
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	movzx   rax, al
+ 	mov	QWORD PTR [rcx], rax
+-	jmp	ret_void$
++	jmp	SHORT ret_void$
+ 
+ ret_sint8$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SINT8
+@@ -161,7 +161,7 @@ ret_sint8$:
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	movsx   rax, al
+ 	mov	QWORD PTR [rcx], rax
+-	jmp	ret_void$
++	jmp	SHORT ret_void$
+ 
+ ret_uint16$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_UINT16
+@@ -188,7 +188,13 @@ ret_uint32$:
+ 	mov	rcx, QWORD PTR RVALUE[rbp]
+ 	mov     eax, eax
+ 	mov	QWORD PTR [rcx], rax
+-	jmp	SHORT ret_void$
++
++ret_void$:
++	xor	rax, rax
++
++	lea	rsp, QWORD PTR [rbp+16]
++	pop	rbp
++	ret	0
+ 
+ ret_sint32$:
+  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SINT32
+@@ -247,13 +253,6 @@ ret_int$:
+ 	cdqe
+ 	mov	QWORD PTR [rcx], rax
+  	jmp	SHORT ret_void$
+-
+-ret_void$:
+-	xor	rax, rax
+-
+-	lea	rsp, QWORD PTR [rbp+16]
+-	pop	rbp
+-	ret	0
+ ffi_call_win64 ENDP
+ _TEXT	ENDS
+ END
+-- 
+2.4.5
+

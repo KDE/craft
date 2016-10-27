@@ -29,7 +29,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kcoreaddons'] = 'default'
         self.dependencies['frameworks/kdbusaddons'] = 'default'
         self.dependencies['frameworks/kjs'] = 'default'
-        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/kparts'] = 'default'
         self.dependencies['frameworks/threadweaver'] = 'default'

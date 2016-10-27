@@ -17,7 +17,6 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kiconthemes"] = "default"
         self.dependencies["frameworks/kio"] = "default"
         self.dependencies["frameworks/kjobwidgets"] = "default"
-        self.dependencies["frameworks/knotifications"] = "default"
         self.dependencies["frameworks/kservice"] = "default"
         self.dependencies["frameworks/ktextwidgets"] = "default"
         self.dependencies["frameworks/kwidgetsaddons"] = "default"

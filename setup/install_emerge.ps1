@@ -84,10 +84,17 @@ Write-Host "Where to you want us to install emerge"
 $Script:installRoot = if (($result = Read-Host "Emerge install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
 
 
-if(Test-Path -Path $Script:installRoot){
-    Write-Host "Directory $Script:installRoot already exists. Exiting."
-    exit
+while(Test-Path -Path $Script:installRoot){
+    Write-Host "Directory $Script:installRoot already exists.`nChoose one of the options:"
+	switch($ask=Read-Host "[Q] Quit installation    `n[Y] Truncate directory: [$Script:installRoot] and continue installation in the same directory    `n[N] Change directory path.`n(default is 'Q')")
+	{
+		"y"		{rmdir $Script:installRoot}
+		"n"		{$Script:installRoot=if (($result = Read-Host "Enter another directory to install emerge (default is ["$Script:installRoot"(1)])") -eq '') {$Script:installRoot+"(1)"} else {$result}}
+		"q"		{exit}
+		default	{exit}
+	}
 }
+
 mkdir $Script:installRoot -Force | Out-Null
 mkdir $Script:installRoot\download -Force | Out-Null
 

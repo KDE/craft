@@ -59,8 +59,10 @@ class Package( CMakePackageBase ):
 
     def createPackage(self):
         self.defines[ "productname" ] = "KDevelop"
+        self.defines[ "website" ] = "https://kdevelop.org"
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
+        self.defines[ "extrashortcuts" ] = r'CreateShortCut \"${startmenu}\KDevelop - Microsoft Visual C++ compiler.lnk\" \"$INSTDIR\\bin\\kdevelop-msvc.bat\"'
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
@@ -76,9 +78,7 @@ class Package( CMakePackageBase ):
         binPath = os.path.join(archiveDir, "bin")
 
         utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
-        utils.mergeTree(os.path.join(archiveDir, "lib", "plugins"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
-        utils.mergeTree(os.path.join(archiveDir, "lib", "qml"), os.path.join(archiveDir, binPath))
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))

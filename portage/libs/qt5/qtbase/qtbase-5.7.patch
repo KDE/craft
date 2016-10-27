@@ -1,18 +1,5 @@
-diff --git a/mkspecs/features/qt_build_extra.prf b/mkspecs/features/qt_build_extra.prf
-index 378f5bb..4e53f8c 100644
---- a/mkspecs/features/qt_build_extra.prf
-+++ b/mkspecs/features/qt_build_extra.prf
-@@ -13,7 +13,7 @@ equals(TEMPLATE, subdirs): return()
- 
- # It's likely that these extra flags will be wrong for host builds,
- # and the bootstrapped tools usually don't need them anyway.
--host_build:force_bootstrap: return()
-+# host_build:force_bootstrap: return()
- 
- # The headersclean check needs defines and includes even for
- # header-only modules.
 diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
-index 12004c6..9886d10 100644
+index d356ada..2058fa0 100644
 --- a/qmake/generators/makefile.cpp
 +++ b/qmake/generators/makefile.cpp
 @@ -1182,7 +1182,7 @@ MakefileGenerator::filePrefixRoot(const QString &root, const QString &path)
@@ -24,3 +11,27 @@ index 12004c6..9886d10 100644
      else
          ret.prepend(root);
      while (ret.endsWith('\\'))
+diff --git a/src/corelib/io/qprocess_win.cpp b/src/corelib/io/qprocess_win.cpp
+index 96b39ef..2f58427 100644
+--- a/src/corelib/io/qprocess_win.cpp
++++ b/src/corelib/io/qprocess_win.cpp
+@@ -867,16 +867,17 @@ bool QProcessPrivate::startDetached(const QString &program, const QStringList &a
+     bool success = false;
+     PROCESS_INFORMATION pinfo;
+ 
++    DWORD dwCreationFlags = (GetConsoleWindow() ? 0 : CREATE_NO_WINDOW);
++    dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
+     STARTUPINFOW startupInfo = { sizeof( STARTUPINFO ), 0, 0, 0,
+                                  (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
+                                  (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                                };
+     success = CreateProcess(0, (wchar_t*)args.utf16(),
+-                            0, 0, FALSE, CREATE_UNICODE_ENVIRONMENT | CREATE_NEW_CONSOLE, 0,
++                            0, 0, FALSE, dwCreationFlags, 0,
+                             workingDir.isEmpty() ? 0 : (wchar_t*)workingDir.utf16(),
+                             &startupInfo, &pinfo);
+-
+     if (success) {
+         CloseHandle(pinfo.hThread);
+         CloseHandle(pinfo.hProcess);
