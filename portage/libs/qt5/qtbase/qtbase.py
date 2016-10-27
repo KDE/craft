@@ -12,15 +12,15 @@ from Package.Qt5CorePackageBase import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-            
+
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
             if ver.startswith("5.6") or ver.startswith("v5.6"):
                 self.patchToApply[ ver ] = [
                     ("qmake-fix-install-root.patch", 1),
-                    ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.6.patch" , 1),#https://codereview.qt-project.org/#/c/141254/
                                              #https://codereview.qt-project.org/#/c/149550/
-                    ("do-not-spawn-console-qprocess-startdetached.patch", 1)#https://codereview.qt-project.org/#/c/162585/
+                    ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
+                    ("fix-angle-mingw-5.6.2-20161027.diff", 1)
                 ]
             elif ver.startswith("5.7") or ver.startswith("v5.7"):
                 self.patchToApply[ver] = [

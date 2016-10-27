@@ -12,15 +12,17 @@ class subinfo(info.infoclass):
 
         branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
-            branch = branchRegEx.findall(ver)[0]
+            branch = branchRegEx.findall(ver)[0][:-2]
             del self.targets[ver]
+            if ver in self.targetInstSrc:
+                del self.targetInstSrc[ver]
             self.svnTargets[ver] = self.svnTargets[branch]
             self.patchToApply[ver] = self.patchToApply[branch]
 
         for ver in self.versionInfo.tags():
-            branch = branchRegEx.findall(ver)[0]
+            branch = branchRegEx.findall(ver)[0][:-2]
             self.svnTargets[ver] = self.svnTargets[ branch ]
-            self.patchToApply[ ver ] = self.patchToApply[ branch ] 
+            self.patchToApply[ ver ] = self.patchToApply[ branch ]
 
     def setDependencies( self ):
         self.dependencies['win32libs/sqlite'] = 'default'
