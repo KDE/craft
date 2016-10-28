@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
 
     def setDependencies( self ):
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
         self.dependencies["kdesupport/qimageblitz"] = 'default'

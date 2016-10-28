@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "KDE Connect adds communication between KDE and your smartphone"
 
     def setDependencies( self ):
-        self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
