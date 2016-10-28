@@ -72,7 +72,6 @@ class Package(Qt5CorePackageBase):
 
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
         command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
-        command += "-plugin-sql-odbc "
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-pcre "
@@ -81,7 +80,9 @@ class Package(Qt5CorePackageBase):
             command += "-c++11 "
         if "5.8" in self.subinfo.buildTarget:
             command += "-mp "
-        command += "-opengl dynamic "
+        if OsUtils.isWin():
+            command += "-opengl dynamic "
+            command += "-plugin-sql-odbc "
         command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
