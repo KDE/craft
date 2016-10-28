@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/jpeg'] = 'default'
+        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
 
 from Package.CMakePackageBase import *
 

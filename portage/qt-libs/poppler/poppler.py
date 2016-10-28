@@ -16,10 +16,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['win32libs/freetype'] = 'default'
-        self.dependencies['win32libs/openjpeg'] = 'default'
+        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
         self.dependencies['win32libs/lcms'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
-        self.dependencies['win32libs/jpeg'] = 'default'
+        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
         self.dependencies['win32libs/libpng'] = 'default'
         self.dependencies['win32libs/libcurl'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'

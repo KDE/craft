@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/extra-cmake-modules"] = "default"
         self.buildDependencies["libs/qtbase"] = "default"
-        self.dependencies["win32libs/jpeg"] = "default"
+        self.dependencies["win32libs/libjpeg-turbo"] = "default"
         self.dependencies["win32libs/libpng"] = "default"
         self.dependencies["win32libs/exiv2"] = "default"
         self.dependencies["win32libs/lcms2"] = "default"
