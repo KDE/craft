@@ -83,7 +83,8 @@ class Package(Qt5CorePackageBase):
         if OsUtils.isWin():
             command += "-opengl dynamic "
             command += "-plugin-sql-odbc "
-        command += "-ltcg "
+        if not OsUtils.isFreeBSD():
+            command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
         if self.buildType() == "Debug":
