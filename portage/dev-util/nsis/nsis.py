@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/bin-base'] = 'default'
 
     def setTargets( self ):
-        self.targets['2.46'] = 'http://downloads.sourceforge.net/sourceforge/nsis/nsis-2.46.zip'
-        self.targetDigests['2.46'] = 'adeff823a1f8af3c19783700a6b8d9054cf0f3c2'
-        self.defaultTarget = '2.46'
+        self.targets['3.0'] = 'http://downloads.sourceforge.net/sourceforge/nsis/nsis-3.0.zip'
+        self.targetDigests['3.0'] = '58817baa6509ad239f6cdff90ac013689aff1902'
+        self.defaultTarget = '3.0'
 
 from Package.BinaryPackageBase import *
 
