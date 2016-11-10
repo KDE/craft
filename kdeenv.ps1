@@ -16,13 +16,6 @@ $EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definiti
 
 $EMERGE_ARGUMENTS = $args
 
-$env:EMERGE_PYTHON = (Get-Command python3 -ErrorAction SilentlyContinue).Source
-
-if( -Not $env:EMERGE_PYTHON)
-{
-    $env:EMERGE_PYTHON = (Get-Command python -ErrorAction SilentlyContinue).Source
-}
-
 &{
 function readINI([string] $fileName)
 {
@@ -65,6 +58,13 @@ function prependPATH([string] $path)
 }
 
 prependPATH $settings["Paths"]["Python"]
+
+$env:EMERGE_PYTHON = (Get-Command python3 -ErrorAction SilentlyContinue).Source
+
+if( -Not $env:EMERGE_PYTHON)
+{
+    $env:EMERGE_PYTHON = (Get-Command python -ErrorAction SilentlyContinue).Source
+}
 
 (& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$EMERGE_ROOT", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
 foreach {
