@@ -68,7 +68,7 @@ function prependPATH([string] $path)
 if( -Not $env:EMERGE_PYTHON)
 {
     prependPATH $settings["Paths"]["Python"]
-    $env:EMERGE_PYTHON = ("{0}{1}python" -f $settings["Paths"]["Python"], [IO.Path]::PathSeparator)
+    $env:EMERGE_PYTHON = ([IO.PATH]::COMBINE($settings["Paths"]["Python"], "python"))
 }
 
 (& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$EMERGE_ROOT", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
