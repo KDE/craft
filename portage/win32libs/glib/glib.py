@@ -80,6 +80,13 @@ class PackageMSys(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.defines = "--enable-shared --disable-static --with-pcre=internal"
 
+    def install( self ):
+        if not AutoToolsBuildSystem.install(self):
+            return False
+        utils.copyFile(os.path.join(self.buildDir(), "glib", "glibconfig.h"),
+                       os.path.join(self.imageDir(), "include", "glib-2.0", "glibconfig.h"), False)
+        return True
+
 if compiler.isMinGW():
     class Package(PackageMSys): pass
 else:
