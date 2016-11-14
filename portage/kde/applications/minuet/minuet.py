@@ -10,7 +10,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.buildDependencies["dev-util/pkg-conf"] = "default"
+        self.buildDependencies["dev-util/pkg-config"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qtquickcontrols2"] = "default"
         self.dependencies["win32libs/glib"] = "default"
