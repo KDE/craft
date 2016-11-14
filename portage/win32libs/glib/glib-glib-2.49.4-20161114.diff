@@ -1,0 +1,23 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' glib-glib-2.49.4.orig/configure glib-glib-2.49.4/configure
+--- glib-glib-2.49.4.orig/configure	2016-07-24 22:11:42.000000000 +0200
++++ glib-glib-2.49.4/configure	2016-11-14 08:30:50.171391600 +0100
+@@ -8191,17 +8191,11 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-char ngettext ();
++#include <libintl.h>
+ int
+ main ()
+ {
+-return ngettext ();
++return !ngettext ("","", 1)
+   ;
+   return 0;
+ }

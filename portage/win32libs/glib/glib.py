@@ -12,11 +12,13 @@ class subinfo(info.infoclass):
             self.targets[ver] = "https://github.com/winlibs/glib/archive/glib-%s.tar.gz" % ver
             self.archiveNames[ver] = "glib-glib%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "glib-glib-%s" % ver
+            self.patchToApply[ ver ] = ("glib-glib-2.49.4-20161114.diff", 1)
         self.targetDigests['2.49.4'] = (['936e124d1d147226acd95def54cb1bea5d19dfc534532b85de6727fa68bc310f'], EmergeHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "2.49.4"
 
     def setDependencies( self ):
+        self.buildDependencies["virtual/base"] = "default"
         self.dependencies["win32libs/libffi"] = "default"
         self.dependencies["win32libs/pcre"] = "default"
         self.dependencies["win32libs/zlib"] = "default"
@@ -76,7 +78,7 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static "
+        self.subinfo.options.configure.defines = "--enable-shared --disable-static --with-pcre=internal"
 
 if compiler.isMinGW():
     class Package(PackageMSys): pass
