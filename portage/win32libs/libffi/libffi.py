@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3.2.1"
 
     def setDependencies( self ):
+        self.buildDependencies["virtual/base"] = "default"
         if compiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
@@ -54,8 +55,14 @@ class PackageCMake(CMakePackageBase):
 
     def install(self):
         os.makedirs(os.path.join(self.imageDir(), "lib"))
+        os.makedirs(os.path.join(self.imageDir(), "include"))
         utils.copyFile(os.path.join(self.msvcDir, self.arch, self.bt, "libffi.lib"), os.path.join(self.imageDir(), "lib", "libffi.lib"), False)
-        utils.copyDir(os.path.join(self.sourceDir(), "include"), os.path.join(self.imageDir(), "include"), False)
+        utils.copyFile(os.path.join(self.sourceDir(), "include", "ffi.h"),
+                      os.path.join(self.imageDir(), "include", "ffi.h"), False)
+        utils.copyFile(os.path.join(self.sourceDir(), "include", "ffi_common.h"),
+                      os.path.join(self.imageDir(), "include", "ffi_common.h"), False)
+        utils.copyFile(os.path.join(self.sourceDir(), "src", "x86", "ffitarget.h"),
+                      os.path.join(self.imageDir(), "include", "ffitarget.h"), False)
         return True
 
 
