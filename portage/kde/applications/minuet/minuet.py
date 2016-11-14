@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qtquickcontrols2"] = "default"
         self.dependencies["win32libs/glib"] = "default"
+        self.dependencies["win32libs/fluidsynth"] = "default"
         self.dependencies["frameworks/kdoctools"] = "default"
         self.dependencies["frameworks/kxmlgui"] = "default"
         self.dependencies["frameworks/ki18n"] = "default"
