@@ -7,9 +7,9 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "7.0.12"
-        self.targets[ver]  ="http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
-        self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", EmergeHash.HashAlgorithm.SHA1)
+        for ver in utils.UtilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d")):
+            self.targets[ver]  ="http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
+            self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", EmergeHash.HashAlgorithm.SHA1)
 
         self.defaultTarget = ver
 
@@ -25,8 +25,8 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         # TODO: ouch
-        with open(os.path.join( self.installDir(), "php.ini-development"), "rt+") as ini:
-            with open(os.path.join( self.installDir(), "php.ini"), "wt+") as out:
+        with open(os.path.join( self.imageDir(), "php.ini-development"), "rt+") as ini:
+            with open(os.path.join( self.imageDir(), "php.ini"), "wt+") as out:
                 ext_dir = re.compile("^; extension_dir = \"ext\".*$")
                 curl = re.compile("^;extension=php_curl.dll.*$")
                 for line in ini:
@@ -35,11 +35,8 @@ class Package(BinaryPackageBase):
                     elif curl.match(line):
                         line = "extension=php_curl.dll\n"
                     out.write(line)
+        os.makedirs(os.path.join(self.imageDir(),"dev-utils","bin"))
+        utils.createBat(os.path.join(self.imageDir(),"dev-utils","bin","php.bat"), "%s %%*" % os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "php", "php.exe" ))
         return True
 
-    def qmerge(self):
-        if not BinaryPackageBase.qmerge(self):
-            return False
-        utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","php.bat"), "%s %%*" % os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "php", "php.exe" ))
-        return True
 
