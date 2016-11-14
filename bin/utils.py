@@ -64,10 +64,8 @@ class UtilsCache():
         """
         if emergeSettings.getboolean("General", "WorkOffline"):
             EmergeDebug.info("Nightly builds unavailable for %s in offline mode." % url)
-            return [None]
-        if url in UtilsCache._NIGTHLY_URLS:
-            return UtilsCache._NIGTHLY_URLS[url]
-        else:
+            return []
+        if url not in UtilsCache._NIGTHLY_URLS:
             try:
                 with urllib.request.urlopen(url, timeout = timeout) as fh:
                     data = str(fh.read(), "UTF-8")
@@ -75,11 +73,11 @@ class UtilsCache():
                     if not vers:
                         print(data)
                         raise Exception("Pattern %s does not match." % pattern)
-                    UtilsCache._NIGTHLY_URLS[url] = vers
-                    return vers
+                    UtilsCache._NIGTHLY_URLS[url] = list(set(vers))
+                    return UtilsCache._NIGTHLY_URLS[url]
             except Exception as e:
                 EmergeDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
-                return [None]
+        return UtilsCache._NIGTHLY_URLS.get(url, [])
 
 
 def abstract():
