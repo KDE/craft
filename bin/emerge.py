@@ -40,12 +40,18 @@ def destroyEmergeRoot():
                 if not entry == "kdesettings.ini":
                     etcPath = os.path.join(path, entry)
                     if os.path.isdir(etcPath):
+                        if utils.OsUtils.isLink(etcPath):
+                            print("Skipping symlink %s" % etcPath)
+                            continue
                         utils.cleanDirectory(etcPath)
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
         elif not path in [ EmergeStandardDirs.downloadDir(), EmergeStandardDirs.emergeRepositoryDir(),
                            os.path.join(EmergeStandardDirs.emergeRoot(), "python") ]:
+            if utils.OsUtils.isLink(path):
+                print("Skipping symlink %s" % path)
+                continue
             utils.cleanDirectory(path)
             utils.OsUtils.rmDir(path, True)
 

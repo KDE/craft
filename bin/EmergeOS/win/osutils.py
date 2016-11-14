@@ -20,7 +20,13 @@ class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
         return ctypes.windll.kernel32.RemoveDirectoryW(path) != 0
 
     @staticmethod
+    def isLink(path):
+        return os.path.islink(path) \
+               | OsUtils.getFileAttributes(path) & 0x400 # FILE_ATTRIBUTE_REPARSE_POINT Detect a Junction
+
+    @staticmethod
     def getFileAttributes(path):
+        # https://msdn.microsoft.com/en-us/library/windows/desktop/gg258117(v=vs.85).aspx
         return ctypes.windll.kernel32.GetFileAttributesW(path)
 
     @staticmethod

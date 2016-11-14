@@ -27,6 +27,10 @@ class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
         return False
 
     @staticmethod
+    def isLink(path):
+        return os.path.islink(path)
+
+    @staticmethod
     def removeReadOnlyAttribute(path):
         return False
 
