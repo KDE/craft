@@ -7,26 +7,27 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in utils.UtilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d")):
-            self.targets[ver]  ="http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
+        versions = utils.UtilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d"))
+        versions.sort(key=lambda v: utils.parse_version(v))
+        for ver in versions:
+            self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
             self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", EmergeHash.HashAlgorithm.SHA1)
-
-        self.defaultTarget = ver
+            self.targetInstallPath[ver] = os.path.join("dev-utils", "php")
+            self.defaultTarget = ver
 
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.merge.destinationPath = "dev-utils/php";
         self.subinfo.options.merge.ignoreBuildType = True
 
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
         # TODO: ouch
-        with open(os.path.join( self.imageDir(), "php.ini-development"), "rt+") as ini:
-            with open(os.path.join( self.imageDir(), "php.ini"), "wt+") as out:
+        with open(os.path.join( self.imageDir(), "dev-utils", "php", "php.ini-development"), "rt+") as ini:
+            with open(os.path.join( self.imageDir(), "dev-utils", "php", "php.ini"), "wt+") as out:
                 ext_dir = re.compile("^; extension_dir = \"ext\".*$")
                 curl = re.compile("^;extension=php_curl.dll.*$")
                 for line in ini:
