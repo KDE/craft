@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import os
 import sys
 import re
@@ -76,29 +77,37 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 
-def setUp(kdeRoot):
-    os.chdir(kdeRoot)
+def setUp(args):
+    os.chdir(args.root)
 
-    architecture = EmergeBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
-    compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
+    if args.architecture:
+        architecture = args.architecture
+    else:
+        architecture = EmergeBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
+
+    if args.compiler:
+        compiler = args.compiler
+    else:
+        compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
                                                "Mingw-w64")
     if compiler == "Mingw-w64":
         compiler = "mingw4"
     else:
         compiler = "msvc2015"
 
-    print("Windows has problems with too long commands.")
-    print("For that reason we mount emerge directories to drive letters.")
-    print("It just maps the folder to a drive letter you will assign.")
-    shortPath = EmergeBootstrap.promptShortPath()
+    if not args.no_short_path:
+        print("Windows has problems with too long commands.")
+        print("For that reason we mount emerge directories to drive letters.")
+        print("It just maps the folder to a drive letter you will assign.")
+        shortPath = EmergeBootstrap.promptShortPath()
 
-    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"),
+    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(args.root, "download"),
                                  "emerge.zip")
-    shutil.unpack_archive(os.path.join(kdeRoot, "download", "emerge.zip"), kdeRoot)
-    shutil.move(os.path.join(kdeRoot, "emerge-master"), os.path.join(kdeRoot, "emerge"))
-    os.chdir(os.path.join(kdeRoot, "emerge"))
+    shutil.unpack_archive(os.path.join(args.root, "download", "emerge.zip"), args.root)
+    shutil.move(os.path.join(args.root, "emerge-master"), os.path.join(args.root, "emerge"))
+    os.chdir(os.path.join(args.root, "emerge"))
 
-    boot = EmergeBootstrap(kdeRoot)
+    boot = EmergeBootstrap(args.root)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
@@ -107,25 +116,43 @@ def setUp(kdeRoot):
     for key, value in shortPath.items():
         boot.setSettignsValue(key, value)
     boot.writeSettings()
-    subprocess.call("%s emerge git" % os.path.join(kdeRoot, "emerge", "kdeenv.bat"))
-    os.chdir(kdeRoot)
-    shutil.rmtree(os.path.join(kdeRoot, "emerge"))
+    subprocess.call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"))
+    os.chdir(args.root)
+    shutil.rmtree(os.path.join(args.root, "emerge"))
     subprocess.check_call(
-        "%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
+        "%s clone kde:emerge %s" % (os.path.join(args.root, "dev-utils", "bin", "git"), os.path.join(args.root, "emerge")))
     print("Setup complete")
-    print("Please run %s/emerge/kdeenv.ps1" % kdeRoot)
+    print("Please run %s/emerge/kdeenv.ps1" % args.root)
 
+
+def writeSettings(args):
+    settings = configparser.ConfigParser()
+    ini = os.path.join(args.root, "etc", "kdesettings.ini")
+    settings.read(ini)
+
+    for setting in args.values:
+        group, key = setting.split("=", 1)
+        key, value = key.split("/", 1)
+        settings.set(group, key, value)
+
+    with open(ini, 'wt+') as configfile:
+        settings.write(configfile)
+
+    exit();
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
     parser.add_argument("--root", action="store")
-    parser.add_argument("--set", action="store")
+    parser.add_argument("--compiler", action="store")
+    parser.add_argument("--architecture", action="store")
+    parser.add_argument("--no-short-path", action="store_true")
+    parser.add_argument("--set", action="store_true")
+
     parser.add_argument("values", nargs = argparse.REMAINDER)
 
     args = parser.parse_args()
 
     if args.set:
-        EmergeBootstrap.setSettignsValue(args.set, " ".join(args.values))
-        exit();
+        writeSettings(args)
 
-    setUp(args.root)
+    setUp(args)

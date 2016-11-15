@@ -1,3 +1,10 @@
+param(
+    [alias("root")][string]$Script:installRoot=$null,
+    [alias("python")][string]$Script:python=$null,
+    [string[]]$Script:extraArgs
+    )
+
+
 $Script:minPythonVersion = "3.5.0"
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
@@ -7,10 +14,7 @@ else
 {
     $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1-embed-win32.zip"
 }
-Write-Host $Script:pythonUrl
-$Script:installRoot = "C:\kde"
 #####
-$Script:python = where.exe python 2>$NULL
 $Script:pythonVersion = "0"
 
 function FetchPython()
@@ -80,8 +84,11 @@ function TestAndFetchPython()
 ####################################################
 # Start
 Write-Host "Start to boostrap emerge."
-Write-Host "Where to you want us to install emerge"
-$Script:installRoot = if (($result = Read-Host "Emerge install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
+if ($Script:installRoot -eq $null) {
+    Write-Host "Where to you want us to install emerge"
+    $Script:installRoot="C:\KDE\"
+    $Script:installRoot = if (($result = Read-Host "Emerge install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
+}
 
 
 while(Test-Path -Path $Script:installRoot){
@@ -98,10 +105,14 @@ while(Test-Path -Path $Script:installRoot){
 mkdir $Script:installRoot -Force | Out-Null
 mkdir $Script:installRoot\download -Force | Out-Null
 
-TestAndFetchPython
+if ($Script:python -eq $null) {
+    $Script:python= (where.exe python 2>$null)
+    TestAndFetchPython
+}
 
 (new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
 
 Start-Sleep -s 10
-& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot"
+Write-Host "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
+& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
 cd $Script:installRoot
