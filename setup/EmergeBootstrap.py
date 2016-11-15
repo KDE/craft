@@ -76,9 +76,9 @@ class EmergeBootstrap(object):
         print()
         return os.path.exists(os.path.join( destdir, filename ))
 
-def run(args, command, cwd):
-    print("Execute: %s %s" % (os.path.join(args.root, "emerge", "kdeenv.bat"), command))
-    subprocess.check_call("%s %s" % (os.path.join(args.root, "emerge", "kdeenv.bat"), command), shell=True, cwd=cwd)
+def run(args, command):
+    print("Execute: %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
+    subprocess.check_call("%s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
 
 
 def setUp(args):
@@ -125,10 +125,10 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "emerge git", args.root)
+    run(args, "emerge git")
     os.chdir(args.root)
     shutil.rmtree(os.path.join(args.root, "emerge"))
-    run(args, "git clone kde:emerge", args.root)
+    run(args, "git clone kde:emerge %s" % os.path.join(args.root, "emerge"))
     print("Setup complete")
     print("Please run %s/emerge/kdeenv.ps1" % args.root)
 
