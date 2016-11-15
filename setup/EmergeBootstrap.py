@@ -121,11 +121,11 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    subprocess.check_call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"))
+    subprocess.check_call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"), shell=True)
     os.chdir(args.root)
     shutil.rmtree(os.path.join(args.root, "emerge"))
     subprocess.check_call(
-        "%s clone kde:emerge %s" % (os.path.join(args.root, "dev-utils", "bin", "git"), os.path.join(args.root, "emerge")))
+        "%s clone kde:emerge %s" % (os.path.join(args.root, "dev-utils", "bin", "git"), os.path.join(args.root, "emerge")), shell=True)
     print("Setup complete")
     print("Please run %s/emerge/kdeenv.ps1" % args.root)
 
