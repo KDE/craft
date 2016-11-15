@@ -118,7 +118,10 @@ def setUp(args):
             boot.setSettignsValue(key, value)
 
     boot.writeSettings()
-    subprocess.call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"))
+    if args.set:
+        writeSettings(args)
+
+    subprocess.check_call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"))
     os.chdir(args.root)
     shutil.rmtree(os.path.join(args.root, "emerge"))
     subprocess.check_call(
@@ -154,6 +157,4 @@ if __name__ == "__main__":
 
     setUp(args)
 
-    if args.set:
-        writeSettings(args)
 
