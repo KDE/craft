@@ -47,7 +47,7 @@ function FetchPython()
 function TestAndFetchPython()
 {
     if($Script:python -ne $NULL)
-    {  
+    {
         if(($Script:python -split "\r\n").Length -eq 1)
         {
             Try {
@@ -103,5 +103,5 @@ TestAndFetchPython
 (new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
 
 Start-Sleep -s 10
-& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" "$Script:installRoot"
+& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot"
 cd $Script:installRoot

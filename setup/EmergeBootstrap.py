@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import re
@@ -75,13 +76,12 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 
-
-if __name__ == "__main__":
-    kdeRoot = sys.argv[1]
+def setUp(kdeRoot):
     os.chdir(kdeRoot)
 
     architecture = EmergeBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
-    compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"], "Mingw-w64")
+    compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
+                                               "Mingw-w64")
     if compiler == "Mingw-w64":
         compiler = "mingw4"
     else:
@@ -92,10 +92,11 @@ if __name__ == "__main__":
     print("It just maps the folder to a drive letter you will assign.")
     shortPath = EmergeBootstrap.promptShortPath()
 
-    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"), "emerge.zip")
-    shutil.unpack_archive(os.path.join(kdeRoot, "download", "emerge.zip" ), kdeRoot)
-    shutil.move(os.path.join(kdeRoot,"emerge-master" ), os.path.join(kdeRoot,"emerge" ))
-    os.chdir(os.path.join(kdeRoot,"emerge" ))
+    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(kdeRoot, "download"),
+                                 "emerge.zip")
+    shutil.unpack_archive(os.path.join(kdeRoot, "download", "emerge.zip"), kdeRoot)
+    shutil.move(os.path.join(kdeRoot, "emerge-master"), os.path.join(kdeRoot, "emerge"))
+    os.chdir(os.path.join(kdeRoot, "emerge"))
 
     boot = EmergeBootstrap(kdeRoot)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
@@ -108,9 +109,23 @@ if __name__ == "__main__":
     boot.writeSettings()
     subprocess.call("%s emerge git" % os.path.join(kdeRoot, "emerge", "kdeenv.bat"))
     os.chdir(kdeRoot)
-    shutil.rmtree( os.path.join(kdeRoot, "emerge") )
-    subprocess.check_call("%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
+    shutil.rmtree(os.path.join(kdeRoot, "emerge"))
+    subprocess.check_call(
+        "%s clone kde:emerge %s" % (os.path.join(kdeRoot, "dev-utils", "bin", "git"), os.path.join(kdeRoot, "emerge")))
     print("Setup complete")
     print("Please run %s/emerge/kdeenv.ps1" % kdeRoot)
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog="SetupHelper")
+    parser.add_argument("--root", action="store")
+    parser.add_argument("--set", action="store")
+    parser.add_argument("values", nargs = argparse.REMAINDER)
+
+    args = parser.parse_args()
+
+    if args.set:
+        EmergeBootstrap.setSettignsValue(args.set, " ".join(args.values))
+        exit();
+
+    setUp(args.root)
