@@ -128,7 +128,7 @@ def setUp(args):
     run(args, "emerge git", args.root)
     os.chdir(args.root)
     shutil.rmtree(os.path.join(args.root, "emerge"))
-    run(args, "git clone kde:emerge %s", args.root)
+    run(args, "git clone kde:emerge", args.root)
     print("Setup complete")
     print("Please run %s/emerge/kdeenv.ps1" % args.root)
 
