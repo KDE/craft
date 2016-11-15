@@ -114,5 +114,5 @@ if ($Script:python -eq $null) {
 
 Start-Sleep -s 10
 Write-Host "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
-& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
+& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" $Script:extraArgs
 cd $Script:installRoot

@@ -112,9 +112,11 @@ def setUp(args):
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
 
-    boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
-    for key, value in shortPath.items():
-        boot.setSettignsValue(key, value)
+    if not args.no_short_path:
+        boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
+        for key, value in shortPath.items():
+            boot.setSettignsValue(key, value)
+
     boot.writeSettings()
     subprocess.call("%s emerge git" % os.path.join(args.root, "emerge", "kdeenv.bat"))
     os.chdir(args.root)
