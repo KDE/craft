@@ -11,7 +11,7 @@ import shutil
 class EmergeBootstrap(object):
     def __init__(self, kdeRoot):
         self.kdeRoot = kdeRoot
-        with open(os.path.join(kdeRoot, "emerge", "kdesettings.ini"),  "rt+") as ini:
+        with open(os.path.join(kdeRoot, "emerge-master", "kdesettings.ini"),  "rt+") as ini:
             self.settings = ini.read()
 
     @staticmethod
@@ -57,6 +57,9 @@ class EmergeBootstrap(object):
 
     @staticmethod
     def downloadFile(url, destdir, filename = None):
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+            
         if not filename:
             _, _, path, _, _, _ = urllib.parse.urlparse( url )
             filename = os.path.basename( path )
@@ -77,13 +80,13 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    print("Execute: powershell %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
-    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
+    print("Execute: powershell %s %s" % (os.path.join(args.root, "emerge-master", "kdeenv.ps1"), command))
+    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "emerge-master", "kdeenv.ps1"), command))
 
 
 def setUp(args):
-    os.chdir(args.root)
-
+    if not os.path.exists(args.root):
+        os.makedirs(args.root)
     if args.architecture:
         architecture = args.architecture
     else:
@@ -108,8 +111,6 @@ def setUp(args):
     EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(args.root, "download"),
                                  "emerge.zip")
     shutil.unpack_archive(os.path.join(args.root, "download", "emerge.zip"), args.root)
-    shutil.move(os.path.join(args.root, "emerge-master"), os.path.join(args.root, "emerge"))
-    os.chdir(os.path.join(args.root, "emerge"))
 
     boot = EmergeBootstrap(args.root)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
@@ -126,9 +127,8 @@ def setUp(args):
         writeSettings(args)
 
     run(args, "emerge git")
-    os.chdir(args.root)
-    shutil.rmtree(os.path.join(args.root, "emerge"))
     run(args, "git clone kde:emerge %s" % os.path.join(args.root, "emerge"))
+    shutil.rmtree(os.path.join(args.root, "emerge-master"))
     print("Setup complete")
     print("Please run %s/emerge/kdeenv.ps1" % args.root)
 
