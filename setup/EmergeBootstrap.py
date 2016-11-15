@@ -77,7 +77,7 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command, cwd):
-    print("Execute: %s %s" % (os.path.join(args.root, "emerge", "kdeenv.bat"), command)
+    print("Execute: %s %s" % (os.path.join(args.root, "emerge", "kdeenv.bat"), command))
     subprocess.check_call("%s %s" % (os.path.join(args.root, "emerge", "kdeenv.bat"), command), shell=True, cwd=cwd)
 
 
