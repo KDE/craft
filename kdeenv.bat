@@ -29,7 +29,7 @@ goto :nextarg
 
 if not exist %~dp0..\etc\kdesettings.ini (
     echo "Please prepare a %~dp0..\etc\kdesettings.ini"
-    goto :eof
+    exit 1
 )
 
 rem load the python path from the kdesettings.ini
