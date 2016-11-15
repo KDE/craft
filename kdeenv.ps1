@@ -89,8 +89,6 @@ function Global:emerge() {
 }
 
 
-$EMERGE_ARGUMENTS=$null
-
 if($args.Length -eq 2 -and $args[0] -eq "--package")
 {
     & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:KDEROOT", "emerge", "server", "package.py")) $args[1]

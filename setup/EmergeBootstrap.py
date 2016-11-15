@@ -77,8 +77,8 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    print("Execute: %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
-    subprocess.check_call("%s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
+    print("Execute: powershell %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
+    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "emerge", "kdeenv.ps1"), command))
 
 
 def setUp(args):
