@@ -138,8 +138,6 @@ def writeSettings(args):
     with open(ini, 'wt+') as configfile:
         settings.write(configfile)
 
-    exit();
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
     parser.add_argument("--root", action="store")
@@ -152,7 +150,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    setUp(args)
+
     if args.set:
         writeSettings(args)
 
-    setUp(args)
