@@ -4,15 +4,15 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.svnTargets["frameworks"] = "[git]kde:kolourpaint|frameworks"
-        self.defaultTarget = "frameworks"
+        self.svnTargets["gitHEAD"] = "[git]kde:kolourpaint"
+        self.defaultTarget = "gitHEAD"
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
 
     def setDependencies( self ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
-        self.dependencies["kdesupport/qimageblitz"] = 'default'
+        #self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
+        self.dependencies["kde/libkexiv2"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["frameworks/kdelibs4support"] = "default"
