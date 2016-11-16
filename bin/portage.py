@@ -131,7 +131,7 @@ def rootDirectories():
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
-        rootDirs = [ os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "portage" ) ]
+        rootDirs = [ EmergeStandardDirs.emergeRepositoryDir() ]
     return rootDirs
 
 def rootDirForCategory( category ):
