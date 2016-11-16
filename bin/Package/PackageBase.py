@@ -2,6 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import EmergeDebug
+import EmergeHash
 from EmergeBase import *
 from InstallDB import *
 from compiler import *
@@ -215,15 +216,16 @@ class PackageBase (EmergeBase):
 
     def fetchBinary(self) -> bool:
         archiveName = self.binaryArchiveName()
-        downloadFolder = os.path.join(EmergeStandardDirs.downloadDir(), "binary")
+        downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
             os.mkdir(downloadFolder)
         EmergeDebug.debug("Trying to restor %s from cache." % archiveName)
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
-        #     if not utils.getFile("%s/%s" % (emergeSettings.get("ContinuousIntegration", "BinaryUrl"), archiveName),
-        #                   downloadFolder):
+            if not utils.getFile("%s/%s" % (self.repositoryUrl(), archiveName), downloadFolder) and not\
+                    utils.getFile("%s/%s.sha256" % (self.repositoryUrl(), archiveName), downloadFolder):
                  return False
-        return self.cleanImage()\
+        return EmergeHash.checkFilesDigests(downloadFolder, archiveName, EmergeHash.HashAlgorithm.SHA256) and\
+               self.cleanImage()\
                and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
                and self.qmerge()
 
