@@ -16,14 +16,20 @@ $EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definiti
 
 $EMERGE_ARGUMENTS = $args
 
-$env:EMERGE_PYTHON = (Get-Command python3 -ErrorAction SilentlyContinue).Source
+&{
+[version]$minPythonVersion = 3.5
 
-if( -Not $env:EMERGE_PYTHON)
+function findPython([string] $name)
 {
-    $env:EMERGE_PYTHON = (Get-Command python -ErrorAction SilentlyContinue).Source
+    $py = (Get-Command $name -ErrorAction SilentlyContinue)
+    if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+        $env:EMERGE_PYTHON=$py.Source
+    }
 }
 
-&{
+findPython("python3")
+findPython("python")
+
 function readINI([string] $fileName)
 {
    $ini = @{}
@@ -68,7 +74,8 @@ function prependPATH([string] $path)
 if( -Not $env:EMERGE_PYTHON)
 {
     prependPATH $settings["Paths"]["Python"]
-    $env:EMERGE_PYTHON = ([IO.PATH]::COMBINE($settings["Paths"]["Python"], "python"))
+    findPython("python")
+    findPython("python3")
 }
 
 (& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$EMERGE_ROOT", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
