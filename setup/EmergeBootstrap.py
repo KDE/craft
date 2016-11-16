@@ -59,7 +59,7 @@ class EmergeBootstrap(object):
     def downloadFile(url, destdir, filename = None):
         if not os.path.exists(destdir):
             os.makedirs(destdir)
-            
+
         if not filename:
             _, _, path, _, _, _ = urllib.parse.urlparse( url )
             filename = os.path.basename( path )
@@ -139,8 +139,8 @@ def writeSettings(args):
     settings.read(ini)
 
     for setting in args.values:
-        group, key = setting.split("=", 1)
-        key, value = key.split("/", 1)
+        group, key = setting.split("/", 1)
+        key, value = key.split("=", 1)
         settings.set(group, key, value)
 
     with open(ini, 'wt+') as configfile:
