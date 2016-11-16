@@ -313,3 +313,17 @@ class EmergeBase(object):
             version = "Qt_%s" % version
         return os.path.join(EmergeStandardDirs.downloadDir(), "binary", version,
                                compiler.getCompilerName(), self.buildType())
+
+    def repositoryUrl(self):
+        if emergeSettings.getboolean("QtSDK", "Enabled", "False"):
+            version = "QtSDK_%s" % emergeSettings.get("QtSDK", "Version")
+        else:
+            version = emergeSettings.get("PortageVersions", "Qt5")
+            if not version:
+                EmergeDebug.die("Please set a value for\n"
+                                "[PortageVersions]\n"
+                                "Qt5")
+            version = "Qt_%s" % version
+        return "/".join(emergeSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
+                            compiler.getCompilerName(), self.buildType())
+
