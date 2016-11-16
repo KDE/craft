@@ -129,7 +129,7 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "emerge %s git" %  "-vvv" if args.verbose else "")
+    run(args, "emerge %s git" % ("-vvv" if args.verbose else ""))
     run(args, "git clone kde:emerge %s" % os.path.join(args.root, "emerge"))
     shutil.rmtree(os.path.join(args.root, "emerge-master"))
     print("Setup complete")
