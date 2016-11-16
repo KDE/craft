@@ -125,12 +125,11 @@ class EmergeStandardDirs( object ):
 
     @staticmethod
     def emergeBin():
-        folder, _ = os.path.split(EmergeStandardDirs._deSubstPath(os.path.dirname(__file__)))
-        return os.path.join(EmergeStandardDirs.emergeRoot(), folder)
+        return os.path.join(EmergeStandardDirs.emergeRoot(), os.path.dirname(__file__))
 
     @staticmethod
     def emergeRepositoryDir( ):
-        return  os.path.join(EmergeStandardDirs.emergeBin(), "..", "portage" )
+        return os.path.join(EmergeStandardDirs.emergeBin(), "..", "portage" )
 
     @staticmethod
     def etcPortageDir( ):
