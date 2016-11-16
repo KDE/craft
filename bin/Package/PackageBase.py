@@ -218,7 +218,7 @@ class PackageBase (EmergeBase):
         archiveName = self.binaryArchiveName()
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
-            os.mkdir(downloadFolder)
+            os.makedirs(downloadFolder)
         EmergeDebug.debug("Trying to restor %s from cache." % archiveName)
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
             if not utils.getFile("%s/%s" % (self.repositoryUrl(), archiveName), downloadFolder) and not\
