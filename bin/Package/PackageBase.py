@@ -221,10 +221,10 @@ class PackageBase (EmergeBase):
             os.makedirs(downloadFolder)
         EmergeDebug.debug("Trying to restor %s from cache." % archiveName)
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
-            if not utils.getFile("%s/%s" % (self.repositoryUrl(), archiveName), downloadFolder) and not\
-                    utils.getFile("%s/%s.sha256" % (self.repositoryUrl(), archiveName), downloadFolder):
+            if not (utils.getFile("%s/%s" % (self.cacheRepositoryUrl(), archiveName), downloadFolder) and \
+                    utils.getFile("%s/%s.sha256" % (self.cacheRepositoryUrl(), archiveName), downloadFolder)):
                  return False
-        return EmergeHash.checkFilesDigests(downloadFolder, archiveName, EmergeHash.HashAlgorithm.SHA256) and\
+        return EmergeHash.checkFilesDigests(downloadFolder, [archiveName], digestAlgorithm=EmergeHash.HashAlgorithm.SHA256) and\
                self.cleanImage()\
                and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
                and self.qmerge()

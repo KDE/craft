@@ -314,7 +314,7 @@ class EmergeBase(object):
         return os.path.join(EmergeStandardDirs.downloadDir(), "binary", version,
                                compiler.getCompilerName(), self.buildType())
 
-    def repositoryUrl(self):
+    def cacheRepositoryUrl(self):
         if emergeSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % emergeSettings.get("QtSDK", "Version")
         else:
