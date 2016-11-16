@@ -139,9 +139,11 @@ def writeSettings(args):
     settings.read(ini)
 
     for setting in args.values:
-        group, key = setting.split("/", 1)
+        section, key = setting.split("/", 1)
         key, value = key.split("=", 1)
-        settings.set(group, key, value)
+        if section not in settings.sections():
+            settings.add_section(section)
+        settings.set(section, key, value)
 
     with open(ini, 'wt+') as configfile:
         settings.write(configfile)
