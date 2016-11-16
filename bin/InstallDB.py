@@ -255,7 +255,6 @@ class InstallDB(object):
             if not os.path.exists( self.dbfilename ):
                 if not os.path.exists( EmergeStandardDirs.etcPortageDir( ) ):
                     os.makedirs( EmergeStandardDirs.etcPortageDir( ) )
-                print( "database does not exist yet: creating database", file = sys.stderr )
                 self.connection = sqlite3.connect( self.dbfilename )
                 cursor = self.connection.cursor()
 
