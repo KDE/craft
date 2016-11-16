@@ -96,6 +96,8 @@ class SetupHelper( object ):
                     _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
 
     def printBanner( self ):
+        if emergeSettings.getboolean("ContinuousIntegration", "Enabled", False):
+            return
         print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ), file = sys.stderr )
         print( "KDECOMPILER : %s" % compiler.getCompilerName( ), file = sys.stderr )
         print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ), file = sys.stderr )
