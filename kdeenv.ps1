@@ -12,7 +12,7 @@
 cls
 
 
-$EMERGE_ROOT=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
+$env:EmergeRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 $EMERGE_ARGUMENTS = $args
 
@@ -49,13 +49,13 @@ function readINI([string] $fileName)
 
 
 
-if(test-path -path $EMERGE_ROOT\..\etc\kdesettings.ini)
+if(test-path -path $env:EmergeRoot\..\etc\kdesettings.ini)
 {
-    $settings = readINI $EMERGE_ROOT\..\etc\kdesettings.ini
+    $settings = readINI $env:EmergeRoot\..\etc\kdesettings.ini
 }
 else
 {
-    Write-Error("$EMERGE_ROOT\..\etc\kdesettings.ini Does not exist")
+    Write-Error("$env:EmergeRoot\..\etc\kdesettings.ini Does not exist")
     break
 }
 if( $EMERGE_ARGUMENTS[0] -eq "--get")
@@ -78,7 +78,7 @@ if( -Not $env:EMERGE_PYTHON)
     findPython("python3")
 }
 
-(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$EMERGE_ROOT", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
+(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=")
@@ -92,19 +92,12 @@ cd "$env:KDEROOT"
 
 
 function Global:emerge() {
-    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:KDEROOT", "emerge", "bin", "emerge.py")) $args
+    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "emerge.py")) $args
 }
 
 
-if($args.Length -eq 2 -and $args[0] -eq "--package")
+if($args.Length -ne 0)
 {
-    & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:KDEROOT", "emerge", "server", "package.py")) $args[1]
+    invoke-expression -command "$args"
 }
-else
-{
-    if($args.Length -ne 0)
-    {
-        invoke-expression -command "$args"
-    }
 
-}
