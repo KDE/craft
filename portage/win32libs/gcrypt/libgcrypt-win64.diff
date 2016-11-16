@@ -1,7 +1,31 @@
-diff -Nru -x '*~' libgcrypt-1.5.3.orig/random/rndw32.c libgcrypt-1.5.3/random/rndw32.c
---- libgcrypt-1.5.3.orig/random/rndw32.c	2014-05-06 12:18:48.636074300 +0200
-+++ libgcrypt-1.5.3/random/rndw32.c	2014-05-06 12:02:57.942000300 +0200
-@@ -829,10 +829,10 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libgcrypt-1.5.3.orig/random/rndw32.c libgcrypt-1.5.3/random/rndw32.c
+--- libgcrypt-1.5.3.orig/random/rndw32.c	2016-11-15 12:40:26.642760600 +0100
++++ libgcrypt-1.5.3/random/rndw32.c	2016-11-15 12:39:53.878425700 +0100
+@@ -359,6 +359,7 @@
+ registry_poll (void (*add)(const void*, size_t, enum random_origins),
+                enum random_origins requester)
+ {
++#if _WIN32_WINNT >= 0x0600
+   static int cbPerfData = PERFORMANCE_BUFFER_SIZE;
+   int iterations;
+   DWORD dwSize, status;
+@@ -478,6 +479,15 @@
+      isn't done then any system components which provide performance data
+      can't be removed or changed while the handle remains active.  */
+   RegCloseKey (HKEY_PERFORMANCE_DATA);
++#else
++    static int shown;
++
++    if (!shown)
++      {
++        shown = 1;
++        log_info ("note: no performance data support compiled in\n");
++      }
++#endif
+ }
+ 
+ 
+@@ -829,10 +839,10 @@
       and milliseconds since Windows was started.  */
  
    {
@@ -14,7 +38,7 @@ diff -Nru -x '*~' libgcrypt-1.5.3.orig/random/rndw32.c libgcrypt-1.5.3/random/rn
                       memcpy (bufptr, &along, sizeof (along) );  \
                       bufptr += sizeof (along);                  \
                     } while (0)
-@@ -888,7 +888,7 @@
+@@ -888,7 +898,7 @@
    {
      HANDLE handle;
      FILETIME creationTime, exitTime, kernelTime, userTime;
@@ -23,9 +47,9 @@ diff -Nru -x '*~' libgcrypt-1.5.3.orig/random/rndw32.c libgcrypt-1.5.3/random/rn
  
      handle = GetCurrentThread ();
      GetThreadTimes (handle, &creationTime, &exitTime,
-diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/ath.c libgcrypt-1.5.3/src/ath.c
---- libgcrypt-1.5.3.orig/src/ath.c	2014-05-06 12:18:48.640077300 +0200
-+++ libgcrypt-1.5.3/src/ath.c	2014-05-06 12:18:11.561185100 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libgcrypt-1.5.3.orig/src/ath.c libgcrypt-1.5.3/src/ath.c
+--- libgcrypt-1.5.3.orig/src/ath.c	2016-11-15 12:40:26.642760600 +0100
++++ libgcrypt-1.5.3/src/ath.c	2016-11-15 12:25:19.990106900 +0100
 @@ -40,9 +40,11 @@
  #include <sys/wait.h>
  #else
@@ -39,9 +63,9 @@ diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/ath.c libgcrypt-1.5.3/src/ath.c
  #include <errno.h>
  
  #include "ath.h"
-diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h libgcrypt-1.5.3/src/gcrypt.h
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libgcrypt-1.5.3.orig/src/gcrypt.h libgcrypt-1.5.3/src/gcrypt.h
 --- libgcrypt-1.5.3.orig/src/gcrypt.h	2013-07-25 11:23:38.000000000 +0200
-+++ libgcrypt-1.5.3/src/gcrypt.h	2014-05-06 12:02:57.957927300 +0200
++++ libgcrypt-1.5.3/src/gcrypt.h	2016-11-15 12:25:19.990106900 +0100
 @@ -37,7 +37,7 @@
  # include <ws2tcpip.h>
  # include <time.h>
@@ -51,9 +75,9 @@ diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h libgcrypt-1.5.3/src/gcrypt.h
    typedef int  pid_t;
  # endif /*!__GNUC__*/
  #else
-diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h.in libgcrypt-1.5.3/src/gcrypt.h.in
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libgcrypt-1.5.3.orig/src/gcrypt.h.in libgcrypt-1.5.3/src/gcrypt.h.in
 --- libgcrypt-1.5.3.orig/src/gcrypt.h.in	2013-07-25 11:10:04.000000000 +0200
-+++ libgcrypt-1.5.3/src/gcrypt.h.in	2014-05-06 12:02:57.966007700 +0200
++++ libgcrypt-1.5.3/src/gcrypt.h.in	2016-11-15 12:25:19.990106900 +0100
 @@ -37,7 +37,7 @@
  # include <ws2tcpip.h>
  # include <time.h>
@@ -63,9 +87,9 @@ diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/gcrypt.h.in libgcrypt-1.5.3/src/gcryp
    typedef int  pid_t;
  # endif /*!__GNUC__*/
  #else
-diff -Nru -x '*~' libgcrypt-1.5.3.orig/src/secmem.c libgcrypt-1.5.3/src/secmem.c
---- libgcrypt-1.5.3.orig/src/secmem.c	2014-05-06 12:18:48.671078700 +0200
-+++ libgcrypt-1.5.3/src/secmem.c	2014-05-06 12:17:38.281249400 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libgcrypt-1.5.3.orig/src/secmem.c libgcrypt-1.5.3/src/secmem.c
+--- libgcrypt-1.5.3.orig/src/secmem.c	2016-11-15 12:40:26.658537200 +0100
++++ libgcrypt-1.5.3/src/secmem.c	2016-11-15 12:25:19.990106900 +0100
 @@ -30,9 +30,11 @@
  #include <stddef.h>
  #ifdef _WIN32
