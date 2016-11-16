@@ -84,7 +84,7 @@ function TestAndFetchPython()
 ####################################################
 # Start
 Write-Host "Start to boostrap emerge."
-if ($Script:installRoot -eq $null) {
+if (!$Script:installRoot) {
     Write-Host "Where to you want us to install emerge"
     $Script:installRoot="C:\KDE\"
     $Script:installRoot = if (($result = Read-Host "Emerge install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
@@ -105,8 +105,8 @@ while(Test-Path -Path $Script:installRoot){
 mkdir $Script:installRoot -Force | Out-Null
 mkdir $Script:installRoot\download -Force | Out-Null
 
-if ($Script:python -eq $null) {
-    $Script:python= (where.exe python 2>$null)
+if (!$Script:python) {
+    $Script:python=(where.exe python 2>$null)
     TestAndFetchPython
 }
 
