@@ -298,8 +298,12 @@ class EmergeBase(object):
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
+        if self.subinfo.hasSvnTarget():
+            version = "latest"
+        else:
+            version = self.getPackageVersion()[0]
         return "%s-%s-%s-%s%s.%s" % (
-            self.package, compiler.architecture(), self.getPackageVersion()[0], compiler.getShortName(), pkgSuffix, fileType)
+            self.package, compiler.architecture(), version, compiler.getShortName(), pkgSuffix, fileType)
 
     def cacheLocation(self):
         if emergeSettings.getboolean("QtSDK", "Enabled", "False"):
