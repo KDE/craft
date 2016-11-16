@@ -13,6 +13,7 @@
 #
 #
 import EmergeDebug
+import EmergeHash
 from Packager.PackagerBase import *
 
 class SevenZipPackager (PackagerBase):
@@ -31,6 +32,7 @@ class SevenZipPackager (PackagerBase):
             cmd += " -bso0"
         if not utils.system(cmd):
             EmergeDebug.die("while packaging. cmd: %s" % cmd)
+        EmergeHash.createDigestFiles(os.path.join(destDir, archiveName))
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
