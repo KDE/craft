@@ -324,6 +324,6 @@ class EmergeBase(object):
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return "/".join(emergeSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
-                            compiler.getCompilerName(), self.buildType())
+        return "/".join([emergeSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
+                            compiler.getCompilerName(), self.buildType()])
 
