@@ -102,7 +102,7 @@ def setUp(args):
     else:
         compiler = "msvc2015"
 
-    if not args.no_short_path:
+    if not args.noShortPath:
         print("Windows has problems with too long commands.")
         print("For that reason we mount emerge directories to drive letters.")
         print("It just maps the folder to a drive letter you will assign.")
@@ -117,10 +117,13 @@ def setUp(args):
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
 
-    if not args.no_short_path:
+    if not args.noShortPath:
         boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
         for key, value in shortPath.items():
             boot.setSettignsValue(key, value)
+    else:
+        boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "False")
+
 
     boot.writeSettings()
     if args.set:
@@ -153,7 +156,7 @@ if __name__ == "__main__":
     parser.add_argument("--root", action="store")
     parser.add_argument("--compiler", action="store")
     parser.add_argument("--architecture", action="store")
-    parser.add_argument("--no-short-path", action="store_true")
+    parser.add_argument("--no-short-path", action="store_true", dest="noShortPath")
     parser.add_argument("--set", action="store_true")
 
     parser.add_argument("values", nargs = argparse.REMAINDER)
