@@ -129,7 +129,7 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "emerge git")
+    run(args, "emerge %s git" %  "-vvv" if args.verbose else "")
     run(args, "git clone kde:emerge %s" % os.path.join(args.root, "emerge"))
     shutil.rmtree(os.path.join(args.root, "emerge-master"))
     print("Setup complete")
@@ -158,6 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("--architecture", action="store")
     parser.add_argument("--no-short-path", action="store_true", dest="noShortPath")
     parser.add_argument("--set", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
 
     parser.add_argument("values", nargs = argparse.REMAINDER)
 
