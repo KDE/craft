@@ -4,8 +4,6 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.svnTargets["gitHEAD"] = "[git]kde:kolourpaint"
-        self.defaultTarget = "gitHEAD"
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
 
     def setDependencies( self ):

@@ -3,8 +3,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.svnTargets['gitHEAD'] = '[git]kde:libkexiv2'
-        self.defaultTarget = 'gitHEAD'
         
         self.shortDescription = "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
 
