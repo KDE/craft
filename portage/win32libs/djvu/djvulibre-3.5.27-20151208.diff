@@ -655,3 +655,18 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' djvulibre-3.5.27.orig/xmltools/djvuxml.
 +.BR djvused (1),
 +and
 +.BR utf8 (7).
+diff --git djvulibre-3.5.27.orig/libdjvu/ByteStream.h djvulibre-3.5.27/libdjvu/ByteStream.h
+index 0615f7a..8e7fd12 100644
+--- djvulibre-3.5.27.orig/libdjvu/ByteStream.h
++++ djvulibre-3.5.27/libdjvu/ByteStream.h
+@@ -279,8 +279,8 @@ protected:
+   ByteStream(void) : cp(AUTO) {};
+ private:
+   // Cancel C++ default stuff
+-  ByteStream(const ByteStream &);
+-  ByteStream & operator=(const ByteStream &);
++  ByteStream(const ByteStream &) = default;
++  ByteStream & operator=(const ByteStream &) = default;
+ public:
+   /** Constructs an empty Memory ByteStream.  The buffer itself is organized
+       as an array of 4096 byte blocks.  The buffer is initially empty. You
