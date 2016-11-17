@@ -4,7 +4,6 @@ from EmergeConfig import *
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
-        self.svnTargets['master'] = "[git]kde:okular|frameworks"
         self.shortDescription = "KDE document viewer"
 
     def setDependencies( self ):
