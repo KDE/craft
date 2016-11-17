@@ -119,6 +119,9 @@ class CMakeBuildSystem(BuildSystemBase):
                 options += " " + self.subinfo.options.configure.testDefine + " "
             else:
                 options += " -DKDE4_BUILD_TESTS=1 "
+        else:
+            options += " -DBUILD_TESTING=OFF "
+
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticDefine:
@@ -141,6 +144,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
+        EmergeDebug.debug(command)
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
