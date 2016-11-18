@@ -113,13 +113,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DBUNDLE_INSTALL_DIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
                 self.mergeDestinationDir().replace( "\\", "/" )
 
-        if self.buildTests:
-            # @todo KDE4_BUILD_TESTS is only required for kde packages, how to detect this case
-            if not self.subinfo.options.configure.testDefine == None:
-                options += " " + self.subinfo.options.configure.testDefine + " "
-            else:
-                options += " -DKDE4_BUILD_TESTS=1 "
-        else:
+        if not self.buildTests:
             options += " -DBUILD_TESTING=OFF "
 
         if self.subinfo.options.buildTools:
