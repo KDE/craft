@@ -350,7 +350,7 @@ def main( ):
                          dest = "stayQuiet",
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
-                         default = emergeSettings.getboolean( "Compile", "BuildTests", False ) )
+                         default = emergeSettings.getboolean( "Compile", "BuildTests", True ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument("-cc", "--create-cache", action="store_true", dest="createCache",
                         default=emergeSettings.getboolean("ContinuousIntegration", "CreateCache", "False"))

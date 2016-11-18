@@ -93,7 +93,7 @@ class EmergeBase(object):
 
     @property
     def buildTests(self):
-        return emergeSettings.getboolean("Compile", "BuildTests", False )
+        return emergeSettings.getboolean("Compile", "BuildTests")
 
 
     def __adjustPath(self, directory):
