@@ -47,7 +47,7 @@ def destroyEmergeRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not path in [ EmergeStandardDirs.downloadDir(), EmergeStandardDirs.emergeRepositoryDir(),
+        elif not path in [ EmergeStandardDirs.downloadDir(), os.path.join(EmergeStandardDirs.emergeBin(), ".."),
                            os.path.join(EmergeStandardDirs.emergeRoot(), "python") ]:
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
