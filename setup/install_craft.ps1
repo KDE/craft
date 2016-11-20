@@ -110,7 +110,7 @@ if (!$Script:python) {
     TestAndFetchPython
 }
 
-(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/CraftBootstrap.py", "$Script:installRoot\download\CraftBootstrap.py")
+(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
 Write-Host "$Script:python" "$Script:installRoot\download\CraftBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
