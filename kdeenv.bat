@@ -15,7 +15,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 :nextarg
 if "%1" == "" goto :endargs
-set EMERGE_ARGS=%1
+set CRAFT_ARGS=%1
 
 shift
 goto :endargs
@@ -45,9 +45,9 @@ FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\CraftSetupHelper.py --setup -
 set Z=
 
 
-if "%EMERGE_ARGS%" == "" (
+if "%CRAFT_ARGS%" == "" (
     %comspec% /e:on /K "cd /D %KDEROOT%"
     goto :eof
 )
-%comspec% /e:on /C %EMERGE_ARGS% %1 %2 %3 %4 %5 %6 %7 %8 %9
+%comspec% /e:on /C %CRAFT_ARGS% %1 %2 %3 %4 %5 %6 %7 %8 %9
 

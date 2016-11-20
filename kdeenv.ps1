@@ -14,7 +14,7 @@ cls
 
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
-$EMERGE_ARGUMENTS = $args
+$CRAFT_ARGUMENTS = $args
 
 &{
 [version]$minPythonVersion = 3.5
@@ -23,7 +23,7 @@ function findPython([string] $name)
 {
     $py = (Get-Command $name -ErrorAction SilentlyContinue)
     if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
-        $env:EMERGE_PYTHON=$py.Source
+        $env:CRAFT_PYTHON=$py.Source
     }
 }
 
@@ -58,9 +58,9 @@ else
     Write-Error("$env:CraftRoot\..\etc\kdesettings.ini Does not exist")
     break
 }
-if( $EMERGE_ARGUMENTS[0] -eq "--get")
+if( $CRAFT_ARGUMENTS[0] -eq "--get")
 {
-    Write-Host($settings[$EMERGE_ARGUMENTS[1]][$EMERGE_ARGUMENTS[2]])
+    Write-Host($settings[$CRAFT_ARGUMENTS[1]][$CRAFT_ARGUMENTS[2]])
     break
 }
 
@@ -71,13 +71,13 @@ function prependPATH([string] $path)
 }
 
 
-if( -Not $env:EMERGE_PYTHON)
+if( -Not $env:CRAFT_PYTHON)
 {
     prependPATH $settings["Paths"]["Python"]
-    $env:EMERGE_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
+    $env:CRAFT_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
 }
 
-(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup" "--mode" "powershell") |
+(& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup" "--mode" "powershell") |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=")
@@ -91,7 +91,7 @@ cd "$env:KDEROOT"
 
 
 function Global:craft() {
-    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
+    return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
 

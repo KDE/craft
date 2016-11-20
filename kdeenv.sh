@@ -14,9 +14,9 @@ if [[ ! -d "$craftRoot" ]]; then
     craftRoot=$(dirname $(realpath "$craftRoot"))
 fi
 
-EMERGE_ENV=($(python3.5 "$craftRoot/bin/CraftSetupHelper.py" --setup --mode bash))
+CRAFT_ENV=($(python3.5 "$craftRoot/bin/CraftSetupHelper.py" --setup --mode bash))
 
-for line in "${EMERGE_ENV[@]}"; do
+for line in "${CRAFT_ENV[@]}"; do
   if [[ "$line"  =~ "=" ]];then
     export $line
   fi
