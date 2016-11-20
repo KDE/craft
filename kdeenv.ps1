@@ -21,6 +21,7 @@ $EMERGE_ARGUMENTS = $args
 
 function findPython([string] $name)
 {
+    return
     $py = (Get-Command $name -ErrorAction SilentlyContinue)
     if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
         $env:EMERGE_PYTHON=$py.Source
@@ -74,8 +75,7 @@ function prependPATH([string] $path)
 if( -Not $env:EMERGE_PYTHON)
 {
     prependPATH $settings["Paths"]["Python"]
-    findPython("python")
-    findPython("python3")
+    $env:EMERGE_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
 }
 
 (& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup" "--mode" "powershell") |
