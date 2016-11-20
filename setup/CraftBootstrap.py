@@ -8,10 +8,10 @@ import urllib.parse
 import urllib.request
 import shutil
 
-class EmergeBootstrap(object):
+class CraftBootstrap(object):
     def __init__(self, kdeRoot):
         self.kdeRoot = kdeRoot
-        with open(os.path.join(kdeRoot, "emerge-master", "kdesettings.ini"),  "rt+") as ini:
+        with open(os.path.join(kdeRoot, "craft-master", "kdesettings.ini"),  "rt+") as ini:
             self.settings = ini.read()
 
     @staticmethod
@@ -80,8 +80,8 @@ class EmergeBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    print("Execute: powershell %s %s" % (os.path.join(args.root, "emerge-master", "kdeenv.ps1"), command))
-    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "emerge-master", "kdeenv.ps1"), command))
+    print("Execute: powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
+    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
 
 
 def setUp(args):
@@ -90,12 +90,12 @@ def setUp(args):
     if args.architecture:
         architecture = args.architecture
     else:
-        architecture = EmergeBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
+        architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
 
     if args.compiler:
         compiler = args.compiler
     else:
-        compiler = EmergeBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
+        compiler = CraftBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
                                                "Mingw-w64")
     if compiler == "Mingw-w64":
         compiler = "mingw4"
@@ -104,15 +104,15 @@ def setUp(args):
 
     if not args.noShortPath:
         print("Windows has problems with too long commands.")
-        print("For that reason we mount emerge directories to drive letters.")
+        print("For that reason we mount Craft directories to drive letters.")
         print("It just maps the folder to a drive letter you will assign.")
-        shortPath = EmergeBootstrap.promptShortPath()
+        shortPath = CraftBootstrap.promptShortPath()
 
-    EmergeBootstrap.downloadFile("https://github.com/KDE/emerge/archive/master.zip", os.path.join(args.root, "download"),
-                                 "emerge.zip")
-    shutil.unpack_archive(os.path.join(args.root, "download", "emerge.zip"), args.root)
+    CraftBootstrap.downloadFile("https://github.com/KDE/craft/archive/master.zip", os.path.join(args.root, "download"),
+                                 "craft.zip")
+    shutil.unpack_archive(os.path.join(args.root, "download", "Craft.zip"), args.root)
 
-    boot = EmergeBootstrap(args.root)
+    boot = CraftBootstrap(args.root)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
@@ -129,11 +129,11 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "emerge %s git" % ("-vvv" if args.verbose else ""))
-    run(args, "git clone kde:emerge %s" % os.path.join(args.root, "emerge"))
-    shutil.rmtree(os.path.join(args.root, "emerge-master"))
+    run(args, "craft %s git" % ("-vvv" if args.verbose else ""))
+    run(args, "git clone kde:craft %s" % os.path.join(args.root, "craft"))
+    shutil.rmtree(os.path.join(args.root, "craft-master"))
     print("Setup complete")
-    print("Please run %s/emerge/kdeenv.ps1" % args.root)
+    print("Please run %s/craft/kdeenv.ps1" % args.root)
 
 
 def writeSettings(args):

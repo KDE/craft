@@ -83,11 +83,11 @@ function TestAndFetchPython()
 }
 ####################################################
 # Start
-Write-Host "Start to boostrap emerge."
+Write-Host "Start to boostrap Craft."
 if (!$Script:installRoot) {
-    Write-Host "Where to you want us to install emerge"
+    Write-Host "Where to you want us to install Craft"
     $Script:installRoot="C:\KDE\"
-    $Script:installRoot = if (($result = Read-Host "Emerge install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
+    $Script:installRoot = if (($result = Read-Host "Craft install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
 }
 
 
@@ -110,9 +110,9 @@ if (!$Script:python) {
     TestAndFetchPython
 }
 
-(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/EmergeBootstrap.py", "$Script:installRoot\download\EmergeBootstrap.py")
+(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/emerge/master/setup/CraftBootstrap.py", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
-Write-Host "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
-& "$Script:python" "$Script:installRoot\download\EmergeBootstrap.py" --root "$Script:installRoot" $Script:extraArgs
+Write-Host "$Script:python" "$Script:installRoot\download\CraftBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
+& "$Script:python" "$Script:installRoot\download\CraftBootstrap.py" --root "$Script:installRoot" $Script:extraArgs
 cd $Script:installRoot

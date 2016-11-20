@@ -91,8 +91,8 @@ cd "$env:KDEROOT"
 }
 
 
-function Global:emerge() {
-    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "emerge.py")) $args
+function Global:craft() {
+    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "craft.py")) $args
 }
 
 

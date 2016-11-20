@@ -221,7 +221,7 @@ class SetupHelper( object ):
                 self.prependPath( "PATH", os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
 
         if self.args.mode in ["bat", "bash"]:  #don't put emerge.bat in path when using powershell
-            self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "emerge", "bin" ) )
+            self.prependPath( "PATH", EmergeStandardDirs.emergeBin( ) )
         self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
 
 
