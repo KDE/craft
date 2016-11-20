@@ -327,8 +327,8 @@ class ActionHandler:
 
 def main( ):
     parser = argparse.ArgumentParser( prog = "craft",
-                                      description = "Craft is a tool for building KDE-related software under Windows. craft automates it, looks for the dependencies and fetches them automatically.\
-                                      Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
+                                      description = "Craft is an open source meta build system and package manager."
+                                                    "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
                                       epilog = """More information see the README or http://windows.kde.org/.
     Send feedback to <kde-windows@kde.org>.""" )
 
