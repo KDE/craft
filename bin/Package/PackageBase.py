@@ -1,13 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import EmergeDebug
-import EmergeHash
-from EmergeBase import *
+import CraftDebug
+import CraftHash
+from CraftBase import *
 from InstallDB import *
 from compiler import *
 
-class PackageBase (EmergeBase):
+class PackageBase (CraftBase):
     """
      provides a generic interface for packages and implements the basic stuff for all
      packages
@@ -16,7 +16,7 @@ class PackageBase (EmergeBase):
     # uses the following instance variables
     # todo: place in related ...Base
 
-    #rootdir    -> EmergeBase
+    #rootdir    -> CraftBase
     #package    -> PackageBase
     #force      -> PackageBase
     #category   -> PackageBase
@@ -25,8 +25,8 @@ class PackageBase (EmergeBase):
     #imagedir   -> PackageBase
 
     def __init__(self):
-        EmergeDebug.debug("PackageBase.__init__ called", 2)
-        EmergeBase.__init__(self)
+        CraftDebug.debug("PackageBase.__init__ called", 2)
+        CraftBase.__init__(self)
 
     def _installedDBPrefix(self, buildType=None):
         postfix = ''
@@ -53,23 +53,23 @@ class PackageBase (EmergeBase):
 
 
 
-        EmergeDebug.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
+        CraftDebug.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
 
         # run post-install scripts
-        if not emergeSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
+        if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
-                    EmergeDebug.debug("run post install script '%s'" % script, 2)
+                    CraftDebug.debug("run post install script '%s'" % script, 2)
                     cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
-                        EmergeDebug.warning("%s failed!" % cmd)
+                        CraftDebug.warning("%s failed!" % cmd)
                 else:
-                    EmergeDebug.debug("post install script '%s' not found" % script, 2)
+                    CraftDebug.debug("post install script '%s' not found" % script, 2)
         else:
-            EmergeDebug.debug("running of post install scripts disabled!")
+            CraftDebug.debug("running of post install scripts disabled!")
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -91,13 +91,13 @@ class PackageBase (EmergeBase):
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        EmergeDebug.debug("Packagebase unmerge called", 2)
+        CraftDebug.debug("Packagebase unmerge called", 2)
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the
         ## package definition, which fails if this is changed
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
-        EmergeDebug.debug("unmerge package from %s" % self.mergeDestinationDir(), 2)
+        CraftDebug.debug("unmerge package from %s" % self.mergeDestinationDir(), 2)
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
@@ -123,26 +123,26 @@ class PackageBase (EmergeBase):
             installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
 
         # run post-uninstall scripts
-        if not emergeSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
+        if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-uninstall-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
-                    EmergeDebug.debug("run post uninstall script '%s'" % script, 2)
+                    CraftDebug.debug("run post uninstall script '%s'" % script, 2)
                     cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
-                        EmergeDebug.warning("%s failed!" % cmd)
+                        CraftDebug.warning("%s failed!" % cmd)
                 else:
-                    EmergeDebug.debug("post uninstall script '%s' not found" % script, 2)
+                    CraftDebug.debug("post uninstall script '%s' not found" % script, 2)
         else:
-            EmergeDebug.debug("running of post uninstall scripts disabled!")
+            CraftDebug.debug("running of post uninstall scripts disabled!")
 
         return True
 
     def cleanImage( self ) -> bool:
         """cleanup before install to imagedir"""
         if ( os.path.exists( self.imageDir() ) ):
-            EmergeDebug.debug("cleaning image dir: %s" % self.imageDir(), 1)
+            CraftDebug.debug("cleaning image dir: %s" % self.imageDir(), 1)
             utils.cleanDirectory( self.imageDir() )
             os.rmdir(self.imageDir())
         return True
@@ -151,7 +151,7 @@ class PackageBase (EmergeBase):
         """cleanup currently used build dir"""
         if os.path.exists( self.buildDir() ):
             utils.cleanDirectory( self.buildDir() )
-            EmergeDebug.debug("cleaning build dir: %s" % self.buildDir(), 1)
+            CraftDebug.debug("cleaning build dir: %s" % self.buildDir(), 1)
 
         return True
 
@@ -162,13 +162,13 @@ class PackageBase (EmergeBase):
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or not isMinGW():
-            EmergeDebug.debug("Skiping stipping of " + fileName, 2)
+            CraftDebug.debug("Skiping stipping of " + fileName, 2)
             return True
         basepath = os.path.join( self.installDir() )
         filepath = os.path.join( basepath, "bin",  fileName )
 
         cmd = "strip -s " + filepath
-        EmergeDebug.debug(cmd, 2)
+        CraftDebug.debug(cmd, 2)
         os.system( cmd )
         return True
 
@@ -196,7 +196,7 @@ class PackageBase (EmergeBase):
         else:
             command = cmd
             options = None
-        # \todo options are not passed through by emerge.py fix it
+        # \todo options are not passed through by craft.py fix it
         return [command, options]
 
     def execute( self, cmd=None ):
@@ -204,7 +204,7 @@ class PackageBase (EmergeBase):
         this will be executed from the package if the package is started on its own
         it shouldn't be called if the package is imported as a python module"""
 
-        EmergeDebug.debug("PackageBase.execute called. args: %s" % sys.argv, 2)
+        CraftDebug.debug("PackageBase.execute called. args: %s" % sys.argv, 2)
         command, _ = self.getAction(cmd)
 
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
@@ -219,12 +219,12 @@ class PackageBase (EmergeBase):
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
-        EmergeDebug.debug("Trying to restor %s from cache." % archiveName)
+        CraftDebug.debug("Trying to restor %s from cache." % archiveName)
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
             if not (utils.getFile("%s/%s" % (self.cacheRepositoryUrl(), archiveName), downloadFolder) and \
                     utils.getFile("%s/%s.sha256" % (self.cacheRepositoryUrl(), archiveName), downloadFolder)):
                  return False
-        return EmergeHash.checkFilesDigests(downloadFolder, [archiveName], digestAlgorithm=EmergeHash.HashAlgorithm.SHA256) and\
+        return CraftHash.checkFilesDigests(downloadFolder, [archiveName], digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and\
                self.cleanImage()\
                and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
                and self.qmerge()
@@ -260,6 +260,6 @@ class PackageBase (EmergeBase):
                 raise portage.PortageException( str( e ), self.category, self.package, e )
 
         else:
-            ok = EmergeDebug.error( "command %s not understood" % command )
+            ok = CraftDebug.error( "command %s not understood" % command )
 
         return ok

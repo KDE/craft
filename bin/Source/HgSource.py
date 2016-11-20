@@ -2,13 +2,13 @@
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
 # mercurial support based on the git support
-import EmergeDebug
+import CraftDebug
 from Source.VersionSystemSourceBase import *
 
 class HgSource ( VersionSystemSourceBase ):
     """mercurial support"""
     def __init__( self, subinfo=None ):
-        EmergeDebug.trace('HgSource __init__', 2)
+        CraftDebug.trace('HgSource __init__', 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -17,7 +17,7 @@ class HgSource ( VersionSystemSourceBase ):
         self.enableHg = os.path.exists( self.hgExecutable )
         # add other locations
         if not self.enableHg:
-            print("could not find hg.exe, you should run emerge mercurial")
+            print("could not find hg.exe, you should run craft mercurial")
         # guard spaces in path
         self.hgExecutable = "\"%s\"" % self.hgExecutable
 
@@ -26,7 +26,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def fetch( self, repopath=None ):
         """try to clone or update the repository"""
-        EmergeDebug.trace("HgSource.fetch called", 2)
+        CraftDebug.trace("HgSource.fetch called", 2)
 
         # get the path where the repositories should be stored to
         if repopath == None:
@@ -57,12 +57,12 @@ class HgSource ( VersionSystemSourceBase ):
                 os.chdir( checkoutDir )
                 ret = self.system( "%s update %s" % ( self.hgExecutable, repoBranch ) ) # TODO: check return code for success
         else:
-            EmergeDebug.debug("skipping hg fetch (--offline)")
+            CraftDebug.debug("skipping hg fetch (--offline)")
         return ret
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a mercurial repository checkout"""
-        EmergeDebug.trace("HgSource.applyPatches called", 2)
+        CraftDebug.trace("HgSource.applyPatches called", 2)
         if fileName and self.enableHg:
             patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
@@ -71,7 +71,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        EmergeDebug.trace("HgSource.createPatch called", 2)
+        CraftDebug.trace("HgSource.createPatch called", 2)
         ret = False
         if self.enableHg:
             os.chdir( self.sourceDir() )
@@ -81,12 +81,12 @@ class HgSource ( VersionSystemSourceBase ):
 
     def sourceVersion( self ):
         """ return the revision of the repository """
-        EmergeDebug.trace("HgSource.sourceVersion called", 2)
+        CraftDebug.trace("HgSource.sourceVersion called", 2)
 
         if self.enableHg:
 
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-            with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ), "wb+" ) as tempfile:
+            with open( os.path.join( self.checkoutDir().replace('/', '\\'), ".crafthgtip.tmp" ), "wb+" ) as tempfile:
 
                 # run the command
                 utils.system( "%s tip" % self.hgExecutable, stdout=tempfile )
@@ -96,6 +96,6 @@ class HgSource ( VersionSystemSourceBase ):
                 # read the temporary file and grab the first line
                 revision = tempfile.readline().replace("changeset:", "").strip()
 
-            os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".emergehgtip.tmp" ) )
+            os.remove( os.path.join( self.checkoutDir().replace('/', '\\'), ".crafthgtip.tmp" ) )
         # always return True to not break something serious
         return revision

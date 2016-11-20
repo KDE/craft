@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import tempfile
 
-import EmergeDebug
+import CraftDebug
 import info
 import utils
 
@@ -38,7 +38,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.qmerge(self):
             return False
         gitbash = os.path.join(self.rootdir, "dev-utils", "git", "git-bash.exe")
-        utils.system( "%s --no-needs-console --hide --no-cd --command=post-install.bat" % gitbash, cwd = os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "git"))
+        utils.system( "%s --no-needs-console --hide --no-cd --command=post-install.bat" % gitbash, cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
@@ -47,7 +47,7 @@ class Package(BinaryPackageBase):
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:
                 return True
-        EmergeDebug.debug("adding kde related settings to global git config file", 1)
+        CraftDebug.debug("adding kde related settings to global git config file", 1)
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
         utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
         utils.system( "%s config --global core.autocrlf false" % git)

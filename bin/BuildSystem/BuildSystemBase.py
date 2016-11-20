@@ -3,32 +3,32 @@
 #
 
 """ \package BuildSystemBase"""
-import EmergeDebug
-from EmergeBase import *
+import CraftDebug
+from CraftBase import *
 import compiler
 
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 
 
-class BuildSystemBase(EmergeBase):
+class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
     debug = True
 
     def __init__(self, typeName=""):
         """constructor"""
-        EmergeBase.__init__(self)
+        CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = emergeSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
-        self.supportsClang = emergeSettings.getboolean("Compile","UseClang", False )
+        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
+        self.supportsClang = craftSettings.getboolean("Compile","UseClang", False )
         self.buildSystemType = typeName
 
 
     def _getmakeProgram(self):
-        if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
+        if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False):
             return "ninja"
-        makeProgram = emergeSettings.get("Compile", "MakeProgram", "" )
+        makeProgram = craftSettings.get("Compile", "MakeProgram", "" )
         if makeProgram != "" and self.subinfo.options.make.supportsMultijob:
-            EmergeDebug.debug("set custom make program: %s" % makeProgram, 1)
+            CraftDebug.debug("set custom make program: %s" % makeProgram, 1)
             return makeProgram
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
@@ -40,7 +40,7 @@ class BuildSystemBase(EmergeBase):
             elif compiler.isMinGW():
                 return "mingw32-make"
             else:
-                EmergeDebug.die("unknown %s compiler" % self.compiler())
+                CraftDebug.die("unknown %s compiler" % self.compiler())
         elif OsUtils.isUnix():
             return "make"
     makeProgramm = property(_getmakeProgram)
@@ -82,18 +82,18 @@ class BuildSystemBase(EmergeBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if maybeVerbose and EmergeDebug.verbose() > 1:
-            if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False ):
+        if maybeVerbose and CraftDebug.verbose() > 1:
+            if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False ):
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"
         return defines
 
-    def dumpEmergeDependencies( self ):
-        """dump emerge package dependencies"""
+    def dumpCraftDependencies( self ):
+        """dump craft package dependencies"""
         output = dependencies.dumpDependencies( self.package )
         outDir = self.buildDir()
-        outFile = os.path.join( outDir, self.package + '-emerge.dot' )
+        outFile = os.path.join( outDir, self.package + '-craft.dot' )
         if not os.path.exists( os.path.dirname( outFile ) ):
             os.makedirs( os.path.dirname( outFile ) )
         with open( outFile, "w" ) as f:
@@ -108,7 +108,7 @@ class BuildSystemBase(EmergeBase):
 
     def dumpDependencies(self):
         """dump package dependencies """
-        return self.dumpEmergeDependencies()
+        return self.dumpCraftDependencies()
 
     def configure(self):
         return True

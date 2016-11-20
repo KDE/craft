@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# central instance for managing settings regarding emerge
+# central instance for managing settings regarding craft
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
 
@@ -10,9 +10,9 @@ import os
 import platform
 import re
 
-emergeSettings = None
+craftSettings = None
 
-class EmergeStandardDirs( object ):
+class CraftStandardDirs( object ):
     __pathCache = dict( )
     __noShortPathCache = dict( )
     _allowShortpaths = True
@@ -20,85 +20,85 @@ class EmergeStandardDirs( object ):
 
     @staticmethod
     def _deSubstPath(path):
-        """desubstitude emerge short path"""
+        """desubstitude craft short path"""
 
         if platform.system() != 'Windows':
             return path
 
-        if emergeSettings and not emergeSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
+        if craftSettings and not craftSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
             return path
         drive , tail = os.path.splitdrive(path)
         drive = drive.upper()
-        if EmergeStandardDirs._SUBST == None:
+        if CraftStandardDirs._SUBST == None:
             tmp = subprocess.getoutput("subst").split("\n")
-            EmergeStandardDirs._SUBST = dict()
+            CraftStandardDirs._SUBST = dict()
             for s in tmp:
                 if s != "":
                     key , val = s.split("\\: => ")
-                    EmergeStandardDirs._SUBST[key] = val
-        if drive in list(EmergeStandardDirs._SUBST.keys()):
-            deSubst = EmergeStandardDirs._SUBST[drive] + tail
+                    CraftStandardDirs._SUBST[key] = val
+        if drive in list(CraftStandardDirs._SUBST.keys()):
+            deSubst = CraftStandardDirs._SUBST[drive] + tail
             return deSubst
         return path
 
     @staticmethod
     def _pathCache( ):
-        if EmergeStandardDirs._allowShortpaths:
-            return EmergeStandardDirs.__pathCache
+        if CraftStandardDirs._allowShortpaths:
+            return CraftStandardDirs.__pathCache
         else:
-            return EmergeStandardDirs.__noShortPathCache
+            return CraftStandardDirs.__noShortPathCache
 
     @staticmethod
     def allowShortpaths( allowd ):
-        old = EmergeStandardDirs._allowShortpaths
-        EmergeStandardDirs._allowShortpaths = allowd
+        old = CraftStandardDirs._allowShortpaths
+        CraftStandardDirs._allowShortpaths = allowd
         return old
 
     @staticmethod
     def isShortPathEnabled():
-        return EmergeStandardDirs._allowShortpaths and emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
+        return CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
 
     @staticmethod
     def downloadDir( ):
         """ location of directory where fetched files are  stored """
-        if not "DOWNLOADDIR" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) in emergeSettings:
-                EmergeStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = EmergeStandardDirs.nomalizePath(
-                    emergeSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
+        if not "DOWNLOADDIR" in CraftStandardDirs._pathCache( ):
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) in craftSettings:
+                CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = CraftStandardDirs.nomalizePath(
+                    craftSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
             else:
-                EmergeStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = emergeSettings.get( "Paths", "DOWNLOADDIR",
+                CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = craftSettings.get( "Paths", "DOWNLOADDIR",
                                                                                         os.path.join(
-                                                                                            EmergeStandardDirs.emergeRoot( ),
+                                                                                            CraftStandardDirs.craftRoot( ),
                                                                                             "download" ) )
-        return EmergeStandardDirs._pathCache( )[ "DOWNLOADDIR" ]
+        return CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ]
 
     @staticmethod
     def svnDir( ):
-        if not "SVNDIR" in EmergeStandardDirs._pathCache( ):
-            EmergeStandardDirs._pathCache( )[ "SVNDIR" ] = emergeSettings.get( "Paths", "KDESVNDIR",
+        if not "SVNDIR" in CraftStandardDirs._pathCache( ):
+            CraftStandardDirs._pathCache( )[ "SVNDIR" ] = craftSettings.get( "Paths", "KDESVNDIR",
                                                                                    os.path.join(
-                                                                                   EmergeStandardDirs.downloadDir( ),
+                                                                                   CraftStandardDirs.downloadDir( ),
                                                                                    "svn" ) )
-        return EmergeStandardDirs._pathCache( )[ "SVNDIR" ]
+        return CraftStandardDirs._pathCache( )[ "SVNDIR" ]
 
     @staticmethod
     def gitDir( ):
-        if not "GITDIR" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_GIT_DRIVE" ) in emergeSettings:
-                EmergeStandardDirs._pathCache( )[ "GITDIR" ] = EmergeStandardDirs.nomalizePath(
-                    emergeSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
+        if not "GITDIR" in CraftStandardDirs._pathCache( ):
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_GIT_DRIVE" ) in craftSettings:
+                CraftStandardDirs._pathCache( )[ "GITDIR" ] = CraftStandardDirs.nomalizePath(
+                    craftSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
             else:
-                EmergeStandardDirs._pathCache( )[ "GITDIR" ] = emergeSettings.get( "Paths", "KDEGITDIR",
+                CraftStandardDirs._pathCache( )[ "GITDIR" ] = craftSettings.get( "Paths", "KDEGITDIR",
                                                                                    os.path.join(
-                                                                                       EmergeStandardDirs.downloadDir( ),
+                                                                                       CraftStandardDirs.downloadDir( ),
                                                                                        "git" ) )
-        return EmergeStandardDirs._pathCache( )[ "GITDIR" ]
+        return CraftStandardDirs._pathCache( )[ "GITDIR" ]
 
     @staticmethod
     def tmpDir():
-        if not "TMPDIR" in EmergeStandardDirs._pathCache( ):
-            EmergeStandardDirs._pathCache( )[ "TMPDIR" ] = emergeSettings.get( "Paths", "TMPDIR", os.path.join( EmergeStandardDirs.emergeRoot(), "tmp"))
-        return EmergeStandardDirs._pathCache( )[ "TMPDIR" ]
+        if not "TMPDIR" in CraftStandardDirs._pathCache( ):
+            CraftStandardDirs._pathCache( )[ "TMPDIR" ] = craftSettings.get( "Paths", "TMPDIR", os.path.join( CraftStandardDirs.craftRoot(), "tmp"))
+        return CraftStandardDirs._pathCache( )[ "TMPDIR" ]
 
 
     @staticmethod
@@ -109,35 +109,35 @@ class EmergeStandardDirs( object ):
 
 
     @staticmethod
-    def emergeRoot( ):
-        if not "EMERGEROOT" in EmergeStandardDirs._pathCache( ):
-            if EmergeStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_ROOT_DRIVE" ) in emergeSettings:
-                EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = EmergeStandardDirs.nomalizePath(
-                    emergeSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
+    def craftRoot( ):
+        if not "EMERGEROOT" in CraftStandardDirs._pathCache( ):
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_ROOT_DRIVE" ) in craftSettings:
+                CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = CraftStandardDirs.nomalizePath(
+                    craftSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
             else:
-                EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
-                    os.path.join( os.path.dirname( EmergeStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
-        return EmergeStandardDirs._pathCache( )[ "EMERGEROOT" ]
+                CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
+                    os.path.join( os.path.dirname( CraftStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
+        return CraftStandardDirs._pathCache( )[ "EMERGEROOT" ]
 
     @staticmethod
     def etcDir( ):
-        return os.path.join( EmergeStandardDirs.emergeRoot( ), "etc" )
+        return os.path.join( CraftStandardDirs.craftRoot( ), "etc" )
 
     @staticmethod
-    def emergeBin():
-        return os.path.join(EmergeStandardDirs.emergeRoot(), os.path.dirname(__file__))
+    def craftBin():
+        return os.path.join(CraftStandardDirs.craftRoot(), os.path.dirname(__file__))
 
     @staticmethod
-    def emergeRepositoryDir( ):
-        return os.path.join(EmergeStandardDirs.emergeBin(), "..", "portage" )
+    def craftRepositoryDir( ):
+        return os.path.join(CraftStandardDirs.craftBin(), "..", "portage" )
 
     @staticmethod
     def etcPortageDir( ):
         """the etc directory for portage"""
-        return os.path.join( EmergeStandardDirs.etcDir( ), "portage" )
+        return os.path.join( CraftStandardDirs.etcDir( ), "portage" )
 
 
-class EmergeConfig( object ):
+class CraftConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
 
     def __init__( self, iniPath=None ):
@@ -146,7 +146,7 @@ class EmergeConfig( object ):
             self.iniPath = iniPath
         else:
             with TemporaryUseShortpath(False):
-                self.iniPath = os.path.join( EmergeStandardDirs.etcDir( ), "kdesettings.ini" )
+                self.iniPath = os.path.join( CraftStandardDirs.etcDir( ), "kdesettings.ini" )
         self._alias = dict( )
         self._readSettings( )
 
@@ -164,8 +164,8 @@ class EmergeConfig( object ):
 
     def _setAliasesV1(self):
         self.setDefault( "General", "DUMP_SETTINGS", "False" )
-        self.addAlias( "EmergeDebug", "Verbose", "General", "EMERGE_VERBOSE" )
-        self.addAlias( "EmergeDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
+        self.addAlias( "CraftDebug", "Verbose", "General", "EMERGE_VERBOSE" )
+        self.addAlias( "CraftDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
         self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
         self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
         self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
@@ -269,17 +269,17 @@ class EmergeConfig( object ):
 class TemporaryUseShortpath(object):
     """Context handler for temporarily different shortpath setting"""
     def __init__(self, enabled):
-        self.prev = EmergeStandardDirs.allowShortpaths(enabled)
+        self.prev = CraftStandardDirs.allowShortpaths(enabled)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, trback):
-        EmergeStandardDirs.allowShortpaths(self.prev)
+        CraftStandardDirs.allowShortpaths(self.prev)
 
 
 
-emergeSettings = EmergeConfig( )
+craftSettings = CraftConfig( )
 
 
 

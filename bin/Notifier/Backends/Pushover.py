@@ -1,5 +1,5 @@
 from Notifier.NotificationInterface import *
-from EmergeConfig import *
+from CraftConfig import *
 
 class Pushover(NotificationInterface):
     def __init__(self):
@@ -10,8 +10,8 @@ class Pushover(NotificationInterface):
         import http.client
         import urllib
         
-        app_token = emergeSettings.get('General', 'EMERGE_PUSHOVER_APP_TOKEN', 'aJU9PRUb6nGUUM2idyLfXdU8S5q18i')
-        user_key = emergeSettings.get('General', 'EMERGE_PUSHOVER_USER_KEY')
+        app_token = craftSettings.get('General', 'EMERGE_PUSHOVER_APP_TOKEN', 'aJU9PRUb6nGUUM2idyLfXdU8S5q18i')
+        user_key = craftSettings.get('General', 'EMERGE_PUSHOVER_USER_KEY')
         
         if user_key == None:
             return

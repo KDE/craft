@@ -1,5 +1,5 @@
-import EmergeOS.OsUtilsBase
-import EmergeDebug
+import CraftOS.OsUtilsBase
+import CraftDebug
 import ctypes
 import os
 
@@ -9,17 +9,17 @@ class FileAttributes():
     FILE_ATTRIBUTE_READONLY = 0x1
     FILE_ATTRIBUTE_REPARSE_POINT = 0x400
 
-class OsUtils(EmergeOS.OsUtilsBase.OsUtilsBase):
+class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def rm(path, force=False):
-        EmergeDebug.debug("deleting file %s" % path, 3)
+        CraftDebug.debug("deleting file %s" % path, 3)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         return ctypes.windll.kernel32.DeleteFileW(path) != 0
 
     @staticmethod
     def rmDir(path, force=False):
-        EmergeDebug.debug("deleting directory %s" % path, 3)
+        CraftDebug.debug("deleting directory %s" % path, 3)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         return ctypes.windll.kernel32.RemoveDirectoryW(path) != 0

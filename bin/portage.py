@@ -6,9 +6,9 @@ from enum import Enum
 import importlib
 from collections import OrderedDict
 
-import EmergeDebug
-from EmergePackageObject import PackageObjectBase
-from EmergeConfig import *
+import CraftDebug
+from CraftPackageObject import PackageObjectBase
+from CraftConfig import *
 import InstallDB
 import utils
 
@@ -78,16 +78,16 @@ class DependencyPackage(PackageObjectBase):
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                EmergeDebug.debug("category: %s, name: %s" % (category, package), 2)
+                CraftDebug.debug("category: %s, name: %s" % (category, package), 2)
                 try:
                     version = PortageInstance.getNewestVersion( category, package )
                 except PortageException as e:
-                    EmergeDebug.warning("%s for %s/%s as a dependency of %s/%s" % (e, e.category, e.package, self.category , self.name))
+                    CraftDebug.warning("%s for %s/%s as a dependency of %s/%s" % (e, e.category, e.package, self.category , self.name))
                     continue
 
                 if not line in self._dependencyList.keys():
                     p = DependencyPackage( category, package, False, self )
-                    EmergeDebug.debug("adding package %s/%s-%s" % (category, package, version), 2)
+                    CraftDebug.debug("adding package %s/%s-%s" % (category, package, version), 2)
                     self._dependencyList[ line ] = p
                     p.__readChildren()
                 else:
@@ -122,16 +122,16 @@ class DependencyPackage(PackageObjectBase):
 
 def buildType():
     """return currently selected build type"""
-    return emergeSettings.get("Compile","BuildType")
+    return craftSettings.get("Compile","BuildType")
 
 def rootDirectories():
     # this function should return all currently set portage directories
-    if ("General", "EMERGE_PORTAGE_ROOT" ) in emergeSettings:
-        rootDirs = emergeSettings.get("General", "EMERGE_PORTAGE_ROOT" ).split( ";" )
+    if ("General", "EMERGE_PORTAGE_ROOT" ) in craftSettings:
+        rootDirs = craftSettings.get("General", "EMERGE_PORTAGE_ROOT" ).split( ";" )
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
-        rootDirs = [ EmergeStandardDirs.emergeRepositoryDir() ]
+        rootDirs = [ CraftStandardDirs.craftRepositoryDir() ]
     return rootDirs
 
 def rootDirForCategory( category ):
@@ -144,7 +144,7 @@ throws exception if not found
     for i in rootDirectories():
         if category and os.path.exists( os.path.join( i, category ) ):
             return i
-    EmergeDebug.die("can't find category %s" % category)
+    CraftDebug.die("can't find category %s" % category)
 
 def rootDirForPackage( category, package ):
     """returns the portage directory where it finds the first occurance of this package
@@ -180,7 +180,7 @@ def getDirname( category, package ):
         else:
             return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
-        EmergeDebug.die("broken category or package %s/%s" % (category, package))
+        CraftDebug.die("broken category or package %s/%s" % (category, package))
 
 def getFilename( category, package ):
     """ return absolute filename for a given category, package  """
@@ -201,8 +201,8 @@ class Portage(object):
         self.portages = {}
         self._CURRENT_MODULE = ()#todo refactor package constructor
         self.ignores = re.compile("a^")
-        if ("Portage", "Ignores") in emergeSettings:
-            self.ignores = Portage.generateIgnoreList(emergeSettings.get("Portage", "Ignores").split(";"))
+        if ("Portage", "Ignores") in craftSettings:
+            self.ignores = Portage.generateIgnoreList(craftSettings.get("Portage", "Ignores").split(";"))
 
     @staticmethod
     def generateIgnoreList(ignores):
@@ -276,11 +276,11 @@ class Portage(object):
 
     def getCategory( self, package ):
         """ returns the category of this package """
-        EmergeDebug.debug("getCategory: %s" % package, 2)
+        CraftDebug.debug("getCategory: %s" % package, 2)
 
         for cat in list(self.categories.keys()):
             if package in self.categories[ cat ]:
-                EmergeDebug.debug("getCategory: found category %s for package %s" % (cat, package), 3)
+                CraftDebug.debug("getCategory: found category %s for package %s" % (cat, package), 3)
                 return cat
         return False
 
@@ -331,12 +331,12 @@ class Portage(object):
         mod = None
         if fileName.endswith(".py") and os.path.isfile(fileName):
             if not fileName in self._packageDict:
-                EmergeDebug.debug("module to import: %s" % fileName, 2)
+                CraftDebug.debug("module to import: %s" % fileName, 2)
                 if not os.path.isfile( fileName ):
                     try:
                         mod = builtins.__import__( fileName )
                     except ImportError as e:
-                        EmergeDebug.warning('import failed for module %s: %s' % (fileName, str(e)))
+                        CraftDebug.warning('import failed for module %s: %s' % (fileName, str(e)))
                         mod =  None
                 else:
                     modulename = os.path.basename( fileName )[:-3].replace('.', '_')
@@ -358,7 +358,7 @@ class Portage(object):
 
     def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
-        EmergeDebug.debug("getDefaultTarget: importing file %s" % getFilename(category, package), 2)
+        CraftDebug.debug("getDefaultTarget: importing file %s" % getFilename(category, package), 2)
         if not ( category and package ):
             return dict()
 
@@ -370,14 +370,14 @@ class Portage(object):
 
     def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
-        EmergeDebug.debug("getAllTargets: importing file %s" % getFilename(category, package), 2)
+        CraftDebug.debug("getAllTargets: importing file %s" % getFilename(category, package), 2)
         if not ( category and package ):
             return dict()
         info = _getSubinfo( category, package )
         if not info is None:
             tagDict = info.svnTargets.copy()
             tagDict.update( info.targets )
-            EmergeDebug.debug(tagDict, 2)
+            CraftDebug.debug(tagDict, 2)
             return tagDict
         else:
             return dict()
@@ -385,12 +385,12 @@ class Portage(object):
     def getAllVCSTargets( self, category, package ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        EmergeDebug.debug("getAllVCSTargets: importing file %s" % getFilename(category, package), 1)
+        CraftDebug.debug("getAllVCSTargets: importing file %s" % getFilename(category, package), 1)
         info = _getSubinfo(  category, package )
         if not info is None:
             tagDict = info.svnTargets
             for key in tagDict:
-                EmergeDebug.debug('%s: %s' % (key, tagDict[key]), 2)
+                CraftDebug.debug('%s: %s' % (key, tagDict[key]), 2)
             return tagDict
         else:
             return dict()
@@ -470,10 +470,10 @@ def getDependencies( category, package, runtimeOnly = False ):
 
     subpackage, package = getSubPackage( category, package )
     if subpackage:
-        EmergeDebug.debug("solving package %s/%s/%s %s" % (category, subpackage, package,
+        CraftDebug.debug("solving package %s/%s/%s %s" % (category, subpackage, package,
                                                            getFilename( category, package )))
     else:
-        EmergeDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
+        CraftDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
 
     deps = []
     info = _getSubinfo(category, package)
@@ -511,7 +511,7 @@ def solveDependencies( category, package, depList, depType = DependencyType.Both
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
-        EmergeDebug.debug("found package in category %s" % category, 2)
+        CraftDebug.debug("found package in category %s" % category, 2)
 
     pac = DependencyPackage( category, package, parent = None )
     depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set(), ignoredPackages = ignoredPackages )
@@ -541,7 +541,7 @@ def _getSubinfo( category, package  ):
 
 
 def readChildren( category, package ):
-    EmergeDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)), 2)
+    CraftDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)), 2)
     subinfo = _getSubinfo( category, package  )
 
     if subinfo is None:
@@ -556,7 +556,7 @@ def readChildren( category, package ):
     return runtimeDependencies, buildDependencies
 
 def isPackageUpdateable( category, package ):
-    EmergeDebug.debug("isPackageUpdateable: importing file %s" % getFilename(category, package), 2)
+    CraftDebug.debug("isPackageUpdateable: importing file %s" % getFilename(category, package), 2)
     subinfo = _getSubinfo( category, package )
     if not subinfo is None:
         if len( subinfo.svnTargets ) == 1 and not subinfo.svnTargets[ list(subinfo.svnTargets.keys())[0] ]:
@@ -610,18 +610,18 @@ def printPackagesForFileSearch(filename):
         print("%s/%s: %s" % (category, packageName, filename))
 
 def getPackagesCategories(packageName, defaultCategory = None):
-    EmergeDebug.trace("getPackagesCategories for package name %s" % packageName)
+    CraftDebug.trace("getPackagesCategories for package name %s" % packageName)
     if defaultCategory is None:
-        defaultCategory = emergeSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
+        defaultCategory = craftSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
 
     packageList, categoryList = [], []
     if len( packageName.split( "/" ) ) == 1:
         if PortageInstance.isCategory( packageName ):
-            EmergeDebug.debug("isCategory=True", 2)
+            CraftDebug.debug("isCategory=True", 2)
             packageList = PortageInstance.getAllPackages( packageName )
             categoryList = [ packageName ] * len(packageList)
         else:
-            EmergeDebug.debug("isCategory=False", 2)
+            CraftDebug.debug("isCategory=False", 2)
             if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
                 # prefer the default category
                 packageList = [ packageName ]
@@ -639,9 +639,9 @@ def getPackagesCategories(packageName, defaultCategory = None):
         if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
-            EmergeDebug.debug("added package %s/%s" % (categoryList[0], pac), 2)
+            CraftDebug.debug("added package %s/%s" % (categoryList[0], pac), 2)
     else:
-        EmergeDebug.error("unknown packageName")
+        CraftDebug.error("unknown packageName")
 
     return packageList, categoryList
 

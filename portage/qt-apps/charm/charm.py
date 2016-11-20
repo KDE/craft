@@ -4,7 +4,7 @@ import os
 import info
 from Package.CMakePackageBase import *
 
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 
 
 class subinfo(info.infoclass):

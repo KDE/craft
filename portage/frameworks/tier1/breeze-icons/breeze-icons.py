@@ -1,4 +1,4 @@
-import EmergeDebug
+import CraftDebug
 import info
 
 

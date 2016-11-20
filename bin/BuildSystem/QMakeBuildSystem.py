@@ -2,11 +2,11 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
-import EmergeDebug
+import CraftDebug
 import utils
 import compiler
 
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 
 from BuildSystem.BuildSystemBase import *
 
@@ -25,7 +25,7 @@ class QMakeBuildSystem(BuildSystemBase):
             elif compiler.isIntel():
                 self.platform = "win32-icc"
             else:
-                EmergeDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
+                CraftDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
         elif OsUtils.isUnix():
             if not OsUtils.isFreeBSD():
                 if compiler.isClang():

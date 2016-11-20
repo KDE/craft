@@ -4,7 +4,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         for v in [ '0.15' ]:
             self.targets[v] = 'http://icon-theme.freedesktop.org/releases/hicolor-icon-theme-' + v + '.tar.xz'
-        self.targetDigests['0.15'] = (['9cc45ac3318c31212ea2d8cb99e64020732393ee7630fa6c1810af5f987033cc'], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigests['0.15'] = (['9cc45ac3318c31212ea2d8cb99e64020732393ee7630fa6c1810af5f987033cc'], CraftHash.HashAlgorithm.SHA256)
         self.shortDescription = "High-color icon theme shell from the FreeDesktop project"
         self.defaultTarget = '0.15'
         

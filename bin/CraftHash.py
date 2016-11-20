@@ -3,7 +3,7 @@ import os
 import hashlib
 import re
 
-import EmergeDebug
+import CraftDebug
 
 
 class HashAlgorithm(Enum):
@@ -58,7 +58,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
         digestList = [digests]
 
     for digests, filename in zip(digestList, filenames):
-        EmergeDebug.debug("checking digest of: %s" % filename, 1)
+        CraftDebug.debug("checking digest of: %s" % filename, 1)
         pathName = os.path.join(downloaddir, filename)
         if digests == None:
             for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
@@ -72,14 +72,14 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                 with open(digestFileName, "rt+") as f:
                     data = f.read()
                 if not re.findall(currentHash, data):
-                    EmergeDebug.error("%s hash for file %s (%s) does not match (%s)" % (
+                    CraftDebug.error("%s hash for file %s (%s) does not match (%s)" % (
                     digestAlgorithm.name, pathName, currentHash, data))
                     return False
                     # digest provided in digests parameter
         else:
             currentHash = digestFile(pathName, digestAlgorithm)
             if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
-                EmergeDebug.error("%s hash for file %s (%s) does not match (%s)" % (
+                CraftDebug.error("%s hash for file %s (%s) does not match (%s)" % (
                 digestAlgorithm.name, pathName, currentHash, digests))
                 return False
     return True
@@ -101,5 +101,5 @@ def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorit
         if not filename == "":
             out += "'%s'," % digestFile(os.path.join(downloaddir, filename), algorithm)
     if not out == "":
-        print("self.targetDigests['%s'] = ([%s], EmergeHash.%s)" % (buildTarget, out[:-1], algorithm))
+        print("self.targetDigests['%s'] = ([%s], CraftHash.%s)" % (buildTarget, out[:-1], algorithm))
 

@@ -7,9 +7,9 @@ import os
 import subprocess
 import re
 
-import EmergeDebug
+import CraftDebug
 import utils
-from EmergeConfig import *
+from CraftConfig import *
 
 
 
@@ -21,7 +21,7 @@ def _getGCCTarget():
     if not _GCCTARGET:
         status, result = subprocess.getstatusoutput("gcc -dumpmachine")
         if status == 0:
-            EmergeDebug.debug("GCC Target Processor:%s" % result, 1)
+            CraftDebug.debug("GCC Target Processor:%s" % result, 1)
             _GCCTARGET = result.strip()
         else:
             #if no mingw is installed return mingw-w32 it is part of base
@@ -32,10 +32,10 @@ def _getGCCTarget():
     return _GCCTARGET
 
 def architecture():
-    return emergeSettings.get("General", "Architecture" )
+    return craftSettings.get("General", "Architecture" )
 
 def isNative():
-    return emergeSettings.getboolean("General", "Native", True)
+    return craftSettings.getboolean("General", "Native", True)
 
 def isX64():
     return architecture() == "x64"
@@ -45,7 +45,7 @@ def isX86():
 
 
 def _compiler():
-    return emergeSettings.get("General","KDECOMPILER")
+    return craftSettings.get("General","KDECOMPILER")
 
 def isGCC():
     return isMinGW() or _compiler().endswith("-gcc")
@@ -63,7 +63,7 @@ def isMSVC():
     return _compiler().startswith("msvc")
 
 def isClang():
-    return emergeSettings.getboolean("Compile","UseClang", False )
+    return craftSettings.getboolean("Compile","UseClang", False )
 
 def isMSVC2005():
     return _compiler() == "msvc2005"
@@ -96,7 +96,7 @@ def getCompilerName():
     elif isGCC():
         return "gcc"
     else:
-        EmergeDebug.die("Unknown Compiler %s" % _compiler())
+        CraftDebug.die("Unknown Compiler %s" % _compiler())
 
 def getSimpleCompilerName():
     if isMinGW():
@@ -114,7 +114,7 @@ def getGCCVersion():
         status, result = subprocess.getstatusoutput("gcc --version")
         if status == 0:
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
-            EmergeDebug.debug("GCC Version:%s" % result, 1)
+            CraftDebug.debug("GCC Version:%s" % result, 1)
             _MINGW_VERSION = result.strip()
         else:
             #if no mingw is installed return 0
@@ -142,7 +142,7 @@ def getShortName():
     elif isMSVC2015():
         return "vc140"
     else:
-        EmergeDebug.die("Unknown Compiler %s" % _compiler())
+        CraftDebug.die("Unknown Compiler %s" % _compiler())
 
 
 if __name__ == '__main__':

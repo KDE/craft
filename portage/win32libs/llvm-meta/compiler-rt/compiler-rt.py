@@ -19,7 +19,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON","").replace("\\","/")
+        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % craftSettings.get("Paths","PYTHON","").replace("\\","/")
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)

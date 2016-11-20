@@ -2,8 +2,8 @@
 # this package contains functions to easily set versions for packages like qt5 or kde
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
-import EmergeDebug
-from EmergeConfig import *
+import CraftDebug
+from CraftConfig import *
 import utils
 
 
@@ -38,14 +38,14 @@ class VersionInfo( object ):
                 iniPath = os.path.abspath( iniPath )
                 if iniPath in VersionInfo._VERSION_INFOS.keys( ):
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    EmergeDebug.debug("Found a version info for %s in cache" % name, 2)
+                    CraftDebug.debug("Found a version info for %s in cache" % name, 2)
                     return VersionInfo._VERSION_INFOS[ iniPath ]
                 elif os.path.exists( iniPath ):
                     config = configparser.ConfigParser( )
                     config.read( iniPath )
                     VersionInfo._VERSION_INFOS[ iniPath ] = config
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    EmergeDebug.debug("Found a version info for %s in %s" % (name, iniPath), 2)
+                    CraftDebug.debug("Found a version info for %s in %s" % (name, iniPath), 2)
                     return config
             VersionInfo._VERSION_INFOS_HINTS[ name ] = None
         return self.__defaulVersions
@@ -67,8 +67,8 @@ class VersionInfo( object ):
 
     def defaultTarget( self ):
         name = self._getVersionInfo( "name" )
-        if ("PortageVersions", name) in emergeSettings:
-            return emergeSettings.get( "PortageVersions", name )
+        if ("PortageVersions", name) in craftSettings:
+            return craftSettings.get( "PortageVersions", name )
         return self._getVersionInfo( "defaulttarget" )
 
 
@@ -81,8 +81,8 @@ class VersionInfo( object ):
             replaces[ "VERSION_MINOR"] = split_ver[1]
             replaces[ "VERSION_PATCH_LEVEL"] = split_ver[2]
 
-        while EmergeConfig.variablePatern.search(text):
-            for match in EmergeConfig.variablePatern.findall( text ):
+        while CraftConfig.variablePatern.search(text):
+            for match in CraftConfig.variablePatern.findall( text ):
                 text = text.replace( match, replaces[ match[ 2:-1 ].upper() ] )
         return text
 

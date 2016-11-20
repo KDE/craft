@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets[ "1.17.1" ] = "http://downloads.sourceforge.net/sourceforge/tumagcc/wget-1.17.1_curl-7.46.0_win32_win64.7z"
         self.targetInstallPath[ "1.17.1" ] = "bin"
-        self.targetDigests['1.17.1'] = (['0974c4576f24d38289b9958cc7fc41a64ef49e916ac7d4c148d741cd4981dac6'], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigests['1.17.1'] = (['0974c4576f24d38289b9958cc7fc41a64ef49e916ac7d4c148d741cd4981dac6'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1.17.1"
 
 from Package.BinaryPackageBase import *

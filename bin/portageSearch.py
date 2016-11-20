@@ -1,6 +1,6 @@
 import re
 
-import EmergeDebug
+import CraftDebug
 import portage
 import utils
 import InstallDB
@@ -30,16 +30,16 @@ def printSearch(search_category, search_package,maxDist = 2):
 
         if match == None:
             if len(similar)>0:
-                print("Emerge was unable to find %s, similar packages are:" % search_package) 
+                print("Craft was unable to find %s, similar packages are:" % search_package) 
                 similar.sort( key = lambda x: x[0])
             else:
-                print("Emerge was unable to find %s" % search_package)
+                print("Craft was unable to find %s" % search_package)
         else:
             print("Package %s found:" % search_package)
             similar = [match]
         
         for levDist,package in similar:
-            EmergeDebug.debug((package, levDist), 1)
+            CraftDebug.debug((package, levDist), 1)
             print(package)
             print("\t Homepage: %s" % package.subinfo.homepage)
             print("\t Description: %s" % package.subinfo.shortDescription)

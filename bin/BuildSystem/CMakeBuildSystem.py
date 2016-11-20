@@ -6,13 +6,13 @@
 
 import os
 
-import EmergeDebug
+import CraftDebug
 import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 import compiler
 import utils
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 
 
 
@@ -25,7 +25,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.supportsNinja and emergeSettings.getboolean("Compile","UseNinja", False):
+        if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False):
             return "Ninja"
         if OsUtils.isWin():
             if compiler.isMSVC2015():
@@ -50,7 +50,7 @@ class CMakeBuildSystem(BuildSystemBase):
         elif OsUtils.isUnix():
             return "Unix Makefiles"
         else:
-            EmergeDebug.die("unknown %s compiler" % self.compiler())
+            CraftDebug.die("unknown %s compiler" % self.compiler())
 
     def __onlyBuildDefines( self, buildOnlyTargets ):
         """This method returns a list of cmake defines to exclude targets from build"""
@@ -104,7 +104,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
 
         if compiler.isGCC() and not compiler.isNative():
-            options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join( EmergeStandardDirs.emergeRoot(), "emerge", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % compiler.architecture())
+            options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join( CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % compiler.architecture())
 
         if OsUtils.isWin():
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
@@ -138,7 +138,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
-        EmergeDebug.info(command)
+        CraftDebug.info(command)
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
@@ -161,7 +161,7 @@ class CMakeBuildSystem(BuildSystemBase):
             elif compiler.isMSVC2015():
                 command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
-                EmergeDebug.die("has to be implemented");
+                CraftDebug.die("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" )
@@ -209,7 +209,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def dumpDependencies( self ):
         self.dumpCMakeDependencies()
-        return self.dumpEmergeDependencies()
+        return self.dumpCraftDependencies()
 
     def dumpCMakeDependencies(self):
         """dump package dependencies as pdf (requires installed dot)"""
@@ -220,12 +220,12 @@ class CMakeBuildSystem(BuildSystemBase):
         outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir):
-            EmergeDebug.debug("could not find source files for generating cmake dependencies")
+            CraftDebug.debug("could not find source files for generating cmake dependencies")
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         a.toPackageList(title, srcDir)
         if not a.toDot(title, srcDir, outFile):
-            EmergeDebug.debug("could not create dot file")
+            CraftDebug.debug("could not create dot file")
             return False
 
         graphviz = GraphViz(self)
@@ -257,7 +257,7 @@ class CMakeBuildSystem(BuildSystemBase):
         so when we want to be able to install imagedir into KDEROOT,
         we have to move things around...
         """
-        EmergeDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
+        CraftDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
         # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
         # rootdir  = e:\foo\thirdroot
         # files are installed to
@@ -275,7 +275,7 @@ class CMakeBuildSystem(BuildSystemBase):
             return
 
         tmp = os.path.join( imagedir, rootpath )
-        EmergeDebug.debug("tmp: %s" % tmp, 1)
+        CraftDebug.debug("tmp: %s" % tmp, 1)
         tmpdir = os.path.join( imagedir, "tMpDiR" )
         if ( not os.path.isdir( tmpdir ) ):
             os.mkdir( tmpdir )

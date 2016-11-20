@@ -1,4 +1,4 @@
-import EmergeDebug
+import CraftDebug
 from BuildSystem.BuildSystemBase import *
 
 class PipBuildSystem(BuildSystemBase):
@@ -17,10 +17,10 @@ class PipBuildSystem(BuildSystemBase):
     def install( self ):
         ok = True
         pythons = []
-        if self.python2 and ("Paths","PYTHON27") in emergeSettings:
-            pythons.append(emergeSettings.get("Paths","PYTHON27"))
+        if self.python2 and ("Paths","PYTHON27") in craftSettings:
+            pythons.append(craftSettings.get("Paths","PYTHON27"))
         if self.python3:
-            pythons.append(emergeSettings.get("Paths","PYTHON"))
+            pythons.append(craftSettings.get("Paths","PYTHON"))
 
         args = ""
         if self.allowExternal:

@@ -1,7 +1,7 @@
 import info
 import utils
 import InstallDB
-from EmergeConfig import EmergeStandardDirs as esd
+from CraftConfig import CraftStandardDirs as esd
 import os
 
 class subinfo(info.infoclass):
@@ -53,8 +53,8 @@ class Package(BinaryPackageBase):
             utils.cleanDirectory(self.imageDir())
         os.makedirs(imageEtcDir)
         # get the current installdb and the kdesettings.ini file
-        utils.copyFile(os.path.join(EmergeStandardDirs.etcPortageDir(), "install.db"), installDBFile, linkOnly=False)
-        utils.copyFile(os.path.join(EmergeStandardDirs.etcDir(), "kdesettings.ini"), settingsFile, linkOnly=False)
+        utils.copyFile(os.path.join(CraftStandardDirs.etcPortageDir(), "install.db"), installDBFile, linkOnly=False)
+        utils.copyFile(os.path.join(CraftStandardDirs.etcDir(), "kdesettings.ini"), settingsFile, linkOnly=False)
         self.resetSettings(settingsFile)
         self.db = InstallDB(installDBFile)
         self.removeCategoryFromDB("gnuwin32")

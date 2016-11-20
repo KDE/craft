@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         versions.sort(key=lambda v: utils.parse_version(v))
         for ver in versions:
             self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
-            self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", EmergeHash.HashAlgorithm.SHA1)
+            self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", CraftHash.HashAlgorithm.SHA1)
             self.targetInstallPath[ver] = os.path.join("dev-utils", "php")
             self.defaultTarget = ver
 
@@ -37,7 +37,7 @@ class Package(BinaryPackageBase):
                         line = "extension=php_curl.dll\n"
                     out.write(line)
         os.makedirs(os.path.join(self.imageDir(),"dev-utils","bin"))
-        utils.createBat(os.path.join(self.imageDir(),"dev-utils","bin","php.bat"), "%s %%*" % os.path.join( EmergeStandardDirs.emergeRoot(), "dev-utils", "php", "php.exe" ))
+        utils.createBat(os.path.join(self.imageDir(),"dev-utils","bin","php.bat"), "%s %%*" % os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "php", "php.exe" ))
         return True
 
 

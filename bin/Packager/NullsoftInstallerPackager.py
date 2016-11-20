@@ -8,8 +8,8 @@ import os
 if os.name == 'nt':
     from winreg import * # pylint: disable=F0401
 
-import EmergeDebug
-import EmergeHash
+import CraftDebug
+import CraftHash
 import utils
 import shutil
 import glob
@@ -24,7 +24,7 @@ class NullsoftInstallerPackager( CollectionPackagerBase ):
 Packager for Nullsoft scriptable install system
 
 This Packager generates a nsis installer (an executable which contains all files)
-from the image directories of emerge. This way you can be sure to have a clean
+from the image directories of craft. This way you can be sure to have a clean
 installer.
 
 In your package, you can add regexp whitelists and blacklists (see example files
@@ -46,7 +46,7 @@ executable:     executable is defined empty by default, but it is used to add a 
 You can add your own defines into self.defines as well.
 
 The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
-if EMERGE_NOCLEAN is given (e.g. because you call emerge --update --package Packagename), the
+if EMERGE_NOCLEAN is given (e.g. because you call craft --update --package Packagename), the
 file collection process is skipped, and only the installer is generated.
 """
     def __init__( self, whitelists=None, blacklists=None, initialized = False):
@@ -79,8 +79,8 @@ file collection process is skipped, and only the installer is generated.
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                EmergeDebug.die("could not find installed nsis package, "
-                           "you can install it using emerge nsis or"
+                CraftDebug.die("could not find installed nsis package, "
+                           "you can install it using craft nsis or"
                            "download and install it from "
                            "http://sourceforge.net/projects/nsis/")
 
@@ -134,8 +134,8 @@ file collection process is skipped, and only the installer is generated.
                 _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
             if not os.path.isfile(_file):
                 _file = None
-                EmergeDebug.new_line()
-                EmergeDebug.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
+                CraftDebug.new_line()
+                CraftDebug.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
     def generateNSISInstaller( self ):
@@ -156,24 +156,24 @@ file collection process is skipped, and only the installer is generated.
         for key in self.defines:
             definestring += " /D%s=\"%s\"" % (key , self.defines[ key ] )
 
-        EmergeDebug.new_line()
-        EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
+        CraftDebug.new_line()
+        CraftDebug.debug("generating installer %s" % self.defines["setupname"])
 
-        verboseString = "/V4" if EmergeDebug.verbose() > 0 else "/V3"
+        verboseString = "/V4" if CraftDebug.verbose() > 0 else "/V3"
 
         if self.isNsisInstalled:
             if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (self.nsisExe, verboseString, definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
-                EmergeDebug.die("Error in makensis execution")
+                CraftDebug.die("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """
         self.isNsisInstalled()
 
-        EmergeDebug.debug("packaging using the NullsoftInstallerPackager")
+        CraftDebug.debug("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
         self.preArchive()
         self.generateNSISInstaller()
-        EmergeHash.createDigestFiles(self.defines["setupname"])
+        CraftHash.createDigestFiles(self.defines["setupname"])
         return True

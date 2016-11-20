@@ -7,17 +7,17 @@ import subprocess
 import argparse
 import collections
 
-from EmergeConfig import *
+from CraftConfig import *
 import compiler
 
 
-# The minimum python version for emerge please edit here
+# The minimum python version for craft please edit here
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 5, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
     print( "Error: Python too old!", file= sys.stderr )
-    print( "Emerge needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file= sys.stderr )
+    print( "Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file= sys.stderr )
     print( "Please install it and adapt your kdesettings.ini", file= sys.stderr )
     exit( 1 )
 
@@ -68,7 +68,7 @@ class SetupHelper( object ):
             default = ""
             if len( self.args.rest ) == 3:
                 default = self.args.rest[ 2 ]
-            print( emergeSettings.get( self.args.rest[ 0 ], self.args.rest[ 1 ], default ) )
+            print( craftSettings.get( self.args.rest[ 0 ], self.args.rest[ 1 ], default ) )
         elif self.args.print_banner:
             self.printBanner( )
         elif self.args.getenv:
@@ -83,27 +83,27 @@ class SetupHelper( object ):
         def _subst( path, drive ):
             if not os.path.exists( path ):
                 os.makedirs( path )
-            command = "subst %s %s" % ( emergeSettings.get( "ShortPath", drive ), path)
+            command = "subst %s %s" % ( craftSettings.get( "ShortPath", drive ), path)
             subprocess.getoutput( command )
 
-        if emergeSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+        if craftSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
             with TemporaryUseShortpath( False):
-                if ("ShortPath", "EMERGE_ROOT_DRIVE") in emergeSettings:
-                    _subst( EmergeStandardDirs.emergeRoot( ), "EMERGE_ROOT_DRIVE" )
-                if ("ShortPath", "EMERGE_DOWNLOAD_DRIVE") in emergeSettings:
-                    _subst( EmergeStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
-                if ("ShortPath", "EMERGE_GIT_DRIVE") in emergeSettings:
-                    _subst( EmergeStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
+                if ("ShortPath", "EMERGE_ROOT_DRIVE") in craftSettings:
+                    _subst( CraftStandardDirs.craftRoot( ), "EMERGE_ROOT_DRIVE" )
+                if ("ShortPath", "EMERGE_DOWNLOAD_DRIVE") in craftSettings:
+                    _subst( CraftStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
+                if ("ShortPath", "EMERGE_GIT_DRIVE") in craftSettings:
+                    _subst( CraftStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
 
     def printBanner( self ):
-        if emergeSettings.getboolean("ContinuousIntegration", "Enabled", False):
+        if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
             return
-        print( "KDEROOT     : %s" % EmergeStandardDirs.emergeRoot( ), file = sys.stderr )
+        print( "KDEROOT     : %s" % CraftStandardDirs.craftRoot( ), file = sys.stderr )
         print( "KDECOMPILER : %s" % compiler.getCompilerName( ), file = sys.stderr )
-        print( "KDESVNDIR   : %s" % EmergeStandardDirs.svnDir( ), file = sys.stderr )
-        print( "KDEGITDIR   : %s" % EmergeStandardDirs.gitDir( ), file = sys.stderr )
-        print( "DOWNLOADDIR : %s" % EmergeStandardDirs.downloadDir( ), file = sys.stderr )
-        print( "PYTHONPATH  : %s" % emergeSettings.get( "Paths", "Python" ), file = sys.stderr )
+        print( "KDESVNDIR   : %s" % CraftStandardDirs.svnDir( ), file = sys.stderr )
+        print( "KDEGITDIR   : %s" % CraftStandardDirs.gitDir( ), file = sys.stderr )
+        print( "DOWNLOADDIR : %s" % CraftStandardDirs.downloadDir( ), file = sys.stderr )
+        print( "PYTHONPATH  : %s" % craftSettings.get( "Paths", "Python" ), file = sys.stderr )
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
@@ -158,25 +158,25 @@ class SetupHelper( object ):
 
 
     def setXDG(self):
-        self.prependPath( "XDG_DATA_DIRS", [os.path.join( EmergeStandardDirs.emergeRoot( ), "share" )])
+        self.prependPath( "XDG_DATA_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "share" )])
         if self.args.mode == "bash":
-            self.prependPath( "XDG_CONFIG_DIRS", [os.path.join( EmergeStandardDirs.emergeRoot( ), "etc", "xdg" )])
-            self.addEnvVar( "XDG_DATA_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
-            self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".config" ))
-            self.addEnvVar( "XDG_CACHE_HOME", os.path.join( EmergeStandardDirs.emergeRoot( ), "home", os.getenv("USER"), ".cache" ))
+            self.prependPath( "XDG_CONFIG_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "etc", "xdg" )])
+            self.addEnvVar( "XDG_DATA_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
+            self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".config" ))
+            self.addEnvVar( "XDG_CACHE_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".cache" ))
 
 
 
 
     def printEnv( self ):
         self.env = self.getEnv( )
-        self.version = int(emergeSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
+        self.version = int(craftSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
 
-        self.addEnvVar( "KDEROOT", EmergeStandardDirs.emergeRoot( ) )
+        self.addEnvVar( "KDEROOT", CraftStandardDirs.craftRoot( ) )
 
-        if emergeSettings.getboolean( "Compile", "UseCCache", False ):
+        if craftSettings.getboolean( "Compile", "UseCCache", False ):
             self.addEnvVar( "CCACHE_DIR",
-                            emergeSettings.get( "Paths", "CCACHE_DIR", os.path.join( EmergeStandardDirs.emergeRoot( ),
+                            craftSettings.get( "Paths", "CCACHE_DIR", os.path.join( CraftStandardDirs.craftRoot( ),
                                                                                      "build", "CCACHE" ) ) )
 
         if self.version < 2:
@@ -186,52 +186,52 @@ class SetupHelper( object ):
         if not "HOME" in self.env:
             self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
-        self.prependPath( "PKG_CONFIG_PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ))
+        self.prependPath( "PKG_CONFIG_PATH", os.path.join( CraftStandardDirs.craftRoot( ), "lib", "pkgconfig" ))
 
-        self.prependPath( "QT_PLUGIN_PATH", [ os.path.join( EmergeStandardDirs.emergeRoot( ), "plugins" ),
-                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugins" ),
-                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib64", "plugins" ),
-                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "x86_64-linux-gnu", "plugins" ),
-                                              os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "plugin" )
+        self.prependPath( "QT_PLUGIN_PATH", [ os.path.join( CraftStandardDirs.craftRoot( ), "plugins" ),
+                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "plugins" ),
+                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib64", "plugins" ),
+                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "x86_64-linux-gnu", "plugins" ),
+                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "plugin" )
                                             ])
 
-        self.prependPath( "QML2_IMPORT_PATH", [ os.path.join( EmergeStandardDirs.emergeRoot(), "lib", "qml"),os.path.join( EmergeStandardDirs.emergeRoot(), "lib64", "qml"),
-                                                os.path.join( EmergeStandardDirs.emergeRoot(), "lib", "x86_64-linux-gnu", "qml")
+        self.prependPath( "QML2_IMPORT_PATH", [ os.path.join( CraftStandardDirs.craftRoot(), "lib", "qml"),os.path.join( CraftStandardDirs.craftRoot(), "lib64", "qml"),
+                                                os.path.join( CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu", "qml")
                                                 ])
         self.prependPath("QML_IMPORT_PATH", self.env["QML2_IMPORT_PATH"])
 
 
 
         if self.args.mode == "bash":
-            self.prependPath("LD_LIBRARY_PATH", [ os.path.join(EmergeStandardDirs.emergeRoot(), "lib"),
-                                                  os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "x86_64-linux-gnu") ])
+            self.prependPath("LD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib"),
+                                                  os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu") ])
 
         self.setXDG()
 
-        if emergeSettings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath( "PATH", os.path.join( emergeSettings.get("QtSDK", "Path") , emergeSettings.get("QtSDK", "Version"), emergeSettings.get("QtSDK", "Compiler"), "bin"))
+        if craftSettings.getboolean("QtSDK", "Enabled", "false"):
+            self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler"), "bin"))
 
         if compiler.isMinGW( ):
-            if not emergeSettings.getboolean("QtSDK", "Enabled", "false"):
+            if not craftSettings.getboolean("QtSDK", "Enabled", "false"):
                 if compiler.isX86( ):
-                    self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw", "bin" ) )
+                    self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw", "bin" ) )
                 else:
-                    self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "mingw64", "bin" ) )
+                    self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw64", "bin" ) )
             else:
-                self.prependPath( "PATH", os.path.join( emergeSettings.get("QtSDK", "Path") ,"Tools", emergeSettings.get("QtSDK", "Compiler"), "bin" ))
+                self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") ,"Tools", craftSettings.get("QtSDK", "Compiler"), "bin" ))
 
-        if self.args.mode in ["bat", "bash"]:  #don't put emerge.bat in path when using powershell
-            self.prependPath( "PATH", EmergeStandardDirs.emergeBin( ) )
-        self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "dev-utils", "bin" ) )
+        if self.args.mode in ["bat", "bash"]:  #don't put craft.bat in path when using powershell
+            self.prependPath( "PATH", CraftStandardDirs.craftBin( ) )
+        self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "dev-utils", "bin" ) )
 
 
-        #make sure thate emergeroot bin is the first to look for dlls etc
-        self.prependPath( "PATH", os.path.join( EmergeStandardDirs.emergeRoot( ), "bin" ) )
+        #make sure thate craftroot bin is the first to look for dlls etc
+        self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "bin" ) )
 
         # add python site packages to pythonpath
-        self.prependPath( "PythonPath",  os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "site-packages"))
+        self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
 
-        for var, value in emergeSettings.getSection( "Environment" ):  #set and overide existing values
+        for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var.upper(), value )
         for key, val in self.env.items( ):
             print( "%s=%s" % (key, val) )

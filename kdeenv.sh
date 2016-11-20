@@ -1,20 +1,20 @@
-emergeRoot="${BASH_SOURCE[0]}"
-if [[ -z "$emergeRoot" ]];then
-    emergeRoot="$0"
+craftRoot="${BASH_SOURCE[0]}"
+if [[ -z "$craftRoot" ]];then
+    craftRoot="$0"
 fi
-if [[ -z "$emergeRoot" ]];then
-    emergeRoot="$_"
+if [[ -z "$craftRoot" ]];then
+    craftRoot="$_"
 fi
-if [[ -z "$emergeRoot" ]];then
+if [[ -z "$craftRoot" ]];then
     echo "Failed to determine interpreter"
     exit 1
 fi
 
-if [[ ! -d "$emergeRoot" ]]; then
-    emergeRoot=$(dirname $(realpath "$emergeRoot"))
+if [[ ! -d "$craftRoot" ]]; then
+    craftRoot=$(dirname $(realpath "$craftRoot"))
 fi
 
-EMERGE_ENV=($(python3.5 "$emergeRoot/bin/EmergeSetupHelper.py" --setup --mode bash))
+EMERGE_ENV=($(python3.5 "$craftRoot/bin/CraftSetupHelper.py" --setup --mode bash))
 
 for line in "${EMERGE_ENV[@]}"; do
   if [[ "$line"  =~ "=" ]];then

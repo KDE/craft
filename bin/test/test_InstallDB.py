@@ -38,15 +38,15 @@ import sys
 import unittest
 
 import InstallDB
-import EmergeConfig
-import EmergeTestBase
+import CraftConfig
+import CraftTestBase
 
 
-class DatabaseTest(EmergeTestBase.EmergeTestBase):
+class DatabaseTest(CraftTestBase.CraftTestBase):
 
     def setUp(self):
         super().setUp()
-        self.db = InstallDB.InstallDB(os.path.join(EmergeConfig.EmergeStandardDirs.etcDir(), "test.db"))
+        self.db = InstallDB.InstallDB(os.path.join(CraftConfig.CraftStandardDirs.etcDir(), "test.db"))
 
     def tearDown(self):
         del self.db

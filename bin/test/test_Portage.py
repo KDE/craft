@@ -6,16 +6,16 @@ import tempfile
 import contextlib
 import importlib
 
-import EmergeDebug
-import EmergeTestBase
-import EmergeConfig
+import CraftDebug
+import CraftTestBase
+import CraftConfig
 import portage
 
-class EmergePortageTest(EmergeTestBase.EmergeTestBase):
+class CraftPortageTest(CraftTestBase.CraftTestBase):
 
     def portageTest(self, compiler, architecture):
-        EmergeConfig.emergeSettings.set("General", "KDECOMPILER", compiler)
-        EmergeConfig.emergeSettings.set("General", "Architecture", architecture)
+        CraftConfig.craftSettings.set("General", "KDECOMPILER", compiler)
+        CraftConfig.craftSettings.set("General", "Architecture", architecture)
 
         importlib.reload(portage)#clear cache
         installable = portage.PortageInstance.getInstallables()
@@ -24,7 +24,7 @@ class EmergePortageTest(EmergeTestBase.EmergeTestBase):
 
 
 
-class TestAPI(EmergePortageTest):
+class TestAPI(CraftPortageTest):
 
     def test_mingw_x86(self):
         self.portageTest("mingw4", "x86")

@@ -3,12 +3,12 @@
 #
 # Packager base
 
-from EmergeBase import *
+from CraftBase import *
 
-class PackagerBase(EmergeBase):
+class PackagerBase(CraftBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
     def __init__(self):
-        EmergeBase.__init__(self)
+        CraftBase.__init__(self)
         self.whitelist_file = None
         self.blacklist_file = None
         self.defines = {}
@@ -31,8 +31,8 @@ class PackagerBase(EmergeBase):
 
         pkgNotesVersion = pkgVersion
 
-        if ("General","EMERGE_PKGPATCHLVL") in emergeSettings and emergeSettings.get("General","EMERGE_PKGPATCHLVL") != "":
-            pkgVersion += "-" + emergeSettings.get("General","EMERGE_PKGPATCHLVL")
+        if ("General","EMERGE_PKGPATCHLVL") in craftSettings and craftSettings.get("General","EMERGE_PKGPATCHLVL") != "":
+            pkgVersion += "-" + craftSettings.get("General","EMERGE_PKGPATCHLVL")
 
         return [pkgVersion, pkgNotesVersion]
 

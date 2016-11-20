@@ -5,15 +5,15 @@
 import os
 import shutil
 
-import EmergeDebug
+import CraftDebug
 from Source.SourceBase import *
-import EmergeHash
+import CraftHash
 
 
 class ArchiveSource(SourceBase):
     """ file download source"""
     def __init__(self, subinfo=None):
-        EmergeDebug.debug("ArchiveSource.__init__ called", 2)
+        CraftDebug.debug("ArchiveSource.__init__ called", 2)
         if subinfo:
             self.subinfo = subinfo
         SourceBase.__init__( self )
@@ -38,7 +38,7 @@ class ArchiveSource(SourceBase):
 
     def localFileNamesBase(self):
         """ collect local filenames """
-        EmergeDebug.debug("ArchiveSource.localFileNamesBase called", 2)
+        CraftDebug.debug("ArchiveSource.localFileNamesBase called", 2)
 
         filenames = []
         for i in range(self.repositoryUrlCount()):
@@ -54,7 +54,7 @@ class ArchiveSource(SourceBase):
 
         """check if all files for the current target are available"""
         for filename in filenames:
-            path = os.path.join(EmergeStandardDirs.downloadDir(), filename)
+            path = os.path.join(CraftStandardDirs.downloadDir(), filename)
 
             # check file
             if not isFileValid(path):
@@ -65,7 +65,7 @@ class ArchiveSource(SourceBase):
                 if not isFileValid(path):
                     return False
             elif self.subinfo.hasTargetDigestUrls():
-                algorithm = EmergeHash.HashAlgorithm.SHA1
+                algorithm = CraftHash.HashAlgorithm.SHA1
                 if  type(self.subinfo.targetDigestUrl()) == tuple:
                     _, algorithm = self.subinfo.targetDigestUrl()
                 if not isFileValid(path + algorithm.fileEnding()):
@@ -74,61 +74,61 @@ class ArchiveSource(SourceBase):
 
     def fetch( self, dummyRepopath = None ):
         """fetch normal tarballs"""
-        EmergeDebug.debug("ArchiveSource.fetch called", 2)
+        CraftDebug.debug("ArchiveSource.fetch called", 2)
 
         filenames = self.localFileNames()
 
         if ( self.noFetch ):
-            EmergeDebug.debug("skipping fetch (--offline)")
+            CraftDebug.debug("skipping fetch (--offline)")
             return True
 
         self.setProxy()
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
-                EmergeDebug.debug("files and digests available, no need to download files", 1)
+                CraftDebug.debug("files and digests available, no need to download files", 1)
                 return True
 
-            result = utils.getFiles( self.subinfo.target(), EmergeStandardDirs.downloadDir() , filenames = self.subinfo.archiveName() )
+            result = utils.getFiles( self.subinfo.target(), CraftStandardDirs.downloadDir() , filenames = self.subinfo.archiveName() )
             if not result:
-                EmergeDebug.debug("failed to download files", 1)
+                CraftDebug.debug("failed to download files", 1)
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if type(self.subinfo.targetDigestUrl()) == tuple:
                     url, alg = self.subinfo.targetDigestUrl()
-                    return utils.getFiles(url, EmergeStandardDirs.downloadDir(),
+                    return utils.getFiles(url, CraftStandardDirs.downloadDir(),
                                           filenames = self.subinfo.archiveName()[0]
-                                                        + EmergeHash.HashAlgorithm.fileEndings().get(alg))
+                                                        + CraftHash.HashAlgorithm.fileEndings().get(alg))
                 else:
-                    return utils.getFiles( self.subinfo.targetDigestUrl(), EmergeStandardDirs.downloadDir(), filenames = '' )
+                    return utils.getFiles( self.subinfo.targetDigestUrl(), CraftStandardDirs.downloadDir(), filenames = '' )
             else:
-                EmergeDebug.debug("no digestUrls present", 2)
+                CraftDebug.debug("no digestUrls present", 2)
                 return True
         else:
-            return utils.getFiles( "", EmergeStandardDirs.downloadDir() )
+            return utils.getFiles( "", CraftStandardDirs.downloadDir() )
 
     def checkDigest(self):
-        EmergeDebug.debug("ArchiveSource.checkDigest called", 2)
+        CraftDebug.debug("ArchiveSource.checkDigest called", 2)
         filenames = self.localFileNames()
 
         if self.subinfo.hasTargetDigestUrls():
-            EmergeDebug.debug("check digests urls", 1)
-            if not EmergeHash.checkFilesDigests(EmergeStandardDirs.downloadDir(), filenames):
-                EmergeDebug.error("invalid digest file")
+            CraftDebug.debug("check digests urls", 1)
+            if not CraftHash.checkFilesDigests(CraftStandardDirs.downloadDir(), filenames):
+                CraftDebug.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
-            EmergeDebug.debug("check digests", 1)
+            CraftDebug.debug("check digests", 1)
             digests, algorithm = self.subinfo.targetDigest()
-            if not EmergeHash.checkFilesDigests( EmergeStandardDirs.downloadDir(), filenames, digests, algorithm):
-                EmergeDebug.error("invalid digest file")
+            if not CraftHash.checkFilesDigests( CraftStandardDirs.downloadDir(), filenames, digests, algorithm):
+                CraftDebug.error("invalid digest file")
                 return False
         else:
-            EmergeDebug.debug("print source file digests", 1)
-            EmergeHash.printFilesDigests(EmergeStandardDirs.downloadDir(), filenames, self.subinfo.buildTarget, algorithm = EmergeHash.HashAlgorithm.SHA256)
+            CraftDebug.debug("print source file digests", 1)
+            CraftHash.printFilesDigests(CraftStandardDirs.downloadDir(), filenames, self.subinfo.buildTarget, algorithm = CraftHash.HashAlgorithm.SHA256)
         return True
 
     def unpack(self):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
-        EmergeDebug.debug("ArchiveSource.unpack called", 2)
+        CraftDebug.debug("ArchiveSource.unpack called", 2)
 
         filenames = self.localFileNames()
 
@@ -141,7 +141,7 @@ class ArchiveSource(SourceBase):
         binEndings = (".exe", ".bat", ".msi")
         for filename in filenames:
             if filename.endswith(binEndings):
-                filePath = os.path.abspath( os.path.join(EmergeStandardDirs.downloadDir(), filename) )
+                filePath = os.path.abspath( os.path.join(CraftStandardDirs.downloadDir(), filename) )
                 if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext( filename )
                     if ext == ".exe":
@@ -151,11 +151,11 @@ class ArchiveSource(SourceBase):
                 if not utils.copyFile( filePath, os.path.join(self.workDir(), filename) ):
                     return False
             else:
-                if not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, self.workDir()):
+                if not utils.unpackFile( CraftStandardDirs.downloadDir(), filename, self.workDir()):
                     return False
 
         ret = self.applyPatches()
-        if emergeSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL",False):
+        if craftSettings.getboolean("General","EMERGE_HOLD_ON_PATCH_FAIL",False):
             return ret
         return True
 
@@ -169,7 +169,7 @@ class ArchiveSource(SourceBase):
         
         diffExe = os.path.join( self.rootdir, "dev-utils", "bin", "diff.exe" )
         if not os.path.exists( diffExe ):
-            EmergeDebug.die("could not find diff tool, please run 'emerge diffutils'")
+            CraftDebug.die("could not find diff tool, please run 'craft diffutils'")
         
         # get the file paths of the tarballs
         filenames = self.localFileNames()
@@ -178,10 +178,10 @@ class ArchiveSource(SourceBase):
 
         # it makes no sense to make a diff against nothing
         if ( not os.path.exists( self.sourceDir() ) ):
-            EmergeDebug.error("source directory doesn't exist, please run unpack first")
+            CraftDebug.error("source directory doesn't exist, please run unpack first")
             return False
 
-        EmergeDebug.debug("unpacking files into work root %s" % destdir, 1)
+        CraftDebug.debug("unpacking files into work root %s" % destdir, 1)
 
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
@@ -198,8 +198,8 @@ class ArchiveSource(SourceBase):
 
         # unpack all packages
         for filename in filenames:
-            EmergeDebug.debug("unpacking this file: %s" % filename, 1)
-            if ( not utils.unpackFile( EmergeStandardDirs.downloadDir(), filename, unpackDir ) ):
+            CraftDebug.debug("unpacking this file: %s" % filename, 1)
+            if ( not utils.unpackFile( CraftStandardDirs.downloadDir(), filename, unpackDir ) ):
                 return False
 
         packagelist = os.listdir( tmpdir )
@@ -213,7 +213,7 @@ class ArchiveSource(SourceBase):
             if not isinstance(patches, list):
                 patches = [patches]
             for fileName, patchdepth in patches[:-1]:
-                EmergeDebug.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
+                CraftDebug.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
                 if not self.applyPatch( fileName, patchdepth, os.path.join( tmpdir, packagelist[ 0 ] ) ):
                     return False
             if patches[-1][0]:
@@ -235,7 +235,7 @@ class ArchiveSource(SourceBase):
             if not self.system( cmd ):
                 return False
 
-        EmergeDebug.debug("patch created at %s" % patchName)
+        CraftDebug.debug("patch created at %s" % patchName)
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         #for directory in packagelist:

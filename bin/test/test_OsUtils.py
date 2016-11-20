@@ -1,11 +1,11 @@
 import unittest
 import tempfile
 
-import EmergeDebug
-import EmergeTestBase
-from EmergeOS.osutils import OsUtils
+import CraftDebug
+import CraftTestBase
+from CraftOS.osutils import OsUtils
 
-class OsUtilsTest(EmergeTestBase.EmergeTestBase):
+class OsUtilsTest(CraftTestBase.CraftTestBase):
 
     def test_rm(self):
         _, fileName = tempfile.mkstemp()

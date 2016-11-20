@@ -1,7 +1,7 @@
 #
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
-import EmergeDebug
+import CraftDebug
 import portage
 from xml.dom.minidom import Document
 import hashlib
@@ -30,7 +30,7 @@ class MSIFragmentPackager( PackagerBase ):
 
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
-        EmergeDebug.debug("MSIFragmentPackager __init__", 2)
+        CraftDebug.debug("MSIFragmentPackager __init__", 2)
         self.outDestination = self.packageDestinationDir()
         self.objectFiles = []
 
@@ -53,7 +53,7 @@ class MSIFragmentPackager( PackagerBase ):
             dirId = getUniqueDirectoryId( relDir )
 
             # components could be used to create updateable packages according to current
-            # emerge packaging
+            # craft packaging
             for _f in files:
                 if _f.endswith( ".pdb" ) or _f.endswith( ".ilk" ): continue
 

@@ -1,6 +1,6 @@
-import EmergeDebug
+import CraftDebug
 import info
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 
 class subinfo(info.infoclass):
     def setTargets(self):
@@ -57,10 +57,10 @@ class Package(BoostPackageBase):
                     cmd += "vc12"
                 elif compiler.isMSVC2015():
                     cmd += "vc14"
-        if EmergeDebug.verbose() >= 0:
+        if CraftDebug.verbose() >= 0:
             print(cmd)
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
-                'boost-headers').sourceDir(),"tools","build")) or EmergeDebug.die(
+                'boost-headers').sourceDir(),"tools","build")) or CraftDebug.die(
                 "command: %s failed" % (cmd))
         return True
 

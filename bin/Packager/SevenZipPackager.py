@@ -12,8 +12,8 @@
 # - self extraction archives
 #
 #
-import EmergeDebug
-import EmergeHash
+import CraftDebug
+import CraftHash
 from Packager.PackagerBase import *
 
 class SevenZipPackager (PackagerBase):
@@ -22,25 +22,25 @@ class SevenZipPackager (PackagerBase):
         if not initialized: PackagerBase.__init__( self )
         self.packagerExe = utils.UtilsCache.findApplication("7za")
         if not self.packagerExe:
-            self.packagerExe = os.path.join(EmergeStandardDirs.emergeRoot(), "emerge", "bin", "emerge_7za")
+            self.packagerExe = os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "craft_7za")
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
         cmd += " -bsp1"
-        if EmergeDebug.verbose() <= 1:
+        if CraftDebug.verbose() <= 1:
             cmd += " -bso0"
         if not utils.system(cmd):
-            EmergeDebug.die("while packaging. cmd: %s" % cmd)
-        EmergeHash.createDigestFiles(os.path.join(destDir, archiveName))
+            CraftDebug.die("while packaging. cmd: %s" % cmd)
+        CraftHash.createDigestFiles(os.path.join(destDir, archiveName))
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
-            EmergeDebug.die("could not find 7za in your path!")
+            CraftDebug.die("could not find 7za in your path!")
 
-        if emergeSettings.getboolean("ContinuousIntegration", "CreateCache"):
+        if craftSettings.getboolean("ContinuousIntegration", "CreateCache"):
             dstpath = self.cacheLocation()
         else:
             dstpath = self.packageDestinationDir()
@@ -48,7 +48,7 @@ class SevenZipPackager (PackagerBase):
         self._compress(self.binaryArchiveName(), self.imageDir(), dstpath)
         if not self.subinfo.options.package.packSources:
             return True
-        if emergeSettings.getboolean("Packager", "PackageSrc", "True"):
+        if craftSettings.getboolean("Packager", "PackageSrc", "True"):
             self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
         return True
 

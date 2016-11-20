@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """@brief utilities
-this file contains some helper functions for emerge
+this file contains some helper functions for craft
 """
 
 # copyright:
@@ -21,11 +21,11 @@ import urllib.request
 import zipfile
 from operator import itemgetter
 
-import EmergeDebug
-import EmergeHash
+import CraftDebug
+import CraftHash
 import Notifier.NotificationLoader
-from EmergeConfig import *
-from EmergeOS.osutils import OsUtils
+from CraftConfig import *
+from CraftOS.osutils import OsUtils
 
 # TODO: Rename
 class UtilsCache():
@@ -36,7 +36,7 @@ class UtilsCache():
     def findApplication(app) -> str:
         appLocation = shutil.which(app)
         if not appLocation:
-            EmergeDebug.warning("Emerge was unable to locate: %s" % app)
+            CraftDebug.warning("Craft was unable to locate: %s" % app)
             return None
         return appLocation
 
@@ -44,12 +44,12 @@ class UtilsCache():
     @staticmethod
     def appSupportsCommand(app, command, helpCommand = "-h") -> str:
         if not (app, command) in UtilsCache._helpCache:
-            EmergeDebug.debug("%s %s" %(app, helpCommand), 1)
+            CraftDebug.debug("%s %s" %(app, helpCommand), 1)
             output = subprocess.getoutput("%s %s" %(app, helpCommand))
             supports = output.find( command ) != -1
             UtilsCache._helpCache[(app, command)] = supports
-            EmergeDebug.debug(output, 1)
-            EmergeDebug.debug("%s %s %s" % (app, "supports" if supports else "does not support", command), 1)
+            CraftDebug.debug(output, 1)
+            CraftDebug.debug("%s %s %s" % (app, "supports" if supports else "does not support", command), 1)
         return UtilsCache._helpCache[(app, command)]
 
 
@@ -62,8 +62,8 @@ class UtilsCache():
         :param timeout:
         :return: A list of matching strings or [None]
         """
-        if emergeSettings.getboolean("General", "WorkOffline"):
-            EmergeDebug.info("Nightly builds unavailable for %s in offline mode." % url)
+        if craftSettings.getboolean("General", "WorkOffline"):
+            CraftDebug.info("Nightly builds unavailable for %s in offline mode." % url)
             return []
         if url not in UtilsCache._NIGTHLY_URLS:
             try:
@@ -76,7 +76,7 @@ class UtilsCache():
                     UtilsCache._NIGTHLY_URLS[url] = list(set(vers))
                     return UtilsCache._NIGTHLY_URLS[url]
             except Exception as e:
-                EmergeDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
+                CraftDebug.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return UtilsCache._NIGTHLY_URLS.get(url, [])
 
 
@@ -105,7 +105,7 @@ def getCallerFilename():
 
 def getFiles( urls, destdir, suffix='' , filenames = ''):
     """download files from 'url' into 'destdir'"""
-    EmergeDebug.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix), 1)
+    CraftDebug.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix), 1)
     # make sure distfiles dir exists
     if ( not os.path.exists( destdir ) ):
         os.makedirs( destdir )
@@ -133,9 +133,9 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
 
 def getFile( url, destdir , filename='' ) -> bool:
     """download file from 'url' into 'destdir'"""
-    EmergeDebug.debug("getFile called. url: %s" % url, 1)
+    CraftDebug.debug("getFile called. url: %s" % url, 1)
     if url == "":
-        EmergeDebug.error("fetch: no url given")
+        CraftDebug.error("fetch: no url given")
         return False
 
     if UtilsCache.findApplication("wget"):
@@ -156,9 +156,9 @@ def getFile( url, destdir , filename='' ) -> bool:
         sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
         sys.stdout.flush()
 
-    urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if EmergeDebug.verbose() >= 0 else None )
+    urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if CraftDebug.verbose() >= 0 else None )
 
-    if EmergeDebug.verbose()>=0:
+    if CraftDebug.verbose()>=0:
         sys.stdout.write("\n")
         sys.stdout.flush()
     return True
@@ -167,18 +167,18 @@ def getFile( url, destdir , filename='' ) -> bool:
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     command = "\"%s\" -c -t 10" % UtilsCache.findApplication("wget")
-    if EmergeDebug.Verbose().level() < 1:
+    if CraftDebug.Verbose().level() < 1:
         command += " -q --show-progress"
-    if emergeSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
+    if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
         command += "  -P %s" % destdir
     else:
         command += " -O %s" % os.path.join( destdir, filename )
     command += " %s" % url
-    EmergeDebug.debug("wgetfile called", 1)
+    CraftDebug.debug("wgetfile called", 1)
     ret = system( command )
-    EmergeDebug.debug("wget ret: %s" % ret, 2)
+    CraftDebug.debug("wget ret: %s" % ret, 2)
     return ret
 
 ### unpack functions
@@ -194,7 +194,7 @@ def unpackFiles( downloaddir, filenames, workdir ):
 
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
-    EmergeDebug.debug("unpacking this file: %s" % filename)
+    CraftDebug.debug("unpacking this file: %s" % filename)
 
     ( shortname, ext ) = os.path.splitext( filename )
     if re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
@@ -205,7 +205,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
-    command = UtilsCache.findApplication("7za") or os.path.join(EmergeStandardDirs.emergeBin(), "emerge_7za")
+    command = UtilsCache.findApplication("7za") or os.path.join(CraftStandardDirs.craftBin(), "craft_7za")
     command += " x -r -y -o%s %s" % ( destdir, fileName )
 
     if flag == ".7z":
@@ -215,7 +215,7 @@ def un7zip( fileName, destdir, flag = None ):
         command += " -t7z"
     if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
         command += " -bsp1"
-        if EmergeDebug.verbose() <= 1:
+        if CraftDebug.verbose() <= 1:
             command += " -bso0"
     return system( command )
 
@@ -229,10 +229,10 @@ def systemWithoutShell(cmd, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
 
-    EmergeDebug.debug("executing command: %s" % cmd, 1)
-    if emergeSettings.getboolean("ContinuousIntegration", "Enabled", False):
+    CraftDebug.debug("executing command: %s" % cmd, 1)
+    if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         kw['stderr'] = subprocess.STDOUT
-    if EmergeDebug.verbose() == -1 and not 'stdout' in kw and not 'stderr' in kw:
+    if CraftDebug.verbose() == -1 and not 'stdout' in kw and not 'stderr' in kw:
         kw['stdout'] = kw['stderr'] = subprocess.DEVNULL
     return subprocess.call(cmd, **kw) == 0
 
@@ -244,10 +244,10 @@ def getFileListFromDirectory( imagedir ):
     if ( not imagedir.endswith( "\\" ) ):
         myimagedir = myimagedir + "\\"
 
-    algorithm = EmergeHash.HashAlgorithm.SHA256
+    algorithm = CraftHash.HashAlgorithm.SHA256
     for root, _, files in os.walk( imagedir ):
         for fileName in files:
-            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), algorithm.stringPrefix() + EmergeHash.digestFile( os.path.join( root, fileName), algorithm) ) )
+            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), algorithm.stringPrefix() + CraftHash.digestFile( os.path.join( root, fileName), algorithm) ) )
     return ret
 
 
@@ -256,32 +256,32 @@ def unmergeFileList(rootdir, fileList, forced=False):
     for filename, filehash in fileList:
         fullPath = os.path.join(rootdir, os.path.normcase( filename))
         if os.path.isfile(fullPath):
-            algorithm = EmergeHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
+            algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
             if not algorithm:
-                currentHash = EmergeHash.digestFile(fullPath, EmergeHash.HashAlgorithm.MD5)
+                currentHash = CraftHash.digestFile(fullPath, CraftHash.HashAlgorithm.MD5)
             else:
-                currentHash = algorithm.stringPrefix() + EmergeHash.digestFile(fullPath, algorithm)
+                currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
             if currentHash == filehash or filehash == "":
                 OsUtils.rm(fullPath, True)
             else:
                 if forced:
-                    EmergeDebug.warning("file %s has different hash: %s %s, deleting anyway" % \
+                    CraftDebug.warning("file %s has different hash: %s %s, deleting anyway" % \
                             (fullPath, currentHash, filehash ))
                     OsUtils.rm(fullPath, True)
                 else:
-                    EmergeDebug.warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                    CraftDebug.warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
                             (fullPath, currentHash, filehash ))
         elif not os.path.isdir(fullPath):
-            EmergeDebug.warning("file %s does not exist" % fullPath)
+            CraftDebug.warning("file %s does not exist" % fullPath)
 
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False )):
+def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = craftSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
         src = os.path.join( srcdir, entry )
         dest = os.path.join( destdir, entry )
-        EmergeDebug.debug("move: %s -> %s" % (src, dest), 1)
+        CraftDebug.debug("move: %s -> %s" % (src, dest), 1)
         if( os.path.isfile( dest ) ):
             os.remove( dest )
         if( os.path.isdir( dest ) ):
@@ -289,15 +289,15 @@ def moveEntries( srcdir, destdir ):
         os.rename( src, dest )
 
 def cleanDirectory( directory ):
-    EmergeDebug.debug("clean directory %s" % directory, 1)
+    CraftDebug.debug("clean directory %s" % directory, 1)
     if ( os.path.exists( directory ) ):
         for root, dirs, files in os.walk( directory, topdown=False):
             for name in files:
                 if not OsUtils.rm(os.path.join(root, name), True):
-                    EmergeDebug.die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
+                    CraftDebug.die("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
             for name in dirs:
                 if not OsUtils.rmDir(os.path.join(root, name), True):
-                    EmergeDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
+                    CraftDebug.die("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs( directory )
 
@@ -350,13 +350,13 @@ def splitVCSUrl( Url ):
 def replaceVCSUrl( Url ):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(EmergeStandardDirs.etcPortageDir(), "..", "emergehosts.conf" )
+    configfile = os.path.join(CraftStandardDirs.etcPortageDir(), "..", "crafthosts.conf" )
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
     #todo WTF
-    if ( ("General", "KDESVNUSERNAME") in emergeSettings and
-     emergeSettings.get("General", "KDESVNUSERNAME") != "username" ) :
+    if ( ("General", "KDESVNUSERNAME") in craftSettings and
+     craftSettings.get("General", "KDESVNUSERNAME") != "username" ) :
         replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
     if os.path.exists( configfile ):
         config = configparser.ConfigParser()
@@ -385,7 +385,7 @@ def createImportLibs( dll_name, basepath ):
     USE_GENDEF = HAVE_GENDEF
     HAVE_LIB = UtilsCache.findApplication( "lib" ) is not None
     HAVE_DLLTOOL = UtilsCache.findApplication( "dlltool" ) is not None
-    if EmergeDebug.verbose() > 1:
+    if CraftDebug.verbose() > 1:
         print("gendef found:", HAVE_GENDEF)
         print("gendef used:", USE_GENDEF)
         print("lib found:", HAVE_LIB)
@@ -401,12 +401,12 @@ def createImportLibs( dll_name, basepath ):
         HAVE_GENDEF = True
         USE_GENDEF = False
     if not HAVE_GENDEF:
-        EmergeDebug.warning("system does not have gendef.exe")
+        CraftDebug.warning("system does not have gendef.exe")
         return False
     if not HAVE_LIB  and not os.path.isfile( imppath ):
-        EmergeDebug.warning("system does not have lib.exe (from msvc)")
+        CraftDebug.warning("system does not have lib.exe (from msvc)")
     if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
-        EmergeDebug.warning("system does not have dlltool.exe")
+        CraftDebug.warning("system does not have dlltool.exe")
 
     # create .def
     if USE_GENDEF:
@@ -441,31 +441,31 @@ def cleanPackageName( basename, packagename ):
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
-        EmergeDebug.debug("creating directory %s " % (path), 2)
+        CraftDebug.debug("creating directory %s " % (path), 2)
         os.makedirs( path )
     return True
     
-def copyFile(src, dest,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False)):
+def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
-    EmergeDebug.debug("copy file from %s to %s" % (src, dest), 2)
+    CraftDebug.debug("copy file from %s to %s" % (src, dest), 2)
     destDir = os.path.dirname( dest )
     if not os.path.exists( destDir ):
         os.makedirs( destDir )
     if os.path.exists( dest ):
-        EmergeDebug.warning("Overriding %s" % dest)
+        CraftDebug.warning("Overriding %s" % dest)
         OsUtils.rm( dest, True )
     if linkOnly:
         try:
             os.link( src , dest )
             return True
         except:
-            EmergeDebug.warning("Failed to create hardlink %s for %s" % (dest, src))
+            CraftDebug.warning("Failed to create hardlink %s for %s" % (dest, src))
     shutil.copy(src,dest)
     return True
 
-def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "UseHardlinks", False ) ):
+def copyDir( srcdir, destdir,linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
-    EmergeDebug.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
+    CraftDebug.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 2)
 
     if ( not srcdir.endswith( os.path.sep ) ):
         srcdir += os.path.sep
@@ -481,7 +481,7 @@ def copyDir( srcdir, destdir,linkOnly = emergeSettings.getboolean("General", "Us
                 os.makedirs( tmpdir )
             for fileName in files:
                 copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
-                EmergeDebug.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
+                CraftDebug.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)), 2)
 
     return True
 
@@ -508,22 +508,22 @@ def mergeTree(srcdir, destdir):
 
 def moveDir( srcdir, destdir ):
     """ move directory from srcdir to destdir """
-    EmergeDebug.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 1)
+    CraftDebug.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir), 1)
     try:
         shutil.move( srcdir, destdir )
     except Exception as e:
-        EmergeDebug.warning(e)
+        CraftDebug.warning(e)
         return False
     return True
 
 def rmtree( directory ):
     """ recursively delete directory """
-    EmergeDebug.debug("rmtree called. directory: %s" % (directory), 2)
+    CraftDebug.debug("rmtree called. directory: %s" % (directory), 2)
     shutil.rmtree ( directory, True ) # ignore errors
 
 def moveFile(src, dest):
     """move file from src to dest"""
-    EmergeDebug.debug("move file from %s to %s" % (src, dest), 2)
+    CraftDebug.debug("move file from %s to %s" % (src, dest), 2)
     shutil.move( src, dest )
     return True
 
@@ -531,7 +531,7 @@ def deleteFile(fileName):
     """delete file """
     if not os.path.exists( fileName ):
         return False
-    EmergeDebug.debug("delete file %s " % (fileName), 2)
+    CraftDebug.debug("delete file %s " % (fileName), 2)
     os.remove( fileName )
     return True
 
@@ -552,34 +552,34 @@ def findFiles( directory, pattern=None, fileNames=None):
 
 def putenv(name, value):
     """set environment variable"""
-    EmergeDebug.debug("set environment variable -- set %s=%s" % (name, value), 2)
+    CraftDebug.debug("set environment variable -- set %s=%s" % (name, value), 2)
     os.putenv( name, value )
     return True
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = 'patch -d "%s" -p%s -i "%s"' % (sourceDir, patchLevel, f)
-    EmergeDebug.debug("applying %s" % cmd)
+    CraftDebug.debug("applying %s" % cmd)
     result = system( cmd )
     if not result:
-        EmergeDebug.warning("applying %s failed!" % f)
+        CraftDebug.warning("applying %s failed!" % f)
     return result
 
 def log(fn):
     def inner(*args, **argv):
-        logdir = emergeSettings.get( "General", "EMERGE_LOG_DIR", "" )
+        logdir = craftSettings.get( "General", "EMERGE_LOG_DIR", "" )
 
         if logdir == "":
             return fn(*args, **argv)
 
         if os.path.isfile(logdir):
-            EmergeDebug.die("EMERGE_LOG_DIR %s is a file" % logdir)
+            CraftDebug.die("EMERGE_LOG_DIR %s is a file" % logdir)
 
         if not os.path.exists(logdir):
             try:
                 os.mkdir(logdir)
             except OSError:
-                EmergeDebug.die("EMERGE_LOG_DIR %s can not be created" % logdir)
+                CraftDebug.die("EMERGE_LOG_DIR %s can not be created" % logdir)
 
         logfile = ""
         for a in args:
@@ -610,12 +610,12 @@ def getWinVer():
     try:
         result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0],"windows-1252")
     except OSError:
-        EmergeDebug.debug("Windows Version can not be determined", 1)
+        CraftDebug.debug("Windows Version can not be determined", 1)
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
     if(version):
         return version.group(0)
-    EmergeDebug.debug("Windows Version can not be determined", 1)
+    CraftDebug.debug("Windows Version can not be determined", 1)
     return "0"
 
 def regQuery(key, value):
@@ -624,7 +624,7 @@ def regQuery(key, value):
     the result.
     '''
     query = 'reg query "%s" /v "%s"' % (key, value)
-    EmergeDebug.debug("Executing registry query %s " % query, 2)
+    CraftDebug.debug("Executing registry query %s " % query, 2)
     result = subprocess.Popen(query,
                 stdout = subprocess.PIPE).communicate()[0]
     # Output of this command is either an error to stderr
@@ -644,11 +644,11 @@ def embedManifest(executable, manifest):
     '''
     if not os.path.isfile(executable) or not os.path.isfile(manifest):
         # We die here because this is a problem with the portage files
-        EmergeDebug.die("embedManifest %s or %s do not exist" % (executable, manifest))
-    EmergeDebug.debug("embedding ressource manifest %s into %s" % \
+        CraftDebug.die("embedManifest %s or %s do not exist" % (executable, manifest))
+    CraftDebug.debug("embedding ressource manifest %s into %s" % \
           (manifest, executable), 2)
     mtExe = None
-    mtExe = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "bin", "mt.exe")
+    mtExe = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "mt.exe")
 
     if(not os.path.isfile(mtExe)):
         # If there is no free manifest tool installed on the system
@@ -656,12 +656,12 @@ def embedManifest(executable, manifest):
         sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
             "CurrentInstallFolder")
         if not sdkdir:
-            EmergeDebug.debug("embedManifest could not find the Registry Key"
+            CraftDebug.debug("embedManifest could not find the Registry Key"
                   " for the Windows SDK", 2)
         else:
             mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
             if not os.path.isfile(os.path.normpath(mtExe)):
-                EmergeDebug.debug("embedManifest could not find a mt.exe in\n\t %s" % \
+                CraftDebug.debug("embedManifest could not find a mt.exe in\n\t %s" % \
                       os.path.dirname(mtExe), 2)
     if os.path.isfile(mtExe):
         return system([mtExe, "-nologo", "-manifest", manifest,
@@ -684,13 +684,13 @@ def prependPath(*parts):
         fullPath = os.path.join(*parts)
         old = os.getenv("PATH").split(';')
         if old[0] != fullPath:
-            EmergeDebug.debug("adding %s to system path" % fullPath, 2)
+            CraftDebug.debug("adding %s to system path" % fullPath, 2)
             old.insert(0, fullPath)
             putenv( "PATH", os.path.pathsep.join(old))
 
 def notify(title,message,alertClass = None):
-    EmergeDebug.info("%s: %s" % (title, message))
-    backends = emergeSettings.get( "General","EMERGE_USE_NOTIFY", "")
+    CraftDebug.info("%s: %s" % (title, message))
+    backends = craftSettings.get( "General","EMERGE_USE_NOTIFY", "")
     if backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))

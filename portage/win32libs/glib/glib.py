@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             self.archiveNames[ver] = "glib-glib%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "glib-glib-%s" % ver
             self.patchToApply[ ver ] = ("glib-glib-2.49.4-20161114.diff", 1)
-        self.targetDigests['2.49.4'] = (['936e124d1d147226acd95def54cb1bea5d19dfc534532b85de6727fa68bc310f'], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigests['2.49.4'] = (['936e124d1d147226acd95def54cb1bea5d19dfc534532b85de6727fa68bc310f'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "2.49.4"
 
@@ -44,19 +44,19 @@ class PackageCMake(CMakePackageBase):
             self.bt = "Release"
 
     def configure(self):
-        if not os.path.exists( os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "libintl_a.lib")):
-            utils.copyFile(os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "libintl.lib"),
-                           os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "libintl_a.lib"))
+        if not os.path.exists( os.path.join(CraftStandardDirs.craftRoot(), "lib", "libintl_a.lib")):
+            utils.copyFile(os.path.join(CraftStandardDirs.craftRoot(), "lib", "libintl.lib"),
+                           os.path.join(CraftStandardDirs.craftRoot(), "lib", "libintl_a.lib"))
 
-        if not os.path.exists(os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "zlib_a.lib")):
-            utils.copyFile(os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "zlib.lib"),
-                           os.path.join(EmergeStandardDirs.emergeRoot(), "lib", "zlib_a.lib"))
+        if not os.path.exists(os.path.join(CraftStandardDirs.craftRoot(), "lib", "zlib_a.lib")):
+            utils.copyFile(os.path.join(CraftStandardDirs.craftRoot(), "lib", "zlib.lib"),
+                           os.path.join(CraftStandardDirs.craftRoot(), "lib", "zlib_a.lib"))
         return True
 
     def make(self):
         self.enterSourceDir()
-        utils.putenv("INCLUDE", "%s;%s" % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.environ["INCLUDE"]))
-        utils.putenv("LIB", "%s;%s" % (os.path.join(EmergeStandardDirs.emergeRoot(), "lib"), os.environ["LIB"]))
+        utils.putenv("INCLUDE", "%s;%s" % (os.path.join(CraftStandardDirs.craftRoot(), "include"), os.environ["INCLUDE"]))
+        utils.putenv("LIB", "%s;%s" % (os.path.join(CraftStandardDirs.craftRoot(), "lib"), os.environ["LIB"]))
         return utils.system("msbuild /m /t:Rebuild \"%s\" /p:Configuration=%s /p:useenv=true " %
                 (os.path.join(self.msvcDir, "glib.sln"), self.bt)
         )

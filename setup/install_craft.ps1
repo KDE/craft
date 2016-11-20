@@ -96,7 +96,7 @@ while(Test-Path -Path $Script:installRoot){
 	switch($ask=Read-Host "[Q] Quit installation    `n[Y] Truncate directory: [$Script:installRoot] and continue installation in the same directory    `n[N] Change directory path.`n(default is 'Q')")
 	{
 		"y"		{rmdir $Script:installRoot}
-		"n"		{$Script:installRoot=if (($result = Read-Host "Enter another directory to install emerge (default is ["$Script:installRoot"(1)])") -eq '') {$Script:installRoot+"(1)"} else {$result}}
+		"n"		{$Script:installRoot=if (($result = Read-Host "Enter another directory to install craft (default is ["$Script:installRoot"(1)])") -eq '') {$Script:installRoot+"(1)"} else {$result}}
 		"q"		{exit}
 		default	{exit}
 	}

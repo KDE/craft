@@ -5,7 +5,7 @@ from Package.PackageBase import *
 
 class InternalPackageBase(PackageBase):
     """
-     provides a generic interface for packages which are used internal by the emerge system
+     provides a generic interface for packages which are used internal by the craft system
     """
 
     def __init__(self):

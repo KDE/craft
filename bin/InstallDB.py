@@ -2,8 +2,8 @@ import os
 import sqlite3
 import threading
 
-import EmergeDebug
-from EmergeConfig import *
+import CraftDebug
+from CraftConfig import *
 
 import utils
 import portage
@@ -53,14 +53,14 @@ class InstallPackage(object):
     def getFilesWithHashes( self ):
         """ get the list of files (filename, fileHash tuples) for the given package """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getFiles( self ):
         """ get the list of files for the given package """
         cmd = '''SELECT filename FROM fileList WHERE packageId=?;'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
@@ -76,10 +76,10 @@ class InstallPackage(object):
     def uninstall( self ):
         """ really uninstall that package """
         cmd = '''DELETE FROM fileList WHERE packageId=?;'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
         self.cursor.execute(cmd, (self.packageId,))
         cmd = '''DELETE FROM packageList WHERE packageId=?;'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
@@ -92,7 +92,7 @@ class InstallPackage(object):
         dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
-        EmergeDebug.debug("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)), 2)
         self.cursor.executemany( cmd, dataList )
 
         # at last, commit all the changes so that they are committed only after everything is written to the
@@ -118,7 +118,7 @@ class InstallDB(object):
     def __init__( self, filename = None ):
         if filename == None:
             with TemporaryUseShortpath(False):
-                filename = os.path.join( EmergeStandardDirs.etcPortageDir(), 'install.db' )
+                filename = os.path.join( CraftStandardDirs.etcPortageDir(), 'install.db' )
 
         self.dbfilename = filename
         self._prepareDatabase()
@@ -159,16 +159,16 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
-            EmergeDebug.debug("""The package %s/%s has been installed in prefix '%s' with
+            CraftDebug.debug("""The package %s/%s has been installed in prefix '%s' with
                             version '%s'.""" % ( category, package, prefix, version ), 2)
         else:
-            EmergeDebug.debug("""Couldn't find a trace that the package %s/%s has been installed in
+            CraftDebug.debug("""Couldn't find a trace that the package %s/%s has been installed in
                             prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1)
         cursor.close()
         return isPackageInstalled
@@ -181,7 +181,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -197,7 +197,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -213,7 +213,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -227,7 +227,7 @@ class InstallDB(object):
 
         cursor = self.connection.cursor()
         cmd = '''SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)), 2)
         cursor.execute(cmd, ("%" + filename + "%",))
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
@@ -240,7 +240,7 @@ class InstallDB(object):
 
         params = [ None, prefix, category, package, version, revision ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
-        EmergeDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
@@ -253,8 +253,8 @@ class InstallDB(object):
         """ prepare a new database and add the required table layout """
         with TemporaryUseShortpath(False):
             if not os.path.exists( self.dbfilename ):
-                if not os.path.exists( EmergeStandardDirs.etcPortageDir( ) ):
-                    os.makedirs( EmergeStandardDirs.etcPortageDir( ) )
+                if not os.path.exists( CraftStandardDirs.etcPortageDir( ) ):
+                    os.makedirs( CraftStandardDirs.etcPortageDir( ) )
                 self.connection = sqlite3.connect( self.dbfilename )
                 cursor = self.connection.cursor()
 
@@ -286,11 +286,11 @@ def main():
     """ Testing the class"""
 
     # add two databases
-    tempdbpath1 = os.path.join( EmergeStandardDirs.emergeRoot(), "tmp", "temp1.db" )
-    tempdbpath2 = os.path.join( EmergeStandardDirs.emergeRoot(), "tmp", "temp2.db" )
+    tempdbpath1 = os.path.join( CraftStandardDirs.craftRoot(), "tmp", "temp1.db" )
+    tempdbpath2 = os.path.join( CraftStandardDirs.craftRoot(), "tmp", "temp2.db" )
 
-    if not os.path.exists( os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) ):
-        os.makedirs( os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) )
+    if not os.path.exists( os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) ):
+        os.makedirs( os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
 
     if os.path.exists( tempdbpath1 ):
         os.remove( tempdbpath1 )
@@ -300,7 +300,7 @@ def main():
     db_temp = InstallDB( tempdbpath1 )
     db = InstallDB( tempdbpath2 )
 
-    EmergeDebug.debug('testing installation database')
+    CraftDebug.debug('testing installation database')
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
@@ -308,31 +308,31 @@ def main():
         # really commit uninstall
         for package in packageList:
             package.uninstall()
-    EmergeDebug.debug_line()
+    CraftDebug.debug_line()
 
-    EmergeDebug.new_line()
+    CraftDebug.new_line()
     # add a package
-    EmergeDebug.debug('installing package win32libs/dbus-src-1.4.0 (release)')
+    CraftDebug.debug('installing package win32libs/dbus-src-1.4.0 (release)')
     package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'release' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
 
     # add another package in a different prefix
-    EmergeDebug.debug('installing package win32libs/dbus-src-1.4.0 (debug)')
+    CraftDebug.debug('installing package win32libs/dbus-src-1.4.0 (debug)')
     package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'debug' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
-    EmergeDebug.debug_line()
+    CraftDebug.debug_line()
 
-    EmergeDebug.new_line()
-    EmergeDebug.debug('checking installed packages')
-    EmergeDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    EmergeDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    CraftDebug.new_line()
+    CraftDebug.debug('checking installed packages')
+    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
 
-    EmergeDebug.new_line()
-    EmergeDebug.debug('now trying to remove package & revert it again later')
+    CraftDebug.new_line()
+    CraftDebug.debug('now trying to remove package & revert it again later')
     # remove the package again
     packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
@@ -340,42 +340,42 @@ def main():
             # we could remove the file here
             # print line
             pass
-    EmergeDebug.debug_line()
+    CraftDebug.debug_line()
 
-    EmergeDebug.new_line()
-    EmergeDebug.debug('checking installed packages')
-    EmergeDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    EmergeDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    EmergeDebug.debug_line()
+    CraftDebug.new_line()
+    CraftDebug.debug('checking installed packages')
+    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    CraftDebug.debug_line()
 
-    EmergeDebug.new_line()
-    EmergeDebug.debug('reverting removal')
+    CraftDebug.new_line()
+    CraftDebug.debug('reverting removal')
     # now instead of completing the removal, revert it
     for pac in packageList:
         pac.revert()
 
-    EmergeDebug.debug('checking installed packages')
-    EmergeDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    EmergeDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    EmergeDebug.debug_line()
+    CraftDebug.debug('checking installed packages')
+    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    CraftDebug.debug_line()
 
     db.getInstalled()
     db.getInstalled( category='win32libs', prefix='debug' )
     db.getInstalled( package='dbus-src' )
 
-    EmergeDebug.new_line()
-    EmergeDebug.debug('now really remove the package')
+    CraftDebug.new_line()
+    CraftDebug.debug('now really remove the package')
     packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
-        EmergeDebug.debug('removing %s files' % len(pac.getFilesWithHashes()))
+        CraftDebug.debug('removing %s files' % len(pac.getFilesWithHashes()))
         pac.uninstall()
 
-    EmergeDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    EmergeDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    EmergeDebug.debug_line()
+    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    CraftDebug.debug_line()
 
     # test the import from the old style (manifest based) databases
-    EmergeDebug.new_line()
+    CraftDebug.new_line()
     print("getInstalled:", db_temp.getInstalled())
 
 if __name__ == '__main__':

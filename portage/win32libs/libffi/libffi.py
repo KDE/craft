@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = "https://github.com/winlibs/libffi/archive/libffi-%s.tar.gz" % ver
             self.archiveNames[ver] = "libffi-libffi-%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "libffi-libffi-%s" % ver
-        self.targetDigests['3.2.1'] = (['9f8e1133c6b9f72b73943103414707a1970e2e9b1d332c3df0d35dac1d9917e5'], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigests['3.2.1'] = (['9f8e1133c6b9f72b73943103414707a1970e2e9b1d332c3df0d35dac1d9917e5'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "3.2.1"
 
     def setDependencies( self ):

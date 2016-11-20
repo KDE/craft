@@ -12,7 +12,7 @@
 cls
 
 
-$env:EmergeRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
+$env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 $EMERGE_ARGUMENTS = $args
 
@@ -49,13 +49,13 @@ function readINI([string] $fileName)
 
 
 
-if(test-path -path $env:EmergeRoot\..\etc\kdesettings.ini)
+if(test-path -path $env:CraftRoot\..\etc\kdesettings.ini)
 {
-    $settings = readINI $env:EmergeRoot\..\etc\kdesettings.ini
+    $settings = readINI $env:CraftRoot\..\etc\kdesettings.ini
 }
 else
 {
-    Write-Error("$env:EmergeRoot\..\etc\kdesettings.ini Does not exist")
+    Write-Error("$env:CraftRoot\..\etc\kdesettings.ini Does not exist")
     break
 }
 if( $EMERGE_ARGUMENTS[0] -eq "--get")
@@ -78,7 +78,7 @@ if( -Not $env:EMERGE_PYTHON)
     findPython("python3")
 }
 
-(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "EmergeSetupHelper.py")) "--setup" "--mode" "powershell") |
+(& $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup" "--mode" "powershell") |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=")
@@ -92,7 +92,7 @@ cd "$env:KDEROOT"
 
 
 function Global:craft() {
-    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:EmergeRoot", "bin", "craft.py")) $args
+    return & $env:EMERGE_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
 

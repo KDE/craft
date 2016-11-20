@@ -1,6 +1,6 @@
 import sys
 
-from EmergeConfig import emergeSettings
+from CraftConfig import craftSettings
 
 
 class Verbose(object):
@@ -8,7 +8,7 @@ class Verbose(object):
         This class will work on the overall output verbosity
         It defines the interface for the option parser but before the default
         value is taken from the environment variable.
-        There is only one verbosity value for all parts of emerge.
+        There is only one verbosity value for all parts of craft.
         Always updates the shell variable EMERGE_VERBOSE.
     """
     __level = 0
@@ -67,16 +67,16 @@ def info( message ):
 
 def debug( message, level=1 ):
     if verbose() >= level and verbose() > 0:
-        print("emerge debug (%s): %s" % (level, message))
+        print("craft debug (%s): %s" % (level, message))
         sys.stdout.flush()
     return True
 
 
 def warning( message ):
     try:
-        print("emerge warning: %s" % message)
+        print("craft warning: %s" % message)
     except UnicodeEncodeError:
-        print("emerge warning: failed to print message")
+        print("craft warning: failed to print message")
     return True
 
 
@@ -89,22 +89,22 @@ def debug_line( level=1 ):
         print("_" * 80)
 
 def error( message ):
-    print("emerge error: %s" % message, file=sys.stderr)
+    print("craft error: %s" % message, file=sys.stderr)
     return False
 
 
 def die( message ):
-    print("emerge fatal error: %s" % message)
+    print("craft fatal error: %s" % message)
     exit(1)
 
 
 def traceMode():
     """return the value of the trace level"""
-    return int(emergeSettings.get( "General", "EMERGE_TRACE", "0" ))
+    return int(craftSettings.get( "General", "EMERGE_TRACE", "0" ))
 
 
 def trace( message, dummyLevel=0 ):
     if traceMode(): #> level:
-        print("emerge trace:", message)
+        print("craft trace:", message)
     sys.stdout.flush()
     return True

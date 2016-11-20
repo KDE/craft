@@ -7,9 +7,9 @@
 
 import os
 
-import EmergeDebug
+import CraftDebug
 import utils
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 from BuildSystem.BuildSystemBase import *
 
 
@@ -79,9 +79,9 @@ class BoostBuildSystem(BuildSystemBase):
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
                 options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % ({ "vs2008" : "9_0", "vs2010" : "10_0", "vs2012" : "11_0" }[os.getenv("INTEL_VSSHELL")])
                 options += " -sINTEL_VERSION=%s" % os.getenv("PRODUCT_NAME")[-2:]
-        emergeUserConfig = os.path.join( EmergeStandardDirs.emergeRoot(), "etc", "emerge-boost-config.jam" )
-        if os.path.exists( emergeUserConfig ):
-            options += " --user-config=" + os.path.join( emergeUserConfig )
+        craftUserConfig = os.path.join( CraftStandardDirs.craftRoot(), "etc", "craft-boost-config.jam" )
+        if os.path.exists( craftUserConfig ):
+            options += " --user-config=" + os.path.join( craftUserConfig )
         return options
 
     def configure( self, defines=""):
@@ -95,7 +95,7 @@ class BoostBuildSystem(BuildSystemBase):
         self.enterSourceDir()
         cmd  = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
-        if EmergeDebug.verbose() >= 1:
+        if CraftDebug.verbose() >= 1:
             print(cmd)
         return self.system(cmd)
 

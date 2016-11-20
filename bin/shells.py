@@ -7,7 +7,7 @@
 import os
 import sys
 
-import EmergeDebug
+import CraftDebug
 import utils
 import compiler
 from options import *
@@ -17,13 +17,13 @@ from options import *
 
 class MSysShell(object):
     def __init__(self):
-        self.msysdir = os.path.join( EmergeStandardDirs.emergeRoot(), "msys" )
+        self.msysdir = os.path.join( CraftStandardDirs.craftRoot(), "msys" )
         self.environment = {}
         self._sh = os.path.join( self.msysdir, "bin", "sh.exe" )
         if not os.path.exists( self._sh ):
             self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
-        mergeroot = self.toNativePath(EmergeStandardDirs.emergeRoot())
+        mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
         if compiler.isMSVC():
             ldflags = ""
             cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX"  # dynamic and exceptions enabled
@@ -40,7 +40,7 @@ class MSysShell(object):
 
 
         self.environment[ "MSYS2_PATH_TYPE" ] = "inherit"#inherit the windows path
-        self.environment[ "PKG_CONFIG_PATH" ] = self.toNativePath(os.path.join( EmergeStandardDirs.emergeRoot( ), "lib", "pkgconfig" ))
+        self.environment[ "PKG_CONFIG_PATH" ] = self.toNativePath(os.path.join( CraftStandardDirs.craftRoot( ), "lib", "pkgconfig" ))
 
         if "make" in self.environment:
             del self.environment[ "make" ]
@@ -58,8 +58,8 @@ class MSysShell(object):
                 cl = "clang-cl"
             else:
                 cl = "cl"
-            self.environment[ "LIB" ] = "%s;%s\\lib" % ( os.getenv("LIB"), EmergeStandardDirs.emergeRoot())
-            self.environment[ "INCLUDE" ] = "%s;%s\\include" % ( os.getenv("INCLUDE"), EmergeStandardDirs.emergeRoot())
+            self.environment[ "LIB" ] = "%s;%s\\lib" % ( os.getenv("LIB"), CraftStandardDirs.craftRoot())
+            self.environment[ "INCLUDE" ] = "%s;%s\\include" % ( os.getenv("INCLUDE"), CraftStandardDirs.craftRoot())
             self.environment[ "LD" ] = "link -NOLOGO"
             self.environment[ "CC" ] = "%s -nologo" % cl
             self.environment[ "CXX" ] = self.environment[ "CC" ]
@@ -77,7 +77,7 @@ class MSysShell(object):
 
     @property
     def buildType(self):
-        return emergeSettings.get("Compile", "BuildType","RelWithDebInfo")
+        return craftSettings.get("Compile", "BuildType","RelWithDebInfo")
 
     @staticmethod
     def toNativePath( path ):
@@ -91,8 +91,8 @@ class MSysShell(object):
             env[k] = v
         command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
                   ( self._sh, export, self.toNativePath( path ), self.toNativePath( cmd ), args )
-        EmergeDebug.info("msys execute: %s" % command)
-        EmergeDebug.debug("msys environment: %s" % self.environment)
+        CraftDebug.info("msys execute: %s" % command)
+        CraftDebug.debug("msys environment: %s" % self.environment)
         return utils.system( command, stdout=out, stderr=err, env = env )
 
     def login(self):

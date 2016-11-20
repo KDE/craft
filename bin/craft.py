@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# this will emerge some programs...
+# this will craft some programs...
 
 # copyright:
 # Holger Schroeder <holger [AT] holgis [DOT] net>
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
 
-# The minimum python version for emerge please edit here
+# The minimum python version for craft please edit here
 # if you add code that changes this requirement
 
 import sys
 
-import EmergeDebug
-import EmergeTimer
+import CraftDebug
+import CraftTimer
 
 import time
 import datetime
@@ -28,14 +28,14 @@ import InstallDB
 import portage
 import utils
 import threading
-from EmergeConfig import *
+from CraftConfig import *
 
-def destroyEmergeRoot():
+def destroyCraftRoot():
     del InstallDB.installdb
-    root = EmergeStandardDirs.emergeRoot()
+    root = CraftStandardDirs.craftRoot()
     for entry in os.listdir(root):
         path = os.path.join(root, entry)
-        if path == EmergeStandardDirs.etcDir():
+        if path == CraftStandardDirs.etcDir():
             for entry in os.listdir(path):
                 if not entry == "kdesettings.ini":
                     etcPath = os.path.join(path, entry)
@@ -47,8 +47,8 @@ def destroyEmergeRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not path in [ EmergeStandardDirs.downloadDir(), os.path.join(EmergeStandardDirs.emergeBin(), ".."),
-                           os.path.join(EmergeStandardDirs.emergeRoot(), "python") ]:
+        elif not path in [ CraftStandardDirs.downloadDir(), os.path.join(CraftStandardDirs.craftBin(), ".."),
+                           os.path.join(CraftStandardDirs.craftRoot(), "python") ]:
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
                 continue
@@ -66,18 +66,18 @@ def packageIsOutdated( category, package ):
 
 @utils.log
 def doExec( package, action, continueFlag = False ):
-    with EmergeTimer.Timer("%s for %s" % ( action, package ), 1 ):
-        EmergeDebug.info("Action: %s for %s" % (action, package))
+    with CraftTimer.Timer("%s for %s" % ( action, package ), 1 ):
+        CraftDebug.info("Action: %s for %s" % (action, package))
         ret = package.execute( action )
         if not ret:
-            EmergeDebug.warning("Action: %s for %s FAILED" % (action, package))
+            CraftDebug.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
-    with EmergeTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
-        EmergeDebug.debug_line()
-        EmergeDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
+    with CraftTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
+        CraftDebug.debug_line()
+        CraftDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
 
         success = True
         package = portage.getPackageInstance( category, packageName )
@@ -85,7 +85,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             raise portage.PortageException( "Package not found", category, packageName )
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
-            if emergeSettings.getboolean("ContinuousIntegration", "UseCache", "False"):
+            if craftSettings.getboolean("ContinuousIntegration", "UseCache", "False"):
                 if doExec( package, "fetch-binary"):
                     return True
             success = success and doExec( package, "fetch", continueFlag )
@@ -94,7 +94,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 revision = package.sourceVersion( )
                 for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
                     if p.getRevision( ) == revision:
-                        EmergeDebug.info("Skipping further actions, package is up-to-date")
+                        CraftDebug.info("Skipping further actions, package is up-to-date")
                         skip = True
             if not skip:
                 success = success and doExec( package, "unpack", continueFlag )
@@ -103,7 +103,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 success = success and doExec( package, "install" )
                 if buildAction in [ "all", "update", "update-all" ]:
                     success = success and doExec( package, "qmerge" )
-                if buildAction == "full-package" or emergeSettings.getboolean("ContinuousIntegration", "CreateCache"):
+                if buildAction == "full-package" or craftSettings.getboolean("ContinuousIntegration", "CreateCache"):
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
@@ -131,10 +131,10 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             portage.printTargets( category, packageName )
             success = True
         else:
-            success = EmergeDebug.error("could not understand this buildAction: %s" % buildAction)
+            success = CraftDebug.error("could not understand this buildAction: %s" % buildAction)
 
         timer.stop()
-        utils.notify( "Emerge %s %s" % (buildAction, "succeeded" if success else "failed"),
+        utils.notify( "Craft %s %s" % (buildAction, "succeeded" if success else "failed"),
                       "%s of %s/%s %s after %s" % ( buildAction, category, packageName, "succeeded" if success else "failed", timer), buildAction)
         return success
 
@@ -149,9 +149,9 @@ def handleSinglePackage( packageName, action, args ):
     if action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
-            EmergeDebug.debug("Updating installed packages from category " + packageName, 1)
+            CraftDebug.debug("Updating installed packages from category " + packageName, 1)
         else:
-            EmergeDebug.debug("Updating all installed packages", 1)
+            CraftDebug.debug("Updating all installed packages", 1)
         packageList = [ ]
         for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
@@ -160,7 +160,7 @@ def handleSinglePackage( packageName, action, args ):
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
-        EmergeDebug.debug("Will update packages: " + str(packageList), 1)
+        CraftDebug.debug("Will update packages: " + str(packageList), 1)
     elif args.list_file:
         listFileObject = open( args.list_file, 'r' )
         for line in listFileObject:
@@ -177,7 +177,7 @@ def handleSinglePackage( packageName, action, args ):
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
     for entry in packageList:
-        EmergeDebug.debug("Checking dependencies for: %s" % entry, 1)
+        CraftDebug.debug("Checking dependencies for: %s" % entry, 1)
 
     for mainCategory, entry in zip( categoryList, packageList ):
         deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
@@ -205,11 +205,11 @@ def handleSinglePackage( packageName, action, args ):
             # if no target or a wrong one is defined, simply set the default target here
             item.target = args.target
 
-        EmergeDebug.debug("dependency: %s" % item, 1)
+        CraftDebug.debug("dependency: %s" % item, 1)
     if not deplist:
-        EmergeDebug.debug("<none>", 1)
+        CraftDebug.debug("<none>", 1)
 
-    EmergeDebug.debug_line(1)
+    CraftDebug.debug_line(1)
 
     #for item in deplist:
     #    cat = item[ 0 ]
@@ -266,24 +266,24 @@ def handleSinglePackage( packageName, action, args ):
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
-                if EmergeDebug.verbose() > 1 and info.package == packageName:
-                    EmergeDebug.warning("already installed %s/%s" % (info.category, info.package))
-                elif EmergeDebug.verbose() > 2 and not info.package == packageName:
-                    EmergeDebug.warning("already installed %s/%s" % (info.category, info.package))
+                if CraftDebug.verbose() > 1 and info.package == packageName:
+                    CraftDebug.warning("already installed %s/%s" % (info.category, info.package))
+                elif CraftDebug.verbose() > 2 and not info.package == packageName:
+                    CraftDebug.warning("already installed %s/%s" % (info.category, info.package))
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                        EmergeDebug.warning("pretending %s" % info)
+                        CraftDebug.warning("pretending %s" % info)
                 else:
                     if action in [ "install-deps", "update-direct-deps" ]:
                         action = "all"
 
                     if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
-                        EmergeDebug.error("fatal error: package %s/%s %s failed" % \
+                        CraftDebug.error("fatal error: package %s/%s %s failed" % \
                                           ( info.category, info.package, action ))
                         return False
 
-    EmergeDebug.new_line()
+    CraftDebug.new_line()
     return True
 
 class ActionHandler:
@@ -326,22 +326,22 @@ class ActionHandler:
 
 
 def main( ):
-    parser = argparse.ArgumentParser( prog = "emerge",
-                                      description = "Emerge is a tool for building KDE-related software under Windows. emerge automates it, looks for the dependencies and fetches them automatically.\
+    parser = argparse.ArgumentParser( prog = "craft",
+                                      description = "Craft is a tool for building KDE-related software under Windows. craft automates it, looks for the dependencies and fetches them automatically.\
                                       Some options should be used with extreme caution since they will make your kde installation unusable in 999 out of 1000 cases.",
                                       epilog = """More information see the README or http://windows.kde.org/.
     Send feedback to <kde-windows@kde.org>.""" )
 
     parser.add_argument( "-p", "--probe", action = "store_true",
-                         help = "probing: emerge will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
+                         help = "probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
     parser.add_argument( "--list-file", action = "store",
                          help = "Build all packages from the csv file provided" )
-    _def = emergeSettings.get( "General", "EMERGE_OPTIONS", "" )
+    _def = craftSettings.get( "General", "EMERGE_OPTIONS", "" )
     if _def == "": _def = []
     else: _def = _def.split( ";" )
     parser.add_argument( "--options", action = "append",
                          default = _def,
-                         help = "Set emerge property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations." )
+                         help = "Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations." )
     parser.add_argument( "-z", "--outDateVCS", action = "store_true",
                          help = "if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date)." )
     parser.add_argument( "-sz", "--outDatePackage", action = "store_true",
@@ -350,30 +350,30 @@ def main( ):
                          dest = "stayQuiet",
                          help = "quiet: there should be no output - The verbose level should be 0" )
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
-                         default = emergeSettings.getboolean( "Compile", "BuildTests", True ) )
+                         default = craftSettings.getboolean( "Compile", "BuildTests", True ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument("-cc", "--create-cache", action="store_true", dest="createCache",
-                        default=emergeSettings.getboolean("ContinuousIntegration", "CreateCache", "False"))
+                        default=craftSettings.getboolean("ContinuousIntegration", "CreateCache", "False"))
     parser.add_argument("-uc", "--use-cache", action="store_true", dest="useCache",
-                        default=emergeSettings.getboolean("ContinuousIntegration", "UseCache", "False"))
-    parser.add_argument( "--destroy-emerge-root", action = "store_true", dest = "doDestroyEmergeRoot",
+                        default=craftSettings.getboolean("ContinuousIntegration", "UseCache", "False"))
+    parser.add_argument( "--destroy-craft-root", action = "store_true", dest = "doDestroyCraftRoot",
                          default=False)
     parser.add_argument( "--offline", action = "store_true",
-                         default = emergeSettings.getboolean( "General", "WorkOffline", False ),
+                         default = craftSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail." )
     parser.add_argument( "-f", "--force", action = "store_true", dest = "forced",
-                         default = emergeSettings.getboolean( "General", "EMERGE_FORCED", False ) )
+                         default = craftSettings.getboolean( "General", "EMERGE_FORCED", False ) )
     parser.add_argument( "--buildtype", choices = [ "Release", "RelWithDebInfo", "MinSizeRel", "Debug" ],
                          dest = "buildType",
-                         default = emergeSettings.get( "Compile", "BuildType", "RelWithDebInfo" ),
+                         default = craftSettings.get( "Compile", "BuildType", "RelWithDebInfo" ),
                          help = "This will override the build type set in your kdesettings.ini." )
     parser.add_argument( "-v", "--verbose", action = "count",
-                         default = int( emergeSettings.get( "EmergeDebug", "Verbose", "0" ) ),
-                         help = " verbose: increases the verbose level of emerge. Default is 1. verbose level 1 contains some notes from emerge, all output of cmake, make and other programs that are used.\
-                          verbose level 2a dds an option VERBOSE=1 to make and emerge is more verbose highest level is verbose level 3." )
+                         default = int( craftSettings.get( "CraftDebug", "Verbose", "0" ) ),
+                         help = " verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\
+                          verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3." )
     parser.add_argument( "--trace", action = "store",
-                         default = int( emergeSettings.get( "General", "EMERGE_TRACE", "0" ) ), type = int )
+                         default = int( craftSettings.get( "General", "EMERGE_TRACE", "0" ) ), type = int )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
     parser.add_argument( "-ia", "--ignoreAllInstalled", action = "store_true",
@@ -384,22 +384,22 @@ def main( ):
     parser.add_argument( "--search", action = "store_true",
                          help = "This will search for a package or a description matching or similar to the search term." )
     parser.add_argument( "--noclean", action = "store_true",
-                         default = emergeSettings.getboolean( "General", "EMERGE_NOCLEAN", False ),
+                         default = craftSettings.getboolean( "General", "EMERGE_NOCLEAN", False ),
                          help = "this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing." )
     parser.add_argument( "--clean", action = "store_false", dest = "noclean",
                          help = "oposite of --noclean" )
     parser.add_argument( "--patchlevel", action = "store",
-                         default = emergeSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
+                         default = craftSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
                          help = "This will add a patch level when used together with --package" )
     parser.add_argument( "--log-dir", action = "store",
-                         default = emergeSettings.get( "General", "EMERGE_LOG_DIR", "" ),
+                         default = craftSettings.get( "General", "EMERGE_LOG_DIR", "" ),
                          help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
     parser.add_argument( "--update-fast", action = "store_true",
                          help = "If the package is installed from svn/git and the revision did not change all steps after fetch are skipped" )
     parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default = -1,
-                         help = "By default emerge resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
+                         help = "By default craft resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
 
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
@@ -424,34 +424,34 @@ def main( ):
 
     # other actions
     actionHandler.addActionWithArg( "dump-deps-file", dest = "dumpDepsFile",
-                                    help = "Output the dependencies of this package as a csv file suitable for emerge server." )
+                                    help = "Output the dependencies of this package as a csv file suitable for craft server." )
 
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )
 
-    if args.doDestroyEmergeRoot:
-        destroyEmergeRoot()
+    if args.doDestroyCraftRoot:
+        destroyCraftRoot()
         return True
 
 
     if args.stayQuiet:
-        EmergeDebug.setVerbose(-1)
+        CraftDebug.setVerbose(-1)
     elif args.verbose:
-        EmergeDebug.setVerbose(args.verbose)
+        CraftDebug.setVerbose(args.verbose)
 
-    emergeSettings.set( "General", "WorkOffline", args.offline )
-    emergeSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
-    emergeSettings.set( "General", "EMERGE_FORCED", args.forced )
-    emergeSettings.set( "Compile", "BuildTests", args.buildTests )
-    emergeSettings.set( "Compile", "BuildType", args.buildType )
-    emergeSettings.set( "PortageVersions", "DefaultTarget", args.target )
-    emergeSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
-    emergeSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
-    emergeSettings.set( "General", "EMERGE_TRACE", args.trace )
-    emergeSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
-    emergeSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
-    emergeSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
+    craftSettings.set( "General", "WorkOffline", args.offline )
+    craftSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
+    craftSettings.set( "General", "EMERGE_FORCED", args.forced )
+    craftSettings.set( "Compile", "BuildTests", args.buildTests )
+    craftSettings.set( "Compile", "BuildType", args.buildType )
+    craftSettings.set( "PortageVersions", "DefaultTarget", args.target )
+    craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
+    craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
+    craftSettings.set( "General", "EMERGE_TRACE", args.trace )
+    craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
+    craftSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
+    craftSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
 
     portage.PortageInstance.options = args.options
     if args.search:
@@ -472,15 +472,15 @@ def main( ):
         if action in [ "update", "update-all" ]:
             tempArgs.noclean = True
 
-        EmergeDebug.debug("buildAction: %s" % action)
-        EmergeDebug.debug("doPretend: %s" % tempArgs.probe, 1)
-        EmergeDebug.debug("packageName: %s" % tempArgs.packageNames)
-        EmergeDebug.debug("buildType: %s" % tempArgs.buildType)
-        EmergeDebug.debug("buildTests: %s" % tempArgs.buildTests)
-        EmergeDebug.debug("verbose: %d" % EmergeDebug.verbose(), 1)
-        EmergeDebug.debug("trace: %s" % tempArgs.trace, 1)
-        EmergeDebug.debug("KDEROOT: %s" % EmergeStandardDirs.emergeRoot(), 1)
-        EmergeDebug.debug_line()
+        CraftDebug.debug("buildAction: %s" % action)
+        CraftDebug.debug("doPretend: %s" % tempArgs.probe, 1)
+        CraftDebug.debug("packageName: %s" % tempArgs.packageNames)
+        CraftDebug.debug("buildType: %s" % tempArgs.buildType)
+        CraftDebug.debug("buildTests: %s" % tempArgs.buildTests)
+        CraftDebug.debug("verbose: %d" % CraftDebug.verbose(), 1)
+        CraftDebug.debug("trace: %s" % tempArgs.trace, 1)
+        CraftDebug.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot(), 1)
+        CraftDebug.debug_line()
 
         if action == "print-installed":
             InstallDB.printInstalled( )
@@ -499,14 +499,14 @@ def main( ):
 
 if __name__ == '__main__':
     success= True
-    with EmergeTimer.Timer("Emerge", 0):
+    with CraftTimer.Timer("Craft", 0):
         try:
             doUpdateTitle = True
 
             def updateTitle( startTime, title ):
                 while ( doUpdateTitle ):
                     delta = datetime.datetime.now( ) - startTime
-                    utils.OsUtils.setConsoleTitle( "emerge %s %s" % (title, delta) )
+                    utils.OsUtils.setConsoleTitle( "craft %s %s" % (title, delta) )
                     time.sleep( 1 )
 
             tittleThread = threading.Thread( target = updateTitle,
@@ -518,16 +518,16 @@ if __name__ == '__main__':
             pass
         except portage.PortageException as e:
             if e.exception:
-                EmergeDebug.debug(e.exception, 0)
+                CraftDebug.debug(e.exception, 0)
                 traceback.print_tb( e.exception.__traceback__)
-            EmergeDebug.error(e)
+            CraftDebug.error(e)
         except Exception as e:
             print( e )
             traceback.print_tb( e.__traceback__ )
         finally:
             doUpdateTitle = False
-            if emergeSettings.getboolean( "EmergeDebug", "DumpSettings", False ):
-                emergeSettings.dump( )
+            if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):
+                craftSettings.dump( )
     if not success:
         exit( 1 )
 

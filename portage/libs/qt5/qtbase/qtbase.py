@@ -6,7 +6,7 @@ import utils
 import info
 import portage
 import compiler
-from EmergeOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
 
@@ -70,8 +70,8 @@ class Package(Qt5CorePackageBase):
             configure = os.path.join( self.sourceDir() ,"configure" )
 
 
-        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, EmergeStandardDirs.emergeRoot(), self.platform )
-        command += "-headerdir %s " % os.path.join(EmergeStandardDirs.emergeRoot(), "include", "qt5")
+        command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, CraftStandardDirs.craftRoot(), self.platform )
+        command += "-headerdir %s " % os.path.join(CraftStandardDirs.craftRoot(), "include", "qt5")
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         command += "-qt-pcre "
@@ -93,7 +93,7 @@ class Package(Qt5CorePackageBase):
             command += "-release "
 
         if not self.subinfo.options.buildStatic:
-            command += "-I \"%s\" -L \"%s\" " % (os.path.join(EmergeStandardDirs.emergeRoot(), "include"), os.path.join(EmergeStandardDirs.emergeRoot(), "lib"))
+            command += "-I \"%s\" -L \"%s\" " % (os.path.join(CraftStandardDirs.craftRoot(), "include"), os.path.join(CraftStandardDirs.craftRoot(), "lib"))
             if self.subinfo.options.isActive("win32libs/openssl"):
                 command += " -openssl-linked "
             if self.subinfo.options.isActive("binary/mysql-pkg"):

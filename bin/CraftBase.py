@@ -6,11 +6,11 @@ import sys
 import datetime
 from ctypes import *
 
-import EmergeDebug
+import CraftDebug
 import utils
 import portage
 import compiler
-from EmergeConfig import *
+from CraftConfig import *
 import utils
 
 
@@ -24,14 +24,14 @@ import utils
 
 
 
-class EmergeBase(object):
-    """base class for emerge system - holds attributes and methods required by base classes"""
+class CraftBase(object):
+    """base class for craft system - holds attributes and methods required by base classes"""
 
     def __init__( self):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
-        EmergeDebug.debug("EmergeBase.__init__ called", 2)
+        CraftDebug.debug("CraftBase.__init__ called", 2)
 
         if not hasattr(self, 'subinfo'):
             self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
@@ -45,11 +45,11 @@ class EmergeBase(object):
 
         # if implicit build time dependency is wanted, depend on internal packages
         # for this class and all of its ancestor classes
-        if emergeSettings.getboolean("General", "EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES", False):
+        if craftSettings.getboolean("General", "EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES", False):
             for cls in type(self).mro():
                 className = cls.__name__
                 packageName = 'internal/%s' % className
-                if os.path.exists(os.path.join(EmergeStandardDirs.emergeRoot() , 'emerge', 'portage',
+                if os.path.exists(os.path.join(CraftStandardDirs.craftRoot() , 'craft', 'portage',
                         'internal', className, '%s-internal.py' % className)):
                     if self.subinfo and not packageName in self.subinfo.buildDependencies:
                         self.subinfo.buildDependencies[packageName] = 'default'
@@ -64,7 +64,7 @@ class EmergeBase(object):
 
         ## specifies if a build type related root directory should be used
         self.useBuildTypeRelatedMergeRoot = False
-        if emergeSettings.getboolean("General","EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False):
+        if craftSettings.getboolean("General","EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False):
             self.useBuildTypeRelatedMergeRoot = True
 
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
@@ -77,23 +77,23 @@ class EmergeBase(object):
 
     @property
     def noFetch(self):
-        return emergeSettings.getboolean("General", "WorkOffline", False)
+        return craftSettings.getboolean("General", "WorkOffline", False)
 
     @property
     def noFast(self):
-        return emergeSettings.getboolean("General", "EMERGE_NOFAST", True )
+        return craftSettings.getboolean("General", "EMERGE_NOFAST", True )
 
     @property
     def noClean(self):
-        return emergeSettings.getboolean("General", "EMERGE_NOCLEAN", False )
+        return craftSettings.getboolean("General", "EMERGE_NOCLEAN", False )
 
     @property
     def forced(self):
-        return emergeSettings.getboolean("General", "EMERGE_FORCED", False )
+        return craftSettings.getboolean("General", "EMERGE_FORCED", False )
 
     @property
     def buildTests(self):
-        return emergeSettings.getboolean("Compile", "BuildTests")
+        return craftSettings.getboolean("Compile", "BuildTests")
 
 
     def __adjustPath(self, directory):
@@ -106,12 +106,12 @@ class EmergeBase(object):
             return directory
         buf = create_string_buffer('\000' * (length + 1))
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        EmergeDebug.debug("converting " + directory + " to " + buf.value)
+        CraftDebug.debug("converting " + directory + " to " + buf.value)
         return buf.value
 
     def buildType(self):
         """return currently selected build type"""
-        return emergeSettings.get("Compile","BuildType")
+        return craftSettings.get("Compile","BuildType")
 
     def compiler(self):
         """deprecated"""
@@ -157,7 +157,7 @@ class EmergeBase(object):
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        buildroot    = os.path.join( EmergeStandardDirs.emergeRoot(), "build", self.category, self.package )
+        buildroot    = os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
         return self.__adjustPath(buildroot)
 
     def workDir(self):
@@ -166,11 +166,11 @@ class EmergeBase(object):
         return self.__adjustPath(_workDir)
 
     def buildDir(self):
-        EmergeDebug.debug("EmergeBase.buildDir() called", 2)
+        CraftDebug.debug("CraftBase.buildDir() called", 2)
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
-        EmergeDebug.debug("package builddir is: %s" % builddir, 2)
+        CraftDebug.debug("package builddir is: %s" % builddir, 2)
         return self.__adjustPath(builddir)
 
     def imageDir(self):
@@ -211,30 +211,30 @@ class EmergeBase(object):
         """
 
         if self.subinfo.hasMergePath():
-            directory = os.path.join( EmergeStandardDirs.emergeRoot(), self.subinfo.mergePath() )
+            directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.mergePath() )
         elif not self.subinfo.options.merge.destinationPath == None:
-            directory = os.path.join( EmergeStandardDirs.emergeRoot(), self.subinfo.options.merge.destinationPath )
+            directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.options.merge.destinationPath )
         elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
-            directory = EmergeStandardDirs.emergeRoot()
+            directory = CraftStandardDirs.craftRoot()
         elif self.buildType() == 'Debug':
-            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'debug')
+            directory = os.path.join(CraftStandardDirs.craftRoot(),'debug')
         elif self.buildType() == 'Release':
-            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'release')
+            directory = os.path.join(CraftStandardDirs.craftRoot(),'release')
         elif self.buildType() == 'RelWithDebInfo':
-            directory = os.path.join(EmergeStandardDirs.emergeRoot(),'relwithdebinfo')
+            directory = os.path.join(CraftStandardDirs.craftRoot(),'relwithdebinfo')
         else:
-            directory = EmergeStandardDirs.emergeRoot()
+            directory = CraftStandardDirs.craftRoot()
         return self.__adjustPath(directory)
 
     def packageDestinationDir( self, withBuildType=True ):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
-        EmergeDebug.debug("EmergeBase.packageDestinationDir called", 2)
-        dstpath = emergeSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( EmergeStandardDirs.emergeRoot(), "tmp" ) )
+        CraftDebug.debug("CraftBase.packageDestinationDir called", 2)
+        dstpath = craftSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
 
         if withBuildType:
-            if emergeSettings.getboolean("General", "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False ):
+            if craftSettings.getboolean("General", "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False ):
                 dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):
@@ -251,24 +251,24 @@ class EmergeBase(object):
 
     @property
     def rootdir(self):
-        return EmergeStandardDirs.emergeRoot()
+        return CraftStandardDirs.craftRoot()
 
     def enterBuildDir(self):
-        EmergeDebug.trace("EmergeBase.enterBuildDir called")
+        CraftDebug.trace("CraftBase.enterBuildDir called")
 
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
-            EmergeDebug.debug("creating: %s" % self.buildDir())
+            CraftDebug.debug("creating: %s" % self.buildDir())
 
         os.chdir( self.buildDir() )
-        EmergeDebug.debug("entering: %s" % self.buildDir())
+        CraftDebug.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if ( not os.path.exists( self.sourceDir() ) ):
             return False
-        EmergeDebug.warning("entering the source directory!")
+        CraftDebug.warning("entering the source directory!")
         os.chdir( self.sourceDir() )
-        EmergeDebug.debug("entering: %s" % self.sourceDir())
+        CraftDebug.debug("entering: %s" % self.sourceDir())
 
     def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
@@ -279,20 +279,20 @@ class EmergeBase(object):
         if utils.system( command, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
-            EmergeDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
+            CraftDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         else:
-            EmergeDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
+            CraftDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         return False
 
     def proxySettings(self):
-        host = emergeSettings.get("General", 'EMERGE_PROXY_HOST', "")
-        port = emergeSettings.get("General", 'EMERGE_PROXY_PORT', "")
-        username = emergeSettings.get("General", 'EMERGE_PROXY_USERNAME', "")
-        password = emergeSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
+        host = craftSettings.get("General", 'EMERGE_PROXY_HOST', "")
+        port = craftSettings.get("General", 'EMERGE_PROXY_PORT', "")
+        username = craftSettings.get("General", 'EMERGE_PROXY_USERNAME', "")
+        password = craftSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
         return [host, port, username, password]
 
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=emergeSettings.get("Packager", "7ZipArchiveType", "7z")):
+    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")):
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -306,28 +306,28 @@ class EmergeBase(object):
             self.package, compiler.architecture(), version, compiler.getShortName(), pkgSuffix, fileType)
 
     def cacheLocation(self):
-        if emergeSettings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % emergeSettings.get("QtSDK", "Version")
+        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
+            version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = emergeSettings.get("PortageVersions", "Qt5")
+            version = craftSettings.get("PortageVersions", "Qt5")
             if not version:
-                EmergeDebug.die("Please set a value for\n"
+                CraftDebug.die("Please set a value for\n"
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return os.path.join(EmergeStandardDirs.downloadDir(), "binary", version,
+        return os.path.join(CraftStandardDirs.downloadDir(), "binary", version,
                                compiler.getCompilerName(), self.buildType())
 
     def cacheRepositoryUrl(self):
-        if emergeSettings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % emergeSettings.get("QtSDK", "Version")
+        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
+            version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = emergeSettings.get("PortageVersions", "Qt5")
+            version = craftSettings.get("PortageVersions", "Qt5")
             if not version:
-                EmergeDebug.die("Please set a value for\n"
+                CraftDebug.die("Please set a value for\n"
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return "/".join([emergeSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
+        return "/".join([craftSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
                             compiler.getCompilerName(), self.buildType()])
 

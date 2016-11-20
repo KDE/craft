@@ -1,4 +1,4 @@
-import EmergeDebug
+import CraftDebug
 import info
 
 
@@ -23,20 +23,20 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )        
         # this program needs python 2.7
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % emergeSettings.get("Paths","PYTHON27","").replace("\\","/")
+        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % craftSettings.get("Paths","PYTHON27","").replace("\\","/")
         
     
     def configure(self):
-        if not ("Paths","Python27") in emergeSettings:
-            EmergeDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+        if not ("Paths","Python27") in craftSettings:
+            CraftDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
         return CMakeBuildSystem.configure(self)
 
 
     
     def install(self):
-        python = os.path.join(emergeSettings.get("Paths","PYTHON27"), "python")
+        python = os.path.join(craftSettings.get("Paths","PYTHON27"), "python")
         os.makedirs(os.path.join(self.imageDir(), "bin"))
         for script in ["depdiagram-generate", "depdiagram-prepare", "kgenapidox", "kgenframeworksapidox"]:
             utils.createBat(os.path.join(self.imageDir(), "bin", "%s.bat" % script),
-                            "%s %s %%*" % (python, os.path.join(EmergeStandardDirs.emergeRoot( ), "scripts", script)))
+                            "%s %s %%*" % (python, os.path.join(CraftStandardDirs.craftRoot( ), "scripts", script)))
         return CMakeBuildSystem.install(self)

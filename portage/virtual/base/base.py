@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-        if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
+        if not craftSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['gnuwin32/wget']       = 'default'
             self.buildDependencies['dev-util/7zip']       = 'default'
             self.buildDependencies['gnuwin32/patch']      = 'default'
@@ -20,16 +20,16 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/subversion'] = 'default'
             self.buildDependencies['dev-util/git']        = 'default'
 
-        if not emergeSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
+        if not craftSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['dev-util/putty']      = 'default'
 
             if compiler.isMinGW():
                 self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            if emergeSettings.get("Compile","MakeProgram" ,"" ) == "jom":
+            if craftSettings.get("Compile","MakeProgram" ,"" ) == "jom":
                 self.buildDependencies['dev-util/jom'] = 'default'
-            if emergeSettings.getboolean("Compile","UseNinja", False):
+            if craftSettings.getboolean("Compile","UseNinja", False):
                 self.buildDependencies['dev-util/ninja'] = 'default'
-            if emergeSettings.getboolean("Compile","UseCCache", False):
+            if craftSettings.getboolean("Compile","UseCCache", False):
                 self.buildDependencies['dev-util/ccache'] = 'default'
 
 

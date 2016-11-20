@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         if compiler.isX64():
             arch = "x64"
         self.targets[ver] = "http://downloads.activestate.com/ActivePerl/releases/%s/ActivePerl-%s-MSWin32-%s-%s.zip" % (ver, ver, arch, build)
-        self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/%s/SHA256SUM" % ver], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/%s/SHA256SUM" % ver], CraftHash.HashAlgorithm.SHA256)
         self.targetMergeSourcePath[ver] = "ActivePerl-%s-MSWin32-%s-%s\\perl" % (ver, arch, build)
         self.defaultTarget = ver
 

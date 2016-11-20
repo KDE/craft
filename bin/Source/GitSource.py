@@ -6,7 +6,7 @@
 
 import tempfile
 
-import EmergeDebug
+import CraftDebug
 from Source.VersionSystemSourceBase import *
 
 
@@ -15,7 +15,7 @@ from Source.VersionSystemSourceBase import *
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
     def __init__(self, subinfo=None):
-        EmergeDebug.trace('GitSource __init__', 2)
+        CraftDebug.trace('GitSource __init__', 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -75,11 +75,11 @@ class GitSource ( VersionSystemSourceBase ):
             return branch
 
     def __fetchSingleBranch( self, repopath = None ):
-        EmergeDebug.trace('GitSource __fetchSingleBranch', 2)
+        CraftDebug.trace('GitSource __fetchSingleBranch', 2)
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        EmergeDebug.debug("fetching %s" % repopath)
+        CraftDebug.debug("fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace( "[git]", "" )
@@ -108,7 +108,7 @@ class GitSource ( VersionSystemSourceBase ):
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs( checkoutDir )
-                # first try to replace with a repo url from etc/portage/emergehosts.conf
+                # first try to replace with a repo url from etc/portage/crafthosts.conf
                 recursive = '--recursive' if self.subinfo.options.fetch.checkoutSubmodules else ''
                 ret = self.__git('clone', recursive, repoUrl, '.')
 
@@ -131,13 +131,13 @@ class GitSource ( VersionSystemSourceBase ):
                     ret = self.__git('checkout', repoTag)
 
         else:
-            EmergeDebug.debug("skipping git fetch (--offline)")
+            CraftDebug.debug("skipping git fetch (--offline)")
         return ret
 
     def __git(self, command, *args, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and emergeSettings.get( "General", "EMERGE_LOG_DIR") != "":
+        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and craftSettings.get( "General", "EMERGE_LOG_DIR") != "":
             # if stdout/stderr is redirected, git clone qt hangs forever.
             # It does not with option -q (suppressing progress info)
             command += ' -q'
@@ -148,11 +148,11 @@ class GitSource ( VersionSystemSourceBase ):
         return self.system(' '.join(parts), **kwargs)
 
     def __fetchMultipleBranch(self, repopath=None):
-        EmergeDebug.trace('GitSource __fetchMultipleBranch', 2)
+        CraftDebug.trace('GitSource __fetchMultipleBranch', 2)
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        EmergeDebug.debug("fetching %s" % repopath)
+        CraftDebug.debug("fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
@@ -171,7 +171,7 @@ class GitSource ( VersionSystemSourceBase ):
             else:
                 ret = self.__git('fetch', cwd=rootCheckoutDir)
                 if not ret:
-                    EmergeDebug.die("could not fetch remote data")
+                    CraftDebug.die("could not fetch remote data")
 
             if repoBranch == "":
                 repoBranch = "master"
@@ -183,29 +183,29 @@ class GitSource ( VersionSystemSourceBase ):
                 else:
                     ret = self.__git('pull')
                     if not ret:
-                        EmergeDebug.die("could not pull into branch %s" % repoBranch)
+                        CraftDebug.die("could not pull into branch %s" % repoBranch)
 
             if ret:
                 #ret = self.__git('checkout', '-f')
                 ret = self.__git("checkout", "-f", repoTag or repoBranch, cwd=branchDir)
         else:
-            EmergeDebug.debug("skipping git fetch (--offline)")
+            CraftDebug.debug("skipping git fetch (--offline)")
         return ret
 
 
     def fetch(self, repopath=None):
-        EmergeDebug.trace('GitSource fetch', 2)
-        if emergeSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
+        CraftDebug.trace('GitSource fetch', 2)
+        if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
             return self.__fetchMultipleBranch(repopath)
         else:
             return self.__fetchSingleBranch(repopath)
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
-        EmergeDebug.trace('GitSource ', 2)
+        CraftDebug.trace('GitSource ', 2)
         if fileName:
             patchfile = os.path.join ( self.packageDir(), fileName )
-            if emergeSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
+            if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
                 repopath = self.repositoryUrl()
                 # in case you need to move from a read only Url to a writeable one, here it gets replaced
                 repopath = repopath.replace("[git]", "")
@@ -224,25 +224,25 @@ class GitSource ( VersionSystemSourceBase ):
     def createPatch( self ):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
-        EmergeDebug.trace('GitSource createPatch', 2)
+        CraftDebug.trace('GitSource createPatch', 2)
         patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) )
-        EmergeDebug.debug("git diff %s" % patchFileName, 1)
+        CraftDebug.debug("git diff %s" % patchFileName, 1)
         with open(patchFileName,'wt+') as patchFile:
             return self.__git('diff', stdout=patchFile)
 
     def sourceVersion( self ):
         """print the revision returned by git show"""
-        EmergeDebug.trace('GitSource sourceVersion', 2)
+        CraftDebug.trace('GitSource sourceVersion', 2)
 
         return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0 ):
-        EmergeDebug.trace('GitSource checkoutDir', 2)
+        CraftDebug.trace('GitSource checkoutDir', 2)
         return VersionSystemSourceBase.checkoutDir( self, index )
 
     def sourceDir(self, index=0 ):
-        EmergeDebug.trace('GitSource sourceDir', 2)
+        CraftDebug.trace('GitSource sourceDir', 2)
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
@@ -250,7 +250,7 @@ class GitSource ( VersionSystemSourceBase ):
         _, repoBranch, _ = utils.splitVCSUrl( repoString )
         if repoBranch == "":
             repoBranch = "master"
-        if emergeSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
+        if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
             sourcedir = os.path.join(self.checkoutDir(index), repoBranch)
         else:
             sourcedir = self.checkoutDir(index)
@@ -258,7 +258,7 @@ class GitSource ( VersionSystemSourceBase ):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        EmergeDebug.debug("using sourcedir: %s" % sourcedir, 2)
+        CraftDebug.debug("using sourcedir: %s" % sourcedir, 2)
         return sourcedir
 
     def getUrls( self ):

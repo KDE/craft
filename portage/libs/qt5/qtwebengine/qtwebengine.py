@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import EmergeDebug
+import CraftDebug
 import info
 
 
@@ -20,9 +20,9 @@ class Package( Qt5CorePackageBase ):
         self.subinfo.options.fetch.checkoutSubmodules = True
         
     def compile(self):
-        if not ("Paths","Python27") in emergeSettings:
-            EmergeDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
-        utils.prependPath(emergeSettings.get("Paths","PYTHON27",""))
+        if not ("Paths","Python27") in craftSettings:
+            CraftDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+        utils.prependPath(craftSettings.get("Paths","PYTHON27",""))
         return Qt5CorePackageBase.compile(self)
        
 

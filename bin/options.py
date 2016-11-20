@@ -17,25 +17,25 @@
 #
 # or
 #
-# emerge "--options=cmake.openIDE=1" --make kdewin-installer
+# craft "--options=cmake.openIDE=1" --make kdewin-installer
 #
 # or
 #
 # set EMERGE_OPTIONS=cmake.openIDE=1
-# emerge --make kdewin-installer
+# craft --make kdewin-installer
 #
 # The parser in this package is able to set all attributes
 #
 # for example:
 #
-#  emerge "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
+#  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
 import os
 import inspect
 import shlex
 
-import EmergeDebug
-from EmergeConfig import  *
+import CraftDebug
+from CraftConfig import  *
 import utils
 import portage
 
@@ -217,7 +217,7 @@ class OptionsCMake(OptionsBase):
         ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
         self.openIDE = False
         ## use CTest instead of the make utility
-        self.useCTest = emergeSettings.getboolean("General","EMERGE_USECTEST", False )
+        self.useCTest = craftSettings.getboolean("General","EMERGE_USECTEST", False )
 
 
 
@@ -290,17 +290,17 @@ class Options(object):
 
         ## there is a special option available already
         self.buildTools = False
-        self.buildStatic = emergeSettings.getboolean("Compile", "Static")
+        self.buildStatic = craftSettings.getboolean("Compile", "Static")
 
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(emergeSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
+        self.__readFromList(craftSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
         self.readFromEnv()
         self.__readFromList(optionslist)
 
     def readFromEnv( self ):
-        """ read emerge related variables from environment and map them to public
+        """ read craft related variables from environment and map them to public
         attributes in the option class and sub classes """
         _o = os.getenv("EMERGE_OPTIONS")
         if _o:
@@ -346,7 +346,7 @@ class Options(object):
         result = False
         for entry in opts:
             if entry.find('=') == -1:
-                EmergeDebug.debug('incomplete option %s' % entry, 3)
+                CraftDebug.debug('incomplete option %s' % entry, 3)
                 continue
             (key, value) = entry.split( '=', 1 )
             if self.__setInstanceAttribute(key, value):

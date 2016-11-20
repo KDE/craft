@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver ] = "ninja-%s" % ver
             self.archiveNames[ ver] = "ninja-%s.tar.gz" % ver
         self.targetDigests['1.6.0'] = 'a6ff055691f6d355234298c21cc18961b4ca2ed9'
-        self.targetDigests['1.7.2'] = (['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], EmergeHash.HashAlgorithm.SHA256)
+        self.targetDigests['1.7.2'] = (['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.7.2"
 

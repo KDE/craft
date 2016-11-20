@@ -18,7 +18,7 @@ class Package( PipPackageBase ):
         
 
     def install(self):
-        pythonPath = emergeSettings.get("Paths","PYTHON")
+        pythonPath = craftSettings.get("Paths","PYTHON")
         os.makedirs(os.path.join(self.imageDir(), "bin"))
         utils.createBat(os.path.join(self.imageDir(), "bin", "pylint.bat"),
                         "%s %%*" % (os.path.join(pythonPath, "scripts","pylint")))

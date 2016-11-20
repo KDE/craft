@@ -1,6 +1,6 @@
 import info
-from EmergeConfig import *
-from EmergeOS.osutils import OsUtils
+from CraftConfig import *
+from CraftOS.osutils import OsUtils
 
 class subinfo( info.infoclass ):
     def setTargets( self ):

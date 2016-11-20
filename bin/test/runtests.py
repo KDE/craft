@@ -30,7 +30,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-Main entry point for the emerge test suite.
+Main entry point for the craft test suite.
 
 Just run this file as a python script to execute all tests
 """
@@ -43,11 +43,11 @@ import optparse
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
-import EmergeDebug
-import EmergeConfig
+import CraftDebug
+import CraftConfig
 
 def main():
-    """Run all the tests in the emerge test suite"""
+    """Run all the tests in the craft test suite"""
 
     parser = optparse.OptionParser()
     parser.set_defaults(verbosity=1)
@@ -55,7 +55,7 @@ def main():
                       dest="verbosity")
     opts, rest = parser.parse_args()
 
-    EmergeDebug.setVerbose(opts.verbosity)
+    CraftDebug.setVerbose(opts.verbosity)
     os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
 
     loader = unittest.TestLoader()

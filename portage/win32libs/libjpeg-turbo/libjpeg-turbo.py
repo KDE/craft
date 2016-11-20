@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'libjpeg-turbo-%s' % ver
 
         self.targetDigests['1.5.1'] = (
-        ['c15a9607892113946379ccea3ca8b85018301b200754f209453ab21674268e77'], EmergeHash.HashAlgorithm.SHA256)
+        ['c15a9607892113946379ccea3ca8b85018301b200754f209453ab21674268e77'], CraftHash.HashAlgorithm.SHA256)
 
         self.shortDescription = "libjpeg-turbo is a JPEG image codec that uses SIMD instructions (MMX, SSE2, NEON, AltiVec) to accelerate baseline JPEG compression and decompression on x86, x86-64, ARM, and PowerPC systems"
         self.homepage = "http://libjpeg-turbo.virtualgl.org/"

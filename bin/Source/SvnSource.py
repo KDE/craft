@@ -3,13 +3,13 @@
 #
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
-import EmergeDebug
+import CraftDebug
 from Source.VersionSystemSourceBase import *
 
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
     def __init__(self, subinfo=None):
-        EmergeDebug.trace("SvnSource.__init__", 2)
+        CraftDebug.trace("SvnSource.__init__", 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -17,21 +17,21 @@ class SvnSource (VersionSystemSourceBase):
 
 
     def checkoutDir( self, index=0 ):
-        EmergeDebug.trace("SvnSource.checkoutDir", 2)
+        CraftDebug.trace("SvnSource.checkoutDir", 2)
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join(EmergeStandardDirs.svnDir(), url )
+                sourcedir = os.path.join(CraftStandardDirs.svnDir(), url )
             else:
-                sourcedir = os.path.join( EmergeStandardDirs.downloadDir(), "svn-src" )
+                sourcedir = os.path.join( CraftStandardDirs.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
                 _, path = self.__splitPath(url)
-                if path and emergeSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
+                if path and craftSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
                     sourcedir = os.path.join( sourcedir, path )
         else:
-            EmergeDebug.die("svnTarget property not set for this target")
+            CraftDebug.die("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
@@ -40,7 +40,7 @@ class SvnSource (VersionSystemSourceBase):
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a svn repository checkout"""
-        EmergeDebug.trace("SvnSource.applyPatch", 2)
+        CraftDebug.trace("SvnSource.applyPatch", 2)
         if fileName:
             return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
@@ -61,9 +61,9 @@ class SvnSource (VersionSystemSourceBase):
 
     def fetch( self, repopath = None ):
         """ checkout or update an existing repository path """
-        EmergeDebug.trace("SvnSource.fetch", 2)
+        CraftDebug.trace("SvnSource.fetch", 2)
         if self.noFetch:
-            EmergeDebug.debug("skipping svn fetch (--offline)")
+            CraftDebug.debug("skipping svn fetch (--offline)")
             return True
 
         for i in range(self.repositoryUrlCount()):
@@ -105,7 +105,7 @@ class SvnSource (VersionSystemSourceBase):
         cmd = "svn info %s" % ( sourcedir )
 
         # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempFileName = os.path.normpath(os.path.join( self.checkoutDir(), ".emergesvninfo.tmp" ))
+        tempFileName = os.path.normpath(os.path.join( self.checkoutDir(), ".craftsvninfo.tmp" ))
         with open( tempFileName, "wt+" ) as tempfile:
 
             # run the command
@@ -182,7 +182,7 @@ class SvnSource (VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if EmergeDebug.verbose() < 2 and not emergeSettings.getboolean("General", "KDESVNVERBOSE", True):
+        if CraftDebug.verbose() < 2 and not craftSettings.getboolean("General", "KDESVNVERBOSE", True):
             option += " --quiet"
 
         self.setProxy()

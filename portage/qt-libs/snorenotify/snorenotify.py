@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         for ver in ['0.6.0', '0.7.0']:
             self.targets[ ver ] = "http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz" % ( ver ,ver )
             self.targetInstSrc[ ver ] = "snorenotify-%s" % ver
-            self.targetDigestUrls[ ver ] = ("http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz.sha256" % (ver, ver), EmergeHash.HashAlgorithm.SHA256)
+            self.targetDigestUrls[ ver ] = ("http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz.sha256" % (ver, ver), CraftHash.HashAlgorithm.SHA256)
 
         self.shortDescription = "Snorenotify is a multi platform Qt notification framework. Using a plugin system it is possible to create notifications with many different notification systems on Windows, Mac OS and Unix."
         self.defaultTarget = '0.7.0'

@@ -7,7 +7,7 @@ from string import Template
 from io import StringIO
 import re
 
-import EmergeDebug
+import CraftDebug
 from .CollectionPackagerBase import *
 
 
@@ -62,8 +62,8 @@ class MSInstallerPackager( CollectionPackagerBase ):
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        EmergeDebug.new_line()
-        EmergeDebug.debug("generating installer %s" % self.defines["setupname"])
+        CraftDebug.new_line()
+        CraftDebug.debug("generating installer %s" % self.defines["setupname"])
 
         wxs = Document()
         componentRefs = Document()
@@ -91,7 +91,7 @@ class MSInstallerPackager( CollectionPackagerBase ):
                 objectDict[ root ] = currentDirectory
 
                 # components could be used to create updateable packages according to current
-                # emerge packaging
+                # craft packaging
                 for _f in files:
                     _fileId = self.__getUniqueIdString( _f )
                     currentComponent = wxs.createElement( "Component" )

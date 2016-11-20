@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         def addTarget(baseUrl, ver):
             self.targets[ver] = baseUrl + 'openssl-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'openssl-' + ver
-            self.targetDigestUrls[ver] = ([baseUrl + 'openssl-' + ver + '.tar.gz.sha256'], EmergeHash.HashAlgorithm.SHA256)
+            self.targetDigestUrls[ver] = ([baseUrl + 'openssl-' + ver + '.tar.gz.sha256'], CraftHash.HashAlgorithm.SHA256)
 
         # older versions  -> inside old/major.minor.patch/
         for ver in ['1.0.2a', '1.0.2c', '1.0.2d']:

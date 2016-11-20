@@ -1,5 +1,5 @@
 import info
-from EmergeConfig import *
+from CraftConfig import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):

@@ -20,7 +20,7 @@ class Package( PipPackageBase ):
 
 
     def install(self):
-        pythonPath = emergeSettings.get("Paths","PYTHON27")
+        pythonPath = craftSettings.get("Paths","PYTHON27")
         os.makedirs(os.path.join(self.imageDir(), "bin"))
         utils.createBat(os.path.join(self.imageDir(), "bin", "doxyqml.bat"),
                         "%s %s %%*" % (os.path.join(pythonPath, "python") , os.path.join(pythonPath, "scripts", "doxyqml")))

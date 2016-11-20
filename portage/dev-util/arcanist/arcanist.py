@@ -23,7 +23,7 @@ class Package(BinaryPackageBase):
     def unpack(self):
         BinaryPackageBase.cleanImage(self)
         utils.copyDir(self.sourceDir(), self.imageDir())
-        arc_dir = os.path.join(EmergeStandardDirs.emergeRoot(), "dev-utils", "arcanist", "arcanist", "bin")
+        arc_dir = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "arcanist", "arcanist", "bin")
         utils.createBat(os.path.join(self.rootdir,"dev-utils","bin","arc.bat"), """
         set PATH=%s;%%PATH%%
         %s %%*""" % (arc_dir, os.path.join(arc_dir , "arc" )))

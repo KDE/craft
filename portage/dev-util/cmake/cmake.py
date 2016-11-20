@@ -1,12 +1,12 @@
 import info
-import EmergeHash
+import CraftHash
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ['3.2.1', '3.2.2', '3.2.3', '3.3.1', '3.4.1','3.4.3', '3.6.1', '3.7.0']:
             self.targets[ver] = 'http://www.cmake.org/files/v%s/cmake-%s-win32-x86.zip' % (ver[:3], ver)
             self.targetMergeSourcePath[ver] = 'cmake-%s-win32-x86' % ver
-            self.targetDigestUrls[ver] = ("https://cmake.org/files/v%s/cmake-%s-SHA-256.txt"% (ver[:3], ver), EmergeHash.HashAlgorithm.SHA256)
+            self.targetDigestUrls[ver] = ("https://cmake.org/files/v%s/cmake-%s-SHA-256.txt"% (ver[:3], ver), CraftHash.HashAlgorithm.SHA256)
 
         nightlyUrl = "https://cmake.org/files/dev/"
         nightlyVer = utils.UtilsCache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape("-win32-x86"))[0]

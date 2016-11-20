@@ -16,9 +16,9 @@ Architecture = x64
 ## Possible Backends:
 ## Snarl      http://snarl.fullphat.net/
 ## Toaster    Toaster will display a Windows 8 toast notification
-## Snore      https://github.com/Snorenotify/Snorenotify. Snore supports multiple backends. You need to install snore-send using emerge.
+## Snore      https://github.com/Snorenotify/Snorenotify. Snore supports multiple backends. You need to install snore-send using craft.
 ## Pushover   https://pushover.net - Pushover is a service to receive instant push notifications on your phone or tablet from a variety of sources.
-##            If using pushover, you may also need to set EMERGE_PUSHOVER_APP_TOKEN (emerge will use a default Token if unset) and EMERGE_PUSHOVER_USER_KEY, which is your user key
+##            If using pushover, you may also need to set EMERGE_PUSHOVER_APP_TOKEN (craft will use a default Token if unset) and EMERGE_PUSHOVER_USER_KEY, which is your user key
 #EMERGE_USE_NOTIFY = Snarl;Toaster;Pushover
 #EMERGE_PUSHOVER_APP_TOKEN = aJU9PRUb6nGUUM2idyLfXdU8S5q18i
 #EMERGE_PUSHOVER_USER_KEY = 
@@ -38,15 +38,15 @@ Python = C:\ProgramFiles\Python
 ## Here you change the download directory.
 ## If you want, so you can share the same download directory between
 ## mingw and msvc.
-## The default value is emerge/../download
+## The default value is craft/../download
 #DownloadDir = C:\kde\download
 
 ## This option defines the location for git checkouts.
-## The default value is emerge/../download/git
+## The default value is craft/../download/git
 #KDEGitDir = ${DOWNLOADDIR}\git
 
 ## This option defines the location for svn checkouts.
-## The default value is emerge/../download/svn
+## The default value is craft/../download/svn
 #KDESVNDir = ${DOWNLOADDIR}\svn
 
 ## This option defines the location where the ccache files are stored.
@@ -57,7 +57,7 @@ Python = C:\ProgramFiles\Python
 ## Whether to build tests (default: True)
 #BuildTests = False
 
-## This only reminds emerge that we are using Clang. Switching compiler isn't supported yet.
+## This only reminds craft that we are using Clang. Switching compiler isn't supported yet.
 UseClang = True
 
 ## the buildtype of this installation
@@ -127,18 +127,18 @@ Ignores = dev-util/.*;win32libs/(?!(boost)).*;binary/.*;kdesupport/kdewin
 ## Package the Source files too.
 #PackageSrc=False
 
-[EmergeDebug]
+[CraftDebug]
 ## If you want to have verbose output, uncomment the following option
 ## and set it to positive integer for verbose output and to 0
 ## (or disable it) for normal output. Currently the highest verbosity level
-## is 3 (equal to 'emerge -v -v -v'). level -1 equals 'emerge -q'
+## is 3 (equal to 'craft -v -v -v'). level -1 equals 'craft -q'
 ## Default is Verbose = 0
 #Verbose = 1
 
-## Prints time spend on various emerge tasks
+## Prints time spend on various craft tasks
 MeasureTime = False
 
-## Dump internal state of emergeSettings to kdesettings.ini.dump
+## Dump internal state of craftSettings to kdesettings.ini.dump
 #DumpSettings = True
 
 [Environment]

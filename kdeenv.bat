@@ -38,7 +38,7 @@ FOR /F "tokens=1 delims=" %%A in ('powershell -ExecutionPolicy RemoteSigned %~dp
 set PATH=!_PYTHONPATH!;!PATH!
 set _PYTHONPATH=
 
-FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\EmergeSetupHelper.py --setup --mode bat') do (
+FOR /F "tokens=1 delims=" %%A in ('python %~dp0bin\CraftSetupHelper.py --setup --mode bat') do (
     SET Z=%%A
     SET !Z!
 )

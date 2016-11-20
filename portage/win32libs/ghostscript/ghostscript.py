@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
 
             self.targets[ ver ] = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/ghostscript-%s.tar.gz" % (ver.replace(".",""), ver)
             self.targetInstSrc[ver] = 'ghostscript-%s' % ver
-            self.targetDigestUrls[ver] = (["https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/SHA1SUMS" % ver.replace(".","")], EmergeHash.HashAlgorithm.SHA1)
+            self.targetDigestUrls[ver] = (["https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/SHA1SUMS" % ver.replace(".","")], CraftHash.HashAlgorithm.SHA1)
 
         if compiler.isMinGW():
             self.patchToApply['9.19'] = [

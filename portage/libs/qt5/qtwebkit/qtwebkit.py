@@ -41,7 +41,7 @@ from Package.Qt5CorePackageBase import *
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
-        utils.putenv("SQLITE3SRCDIR",EmergeStandardDirs.emergeRoot())
+        utils.putenv("SQLITE3SRCDIR",CraftStandardDirs.craftRoot())
         self.subinfo.options.configure.defines = ""
         if OsUtils.isWin():
             self.subinfo.options.configure.defines += """ "QT_CONFIG+=no-pkg-config" """
