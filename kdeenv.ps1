@@ -21,7 +21,6 @@ $EMERGE_ARGUMENTS = $args
 
 function findPython([string] $name)
 {
-    return
     $py = (Get-Command $name -ErrorAction SilentlyContinue)
     if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
         $env:EMERGE_PYTHON=$py.Source
