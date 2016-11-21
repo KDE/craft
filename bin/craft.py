@@ -47,7 +47,7 @@ def destroyCraftRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not path in [ CraftStandardDirs.downloadDir(), os.path.join(CraftStandardDirs.craftBin(), ".."),
+        elif not path in [ CraftStandardDirs.downloadDir(), os.path.normpath(os.path.join(CraftStandardDirs.craftBin(), "..")),
                            os.path.join(CraftStandardDirs.craftRoot(), "python") ]:
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
