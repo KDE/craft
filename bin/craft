@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python3.5 $crafteRoot/bin/craft.py $@
+python3.5 $craftRoot/bin/craft.py $@
