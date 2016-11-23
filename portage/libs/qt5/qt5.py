@@ -7,13 +7,13 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip' % ( ver[0:3], ver, self.versionInfo.packageName(), ver)
             self.targetDigestUrls[ver] = 'http://download.qt-project.org/official_releases/qt/%s/%s/submodules/%s-opensource-src-%s.zip.sha1' % (ver[0:3], ver, self.versionInfo.packageName(), ver)
             self.targetInstSrc[ver] = '%s-opensource-src-%s' % ( self.versionInfo.packageName(), ver)
-            
+
         for ver in self.versionInfo.branches():
             self.svnTargets[ver] = '[git]git://code.qt.io/qt/%s.git|%s' % ( self.versionInfo.packageName(), ver)
-            
+
         for ver in self.versionInfo.tags():
             self.svnTargets[ver] = '[git]git://code.qt.io/qt/%s.git||%s' % ( self.versionInfo.packageName(), ver)
-            
+
 
         self.defaultTarget = self.versionInfo.defaultTarget()
 
@@ -33,9 +33,10 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtwinextras'] = 'default'
         self.dependencies['libs/qtquickcontrols'] = 'default'
         self.dependencies['libs/qtquickcontrols2'] = 'default'
+        self.dependencies['libs/qtserialport'] = 'default'
 
-        
-        
+
+
 
 from Package.VirtualPackageBase import *
 
