@@ -14,6 +14,8 @@ if [[ ! -d "$craftRoot" ]]; then
     craftRoot=$(dirname $(realpath "$craftRoot"))
 fi
 
+export craftRoot
+
 CRAFT_ENV=($(python3.5 "$craftRoot/bin/CraftSetupHelper.py" --setup --mode bash))
 
 for line in "${CRAFT_ENV[@]}"; do
