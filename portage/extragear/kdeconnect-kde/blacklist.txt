@@ -31,7 +31,6 @@ qml\\QtTest
 
 # unrelated
 dev-utils\\.*
-share\\dbus-1\\services\\.*
 share\\pkgconfig\\.*
 
 # kemoticons is somehow a dependency
@@ -57,7 +56,22 @@ mkspecs\\.*
 
 # unneeded stuff from bin\
 # bin\\qt\.conf
-bin\\syncqt\.pl
+bin\\*\.pl
+
+#cmake stuff
+share\\ECM
+share\\phonon4qt5\\buildsystem
+
+#stuff in lib that we don't need
+lib\\fonts
+lib\\aspell-0\.60
+lib\\gpg-error\.def
+
+#big dlls we don't use
+bin\\aspell\.dll
+bin\\libGLESv2\.dll
+bin\\Qt5Designer\.dll
+bin\\Qt5DesignerComponents\.dll
 
 # strip most executables
-bin\\(?!(kdeconnect-cli|kdeconnectd|dbus-service|kcmshell5|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
+bin\\(?!(kdeconnect-indicator|kdeconnect-cli|kdeconnectd|dbus-daemon|kcmshell5|kbuildsycoca5|update-mime-database|kioslave)).*\.exe

@@ -17,9 +17,8 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kdbusaddons'] = 'default'
         self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/knotifications'] = 'default'
-        #self.dependencies['qt-libs/snorenotify'] = 'default'
         self.dependencies['frameworks/kcmutils'] = 'default'
-        #self.dependencies[ 'kde/kde-cli-tools' ] = 'default'
+        self.dependencies[ 'kde/kde-cli-tools' ] = 'default'
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
 
 class Package( CMakePackageBase ):
@@ -33,7 +32,7 @@ class Package( CMakePackageBase ):
 
     def createPackage(self):
         self.defines[ "productname" ] = "KDE Connect"
-        self.defines[ "executable" ] = "bin\\kdeconnectd.exe"
+        self.defines[ "executable" ] = "bin\\kdeconnect-indicator.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "icon.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
@@ -45,8 +44,9 @@ class Package( CMakePackageBase ):
 
         # move everything to the location where Qt expects it
         binPath = os.path.join(archiveDir, "bin")
-        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
-        utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath))
+        utils.mergeTree(os.path.join(archiveDir, "qml"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "lib/qca-qt5"), binPath)
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
