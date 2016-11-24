@@ -44,7 +44,7 @@ class Package( CMakePackageBase ):
 
         # move everything to the location where Qt expects it
         binPath = os.path.join(archiveDir, "bin")
-        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath))
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "qml"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "lib/qca-qt5"), binPath)
 
