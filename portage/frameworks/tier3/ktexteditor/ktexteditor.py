@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kio"] = "default"
         self.dependencies["frameworks/kparts"] = "default"
         self.dependencies["frameworks/sonnet"] = "default"
+        self.dependencies["frameworks/syntax-highlighting"] = "default"
 
 from Package.CMakePackageBase import *
 
