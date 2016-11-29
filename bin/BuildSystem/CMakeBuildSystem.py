@@ -30,7 +30,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if OsUtils.isWin():
             if compiler.isMSVC2015():
                 if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                    return "Visual Studio 14 2015" + " Win64" if compiler.isX64() else ""
+                    return "Visual Studio 14 2015" + (" Win64" if compiler.isX64() else "")
                 else:
                     return "NMake Makefiles"
             if compiler.isMSVC2010():
