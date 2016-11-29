@@ -19,6 +19,8 @@ class subinfo(info.infoclass):
         if compiler.isMSVC2015() or compiler.isMinGW():
             self.patchToApply['55.1'] = ("icu-20150414.diff", 2)
             self.defaultTarget = '55.1'
+        if compiler.isMinGW():
+            self.patchToApply['55.1'] = [("icu-20150414.diff", 2),("icu-msys.diff", 2)]
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
@@ -81,6 +83,16 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
+
+    def make(self):
+        datafile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icudt55l.dat")
+        if os.path.exists(datafile):
+            datafileDestination = os.path.join(self.sourceDir(), "data", "in", "icudt55l.dat")
+            if os.path.exists(datafileDestination):
+                os.remove(datafileDestination)
+            utils.copyFile( datafile, datafileDestination)
+
+        return AutoToolsPackageBase.make(self)
 
     def install(self):
         if not AutoToolsPackageBase.install(self):
