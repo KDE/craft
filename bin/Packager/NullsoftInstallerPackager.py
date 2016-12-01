@@ -96,24 +96,24 @@ file collection process is skipped, and only the installer is generated.
             return True
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ )
-            [_,self.nsisExe,_] = EnumValue( key, 0 )#????
+            _, nsisPath, _ = EnumValue( key, 0 )#????
         except WindowsError:
             try:
                 key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ )
-                [ self.nsisExe, dummyType ] = QueryValueEx( key, "" )
+                nsisPath, _ = QueryValueEx( key, "" )
             except WindowsError:
                 try:
                     key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS\Unicode', 0, KEY_READ )
-                    [_,self.nsisExe,_] = EnumValue( key, 0 )#????
+                    _ ,nsisPath, _ = EnumValue( key, 0 )#????
                 except WindowsError:
                     try:
                         key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS', 0, KEY_READ )
-                        [self.nsisExe, dummyType] = QueryValueEx(key, "")
+                        nsisPath, _ = QueryValueEx(key, "")
                     except WindowsError:
-                        os.path.join(self.nsisExe, "makensis")
-                        return False        
-        
+                        return False
+
         CloseKey(key)
+        self.nsisExe = os.path.join(nsisPath, "makensis")
         return True
 
     def getVCRuntimeLibrariesLocation(self):
