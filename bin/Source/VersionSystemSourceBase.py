@@ -98,6 +98,8 @@ class VersionSystemSourceBase (SourceBase):
 
     def checkoutDir( self, dummyIndex=0 ):
         CraftDebug.trace("VersionSystemSourceBase checkoutDir", 2)
+        if craftSettings.get( "ContinuousIntegration", "SourceDir"):
+            return craftSettings.get( "ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
             sourcedir = os.path.join(  CraftStandardDirs.gitDir(), self.package )
         else:
@@ -110,6 +112,9 @@ class VersionSystemSourceBase (SourceBase):
 
     def sourceDir(self, index=0 ):
         CraftDebug.trace("VersionSystemSourceBase sourceDir", 2)
+        if craftSettings.get( "ContinuousIntegration", "SourceDir"):
+            return craftSettings.get( "ContinuousIntegration", "SourceDir")
+
         sourcedir = self.checkoutDir( index )
 
         if self.subinfo.hasTargetSourcePath():

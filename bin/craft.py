@@ -403,6 +403,9 @@ def main( ):
     parser.add_argument( "-d", "--dependencydepth", action = "store", type = int, default = -1,
                          help = "By default craft resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package" )
 
+    parser.add_argument("--src-dir", action="store", dest="srcDir",
+                        help="This will override the source dir and enable the offline mode")
+
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                        "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
@@ -442,7 +445,7 @@ def main( ):
     elif args.verbose:
         CraftDebug.setVerbose(args.verbose)
 
-    craftSettings.set( "General", "WorkOffline", args.offline )
+    craftSettings.set( "General", "WorkOffline", args.offline or args.srcDir is not None )
     craftSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
     craftSettings.set( "General", "EMERGE_FORCED", args.forced )
     craftSettings.set( "Compile", "BuildTests", args.buildTests )
@@ -454,6 +457,7 @@ def main( ):
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
     craftSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
     craftSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
+    craftSettings.set( "ContinuousIntegration", "SourceDir", args.srcDir)
 
     portage.PortageInstance.options = args.options
     if args.search:
