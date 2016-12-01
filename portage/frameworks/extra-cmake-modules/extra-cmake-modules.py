@@ -1,13 +1,12 @@
 import info
 
 class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.versionInfo.setDefaultValues( )
+
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/png2ico'] = 'default'
-
-    def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:extra-cmake-modules'
-        self.defaultTarget = 'gitHEAD'
 
 from Package.CMakePackageBase import *
 
