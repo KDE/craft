@@ -3,13 +3,21 @@ import info
 class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets['gitHEAD'] = 'https://github.com/KDAB/KDStateMachineEditor.git'
-        self.defaultTarget = 'gitHEAD'
+        for ver in ["1.1.0"]:
+            self.targets[ver] = 'https://github.com/KDAB/KDStateMachineEditor/archive/v%s.tar.gz' % ver
+            self.archiveNames[ver] = "kdstatemachineeditor-%s.tar.gz" % ver
+            self.targetInstSrc[ver] = 'kdstatemachineeditor-%s' % ver
+
+        self.targetDigests['1.1.0'] = (['3dcbb8925d3fc9e1ec760a486477f30856bd66e0086227dc2af0b0afac973a4a'], CraftHash.HashAlgorithm.SHA256)
+
+        self.shortDescription = "The KDAB State Machine Editor Library is a framework that can be used to help develop full-featured State Machine Editing graphical user interfaces and tools."
+        self.defaultTarget = "1.1.0"
 
     def setDependencies( self ):
-        self.shortDescription = "The KDAB State Machine Editor Library is a framework that can be used to help develop full-featured State Machine Editing graphical user interfaces and tools."
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/qtdeclarative"] = "default"
+        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies["libs/qtdeclarative"] = "default"
+        self.dependencies["libs/qtbase"] = "default"
 
 from Package.CMakePackageBase import *
 
