@@ -11,8 +11,6 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies['qt-apps/kdstatemachineeditor'] = 'default'
-        if self.getboolean("QtSDK", "Enabled", "False"):
-            self.dependencies['qt-apps/gammaray-probe'] = 'default'
 
 from Package.CMakePackageBase import *
 
