@@ -315,7 +315,7 @@ class CraftBase(object):
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return os.path.join(CraftStandardDirs.downloadDir(), "binary", version,
+        return os.path.join(CraftStandardDirs.downloadDir(), "binary", sys.platform, version,
                                compiler.getCompilerName(), self.buildType())
 
     def cacheRepositoryUrl(self):
@@ -328,6 +328,6 @@ class CraftBase(object):
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return "/".join([craftSettings.get("ContinuousIntegration", "RepositoryUrl"), version,
+        return "/".join([craftSettings.get("ContinuousIntegration", "RepositoryUrl"), sys.platform, version,
                             compiler.getCompilerName(), self.buildType()])
 
