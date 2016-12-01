@@ -5,7 +5,6 @@ import CraftDebug
 import CraftHash
 from CraftBase import *
 from InstallDB import *
-from Package import VirtualPackageBase
 from compiler import *
 
 class PackageBase (CraftBase):
@@ -216,7 +215,8 @@ class PackageBase (CraftBase):
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:
-        if isinstance(self, VirtualPackageBase):
+        from Package import VirtualPackageBase
+        if issubclass(type(self), VirtualPackageBase.VirtualPackageBase):
             return True
 
         archiveName = self.binaryArchiveName()
