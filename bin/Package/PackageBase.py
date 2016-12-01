@@ -5,6 +5,7 @@ import CraftDebug
 import CraftHash
 from CraftBase import *
 from InstallDB import *
+from Package import VirtualPackageBase
 from compiler import *
 
 class PackageBase (CraftBase):
@@ -215,6 +216,9 @@ class PackageBase (CraftBase):
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:
+        if isinstance(self, VirtualPackageBase):
+            return True
+
         archiveName = self.binaryArchiveName()
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
