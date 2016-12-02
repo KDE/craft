@@ -215,9 +215,6 @@ class PackageBase (CraftBase):
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:
-        if portage.PortageInstance.isVirtualPackage(self.category, self.category):
-            return True
-
         archiveName = self.binaryArchiveName()
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):

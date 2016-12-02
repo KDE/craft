@@ -85,7 +85,8 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             raise portage.PortageException( "Package not found", category, packageName )
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
-            if craftSettings.getboolean("ContinuousIntegration", "UseCache", "False"):
+            if craftSettings.getboolean("ContinuousIntegration", "UseCache", "False")\
+                    and not portage.PortageInstance.isVirtualPackage(category, packageName):
                 if doExec( package, "fetch-binary"):
                     return True
                 elif craftSettings.getboolean("ContinuousIntegration", "Enabled", "False"):
