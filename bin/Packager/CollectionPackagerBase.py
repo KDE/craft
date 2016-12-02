@@ -110,7 +110,7 @@ class CollectionPackagerBase( PackagerBase ):
             # this loop collects the files from all image directories
             CraftDebug.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (_package.category, x.package, _package.version, _package.buildTarget), 2)
 
-        if craftSettings.getboolean("QtSDK", "Enabled", "false"):
+        if craftSettings.getboolean("QtSDK", "Enabled", False) and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
             imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), None, False))
 
         return imageDirs
