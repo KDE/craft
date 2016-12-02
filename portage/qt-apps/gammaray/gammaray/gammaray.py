@@ -11,6 +11,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies['virtual/base'] = 'default'
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies['qt-apps/kdstatemachineeditor'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
 
 from Package.CMakePackageBase import *
 
@@ -25,6 +26,10 @@ class Package( CMakePackageBase ):
         self.defines["website"] = "http://www.kdab.com/gammaray"
         self.defines["executable"] = "bin\\gammaray.exe"
 #            self.defines["icon"] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
+        if craftSettings.getboolean("QtSDK", "Enabled", False):
+            self.defines["defaultinstdir"] = os.path.join(craftSettings.get("QtSDK", "Path"),
+                                                          craftSettings.get("QtSDK", "Version"),
+                                                          craftSettings.get("QtSDK", "Compiler"))
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
