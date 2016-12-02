@@ -95,17 +95,8 @@ class CollectionPackagerBase( PackagerBase ):
     def __getImageDirectories( self ):
         """ return the image directories where the files are stored """
         imageDirs = []
-        runtimeDependencies = portage.getDependencies(self.category, self.package)
-
         depList = []
-        for ( category, package, _, _ ) in runtimeDependencies:
-            # we only want runtime dependencies since we want to build a binary installer
-            portage.solveDependencies(category, package, depList = depList,
-                                      depType = DependencyType.Runtime, ignoredPackages = self.ignoredPackages)
-        depList.reverse()
-
-        # make sure current package is added to the list, too
-        depList.append(DependencyPackage(self.category, self.package))
+        depList = portage.solveDependencies(self.category, self.package, depList, DependencyType.Runtime)
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
