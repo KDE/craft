@@ -215,8 +215,7 @@ class PackageBase (CraftBase):
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:
-        from Package import VirtualPackageBase
-        if issubclass(type(self), VirtualPackageBase.VirtualPackageBase):
+        if portage.PortageInstance.isVirtualPackage(self.category, self.category):
             return True
 
         archiveName = self.binaryArchiveName()
