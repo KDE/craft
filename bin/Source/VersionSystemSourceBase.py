@@ -125,6 +125,8 @@ class VersionSystemSourceBase (SourceBase):
 
     def sourceRevision(self):
         CraftDebug.trace("VersionSystemSourceBase sourceRevision", 2)
+        if craftSettings.getboolean("ContinuousIntegration", "UseCache", False):
+            return "latest"
         return self.sourceVersion()
 
 
