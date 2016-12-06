@@ -8,7 +8,7 @@ import os
 if os.name == 'nt':
     from winreg import * # pylint: disable=F0401
 
-from CraftDebug import craftDebug
+import CraftDebug
 import CraftHash
 import utils
 import shutil
@@ -79,7 +79,7 @@ file collection process is skipped, and only the installer is generated.
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                craftDebug.log.critical("could not find installed nsis package, "
+                CraftDebug.die("could not find installed nsis package, "
                            "you can install it using craft nsis or"
                            "download and install it from "
                            "http://sourceforge.net/projects/nsis/")
@@ -134,8 +134,8 @@ file collection process is skipped, and only the installer is generated.
                 _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
             if not os.path.isfile(_file):
                 _file = None
-                craftDebug.new_line()
-                craftDebug.log.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
+                CraftDebug.new_line()
+                CraftDebug.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
     def generateNSISInstaller( self ):
@@ -156,21 +156,21 @@ file collection process is skipped, and only the installer is generated.
         for key in self.defines:
             definestring += " /D%s=\"%s\"" % (key , self.defines[ key ] )
 
-        craftDebug.new_line()
-        craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
+        CraftDebug.new_line()
+        CraftDebug.debug("generating installer %s" % self.defines["setupname"])
 
-        verboseString = "/V4" if craftDebug.verbose() > 0 else "/V3"
+        verboseString = "/V4" if CraftDebug.verbose() > 0 else "/V3"
 
         if self.isNsisInstalled:
             if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (self.nsisExe, verboseString, definestring,
                     self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
-                craftDebug.log.critical("Error in makensis execution")
+                CraftDebug.die("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """
         self.isNsisInstalled()
 
-        craftDebug.log.debug("packaging using the NullsoftInstallerPackager")
+        CraftDebug.debug("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
         self.preArchive()

@@ -12,7 +12,7 @@
 # - self extraction archives
 #
 #
-from CraftDebug import craftDebug
+import CraftDebug
 import CraftHash
 from Packager.PackagerBase import *
 
@@ -28,17 +28,17 @@ class SevenZipPackager (PackagerBase):
         utils.deleteFile(archiveName)
         cmd = "%s a -r %s %s/*" % (self.packagerExe, os.path.join(destDir, archiveName), sourceDir )
         cmd += " -bsp1"
-        if craftDebug.verbose() <= 1:
+        if CraftDebug.verbose() <= 1:
             cmd += " -bso0"
         if not utils.system(cmd):
-            craftDebug.log.critical("while packaging. cmd: %s" % cmd)
+            CraftDebug.die("while packaging. cmd: %s" % cmd)
         CraftHash.createDigestFiles(os.path.join(destDir, archiveName))
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
-            craftDebug.log.critical("could not find 7za in your path!")
+            CraftDebug.die("could not find 7za in your path!")
 
         if craftSettings.getboolean("ContinuousIntegration", "CreateCache"):
             dstpath = self.cacheLocation()

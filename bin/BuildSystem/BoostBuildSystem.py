@@ -7,7 +7,7 @@
 
 import os
 
-from CraftDebug import craftDebug
+import CraftDebug
 import utils
 from CraftOS.osutils import OsUtils
 from BuildSystem.BuildSystemBase import *
@@ -95,7 +95,7 @@ class BoostBuildSystem(BuildSystemBase):
         self.enterSourceDir()
         cmd  = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.defines)
-        if craftDebug.verbose() >= 1:
+        if CraftDebug.verbose() >= 1:
             print(cmd)
         return self.system(cmd)
 

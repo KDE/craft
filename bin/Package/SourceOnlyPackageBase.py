@@ -7,7 +7,7 @@ from Packager.PackagerBase import *
 class SourceOnlyPackageBase( PackageBase, MultiSource, BuildSystemBase, PackagerBase ):
     """provides a base class for source dependency packages"""
     def __init__( self ):
-        craftDebug.log.debug("SourceOnlyPackageBase.__init__ called")
+        CraftDebug.debug("SourceOnlyPackageBase.__init__ called", 2)
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         BuildSystemBase.__init__(self, "")

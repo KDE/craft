@@ -1,4 +1,4 @@
-from CraftDebug import craftDebug
+import CraftDebug
 from BuildSystem.BuildSystemBase import *
 
 class PipBuildSystem(BuildSystemBase):

@@ -2,7 +2,7 @@
 # this package contains functions to easily set versions for packages like qt5 or kde
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
-from CraftDebug import craftDebug
+import CraftDebug
 from CraftConfig import *
 import utils
 
@@ -38,14 +38,14 @@ class VersionInfo( object ):
                 iniPath = os.path.abspath( iniPath )
                 if iniPath in VersionInfo._VERSION_INFOS.keys( ):
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    craftDebug.log.debug("Found a version info for %s in cache" % name)
+                    CraftDebug.debug("Found a version info for %s in cache" % name, 2)
                     return VersionInfo._VERSION_INFOS[ iniPath ]
                 elif os.path.exists( iniPath ):
                     config = configparser.ConfigParser( )
                     config.read( iniPath )
                     VersionInfo._VERSION_INFOS[ iniPath ] = config
                     VersionInfo._VERSION_INFOS_HINTS[ name ] = iniPath
-                    craftDebug.log.debug("Found a version info for %s in %s" % (name, iniPath))
+                    CraftDebug.debug("Found a version info for %s in %s" % (name, iniPath), 2)
                     return config
             VersionInfo._VERSION_INFOS_HINTS[ name ] = None
         return self.__defaulVersions

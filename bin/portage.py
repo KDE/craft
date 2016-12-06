@@ -6,7 +6,7 @@ from enum import Enum
 import importlib
 from collections import OrderedDict
 
-from CraftDebug import craftDebug
+import CraftDebug
 from CraftPackageObject import PackageObjectBase
 from CraftConfig import *
 import InstallDB
@@ -78,16 +78,16 @@ class DependencyPackage(PackageObjectBase):
         if deps:
             for line in deps:
                 ( category, package ) = line.split( "/" )
-                craftDebug.log.debug("category: %s, name: %s" % (category, package))
+                CraftDebug.debug("category: %s, name: %s" % (category, package), 2)
                 try:
                     version = PortageInstance.getNewestVersion( category, package )
                 except PortageException as e:
-                    craftDebug.log.warning("%s for %s/%s as a dependency of %s/%s" % (e, e.category, e.package, self.category , self.name))
+                    CraftDebug.warning("%s for %s/%s as a dependency of %s/%s" % (e, e.category, e.package, self.category , self.name))
                     continue
 
                 if not line in self._dependencyList.keys():
                     p = DependencyPackage( category, package, False, self )
-                    craftDebug.log.debug("adding package %s/%s-%s" % (category, package, version))
+                    CraftDebug.debug("adding package %s/%s-%s" % (category, package, version), 2)
                     self._dependencyList[ line ] = p
                     p.__readChildren()
                 else:
@@ -144,7 +144,7 @@ throws exception if not found
     for i in rootDirectories():
         if category and os.path.exists( os.path.join( i, category ) ):
             return i
-    craftDebug.log.critical("can't find category %s" % category)
+    CraftDebug.die("can't find category %s" % category)
 
 def rootDirForPackage( category, package ):
     """returns the portage directory where it finds the first occurance of this package
@@ -180,7 +180,7 @@ def getDirname( category, package ):
         else:
             return os.path.join( rootDirForPackage( category, package ), category, package )
     else:
-        craftDebug.log.critical("broken category or package %s/%s" % (category, package))
+        CraftDebug.die("broken category or package %s/%s" % (category, package))
 
 def getFilename( category, package ):
     """ return absolute filename for a given category, package  """
@@ -276,11 +276,11 @@ class Portage(object):
 
     def getCategory( self, package ):
         """ returns the category of this package """
-        craftDebug.log.debug("getCategory: %s" % package)
+        CraftDebug.debug("getCategory: %s" % package, 2)
 
         for cat in list(self.categories.keys()):
             if package in self.categories[ cat ]:
-                craftDebug.log.debug("getCategory: found category %s for package %s" % (cat, package))
+                CraftDebug.debug("getCategory: found category %s for package %s" % (cat, package), 3)
                 return cat
         return False
 
@@ -331,12 +331,12 @@ class Portage(object):
         mod = None
         if fileName.endswith(".py") and os.path.isfile(fileName):
             if not fileName in self._packageDict:
-                craftDebug.log.debug("module to import: %s" % fileName)
+                CraftDebug.debug("module to import: %s" % fileName, 2)
                 if not os.path.isfile( fileName ):
                     try:
                         mod = builtins.__import__( fileName )
                     except ImportError as e:
-                        craftDebug.log.warning('import failed for module %s: %s' % (fileName, str(e)))
+                        CraftDebug.warning('import failed for module %s: %s' % (fileName, str(e)))
                         mod =  None
                 else:
                     modulename = os.path.basename( fileName )[:-3].replace('.', '_')
@@ -358,7 +358,7 @@ class Portage(object):
 
     def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
-        craftDebug.log.debug("getDefaultTarget: importing file %s" % getFilename(category, package))
+        CraftDebug.debug("getDefaultTarget: importing file %s" % getFilename(category, package), 2)
         if not ( category and package ):
             return dict()
 
@@ -370,14 +370,14 @@ class Portage(object):
 
     def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
-        craftDebug.log.debug("getAllTargets: importing file %s" % getFilename(category, package))
+        CraftDebug.debug("getAllTargets: importing file %s" % getFilename(category, package), 2)
         if not ( category and package ):
             return dict()
         info = _getSubinfo( category, package )
         if not info is None:
             tagDict = info.svnTargets.copy()
             tagDict.update( info.targets )
-            craftDebug.log.debug(tagDict)
+            CraftDebug.debug(tagDict, 2)
             return tagDict
         else:
             return dict()
@@ -385,12 +385,12 @@ class Portage(object):
     def getAllVCSTargets( self, category, package ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        craftDebug.log.debug("getAllVCSTargets: importing file %s" % getFilename(category, package))
+        CraftDebug.debug("getAllVCSTargets: importing file %s" % getFilename(category, package), 1)
         info = _getSubinfo(  category, package )
         if not info is None:
             tagDict = info.svnTargets
             for key in tagDict:
-                craftDebug.log.debug('%s: %s' % (key, tagDict[key]))
+                CraftDebug.debug('%s: %s' % (key, tagDict[key]), 2)
             return tagDict
         else:
             return dict()
@@ -470,10 +470,10 @@ def getDependencies( category, package, runtimeOnly = False ):
 
     subpackage, package = getSubPackage( category, package )
     if subpackage:
-        craftDebug.log.debug("solving package %s/%s/%s %s" % (category, subpackage, package,
-                                                          getFilename(category, package)))
+        CraftDebug.debug("solving package %s/%s/%s %s" % (category, subpackage, package,
+                                                           getFilename( category, package )))
     else:
-        craftDebug.log.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
+        CraftDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
 
     deps = []
     info = _getSubinfo(category, package)
@@ -511,7 +511,7 @@ def solveDependencies( category, package, depList, depType = DependencyType.Both
     depList.reverse()
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
-        craftDebug.log.debug("found package in category %s" % category)
+        CraftDebug.debug("found package in category %s" % category, 2)
 
     pac = DependencyPackage( category, package, parent = None )
     depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set(), ignoredPackages = ignoredPackages )
@@ -541,7 +541,7 @@ def _getSubinfo( category, package  ):
 
 
 def readChildren( category, package ):
-    craftDebug.log.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
+    CraftDebug.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)), 2)
     subinfo = _getSubinfo( category, package  )
 
     if subinfo is None:
@@ -556,7 +556,7 @@ def readChildren( category, package ):
     return runtimeDependencies, buildDependencies
 
 def isPackageUpdateable( category, package ):
-    craftDebug.log.debug("isPackageUpdateable: importing file %s" % getFilename(category, package))
+    CraftDebug.debug("isPackageUpdateable: importing file %s" % getFilename(category, package), 2)
     subinfo = _getSubinfo( category, package )
     if not subinfo is None:
         if len( subinfo.svnTargets ) == 1 and not subinfo.svnTargets[ list(subinfo.svnTargets.keys())[0] ]:
@@ -610,18 +610,18 @@ def printPackagesForFileSearch(filename):
         print("%s/%s: %s" % (category, packageName, filename))
 
 def getPackagesCategories(packageName, defaultCategory = None):
-    craftDebug.trace("getPackagesCategories for package name %s" % packageName)
+    CraftDebug.trace("getPackagesCategories for package name %s" % packageName)
     if defaultCategory is None:
         defaultCategory = craftSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
 
     packageList, categoryList = [], []
     if len( packageName.split( "/" ) ) == 1:
         if PortageInstance.isCategory( packageName ):
-            craftDebug.log.debug("isCategory=True")
+            CraftDebug.debug("isCategory=True", 2)
             packageList = PortageInstance.getAllPackages( packageName )
             categoryList = [ packageName ] * len(packageList)
         else:
-            craftDebug.log.debug("isCategory=False")
+            CraftDebug.debug("isCategory=False", 2)
             if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
                 # prefer the default category
                 packageList = [ packageName ]
@@ -639,9 +639,9 @@ def getPackagesCategories(packageName, defaultCategory = None):
         if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
             packageList = [ pac ]
         if len( categoryList ) and len( packageList ):
-            craftDebug.log.debug("added package %s/%s" % (categoryList[0], pac))
+            CraftDebug.debug("added package %s/%s" % (categoryList[0], pac), 2)
     else:
-        craftDebug.log.error("unknown packageName")
+        CraftDebug.error("unknown packageName")
 
     return packageList, categoryList
 

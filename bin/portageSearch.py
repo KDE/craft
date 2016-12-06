@@ -1,6 +1,6 @@
 import re
 
-from CraftDebug import craftDebug
+import CraftDebug
 import portage
 import utils
 import InstallDB
@@ -39,7 +39,7 @@ def printSearch(search_category, search_package,maxDist = 2):
             similar = [match]
         
         for levDist,package in similar:
-            craftDebug.log.debug((package, levDist))
+            CraftDebug.debug((package, levDist), 1)
             print(package)
             print("\t Homepage: %s" % package.subinfo.homepage)
             print("\t Description: %s" % package.subinfo.shortDescription)

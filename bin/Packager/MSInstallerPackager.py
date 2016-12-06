@@ -7,7 +7,7 @@ from string import Template
 from io import StringIO
 import re
 
-from CraftDebug import craftDebug
+import CraftDebug
 from .CollectionPackagerBase import *
 
 
@@ -62,8 +62,8 @@ class MSInstallerPackager( CollectionPackagerBase ):
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        craftDebug.new_line()
-        craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
+        CraftDebug.new_line()
+        CraftDebug.debug("generating installer %s" % self.defines["setupname"])
 
         wxs = Document()
         componentRefs = Document()

@@ -1,5 +1,5 @@
 import CraftConfig
-from CraftDebug import craftDebug
+import CraftDebug
 
 import datetime
 
@@ -17,7 +17,7 @@ class Timer(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
         if CraftConfig.craftSettings.getboolean( "CraftDebug", "MeasureTime", False ):
-            craftDebug.step( "Task: %s stopped after: %s" % (self.name , self))
+            CraftDebug.info( "Task: %s stopped after: %s" % (self.name , self))
 
     def __str__(self):
         out = str(self.duration)

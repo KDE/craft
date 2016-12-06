@@ -43,7 +43,7 @@ import optparse
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
-from CraftDebug import craftDebug
+import CraftDebug
 import CraftConfig
 
 def main():
@@ -55,7 +55,7 @@ def main():
                       dest="verbosity")
     opts, rest = parser.parse_args()
 
-    craftDebug.setVerbose(opts.verbosity)
+    CraftDebug.setVerbose(opts.verbosity)
     os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
 
     loader = unittest.TestLoader()

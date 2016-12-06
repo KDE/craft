@@ -8,7 +8,7 @@ import types
 import fileinput
 
 from portage import DependencyPackage, DependencyType
-from CraftDebug import craftDebug
+import CraftDebug
 from Packager.PackagerBase import *
 
 
@@ -26,9 +26,9 @@ class PackagerLists(object):
             try:
                 exp = re.compile( line, re.IGNORECASE )
                 ret.append( exp )
-                craftDebug.log.debug("%s added to blacklist as %s" % (line, exp.pattern))
+                CraftDebug.debug("%s added to blacklist as %s" % (line, exp.pattern), 2)
             except re.error:
-                craftDebug.log.debug("%s is not a valid regexp" % line)
+                CraftDebug.debug("%s is not a valid regexp" % line, 1)
         return ret
 
     @staticmethod
@@ -60,7 +60,7 @@ class CollectionPackagerBase( PackagerBase ):
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
-                craftDebug.log.debug("reading whitelist: %s" % entry)
+                CraftDebug.debug("reading whitelist: %s" % entry, 2)
                 if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                     for line in entry():
                         self._whitelist.append( line )
@@ -72,7 +72,7 @@ class CollectionPackagerBase( PackagerBase ):
     def blacklist(self):
         if not self._blacklist:
             for entry in self.blacklist_file:
-                craftDebug.log.debug("reading blacklist: %s" % entry)
+                CraftDebug.debug("reading blacklist: %s" % entry, 2)
                 if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
                     for line in entry():
                         self._blacklist.append( line )
@@ -100,7 +100,7 @@ class CollectionPackagerBase( PackagerBase ):
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
-                craftDebug.log.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
+                CraftDebug.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
                 continue
 
             _package = portage.getPackageInstance( x.category, x.package )
@@ -108,8 +108,7 @@ class CollectionPackagerBase( PackagerBase ):
             imageDirs.append(( os.path.join( self.rootdir, "build", x.category, x.package,
                     self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.merge.destinationPath , _package.subinfo.options.package.disableStriping ) )
             # this loop collects the files from all image directories
-            craftDebug.log.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (
-            _package.category, x.package, _package.version, _package.buildTarget))
+            CraftDebug.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (_package.category, x.package, _package.version, _package.buildTarget), 2)
 
         if craftSettings.getboolean("QtSDK", "Enabled", False) and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
             imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), None, False))
@@ -120,7 +119,7 @@ class CollectionPackagerBase( PackagerBase ):
         """ Read regular expressions from fname """
         fname = os.path.join(self.packageDir(), fname)
         if not os.path.isfile(fname):
-            craftDebug.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+            CraftDebug.die("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
         regex = "("
         for line in fileinput.input(fname):
             # Cleanup white spaces / line endings
@@ -132,9 +131,9 @@ class CollectionPackagerBase( PackagerBase ):
                 tmp = "^%s$" % line
                 regex += "%s|" % tmp
                 re.compile(tmp, re.IGNORECASE) #for debug
-                craftDebug.log.debug("%s added to %s as %s" % (line, targetName, tmp))
+                CraftDebug.debug("%s added to %s as %s" % (line, targetName, tmp), 2)
             except re.error:
-                craftDebug.log.critical("%s is not a valid regexp" % tmp)
+                CraftDebug.die("%s is not a valid regexp" % tmp)
         return re.compile("%s)" % regex[:-2], re.IGNORECASE)
 
     def read_whitelist( self, fname ):
@@ -186,14 +185,14 @@ class CollectionPackagerBase( PackagerBase ):
             directory
         """
         utils.createDir( destDir )
-        craftDebug.log.debug("Copying %s -> %s" % (srcDir, destDir))
+        CraftDebug.debug("Copying %s -> %s" % (srcDir, destDir))
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
 
         for entry in self.traverse( srcDir, self.whitelisted, self.blacklisted ):
             if os.path.basename( entry ) in uniquebasenames:
-                craftDebug.log.debug("Found duplicate filename: %s" % os.path.basename(entry))
+                CraftDebug.debug("Found duplicate filename: %s" % os.path.basename(entry), 2)
                 duplicates.append( entry )
             else:
                 self.unique_names.append( entry )
@@ -204,7 +203,7 @@ class CollectionPackagerBase( PackagerBase ):
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
-            craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
+            CraftDebug.debug("Copied %s to %s" % (entry, entry_target), 2)
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
         for entry in duplicates:
@@ -212,7 +211,7 @@ class CollectionPackagerBase( PackagerBase ):
             if not os.path.exists( os.path.dirname( entry_target ) ):
                 utils.createDir( os.path.dirname( entry_target ) )
             shutil.copy( entry, entry_target )
-            craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
+            CraftDebug.debug("Copied %s to %s" % (entry, entry_target), 2)
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
           
@@ -222,7 +221,7 @@ class CollectionPackagerBase( PackagerBase ):
         archiveDir = self.archiveDir()
 
         if not self.noClean:
-            craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
+            CraftDebug.debug("cleaning package dir: %s" % archiveDir)
             utils.cleanDirectory(archiveDir)
             for directory, mergeDir, strip  in self.__getImageDirectories():
                 imageDir = archiveDir
@@ -231,7 +230,7 @@ class CollectionPackagerBase( PackagerBase ):
                 if os.path.exists( directory ):
                     self.copyFiles(directory, imageDir, strip)
                 else:
-                    craftDebug.log.critical("image directory %s does not exist!" % directory)
+                    CraftDebug.die("image directory %s does not exist!" % directory)
 
         if not os.path.exists( archiveDir ):
             os.makedirs( archiveDir )

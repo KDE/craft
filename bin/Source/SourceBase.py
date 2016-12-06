@@ -1,13 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
+import CraftDebug
 from CraftBase import *
 
 class SourceBase(CraftBase):
     """ implements basic stuff required for all sources"""
     def __init__(self):
-        craftDebug.trace("SourceBase.__init__ called", 2)
+        CraftDebug.trace("SourceBase.__init__ called", 2)
         CraftBase.__init__(self)
         self.url = ""
 
@@ -54,12 +54,12 @@ class SourceBase(CraftBase):
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-        craftDebug.log.debug("using sourcedir: " + sourcedir)
+        CraftDebug.debug("using sourcedir: " + sourcedir, 2)
         return sourcedir
 
     def applyPatches(self):
         """apply patches if available"""
-        craftDebug.trace("SourceBase.applyPatches called", 0)
+        CraftDebug.trace("SourceBase.applyPatches called", 0)
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
@@ -71,7 +71,7 @@ class SourceBase(CraftBase):
 
     def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
-        craftDebug.trace("SourceBase.applyPatch called", 2)
+        CraftDebug.trace("SourceBase.applyPatch called", 2)
         if not fileName:
             return True
         if not srcdir:

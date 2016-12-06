@@ -1,136 +1,110 @@
-import inspect
-import os
 import sys
-import logging
-import functools
 
 from CraftConfig import craftSettings
 
-class CraftDebug(object):
-    __instance = None
+
+class Verbose(object):
+    """
+        This class will work on the overall output verbosity
+        It defines the interface for the option parser but before the default
+        value is taken from the environment variable.
+        There is only one verbosity value for all parts of craft.
+        Always updates the shell variable EMERGE_VERBOSE.
+    """
+    __level = 0
 
     @staticmethod
-    def instance():
-        if not CraftDebug.__instance:
-            CraftDebug.__instance = CraftDebug()
-        return  CraftDebug.__instance
+    def increase():
+        """increase verbosity"""
+        Verbose.setLevel(Verbose.__level + 1)
 
-    def __init__(self):
-        self.seenDeprecatedFunctions = set()
-        self._log = logging.getLogger("craft")
-        self._log.setLevel(logging.INFO)
-        self._log.addHandler(logging.StreamHandler(sys.stdout))
-        logDir = craftSettings.get("General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/"))
-        if not os.path.exists(logDir):
-            os.makedirs(logDir)
-        logging.getLogger().addHandler(logging.FileHandler(os.path.join(logDir, "log.txt"), "wt+"))
+    @staticmethod
+    def decrease():
+        """decrease verbosity"""
+        Verbose.setLevel(Verbose.__level - 1)
 
-    def verbose(self):
-        """return the value of the verbose level"""
-        lvl = self.log.level
-        if lvl == logging.INFO:
-            return 0
-        elif lvl <= logging.DEBUG:
-            return 3
-        else:
-            return -1
+    @staticmethod
+    def level():
+        return Verbose.__level
 
-    def setVerbose(self, _verbose):
-        if 0 < _verbose < 2:
-            lvl = logging.INFO
-        elif _verbose >= 2:
-            lvl = logging.DEBUG
-        elif _verbose < 0:
-            lvl = logging.WARNING
-        self.log.setLevel(lvl)
+    @staticmethod
+    def setLevel(newLevel):
+        """ set the level by hand for quick and dirty changes """
+        Verbose.__level = max(-1, newLevel)
 
-    def step(self, message):
-        self.log.info("*** %s ***" % message)
+    def verbose( self ):
+        """ returns the verbosity level for the application """
+        return Verbose.__level
 
-    def new_line(self):
-        self.log.info("\n")
-
-    def debug_line(self):
-        self.log.info("_" * 80)
-
-    @property
-    def log(self):
-        return self._log
-
-    def traceMode(self):
-        """return the value of the trace level"""
-        return int(craftSettings.get("General", "EMERGE_TRACE", "0"))
-
-    def trace(self, message, dummyLevel=0):
-        if self.traceMode():  # > level:
-            self.log.debug("craft trace: %s" % message)
-        return True
-
-
-craftDebug = CraftDebug.instance()
 
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
     def __init__(self, tempLevel):
-        self.prevLevel = craftDebug.verbose()
-        craftDebug.setVerbose(tempLevel)
+        self.prevLevel = verbose()
+        setVerbose(tempLevel)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, trback):
-        craftDebug.setVerbose(self.prevLevel)
+        setVerbose(self.prevLevel)
 
-def deprecated(replacement=None):
-    """
-    http://code.activestate.com/recipes/577819-deprecated-decorator/
-    Deprecated decorator.
 
-    Author: Giampaolo Rodola' <g.rodola [AT] gmail [DOT] com>
-    License: MIT
-    A decorator which can be used to mark functions as deprecated.
-    replacement is a callable that will be called with the same args
-    as the decorated function.
+def verbose():
+    """return the value of the verbose level"""
+    return Verbose.level()
 
-    >>> @deprecated()
-    ... def foo(x):
-    ...     return x
-    ...
-    >>> ret = foo(1)
-    DeprecationWarning: foo is deprecated
-    >>> ret
-    1
-    >>>
-    >>>
-    >>> def newfun(x):
-    ...     return 0
-    ...
-    >>> @deprecated(newfun)
-    ... def foo(x):
-    ...     return x
-    ...
-    >>> ret = foo(1)
-    DeprecationWarning: foo is deprecated; use newfun instead
-    >>> ret
-    0
-    >>>
-    """
 
-    def outer(fun):
-        msg = "%s is deprecated" % fun.__name__
-        if replacement is not None:
-            msg += "; use %s instead" % replacement
-        if fun.__doc__ is None:
-            fun.__doc__ = msg
+def setVerbose( _verbose ):
+    Verbose.setLevel(_verbose)
 
-        @functools.wraps(fun)
-        def inner(*args, **kwargs):
-            _info = inspect.stack()[1]
-            if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
-                craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                craftDebug.log.warning(msg)
-                craftDebug.log.info("Used in: %s line: %s" % (_info.filename, _info.lineno))
-            return fun(*args, **kwargs)
 
-        return inner
-    return outer
+def info( message ):
+    if verbose() >= 0:
+        print("*** %s ***" % message)
+    return True
+
+
+def debug( message, level=1 ):
+    if verbose() >= level and verbose() > 0:
+        print("craft debug (%s): %s" % (level, message))
+        sys.stdout.flush()
+    return True
+
+
+def warning( message ):
+    try:
+        print("craft warning: %s" % message)
+    except UnicodeEncodeError:
+        print("craft warning: failed to print message")
+    return True
+
+
+def new_line( level=1 ):
+    if verbose() >= level and verbose() > 0:
+        print()
+
+def debug_line( level=1 ):
+    if verbose() >= level and verbose() > 0:
+        print("_" * 80)
+
+def error( message ):
+    print("craft error: %s" % message, file=sys.stderr)
+    return False
+
+
+def die( message ):
+    print("craft fatal error: %s" % message)
+    exit(1)
+
+
+def traceMode():
+    """return the value of the trace level"""
+    return int(craftSettings.get( "General", "EMERGE_TRACE", "0" ))
+
+
+def trace( message, dummyLevel=0 ):
+    if traceMode(): #> level:
+        print("craft trace:", message)
+    sys.stdout.flush()
+    return True

@@ -1,7 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
+import CraftDebug
 import CraftHash
 from CraftBase import *
 from InstallDB import *
@@ -25,7 +25,7 @@ class PackageBase (CraftBase):
     #imagedir   -> PackageBase
 
     def __init__(self):
-        craftDebug.log.debug("PackageBase.__init__ called")
+        CraftDebug.debug("PackageBase.__init__ called", 2)
         CraftBase.__init__(self)
 
     def _installedDBPrefix(self, buildType=None):
@@ -51,7 +51,9 @@ class PackageBase (CraftBase):
             ignoreInstalled = True
             self.unmerge()
 
-        craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
+
+
+        CraftDebug.debug("qmerge package to %s" % self.mergeDestinationDir(), 2)
         utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
 
         # run post-install scripts
@@ -60,14 +62,14 @@ class PackageBase (CraftBase):
                 scriptName = "post-install-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
-                    craftDebug.log.debug("run post install script '%s'" % script)
+                    CraftDebug.debug("run post install script '%s'" % script, 2)
                     cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
-                        craftDebug.log.warning("%s failed!" % cmd)
+                        CraftDebug.warning("%s failed!" % cmd)
                 else:
-                    craftDebug.log.debug("post install script '%s' not found" % script)
+                    CraftDebug.debug("post install script '%s' not found" % script, 2)
         else:
-            craftDebug.log.debug("running of post install scripts disabled!")
+            CraftDebug.debug("running of post install scripts disabled!")
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -89,13 +91,13 @@ class PackageBase (CraftBase):
 
     def unmerge( self ):
         """unmergeing the files from the filesystem"""
-        craftDebug.log.debug("Packagebase unmerge called")
+        CraftDebug.debug("Packagebase unmerge called", 2)
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the
         ## package definition, which fails if this is changed
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
-        craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
+        CraftDebug.debug("unmerge package from %s" % self.mergeDestinationDir(), 2)
         if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
                 and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
@@ -126,21 +128,21 @@ class PackageBase (CraftBase):
                 scriptName = "post-uninstall-%s-%s.cmd" % ( self.package, pkgtype )
                 script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
                 if os.path.exists( script ):
-                    craftDebug.log.debug("run post uninstall script '%s'" % script)
+                    CraftDebug.debug("run post uninstall script '%s'" % script, 2)
                     cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
                     if not utils.system(cmd):
-                        craftDebug.log.warning("%s failed!" % cmd)
+                        CraftDebug.warning("%s failed!" % cmd)
                 else:
-                    craftDebug.log.debug("post uninstall script '%s' not found" % script)
+                    CraftDebug.debug("post uninstall script '%s' not found" % script, 2)
         else:
-            craftDebug.log.debug("running of post uninstall scripts disabled!")
+            CraftDebug.debug("running of post uninstall scripts disabled!")
 
         return True
 
     def cleanImage( self ) -> bool:
         """cleanup before install to imagedir"""
         if ( os.path.exists( self.imageDir() ) ):
-            craftDebug.log.debug("cleaning image dir: %s" % self.imageDir())
+            CraftDebug.debug("cleaning image dir: %s" % self.imageDir(), 1)
             utils.cleanDirectory( self.imageDir() )
             os.rmdir(self.imageDir())
         return True
@@ -149,7 +151,7 @@ class PackageBase (CraftBase):
         """cleanup currently used build dir"""
         if os.path.exists( self.buildDir() ):
             utils.cleanDirectory( self.buildDir() )
-            craftDebug.log.debug("cleaning build dir: %s" % self.buildDir())
+            CraftDebug.debug("cleaning build dir: %s" % self.buildDir(), 1)
 
         return True
 
@@ -160,13 +162,13 @@ class PackageBase (CraftBase):
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or not isMinGW():
-            craftDebug.log.debug("Skiping stipping of " + fileName)
+            CraftDebug.debug("Skiping stipping of " + fileName, 2)
             return True
         basepath = os.path.join( self.installDir() )
         filepath = os.path.join( basepath, "bin",  fileName )
 
         cmd = "strip -s " + filepath
-        craftDebug.log.debug(cmd)
+        CraftDebug.debug(cmd, 2)
         os.system( cmd )
         return True
 
@@ -202,7 +204,7 @@ class PackageBase (CraftBase):
         this will be executed from the package if the package is started on its own
         it shouldn't be called if the package is imported as a python module"""
 
-        craftDebug.log.debug("PackageBase.execute called. args: %s" % sys.argv)
+        CraftDebug.debug("PackageBase.execute called. args: %s" % sys.argv, 2)
         command, _ = self.getAction(cmd)
 
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
@@ -217,7 +219,7 @@ class PackageBase (CraftBase):
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
-        craftDebug.log.debug("Trying to restor %s from cache." % archiveName)
+        CraftDebug.debug("Trying to restor %s from cache." % archiveName)
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
             if not (utils.getFile("%s/%s" % (self.cacheRepositoryUrl(), archiveName), downloadFolder) and \
                     utils.getFile("%s/%s.sha256" % (self.cacheRepositoryUrl(), archiveName), downloadFolder)):
@@ -258,6 +260,6 @@ class PackageBase (CraftBase):
                 raise portage.PortageException( str( e ), self.category, self.package, e )
 
         else:
-            ok = craftDebug.log.error( "command %s not understood" % command )
+            ok = CraftDebug.error( "command %s not understood" % command )
 
         return ok

@@ -3,12 +3,12 @@ import tempfile
 import os
 
 import CraftConfig
-from CraftDebug import craftDebug
+import CraftDebug
 
 class CraftTestBase(unittest.TestCase):
 
     def setUp(self):
-        craftDebug.setVerbose(int(os.environ["EMERGE_TEST_VERBOSITY"]))
+        CraftDebug.setVerbose(int(os.environ["EMERGE_TEST_VERBOSITY"]))
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         CraftConfig.craftSettings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "kdesettings.ini"))

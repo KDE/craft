@@ -3,7 +3,7 @@
 #
 
 """ \package BuildSystemBase"""
-from CraftDebug import craftDebug
+import CraftDebug
 from CraftBase import *
 import compiler
 
@@ -28,7 +28,7 @@ class BuildSystemBase(CraftBase):
             return "ninja"
         makeProgram = craftSettings.get("Compile", "MakeProgram", "" )
         if makeProgram != "" and self.subinfo.options.make.supportsMultijob:
-            craftDebug.log.debug("set custom make program: %s" % makeProgram)
+            CraftDebug.debug("set custom make program: %s" % makeProgram, 1)
             return makeProgram
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
@@ -40,7 +40,7 @@ class BuildSystemBase(CraftBase):
             elif compiler.isMinGW():
                 return "mingw32-make"
             else:
-                craftDebug.log.critical("unknown %s compiler" % self.compiler())
+                CraftDebug.die("unknown %s compiler" % self.compiler())
         elif OsUtils.isUnix():
             return "make"
     makeProgramm = property(_getmakeProgram)
@@ -82,7 +82,7 @@ class BuildSystemBase(CraftBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if maybeVerbose and craftDebug.verbose() > 1:
+        if maybeVerbose and CraftDebug.verbose() > 1:
             if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False ):
                 defines += " -v "
             else:

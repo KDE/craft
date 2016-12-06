@@ -1,7 +1,7 @@
 #
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
-from CraftDebug import craftDebug
+import CraftDebug
 import portage
 from xml.dom.minidom import Document
 import hashlib
@@ -30,7 +30,7 @@ class MSIFragmentPackager( PackagerBase ):
 
     def __init__( self, initialized = False ):
         if not initialized: PackagerBase.__init__( self )
-        craftDebug.log.debug("MSIFragmentPackager __init__")
+        CraftDebug.debug("MSIFragmentPackager __init__", 2)
         self.outDestination = self.packageDestinationDir()
         self.objectFiles = []
 

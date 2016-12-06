@@ -12,7 +12,7 @@
 
 import sys
 
-from CraftDebug import craftDebug
+import CraftDebug
 import CraftTimer
 
 import time
@@ -64,19 +64,20 @@ def packageIsOutdated( category, package ):
             return True
 
 
+@utils.log
 def doExec( package, action, continueFlag = False ):
     with CraftTimer.Timer("%s for %s" % ( action, package ), 1 ):
-        craftDebug.step("Action: %s for %s" % (action, package))
+        CraftDebug.info("Action: %s for %s" % (action, package))
         ret = package.execute( action )
         if not ret:
-            craftDebug.log.warning("Action: %s for %s FAILED" % (action, package))
+            CraftDebug.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
 
 def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
     with CraftTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
-        craftDebug.debug_line()
-        craftDebug.step("Handling package: %s, action: %s" % (packageName, buildAction))
+        CraftDebug.debug_line()
+        CraftDebug.info("Handling package: %s, action: %s" % (packageName, buildAction))
 
         success = True
         package = portage.getPackageInstance( category, packageName )
@@ -96,7 +97,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 revision = package.sourceVersion( )
                 for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
                     if p.getRevision( ) == revision:
-                        craftDebug.step("Skipping further actions, package is up-to-date")
+                        CraftDebug.info("Skipping further actions, package is up-to-date")
                         skip = True
             if not skip:
                 success = success and doExec( package, "unpack", continueFlag )
@@ -133,7 +134,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             portage.printTargets( category, packageName )
             success = True
         else:
-            success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
+            success = CraftDebug.error("could not understand this buildAction: %s" % buildAction)
 
         timer.stop()
         utils.notify( "Craft %s %s" % (buildAction, "succeeded" if success else "failed"),
@@ -151,9 +152,9 @@ def handleSinglePackage( packageName, action, args ):
     if action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
         if portage.PortageInstance.isCategory( packageName ):
-            craftDebug.log.debug("Updating installed packages from category " + packageName)
+            CraftDebug.debug("Updating installed packages from category " + packageName, 1)
         else:
-            craftDebug.log.debug("Updating all installed packages")
+            CraftDebug.debug("Updating all installed packages", 1)
         packageList = [ ]
         for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
@@ -162,7 +163,7 @@ def handleSinglePackage( packageName, action, args ):
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
-        craftDebug.log.debug("Will update packages: " + str(packageList))
+        CraftDebug.debug("Will update packages: " + str(packageList), 1)
     elif args.list_file:
         listFileObject = open( args.list_file, 'r' )
         for line in listFileObject:
@@ -179,7 +180,7 @@ def handleSinglePackage( packageName, action, args ):
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
     for entry in packageList:
-        craftDebug.log.debug("Checking dependencies for: %s" % entry)
+        CraftDebug.debug("Checking dependencies for: %s" % entry, 1)
 
     for mainCategory, entry in zip( categoryList, packageList ):
         deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
@@ -207,11 +208,11 @@ def handleSinglePackage( packageName, action, args ):
             # if no target or a wrong one is defined, simply set the default target here
             item.target = args.target
 
-        craftDebug.log.debug("dependency: %s" % item)
+        CraftDebug.debug("dependency: %s" % item, 1)
     if not deplist:
-        craftDebug.log.debug("<none>")
+        CraftDebug.debug("<none>", 1)
 
-    craftDebug.debug_line()
+    CraftDebug.debug_line(1)
 
     #for item in deplist:
     #    cat = item[ 0 ]
@@ -268,24 +269,24 @@ def handleSinglePackage( packageName, action, args ):
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
-                if craftDebug.verbose() > 1 and info.package == packageName:
-                    craftDebug.log.warning("already installed %s/%s" % (info.category, info.package))
-                elif craftDebug.verbose() > 2 and not info.package == packageName:
-                    craftDebug.log.warning("already installed %s/%s" % (info.category, info.package))
+                if CraftDebug.verbose() > 1 and info.package == packageName:
+                    CraftDebug.warning("already installed %s/%s" % (info.category, info.package))
+                elif CraftDebug.verbose() > 2 and not info.package == packageName:
+                    CraftDebug.warning("already installed %s/%s" % (info.category, info.package))
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                        craftDebug.log.warning("pretending %s" % info)
+                        CraftDebug.warning("pretending %s" % info)
                 else:
                     if action in [ "install-deps", "update-direct-deps" ]:
                         action = "all"
 
                     if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
-                        craftDebug.log.error("fatal error: package %s/%s %s failed" % \
+                        CraftDebug.error("fatal error: package %s/%s %s failed" % \
                                           ( info.category, info.package, action ))
                         return False
 
-    craftDebug.new_line()
+    CraftDebug.new_line()
     return True
 
 class ActionHandler:
@@ -394,7 +395,7 @@ def main( ):
                          default = craftSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
                          help = "This will add a patch level when used together with --package" )
     parser.add_argument( "--log-dir", action = "store",
-                         default = craftSettings.get( "General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/")),
+                         default = craftSettings.get( "General", "EMERGE_LOG_DIR", "" ),
                          help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
@@ -441,9 +442,9 @@ def main( ):
 
 
     if args.stayQuiet:
-        craftDebug.setVerbose(-1)
+        CraftDebug.setVerbose(-1)
     elif args.verbose:
-        craftDebug.setVerbose(args.verbose)
+        CraftDebug.setVerbose(args.verbose)
 
     craftSettings.set( "General", "WorkOffline", args.offline or args.srcDir is not None )
     craftSettings.set( "General", "EMERGE_NOCLEAN", args.noclean )
@@ -478,15 +479,15 @@ def main( ):
         if action in [ "update", "update-all" ]:
             tempArgs.noclean = True
 
-        craftDebug.log.debug("buildAction: %s" % action)
-        craftDebug.log.debug("doPretend: %s" % tempArgs.probe)
-        craftDebug.log.debug("packageName: %s" % tempArgs.packageNames)
-        craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
-        craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
-        craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
-        craftDebug.log.debug("trace: %s" % tempArgs.trace)
-        craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
-        craftDebug.debug_line()
+        CraftDebug.debug("buildAction: %s" % action)
+        CraftDebug.debug("doPretend: %s" % tempArgs.probe, 1)
+        CraftDebug.debug("packageName: %s" % tempArgs.packageNames)
+        CraftDebug.debug("buildType: %s" % tempArgs.buildType)
+        CraftDebug.debug("buildTests: %s" % tempArgs.buildTests)
+        CraftDebug.debug("verbose: %d" % CraftDebug.verbose(), 1)
+        CraftDebug.debug("trace: %s" % tempArgs.trace, 1)
+        CraftDebug.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot(), 1)
+        CraftDebug.debug_line()
 
         if action == "print-installed":
             InstallDB.printInstalled( )
@@ -524,12 +525,12 @@ if __name__ == '__main__':
             pass
         except portage.PortageException as e:
             if e.exception:
-                craftDebug.log.warning(e.exception)
-                craftDebug.log.warning(traceback.format_tb( e.exception.__traceback__))
-            craftDebug.log.error(e)
+                CraftDebug.debug(e.exception, 0)
+                traceback.print_tb( e.exception.__traceback__)
+            CraftDebug.error(e)
         except Exception as e:
-            craftDebug.log.warning( e )
-            craftDebug.log.warning(traceback.format_tb( e.__traceback__ ))
+            print( e )
+            traceback.print_tb( e.__traceback__ )
         finally:
             doUpdateTitle = False
             if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):

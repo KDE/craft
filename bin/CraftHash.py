@@ -3,7 +3,7 @@ import os
 import hashlib
 import re
 
-from CraftDebug import craftDebug
+import CraftDebug
 
 
 class HashAlgorithm(Enum):
@@ -58,7 +58,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
         digestList = [digests]
 
     for digests, filename in zip(digestList, filenames):
-        craftDebug.log.debug("checking digest of: %s" % filename)
+        CraftDebug.debug("checking digest of: %s" % filename, 1)
         pathName = os.path.join(downloaddir, filename)
         if digests == None:
             for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
@@ -72,14 +72,14 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                 with open(digestFileName, "rt+") as f:
                     data = f.read()
                 if not re.findall(currentHash, data):
-                    craftDebug.log.error("%s hash for file %s (%s) does not match (%s)" % (
+                    CraftDebug.error("%s hash for file %s (%s) does not match (%s)" % (
                     digestAlgorithm.name, pathName, currentHash, data))
                     return False
                     # digest provided in digests parameter
         else:
             currentHash = digestFile(pathName, digestAlgorithm)
             if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
-                craftDebug.log.error("%s hash for file %s (%s) does not match (%s)" % (
+                CraftDebug.error("%s hash for file %s (%s) does not match (%s)" % (
                 digestAlgorithm.name, pathName, currentHash, digests))
                 return False
     return True
