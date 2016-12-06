@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 
-import CraftDebug
+from CraftDebug import craftDebug
 import CraftTestBase
 from CraftOS.osutils import OsUtils
 

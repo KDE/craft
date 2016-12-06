@@ -7,7 +7,7 @@ import os
 import subprocess
 import re
 
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 from CraftConfig import *
 
@@ -21,7 +21,7 @@ def _getGCCTarget():
     if not _GCCTARGET:
         status, result = subprocess.getstatusoutput("gcc -dumpmachine")
         if status == 0:
-            CraftDebug.debug("GCC Target Processor:%s" % result, 1)
+            craftDebug.log.debug("GCC Target Processor:%s" % result)
             _GCCTARGET = result.strip()
         else:
             #if no mingw is installed return mingw-w32 it is part of base
@@ -96,7 +96,7 @@ def getCompilerName():
     elif isGCC():
         return "gcc"
     else:
-        CraftDebug.die("Unknown Compiler %s" % _compiler())
+        craftDebug.log.critical("Unknown Compiler %s" % _compiler())
 
 def getSimpleCompilerName():
     if isMinGW():
@@ -114,7 +114,7 @@ def getGCCVersion():
         status, result = subprocess.getstatusoutput("gcc --version")
         if status == 0:
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
-            CraftDebug.debug("GCC Version:%s" % result, 1)
+            craftDebug.log.debug("GCC Version:%s" % result)
             _MINGW_VERSION = result.strip()
         else:
             #if no mingw is installed return 0
@@ -142,7 +142,7 @@ def getShortName():
     elif isMSVC2015():
         return "vc140"
     else:
-        CraftDebug.die("Unknown Compiler %s" % _compiler())
+        craftDebug.log.critical("Unknown Compiler %s" % _compiler())
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import CraftOS.OsUtilsBase
-import CraftDebug
+from CraftDebug import craftDebug
 import ctypes
 import os
 
@@ -12,14 +12,14 @@ class FileAttributes():
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def rm(path, force=False):
-        CraftDebug.debug("deleting file %s" % path, 3)
+        craftDebug.log.debug("deleting file %s" % path)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         return ctypes.windll.kernel32.DeleteFileW(path) != 0
 
     @staticmethod
     def rmDir(path, force=False):
-        CraftDebug.debug("deleting directory %s" % path, 3)
+        craftDebug.log.debug("deleting directory %s" % path)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         return ctypes.windll.kernel32.RemoveDirectoryW(path) != 0

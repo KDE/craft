@@ -2,7 +2,7 @@ import os
 import sqlite3
 import threading
 
-import CraftDebug
+from CraftDebug import craftDebug
 from CraftConfig import *
 
 import utils
@@ -53,14 +53,14 @@ class InstallPackage(object):
     def getFilesWithHashes( self ):
         """ get the list of files (filename, fileHash tuples) for the given package """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getFiles( self ):
         """ get the list of files for the given package """
         cmd = '''SELECT filename FROM fileList WHERE packageId=?;'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
@@ -76,10 +76,10 @@ class InstallPackage(object):
     def uninstall( self ):
         """ really uninstall that package """
         cmd = '''DELETE FROM fileList WHERE packageId=?;'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         cmd = '''DELETE FROM packageList WHERE packageId=?;'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
@@ -92,7 +92,7 @@ class InstallPackage(object):
         dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
-        CraftDebug.debug("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)))
         self.cursor.executemany( cmd, dataList )
 
         # at last, commit all the changes so that they are committed only after everything is written to the
@@ -159,17 +159,17 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
-            CraftDebug.debug("""The package %s/%s has been installed in prefix '%s' with
-                            version '%s'.""" % ( category, package, prefix, version ), 2)
+            craftDebug.log.debug("""The package %s/%s has been installed in prefix '%s' with
+                            version '%s'.""" % (category, package, prefix, version))
         else:
-            CraftDebug.debug("""Couldn't find a trace that the package %s/%s has been installed in
-                            prefix '%s' with version '%s'""" % ( category, package, prefix, version ), 1)
+            craftDebug.log.debug("""Couldn't find a trace that the package %s/%s has been installed in
+                            prefix '%s' with version '%s'""" % (category, package, prefix, version))
         cursor.close()
         return isPackageInstalled
 
@@ -181,7 +181,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -197,7 +197,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -213,7 +213,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -227,7 +227,7 @@ class InstallDB(object):
 
         cursor = self.connection.cursor()
         cmd = '''SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)))
         cursor.execute(cmd, ("%" + filename + "%",))
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
@@ -240,7 +240,7 @@ class InstallDB(object):
 
         params = [ None, prefix, category, package, version, revision ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
-        CraftDebug.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)), 2)
+        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
@@ -300,7 +300,7 @@ def main():
     db_temp = InstallDB( tempdbpath1 )
     db = InstallDB( tempdbpath2 )
 
-    CraftDebug.debug('testing installation database')
+    craftDebug.log.debug('testing installation database')
 
     # in case the package is still installed, remove it first silently
     if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
@@ -308,31 +308,31 @@ def main():
         # really commit uninstall
         for package in packageList:
             package.uninstall()
-    CraftDebug.debug_line()
+    craftDebug.log.debug_line()
 
-    CraftDebug.new_line()
+    craftDebug.new_line()
     # add a package
-    CraftDebug.debug('installing package win32libs/dbus-src-1.4.0 (release)')
+    craftDebug.log.debug('installing package win32libs/dbus-src-1.4.0 (release)')
     package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'release' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
 
     # add another package in a different prefix
-    CraftDebug.debug('installing package win32libs/dbus-src-1.4.0 (debug)')
+    craftDebug.log.debug('installing package win32libs/dbus-src-1.4.0 (debug)')
     package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'debug' )
     package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
     # now really commit the package
     package.install()
-    CraftDebug.debug_line()
+    craftDebug.log.debug_line()
 
-    CraftDebug.new_line()
-    CraftDebug.debug('checking installed packages')
-    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    craftDebug.new_line()
+    craftDebug.log.debug('checking installed packages')
+    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
 
-    CraftDebug.new_line()
-    CraftDebug.debug('now trying to remove package & revert it again later')
+    craftDebug.new_line()
+    craftDebug.log.debug('now trying to remove package & revert it again later')
     # remove the package again
     packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
@@ -340,42 +340,42 @@ def main():
             # we could remove the file here
             # print line
             pass
-    CraftDebug.debug_line()
+    craftDebug.log.debug_line()
 
-    CraftDebug.new_line()
-    CraftDebug.debug('checking installed packages')
-    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    CraftDebug.debug_line()
+    craftDebug.new_line()
+    craftDebug.log.debug('checking installed packages')
+    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    craftDebug.log.debug_line()
 
-    CraftDebug.new_line()
-    CraftDebug.debug('reverting removal')
+    craftDebug.new_line()
+    craftDebug.log.debug('reverting removal')
     # now instead of completing the removal, revert it
     for pac in packageList:
         pac.revert()
 
-    CraftDebug.debug('checking installed packages')
-    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    CraftDebug.debug_line()
+    craftDebug.log.debug('checking installed packages')
+    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    craftDebug.log.debug_line()
 
     db.getInstalled()
     db.getInstalled( category='win32libs', prefix='debug' )
     db.getInstalled( package='dbus-src' )
 
-    CraftDebug.new_line()
-    CraftDebug.debug('now really remove the package')
+    craftDebug.new_line()
+    craftDebug.log.debug('now really remove the package')
     packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
     for pac in packageList:
-        CraftDebug.debug('removing %s files' % len(pac.getFilesWithHashes()))
+        craftDebug.log.debug('removing %s files' % len(pac.getFilesWithHashes()))
         pac.uninstall()
 
-    CraftDebug.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    CraftDebug.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    CraftDebug.debug_line()
+    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
+    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
+    craftDebug.log.debug_line()
 
     # test the import from the old style (manifest based) databases
-    CraftDebug.new_line()
+    craftDebug.new_line()
     print("getInstalled:", db_temp.getInstalled())
 
 if __name__ == '__main__':

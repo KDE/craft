@@ -6,7 +6,7 @@
 
 import os
 
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
@@ -50,7 +50,7 @@ class CMakeBuildSystem(BuildSystemBase):
         elif OsUtils.isUnix():
             return "Unix Makefiles"
         else:
-            CraftDebug.die("unknown %s compiler" % self.compiler())
+            craftDebug.log.critical("unknown %s compiler" % self.compiler())
 
     def __onlyBuildDefines( self, buildOnlyTargets ):
         """This method returns a list of cmake defines to exclude targets from build"""
@@ -138,7 +138,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines) )
-        CraftDebug.info(command)
+        craftDebug.step(command)
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
@@ -161,7 +161,7 @@ class CMakeBuildSystem(BuildSystemBase):
             elif compiler.isMSVC2015():
                 command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
-                CraftDebug.die("has to be implemented");
+                craftDebug.log.critical("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system( self.makeProgramm + " clean", "make clean" )
@@ -220,12 +220,12 @@ class CMakeBuildSystem(BuildSystemBase):
         outFile = os.path.join(outDir, self.package+'-cmake.dot')
         a = CMakeDependencies()
         if not a.parse(srcDir):
-            CraftDebug.debug("could not find source files for generating cmake dependencies")
+            craftDebug.log.debug("could not find source files for generating cmake dependencies")
             return False
         title = "%s cmake dependency chart - version %s" % (self.package, self.version)
         a.toPackageList(title, srcDir)
         if not a.toDot(title, srcDir, outFile):
-            CraftDebug.debug("could not create dot file")
+            craftDebug.log.debug("could not create dot file")
             return False
 
         graphviz = GraphViz(self)
@@ -257,7 +257,7 @@ class CMakeBuildSystem(BuildSystemBase):
         so when we want to be able to install imagedir into KDEROOT,
         we have to move things around...
         """
-        CraftDebug.debug("fixImageDir: %s %s" % (imagedir, rootdir), 1)
+        craftDebug.log.debug("fixImageDir: %s %s" % (imagedir, rootdir))
         # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
         # rootdir  = e:\foo\thirdroot
         # files are installed to
@@ -275,7 +275,7 @@ class CMakeBuildSystem(BuildSystemBase):
             return
 
         tmp = os.path.join( imagedir, rootpath )
-        CraftDebug.debug("tmp: %s" % tmp, 1)
+        craftDebug.log.debug("tmp: %s" % tmp)
         tmpdir = os.path.join( imagedir, "tMpDiR" )
         if ( not os.path.isdir( tmpdir ) ):
             os.mkdir( tmpdir )

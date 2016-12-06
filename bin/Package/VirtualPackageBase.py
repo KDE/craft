@@ -5,7 +5,7 @@ import portage
 class VirtualPackageBase( SourceOnlyPackageBase):
     """provides a base class for virtual packages"""
     def __init__( self ):
-        CraftDebug.debug("VirtualPackageBase.__init__ called", 2)
+        craftDebug.log.debug("VirtualPackageBase.__init__ called")
         SourceOnlyPackageBase.__init__( self )
 
 # from SourceBase:

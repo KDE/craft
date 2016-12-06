@@ -1,7 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 
 from Source.ArchiveSource import *
@@ -11,7 +11,7 @@ from Source.HgSource import *
 
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
-    CraftDebug.trace("SourceFactory called", 1)
+    craftDebug.trace("SourceFactory called", 1)
     source = None
 
     if settings.hasTarget():
@@ -33,7 +33,7 @@ def SourceFactory(settings):
             source = GitSource(settings)
 
     if source == None:
-        CraftDebug.die("none or unsupported source system set")
+        craftDebug.log.critical("none or unsupported source system set")
     if not source.subinfo:
         source.subinfo = settings
     source.url = url

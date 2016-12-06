@@ -1,4 +1,4 @@
-import CraftDebug
+from CraftDebug import craftDebug
 import info
 from CraftOS.osutils import OsUtils
 
@@ -57,10 +57,10 @@ class Package(BoostPackageBase):
                     cmd += "vc12"
                 elif compiler.isMSVC2015():
                     cmd += "vc14"
-        if CraftDebug.verbose() >= 0:
+        if craftDebug.verbose() >= 0:
             print(cmd)
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
-                'boost-headers').sourceDir(),"tools","build")) or CraftDebug.die(
+                'boost-headers').sourceDir(),"tools","build")) or craftDebug.log.critical(
                 "command: %s failed" % (cmd))
         return True
 

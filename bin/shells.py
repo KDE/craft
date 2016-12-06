@@ -7,7 +7,7 @@
 import os
 import sys
 
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 import compiler
 from options import *
@@ -91,8 +91,8 @@ class MSysShell(object):
             env[k] = v
         command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
                   ( self._sh, export, self.toNativePath( path ), self.toNativePath( cmd ), args )
-        CraftDebug.info("msys execute: %s" % command)
-        CraftDebug.debug("msys environment: %s" % self.environment)
+        craftDebug.step("msys execute: %s" % command)
+        craftDebug.log.debug("msys environment: %s" % self.environment)
         return utils.system( command, stdout=out, stderr=err, env = env )
 
     def login(self):

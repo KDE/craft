@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import tempfile
 
-import CraftDebug
+from CraftDebug import craftDebug
 import info
 import utils
 
@@ -47,7 +47,7 @@ class Package(BinaryPackageBase):
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:
                 return True
-        CraftDebug.debug("adding kde related settings to global git config file", 1)
+        craftDebug.log.debug("adding kde related settings to global git config file")
         utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
         utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
         utils.system( "%s config --global core.autocrlf false" % git)

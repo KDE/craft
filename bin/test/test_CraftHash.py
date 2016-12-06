@@ -7,7 +7,7 @@ import contextlib
 import io
 import collections
 import CraftHash
-import CraftDebug
+from CraftDebug import craftDebug
 import CraftTestBase
 
 class CraftHashTest(CraftTestBase.CraftTestBase):

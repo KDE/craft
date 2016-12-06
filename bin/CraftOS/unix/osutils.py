@@ -1,5 +1,5 @@
 import CraftOS.OsUtilsBase
-import CraftDebug
+from CraftDebug import craftDebug
 import shutil
 import os
 import sys
@@ -8,17 +8,17 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def rm(path, force=False):
-        CraftDebug.debug("deleting file %s" % path, 3)
+        craftDebug.log.debug("deleting file %s" % path)
         try:
             os.remove(path)
             return True
         except OSError as e:
-            CraftDebug.warning("could not delete file %s: %s" % (path, e))
+            craftDebug.log.warning("could not delete file %s: %s" % (path, e))
             return False
 
     @staticmethod
     def rmDir(path, force=False):
-        CraftDebug.debug("deleting directory %s" % path, 3)
+        craftDebug.log.debug("deleting directory %s" % path)
         try:
             shutil.rmtree(path)
             return True

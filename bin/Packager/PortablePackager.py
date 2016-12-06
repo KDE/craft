@@ -1,7 +1,7 @@
 #
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
-import CraftDebug
+from CraftDebug import craftDebug
 import CraftHash
 import utils
 from .CollectionPackagerBase import *
@@ -23,7 +23,7 @@ Packager for portal 7zip archives
         """create portable 7z package with digest files located in the manifest subdir"""
 
         if not self.packagerExe:
-            CraftDebug.die("could not find 7za in your path!")
+            craftDebug.log.critical("could not find 7za in your path!")
 
 
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:

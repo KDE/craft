@@ -6,7 +6,7 @@ import sys
 import datetime
 from ctypes import *
 
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 import portage
 import compiler
@@ -31,7 +31,7 @@ class CraftBase(object):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
-        CraftDebug.debug("CraftBase.__init__ called", 2)
+        craftDebug.log.debug("CraftBase.__init__ called")
 
         if not hasattr(self, 'subinfo'):
             self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
@@ -106,7 +106,7 @@ class CraftBase(object):
             return directory
         buf = create_string_buffer('\000' * (length + 1))
         windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        CraftDebug.debug("converting " + directory + " to " + buf.value)
+        craftDebug.log.debug("converting " + directory + " to " + buf.value)
         return buf.value
 
     def buildType(self):
@@ -166,11 +166,11 @@ class CraftBase(object):
         return self.__adjustPath(_workDir)
 
     def buildDir(self):
-        CraftDebug.debug("CraftBase.buildDir() called", 2)
+        craftDebug.log.debug("CraftBase.buildDir() called")
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
-        CraftDebug.debug("package builddir is: %s" % builddir, 2)
+        craftDebug.log.debug("package builddir is: %s" % builddir)
         return self.__adjustPath(builddir)
 
     def imageDir(self):
@@ -230,7 +230,7 @@ class CraftBase(object):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
-        CraftDebug.debug("CraftBase.packageDestinationDir called", 2)
+        craftDebug.log.debug("CraftBase.packageDestinationDir called")
         dstpath = craftSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
 
         if withBuildType:
@@ -254,21 +254,21 @@ class CraftBase(object):
         return CraftStandardDirs.craftRoot()
 
     def enterBuildDir(self):
-        CraftDebug.trace("CraftBase.enterBuildDir called")
+        craftDebug.trace("CraftBase.enterBuildDir called")
 
         if ( not os.path.exists( self.buildDir() ) ):
             os.makedirs( self.buildDir() )
-            CraftDebug.debug("creating: %s" % self.buildDir())
+            craftDebug.log.debug("creating: %s" % self.buildDir())
 
         os.chdir( self.buildDir() )
-        CraftDebug.debug("entering: %s" % self.buildDir())
+        craftDebug.log.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if ( not os.path.exists( self.sourceDir() ) ):
             return False
-        CraftDebug.warning("entering the source directory!")
+        craftDebug.log.warning("entering the source directory!")
         os.chdir( self.sourceDir() )
-        CraftDebug.debug("entering: %s" % self.sourceDir())
+        craftDebug.log.debug("entering: %s" % self.sourceDir())
 
     def system( self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
@@ -279,9 +279,9 @@ class CraftBase(object):
         if utils.system( command, **kw):
             return True
         if self.subinfo.options.exitOnErrors:
-            CraftDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
+            craftDebug.log.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         else:
-            CraftDebug.warning("while running %s cmd: %s" % (errorMessage, str(command)))
+            craftDebug.log.warning("while running %s cmd: %s" % (errorMessage, str(command)))
         return False
 
     def proxySettings(self):
@@ -311,7 +311,7 @@ class CraftBase(object):
         else:
             version = craftSettings.get("PortageVersions", "Qt5")
             if not version:
-                CraftDebug.die("Please set a value for\n"
+                craftDebug.log.critical("Please set a value for\n"
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
@@ -325,7 +325,7 @@ class CraftBase(object):
         else:
             version = craftSettings.get("PortageVersions", "Qt5")
             if not version:
-                CraftDebug.die("Please set a value for\n"
+                craftDebug.log.critical("Please set a value for\n"
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
