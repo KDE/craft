@@ -57,8 +57,6 @@ class Package(BoostPackageBase):
                     cmd += "vc12"
                 elif compiler.isMSVC2015():
                     cmd += "vc14"
-        if craftDebug.verbose() >= 0:
-            print(cmd)
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
                 'boost-headers').sourceDir(),"tools","build")) or craftDebug.log.critical(
                 "command: %s failed" % (cmd))

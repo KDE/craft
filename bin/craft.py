@@ -268,10 +268,10 @@ def handleSinglePackage( packageName, action, args ):
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
-                if craftDebug.verbose() > 1 and info.package == packageName:
-                    craftDebug.log.warning("already installed %s/%s" % (info.category, info.package))
-                elif craftDebug.verbose() > 2 and not info.package == packageName:
-                    craftDebug.log.warning("already installed %s/%s" % (info.category, info.package))
+                if info.package == packageName:
+                    craftDebug.log.debug("already installed %s/%s" % (info.category, info.package))
+                elif not info.package == packageName:
+                    craftDebug.log.debug("already installed %s/%s" % (info.category, info.package))
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:

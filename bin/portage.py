@@ -451,7 +451,6 @@ for _dir in rootDirectories():
 def getSubPackage( category, package ):
     """ returns package and subpackage names """
     """ in case no subpackage could be found, None is returned """
-    #print(category, package )
     if package in PortageInstance.subpackages:
         for entry in PortageInstance.subpackages[ package ]:
             cat, pac = entry.split("/")
@@ -528,10 +527,10 @@ def printTargets( category, package ):
     targetsDictKeys.sort()
     for i in targetsDictKeys:
         if defaultTarget == i:
-            print('*', end=' ')
+            craftDebug.log.info('*', end=' ')
         else:
-            print(' ', end=' ')
-        print(i)
+            craftDebug.log.info(' ', end=' ')
+        craftDebug.log.info(i)
 
 def _getSubinfo( category, package  ):
     pack = getPackageInstance( category, package  )
@@ -588,7 +587,7 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
         packlen = 25
-        print(cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt)
+        craftDebug.log.info(cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt)
 
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
@@ -607,7 +606,7 @@ def printPackagesForFileSearch(filename):
     packages = InstallDB.installdb.getPackagesForFileSearch(filename)
     for pId, filename in packages:
         category, packageName, version = pId.getPackageInfo()
-        print("%s/%s: %s" % (category, packageName, filename))
+        craftDebug.log.info("%s/%s: %s" % (category, packageName, filename))
 
 def getPackagesCategories(packageName, defaultCategory = None):
     craftDebug.trace("getPackagesCategories for package name %s" % packageName)
