@@ -1,10 +1,11 @@
 import inspect
 import os
+import re
 import sys
 import logging
 import functools
 
-from CraftConfig import craftSettings
+from CraftConfig import craftSettings, CraftStandardDirs
 
 class CraftDebug(object):
     __instance = None
@@ -17,9 +18,14 @@ class CraftDebug(object):
 
     def __init__(self):
         self.seenDeprecatedFunctions = set()
+        self._handler = logging.StreamHandler(sys.stdout)
+
         self._log = logging.getLogger("craft")
-        self._log.setLevel(logging.INFO)
-        self._log.addHandler(logging.StreamHandler(sys.stdout))
+        self._log.setLevel(logging.DEBUG)
+        self._log.addHandler(self._handler)
+        self._handler.setLevel(logging.INFO)
+
+
         logDir = craftSettings.get("General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
@@ -27,7 +33,7 @@ class CraftDebug(object):
 
     def verbose(self):
         """return the value of the verbose level"""
-        lvl = self.log.level
+        lvl = self._handler.level
         if lvl == logging.INFO:
             return 0
         elif lvl <= logging.DEBUG:
@@ -42,7 +48,7 @@ class CraftDebug(object):
             lvl = logging.DEBUG
         elif _verbose < 0:
             lvl = logging.WARNING
-        self.log.setLevel(lvl)
+        self._handler.setLevel(lvl)
 
     def step(self, message):
         self.log.info("*** %s ***" % message)
@@ -130,7 +136,12 @@ def deprecated(replacement=None):
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
                 craftDebug.log.warning(msg)
                 craftDebug.log.info("Used in: %s line: %s" % (_info.filename, _info.lineno))
+                craftDebug.log.debug("Trace for the usage of %s" % fun.__name__, stack_info=True)
             return fun(*args, **kwargs)
 
         return inner
     return outer
+
+if __name__ == "__main__":
+    craftDebug.log.debug("debug: foo")
+    craftDebug.log.info("info: foo")
