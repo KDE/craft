@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
-import CraftDebug
+from CraftDebug import craftDebug
 import utils
 import compiler
 
@@ -25,7 +25,7 @@ class QMakeBuildSystem(BuildSystemBase):
             elif compiler.isIntel():
                 self.platform = "win32-icc"
             else:
-                CraftDebug.die("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
+                craftDebug.log.critical("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
         elif OsUtils.isUnix():
             if not OsUtils.isFreeBSD():
                 if compiler.isClang():

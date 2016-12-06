@@ -1,4 +1,4 @@
-import CraftDebug
+from CraftDebug import craftDebug
 import info
 
 

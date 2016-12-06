@@ -6,7 +6,7 @@ import tempfile
 import contextlib
 import importlib
 
-import CraftDebug
+from CraftDebug import craftDebug
 import CraftTestBase
 import CraftConfig
 import portage

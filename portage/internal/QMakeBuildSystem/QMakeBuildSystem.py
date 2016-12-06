@@ -1,13 +1,13 @@
 import os
 
-import CraftDebug
+from CraftDebug import craftDebug
 import info
 import compiler
 
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        CraftDebug.debug("craftbuildsystem:subinfo.setDependencies not implemented yet", 1)
+        craftDebug.log.debug("craftbuildsystem:subinfo.setDependencies not implemented yet")
         # we need at least qmake
         #self.dependencies['libs/qt'] = 'default'
         self.buildDependencies['dev-util/jom'] = 'default'

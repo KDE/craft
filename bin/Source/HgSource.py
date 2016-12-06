@@ -2,13 +2,13 @@
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
 # mercurial support based on the git support
-import CraftDebug
+from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
 class HgSource ( VersionSystemSourceBase ):
     """mercurial support"""
     def __init__( self, subinfo=None ):
-        CraftDebug.trace('HgSource __init__', 2)
+        craftDebug.trace('HgSource __init__', 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -26,7 +26,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def fetch( self, repopath=None ):
         """try to clone or update the repository"""
-        CraftDebug.trace("HgSource.fetch called", 2)
+        craftDebug.trace("HgSource.fetch called", 2)
 
         # get the path where the repositories should be stored to
         if repopath == None:
@@ -57,12 +57,12 @@ class HgSource ( VersionSystemSourceBase ):
                 os.chdir( checkoutDir )
                 ret = self.system( "%s update %s" % ( self.hgExecutable, repoBranch ) ) # TODO: check return code for success
         else:
-            CraftDebug.debug("skipping hg fetch (--offline)")
+            craftDebug.log.debug("skipping hg fetch (--offline)")
         return ret
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a mercurial repository checkout"""
-        CraftDebug.trace("HgSource.applyPatches called", 2)
+        craftDebug.trace("HgSource.applyPatches called", 2)
         if fileName and self.enableHg:
             patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
@@ -71,7 +71,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        CraftDebug.trace("HgSource.createPatch called", 2)
+        craftDebug.trace("HgSource.createPatch called", 2)
         ret = False
         if self.enableHg:
             os.chdir( self.sourceDir() )
@@ -81,7 +81,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def sourceVersion( self ):
         """ return the revision of the repository """
-        CraftDebug.trace("HgSource.sourceVersion called", 2)
+        craftDebug.trace("HgSource.sourceVersion called", 2)
 
         if self.enableHg:
 

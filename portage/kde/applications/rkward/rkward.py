@@ -63,7 +63,7 @@ class Package( CMakePackageBase):
 
     def fetch( self ):
         ret = CMakePackageBase.fetch( self )
-        CraftDebug.info( "Fetching translations" )
+        craftDebug.step( "Fetching translations" )
         RKTranslations( self ).fetch()
         return ret
 

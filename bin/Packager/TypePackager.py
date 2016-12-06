@@ -1,7 +1,7 @@
 #
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
-import CraftDebug
+from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
 from Packager.SevenZipPackager import *
@@ -14,13 +14,13 @@ class TypePackager( PackagerBase ):
 The packager used can be decided at runtime
 """
     def __init__( self, defaultType = eval(craftSettings.get("Packager", "PackageType", "SevenZipPackager")) ):
-        CraftDebug.debug("TypePackager __init__ %s" % defaultType, 2)
+        craftDebug.log.debug("TypePackager __init__ %s" % defaultType)
         PackagerBase.__init__(self)
         self.__packager = defaultType
 
     def changePackager(self, packager=None):
         if not packager == None and ("Packager", "PackageType") in craftSettings:
-            CraftDebug.info("Packager setting %s overriten by with %s" % (packager, craftSettings.get("Packager", "PackageType")))
+            craftDebug.step("Packager setting %s overriten by with %s" % (packager, craftSettings.get("Packager", "PackageType")))
             packager = eval(craftSettings.get("Packager", "PackageType"))
 
         if packager == None:

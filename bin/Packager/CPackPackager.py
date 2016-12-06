@@ -1,4 +1,4 @@
-import CraftDebug
+from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
 class CPackPackager (PackagerBase):
@@ -6,6 +6,6 @@ class CPackPackager (PackagerBase):
         PackagerBase.__init__(self)
 
     def createPackage(self):
-        CraftDebug.die("not implemented yet")
+        craftDebug.log.critical("not implemented yet")
 
 

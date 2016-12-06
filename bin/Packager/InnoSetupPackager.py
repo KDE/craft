@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
-import CraftDebug
+from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
 class InnoSetupPackager (PackagerBase):
@@ -11,14 +11,14 @@ class InnoSetupPackager (PackagerBase):
         if not initialized: PackagerBase.__init__( self )
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe:
-            CraftDebug.debug("using inno setup packager from %s" % self.packagerExe, 2)
+            craftDebug.log.debug("using inno setup packager from %s" % self.packagerExe)
 
     def configFile(self):
         """ return path of installer config file"""
-        CraftDebug.debug("searching package dir for setup config", 2)
+        craftDebug.log.debug("searching package dir for setup config")
 
         fileName = os.path.join(self.buildDir(), "setup.iss")
-        CraftDebug.debug("searching build dir for setup config %s" % fileName, 2)
+        craftDebug.log.debug("searching build dir for setup config %s" % fileName)
         if os.path.exists(fileName):
             return fileName
 
@@ -37,7 +37,7 @@ class InnoSetupPackager (PackagerBase):
         print("createPackage from innosetupPackager")
 
         if not self.packagerExe:
-            CraftDebug.die("could not find packager in your path!")
+            craftDebug.log.critical("could not find packager in your path!")
 
         if self.subinfo.options.package.packageName != None:
             pkgName = self.subinfo.options.package.packageName
@@ -89,7 +89,7 @@ class InnoSetupPackager (PackagerBase):
         #
         infile = self.configFile()
         if infile == None:
-            CraftDebug.die("could not find config file %s" % infile)
+            craftDebug.log.critical("could not find config file %s" % infile)
         with open(infile,'r') as _in:
             lines = _in.read().splitlines()
 
@@ -105,7 +105,7 @@ class InnoSetupPackager (PackagerBase):
 
         cmd += " \"%s\"" % (outfile)
         if not utils.systemWithoutShell(cmd):
-            CraftDebug.die("while packaging. cmd: %s" % cmd)
+            craftDebug.log.critical("while packaging. cmd: %s" % cmd)
         return True
 
 

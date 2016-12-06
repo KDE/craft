@@ -1,4 +1,4 @@
-import CraftDebug
+from CraftDebug import craftDebug
 import info
 
 
@@ -28,7 +28,7 @@ class Package(CMakePackageBase):
     
     def configure(self):
         if not ("Paths","Python27") in craftSettings:
-            CraftDebug.die("Please make sure Paths/Python27 is set in your kdesettings.ini")
+            craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
         return CMakeBuildSystem.configure(self)
 
 

@@ -34,7 +34,7 @@ import os
 import inspect
 import shlex
 
-import CraftDebug
+from CraftDebug import craftDebug
 from CraftConfig import  *
 import utils
 import portage
@@ -346,7 +346,7 @@ class Options(object):
         result = False
         for entry in opts:
             if entry.find('=') == -1:
-                CraftDebug.debug('incomplete option %s' % entry, 3)
+                craftDebug.log.debug('incomplete option %s' % entry)
                 continue
             (key, value) = entry.split( '=', 1 )
             if self.__setInstanceAttribute(key, value):

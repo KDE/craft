@@ -1,7 +1,7 @@
 #
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import CraftDebug
+from CraftDebug import craftDebug
 from Package.PackageBase import *
 from Source.MultiSource import *
 from BuildSystem.AutoToolsBuildSystem import *
@@ -10,7 +10,7 @@ from Packager.TypePackager import *
 class AutoToolsPackageBase (PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):
     """provides a base class for autotools based packages from any source"""
     def __init__(self):
-        CraftDebug.debug("AutoToolsPackageBase.__init__ called", 2)
+        craftDebug.log.debug("AutoToolsPackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)

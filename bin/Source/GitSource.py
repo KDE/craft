@@ -6,7 +6,7 @@
 
 import tempfile
 
-import CraftDebug
+from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
 
@@ -15,7 +15,7 @@ from Source.VersionSystemSourceBase import *
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
     def __init__(self, subinfo=None):
-        CraftDebug.trace('GitSource __init__', 2)
+        craftDebug.trace('GitSource __init__', 2)
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -75,11 +75,11 @@ class GitSource ( VersionSystemSourceBase ):
             return branch
 
     def __fetchSingleBranch( self, repopath = None ):
-        CraftDebug.trace('GitSource __fetchSingleBranch', 2)
+        craftDebug.trace('GitSource __fetchSingleBranch', 2)
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        CraftDebug.debug("fetching %s" % repopath)
+        craftDebug.log.debug("fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace( "[git]", "" )
@@ -131,7 +131,7 @@ class GitSource ( VersionSystemSourceBase ):
                     ret = self.__git('checkout', repoTag)
 
         else:
-            CraftDebug.debug("skipping git fetch (--offline)")
+            craftDebug.log.debug("skipping git fetch (--offline)")
         return ret
 
     def __git(self, command, *args, **kwargs):
@@ -148,11 +148,11 @@ class GitSource ( VersionSystemSourceBase ):
         return self.system(' '.join(parts), **kwargs)
 
     def __fetchMultipleBranch(self, repopath=None):
-        CraftDebug.trace('GitSource __fetchMultipleBranch', 2)
+        craftDebug.trace('GitSource __fetchMultipleBranch', 2)
         # get the path where the repositories should be stored to
         if repopath == None:
             repopath = self.repositoryUrl()
-        CraftDebug.debug("fetching %s" % repopath)
+        craftDebug.log.debug("fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
@@ -171,7 +171,7 @@ class GitSource ( VersionSystemSourceBase ):
             else:
                 ret = self.__git('fetch', cwd=rootCheckoutDir)
                 if not ret:
-                    CraftDebug.die("could not fetch remote data")
+                    craftDebug.log.critical("could not fetch remote data")
 
             if repoBranch == "":
                 repoBranch = "master"
@@ -183,18 +183,18 @@ class GitSource ( VersionSystemSourceBase ):
                 else:
                     ret = self.__git('pull')
                     if not ret:
-                        CraftDebug.die("could not pull into branch %s" % repoBranch)
+                        craftDebug.log.critical("could not pull into branch %s" % repoBranch)
 
             if ret:
                 #ret = self.__git('checkout', '-f')
                 ret = self.__git("checkout", "-f", repoTag or repoBranch, cwd=branchDir)
         else:
-            CraftDebug.debug("skipping git fetch (--offline)")
+            craftDebug.log.debug("skipping git fetch (--offline)")
         return ret
 
 
     def fetch(self, repopath=None):
-        CraftDebug.trace('GitSource fetch', 2)
+        craftDebug.trace('GitSource fetch', 2)
         if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
             return self.__fetchMultipleBranch(repopath)
         else:
@@ -202,7 +202,7 @@ class GitSource ( VersionSystemSourceBase ):
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
-        CraftDebug.trace('GitSource ', 2)
+        craftDebug.trace('GitSource ', 2)
         if fileName:
             patchfile = os.path.join ( self.packageDir(), fileName )
             if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
@@ -224,25 +224,25 @@ class GitSource ( VersionSystemSourceBase ):
     def createPatch( self ):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
-        CraftDebug.trace('GitSource createPatch', 2)
+        craftDebug.trace('GitSource createPatch', 2)
         patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) )
-        CraftDebug.debug("git diff %s" % patchFileName, 1)
+        craftDebug.log.debug("git diff %s" % patchFileName)
         with open(patchFileName,'wt+') as patchFile:
             return self.__git('diff', stdout=patchFile)
 
     def sourceVersion( self ):
         """print the revision returned by git show"""
-        CraftDebug.trace('GitSource sourceVersion', 2)
+        craftDebug.trace('GitSource sourceVersion', 2)
 
         return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0 ):
-        CraftDebug.trace('GitSource checkoutDir', 2)
+        craftDebug.trace('GitSource checkoutDir', 2)
         return VersionSystemSourceBase.checkoutDir( self, index )
 
     def sourceDir(self, index=0 ):
-        CraftDebug.trace('GitSource sourceDir', 2)
+        craftDebug.trace('GitSource sourceDir', 2)
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
@@ -258,7 +258,7 @@ class GitSource ( VersionSystemSourceBase ):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        CraftDebug.debug("using sourcedir: %s" % sourcedir, 2)
+        craftDebug.log.debug("using sourcedir: %s" % sourcedir)
         return sourcedir
 
     def getUrls( self ):
