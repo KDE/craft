@@ -34,7 +34,7 @@ import os
 import inspect
 import shlex
 
-from CraftDebug import craftDebug
+from CraftDebug import craftDebug, deprecated
 from CraftConfig import  *
 import utils
 import portage
@@ -178,11 +178,21 @@ class OptionsMerge(OptionsBase):
         ## subdir based on installDir() used as merge source directory
         self.sourcePath = None
         ## subdir based on mergeDir() used as  merge destination directory
-        self.destinationPath = None
+        self._destinationPath = None
         ## merge/unmerge the package build type independent
         # this option is ignored when the environment variable
         # EMERGE_MERGE_ROOT_WITH_BUILD_TYPE is not set or is false
         self.ignoreBuildType = False
+
+    @property
+    @deprecated("info.targetInstallPath")
+    def destinationPath(self):
+        return self._destinationPath
+
+    @destinationPath.setter
+    @deprecated("info.targetInstallPath")
+    def destinationPath(self, val):
+        self._destinationPath = val
 
 ## options for the package action
 class OptionsPackage(OptionsBase):
