@@ -587,7 +587,7 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
         packlen = 25
-        craftDebug.log.info(cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver, hnt)
+        craftDebug.log.info(cat + " " * ( catlen - len( cat ) ) + pack + " " * ( packlen - len( pack ) ) + ver + hnt)
 
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
