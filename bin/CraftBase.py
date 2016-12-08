@@ -185,8 +185,6 @@ class CraftBase(object):
         """
         if self.subinfo.hasInstallPath():
             installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
-        elif self.subinfo.options.install.installPath:
-            installDir = os.path.join(self.imageDir(), self.subinfo.options.install.installPath)
         else:
             installDir = self.imageDir()
         return self.__adjustPath(installDir)

@@ -167,8 +167,6 @@ class OptionsInstall(OptionsBase):
         ## use either make tool for installing or
         # run cmake directly for installing
         self.useMakeToolForInstall = True
-        ## subdir based on installDir() used as install destination directory
-        self.installPath = None
         ## add DESTDIR=xxx support for autotools build system
         self.useDestDir = True
 
