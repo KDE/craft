@@ -29,12 +29,12 @@ class CraftDebug(object):
         logDir = craftSettings.get("General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
-        cleanNameRe = re.compile(r"\\|/|:|;")
-        fileName = "log-%s.txt" % cleanNameRe.sub("", os.path.dirname(CraftStandardDirs.craftRoot()))
-        fileHandler = logging.FileHandler(os.path.join(logDir, fileName), mode="wt+")
+
+        cleanNameRe = re.compile(r":?\\+|/+|:|;")
+        fileHandler = logging.FileHandler(os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot()))), mode="wt+")
         self._log.addHandler(fileHandler)
         fileHandler.setLevel(logging.DEBUG)
-
+        self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
 
     def verbose(self):
         """return the value of the verbose level"""
