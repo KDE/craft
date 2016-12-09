@@ -24,9 +24,6 @@ class CraftStandardDirs( object ):
 
         if platform.system() != 'Windows':
             return path
-
-        if craftSettings and not craftSettings.getboolean("General", "EMERGE_USE_SHORT_PATH"):
-            return path
         drive , tail = os.path.splitdrive(path)
         drive = drive.upper()
         if CraftStandardDirs._SUBST == None:
@@ -36,7 +33,7 @@ class CraftStandardDirs( object ):
                 if s != "":
                     key , val = s.split("\\: => ")
                     CraftStandardDirs._SUBST[key] = val
-        if drive in list(CraftStandardDirs._SUBST.keys()):
+        if drive in CraftStandardDirs._SUBST:
             deSubst = CraftStandardDirs._SUBST[drive] + tail
             return deSubst
         return path
