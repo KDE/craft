@@ -215,8 +215,6 @@ def un7zip( fileName, destdir, flag = None ):
         command += " -t7z"
     if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
         command += " -bsp1"
-        if craftDebug.verbose() <= 1:
-            command += " -bso0"
     return system( command )
 
 def system(cmd, **kw ):
