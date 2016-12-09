@@ -229,9 +229,10 @@ def systemWithoutShell(cmd, **kw):
 
     craftDebug.log.debug("executing command: %s" % cmd)
     stdout = kw.get('stdout', sys.stdout)
-    kw['stdout'] = subprocess.PIPE
+    if stdout == sys.stdout:
+        kw["universal_newlines"] = True
     kw['stderr'] = subprocess.STDOUT
-    kw["universal_newlines"] = True
+    kw['stdout'] = subprocess.PIPE
     proc = subprocess.Popen(cmd, **kw)
     for line in proc.stdout:
         if not stdout == sys.stdout:
