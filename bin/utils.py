@@ -233,13 +233,14 @@ def systemWithoutShell(cmd, **kw):
     stdout = kw.get('stdout', sys.stdout)
     kw['stdout'] = subprocess.PIPE
     kw['stderr'] = subprocess.STDOUT
+    kw["universal_newlines"] = True
     proc = subprocess.Popen(cmd, **kw)
-    for line in iter(proc.stdout.readline, b""):
+    for line in proc.stdout:
         if not stdout == sys.stdout:
             stdout.write(line)
-            craftDebug.log.debug(str(line.rstrip(), "UTF-8"))
+            craftDebug.log.debug(line.rstrip())
         else:
-            craftDebug.log.info(str(line.rstrip(), "UTF-8"))
+            craftDebug.log.info(line.rstrip())
     proc.communicate()
     return proc.wait() == 0
 
