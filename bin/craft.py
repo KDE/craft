@@ -521,11 +521,13 @@ if __name__ == '__main__':
         except portage.PortageException as e:
             if e.exception:
                 craftDebug.log.warning(e.exception)
-                craftDebug.log.warning(traceback.format_tb( e.exception.__traceback__))
+                craftDebug.log.debug(traceback.format_tb( e.exception.__traceback__))
+                traceback.print_stack( e.exception.__traceback__)
             craftDebug.log.error(e)
         except Exception as e:
             craftDebug.log.warning( e )
-            craftDebug.log.warning(traceback.format_tb( e.__traceback__ ))
+            craftDebug.log.debug(traceback.format_tb( e.__traceback__ ))
+            traceback.print_stack(e.__traceback__)
         finally:
             doUpdateTitle = False
             if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):
