@@ -22,7 +22,7 @@ class Package( BinaryPackageBase ):
 #        elif compiler.isMSVC2008():
 #            self.subinfo.options.package.version = '9.0.30729.1'
 
-    def fetch( self ):
+    def fetch(self):
         return True
 
     def unpack( self ):

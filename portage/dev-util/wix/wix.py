@@ -23,6 +23,6 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__( self )
         self.subinfo.options.merge.destinationPath = "dev-utils"
 
-    def fetch( self ):
+    def fetch(self):
         return self.system("wget -c -O %s\wix35-binaries.zip \"--post-data=fileId=204418&releaseId=60102&clickOncePath=\" http://wix.codeplex.com/releases/acceptLicense" % CraftStandardDirs.downloadDir())
 

@@ -61,8 +61,8 @@ class Package( CMakePackageBase):
             self.realconfigure = self.configure
             self.configure = self.msvcconfigure
 
-    def fetch( self ):
-        ret = CMakePackageBase.fetch( self )
+    def fetch(self):
+        ret = CMakePackageBase.fetch(self)
         craftDebug.step( "Fetching translations" )
         RKTranslations( self ).fetch()
         return ret
