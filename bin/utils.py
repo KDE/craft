@@ -167,8 +167,6 @@ def getFile( url, destdir , filename='' ) -> bool:
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     command = "\"%s\" -c -t 10" % UtilsCache.findApplication("wget")
-    if craftDebug.verbose() < 1:
-        command += " -q --show-progress"
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
@@ -177,7 +175,12 @@ def wgetFile( url, destdir, filename=''):
         command += " -O %s" % os.path.join( destdir, filename )
     command += " %s" % url
     craftDebug.log.debug("wgetfile called")
-    ret = system( command )
+
+    if craftDebug.verbose() < 1:
+        command += " -q --show-progress"
+        ret = system( command, displayProgress=True, stderr=subprocess.STDOUT)
+    else:
+        ret = system( command )
     craftDebug.log.debug("wget ret: %s" % ret)
     return ret
 
@@ -214,32 +217,45 @@ def un7zip( fileName, destdir, flag = None ):
         # Yes it is an ugly hack.
         command += " -t7z"
     if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
+        command += " -bso2"
         command += " -bsp1"
-    return system( command )
+    return system( command , displayProgress=True)
 
-def system(cmd, **kw ):
+def system(cmd, displayProgress=False, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
     kw['shell'] = True
-    return systemWithoutShell(cmd, **kw)
+    return systemWithoutShell(cmd, displayProgress, **kw)
 
-def systemWithoutShell(cmd, **kw):
+def systemWithoutShell(cmd, displayProgress=False, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
-    might be changed depending on the chosen logging options."""
+    might be changed depending on the chosen logging options.
+
+    When the parameter "displayProgress" is True, stdout won't be
+    logged to allow the display of progress bars."""
 
     craftDebug.log.debug("executing command: %s" % cmd)
-    stdout = kw.get('stdout', sys.stdout)
-    if stdout == sys.stdout:
+    if not displayProgress:
+        stdout = kw.get('stdout', sys.stdout)
+        if stdout == sys.stdout:
+            kw["universal_newlines"] = True
+        kw['stderr'] = subprocess.STDOUT
+        kw['stdout'] = subprocess.PIPE
+        proc = subprocess.Popen(cmd, **kw)
+        for line in proc.stdout:
+            if not stdout == sys.stdout:
+                stdout.write(line)
+                craftDebug.log.debug(line.rstrip())
+            else:
+                craftDebug.log.info(line.rstrip())
+    else:
+        kw['stderr'] = kw.get('stderr', subprocess.PIPE)
         kw["universal_newlines"] = True
-    kw['stderr'] = subprocess.STDOUT
-    kw['stdout'] = subprocess.PIPE
-    proc = subprocess.Popen(cmd, **kw)
-    for line in proc.stdout:
-        if not stdout == sys.stdout:
-            stdout.write(line)
-            craftDebug.log.debug(line.rstrip())
-        else:
-            craftDebug.log.info(line.rstrip())
+        proc = subprocess.Popen(cmd, **kw)
+        if proc.stderr:
+            for line in proc.stderr:
+                craftDebug.log.debug(line.rstrip())
+
     proc.communicate()
     return proc.wait() == 0
 
