@@ -129,8 +129,7 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "craft %s git" % ("-vvv" if args.verbose else ""))
-    run(args, "git clone kde:craft %s" % os.path.join(args.root, "craft"))
+    run(args, "craft %s craft" % ("-vvv" if args.verbose else ""))
     shutil.rmtree(os.path.join(args.root, "craft-master"))
     print("Setup complete")
     print("Please run %s/craft/kdeenv.ps1" % args.root)
