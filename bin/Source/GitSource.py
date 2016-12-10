@@ -74,23 +74,37 @@ class GitSource ( VersionSystemSourceBase ):
             # in case this is a tag, print out the tag version
             return branch
 
-    def __fetchSingleBranch( self, repopath = None ):
-        craftDebug.trace('GitSource __fetchSingleBranch', 2)
+    def __git(self, command, *args, **kwargs):
+        """executes a git command in a shell.
+        Default for cwd is self.checkoutDir()"""
+        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and craftSettings.get( "General", "EMERGE_LOG_DIR") != "":
+            # if stdout/stderr is redirected, git clone qt hangs forever.
+            # It does not with option -q (suppressing progress info)
+            command += ' -q'
+        parts = ["git", command]
+        parts.extend(args)
+        if not kwargs.get('cwd'):
+            kwargs['cwd'] = self.checkoutDir()
+        return self.system(' '.join(parts), **kwargs)
+
+    def fetch(self):
+        craftDebug.trace('GitSource fetch')
         # get the path where the repositories should be stored to
-        if repopath == None:
-            repopath = self.repositoryUrl()
+
+        repopath = self.repositoryUrl()
         craftDebug.log.debug("fetching %s" % repopath)
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
-        repopath = repopath.replace( "[git]", "" )
-        repoString = utils.replaceVCSUrl( repopath )
-        [ repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
+        repopath = repopath.replace("[git]", "")
+
+        repoString = utils.replaceVCSUrl(repopath)
+        [repoUrl, repoBranch, repoTag] = utils.splitVCSUrl(repoString)
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
         ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
-        if ( not self.noFetch ):
+        if (not self.noFetch):
             self.setProxy()
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
@@ -107,7 +121,7 @@ class GitSource ( VersionSystemSourceBase ):
                         self.__git("submodule update --init --recursive")
             else:
                 # it doesn't exist so clone the repo
-                os.makedirs( checkoutDir )
+                os.makedirs(checkoutDir)
                 # first try to replace with a repo url from etc/portage/crafthosts.conf
                 recursive = '--recursive' if self.subinfo.options.fetch.checkoutSubmodules else ''
                 ret = self.__git('clone', recursive, repoUrl, '.')
@@ -116,14 +130,14 @@ class GitSource ( VersionSystemSourceBase ):
             # locally, otherwise we can track the remote branch
             if ret and repoBranch and not repoTag:
                 track = ""
-                if not self.__isLocalBranch( repoBranch ):
+                if not self.__isLocalBranch(repoBranch):
                     track = "--track origin/"
-                ret = self.__git('checkout', "%s%s" % (track, repoBranch ))
+                ret = self.__git('checkout', "%s%s" % (track, repoBranch))
 
             # we can have tags or revisions in repoTag
             if ret and repoTag:
-                if self.__isTag( repoTag ):
-                    if not self.__isLocalBranch( "_" + repoTag ):
+                if self.__isTag(repoTag):
+                    if not self.__isLocalBranch("_" + repoTag):
                         ret = self.__git('checkout', '-b', '_%s' % repoTag, repoTag)
                     else:
                         ret = self.__git('checkout', '_%s' % repoTag)
@@ -134,89 +148,15 @@ class GitSource ( VersionSystemSourceBase ):
             craftDebug.log.debug("skipping git fetch (--offline)")
         return ret
 
-    def __git(self, command, *args, **kwargs):
-        """executes a git command in a shell.
-        Default for cwd is self.checkoutDir()"""
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and craftSettings.get( "General", "EMERGE_LOG_DIR") != "":
-            # if stdout/stderr is redirected, git clone qt hangs forever.
-            # It does not with option -q (suppressing progress info)
-            command += ' -q'
-        parts = ["git", command]
-        parts.extend(args)
-        if not kwargs.get('cwd'):
-            kwargs['cwd'] = self.checkoutDir()
-        return self.system(' '.join(parts), **kwargs)
-
-    def __fetchMultipleBranch(self, repopath=None):
-        craftDebug.trace('GitSource __fetchMultipleBranch', 2)
-        # get the path where the repositories should be stored to
-        if repopath == None:
-            repopath = self.repositoryUrl()
-        craftDebug.log.debug("fetching %s" % repopath)
-
-        # in case you need to move from a read only Url to a writeable one, here it gets replaced
-        repopath = repopath.replace("[git]", "")
-        repoString = utils.replaceVCSUrl( repopath )
-        [repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
-
-        ret = True
-        # only run if wanted (e.g. no --offline is given on the commandline)
-        if ( not self.noFetch ):
-            self.setProxy()
-            rootCheckoutDir = os.path.join(self.checkoutDir(), '.git')
-            if not os.path.exists( rootCheckoutDir ):
-                # it doesn't exist so clone the repo
-                os.makedirs( rootCheckoutDir )
-                ret = self.__git('clone', '--mirror', repoUrl, '.', cwd=rootCheckoutDir)
-            else:
-                ret = self.__git('fetch', cwd=rootCheckoutDir)
-                if not ret:
-                    craftDebug.log.critical("could not fetch remote data")
-
-            if repoBranch == "":
-                repoBranch = "master"
-            if ret:
-                branchDir = os.path.join(self.checkoutDir(), repoBranch)
-                if not os.path.exists(branchDir):
-                    os.makedirs(branchDir)
-                    ret = self.__git('clone', '--local --shared -b', repoBranch, rootCheckoutDir, branchDir, cwd=branchDir)
-                else:
-                    ret = self.__git('pull')
-                    if not ret:
-                        craftDebug.log.critical("could not pull into branch %s" % repoBranch)
-
-            if ret:
-                #ret = self.__git('checkout', '-f')
-                ret = self.__git("checkout", "-f", repoTag or repoBranch, cwd=branchDir)
-        else:
-            craftDebug.log.debug("skipping git fetch (--offline)")
-        return ret
-
-
-    def fetch(self, repopath=None):
-        craftDebug.trace('GitSource fetch', 2)
-        if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
-            return self.__fetchMultipleBranch(repopath)
-        else:
-            return self.__fetchSingleBranch(repopath)
-
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
-        craftDebug.trace('GitSource ', 2)
+        craftDebug.trace('GitSource ')
         if fileName:
             patchfile = os.path.join ( self.packageDir(), fileName )
-            if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
-                repopath = self.repositoryUrl()
-                # in case you need to move from a read only Url to a writeable one, here it gets replaced
-                repopath = repopath.replace("[git]", "")
-                repoString = utils.replaceVCSUrl( repopath )
-                repoBranch = utils.splitVCSUrl( repoString )[1] or "master"
-                sourceDir = os.path.join(self.checkoutDir(), repoBranch)
-            else:
-                sourceDir = self.sourceDir()
-                #FIXME this reverts previously applied patches !
-                #self.__git('checkout', '-f',cwd=sourceDir)
-                sourceDir = self.checkoutDir()
+            sourceDir = self.sourceDir()
+            #FIXME this reverts previously applied patches !
+            #self.__git('checkout', '-f',cwd=sourceDir)
+            sourceDir = self.checkoutDir()
             return self.__git('apply', '--whitespace=fix',
                     '-p %d' % patchdepth, patchfile, cwd=sourceDir)
         return True
@@ -246,14 +186,7 @@ class GitSource ( VersionSystemSourceBase ):
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
-        repoString = utils.replaceVCSUrl( repopath )
-        _, repoBranch, _ = utils.splitVCSUrl( repoString )
-        if repoBranch == "":
-            repoBranch = "master"
-        if craftSettings.getboolean("General","EMERGE_GIT_MULTIBRANCH", False):
-            sourcedir = os.path.join(self.checkoutDir(index), repoBranch)
-        else:
-            sourcedir = self.checkoutDir(index)
+        sourcedir = self.checkoutDir(index)
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
