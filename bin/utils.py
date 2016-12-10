@@ -234,7 +234,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
-    craftDebug.log.debug("executing command: %s" % cmd)
+    craftDebug.log.debug("executing command: '%s' in '%s'" % (cmd, kw.get("cwd", os.getcwd())))
     if not displayProgress:
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
