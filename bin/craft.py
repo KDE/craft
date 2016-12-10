@@ -374,8 +374,6 @@ def main( ):
                          default = int( craftSettings.get( "CraftDebug", "Verbose", "0" ) ),
                          help = " verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3." )
-    parser.add_argument( "--trace", action = "store",
-                         default = int( craftSettings.get( "General", "EMERGE_TRACE", "0" ) ), type = int )
     parser.add_argument( "-i", "--ignoreInstalled", action = "store_true",
                          help = "ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
     parser.add_argument( "-ia", "--ignoreAllInstalled", action = "store_true",
@@ -453,7 +451,6 @@ def main( ):
     craftSettings.set( "PortageVersions", "DefaultTarget", args.target )
     craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
     craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
-    craftSettings.set( "General", "EMERGE_TRACE", args.trace )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
     craftSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
     craftSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
@@ -484,7 +481,6 @@ def main( ):
         craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
         craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
-        craftDebug.log.debug("trace: %s" % tempArgs.trace)
         craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
         craftDebug.debug_line()
 

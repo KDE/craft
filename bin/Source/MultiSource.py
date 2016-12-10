@@ -10,7 +10,7 @@ class MultiSource(object):
     """ provides multi source type api """
     def __init__(self):
         object.__init__(self)
-        craftDebug.trace("MultiSource __init__", 2)
+        craftDebug.trace("MultiSource __init__")
         self.__source = None
 
     @property
@@ -25,7 +25,7 @@ class MultiSource(object):
         return self.__source
 
     def localFileNames( self ):
-        craftDebug.trace("MultiSource localFileNames", 2)
+        craftDebug.trace("MultiSource localFileNames")
         if self.subinfo.archiveName() == "":
             return self.source.localFileNamesBase()
         if isinstance(self.subinfo.archiveName(), (list, tuple)):
@@ -33,16 +33,16 @@ class MultiSource(object):
         else:
             return (self.subinfo.archiveName(), )
 
-    def fetch( self, repopath = None ):
-        craftDebug.trace("MultiSource fetch", 2)
-        return self.source.fetch( repopath )
+    def fetch(self):
+        craftDebug.trace("MultiSource fetch")
+        return self.source.fetch()
 
     def checkDigest(self):
-        craftDebug.trace("MultiSource checkDigest", 2)
+        craftDebug.trace("MultiSource checkDigest")
         return self.source.checkDigest()
 
     def unpack(self):
-        craftDebug.trace("MultiSource unpack", 2)
+        craftDebug.trace("MultiSource unpack")
         # pylint: disable=E1101
         # multiple inheritance: MultiSource is never the only
         # superclass, others define self.buildSystemType.
@@ -50,23 +50,23 @@ class MultiSource(object):
         return self.source.unpack()
 
     def checkoutDir(self):
-        craftDebug.trace("MultiSource checkoutDir", 2)
+        craftDebug.trace("MultiSource checkoutDir")
         return self.source.checkoutDir()
 
     def sourceDir(self):
-        craftDebug.trace("MultiSource sourceDir", 2)
+        craftDebug.trace("MultiSource sourceDir")
         return self.source.sourceDir()
 
     def repositoryUrl(self, index=0):
-        craftDebug.trace("MultiSource repositoryUrl", 2)
+        craftDebug.trace("MultiSource repositoryUrl")
         return self.source.repositoryUrl(index)
 
     def repositoryUrlCount(self):
-        craftDebug.trace("MultiSource repositoryUrlCount", 2)
+        craftDebug.trace("MultiSource repositoryUrlCount")
         return self.source.repositoryUrlCount()
 
     def applyPatches(self):
-        craftDebug.trace("MultiSource applyPatches", 2)
+        craftDebug.trace("MultiSource applyPatches")
         return self.source.applyPatches()
 
     def applyPatch(self):
@@ -76,23 +76,23 @@ class MultiSource(object):
         # return self.source.applyPatch()
 
     def createPatch(self):
-        craftDebug.trace("MultiSource createPatch", 2)
+        craftDebug.trace("MultiSource createPatch")
         return self.source.createPatch()
 
     def getUrls(self):
-        craftDebug.trace("MultiSource getUrls", 2)
+        craftDebug.trace("MultiSource getUrls")
         return self.source.getUrls()
 
     def sourceVersion(self):
-        craftDebug.trace("MultiSource sourceVersion", 2)
+        craftDebug.trace("MultiSource sourceVersion")
         return self.source.sourceVersion()
 
     def sourceRevision(self):
-        craftDebug.trace("MultiSource sourceVersion", 2)
+        craftDebug.trace("MultiSource sourceVersion")
         return self.source.sourceRevision()
 
         
     def printSourceVersion(self):
-        craftDebug.trace("MultiSource printSourceVersion", 2)
+        craftDebug.trace("MultiSource printSourceVersion")
         print(self.source.sourceVersion())
         return True

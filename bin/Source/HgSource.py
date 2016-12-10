@@ -8,7 +8,7 @@ from Source.VersionSystemSourceBase import *
 class HgSource ( VersionSystemSourceBase ):
     """mercurial support"""
     def __init__( self, subinfo=None ):
-        craftDebug.trace('HgSource __init__', 2)
+        craftDebug.trace('HgSource __init__')
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -26,7 +26,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def fetch( self, repopath=None ):
         """try to clone or update the repository"""
-        craftDebug.trace("HgSource.fetch called", 2)
+        craftDebug.trace("HgSource.fetch called")
 
         # get the path where the repositories should be stored to
         if repopath == None:
@@ -62,7 +62,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a mercurial repository checkout"""
-        craftDebug.trace("HgSource.applyPatches called", 2)
+        craftDebug.trace("HgSource.applyPatches called")
         if fileName and self.enableHg:
             patchfile = os.path.join ( self.packageDir(), fileName )
             os.chdir( self.sourceDir() )
@@ -71,7 +71,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def createPatch( self ):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        craftDebug.trace("HgSource.createPatch called", 2)
+        craftDebug.trace("HgSource.createPatch called")
         ret = False
         if self.enableHg:
             os.chdir( self.sourceDir() )
@@ -81,7 +81,7 @@ class HgSource ( VersionSystemSourceBase ):
 
     def sourceVersion( self ):
         """ return the revision of the repository """
-        craftDebug.trace("HgSource.sourceVersion called", 2)
+        craftDebug.trace("HgSource.sourceVersion called")
 
         if self.enableHg:
 

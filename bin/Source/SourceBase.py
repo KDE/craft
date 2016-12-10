@@ -7,7 +7,7 @@ from CraftBase import *
 class SourceBase(CraftBase):
     """ implements basic stuff required for all sources"""
     def __init__(self):
-        craftDebug.trace("SourceBase.__init__ called", 2)
+        craftDebug.trace("SourceBase.__init__ called")
         CraftBase.__init__(self)
         self.url = ""
 
@@ -59,7 +59,7 @@ class SourceBase(CraftBase):
 
     def applyPatches(self):
         """apply patches if available"""
-        craftDebug.trace("SourceBase.applyPatches called", 0)
+        craftDebug.trace("SourceBase.applyPatches called")
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
@@ -71,7 +71,7 @@ class SourceBase(CraftBase):
 
     def applyPatch(self, fileName, patchdepth, srcdir=None ):
         """base implementation for applying a single patch to the source"""
-        craftDebug.trace("SourceBase.applyPatch called", 2)
+        craftDebug.trace("SourceBase.applyPatch called")
         if not fileName:
             return True
         if not srcdir:

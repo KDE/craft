@@ -8,12 +8,12 @@ class VersionSystemSourceBase (SourceBase):
     """abstract base class for version system support"""
 
     def __init__(self):
-        craftDebug.trace("VersionSystemSourceBase __init__", 2)
+        craftDebug.trace("VersionSystemSourceBase __init__")
         SourceBase.__init__(self)
 
     def getUrl( self, index ):
         """get the url at position 'index' from a ';' separated list of urls"""
-        craftDebug.trace("VersionSystemSourceBase getUrl", 2)
+        craftDebug.trace("VersionSystemSourceBase getUrl")
         u = self.subinfo.svnTarget()
         if u.find(';') == -1:
             if index == 0:
@@ -30,14 +30,14 @@ class VersionSystemSourceBase (SourceBase):
 
     def splitUrl( self, url ):
         """ split url into real url and url option. the delimiter is '#'"""
-        craftDebug.trace("VersionSystemSourceBase splitUrl", 2)
+        craftDebug.trace("VersionSystemSourceBase splitUrl")
         if url.find('#') != -1:
             return url.split('#')
         return [url, ""]
 
     def __repositoryBaseUrl( self ):
         """ this function return the base url to the KDE repository """
-        craftDebug.trace("VersionSystemSourceBase __repositoryBaseUrl", 2)
+        craftDebug.trace("VersionSystemSourceBase __repositoryBaseUrl")
         # @todo move to SvnSource
         server = craftSettings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
 
@@ -45,7 +45,7 @@ class VersionSystemSourceBase (SourceBase):
         return server + '/home/kde/'
 
     def unpack(self):
-        craftDebug.trace("VersionSystemSourceBase unpack", 2)
+        craftDebug.trace("VersionSystemSourceBase unpack")
         self.enterBuildDir()
 
         if not self.noClean:
@@ -58,7 +58,7 @@ class VersionSystemSourceBase (SourceBase):
 
     def repositoryUrlCount( self ):
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""
-        craftDebug.trace("VersionSystemSourceBase repositoryUrlCount", 2)
+        craftDebug.trace("VersionSystemSourceBase repositoryUrlCount")
         if not self.subinfo.hasSvnTarget():
             return 0
         u = self.subinfo.svnTarget()
@@ -70,7 +70,7 @@ class VersionSystemSourceBase (SourceBase):
     def repositoryUrl( self, index=0 ):
         """this function returns the full url into a version system based repository at position 'index'.
         See @ref repositoryUrlCount how to define multiple repository urls."""
-        craftDebug.trace("VersionSystemSourceBase repositoryUrl", 2)
+        craftDebug.trace("VersionSystemSourceBase repositoryUrl")
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
             (u, dummy) = self.splitUrl(u1)
@@ -88,7 +88,7 @@ class VersionSystemSourceBase (SourceBase):
         """this function return options for the repository url at position 'index'.
         Options for a repository url are defined by adding '#' followed by the specific option.
         """
-        craftDebug.trace("VersionSystemSourceBase repositoryUrlOptions", 2)
+        craftDebug.trace("VersionSystemSourceBase repositoryUrlOptions")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (dummy, option) = self.splitUrl(u)
@@ -96,7 +96,7 @@ class VersionSystemSourceBase (SourceBase):
         return None
 
     def checkoutDir( self, dummyIndex=0 ):
-        craftDebug.trace("VersionSystemSourceBase checkoutDir", 2)
+        craftDebug.trace("VersionSystemSourceBase checkoutDir")
         if ( "ContinuousIntegration", "SourceDir") in craftSettings:
             return craftSettings.get( "ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
@@ -110,7 +110,7 @@ class VersionSystemSourceBase (SourceBase):
         return os.path.abspath(sourcedir)
 
     def sourceDir(self, index=0 ):
-        craftDebug.trace("VersionSystemSourceBase sourceDir", 2)
+        craftDebug.trace("VersionSystemSourceBase sourceDir")
         if ( "ContinuousIntegration", "SourceDir") in craftSettings:
             return craftSettings.get( "ContinuousIntegration", "SourceDir")
 
@@ -123,7 +123,7 @@ class VersionSystemSourceBase (SourceBase):
         return os.path.abspath(sourcedir)
 
     def sourceRevision(self):
-        craftDebug.trace("VersionSystemSourceBase sourceRevision", 2)
+        craftDebug.trace("VersionSystemSourceBase sourceRevision")
         if craftSettings.getboolean("ContinuousIntegration", "UseCache", False):
             return "latest"
         return self.sourceVersion()

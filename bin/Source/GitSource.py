@@ -15,7 +15,7 @@ from Source.VersionSystemSourceBase import *
 class GitSource ( VersionSystemSourceBase ):
     """git support"""
     def __init__(self, subinfo=None):
-        craftDebug.trace('GitSource __init__', 2)
+        craftDebug.trace('GitSource __init__')
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
@@ -224,7 +224,7 @@ class GitSource ( VersionSystemSourceBase ):
     def createPatch( self ):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
-        craftDebug.trace('GitSource createPatch', 2)
+        craftDebug.trace('GitSource createPatch')
         patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
                 ( self.package, str( datetime.date.today() ).replace('-', '') ) )
         craftDebug.log.debug("git diff %s" % patchFileName)
@@ -233,16 +233,16 @@ class GitSource ( VersionSystemSourceBase ):
 
     def sourceVersion( self ):
         """print the revision returned by git show"""
-        craftDebug.trace('GitSource sourceVersion', 2)
+        craftDebug.trace('GitSource sourceVersion')
 
         return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0 ):
-        craftDebug.trace('GitSource checkoutDir', 2)
+        craftDebug.trace('GitSource checkoutDir')
         return VersionSystemSourceBase.checkoutDir( self, index )
 
     def sourceDir(self, index=0 ):
-        craftDebug.trace('GitSource sourceDir', 2)
+        craftDebug.trace('GitSource sourceDir')
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")

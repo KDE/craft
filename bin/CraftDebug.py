@@ -68,14 +68,8 @@ class CraftDebug(object):
     def log(self):
         return self._log
 
-    def traceMode(self):
-        """return the value of the trace level"""
-        return int(craftSettings.get("General", "EMERGE_TRACE", "0"))
-
-    def trace(self, message, dummyLevel=0):
-        if self.traceMode():  # > level:
-            self.log.debug("craft trace: %s" % message)
-        return True
+    def trace(self, message):
+        self.log.debug("craft trace: %s" % message)
 
 
 craftDebug = CraftDebug.instance()

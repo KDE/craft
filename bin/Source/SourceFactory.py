@@ -11,7 +11,7 @@ from Source.HgSource import *
 
 def SourceFactory(settings):
     """ return sourceBase derived instance for recent settings"""
-    craftDebug.trace("SourceFactory called", 1)
+    craftDebug.trace("SourceFactory called")
     source = None
 
     if settings.hasTarget():
