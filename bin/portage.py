@@ -526,11 +526,7 @@ def printTargets( category, package ):
     targetsDictKeys = list(targetsDict.keys())
     targetsDictKeys.sort()
     for i in targetsDictKeys:
-        if defaultTarget == i:
-            craftDebug.log.info('*', end=' ')
-        else:
-            craftDebug.log.info(' ', end=' ')
-        craftDebug.log.info(i)
+        craftDebug.log.info("%s %s" % ("*" if defaultTarget == i else " ", i))
 
 def _getSubinfo( category, package  ):
     pack = getPackageInstance( category, package  )
