@@ -404,6 +404,9 @@ def main( ):
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
 
+    parser.add_argument("--snore-settings", action="store_true", default=False, dest="snoreSettings",
+                        help="Calls the notification settings")
+
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                        "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
@@ -436,6 +439,12 @@ def main( ):
     if args.doDestroyCraftRoot:
         destroyCraftRoot()
         return True
+
+    if args.snoreSettings:
+        snoresettigns = utils.UtilsCache.findApplication("snoresettings")
+        if snoresettigns:
+            return utils.system("%s -a snoresend" % snoresettigns)
+        return False
 
 
     if args.stayQuiet:
