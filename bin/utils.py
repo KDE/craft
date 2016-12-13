@@ -34,9 +34,9 @@ class UtilsCache():
 
     @staticmethod
     def findApplication(app) -> str:
-        appLocation = shutil.which(app) or os.path.join(CraftStandardDirs.craftBin(),
-                                                        "data", "binary", OsUtils.name(), app)
-        if not appLocation or not os.path.exists(appLocation):
+        appLocation = shutil.which(app) or shutil.which(os.path.join(CraftStandardDirs.craftBin(),
+                                                        "data", "binary", OsUtils.name(), app))
+        if not appLocation:
             craftDebug.log.warning("Craft was unable to locate: %s" % app)
             return None
         return appLocation
