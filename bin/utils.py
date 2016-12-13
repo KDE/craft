@@ -34,8 +34,9 @@ class UtilsCache():
 
     @staticmethod
     def findApplication(app) -> str:
-        appLocation = shutil.which(app)
-        if not appLocation:
+        appLocation = shutil.which(app) or os.path.join(CraftStandardDirs.craftBin(),
+                                                        "data", "binary", OsUtils.name(), app)
+        if not appLocation or not os.path.exists(appLocation):
             craftDebug.log.warning("Craft was unable to locate: %s" % app)
             return None
         return appLocation
@@ -208,7 +209,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
-    command = UtilsCache.findApplication("7za") or os.path.join(CraftStandardDirs.craftBin(), "craft_7za")
+    command = UtilsCache.findApplication("7za")
     command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
 
     if flag == ".7z":
