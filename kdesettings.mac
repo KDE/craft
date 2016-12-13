@@ -18,14 +18,10 @@ Architecture = x64
 ## This option can be used to enable a notification backend.
 ## As soon as the buildprocess of a project has finished a notification will be displayed.
 ## Possible Backends:
-## Snarl      http://snarl.fullphat.net/
-## Toaster    Toaster will display a Windows 8 toast notification
-## Snore      https://github.com/Snorenotify/Snorenotify. Snore supports multiple backends. You need to install snore-send using craft.
-## Pushover   https://pushover.net - Pushover is a service to receive instant push notifications on your phone or tablet from a variety of sources.
-##            If using pushover, you may also need to set EMERGE_PUSHOVER_APP_TOKEN (craft will use a default Token if unset) and EMERGE_PUSHOVER_USER_KEY, which is your user key
-#EMERGE_USE_NOTIFY = Snarl;Toaster;Pushover
-#EMERGE_PUSHOVER_APP_TOKEN = aJU9PRUb6nGUUM2idyLfXdU8S5q18i
-#EMERGE_PUSHOVER_USER_KEY =
+## Snore https://commits.kde.org/snorenotify. Snore supports multiple backends.
+### To configure it call craft --snore-settings
+### You might need to install snorenotify
+#EMERGE_USE_NOTIFY = Snore
 
 ## Speed up the merging of packages by using hard links
 UseHardlinks = False
