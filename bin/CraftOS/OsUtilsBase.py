@@ -2,6 +2,9 @@ import abc
 import os
 import platform
 
+import sys
+
+
 class OsUtilsBase(metaclass=abc.ABCMeta):
 
     @abc.abstractstaticmethod
@@ -43,3 +46,18 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     @staticmethod
     def isMac():
         return OsUtilsBase.isUnix() and platform.system() == 'Darwin'
+
+    @staticmethod
+    def isLinux():
+        return OsUtilsBase.isUnix() and platform.system() == 'Linux'
+
+
+    @staticmethod
+    def name():
+        if OsUtilsBase.isWin(): return "win"
+        if OsUtilsBase.isFreeBSD(): return "freebsd"
+        if OsUtilsBase.isMac(): return "mac"
+        if OsUtilsBase.isLinux(): return "linux"
+        print("Error:unknown system", file=sys.stderr)
+        exit(1)
+
