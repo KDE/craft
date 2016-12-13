@@ -519,15 +519,9 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         except portage.PortageException as e:
-            if e.exception:
-                craftDebug.log.warning(e.exception)
-                craftDebug.log.debug(traceback.format_tb( e.exception.__traceback__))
-                traceback.print_stack( e.exception.__traceback__)
-            craftDebug.log.error(e)
+            craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
-            craftDebug.log.warning( e )
-            craftDebug.log.debug(traceback.format_tb( e.__traceback__ ))
-            traceback.print_stack(e.__traceback__)
+            craftDebug.log.error( e, exc_info=e)
         finally:
             doUpdateTitle = False
             if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):
