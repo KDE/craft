@@ -17,7 +17,10 @@ class Snore(NotificationInterface):
 
     def notify(self,title,message,alertClass):
         try:
-            command = """%s -t "%s" -m "%s" -i "%s" -a "Craft" -c "%s" --silent """ % (UtilsCache.findApplication("snoresend"), title, message , self.icon, alertClass)
+            snore = UtilsCache.findApplication("snoresend")
+            if not snore:
+                return
+            command = """%s -t "%s" -m "%s" -i "%s" -a "Craft" -c "%s" --silent """ % (snore, title, message , self.icon, alertClass)
             if OsUtils.isWin():
                 command += " --bring-window-to-front %s" % ctypes.windll.kernel32.GetConsoleWindow()
             CraftDebug.craftDebug.log.debug(command)
@@ -27,5 +30,6 @@ class Snore(NotificationInterface):
                               stderr=subprocess.DEVNULL,
                               cwd = CraftConfig.CraftStandardDirs.craftRoot())# make sure that nothing is spawned in a build dir
         except Exception as e:
+            CraftDebug.craftDebug.log.debug(e)
             return
 
