@@ -1,0 +1,147 @@
+# blacklist
+
+# general
+manifest\\.*
+.*\.exp
+.*\.pdb
+.*\.la
+.*\.nsis
+.*\.prl
+
+# multiple docs
+doc\\.*
+share\\man\\.*
+share\\xml\\.*
+share\\locale\\.*
+man\\.*
+
+# don't ship any data potential created by running the app in situ before packaging
+data\\ib.*
+data\\mysql\\.*
+data\\performance\_schema\\.*
+data\\test\\.*
+
+# cmake stuff
+share\\apps\\cmake\\.*
+
+# common app stuff
+share\\apps\\ark\\.*
+share\\apps\\kgpg\\.*
+share\\kf5\\kdoctools\\.*
+share\\kf5\\kcharselect\\.*
+
+# Unused Qt modules
+qml\\QtMultimedia
+qml\\QtWebChannel
+qml\\QtWebKit
+qml\\QtWinExtras
+qml\\QtTest
+
+# Unused Qt and KF5 libraries
+bin\\KF5Khtml\.dll
+bin\\Qt5CLucene\.dll
+bin\\Qt5Declarative\.dll
+bin\\Qt5Designer\.dll
+bin\\Qt5DesignerComponents\.dll
+#bin\\Qt5Sql\.dll
+bin\\Qt5Test\.dll
+bin\\Qt5QuickTest\.dll
+bin\\Qt5XmlPatterns\.dll
+
+# unrelated
+dev-utils\\.*
+share\\dbus-1\\services\\.*
+share\\pkgconfig\\.*
+share\\ECM\\.*
+share\\emoticons\\.*
+share\\kdeappwizard\\.*
+share\\kdevappwizard\\.*
+
+# not running a desktop, don't need the plasma desktop theme
+share\\plasma\\desktoptheme\\(?!(default)).*
+
+# cleanup breeze stuff
+share\\wallpapers\\.*
+share\\icons\\Breeze_Snow\\.*
+share\\icons\\breeze-dark\\.*
+
+share\\icons\\breeze\\applets\\.*
+share\\icons\\breeze\\apps\\.*
+share\\icons\\breeze\\mimetypes\\(16|22|32|64)\\(?!(image-vnd\.djvu|application-epub\+zip|application-pdf|none|unknown)).*\.(png|svg)
+
+share\\icons\\breeze\\actions\\(12|16|22|24|32)\\(?!(format-text-direction-rtl|format-text-direction-ltr|dialog-close|go-previous|go-next|document-open|system-search|edit-delete|dialog-ok|dialog-ok-apply|dialog-cancel|edit-clear-locationbar-rtl|appointment-new|view-media-title|actor|edit-group|view-media-publisher|tag-folder|document-open|configure|list-remove|list-add|handle-right|handle-left|go-up|view-fullscreen|start-over)).*\.(png|svg)
+
+# Don't blacklist the following action icons, just everything else...
+# format-text-direction-rtl
+# format-text-direction-ltr
+# dialog-close
+# go-previous
+# go-next
+# document-open
+# system-search
+# edit-delete
+# dialog-ok
+# dialog-ok-apply
+# dialog-cancel
+# edit-clear-locationbar-rtl
+# appointment-new
+# view-media-title
+# actor
+# edit-group
+# view-media-publisher
+# tag-folder
+# document-open
+# configure
+# list-remove
+# list-add
+# handle-right
+# handle-left
+# go-up
+# view-fullscreen
+# start-over
+
+# cut the big oxygen icons: this can lead to errors though if used!!!!
+# leaving this bit in, need a more proper filter for these, as we really don't need the majority of these...
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\emotes\\(?!(face-smile-big)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\categories\\(?!(applications-education-mathematics)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\places\\(?!(stock-folder)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\devices\\(?!(audio-input-line)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\status\\(?!(cloudstatus)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\emblems\\(?!(emblem-remove)).*
+share\\icons\\oxygen\\base\\(16x16|22x22)\\actions\\(?!(activity-fork)).*
+share\\icons\\oxygen\\base\\(16x16|22x22|32x32)\\mimetypes\\(?!(audio-x-mp2)).*
+share\\icons\\oxygen\\base\\16x16\\apps\\(?!(kdeconnect)).*
+share\\icons\\oxygen\\base\\22x22\\apps\\(?!(kget)).*
+share\\icons\\oxygen\\base\\32x32\\apps\\(?!(amarok_change_language)).*
+share\\icons\\oxygen\\base\\32x32\\emblems\\(?!(vcs-conflicting)).*
+share\\icons\\oxygen\\base\\32x32\\status\\(?!(weather-mist)).*
+share\\icons\\oxygen\\base\\48x48\\.*
+share\\icons\\oxygen\\base\\64x64\\.*
+share\\icons\\oxygen\\base\\128x128\\.*
+share\\icons\\oxygen\\base\\256x256\\.*
+
+# doubled qt dlls
+lib\\[^\\]*\.dll
+# more qt leftovers
+translations\\.*
+phrasebooks\\.*
+mkspecs\\.*
+
+# unneeded stuff from bin\
+bin\\qt\.conf
+bin\\syncqt\.pl
+
+# unneeded kio slaves
+lib\\plugins\\kf5\\kio\\(?!(file|thumbnail)).*
+plugins\\kf5\\kio\\(?!(file|thumbnail)).*
+
+# strip most executables
+bin\\(?!(peruse|kbuildsycoca5|update-mime-database|kioslave|gswin32c|gswin64c)).*\.exe
+
+# some unneeded mysql things, because things further up pulls it in and we don't actually use it...
+bin\\libmysql\.dll
+bin\\libmysqld\.dll
+share\\fill_help_tables\.sql
+share\\errmsg-utf8\.txt
+share\\[^\\]*\\errmsg\.sys
+scripts\\.*
