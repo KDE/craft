@@ -29,6 +29,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/sonnet'] = 'default'
         self.dependencies['frameworks/threadweaver'] = 'default'
         self.dependencies['frameworks/breeze-icons'] = 'default'
+        self.dependencies['frameworks/kirigami'] = 'default'
 
 
 from Package.VirtualPackageBase import *
