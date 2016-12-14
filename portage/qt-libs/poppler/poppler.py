@@ -15,7 +15,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.38.0"
 
     def setDependencies( self ):
-        self.dependencies['win32libs/win_iconv'] = 'default'
         self.dependencies['win32libs/freetype'] = 'default'
         self.dependencies['win32libs/libjpeg-turbo'] = 'default'
         self.dependencies['win32libs/lcms'] = 'default'
