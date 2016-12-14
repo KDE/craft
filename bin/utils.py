@@ -36,13 +36,13 @@ class UtilsCache():
     def findApplication(app) -> str:
         appLocation = shutil.which(app)
         if not appLocation:
-            appLocation = os.path.join(CraftStandardDirs.craftBin(), "data", "binary", OsUtils.name(), app)
+            possibleAppLocation = os.path.join(CraftStandardDirs.craftBin(), "data", "binary", OsUtils.name(), app)
             extentions = [""]
             if OsUtils.isWin():
                 extentions += [".exe", ".bat"]
             for ext in extentions:
-                if os.path.exists(os.path.join(appLocation, ext)):
-                    appLocation = os.path.join(appLocation, ext)
+                if os.path.exists(os.path.join(possibleAppLocation, ext)):
+                    appLocation = os.path.join(possibleAppLocation, ext)
                     break
         if not appLocation:
             craftDebug.log.debug("Craft was unable to locate: %s" % app)
