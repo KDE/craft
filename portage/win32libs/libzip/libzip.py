@@ -41,7 +41,6 @@ class PackageMSys(AutoToolsPackageBase):
         if not AutoToolsPackageBase.install(self):
             return False
         utils.copyFile(os.path.join(self.imageDir(), "bin", "libzip-4.dll"), os.path.join(self.imageDir(), "bin", "libzip.dll"), False)
-        utils.copyFile(os.path.join(self.imageDir(), "lib", "libzip", "include", "zipconf.h"), os.path.join(self.imageDir(), "include", "zipconf.h"), False)
         return True
 
 if compiler.isMinGW():
