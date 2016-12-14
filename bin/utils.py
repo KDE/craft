@@ -41,8 +41,8 @@ class UtilsCache():
             if OsUtils.isWin():
                 extentions += [".exe", ".bat"]
             for ext in extentions:
-                if os.path.exists(os.path.join(possibleAppLocation, ext)):
-                    appLocation = os.path.join(possibleAppLocation, ext)
+                if os.path.exists(possibleAppLocation + ext):
+                    appLocation = possibleAppLocation + ext
                     break
         if not appLocation:
             craftDebug.log.debug("Craft was unable to locate: %s" % app)
