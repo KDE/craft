@@ -1,0 +1,19 @@
+diff -Nru libzip-1.3.1.old/regress/Makefile.am libzip-1.3.1/regress/Makefile.am
+--- libzip-1.3.1.old/regress/Makefile.am
++++ libzip-1.3.1/regress/Makefile.am
+@@ -9,12 +9,11 @@ noinst_PROGRAMS= \
+ 	fseek \
+ 	tryopen
+ 
+-pkglib_LTLIBRARIES=	malloc.la
++if !WIN32_HOST
++noinst_LTLIBRARIES=	malloc.la
+ malloc_la_SOURCES=	malloc.c
+ malloc_la_LDFLAGS=	-module -avoid-version
+-
+-install-pkglibLTLIBRARIES:
+-	@echo not installing shared objects needed only for testing
++endif
+ 
+ EXTRA_DIST= \
+ 	CMakeLists.txt \
