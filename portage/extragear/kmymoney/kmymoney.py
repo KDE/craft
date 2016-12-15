@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/kxmlgui"] = 'default'
         self.dependencies["frameworks/ktextwidgets"] = 'default'
         #self.dependencies['testing/gpgmepp'] = 'default'
-        self.dependencies['frameworks/kholidays'] = 'default'
+        self.dependencies['kde/kholidays'] = 'default'
         self.dependencies['binary/mysql-pkg'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         #self.dependencies['win32libs/libofx'] = 'default'
