@@ -3,11 +3,11 @@ import lzma
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in [ "1602"]:
+        for ver in [ "1602", "1604"]:
             self.targets[ ver ] = "http://www.7-zip.org/a/7z%s-extra.7z" % ver
-            self.targetInstallPath[ ver ] = "bin"
+            self.targetInstallPath[ ver ] = os.path.join("dev-utils", "bin")
         self.targetDigests['1602'] = (['f6c412e8bc45e4a88e675976024c21ed7a23eeb7eb0af452aa7a9b9a97843aa2'], CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = '1602'
+        self.defaultTarget = '1604'
 
 
     def setDependencies( self ):
@@ -18,7 +18,6 @@ from Package.BinaryPackageBase import *
 class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def install( self ):
         if compiler.isX64():
