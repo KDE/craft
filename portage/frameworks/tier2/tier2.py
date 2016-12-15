@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kjobwidgets'] = 'default'
         self.dependencies['frameworks/kpackage'] = 'default'
         self.dependencies['frameworks/kunitconversion'] = 'default'
+        self.dependencies['frameworks/kirigami'] = 'default'
 
 from Package.VirtualPackageBase import *
 
