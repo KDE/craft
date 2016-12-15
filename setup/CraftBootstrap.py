@@ -139,6 +139,9 @@ def setUp(args):
 def writeSettings(args):
     settings = configparser.ConfigParser()
     ini = os.path.join(args.root, "etc", "kdesettings.ini")
+    if not os.path.exists(ini):
+        os.makedirs(os.path.dirname(ini))
+        shutil.copy(os.path.join(args.root, "craft", "kdesettings.ini"), ini)
     settings.read(ini)
 
     for setting in args.values:
@@ -157,6 +160,7 @@ if __name__ == "__main__":
     parser.add_argument("--compiler", action="store")
     parser.add_argument("--architecture", action="store")
     parser.add_argument("--no-short-path", action="store_true", dest="noShortPath")
+    parser.add_argument("--no-bootstrap", action="store_true", dest="noBootstrap")
     parser.add_argument("--set", action="store_true")
     parser.add_argument("--verbose", action="store_true")
 
@@ -164,6 +168,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    setUp(args)
+    if not args.noBootstrap:
+        setUp(args)
+    elif args.set:
+        writeSettings(args)
 
 
