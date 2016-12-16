@@ -685,8 +685,8 @@ def prependPath(*parts):
 
 def notify(title,message,alertClass = None):
     craftDebug.step("%s: %s" % (title, message))
-    backends = craftSettings.get( "General","EMERGE_USE_NOTIFY", None)
-    if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or not backends:
+    backends = craftSettings.get( "General","EMERGE_USE_NOTIFY", "")
+    if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():
