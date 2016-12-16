@@ -39,5 +39,5 @@ class Package(BinaryPackageBase):
         os.makedirs(os.path.join(self.imageDir(), "dev-utils", "bin"))
         for f in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
             utils.createBat(os.path.join(self.imageDir(), "dev-utils", "bin", "%s.bat" % f),
-                            "%s %%*" % os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "cmake", "bin", "%s.exe" % f))
+                            "%%~dp0/../cmake/bin/%s %%*" % f)
         return True
