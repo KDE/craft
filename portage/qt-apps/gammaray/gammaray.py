@@ -4,8 +4,9 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.svnTargets["gitHEAD"] = "[git]https://github.com/KDAB/GammaRay.git"
         for ver in ["2.6.0"]:
-            self.targets[ver] = "https://github.com/KDAB/GammaRay/releases/download/v%s/gammaray-%s.tar.gz" % (ver, ver)
+            self.targets[ver] = "https://github.com/KDAB/GammaRay/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ver] = "gammaray-%s" % ver
+            self.archiveNames[ver] = "gammaray-%s.tar.gz" % ver
         self.targetDigests['2.6.0'] = (['762fc1e61fb141462e72fe048b4a7bbf1063eea6a2209963c8aa1ad7696b0217'], CraftHash.HashAlgorithm.SHA256)
 
         self.shortDescription = "GammaRay is a tool to poke around in a Qt-application and also to manipulate the application to some extent"
