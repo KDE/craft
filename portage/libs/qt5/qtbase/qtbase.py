@@ -29,14 +29,14 @@ class subinfo(info.infoclass):
                     ("qtbase-5.7.patch", 1),#https://codereview.qt-project.org/#/c/141254/
                                             #https://codereview.qt-project.org/#/c/149550/
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
-                    ("qdbus-manager-quit.patch",1)#https://phabricator.kde.org/D2545#69186
+                    ("qdbus-manager-quit-5.7.patch",1)#https://phabricator.kde.org/D2545#69186
                 ]
             elif ver.startswith("5.8") or ver.startswith("v5.8"):
                 self.patchToApply[ver] = [
                     ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
                                             #https://codereview.qt-project.org/#/c/149550/
-                    ("qdbus-manager-quit.patch",1)#https://phabricator.kde.org/D2545#69186
+                    ("qdbus-manager-quit-5.8.patch",1)#https://phabricator.kde.org/D2545#69186
                 ]
 
         self.shortDescription = "a cross-platform application framework"

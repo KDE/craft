@@ -1,0 +1,15 @@
+diff --git a/src/dbus/qdbusconnection.cpp b/src/dbus/qdbusconnection.cpp
+index f95cc3a..0274a26 100644
+--- a/src/dbus/qdbusconnection.cpp
++++ b/src/dbus/qdbusconnection.cpp
+@@ -139,6 +139,10 @@ QDBusConnectionManager::QDBusConnectionManager()
+             this, &QDBusConnectionManager::createServer, Qt::BlockingQueuedConnection);
+     moveToThread(this);         // ugly, don't do this in other projects
+ 
++    qAddPostRoutine([]() {
++        QMetaObject::invokeMethod(QDBusConnectionManager::instance(), "quit");
++    });
++
+     defaultBuses[0] = defaultBuses[1] = Q_NULLPTR;
+     start();
+ }
