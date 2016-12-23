@@ -1,0 +1,15 @@
+diff --git a/src/dbus/qdbusconnection.cpp b/src/dbus/qdbusconnection.cpp
+index da7557d..e0f40e7 100644
+--- a/src/dbus/qdbusconnection.cpp
++++ b/src/dbus/qdbusconnection.cpp
+@@ -142,6 +142,10 @@ QDBusConnectionManager::QDBusConnectionManager()
+     connect(this, &QDBusConnectionManager::serverRequested,
+             this, &QDBusConnectionManager::createServer, Qt::BlockingQueuedConnection);
+     moveToThread(this);         // ugly, don't do this in other projects
++    
++    qAddPostRoutine([]() {
++        QMetaObject::invokeMethod(QDBusConnectionManager::instance(), "quit");
++    });
+ 
+ #ifdef Q_OS_WIN
+     // prevent the library from being unloaded on Windows. See comments in the function.
