@@ -129,7 +129,7 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
-    run(args, "craft %s git" % ("-vvv" if args.verbose else ""))
+    run(args, "craft --ci-mode %s git" % ("-vvv" if args.verbose else ""))
     run(args, "git clone kde:craft %s" % os.path.join(args.root, "craft"))
     shutil.rmtree(os.path.join(args.root, "craft-master"))
     print("Setup complete")

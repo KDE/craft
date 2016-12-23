@@ -407,6 +407,9 @@ def main( ):
     parser.add_argument("--snore-settings", action="store_true", default=False, dest="snoreSettings",
                         help="Calls the notification settings")
 
+    parser.add_argument("--ci-mode", action="store_true", default=craftSettings.getboolean("ContinuousIntegration", "Enabled", False),
+                        dest="ciMode", help="Enables the ci mode")
+
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                        "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
@@ -464,6 +467,7 @@ def main( ):
     craftSettings.set( "ContinuousIntegration", "CreateCache", args.createCache)
     craftSettings.set( "ContinuousIntegration", "UseCache", args.useCache)
     craftSettings.set( "ContinuousIntegration", "SourceDir", args.srcDir)
+    craftSettings.set( "ContinuousIntegration", "Enabled",  args.ciMode)
 
     portage.PortageInstance.options = args.options
     if args.search:
