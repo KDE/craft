@@ -40,7 +40,7 @@ class Package( CMakePackageBase ):
     def createPackage(self):
         self.defines[ "productname" ] = "Konversation"
         self.defines[ "executable" ] = "bin\\konversation.exe"
-        #self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "konversation.ico")
+        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "konversation.ico")
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
