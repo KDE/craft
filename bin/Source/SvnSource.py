@@ -3,6 +3,8 @@
 #
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
+import tempfile
+
 from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
@@ -78,12 +80,6 @@ class SvnSource (VersionSystemSourceBase):
         """ return the revision returned by svn info """
 
         revision = None
-        # first, change the output to always be english
-        if "LANG" in os.environ:
-            oldLanguage = os.environ["LANG"]
-        else:
-            oldLanguage = ""
-        os.environ["LANG"] = "C"
 
         # handle multiple urls in targets
         # we need to find the main url which is marked with #main
@@ -104,22 +100,20 @@ class SvnSource (VersionSystemSourceBase):
         # set up the command
         cmd = "svn info %s" % ( sourcedir )
 
-        # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-        tempFileName = os.path.normpath(os.path.join( self.checkoutDir(), ".craftsvninfo.tmp" ))
-        with open( tempFileName, "wt+" ) as tempfile:
+        with tempfile.TemporaryFile() as tmp:
 
             # run the command
-            utils.system( cmd, stdout=tempfile )
+            env = os.environ.copy()
+            env["LANG"] = "C"
+            utils.system( cmd, stdout=tmp , env=env)
 
-            tempfile.seek(os.SEEK_SET)
+            tmp.seek(os.SEEK_SET)
             # read the temporary file and find the line with the revision
-            for line in tempfile:
-                if line.startswith("Revision: "):
-                    revision = line.replace("Revision: ", "").strip()
+            for line in tmp:
+                if line.startswith(b"Revision: "):
+                    revision = str(line, "UTF-8").replace("Revision: ", "").strip()
                     break
 
-        os.environ["LANG"] = oldLanguage
-        os.remove( tempFileName )
         return revision
 
     def __splitPath(self, path):
