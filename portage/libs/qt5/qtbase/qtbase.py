@@ -15,7 +15,30 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
-            if ver.startswith("5.6") or ver.startswith("v5.6"):
+            qtVer = utils.parse_version(ver)
+            if ver == "dev":
+                self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
+                    ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
+                                            #https://codereview.qt-project.org/#/c/149550/
+                ]
+            elif qtVer >= utils.parse_version("5.8"):
+                self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
+                    ("qtbase-5.8.patch", 1),  # https://codereview.qt-project.org/#/c/141254/
+                    # https://codereview.qt-project.org/#/c/149550/
+                    ("qdbus-manager-quit-5.8.patch", 1)  # https://phabricator.kde.org/D2545#69186
+                ]
+            elif qtVer >= utils.parse_version("5.7"):
+                self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
+                    ("qtbase-5.7.patch", 1),  # https://codereview.qt-project.org/#/c/141254/
+                    # https://codereview.qt-project.org/#/c/149550/
+                    ("do-not-spawn-console-qprocess-startdetached.patch", 1),
+                    # https://codereview.qt-project.org/#/c/162585/
+                    ("qdbus-manager-quit-5.7.patch", 1)  # https://phabricator.kde.org/D2545#69186
+                ]
+            else:
                 self.patchToApply[ ver ] = [
                     ("qmake-fix-install-root.patch", 1),
                     ("qtbase-5.6.patch" , 1),#https://codereview.qt-project.org/#/c/141254/
@@ -23,22 +46,6 @@ class subinfo(info.infoclass):
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
                     ("fix-angle-mingw-5.6.2-20161027.diff", 1)
                 ]
-            elif ver.startswith("5.7") or ver.startswith("v5.7"):
-                self.patchToApply[ver] = [
-                    ("fix-angle-mingw.patch", 1),
-                    ("qtbase-5.7.patch", 1),#https://codereview.qt-project.org/#/c/141254/
-                                            #https://codereview.qt-project.org/#/c/149550/
-                    ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
-                    ("qdbus-manager-quit-5.7.patch",1)#https://phabricator.kde.org/D2545#69186
-                ]
-            elif ver.startswith("5.8") or ver.startswith("v5.8"):
-                self.patchToApply[ver] = [
-                    ("fix-angle-mingw.patch", 1),
-                    ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
-                                            #https://codereview.qt-project.org/#/c/149550/
-                    ("qdbus-manager-quit-5.8.patch",1)#https://phabricator.kde.org/D2545#69186
-                ]
-
         self.shortDescription = "a cross-platform application framework"
 
 
@@ -76,12 +83,14 @@ class Package(Qt5CorePackageBase):
         command += "-headerdir %s " % os.path.join(CraftStandardDirs.craftRoot(), "include", "qt5")
         command += "-qt-libpng "
         command += "-qt-libjpeg "
-        command += "-qt-pcre "
         # can we drop that in general?
-        if not ("5.7" in self.subinfo.buildTarget or "5.8" in self.subinfo.buildTarget):
+        version = self.qtVersion()
+        if version <= utils.parse_version("5.6"):
             command += "-c++11 "
-        if "5.8" in self.subinfo.buildTarget:
+        if version >= utils.parse_version("5.8"):
             command += "-mp "
+        else:
+            command += "-qt-pcre "
         if OsUtils.isWin():
             command += "-opengl dynamic "
             command += "-plugin-sql-odbc "
@@ -152,7 +161,10 @@ class Package(Qt5CorePackageBase):
         utils.prependPath(os.path.join(self.buildDir(),"bin"))
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
-        utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+        if self.qtVersion() <  utils.parse_version("5.8"):
+            utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+        else:
+            utils.putenv("QMAKESPEC", "")
 
 
 

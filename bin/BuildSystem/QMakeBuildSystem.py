@@ -17,9 +17,9 @@ class QMakeBuildSystem(BuildSystemBase):
         if OsUtils.isWin():
             if compiler.isMSVC():
                 if compiler.isClang():
-                    self.platform = "win32-clang-%s" % self.compiler()
+                    self.platform = "win32-clang-%s" % (self.compiler() if self.qtVersion() < utils.parse_version("5.8") else "msvc")
                 else:
-                    self.platform = "win32-%s" % self.compiler()
+                    self.platform = "win32-%s" % (self.compiler() if self.qtVersion() < utils.parse_version("5.8") else "msvc")
             elif compiler.isMinGW():
                 self.platform = "win32-g++"
             elif compiler.isIntel():
@@ -34,6 +34,9 @@ class QMakeBuildSystem(BuildSystemBase):
                     self.platform = "linux-g++"
             else:
                 self.platform = "freebsd-clang"
+
+    def qtVersion(self):
+        return ('00000099', '00000099', '*final') if self.subinfo.buildTarget == "dev" else utils.parse_version(self.subinfo.buildTarget)
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
