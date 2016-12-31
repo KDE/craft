@@ -44,7 +44,8 @@ class subinfo(info.infoclass):
                     ("qtbase-5.6.patch" , 1),#https://codereview.qt-project.org/#/c/141254/
                                              #https://codereview.qt-project.org/#/c/149550/
                     ("do-not-spawn-console-qprocess-startdetached.patch", 1),#https://codereview.qt-project.org/#/c/162585/
-                    ("fix-angle-mingw-5.6.2-20161027.diff", 1)
+                    ("fix-angle-mingw-5.6.2-20161027.diff", 1),
+                    ("qdbus-manager-quit-5.7.patch", 1)  # https://phabricator.kde.org/D2545#69186
                 ]
         self.shortDescription = "a cross-platform application framework"
 
