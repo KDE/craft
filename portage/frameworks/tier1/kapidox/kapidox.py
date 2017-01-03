@@ -24,11 +24,14 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )        
 
+        if not ("Paths","Python27") in craftSettings:
+            craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
+
         # this program needs python 2.7
         pythonPath = shutil.which("python", path=craftSettings.get("Paths","PYTHON27",""))
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s" % pythonPath.replace("\\","/")
-        
-    
+        if pythonPath:
+            self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s" % pythonPath.replace("\\","/")
+
     def configure(self):
         if not ("Paths","Python27") in craftSettings:
             craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
