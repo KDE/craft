@@ -1,0 +1,15 @@
+version: '{build}'
+
+build_script:
+- ps: |
+    [string[]]$config = @("--architecture", "x64", "--compiler", "msvc2015", "--no-short-path",
+                                            "--set",
+                                            "ContinuousIntegration/Enabled=True",
+                                            "PortageVersions/KF5=5.29.0",
+                                            "PortageVersions/Qt5=5.7.1",
+                                            "Compile/BuildType=Release")
+    Start-FileDownload "https://raw.githubusercontent.com/KDE/craft/master/setup/install_craft.ps1"
+    ./install_craft.ps1 -root $env:APPVEYOR_BUILD_FOLDER\work -python "C:\python35\python.exe" $config
+    C:\python35\python.exe $env:APPVEYOR_BUILD_FOLDER\work\craft\bin\test\runtests.py 2>&1
+    Get-ChildItem $HOME/.craft/* | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+
