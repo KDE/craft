@@ -35,7 +35,7 @@ def destroyCraftRoot():
     root = CraftStandardDirs.craftRoot()
     for entry in os.listdir(root):
         path = os.path.join(root, entry)
-        if path == CraftStandardDirs.etcDir():
+        if os.path.exists(CraftStandardDirs.etcDir()) and os.path.samefile(path, CraftStandardDirs.etcDir()):
             for entry in os.listdir(path):
                 if not entry == "kdesettings.ini":
                     etcPath = os.path.join(path, entry)
@@ -47,8 +47,8 @@ def destroyCraftRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not path in [ CraftStandardDirs.downloadDir(), os.path.normpath(os.path.join(CraftStandardDirs.craftBin(), "..")),
-                           os.path.join(CraftStandardDirs.craftRoot(), "python") ]:
+        elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in [ CraftStandardDirs.downloadDir(), os.path.normpath(os.path.join(CraftStandardDirs.craftBin(), "..")),
+                           os.path.join(CraftStandardDirs.craftRoot(), "python")]):
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
                 continue
