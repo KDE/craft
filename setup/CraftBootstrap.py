@@ -81,7 +81,7 @@ class CraftBootstrap(object):
 
 def run(args, command):
     print("Execute: powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
-    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
+    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command), stderr=subprocess.PIPE)
 
 
 def setUp(args):
