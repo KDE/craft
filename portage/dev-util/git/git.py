@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import subprocess
 import tempfile
 
 from CraftDebug import craftDebug
@@ -42,7 +43,7 @@ class Package(BinaryPackageBase):
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
-                      stdout=tmpFile, stderr=tmpFile  )
+                      stdout=tmpFile, stderr=subprocess.PIPE  )
         tmpFile.seek( 0 )
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:
