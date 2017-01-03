@@ -40,7 +40,7 @@ class UtilsCache(object):
         self._appCache = {}
         self._helpCache = {}
         self._nightlyVersions = {}
-        self.cacheCreationtime = time.time()
+        self.cacheCreationTime = time.time()
 
     @staticmethod
     def instance():
@@ -54,7 +54,7 @@ class UtilsCache(object):
                         craftDebug.log.warning("Cache corrupted")
                         return UtilsCache._instance
 
-                if data.version != UtilsCache._version or (time.time() - data.date) > UtilsCache._cacheLifetime:
+                if data.version != UtilsCache._version or (time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
                     craftDebug.log.debug("Clear cache")
                 else:
                     UtilsCache._instance = data
