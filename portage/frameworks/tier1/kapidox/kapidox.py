@@ -1,5 +1,6 @@
 from CraftDebug import craftDebug
 import info
+import shutil
 
 
 class subinfo(info.infoclass):
@@ -22,8 +23,10 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )        
+
         # this program needs python 2.7
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s/python.exe" % craftSettings.get("Paths","PYTHON27","").replace("\\","/")
+        pythonPath = shutil.which("python", path=craftSettings.get("Paths","PYTHON27",""))
+        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s" % pythonPath.replace("\\","/")
         
     
     def configure(self):
