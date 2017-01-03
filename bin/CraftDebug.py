@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import logging
+import logging.handlers
 import functools
 
 from CraftConfig import craftSettings, CraftStandardDirs
@@ -31,9 +32,14 @@ class CraftDebug(object):
             os.makedirs(logDir)
 
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        fileHandler = logging.FileHandler(os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot()))), mode="wt+")
+        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot())))
+
+        fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=50000000)
+        fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
         self._log.addHandler(fileHandler)
         fileHandler.setLevel(logging.DEBUG)
+        self.log.debug("#" * 80)
+        self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
 
     def verbose(self):
