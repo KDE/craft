@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         vlcTagName = "3.0.0"
 
 
-        for ver in utils.UtilsCache.getNightlyVersionsFromUrl(vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d" ):
+        for ver in utils.utilsCache.getNightlyVersionsFromUrl(vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d"):
             self.targets[ vlcTagName + "-git" ]  =  "%svlc-%s-%s-git-win%s.7z" % (vlcBaseUrl, vlcTagName, ver, vlcArch  )
             self.targetInstSrc[ vlcTagName + "-git" ] = "vlc-%s-git" % (vlcTagName)
             self.patchToApply[ vlcTagName  + "-git" ] = [("vlc-2.1.5.diff" ,1)]

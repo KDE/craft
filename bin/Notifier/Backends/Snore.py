@@ -7,7 +7,7 @@ import CraftDebug
 from CraftOS.osutils import OsUtils
 
 from Notifier.NotificationInterface import *
-from utils import UtilsCache
+from utils import utilsCache
 
 
 class Snore(NotificationInterface):
@@ -17,7 +17,7 @@ class Snore(NotificationInterface):
 
     def notify(self,title,message,alertClass):
         try:
-            snore = UtilsCache.findApplication("snoresend")
+            snore = utilsCache.findApplication("snoresend")
             if not snore:
                 return
             command = """%s -t "%s" -m "%s" -i "%s" -a "Craft" -c "%s" --silent """ % (snore, title, message , self.icon, alertClass)

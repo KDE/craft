@@ -444,7 +444,7 @@ def main( ):
         return True
 
     if args.snoreSettings:
-        snoresettigns = utils.UtilsCache.findApplication("snoresettings")
+        snoresettigns = utils.utilsCache.findApplication("snoresettings")
         if snoresettigns:
             return utils.system("%s -a snoresend" % snoresettigns)
         return False

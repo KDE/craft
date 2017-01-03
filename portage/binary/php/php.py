@@ -7,7 +7,7 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        versions = utils.UtilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d"))
+        versions = utils.utilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d"))
         versions.sort(key=lambda v: utils.parse_version(v))
         for ver in versions:
             self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())

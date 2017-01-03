@@ -9,10 +9,11 @@ this file contains some helper functions for craft
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
 import configparser
-import datetime
+import time
 import ftplib
 import http.client
 import inspect
+import pickle
 import shutil
 import tarfile
 import urllib.error
@@ -20,6 +21,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 from operator import itemgetter
+import atexit
 
 from CraftDebug import craftDebug
 import CraftHash
@@ -28,12 +30,55 @@ from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
 # TODO: Rename
-class UtilsCache():
-    _helpCache = {}
-    _NIGTHLY_URLS = dict()
+class UtilsCache(object):
+    _instance = None
+    _version = 0
+    _cacheLifetime = (60 * 60 * 24) * 1  # days
+
+    def __init__(self):
+        self.version = UtilsCache._version
+        self._appCache = {}
+        self._helpCache = {}
+        self._nightlyVersions = {}
+        self.cacheCreationtime = time.time()
 
     @staticmethod
-    def findApplication(app) -> str:
+    def instance():
+        if not UtilsCache._instance:
+            UtilsCache._instance = UtilsCache()
+            if os.path.exists(UtilsCache._cacheFile()):
+                with open(UtilsCache._cacheFile(), "rb") as f:
+                    try:
+                        data = pickle.load(f)
+                    except:
+                        craftDebug.log.warning("Cache corrupted")
+                        return UtilsCache._instance
+
+                if data.version != UtilsCache._version or (time.time() - data.date) > UtilsCache._cacheLifetime:
+                    craftDebug.log.debug("Clear cache")
+                else:
+                    UtilsCache._instance = data
+        return UtilsCache._instance
+
+    @staticmethod
+    def _cacheFile():
+        return os.path.join(CraftStandardDirs.etcDir(), "cache.pickle")
+
+    @staticmethod
+    @atexit.register
+    def _save():
+        try:
+            with open(UtilsCache._cacheFile(), "wb") as f:
+                pickle.dump(UtilsCache.instance(), f)
+        except:
+            craftDebug.log.debug("Failed to save cache")
+            deleteFile(UtilsCache._cacheFile())
+
+
+    def findApplication(self, app) -> str:
+        if app in self._appCache:
+            return self._appCache[app]
+
         appLocation = shutil.which(app)
         if not appLocation:
             possibleAppLocation = os.path.join(CraftStandardDirs.craftBin(), "data", "binary", OsUtils.name(), app)
@@ -44,26 +89,27 @@ class UtilsCache():
                 if os.path.exists(possibleAppLocation + ext):
                     appLocation = possibleAppLocation + ext
                     break
+        else:
+            #don't cache internal copies
+            craftDebug.log.debug("Adding %s to app cache" % appLocation)
+            self._appCache[app] = appLocation
         if not appLocation:
             craftDebug.log.debug("Craft was unable to locate: %s" % app)
             return None
         return appLocation
 
     # TODO: rename, cleanup
-    @staticmethod
-    def appSupportsCommand(app, command, helpCommand = "-h") -> str:
-        if not (app, command) in UtilsCache._helpCache:
+    def appSupportsCommand(self, app, command, helpCommand = "-h") -> str:
+        if not (app, command) in self._helpCache:
             craftDebug.log.debug("%s %s" % (app, helpCommand))
             output = subprocess.getoutput("%s %s" %(app, helpCommand))
             supports = output.find( command ) != -1
-            UtilsCache._helpCache[(app, command)] = supports
+            self._helpCache[(app, command)] = supports
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
-        return UtilsCache._helpCache[(app, command)]
+        return self._helpCache[(app, command)]
 
-
-    @staticmethod
-    def getNightlyVersionsFromUrl(url, pattern, timeout = 10) -> [str]:
+    def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
         """
         Returns a list of possible version number matching the regular expression in pattern.
         :param url: The url to look for the nightly builds.
@@ -71,10 +117,10 @@ class UtilsCache():
         :param timeout:
         :return: A list of matching strings or [None]
         """
-        if craftSettings.getboolean("General", "WorkOffline"):
-            craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
-            return []
-        if url not in UtilsCache._NIGTHLY_URLS:
+        if url not in self._nightlyVersions:
+            if craftSettings.getboolean("General", "WorkOffline"):
+                craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
+                return []
             try:
                 with urllib.request.urlopen(url, timeout = timeout) as fh:
                     data = str(fh.read(), "UTF-8")
@@ -82,12 +128,13 @@ class UtilsCache():
                     if not vers:
                         print(data)
                         raise Exception("Pattern %s does not match." % pattern)
-                    UtilsCache._NIGTHLY_URLS[url] = list(set(vers))
-                    return UtilsCache._NIGTHLY_URLS[url]
+                    self._nightlyVersions[url] = list(set(vers))
+                    return self._nightlyVersions[url]
             except Exception as e:
                 craftDebug.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
-        return UtilsCache._NIGTHLY_URLS.get(url, [])
+        return self._nightlyVersions.get(url, [])
 
+utilsCache = UtilsCache.instance()
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -147,7 +194,7 @@ def getFile( url, destdir , filename='' ) -> bool:
         craftDebug.log.error("fetch: no url given")
         return False
 
-    if UtilsCache.findApplication("wget"):
+    if utilsCache.findApplication("wget"):
         return wgetFile( url, destdir , filename )
 
 
@@ -175,7 +222,7 @@ def getFile( url, destdir , filename='' ) -> bool:
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    command = "\"%s\" -c -t 10" % UtilsCache.findApplication("wget")
+    command = "\"%s\" -c -t 10" % utilsCache.findApplication("wget")
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
@@ -217,7 +264,7 @@ def unpackFile( downloaddir, filename, workdir ):
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
-    command = UtilsCache.findApplication("7za")
+    command = utilsCache.findApplication("7za")
     command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
 
     if flag == ".7z":
@@ -225,7 +272,7 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
+    if utilsCache.appSupportsCommand(utilsCache.findApplication("7za"), "-bs"):
         command += " -bso2"
         command += " -bsp1"
     return system( command , displayProgress=True)
@@ -413,10 +460,10 @@ def createImportLibs( dll_name, basepath ):
         os.mkdir( dst )
 
     # check whether the required binary tools exist
-    HAVE_GENDEF = UtilsCache.findApplication( "gendef" ) is not None
+    HAVE_GENDEF = utilsCache.findApplication("gendef") is not None
     USE_GENDEF = HAVE_GENDEF
-    HAVE_LIB = UtilsCache.findApplication( "lib" ) is not None
-    HAVE_DLLTOOL = UtilsCache.findApplication( "dlltool" ) is not None
+    HAVE_LIB = utilsCache.findApplication("lib") is not None
+    HAVE_DLLTOOL = utilsCache.findApplication("dlltool") is not None
 
     craftDebug.log.debug("gendef found:", HAVE_GENDEF)
     craftDebug.log.debug("gendef used:", USE_GENDEF)
