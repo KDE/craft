@@ -9,7 +9,7 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.10.1"
+        ver = "2.11.0"
         arch = 32
         if compiler.isX64():
             arch = 64
@@ -38,8 +38,7 @@ class Package(BinaryPackageBase):
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        gitbash = os.path.join(self.rootdir, "dev-utils", "git", "git-bash.exe")
-        utils.system( "%s --no-needs-console --hide --no-cd --command=post-install.bat" % gitbash, cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
+        utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
