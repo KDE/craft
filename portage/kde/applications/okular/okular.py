@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['qt-libs/poppler'] = 'default'
-        self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'
         self.dependencies['win32libs/djvu'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
