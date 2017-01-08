@@ -16,7 +16,7 @@ XPStyle on
 ShowInstDetails hide
 ShowUninstDetails hide
 
-SetCompressor /SOLID zlib
+SetCompressor /SOLID lzma
 
 Name "${productname}"
 Caption "${productname} ${version}"
