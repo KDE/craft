@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.6.27'] = (['c9d164ec247f426a525a7b89936694aefbc91fb7a50182b198898b8fc91174b4'], CraftHash.HashAlgorithm.SHA256)
 
         self.shortDescription = 'A library to display png images'
-        self.defaultTarget = '1.5.14'
+        self.defaultTarget = '1.5.28'
 
     def setDependencies( self ):
         self.dependencies['win32libs/zlib'] = 'default'
