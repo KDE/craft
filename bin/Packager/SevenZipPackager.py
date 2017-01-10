@@ -23,9 +23,9 @@ class SevenZipPackager (PackagerBase):
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
-        app = utils.UtilsCache.findApplication("7za")
+        app = utils.utilsCache.findApplication("7za")
         cmd = "%s a -r %s %s/*" % (app, os.path.join(destDir, archiveName), sourceDir )
-        if utils.UtilsCache.appSupportsCommand(app, "-bs"):
+        if utils.utilsCache.appSupportsCommand(app, "-bs"):
             cmd += " -bsp1"
             cmd += " -bso2"
         if not utils.system(cmd, displayProgress=True):
