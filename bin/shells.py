@@ -83,7 +83,7 @@ class MSysShell(object):
     def toNativePath( path ):
         return utils.toMSysPath( path )
 
-    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr):
+    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
         export = ""
         env = os.environ.copy()
         for k,v in self.environment.items():
@@ -93,12 +93,12 @@ class MSysShell(object):
                   ( self._sh, export, self.toNativePath( path ), self.toNativePath( cmd ), args )
         craftDebug.step("msys execute: %s" % command)
         craftDebug.log.debug("msys environment: %s" % self.environment)
-        return utils.system( command, stdout=out, stderr=err, env = env )
+        return utils.system( command, stdout=out, stderr=err, env = env, displayProgress=displayProgress )
 
     def login(self):
         self.environment[ "CHERE_INVOKING" ] = "1"
         command = "bash --login -i"
-        return self.execute(".", command)
+        return self.execute(".", command, displayProgress=True)
 
 
 def main():
