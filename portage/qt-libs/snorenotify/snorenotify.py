@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qttools'] = 'default'
         self.dependencies['libs/qtwebsockets'] = 'default'
         self.dependencies['libs/qtmultimedia'] = 'default'
+        self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['win32libs/snoregrowl'] = 'default'
 
 
