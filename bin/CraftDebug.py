@@ -34,7 +34,7 @@ class CraftDebug(object):
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
         logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot())))
 
-        fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=50000000)
+        fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=50000000, backupCount=1)
         fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
         self._log.addHandler(fileHandler)
         fileHandler.setLevel(logging.DEBUG)
