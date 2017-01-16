@@ -62,11 +62,6 @@ class CraftBase(object):
         self.CustomDefines       = ""
         self.createCombinedPackage  = False
 
-        ## specifies if a build type related root directory should be used
-        self.useBuildTypeRelatedMergeRoot = False
-        if craftSettings.getboolean("General","EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False):
-            self.useBuildTypeRelatedMergeRoot = True
-
         self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
 
     def __str__(self):
@@ -212,14 +207,6 @@ class CraftBase(object):
             directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.mergePath() )
         elif not self.subinfo.options.merge.destinationPath == None:
             directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.options.merge.destinationPath )
-        elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
-            directory = CraftStandardDirs.craftRoot()
-        elif self.buildType() == 'Debug':
-            directory = os.path.join(CraftStandardDirs.craftRoot(),'debug')
-        elif self.buildType() == 'Release':
-            directory = os.path.join(CraftStandardDirs.craftRoot(),'release')
-        elif self.buildType() == 'RelWithDebInfo':
-            directory = os.path.join(CraftStandardDirs.craftRoot(),'relwithdebinfo')
         else:
             directory = CraftStandardDirs.craftRoot()
         return self.__adjustPath(directory)
@@ -230,10 +217,6 @@ class CraftBase(object):
 
         craftDebug.log.debug("CraftBase.packageDestinationDir called")
         dstpath = craftSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
-
-        if withBuildType:
-            if craftSettings.getboolean("General", "EMERGE_MERGE_ROOT_WITH_BUILD_TYPE", False ):
-                dstpath = os.path.join( dstpath, self.buildType())
 
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)

@@ -73,8 +73,7 @@ class PackageBase (CraftBase):
 
         # only packages using a specific merge destination path are shared between build types
         revision = self.sourceRevision()
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled, revision = revision)
                 package.addFiles( utils.getFileListFromDirectory(  self._installedDBPrefix( prefix ) ) )
@@ -96,8 +95,7 @@ class PackageBase (CraftBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.destinationPath != None:
             for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
                 packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( prefix ) )
                 for package in packageList:
@@ -112,8 +110,7 @@ class PackageBase (CraftBase):
                 package.uninstall()
 
         # only packages using a specific merge destination path are shared between build types
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
+        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.destinationPath != None:
             installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Release" ) )
             installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
             installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Debug" ) )
