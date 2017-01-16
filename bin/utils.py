@@ -546,7 +546,7 @@ def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardli
     shutil.copy(src,dest)
     return True
 
-def copyDir( srcdir, destdir,linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
+def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
@@ -563,8 +563,7 @@ def copyDir( srcdir, destdir,linkOnly = craftSettings.getboolean("General", "Use
             if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
-                craftDebug.log.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)))
+                copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly)
 
     return True
 
