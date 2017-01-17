@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.svnTargets['5.1'] = '[git]kde:kdevplatform|5.1'
         self.svnTargets['gitHEAD'] = '[git]kde:kdevplatform|master'
         self.shortDescription = 'Framework to build IDE-like applications'
-        self.defaultTarget = '5.1'
+        self.defaultTarget = '5.0'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"

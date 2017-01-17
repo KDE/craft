@@ -1,0 +1,12 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' kio-5.29.0.orig/src/ioslaves/trash/kio_trash_win.cpp kio-5.29.0/src/ioslaves/trash/kio_trash_win.cpp
+--- kio-5.29.0.orig/src/ioslaves/trash/kio_trash_win.cpp	2016-12-10 16:26:14.000000000 +0100
++++ kio-5.29.0/src/ioslaves/trash/kio_trash_win.cpp	2016-12-31 00:57:39.657090100 +0100
+@@ -24,6 +24,8 @@
+ #include "kioglobal_p.h"
+ #include "kio/job.h"
+ 
++#include "kiotrashdebug.h"
++
+ #include <QDataStream>
+ #include <QDebug>
+ #include <QCoreApplication>

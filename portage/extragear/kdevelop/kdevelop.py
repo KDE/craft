@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.svnTargets[ '5.0' ] = '[git]kde:kdevelop|5.0'
         self.svnTargets[ '5.1' ] = '[git]kde:kdevelop|5.1'
         self.svnTargets[ 'master' ] = '[git]kde:kdevelop|master'
-        self.defaultTarget = '5.1'
+        self.defaultTarget = '5.0'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
@@ -45,6 +45,8 @@ class subinfo( info.infoclass ):
 
         # Install extra plugins shipped by Kate
         self.dependencies[ 'kde/kate' ] = 'default'
+        self.dependencies[ 'extragear/kdev-python' ] = 'default'
+        self.dependencies[ 'extragear/kdev-php' ] = 'default'
 
 
 from Package.CMakePackageBase import *
