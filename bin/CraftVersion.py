@@ -1,6 +1,8 @@
 import re
 from distutils.version import Version, LooseVersion, StrictVersion
 
+import CraftDebug
+
 
 class CraftVersion(Version):
     component_re = re.compile(r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
@@ -30,6 +32,9 @@ class CraftVersion(Version):
     @property
     def strictVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
+        if self.isBranch or not re.match(r"^\d+.*", v):
+            CraftDebug.craftDebug.log.warn("Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr, stack_info=True)
+            return StrictVersion("0.0.0")
         loose = LooseVersion(v)
         out = []
         for entry in loose.version:
