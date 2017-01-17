@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.buildDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
-        self.targets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+        self.targets['master'] = ''
+        self.defaultTarget = 'master'
 
 from Package.BinaryPackageBase import *
 

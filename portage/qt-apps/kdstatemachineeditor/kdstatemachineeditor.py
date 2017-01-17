@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/KDAB/KDStateMachineEditor.git'
+        self.svnTargets['master'] = 'https://github.com/KDAB/KDStateMachineEditor.git'
         for ver in ["1.1.0"]:
             self.targets[ver] = 'https://github.com/KDAB/KDStateMachineEditor/archive/v%s.tar.gz' % ver
             self.archiveNames[ver] = "kdstatemachineeditor-%s.tar.gz" % ver

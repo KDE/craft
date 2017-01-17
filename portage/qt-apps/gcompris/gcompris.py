@@ -7,8 +7,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:gcompris'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = '[git]kde:gcompris'
+        self.defaultTarget = 'master'
         self.shortDescription = "GCompris is a high quality educational software suite comprising of numerous activities for children aged 2 to 10."
 
 

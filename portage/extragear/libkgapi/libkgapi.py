@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:libkgapi'
+        self.svnTargets['master'] = '[git]kde:libkgapi'
         self.svnTargets['0.4'] = '[git]kde:libkgapi|LibKGAPI/0.4|'
         
         self.targets[ '0.4.4'] = "http://download.kde.org/stable/libkgapi/0.4.4/src/libkgapi-0.4.4.tar.bz2"

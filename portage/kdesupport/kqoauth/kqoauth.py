@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.97'
         self.shortDescription = "kQOAuth is a library written in C++ for Qt that implements the OAuth 1.0 authentication specification RFC 5849"
 
-        self.svnTargets['gitHEAD'] = 'https://github.com/kypeli/kQOAuth.git'
+        self.svnTargets['master'] = 'https://github.com/kypeli/kQOAuth.git'
         
         for ver in ['0.97']:
             self.targets[ver] ='https://github.com/kypeli/kQOAuth/archive/' + ver + '.tar.gz'

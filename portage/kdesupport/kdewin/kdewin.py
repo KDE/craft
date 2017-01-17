@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'http://gitweb.kde.org/kdewin.git/snapshot/fc116df1dc204d8a06dc5c874a4cdecc335115ec.tar.gz'
-        self.svnTargets['gitHEAD'] = '[git]kde:kdewin'
+        self.svnTargets['master'] = '[git]kde:kdewin'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
             self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/kdewin'
         for ver in ['0.5.6']:
@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'kdewin-' + ver
         self.patchToApply['0.5.6'] = [("kdewin-0.5.6-20130530.diff", 1), ("invert-if-msvc.diff", 1)]
         self.shortDescription = "kde supplementary package for win32"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 from Package.CMakePackageBase import *
 

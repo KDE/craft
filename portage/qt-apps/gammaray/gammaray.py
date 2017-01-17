@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets["gitHEAD"] = "[git]https://github.com/KDAB/GammaRay.git"
+        self.svnTargets["master"] = "[git]https://github.com/KDAB/GammaRay.git"
         for ver in ["2.6.0"]:
             self.targets[ver] = "https://github.com/KDAB/GammaRay/archive/v%s.tar.gz" % ver
             self.targetInstSrc[ver] = "gammaray-%s" % ver

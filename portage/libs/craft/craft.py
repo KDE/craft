@@ -4,8 +4,8 @@ from Package import VirtualPackageBase
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets[ "gitHEAD" ] = "[git]kde:craft"
-        self.defaultTarget = "gitHEAD"
+        self.svnTargets[ "master" ] = "[git]kde:craft"
+        self.defaultTarget = "master"
 
 
     def setDependencies( self ):

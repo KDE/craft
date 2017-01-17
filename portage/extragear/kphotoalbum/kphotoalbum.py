@@ -5,9 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kphotoalbum.git'
+        self.svnTargets['master'] = '[git]kde:kphotoalbum.git'
 
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kdegraphics'] = 'default'

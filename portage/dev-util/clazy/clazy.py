@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
 
         
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = '[git]kde:clazy'
-      self.defaultTarget = 'gitHEAD'
+      self.svnTargets['master'] = '[git]kde:clazy'
+      self.defaultTarget = 'master'
          
 
 class Package( CMakePackageBase ):

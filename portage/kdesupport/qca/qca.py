@@ -8,9 +8,9 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/cyrus-sasl'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'kde:qca.git|qt5'
+        self.svnTargets['master'] = 'kde:qca.git|qt5'
         self.shortDescription = "Qt Cryptographic Architecture (QCA)"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 from Package.CMakePackageBase import *
 

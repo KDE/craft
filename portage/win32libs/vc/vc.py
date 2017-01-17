@@ -10,11 +10,9 @@ class subinfo(info.infoclass):
 
         # Note: at the moment Vc does not provide a stable MSVC-compatible release.
         # Please update the default target to a tarball once one is made available.
-        self.svnTargets['gitHEAD'] = 'https://github.com/VcDevel/Vc.git|0.7'
-        self.targetSrcSuffix['gitHEAD'] = 'git'
-        self.targetConfigurePath['gitHEAD'] = ''
+        self.svnTargets['0.7'] = 'https://github.com/VcDevel/Vc.git|0.7'
         self.shortDescription = 'Portable, zero-overhead SIMD library for C++'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = '0.7.3'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

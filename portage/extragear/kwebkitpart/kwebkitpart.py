@@ -2,9 +2,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kwebkitpart'
+        self.svnTargets['master'] = '[git]kde:kwebkitpart'
         self.shortDescription = 'A WebKit browser component for KDE (KPart)'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kdelibs'] = 'default'

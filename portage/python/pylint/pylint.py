@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
     #def setDependencies( self ):
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = ''
+        self.defaultTarget = 'master'
 
 
 class Package( PipPackageBase ):

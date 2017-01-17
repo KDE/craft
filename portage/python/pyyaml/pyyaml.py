@@ -7,9 +7,9 @@ class subinfo(info.infoclass):
     #def setDependencies( self ):
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
+        self.svnTargets['master'] = ''
         self.shortDescription = "PyYAML is a Python module that implements the next generation YAML parser and emitter."
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 
 class Package( PipPackageBase ):

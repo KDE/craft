@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
 
         
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/qewitter/qewitter.git'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = 'git://gitorious.org/qewitter/qewitter.git'
+        self.defaultTarget = 'master'
          
 
 class Package( CMakePackageBase ):

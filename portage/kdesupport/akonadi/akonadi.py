@@ -11,11 +11,11 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/shared-mime-info'] = 'default'
 
     def setTargets( self ):
-        #self.patchToApply['gitHEAD'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
+        #self.patchToApply['master'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
 
-        self.svnTargets['gitHEAD'] = '[git]kde:akonadi.git'
+        self.svnTargets['master'] = '[git]kde:akonadi.git'
         self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 from Package.CMakePackageBase import *
 

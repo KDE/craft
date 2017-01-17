@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdev-ruby'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = '[git]kde:kdev-ruby'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.shortDescription = "ruby support for kdevelop"

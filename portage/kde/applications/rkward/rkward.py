@@ -4,11 +4,11 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] =  '[git]kde:rkward|frameworks'
+        self.svnTargets[ 'frameworks' ] =  '[git]kde:rkward|frameworks'
         for ver in ['0.6.4']:
             self.targets[ver] = 'http://download.kde.org/stable/rkward/' + ver + '/rkward-' + ver + '.tar.gz'
             self.targetInstSrc[ ver] = 'rkward-' + ver
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'frameworks'
 
     def setDependencies( self ):
         self.dependencies[ 'binary/r-base' ] = 'default'

@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = ''
+        self.defaultTarget = 'master'
         self.shortDescription = 'kf5 tier1'
 
     def setDependencies( self ):

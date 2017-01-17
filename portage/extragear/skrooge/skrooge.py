@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:skrooge'
+        self.svnTargets['master'] = '[git]kde:skrooge'
         self.targets['0.9.1'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/skrooge-4c9e641.tar.bz2"
         self.targetInstSrc['0.9.1'] = "skrooge-4c9e641"
         self.patchToApply['0.9.1'] = ("skrooge-4c9e641-20110830.diff", 1)
@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.targetDigests['1.1.1'] = '063af1a04c2406babc59203e0d57912e834e46f1'
         self.targetDigests['1.2.0'] = '1587d493f6064637805e3601bdae08fd5258a633'
         self.shortDescription = "a personal finance manager for KDE"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['libs/qt'] = 'default'

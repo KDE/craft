@@ -3,9 +3,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets[ "gitHEAD" ] = "https://github.com/phacility/arcanist.git"
-        self.targetInstallPath[ "gitHEAD" ] = "dev-utils/arcanist/arcanist"
-        self.defaultTarget = "gitHEAD"
+        self.svnTargets[ "master" ] = "https://github.com/phacility/arcanist.git"
+        self.targetInstallPath[ "master" ] = "dev-utils/arcanist/arcanist"
+        self.defaultTarget = "master"
 
 
     def setDependencies( self ):

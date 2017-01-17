@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:snorenotify'
+        self.svnTargets['master'] = '[git]kde:snorenotify'
         for ver in ['0.6.0', '0.7.0']:
             self.targets[ ver ] = "http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz" % ( ver ,ver )
             self.targetInstSrc[ ver ] = "snorenotify-%s" % ver

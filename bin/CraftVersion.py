@@ -7,7 +7,7 @@ import CraftDebug
 class CraftVersion(Version):
     component_re = re.compile(r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
     invalid_re = re.compile(r"^v", re.IGNORECASE)
-    # we can't compare "master" with "gitHEAD" so mark branches as larger than version
+    # we can't compare "master" with "feature1" so mark branches as larger than version
     isBranch_re = re.compile(r"^[a-z]+$", re.IGNORECASE)
 
     def __init__(self, version):

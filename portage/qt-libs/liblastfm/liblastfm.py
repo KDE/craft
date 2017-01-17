@@ -3,7 +3,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = "https://github.com/lastfm/liblastfm.git"
+        self.svnTargets[ 'master' ] = "https://github.com/lastfm/liblastfm.git"
         for ver in ['1.0.0','1.0.1','1.0.2','1.0.3','1.0.8','1.0.9']:
             self.targets[ver] = 'https://github.com/lastfm/liblastfm/archive/%s.tar.gz' % ver
             self.archiveNames[ver] = "liblastfm-%s.tar.gz" % ver
@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.patchToApply['1.0.8'] = [ ('remove_atl_stuff.patch', 1) ]
         
         self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies[ 'libs/qt' ] = 'default'

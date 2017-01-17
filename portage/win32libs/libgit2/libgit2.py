@@ -3,11 +3,11 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/libgit2/libgit2.git'
+        self.svnTargets['master'] = 'https://github.com/libgit2/libgit2.git'
 
 
         self.shortDescription = "a portable C library for accessing git repositories"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

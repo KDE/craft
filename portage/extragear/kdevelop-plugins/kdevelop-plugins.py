@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = ''
+        self.defaultTarget = 'master'
         self.shortDescription = 'kdevelop languages and other plugins'
 
     def setDependencies( self ):

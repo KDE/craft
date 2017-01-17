@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ '2.8.0' ] = [( '0001-Don-t-communicate-with-mysql-by-env-vars-and-autogen.patch', 1),
                                         ( '0001-Don-t-add-the-analyzer-applet-when-Phonon-doesn-t-su.patch', 1)]
 
-        self.svnTargets['gitHEAD'] = '[git]kde:amarok.git'
+        self.svnTargets['master'] = '[git]kde:amarok.git'
         self.defaultTarget = '2.8.0'
 
     def setDependencies( self ):

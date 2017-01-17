@@ -2,8 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]kde:kdevelop-pg-qt|2.0'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets[ '2.0' ] = '[git]kde:kdevelop-pg-qt|2.0'
+        self.defaultTarget = '2.0'
 
     def setDependencies( self ):
         self.dependencies[ 'extragear/kdevplatform' ] = 'default'

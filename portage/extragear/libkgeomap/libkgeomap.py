@@ -3,8 +3,8 @@ import info
 # deprecated class
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:libkgeomap'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = '[git]kde:libkgeomap'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'

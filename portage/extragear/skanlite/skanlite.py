@@ -5,11 +5,11 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:skanlite.git'
+        self.svnTargets['master'] = '[git]kde:skanlite.git'
         for ver in ['0.9', '1.0']:
             self.targets[ver] = "http://download.kde.org/stable/" + self.package + "/" + ver + "/src/" + self.package + "-" + ver + ".tar.bz2"
             self.targetInstSrc[ver] = self.package + '-' + ver
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
         self.shortDescription = 'a small application for image scanning'
 
     def setDependencies( self ):

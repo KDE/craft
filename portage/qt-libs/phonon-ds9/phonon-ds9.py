@@ -7,9 +7,9 @@ class subinfo( info.infoclass ):
         self.dependencies['qt-libs/phonon'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:phonon-directshow'
+        self.svnTargets['master'] = '[git]kde:phonon-directshow'
         self.shortDescription = "the DirectShow based phonon multimedia backend"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):

@@ -7,9 +7,9 @@ class subinfo(info.infoclass):
     #def setDependencies( self ):
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
+        self.svnTargets['master'] = ''
         self.shortDescription = "Jinja2 is a Python module that implements a simple pythonic template language. "
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 
 class Package( PipPackageBase ):

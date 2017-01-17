@@ -3,8 +3,8 @@ from shells import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://git.code.sf.net/p/mingw-w64/mingw-w64'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = 'git://git.code.sf.net/p/mingw-w64/mingw-w64'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies['dev-util/msys'] = 'default'

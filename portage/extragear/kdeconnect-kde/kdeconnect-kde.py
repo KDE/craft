@@ -4,8 +4,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kdeconnect-kde'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = '[git]kde:kdeconnect-kde'
+        self.defaultTarget = 'master'
         self.shortDescription = "KDE Connect adds communication between KDE and your smartphone"
 
     def setDependencies( self ):

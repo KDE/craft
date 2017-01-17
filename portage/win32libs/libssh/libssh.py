@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ ver[1] ] = "libssh-" + ver[1]
         self.targetDigests['0.7.3'] = '9de2a8fde51aa7b7855008fafd5bf47ebb01289f'
 
-        self.svnTargets['gitHEAD'] = "git://git.libssh.org/projects/libssh.git"
+        self.svnTargets['master'] = "git://git.libssh.org/projects/libssh.git"
 
         self.shortDescription = "a working SSH implementation by the mean of a library"
         self.defaultTarget = '0.7.3'

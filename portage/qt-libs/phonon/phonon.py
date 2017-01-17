@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         #self.dependencies['libs/qtquick1'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:phonon'        
+        self.svnTargets['master'] = '[git]kde:phonon'        
         for ver in ['4.9.0']:
             self.targets[ver] = 'http://download.kde.org/stable/phonon/%s/phonon-%s.tar.xz' % (ver ,ver)
             self.targetInstSrc[ver] = 'phonon-%s' % ver

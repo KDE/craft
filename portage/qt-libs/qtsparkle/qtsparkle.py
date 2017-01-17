@@ -8,8 +8,8 @@ class subinfo( info.infoclass ):
       self.dependencies[ 'libs/qt' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'gitHEAD' ] = 'https://github.com/davidsansome/qtsparkle.git'
-      self.defaultTarget = 'gitHEAD'
+      self.svnTargets[ 'master' ] = 'https://github.com/davidsansome/qtsparkle.git'
+      self.defaultTarget = 'master'
 
 
 class Package( CMakePackageBase ):

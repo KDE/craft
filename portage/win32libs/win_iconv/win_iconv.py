@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/win-iconv/win-iconv.git'
+        self.svnTargets['master'] = 'https://github.com/win-iconv/win-iconv.git'
         for ver in ['0.0.7', '0.0.8']:
             self.targets[ver] = 'https://github.com/win-iconv/win-iconv/archive/v%s.tar.gz' % ver
             self.archiveNames[ver] = "win-iconv-%s.tar.gz" % ver

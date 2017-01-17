@@ -5,9 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:kregexpeditor'
+        self.svnTargets['master'] = '[git]kde:kregexpeditor'
         self.shortDescription = "a regular expression editor for KDE"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

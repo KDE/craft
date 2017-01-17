@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         
       self.targetDigests['0.9.0'] = (['c0ced7ca571acc22211eecf5158241714fa9ccdb82d4fe0a970ad702860ccdbe'], CraftHash.HashAlgorithm.SHA256)
 
-      self.svnTargets['gitHEAD'] = '[git]kde:phonon-vlc'
+      self.svnTargets['master'] = '[git]kde:phonon-vlc'
       
       self.shortDescription = "the vlc based phonon multimedia backend"
       self.defaultTarget = '0.9.0'

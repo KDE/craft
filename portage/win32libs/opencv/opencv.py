@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '2.4.5'
         self.shortDescription = 'a library for real time computer vision'
         
-        self.svnTargets['gitHEAD'] = 'git://code.opencv.org/opencv.git'
+        self.svnTargets['master'] = 'git://code.opencv.org/opencv.git'
         
         self.svnTargets['2.3'] = 'http://downloads.sourceforge.net/opencvlibrary/OpenCV-2.3.0-win-src.zip'
         self.targetInstSrc['2.3'] = 'OpenCV-2.3.0'

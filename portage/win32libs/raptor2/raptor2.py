@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.0.4'] = '79e1289f480cb0fe75f49ec29d9f49189a8a58c2'
         self.targetDigests['2.0.8'] = '6caec62d28dbf5bc26e8de5a46101b52aabf94fd'
         self.shortDescription = "Resource Description Framework (RDF)"
-        self.svnTargets['gitHEAD'] = 'https://github.com/dajobe/raptor.git'
+        self.svnTargets['master'] = 'https://github.com/dajobe/raptor.git'
         self.defaultTarget = '2.0.8'
 
     def setDependencies( self ):

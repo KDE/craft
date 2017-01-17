@@ -3,11 +3,11 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets["gitHEAD"] = 'https://github.com/zaphoyd/websocketpp.git'
+        self.svnTargets["master"] = 'https://github.com/zaphoyd/websocketpp.git'
 
 
         self.shortDescription = 'WebSocket++ is a header only C++ library that implements RFC6455 The WebSocket Protocol'
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
