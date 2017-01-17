@@ -27,7 +27,7 @@ class Package(BinaryPackageBase):
     def removeCategoryFromDB(self, category):
         list = self.db.getDistinctInstalled(category)
         for c,p,_ in list:
-            for package in self.db.getInstalledPackages( c, p ):
+            for package in self.db.getInstalledPackages(c, p):
                 package.uninstall()
 
 

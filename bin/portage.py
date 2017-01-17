@@ -425,7 +425,7 @@ class Portage(object):
         if not self.isPackage( category, package ):
             raise PortageException( "Could not find package", category, package )
 
-        installed = InstallDB.installdb.getInstalledPackages(category, package )
+        installed = InstallDB.installdb.getInstalledPackages(category, package)
         newest = PortageInstance.getDefaultTarget( category, package )
 
         for pack in installed:

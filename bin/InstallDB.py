@@ -151,12 +151,10 @@ class InstallDB(object):
 
         return stmt, params
 
-    def isInstalled( self, category, package, version=None, prefix=None ):
-        """ returns whether a package is installed. If version and prefix are empty, all versions
-            and prefixes will be checked. """
+    def isInstalled(self, category, package, version=None):
+        """ returns whether a package is installed. If version is empty, all versions will be checked. """
         cmd = '''SELECT * FROM packageList'''
-        # TODO: what is the difference between prefix=None and prefix=''? Both happens. Document.
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package, 'version': version } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
         craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -165,20 +163,19 @@ class InstallDB(object):
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
-            craftDebug.log.debug("""The package %s/%s has been installed in prefix '%s' with
-                            version '%s'.""" % (category, package, prefix, version))
+            craftDebug.log.debug("""The package %s/%s has been installed with
+                            version '%s'.""" % (category, package, version))
         else:
-            craftDebug.log.debug("""Couldn't find a trace that the package %s/%s has been installed in
-                            prefix '%s' with version '%s'""" % (category, package, prefix, version))
+            craftDebug.log.debug("""Couldn't find a trace that the package %s/%s has been installed with version '%s'""" % (category, package, version))
         cursor.close()
         return isPackageInstalled
 
-    def getInstalled( self, category=None, package=None, prefix=None ):
+    def getInstalled(self, category=None, package=None):
         """ returns a list of the installed packages, which can be restricted by adding
-            package, category and prefix.
+            package, category.
         """
         cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
         craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -189,12 +186,12 @@ class InstallDB(object):
         cursor.close()
         return values
 
-    def getDistinctInstalled( self, category=None, package=None, prefix=None ):
+    def getDistinctInstalled(self, category=None, package=None):
         """ returns a list of the installed packages, which can be restricted by adding
-            package, category and prefix.
+            package, category.
         """
         cmd = '''SELECT DISTINCT category, packageName, version FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
         craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -205,12 +202,12 @@ class InstallDB(object):
         cursor.close()
         return values
 
-    def getPackageIds( self, category = None, package = None, prefix = None ):
+    def getPackageIds(self, category=None, package=None):
         """ returns a list of the ids of the packages, which can be restricted by adding
-            package, category and prefix.
+            package, category.
         """
         cmd = '''SELECT packageId FROM packageList'''
-        stmt, params = self.__constructWhereStmt( { 'prefix': prefix, 'category': category, 'packageName': package } )
+        stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
         craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -222,7 +219,7 @@ class InstallDB(object):
             values.append( row[0] )
         return values
 
-    def getPackagesForFileSearch(self, filename, prefix = None ):
+    def getPackagesForFileSearch(self, filename):
         """ returns a list of tuple(InstallPackage(), filename) for packages providing a given file """
 
         cursor = self.connection.cursor()
@@ -232,22 +229,22 @@ class InstallDB(object):
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
 
-    def addInstalled( self, category, package, version, prefix=None, ignoreInstalled=False, revision = "" ):
+    def addInstalled(self, category, package, version, ignoreInstalled=False, revision=""):
         """ adds an installed package """
         cursor = self.connection.cursor()
-        if self.isInstalled( category, package, version, prefix ) and not ignoreInstalled:
-            raise Exception( 'package %s/%s-%s already installed (prefix %s)' % ( category, package, version, prefix ) )
+        if self.isInstalled(category, package, version) and not ignoreInstalled:
+            raise Exception( 'package %s/%s-%s already installed' % ( category, package, version ) )
 
-        params = [ None, prefix, category, package, version, revision ]
+        params = [ None, None, category, package, version, revision ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
         craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
-    def getInstalledPackages( self, category, package, prefix = None ):
+    def getInstalledPackages(self, category, package):
         """ return an installed package """
         cursor = self.connection.cursor()
-        return [ InstallPackage( cursor, pId ) for pId in self.getPackageIds( category, package, prefix ) ]
+        return [InstallPackage( cursor, pId ) for pId in self.getPackageIds(category, package)]
 
     def _prepareDatabase( self ):
         """ prepare a new database and add the required table layout """
@@ -280,103 +277,4 @@ installdb = InstallDB()
 def printInstalled():
     """get all the packages that are already installed"""
     host = target = portage.alwaysTrue
-    portage.printCategoriesPackagesAndVersions( installdb.getDistinctInstalled(), portage.alwaysTrue, host, target )
-
-def main():
-    """ Testing the class"""
-
-    # add two databases
-    tempdbpath1 = os.path.join( CraftStandardDirs.craftRoot(), "tmp", "temp1.db" )
-    tempdbpath2 = os.path.join( CraftStandardDirs.craftRoot(), "tmp", "temp2.db" )
-
-    if not os.path.exists( os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) ):
-        os.makedirs( os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
-
-    if os.path.exists( tempdbpath1 ):
-        os.remove( tempdbpath1 )
-    if os.path.exists( tempdbpath2 ):
-        os.remove( tempdbpath2 )
-
-    db_temp = InstallDB( tempdbpath1 )
-    db = InstallDB( tempdbpath2 )
-
-    craftDebug.log.debug('testing installation database')
-
-    # in case the package is still installed, remove it first silently
-    if db.isInstalled( 'win32libs', 'dbus-src', '1.4.0' ):
-        packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
-        # really commit uninstall
-        for package in packageList:
-            package.uninstall()
-    craftDebug.log.debug_line()
-
-    craftDebug.new_line()
-    # add a package
-    craftDebug.log.debug('installing package win32libs/dbus-src-1.4.0 (release)')
-    package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'release' )
-    package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
-    # now really commit the package
-    package.install()
-
-    # add another package in a different prefix
-    craftDebug.log.debug('installing package win32libs/dbus-src-1.4.0 (debug)')
-    package = db.addInstalled( 'win32libs', 'dbus-src', '1.4.0', 'debug' )
-    package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
-    # now really commit the package
-    package.install()
-    craftDebug.log.debug_line()
-
-    craftDebug.new_line()
-    craftDebug.log.debug('checking installed packages')
-    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-
-    craftDebug.new_line()
-    craftDebug.log.debug('now trying to remove package & revert it again later')
-    # remove the package again
-    packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
-    for pac in packageList:
-        for line in pac.getFiles(): # pylint: disable=W0612
-            # we could remove the file here
-            # print line
-            pass
-    craftDebug.log.debug_line()
-
-    craftDebug.new_line()
-    craftDebug.log.debug('checking installed packages')
-    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    craftDebug.log.debug_line()
-
-    craftDebug.new_line()
-    craftDebug.log.debug('reverting removal')
-    # now instead of completing the removal, revert it
-    for pac in packageList:
-        pac.revert()
-
-    craftDebug.log.debug('checking installed packages')
-    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    craftDebug.log.debug_line()
-
-    db.getInstalled()
-    db.getInstalled( category='win32libs', prefix='debug' )
-    db.getInstalled( package='dbus-src' )
-
-    craftDebug.new_line()
-    craftDebug.log.debug('now really remove the package')
-    packageList = db.getInstalledPackages( 'win32libs', 'dbus-src' )
-    for pac in packageList:
-        craftDebug.log.debug('removing %s files' % len(pac.getFilesWithHashes()))
-        pac.uninstall()
-
-    craftDebug.log.debug('get installed package (release): %s' % db.getInstalled('win32libs', 'dbus-src', 'release'))
-    craftDebug.log.debug('get installed package (debug):   %s' % db.getInstalled('win32libs', 'dbus-src', 'debug'))
-    craftDebug.log.debug_line()
-
-    # test the import from the old style (manifest based) databases
-    craftDebug.new_line()
-    print("getInstalled:", db_temp.getInstalled())
-
-if __name__ == '__main__':
-    main()
+    portage.printCategoriesPackagesAndVersions(installdb.getDistinctInstalled(), portage.alwaysTrue, host, target)

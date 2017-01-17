@@ -45,7 +45,7 @@ def printSearch(search_category, search_package,maxDist = 2):
             print("\t Description: %s" % package.subinfo.shortDescription)
             print("\t Latest version: %s" % package.subinfo.defaultTarget)
             installed = False
-            for pack in InstallDB.installdb.getInstalledPackages(package.category,package.package):
+            for pack in InstallDB.installdb.getInstalledPackages(package.category, package.package):
                 if pack.getVersion():
                     installed = True
                     print("\t Installed versions: %s" % pack.getVersion())
