@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import tempfile
+from distutils.version import StrictVersion
 
 import info
 import utils
@@ -8,7 +9,7 @@ import utils
 class subinfo(info.infoclass):
     def setTargets( self ):
         versions = utils.utilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d"))
-        versions.sort(key=lambda v: utils.parse_version(v))
+        versions.sort(key=lambda v: StrictVersion(v))
         for ver in versions:
             self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
             self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", CraftHash.HashAlgorithm.SHA1)
