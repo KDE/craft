@@ -8,6 +8,9 @@ class subinfo( info.infoclass ):
         self.svnTargets[ 'master' ] = '[git]kde:kdevelop|master'
         self.defaultTarget = '5.0'
 
+        # Note: Don't forget to update this!
+        self.installerVersion = '5.0.4'
+
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
@@ -66,6 +69,7 @@ class Package( CMakePackageBase ):
         self.defines[ "executable" ] = "bin\\kdevelop.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
         self.defines[ "extrashortcuts" ] = r'CreateShortCut \"${startmenu}\KDevelop - Microsoft Visual C++ compiler.lnk\" \"$INSTDIR\\bin\\kdevelop-msvc.bat\"'
+        self.defines[ "version" ] = self.subinfo.installerVersion
 
         self.ignoredPackages.append("binary/mysql-pkg")
 
