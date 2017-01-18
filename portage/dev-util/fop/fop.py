@@ -6,6 +6,7 @@ class subinfo( info.infoclass ):
         self.targets['1.0'] = 'http://apache.parentingamerica.com/xmlgraphics/fop/binaries/fop-1.0-bin.zip'
         self.targetDigests['1.0'] = 'afef3bbfed5543c92bc9ed2d7651422580f98bd9'
         self.targetMergeSourcePath['1.0'] = 'fop-1.0'
+        self.targetInstallPath['1.0'] = "dev-utils/bin"
         self.defaultTarget = '1.0'
 
 
@@ -14,6 +15,4 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
-        ## @todo manifest files are also written in dev-utils/bin - fix this
-        self.subinfo.options.merge.destinationPath = "dev-utils/bin"
 
