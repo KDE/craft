@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
         #self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtwebkit'] = 'default'
+        self.dependencies['libs/qtwebengine'] = 'default'
         self.dependencies['libs/qtscript'] = 'default'
         self.dependencies['libs/qttools'] = 'default'
         self.shortDescription = "a distributed IRC client"
