@@ -271,6 +271,7 @@ def un7zip( fileName, destdir, flag = None ):
     command = utilsCache.findApplication("7za")
     command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
 
+    kw = {}
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
         # But git is an exe file renamed to 7z and we need to specify the type.
@@ -279,7 +280,9 @@ def un7zip( fileName, destdir, flag = None ):
     if utilsCache.appSupportsCommand(utilsCache.findApplication("7za"), "-bs"):
         command += " -bso2"
         command += " -bsp1"
-    return system( command , displayProgress=True)
+        kw["stderr"] = subprocess.PIPE
+
+    return system( command , displayProgress=True, **kw)
 
 def system(cmd, displayProgress=False, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
@@ -295,6 +298,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     logged to allow the display of progress bars."""
 
     craftDebug.log.debug("executing command: '%s' in '%s'" % (cmd, kw.get("cwd", os.getcwd())))
+    craftDebug.log.debug("displayProgress=%s" % displayProgress)
     if not displayProgress:
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
@@ -309,7 +313,6 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
             else:
                 craftDebug.log.info(line.rstrip())
     else:
-        kw['stderr'] = kw.get('stderr', subprocess.PIPE)
         kw["universal_newlines"] = True
         proc = subprocess.Popen(cmd, **kw)
         if proc.stderr:

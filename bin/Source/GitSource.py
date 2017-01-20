@@ -77,15 +77,18 @@ class GitSource ( VersionSystemSourceBase ):
     def __git(self, command, *args, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and craftSettings.get( "General", "EMERGE_LOG_DIR") != "":
-            # if stdout/stderr is redirected, git clone qt hangs forever.
-            # It does not with option -q (suppressing progress info)
-            command += ' -q'
+        displayProgress = False
+        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule'):
+            if craftDebug.verbose() < 0:
+                command += ' -q'
+            else:
+                displayProgress = True
+                command += ' --progress'
         parts = ["git", command]
         parts.extend(args)
         if not kwargs.get('cwd'):
             kwargs['cwd'] = self.checkoutDir()
-        return self.system(' '.join(parts), **kwargs)
+        return self.system(' '.join(parts),displayProgress=displayProgress, **kwargs)
 
     def fetch(self):
         craftDebug.trace('GitSource fetch')
