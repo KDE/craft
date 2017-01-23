@@ -66,6 +66,10 @@ class Package(Qt5CorePackageBase):
 
 
     def configure( self, unused1=None, unused2=""):
+        if compiler.isMinGW() and "DXSDK_DIR" not in os.environ:
+            craftDebug.log.critical("Failed to detec a DirectX SDK")
+            craftDebug.log.critical("Please visite https://community.kde.org/Guidelines_and_HOWTOs/Build_from_source/Windows#Direct_X_SDK for instructions")
+            return False
         self.enterBuildDir()
         self.setPathes()
         if OsUtils.isWin():
