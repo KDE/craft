@@ -32,7 +32,6 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.unpack(self):
             return False
         dirs = os.listdir(self.workDir())
-        print(dirs)
         if len(dirs) != 1:
             return False
         utils.mergeTree(os.path.join(self.workDir(), dirs[0]), self.workDir())
