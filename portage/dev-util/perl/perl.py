@@ -12,7 +12,6 @@ class subinfo(info.infoclass):
         self.targets[ver] = "http://downloads.activestate.com/ActivePerl/releases/{ver}/ActivePerl-{ver}-MSWin32-{arch}-{build}.exe".format(
             ver=ver, arch=arch, build=build)
         self.targetInstallPath[ver] = "dev-utils"
-        self.targetInstSrc[ver] = "6235264" #TODO: where is the number coming from ....
         self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/{0}/SHA256SUM".format(ver)], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = ver
 
@@ -32,6 +31,11 @@ class Package(BinaryPackageBase):
     def unpack(self):
         if not BinaryPackageBase.unpack(self):
             return False
+        dirs = os.listdir(self.workDir())
+        print(dirs)
+        if len(dirs) != 1:
+            return False
+        utils.mergeTree(os.path.join(self.workDir(), dirs[0]), self.workDir())
         _, name = os.path.split(self.subinfo.targets[self.subinfo.buildTarget])
         utils.deleteFile(os.path.join(self.sourceDir(), "{0}.msi".format(name)))
         return True
