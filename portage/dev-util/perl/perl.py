@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             ver=ver, arch=arch, build=build)
         self.targetInstallPath[ver] = "dev-utils"
         self.targetInstSrc[ver] = "6235264" #TODO: where is the number coming from ....
-        self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/{0}/SHA256SUM",format(ver)], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigestUrls[ver] = (["http://downloads.activestate.com/ActivePerl/releases/{0}/SHA256SUM".format(ver)], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = ver
 
     def setDependencies( self ):
