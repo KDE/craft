@@ -21,3 +21,17 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
+
+    def install( self ):
+        if not BinaryPackageBase.install(self):
+            return False
+        # https://bugs.python.org/issue29319
+        files = os.listdir(self.installDir())
+        reZipName = re.compile(r"python\d\d.*")
+        name = None
+        for f in files:
+            if reZipName.match(f):
+                name, _ = os.path.splitext(f)
+                break
+        return utils.deleteFile(os.path.join(self.installDir(), f"{name}._pth"))
+

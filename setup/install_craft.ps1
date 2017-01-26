@@ -41,6 +41,8 @@ function FetchPython()
                 }
                 $Script:python = "$Script:installRoot\python\python.exe"
                 Expand-Archive "$archive" "$Script:installRoot\python\"
+                # https://bugs.python.org/issue29319
+                rm $Script:installRoot\python\python*._pth -ErrorAction SilentlyContinue
                 break
             }
             1 {
