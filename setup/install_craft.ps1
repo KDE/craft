@@ -5,15 +5,15 @@ param(
     )
 
 
-[version]$minPythonVersion = 3.5
+[version]$minPythonVersion = 3.6
 
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.3/python-3.5.3-embed-amd64.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-amd64.zip"
 }
 else
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.3/python-3.5.3-embed-win32.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-win32.zip"
 }
 #####
 $Script:pythonVersion = "0"

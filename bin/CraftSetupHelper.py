@@ -13,7 +13,7 @@ import compiler
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
-MIN_PY_VERSION = (3, 5, 0)
+MIN_PY_VERSION = (3, 6, 0)
 
 if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
     print( "Error: Python too old!", file= sys.stderr )
