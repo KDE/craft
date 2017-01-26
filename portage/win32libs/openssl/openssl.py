@@ -9,18 +9,18 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets(self):
         def addTarget(baseUrl, ver):
-            self.targets[ver] = baseUrl + 'openssl-' + ver + '.tar.gz'
-            self.targetInstSrc[ver] = 'openssl-' + ver
-            self.targetDigestUrls[ver] = ([baseUrl + 'openssl-' + ver + '.tar.gz.sha256'], CraftHash.HashAlgorithm.SHA256)
+            self.targets[ver] = f'{baseUrl}openssl-{ver}.tar.gz'
+            self.targetInstSrc[ver] = f'openssl-{ver}'
+            self.targetDigestUrls[ver] = ([f'{baseUrl}openssl-{ver}.tar.gz.sha256'], CraftHash.HashAlgorithm.SHA256)
 
         # older versions  -> inside old/major.minor.patch/
-        for ver in ['1.0.2a', '1.0.2c', '1.0.2d']:
+        for ver in ['1.0.2a', '1.0.2c', '1.0.2d', '1.0.2j']:
             dir = re.search(r"\d+\.\d+.\d+", ver).group(0)
-            baseUrl = 'ftp://ftp.openssl.org/source/old/' + dir + '/'
+            baseUrl = f'ftp://ftp.openssl.org/source/old/{dir}/'
             addTarget(baseUrl, ver)
 
         # latest versions -> inside source/
-        for ver in ['0.9.8zh', '1.0.2j']:
+        for ver in ["1.1.0d"]:
             baseUrl = 'ftp://ftp.openssl.org/source/'
             addTarget(baseUrl, ver)
 
@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
-        elif compiler.isMSVC() and compiler.isX86():
+        elif compiler.isMSVC():
             self.buildDependencies['dev-util/nasm'] = 'default'
 
 
