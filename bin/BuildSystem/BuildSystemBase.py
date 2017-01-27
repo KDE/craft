@@ -24,11 +24,12 @@ class BuildSystemBase(CraftBase):
 
 
     def _getmakeProgram(self):
-        if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False):
-            return "ninja"
         makeProgram = craftSettings.get("Compile", "MakeProgram", "" )
-        if makeProgram != "" and self.subinfo.options.make.supportsMultijob:
-            craftDebug.log.debug("set custom make program: %s" % makeProgram)
+        if self.subinfo.options.make.supportsMultijob:
+            if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
+                return "ninja"
+            if makeProgram != "":
+                craftDebug.log.debug("set custom make program: %s" % makeProgram)
             return makeProgram
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
