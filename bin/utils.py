@@ -303,6 +303,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
             kw["universal_newlines"] = True
+            kw["errors"] = "backslashreplace"
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
