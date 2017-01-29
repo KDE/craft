@@ -105,9 +105,12 @@ class GitSource ( VersionSystemSourceBase ):
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
-        ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
-        if (not self.noFetch):
+        if (self.noFetch):
+            craftDebug.log.debug("skipping git fetch (--offline)")
+            return True
+        else:
+            ret = True
             self.setProxy()
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
@@ -146,10 +149,8 @@ class GitSource ( VersionSystemSourceBase ):
                         ret = self.__git('checkout', '_%s' % repoTag)
                 else:
                     ret = self.__git('checkout', repoTag)
-
-        else:
-            craftDebug.log.debug("skipping git fetch (--offline)")
         return ret
+
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
