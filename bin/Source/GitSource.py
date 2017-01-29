@@ -117,11 +117,11 @@ class GitSource ( VersionSystemSourceBase ):
                 os.rmdir(checkoutDir)
             if os.path.exists(checkoutDir):
                 if not repoTag:
-                    self.__git("fetch")
-                    ret = self.__git("checkout", repoBranch or "master") and \
-                          self.__git("merge")
+                    ret = self.__git("fetch")\
+                            and self.__git("checkout", repoBranch or "master") \
+                            and self.__git("merge")
                     if self.subinfo.options.fetch.checkoutSubmodules:
-                        self.__git("submodule update --init --recursive")
+                        ret = ret and self.__git("submodule update --init --recursive")
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs(checkoutDir)
