@@ -321,7 +321,10 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
                 craftDebug.log.debug(line.rstrip())
 
     proc.communicate()
-    return proc.wait() == 0
+    result = proc.wait() == 0
+    if not result:
+        craftDebug.log.debug(f"Coammand {cmd} failed with exit code {proc.returncode}")
+    return result
 
 def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """
