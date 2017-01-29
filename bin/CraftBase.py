@@ -259,10 +259,7 @@ class CraftBase(object):
 
         if utils.system( command, **kw):
             return True
-        if self.subinfo.options.exitOnErrors:
-            craftDebug.log.warning("while running %s cmd: %s" % (errorMessage, str(command)))
-        else:
-            craftDebug.log.warning("while running %s cmd: %s" % (errorMessage, str(command)))
+        craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
     def proxySettings(self):

@@ -82,13 +82,13 @@ class GitSource ( VersionSystemSourceBase ):
             if craftDebug.verbose() < 0:
                 command += ' -q'
             else:
-                displayProgress = True
+                kwargs["displayProgress"]  = True
                 command += ' --progress'
         parts = ["git", command]
         parts.extend(args)
         if not kwargs.get('cwd'):
             kwargs['cwd'] = self.checkoutDir()
-        return self.system(' '.join(parts),displayProgress=displayProgress, **kwargs)
+        return self.system(' '.join(parts), **kwargs)
 
     def fetch(self):
         craftDebug.trace('GitSource fetch')
