@@ -23,6 +23,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
+        self.supportsClang = utils.utilsCache.findApplication("clang") is not None
         self.clang = portage.getPackageInstance('win32libs', 'clang')
         self.lld = portage.getPackageInstance('win32libs', 'lld')
         self.subPackages = [self.clang, self.lld]
