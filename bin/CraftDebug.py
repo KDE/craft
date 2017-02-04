@@ -139,8 +139,6 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                craftDebug.log.warning(msg)
-                craftDebug.log.info("Used in: %s line: %s" % (_info.filename, _info.lineno))
                 craftDebug.log.debug("Trace for the usage of %s" % fun.__name__, stack_info=True)
             return fun(*args, **kwargs)
 
