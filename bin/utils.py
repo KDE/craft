@@ -32,7 +32,7 @@ from CraftOS.osutils import OsUtils
 # TODO: Rename
 class UtilsCache(object):
     _instance = None
-    _version = 0
+    _version = 2
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
@@ -41,6 +41,8 @@ class UtilsCache(object):
         self._helpCache = {}
         self._nightlyVersions = {}
         self.cacheCreationTime = time.time()
+        #defined in portageSearch
+        self.availablePackages = None
 
     @staticmethod
     def instance():
@@ -69,10 +71,11 @@ class UtilsCache(object):
     def _save():
         try:
             with open(UtilsCache._cacheFile(), "wb") as f:
-                pickle.dump(UtilsCache.instance(), f)
-        except:
-            craftDebug.log.debug("Failed to save cache")
-            deleteFile(UtilsCache._cacheFile())
+                pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
+                pick.dump(UtilsCache.instance())
+        except Exception as e:
+         craftDebug.log.warning(f"Failed to save cache {e}",exc_info=e, stack_info=True)
+         deleteFile(UtilsCache._cacheFile())
 
 
     def findApplication(self, app) -> str:
