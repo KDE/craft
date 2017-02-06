@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['dev-util/git'] = 'default'
+        self.buildDependencies['dev-util/7zip'] = 'default'
 
 
 from Package.SourceOnlyPackageBase import *

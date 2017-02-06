@@ -12,10 +12,6 @@ class subinfo( info.infoclass ):
         self.targetDigests['1602'] = (['f6c412e8bc45e4a88e675976024c21ed7a23eeb7eb0af452aa7a9b9a97843aa2'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1604" if utils.utilsCache.findApplication("7za") else "920"
 
-
-    def setDependencies( self ):
-        self.buildDependencies[ 'gnuwin32/wget' ] = 'default'
-
 from Package.BinaryPackageBase import *
 
 class Package( BinaryPackageBase ):
