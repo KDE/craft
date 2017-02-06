@@ -80,23 +80,17 @@ class UtilsCache(object):
 
     def findApplication(self, app) -> str:
         if app in self._appCache:
-            return self._appCache[app]
+            appLocation = self._appCache[app]
+            if os.path.exists(appLocation):
+                return appLocation
+            else:
+                self._helpCache.clear()
 
         appLocation = shutil.which(app)
-        if not appLocation:
-            possibleAppLocation = os.path.join(CraftStandardDirs.craftBin(), "data", "binary", OsUtils.name(), app)
-            extentions = [""]
-            if OsUtils.isWin():
-                extentions += [".exe", ".bat"]
-            for ext in extentions:
-                if os.path.exists(possibleAppLocation + ext):
-                    appLocation = possibleAppLocation + ext
-                    break
-        else:
-            #don't cache internal copies
+        if appLocation:
             craftDebug.log.debug("Adding %s to app cache" % appLocation)
             self._appCache[app] = appLocation
-        if not appLocation:
+        else:
             craftDebug.log.debug("Craft was unable to locate: %s" % app)
             return None
         return appLocation
@@ -263,7 +257,7 @@ def unpackFile( downloaddir, filename, workdir ):
     craftDebug.log.debug("unpacking this file: %s" % filename)
 
     ( shortname, ext ) = os.path.splitext( filename )
-    if re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
+    if not utilsCache.findApplication("7za") or re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
         shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
         return True
     elif ext == "":
