@@ -17,7 +17,33 @@ class subinfo(info.infoclass):
         self.dependencies['kde/okular'] = 'default'         # this is only a dependency for kile > 2.1, but we keep it like that for now
         self.runtimeDependencies['kde/kate'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
+class Package( CMakePackageBase ):
+    def __init__( self):
+        CMakePackageBase.__init__( self )
+        self.blacklist_file = [
+            NSIPackagerLists.runtimeBlacklist,
+            os.path.join(os.path.dirname(__file__), 'blacklist.txt')
+        ]
+        self.changePackager( NullsoftInstallerPackager )
 
+    def createPackage(self):
+        self.defines[ "productname" ] = "Kile"
+        self.defines[ "executable" ] = "bin\\kile.exe"
+
+        self.ignoredPackages.append("binary/mysql-pkg")
+
+        return TypePackager.createPackage(self)
+
+    def preArchive(self):
+        archiveDir = self.archiveDir()
+        # TODO: Why is that needed?
+        os.mkdir(os.path.join(archiveDir, "etc", "dbus-1", "session.d"))
+
+        # TODO: Can we generalize this for other apps?
+        # move everything to the location where Qt expects it
+        binPath = os.path.join(archiveDir, "bin")
+
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
+
+        # TODO: Just blacklisting this doesn't work. WTF?
+        utils.rmtree(os.path.join(archiveDir, "dev-utils"))
