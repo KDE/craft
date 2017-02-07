@@ -9,7 +9,6 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['win32libs/chm'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['qt-libs/poppler'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'
         self.dependencies['win32libs/djvu'] = 'default'

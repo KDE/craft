@@ -25,7 +25,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kwallet'] = 'default'
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['qt-libs/phonon'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
         self.shortDescription = "a KDE based irc client"
 
 class Package( CMakePackageBase ):
