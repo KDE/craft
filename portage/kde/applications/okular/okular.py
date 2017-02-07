@@ -53,7 +53,6 @@ class Package( CMakePackageBase ):
         self.ignoredPackages.append("gnuwin32/sed")
         self.ignoredPackages.append("frameworks/kdesignerplugin")
         self.ignoredPackages.append("frameworks/kemoticons")
-        self.ignoredPackages.append("kdesupport/qca")
 
         return TypePackager.createPackage(self)
 

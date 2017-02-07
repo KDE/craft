@@ -23,7 +23,7 @@ share\\apps\\ark\\.*
 share\\apps\\kgpg\\.*
 share\\kf5\\kdoctools\\.*
 lib\\.*
-bin\\data\\(?!icontheme.rcc).*
+bin\\data\\(?!(icontheme.rcc|kxmlgui5|knotifications5|kservices5)).*
 
 # unrelated
 dev-utils\\.*
