@@ -24,4 +24,8 @@ class Package(SourceOnlyPackageBase, GitSource):
         return os.path.join(CraftStandardDirs.craftBin(), "..")
 
     def fetch(self):
-        GitSource.fetch(self)
+        return GitSource.fetch(self)
+
+    def install( self ):
+        utils.utilsCache.clear()
+        return SourceOnlyPackageBase.install(self)

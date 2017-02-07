@@ -77,6 +77,9 @@ class UtilsCache(object):
          craftDebug.log.warning(f"Failed to save cache {e}",exc_info=e, stack_info=True)
          deleteFile(UtilsCache._cacheFile())
 
+    def clear(self):
+        UtilsCache._instance = UtilsCache()
+
 
     def findApplication(self, app) -> str:
         if app in self._appCache:
