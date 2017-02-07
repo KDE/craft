@@ -18,6 +18,9 @@ class SourceOnlyPackageBase( PackageBase, MultiSource, BuildSystemBase, Packager
         return True
 
     def install( self ):
+        if installdb.isInstalled(self.category, self.package):
+            for p in installdb.getInstalledPackages(self.category, self.package):
+                p.uninstall()
         installdb.addInstalled(self.category, self.package, self.version, revision=self.sourceRevision())
         return True
 
