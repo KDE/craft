@@ -19,9 +19,7 @@ class Package(SourceOnlyPackageBase, GitSource):
     def __init__( self):
         SourceOnlyPackageBase.__init__(self)
         GitSource.__init__(self,subinfo=self.subinfo)
-
-    def checkoutDir(self):
-        return os.path.join(CraftStandardDirs.craftBin(), "..")
+        setattr(self.source, "checkoutDir", lambda : os.path.join(CraftStandardDirs.craftBin(), ".."))
 
     def fetch(self):
         return GitSource.fetch(self)
