@@ -9,12 +9,13 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.11.1"
+        ver = "2.11.0"
         arch = 32
         if compiler.isX64():
             arch = 64
 
-        self.targets[ver]  = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.1/MinGit-{ver}-{arch}-bit.zip"
+        self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)
+        self.archiveNames[ver] = "PortableGit-%s-%s-bit.7z" % (ver, arch)
         self.targetInstallPath[ ver ] = os.path.join("dev-utils","git")
         self.defaultTarget = ver
 
@@ -30,16 +31,16 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        os.makedirs(os.path.join(self.imageDir(),"dev-utils","bin"))
-        utils.createBat(os.path.join(self.imageDir(), "dev-utils", "bin", "git.bat"),
-                        "%s %%*" % os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "git", "cmd", "git.exe"))
+        utils.copyFile(os.path.join(self.packageDir(), "git.exe"),
+                       os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"))
         return True
 
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
+        utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         tmpFile = tempfile.TemporaryFile()
+        git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
                       stdout=tmpFile, stderr=subprocess.PIPE  )
         tmpFile.seek( 0 )
