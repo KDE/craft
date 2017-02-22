@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'libs/qttools' ] = 'default'
 
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = 'https://github.com/frankosterfeld/qtkeychain.git'
+        self.svnTargets[ 'master' ] = 'https://github.com/frankosterfeld/qtkeychain.git'
         for ver in ["0.4.0", "0.5.0", "0.7.0"]:
             self.targets[ ver ] = "https://github.com/frankosterfeld/qtkeychain/archive/v%s.tar.gz" % ver
             self.archiveNames[ ver ] = "qtkeychain-v%s.tar.gz" % ver

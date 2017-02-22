@@ -9,13 +9,14 @@ from CraftOS.osutils import OsUtils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/KDAB/Charm.git'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = 'https://github.com/KDAB/Charm.git'
+        self.defaultTarget = 'master'
         self.shortDescription = "The Cross-Platform Time Tracker"
 
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
+        self.dependencies['libs/qtwinextras'] = 'default'
         self.dependencies['qt-libs/qtkeychain'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
 

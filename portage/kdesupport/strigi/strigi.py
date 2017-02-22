@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:strigi'
+        self.svnTargets['master'] = '[git]kde:strigi'
         for ver in ['0.7.6','0.7.7','0.7.8']:
             self.svnTargets[ver] = '[git]kde:strigi||v%s' % ver
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
@@ -50,7 +50,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.defines = ""
         self.subinfo.options.configure.defines += "-DENABLE_CLUCENE=OFF "
 
-        if self.buildTarget == "gitHEAD":
+        if self.buildTarget == "master":
             self.subinfo.options.configure.defines = (
                 " -DSTRIGI_SYNC_SUBMODULES=ON "
                 " -DGIT_EXECUTABLE=%s "

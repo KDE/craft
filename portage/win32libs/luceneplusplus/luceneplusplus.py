@@ -18,13 +18,13 @@ class subinfo (info.infoclass):
             self.targets[ ver ] = "https://github.com/luceneplusplus/LucenePlusPlus/archive/rel_%s.tar.gz" % ver
             self.archiveNames[ ver ] = "luceneplusplus-%s.tar.gz" % ver
             self.targetInstSrc[ ver ] = "LucenePlusPlus-rel_%s" % ver
-        self.patchToApply["gitHEAD"] = ("luceneplusplus-20150916.patch", 1)
+        self.patchToApply["master"] = ("luceneplusplus-20150916.patch", 1)
 
-        self.svnTargets[ "gitHEAD" ] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
+        self.svnTargets[ "master" ] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
         
         self.shortDescription = "Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine."
         self.homepage = "https://github.com/luceneplusplus/LucenePlusPlus/"
-        self.defaultTarget = "gitHEAD"
+        self.defaultTarget = "master"
 
 
 from Package.CMakePackageBase import *

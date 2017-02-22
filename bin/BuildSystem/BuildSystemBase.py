@@ -23,13 +23,14 @@ class BuildSystemBase(CraftBase):
         self.buildSystemType = typeName
 
 
-    def _getmakeProgram(self):
-        if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False):
-            return "ninja"
-        makeProgram = craftSettings.get("Compile", "MakeProgram", "" )
-        if makeProgram != "" and self.subinfo.options.make.supportsMultijob:
-            craftDebug.log.debug("set custom make program: %s" % makeProgram)
-            return makeProgram
+    @property
+    def makeProgramm(self):
+        if self.subinfo.options.make.supportsMultijob:
+            if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
+                return "ninja"
+            if ("Compile", "MakeProgram") in craftSettings:
+                craftDebug.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", "" ))
+                return craftSettings.get("Compile", "MakeProgram", "" )
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
@@ -43,7 +44,6 @@ class BuildSystemBase(CraftBase):
                 craftDebug.log.critical("unknown %s compiler" % self.compiler())
         elif OsUtils.isUnix():
             return "make"
-    makeProgramm = property(_getmakeProgram)
 
     def compile(self):
         """convencience method - runs configure() and make()"""
@@ -83,7 +83,7 @@ class BuildSystemBase(CraftBase):
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
         if maybeVerbose and craftDebug.verbose() > 1:
-            if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False ):
+            if self.makeProgramm == "ninja":
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

@@ -1,0 +1,65 @@
+# blacklist
+
+# general
+manifest\\.*
+.*\.exp
+.*\.pdb
+.*\.la
+.*\.nsis
+.*\.prl
+
+# multiple docs
+doc\\.*
+share\\man\\.*
+man\\.*
+share\\xml\\.*
+share\\locale\\.*
+
+# cmake stuff
+share\\apps\\cmake\\.*
+
+# common app stuff
+share\\apps\\ark\\.*
+share\\apps\\kgpg\\.*
+share\\kf5\\kdoctools\\.*
+lib\\.*
+bin\\data\\(?!(icontheme.rcc|kxmlgui5|knotifications5|kservices5|kile)).*
+
+# Unused Qt modules
+qml\\QtMultimedia
+qml\\QtWebChannel
+qml\\QtWebKit
+qml\\QtWinExtras
+qml\\QtTest
+
+# unrelated
+dev-utils\\.*
+share\\dbus-1\\services\\.*
+share\\pkgconfig\\.*
+
+# cleanup breeze stuff
+share\\wallpapers\\.*
+share\\icons\\Breeze_Snow\\.*
+share\\icons\\breeze-dark\\.*
+
+# cut the big oxygen icons: this can lead to errors though if used!!!!
+share\\icons\\oxygen\\64x64\\.*
+share\\icons\\oxygen\\128x128\\.*
+share\\icons\\oxygen\\256x256\\.*
+
+# doubled qt dlls
+lib\\[^\\]*\.dll
+# more qt leftovers
+translations\\.*
+phrasebooks\\.*
+mkspecs\\.*
+
+# unneeded stuff from bin\
+bin\\qt\.conf
+bin\\syncqt\.pl
+
+bin\\dbus-*\.exe
+bin\\dbus-env\.bat
+
+# strip most executables
+bin\\(?!(kile|kbuildsycoca5|update-mime-database|kioslave|okular)).*\.exe

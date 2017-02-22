@@ -1,0 +1,51 @@
+# blacklist
+
+# general
+manifest\\.*
+.*\.exp
+.*\.pdb
+.*\.la
+.*\.nsis
+.*\.prl
+
+# multiple docs
+doc\\.*
+share\\man\\.*
+man\\.*
+share\\xml\\.*
+share\\locale\\.*
+
+# cmake stuff
+share\\apps\\cmake\\.*
+
+# common app stuff
+share\\apps\\ark\\.*
+share\\apps\\kgpg\\.*
+share\\kf5\\kdoctools\\.*
+lib\\.*
+bin\\data\\(?!(icontheme.rcc|okteta|kxmlgui5)).*
+
+# unrelated
+dev-utils\\.*
+share\\dbus-1\\services\\.*
+share\\pkgconfig\\.*
+share\\.*
+etc\\.*
+certs\\.*
+
+
+# doubled qt dlls
+lib\\[^\\]*\.dll
+#lib\\[^\\]*\.a
+# more qt leftovers
+translations\\.*
+phrasebooks\\.*
+mkspecs\\.*
+
+# unneeded stuff from bin\
+# bin\\qt\.conf
+bin\\syncqt\.pl
+
+
+# strip most executables
+bin\\(?!(okteta|kbuildsycoca5|update-mime-database|kioslave)).*\.exe

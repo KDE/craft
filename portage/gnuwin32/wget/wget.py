@@ -9,6 +9,9 @@ class subinfo(info.infoclass):
         self.targetDigests['1.18'] = (['19d4ae30ae35f212e95edb6f18dddab19e1c97e119c36c4231b741e7293f9b3c'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1.18"
 
+    def setDependencies(self):
+        self.buildDependencies['dev-util/7zip'] = 'default'
+
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

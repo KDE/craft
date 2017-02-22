@@ -3,9 +3,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:yakuake'
+        self.svnTargets['master'] = '[git]kde:yakuake'
         self.shortDescription = "a drop-down terminal emulator based on KDE Konsole technology"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

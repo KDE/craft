@@ -3,7 +3,7 @@
 ## Here you set the compiler to be used.
 ## mingw4   - use the mingw gcc compiler (recommended)
 ## msvc2010, msvc2012, msvc2013 or msvc2015 - use the Microsoft Visual C++ compiler
-KDECompiler = mingw4
+KDECompiler = freebsd-gcc
 
 ##  possible values x86 or x64
 Architecture = x64

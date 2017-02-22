@@ -10,12 +10,13 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qttools'] = 'default'
         self.dependencies['libs/qtwebsockets'] = 'default'
         self.dependencies['libs/qtmultimedia'] = 'default'
+        self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['win32libs/snoregrowl'] = 'default'
 
 
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:snorenotify'
+        self.svnTargets['master'] = '[git]kde:snorenotify'
         for ver in ['0.6.0', '0.7.0']:
             self.targets[ ver ] = "http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz" % ( ver ,ver )
             self.targetInstSrc[ ver ] = "snorenotify-%s" % ver

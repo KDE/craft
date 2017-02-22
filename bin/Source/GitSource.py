@@ -77,10 +77,13 @@ class GitSource ( VersionSystemSourceBase ):
     def __git(self, command, *args, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule') and craftSettings.get( "General", "EMERGE_LOG_DIR") != "":
-            # if stdout/stderr is redirected, git clone qt hangs forever.
-            # It does not with option -q (suppressing progress info)
-            command += ' -q'
+        displayProgress = False
+        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule'):
+            if craftDebug.verbose() < 0:
+                command += ' -q'
+            else:
+                kwargs["displayProgress"]  = True
+                command += ' --progress'
         parts = ["git", command]
         parts.extend(args)
         if not kwargs.get('cwd'):
@@ -102,9 +105,12 @@ class GitSource ( VersionSystemSourceBase ):
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
-        ret = True
         # only run if wanted (e.g. no --offline is given on the commandline)
-        if (not self.noFetch):
+        if (self.noFetch):
+            craftDebug.log.debug("skipping git fetch (--offline)")
+            return True
+        else:
+            ret = True
             self.setProxy()
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
@@ -114,11 +120,11 @@ class GitSource ( VersionSystemSourceBase ):
                 os.rmdir(checkoutDir)
             if os.path.exists(checkoutDir):
                 if not repoTag:
-                    self.__git("fetch")
-                    ret = self.__git("checkout", repoBranch or "master") and \
-                          self.__git("merge")
+                    ret = self.__git("fetch")\
+                            and self.__git("checkout", repoBranch or "master") \
+                            and self.__git("merge")
                     if self.subinfo.options.fetch.checkoutSubmodules:
-                        self.__git("submodule update --init --recursive")
+                        ret = ret and self.__git("submodule update --init --recursive")
             else:
                 # it doesn't exist so clone the repo
                 os.makedirs(checkoutDir)
@@ -143,10 +149,8 @@ class GitSource ( VersionSystemSourceBase ):
                         ret = self.__git('checkout', '_%s' % repoTag)
                 else:
                     ret = self.__git('checkout', repoTag)
-
-        else:
-            craftDebug.log.debug("skipping git fetch (--offline)")
         return ret
+
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""

@@ -29,7 +29,37 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
+class Package( CMakePackageBase ):
     def __init__( self ):
-        CMakePackageBase.__init__(self)
+        CMakePackageBase.__init__( self )
+        self.blacklist_file = [
+            PackagerLists.runtimeBlacklist,
+            os.path.join(os.path.dirname(__file__), "blacklist.txt")
+        ]
+        self.changePackager(NullsoftInstallerPackager)
 
+
+    def createPackage(self):
+        self.defines["productname"] = "Okteta"
+        self.defines["executable"] = "bin\\okteta.exe"
+        #self.defines["icon"] = os.path.join(self.packageDir(), "okular.ico")
+
+        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("gnuwin32/sed")
+        self.ignoredPackages.append("frameworks/kdesignerplugin")
+        self.ignoredPackages.append("frameworks/kemoticons")
+        self.ignoredPackages.append("kdesupport/qca")
+
+        return TypePackager.createPackage(self)
+
+
+    def preArchive(self):
+        archiveDir = self.archiveDir()
+
+        # move everything to the location where Qt expects it
+        binPath = os.path.join(archiveDir, "bin")
+        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
+        utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
+
+        # TODO: Just blacklisting this doesn't work. WTF?
+        utils.rmtree(os.path.join(archiveDir, "dev-utils"))

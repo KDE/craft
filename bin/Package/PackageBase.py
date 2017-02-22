@@ -28,27 +28,11 @@ class PackageBase (CraftBase):
         craftDebug.log.debug("PackageBase.__init__ called")
         CraftBase.__init__(self)
 
-    def _installedDBPrefix(self, buildType=None):
-        postfix = ''
-        if buildType == None:
-            buildType = self.buildType()
-        if self.useBuildTypeRelatedMergeRoot:
-            if buildType == 'Debug':
-                postfix = 'debug'
-            elif buildType == 'Release':
-                postfix =  'release'
-            elif buildType == 'RelWithDebInfo':
-                postfix =  'relwithdebinfo'
-        return postfix
-
     def qmerge( self ):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
-        ignoreInstalled = False
 
-        prefixPath = self._installedDBPrefix( self.buildType() )
-        if installdb.isInstalled( category=None, package=self.package, prefix=prefixPath ):
-            ignoreInstalled = True
+        if installdb.isInstalled(category=None, package=self.package):
             self.unmerge()
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
@@ -71,18 +55,10 @@ class PackageBase (CraftBase):
 
         # add package to installed database -> is this not the task of the manifest files ?
 
-        # only packages using a specific merge destination path are shared between build types
         revision = self.sourceRevision()
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
-            for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix( prefix ), ignoreInstalled, revision = revision)
-                package.addFiles( utils.getFileListFromDirectory(  self._installedDBPrefix( prefix ) ) )
-                package.install()
-        else:
-            package = installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix(), ignoreInstalled, revision = revision )
-            package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
-            package.install()
+        package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
+        package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+        package.install()
 
 
         return True
@@ -96,29 +72,13 @@ class PackageBase (CraftBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
-            for prefix in [ "Release", "RelWithDebInfo", "Debug" ]:
-                packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( prefix ) )
-                for package in packageList:
-                    fileList = package.getFilesWithHashes()
-                    utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
-                    package.uninstall()
-        else:
-            packageList = installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
-            for package in packageList:
-                fileList = package.getFilesWithHashes()
-                utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
-                package.uninstall()
+        packageList = installdb.getInstalledPackages(self.category, self.package)
+        for package in packageList:
+            fileList = package.getFilesWithHashes()
+            utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+            package.uninstall()
 
-        # only packages using a specific merge destination path are shared between build types
-        if self.useBuildTypeRelatedMergeRoot and self.subinfo.options.merge.ignoreBuildType \
-                and self.subinfo.options.merge.destinationPath != None:
-            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Release" ) )
-            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
-            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Debug" ) )
-        else:
-            installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
+        installdb.getInstalledPackages(self.category, self.package)
 
         # run post-uninstall scripts
         if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
@@ -176,7 +136,7 @@ class PackageBase (CraftBase):
         utils.createImportLibs( pkgName, basepath )
 
     def printFiles(self):
-        packageList = installdb.getInstalledPackages(self.category, self.package, self._installedDBPrefix())
+        packageList = installdb.getInstalledPackages(self.category, self.package)
         for package in packageList:
             fileList = package.getFiles()
             fileList.sort()

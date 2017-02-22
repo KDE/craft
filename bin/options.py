@@ -177,10 +177,6 @@ class OptionsMerge(OptionsBase):
         self.sourcePath = None
         ## subdir based on mergeDir() used as  merge destination directory
         self._destinationPath = None
-        ## merge/unmerge the package build type independent
-        # this option is ignored when the environment variable
-        # EMERGE_MERGE_ROOT_WITH_BUILD_TYPE is not set or is false
-        self.ignoreBuildType = False
 
     @property
     @deprecated("info.targetInstallPath")

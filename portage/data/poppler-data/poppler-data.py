@@ -2,7 +2,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "git://git.freedesktop.org/git/poppler/poppler-data"
+        self.svnTargets['master'] = "git://git.freedesktop.org/git/poppler/poppler-data"
         for v in [ '0.4.6', '0.4.7']:
             self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
             self.targetInstSrc[v] = 'poppler-data-' + v

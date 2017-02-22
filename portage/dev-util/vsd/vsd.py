@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
 
         
     def setTargets( self ):
-      self.svnTargets['gitHEAD'] = 'https://github.com/TheOneRing/vsd.git'
-      self.defaultTarget = 'gitHEAD'
+      self.svnTargets['master'] = 'https://github.com/TheOneRing/vsd.git'
+      self.defaultTarget = 'master'
          
 
 class Package( CMakePackageBase ):

@@ -35,7 +35,7 @@ def destroyCraftRoot():
     root = CraftStandardDirs.craftRoot()
     for entry in os.listdir(root):
         path = os.path.join(root, entry)
-        if path == CraftStandardDirs.etcDir():
+        if os.path.exists(CraftStandardDirs.etcDir()) and os.path.samefile(path, CraftStandardDirs.etcDir()):
             for entry in os.listdir(path):
                 if not entry == "kdesettings.ini":
                     etcPath = os.path.join(path, entry)
@@ -47,8 +47,8 @@ def destroyCraftRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not path in [ CraftStandardDirs.downloadDir(), os.path.normpath(os.path.join(CraftStandardDirs.craftBin(), "..")),
-                           os.path.join(CraftStandardDirs.craftRoot(), "python") ]:
+        elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in [ CraftStandardDirs.downloadDir(), os.path.normpath(os.path.join(CraftStandardDirs.craftBin(), "..")),
+                           os.path.join(CraftStandardDirs.craftRoot(), "python")]):
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
                 continue
@@ -57,7 +57,7 @@ def destroyCraftRoot():
 
 def packageIsOutdated( category, package ):
     newest = portage.PortageInstance.getNewestVersion( category, package )
-    installed = InstallDB.installdb.getInstalledPackages( category, package )
+    installed = InstallDB.installdb.getInstalledPackages(category, package)
     for pack in installed:
         version = pack.getVersion( )
         if newest != version:
@@ -94,7 +94,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             skip = False
             if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
                 revision = package.sourceVersion( )
-                for p in InstallDB.installdb.getInstalledPackages( category, packageName ):
+                for p in InstallDB.installdb.getInstalledPackages(category, packageName):
                     if p.getRevision( ) == revision:
                         craftDebug.step("Skipping further actions, package is up-to-date")
                         skip = True
@@ -158,7 +158,7 @@ def handleSinglePackage( packageName, action, args ):
         for mainCategory, mainPackage in installedPackages:
             if portage.PortageInstance.isCategory( packageName ) and ( mainCategory != packageName ):
                 continue
-            if InstallDB.installdb.isInstalled( mainCategory, mainPackage, args.buildType ) \
+            if InstallDB.installdb.isInstalled(mainCategory, mainPackage, args.buildType) \
                     and portage.isPackageUpdateable( mainCategory, mainPackage ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
@@ -262,7 +262,7 @@ def handleSinglePackage( packageName, action, args ):
             isLastPackage = info == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( info.category, info.package ) != [ ]
-            isInstalled = InstallDB.installdb.isInstalled( info.category, info.package )
+            isInstalled = InstallDB.installdb.isInstalled(info.category, info.package)
             if args.list_file and action != "all":
                 info.enabled = info.package in originalPackageList
             if ( isInstalled and not info.enabled ) and not (
@@ -444,7 +444,7 @@ def main( ):
         return True
 
     if args.snoreSettings:
-        snoresettigns = utils.UtilsCache.findApplication("snoresettings")
+        snoresettigns = utils.utilsCache.findApplication("snoresettings")
         if snoresettigns:
             return utils.system("%s -a snoresend" % snoresettigns)
         return False

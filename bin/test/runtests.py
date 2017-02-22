@@ -39,6 +39,7 @@ import os
 import sys
 import unittest
 import optparse
+from asyncio import log
 
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
@@ -51,15 +52,18 @@ def main():
 
     parser = optparse.OptionParser()
     parser.set_defaults(verbosity=1)
-    parser.add_option("-v", "--verbose", action="store_const", const=3,
-                      dest="verbosity")
+    parser.add_option("-v", "--verbose", action="store_const", const=3, dest="verbosity")
+    parser.add_option("-t", "--target", action="store", dest="target" , default=None)
     opts, rest = parser.parse_args()
 
     craftDebug.setVerbose(opts.verbosity)
     os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
 
     loader = unittest.TestLoader()
-    suite = loader.discover(start_dir=thisdir)
+    if not opts.target:
+        suite = loader.discover(start_dir=thisdir)
+    else:
+        suite = loader.loadTestsFromName(opts.target)
     runner = unittest.TextTestRunner(verbosity = opts.verbosity + 1)
     result = runner.run(suite)
 

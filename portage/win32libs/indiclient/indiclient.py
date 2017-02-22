@@ -5,10 +5,10 @@ from xml.etree import ElementTree as et
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = "https://github.com/indilib/indi.git"
+        self.svnTargets['master'] = "https://github.com/indilib/indi.git"
         self.shortDescription = 'INDI Library'
-        self.defaultTarget = 'gitHEAD'
-        self.targetInstSrc['gitHEAD'] = "libindi"
+        self.defaultTarget = 'master'
+        self.targetInstSrc['master'] = "libindi"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base']  = 'default'

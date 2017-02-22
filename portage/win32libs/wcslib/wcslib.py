@@ -2,8 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        #self.targets['0.1'] = 'ftp://ftp.atnf.csiro.au/pub/software/wcslib/wcslib.tar.bz2'
-        self.targets['0.1'] = 'http://raphaelcojocaru.xyz/wcslib515.tar.bz2'
+        self.targets['0.1'] = 'http://indilib.org/jdownloads/kstars/wcslib-515.tar.bz2'
 		
         self.defaultTarget = '0.1'
 

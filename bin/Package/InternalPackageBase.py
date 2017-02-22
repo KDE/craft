@@ -30,15 +30,15 @@ class InternalPackageBase(PackageBase):
         return True
 
     def qmerge(self):
-        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Release") )
-        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("RelWithDebInfo") )
-        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix("Debug") )
-        installdb.addInstalled( self.category, self.package, self.version, self._installedDBPrefix() )
+        installdb.addInstalled(self.category, self.package, self.version)
+        installdb.addInstalled(self.category, self.package, self.version)
+        installdb.addInstalled(self.category, self.package, self.version)
+        installdb.addInstalled(self.category, self.package, self.version)
         return True
 
     def unmerge(self):
-        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Release" ) )
-        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "RelWithDebInfo" ) )
-        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( "Debug" ) )
-        installdb.getInstalledPackages( self.category, self.package, self._installedDBPrefix( ) )
+        installdb.getInstalledPackages(self.category, self.package)
+        installdb.getInstalledPackages(self.category, self.package)
+        installdb.getInstalledPackages(self.category, self.package)
+        installdb.getInstalledPackages(self.category, self.package)
         return True

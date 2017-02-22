@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
       self.dependencies[ 'kdesupport/qjson' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'gitHEAD' ] = 'https://github.com/minimoog/QTweetLib.git'
+      self.svnTargets[ 'master' ] = 'https://github.com/minimoog/QTweetLib.git'
       self.targets['0.5'] = 'http://cloud.github.com/downloads/minimoog/QTweetLib/QTweetLib-0.5.tar.gz'
       self.targetDigests['0.5'] = 'cab78a68294d0b79e9108a180e2cd9da225581b0'
       self.targetInstSrc['0.5'] = 'QTweetLib-0.5'

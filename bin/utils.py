@@ -9,10 +9,11 @@ this file contains some helper functions for craft
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
 import configparser
-import datetime
+import time
 import ftplib
 import http.client
 import inspect
+import pickle
 import shutil
 import tarfile
 import urllib.error
@@ -20,6 +21,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 from operator import itemgetter
+import atexit
 
 from CraftDebug import craftDebug
 import CraftHash
@@ -28,42 +30,86 @@ from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
 # TODO: Rename
-class UtilsCache():
-    _helpCache = {}
-    _NIGTHLY_URLS = dict()
+class UtilsCache(object):
+    _instance = None
+    _version = 2
+    _cacheLifetime = (60 * 60 * 24) * 1  # days
+
+    def __init__(self):
+        self.version = UtilsCache._version
+        self._appCache = {}
+        self._helpCache = {}
+        self._nightlyVersions = {}
+        self.cacheCreationTime = time.time()
+        #defined in portageSearch
+        self.availablePackages = None
 
     @staticmethod
-    def findApplication(app) -> str:
+    def instance():
+        if not UtilsCache._instance:
+            UtilsCache._instance = UtilsCache()
+            if os.path.exists(UtilsCache._cacheFile()):
+                with open(UtilsCache._cacheFile(), "rb") as f:
+                    try:
+                        data = pickle.load(f)
+                    except:
+                        craftDebug.log.warning("Cache corrupted")
+                        return UtilsCache._instance
+
+                if data.version != UtilsCache._version or (time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
+                    craftDebug.log.debug("Clear cache")
+                else:
+                    UtilsCache._instance = data
+        return UtilsCache._instance
+
+    @staticmethod
+    def _cacheFile():
+        return os.path.join(CraftStandardDirs.etcDir(), "cache.pickle")
+
+    @staticmethod
+    @atexit.register
+    def _save():
+        try:
+            with open(UtilsCache._cacheFile(), "wb") as f:
+                pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
+                pick.dump(UtilsCache.instance())
+        except Exception as e:
+         craftDebug.log.warning(f"Failed to save cache {e}",exc_info=e, stack_info=True)
+         deleteFile(UtilsCache._cacheFile())
+
+    def clear(self):
+        UtilsCache._instance = UtilsCache()
+
+
+    def findApplication(self, app) -> str:
+        if app in self._appCache:
+            appLocation = self._appCache[app]
+            if os.path.exists(appLocation):
+                return appLocation
+            else:
+                self._helpCache.clear()
+
         appLocation = shutil.which(app)
-        if not appLocation:
-            possibleAppLocation = os.path.join(CraftStandardDirs.craftBin(), "data", "binary", OsUtils.name(), app)
-            extentions = [""]
-            if OsUtils.isWin():
-                extentions += [".exe", ".bat"]
-            for ext in extentions:
-                if os.path.exists(possibleAppLocation + ext):
-                    appLocation = possibleAppLocation + ext
-                    break
-        if not appLocation:
+        if appLocation:
+            craftDebug.log.debug("Adding %s to app cache" % appLocation)
+            self._appCache[app] = appLocation
+        else:
             craftDebug.log.debug("Craft was unable to locate: %s" % app)
             return None
         return appLocation
 
     # TODO: rename, cleanup
-    @staticmethod
-    def appSupportsCommand(app, command, helpCommand = "-h") -> str:
-        if not (app, command) in UtilsCache._helpCache:
+    def appSupportsCommand(self, app, command, helpCommand = "-h") -> str:
+        if not (app, command) in self._helpCache:
             craftDebug.log.debug("%s %s" % (app, helpCommand))
             output = subprocess.getoutput("%s %s" %(app, helpCommand))
             supports = output.find( command ) != -1
-            UtilsCache._helpCache[(app, command)] = supports
+            self._helpCache[(app, command)] = supports
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
-        return UtilsCache._helpCache[(app, command)]
+        return self._helpCache[(app, command)]
 
-
-    @staticmethod
-    def getNightlyVersionsFromUrl(url, pattern, timeout = 10) -> [str]:
+    def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
         """
         Returns a list of possible version number matching the regular expression in pattern.
         :param url: The url to look for the nightly builds.
@@ -71,10 +117,10 @@ class UtilsCache():
         :param timeout:
         :return: A list of matching strings or [None]
         """
-        if craftSettings.getboolean("General", "WorkOffline"):
-            craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
-            return []
-        if url not in UtilsCache._NIGTHLY_URLS:
+        if url not in self._nightlyVersions:
+            if craftSettings.getboolean("General", "WorkOffline"):
+                craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
+                return []
             try:
                 with urllib.request.urlopen(url, timeout = timeout) as fh:
                     data = str(fh.read(), "UTF-8")
@@ -82,12 +128,13 @@ class UtilsCache():
                     if not vers:
                         print(data)
                         raise Exception("Pattern %s does not match." % pattern)
-                    UtilsCache._NIGTHLY_URLS[url] = list(set(vers))
-                    return UtilsCache._NIGTHLY_URLS[url]
+                    self._nightlyVersions[url] = list(set(vers))
+                    return self._nightlyVersions[url]
             except Exception as e:
                 craftDebug.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
-        return UtilsCache._NIGTHLY_URLS.get(url, [])
+        return self._nightlyVersions.get(url, [])
 
+utilsCache = UtilsCache.instance()
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -147,7 +194,7 @@ def getFile( url, destdir , filename='' ) -> bool:
         craftDebug.log.error("fetch: no url given")
         return False
 
-    if UtilsCache.findApplication("wget"):
+    if utilsCache.findApplication("wget"):
         return wgetFile( url, destdir , filename )
 
 
@@ -159,10 +206,14 @@ def getFile( url, destdir , filename='' ) -> bool:
         return True
 
     width, _ =  shutil.get_terminal_size((80,20))
+
     def dlProgress(count, blockSize, totalSize):
-        percent = int(count * blockSize * 100 / totalSize)
-        times = int((width - 20)/100 * percent)
-        sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+        if totalSize != -1:
+            percent = int(count * blockSize * 100 / totalSize)
+            times = int((width - 20) / 100 * percent)
+            sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+        else:
+            sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
         sys.stdout.flush()
 
     urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
@@ -175,7 +226,7 @@ def getFile( url, destdir , filename='' ) -> bool:
 
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    command = "\"%s\" -c -t 10" % UtilsCache.findApplication("wget")
+    command = "\"%s\" -c -t 10" % utilsCache.findApplication("wget")
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
@@ -209,7 +260,7 @@ def unpackFile( downloaddir, filename, workdir ):
     craftDebug.log.debug("unpacking this file: %s" % filename)
 
     ( shortname, ext ) = os.path.splitext( filename )
-    if re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
+    if not utilsCache.findApplication("7za") or re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
         shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
         return True
     elif ext == "":
@@ -217,18 +268,21 @@ def unpackFile( downloaddir, filename, workdir ):
     return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
 
 def un7zip( fileName, destdir, flag = None ):
-    command = UtilsCache.findApplication("7za")
+    command = utilsCache.findApplication("7za")
     command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
 
+    kw = {}
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         command += " -t7z"
-    if UtilsCache.appSupportsCommand(UtilsCache.findApplication("7za"),  "-bs" ):
+    if utilsCache.appSupportsCommand(utilsCache.findApplication("7za"), "-bs"):
         command += " -bso2"
         command += " -bsp1"
-    return system( command , displayProgress=True)
+        kw["stderr"] = subprocess.PIPE
+
+    return system( command , displayProgress=True, **kw)
 
 def system(cmd, displayProgress=False, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
@@ -244,10 +298,12 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     logged to allow the display of progress bars."""
 
     craftDebug.log.debug("executing command: '%s' in '%s'" % (cmd, kw.get("cwd", os.getcwd())))
+    craftDebug.log.debug("displayProgress=%s" % displayProgress)
     if not displayProgress:
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
             kw["universal_newlines"] = True
+            kw["errors"] = "backslashreplace"
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
@@ -258,7 +314,6 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
             else:
                 craftDebug.log.info(line.rstrip())
     else:
-        kw['stderr'] = kw.get('stderr', subprocess.PIPE)
         kw["universal_newlines"] = True
         proc = subprocess.Popen(cmd, **kw)
         if proc.stderr:
@@ -266,7 +321,10 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
                 craftDebug.log.debug(line.rstrip())
 
     proc.communicate()
-    return proc.wait() == 0
+    result = proc.wait() == 0
+    if not result:
+        craftDebug.log.debug(f"Coammand {cmd} failed with exit code {proc.returncode}")
+    return result
 
 def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """
@@ -413,10 +471,10 @@ def createImportLibs( dll_name, basepath ):
         os.mkdir( dst )
 
     # check whether the required binary tools exist
-    HAVE_GENDEF = UtilsCache.findApplication( "gendef" ) is not None
+    HAVE_GENDEF = utilsCache.findApplication("gendef") is not None
     USE_GENDEF = HAVE_GENDEF
-    HAVE_LIB = UtilsCache.findApplication( "lib" ) is not None
-    HAVE_DLLTOOL = UtilsCache.findApplication( "dlltool" ) is not None
+    HAVE_LIB = utilsCache.findApplication("lib") is not None
+    HAVE_DLLTOOL = utilsCache.findApplication("dlltool") is not None
 
     craftDebug.log.debug("gendef found:", HAVE_GENDEF)
     craftDebug.log.debug("gendef used:", USE_GENDEF)
@@ -495,7 +553,7 @@ def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardli
     shutil.copy(src,dest)
     return True
 
-def copyDir( srcdir, destdir,linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
+def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
@@ -512,8 +570,7 @@ def copyDir( srcdir, destdir,linkOnly = craftSettings.getboolean("General", "Use
             if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                copyFile(os.path.join( root, fileName ),os.path.join( tmpdir, fileName ), linkOnly)
-                craftDebug.log.debug("copy %s to %s" % (os.path.join(root, fileName), os.path.join(tmpdir, fileName)))
+                copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly)
 
     return True
 
@@ -709,67 +766,6 @@ def levenshtein(s1, s2):
         previous_row = current_row
 
     return previous_row[-1]
-
-
-#taken from https://bitbucket.org/pypa/setuptools/src/a3d16c5f7443ec6e5e4d8d4791682b56130b41b5/pkg_resources.py?at=default
-
-
-def parse_version(s):
-    """Convert a version string to a chronologically-sortable key
-
-    This is a rough cross between distutils' StrictVersion and LooseVersion;
-    if you give it versions that would work with StrictVersion, then it behaves
-    the same; otherwise it acts like a slightly-smarter LooseVersion. It is
-    *possible* to create pathological version coding schemes that will fool
-    this parser, but they should be very rare in practice.
-
-    The returned value will be a tuple of strings.  Numeric portions of the
-    version are padded to 8 digits so they will compare numerically, but
-    without relying on how numbers compare relative to strings.  Dots are
-    dropped, but dashes are retained.  Trailing zeros between alpha segments
-    or dashes are suppressed, so that e.g. "2.4.0" is considered the same as
-    "2.4". Alphanumeric parts are lower-cased.
-
-    The algorithm assumes that strings like "-" and any alpha string that
-    alphabetically follows "final"  represents a "patch level".  So, "2.4-1"
-    is assumed to be a branch or patch of "2.4", and therefore "2.4.1" is
-    considered newer than "2.4-1", which in turn is newer than "2.4".
-
-    Strings like "a", "b", "c", "alpha", "beta", "candidate" and so on (that
-    come before "final" alphabetically) are assumed to be pre-release versions,
-    so that the version "2.4" is considered newer than "2.4a1".
-
-    Finally, to handle miscellaneous cases, the strings "pre", "preview", and
-    "rc" are treated as if they were "c", i.e. as though they were release
-    candidates, and therefore are not as new as a version string that does not
-    contain them, and "dev" is replaced with an '@' so that it sorts lower than
-    than any other pre-release tag.
-    """
-
-    def _parse_version_parts(s):
-        component_re = re.compile(r'(\d+ | [a-z]+ | \.| -)', re.VERBOSE)
-        replace = {'pre':'c', 'preview':'c','-':'final-','rc':'c','dev':'@'}.get
-        for part in component_re.split(s):
-            part = replace(part,part)
-            if not part or part=='.':
-                continue
-            if part[:1] in '0123456789':
-                yield part.zfill(8)    # pad for numeric comparison
-            else:
-                yield '*'+part
-
-        yield '*final'  # ensure that alpha/beta/candidate are before final
-
-    parts = []
-    for part in _parse_version_parts(s.lower()):
-        if part.startswith('*'):
-            if part<'*final':   # remove '-' before a prerelease tag
-                while parts and parts[-1]=='*final-': parts.pop()
-            # remove trailing zeros from each series of numeric parts
-            while parts and parts[-1]=='00000000':
-                parts.pop()
-        parts.append(part)
-    return tuple(parts)
 
 def createBat(fileName, command):
     with open(fileName, "wt+") as bat:

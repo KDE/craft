@@ -9,9 +9,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['win32libs/chm'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['qt-libs/poppler'] = 'default'
-        self.dependencies['kdesupport/qimageblitz'] = 'default'
         self.dependencies['win32libs/tiff'] = 'default'
         self.dependencies['win32libs/djvu'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
@@ -55,7 +53,6 @@ class Package( CMakePackageBase ):
         self.ignoredPackages.append("gnuwin32/sed")
         self.ignoredPackages.append("frameworks/kdesignerplugin")
         self.ignoredPackages.append("frameworks/kemoticons")
-        self.ignoredPackages.append("kdesupport/qca")
 
         return TypePackager.createPackage(self)
 

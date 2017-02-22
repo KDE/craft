@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'dbus-%s' % ver
             self.targetConfigurePath[ver] = 'cmake'
 
-        self.svnTargets['gitHEAD'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
-        self.targetSrcSuffix['gitHEAD'] = 'git'
-        self.targetConfigurePath['gitHEAD'] = 'cmake'
+        self.svnTargets['master'] = 'git://anongit.freedesktop.org/git/dbus/dbus'
+        self.targetSrcSuffix['master'] = 'git'
+        self.targetConfigurePath['master'] = 'cmake'
 
         self.patchToApply['1.8.4'] = [('dont_include_afxres.diff', 1)]
         self.patchToApply['1.10.4'] = [('dont_include_afxres.diff', 1)]

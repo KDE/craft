@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'https://github.com/flavio/qjson.git'
+        self.svnTargets['master'] = 'https://github.com/flavio/qjson.git'
         for ver in ['0.7.1','0.8.0','0.8.1']:
             self.targets[ ver ] = "http://downloads.sourceforge.net/qjson/qjson-" + ver + ".tar.bz2"
             self.targetInstSrc[ ver ] = "qjson-%s" % ver
@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.7.1'] = ("qjson-20100517.diff", 1)
         self.targetDigests['0.8.1'] = '197ccfd533f17bcf40428e68a82e6622047ed4ab'
         self.shortDescription = "a qt-based library that maps JSON data to Qt objects"
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
 from Package.CMakePackageBase import *
 

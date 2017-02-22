@@ -4,8 +4,8 @@ from CraftConfig import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]kde:atcore|master'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets[ 'master' ] = '[git]kde:atcore|master'
+        self.defaultTarget = 'master'
         self.shortDescription = "the KDE core of Atelier Printer Host"
 
     def setDependencies( self ):

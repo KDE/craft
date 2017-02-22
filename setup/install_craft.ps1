@@ -5,17 +5,27 @@ param(
     )
 
 
-$Script:minPythonVersion = "3.5.0"
+[version]$minPythonVersion = 3.6
+
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1-embed-amd64.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-amd64.zip"
 }
 else
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.5.1/python-3.5.1-embed-win32.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-win32.zip"
 }
 #####
 $Script:pythonVersion = "0"
+
+function findPython([string] $name)
+{
+    $py = (Get-Command $name -ErrorAction SilentlyContinue)
+    if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+        return $py.Source
+    }
+    return $null
+}
 
 function FetchPython()
 {
@@ -31,6 +41,8 @@ function FetchPython()
                 }
                 $Script:python = "$Script:installRoot\python\python.exe"
                 Expand-Archive "$archive" "$Script:installRoot\python\"
+                # https://bugs.python.org/issue29319
+                rm $Script:installRoot\python\python*._pth -ErrorAction SilentlyContinue
                 break
             }
             1 {
@@ -50,21 +62,18 @@ function FetchPython()
 
 function TestAndFetchPython()
 {
-    if($Script:python -ne $NULL)
+    if($Script:python)
     {
         if(($Script:python -split "\r\n").Length -eq 1)
         {
             Try {
                 (& "$Script:python" "--version" ) -match "\d.\d.\d" | Out-Null
                 $Script:pythonVersion = $Matches[0]
-                if( [int]::Parse($Script:minPythonVersion -replace "\.") -ge [int]::Parse($Script:pythonVersion -replace "\."))
-                {
-                    Write-Host "We found $Script:python version $Script:pythonVersion which is to old."
-                }
-                else
+                if([version]$Script:pythonVersion -ge $minPythonVersion)
                 {
                     return
                 }
+                Write-Host "We found $Script:python version $Script:pythonVersion which is to old."
             }
             Catch {
                 Write-Host "We failed to determine your python version."
@@ -106,7 +115,10 @@ mkdir $Script:installRoot -Force | Out-Null
 mkdir $Script:installRoot\download -Force | Out-Null
 
 if (!$Script:python) {
-    $Script:python=(where.exe python 2>$null)
+    $Script:python = findPython("python")
+    if (!$Script:python) {
+        $Script:python=(where.exe python 2>$null)
+    }
     TestAndFetchPython
 }
 

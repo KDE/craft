@@ -2,7 +2,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:libkfbapi'
+        self.svnTargets['master'] = '[git]kde:libkfbapi'
         
         for ver in ['1.0']:
             self.targets[ ver ] = "http://download.kde.org/stable/libkfbapi/" + ver + "/src/libkfbapi-" + ver + ".tar.bz2"

@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'libs/qtbase' ] = 'default'
 
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = '[git]https://github.com/KDAB/KDReports.git'
+        self.svnTargets[ 'master' ] = '[git]https://github.com/KDAB/KDReports.git'
         for ver in [ '1.7.1' ]:
             self.targets[ ver ] = 'https://github.com/KDAB/KDReports/archive/kdreports-1.7.1.tar.gz'
             self.targetInstSrc[ ver ] = "kdreports-%s" % ver

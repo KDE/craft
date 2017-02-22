@@ -9,27 +9,26 @@ import compiler
 from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
-
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
         for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
-            qtVer = utils.parse_version(ver)
+            qtVer = CraftVersion(ver)
             if ver == "dev":
                 self.patchToApply[ver] = [
                     ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
                                             #https://codereview.qt-project.org/#/c/149550/
                 ]
-            elif qtVer >= utils.parse_version("5.8"):
+            elif qtVer >= CraftVersion("5.8"):
                 self.patchToApply[ver] = [
                     ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.8.patch", 1),  # https://codereview.qt-project.org/#/c/141254/
                     # https://codereview.qt-project.org/#/c/149550/
                     ("qdbus-manager-quit-5.8.patch", 1)  # https://phabricator.kde.org/D2545#69186
                 ]
-            elif qtVer >= utils.parse_version("5.7"):
+            elif qtVer >= CraftVersion("5.7"):
                 self.patchToApply[ver] = [
                     ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.7.patch", 1),  # https://codereview.qt-project.org/#/c/141254/
@@ -67,6 +66,10 @@ class Package(Qt5CorePackageBase):
 
 
     def configure( self, unused1=None, unused2=""):
+        if compiler.isMinGW() and "DXSDK_DIR" not in os.environ:
+            craftDebug.log.critical("Failed to detec a DirectX SDK")
+            craftDebug.log.critical("Please visite https://community.kde.org/Guidelines_and_HOWTOs/Build_from_source/Windows#Direct_X_SDK for instructions")
+            return False
         self.enterBuildDir()
         self.setPathes()
         if OsUtils.isWin():
@@ -79,16 +82,15 @@ class Package(Qt5CorePackageBase):
         elif OsUtils.isUnix():
             configure = os.path.join( self.sourceDir() ,"configure" )
 
-
         command = " %s -opensource  -confirm-license -prefix %s -platform %s " % ( configure, CraftStandardDirs.craftRoot(), self.platform )
         command += "-headerdir %s " % os.path.join(CraftStandardDirs.craftRoot(), "include", "qt5")
         command += "-qt-libpng "
         command += "-qt-libjpeg "
         # can we drop that in general?
-        version = self.qtVersion()
-        if version <= utils.parse_version("5.6"):
+        version = CraftVersion(self.subinfo.buildTarget)
+        if version <= CraftVersion("5.6"):
             command += "-c++11 "
-        if version >= utils.parse_version("5.8"):
+        if version >= CraftVersion("5.8"):
             command += "-mp "
         else:
             command += "-qt-pcre "
@@ -162,7 +164,7 @@ class Package(Qt5CorePackageBase):
         utils.prependPath(os.path.join(self.buildDir(),"bin"))
         # so that the mkspecs can be found, when -prefix is set
         utils.putenv( "QMAKEPATH", self.sourceDir() )
-        if self.qtVersion() <  utils.parse_version("5.8"):
+        if CraftVersion(self.subinfo.buildTarget) <  CraftVersion("5.8"):
             utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
         else:
             utils.putenv("QMAKESPEC", "")

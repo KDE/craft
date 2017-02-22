@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.dependencies['binary/virtuoso']             = 'default'
 
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:soprano.git'
+        self.svnTargets['master'] = '[git]kde:soprano.git'
 
         for ver in ['2.8.0', '2.9.0', '2.9.2', '2.9.3', '2.9.4']:
             self.svnTargets[ ver ] ='[git]kde:soprano.git||v' + ver

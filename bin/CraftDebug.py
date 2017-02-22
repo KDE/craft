@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import logging
+import logging.handlers
 import functools
 
 from CraftConfig import craftSettings, CraftStandardDirs
@@ -31,9 +32,14 @@ class CraftDebug(object):
             os.makedirs(logDir)
 
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        fileHandler = logging.FileHandler(os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot()))), mode="wt+")
+        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot())))
+
+        fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000, backupCount=9)
+        fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
         self._log.addHandler(fileHandler)
         fileHandler.setLevel(logging.DEBUG)
+        self.log.debug("#" * 80)
+        self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
 
     def verbose(self):
@@ -133,8 +139,6 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                craftDebug.log.warning(msg)
-                craftDebug.log.info("Used in: %s line: %s" % (_info.filename, _info.lineno))
                 craftDebug.log.debug("Trace for the usage of %s" % fun.__name__, stack_info=True)
             return fun(*args, **kwargs)
 

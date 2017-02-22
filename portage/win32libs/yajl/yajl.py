@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.shortDescription = 'Yet Another JSON Library'
 
-        self.svnTargets['gitHEAD'] = 'https://github.com/lloyd/yajl'
+        self.svnTargets['master'] = 'https://github.com/lloyd/yajl'
 
         ver = '1.0.12'
 

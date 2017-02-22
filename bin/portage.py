@@ -6,6 +6,7 @@ from enum import Enum
 import importlib
 from collections import OrderedDict
 
+from CraftVersion import CraftVersion
 from CraftDebug import craftDebug
 from CraftPackageObject import PackageObjectBase
 from CraftConfig import *
@@ -425,13 +426,13 @@ class Portage(object):
         if not self.isPackage( category, package ):
             raise PortageException( "Could not find package", category, package )
 
-        installed = InstallDB.installdb.getInstalledPackages(category, package )
+        installed = InstallDB.installdb.getInstalledPackages(category, package)
         newest = PortageInstance.getDefaultTarget( category, package )
 
         for pack in installed:
             version = pack.getVersion()
             if not version or not newest: continue
-            if utils.parse_version(newest) < utils.parse_version(version):
+            if CraftVersion(newest) < CraftVersion(version):
                 newest = version
         return newest
 

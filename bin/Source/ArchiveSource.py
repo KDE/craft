@@ -145,9 +145,9 @@ class ArchiveSource(SourceBase):
                 if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext( filename )
                     if ext == ".exe":
-                        return utils.system("%s" % filePath )
+                        return utils.system("%s %s" % (filePath, self.subinfo.options.configure.defines ))
                     elif ( ext == ".msi" ):
-                        return utils.system("msiexec /package %s" % filePath )
+                        return utils.system("msiexec /package %s %s" % (filePath, self.subinfo.options.configure.defines) )
                 if not utils.copyFile( filePath, os.path.join(self.workDir(), filename) ):
                     return False
             else:

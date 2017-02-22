@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = '[git]kde:ktorrent'
+        self.svnTargets['master'] = '[git]kde:ktorrent'
         for version in ['4.3.1']:
             self.targets[version] = 'http://ktorrent.org/downloads/' + version + '/ktorrent-' + version + '.tar.bz2'
             self.targetInstSrc[version] = 'ktorrent-' + version
@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
                                       ("0002-Cast-activateWindow-param-to-improved-portability.patch", 1)]
 
         self.shortDescription = "A powerful BitTorrent client."
-        self.defaultTarget = 'gitHEAD'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

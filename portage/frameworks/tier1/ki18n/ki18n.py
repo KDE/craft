@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qttools"] = "default"
         self.dependencies["libs/qtscript"] = "default"
+        self.dependencies["libs/qtdeclarative"] = "default"
         self.dependencies["win32libs/gettext"] = "default"
 
 from Package.CMakePackageBase import *

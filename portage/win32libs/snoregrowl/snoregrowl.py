@@ -3,7 +3,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'gitHEAD' ] = 'https://github.com/Snorenotify/SnoreGrowl.git'
+        self.svnTargets[ 'master' ] = 'https://github.com/Snorenotify/SnoreGrowl.git'
         
         for ver in ['0.4.0', '0.5.0']:
             self.targets[ver] = 'https://github.com/Snorenotify/SnoreGrowl/archive/v%s.tar.gz' % ver

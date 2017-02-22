@@ -22,6 +22,7 @@ class Package( Qt5CorePackageBase ):
     def compile(self):
         if not ("Paths","Python27") in craftSettings:
             craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
+            return False
         utils.prependPath(craftSettings.get("Paths","PYTHON27",""))
         return Qt5CorePackageBase.compile(self)
        

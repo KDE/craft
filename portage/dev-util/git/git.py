@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import subprocess
 import tempfile
 
 from CraftDebug import craftDebug
@@ -8,14 +9,14 @@ import utils
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "2.10.1"
+        ver = "2.11.0"
         arch = 32
         if compiler.isX64():
             arch = 64
 
         self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)
         self.archiveNames[ver] = "PortableGit-%s-%s-bit.7z" % (ver, arch)
-        self.targetInstallPath[ ver ] = "git"
+        self.targetInstallPath[ ver ] = os.path.join("dev-utils","git")
         self.defaultTarget = ver
 
     def setDependencies(self):
@@ -26,23 +27,22 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        utils.copyFile(os.path.join(self.packageDir(),"git.exe"),os.path.join(self.imageDir(),"bin","git.exe"))
+        utils.copyFile(os.path.join(self.packageDir(), "git.exe"),
+                       os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"))
         return True
 
     def qmerge(self):
         if not BinaryPackageBase.qmerge(self):
             return False
-        gitbash = os.path.join(self.rootdir, "dev-utils", "git", "git-bash.exe")
-        utils.system( "%s --no-needs-console --hide --no-cd --command=post-install.bat" % gitbash, cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
+        utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         tmpFile = tempfile.TemporaryFile()
         git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
         utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
-                      stdout=tmpFile, stderr=tmpFile  )
+                      stdout=tmpFile, stderr=subprocess.PIPE  )
         tmpFile.seek( 0 )
         for line in tmpFile:
             if str(line,'UTF-8').find("kde:")>-1:

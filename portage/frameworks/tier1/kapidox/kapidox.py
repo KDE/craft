@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/cmake"] = "default"
         self.runtimeDependencies["dev-util/doxygen"] = "default"
-        self.runtimeDependencies["python/pyyaml"] = "default"
-        self.runtimeDependencies["python/jinja2"] = "default"
-        self.runtimeDependencies["python/doxyqml"] = "default"
+        self.runtimeDependencies["python-modules/pyyaml"] = "default"
+        self.runtimeDependencies["python-modules/jinja2"] = "default"
+        self.runtimeDependencies["python-modules/doxyqml"] = "default"
 
 from Package.CMakePackageBase import *
 
@@ -24,11 +24,14 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )        
 
+        if not ("Paths","Python27") in craftSettings:
+            craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
+
         # this program needs python 2.7
         pythonPath = shutil.which("python", path=craftSettings.get("Paths","PYTHON27",""))
-        self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s" % pythonPath.replace("\\","/")
-        
-    
+        if pythonPath:
+            self.subinfo.options.configure.defines = " -DPYTHON_EXECUTABLE=%s" % pythonPath.replace("\\","/")
+
     def configure(self):
         if not ("Paths","Python27") in craftSettings:
             craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")

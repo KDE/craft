@@ -70,9 +70,12 @@ class CraftBootstrap(object):
 
         width, _ =  shutil.get_terminal_size((80,20))
         def dlProgress(count, blockSize, totalSize):
-            percent = int(count * blockSize * 100 / totalSize)
-            times = int((width - 20)/100 * percent)
-            sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+            if totalSize != -1:
+                percent = int(count * blockSize * 100 / totalSize)
+                times = int((width - 20)/100 * percent)
+                sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+            else:
+                sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
             sys.stdout.flush()
 
         urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress)
@@ -81,7 +84,7 @@ class CraftBootstrap(object):
 
 def run(args, command):
     print("Execute: powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
-    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
+    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command), stderr=subprocess.PIPE)
 
 
 def setUp(args):

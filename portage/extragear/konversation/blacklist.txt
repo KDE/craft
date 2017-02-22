@@ -11,6 +11,7 @@ manifest\\.*
 # multiple docs
 doc\\.*
 share\\man\\.*
+man\\.*
 share\\xml\\.*
 share\\locale\\.*
 
@@ -21,6 +22,8 @@ share\\apps\\cmake\\.*
 share\\apps\\ark\\.*
 share\\apps\\kgpg\\.*
 share\\kf5\\kdoctools\\.*
+lib\\.*
+bin\\data\\(?!(icontheme.rcc|kxmlgui5|knotifications5|kservices5)).*
 
 # Unused Qt modules
 qml\\QtMultimedia
@@ -59,4 +62,4 @@ bin\\dbus-*\.exe
 bin\\dbus-env\.bat
 
 # strip most executables
-bin\\(?!(konversation|kbuildsycoca5|update-mime-database|dbus-daemon)).*\.exe
+bin\\(?!(konversation|kbuildsycoca5|update-mime-database|kioslave)).*\.exe

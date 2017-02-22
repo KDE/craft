@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/kdevelop/quanta.git'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = 'git://gitorious.org/kdevelop/quanta.git'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['kde/kde-runtime'] = 'default'

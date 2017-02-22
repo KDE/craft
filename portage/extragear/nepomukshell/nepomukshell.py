@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets['gitHEAD'] = '[git]kde:nepomukshell'
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = '[git]kde:nepomukshell'
+        self.defaultTarget = 'master'
         self.shortDescription =(
                 "NepomukShell is a maintenance and debugging "
                 "tool intended for developers. It allows to browse, "

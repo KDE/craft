@@ -91,7 +91,7 @@ file collection process is skipped, and only the installer is generated.
 
         # pylint: disable=E0602
         # if pylint is done on linux, we don't have those toys
-        self.nsisExe = utils.UtilsCache.findApplication("makensis")
+        self.nsisExe = utils.utilsCache.findApplication("makensis")
         if self.nsisExe:
             return True
         try:

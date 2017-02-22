@@ -13,5 +13,4 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.merge.destinationPath = "dev-utils";
-        self.subinfo.options.merge.ignoreBuildType = True
 

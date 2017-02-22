@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = ''
-        self.defaultTarget = 'gitHEAD'
+        self.svnTargets['master'] = ''
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.dependencies['libs/qt5'] = 'default'

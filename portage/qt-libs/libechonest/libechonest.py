@@ -9,9 +9,9 @@ class subinfo( info.infoclass ):
       self.buildDependencies[ 'win32libs/boost-headers' ] = 'default'
 
     def setTargets( self ):
-      self.svnTargets[ 'gitHEAD_KDE' ] = '[git]kde:libechonest'
-      self.svnTargets[ 'gitHEAD' ] = '[git]https://github.com/lfranchi/libechonest.git'
-      self.targetSrcSuffix[ 'gitHEAD'] = "-github"
+      self.svnTargets[ 'master_KDE' ] = '[git]kde:libechonest'
+      self.svnTargets[ 'master' ] = '[git]https://github.com/lfranchi/libechonest.git'
+      self.targetSrcSuffix[ 'master'] = "-github"
       
       for ver in ['1.2.1','2.0.1','2.0.2','2.0.3','2.3.1']:
         self.targets[ver] = 'http://files.lfranchi.com/libechonest-%s.tar.bz2' % ver

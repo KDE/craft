@@ -25,7 +25,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.supportsNinja and craftSettings.getboolean("Compile","UseNinja", False):
+        if self.makeProgramm == "ninja":
             return "Ninja"
         if OsUtils.isWin():
             if compiler.isMSVC2015():

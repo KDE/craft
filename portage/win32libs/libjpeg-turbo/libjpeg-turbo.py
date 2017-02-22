@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets["gitHEAD"] = "https://github.com/libjpeg-turbo/libjpeg-turbo.git"
+        self.svnTargets["master"] = "https://github.com/libjpeg-turbo/libjpeg-turbo.git"
 
         for ver in ["1.5.1"]:
             self.targets[ver] = "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/%s.tar.gz" % ver

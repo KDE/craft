@@ -17,7 +17,7 @@ $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Defini
 $CRAFT_ARGUMENTS = $args
 
 &{
-[version]$minPythonVersion = 3.5
+[version]$minPythonVersion = 3.6
 
 function findPython([string] $name)
 {

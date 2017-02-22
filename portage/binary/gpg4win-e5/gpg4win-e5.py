@@ -35,8 +35,6 @@ class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packSources = False
-        self.subinfo.options.package.withCompiler = None
-        self.subinfo.options.merge.ignoreBuildType = True
 
     def compile( self ):
         return True
