@@ -24,6 +24,7 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.defines = " -DGAMMARAY_MULTI_BUILD=OFF"
         self.changePackager(NullsoftInstallerPackager)
 
 
