@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
         self.shortDescription = "Breeze icon theme."
 
+        # HACK: Can't unpack the tarball... Let's just use master here
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
