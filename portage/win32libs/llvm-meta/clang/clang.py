@@ -13,7 +13,10 @@ class subinfo(info.infoclass):
             if ver in ["3.7.0", "3.7.1", "release_37"]:
                 self.patchToApply[ ver ] += [("0014-use-DESTDIR-on-windows.patch", 1)]
             elif not ver in ["3.7.0", "3.7.1", "release_37", "3.8.0", "3.8.1", "release_38"]:
-                self.patchToApply[ver] += [("fix-plugins.diff", 1)]
+                self.patchToApply[ver] += [
+                    ("fix-plugins.diff", 1),
+                    ("D27810-dont-keep-open-files.patch", 1)
+                ]
             if compiler.isMinGW():
                 self.patchToApply[ ver ] += [("0012-Set-the-x86-arch-name-to-i686-for-mingw-w64.patch", 1),
                                              ("0015-Fix-the-calling-convention-of-Mingw64-long-double-va.patch", 1),
