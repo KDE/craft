@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/cmake"] = "default"
         self.runtimeDependencies["dev-util/doxygen"] = "default"
-        self.runtimeDependencies["python-modules/pyyaml"] = "default"
-        self.runtimeDependencies["python-modules/jinja2"] = "default"
-        self.runtimeDependencies["python-modules/doxyqml"] = "default"
+        self.runtimeDependencies["python/pyyaml"] = "default"
+        self.runtimeDependencies["python/jinja2"] = "default"
+        self.runtimeDependencies["python/doxyqml"] = "default"
 
 from Package.CMakePackageBase import *
 
