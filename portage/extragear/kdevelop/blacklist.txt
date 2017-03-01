@@ -9,6 +9,7 @@ manifest\\.*
 .*\.prl
 
 # multiple docs
+bin\\data\\man\\.*
 doc\\.*
 share\\man\\.*
 man\\.*
@@ -23,7 +24,6 @@ share\\apps\\ark\\.*
 share\\apps\\kgpg\\.*
 share\\kf5\\kdoctools\\.*
 lib\\.*
-bin\\data\\(?!icontheme.rcc).*
 
 # Unused Qt modules
 qml\\QtMultimedia
