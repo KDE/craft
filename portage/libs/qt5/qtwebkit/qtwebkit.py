@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1),
                                          ("disable-icu-test.diff", 1)]
 
+        self.patchToApply["5.6"].append(("revert-version-to562.patch", 1))
+
         branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
             branch = branchRegEx.findall(ver)[0][:-2]
