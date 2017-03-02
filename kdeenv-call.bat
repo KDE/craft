@@ -1,8 +1,5 @@
 @echo off
 
-rem Add the script's dir to PATH (for craft.bat)
-set PATH=%~dp0;%PATH%
-
 rem Add Python to PATH
 for /F "tokens=* USEBACKQ" %%F in (`powershell -ExecutionPolicy RemoteSigned %~dp0kdeenv.ps1 --get Paths Python`) do (
     set _PYTHONPATH=%%F
@@ -16,5 +13,8 @@ set rand=%random%
 set filename="%temp%\kdeenv_%random%.cmd"
 python %~dp0bin\CraftSetupHelper.py --setup --mode cmd > %filename%
 call %filename%
+
+rem Add the script's dir to PATH (for craft.bat)
+set PATH=%~dp0;%PATH%
 
 del %filename%
