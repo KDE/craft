@@ -15,6 +15,6 @@ python %~dp0bin\CraftSetupHelper.py --setup --mode cmd > %filename%
 call %filename%
 
 rem Add the script's dir to PATH (for craft.bat)
-set PATH=%~dp0;%PATH%
+set PATH=%~dp0bin;%PATH%
 
 del %filename%
