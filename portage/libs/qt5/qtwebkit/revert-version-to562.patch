@@ -1,0 +1,10 @@
+diff --git a/.qmake.conf b/.qmake.conf
+index da07708ee..bffb33969 100644
+--- a/.qmake.conf
++++ b/.qmake.conf
+@@ -3,4 +3,4 @@ MODULE_QMAKE_OUTDIR = $$shadowed($$PWD/Tools/qmake)
+ QMAKEPATH += $$PWD/Tools/qmake $$MODULE_QMAKE_OUTDIR
+ load(qt_build_config)
+ 
+-MODULE_VERSION = 5.6.3
++MODULE_VERSION = 5.6.2
