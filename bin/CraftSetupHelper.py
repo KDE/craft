@@ -57,7 +57,7 @@ class SetupHelper( object ):
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
         parser.add_argument( "--setup", action = "store_true" )
-        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" } )
+        parser.add_argument( "--mode", action = "store", choices = { "cmd", "bat", "powershell", "bash" } )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
 
@@ -233,9 +233,13 @@ class SetupHelper( object ):
 
         for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var.upper(), value )
-        for key, val in self.env.items( ):
-            print( "%s=%s" % (key, val) )
 
+        if self.args.mode == "cmd":
+            for key, val in self.env.items( ):
+                print( "set %s=%s" % (key, val) )
+        else:
+            for key, val in self.env.items( ):
+                print( "%s=%s" % (key, val) )
 
 if __name__ == '__main__':
     helper = SetupHelper( )
