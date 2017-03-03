@@ -13,6 +13,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+
+        # HACK: v5.31.0 requires KF5::IconThemes
+        self.dependencies["frameworks/kiconthemes"] = 'default'
+
         self.dependencies["libs/qtbase"] = "default"
 
 from Package.CMakePackageBase import *
