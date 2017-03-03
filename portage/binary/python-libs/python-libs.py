@@ -24,7 +24,7 @@ class Package(BinaryPackageBase):
         success = utils.unpackFile(self.workDir(), "python36.zip", self.workDir() + "/lib/")
         if not success: return False
         success = utils.copyFile(self.workDir() + "/python36.dll",
-                                 self.imageDir() + "/bin/python35.dll")
+                                 self.imageDir() + "/bin/python36.dll")
         if not success: return False
         utils.copyDir(self.workDir() + "/lib/", self.imageDir() + "/bin/lib/")
         return True
