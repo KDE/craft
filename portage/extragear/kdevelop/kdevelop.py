@@ -47,9 +47,9 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'extragear/kdevelop-pg-qt' ] = 'default'
 
         # Install extra plugins shipped by Kate
-        self.dependencies[ 'kde/kate' ] = 'default'
-        self.dependencies[ 'extragear/kdev-python' ] = 'default'
-        self.dependencies[ 'extragear/kdev-php' ] = 'default'
+        self.runtimeDependencies[ 'kde/kate' ] = 'default'
+        self.runtimeDependencies[ 'extragear/kdev-python' ] = 'default'
+        self.runtimeDependencies[ 'extragear/kdev-php' ] = 'default'
 
 
 from Package.CMakePackageBase import *
