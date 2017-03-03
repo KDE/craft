@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "3.5.1"
+        ver = "3.6.0"
         arch = "win32"
         if compiler.isX64():
             arch = "amd64"
@@ -21,9 +21,9 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
 
     def install(self):
-        success = utils.unpackFile(self.workDir(), "python35.zip", self.workDir() + "/lib/")
+        success = utils.unpackFile(self.workDir(), "python36.zip", self.workDir() + "/lib/")
         if not success: return False
-        success = utils.copyFile(self.workDir() + "/python35.dll",
+        success = utils.copyFile(self.workDir() + "/python36.dll",
                                  self.imageDir() + "/bin/python35.dll")
         if not success: return False
         utils.copyDir(self.workDir() + "/lib/", self.imageDir() + "/bin/lib/")
