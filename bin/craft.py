@@ -182,7 +182,7 @@ def handleSinglePackage( packageName, action, args ):
         craftDebug.log.debug("Checking dependencies for: %s" % entry)
 
     for mainCategory, entry in zip( categoryList, packageList ):
-        deplist = portage.solveDependencies( mainCategory, entry, deplist, args.dependencyType,
+        deplist = portage.solveDependencies( mainCategory, entry, deplist, portage.DependencyType(args.dependencyType),
                                               maxDepth = args.dependencydepth )
     # no package found
     if len( deplist ) == 0:
