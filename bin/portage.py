@@ -2,7 +2,7 @@
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import builtins
-from enum import Enum
+from enum import Enum, unique
 import importlib
 from collections import OrderedDict
 
@@ -13,6 +13,7 @@ from CraftConfig import *
 import InstallDB
 import utils
 
+@unique
 class DependencyType(Enum):
     Runtime     = "runtime"
     Buildtime   = "buildtime"
