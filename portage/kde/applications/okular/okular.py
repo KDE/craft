@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['win32libs/libspectre'] = 'default'
         self.dependencies['win32libs/ghostscript'] = 'default'
         self.dependencies['kde/libkexiv2'] = 'default'
-        self.dependencies['frameworks/kactivities'] = 'default'
         self.dependencies['frameworks/karchive'] = 'default'
         self.dependencies['frameworks/kbookmarks'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
