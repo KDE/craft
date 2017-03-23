@@ -20,7 +20,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DENABLE_STATIC=ON"
+        self.subinfo.options.configure.defines = "-DINDI_BUILD_SERVER=OFF -DINDI_BUILD_DRIVERS=OFF -DINDI_BUILD_POSIX_CLIENT=OFF -DINDI_BUILD_QT5_CLIENT=ON"
 
     # Need to copy all drivers XML files manually since indiserver and drivers are not built on Windows
     def install(self):
