@@ -12,7 +12,8 @@ manifest\\.*
 data\\.*
 
 # multiple docs
-doc\\.*
+bin\\data\\doc\\.*
+bin\\data\\designer\\.*
 share\\man\\.*
 share\\xml\\.*
 share\\locale\\.*
@@ -52,6 +53,9 @@ mkspecs\\.*
 # unneeded stuff from bin\
 bin\\qt\.conf
 bin\\syncqt\.pl
+bin\\Qt5Designer.dll
+bin\\Qt5DesignerComponents.dll
+bin\\Qt5Script.dll
 
 # strip most executables
-#bin\\(?!(kdevelop|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
+bin\\(?!(kstars|kbuildsycoca5|update-mime-database|kio|dbus|klauncher|kinit)).*\.exe

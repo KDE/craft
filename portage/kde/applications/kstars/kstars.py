@@ -12,8 +12,7 @@ class subinfo( info.infoclass ):
         self.dependencies['libs/qtdeclarative'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kdoctools'] = 'default'
-        #self.dependencies['frameworks/kguiaddons'] = 'default'
+        self.dependencies['frameworks/kdoctools'] = 'default'        
         self.dependencies['frameworks/kwidgetsaddons'] = 'default'
         self.dependencies['frameworks/knewstuff'] = 'default'
         self.dependencies['frameworks/kdbusaddons'] = 'default'
@@ -23,14 +22,16 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/kxmlgui'] = 'default'
         self.dependencies['frameworks/kplotting'] = 'default'
+        self.dependencies['frameworks/knotifications'] = 'default'
+        self.dependencies['frameworks/knotifyconfig'] = 'default'
         self.dependencies['win32libs/eigen3'] = 'default'
         self.dependencies['win32libs/cfitsio'] = 'default'
         self.dependencies['win32libs/wcslib'] = 'default'
         self.dependencies['win32libs/indiclient'] = 'default'
         self.dependencies['win32libs/libraw'] = 'default'
+        self.dependencies['win32libs/gsl'] = 'default'
 
         # Install proper theme
-        #self.dependencies[ 'frameworks/oxygen-icons5' ] = 'default'
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
 
 from Package.CMakePackageBase import *
