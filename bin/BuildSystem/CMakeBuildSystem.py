@@ -110,7 +110,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
 
         if OsUtils.isMac():
-            options += " -DBUNDLE_INSTALL_DIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
+            options += " -DKDE_INSTALL_BUNDLEDIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
                 self.mergeDestinationDir().replace( "\\", "/" )
 
         if not self.buildTests:
