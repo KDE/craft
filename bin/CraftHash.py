@@ -28,7 +28,7 @@ class HashAlgorithm(Enum):
 
     @classmethod
     def getAlgorithmFromFile(cls, file):
-        _, ext = os.path.splitext()
+        _, ext = os.path.splitext(file)
         return cls.__getattr__(ext[1:].upper())
 
     @classmethod
