@@ -274,7 +274,7 @@ class infoclass(object):
             if type(out) == str:
                 out = [out]
             if not type(out) == tuple:
-                out = (out, CraftHash.HashAlgorithm.SHA1)
+                out = (out, CraftHash.HashAlgorithm.getAlgorithmFromFile(out[0]))
             return out
         return None
         
