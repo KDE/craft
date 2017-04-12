@@ -513,7 +513,7 @@ def main( ):
 
 
 if __name__ == '__main__':
-    success= True
+    success = False
     with CraftTimer.Timer("Craft", 0):
         try:
             doUpdateTitle = True
@@ -539,6 +539,7 @@ if __name__ == '__main__':
             doUpdateTitle = False
             if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):
                 craftSettings.dump( )
+
     if not success:
         exit( 1 )
 
