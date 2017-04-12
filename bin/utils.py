@@ -330,14 +330,13 @@ def getFileListFromDirectory( imagedir ):
     """ create a file list containing hashes """
     ret = []
 
-    myimagedir = imagedir
-    if ( not imagedir.endswith( "\\" ) ):
-        myimagedir = myimagedir + "\\"
-
     algorithm = CraftHash.HashAlgorithm.SHA256
-    for root, _, files in os.walk( imagedir ):
+    for root, _, files in os.walk(imagedir):
         for fileName in files:
-            ret.append( ( os.path.join( root, fileName ).replace( myimagedir, "" ), algorithm.stringPrefix() + CraftHash.digestFile( os.path.join( root, fileName), algorithm) ) )
+            filePath = os.path.join(root, fileName)
+            relativeFilePath = os.path.relpath(filePath, imagedir)
+            digest = algorithm.stringPrefix() + CraftHash.digestFile(os.path.join( root, fileName), algorithm)
+            ret.append((relativeFilePath, digest))
     return ret
 
 
