@@ -58,4 +58,5 @@ class Package(BinaryPackageBase):
         except Exception as e:
             print(e)
             return False
-        return True
+        return (self.shell.execute(".", "pacman -S base-devel --noconfirm --force --needed") and
+            utils.system("autorebase.bat", cwd=msysDir) )
