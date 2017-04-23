@@ -1,16 +1,16 @@
 import info
 import shells
+import io
 
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        ver = "20160719"
+        ver = "20161025"
+        arch = "i686"
+        if compiler.isX64():
+            arch = "x86_64"
         # don't set an actual version  instead of base. Msys must be manually updated so doing a craft update of msys wil break things.
-        if compiler.isX86():
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-i686-%s.tar.xz" % ver
-        else:
-            self.targets[ "base" ] = "http://downloads.sourceforge.net/sourceforge/msys2/msys2-base-x86_64-%s.tar.xz" % ver
-            self.targetDigests['base'] = (['a3255ebba5888c3b4de7a01b6febce9336c66128953f061f7d80e1d8c56582ca'], CraftHash.HashAlgorithm.SHA256)
+        self.targets[ "base" ] = f"http://repo.msys2.org/distrib/{arch}/msys2-base-{arch}-{ver}.tar.xz"
         self.defaultTarget = "base"
 
 
@@ -38,10 +38,24 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.qmerge(self):
            return False
         msysDir = os.path.join(CraftStandardDirs.craftRoot(),"msys")
-        return ( self.shell.execute(".", "echo Firstrun") and #start and restart msys before first use
-            utils.system("autorebase.bat", cwd = msysDir) and
-                 self.shell.execute(".", "pacman -Syu --noconfirm --force") and
-            utils.system("autorebase.bat", cwd = msysDir) and
-                 self.shell.execute(".", "pacman -Sy --noconfirm --force") and
-                 self.shell.execute(".", "pacman -S base-devel --noconfirm --force --needed") and
-            utils.system("autorebase.bat", cwd = msysDir) )
+        # start and restart msys before first use
+        if not self.shell.execute(".", "echo Firstrun") and utils.system("autorebase.bat", cwd = msysDir):
+            return False
+
+        def queryForUpdate():
+            out = io.BytesIO()
+            if not self.shell.execute(".", "pacman -Sy --noconfirm --force"):
+                raise Exception()
+            self.shell.execute(".", "pacman -Qu --noconfirm", out=out, err=subprocess.PIPE)
+            out = out.getvalue()
+            return out != b""
+
+        try:
+            while queryForUpdate():
+                if not self.shell.execute(".", "pacman -Su --noconfirm --force") and \
+                        utils.system("autorebase.bat", cwd = msysDir):
+                    return False
+        except Exception as e:
+            print(e)
+            return False
+        return True
