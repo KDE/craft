@@ -4,6 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
+        self.patchToApply["5.33.0"] = [("0007-fix-duplicated-symbols-compilation-error-with-mingw-.patch", 1)]
 
         self.shortDescription = "A file metadata and text extraction library"
         

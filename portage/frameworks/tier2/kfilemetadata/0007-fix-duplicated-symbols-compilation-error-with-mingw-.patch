@@ -1,0 +1,39 @@
+From ba89c2a9c1d30d17620a56e641ccfbbb55ac1a77 Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu_gallien@yahoo.fr>
+Date: Fri, 14 Apr 2017 07:49:01 +0200
+Subject: [PATCH 07/10] fix duplicated symbols compilation error with mingw on
+ Windows
+
+Summary: fix duplicated symbols compilation error with mingw on Windows
+
+Test Plan: Tested with mingw-5.3 under windows 7 and on linux with gcc
+
+Reviewers: kfunk, #windows
+
+Reviewed By: kfunk, #windows
+
+Subscribers: #frameworks
+
+Tags: #frameworks
+
+Differential Revision: https://phabricator.kde.org/D5443
+---
+ autotests/CMakeLists.txt | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/autotests/CMakeLists.txt b/autotests/CMakeLists.txt
+index 5d28bdf..d83380e 100644
+--- a/autotests/CMakeLists.txt
++++ b/autotests/CMakeLists.txt
+@@ -109,8 +109,6 @@ ecm_add_test(externalextractortest.cpp ../src/externalextractor.cpp
+ #
+ set(extractorcollection_SRCS
+     extractorcollectiontest.cpp
+-    ../src/extractorcollection.cpp
+-    ../src/externalextractor.cpp
+ )
+
+ ecm_add_test(${extractorcollection_SRCS}
+--
+2.11.0.windows.1
+
