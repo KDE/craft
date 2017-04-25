@@ -160,14 +160,15 @@ class Package(Qt5CorePackageBase):
          
          
     def setPathes( self ):
-         # for building qt with qmake       
+        # for building qt with qmake
         utils.prependPath(os.path.join(self.buildDir(),"bin"))
-        # so that the mkspecs can be found, when -prefix is set
-        utils.putenv( "QMAKEPATH", self.sourceDir() )
-        if CraftVersion(self.subinfo.buildTarget) <  CraftVersion("5.8"):
-            utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
-        else:
-            utils.putenv("QMAKESPEC", "")
+        if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
+            # so that the mkspecs can be found, when -prefix is set
+            utils.putenv( "QMAKEPATH", self.sourceDir() )
+            if CraftVersion(self.subinfo.buildTarget) <  CraftVersion("5.8"):
+                utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
+            else:
+                utils.putenv("QMAKESPEC", "")
 
 
 

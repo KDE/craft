@@ -9,8 +9,9 @@ from BuildSystem.QMakeBuildSystem import *
 class Qt5CoreBuildSystem( QMakeBuildSystem ):
     def __init__( self ):
         QMakeBuildSystem.__init__( self )
-        if not craftSettings.getboolean("QtSDK", "Enabled", "False"):
-            utils.putenv( "QMAKESPEC", os.path.join( CraftStandardDirs.craftRoot( ), 'mkspecs', self.platform ) )
+        if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
+            if not craftSettings.getboolean("QtSDK", "Enabled", "False"):
+                utils.putenv( "QMAKESPEC", os.path.join( CraftStandardDirs.craftRoot( ), 'mkspecs', self.platform ) )
 
 
     def install( self, options = "" ):
