@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
         self.targetDigests['1.7.2'] = (['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.7.2"
+        if compiler.isMSVC2017():
+            self.defaultTarget = "master"
 
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
