@@ -31,9 +31,11 @@ class CMakeBuildSystem(BuildSystemBase):
             if compiler.isMSVC() and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or compiler.isIntel():
                 return "NMake Makefiles"
             else:
-                if compiler.isMSVC2015():
+                if compiler.isMSVC2017():
+                    return "Visual Studio 15 2017" + (" Win64" if compiler.isX64() else "")
+                elif compiler.isMSVC2015():
                     return "Visual Studio 14 2015" + (" Win64" if compiler.isX64() else "")
-                if compiler.isMSVC2010():
+                elif compiler.isMSVC2010():
                     return "Visual Studio 10"
             if compiler.isMinGW():
                 return "MinGW Makefiles"
