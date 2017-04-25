@@ -44,19 +44,9 @@ class Package(BoostPackageBase):
                 cmd += "clang"
             elif compiler.isMinGW():
                 cmd += "mingw"
-            else:
-                if compiler.isMSVC2005():
-                    cmd += "vc8"
-                elif compiler.isMSVC2008():
-                    cmd += "vc9"
-                elif compiler.isMSVC2010():
-                    cmd += "vc10"
-                elif compiler.isMSVC2012():
-                    cmd += "vc11"
-                elif compiler.isMSVC2013():
-                    cmd += "vc12"
-                elif compiler.isMSVC2015():
-                    cmd += "vc14"
+            elif compiler.isMSVC():
+                platform = str(compiler.msvcPlatformToolset())
+                cmd += f"vc{platform[:2]}"
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
                 'boost-headers').sourceDir(),"tools","build")) or craftDebug.log.critical(
                 "command: %s failed" % (cmd))

@@ -28,24 +28,14 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgramm == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if compiler.isMSVC2015():
-                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                    return "Visual Studio 14 2015" + (" Win64" if compiler.isX64() else "")
-                else:
-                    return "NMake Makefiles"
-            if compiler.isMSVC2010():
-                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                    return "Visual Studio 10"
-                else:
-                    return "NMake Makefiles"
-            elif compiler.isMSVC2008():
-                if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
-                    return "Visual Studio 9 2008"
-                else:
-                    return "NMake Makefiles"
-            elif compiler.isMSVC() or compiler.isIntel():
+            if compiler.isMSVC() and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or compiler.isIntel():
                 return "NMake Makefiles"
-            elif compiler.isMinGW():
+            else:
+                if compiler.isMSVC2015():
+                    return "Visual Studio 14 2015" + (" Win64" if compiler.isX64() else "")
+                if compiler.isMSVC2010():
+                    return "Visual Studio 10"
+            if compiler.isMinGW():
                 return "MinGW Makefiles"
         elif OsUtils.isUnix():
             return "Unix Makefiles"
@@ -151,14 +141,10 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         if self.subinfo.options.cmake.openIDE:
-            if compiler.isMSVC2008():
-                command = "start %s" % self.__slnFileName()
-            elif compiler.isMSVC2010():
+            if compiler.isMSVC2010():
                 command = "start vcexpress %s" % self.__slnFileName()
         elif self.subinfo.options.cmake.useIDE:
-            if compiler.isMSVC2008():
-                command = "vcbuild /M1 %s \"%s|WIN32\"" % (self.__slnFileName(), self.buildType())
-            elif compiler.isMSVC2015():
+            if compiler.isMSVC2015():
                 command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (self.__slnFileName(), self.buildType())
             elif compiler.isMSVC2010():
                 craftDebug.log.critical("has to be implemented");
@@ -184,9 +170,7 @@ class CMakeBuildSystem(BuildSystemBase):
             fastString = "/fast"
 
         if self.subinfo.options.install.useMakeToolForInstall:
-            if compiler.isMSVC2008() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-                command = "vcbuild INSTALL.vcproj \"%s|Win32\"" % self.buildType()
-            elif compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+            if compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
                 os.putenv("DESTDIR",self.installDir())

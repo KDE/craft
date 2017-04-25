@@ -125,17 +125,18 @@ class SetupHelper( object ):
 
     def getEnv( self ):
         if compiler.isMSVC( ):
-            compilerDirs = {
-                "msvc2010": "VS100COMNTOOLS",
-                "msvc2012": "VS110COMNTOOLS",
-                "msvc2013": "VS120COMNTOOLS",
-                "msvc2015": "VS140COMNTOOLS"
-            }
+
             architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
-            crossmodifier = ""
-            if not compiler.isNative(): crossmodifier="_cross"
-            status, result = subprocess.getstatusoutput( "\"%s\\..\\..\\VC\\vcvarsall.bat\" %s > NUL && set" % (
-                os.getenv( compilerDirs[ compiler.getCompilerName( ) ] ), architectures[ compiler.architecture( ) + crossmodifier ]) )
+            version = compiler.internalVerison()
+            vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
+            path = subprocess.getoutput(f"\"{vswhere}\""
+                                        f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest")
+            arg = architectures[ compiler.architecture() ] + ("_cross" if not compiler.isNative() else "")
+            path = os.path.join(path, "VC")
+            if version >= 15:
+                path = os.path.join(path, "Auxiliary","Build")
+            path = os.path.join(path, "vcvarsall.bat")
+            status, result = subprocess.getstatusoutput(f"\"{path}\" {arg} > NUL && set")
             if status != 0:
                 print( "Failed to setup msvc compiler", file = sys.stderr )
                 exit(1)

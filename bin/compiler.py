@@ -65,12 +65,6 @@ def isMSVC():
 def isClang():
     return craftSettings.getboolean("Compile","UseClang", False )
 
-def isMSVC2005():
-    return _compiler() == "msvc2005"
-
-def isMSVC2008():
-    return _compiler() == "msvc2008"
-
 def isMSVC2010():
     return _compiler() == "msvc2010"
 
@@ -82,6 +76,9 @@ def isMSVC2013():
 
 def isMSVC2015():
     return _compiler() == "msvc2015"
+
+def isMSVC2017():
+    return _compiler() == "msvc2017"
 
 def isIntel():
     return _compiler() == "intel"
@@ -129,21 +126,37 @@ def getVersion():
     return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
     
 def getShortName():
-    if isMinGW():
+    if not isMSVC():
         return getCompilerName()
-    elif isMSVC2008():
-        return "vc90"
-    elif isMSVC2010():
-        return "vc100"
-    elif isMSVC2012():
-        return "vc110"
-    elif isMSVC2013():
-        return "vc120"
-    elif isMSVC2015():
-        return "vc140"
-    else:
-        craftDebug.log.critical("Unknown Compiler %s" % _compiler())
+    return f"vc{internalVerison()}"
 
+
+def internalVerison():
+    if not isMSVC():
+        return getVersion()
+    versions = {
+        "msvc2010": 10,
+        "msvc2012": 11,
+        "msvc2013": 12,
+        "msvc2015": 14,
+        "msvc2017": 15
+    }
+    if _compiler() not in versions:
+        craftDebug.log.critical(f"Unknown MSVC Compiler {_compiler()}")
+    return versions[_compiler()]
+
+
+def msvcPlatformToolset():
+    versions = {
+        "msvc2010": 100,
+        "msvc2012": 110,
+        "msvc2013": 120,
+        "msvc2015": 140,
+        "msvc2017": 141
+    }
+    if _compiler() not in versions:
+        craftDebug.log.critical(f"Unknown MSVC Compiler {_compiler()}")
+    return versions[_compiler()]
 
 if __name__ == '__main__':
     print("Testing Compiler.py")

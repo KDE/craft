@@ -61,20 +61,13 @@ class BoostBuildSystem(BuildSystemBase):
                 options += " threadapi=pthread"
         elif compiler.isMinGW():
             options += "gcc"
-        else:
-            if compiler.isMSVC2005():
-                options += "msvc-8.0"
-            elif compiler.isMSVC2008():
-                options += "msvc-9.0"
-            elif compiler.isMSVC2010():
-                options += "msvc-10.0"
-            elif compiler.isMSVC2012():
-                options += "msvc-11.0"
-            elif compiler.isMSVC2013():
-                options += "msvc-12.0"
-            elif compiler.isMSVC2015():
-                options += "msvc-14.0"
-            elif compiler.isIntel():
+        elif compiler.isMSVC():
+            platform = str(compiler.msvcPlatformToolset())
+            if compiler.isMSVC2017():
+                options += f"msvc-{platform[:2]}.0"
+            else:
+                options += f"msvc-{platform[:2]}.{platform[2:]}"
+        elif compiler.isIntel():
                 options += "intel"
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
                 options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % ({ "vs2008" : "9_0", "vs2010" : "10_0", "vs2012" : "11_0" }[os.getenv("INTEL_VSSHELL")])
