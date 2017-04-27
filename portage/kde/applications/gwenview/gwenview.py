@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.dependencies["win32libs/libpng"] = "default"
         self.dependencies["win32libs/exiv2"] = "default"
         self.dependencies["win32libs/lcms2"] = "default"
-        self.dependencies["frameworks/libkdcraw"] = "default"
+        self.dependencies["kde/libkdcraw"] = "default"
         self.dependencies["frameworks/kactivities"] = "default"
         self.dependencies["frameworks/kdelibs4support"] = "default"
         self.dependencies["qt-libs/phonon"] = "default"
