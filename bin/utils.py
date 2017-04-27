@@ -227,6 +227,8 @@ def getFile( url, destdir , filename='' ) -> bool:
 def wgetFile( url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     command = "\"%s\" -c -t 10" % utilsCache.findApplication("wget")
+    # the default of 20 might not be enough for sourceforge ...
+    command += " --max-redirect 50"
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
         command += " --no-passive-ftp "
     if(filename ==''):
