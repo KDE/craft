@@ -1,0 +1,24 @@
+From 500d84d2bce0cc32619c5244ebb30a35e7145f6c Mon Sep 17 00:00:00 2001
+From: Christophe Giboudeaux <cgiboudeaux@gmx.com>
+Date: Thu, 27 Apr 2017 19:09:18 +0200
+Subject: [PATCH] Fix build with CMake 3.8
+
+---
+ autotests/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/autotests/CMakeLists.txt b/autotests/CMakeLists.txt
+index d6ed24db4..ed0c18e93 100644
+--- a/autotests/CMakeLists.txt
++++ b/autotests/CMakeLists.txt
+@@ -21,6 +21,7 @@ endif()
+ MACRO(PLASMA_UNIT_TESTS)
+        FOREACH(_testname ${ARGN})
+                add_executable(${_testname} ${_testname}.cpp)
++               target_include_directories(${_testname} PRIVATE "$<BUILD_INTERFACE:$<TARGET_PROPERTY:KF5PlasmaQuick,INCLUDE_DIRECTORIES>>;")
+                target_link_libraries(${_testname} Qt5::Qml Qt5::Test
+                                      KF5::Plasma KF5::PlasmaQuick
+                                      KF5::Archive KF5::CoreAddons
+--
+2.11.0.windows.1
+

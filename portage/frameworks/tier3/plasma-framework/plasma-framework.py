@@ -4,6 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
+        self.patchToApply["5.33.0"] = [("0001-Fix-build-with-CMake-3.8.patch", 1)]
 
         self.shortDescription = "Plugin based UI runtime used to write primary user interfaces"
 
