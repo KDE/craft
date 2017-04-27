@@ -4,8 +4,7 @@ from CraftConfig import *
 class subinfo(info.infoclass):
 
     def setTargets( self ):
-        self.svnTargets['master'] = '[git]kde:oxygen-icons5'
-        self.defaultTarget = 'master'
+        self.versionInfo.setDefaultValues( )
         self.shortDescription = "icons and bitmaps for the oxygen style"
 
     def setDependencies( self ):
