@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/frameworkintegration'] = 'default'
         self.dependencies['frameworks/kcmutils'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
-        self.dependencies['frameworks/kdecoration'] = 'default'
         self.dependencies['frameworks/plasma-framework'] = 'default'
+        self.dependencies['kde/kdecoration'] = 'default'
 
 
 from Package.CMakePackageBase import *
@@ -27,5 +27,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 
 
-    
+
 
