@@ -1,3 +1,5 @@
+import platform
+
 import CraftOS.OsUtilsBase
 from CraftDebug import craftDebug
 import ctypes
@@ -41,3 +43,13 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def setConsoleTitle(title):
         return ctypes.windll.kernel32.SetConsoleTitleW(title) != 0
+
+    @staticmethod
+    def supportsSymlinks():
+        _, ver, _, _ = platform.win32_ver()
+        ver = ver.split(".")
+        if len(ver) < 3:
+            return False
+        # Since Windows 10 14972 admin rights are no longer required to create symlinks
+        # https://blogs.windows.com/buildingapps/2016/12/02/symlinks-windows-10/
+        return ver[0] == "10" and int(ver[2]) >= 14972

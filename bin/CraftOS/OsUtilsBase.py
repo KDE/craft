@@ -61,3 +61,6 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
         print("Error:unknown system", file=sys.stderr)
         exit(1)
 
+    @staticmethod
+    def supportsSymlinks() -> bool:
+        return True
