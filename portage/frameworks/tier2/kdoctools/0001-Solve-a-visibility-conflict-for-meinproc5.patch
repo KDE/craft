@@ -1,0 +1,47 @@
+From 928c626ed203221ac54d8bbf9b3d6a7d3890e656 Mon Sep 17 00:00:00 2001
+From: Luigi Toscano <luigi.toscano@tiscali.it>
+Date: Tue, 2 May 2017 17:15:50 +0200
+Subject: [PATCH] Solve a visibility conflict for meinproc5
+
+Summary:
+This seems to affect only mingw, which can't link meinproc5 as
+the symbol exported affects in the sources shared with the
+library affects the build (but not on gcc on *nix and with MSVC).
+
+The other (probably better) solution would have been to split the
+source code so that the sources of the libraries are separate, but
+that would require more changes. As this seems to work, I'd prefer
+to move the more complicated changes to "later".
+
+Thanks to Hannah Von Reth for the hint.
+
+BUG: 379142
+
+Test Plan: Compiles with gcc 6.3 (Debian Testing), as before), with mingw (as deployed on current Craft) and with MSVC (2017) (the latter with less linking warnings so it was an issue there). All on x86_64.
+
+Reviewers: vonreth
+
+Subscribers: #frameworks, #documentation
+
+Tags: #frameworks, #documentation, #windows
+
+Differential Revision: https://phabricator.kde.org/D5674
+---
+ src/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index af68c0a..a615ca8 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -82,6 +82,7 @@ endif()
+ add_executable(meinproc5 meinproc.cpp meinproc_common.cpp xslt.cpp ${meinproc_additional_SRCS} ${kdoctoolslog_core_SRCS})
+ ecm_mark_nongui_executable(meinproc5)
+ target_link_libraries(meinproc5 Qt5::Core ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${meinproc_additional_LIBS})
++target_compile_definitions(meinproc5 PRIVATE -DKDOCTOOLS_EXPORT=)
+ install(TARGETS meinproc5 EXPORT KF5DocToolsTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS})
+
+ if(CMAKE_CROSSCOMPILING AND MEINPROC5_EXECUTABLE)
+--
+2.12.2.windows.2
+
