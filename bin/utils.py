@@ -262,29 +262,46 @@ def unpackFile( downloaddir, filename, workdir ):
     craftDebug.log.debug("unpacking this file: %s" % filename)
 
     ( shortname, ext ) = os.path.splitext( filename )
-    if not utilsCache.findApplication("7za") or re.match( "(.*\.tar.*$|.*\.tgz$)", filename ):
-        shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
+    if utilsCache.findApplication("7za") and (
+                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
+        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
+    if ext == "":
+        craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
-    elif ext == "":
-        return True
-    return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
+    else:
+        try:
+            shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
+        except Exception as e:
+            craftDebug.log.error(f"Failed to unpack {filename}", exc_info=e )
+            return False
+    return True
+
 
 def un7zip( fileName, destdir, flag = None ):
-    command = utilsCache.findApplication("7za")
-    command += " x -r -y -o\"%s\" \"%s\"" % ( destdir, fileName )
-
     kw = {}
+    progressFlags = ""
+    type = ""
+    resolveSymlinks = False
+    app = utilsCache.findApplication("7za")
+    if utilsCache.appSupportsCommand(app, "-bs"):
+        progressFlags = " -bso2 -bsp1"
+        kw["stderr"] = subprocess.PIPE
+
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
-        command += " -t7z"
-    if utilsCache.appSupportsCommand(utilsCache.findApplication("7za"), "-bs"):
-        command += " -bso2"
-        command += " -bsp1"
-        kw["stderr"] = subprocess.PIPE
+        type = "-t7z"
+    if re.match( "(.*\.tar.*$|.*\.tgz$)", fileName):
+        type = "-ttar"
+        resolveSymlinks = OsUtils.isWin()
+        command = f"\"{app}\" x \"{fileName}\" -so | \"{app}\" x -si -o\"{destdir}\""
+    else:
+        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\""
+    command = f"{command} {type} {progressFlags}"
 
-    return system( command , displayProgress=True, **kw)
+    # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
+    return system( command , displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
 
 def system(cmd, displayProgress=False, **kw ):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
@@ -773,3 +790,26 @@ def createBat(fileName, command):
         bat.write("@echo off\r\n")
         bat.write(command)
         bat.write("\r\n")
+
+def replaceSymlinksWithCopys(path):
+    def resolveLink(path):
+        while os.path.islink(path):
+            toReplace  = os.readlink(path)
+            if not os.path.isabs(toReplace):
+                path = os.path.join(os.path.dirname(path), toReplace)
+            else:
+                path = toReplace
+        return path
+
+    for root, _, files in os.walk(path):
+        for svg in files:
+            path = os.path.join(root, svg)
+            if os.path.islink(path):
+                toReplace = resolveLink(path)
+                if not os.path.exists(toReplace):
+                    craftDebug.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
+                    return False
+                if toReplace != path:
+                    deleteFile(path)
+                    copyFile(toReplace, path)
+    return True
