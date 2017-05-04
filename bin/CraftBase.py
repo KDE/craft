@@ -178,20 +178,14 @@ class CraftBase(object):
         """return absolute path to the install directory of the currently active package.
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used
         """
-        if self.subinfo.hasInstallPath():
-            installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
-        else:
-            installDir = self.imageDir()
-        return self.__adjustPath(installDir)
+        return self.__adjustPath(self.imageDir())
 
     def mergeSourceDir(self):
         """return absolute path to the merge source directory of the currently active package.
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a
         specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
-        if self.subinfo.hasMergeSourcePath():
-            directory = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath() )
-        elif not self.subinfo.options.merge.sourcePath == None:
+        if not self.subinfo.options.merge.sourcePath == None:
             directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
             directory = self.imageDir()

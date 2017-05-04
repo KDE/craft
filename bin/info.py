@@ -35,7 +35,7 @@ class infoclass(object):
         self.targetSrcSuffix = OrderedDict()
         self.targetConfigurePath = OrderedDict()
         self.targetInstallPath = OrderedDict()
-        self._targetMergeSourcePath = OrderedDict()
+        #@deprecated("self.targetInstallPath")
         self.targetMergePath = OrderedDict()
 
         self.targetDigests = OrderedDict()
@@ -91,11 +91,6 @@ class infoclass(object):
         if target in list(self.targets.keys()) or target in list(self.svnTargets.keys()) :
             return target
         return self._defaultTarget
-
-    @property
-    @deprecated("self.targetInstSrc")
-    def targetMergeSourcePath(self):
-        return self._targetMergeSourcePath
 
     @defaultTarget.setter
     def defaultTarget(self, value):
@@ -201,18 +196,6 @@ class infoclass(object):
                 self.buildTarget in list(self.targetConfigurePath.keys()):
             return self.targetConfigurePath[ self.buildTarget ]
 
-    def hasInstallPath(self) -> bool:
-        """return true if relative path appendable to local install path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstallPath.keys())
-
-    def installPath(self) -> str:
-        """return relative path appendable to local install path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstallPath.keys()):
-            return self.targetInstallPath[ self.buildTarget ]
-        craftDebug.log.critical("no install path for this build target defined")
-
     def hasMergePath(self) -> bool:
         """return true if relative path appendable to local merge path is given for the recent target"""
         return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
@@ -223,17 +206,6 @@ class infoclass(object):
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
                 and self.buildTarget in list(self.targetMergePath.keys()):
             return self.targetMergePath[ self.buildTarget ]
-
-    def hasMergeSourcePath(self) -> bool:
-        """return true if relative path appendable to local merge source path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetMergeSourcePath.keys())
-
-    def mergeSourcePath(self) -> str:
-        """return relative path appendable to local merge source path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetMergeSourcePath.keys()):
-            return self.targetMergeSourcePath[ self.buildTarget ]
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
