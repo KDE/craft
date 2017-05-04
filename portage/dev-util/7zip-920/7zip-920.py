@@ -16,4 +16,4 @@ class Package( BinaryPackageBase ):
         self.subinfo.options.package.disableBinaryCache = True
 
     def install( self ):
-        return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"))
+        return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
