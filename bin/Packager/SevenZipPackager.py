@@ -35,7 +35,7 @@ class SevenZipPackager (PackagerBase):
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
         if craftSettings.getboolean("Packager", "CreateCache"):
-            if not self.subinfo.options.packages.disableBinaryCache:
+            if self.subinfo.options.packages.disableBinaryCache:
                 return True
             dstpath = self.cacheLocation()
         else:
