@@ -13,7 +13,7 @@ from Package.BinaryPackageBase import *
 class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.packages.disableBinaryCache = True
+        self.subinfo.options.package.disableBinaryCache = True
 
     def install( self ):
         return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"))
