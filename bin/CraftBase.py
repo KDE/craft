@@ -193,15 +193,8 @@ class CraftBase(object):
 
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
-        This path may point to a subdir of rootdir in case @ref info.targetMergePath for a specific
-        build target is used
         """
-
-        if self.subinfo.hasMergePath():
-            directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.mergePath() )
-        else:
-            directory = CraftStandardDirs.craftRoot()
-        return self.__adjustPath(directory)
+        return self.__adjustPath(CraftStandardDirs.craftRoot())
 
     def packageDestinationDir( self, withBuildType=True ):
         """return absolute path to the directory where binary packages are placed into.

@@ -35,8 +35,6 @@ class infoclass(object):
         self.targetSrcSuffix = OrderedDict()
         self.targetConfigurePath = OrderedDict()
         self.targetInstallPath = OrderedDict()
-        #@deprecated("self.targetInstallPath")
-        self.targetMergePath = OrderedDict()
 
         self.targetDigests = OrderedDict()
         self.targetDigestUrls = OrderedDict()
@@ -195,17 +193,6 @@ class infoclass(object):
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) and \
                 self.buildTarget in list(self.targetConfigurePath.keys()):
             return self.targetConfigurePath[ self.buildTarget ]
-
-    def hasMergePath(self) -> bool:
-        """return true if relative path appendable to local merge path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetMergePath.keys())
-
-    def mergePath(self) -> str:
-        """return relative path appendable to local merge path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetMergePath.keys()):
-            return self.targetMergePath[ self.buildTarget ]
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
