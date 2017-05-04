@@ -10,7 +10,6 @@ import datetime
 import os
 from collections import OrderedDict
 
-from CraftDebug import craftDebug, deprecated
 import utils
 import compiler
 from options import *
@@ -193,6 +192,18 @@ class infoclass(object):
         if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) and \
                 self.buildTarget in list(self.targetConfigurePath.keys()):
             return self.targetConfigurePath[ self.buildTarget ]
+
+    def hasInstallPath(self) -> bool:
+        """return true if relative path appendable to local install path is given for the recent target"""
+        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstallPath.keys())
+
+    def installPath(self) -> str:
+        """return relative path appendable to local install path for the recent target"""
+        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
+                and self.buildTarget in list(self.targetInstallPath.keys()):
+            return self.targetInstallPath[ self.buildTarget ]
+        craftDebug.log.critical("no install path for this build target defined")
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
