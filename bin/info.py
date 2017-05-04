@@ -236,7 +236,7 @@ class infoclass(object):
                 out = (out, CraftHash.HashAlgorithm.getAlgorithmFromFile(out[0]))
             return out
         return None
+        
+        
 
-
-
-
+   

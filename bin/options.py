@@ -82,6 +82,9 @@ class OptionsFeatures(OptionsBase):
         ## enable python support in several packages.
         self.pythonSupport = False
 
+        ## stick to the gcc 4.4.7 version
+        self.legacyGCC = False
+
         ## enable or disable the dependency to plasma
         self.fullplasma = False
 
@@ -150,6 +153,12 @@ class OptionsConfigure(OptionsBase):
 ## options for the make action
 class OptionsMake(OptionsBase):
     def __init__(self):
+        ## ignore make error
+        self.ignoreErrors = None
+        ## options for the make tool
+        self.makeOptions = None
+        ## define the basename of the .sln file in case cmake.useIDE = True
+        self.slnBaseName = None
         self.supportsMultijob = True
 
 ## options for the install action
@@ -161,16 +170,31 @@ class OptionsInstall(OptionsBase):
         ## add DESTDIR=xxx support for autotools build system
         self.useDestDir = True
 
+## options for the merge action
+class OptionsMerge(OptionsBase):
+    def __init__(self):
+        ## subdir based on installDir() used as merge source directory
+        self.sourcePath = None
+
 ## options for the package action
 class OptionsPackage(OptionsBase):
     def __init__(self):
+        ## defines the package name
+        self.packageName = None
+        ## defines the package version
+        self.version = None
         ## use compiler in package name
         self.withCompiler = True
+        ## use special packaging mode  (only for qt)
+        self.specialMode = False
         ## pack also sources
         self.packSources = True
         ## pack from subdir of imageDir()
         # currently supported by SevenZipPackager
         self.packageFromSubDir = None
+        ## use architecture in package name
+        # currently supported by SevenZipPackager
+        self.withArchitecture = False
         ## add file digests to the package located in the manifest sub dir
         # currently supported by SevenZipPackager
         self.withDigests = True
@@ -187,10 +211,17 @@ class OptionsCMake(OptionsBase):
         ## use CTest instead of the make utility
         self.useCTest = craftSettings.getboolean("General","EMERGE_USECTEST", False )
 
+
+
 class OptionsQMake(OptionsBase):
     def __init__(self):
         ## specify a special .pro file if multiple are avalible
         self.proFile = None
+
+class OptionsGit(OptionsBase):
+    def __init__(self):
+        ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
+        self.enableFormattedPatch = False
 
 ## main option class
 class Options(object):
@@ -211,10 +242,14 @@ class Options(object):
         self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
+        ## options of the merge action
+        self.merge = OptionsMerge()
         ## options of the cmake buildSystem
         self.cmake = OptionsCMake()
-        ## options of the qmake buildSystem
+        ## options of the cmake buildSystem
         self.qmake = OptionsQMake()
+        ## options of the git module
+        self.git = OptionsGit()
 
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
