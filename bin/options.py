@@ -202,6 +202,9 @@ class OptionsPackage(OptionsBase):
         #needed for mysql, striping make the library unusable
         self.disableStriping = False
 
+        ##disable the binary cache for this package
+        self.disableBinaryCache = False
+
 class OptionsCMake(OptionsBase):
     def __init__(self):
         ## use IDE for msvc2008 projects
