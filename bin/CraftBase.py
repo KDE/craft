@@ -278,7 +278,7 @@ class CraftBase(object):
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        cacheDir = craftSettings.get("ContinuousIntegration", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
+        cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, sys.platform, version,
                                compiler.getCompilerName(), self.buildType())
 
@@ -292,6 +292,6 @@ class CraftBase(object):
                                 "[PortageVersions]\n"
                                 "Qt5")
             version = "Qt_%s" % version
-        return "/".join([craftSettings.get("ContinuousIntegration", "RepositoryUrl"), sys.platform, version,
+        return "/".join([craftSettings.get("Packager", "RepositoryUrl"), sys.platform, version,
                             compiler.getCompilerName(), self.buildType()])
 
