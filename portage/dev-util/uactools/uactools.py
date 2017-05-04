@@ -13,6 +13,7 @@ class subinfo( info.infoclass ):
             "http://downloads.sourceforge.net/kde-windows/uactools-mingw4-" + \
             latest + "-bin.tar.bz2"
         self.targetDigests[ latest ] = 'b59ab7ac9190cbfe5b00acae05f909ea8f22bd3a'
+        self.targetInstallPath[latest] = "dev-utils"
         self.defaultTarget = latest
 
     def setDependencies( self ):
@@ -22,5 +23,4 @@ from Package.BinaryPackageBase import *
 class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = "dev-utils"
 

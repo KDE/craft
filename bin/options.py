@@ -175,18 +175,6 @@ class OptionsMerge(OptionsBase):
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
         self.sourcePath = None
-        ## subdir based on mergeDir() used as  merge destination directory
-        self._destinationPath = None
-
-    @property
-    @deprecated("info.targetInstallPath")
-    def destinationPath(self):
-        return self._destinationPath
-
-    @destinationPath.setter
-    @deprecated("info.targetInstallPath")
-    def destinationPath(self, val):
-        self._destinationPath = val
 
 ## options for the package action
 class OptionsPackage(OptionsBase):

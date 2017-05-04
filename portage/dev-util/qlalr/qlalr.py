@@ -11,13 +11,11 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['HEAD'] = "http://www.winkde.org/pub/kde/ports/win32/repository/other/qlalr.exe"
         self.defaultTarget = 'HEAD'
-        ## \todo specific a target independent install path option
-        self.targetInstallPath['HEAD'] = 'bin'
+        self.targetInstallPath['HEAD'] = os.path.join("dev-utils", "bin")
 
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__(self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = 'dev-utils'
 
