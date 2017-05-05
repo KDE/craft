@@ -157,6 +157,10 @@ class CraftConfig( object ):
         self.addAlias( "Compile", "BuildTests", "General", "EMERGE_BUILDTESTS" )
         self.addAlias( "Compile", "BuildType", "General", "EMERGE_BUILDTYPE" )
         self.addAlias( "Portage", "Ignores", "Portage", "PACKAGE_IGNORES" )
+        self.addAlias("Package", "UseCache", "ContinuousIntegration", "UseCache")
+        self.addAlias("Package", "CreateCache", "ContinuousIntegration", "UseCache")
+        self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")
+        self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
 
 
     def _setAliasesV1(self):

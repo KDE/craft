@@ -5,6 +5,7 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets['master'] = "https://github.com/jrosdahl/ccache.git"
+        self.targetInstallPath["master"] = "dev-utils"
         self.defaultTarget = 'master'
 
 
@@ -20,7 +21,6 @@ from Package.VirtualPackageBase import *
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.merge.destinationPath = "dev-utils"
         self.subinfo.options.configure.defines = "--with-bundled-zlib "
         self.supportsCCACHE = False
 

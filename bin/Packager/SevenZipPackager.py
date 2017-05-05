@@ -24,17 +24,22 @@ class SevenZipPackager (PackagerBase):
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
         app = utils.utilsCache.findApplication("7za")
-        cmd = "%s a -r %s %s/*" % (app, os.path.join(destDir, archiveName), sourceDir )
+        kw = {}
+        progressFlags = ""
         if utils.utilsCache.appSupportsCommand(app, "-bs"):
-            cmd += " -bsp1"
-            cmd += " -bso2"
-        if not utils.system(cmd, displayProgress=True):
-            craftDebug.log.critical("while packaging. cmd: %s" % cmd)
+            progressFlags = " -bso2 -bsp1"
+            kw["stderr"] = subprocess.PIPE
+        archive = os.path.join(destDir, archiveName)
+        cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
+        if not utils.system(cmd, displayProgress=True, **kw):
+            craftDebug.log.critical(f"while packaging. cmd: {cmd}")
         CraftHash.createDigestFiles(os.path.join(destDir, archiveName))
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
-        if craftSettings.getboolean("ContinuousIntegration", "CreateCache"):
+        if craftSettings.getboolean("Packager", "CreateCache"):
+            if self.subinfo.options.package.disableBinaryCache:
+                return True
             dstpath = self.cacheLocation()
         else:
             dstpath = self.packageDestinationDir()

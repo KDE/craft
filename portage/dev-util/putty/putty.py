@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         for ver in ['0.62', '0.63', '0.64', '0.65', '0.66']:
             self.targets[ver] = 'http://the.earth.li/~sgtatham/putty/' + ver + '/x86/putty.zip'
             self.archiveNames[ver] = "putty-%s.zip" % ver
-            self.targetInstallPath[ver] = "bin"
+            self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
 
         self.targetDigests['0.62'] = '953e7b2eb7844184ccfb24651c7829f3e1e30558'
         self.targetDigests['0.63'] = '573ffcaa7f3205ca77ee5f3502b7def3b0ec7e79'
@@ -23,7 +23,6 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = 'dev-utils'
 
 
 

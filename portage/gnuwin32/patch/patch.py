@@ -8,6 +8,7 @@ import compiler
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.targets['2.5.9'] = "http://sourceforge.net/projects/gnuwin32/files/patch/2.5.9-7/patch-2.5.9-7-bin.zip"
+        self.targetInstallPath["2.5.9"] = "dev-utils"
         self.targetDigests['2.5.9'] = '7b2ec738881f4e962e54e0f330b67c42635266b7'
         self.defaultTarget = '2.5.9'
 
@@ -21,7 +22,6 @@ from Package.BinaryPackageBase import *
 class Package( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.merge.destinationPath = "dev-utils"
 
     def install( self ):
         if not BinaryPackageBase.install( self ):

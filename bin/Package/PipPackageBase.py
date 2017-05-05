@@ -35,3 +35,10 @@ class PipPackageBase (PackageBase, SourceBase, PipBuildSystem, PackagerBase):
 
     def localFileNamesBase( self ):
         return []
+
+# from PackagerBase
+    def createPackage(self):
+        return True
+
+    def preArchive(self):
+        return True

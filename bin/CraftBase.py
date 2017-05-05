@@ -189,9 +189,7 @@ class CraftBase(object):
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a
         specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
-        if self.subinfo.hasMergeSourcePath():
-            directory = os.path.join( self.imageDir(), self.subinfo.mergeSourcePath() )
-        elif not self.subinfo.options.merge.sourcePath == None:
+        if not self.subinfo.options.merge.sourcePath == None:
             directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
             directory = self.imageDir()
@@ -199,17 +197,8 @@ class CraftBase(object):
 
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
-        This path may point to a subdir of rootdir in case @ref info.targetMergePath for a specific
-        build target or @ref self.subinfo.options.merge.destinationPath is used
         """
-
-        if self.subinfo.hasMergePath():
-            directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.mergePath() )
-        elif not self.subinfo.options.merge.destinationPath == None:
-            directory = os.path.join( CraftStandardDirs.craftRoot(), self.subinfo.options.merge.destinationPath )
-        else:
-            directory = CraftStandardDirs.craftRoot()
-        return self.__adjustPath(directory)
+        return self.__adjustPath(CraftStandardDirs.craftRoot())
 
     def packageDestinationDir( self, withBuildType=True ):
         """return absolute path to the directory where binary packages are placed into.
@@ -287,13 +276,9 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = craftSettings.get("PortageVersions", "Qt5")
-            if not version:
-                craftDebug.log.critical("Please set a value for\n"
-                                "[PortageVersions]\n"
-                                "Qt5")
+            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        cacheDir = craftSettings.get("ContinuousIntegration", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
+        cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, sys.platform, version,
                                compiler.getCompilerName(), self.buildType())
 
@@ -301,12 +286,8 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = craftSettings.get("PortageVersions", "Qt5")
-            if not version:
-                craftDebug.log.critical("Please set a value for\n"
-                                "[PortageVersions]\n"
-                                "Qt5")
+            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        return "/".join([craftSettings.get("ContinuousIntegration", "RepositoryUrl"), sys.platform, version,
+        return "/".join([craftSettings.get("Packager", "RepositoryUrl"), sys.platform, version,
                             compiler.getCompilerName(), self.buildType()])
 
