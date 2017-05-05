@@ -58,8 +58,7 @@ mkspecs\\.*
 bin\\qt\.conf
 bin\\syncqt\.pl
 
-bin\\dbus-*\.exe
-bin\\dbus-env\.bat
+bin\\dbus-.*
 
 # strip most executables
 bin\\(?!(kate|kwrite|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
