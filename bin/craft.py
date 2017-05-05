@@ -355,9 +355,13 @@ def main( ):
                          default = craftSettings.getboolean( "Compile", "BuildTests", True ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
     parser.add_argument("-cc", "--create-cache", action="store_true", dest="createCache",
-                        default=craftSettings.getboolean("Packager", "CreateCache", "False"))
+                        default=craftSettings.getboolean("Packager", "CreateCache", "False"),
+                        help="Create a binary cache, the setting is overwritten by --no-cache")
     parser.add_argument("-uc", "--use-cache", action="store_true", dest="useCache",
-                        default=craftSettings.getboolean("Packager", "UseCache", "False"))
+                        default=craftSettings.getboolean("Packager", "UseCache", "False"),
+                        help = "Use a binary cache, the setting is overwritten by --no-cache")
+    parser.add_argument("--no-cache", action="store_true", dest="noCache",
+                        default=False, help = "Don't create or use the binary cache")
     parser.add_argument( "--destroy-craft-root", action = "store_true", dest = "doDestroyCraftRoot",
                          default=False)
     parser.add_argument( "--offline", action = "store_true",
@@ -464,8 +468,8 @@ def main( ):
     craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
     craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
-    craftSettings.set( "Packager", "CreateCache", args.createCache)
-    craftSettings.set( "Packager", "UseCache", args.useCache)
+    craftSettings.set( "Packager", "CreateCache", not args.noCache and args.createCache)
+    craftSettings.set( "Packager", "UseCache", not args.noCache and args.useCache)
     craftSettings.set( "ContinuousIntegration", "SourceDir", args.srcDir)
     craftSettings.set( "ContinuousIntegration", "Enabled",  args.ciMode)
 
