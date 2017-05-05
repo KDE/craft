@@ -276,11 +276,7 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = craftSettings.get("PortageVersions", "Qt5")
-            if not version:
-                craftDebug.log.critical("Please set a value for\n"
-                                "[PortageVersions]\n"
-                                "Qt5")
+            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, sys.platform, version,
@@ -290,11 +286,7 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = craftSettings.get("PortageVersions", "Qt5")
-            if not version:
-                craftDebug.log.critical("Please set a value for\n"
-                                "[PortageVersions]\n"
-                                "Qt5")
+            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         return "/".join([craftSettings.get("Packager", "RepositoryUrl"), sys.platform, version,
                             compiler.getCompilerName(), self.buildType()])
