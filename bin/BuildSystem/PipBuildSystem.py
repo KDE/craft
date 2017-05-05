@@ -9,7 +9,6 @@ class PipBuildSystem(BuildSystemBase):
         self.python2 = True
         self.python3 = True
         self.allowExternal = False
-        self.subinfo.options.package.disableBinaryCache = True
 
     def configure( self ):
         return True
