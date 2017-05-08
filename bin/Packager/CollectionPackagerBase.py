@@ -112,7 +112,7 @@ class CollectionPackagerBase( PackagerBase ):
             _package.category, x.package, _package.version, _package.buildTarget))
 
         if craftSettings.getboolean("QtSDK", "Enabled", False) and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
-            imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), None, False))
+            imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), False))
 
         return imageDirs
 
@@ -215,7 +215,7 @@ class CollectionPackagerBase( PackagerBase ):
             craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip( entry_target )
-          
+
     def internalCreatePackage( self ):
         """ create a package """
 
@@ -224,10 +224,8 @@ class CollectionPackagerBase( PackagerBase ):
         if not self.noClean:
             craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
             utils.cleanDirectory(archiveDir)
-            for directory, mergeDir, strip  in self.__getImageDirectories():
+            for directory, strip  in self.__getImageDirectories():
                 imageDir = archiveDir
-                if mergeDir:
-                    imageDir = os.path.join( imageDir, mergeDir )
                 if os.path.exists( directory ):
                     self.copyFiles(directory, imageDir, strip)
                 else:
@@ -238,6 +236,6 @@ class CollectionPackagerBase( PackagerBase ):
 
         return True
 
-        
+
     def preArchive(self):
         return True
