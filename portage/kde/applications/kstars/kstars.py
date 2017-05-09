@@ -10,6 +10,8 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
+        self.dependencies['libs/qtquickcontrols'] = 'default'
+        self.dependencies['libs/qtquickcontrols2'] = 'default'
         self.dependencies['libs/qtsvg'] = 'default'
         self.dependencies['frameworks/kconfig'] = 'default'
         self.dependencies['frameworks/kdoctools'] = 'default'        
