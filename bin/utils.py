@@ -216,7 +216,11 @@ def getFile( url, destdir , filename='' ) -> bool:
             sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
         sys.stdout.flush()
 
-    urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
+    try:
+        urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
+    except Exception as e:
+        craftDebug.log.warning(e)
+        return False
 
     if craftDebug.verbose()>=0:
         sys.stdout.write("\n")

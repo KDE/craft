@@ -473,6 +473,10 @@ def main( ):
     craftSettings.set( "ContinuousIntegration", "SourceDir", args.srcDir)
     craftSettings.set( "ContinuousIntegration", "Enabled",  args.ciMode)
 
+    if craftSettings.getboolean("Packager", "CreateCache"):
+        # we are in cache creation mode, ensure to create a 7z image and not an installer
+        craftSettings.set("Packager", "PackageType", "SevenZipPackager")
+
     portage.PortageInstance.options = args.options
     if args.search:
         for package in args.packageNames:

@@ -20,7 +20,7 @@ The packager used can be decided at runtime
 
     def changePackager(self, packager=None):
         if not packager == None and ("Packager", "PackageType") in craftSettings:
-            craftDebug.step("Packager setting %s overriten by with %s" % (packager, craftSettings.get("Packager", "PackageType")))
+            craftDebug.debug("Packager setting %s overriten by with %s" % (packager, craftSettings.get("Packager", "PackageType")))
             packager = eval(craftSettings.get("Packager", "PackageType"))
 
         if packager == None:
