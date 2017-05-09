@@ -27,3 +27,6 @@ class Package(SourceOnlyPackageBase, GitSource):
     def install( self ):
         utils.utilsCache.clear()
         return SourceOnlyPackageBase.install(self)
+
+    def qmerge( self ):
+        return True
