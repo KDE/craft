@@ -812,7 +812,7 @@ def replaceSymlinksWithCopys(path):
                 toReplace = resolveLink(path)
                 if not os.path.exists(toReplace):
                     craftDebug.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
-                    return False
+                    continue
                 if toReplace != path:
                     deleteFile(path)
                     copyFile(toReplace, path)
