@@ -4,6 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
+        self.patchToApply["17.04.0"] = [("0001-Remove-define-to-disable-exports.patch", 1)]
 
 
     def setDependencies( self ):

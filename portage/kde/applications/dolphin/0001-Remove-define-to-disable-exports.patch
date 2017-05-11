@@ -1,0 +1,28 @@
+From 6c3cacd2b360cf70205f662b73a5296f81ef1702 Mon Sep 17 00:00:00 2001
+From: Hannah von Reth <vonreth@kde.org>
+Date: Thu, 11 May 2017 12:33:15 +0200
+Subject: [PATCH] Remove define to disable exports
+
+As the tests are now correctly linked to dolphinprivate we need the
+actual export macro.
+---
+ src/tests/CMakeLists.txt | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/src/tests/CMakeLists.txt b/src/tests/CMakeLists.txt
+index c7159bf1b..de693e2b9 100644
+--- a/src/tests/CMakeLists.txt
++++ b/src/tests/CMakeLists.txt
+@@ -3,9 +3,6 @@ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
+ find_package(Qt5Test CONFIG REQUIRED)
+ include(ECMMarkAsTest)
+ 
+-# needed on windows to correctly use the files from dolphinprivate
+-add_definitions(-DDOLPHIN_EXPORT=)
+-
+ # KItemSetTest
+ set(kitemsettest_SRCS
+     kitemsettest.cpp
+-- 
+2.12.1
+
