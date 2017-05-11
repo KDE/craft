@@ -205,22 +205,29 @@ def getFile( url, destdir , filename='' ) -> bool:
     if os.path.exists(os.path.join( destdir, filename )):
         return True
 
-    width, _ =  shutil.get_terminal_size((80,20))
+    if utilsCache.findApplication("powershell"):
+        powershell = utilsCache.findApplication("powershell")
+        filename = os.path.join(destdir, filename)
+        return system(f"\"{powershell}\" -NoProfile -Command (new-object net.webclient).DownloadFile"
+                      f"('{url}', '{filename}')")
+    else:
 
-    def dlProgress(count, blockSize, totalSize):
-        if totalSize != -1:
-            percent = int(count * blockSize * 100 / totalSize)
-            times = int((width - 20) / 100 * percent)
-            sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
-        else:
-            sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-        sys.stdout.flush()
+        width, _ =  shutil.get_terminal_size((80,20))
 
-    try:
-        urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
-    except Exception as e:
-        craftDebug.log.warning(e)
-        return False
+        def dlProgress(count, blockSize, totalSize):
+            if totalSize != -1:
+                percent = int(count * blockSize * 100 / totalSize)
+                times = int((width - 20) / 100 * percent)
+                sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+            else:
+                sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
+            sys.stdout.flush()
+
+        try:
+            urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
+        except Exception as e:
+            craftDebug.log.warning(e)
+            return False
 
     if craftDebug.verbose()>=0:
         sys.stdout.write("\n")
