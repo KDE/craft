@@ -175,10 +175,10 @@ class Package(Qt5CorePackageBase):
 
 
     def qmerge( self ):
-        if not Qt5CoreBuildSystem.qmerge(self):
+        if not Qt5CorePackageBase.qmerge(self):
             return False
         if craftSettings.getboolean("Packager", "UseCache"):
             patcher = utils.utilsCache.findApplication("qtbinpatcher")
-            binRoot = os.path.join(CraftStandardDirs.craftBin(), "bin")
+            binRoot = os.path.join(CraftStandardDirs.craftRoot(), "bin")
             return self.system(f"\"{patcher}\" --nobackup --qt-dir=\"{binRoot}\"")
         return True
