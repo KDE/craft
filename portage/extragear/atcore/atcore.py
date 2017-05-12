@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qtserialport"] = "default"
-        self.dependencies["frameworks/solid"] = "default"
+        self.dependencies["libs/qtcharts"] = "default"
         
 from Package.CMakePackageBase import *
 
