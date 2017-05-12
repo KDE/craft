@@ -50,6 +50,8 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
+        if craftSettings.getboolean("Packager", "UseCache"):
+            self.buildDependencies['dev-util/qtbinpatcher'] = 'default'
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
@@ -172,3 +174,11 @@ class Package(Qt5CorePackageBase):
 
 
 
+    def qmerge( self ):
+        if not Qt5CoreBuildSystem.qmerge(self):
+            return False
+        if craftSettings.getboolean("Packager", "UseCache"):
+            patcher = utils.utilsCache.findApplication("qtbinpatcher")
+            binRoot = os.path.join(CraftStandardDirs.craftBin(), "bin")
+            return self.system(f"\"{patcher}\" --nobackup --qt-dir=\"{binRoot}\"")
+        return True
