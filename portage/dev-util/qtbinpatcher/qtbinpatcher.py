@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies["libs/qtbase"] = "default"
+        self.buildDependencies['virtual/base'] = 'default'
 
 
     def setTargets( self ):
