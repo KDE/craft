@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets[ "master" ] = "[git]kde:craft"
         self.svnTargets[ "stable" ] = "[git]kde:craft||stable"
-        self.defaultTarget = "master"
+        self.defaultTarget = "stable"
 
 
     def setDependencies( self ):
