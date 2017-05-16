@@ -137,7 +137,7 @@ def setUp(args):
     craftDir = os.path.join(args.root, "craft")
     run(args, "craft --ci-mode %s git" % ("-vvv" if args.verbose else ""))
     run(args, f"git clone --branch={args.branch} kde:craft {craftDir}")
-    shutil.rmtree(os.path.join(args.root, f"craft-${args.branch}"))
+    shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
     print("Setup complete")
     print("Please run %s/craft/kdeenv.ps1" % args.root)
 
