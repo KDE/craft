@@ -124,7 +124,7 @@ if (!$Script:python) {
 }
 &{
 $url = "https://raw.githubusercontent.com/KDE/craft/$Script:branch/setup/CraftBootstrap.py"
-Write-Host $url
+Write-Host "Downloading:" $url
 (new-object net.webclient).DownloadFile("$url", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
