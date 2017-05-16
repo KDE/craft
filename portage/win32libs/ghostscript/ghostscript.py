@@ -48,7 +48,7 @@ class PackageMSVC(CMakePackageBase):
         if compiler.isX64(): _win64 = " WIN64="
         # because ghostscript doesn't know about msvc2015, it guesses wrong on this. But,
         # because of where we are, rc /should/ be in the path, so we'll just use that.
-        if compiler.isMSVC2015(): _rcomp = " RCOMP=rc.exe"
+        if compiler.isMSVC(): _rcomp = " RCOMP=rc.exe"
         self.system( "nmake -f psi\\msvc.mak" + _rcomp + _win64 )
         return True
 
