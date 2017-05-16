@@ -1,6 +1,7 @@
 param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
+    [alias("branch")][string]$Script:branch="stable",
     [string[]]$Script:extraArgs
     )
 
@@ -121,10 +122,14 @@ if (!$Script:python) {
     }
     TestAndFetchPython
 }
-
-(new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py", "$Script:installRoot\download\CraftBootstrap.py")
+&{
+$url = "https://raw.githubusercontent.com/KDE/craft/$Script:branch/setup/CraftBootstrap.py"
+Write-Host $url
+(new-object net.webclient).DownloadFile("$url", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
-Write-Host "$Script:python" "$Script:installRoot\download\CraftBootstrap.py" --root "$Script:installRoot" "$Script:extraArgs"
-& "$Script:python" "$Script:installRoot\download\CraftBootstrap.py" --root "$Script:installRoot" $Script:extraArgs
+$command = @("$Script:installRoot\download\CraftBootstrap.py", "--root", "$Script:installRoot", "--branch", "$Script:branch", $Script:extraArgs)
+Write-Host "$Script:python" $command
+& "$Script:python" $command
 cd $Script:installRoot
+}
