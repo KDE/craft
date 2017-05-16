@@ -9,9 +9,10 @@ import urllib.request
 import shutil
 
 class CraftBootstrap(object):
-    def __init__(self, kdeRoot):
+    def __init__(self, kdeRoot, branch):
         self.kdeRoot = kdeRoot
-        with open(os.path.join(kdeRoot, "craft-master", "kdesettings.ini"),  "rt+") as ini:
+        self.branch = branch
+        with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"),  "rt+") as ini:
             self.settings = ini.read()
 
     @staticmethod
@@ -116,7 +117,7 @@ def setUp(args):
                                  f"craft-{args.branch}.zip")
     shutil.unpack_archive(os.path.join(args.root, "download", f"craft-{args.branch}.zip"), args.root)
 
-    boot = CraftBootstrap(args.root)
+    boot = CraftBootstrap(args.root, args.branch)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
