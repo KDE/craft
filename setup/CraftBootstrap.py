@@ -83,8 +83,9 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    print("Execute: powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command))
-    subprocess.check_call("powershell %s %s" % (os.path.join(args.root, "craft-master", "kdeenv.ps1"), command), stderr=subprocess.PIPE)
+    script = os.path.join(args.root, f"craft-{args.branch}", "kdeenv.ps1")
+    print(f"Execute: powershell {script} {command}")
+    subprocess.check_call(f"powershell {script} {command}", stderr=subprocess.PIPE)
 
 
 def setUp(args):
@@ -111,9 +112,9 @@ def setUp(args):
         print("It just maps the folder to a drive letter you will assign.")
         shortPath = CraftBootstrap.promptShortPath()
 
-    CraftBootstrap.downloadFile("https://github.com/KDE/craft/archive/master.zip", os.path.join(args.root, "download"),
-                                 "craft.zip")
-    shutil.unpack_archive(os.path.join(args.root, "download", "Craft.zip"), args.root)
+    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip", os.path.join(args.root, "download"),
+                                 f"craft-{args.branch}.zip")
+    shutil.unpack_archive(os.path.join(args.root, "download", f"craft-{args.branch}.zip"), args.root)
 
     boot = CraftBootstrap(args.root)
     boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
@@ -132,9 +133,10 @@ def setUp(args):
     if args.set:
         writeSettings(args)
 
+    craftDir = os.path.join(args.root, "craft")
     run(args, "craft --ci-mode %s git" % ("-vvv" if args.verbose else ""))
-    run(args, "git clone kde:craft %s" % os.path.join(args.root, "craft"))
-    shutil.rmtree(os.path.join(args.root, "craft-master"))
+    run(args, f"git clone --branch={args.branch} kde:craft {craftDir}")
+    shutil.rmtree(os.path.join(args.root, f"craft-${args.branch}"))
     print("Setup complete")
     print("Please run %s/craft/kdeenv.ps1" % args.root)
 
@@ -160,6 +162,7 @@ def writeSettings(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
     parser.add_argument("--root", action="store")
+    parser.add_argument("--branch", action="store")
     parser.add_argument("--compiler", action="store")
     parser.add_argument("--architecture", action="store")
     parser.add_argument("--no-short-path", action="store_true", dest="noShortPath")
