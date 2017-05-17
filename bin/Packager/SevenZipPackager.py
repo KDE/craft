@@ -47,7 +47,7 @@ class SevenZipPackager (PackagerBase):
                 cache[str(self)] = {}
             cache[str(self)][archiveName] = {"checksum" : CraftHash.digestFile(archive, CraftHash.HashAlgorithm.SHA256)}
             with open(cacheFilePath, "wt+") as cacheFile:
-                json.dump(cache, cacheFile)
+                json.dump(cache, cacheFile, sort_keys=True, indent=2)
 
 
     def createPackage(self):
