@@ -22,6 +22,7 @@ import urllib.request
 import zipfile
 from operator import itemgetter
 import atexit
+import json
 
 from CraftDebug import craftDebug
 import CraftHash
@@ -32,7 +33,7 @@ from CraftOS.osutils import OsUtils
 # TODO: Rename
 class UtilsCache(object):
     _instance = None
-    _version = 2
+    _version = 3
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
@@ -43,6 +44,7 @@ class UtilsCache(object):
         self.cacheCreationTime = time.time()
         #defined in portageSearch
         self.availablePackages = None
+        self._jsonCache = {}
 
     @staticmethod
     def instance():
@@ -108,6 +110,18 @@ class UtilsCache(object):
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
+
+    def cacheJsonFromUrl(self, url, timeout = 10) -> object:
+        if not url in self._jsonCache:
+            craftDebug.log.debug(f"Fetching: {url}")
+            try:
+                with urllib.request.urlopen(url, timeout=timeout) as fh:
+                    self._jsonCache[url] = json.load(fh)
+            except urllib.error.HTTPError as e:
+                craftDebug.log.debug(f"Failed to download {url}: {e}")
+                if e.code == 404:
+                    self._jsonCache[url] = None
+        return self._jsonCache[url]
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
         """

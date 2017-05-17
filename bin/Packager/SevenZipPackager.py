@@ -15,6 +15,7 @@
 from CraftDebug import craftDebug
 import CraftHash
 from Packager.PackagerBase import *
+import json
 
 class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
@@ -33,7 +34,21 @@ class SevenZipPackager (PackagerBase):
         cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
         if not utils.system(cmd, displayProgress=True, **kw):
             craftDebug.log.critical(f"while packaging. cmd: {cmd}")
-        CraftHash.createDigestFiles(os.path.join(destDir, archiveName))
+        if not craftSettings.getboolean("Packager", "CreateCache"):
+            CraftHash.createDigestFiles(archive)
+        else:
+            cacheFilePath = os.path.join(self.cacheLocation(), "manifest.json")
+            if os.path.exists(cacheFilePath):
+                with open(cacheFilePath, "rt+") as cacheFile:
+                    cache = json.load(cacheFile)
+            else:
+                cache = {}
+            if not str(self) in cache:
+                cache[str(self)] = {}
+            cache[str(self)][archiveName] = {"checksum" : CraftHash.digestFile(archive, CraftHash.HashAlgorithm.SHA256)}
+            with open(cacheFilePath, "wt+") as cacheFile:
+                json.dump(cache, cacheFile)
+
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""

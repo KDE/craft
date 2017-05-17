@@ -173,16 +173,20 @@ class PackageBase (CraftBase):
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:
+        if self.subinfo.options.package.disableBinaryCache:
+            return False
+        cache = utils.utilsCache.cacheJsonFromUrl(f"{self.cacheRepositoryUrl()}/manifest.json")
+        if not cache or not str(self) in cache:
+            return False
         archiveName = self.binaryArchiveName()
         downloadFolder = self.cacheLocation()
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
-        craftDebug.log.debug("Trying to restor %s from cache." % archiveName)
+        craftDebug.log.debug(f"Trying to restor {archiveName} from cache.")
         if not os.path.exists(os.path.join(downloadFolder, archiveName)):
-            if not (utils.getFile("%s/%s" % (self.cacheRepositoryUrl(), archiveName), downloadFolder) and \
-                    utils.getFile("%s/%s.sha256" % (self.cacheRepositoryUrl(), archiveName), downloadFolder)):
+            if not utils.getFile(f"{self.cacheRepositoryUrl()}/{archiveName}", downloadFolder):
                  return False
-        return CraftHash.checkFilesDigests(downloadFolder, [archiveName], digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and\
+        return CraftHash.checkFilesDigests(downloadFolder, [archiveName], digests=cache[str(self)][archiveName]["checksum"], digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and\
                self.cleanImage()\
                and utils.unpackFile(downloadFolder, archiveName, self.imageDir())\
                and self.qmerge()
