@@ -146,7 +146,6 @@ def handleSinglePackage( packageName, action, args ):
     packageList = [ ]
     originalPackageList = [ ]
     categoryList = [ ]
-    targetDict = dict( )
 
     if action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables( )
@@ -164,17 +163,14 @@ def handleSinglePackage( packageName, action, args ):
                 packageList.append( mainPackage )
         craftDebug.log.debug("Will update packages: " + str(packageList))
     elif args.list_file:
-        listFileObject = open( args.list_file, 'r' )
-        for line in listFileObject:
-            if line.strip( ).startswith( '#' ): continue
-            try:
-                cat, pac, tar, _ = line.split( ',' )
-            except:
-                continue
-            categoryList.append( cat )
-            packageList.append( pac )
-            originalPackageList.append( pac )
-            targetDict[ cat + "/" + pac ] = tar
+        parser = configparser.ConfigParser(allow_no_value=True)
+        parser.read(args.list_file)
+        for sections in parser.keys():
+            for packageName in parser[sections]:
+                craftSettings.set("PortageVersions", packageName, parser.get(sections, packageName))
+                package, category = portage.getPackagesCategories(packageName)
+                packageList.extend(package)
+                categoryList.extend(category)
     elif packageName:
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
@@ -198,9 +194,6 @@ def handleSinglePackage( packageName, action, args ):
         if args.ignoreInstalled and item.category in categoryList and item.package in packageList or packageIsOutdated(
                 item.category, item.package ):
             item.enabled = True
-
-        if item.category + "/" + item.package in targetDict:
-            item.target = targetDict[ item.category + "/" + item.package ]
 
         if args.target in list(
                 portage.PortageInstance.getAllTargets( item.category, item.package ).keys( ) ):
