@@ -21,6 +21,7 @@ class Package(SourceOnlyPackageBase, GitSource):
         SourceOnlyPackageBase.__init__(self)
         GitSource.__init__(self,subinfo=self.subinfo)
         setattr(self.source, "checkoutDir", lambda : os.path.join(CraftStandardDirs.craftBin(), ".."))
+        self.subinfo.options.package.disableBinaryCache = True
 
     def fetch(self):
         return GitSource.fetch(self)
@@ -30,4 +31,7 @@ class Package(SourceOnlyPackageBase, GitSource):
         return SourceOnlyPackageBase.install(self)
 
     def qmerge( self ):
+        return True
+
+    def createPackage( self ):
         return True
