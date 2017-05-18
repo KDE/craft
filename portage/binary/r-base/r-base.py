@@ -39,13 +39,19 @@ class Package(BinaryPackageBase):
         self.subinfo.options.package.withCompiler = None
 
     def unpack( self ):
+        print(self.workDir())
+        short_paths = CraftStandardDirs.allowShortpaths( False )  # R Installer does not like drive letter substs
+        workdir = self.workDir()
+        CraftStandardDirs.allowShortpaths( short_paths )
+        print(workdir)
+
         # hopefully only one...
         for filename in self.localFileNames():
-            self.system( os.path.join( CraftStandardDirs.downloadDir(), filename ) + " /DIR=\"" + self.workDir() + "\" /SILENT")
+            self.system( os.path.join( CraftStandardDirs.downloadDir(), filename ) + " /DIR=\"" + workdir + "\" /SILENT")
         return True
 
     def install( self ):
-        srcdir = self.sourceDir()
+        srcdir = self.workDir()
         dstdir = self.installDir()
 
         utils.cleanDirectory( dstdir )
