@@ -4,7 +4,7 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets[ 'master' ] =  '[git]kde:rkward'
+        self.svnTargets[ 'master' ] =  '[git]kde:rkward|frameworks'
         for ver in ['0.6.4']:
             self.targets[ver] = 'http://download.kde.org/stable/rkward/' + ver + '/rkward-' + ver + '.tar.gz'
             self.targetInstSrc[ ver] = 'rkward-' + ver
