@@ -112,13 +112,14 @@ class UtilsCache(object):
         return self._helpCache[(app, command)]
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
-        out = {}
         if not url in self._jsonCache:
             craftDebug.log.debug(f"Fetching: {url}")
             try:
                 with urllib.request.urlopen(url, timeout=timeout) as fh:
-                    out = json.load(fh)
-                    self._jsonCache[url] = out
+                    text = str(fh.read(), "UTF-8")
+                    craftDebug.log.debug(f"Fetched json: {url}")
+                    craftDebug.log.debug(text)
+                    self._jsonCache[url] = json.loads(text)
             except urllib.error.HTTPError as e:
                 craftDebug.log.debug(f"Failed to download {url}: {e}")
                 if e.code == 404:
@@ -126,7 +127,7 @@ class UtilsCache(object):
                     self._jsonCache[url] = {}
             except Exception as e:
                 craftDebug.log.debug(f"Failed to download {url}: {e}")
-        return out
+        return self._jsonCache.get(url, {})
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
         """
