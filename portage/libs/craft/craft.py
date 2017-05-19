@@ -3,36 +3,39 @@ from Package import VirtualPackageBase
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.svnTargets[ "master" ] = "[git]kde:craft"
+    def setTargets(self):
+        self.svnTargets["master"] = "[git]kde:craft"
         for ver in ["2017.05"]:
-            self.svnTargets[ ver ] = f"[git]kde:craft||{ver}"
+            self.svnTargets[ver] = f"[git]kde:craft|{ver}|"
         self.defaultTarget = "2017.05"
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['dev-util/git'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
 
 
 from Package.SourceOnlyPackageBase import *
 
+
 class Package(SourceOnlyPackageBase, GitSource):
-    def __init__( self):
+    def __init__(self):
         SourceOnlyPackageBase.__init__(self)
-        GitSource.__init__(self,subinfo=self.subinfo)
-        setattr(self.source, "checkoutDir", lambda : os.path.join(CraftStandardDirs.craftBin(), ".."))
+        GitSource.__init__(self, subinfo=self.subinfo)
+        setattr(self.source, "checkoutDir", lambda: os.path.join(CraftStandardDirs.craftBin(), ".."))
         self.subinfo.options.package.disableBinaryCache = True
+
+    def unpack(self):
+        return True
 
     def fetch(self):
         return GitSource.fetch(self)
 
-    def install( self ):
-        utils.utilsCache.clear()
-        return SourceOnlyPackageBase.install(self)
-
-    def qmerge( self ):
+    def install(self):
         return True
 
-    def createPackage( self ):
+    def qmerge(self):
+        utils.utilsCache.clear()
+        return True
+
+    def createPackage(self):
         return True
