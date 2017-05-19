@@ -123,9 +123,9 @@ class UtilsCache(object):
                 craftDebug.log.debug(f"Failed to download {url}: {e}")
                 if e.code == 404:
                     # don't retry it
-                    self._jsonCache[url] = out
-            except:
-                pass
+                    self._jsonCache[url] = {}
+            except Exception as e:
+                craftDebug.log.debug(f"Failed to download {url}: {e}")
         return out
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
