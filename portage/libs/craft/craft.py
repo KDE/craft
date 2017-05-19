@@ -5,7 +5,8 @@ from Package import VirtualPackageBase
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets[ "master" ] = "[git]kde:craft"
-        self.svnTargets[ "stable" ] = "[git]kde:craft||stable"
+        for ver in ["2017.05"]:
+            self.svnTargets[ ver ] = f"[git]kde:craft||{ver}"
         self.defaultTarget = "master"
 
 
