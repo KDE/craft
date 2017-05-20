@@ -147,8 +147,6 @@ class CraftConfig( object ):
         self._alias = dict( )
         self._readSettings( )
 
-        if self.version < 2:
-            self._setAliasesV1()
         if self.version < 3:
             self._setAliasesV2()
 
@@ -162,18 +160,6 @@ class CraftConfig( object ):
         self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")
         self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
 
-
-    def _setAliasesV1(self):
-        self.setDefault( "General", "DUMP_SETTINGS", "False" )
-        self.addAlias( "CraftDebug", "Verbose", "General", "EMERGE_VERBOSE" )
-        self.addAlias( "CraftDebug", "MeasureTime", "General", "EMERGE_MEASURE_TIME" )
-        self.addAlias( "General", "UseHardlinks", "General", "EMERGE_USE_SYMLINKS" )
-        self.addAlias( "General", "WorkOffline", "General", "EMERGE_OFFLINE" )
-        self.addAlias( "PortageVersions", "DefaultTarget", "General", "EMERGE_TARGET" )
-        self.addAlias( "Paths", "Python", "Paths", "PYTHONPATH" )
-        self.addAlias( "General", "Architecture", "General", "EMERGE_ARCHITECTURE" )
-        self.addAlias( "Compile", "UseNinja", "General", "EMERGE_USE_NINJA" )
-        self.addAlias( "Compile", "UseCCache", "General", "EMERGE_USE_CCACHE" )
 
     def _readSettings( self ):
         if not os.path.exists( self.iniPath ):
