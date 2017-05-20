@@ -39,11 +39,16 @@ class SeachPackage(object):
 def packages():
     if not utils.utilsCache.availablePackages:
         utils.utilsCache.availablePackages = []
+        craftDebug.log.info("Updating search cache:")
+        total = len(portage.PortageInstance.getInstallables())
         for p in portage.PortageInstance.getInstallables():
             pi = portage.PortageInstance.getPackageInstance(p.category, p.package)
             if pi:
                 package = SeachPackage(pi)
                 utils.utilsCache.availablePackages.append(package)
+                percent = int(len(utils.utilsCache.availablePackages)/total * 100)
+            utils.printProgress(percent)
+        craftDebug.log.info("")
     return utils.utilsCache.availablePackages
 
 

@@ -231,18 +231,13 @@ def getFile( url, destdir , filename='' ) -> bool:
         return system(f"\"{powershell}\" -NoProfile -Command (new-object net.webclient).DownloadFile"
                       f"('{url}', '{filename}')")
     else:
-
-        width, _ =  shutil.get_terminal_size((80,20))
-
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
                 percent = int(count * blockSize * 100 / totalSize)
-                times = int((width - 20) / 100 * percent)
-                sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+                printProgress(percent)
             else:
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-            sys.stdout.flush()
-
+                sys.stdout.flush()
         try:
             urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
         except Exception as e:
@@ -844,3 +839,9 @@ def replaceSymlinksWithCopys(path):
                     deleteFile(path)
                     copyFile(toReplace, path)
     return True
+
+def printProgress(percent):
+    width, _ = shutil.get_terminal_size((80, 20))
+    times = int((width - 20) / 100 * percent)
+    sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+    sys.stdout.flush()
