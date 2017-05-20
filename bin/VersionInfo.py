@@ -8,8 +8,8 @@ import utils
 
 
 class VersionInfo( object ):
-    _VERSION_INFOS = dict( )
-    _VERSION_INFOS_HINTS = dict( )
+    _VERSION_INFOS = {}
+    _VERSION_INFOS_HINTS = {}
 
     def __init__( self, parent ):
         self.subinfo = parent
@@ -51,22 +51,25 @@ class VersionInfo( object ):
         return self.__defaulVersions
 
 
-    def _getVersionInfo( self, key, default = "" ):
+    def _getVersionInfo( self, key, default = None ):
         if self._defaulVersions.has_section( "General" ) and key in self._defaulVersions[ "General" ]:
             return self._defaulVersions[ "General" ][ key ]
         return default
 
     def tags( self ):
-        return self._getVersionInfo( "tags" ).split( ";" )
+        out = self._getVersionInfo( "tags" )
+        return out.split( ";" ) if out else {}
 
     def branches( self ):
-        return self._getVersionInfo( "branches" ).split( ";" )
+        out = self._getVersionInfo( "branches" )
+        return out.split(";") if out else {}
 
     def tarballs( self ):
-        return self._getVersionInfo( "tarballs" ).split( ";" )
+        out = self._getVersionInfo( "tarballs" )
+        return out.split(";") if out else {}
 
     def defaultTarget( self ):
-        name = self._getVersionInfo( "name" )
+        name = self._getVersionInfo( "name" , "")
         if ("PortageVersions", name) in craftSettings:
             return craftSettings.get( "PortageVersions", name )
         return self._getVersionInfo( "defaulttarget" )
@@ -92,7 +95,8 @@ class VersionInfo( object ):
         self.setDefaultValues(tarballUrl,tarballDigestUrl,tarballInstallSrc,gitUrl)
 
 
-    def setDefaultValues( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None, gitUrl = None, packageName = None ):
+    def setDefaultValues( self, tarballUrl = None, tarballDigestUrl = None, tarballInstallSrc = None,
+                          gitUrl = None, packageName = None , patchLevel = None):
         """
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.
@@ -117,20 +121,23 @@ class VersionInfo( object ):
             gitUrl = self._getVersionInfo("gitUrl", None)
         if not tarballUrl is None:
             for ver in self.tarballs( ):
-                self.subinfo.targets[ ver ] = self._replaceVar( tarballUrl, ver, packageName )
+                target = f"{ver}-{patchLevel}" if patchLevel else ver
+                self.subinfo.targets[ target  ] = self._replaceVar( tarballUrl, ver, packageName )
                 if not tarballDigestUrl is None:
-                    self.subinfo.targetDigestUrls[ ver ] = self._replaceVar( tarballDigestUrl, ver, packageName )
+                    self.subinfo.targetDigestUrls[ target ] = self._replaceVar( tarballDigestUrl, ver, packageName )
                 if not tarballInstallSrc is None:
-                    self.subinfo.targetInstSrc[ ver ] = self._replaceVar( tarballInstallSrc, ver, packageName)
+                    self.subinfo.targetInstSrc[ target ] = self._replaceVar( tarballInstallSrc, ver, packageName)
 
         if not gitUrl is None:
             for ver in self.branches( ):
+                target = f"{ver}-{patchLevel}" if patchLevel else ver
                 self.subinfo.svnTargets[ ver ] = "%s|%s|" % ( self._replaceVar( gitUrl, ver, packageName ), ver)
 
             for ver in self.tags( ):
-                self.subinfo.svnTargets[ ver ] = "%s||%s" % ( self._replaceVar( gitUrl, ver, packageName ), ver)
+                target = f"{ver}-{patchLevel}" if patchLevel else ver
+                self.subinfo.svnTargets[ target ] = "%s||%s" % ( self._replaceVar( gitUrl, ver, packageName ), ver)
 
-        self.subinfo.defaultTarget = self.defaultTarget( )
+        self.subinfo.defaultTarget = f"{self.defaultTarget( ) }-{patchLevel}" if patchLevel else self.defaultTarget( )
 
     def packageName( self ):
         return self.subinfo.package

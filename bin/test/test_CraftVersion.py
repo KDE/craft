@@ -20,6 +20,7 @@ class TestCraftVersion(CraftTestBase.CraftTestBase):
 
     def test_compare(self):
         for small, big in [(CraftVersion("5.8.0"), CraftVersion("5.8.1")),
+                           (CraftVersion("5.8.0"), CraftVersion("5.8.0-1")),
                            (CraftVersion("1.0.2j"), CraftVersion("1.0.2k")),
                            (CraftVersion("v1.0.2j"), CraftVersion("1.0.2k")),
                            (CraftVersion("5.8.1"), CraftVersion("master")),
