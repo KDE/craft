@@ -129,9 +129,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         elif buildAction == "print-package-version":
             print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
             success = True
-        elif buildAction == "print-targets":
-            portage.printTargets( category, packageName )
-            success = True
         else:
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
 
@@ -418,12 +415,8 @@ def main( ):
     # read-only actions
     actionHandler.addAction( "print-source-version" )
     actionHandler.addAction( "print-package-version" )
-    actionHandler.addAction( "print-targets",
-                             help = "This will show a list of available targets for the package" )
     actionHandler.addAction( "print-installed",
                              help = "This will show a list of all packages that are installed currently." )
-    actionHandler.addAction( "print-installable",
-                             help = "This will give you a list of packages that can be installed. Currently you don't need to enter the category and package: only the package will be enough." )
     actionHandler.addAction( "print-revision", help = "Print the revision of the package and exit" )
     actionHandler.addAction( "print-files", help = "Print the files installed by the package and exit" )
     actionHandler.addActionWithArg( "search-file", help = "Print packages owning the file" )
@@ -500,8 +493,6 @@ def main( ):
 
         if action == "print-installed":
             InstallDB.printInstalled( )
-        elif action == "print-installable":
-            portage.printInstallables( )
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
         elif tempArgs.list_file:

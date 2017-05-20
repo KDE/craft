@@ -520,14 +520,6 @@ def solveDependencies( category, package, depList, depType = DependencyType.Both
     depList.reverse()
     return depList
 
-def printTargets( category, package ):
-    targetsDict = PortageInstance.getAllTargets( category, package )
-    defaultTarget = PortageInstance.getDefaultTarget( category, package )
-    targetsDictKeys = list(targetsDict.keys())
-    targetsDictKeys.sort()
-    for i in targetsDictKeys:
-        craftDebug.log.info("%s %s" % ("*" if defaultTarget == i else " ", i))
-
 def _getSubinfo( category, package  ):
     pack = getPackageInstance( category, package  )
     if pack:
@@ -590,13 +582,6 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     for category, package, version in lines:
         if condition( category, package, version ):
             printLine( category, package, version )
-
-def printInstallables():
-    """get all the packages that can be installed"""
-    data = list()
-    for p in PortageInstance.getInstallables():
-        data.append((p.category,p.package, p.version))
-    printCategoriesPackagesAndVersions( data, alwaysTrue )
 
 def printPackagesForFileSearch(filename):
     packages = InstallDB.installdb.getPackagesForFileSearch(filename)
