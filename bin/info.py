@@ -83,8 +83,6 @@ class infoclass(object):
         target = None
         if ("PortageVersions", "%s/%s" % ( self.category, self.package )) in craftSettings:
             target = craftSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
-        elif ("PortageVersions", "DefaultTarget") in craftSettings:
-            target = craftSettings.get("PortageVersions", "DefaultTarget")
         if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget

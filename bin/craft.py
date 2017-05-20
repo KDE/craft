@@ -175,6 +175,8 @@ def handleSinglePackage( packageName, action, args ):
         craftDebug.log.debug("Checking dependencies for: %s" % entry)
 
     for mainCategory, entry in zip( categoryList, packageList ):
+        if args.target:
+            craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
         deplist = portage.solveDependencies( mainCategory, entry, deplist, portage.DependencyType(args.dependencyType),
                                               maxDepth = args.dependencydepth )
     # no package found
@@ -450,7 +452,6 @@ def main( ):
     craftSettings.set( "General", "EMERGE_FORCED", args.forced )
     craftSettings.set( "Compile", "BuildTests", args.buildTests )
     craftSettings.set( "Compile", "BuildType", args.buildType )
-    craftSettings.set( "PortageVersions", "DefaultTarget", args.target )
     craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
     craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
