@@ -13,7 +13,6 @@ class SeachPackage(object):
         self.package = package.package
         self.homepage = package.subinfo.homepage
         self.shortDescription = package.subinfo.shortDescription
-        self.defaultTarget = package.subinfo.defaultTarget
 
         versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
         versions.sort()
@@ -30,11 +29,12 @@ class SeachPackage(object):
             version = installed[0].getVersion() or None
             revision = installed[0].getRevision() or None
         subpackage = f"/{self.subpackage}" if self.subpackage else ""
+        latestVersion = portage.PortageInstance.getDefaultTarget(self.category, self.package)
         return f"""\
 {self.category}{subpackage}/{self.package}
     Homepage: {self.homepage}
     Description: {self.shortDescription}
-    Latest version: {self.defaultTarget}
+    Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}
     
