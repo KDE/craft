@@ -686,7 +686,11 @@ def findFiles( directory, pattern=None, fileNames=None):
 def putenv(name, value):
     """set environment variable"""
     craftDebug.log.debug("set environment variable -- set %s=%s" % (name, value))
-    os.putenv( name, value )
+    if not value:
+        if name in os.environ:
+            del os.environ[name]
+    else:
+        os.environ[name] = value
     return True
 
 def applyPatch(sourceDir, f, patchLevel='0'):
