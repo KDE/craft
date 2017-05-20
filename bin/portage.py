@@ -523,8 +523,6 @@ def solveDependencies( category, package, depList, depType = DependencyType.Both
 def printTargets( category, package ):
     targetsDict = PortageInstance.getAllTargets( category, package )
     defaultTarget = PortageInstance.getDefaultTarget( category, package )
-    if 'svnHEAD' in targetsDict and not targetsDict['svnHEAD']:
-        del targetsDict['svnHEAD']
     targetsDictKeys = list(targetsDict.keys())
     targetsDictKeys.sort()
     for i in targetsDictKeys:

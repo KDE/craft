@@ -15,10 +15,7 @@ def SourceFactory(settings):
     source = None
 
     if settings.hasTarget():
-        if settings.hasMultipleTargets():
-            url = settings.targetAt(0)
-        else:
-            url = settings.target()
+        url = settings.target()
         source = ArchiveSource(settings)
 
     ## \todo move settings access into info class

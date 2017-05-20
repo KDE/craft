@@ -24,21 +24,21 @@ class infoclass(object):
         self.parent = parent
         self.options = Options(optionList)
         self.versionInfo = VersionInfo.VersionInfo(self)
-        self.targets = OrderedDict()
-        self.archiveNames = OrderedDict()
+        self.targets = {}
+        self.archiveNames = {}
         # Specifiy that the fetched source should be placed into a
         # subdirectory of the default source directory
-        self.targetInstSrc = OrderedDict()
+        self.targetInstSrc = {}
         # Specifiy that the default source directory should have a suffix after
         # the package name. This is usefull for package which needs different sources.
-        self.targetSrcSuffix = OrderedDict()
-        self.targetConfigurePath = OrderedDict()
-        self.targetInstallPath = OrderedDict()
+        self.targetSrcSuffix = {}
+        self.targetConfigurePath = {}
+        self.targetInstallPath = {}
 
-        self.targetDigests = OrderedDict()
-        self.targetDigestUrls = OrderedDict()
+        self.targetDigests = {}
+        self.targetDigestUrls = {}
         ## \todo prelimary
-        self.svnTargets = OrderedDict()
+        self.svnTargets = {}
 
 
         # dependencies is the common way to define dependencies that are both
@@ -57,12 +57,12 @@ class infoclass(object):
         self.homepage = ''
 
 
-        self.patchToApply = OrderedDict()  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
+        self.patchToApply = {}  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.isoDateToday = str( datetime.date.today() ).replace('-', '')
-        self.svnTargets['svnHEAD'] = False
+        self.svnTargets = {}
         self.svnServer = None       # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
-        self.buildTarget = 'svnHEAD'
+        self.buildTarget = ""
         self.setTargets()
         self.setBuildTarget()
         self.setBuildOptions()
@@ -85,7 +85,7 @@ class infoclass(object):
             target = craftSettings.get("PortageVersions", "%s/%s" % ( self.category, self.package ))
         elif ("PortageVersions", "DefaultTarget") in craftSettings:
             target = craftSettings.get("PortageVersions", "DefaultTarget")
-        if target in list(self.targets.keys()) or target in list(self.svnTargets.keys()) :
+        if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget
 
@@ -104,7 +104,7 @@ class infoclass(object):
         self.buildTarget = self.defaultTarget
         if not buildTarget == None:
             self.buildTarget = buildTarget
-        if not self.buildTarget in list(self.targets.keys()) and not self.buildTarget in list(self.svnTargets.keys()) :
+        if not self.buildTarget in self.targets and not self.buildTarget in self.svnTargets:
             self.buildTarget = self.defaultTarget
 
     def setBuildOptions( self ):
@@ -117,97 +117,76 @@ class infoclass(object):
 
     def hasTarget( self ) -> bool:
         """return true if archive targets for the currently selected build target is available"""
-        return self.buildTarget in list(self.targets.keys())
+        return self.buildTarget in self.targets
 
     def target( self ) -> str:
         """return archive target"""
-        if self.buildTarget in list(self.targets.keys()):
+        if self.buildTarget in self.targets:
             return self.targets[self.buildTarget]
         return ""
 
     def archiveName( self ) -> [str]:
         """returns the archive file name"""
-        if self.buildTarget in list(self.archiveNames.keys()):
+        if self.buildTarget in self.archiveNames:
             return self.archiveNames[self.buildTarget]
         if type(self.targets[self.buildTarget]) == list:
             return [os.path.split(x)[-1] for x in self.targets[self.buildTarget] ]
         else:
             return [os.path.split(self.targets[self.buildTarget])[-1]]
 
-    def hasMultipleTargets( self ) -> bool:
-        """return whether we used a list of targets"""
-        return type( self.targets[self.buildTarget] ) == list
-
-    def targetCount( self ) -> int:
-        """return the number of targets given either in a list, or split by a space character"""
-        if self.hasMultipleTargets():
-            return len( self.targets[self.buildTarget] )
-        else:
-            return len( self.targets[self.buildTarget].split() )
-
-    def targetAt( self, index ) -> str:
-        """return the specified target at a specific position, or an empty string if out of bounds"""
-        if self.targetCount() <= index:
-            return ""
-
-        if self.hasMultipleTargets():
-            return self.targets[self.buildTarget][index]
-        else:
-            return self.targets[self.buildTarget].split()[index]
-
     def hasSvnTarget( self ) -> bool:
         """return true if version system based target for the currently selected build target is available"""
-        return self.buildTarget in list(self.svnTargets.keys())
+        return self.buildTarget in self.svnTargets
 
     def svnTarget( self ) -> str:
         """return version system based target for the currently selected build target"""
-        if self.buildTarget in list(self.svnTargets.keys()):
+        if self.buildTarget in self.svnTargets:
             return self.svnTargets[self.buildTarget]
         return ""
 
     def targetSourceSuffix(self) -> str:
         """return local source path suffix for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetSrcSuffix.keys()):
+        if (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[ self.buildTarget ]
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstSrc.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetInstSrc
 
     def targetSourcePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstSrc.keys()):
+        if (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[ self.buildTarget ]
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetConfigurePath.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetConfigurePath
 
     def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) and \
-                self.buildTarget in list(self.targetConfigurePath.keys()):
+        if (self.hasTarget() or self.hasSvnTarget()) and \
+                self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[ self.buildTarget ]
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstallPath.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetInstallPath
 
     def installPath(self) -> str:
         """return relative path appendable to local install path for the recent target"""
-        if (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetInstallPath.keys()):
+        if (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[ self.buildTarget ]
         craftDebug.log.critical("no install path for this build target defined")
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
-        return (len( self.targets ) or len( self.svnTargets )) and self.buildTarget in list(self.patchToApply.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
     def patchesToApply(self) -> [tuple]:
         """return patch informations for the recent build target"""
@@ -218,8 +197,8 @@ class infoclass(object):
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetDigests.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetDigests
 
     def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
@@ -234,8 +213,8 @@ class infoclass(object):
 
     def hasTargetDigestUrls(self) -> bool:
         """return state if target has digest url(s) for the recent build target"""
-        return (self.buildTarget in list(self.targets.keys()) or self.buildTarget in list(self.svnTargets.keys())) \
-                and self.buildTarget in list(self.targetDigestUrls.keys())
+        return (self.hasTarget() or self.hasSvnTarget()) \
+                and self.buildTarget in self.targetDigestUrls
 
     def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""

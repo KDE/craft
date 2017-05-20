@@ -18,16 +18,6 @@ class ArchiveSource(SourceBase):
             self.subinfo = subinfo
         SourceBase.__init__( self )
 
-    def repositoryUrl(self, index=0):
-        """all repository pathes"""
-        if self.subinfo.hasTarget():
-            return os.path.basename( self.subinfo.targetAt(index) )
-        else:
-            return False
-
-    def repositoryUrlCount(self):
-        return self.subinfo.targetCount()
-
     def localFileNames(self):
         # pylint: disable=E0202
         # but I have no idea why pylint thinks this overrides
@@ -41,8 +31,8 @@ class ArchiveSource(SourceBase):
         craftDebug.log.debug("ArchiveSource.localFileNamesBase called")
 
         filenames = []
-        for i in range(self.repositoryUrlCount()):
-            filenames.append( os.path.basename( self.repositoryUrl( i ) ) )
+        for url in self.subinfo.targets:
+            filenames.append( os.path.basename( url ) )
         return filenames
 
     def __checkFilesPresent(self, filenames):
