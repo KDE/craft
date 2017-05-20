@@ -15,6 +15,10 @@ class SeachPackage(object):
         self.shortDescription = package.subinfo.shortDescription
         self.defaultTarget = package.subinfo.defaultTarget
 
+        versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
+        versions.sort()
+        self.availableVersions = ", ".join(versions)
+
 
     def __str__(self):
         installed = InstallDB.installdb.getInstalledPackages(self.category, self.package)
@@ -33,6 +37,8 @@ class SeachPackage(object):
     Latest version: {self.defaultTarget}
     Installed versions: {version}
     Installed revision: {revision}
+    
+    Available versions: {self.availableVersions}
 """
 
 
