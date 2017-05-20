@@ -22,6 +22,8 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        # this package is currently not portable due to hardcoded path in the xml files
+        self.subinfo.options.package.disableBinaryCache = True
 
 
     
