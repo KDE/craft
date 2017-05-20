@@ -43,6 +43,8 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        # this package is currently not portable due to hardcoded paths in the kdewin defines
+        self.subinfo.options.package.disableBinaryCache = True
 
 
     
