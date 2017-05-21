@@ -5,6 +5,8 @@ from CraftDebug import craftDebug
 import portage
 import utils
 import InstallDB
+from CraftVersion import CraftVersion
+
 
 class SeachPackage(object):
     def __init__(self, package):
@@ -15,7 +17,7 @@ class SeachPackage(object):
         self.shortDescription = package.subinfo.shortDescription
 
         versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
-        versions.sort()
+        versions.sort(key=lambda x:CraftVersion(x))
         self.availableVersions = ", ".join(versions)
 
 
