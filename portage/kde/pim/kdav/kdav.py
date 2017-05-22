@@ -7,12 +7,14 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "KDav library"
-        self.defaultTarget = 'master'
+        self.patchToApply['17.04.0'] = [("001-fix_missing_include.diff", 1)]
         
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.buildDependencies["libs/qtbase"] = "default"
+        self.dependencies["frameworks/kcoreaddons"] = "default"
+        self.dependencies["frameworks/kio"] = "default"
 
 from Package.CMakePackageBase import *
 
