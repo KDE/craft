@@ -344,7 +344,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
 
     craftDebug.log.debug("executing command: '%s' in '%s'" % (cmd, kw.get("cwd", os.getcwd())))
     craftDebug.log.debug("displayProgress=%s" % displayProgress)
-    if not displayProgress:
+    if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
             kw["universal_newlines"] = True
