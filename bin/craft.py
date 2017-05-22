@@ -88,8 +88,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                     and not portage.PortageInstance.isVirtualPackage(category, packageName):
                 if doExec( package, "fetch-binary"):
                     return True
-                elif craftSettings.getboolean("ContinuousIntegration", "Enabled", "False"):
-                    return False
             success = success and doExec( package, "fetch", continueFlag )
             skip = False
             if success and skipUpToDateVcs and package.subinfo.hasSvnTarget( ):
