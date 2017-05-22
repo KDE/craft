@@ -9,8 +9,6 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtwebchannel'] = 'default'
-        self.dependencies['libs/qtlocation'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *
@@ -22,12 +20,11 @@ class Package( Qt5CorePackageBase ):
         self.subinfo.options.fetch.checkoutSubmodules = True
         
     def compile(self):
-        with TemporaryUseShortpath(False):
-            if not ("Paths","Python27") in craftSettings:
-                craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
-                return False
-            utils.prependPath(craftSettings.get("Paths","PYTHON27",""))
-            return Qt5CorePackageBase.compile(self)
-
+        if not ("Paths","Python27") in craftSettings:
+            craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
+            return False
+        utils.prependPath(craftSettings.get("Paths","PYTHON27",""))
+        return Qt5CorePackageBase.compile(self)
+       
 
         
