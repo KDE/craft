@@ -322,7 +322,7 @@ def main( ):
     parser.add_argument( "--options", action = "append",
                          default = _def,
                          help = "Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations." )
-    parser.add_argument( "-z", "--outDateVCS", action = "store_true",
+    parser.add_argument("--outDateVCS", action = "store_true",
                          help = "if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date)." )
     parser.add_argument( "-sz", "--outDatePackage", action = "store_true",
                          help = "similar to -z, only that it acts only on the last package, and works as normal on the rest." )
@@ -332,10 +332,10 @@ def main( ):
     parser.add_argument( "-t", "--buildtests", action = "store_true", dest = "buildTests",
                          default = craftSettings.getboolean( "Compile", "BuildTests", True ) )
     parser.add_argument( "-c", "--continue", action = "store_true", dest = "doContinue" )
-    parser.add_argument("-cc", "--create-cache", action="store_true", dest="createCache",
+    parser.add_argument("--create-cache", action="store_true", dest="createCache",
                         default=craftSettings.getboolean("Packager", "CreateCache", "False"),
                         help="Create a binary cache, the setting is overwritten by --no-cache")
-    parser.add_argument("-uc", "--use-cache", action="store_true", dest="useCache",
+    parser.add_argument("--use-cache", action="store_true", dest="useCache",
                         default=craftSettings.getboolean("Packager", "UseCache", "False"),
                         help = "Use a binary cache, the setting is overwritten by --no-cache")
     parser.add_argument("--no-cache", action="store_true", dest="noCache",
