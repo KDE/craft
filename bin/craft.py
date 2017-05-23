@@ -192,11 +192,6 @@ def handleSinglePackage( packageName, action, args ):
                 item.category, item.package ):
             item.enabled = True
 
-        if args.target in list(
-                portage.PortageInstance.getAllTargets( item.category, item.package ).keys( ) ):
-            # if no target or a wrong one is defined, simply set the default target here
-            item.target = args.target
-
         craftDebug.log.debug("dependency: %s" % item)
     if not deplist:
         craftDebug.log.debug("<none>")
