@@ -846,6 +846,7 @@ def replaceSymlinksWithCopys(path):
 
 def printProgress(percent):
     width, _ = shutil.get_terminal_size((80, 20))
-    times = int((width - 20) / 100 * percent)
-    sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+    width -= 20 # margin
+    times = int(width / 100 * percent)
+    sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress = "#" * times, space = " " * (width- times), percent=percent))
     sys.stdout.flush()

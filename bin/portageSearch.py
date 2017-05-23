@@ -56,6 +56,7 @@ def packages():
                 utils.utilsCache.availablePackages.append(package)
                 percent = int(len(utils.utilsCache.availablePackages)/total * 100)
             utils.printProgress(percent)
+        utils.printProgress(100)
         craftDebug.log.info("")
     return utils.utilsCache.availablePackages
 
