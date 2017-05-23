@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '5.1'
 
         # Note: Don't forget to update this!
-        self.installerVersion = '5.1.0'
+        self.installerVersion = '5.1.1'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
