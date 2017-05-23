@@ -229,8 +229,7 @@ def handleSinglePackage( packageName, action, args ):
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
         not action in [ "all", "install-deps"] and\
-        not args.list_file or\
-        action in ["print-targets"]:#not all commands should be executed on the deps if we are a virtual packages
+        not args.list_file:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -374,7 +373,7 @@ def main( ):
                          help = "ignore all install: using this option will install all package over an existing install. This can be useful if you want to check some new code and your last build isn't that old." )
 
     parser.add_argument( "--target", action = "store",
-                         help = "This will override the build of the default target. The default Target is marked with a star in the printout of --print-targets" )
+                         help = "This will override the build of the default target." )
     parser.add_argument( "--search", action = "store_true",
                          help = "This will search for a package or a description matching or similar to the search term." )
     parser.add_argument( "--noclean", action = "store_true",
