@@ -8,6 +8,7 @@ class subinfo( info.infoclass ):
 
         self.shortDescription = "KDav library"
         self.patchToApply['17.04.0'] = [("001-fix_missing_include.diff", 1)]
+        self.patchToApply['17.04.1'] = [("001-fix_missing_include.diff", 1)]
         
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
