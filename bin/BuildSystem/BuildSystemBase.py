@@ -89,27 +89,6 @@ class BuildSystemBase(CraftBase):
                 defines += " VERBOSE=1 V=1"
         return defines
 
-    def dumpCraftDependencies( self ):
-        """dump craft package dependencies"""
-        output = dependencies.dumpDependencies( self.package )
-        outDir = self.buildDir()
-        outFile = os.path.join( outDir, self.package + '-craft.dot' )
-        if not os.path.exists( os.path.dirname( outFile ) ):
-            os.makedirs( os.path.dirname( outFile ) )
-        with open( outFile, "w" ) as f:
-            f.write( output )
-
-        graphviz = GraphViz( self )
-
-        if not graphviz.runDot( outFile, outFile + '.pdf', 'pdf' ):
-            return False
-
-        return graphviz.openOutput()
-
-    def dumpDependencies(self):
-        """dump package dependencies """
-        return self.dumpCraftDependencies()
-
     def configure(self):
         return True
         

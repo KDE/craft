@@ -107,7 +107,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                     success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
-                              "dumpdeps", "test",
+                              "test",
                               "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                               "geturls",
                               "print-revision",
@@ -234,14 +234,8 @@ def handleSinglePackage( packageName, action, args ):
             return False
 
     else:
-        if args.dumpDepsFile:
-            dumpDepsFileObject = open( args.dumpDepsFile, 'w+' )
-            dumpDepsFileObject.write( "# dependency dump of package %s\n" % ( packageName ) )
         for info in deplist:
             isVCSTarget = False
-
-            if args.dumpDepsFile:
-                dumpDepsFileObject.write( ",".join( [ info.category, info.package, info.target, "" ] ) + "\n" )
 
             isLastPackage = info == deplist[ -1 ]
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
@@ -401,7 +395,7 @@ def main( ):
     actionHandler = ActionHandler(parser)
     for x in sorted( [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                        "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
-                       "checkdigest", "dumpdeps",
+                       "checkdigest",
                        "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"] ):
         actionHandler.addAction( x )
     actionHandler.addAction( "update", help = "Update a single package" )
@@ -416,9 +410,6 @@ def main( ):
     actionHandler.addActionWithArg( "search-file", help = "Print packages owning the file" )
 
     # other actions
-    actionHandler.addActionWithArg( "dump-deps-file", dest = "dumpDepsFile",
-                                    help = "Output the dependencies of this package as a csv file suitable for craft server." )
-
     parser.add_argument( "packageNames", nargs = argparse.REMAINDER )
 
     args = parser.parse_args( )

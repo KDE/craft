@@ -215,7 +215,6 @@ class PackageBase (CraftBase):
                      "print-revision": "printSourceVersion",
                      "print-files":    "printFiles",
                      "checkdigest":    "checkDigest",
-                     "dumpdeps":       "dumpDependencies",
                      "fetch-binary":   "fetchBinary"}
         if command in functions:
             try:

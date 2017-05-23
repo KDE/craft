@@ -193,34 +193,6 @@ class CMakeBuildSystem(BuildSystemBase):
 
         return self.system("ctest --output-on-failure")
 
-    def dumpDependencies( self ):
-        self.dumpCMakeDependencies()
-        return self.dumpCraftDependencies()
-
-    def dumpCMakeDependencies(self):
-        """dump package dependencies as pdf (requires installed dot)"""
-
-        srcDir = self.sourceDir()
-        outDir = self.buildDir()
-        self.enterBuildDir()
-        outFile = os.path.join(outDir, self.package+'-cmake.dot')
-        a = CMakeDependencies()
-        if not a.parse(srcDir):
-            craftDebug.log.debug("could not find source files for generating cmake dependencies")
-            return False
-        title = "%s cmake dependency chart - version %s" % (self.package, self.version)
-        a.toPackageList(title, srcDir)
-        if not a.toDot(title, srcDir, outFile):
-            craftDebug.log.debug("could not create dot file")
-            return False
-
-        graphviz = GraphViz(self)
-
-        if not graphviz.runDot(outFile, outFile+'.pdf', 'pdf'):
-            return False
-
-        return graphviz.openOutput()
-
     def ccacheOptions(self):
         out  =  " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ "
         out  += " -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1=gcc "
