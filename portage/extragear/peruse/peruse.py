@@ -60,9 +60,7 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
 
         utils.moveFile(os.path.join(archiveDir, "etc", "xdg", "peruse.knsrc"), os.path.join(binPath, "data", "peruse.knsrc"))
 
-        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
         utils.mergeTree(os.path.join(archiveDir, "lib", "qca-qt5"), binPath)
-        utils.mergeTree(os.path.join(archiveDir, "qml"), os.path.join(archiveDir, binPath))
 
         utils.rmtree(os.path.join(self.archiveDir(),"lib"))
 

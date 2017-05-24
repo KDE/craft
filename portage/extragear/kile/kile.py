@@ -39,11 +39,5 @@ class Package( CMakePackageBase ):
         # TODO: Why is that needed?
         os.mkdir(os.path.join(archiveDir, "etc", "dbus-1", "session.d"))
 
-        # TODO: Can we generalize this for other apps?
-        # move everything to the location where Qt expects it
-        binPath = os.path.join(archiveDir, "bin")
-
-        utils.mergeTree(os.path.join(archiveDir, "plugins"), binPath)
-
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
