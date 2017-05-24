@@ -234,6 +234,12 @@ class CollectionPackagerBase( PackagerBase ):
         if not os.path.exists( archiveDir ):
             os.makedirs( archiveDir )
 
+        # Qt expects plugins and qml files below bin, on the target sytsem
+        binPath = os.path.join(archiveDir, "bin")
+        for path in [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]:
+            if os.path.isdir(path):
+                utils.mergeTree(path, binPath)
+
         return True
 
 
