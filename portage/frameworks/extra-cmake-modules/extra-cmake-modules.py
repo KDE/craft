@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/png2ico'] = 'default'
+        # needed for many kf5's
+        self.buildDependencies['dev-util/winflexbison'] = 'default'
 
 from Package.CMakePackageBase import *
 
