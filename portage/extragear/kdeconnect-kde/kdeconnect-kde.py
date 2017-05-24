@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kiconthemes'] = 'default'
         self.dependencies['frameworks/knotifications'] = 'default'
         self.dependencies['frameworks/kcmutils'] = 'default'
-        self.dependencies[ 'kde/kde-cli-tools' ] = 'default'
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
 
 class Package( CMakePackageBase ):
@@ -48,6 +47,4 @@ class Package( CMakePackageBase ):
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
-
-
 
