@@ -118,7 +118,7 @@ class Package(Qt5CorePackageBase):
                 command += " -qdbus -dbus-linked "
             if self.subinfo.options.isActive("win32libs/icu"):
                 command += " -icu "
-            if self.subinfo.options.isActive("win32libs/zip"):
+            if self.subinfo.options.isActive("win32libs/zlib"):
                 command += " -system-zlib "
                 if compiler.isMSVC():
                     command += " ZLIB_LIBS=zlib.lib "
