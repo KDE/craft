@@ -233,13 +233,15 @@ class CMakeBuildSystem(BuildSystemBase):
             return
 
         tmp = os.path.join( imagedir, rootpath )
-        craftDebug.log.debug("tmp: %s" % tmp)
-        tmpdir = os.path.join( imagedir, "tMpDiR" )
-        if ( not os.path.isdir( tmpdir ) ):
-            os.mkdir( tmpdir )
-        utils.moveEntries( tmp, tmpdir )
-        os.chdir( imagedir )
-        os.removedirs( rootpath )
-        utils.moveEntries( tmpdir, imagedir )
-        utils.cleanDirectory( tmpdir )
-        os.rmdir( tmpdir )
+        if os.path.exists(tmp):
+            utils.mergeTree(tmp, imagedir)
+            utils.rmtree(os.path.join(tmp, rootpath.split(os.path.pathsep)[0]))
+        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
+            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
+                          craftSettings.get("QtSDK", "Compiler"))
+            #drop the drive letter and the first slash [3:]
+            path = os.path.join(imagedir, qtDir[3:])
+            if os.path.exists(path):
+                utils.mergeTree(path, imagedir)
+                utils.rmtree(os.path.join(imagedir, craftSettings.get("QtSDK", "Path")[3:]))
+
