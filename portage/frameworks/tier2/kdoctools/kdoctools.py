@@ -13,6 +13,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/karchive"] = "default"
+        self.dependencies["frameworks/ki18n"] = "default"
         self.dependencies["win32libs/libxslt"] = "default"
         self.dependencies["data/docbook-dtd"] = "default"
         self.dependencies["data/docbook-xsl"] = "default"
