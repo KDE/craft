@@ -50,7 +50,7 @@ class CaseInsensitiveDict(dict):
 
 class SetupHelper( object ):
     def __init__( self ):
-        self.env = None
+        self.env = os.environ.copy()
         parser = argparse.ArgumentParser( )
         parser.add_argument( "--subst", action = "store_true" )
         parser.add_argument( "--get", action = "store_true" )
@@ -107,6 +107,7 @@ class SetupHelper( object ):
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
+        os.environ[ key ] = val
 
     def prependPath( self, key, var ):
         if not type(var) == list:
@@ -170,6 +171,8 @@ class SetupHelper( object ):
 
 
     def printEnv( self ):
+        for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
+            self.addEnvVar( var.upper(), value )
         self.env = self.getEnv( )
         self.version = int(craftSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
 
@@ -232,8 +235,6 @@ class SetupHelper( object ):
         # add python site packages to pythonpath
         self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
 
-        for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
-            self.addEnvVar( var.upper(), value )
         for key, val in self.env.items( ):
             print( "%s=%s" % (key, val) )
 
