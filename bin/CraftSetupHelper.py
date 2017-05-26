@@ -98,12 +98,16 @@ class SetupHelper( object ):
     def printBanner( self ):
         if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
             return
-        print( "KDEROOT     : %s" % CraftStandardDirs.craftRoot( ), file = sys.stderr )
-        print( "KDECOMPILER : %s" % compiler.getCompilerName( ), file = sys.stderr )
-        print( "KDESVNDIR   : %s" % CraftStandardDirs.svnDir( ), file = sys.stderr )
-        print( "KDEGITDIR   : %s" % CraftStandardDirs.gitDir( ), file = sys.stderr )
-        print( "DOWNLOADDIR : %s" % CraftStandardDirs.downloadDir( ), file = sys.stderr )
-        print( "PYTHONPATH  : %s" % craftSettings.get( "Paths", "Python" ), file = sys.stderr )
+        def printRow(name, value):
+            print(f"{name:20}: {value}", file=sys.stderr)
+        if CraftStandardDirs.isShortPathEnabled():
+            with TemporaryUseShortpath(False):
+                printRow("Craft Root", CraftStandardDirs.craftRoot())
+        printRow("Craft", CraftStandardDirs.craftRoot( ))
+        printRow("Compiler", compiler.getCompilerName( ))
+        printRow("Svn  directory", CraftStandardDirs.svnDir( ))
+        printRow("Git  directory", CraftStandardDirs.gitDir( ))
+        printRow("Download directory", CraftStandardDirs.downloadDir( ))
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
