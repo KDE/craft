@@ -1,0 +1,15 @@
+diff -Nru libofx-0.9.10/lib/ofx_utilities.orig.cpp libofx-0.9.10/lib/ofx_utilities.cpp
+--- libofx-0.9.10/lib/ofx_utilities.orig.cpp      2013-04-24 18:05:44.000000000 +0200
++++ libofx-0.9.10/lib/ofx_utilities.cpp   2017-05-27 09:31:42.930311100 +0200
+@@ -116,9 +116,9 @@
+   string ofxdate_whole;
+   time_t temptime;
+
+-  time.tm_isdst = daylight; // initialize dst setting
++  time.tm_isdst = _daylight; // initialize dst setting
+   std::time(&temptime);
+-  local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime))) + (3600 * daylight);
++  local_offset = difftime(mktime(localtime(&temptime)), mktime(gmtime(&temptime))) + (3600 * _daylight);
+
+   if (ofxdate.size() != 0)
+   {
