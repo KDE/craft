@@ -3,19 +3,18 @@ import info
 
 
 class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
+
+        self.shortDescription = "A storage service for PIM data and meta data"
+
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/shared-mime-info'] = 'default'
-
-    def setTargets( self ):
-        #self.patchToApply['master'] = [("akonadi-kde.conf-fix-1.10.80.diff", 1)]
-
-        self.svnTargets['master'] = '[git]kde:akonadi.git'
-        self.shortDescription = "a storage service for PIM data and meta data"
-        self.defaultTarget = 'master'
+        self.dependencies['frameworks/kdesignerplugin'] = 'default'
 
 from Package.CMakePackageBase import *
 
