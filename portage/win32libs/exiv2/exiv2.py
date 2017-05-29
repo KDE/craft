@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         self.dependencies['win32libs/gettext']      = 'default'
         self.dependencies['win32libs/expat']        = 'default'
         self.dependencies['win32libs/zlib']         = 'default'
-        self.buildDependencies['virtual/base']      = 'default'
+        self.dependencies['virtual/base']      = 'default'
 
 from Package.CMakePackageBase import *
 

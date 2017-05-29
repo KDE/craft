@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "the KDE text editor"
 
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.dependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/kconfig"] = "default"

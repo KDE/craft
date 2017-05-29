@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.0.2'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
 

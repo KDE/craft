@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.97'] = ('kqoauth-no-examples-or-tests.diff', 1)
     
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         
 

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.4'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libwpd'] = 'default'
 
 class Package(CMakePackageBase):

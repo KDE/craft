@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.17.2'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/jasper'] = 'default'
         self.dependencies['win32libs/lcms'] = 'default'
         self.dependencies['win32libs/libjpeg-turbo'] = 'default'

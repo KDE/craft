@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libxml2'] = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['win32libs/raptor2'] = 'default'        
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

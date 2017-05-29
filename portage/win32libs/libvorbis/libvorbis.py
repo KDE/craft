@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.3.3'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libogg'] = 'default'
 
 class Package( CMakePackageBase ):

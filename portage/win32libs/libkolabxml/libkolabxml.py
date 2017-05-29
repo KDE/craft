@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.1'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['binary/xsd'] = 'default'
         self.buildDependencies['win32libs/xerces-c'] = 'default'
 

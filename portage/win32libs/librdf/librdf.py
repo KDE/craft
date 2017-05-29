@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/rasqal'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/pthreads'] = 'default'
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

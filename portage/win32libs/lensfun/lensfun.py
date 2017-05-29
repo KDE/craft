@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         
     
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         # self.buildDependencies['dev-util/doxygen'] = 'default' # only needed if building docs
         self.dependencies['testing/glib-src'] = 'default'
         # self.dependencies['win32libs-bin/zlib']  = 'default' # only needed if building auxfun and tests
