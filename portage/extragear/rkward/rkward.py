@@ -23,9 +23,6 @@ class subinfo( info.infoclass ):
             # not strictly dependencies, but should be included in the package
             self.dependencies["kde/kate"] = "default"
             self.dependencies["frameworks/breeze-icons"] = "default"
-            if not compiler.isMSVC():
-                # without this, package won't include MinGW runtime as of May 2017
-                self.dependencies["libs/runtime"] = "default"
 
 from Source.GitSource import *
 

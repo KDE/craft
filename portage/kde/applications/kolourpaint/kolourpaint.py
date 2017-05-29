@@ -9,7 +9,6 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.dependencies["libs/qtbase"] = "default"
-        #self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
         self.dependencies["frameworks/kconfig"] = "default"
         self.dependencies["frameworks/kguiaddons"] = "default"
         self.dependencies["frameworks/kdelibs4support"] = "default"

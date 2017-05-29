@@ -24,9 +24,6 @@ class subinfo( info.infoclass ):
         self.dependencies[ 'frameworks/knewstuff' ] = 'default'
         self.dependencies[ 'frameworks/breeze-icons' ] = 'default'
 
-        if compiler.isMinGW():
-            self.dependencies["libs/runtime"] = "default" #mingw-based builds need this
-
 
 from Package.CMakePackageBase import *
 
