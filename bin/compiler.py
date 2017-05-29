@@ -50,6 +50,12 @@ def _compiler():
 def isGCC():
     return isMinGW() or _compiler().endswith("-gcc")
 
+def isClang():
+    return _compiler().endswith("-clang")
+
+def isGCCLike():
+    return (isGCC() or isClang())
+
 def isMinGW():
     return _compiler().startswith("mingw")
 
@@ -61,9 +67,6 @@ def isMinGW_W64():
 
 def isMSVC():
     return _compiler().startswith("msvc")
-
-def isClang():
-    return craftSettings.getboolean("Compile","UseClang", False )
 
 def isMSVC2010():
     return _compiler() == "msvc2010"
@@ -92,6 +95,8 @@ def getCompilerName():
         return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
     elif isGCC():
         return "gcc"
+    elif isClang():
+        return "clang"
     else:
         craftDebug.log.critical("Unknown Compiler %s" % _compiler())
 
@@ -105,13 +110,13 @@ def getSimpleCompilerName():
     else:
         return getCompilerName()
 
-def getGCCVersion():
+def getGCCLikeVersion(compilerExecutable):
     global _MINGW_VERSION # pylint: disable=W0603
     if not _MINGW_VERSION:
-        status, result = subprocess.getstatusoutput("gcc --version")
+        status, result = subprocess.getstatusoutput(f"{compilerExecutable} --version")
         if status == 0:
             result = re.findall("\d+\.\d+\.?\d*",result)[0]
-            craftDebug.log.debug("GCC Version:%s" % result)
+            craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
             _MINGW_VERSION = result.strip()
         else:
             #if no mingw is installed return 0
@@ -119,11 +124,14 @@ def getGCCVersion():
     return _MINGW_VERSION
 
 def getVersion():
-    if isGCC():
-        return "%s %s" % (getCompilerName(), getGCCVersion())
+    if isGCCLike():
+        return "%s %s" % (getCompilerName(), getGCCLikeVersion(getCompilerName()))
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
-    return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
+    elif isMSVC():
+        return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
+    else:
+        return None
     
 def getShortName():
     if not isMSVC():
@@ -160,8 +168,9 @@ def msvcPlatformToolset():
 
 if __name__ == '__main__':
     print("Testing Compiler.py")
+    print("Configured compiler (KDECOMPILER): %s" % _compiler())
     print("Version: %s" % getVersion())
     print("Compiler Name: %s" % getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[isNative()])
-    print("Compiler Version: %s" % getGCCVersion())
-
+    if isGCCLike():
+        print("Compiler Version: %s" % getGCCLikeVersion(getCompilerName()))
