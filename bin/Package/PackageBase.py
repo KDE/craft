@@ -184,7 +184,7 @@ class PackageBase (CraftBase):
 
 
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
-            craftDebug.log.debug(f"Trying to restore {archiveName} from cache.")
+            craftDebug.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
             cache = utils.utilsCache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
                 continue
@@ -192,12 +192,11 @@ class PackageBase (CraftBase):
                 if not os.path.exists(os.path.join(downloadFolder, archiveName)):
                     if not utils.getFile(f"{url}/{archiveName}", downloadFolder):
                         return False
-                else:
-                    break
             return CraftHash.checkFilesDigests(downloadFolder, [archiveName], digests=cache[str(self)][archiveName]["checksum"], digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
                    and utils.unpackFile(downloadFolder, archiveName, self.imageDir()) \
                    and self.qmerge()
+        return False
 
     def runAction( self, command ):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
