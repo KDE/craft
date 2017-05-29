@@ -31,6 +31,8 @@ class SevenZipPackager (PackagerBase):
             progressFlags = " -bso2 -bsp1"
             kw["stderr"] = subprocess.PIPE
         archive = os.path.join(destDir, archiveName)
+        if os.path.isfile(archive):
+            utils.deleteFile(archive)
         cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
         if not utils.system(cmd, displayProgress=True, **kw):
             craftDebug.log.critical(f"while packaging. cmd: {cmd}")
