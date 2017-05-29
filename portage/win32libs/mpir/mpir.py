@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.7.2'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         if compiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
         else:

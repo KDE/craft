@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['kdesupport/libface'] = 'default'
 
 from Package.CMakePackageBase import *

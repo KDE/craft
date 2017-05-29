@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.5.0'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs/libkolabxml'] = 'default'
 
         # the following dependencies are dragged in by the static libkolabxml library

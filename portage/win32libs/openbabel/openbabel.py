@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.3.2'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'

@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.2j'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'

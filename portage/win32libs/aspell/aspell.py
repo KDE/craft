@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.60.6.1'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.dependencies['win32libs/win_iconv'] = 'default'
 

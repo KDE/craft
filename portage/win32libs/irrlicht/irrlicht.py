@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/libjpeg-turbo'] = 'default'
         self.dependencies['win32libs/libpng'] = 'default'
         self.dependencies['win32libs/libbzip2'] = 'default'
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.dependencies['virtual/bin-base'] = 'default'
 
 
 class Package(CMakePackageBase):

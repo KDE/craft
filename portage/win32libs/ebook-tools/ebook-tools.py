@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.2'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libzip'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
 

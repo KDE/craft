@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.shortDescription = "python support for kdevelop"
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['extragear/kdevplatform'] = 'default'
         self.dependencies['extragear/kdevelop'] = 'default'
         self.dependencies['binary/python-libs'] = 'default'

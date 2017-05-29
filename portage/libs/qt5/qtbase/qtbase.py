@@ -52,7 +52,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if craftSettings.getboolean("Packager", "UseCache"):
             self.buildDependencies['dev-util/qtbinpatcher'] = 'default'
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
         if not self.options.buildStatic:

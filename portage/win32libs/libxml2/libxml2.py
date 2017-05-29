@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.8.0'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/win_iconv'] = 'default'
 

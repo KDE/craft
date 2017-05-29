@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '2.8.4'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libbzip2'] = 'default'
 #        self.dependencies['win32libs/lzma'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'

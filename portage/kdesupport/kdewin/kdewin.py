@@ -4,7 +4,7 @@ import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         # will be moved to kdewin-qt
         self.dependencies['libs/qtbase'] = 'default'
         # will be moved to kdewin-tools

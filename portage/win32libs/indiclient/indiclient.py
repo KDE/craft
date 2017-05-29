@@ -11,7 +11,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['master'] = "libindi"
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base']  = 'default'
+        self.dependencies['virtual/base']  = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['win32libs/libnova'] = 'default'
 

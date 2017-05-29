@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if compiler.isMinGW():
             self.dependencies['dev-util/uactools'] = 'default'
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.dependencies['virtual/bin-base'] = 'default'
 
 from Package.BinaryPackageBase import *
 

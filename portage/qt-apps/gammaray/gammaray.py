@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = "2.7.0"
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies['qt-apps/kdstatemachineeditor'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'

@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.12'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['gnuwin32/grep'] = 'default'
         self.buildDependencies['gnuwin32/gawk'] = 'default'
 

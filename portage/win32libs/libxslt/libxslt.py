@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.1.28'
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/libxml2'] = 'default'
 
 

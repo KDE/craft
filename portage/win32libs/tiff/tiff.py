@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['win32libs/zlib'] = 'default'
         self.dependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

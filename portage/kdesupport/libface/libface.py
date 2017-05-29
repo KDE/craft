@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.patchToApply['svnHEAD'] = ('libface-20120122.patch', 1)
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['win32libs/opencv'] = 'default'
 
 from Package.CMakePackageBase import *

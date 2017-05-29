@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
 
     def setDependencies( self ):
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.dependencies['virtual/bin-base'] = 'default'
 
 
 from Package.BinaryPackageBase import *

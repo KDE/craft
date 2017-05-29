@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         # qtquick1 is optional
         #self.dependencies['libs/qtquick1'] = 'default'

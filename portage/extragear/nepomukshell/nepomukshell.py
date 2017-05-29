@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
                 "query, and edit Nepomuk resources.")
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.dependencies['virtual/base'] = 'default'
         self.dependencies['libs/qt'] = 'default'
         self.dependencies['kde/kdelibs'] = 'default'
         self.dependencies['kdesupport/soprano'] = 'default'
