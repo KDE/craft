@@ -11,6 +11,8 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/base' ] = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies[ "dev-util/mingw-w64" ] = "default"
 
 from Package.BinaryPackageBase import *
 import compiler
