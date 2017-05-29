@@ -112,8 +112,8 @@ class UtilsCache(object):
         return self._helpCache[(app, command)]
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
+        craftDebug.log.debug(f"Fetch Json: {url}")
         if not url in self._jsonCache:
-            craftDebug.log.debug(f"Fetching: {url}")
             if os.path.isfile(url):
                 with open(url, "rt+") as jsonFile:
                     # don't cache local manifest
