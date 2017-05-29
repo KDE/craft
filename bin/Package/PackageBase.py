@@ -183,7 +183,7 @@ class PackageBase (CraftBase):
             os.makedirs(downloadFolder)
 
 
-        for url in [self.cacheRepositoryUrls(), self.cacheLocation()]:
+        for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             craftDebug.log.debug(f"Trying to restore {archiveName} from cache.")
             cache = utils.utilsCache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
