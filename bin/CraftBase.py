@@ -43,16 +43,6 @@ class CraftBase(object):
         if not hasattr(self, 'buildSystemType'):
             self.buildSystemType = None
 
-        # if implicit build time dependency is wanted, depend on internal packages
-        # for this class and all of its ancestor classes
-        if craftSettings.getboolean("General", "EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES", False):
-            for cls in type(self).mro():
-                className = cls.__name__
-                packageName = 'internal/%s' % className
-                if os.path.exists(os.path.join(CraftStandardDirs.craftRoot() , 'craft', 'portage',
-                        'internal', className, '%s-internal.py' % className)):
-                    if self.subinfo and not packageName in self.subinfo.buildDependencies:
-                        self.subinfo.buildDependencies[packageName] = 'default'
 
         if hasattr(self,'alreadyCalled'):
             return

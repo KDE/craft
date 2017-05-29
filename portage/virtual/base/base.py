@@ -11,27 +11,25 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies( self ):
-        if not craftSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
-            self.buildDependencies['gnuwin32/wget']       = 'default'
-            self.buildDependencies['dev-util/7zip']       = 'default'
-            self.buildDependencies['gnuwin32/patch']      = 'default'
-            self.buildDependencies['gnuwin32/sed']        = 'default'
-            self.buildDependencies['dev-util/cmake']      = 'default'
-            self.buildDependencies['dev-util/subversion'] = 'default'
-            self.buildDependencies['dev-util/git']        = 'default'
-            self.dependencies['libs/runtime']    = 'default'
+        self.buildDependencies['gnuwin32/wget'] = 'default'
+        self.buildDependencies['dev-util/7zip'] = 'default'
+        self.buildDependencies['gnuwin32/patch'] = 'default'
+        self.buildDependencies['gnuwin32/sed'] = 'default'
+        self.buildDependencies['dev-util/cmake'] = 'default'
+        self.buildDependencies['dev-util/subversion'] = 'default'
+        self.buildDependencies['dev-util/git'] = 'default'
+        self.buildDependencies['dev-util/putty'] = 'default'
 
-        if not craftSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
-            self.buildDependencies['dev-util/putty']      = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies['dev-util/mingw-w64'] = 'default'
+        if craftSettings.get("Compile","MakeProgram" ,"" ) == "jom":
+            self.buildDependencies['dev-util/jom'] = 'default'
+        if craftSettings.getboolean("Compile","UseNinja", False):
+            self.buildDependencies['dev-util/ninja'] = 'default'
+        if craftSettings.getboolean("Compile","UseCCache", False):
+            self.buildDependencies['dev-util/ccache'] = 'default'
 
-            if compiler.isMinGW():
-                self.buildDependencies['dev-util/mingw-w64']    = 'default'
-            if craftSettings.get("Compile","MakeProgram" ,"" ) == "jom":
-                self.buildDependencies['dev-util/jom'] = 'default'
-            if craftSettings.getboolean("Compile","UseNinja", False):
-                self.buildDependencies['dev-util/ninja'] = 'default'
-            if craftSettings.getboolean("Compile","UseCCache", False):
-                self.buildDependencies['dev-util/ccache'] = 'default'
+        self.dependencies['libs/runtime'] = 'default'
 
 
 class Package( VirtualPackageBase ):
