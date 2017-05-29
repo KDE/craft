@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/cmake']      = 'default'
             self.buildDependencies['dev-util/subversion'] = 'default'
             self.buildDependencies['dev-util/git']        = 'default'
-            self.buildDependencies['libs/runtime']    = 'default'
+            self.dependencies['libs/runtime']    = 'default'
 
         if not craftSettings.getboolean("General",'EMERGE_ENABLE_IMPLICID_BUILDTIME_DEPENDENCIES', False):
             self.buildDependencies['dev-util/putty']      = 'default'
