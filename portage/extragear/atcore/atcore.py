@@ -14,8 +14,6 @@ class subinfo( info.infoclass ):
         self.dependencies["libs/qtbase"] = "default"
         self.dependencies["libs/qtserialport"] = "default"
         self.dependencies["libs/qtcharts"] = "default"
-        if not OsUtils.isUnix():
-            self.dependencies["libs/runtime"] = "default"
 
 from Package.CMakePackageBase import *
 
