@@ -114,19 +114,24 @@ class UtilsCache(object):
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
         if not url in self._jsonCache:
             craftDebug.log.debug(f"Fetching: {url}")
-            try:
-                with urllib.request.urlopen(url, timeout=timeout) as fh:
-                    text = str(fh.read(), "UTF-8")
-                    craftDebug.log.debug(f"Fetched json: {url}")
-                    craftDebug.log.debug(text)
-                    self._jsonCache[url] = json.loads(text)
-            except urllib.error.HTTPError as e:
-                craftDebug.log.debug(f"Failed to download {url}: {e}")
-                if e.code == 404:
-                    # don't retry it
-                    self._jsonCache[url] = {}
-            except Exception as e:
-                craftDebug.log.debug(f"Failed to download {url}: {e}")
+            if os.path.isfile(url):
+                with open(url, "rt+") as jsonFile:
+                    # don't cache local manifest
+                    return json.loads(jsonFile.read())
+            else:
+                try:
+                    with urllib.request.urlopen(url, timeout=timeout) as fh:
+                        jsonContent = str(fh.read(), "UTF-8")
+                        craftDebug.log.debug(f"Fetched json: {url}")
+                        craftDebug.log.debug(jsonContent)
+                        self._jsonCache[url] = json.loads(jsonContent)
+                except urllib.error.HTTPError as e:
+                    craftDebug.log.debug(f"Failed to download {url}: {e}")
+                    if e.code == 404:
+                        # don't retry it
+                        self._jsonCache[url] = {}
+                except Exception as e:
+                    craftDebug.log.debug(f"Failed to download {url}: {e}")
         return self._jsonCache.get(url, {})
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:

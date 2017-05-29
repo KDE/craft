@@ -249,7 +249,7 @@ class CraftBase(object):
         return [host, port, username, password]
 
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")):
+    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -262,7 +262,7 @@ class CraftBase(object):
         return "%s-%s-%s-%s%s.%s" % (
             self.package, compiler.architecture(), version, compiler.getShortName(), pkgSuffix, fileType)
 
-    def cacheLocation(self):
+    def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
@@ -272,12 +272,12 @@ class CraftBase(object):
         return os.path.join(cacheDir, sys.platform, version,
                                compiler.getCompilerName(), self.buildType())
 
-    def cacheRepositoryUrl(self):
+    def cacheRepositoryUrls(self) -> [str]:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
             version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        return "/".join([craftSettings.get("Packager", "RepositoryUrl"), sys.platform, version,
-                            compiler.getCompilerName(), self.buildType()])
+        return ["/".join([url, sys.platform, version,
+                                compiler.getCompilerName(), self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
 
