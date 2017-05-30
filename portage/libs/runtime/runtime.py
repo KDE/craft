@@ -31,6 +31,9 @@ class PackageMinGW( BinaryPackageBase ):
         utils.createDir( self.sourceDir() )
         utils.createDir( destdir )
 
+        if not OsUtils.isWin():
+            return True
+
         files = [ 'libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll' ]
         if compiler.isMinGW_W32():
             files.append('libgcc_s_sjlj-1.dll')
