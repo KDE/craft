@@ -12,7 +12,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kmime"] = "default"
+        self.buildDependencies["kde/kmime"] = "default"
 
 from Package.CMakePackageBase import *
 
