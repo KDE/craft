@@ -105,7 +105,10 @@ class UtilsCache(object):
         if not (app, command) in self._helpCache:
             craftDebug.log.debug(f"\"{app}\" {helpCommand}")
             output = subprocess.getoutput(f"\"{app}\" {helpCommand}")
-            supports = re.match(f".*{command}.*", output) is not None
+            if type(command) == str:
+                supports = command in output
+            else:
+                supports = command.match(output) is not None
             self._helpCache[(app, command)] = supports
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
