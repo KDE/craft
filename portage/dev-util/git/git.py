@@ -29,7 +29,7 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
         self.gitIsInstalled = False
         # check whether git is >= 2.10
-        if utils.utilsCache.appSupportsCommand(utils.utilsCache.findApplication("git"),"git version 2.1\d", "--version"):
+        if utils.utilsCache.checkCommandOutputFor(utils.utilsCache.findApplication("git"), "git version 2.1\d", "--version"):
             self.gitIsInstalled = True
 
     def fetch(self):
@@ -57,7 +57,7 @@ class Package(BinaryPackageBase):
                 return False
             utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         git = utils.utilsCache.findApplication("git")
-        if utils.utilsCache.appSupportsCommand(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
+        if utils.utilsCache.checkCommandOutputFor(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
             return True
         craftDebug.log.debug("adding kde related settings to global git config file")
         utils.system( f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
