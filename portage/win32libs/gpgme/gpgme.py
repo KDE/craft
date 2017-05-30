@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.4.3'] = 'ffdb5e4ce85220501515af8ead86fd499525ef9a'
 
         self.shortDescription = "GnuPG cryptography support library (runtime)"
-        self.defaultTarget = '1.9.0'
+        self.defaultTarget = '1.4.3'
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
