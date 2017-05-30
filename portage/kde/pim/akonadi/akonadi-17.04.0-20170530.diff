@@ -1,0 +1,71 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' akonadi-17.04.0.orig/KF5AkonadiMacros.cmake akonadi-17.04.0/KF5AkonadiMacros.cmake
+--- akonadi-17.04.0.orig/KF5AkonadiMacros.cmake	2017-04-08 12:42:20.000000000 +0200
++++ akonadi-17.04.0/KF5AkonadiMacros.cmake	2017-05-30 11:12:45.284970500 +0200
+@@ -44,8 +44,7 @@
+ 
+   # based on kde4_add_unit_test
+   if (WIN32)
+-    get_target_property( _loc ${_name} LOCATION )
+-    set(_executable ${_loc}.bat)
++    set(_executable $<TARGET_FILE:${_name}>)
+   else()
+     set(_executable ${EXECUTABLE_OUTPUT_PATH}/${_name})
+   endif()
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' akonadi-17.04.0.orig/src/server/akonadi.cpp akonadi-17.04.0/src/server/akonadi.cpp
+--- akonadi-17.04.0.orig/src/server/akonadi.cpp	2017-04-08 12:42:20.000000000 +0200
++++ akonadi-17.04.0/src/server/akonadi.cpp	2017-05-29 16:52:32.845007700 +0200
+@@ -56,6 +56,11 @@
+ #include <QTimer>
+ #include <QDBusServiceWatcher>
+ 
++#ifdef Q_OS_WIN
++#include <windows.h>
++#include <sddl.h>
++#endif
++
+ using namespace Akonadi;
+ using namespace Akonadi::Server;
+ 
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' akonadi-17.04.0.orig/src/server/connection.cpp akonadi-17.04.0/src/server/connection.cpp
+--- akonadi-17.04.0.orig/src/server/connection.cpp	2017-04-08 12:42:20.000000000 +0200
++++ akonadi-17.04.0/src/server/connection.cpp	2017-05-29 16:51:48.010183400 +0200
+@@ -32,7 +32,10 @@
+ #include "collectionreferencemanager.h"
+ 
+ #include <cassert>
++
++#ifndef Q_OS_WIN
+ #include <cxxabi.h>
++#endif
+ 
+ #include <private/protocol_p.h>
+ #include <private/datastream_p_p.h>
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' akonadi-17.04.0.orig/src/server/storage/dbconfigmysql.cpp akonadi-17.04.0/src/server/storage/dbconfigmysql.cpp
+--- akonadi-17.04.0.orig/src/server/storage/dbconfigmysql.cpp	2017-04-08 12:42:20.000000000 +0200
++++ akonadi-17.04.0/src/server/storage/dbconfigmysql.cpp	2017-05-29 16:59:53.351952400 +0200
+@@ -337,6 +337,7 @@
+     arguments << QString::fromLatin1("--shared-memory");
+ #endif
+ 
++#ifndef Q_OS_WIN
+     // If mysql.socket file does not exists, then we must start the server,
+     // otherwise we reconnect to it
+     if (!QFile::exists(socketFile)) {
+@@ -387,16 +388,15 @@
+         connect(mDatabaseProcess, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished),
+                 this, &DbConfigMysql::processFinished);
+ 
+-#ifndef Q_OS_WIN
+         // wait until mysqld has created the socket file (workaround for QTBUG-47475 in Qt5.5.0)
+         int counter = 50;  // avoid an endless loop in case mysqld terminated
+         while ((counter-- > 0) && !QFileInfo::exists(socketFile)) {
+             QThread::msleep(100);
+         }
+-#endif
+     } else {
+         qCDebug(AKONADISERVER_LOG) << "Found mysql.socket file, reconnecting to the database";
+     }
++#endif
+ 
+     const QLatin1String initCon("initConnection");
+     {

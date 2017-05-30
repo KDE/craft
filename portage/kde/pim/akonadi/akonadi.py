@@ -6,6 +6,8 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
+        self.patchToApply["17.04.0"] = [("akonadi-17.04.0-20170530.diff", 1)]
+
         self.shortDescription = "A storage service for PIM data and meta data"
 
     def setDependencies( self ):
@@ -23,8 +25,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
         if self.subinfo.options.features.akonadiBackendSqlite:
-            self.subinfo.options.configure.defines += (
-                    " -DINSTALL_QSQLITE_IN_QT_PREFIX=TRUE"
-                    " -DDATABASE_BACKEND=SQLITE " )
+            self.subinfo.options.configure.defines += " -DDATABASE_BACKEND=SQLITE "
 
 
