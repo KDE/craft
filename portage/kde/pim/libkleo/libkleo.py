@@ -20,6 +20,8 @@ class subinfo( info.infoclass ):
         self.buildDependencies["frameworks/kcodecs"] = "default"
         self.buildDependencies["frameworks/kitemmodels"] = "default"
         self.buildDependencies["kde/kpimtextedit"] = "default"
+        self.buildDependencies["win32libs/gpgme"] = "default"
+        self.buildDependencies["win32libs/boost"] = "default"
 
 from Package.CMakePackageBase import *
 
