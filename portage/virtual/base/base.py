@@ -16,7 +16,6 @@ class subinfo(info.infoclass):
         self.buildDependencies['gnuwin32/patch'] = 'default'
         self.buildDependencies['gnuwin32/sed'] = 'default'
         self.buildDependencies['dev-util/cmake'] = 'default'
-        self.buildDependencies['dev-util/subversion'] = 'default'
         self.buildDependencies['dev-util/git'] = 'default'
         self.buildDependencies['dev-util/putty'] = 'default'
 
