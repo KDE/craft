@@ -52,9 +52,9 @@ class Package(BinaryPackageBase):
         return True
 
     def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+            return False
         if not self.gitIsInstalled:
-            if not BinaryPackageBase.qmerge(self):
-                return False
             utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
         git = utils.utilsCache.findApplication("git")
         if utils.utilsCache.checkCommandOutputFor(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
