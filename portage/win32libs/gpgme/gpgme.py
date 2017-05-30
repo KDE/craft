@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver in ['1.3.0', '1.3.1', '1.4.3']:
+        for ver in ['1.3.0', '1.3.1', '1.4.3', '1.8.0', '1.9.0']:
             self.targets[ver] = 'ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'gpgme-' + ver
         self.patchToApply['1.3.0'] = [('gpgme-1447-HEAD.diff', 0),
@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.4.3'] = 'ffdb5e4ce85220501515af8ead86fd499525ef9a'
 
         self.shortDescription = "GnuPG cryptography support library (runtime)"
-        self.defaultTarget = '1.4.3'
+        self.defaultTarget = '1.9.0'
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
