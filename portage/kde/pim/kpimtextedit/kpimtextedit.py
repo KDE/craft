@@ -13,6 +13,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.buildDependencies["libs/qtbase"] = "default"
         self.buildDependencies["kdesupport/grantlee"] = "default"
+        self.buildDependencies["frameworks/syntax-highlighting"] = "default"
 
 from Package.CMakePackageBase import *
 
