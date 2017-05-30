@@ -101,7 +101,7 @@ class UtilsCache(object):
         return appLocation
 
     # TODO: rename, cleanup
-    def appSupportsCommand(self, app, command, helpCommand = "-h") -> str:
+    def checkCommandOutputFor(self, app, command, helpCommand ="-h") -> str:
         if not (app, command) in self._helpCache:
             craftDebug.log.debug(f"\"{app}\" {helpCommand}")
             output = subprocess.getoutput(f"\"{app}\" {helpCommand}")
@@ -270,7 +270,7 @@ def wgetFile( url, destdir, filename=''):
     command += " %s" % url
     craftDebug.log.debug("wgetfile called")
 
-    if craftDebug.verbose() < 1 and utilsCache.appSupportsCommand(wget, "--show-progress"):
+    if craftDebug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
         command += " -q --show-progress"
         ret = system( command, displayProgress=True, stderr=subprocess.STDOUT)
     else:
@@ -315,7 +315,7 @@ def un7zip( fileName, destdir, flag = None ):
     type = ""
     resolveSymlinks = False
     app = utilsCache.findApplication("7za")
-    if utilsCache.appSupportsCommand(app, "-bs"):
+    if utilsCache.checkCommandOutputFor(app, "-bs"):
         progressFlags = " -bso2 -bsp1"
         kw["stderr"] = subprocess.PIPE
 

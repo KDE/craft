@@ -27,7 +27,7 @@ class SevenZipPackager (PackagerBase):
         app = utils.utilsCache.findApplication("7za")
         kw = {}
         progressFlags = ""
-        if utils.utilsCache.appSupportsCommand(app, "-bs"):
+        if utils.utilsCache.checkCommandOutputFor(app, "-bs"):
             progressFlags = " -bso2 -bsp1"
             kw["stderr"] = subprocess.PIPE
         archive = os.path.join(destDir, archiveName)
