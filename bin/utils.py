@@ -103,9 +103,9 @@ class UtilsCache(object):
     # TODO: rename, cleanup
     def appSupportsCommand(self, app, command, helpCommand = "-h") -> str:
         if not (app, command) in self._helpCache:
-            craftDebug.log.debug("%s %s" % (app, helpCommand))
-            output = subprocess.getoutput("%s %s" %(app, helpCommand))
-            supports = output.find( command ) != -1
+            craftDebug.log.debug(f"\"{app}\" {helpCommand}")
+            output = subprocess.getoutput(f"\"{app}\" {helpCommand}")
+            supports = re.match(f".*{command}.*", output) is not None
             self._helpCache[(app, command)] = supports
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
