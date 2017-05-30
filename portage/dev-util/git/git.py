@@ -27,8 +27,24 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
+        self.gitIsInstalled = False
+        # check whether git is >= 2.10
+        if utils.utilsCache.appSupportsCommand(utils.utilsCache.findApplication("git"),"git version 2.1\d", "--version"):
+            self.gitIsInstalled = True
+
+    def fetch(self):
+        if self.gitIsInstalled:
+            return True
+        return BinaryPackageBase.fetch(self)
+
+    def unpack(self):
+        if self.gitIsInstalled:
+            return True
+        return BinaryPackageBase.unpack(self)
 
     def install( self ):
+        if self.gitIsInstalled:
+            return True
         if not BinaryPackageBase.install(self):
             return False
         utils.copyFile(os.path.join(self.packageDir(), "git.exe"),
@@ -36,21 +52,17 @@ class Package(BinaryPackageBase):
         return True
 
     def qmerge(self):
-        if not BinaryPackageBase.qmerge(self):
-            return False
-        utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
-        tmpFile = tempfile.TemporaryFile()
-        git = os.path.join(self.rootdir,"dev-utils","git","bin","git")
-        utils.system( "%s config --global --get url.git://anongit.kde.org/.insteadof" % git,
-                      stdout=tmpFile, stderr=subprocess.PIPE  )
-        tmpFile.seek( 0 )
-        for line in tmpFile:
-            if str(line,'UTF-8').find("kde:")>-1:
-                return True
+        if not self.gitIsInstalled:
+            if not BinaryPackageBase.qmerge(self):
+                return False
+            utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
+        git = utils.utilsCache.findApplication("git")
+        if utils.utilsCache.appSupportsCommand(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
+            return True
         craftDebug.log.debug("adding kde related settings to global git config file")
-        utils.system( "%s config --global url.git://anongit.kde.org/.insteadOf kde:" % git)
-        utils.system( "%s config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:" % git)
-        utils.system( "%s config --global core.autocrlf false" % git)
-        utils.system( "%s config --system core.autocrlf false" % git)
+        utils.system( f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
+        utils.system( f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
+        utils.system( f"\"{git}\" config --global core.autocrlf false")
+        utils.system( f"\"{git}\" config --system core.autocrlf false")
         return True
 
