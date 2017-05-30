@@ -12,13 +12,14 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kcoreaddons"] = "master"
-        self.buildDependencies["frameworks/ktextwidgets"] = "master"
-        self.buildDependencies["frameworks/kxmlgui"] = "master"
-        self.buildDependencies["frameworks/kconfig"] = "master"
-        self.buildDependencies["frameworks/kcodecs"] = "master"
-        self.buildDependencies["frameworks/kiconthemes"] = "master"
-        self.buildDependencies["frameworks/kio"] = "master"
+        self.buildDependencies["frameworks/kcoreaddons"] = "default"
+        self.buildDependencies["frameworks/ktextwidgets"] = "default"
+        self.buildDependencies["frameworks/kxmlgui"] = "default"
+        self.buildDependencies["frameworks/kconfig"] = "default"
+        self.buildDependencies["frameworks/kcodecs"] = "default"
+        self.buildDependencies["frameworks/kiconthemes"] = "default"
+        self.buildDependencies["frameworks/kio"] = "default"
+        self.buildDependencies["kde/kpimtextedit"] = "default"
 
 from Package.CMakePackageBase import *
 
