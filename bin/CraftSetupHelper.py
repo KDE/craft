@@ -117,8 +117,8 @@ class SetupHelper( object ):
         if not type(var) == list:
             var = [var]
         if key in self.env:
-            env = self.env[ key ].split(os.path.pathsep)
-            var += list(collections.OrderedDict(zip(env, [[True] for x in range(0,len(env))])))
+            env = var + self.env[ key ].split(os.path.pathsep)
+            var = list(collections.OrderedDict.fromkeys(env))
         self.env[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
