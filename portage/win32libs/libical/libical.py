@@ -2,16 +2,16 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'libical'
-        for v in [ '0.41', '0.42', '0.43', '0.44', '2.0.0']:
-            self.targets[ v ] = 'https://github.com/libical/libical/releases/download/v2.0.0/libical-' + v + '.tar.gz'
-            self.targetInstSrc[ v ] = 'libical-' + v
-        self.defaultTarget = '2.0.0'
-        self.targetDigests['0.44'] = 'f781150e2d98806e91b7e0bee02abdc6baf9ac7d'
-        self.patchToApply['0.44'] = [ ( 'libical-0.44-20100728.diff', 1 ),
-                                      ( 'libical-0.44-20130614.diff', 1 ) ]
+        for ver in [ '2.0.0']:
+            self.targets[ ver ] = f'https://github.com/libical/libical/archive/v{ver}.tar.gz'
+            self.targetInstSrc[ ver ] = f'libical-{ver}'
+            self.archiveNames[ ver ] = f'libical-{ver}.tar.gz'
+
         self.patchToApply['2.0.0'] = [ ( '001-libical-2.0.0-search-snprintf.diff', 1 )]
-        self.shortDescription = "reference implementation of the icalendar data type and serialization format"
+        self.targetDigests['2.0.0'] = (['20f4a98475052e1200d2691ba50b27969e4bedc6e50bffd5e2fa81f4ac90de9a'], CraftHash.HashAlgorithm.SHA256)
+
+        self.shortDescription = "Reference implementation of the icalendar data type and serialization format"
+        self.defaultTarget = '2.0.0'
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
