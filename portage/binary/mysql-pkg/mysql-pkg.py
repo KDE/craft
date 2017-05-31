@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         ver = '5.7.18'
         arch = "32"
         if compiler.isX64():
-            arhc = "64"
+            arch = "x64"
         self.targets[ ver ] = f"{baseURL}mysql-{ver}-win{arch}.zip"
         self.targetInstSrc[ ver ] = f"mysql-{ver}-win{arch}"
 
