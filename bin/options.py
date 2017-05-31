@@ -76,9 +76,6 @@ class OptionsFeatures(OptionsBase):
         ## option whether to build nepomuk
         self.nepomuk = True
 
-        ## whether to build the sqlite backend in akonadi instead of the mysql one
-        self.akonadiBackendSqlite = True
-
         ## enable python support in several packages.
         self.pythonSupport = False
 
