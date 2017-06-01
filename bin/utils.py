@@ -352,27 +352,22 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
-    if isinstance(cmd, list):
-        args = cmd
-        cmd = " ".join(args)
+    #if the first argument is not an absolute path replace it with the full path to the application
+    arg0 = shlex.split(cmd, posix=False)[0]
+    if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
+        app = utilsCache.findApplication(arg0)
+        if not app:
+            craftDebug.log.critical(f"Craft was unable to detect {arg0}")
+        cmd = cmd.replace(arg0, f"\"{app}\"", 1)
     else:
-        craftDebug.log.debug("Detected deprecated usage of utils.system with cmd type is \"str\" instead of \"list(str)\"")
-        craftDebug.log.debug(f"cmd: \"{cmd}\"", stack_info=True)
-        args = shlex.split(cmd, posix=False)
-
-    app = utilsCache.findApplication(args[0])
-    if not app:
-        craftDebug.log.critical(f"Craft was unable to detect {args[0]}")
-    else:
-        args[0] = app
+        app = arg0
     craftDebug.log.debug("executing command: '{cmd}' in '{cwd}'".format(cmd=cmd, cwd=kw.get("cwd", os.getcwd())))
-    craftDebug.log.debug(f"args; {args}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
-        proc = subprocess.Popen(args, **kw)
+        proc = subprocess.Popen(cmd, **kw)
         for line in proc.stdout:
             if not stdout == sys.stdout:
                 stdout.write(line)
@@ -380,12 +375,12 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
                 if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     stdout.buffer.write(line)
                     stdout.flush()
-            craftDebug.log.debug("{app}: {out}".format(app=args[0], out=str(line, "UTF-8").rstrip()))
+            craftDebug.log.debug("{app}: {out}".format(app=app, out=str(line, "UTF-8").rstrip()))
     else:
-        proc = subprocess.Popen(args, **kw)
+        proc = subprocess.Popen(cmd, **kw)
         if proc.stderr:
             for line in proc.stderr:
-                craftDebug.log.debug("{app}: {out}".format(app=args[0], out=str(line, "UTF-8").rstrip()))
+                craftDebug.log.debug("{app}: {out}".format(app=app, out=str(line, "UTF-8").rstrip()))
 
     proc.communicate()
     result = proc.wait() == 0
