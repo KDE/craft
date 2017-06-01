@@ -9,6 +9,7 @@ this file contains some helper functions for craft
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
 import configparser
+import shlex
 import time
 import ftplib
 import http.client
@@ -351,28 +352,29 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
-    craftDebug.log.debug("executing command: '%s' in '%s'" % (cmd, kw.get("cwd", os.getcwd())))
-    craftDebug.log.debug("displayProgress=%s" % displayProgress)
+    args = shlex.split(cmd)
+    args[0] = utilsCache.findApplication(args[0])
+    craftDebug.log.debug("executing command: '{cmd}' in '{cwd}'".format(cmd=cmd, cwd=kw.get("cwd", os.getcwd())))
+    craftDebug.log.debug(f"args; {args}")
+    craftDebug.log.debug(f"displayProgress={displayProgress}")
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
-        if stdout == sys.stdout:
-            kw["universal_newlines"] = True
-            kw["errors"] = "backslashreplace"
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
-        proc = subprocess.Popen(cmd, **kw)
+        proc = subprocess.Popen(args, **kw)
         for line in proc.stdout:
             if not stdout == sys.stdout:
                 stdout.write(line)
-                craftDebug.log.debug(line.rstrip())
             else:
-                craftDebug.log.info(line.rstrip())
+                if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                    stdout.buffer.write(line)
+                    stdout.flush()
+            craftDebug.log.debug("{app}: {out}".format(app=args[0], out=str(line, "UTF-8").rstrip()))
     else:
-        kw["universal_newlines"] = True
-        proc = subprocess.Popen(cmd, **kw)
+        proc = subprocess.Popen(args, **kw)
         if proc.stderr:
             for line in proc.stderr:
-                craftDebug.log.debug(line.rstrip())
+                craftDebug.log.debug("{app}: {out}".format(app=args[0], out=str(line, "UTF-8").rstrip()))
 
     proc.communicate()
     result = proc.wait() == 0
