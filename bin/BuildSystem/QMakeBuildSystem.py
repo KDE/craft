@@ -51,8 +51,7 @@ class QMakeBuildSystem(BuildSystemBase):
     def make( self, options=""):
         """implements the make step for Qt projects"""
         self.enterBuildDir()
-        
-        command = ' '.join([self.makeProgramm, self.makeOptions(options, maybeVerbose=False)])
+        command = ' '.join([self.makeProgramm, self.makeOptions(options)])
 
         return self.system( command, "make" )
 

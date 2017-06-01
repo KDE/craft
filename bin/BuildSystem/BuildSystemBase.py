@@ -76,13 +76,13 @@ class BuildSystemBase(CraftBase):
             defines += " %s" % self.clangOptions()
         return defines
 
-    def makeOptions(self, defines="", maybeVerbose=True):
+    def makeOptions(self, defines=""):
         """return options for make command line"""
         if self.subinfo.options.make.ignoreErrors:
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if maybeVerbose and craftDebug.verbose() > 1:
+        if craftDebug.verbose() > 0:
             if self.makeProgramm == "ninja":
                 defines += " -v "
             else:

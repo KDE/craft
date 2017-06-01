@@ -41,19 +41,16 @@ class CraftDebug(object):
         self.log.debug("#" * 80)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
+        self.setVerbose(0)
 
     def verbose(self):
         """return the value of the verbose level"""
-        lvl = self._handler.level
-        if lvl == logging.INFO:
-            return 0
-        elif lvl <= logging.DEBUG:
-            return 3
-        else:
-            return -1
+        return self._verbosity
 
     def setVerbose(self, _verbose):
-        if 0 < _verbose < 2:
+        self._verbosity = _verbose
+        lvl = logging.INFO
+        if 0 <= _verbose < 2:
             lvl = logging.INFO
         elif _verbose >= 2:
             lvl = logging.DEBUG
