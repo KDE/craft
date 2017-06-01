@@ -595,7 +595,8 @@ def getPackagesCategories(packageName, defaultCategory = None):
         defaultCategory = craftSettings.get("General","EMERGE_DEFAULTCATEGORY","kde")
 
     packageList, categoryList = [], []
-    if len( packageName.split( "/" ) ) == 1:
+    split = packageName.split( "/" )
+    if len( split ) == 1:
         if PortageInstance.isCategory( packageName ):
             craftDebug.log.debug("isCategory=True")
             packageList = PortageInstance.getAllPackages( packageName )
@@ -610,8 +611,11 @@ def getPackagesCategories(packageName, defaultCategory = None):
                 if PortageInstance.getCategory( packageName ):
                     packageList = [ packageName ]
                     categoryList = [ PortageInstance.getCategory( packageName ) ]
-    elif len( packageName.split( "/" ) ) == 2:
-        [ cat, pac ] = packageName.split( "/" )
+    elif 2 <= len( split ) <= 3:
+        if len(split) == 3:
+            cat, sub, pac = split
+        else:
+            cat, pac = split
         if PortageInstance.isCategory( cat ):
             categoryList = [ cat ]
         else:
