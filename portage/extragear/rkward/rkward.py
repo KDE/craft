@@ -71,17 +71,16 @@ class Package( CMakePackageBase):
         return ret
 
     def install( self ):
+        ret = CMakePackageBase.install( self )
         if OsUtils.isWin():
             # Make installation movable, by providing rkward.ini with relative path to R
-            ret = CMakePackageBase.install( self )
             rkward_ini = open( os.path.join( self.imageDir(), "bin", "rkward.ini" ), "w" )
             if compiler.isX64():
                 rkward_ini.write( "R executable=../lib/R/bin/x64/R.exe\n" )
             else:
                 rkward_ini.write( "R executable=../lib/R/bin/i386/R.exe\n" )
             rkward_ini.close()
-            return ret
-        return True
+        return ret
 
     def msvcconfigure( self ):
         # Need to create a .lib-file for R.dll, first
