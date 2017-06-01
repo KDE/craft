@@ -21,6 +21,14 @@ class subinfo(info.infoclass):
                     ("qtbase-5.8.patch", 1),#https://codereview.qt-project.org/#/c/141254/
                                             #https://codereview.qt-project.org/#/c/149550/
                 ]
+            elif qtVer >= CraftVersion("5.9"):
+                self.patchToApply[ver] = [
+                    ("fix-angle-mingw.patch", 1),
+                    ("qtbase-5.8.patch", 1),  # https://codereview.qt-project.org/#/c/141254/
+                    # https://codereview.qt-project.org/#/c/149550/
+                    ("qdbus-manager-quit-5.8.patch", 1),  # https://phabricator.kde.org/D2545#69186
+                    ("hack-fix-syncqt.patch", 1)
+                ]
             elif qtVer >= CraftVersion("5.8"):
                 self.patchToApply[ver] = [
                     ("fix-angle-mingw.patch", 1),
