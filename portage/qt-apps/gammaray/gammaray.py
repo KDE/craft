@@ -16,6 +16,7 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
         self.dependencies["libs/qtbase"] = "default"
+        self.dependencies["frameworks/syntax-highlighting"] = "default"
         self.dependencies['qt-apps/kdstatemachineeditor'] = 'default'
         self.dependencies['win32libs/openssl'] = 'default'
 
