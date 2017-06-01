@@ -9,6 +9,7 @@ this file contains some helper functions for craft
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
 import configparser
+import io
 import shlex
 import time
 import ftplib
@@ -372,7 +373,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
         for line in proc.stdout:
-            if not stdout == sys.stdout:
+            if not isinstance(stdout, io.TextIOWrapper):
                 stdout.write(line)
             else:
                 if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
