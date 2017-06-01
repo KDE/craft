@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://download.qt.io/official_releases/jom/jom_' + ver + '.zip'
             self.targetDigestUrls[ver] = (["http://download.qt.io/official_releases/jom/md5sums.txt"], CraftHash.HashAlgorithm.MD5)
             self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
-        self.defaultTarget = '1_1_2'
+        self.defaultTarget = '1_0_16'
 
 
 from Package.BinaryPackageBase import *
