@@ -7,6 +7,8 @@ import subprocess
 import argparse
 import collections
 
+import shutil
+
 from CraftConfig import *
 import compiler
 
@@ -78,6 +80,24 @@ class SetupHelper( object ):
             self.printEnv( )
             self.printBanner( )
 
+
+    def checkForEvilApplication(self):
+        blackList = []
+        if self.args.mode != "bash":
+            blackList += ["sh"]
+        if compiler.isMSVC():
+            blackList += ["gcc", "g++"]
+        for app in blackList:
+            location = shutil.which(app)
+            if location:
+                location = os.path.dirname(location)
+                print(f"Found \"{app}\" in your PATH: \"{location}\"\n"
+                      f"This application is known to cause problems with your configuration of Craft.\n"
+                      f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
+                      f"\n"
+                      f"[Environment]\n"
+                      f"PATH="
+                      f"\n", file=sys.stderr)
 
     def subst( self, ):
         def _subst( path, drive ):
@@ -174,6 +194,7 @@ class SetupHelper( object ):
         for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var.upper(), value )
         self.env = self.getEnv( )
+        self.checkForEvilApplication()
         self.version = int(craftSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
 
         self.addEnvVar( "KDEROOT", CraftStandardDirs.craftRoot( ) )
