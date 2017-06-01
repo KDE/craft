@@ -378,12 +378,12 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
                 if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     stdout.buffer.write(line)
                     stdout.flush()
-            craftDebug.log.debug("{app}: {out}".format(app=app, out=str(line, "UTF-8").rstrip()))
+            craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
     else:
         proc = subprocess.Popen(cmd, **kw)
         if proc.stderr:
             for line in proc.stderr:
-                craftDebug.log.debug("{app}: {out}".format(app=app, out=str(line, "UTF-8").rstrip()))
+                craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
 
     proc.communicate()
     result = proc.wait() == 0
