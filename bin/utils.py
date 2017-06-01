@@ -352,7 +352,14 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
-    args = shlex.split(cmd, posix=False)
+    if isinstance(cmd, list):
+        args = cmd
+        cmd = " ".join(args)
+    else:
+        craftDebug.log.debug("Detected deprecated usage of utils.system with cmd type is \"str\" instead of \"list(str)\"")
+        craftDebug.log.debug(f"cmd: \"{cmd}\"", stack_info=True)
+        args = shlex.split(cmd, posix=False)
+
     app = utilsCache.findApplication(args[0])
     if not app:
         craftDebug.log.critical(f"Craft was unable to detect {args[0]}")
