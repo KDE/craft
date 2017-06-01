@@ -353,14 +353,17 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     logged to allow the display of progress bars."""
 
     #if the first argument is not an absolute path replace it with the full path to the application
-    arg0 = shlex.split(cmd, posix=False)[0]
-    if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
-        app = utilsCache.findApplication(arg0)
-        if not app:
-            craftDebug.log.critical(f"Craft was unable to detect {arg0}")
-        cmd = cmd.replace(arg0, f"\"{app}\"", 1)
+    if isinstance(cmd, list):
+        arg0 = utilsCache.findApplication(cmd[0])
     else:
-        app = arg0
+        arg0 = shlex.split(cmd, posix=False)[0]
+        if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
+            app = utilsCache.findApplication(arg0)
+            if not app:
+                craftDebug.log.critical(f"Craft was unable to detect {arg0}")
+            cmd = cmd.replace(arg0, f"\"{app}\"", 1)
+        else:
+            app = arg0
     craftDebug.log.debug("executing command: '{cmd}' in '{cwd}'".format(cmd=cmd, cwd=kw.get("cwd", os.getcwd())))
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
