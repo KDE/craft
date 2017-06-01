@@ -91,13 +91,18 @@ class SetupHelper( object ):
             location = shutil.which(app)
             if location:
                 location = os.path.dirname(location)
-                print(f"Found \"{app}\" in your PATH: \"{location}\"\n"
-                      f"This application is known to cause problems with your configuration of Craft.\n"
-                      f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
-                      f"\n"
-                      f"[Environment]\n"
-                      f"PATH="
-                      f"\n", file=sys.stderr)
+                if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+                    print(f"Found \"{app}\" in your PATH: \"{location}\"\n"
+                          f"This application is known to cause problems with your configuration of Craft.\n"
+                          f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
+                          f"\n"
+                          f"[Environment]\n"
+                          f"PATH="
+                          f"\n", file=sys.stderr)
+                else:
+                    path = collections.OrderedDict.fromkeys(self.env["Path"].split(os.path.pathsep))
+                    del path[location]
+                    self.addEnvVar("Path", os.path.pathsep.join(path))
 
     def subst( self, ):
         def _subst( path, drive ):
