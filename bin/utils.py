@@ -355,7 +355,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
 
     #if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
-        cmd[0] = utilsCache.findApplication(cmd[0])
+        app = utilsCache.findApplication(cmd[0])
     else:
         arg0 = shlex.split(cmd, posix=False)[0]
         if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
