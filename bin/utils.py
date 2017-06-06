@@ -373,12 +373,15 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
         for line in proc.stdout:
-            if not isinstance(stdout, io.TextIOWrapper):
-                stdout.write(line)
-            else:
+            if isinstance(stdout, io.TextIOWrapper):
                 if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     stdout.buffer.write(line)
                     stdout.flush()
+            elif stdout == subprocess.DEVNULL:
+                pass
+            else:
+                stdout.write(line)
+
             craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
     else:
         proc = subprocess.Popen(cmd, **kw)
