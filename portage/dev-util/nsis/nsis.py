@@ -26,9 +26,9 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        os.makedirs(os.path.join(self.imageDir(), "dev-utils", "bin"))
-        for f in ['makensis', 'makensisw', 'nsis']:
-            utils.createBat(os.path.join(self.imageDir(), "dev-utils", "bin", "%s.bat" % f),
-                        "%s %%*" % os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "nsis", "%s.exe" % f))
+        for name in ['makensis', 'makensisw', 'nsis']:
+            if not utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", f"{name}.exe"),
+                                    os.path.join(self.imageDir(), "dev-utils", "nsis", f"{name}.exe")):
+                return False
         return True
 

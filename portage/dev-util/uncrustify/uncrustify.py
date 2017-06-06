@@ -30,7 +30,5 @@ class Package(CMakePackageBase):
     def install(self):
         if not CMakePackageBase.install(self):
             return False
-        os.makedirs(os.path.join(self.imageDir(), "dev-utils", "bin"))
-        utils.createBat(os.path.join(self.imageDir(), "dev-utils", "bin", "uncrustify.bat"),
-                            "%~dp0/../uncrustify/uncrustify %*")
-        return True
+        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "uncrustify.exe"),
+                         os.path.join(self.imageDir(), "dev-utils", "uncrustify", "uncrustify.exe"))

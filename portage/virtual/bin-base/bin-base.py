@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['gnuwin32/wget'] = 'default'
         self.buildDependencies['dev-util/7zip'] = 'default'
+        self.buildDependencies['dev-util/shimgen'] = 'default'
         self.buildDependencies['gnuwin32/patch'] = 'default'
 
 from Package.VirtualPackageBase import *

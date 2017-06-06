@@ -34,8 +34,8 @@ class Package(BinaryPackageBase):
     def install(self):
         if not BinaryPackageBase.install(self):
             return False
-        os.makedirs(os.path.join(self.imageDir(), "dev-utils", "bin"))
-        for f in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
-            utils.createBat(os.path.join(self.imageDir(), "dev-utils", "bin", "%s.bat" % f),
-                            "%%~dp0/../cmake/bin/%s %%*" % f)
+        for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
+            if not utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", f"{name}.exe"),
+                                    os.path.join(self.imageDir(), "dev-utils", "cmake", "bin", f"{name}.exe")):
+                return False
         return True

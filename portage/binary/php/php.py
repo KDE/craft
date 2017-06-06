@@ -36,8 +36,6 @@ class Package(BinaryPackageBase):
                     elif curl.match(line):
                         line = "extension=php_curl.dll\n"
                     out.write(line)
-        os.makedirs(os.path.join(self.imageDir(),"dev-utils","bin"))
-        utils.createBat(os.path.join(self.imageDir(),"dev-utils","bin","php.bat"), "%s %%*" % os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "php", "php.exe" ))
-        return True
-
+        return utils.createShim(os.path.join(self.imageDir(),"dev-utils","bin","php.exe"),
+                                os.path.join(self.imageDir(), "dev-utils", "php", "php.exe" ))
 
