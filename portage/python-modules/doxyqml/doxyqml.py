@@ -4,7 +4,8 @@ from Package.PipPackageBase import *
 
 
 class subinfo(info.infoclass):
-    #def setDependencies( self ):
+    def setDependencies( self ):
+        self.runtimeDependencies["dev-util/python2"] = "default"
 
     def setTargets( self ):
         self.svnTargets['master'] = ''
@@ -16,15 +17,10 @@ class Package( PipPackageBase ):
     def __init__( self, **args ):
         PipPackageBase.__init__(self)
         self.python3 = False
-        #the shims are not portable
-        self.subinfo.options.package.disableBinaryCache = True
-
 
 
     def install(self):
-        pythonPath = craftSettings.get("Paths","PYTHON27")
         utils.createShim(os.path.join(self.imageDir(), "bin", "doxyqml.exe"),
-                         os.path.join(pythonPath, "python.exe"),
-                         args = os.path.join(pythonPath, "Scripts", "doxyqml"),
-                         useAbsolutePath=True)
+                         os.path.join(self.imageDir(), "dev-utils", "bin", "python2.exe"),
+                         args = os.path.join(craftSettings.get("Paths","PYTHON27"), "Scripts", "doxyqml"))
         return PipBuildSystem.install(self)
