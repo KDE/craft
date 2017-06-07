@@ -19,7 +19,7 @@ class Package( PipPackageBase ):
 
     def install(self):
         pythonPath = craftSettings.get("Paths","PYTHON")
-        os.makedirs(os.path.join(self.imageDir(), "bin"))
-        utils.createBat(os.path.join(self.imageDir(), "bin", "pylint.bat"),
-                        "%s %%*" % (os.path.join(pythonPath, "scripts","pylint")))
+        utils.createShim(os.path.join(self.imageDir(), "bin", "pylint.exe"),
+                         os.path.join(pythonPath, "scripts","pylint"),
+                         useAbsolutePath=True)
         return PipBuildSystem.install(self)

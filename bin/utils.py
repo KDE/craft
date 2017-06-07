@@ -845,15 +845,21 @@ def createBat(fileName, command):
         bat.write(command)
         bat.write("\r\n")
 
-def createShim(shim, target) -> bool:
+def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
     app = utilsCache.findApplication("shimgen")
-    if os.path.isabs(target):
+    if not useAbsolutePath and os.path.isabs(target):
         srcPath = shim
         if srcPath.endswith(".exe"):
             srcPath = os.path.dirname(srcPath)
         target = os.path.relpath(target, srcPath)
-    os.makedirs(os.path.dirname(shim))
-    return app and system([app, "--output", shim, "--path", target], stdout=subprocess.DEVNULL)
+    if not os.path.exists(os.path.dirname(shim)):
+        os.makedirs(os.path.dirname(shim))
+    command = [app, "--output", shim, "--path", target]
+    if args:
+        command += ["--command", args]
+    if guiApp:
+        command += ["--gui"]
+    return app and system(command, stdout=subprocess.DEVNULL)
 
 
 def replaceSymlinksWithCopys(path):

@@ -22,7 +22,6 @@ class Package( PipPackageBase ):
 
     def install(self):
         pythonPath = craftSettings.get("Paths","PYTHON27")
-        os.makedirs(os.path.join(self.imageDir(), "bin"))
-        utils.createBat(os.path.join(self.imageDir(), "bin", "rbt.bat"),
-                        "%s %%*" % (os.path.join(pythonPath, "scripts","rbt")))
-        return PipBuildSystem.install(self)
+        return PipBuildSystem.install(self) and utils.createShim(
+            os.path.join(self.imageDir(), "bin", "rbt.exe"),
+            os.path.join(pythonPath, "scripts","rbt.exe"))

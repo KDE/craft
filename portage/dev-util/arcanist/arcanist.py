@@ -26,9 +26,7 @@ class Package(BinaryPackageBase):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        arc_dir = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "arcanist", "arcanist", "bin")
-        utils.createBat(os.path.join(CraftStandardDirs.craftRoot(),"dev-utils","bin","arc.bat"), """
-        set PATH=%s;%%PATH%%
-        %s %%*""" % (arc_dir, os.path.join(arc_dir , "arc" )))
+        utils.createShim(os.path.join(self.imageDir(),"dev-utils","bin","arc.exe"),
+                         os.path.join(os.path.join(self.imageDir(), "dev-utils", "arcanist", "arcanist", "bin", "arc.bat" )))
         return True
 

@@ -22,7 +22,9 @@ from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
     def __init__( self ):
-        CMakePackageBase.__init__( self )        
+        CMakePackageBase.__init__( self )
+        #the shims are not portable
+        self.subinfo.options.package.disableBinaryCache = True
 
         if not ("Paths","Python27") in craftSettings:
             craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
@@ -36,13 +38,16 @@ class Package(CMakePackageBase):
         if not ("Paths","Python27") in craftSettings:
             craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
         return CMakeBuildSystem.configure(self)
-
-
     
     def install(self):
-        python = os.path.join(craftSettings.get("Paths","PYTHON27"), "python")
-        os.makedirs(os.path.join(self.imageDir(), "bin"))
-        for script in ["depdiagram-generate", "depdiagram-prepare", "kgenapidox", "kgenframeworksapidox"]:
-            utils.createBat(os.path.join(self.imageDir(), "bin", "%s.bat" % script),
-                            "%s %s %%*" % (python, os.path.join(CraftStandardDirs.craftRoot( ), "scripts", script)))
-        return CMakeBuildSystem.install(self)
+        if not CMakeBuildSystem.install(self):
+            return False
+        python = os.path.join(craftSettings.get("Paths","PYTHON27"), "python.exe")
+        binPath = os.path.join(self.imageDir(), "bin")
+        for script in ["depdiagram-generate", "depdiagram-generate-all", "depdiagram-prepare", "kapidox_generate"]:
+            if not utils.createShim(os.path.join(binPath, f"{script}.exe"),
+                                    python,
+                                    args=os.path.join(CraftStandardDirs.craftRoot(), "Scripts", script),
+                                    useAbsolutePath=True):
+                return False
+        return True

@@ -16,12 +16,15 @@ class Package( PipPackageBase ):
     def __init__( self, **args ):
         PipPackageBase.__init__(self)
         self.python3 = False
+        #the shims are not portable
+        self.subinfo.options.package.disableBinaryCache = True
 
 
 
     def install(self):
         pythonPath = craftSettings.get("Paths","PYTHON27")
-        os.makedirs(os.path.join(self.imageDir(), "bin"))
-        utils.createBat(os.path.join(self.imageDir(), "bin", "doxyqml.bat"),
-                        "%s %s %%*" % (os.path.join(pythonPath, "python") , os.path.join(pythonPath, "scripts", "doxyqml")))
+        utils.createShim(os.path.join(self.imageDir(), "bin", "doxyqml.exe"),
+                         os.path.join(pythonPath, "python.exe"),
+                         args = os.path.join(pythonPath, "Scripts", "doxyqml"),
+                         useAbsolutePath=True)
         return PipBuildSystem.install(self)
