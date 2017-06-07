@@ -109,10 +109,6 @@ class infoclass(object):
         """default method for setting build options, override to set individual targets"""
         return
 
-    @staticmethod
-    def getArchitecture() -> str:
-        return "-%s" % compiler.architecture()
-
     def hasTarget( self ) -> bool:
         """return true if archive targets for the currently selected build target is available"""
         return self.buildTarget in self.targets
