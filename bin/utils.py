@@ -296,15 +296,17 @@ def unpackFiles( downloaddir, filenames, workdir ):
 
 def unpackFile( downloaddir, filename, workdir ):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
-    craftDebug.log.debug("unpacking this file: %s" % filename)
+    craftDebug.log.debug(f"unpacking this file: {filename}")
+    if not filename:
+        return True
 
     ( shortname, ext ) = os.path.splitext( filename )
-    if utilsCache.findApplication("7za") and (
-                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
-        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     if ext == "":
         craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
+    elif utilsCache.findApplication("7za") and (
+                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
+        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     else:
         try:
             shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
