@@ -9,12 +9,12 @@ class subinfo( info.infoclass ):
         self.shortDescription = "TNef pim library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["kde/kcalcore"] = "default"
-        self.buildDependencies["kde/kcontacts"] = "default"
-        self.buildDependencies["kde/kcalutils"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["kde/kcalcore"] = "default"
+        self.runtimeDependencies["kde/kcontacts"] = "default"
+        self.runtimeDependencies["kde/kcalutils"] = "default"
 
 from Package.CMakePackageBase import *
 

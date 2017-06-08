@@ -11,9 +11,9 @@ class subinfo( info.infoclass ):
         self.patchToApply['17.04.1'] = [("001-fix_missing_include.diff", 1)]
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
         self.dependencies["frameworks/kcoreaddons"] = "default"
         self.dependencies["frameworks/kio"] = "default"
 

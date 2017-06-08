@@ -9,10 +9,10 @@ class subinfo( info.infoclass ):
         self.shortDescription = "mbox library"
 
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
 
 from Package.CMakePackageBase import *
 

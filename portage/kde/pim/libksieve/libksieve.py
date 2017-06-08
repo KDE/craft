@@ -9,23 +9,23 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KSieve library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kdoctools"] = "default"
-        self.buildDependencies["frameworks/kiconthemes"] = "default"
-        self.buildDependencies["frameworks/kwindowsystem"] = "default"
-        self.buildDependencies["frameworks/karchive"] = "default"
-        self.buildDependencies["frameworks/knewstuff"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/knewstuff"] = "default"
         
-        self.buildDependencies["kde/kmime"] = "default"
-        self.buildDependencies["kde/kpimcommon"] = "default"
-        self.buildDependencies["kde/libkdepim"] = "default"
-        self.buildDependencies["kde/kpimtextedit"] = "default"
-        self.buildDependencies["kde/kmailtransport"] = "default"
-        self.buildDependencies["kde/kidentitymanagement"] = "default"
-        self.buildDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["kde/kpimcommon"] = "default"
+        self.runtimeDependencies["kde/libkdepim"] = "default"
+        self.runtimeDependencies["kde/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/kmailtransport"] = "default"
+        self.runtimeDependencies["kde/kidentitymanagement"] = "default"
+        self.runtimeDependencies["kde/kimap"] = "default"
         self.dependencies['win32libs/cyrus-sasl'] = 'default'
 
 from Package.CMakePackageBase import *

@@ -9,20 +9,20 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KDE Sieve Editor"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kdbusaddons"] = "default"
-        self.buildDependencies["frameworks/kwallet"] = "default"
-        self.buildDependencies["frameworks/kbookmarks"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kiconthemes"] = "default"
-        self.buildDependencies["frameworks/kio"] = "default"
-        self.buildDependencies["kde/kmime"] = "default"
-        self.buildDependencies["kde/kpimtextedit"] = "default"
-        self.buildDependencies["kde/kmailtransport"] = "default"
-        self.buildDependencies["kde/libksieve"] = "default"
-        self.buildDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/kbookmarks"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["kde/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/kmailtransport"] = "default"
+        self.runtimeDependencies["kde/libksieve"] = "default"
+        self.runtimeDependencies["kde/kimap"] = "default"
 
 
 from Package.CMakePackageBase import *

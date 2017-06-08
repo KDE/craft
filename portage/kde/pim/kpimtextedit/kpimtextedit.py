@@ -9,11 +9,11 @@ class subinfo( info.infoclass ):
         self.shortDescription = "PimTextEdit library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["kdesupport/grantlee"] = "default"
-        self.buildDependencies["frameworks/syntax-highlighting"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["kdesupport/grantlee"] = "default"
+        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -9,16 +9,16 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Evenviews library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kcodecs"] = "default"
-        self.buildDependencies["kde/kcalutils"] = "default"
-        self.buildDependencies["kde/kcalcore"] = "default"
-        self.buildDependencies["kde/akonadi-calendar"] = "default"
-        self.buildDependencies["kde/kmime"] = "default"
-        self.buildDependencies["kde/calendarsupport"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["kde/kcalutils"] = "default"
+        self.runtimeDependencies["kde/kcalcore"] = "default"
+        self.runtimeDependencies["kde/akonadi-calendar"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["kde/calendarsupport"] = "default"
         
 
 from Package.CMakePackageBase import *
