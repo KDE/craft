@@ -9,13 +9,13 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Grantlee Theme library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["kdesupport/grantlee"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kiconthemes"] = "default"
-        self.buildDependencies["frameworks/knewstuff"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["kdesupport/grantlee"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/knewstuff"] = "default"
 
 from Package.CMakePackageBase import *
 

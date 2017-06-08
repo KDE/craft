@@ -9,25 +9,25 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Grantlee Theme Editor"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kdoctools"] = "default"
-        self.buildDependencies["frameworks/kxmlgui"] = "default"
-        self.buildDependencies["frameworks/ktexteditor"] = "default"
-        self.buildDependencies["frameworks/knewstuff"] = "default"
-        self.buildDependencies["frameworks/karchive"] = "default"
-        self.buildDependencies["frameworks/syntax-highlighting"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/ktexteditor"] = "default"
+        self.runtimeDependencies["frameworks/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
         
             
-        self.buildDependencies["kde/messagelib"] = "default"
-        self.buildDependencies["kde/pimcommon"] = "default"
-        self.buildDependencies["kde/grantleetheme"] = "default"
-        self.buildDependencies["kde/akonadi-mime"] = "default"
-        self.buildDependencies["kde/libkleo"] = "default"
-        self.buildDependencies["kde/kimap"] = "default"
-        self.buildDependencies["kde/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/messagelib"] = "default"
+        self.runtimeDependencies["kde/pimcommon"] = "default"
+        self.runtimeDependencies["kde/grantleetheme"] = "default"
+        self.runtimeDependencies["kde/akonadi-mime"] = "default"
+        self.runtimeDependencies["kde/libkleo"] = "default"
+        self.runtimeDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["kde/kpimtextedit"] = "default"
         
 
 from Package.CMakePackageBase import *

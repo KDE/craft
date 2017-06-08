@@ -9,20 +9,20 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Calendar Support library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
         
-        self.buildDependencies["kde/kmime"] = "default"
-        self.buildDependencies["kde/akonadi-mime"] = "default"
-        self.buildDependencies["kde/kcalutils"] = "default"
-        self.buildDependencies["kde/kcalcore"] = "default"
-        self.buildDependencies["kde/kidentitymanagement"] = "default"
-        self.buildDependencies["kde/kholidays"] = "default"
-        self.buildDependencies["kde/akonadi-calendar"] = "default"
-        self.buildDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["kde/akonadi-mime"] = "default"
+        self.runtimeDependencies["kde/kcalutils"] = "default"
+        self.runtimeDependencies["kde/kcalcore"] = "default"
+        self.runtimeDependencies["kde/kidentitymanagement"] = "default"
+        self.runtimeDependencies["kde/kholidays"] = "default"
+        self.runtimeDependencies["kde/akonadi-calendar"] = "default"
+        self.runtimeDependencies["kde/kimap"] = "default"
         
 
 from Package.CMakePackageBase import *

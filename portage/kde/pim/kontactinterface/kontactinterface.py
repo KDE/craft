@@ -9,9 +9,9 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KontactInterface library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
         self.dependencies['frameworks/kcoreaddons'] = 'default'
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'

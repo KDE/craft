@@ -9,17 +9,17 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Mailtransport library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kconfig"] = "default"
-        self.buildDependencies["frameworks/kwallet"] = "default"
-        self.buildDependencies["frameworks/kdoctools"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kio"] = "default"
-        self.buildDependencies["kde/kmime"] = "default"
-        self.buildDependencies["kde/akonadi"] = "default"
-        self.buildDependencies["kde/akonadi-mime"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["kde/akonadi"] = "default"
+        self.runtimeDependencies["kde/akonadi-mime"] = "default"
         self.dependencies['win32libs/cyrus-sasl'] = 'default'
 
 

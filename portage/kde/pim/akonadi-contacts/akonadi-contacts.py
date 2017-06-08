@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['frameworks/kdbusaddons'] = 'default'
         self.dependencies['frameworks/ktextwidgets'] = 'default'
-        self.buildDependencies["kdesupport/grantlee"] = "default"
+        self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.dependencies['kde/kcontacts'] = 'default'
         self.dependencies['kde/kmime'] = 'default'
         self.dependencies['kde/akonadi-mime'] = 'default'

@@ -9,13 +9,13 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Imap library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kio"] = "default"
-        self.buildDependencies["frameworks/kcoreaddons"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["kde/kmime"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["kde/kmime"] = "default"
         self.dependencies['win32libs/cyrus-sasl'] = 'default'        
 
 

@@ -9,11 +9,11 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KLDap library"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
         self.dependencies["win32libs/libical"] = "default"
-        self.buildDependencies["frameworks/kdelibs4support"] = "default"
+        self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
 
 from Package.CMakePackageBase import *
 

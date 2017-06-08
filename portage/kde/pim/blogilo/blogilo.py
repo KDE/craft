@@ -9,23 +9,23 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Blogilo"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kcrash"] = "default"
-        self.buildDependencies["frameworks/kdbusaddons"] = "default"
-        self.buildDependencies["frameworks/kdoctools"] = "default"
-        self.buildDependencies["frameworks/kwallet"] = "default"
-        self.buildDependencies["frameworks/kxmlgui"] = "default"
-        self.buildDependencies["frameworks/syntax-highlighting"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
                 
-        self.buildDependencies["kde/kblog"] = "default"
-        self.buildDependencies["kde/pimcommon"] = "default"
-        self.buildDependencies["kde/kpimtextedit"] = "default"
-        self.buildDependencies["kde/messagelib"] = "default"
-        self.buildDependencies["kde/kimap"] = "default"
-        self.buildDependencies["kde/libkgapi"] = "default"
+        self.runtimeDependencies["kde/kblog"] = "default"
+        self.runtimeDependencies["kde/pimcommon"] = "default"
+        self.runtimeDependencies["kde/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/messagelib"] = "default"
+        self.runtimeDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["kde/libkgapi"] = "default"
         
 
 from Package.CMakePackageBase import *

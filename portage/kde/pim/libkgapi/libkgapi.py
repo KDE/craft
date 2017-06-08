@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.shortDescription = "KDE library for Google API"
 
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/kwindowsystem'] = 'default'
