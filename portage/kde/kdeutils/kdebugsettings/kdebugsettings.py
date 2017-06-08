@@ -9,15 +9,15 @@ class subinfo( info.infoclass ):
         self.shortDescription = "Configure Debug Categories"
         
     def setDependencies( self ):
-        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kcoreaddons"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/kconfig"] = "default"
-        self.buildDependencies["frameworks/kdbusaddons"] = "default"
-        self.buildDependencies["frameworks/kcompetion"] = "default"
-        self.buildDependencies["frameworks/kitemviews"] = "default"
+        self.runtimeDependancies["libs/qtbase"] = "default"
+        self.runtimeDependancies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependancies["frameworks/ki18n"] = "default"
+        self.runtimeDependancies["frameworks/kconfig"] = "default"
+        self.runtimeDependancies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependancies["frameworks/kcompetion"] = "default"
+        self.runtimeDependancies["frameworks/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *
 
