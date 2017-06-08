@@ -24,7 +24,6 @@ class subinfo( info.infoclass ):
         self.dependencies['frameworks/ki18n'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
         self.dependencies['frameworks/khtml'] = 'default'
-        self.dependencies['frameworks/kdelibs4support'] = 'default'
         self.dependencies['frameworks/solid'] = 'default'
 # Would be nice, but... yeah, pty on windows may happen, but not yet
 #        self.dependencies['frameworks/kpty'] = 'default'
