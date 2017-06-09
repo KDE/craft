@@ -29,6 +29,8 @@ class subinfo( info.infoclass ):
         self.buildDependencies["frameworks/kcrash"] = "default"
         self.buildDependencies["frameworks/kio"] = "default"
         self.buildDependencies["frameworks/kbookmarks"] = "default"
+        self.buildDependencies["frameworks/kdnssd"] = "default"
+        self.buildDependencies["frameworks/kdeclarative"] = "default"
 
 from Package.CMakePackageBase import *
 
