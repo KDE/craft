@@ -30,13 +30,15 @@ class Package(BinaryPackageBase):
            utils.copyDir(os.path.join( self.sourceDir(), "msys64"), os.path.join( self.installDir(), "msys"))
         else:
            utils.copyDir(os.path.join( self.sourceDir(), "msys32"), os.path.join( self.installDir(), "msys"))
-        os.makedirs(os.path.join(self.installDir(),"dev-utils","bin"))
-        utils.createBat(os.path.join(self.installDir(),"dev-utils","bin","msys.bat"),"python %KDEROOT%\\craft\\bin\\shells.py")
         return True
     
     def qmerge(self):
+        if not utils.createShim(os.path.join(self.installDir(),"dev-utils","bin","msys.exe"),
+                                os.path.join(self.installDir(),"dev-utils","bin","python3.exe"),
+                                args=os.path.join(CraftStandardDirs.craftBin(), "shells.py")):
+            return False
         if not BinaryPackageBase.qmerge(self):
-           return False
+            return False
         msysDir = os.path.join(CraftStandardDirs.craftRoot(),"msys")
         # start and restart msys before first use
         if not self.shell.execute(".", "echo Firstrun") and utils.system("autorebase.bat", cwd = msysDir):
@@ -59,4 +61,4 @@ class Package(BinaryPackageBase):
             print(e)
             return False
         return (self.shell.execute(".", "pacman -S base-devel --noconfirm --force --needed") and
-            utils.system("autorebase.bat", cwd=msysDir) )
+                utils.system("autorebase.bat", cwd=msysDir) )

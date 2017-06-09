@@ -841,12 +841,6 @@ def levenshtein(s1, s2):
 
     return previous_row[-1]
 
-def createBat(fileName, command):
-    with open(fileName, "wt+") as bat:
-        bat.write("@echo off\r\n")
-        bat.write(command)
-        bat.write("\r\n")
-
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
     app = utilsCache.findApplication("shimgen")
     if not useAbsolutePath and os.path.isabs(target):
