@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "Bomber game"
+        self.shortDescription = "KDEgames Library"
         
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
