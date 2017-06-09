@@ -11,13 +11,13 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependancies["libs/qtbase"] = "default"
-        self.runtimeDependancies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependancies["frameworks/ki18n"] = "default"
-        self.runtimeDependancies["frameworks/kconfig"] = "default"
-        self.runtimeDependancies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependancies["frameworks/kcompetion"] = "default"
-        self.runtimeDependancies["frameworks/kitemviews"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/kcompetion"] = "default"
+        self.runtimeDependencies["frameworks/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *
 
