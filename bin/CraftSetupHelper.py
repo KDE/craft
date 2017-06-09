@@ -252,7 +252,9 @@ class SetupHelper( object ):
                 else:
                     self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw64", "bin" ) )
             else:
-                self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") ,"Tools", craftSettings.get("QtSDK", "Compiler"), "bin" ))
+                compilerName = craftSettings.get("QtSDK", "Compiler")
+                compilerMap = {"mingw53_32":"mingw530_32"}
+                self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") ,"Tools", compilerMap.get(compilerName, compilerName), "bin" ))
 
         if self.args.mode in ["bat", "bash"]:  #don't put craft.bat in path when using powershell
             self.prependPath( "PATH", CraftStandardDirs.craftBin( ) )

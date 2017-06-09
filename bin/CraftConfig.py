@@ -184,7 +184,7 @@ class CraftConfig( object ):
                 self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";binary/.*")
                         
         if self.getboolean("QtSDK", "Enabled", "False"):
-            self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ";libs/qt.*")
+            self.set("Portage", "Ignores", self.get("Portage", "Ignores") + ";libs/qt.*;dev-util/mingw-w64;libs/runtime")
 
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \
