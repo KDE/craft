@@ -13,7 +13,7 @@ class TypePackager( PackagerBase ):
     """packager that is used in place of different other packagers
 The packager used can be decided at runtime
 """
-    def __init__( self, defaultType = eval(craftSettings.get("Packager", "PackageType", "SevenZipPackager")) ):
+    def __init__( self, defaultType = eval(craftSettings.get("Packager", "PackageType", "NullsoftInstallerPackager")) ):
         craftDebug.log.debug("TypePackager __init__ %s" % defaultType)
         PackagerBase.__init__(self)
         self.__packager = defaultType

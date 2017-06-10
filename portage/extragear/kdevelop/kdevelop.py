@@ -1,5 +1,4 @@
 import info
-from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -53,10 +52,9 @@ class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
         self.blacklist_file = [
-            NSIPackagerLists.runtimeBlacklist,
+            PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
-        self.changePackager( NullsoftInstallerPackager )
 
     def createPackage(self):
         self.defines[ "productname" ] = "KDevelop"

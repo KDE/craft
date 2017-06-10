@@ -1,5 +1,4 @@
 import info
-from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -38,18 +37,17 @@ class subinfo( info.infoclass ):
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase, NullsoftInstallerPackager ):
+class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
-        blacklists = [NSIPackagerLists.runtimeBlacklist,os.path.join(os.path.dirname(__file__), 'blacklist.txt')]
-        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
+        self.blacklists_file = [PackagerLists.runtimeBlacklist,os.path.join(os.path.dirname(__file__), 'blacklist.txt')]
 
     def createPackage(self):
         self.defines[ "productname" ] = "KStars Desktop Planetarium"
         self.defines[ "executable" ] = "bin\\kstars.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kstars.ico")
 
-        return NullsoftInstallerPackager.createPackage(self)
+        return TypePackager.createPackage(self)
 
     def preArchive(self):
         archiveDir = self.archiveDir()

@@ -1,5 +1,4 @@
 import info
-from Packager.NullsoftInstallerPackager import *
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -27,16 +26,15 @@ class subinfo( info.infoclass ):
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase, NullsoftInstallerPackager ):
+class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
         self.subinfo.options.fetch.checkoutSubmodules = True
         whitelists = []
-        blacklists = [
-            NSIPackagerLists.runtimeBlacklist,
+        self.blacklist_file = [
+            PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
-        NullsoftInstallerPackager.__init__(self, blacklists=blacklists)
 
     def createPackage(self):
         self.defines[ "productname" ] = "Peruse Comic Book Viewer"
@@ -44,7 +42,7 @@ class Package( CMakePackageBase, NullsoftInstallerPackager ):
         self.defines[ "website" ] = "http://peruse.kde.org"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "peruse.ico")
 
-        return NullsoftInstallerPackager.createPackage(self)
+        return TypePackager.createPackage(self)
 
     def preArchive(self):
         archiveDir = self.archiveDir()
