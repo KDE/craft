@@ -19,6 +19,8 @@ class subinfo( info.infoclass ):
         self.buildDependencies["frameworks/kdbusaddons"] = "default"
         self.buildDependencies["frameworks/kxmlgui"] = "default"
         self.buildDependencies["frameworks/kdoctools"] = "default"
+        self.buildDependencies["kde/libkdegames"] = "default"
+        
 
 from Package.CMakePackageBase import *
 
