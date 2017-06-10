@@ -1,0 +1,27 @@
+--- libkdegames-17.04.1/highscore/khighscore.cpp--
++++ libkdegames-17.04.1/highscore/khighscore.cpp
+@@ -32,7 +32,9 @@
+ #include <QLockFile>
+ #include <QGlobalStatic>
+ 
++#ifndef WIN32
+ #include <unistd.h> // sleep
++#endif
+ 
+ #define GROUP "KHighscore"
+ 
+@@ -155,7 +157,13 @@ bool KHighscore::lockForWriting(QWidget *widget)
+             item.setText(i18n("Retry"));
+             int res = KMessageBox::warningContinueCancel(widget, i18n("Cannot access the highscore file. Another user is probably currently writing to it."), QString(), item, KStandardGuiItem::cancel(), QStringLiteral( "ask_lock_global_highscore_file" ));
+             if ( res==KMessageBox::Cancel ) break;
+-        } else sleep(1);
++        } else {
++#ifdef WIN32
++            Sleep(1000);
++#else
++            sleep(1);
++#endif
++        }
+         first = false;
+     }
+     return false;
