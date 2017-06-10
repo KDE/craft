@@ -27,3 +27,13 @@
          first = false;
      }
      return false;
+--- libkdegames-17.04.1/libkdegamesprivate/kgame/kgame.cpp--
++++ libkdegames-17.04.1/libkdegamesprivate/kgame/kgame.cpp
+@@ -29,7 +29,6 @@
+ 
+ #include "kgamemessage.h"
+ 
+-#include <unistd.h>
+ #include <stdio.h>
+ #include <assert.h>
+ 
