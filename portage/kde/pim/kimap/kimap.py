@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Imap library"
+        self.patchToApply['17.04.1'] = [("kimap-17.04.1-fix-windows.diff", 1)]
         
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
