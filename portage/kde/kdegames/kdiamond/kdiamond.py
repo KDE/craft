@@ -21,6 +21,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies["frameworks/ktextwidgets"] = "default"
         self.runtimeDependencies["frameworks/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/knotifyconfig"] = "default"
         self.runtimeDependencies["kde/libkdegames"] = "default"
 
 
