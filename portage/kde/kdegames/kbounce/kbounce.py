@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "Bomber game"
+        self.shortDescription = "KBounce"
         
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
@@ -18,8 +18,12 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kcrash"] = "default"
         self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kcompletion"] = "default"
         self.runtimeDependencies["kde/libkdegames"] = "default"
-        
+
 
 from Package.CMakePackageBase import *
 
