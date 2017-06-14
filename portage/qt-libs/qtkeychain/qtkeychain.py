@@ -5,8 +5,9 @@ from Package.CMakePackageBase import *
 
 class subinfo( info.infoclass ):
     def setDependencies( self ):
-        self.dependencies[ 'libs/qtbase' ] = 'default'
-        self.dependencies[ 'libs/qttools' ] = 'default'
+        self.runtimeDependencies[ 'virtual/base' ] = 'default'
+        self.runtimeDependencies[ 'libs/qtbase' ] = 'default'
+        self.runtimeDependencies[ 'libs/qttools' ] = 'default'
 
     def setTargets( self ):
         self.svnTargets[ 'master' ] = 'https://github.com/frankosterfeld/qtkeychain.git'
