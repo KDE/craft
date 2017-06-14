@@ -130,7 +130,7 @@ class GitSource ( VersionSystemSourceBase ):
                 os.makedirs(checkoutDir)
                 # first try to replace with a repo url from etc/portage/crafthosts.conf
                 recursive = '--recursive' if self.subinfo.options.fetch.checkoutSubmodules else ''
-                ret = self.__git('clone', recursive, "--depth=1", repoUrl, '.')
+                ret = self.__git('clone', recursive, repoUrl, '.')
 
             # if a branch is given, we should check first if the branch is already downloaded
             # locally, otherwise we can track the remote branch
