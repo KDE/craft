@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtwinextras'] = 'default'
         self.dependencies['qt-libs/qtkeychain'] = 'default'
-        self.dependencies['win32libs/openssl'] = 'default'
 
 
 class Package( CMakePackageBase ):
