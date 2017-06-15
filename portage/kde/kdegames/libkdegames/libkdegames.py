@@ -33,6 +33,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kbookmarks"] = "default"
         self.runtimeDependencies["frameworks/kdnssd"] = "default"
         self.runtimeDependencies["frameworks/kdeclarative"] = "default"
+        self.runtimeDependencies["frameworks/knewstuff"] = "default"
 
 from Package.CMakePackageBase import *
 
