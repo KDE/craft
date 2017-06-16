@@ -369,6 +369,8 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
             app = arg0
     craftDebug.log.debug("executing command: '{cmd}' in '{cwd}'".format(cmd=cmd, cwd=kw.get("cwd", os.getcwd())))
     craftDebug.log.debug(f"displayProgress={displayProgress}")
+    if craftSettings.getboolean("CraftDebug", "LogEnvironment"):
+        craftDebug.log.debug("Environment: \n" + "\n".join(f"{key}={value}" for key, value in os.environ.items()))
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
