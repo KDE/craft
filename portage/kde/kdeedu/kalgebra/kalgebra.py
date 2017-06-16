@@ -17,6 +17,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kconfig"] = "default"
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["kde/analitza"] = "default"
 
 from Package.CMakePackageBase import *
 
