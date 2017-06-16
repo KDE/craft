@@ -627,6 +627,9 @@ def getPackagesCategories(packageName, defaultCategory = None):
     else:
         craftDebug.log.error("unknown packageName")
 
+    if len(packageList) > 1 or len(categoryList) > 1:
+        craftDebug.log.error(f"Package clash detected:  packages:{packageList}, categories: {categoryList}")
+        #todo: return value instead of list
     return packageList, categoryList
 
 
