@@ -15,12 +15,12 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"http://download.icu-project.org/files/icu4c/{ver}/icu4c-{ver2}-src.tgz"
             self.targetDigestUrls[ver] = ([f"https://ssl.icu-project.org/files/icu4c/{ver}/icu4c-src-{ver2}.md5"], CraftHash.HashAlgorithm.MD5)
             self.targetInstSrc[ver] = os.path.join("icu", "source")
-        self.defaultTarget = "58.2"
         if compiler.isMSVC2015() or compiler.isMinGW():
             self.patchToApply["55.1"] = ("icu-20150414.diff", 2)
-            self.defaultTarget = "55.1"
         if compiler.isMinGW():
             self.patchToApply["55.1"] = [("icu-20150414.diff", 2),("icu-msys.diff", 2)]
+
+        self.defaultTarget = "58.2"
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
