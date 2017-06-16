@@ -73,7 +73,7 @@ def doExec( package, action, continueFlag = False ):
         return ret or continueFlag
 
 
-def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs ):
+def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDateVcs, directTargets ):
     with CraftTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
         craftDebug.debug_line()
         craftDebug.step("Handling package: %s, action: %s" % (packageName, buildAction))
@@ -104,7 +104,21 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
                 if buildAction in [ "all", "update", "update-all" ]:
                     success = success and doExec( package, "qmerge" )
                 if buildAction == "full-package" or craftSettings.getboolean("Packager", "CreateCache"):
-                    success = success and doExec( package, "package" )
+                    if craftSettings.getboolean("Packager", "CreateCache") and craftSettings.getboolean("Packager", "CacheDirectTargetsOnly"):
+                        nameRe = re.compile(".*\/.*")
+                        for target in directTargets:
+                            if not nameRe.match(target):
+                                craftDebug.log.error("Error:\n"
+                                                     "[Packager]\n"
+                                                     "CacheDirectTargetsOnly = True\n"
+                                                     "Only works with fully specified packages 'category/package'")
+                                return False
+                        if f"{category}/{packageName}" in directTargets:
+                            success = success and doExec(package, "package")
+                        else:
+                            craftDebug.log.info("skip packaging of non direct targets")
+                    else:
+                        success = success and doExec( package, "package" )
                 success = success or continueFlag
         elif buildAction in [ "fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
                               "test",
@@ -136,7 +150,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         return success
 
 
-def handleSinglePackage( packageName, action, args ):
+def handleSinglePackage( packageName, action, args, directTargets = None ):
     deplist = [ ]
     packageList = [ ]
     originalPackageList = [ ]
@@ -158,12 +172,15 @@ def handleSinglePackage( packageName, action, args ):
                 packageList.append( mainPackage )
         craftDebug.log.debug("Will update packages: " + str(packageList))
     elif args.list_file:
+        if not directTargets:
+            directTargets = []
         parser = configparser.ConfigParser(allow_no_value=True)
         parser.read(args.list_file)
         for sections in parser.keys():
             for packageName in parser[sections]:
                 craftSettings.set("PortageVersions", packageName, parser.get(sections, packageName))
                 package, category = portage.getPackagesCategories(packageName)
+                directTargets.append(f"{category[0]}/{package[0]}")
                 packageList.extend(package)
                 categoryList.extend(category)
     elif packageName:
@@ -230,7 +247,7 @@ def handleSinglePackage( packageName, action, args ):
         # This is still a bit problematic since packageName might not be a valid
         # package
         # for list files, we also want to handle fetching & packaging per package
-        if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
+        if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast, directTargets=directTargets ):
             return False
 
     else:
@@ -258,7 +275,7 @@ def handleSinglePackage( packageName, action, args ):
                     if action in [ "install-deps", "update-direct-deps" ]:
                         action = "all"
 
-                    if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast ):
+                    if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast, directTargets=directTargets ):
                         craftDebug.log.error("fatal error: package %s/%s %s failed" % \
                                           ( info.category, info.package, action ))
                         return False
@@ -483,7 +500,7 @@ def main( ):
             handleSinglePackage( "", action, tempArgs )
         else:
             for packageName in tempArgs.packageNames:
-                if not handleSinglePackage( packageName, action, tempArgs ):
+                if not handleSinglePackage( packageName, action, tempArgs, directTargets=tempArgs.packageNames ):
                     return False
     return True
 
