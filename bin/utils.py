@@ -355,22 +355,32 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
+    environment = kw.get("env", os.environ)
+    cwd = kw.get("cwd", os.getcwd())
+
     #if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
-        cmd[0] = app = utilsCache.findApplication(cmd[0])
+        arg0 = cmd[0]
     else:
         arg0 = shlex.split(cmd, posix=False)[0]
-        if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
-            app = utilsCache.findApplication(arg0)
-            if not app:
-                craftDebug.log.critical(f"Craft was unable to detect {arg0}")
+
+    if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
+        app = utilsCache.findApplication(arg0)
+    else:
+        app = arg0
+
+    if app:
+        if not isinstance(cmd, list):
             cmd = cmd.replace(arg0, f"\"{app}\"", 1)
         else:
-            app = arg0
-    craftDebug.log.debug("executing command: '{cmd}' in '{cwd}'".format(cmd=cmd, cwd=kw.get("cwd", os.getcwd())))
+            cmd[0] = app
+    else:
+        app = arg0
+
+    craftDebug.log.debug(f"executing command: {repr(cmd)} in {repr(cwd)}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
-        craftDebug.log.debug("Environment: \n" + "\n".join(f"{key}={value}" for key, value in os.environ.items()))
+        craftDebug.log.debug("Environment: \n" + "\n".join(f"{key}={value}" for key, value in environment.items()))
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
