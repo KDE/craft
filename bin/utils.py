@@ -558,10 +558,10 @@ def createImportLibs( dll_name, basepath ):
     HAVE_LIB = utilsCache.findApplication("lib") is not None
     HAVE_DLLTOOL = utilsCache.findApplication("dlltool") is not None
 
-    craftDebug.log.debug("gendef found:", HAVE_GENDEF)
-    craftDebug.log.debug("gendef used:", USE_GENDEF)
-    craftDebug.log.debug("lib found:", HAVE_LIB)
-    craftDebug.log.debug("dlltool found:", HAVE_DLLTOOL)
+    craftDebug.log.debug(f"gendef found: {HAVE_GENDEF}")
+    craftDebug.log.debug(f"gendef used: {USE_GENDEF}")
+    craftDebug.log.debug(f"lib found: {HAVE_LIB}")
+    craftDebug.log.debug(f"dlltool found: {HAVE_DLLTOOL}")
 
     dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
     defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
