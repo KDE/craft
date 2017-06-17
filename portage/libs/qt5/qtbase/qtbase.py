@@ -107,7 +107,7 @@ class Package(Qt5CorePackageBase):
         if OsUtils.isWin():
             command += "-opengl dynamic "
             command += "-plugin-sql-odbc "
-        if not OsUtils.isFreeBSD():
+        if not (OsUtils.isFreeBSD() or compiler.isMinGW()):
             command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
@@ -140,7 +140,6 @@ class Package(Qt5CorePackageBase):
         if (compiler.isMSVC() and compiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
             command += "-no-pch "
 
-        print("command: ", command)
         return utils.system( command )
 
     def make(self, unused=''):
@@ -181,7 +180,6 @@ class Package(Qt5CorePackageBase):
             utils.putenv("QMAKESPEC", None)
 
 
-
     def qmerge( self ):
         if not Qt5CorePackageBase.qmerge(self):
             return False
@@ -190,3 +188,11 @@ class Package(Qt5CorePackageBase):
             binRoot = os.path.join(CraftStandardDirs.craftRoot(), "bin")
             return self.system(f"\"{patcher}\" --nobackup --qt-dir=\"{binRoot}\"")
         return True
+
+    @property
+    def makeProgramm(self):
+        if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.9"):
+            # workaround for broken qmake make file.... building with mingw and jom is broken
+            if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
+                return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
+        return Qt5CorePackageBase.makeProgramm
