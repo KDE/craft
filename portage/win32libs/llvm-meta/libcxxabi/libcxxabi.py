@@ -5,10 +5,6 @@ import portage
 class subinfo(info.infoclass):
     def setTargets( self ):
         self.versionInfo.setDefaultValues()
-        self.targetDigests['3.7.0'] = '2a5e0f6f9d59f9cda41dbe87c4b30f4226c5b5eb'
-        
-        for ver in self.svnTargets.keys() | self.targets.keys():
-            self.patchToApply[ ver ] = [("fix_shortpath.patch", 1)]
         
 
     def setDependencies( self ):

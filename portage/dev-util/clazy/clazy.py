@@ -18,7 +18,9 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
-        self.subinfo.options.configure.defines = "-DCLAZY_ON_WINDOWS_HACK=ON"
+        if compiler.isMSVC():
+            clangLib =  os.path.join(portage.getPackageInstance('win32libs', 'llvm').buildDir(), "lib", "clang.lib")
+            self.subinfo.options.configure.defines = f"-DCLANG_LIBRARY_IMPORT='{clangLib}'"
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
