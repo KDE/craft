@@ -47,7 +47,7 @@ class Package( CMakePackageBase ):
         self.defines["executable"] = "bin\\okular.exe"
         self.defines["icon"] = os.path.join(self.packageDir(), "okular.ico")
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
         self.ignoredPackages.append("gnuwin32/sed")
         self.ignoredPackages.append("frameworks/kdesignerplugin")
         self.ignoredPackages.append("frameworks/kemoticons")

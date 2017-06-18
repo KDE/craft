@@ -63,7 +63,7 @@ class Package( CMakePackageBase ):
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
         self.defines[ "extrashortcuts" ] = r'CreateShortCut \"${startmenu}\KDevelop - Microsoft Visual C++ compiler.lnk\" \"$INSTDIR\\bin\\kdevelop-msvc.bat\"'
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

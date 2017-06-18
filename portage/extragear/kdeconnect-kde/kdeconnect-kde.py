@@ -33,7 +33,7 @@ class Package( CMakePackageBase ):
         self.defines[ "executable" ] = "bin\\kdeconnect-indicator.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "icon.ico")
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

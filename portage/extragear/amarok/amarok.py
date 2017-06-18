@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         self.dependencies['qt-libs/phonon'] = 'default'
         self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['binary/mysql-pkg'] = 'default'
+        self.dependencies['binary/mysql'] = 'default'
         self.dependencies['qt-libs/liblastfm'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
         self.runtimeDependencies['kdesupport/qtscriptgenerator'] = 'default'

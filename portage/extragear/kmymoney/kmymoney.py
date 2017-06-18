@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.dependencies["frameworks/ktextwidgets"] = 'default'
         #self.dependencies['testing/gpgmepp'] = 'default'
         self.dependencies['kde/kholidays'] = 'default'
-        self.dependencies['binary/mysql-pkg'] = 'default'
+        self.dependencies['binary/mysql'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         #self.dependencies['win32libs/libofx'] = 'default'
         self.dependencies['win32libs/gettext'] = 'default'
@@ -48,7 +48,7 @@ class Package( CMakePackageBase ):
         self.defines[ "executable" ] = "bin\\kmymoney.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kmymoney.ico")
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

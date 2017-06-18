@@ -24,7 +24,7 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.configure.defines = ""
-        if not self.subinfo.options.isActive("binary/mysql-pkg"):
+        if not self.subinfo.options.isActive("binary/mysql"):
             self.subinfo.options.configure.defines += " -DDATABASE_BACKEND=SQLITE "
 
 

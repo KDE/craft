@@ -29,7 +29,7 @@ class Package( CMakePackageBase ):
         self.defines[ "productname" ] = "Kile"
         self.defines[ "executable" ] = "bin\\kile.exe"
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

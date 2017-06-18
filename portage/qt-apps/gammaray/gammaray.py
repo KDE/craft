@@ -38,7 +38,7 @@ class Package( CMakePackageBase ):
                                                           craftSettings.get("QtSDK", "Version"),
                                                           craftSettings.get("QtSDK", "Compiler"))
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

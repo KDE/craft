@@ -66,7 +66,7 @@ class subinfo(info.infoclass):
         if not self.options.buildStatic:
             self.dependencies['win32libs/openssl'] = 'default'
             self.dependencies['win32libs/dbus'] = 'default'
-            self.dependencies['binary/mysql-pkg'] = 'default'
+            self.dependencies['binary/mysql'] = 'default'
             self.dependencies['win32libs/icu'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
 
@@ -120,7 +120,7 @@ class Package(Qt5CorePackageBase):
             command += "-I \"%s\" -L \"%s\" " % (os.path.join(CraftStandardDirs.craftRoot(), "include"), os.path.join(CraftStandardDirs.craftRoot(), "lib"))
             if self.subinfo.options.isActive("win32libs/openssl"):
                 command += " -openssl-linked "
-            if self.subinfo.options.isActive("binary/mysql-pkg"):
+            if self.subinfo.options.isActive("binary/mysql"):
                 command += " -plugin-sql-mysql "
             if self.subinfo.options.isActive("win32libs/dbus"):
                 command += " -qdbus -dbus-linked "

@@ -48,7 +48,7 @@ class Package( CMakePackageBase ):
         self.defines[ "executable" ] = "bin\\kate.exe"
         self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kate.ico")
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
 

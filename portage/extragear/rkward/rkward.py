@@ -104,6 +104,6 @@ class Package( CMakePackageBase ):
         self.defines[ "executable" ] = "bin\\rkward.exe"
         self.defines[ "icon" ] = os.path.join(self.sourceDir(), "rkward", "icons", "app-icon", "rkward.ico")
 
-        self.ignoredPackages.append("binary/mysql-pkg")
+        self.ignoredPackages.append("binary/mysql")
 
         return TypePackager.createPackage(self)
