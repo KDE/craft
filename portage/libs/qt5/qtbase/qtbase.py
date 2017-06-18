@@ -195,4 +195,4 @@ class Package(Qt5CorePackageBase):
             # workaround for broken qmake make file.... building with mingw and jom is broken
             if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
-        return Qt5CorePackageBase.makeProgramm
+        return Qt5CorePackageBase.makeProgramm()
