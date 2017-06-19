@@ -1,0 +1,18 @@
+commit 6ea03cbe3e5152fb296d2a0dfa74409b52cf23c4
+Author: Montel Laurent <montel@kde.org>
+Date:   Mon Jun 19 08:26:15 2017 +0200
+
+    Remove unused include
+
+diff --git a/src/interpreter/executer.cpp b/src/interpreter/executer.cpp
+index 18bb24f..55c3433 100644
+--- a/src/interpreter/executer.cpp
++++ b/src/interpreter/executer.cpp
+@@ -25,7 +25,6 @@
+ 
+ #include <errno.h>
+ #include <math.h>
+-#include <unistd.h>  // for usleep();
+ 
+ #include <QTimer>  // for wait
+ #include <QDebug>
