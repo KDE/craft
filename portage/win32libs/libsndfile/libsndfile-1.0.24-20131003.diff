@@ -1,6 +1,6 @@
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/cmake/modules/FindOggVorbis.cmake libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake
 --- libsndfile-1.0.24.orig/cmake/modules/FindOggVorbis.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake	2017-06-15 16:43:12.863454900 +0200
++++ libsndfile-1.0.24/cmake/modules/FindOggVorbis.cmake	2017-06-19 12:42:05.881118000 +0200
 @@ -0,0 +1,89 @@
 +# - Try to find the OggVorbis libraries
 +# Once done this will define
@@ -93,7 +93,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/cmak
 +#endif (HAVE_LIBOGG AND HAVE_VORBISFILE_H AND HAVE_LIBVORBIS AND HAVE_LIBVORBISFILE AND HAVE_LIBVORBISENC)
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/CMakeLists.txt libsndfile-1.0.24/CMakeLists.txt
 --- libsndfile-1.0.24.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/CMakeLists.txt	2017-06-15 16:43:12.866956000 +0200
++++ libsndfile-1.0.24/CMakeLists.txt	2017-06-19 12:42:05.885133800 +0200
 @@ -0,0 +1,25 @@
 +project (libsndfile)
 +
@@ -122,7 +122,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/CMak
 +add_subdirectory(src)
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/ConfigureChecks.cmake libsndfile-1.0.24/ConfigureChecks.cmake
 --- libsndfile-1.0.24.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/ConfigureChecks.cmake	2017-06-15 16:43:12.868289100 +0200
++++ libsndfile-1.0.24/ConfigureChecks.cmake	2017-06-19 12:42:05.886632800 +0200
 @@ -0,0 +1,72 @@
 +if(MINGW)
 +    set(__USE_MINGW_ANSI_STDIO 1)
@@ -198,7 +198,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/Conf
 +configure_file(src/sndfile.h.in   sndfile.h)
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/aiff.c libsndfile-1.0.24/src/aiff.c
 --- libsndfile-1.0.24.orig/src/aiff.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/aiff.c	2017-06-15 16:43:12.870272500 +0200
++++ libsndfile-1.0.24/src/aiff.c	2017-06-19 12:42:05.889140300 +0200
 @@ -24,7 +24,9 @@
  #include <string.h>
  #include <time.h>
@@ -220,7 +220,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  						psf_log_printf (psf, "%s", cptr) ;
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/caf.c libsndfile-1.0.24/src/caf.c
 --- libsndfile-1.0.24.orig/src/caf.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/caf.c	2017-06-15 16:43:12.871275200 +0200
++++ libsndfile-1.0.24/src/caf.c	2017-06-19 12:42:05.891145600 +0200
 @@ -23,7 +23,9 @@
  #include	<string.h>
  #include	<ctype.h>
@@ -242,8 +242,8 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/CMakeLists.txt libsndfile-1.0.24/src/CMakeLists.txt
 --- libsndfile-1.0.24.orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/CMakeLists.txt	2017-06-15 16:43:12.873280500 +0200
-@@ -0,0 +1,85 @@
++++ libsndfile-1.0.24/src/CMakeLists.txt	2017-06-19 12:42:11.409020600 +0200
+@@ -0,0 +1,86 @@
 +set(sndfile_SRCS
 +audio_detect.c
 +sndfile.c
@@ -322,16 +322,17 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
 +libsndfile.rc)
 +
 +add_library (sndfile SHARED ${sndfile_SRCS})
++set_target_properties (sndfile PROPERTIES PREFIX "")
 +target_link_libraries(sndfile ${VORBIS_LIBRARY} ${OGG_LIBRARY})
 +
 +install(TARGETS sndfile RUNTIME DESTINATION bin
 +                        LIBRARY DESTINATION lib
 +                        ARCHIVE DESTINATION lib)
-+                           
++
 +install(FILES ${CMAKE_BINARY_DIR}/sndfile.h ${CMAKE_CURRENT_SOURCE_DIR}/sndfile.hh DESTINATION include)
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/common.c libsndfile-1.0.24/src/common.c
 --- libsndfile-1.0.24.orig/src/common.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/common.c	2017-06-15 16:43:12.874283200 +0200
++++ libsndfile-1.0.24/src/common.c	2017-06-19 12:42:05.895658000 +0200
 @@ -23,12 +23,26 @@
  #include	<ctype.h>
  #include	<math.h>
@@ -361,7 +362,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  ** can later be displayed.
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/common.h libsndfile-1.0.24/src/common.h
 --- libsndfile-1.0.24.orig/src/common.h	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/common.h	2017-06-15 16:43:12.876288500 +0200
++++ libsndfile-1.0.24/src/common.h	2017-06-19 12:42:05.897667300 +0200
 @@ -21,6 +21,7 @@
  
  #include "sfconfig.h"
@@ -393,7 +394,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  #elif (SIZEOF_LONG_LONG == 8)
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/config.h.cmake libsndfile-1.0.24/src/config.h.cmake
 --- libsndfile-1.0.24.orig/src/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/config.h.cmake	2017-06-15 16:43:12.877291200 +0200
++++ libsndfile-1.0.24/src/config.h.cmake	2017-06-19 12:42:05.899667500 +0200
 @@ -0,0 +1,288 @@
 +/* src/config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -685,7 +686,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
 +#endif
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/file_io.c libsndfile-1.0.24/src/file_io.c
 --- libsndfile-1.0.24.orig/src/file_io.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/file_io.c	2017-06-15 16:43:12.879309700 +0200
++++ libsndfile-1.0.24/src/file_io.c	2017-06-19 12:42:05.902175500 +0200
 @@ -55,6 +55,10 @@
  
  #define	SENSIBLE_SIZE	(0x40000000)
@@ -699,7 +700,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  **	If O_BINARY isn't already defined by the inclusion of the system
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/flac.c libsndfile-1.0.24/src/flac.c
 --- libsndfile-1.0.24.orig/src/flac.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/flac.c	2017-06-15 16:43:12.881301900 +0200
++++ libsndfile-1.0.24/src/flac.c	2017-06-19 12:42:05.904179600 +0200
 @@ -29,7 +29,7 @@
  #include	"sndfile.h"
  #include	"common.h"
@@ -711,7 +712,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  #include	<FLAC/stream_encoder.h>
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/GSM610/gsm610_priv.h libsndfile-1.0.24/src/GSM610/gsm610_priv.h
 --- libsndfile-1.0.24.orig/src/GSM610/gsm610_priv.h	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/GSM610/gsm610_priv.h	2017-06-15 16:43:12.882304200 +0200
++++ libsndfile-1.0.24/src/GSM610/gsm610_priv.h	2017-06-19 12:42:05.905683500 +0200
 @@ -18,6 +18,10 @@
  /* Added by Erik de Castro Lopo */
  
@@ -725,7 +726,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  typedef int					longword;	/* 32 bit signed int	*/
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/libsndfile-1.def libsndfile-1.0.24/src/libsndfile-1.def
 --- libsndfile-1.0.24.orig/src/libsndfile-1.def	2011-03-23 10:29:08.000000000 +0100
-+++ libsndfile-1.0.24/src/libsndfile-1.def	2017-06-15 16:43:12.883307200 +0200
++++ libsndfile-1.0.24/src/libsndfile-1.def	2017-06-19 12:42:05.907188800 +0200
 @@ -38,4 +38,5 @@
  sf_wchar_open        @71
  sf_open_virtual      @80
@@ -734,7 +735,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
  
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/libsndfile.rc libsndfile-1.0.24/src/libsndfile.rc
 --- libsndfile-1.0.24.orig/src/libsndfile.rc	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/libsndfile.rc	2017-06-15 16:43:12.885312500 +0200
++++ libsndfile-1.0.24/src/libsndfile.rc	2017-06-19 12:42:05.909192900 +0200
 @@ -0,0 +1,32 @@
 +#include <winver.h>
 +
@@ -770,11 +771,11 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
 +
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/sndfile.def libsndfile-1.0.24/src/sndfile.def
 --- libsndfile-1.0.24.orig/src/sndfile.def	1970-01-01 01:00:00.000000000 +0100
-+++ libsndfile-1.0.24/src/sndfile.def	2017-06-15 17:14:52.664031800 +0200
++++ libsndfile-1.0.24/src/sndfile.def	2017-06-19 12:42:05.910697700 +0200
 @@ -0,0 +1,39 @@
 +; Auto-generated by create_symbols_file.py
 +
-+LIBRARY libsndfile.dll
++LIBRARY sndfile.dll
 +EXPORTS
 +
 +sf_command           @1
@@ -813,7 +814,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/
 +id3_skip             @100
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' libsndfile-1.0.24.orig/src/wav.c libsndfile-1.0.24/src/wav.c
 --- libsndfile-1.0.24.orig/src/wav.c	2011-03-23 10:01:02.000000000 +0100
-+++ libsndfile-1.0.24/src/wav.c	2017-06-15 16:43:12.888320200 +0200
++++ libsndfile-1.0.24/src/wav.c	2017-06-19 12:42:05.912703900 +0200
 @@ -24,7 +24,9 @@
  #include	<string.h>
  #include	<ctype.h>
