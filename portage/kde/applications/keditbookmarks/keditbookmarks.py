@@ -7,6 +7,7 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "KEditBookmarks"
+        self.patchToApply['17.04.1'] = [("fix_keditbookmarks_unistd.patch", 1)]
         
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"

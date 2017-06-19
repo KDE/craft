@@ -1,0 +1,21 @@
+--- keditbookmarks-17.04.1/src/main.cpp--
++++ keditbookmarks-17.04.1/src/main.cpp
+@@ -35,7 +35,6 @@
+ 
+ #include <kmessagebox.h>
+ #include <kwindowsystem.h>
+-#include <unistd.h>
+ 
+ #include <kbookmarkmanager.h>
+ #include <kbookmarkexporter.h>
+@@ -45,9 +44,8 @@
+ // TODO - make this register() or something like that and move dialog into main
+ static bool askUser(const QString& filename, bool &readonly) {
+ 
+-    QString requestedName("keditbookmarks");
+     QString interfaceName = "org.kde.keditbookmarks";
+-    QString appId = interfaceName + '-' +QString().setNum(getpid());
++    QString appId = interfaceName + '-' +QString().setNum(QApplication::applicationPid());
+ 
+     QDBusConnection dbus = QDBusConnection::sessionBus();
+     QDBusReply<QStringList> reply = dbus.interface()->registeredServiceNames();
