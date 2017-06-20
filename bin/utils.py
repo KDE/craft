@@ -364,16 +364,17 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     else:
         arg0 = shlex.split(cmd, posix=False)[0]
 
-    if not (os.path.isfile(arg0) or re.match("^\"(.*)\"$", arg0)):
+    matchQuoted = re.match("^\"(.*)\"$", arg0)
+    if not os.path.isfile(arg0) and not matchQuoted:
         app = utilsCache.findApplication(arg0)
     else:
         app = arg0
 
     if app:
-        if not isinstance(cmd, list):
-            cmd = cmd.replace(arg0, f"\"{app}\"", 1)
-        else:
+        if isinstance(cmd, list):
             cmd[0] = app
+        elif not matchQuoted:
+            cmd = cmd.replace(arg0, f"\"{app}\"",  1)
     else:
         app = arg0
 
