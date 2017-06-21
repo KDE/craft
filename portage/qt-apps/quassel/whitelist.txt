@@ -13,7 +13,9 @@ bin\\libstdc.*\.dll
 bin\\.*snore.*\.dll
 lib\\plugins\\libsnore.*\\libsnore_backend.*\.dll
 lib\\plugins\\libsnore.*\\libsnore_settings_backend.*\.dll
-lib\\plugins\\libsnore.*\\libsnore_secondarybackend.*\.dll lib\\plugins\\libsnore.*\\libsnore_settings_secondarybackend.*\.dll bin\\SnoreToast\.exe
+lib\\plugins\\libsnore.*\\libsnore_secondarybackend.*\.dll
+lib\\plugins\\libsnore.*\\libsnore_settings_secondarybackend.*\.dll
+bin\\SnoreToast\.exe
 #
 #Growl
 bin\\.*snoregrowl.*\.dll
@@ -37,6 +39,7 @@ bin\\Qt5Multimedia\.dll
 bin\\Qt5MultimediaWidgets\.dll
 bin\\Qt5Qml\.dll
 bin\\Qt5Quick\.dll
+bin\\Qt5QuickWidgets\.dll
 bin\\Qt5Script\.dll
 bin\\Qt5Sql\.dll
 bin\\Qt5Svg\.dll
@@ -58,6 +61,7 @@ plugins\\iconengines\\(?!.*d\.dll).*\.dll$
 #
 #zlib
 bin\\libz.dll
+bin\\zlib.dll
 #
 #qca
 bin\\libqca.*\.dll
