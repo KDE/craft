@@ -11,10 +11,10 @@ bin\\libstdc.*\.dll
 #
 #snore
 bin\\.*snore.*\.dll
-lib\\plugins\\libsnore.*\\libsnore_backend.*\.dll
-lib\\plugins\\libsnore.*\\libsnore_settings_backend.*\.dll
-lib\\plugins\\libsnore.*\\libsnore_secondarybackend.*\.dll
-lib\\plugins\\libsnore.*\\libsnore_settings_secondarybackend.*\.dll
+plugins\\libsnore.*\\libsnore_backend.*\.dll
+plugins\\libsnore.*\\libsnore_settings_backend.*\.dll
+plugins\\libsnore.*\\libsnore_secondarybackend.*\.dll
+plugins\\libsnore.*\\libsnore_settings_secondarybackend.*\.dll
 bin\\SnoreToast\.exe
 #
 #Growl
