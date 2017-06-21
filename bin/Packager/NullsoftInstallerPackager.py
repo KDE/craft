@@ -153,8 +153,9 @@ file collection process is skipped, and only the installer is generated.
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
         definestring = ""
-        for key in self.defines:
-            definestring += " /D%s=\"%s\"" % (key , self.defines[ key ] )
+        for key, value in self.defines.items():
+            if value is not None:
+                definestring += f" /D{key}=\"{value}\""
 
         craftDebug.new_line()
         craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
