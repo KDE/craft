@@ -68,7 +68,7 @@ class Package(CMakePackageBase):
 
         # the build system is broken so....
         src = os.path.join(self.imageDir(), "bin", "clang" + exeSuffix)
-        if compiler.isGCC():
+        if compiler.isGCCLike():
             dest = os.path.join(self.imageDir(), "bin", "clang++" + exeSuffix)
         elif compiler.isMSVC():
             dest = os.path.join(self.imageDir(), "bin", "clang-cl" + exeSuffix)
