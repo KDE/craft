@@ -54,7 +54,8 @@ class CollectionPackagerBase( PackagerBase ):
         self._whitelist = []
         self._blacklist = []
 
-        self.scriptname = None
+        if not hasattr(self, "scriptname"):
+            self.scriptname = None
 
     @property
     def whitelist(self):
