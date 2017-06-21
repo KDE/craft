@@ -20,6 +20,8 @@ class subinfo(info.infoclass):
         self.targetDigests['0.11.0'] = 'd7b31f8e1ee4465ec33dd77f689fec59f4b78a36'
         self.targetDigests['0.12.2'] = '12e9a88597f724498c40a1548b5f788e7c40858c'
         self.patchToApply['0.11.0'] = ('quassel-0.11.0-20141002.diff',1)
+
+        self.homepage = "http://quassel-irc.org"
         self.defaultTarget = '0.12.2'
 
 
@@ -42,8 +44,8 @@ class Package( CMakePackageBase ):
         self.subinfo.options.configure.defines = " -DUSE_QT5=ON -DCMAKE_DISABLE_FIND_PACKAGE_Qt5DBus=ON"
         if not self.subinfo.options.isActive("libs/qt5/qtwebkit"):
             self.subinfo.options.configure.defines += " -DWITH_WEBKIT=OFF"
-        
-        
+
+
     def install(self):
         if not CMakePackageBase.install(self):
             return False
@@ -54,6 +56,29 @@ class Package( CMakePackageBase ):
             shutil.move(os.path.join(self.installDir(),"quasselclient.exe"),os.path.join(self.installDir(),"bin","quasselclient.exe"))
         return True
 
+
+    def preArchive(self):
+        utils.mergeTree(os.path.join(self.archiveDir(), "bin"), self.archiveDir())
+        return True
+
+    def createPackage(self):
+        self.blacklist_file = [
+            PackagerLists.runtimeBlacklist,
+            os.path.join(self.packageDir(), 'blacklist.txt')
+        ]
+        self.whitelist_file = [
+            os.path.join(self.packageDir(), 'whitelist.txt')
+        ]
+        self.defines["gitDir"] = self.sourceDir()
+        self.defines["caption"] = self.binaryArchiveName(fileType=None).capitalize()
+        self.defines["productname"] = None
+        self.defines["company"] = None
+
+        self.scriptname = os.path.join(self.sourceDir(), "scripts", "build", "NullsoftInstaller.nsi" )
+        self.ignoredPackages.append("binary/mysql")
+
+
+        return TypePackager.createPackage(self)
 
 
 
