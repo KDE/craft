@@ -259,8 +259,11 @@ class CraftBase(object):
             version = "latest"
         else:
             version = self.getPackageVersion()[0]
-        return "%s-%s-%s-%s%s.%s" % (
-            self.package, compiler.architecture(), version, compiler.getShortName(), pkgSuffix, fileType)
+        if fileType:
+            fileType = f".{fileType}"
+        else:
+            fileType = ""
+        return f"{self.package}-{compiler.architecture()}-{version}-{compiler.getShortName()}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
