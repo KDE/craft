@@ -118,6 +118,8 @@ file collection process is skipped, and only the installer is generated.
 
     def getVCRuntimeLibrariesLocation(self):
         """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
+        if "VCToolsRedistDir" in os.environ:
+            return os.environ["VCToolsRedistDir"]
         _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "redist" )
         if not os.path.exists(_path):
             _path = os.path.join( os.path.dirname( shutil.which( "cl.exe" ) ), "..", "..", "redist" )
@@ -127,15 +129,16 @@ file collection process is skipped, and only the installer is generated.
         if not compiler.isMSVC():
             return "none"
         _file = None
-        if compiler.isMSVC2015():
-            if compiler.isX64():
-                _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x64.exe" )
-            elif compiler.isX86():
-                _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", "vcredist_x86.exe" )
+        if compiler.isMSVC():
+            arch = "x86"
+            if compiler.isX64(): arch = "x64"
+            if compiler.isMSVC2015():
+                _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe" )
+            elif compiler.isMSVC2017():
+                _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")
             if not os.path.isfile(_file):
-                _file = None
                 craftDebug.new_line()
-                craftDebug.log.error("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
+                craftDebug.log.critical("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
     def generateNSISInstaller( self ):
