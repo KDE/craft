@@ -28,6 +28,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.dependencies['qt-libs/snorenotify'] = 'default'
         self.dependencies['win32libs/zlib'] = 'default'
+        self.dependencies['win32libs/openssl'] = 'default'
         #self.dependencies['kdesupport/qca'] = 'default'
         self.dependencies['dev-util/pkg-config'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
@@ -42,9 +43,6 @@ class Package( CMakePackageBase ):
         CMakePackageBase.__init__(self)
         self.supportsNinja = OsUtils.isWin()
         self.subinfo.options.configure.defines = " -DUSE_QT5=ON -DCMAKE_DISABLE_FIND_PACKAGE_Qt5DBus=ON"
-        if not self.subinfo.options.isActive("libs/qt5/qtwebkit"):
-            self.subinfo.options.configure.defines += " -DWITH_WEBKIT=OFF"
-
 
     def install(self):
         if not CMakePackageBase.install(self):
