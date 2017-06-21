@@ -28,8 +28,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.gitIsInstalled = False
-        # check whether git is >= 2.10
-        if utils.utilsCache.checkCommandOutputFor(utils.utilsCache.findApplication("git"), re.compile(".*2.1\d.*"), "--version"):
+        if utils.utilsCache.checkVersionGreaterOrEqual("git", pattern="\d+\.\d+\.\d+", version="2.10.0"):
             self.gitIsInstalled = True
 
     def fetch(self):

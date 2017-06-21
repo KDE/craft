@@ -33,15 +33,19 @@ from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
 # TODO: Rename
+from CraftVersion import CraftVersion
+
+
 class UtilsCache(object):
     _instance = None
-    _version = 3
+    _version = 4
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
         self.version = UtilsCache._version
         self._appCache = {}
         self._helpCache = {}
+        self._versionCache = {}
         self._nightlyVersions = {}
         self.cacheCreationTime = time.time()
         #defined in portageSearch
@@ -115,6 +119,23 @@ class UtilsCache(object):
             craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
+
+    def checkVersionGreaterOrEqual(self, app, pattern, version, versionCommand="--version") -> bool:
+        if (app, version) in self._versionCache:
+            return self._versionCache[(app, version)]
+        app = self.findApplication(app)
+        if not app:
+            return False
+        if isinstance(pattern, str):
+            pattern = re.compile(f".*({pattern}).*")
+        craftDebug.log.debug(f"\"{app}\" {versionCommand}")
+        output = subprocess.getoutput(f"\"{app}\" {versionCommand}")
+        match = pattern.match(output)
+        ver = match.group(1)
+        ge = CraftVersion(ver) >= CraftVersion(version)
+        craftDebug.log.debug(f"Installed version of {app} version: {ver} >= {version} = {ge}")
+        self._versionCache[(app, version)] = ge
+        return ge
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
         craftDebug.log.debug(f"Fetch Json: {url}")
