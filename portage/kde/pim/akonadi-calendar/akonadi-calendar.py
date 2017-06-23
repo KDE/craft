@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.dependencies['kde/akonadi-contacts'] = 'default'
         self.dependencies['kde/kmailtransport'] = 'default'
         self.dependencies['kde/kcalutils'] = 'default'
-        self.dependencies['kde/kidentitymanager'] = 'default'
+        self.dependencies['kde/kidentitymanagement'] = 'default'
 
 from Package.CMakePackageBase import *
 
