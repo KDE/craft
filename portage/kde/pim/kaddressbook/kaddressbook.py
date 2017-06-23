@@ -22,7 +22,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/libkdepim"] = "default"
         self.runtimeDependencies["kde/pimcommon"] = "default"
         self.runtimeDependencies["kde/grantleetheme"] = "default"
-        self.runtimeDependencies["kde/kdepim-apps-lib"] = "default"
+        self.runtimeDependencies["kde/kdepim-apps-libs"] = "default"
         self.runtimeDependencies["kde/akonadi-search"] = "default"
         self.runtimeDependencies["win32libs/gpgme"] = "default"
 
