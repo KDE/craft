@@ -1,0 +1,79 @@
+--- kmailtransport-17.04.1/kioslave/src/common.h
++++ kmailtransport-17.04.1/kioslave/src/common.h
+@@ -23,6 +23,7 @@
+ #include <stdio.h>
+ #include <QFile>
+ #include <QDir>
++#include <QCoreApplication>
+ 
+ extern "C" {
+ #include <sasl/sasl.h>
+@@ -30,13 +31,17 @@ extern "C" {
+ 
+ inline bool initSASL()
+ {
+-#ifdef Q_OS_WIN32  //krazy:exclude=cpp
+-    QByteArray libInstallPath(QFile::encodeName(QDir::toNativeSeparators(KGlobal::dirs()->installPath("lib") + QLatin1String("sasl2"))));
+-    QByteArray configPath(QFile::encodeName(QDir::toNativeSeparators(KGlobal::dirs()->installPath("config") + QLatin1String("sasl2"))));
+-    if (sasl_set_path(SASL_PATH_TYPE_PLUGIN, libInstallPath.data()) != SASL_OK
+-        || sasl_set_path(SASL_PATH_TYPE_CONFIG, configPath.data()) != SASL_OK) {
+-        fprintf(stderr, "SASL path initialization failed!\n");
+-        return false;
++#ifdef Q_OS_WIN  //krazy:exclude=cpp
++    for (const auto &path : QCoreApplication::libraryPaths()) {
++        QDir dir(path);
++        if (dir.exists(QStringLiteral("sasl2"))) {
++            auto libInstallPath = QFile::encodeName(dir.absoluteFilePath(QStringLiteral("sasl2")));
++            if (sasl_set_path(SASL_PATH_TYPE_PLUGIN, libInstallPath.data()) != SASL_OK) {
++                fprintf(stderr, "SASL path initialization failed!\n");
++                return false;
++            }
++            break;
++        }
+     }
+ #endif
+ 
+diff --git a/kioslave/src/smtp/CMakeLists.txt b/kioslave/src/smtp/CMakeLists.txt
+index ec7c354..e13aa63 100644
+--- kmailtransport-17.04.1/kioslave/src/smtp/CMakeLists.txt
++++ kmailtransport-17.04.1/kioslave/src/smtp/CMakeLists.txt
+@@ -34,6 +34,9 @@ add_library(kio_smtp MODULE ${kio_smtp_PART_SRCS})
+ 
+ 
+ target_link_libraries(kio_smtp  KF5::KIOCore KF5::I18n Qt5::Network ${smtp_optional_libs})
++if (WIN32)
++    target_link_libraries(kio_smtp ws2_32)
++endif()
+ set_target_properties(kio_smtp PROPERTIES OUTPUT_NAME "smtp")
+ 
+ install(TARGETS kio_smtp  DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kio/ )
+diff --git a/kioslave/src/smtp/smtp.cpp b/kioslave/src/smtp/smtp.cpp
+index 17c5e72..f57e6d2 100644
+--- kmailtransport-17.04.1/kioslave/src/smtp/smtp.cpp
++++ kmailtransport-17.04.1/kioslave/src/smtp/smtp.cpp
+@@ -72,7 +72,11 @@ using std::unique_ptr;
+ #include <string.h>
+ #include <stdio.h>
+ #include <assert.h>
++#ifdef Q_OS_WIN
++#include <Winsock2.h>
++#else
+ #include <netdb.h>
++#endif
+ 
+ extern "C" {
+ Q_DECL_EXPORT int kdemain(int argc, char **argv);
+diff --git a/src/kmailtransportakonadi/autotests/CMakeLists.txt b/src/kmailtransportakonadi/autotests/CMakeLists.txt
+index c58b8c6..e66c990 100644
+--- kmailtransport-17.04.1/src/kmailtransportakonadi/autotests/CMakeLists.txt
++++ kmailtransport-17.04.1/src/kmailtransportakonadi/autotests/CMakeLists.txt
+@@ -21,8 +21,7 @@ macro(add_akonadi_isolated_test _source _path)
+ 
+   # based on kde4_add_unit_test
+   if (WIN32)
+-    get_target_property( _loc ${_targetName} LOCATION )
+-    set(_executable ${_loc}.bat)
++    set(_executable $<TARGET_FILE_DIR:${_targetName}>/${_targetName}.bat)
+   else()
+     set(_executable ${EXECUTABLE_OUTPUT_PATH}/${_targetName})
+   endif()
