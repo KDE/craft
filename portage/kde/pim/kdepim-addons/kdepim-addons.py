@@ -32,7 +32,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kidentitymanagement"] = "default"
         self.runtimeDependencies["kde/libksieve"] = "default"
         self.runtimeDependencies["kde/kmailtransport"] = "default"
-        self.runtimeDependencies["kde/akonadi-contact"] = "default"
+        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/importwizard"] = "default"
         self.runtimeDependencies["kde/mailimporter"] = "default"
         
