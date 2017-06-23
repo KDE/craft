@@ -6,7 +6,8 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "KLDap library"
+        self.shortDescription = "KCalcore library"
+        self.patchToApply['17.04.1'] = [("kcalcore-fix-linking.diff", 1)]
         
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"

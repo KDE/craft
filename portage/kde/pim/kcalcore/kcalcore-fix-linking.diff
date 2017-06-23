@@ -1,0 +1,23 @@
+--- kcalcore-17.04.1/src/icaltimezones.cpp
++++ kcalcore-17.04.1/src/icaltimezones.cpp
+@@ -1208,15 +1208,15 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase(icalcomponent *c,
+             // translations of the time zone offset name.
+ 
+             // TODO: Does this cope with multiple language specifications?
+-            QByteArray tzname = icalproperty_get_tzname(p);
++            QByteArray name = icalproperty_get_tzname(p);
+             // Outlook (2000) places "Standard Time" and "Daylight Time" in the TZNAME
+             // strings, which is totally useless. So ignore those.
+-            if ((!daylight && tzname == "Standard Time") ||
+-                    (daylight && tzname == "Daylight Time")) {
++            if ((!daylight && name == "Standard Time") ||
++                    (daylight && name == "Daylight Time")) {
+                 break;
+             }
+-            if (!abbrevs.contains(tzname)) {
+-                abbrevs += tzname;
++            if (!abbrevs.contains(name)) {
++                abbrevs += name;
+             }
+             break;
+         }
