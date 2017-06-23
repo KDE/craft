@@ -23,6 +23,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kmailtransport"] = "default"
         self.runtimeDependencies["kde/libksieve"] = "default"
         self.runtimeDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies['libs/qtwebengine'] = 'default'
 
 
 from Package.CMakePackageBase import *
