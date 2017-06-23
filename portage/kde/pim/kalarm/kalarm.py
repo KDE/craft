@@ -33,7 +33,7 @@ class subinfo( info.infoclass ):
         
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/akonadi-contact"] = "default"
+        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kde/kholidays"] = "default"

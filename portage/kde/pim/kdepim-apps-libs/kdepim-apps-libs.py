@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         
         self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/akonadi-contact"] = "default"
+        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/kcontacts"] = "default"
         self.runtimeDependencies["kde/grantleetheme"] = "default"
         self.runtimeDependencies["kde/libkleo"] = "default"
