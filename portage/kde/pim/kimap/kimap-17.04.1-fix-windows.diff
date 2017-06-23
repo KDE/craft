@@ -40,3 +40,38 @@
      if (!m_file.open(QFile::WriteOnly)) {
          qCWarning(KIMAP_LOG) << "Could not open log file for writing:" << m_file.fileName();
      }
+--- kimap-17.04.1/src/common.h
++++ kimap-17.04.1/src/common.h
+@@ -23,6 +23,7 @@
+ #include <stdio.h>
+ #include <QFile>
+ #include <QDir>
++#include <QCoreApplication>
+
+ extern "C" {
+ #include <sasl/sasl.h>
+@@ -30,13 +31,17 @@ extern "C" {
+
+ inline bool initSASL()
+ {
+-#ifdef Q_OS_WIN32  //krazy:exclude=cpp
+-    QByteArray libInstallPath(QFile::encodeName(QDir::toNativeSeparators(KGlobal::dirs()->installPath("lib") + QLatin1String("sasl2"))));
+-    QByteArray configPath(QFile::encodeName(QDir::toNativeSeparators(KGlobal::dirs()->installPath("config") + QLatin1String("sasl2"))));
+-    if (sasl_set_path(SASL_PATH_TYPE_PLUGIN, libInstallPath.data()) != SASL_OK ||
+-            sasl_set_path(SASL_PATH_TYPE_CONFIG, configPath.data()) != SASL_OK) {
+-        fprintf(stderr, "SASL path initialization failed!\n");
+-        return false;
++#ifdef Q_OS_WIN  //krazy:exclude=cpp
++    for (const auto &path : QCoreApplication::libraryPaths()) {
++        QDir dir(path);
++        if (dir.exists(QStringLiteral("sasl2"))) {
++            auto libInstallPath = QFile::encodeName(dir.absoluteFilePath(QStringLiteral("sasl2")));
++            if (sasl_set_path(SASL_PATH_TYPE_PLUGIN, libInstallPath.data()) != SASL_OK) {
++                fprintf(stderr, "SASL path initialization failed!\n");
++                return false;
++            }
++            break;
++        }
+     }
+ #endif
+
