@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kitemviews"] = "default"
         self.runtimeDependencies["frameworks/kjobwidgets"] = "default"
         self.runtimeDependencies["frameworks/kwallet"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetaddons"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
         self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/kldap"] = "default"

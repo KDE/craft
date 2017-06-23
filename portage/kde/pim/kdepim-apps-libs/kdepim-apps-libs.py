@@ -18,7 +18,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kiconthemes"] = "default"
         self.runtimeDependencies["frameworks/kio"] = "default"
         self.runtimeDependencies["frameworks/kservice"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetaddons"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         
         self.runtimeDependencies["kde/akonadi"] = "default"
         self.runtimeDependencies["kde/akonadi-contact"] = "default"

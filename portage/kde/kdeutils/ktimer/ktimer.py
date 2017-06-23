@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetaddons"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
         self.runtimeDependencies["frameworks/knotifications"] = "default"
 
