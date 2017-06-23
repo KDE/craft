@@ -36,6 +36,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kde/kimap"] = "default"
+        self.runtimeDependencies["kde/libkdepim"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.dependencies['win32libs/libxslt'] = 'default'
         
