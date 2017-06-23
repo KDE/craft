@@ -20,7 +20,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/knewstuff"] = "default"
         
         self.runtimeDependencies["kde/kmime"] = "default"
-        self.runtimeDependencies["kde/kpimcommon"] = "default"
+        self.runtimeDependencies["kde/pimcommon"] = "default"
         self.runtimeDependencies["kde/libkdepim"] = "default"
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kde/kmailtransport"] = "default"
