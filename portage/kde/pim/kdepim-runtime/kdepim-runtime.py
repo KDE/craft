@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/knotify"] = "default"
+        self.runtimeDependencies["frameworks/knotifyconfig"] = "default"
         self.runtimeDependencies["frameworks/kio"] = "default"
         self.runtimeDependencies["frameworks/kitemmodels"] = "default"
         self.runtimeDependencies["frameworks/kcodecs"] = "default"        
