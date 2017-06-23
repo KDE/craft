@@ -15,7 +15,6 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kcodecs"] = "default"
         self.runtimeDependencies["frameworks/kcompletion"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kconfigaddons"] = "default"
         self.runtimeDependencies["frameworks/ki18n"] = "default"
         self.runtimeDependencies["frameworks/kiconthemes"] = "default"
         self.runtimeDependencies["frameworks/kitemviews"] = "default"
