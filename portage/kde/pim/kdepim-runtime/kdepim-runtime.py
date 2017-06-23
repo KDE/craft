@@ -38,6 +38,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
+        self.runtimeDependencies['libs/qtwebengine'] = 'default'
 
 from Package.CMakePackageBase import *
 
