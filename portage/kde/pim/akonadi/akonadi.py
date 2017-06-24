@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
+        self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
