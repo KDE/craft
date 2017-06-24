@@ -4,10 +4,11 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):       
+    def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
     def setDependencies( self ):
+        self.buildDependencies['gnuwin32/gperf'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtlocation'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
