@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         self.versionInfo.setDefaultValues( )
 
-        self.shortDescription = "KWalletManager"
+        self.shortDescription = "KCharSelect"
         
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
