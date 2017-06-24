@@ -284,6 +284,9 @@ class Options(object):
         self.buildTools = False
         self.buildStatic = craftSettings.getboolean("Compile", "Static")
 
+
+        self.useShadowBuild = True
+
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False

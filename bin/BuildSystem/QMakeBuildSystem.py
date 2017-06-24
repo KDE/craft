@@ -39,7 +39,10 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
-        self.enterBuildDir()
+        if not self.subinfo.options.useShadowBuild:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
 
         proFile = self.configureSourceDir()
         if self.subinfo.options.qmake.proFile:
@@ -50,7 +53,10 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def make( self, options=""):
         """implements the make step for Qt projects"""
-        self.enterBuildDir()
+        if not self.subinfo.options.useShadowBuild:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
         command = ' '.join([self.makeProgramm, self.makeOptions(options)])
 
         return self.system( command, "make" )
@@ -71,7 +77,10 @@ class QMakeBuildSystem(BuildSystemBase):
         else:
             installmake = self.makeProgramm
 
-        self.enterBuildDir()
+        if not self.subinfo.options.useShadowBuild:
+            self.enterSourceDir()
+        else:
+            self.enterBuildDir()
         if options != None:
             command = "%s %s" % ( installmake, options )
         else:

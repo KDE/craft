@@ -16,8 +16,18 @@ from Package.Qt5CorePackageBase import *
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
-        self.supportsNinja = False  # Includes its own ninja, not to be confused with ours
         self.subinfo.options.fetch.checkoutSubmodules = True
+        # sources on different partitions other than the one of the build dir
+        # fails. some submodules fail even with the common shadow build...
+        self.subinfo.options.useShadowBuild = False
+        if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.10"):
+            craftDebug.log.warning("Please try to build QtWebengine useShadowBuild enabled")
+            exit()
+
+    def fetch(self):
+        if isinstance(self.source, GitSource):
+            self.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
+        return Qt5CorePackageBase.fetch(self)
         
     def compile(self):
         if not ("Paths","Python27") in craftSettings:

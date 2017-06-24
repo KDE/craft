@@ -11,7 +11,6 @@ from BuildSystem.BuildSystemBase import *
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "autotools")
-        self.buildInSource = False
         self._shell = MSysShell()
         if compiler.isX86():
             self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
@@ -37,7 +36,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def configure( self ):
         """configure the target"""
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
@@ -54,7 +53,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 self.shell.execute(self.sourceDir(), "autoreconf -f -i")
 
 
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
         else:
             ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
@@ -62,7 +61,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def make( self, dummyBuildType=None ):
         """Using the *make program"""
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
@@ -71,7 +70,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         args = self.makeOptions()
 
         # adding Targets later
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean"):
                 print( "while Make'ing. cmd: %s clean" % self.makeProgram)
                 return False
@@ -86,7 +85,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def install( self ):
         """Using *make install"""
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
@@ -102,7 +101,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
-        if self.buildInSource:
+        if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.sourceDir(), command, args):
                 print( "while installing. cmd: %s %s" % (command, args) )
                 return False

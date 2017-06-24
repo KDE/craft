@@ -114,7 +114,7 @@ class PackageMSys(AutoToolsPackageBase):
             self.platform = "mingw"
         self.supportsCCACHE = False
 
-        self.buildInSource = True
+        self.subinfo.options.useShadowBuild = False
 
         # target install needs perl with native path on configure time
         self.subinfo.options.configure.defines = " shared zlib-dynamic enable-camellia enable-idea enable-mdc2 enable-tlsext enable-rfc3779"

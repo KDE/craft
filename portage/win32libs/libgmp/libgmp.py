@@ -26,7 +26,7 @@ class PackageMinGW(AutoToolsPackageBase):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx "
-        self.buildInSource = True
+        self.subinfo.options.useShadowBuild = False
         
 
 if compiler.isMinGW():
