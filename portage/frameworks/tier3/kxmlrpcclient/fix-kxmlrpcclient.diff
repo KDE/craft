@@ -1,0 +1,111 @@
+commit 39a85ebf14c275cf57fc06eb57a6d6d24db9d818
+Author: Montel Laurent <montel@kde.org>
+Date:   Sat Jun 24 15:22:05 2017 +0200
+
+    Fix compile on window
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ad5f0f313..f5d7bdd3a 100644
+--- kxmlrpcclient-5.33.0/CMakeLists.txt
++++ kxmlrpcclient-5.33.0/CMakeLists.txt
+@@ -38,6 +38,10 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KXMLRPCCLIENT
+ find_package(KF5I18n ${KF5_DEP_VERSION} CONFIG REQUIRED)
+ find_package(KF5KIO ${KF5_DEP_VERSION} CONFIG REQUIRED)
+ 
++if(BUILD_TESTING)
++   add_definitions(-DBUILD_TESTING)
++endif(BUILD_TESTING)
++
+ ########### Targets ###########
+ if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
+    ki18n_install(po)
+diff --git a/autotests/CMakeLists.txt b/autotests/CMakeLists.txt
+index a8906431b..69c5b035a 100644
+--- kxmlrpcclient-5.33.0/autotests/CMakeLists.txt
++++ kxmlrpcclient-5.33.0/autotests/CMakeLists.txt
+@@ -6,13 +6,9 @@ include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src)
+ 
+ macro(add_kxmlrpc_test _name)
+   ecm_add_test(${_name}.cpp
+-               ${CMAKE_SOURCE_DIR}/src/client.cpp
+-               ${CMAKE_SOURCE_DIR}/src/query.cpp
+-               ${CMAKE_BINARY_DIR}/src/kxmlrpcclient_debug.cpp
+-               LINK_LIBRARIES KF5::KIOCore KF5::I18n Qt5::Xml Qt5::Test
++               LINK_LIBRARIES KF5::KIOCore KF5::I18n Qt5::Xml Qt5::Test KF5::XmlRpcClient
+                TEST_NAME ${_name}
+                NAME_PREFIX kxmlrpc)
+-  set_target_properties(${_name} PROPERTIES COMPILE_DEFINITIONS "KXMLRPCCLIENT_EXPORT=")
+ endmacro()
+ 
+ 
+diff --git a/src/kxmlrpcclient_private_export.h b/src/kxmlrpcclient_private_export.h
+new file mode 100644
+index 000000000..2c023497d
+--- /dev/null
++++ kxmlrpcclient-5.33.0/src/kxmlrpcclient_private_export.h
+@@ -0,0 +1,34 @@
++/*  This file is part of the KDE project
++    Copyright (C) 2007 David Faure <faure@kde.org>
++
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Library General Public
++    License as published by the Free Software Foundation; either
++    version 2 of the License, or (at your option) any later version.
++
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Library General Public License for more details.
++
++    You should have received a copy of the GNU Library General Public License
++    along with this library; see the file COPYING.LIB.  If not, write to
++    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++    Boston, MA 02110-1301, USA.
++*/
++
++#ifndef KXMLRPCCLIENTPRIVATE_EXPORT_H
++#define KXMLRPCCLIENTPRIVATE_EXPORT_H
++
++#include "kxmlrpcclient_export.h"
++
++/* Classes which are exported only for unit tests */
++#ifdef BUILD_TESTING
++# ifndef KXMLRPCCLIENT_TESTS_EXPORT
++#  define KXMLRPCCLIENT_TESTS_EXPORT KXMLRPCCLIENT_EXPORT
++# endif
++#else /* not compiling tests */
++# define KXMLRPCCLIENT_TESTS_EXPORT
++#endif
++
++#endif
+diff --git a/src/query_p.h b/src/query_p.h
+index c90ed1e25..24b3c8c4b 100644
+--- a/src/query_p.h
++++ b/src/query_p.h
+@@ -10,7 +10,7 @@
+  *****************************************************************************/
+ 
+ #include "query.h"
+-
++#include "kxmlrpcclient_private_export.h"
+ #include <KIO/Job>
+ 
+ #include <QtCore/QUrl>
+@@ -29,7 +29,7 @@ namespace KXmlRpc
+   This is an internal class and is only used by Query.
+   @internal
+  */
+-class Result
++class KXMLRPCCLIENT_TESTS_EXPORT Result
+ {
+     friend class Query;
+     friend class QueryPrivate;
+@@ -75,7 +75,7 @@ private:
+     QList<QVariant> mData;
+ };
+ 
+-class QueryPrivate
++class KXMLRPCCLIENT_TESTS_EXPORT QueryPrivate
+ {
+ public:
+     QueryPrivate(Query *parent)

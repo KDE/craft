@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "This library contains simple XML-RPC Client support"
-        
+        self.patchToApply['5.33.0'] = [("fix-kxmlrpcclient.diff", 1)]
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
