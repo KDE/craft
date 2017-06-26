@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Ki18n"
-        self.patchToApply['master'] = [("disable-qtscript-ki18n.diff", 1)]        
+        
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
