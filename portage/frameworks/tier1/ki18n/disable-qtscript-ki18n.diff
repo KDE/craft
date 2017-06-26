@@ -1,0 +1,11 @@
+--- ki18n/CMakeLists.txt--	2017-06-26 13:16:19.650305234 +0200
++++ ki18n/CMakeLists.txt	2017-06-26 13:16:36.610403121 +0200
+@@ -31,7 +31,7 @@ set(REQUIRED_QT_VERSION 5.6.0)
+ 
+ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core)
+ 
+-option(BUILD_WITH_QTSCRIPT "Build with support for scripted translations (recommended)" ON)
++option(BUILD_WITH_QTSCRIPT "Build with support for scripted translations (recommended)" OFF)
+ if (BUILD_WITH_QTSCRIPT)
+    find_package(Qt5Script ${REQUIRED_QT_VERSION} CONFIG REQUIRED)
+ endif()
