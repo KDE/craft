@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['gnuwin32/gperf'] = 'default'
+        self.buildDependencies['dev-util/python2'] = 'default'
         self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['libs/qtlocation'] = 'default'
         self.dependencies['libs/qtdeclarative'] = 'default'
@@ -34,10 +35,7 @@ class Package( Qt5CorePackageBase ):
         return Qt5CorePackageBase.fetch(self)
         
     def compile(self):
-        if not ("Paths","Python27") in craftSettings:
-            craftDebug.log.critical("Please make sure Paths/Python27 is set in your kdesettings.ini")
-            return False
-        utils.prependPath(craftSettings.get("Paths","PYTHON27",""))
+        utils.prependPath(craftSettings.get("Paths","PYTHON27"))
         return Qt5CorePackageBase.compile(self)
        
 
