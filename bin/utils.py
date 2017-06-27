@@ -44,6 +44,7 @@ class UtilsCache(object):
     def __init__(self):
         self.version = UtilsCache._version
         self._appCache = {}
+        self._outputCache = {}
         self._helpCache = {}
         self._versionCache = {}
         self._nightlyVersions = {}
@@ -106,30 +107,43 @@ class UtilsCache(object):
             return None
         return appLocation
 
+    def getCommandOutput(self, app, command):
+        app = self.findApplication(app)
+        if not app:
+            return None
+        if not (app, command) in self._outputCache:
+            craftDebug.log.debug(f"\"{app}\" {command}")
+            output = subprocess.getoutput(f"\"{app}\" {command}")
+            craftDebug.log.debug(output)
+            self._outputCache[(app, command)] = output
+        return self._outputCache[(app, command)]
+
+
     # TODO: rename, cleanup
     def checkCommandOutputFor(self, app, command, helpCommand ="-h") -> str:
         if not (app, command) in self._helpCache:
-            craftDebug.log.debug(f"\"{app}\" {helpCommand}")
-            output = subprocess.getoutput(f"\"{app}\" {helpCommand}")
+            output = self.getCommandOutput(app, helpCommand)
+            if not output:
+                return False
             if type(command) == str:
                 supports = command in output
             else:
                 supports = command.match(output) is not None
             self._helpCache[(app, command)] = supports
-            craftDebug.log.debug(output)
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
     def checkVersionGreaterOrEqual(self, app, pattern, version, versionCommand="--version") -> bool:
+        app = self.findApplication(app)
         if (app, version) in self._versionCache:
             return self._versionCache[(app, version)]
-        app = self.findApplication(app)
         if not app:
             return False
         if isinstance(pattern, str):
             pattern = re.compile(f".*({pattern}).*")
-        craftDebug.log.debug(f"\"{app}\" {versionCommand}")
-        output = subprocess.getoutput(f"\"{app}\" {versionCommand}")
+        output = self.getCommandOutput(app, versionCommand)
+        if not output:
+            return False
         match = pattern.match(output)
         ver = match.group(1)
         ge = CraftVersion(ver) >= CraftVersion(version)

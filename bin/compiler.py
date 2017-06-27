@@ -13,23 +13,18 @@ from CraftConfig import *
 
 
 
-_GCCTARGET = None
-_MINGW_VERSION = None
 
 def _getGCCTarget():
-    global _GCCTARGET # pylint: disable=W0603
-    if not _GCCTARGET:
-        status, result = subprocess.getstatusoutput("gcc -dumpmachine")
-        if status == 0:
-            craftDebug.log.debug("GCC Target Processor:%s" % result)
-            _GCCTARGET = result.strip()
+    result = utils.utilsCache.checkCommandOutputFor("gcc -dumpmachine").strip()
+    if result:
+        craftDebug.log.debug("GCC Target Processor:%s" % result)
+    else:
+        #if no mingw is installed return mingw-w32 it is part of base
+        if isX64():
+            result = "x86_64-w64-mingw32"
         else:
-            #if no mingw is installed return mingw-w32 it is part of base
-            if isX64():
-                _GCCTARGET = "x86_64-w64-mingw32"
-            else:
-                _GCCTARGET = "i686-w64-mingw32"
-    return _GCCTARGET
+            result = "i686-w64-mingw32"
+    return result
 
 def architecture():
     return craftSettings.get("General", "Architecture" )
@@ -121,17 +116,11 @@ def getSimpleCompilerName():
         return getCompilerName()
 
 def getGCCLikeVersion(compilerExecutable):
-    global _MINGW_VERSION # pylint: disable=W0603
-    if not _MINGW_VERSION:
-        status, result = subprocess.getstatusoutput(f"{compilerExecutable} --version")
-        if status == 0:
-            result = re.findall("\d+\.\d+\.?\d*",result)[0]
-            craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
-            _MINGW_VERSION = result.strip()
-        else:
-            #if no mingw is installed return 0
-            _MINGW_VERSION = "0"
-    return _MINGW_VERSION
+    result = utils.utilsCache.getCommandOutput(compilerExecutable, "--version")
+    if result:
+        result = re.findall("\d+\.\d+\.?\d*",result)[0]
+        craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
+    return result or "0"
 
 def getVersion():
     if isGCCLike():
