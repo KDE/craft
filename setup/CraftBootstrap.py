@@ -143,7 +143,7 @@ def setUp(args):
     else:
         shutil.move(os.path.join(args.root, f"craft-{args.branch}"), os.path.join(args.root, "craft"))
     print("Setup complete")
-    print(f"Please run {args.root}/craft/kdeenv.ps1")
+    print(f"Please run {args.root}/craft/craftenv.ps1")
 
 
 def writeSettings(args):
