@@ -14,6 +14,15 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/kemoticons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/sonnet"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        
 
 from Package.CMakePackageBase import *
 
