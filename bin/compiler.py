@@ -15,9 +15,9 @@ from CraftConfig import *
 
 
 def _getGCCTarget():
-    result = utils.utilsCache.checkCommandOutputFor("gcc -dumpmachine").strip()
+    result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine").strip()
     if result:
-        craftDebug.log.debug("GCC Target Processor:%s" % result)
+        craftDebug.log.debug(f"GCC Target Processor: {result}")
     else:
         #if no mingw is installed return mingw-w32 it is part of base
         if isX64():
@@ -173,3 +173,4 @@ if __name__ == '__main__':
     print("Native compiler: %s" % ("No", "Yes")[isNative()])
     if isGCCLike():
         print("Compiler Version: %s" % getGCCLikeVersion(getCompilerExecutableName()))
+        print("Compiler Target: %s" % _getGCCTarget())
