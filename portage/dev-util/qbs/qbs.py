@@ -20,7 +20,7 @@ from Package.Qt5CorePackageBase import *
 class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
-        self.subinfo.options.qmake.proFile = "qbs.pro"
+        self.subinfo.options.configure.projectFile = "qbs.pro"
         self.subinfo.options.configure.defines = " \"QBS_INSTALL_PREFIX = %s\" " % CraftStandardDirs.craftRoot().replace("\\", "/")
 
 

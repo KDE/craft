@@ -24,82 +24,33 @@ class subinfo(info.infoclass):
                 self.buildDependencies['dev-util/yasm'] = 'default'
 
 from Package.AutoToolsPackageBase import *
-from Package.MakeFilePackageBase import *
+from Package.MSBuildPackageBase import *
 
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         abi = "ABI=64"
-        if self.buildArchitecture()=="x86":
+        if self.buildarchhitecture()=="x86":
             abi = "ABI=32"
             self.platform = ""
         self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
 
-class PackageMSVC(MakeFilePackageBase):
+class PackageMSVC(MSBuildPackageBase):
     def __init__( self, **args ):
-            MakeFilePackageBase.__init__( self )
-
-    def getBuildSettings( self ):
-        build = ""
-        toolsetSwitches = ""
-        if compiler.isMSVC2012():
-            build = "build.vc11"
-            toolsetSwitches = "/property:PlatformToolset=v110"
-        elif compiler.isMSVC2013():
-            build = "build.vc12"
-            toolsetSwitches = "/tv:12.0 /property:PlatformToolset=v120"
-        elif compiler.isMSVC2015():
-            build = "build.vc14"
-            toolsetSwitches = "/tv:14.0 /property:PlatformToolset=v140"
-        if self.buildType() == "Debug":
-            bt = "Debug"
-        else:
-            bt = "Release"
-        return build, bt, toolsetSwitches
-
-    def configure( self ):
-        os.putenv('YASMPATH', os.path.join(self.rootdir, 'dev-utils', 'bin'))
-        return True
+        MSBuildPackageBase.__init__( self )
+        self.mpirBuildDir = os.path.join(self.sourceDir(), "build.vc14")
+        self.subinfo.options.configure.projectFile = os.path.join(self.mpirBuildDir, "mpir.sln")
+        self.msbuildTargets = ["dll_mpir_gc", "lib_mpir_cxx"]
 
     def make( self ):
-        build, bt, toolsetSwitches = self.getBuildSettings();
-
-        return utils.system("msbuild /target:lib_mpir_gc \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
-        ) and utils.system("msbuild /target:dll_mpir_gc \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
-        )
-
-    def unittest( self ):
-        build, bt, toolsetSwitches = self.getBuildSettings();
-
-        return utils.system("msbuild /target:lib_mpir_gc \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
-        ) and utils.system("msbuild /target:lib_mpir_cxx \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), build, "mpir.sln"), bt, toolsetSwitches)
-        ) and utils.system("msbuild \"%s\" /p:Configuration=%s %s" %
-                (os.path.join(self.sourceDir(), build, "mpir-tests.sln"), bt, toolsetSwitches)
-        ) and utils.system(os.path.join(self.sourceDir(), build, "mpir-tests", "run-tests.py"));
+        utils.putenv('YASMPATH', os.path.join(self.rootdir, 'dev-utils', 'bin'))
+        return MSBuildPackageBase.make(self)
 
     def install( self ):
-        if not os.path.isdir( os.path.join( self.installDir() , "bin" ) ):
-                os.makedirs( os.path.join( self.installDir() , "bin" ) )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'mpir.dll'), os.path.join( self.installDir() , "bin" , "mpir.dll") )
-        
-        if not os.path.isdir( os.path.join( self.installDir() , "lib" ) ):
-                os.makedirs( os.path.join( self.installDir() , "lib" ) )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'mpir.lib'), os.path.join( self.installDir() , "lib" , "mpir.lib") )
+        if not MSBuildPackageBase.install(self, buildDirs=[os.path.join(self.mpirBuildDir, target) for target in self.msbuildTargets]):
+            return False
         # a dirty workaround the fact that FindGMP.cmake will only look for gmp.lib
         utils.copyFile(os.path.join( self.installDir() , "lib" , "mpir.lib"), os.path.join( self.installDir() , "lib" , "gmp.lib") )
-
-        if not os.path.isdir( os.path.join( self.installDir() , "include" ) ):
-                os.makedirs( os.path.join( self.installDir() , "include" ) )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'gmp.h'), os.path.join( self.installDir() , "include" , "gmp.h") )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'gmpxx.h'), os.path.join( self.installDir() , "include" , "gmpxx.h") )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'mpir.h'), os.path.join( self.installDir() , "include" , "mpir.h") )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'mpirxx.h'), os.path.join( self.installDir() , "include" , "mpirxx.h") )
-        utils.copyFile(os.path.join( self.sourceDir(), 'dll', 'Win32', 'Release', 'gmp-mparam.h'), os.path.join( self.installDir() , "include" , "gmp-mparam.h") )
-        
         return True
 
 if compiler.isMinGW():

@@ -29,37 +29,18 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
-from Package.CMakePackageBase import *
+from Package.MSBuildPackageBase import *
 
-class PackageCMake(CMakePackageBase):
+class PackageCMake(MSBuildPackageBase):
     def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
-
-    def configure(self):
-        return True
-
-    def make(self):
-        self.enterSourceDir()
-        datafile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icudt55l.dat")
-        if os.path.exists(datafile):
-            datafileDestination = os.path.join(self.sourceDir(), "data", "in", "icudt55l.dat")
-            if os.path.exists(datafileDestination):
-                os.remove(datafileDestination)
-            utils.copyFile( datafile, datafileDestination)
-
-        buildType = "Debug" if self.buildType() == "Debug" else "Release"
-        projectFile = os.path.join(self.sourceDir(), "allinone", "allinone.sln")
-        return utils.system(f"msbuild /m /t:Rebuild \"{projectFile}\""
-                            f" /p:Configuration={buildType}"
-                            f" /tv:{compiler.internalVerison()}.0 /property:PlatformToolset=v{compiler.msvcPlatformToolset()}"
-        )
+        MSBuildPackageBase.__init__( self )
+        self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "allinone", "allinone.sln")
 
     def install(self):
-        utils.copyDir(os.path.join(self.sourceDir(), "..", "bin"), os.path.join(self.imageDir(), "bin"))
-        utils.copyDir(os.path.join(self.sourceDir(), "..", "bin64"), os.path.join(self.imageDir(), "bin"))
+        self.cleanImage()
+        if not MSBuildPackageBase.install(self, installHeaders=False, buildDirs=[os.path.join(self.sourceDir(), "..", dir) for dir in ["bin", "bin64", "lib", "lib64"]]):
+            return False
         utils.copyDir(os.path.join(self.sourceDir(), "..", "include"), os.path.join(self.imageDir(), "include"))
-        utils.copyDir(os.path.join(self.sourceDir(), "..", "lib"), os.path.join(self.imageDir(), "lib"))
-        utils.copyDir(os.path.join(self.sourceDir(), "..", "lib64"), os.path.join(self.imageDir(), "lib"))
 
         if compiler.isMSVC() and self.buildType() == "Debug":
             imagedir = os.path.join( self.installDir(), "lib" )
@@ -69,6 +50,7 @@ class PackageCMake(CMakePackageBase):
                     utils.copyFile( os.path.join( imagedir, f ), os.path.join( imagedir, f.replace( "d.lib", ".lib" ) ) )
 
         return True
+
 
 from Package.AutoToolsPackageBase import *
 

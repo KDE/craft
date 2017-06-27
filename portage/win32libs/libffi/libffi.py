@@ -3,7 +3,7 @@ import os
 import info
 
 from Package.AutoToolsPackageBase import *
-from Package.CMakePackageBase import CMakePackageBase
+from Package.MSBuildPackageBase import MSBuildPackageBase
 from Package.PackageBase import *
 from Package.VirtualPackageBase import VirtualPackageBase
 
@@ -23,46 +23,22 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-util/msys"] = "default"
 
 
-class PackageCMake(CMakePackageBase):
+class PackageCMake(MSBuildPackageBase):
     def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
+        MSBuildPackageBase.__init__( self )
 
-        toolset = ""
-        if compiler.isMSVC2013():
-            toolset = "vc12"
-        elif compiler.isMSVC2015():
-            toolset = "vc14"
         self.arch = "x86"
         if compiler.isX64():
             self.arch = "x64"
-        self.msvcDir = os.path.join(self.sourceDir(), "win32", "%s_%s" % (toolset, self.arch))
-
-
-        if self.buildType() == "Debug":
-            self.bt = "Debug"
-        else:
-            self.bt = "Release"
-
-    def configure(self):
-        return True
-
-    def make(self):
-        self.enterSourceDir()
-
-        return utils.system("msbuild /m /t:Rebuild \"%s\" /p:Configuration=%s " %
-                (os.path.join(self.msvcDir, "libffi-msvc.sln"), self.bt)
-        )
+        self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "win32", f"vc14_{self.arch}", "libffi-msvc.sln")
 
     def install(self):
-        os.makedirs(os.path.join(self.imageDir(), "lib"))
-        os.makedirs(os.path.join(self.imageDir(), "include"))
-        utils.copyFile(os.path.join(self.msvcDir, self.arch, self.bt, "libffi.lib"), os.path.join(self.imageDir(), "lib", "libffi.lib"), False)
+        if not MSBuildPackageBase.install(self, installHeaders=False):
+            return False
         utils.copyFile(os.path.join(self.sourceDir(), "include", "ffi.h"),
                       os.path.join(self.imageDir(), "include", "ffi.h"), False)
         utils.copyFile(os.path.join(self.sourceDir(), "include", "ffi_common.h"),
                       os.path.join(self.imageDir(), "include", "ffi_common.h"), False)
-        utils.copyFile(os.path.join(self.sourceDir(), "src", "x86", "ffitarget.h"),
-                      os.path.join(self.imageDir(), "include", "ffitarget.h"), False)
         return True
 
 

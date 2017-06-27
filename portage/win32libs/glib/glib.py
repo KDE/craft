@@ -3,7 +3,7 @@ import os
 import info
 
 from Package.AutoToolsPackageBase import *
-from Package.CMakePackageBase import CMakePackageBase
+from Package.MSBuildPackageBase import MSBuildPackageBase
 from Package.PackageBase import *
 
 class subinfo(info.infoclass):
@@ -26,22 +26,13 @@ class subinfo(info.infoclass):
         if compiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
-class PackageCMake(CMakePackageBase):
+class PackageCMake(MSBuildPackageBase):
     def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
+        MSBuildPackageBase.__init__( self )
+        self.toolset = "vs14"
+        self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "build", "win32", self.toolset, "glib.sln")
+        self.subinfo.options.configure.defines = "/p:useenv=true"
 
-        self.toolset = ""
-        if compiler.isMSVC2013():
-            self.toolset = "vs12"
-        elif compiler.isMSVC2015():
-            self.toolset = "vs14"
-        self.msvcDir = os.path.join(self.sourceDir(), "build", "win32", self.toolset)
-
-
-        if self.buildType() == "Debug":
-            self.bt = "Debug"
-        else:
-            self.bt = "Release"
 
     def configure(self):
         if not os.path.exists( os.path.join(CraftStandardDirs.craftRoot(), "lib", "libintl_a.lib")):
@@ -57,9 +48,7 @@ class PackageCMake(CMakePackageBase):
         self.enterSourceDir()
         utils.putenv("INCLUDE", "%s;%s" % (os.path.join(CraftStandardDirs.craftRoot(), "include"), os.environ["INCLUDE"]))
         utils.putenv("LIB", "%s;%s" % (os.path.join(CraftStandardDirs.craftRoot(), "lib"), os.environ["LIB"]))
-        return utils.system("msbuild /m /t:Rebuild \"%s\" /p:Configuration=%s /p:useenv=true " %
-                (os.path.join(self.msvcDir, "glib.sln"), self.bt)
-        )
+        return MSBuildPackageBase.make(self)
 
     def install(self):
         self.cleanImage()

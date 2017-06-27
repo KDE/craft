@@ -146,6 +146,9 @@ class OptionsConfigure(OptionsBase):
         # ldflags currently only used for autotools
         self.ldflags = ""
 
+        # the project file, this is either a .pro for qmake or a sln for msbuild
+        self.projectFile = None
+
 
 ## options for the make action
 class OptionsMake(OptionsBase):
@@ -212,12 +215,6 @@ class OptionsCMake(OptionsBase):
         self.useCTest = craftSettings.getboolean("General","EMERGE_USECTEST", False )
 
 
-
-class OptionsQMake(OptionsBase):
-    def __init__(self):
-        ## specify a special .pro file if multiple are avalible
-        self.proFile = None
-
 class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
@@ -246,8 +243,6 @@ class Options(object):
         self.merge = OptionsMerge()
         ## options of the cmake buildSystem
         self.cmake = OptionsCMake()
-        ## options of the cmake buildSystem
-        self.qmake = OptionsQMake()
         ## options of the git module
         self.git = OptionsGit()
 
