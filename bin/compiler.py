@@ -86,6 +86,16 @@ def isMSVC2017():
 def isIntel():
     return _compiler() == "intel"
 
+def getCompilerExecutableName():
+    if isGCC():
+        return "gcc"
+    elif isClang():
+        return "clang"
+    elif isMSVC():
+        return "cl"
+    else:
+        craftDebug.log.critical(f"Unsupported Compiler {_compiler()}")
+
 def getCompilerName():
     if isMinGW():
         return "mingw-w64"
@@ -125,7 +135,7 @@ def getGCCLikeVersion(compilerExecutable):
 
 def getVersion():
     if isGCCLike():
-        return "%s %s" % (getCompilerName(), getGCCLikeVersion(getCompilerName()))
+        return f"{getCompilerName()} {getGCCLikeVersion(getCompilerExecutableName())}"
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
     elif isMSVC():
@@ -173,4 +183,4 @@ if __name__ == '__main__':
     print("Compiler Name: %s" % getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[isNative()])
     if isGCCLike():
-        print("Compiler Version: %s" % getGCCLikeVersion(getCompilerName()))
+        print("Compiler Version: %s" % getGCCLikeVersion(getCompilerExecutableName()))
