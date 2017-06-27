@@ -84,7 +84,7 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    script = os.path.join(args.root, f"craft-{args.branch}", "kdeenv.ps1")
+    script = os.path.join(args.root, f"craft-{args.branch}", "craftenv.ps1")
     print(f"Execute: powershell {script} {command}")
     subprocess.check_call(f"powershell {script} {command}", stderr=subprocess.PIPE)
 
