@@ -22,6 +22,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kio"] = "default"
         self.runtimeDependencies["frameworks/sonnet"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        self.buildDependencies['frameworks/kdesignerplugin'] = 'default'
         
 
 from Package.CMakePackageBase import *
