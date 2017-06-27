@@ -28,7 +28,7 @@ class PthreadsPackage(CMakePackageBase):
         self.subinfo.options.configure.defines = " -DBUILD_TESTS=OFF"
 
 
-if compiler.isMSVC() or compiler.isIntel() or compiler.getGCCVersion() == "4.4.7":
+if compiler.isMSVC() or compiler.isIntel():
     class Package(PthreadsPackage):
         def __init__( self ):
             PthreadsPackage.__init__( self )

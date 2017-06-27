@@ -21,7 +21,7 @@ import compiler
 class PackageMinGW( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.package.version = compiler.getGCCVersion()
+        self.subinfo.options.package.version = compiler.getVersion()
 
     def fetch(self):
         return True
