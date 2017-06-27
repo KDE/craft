@@ -240,8 +240,8 @@ diff -Nru -x '*~' openldap-2.4.33.orig/CMakeLists.txt openldap-2.4.33/CMakeLists
 +    add_subdirectory(clients)
 +endif(BUILD_TOOLS)
 diff -Nru -x '*~' openldap-2.4.33.orig/ConfigureChecks.cmake openldap-2.4.33/ConfigureOptions.cmake
---- openldap-2.4.33.orig/ConfigureOptions.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ openldap-2.4.33/ConfigureOptions.cmake	2013-01-24 23:36:15.015531800 +0100
+--- openldap-2.4.33.orig/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
++++ openldap-2.4.33/ConfigureChecks.cmake	2013-01-24 23:36:15.015531800 +0100
 @@ -0,0 +1,481 @@
 +if(BUILD_REENTRANT)
 +set(REENTRANT 1)
