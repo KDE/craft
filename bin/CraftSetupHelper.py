@@ -133,6 +133,11 @@ class SetupHelper( object ):
         printRow("Svn  directory", CraftStandardDirs.svnDir( ))
         printRow("Git  directory", CraftStandardDirs.gitDir( ))
         printRow("Download directory", CraftStandardDirs.downloadDir( ))
+        if "CraftDeprecatedEntryScript" in os.environ:
+            oldScript = os.environ["CraftDeprecatedEntryScript"]
+            ext = ".ps1" if self.args.mode != "bash" else ".sh"
+            print(f"You used the deprecated script {oldScript}\n"
+                  f"Plase use craftenv{ext} instead", file=sys.stderr)
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
