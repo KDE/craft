@@ -14,13 +14,19 @@ class subinfo(info.infoclass):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.dependencies['win32libs/libxslt'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/shared-mime-info'] = 'default'
+        self.dependencies['libs/qtbase'] = 'default'
         self.dependencies['frameworks/kdesignerplugin'] = 'default'
         self.dependencies['frameworks/kcompletion'] = 'default'
         self.dependencies['frameworks/kitemmodels'] = 'default'
         self.dependencies['frameworks/kio'] = 'default'
+
+        if craftSettings.getboolean("QtSDK", "Enabled", False):# remove once we made all qt packages maybevirtual
+            # all those dependencies usually handled by qt
+            self.dependencies['binary/mysql'] = 'default'
+            self.dependencies['win32libs/openssl'] = 'default'
+            self.dependencies['win32libs/dbus'] = 'default'
 
 from Package.CMakePackageBase import *
 
