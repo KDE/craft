@@ -133,7 +133,7 @@ class UtilsCache(object):
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
-    def checkVersionGreaterOrEqual(self, app, pattern, version, versionCommand="--version") -> bool:
+    def checkVersionGreaterOrEqual(self, app, version, pattern="\d+\.\d+\.\d+", versionCommand="--version") -> bool:
         app = self.findApplication(app)
         if (app, version) in self._versionCache:
             return self._versionCache[(app, version)]

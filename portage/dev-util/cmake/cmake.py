@@ -26,8 +26,9 @@ class subinfo( info.infoclass ):
         self.buildDependencies["gnuwin32/patch"] = "default"
 
 from Package.BinaryPackageBase import *
+from Package.MaybeVirtualPackageBase import *
 
-class Package(BinaryPackageBase):
+class CMakePackage(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
 
@@ -39,3 +40,10 @@ class Package(BinaryPackageBase):
                                     os.path.join(self.imageDir(), "dev-utils", "cmake", "bin", f"{name}.exe")):
                 return False
         return True
+
+
+class Package(MaybeVirtualPackageBase):
+    def __init__(self):
+        MaybeVirtualPackageBase.__init__(self,
+                                         not utils.utilsCache.checkVersionGreaterOrEqual("cmake", version="3.8.0"),
+                                         classA=CMakePackage)
