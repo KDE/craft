@@ -476,7 +476,7 @@ diff -Nru -x '*~' openldap-2.4.33.orig/ConfigureChecks.cmake openldap-2.4.33/Con
 +if(MSVC_VERSION GREATER 1899)
 +  set(HAVE_SNPRINTF true)
 +endif()
-+check_function_exists("snprintf" HAVE_SNPRINTF)
++#check_function_exists("snprintf" HAVE_SNPRINTF)
 +check_function_exists("strdup" HAVE_STRDUP)
 +check_function_exists("strerror" HAVE_STRERROR)
 +check_function_exists("strerror_r" HAVE_STRERROR_R)
