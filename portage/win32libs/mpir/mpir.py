@@ -30,7 +30,7 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         abi = "ABI=64"
-        if self.buildarchhitecture()=="x86":
+        if compiler.isX86():
             abi = "ABI=32"
             self.platform = ""
         self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
