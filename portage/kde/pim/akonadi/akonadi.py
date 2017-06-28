@@ -18,6 +18,9 @@ class subinfo(info.infoclass):
         self.dependencies['win32libs/sqlite'] = 'default'
         self.dependencies['win32libs/shared-mime-info'] = 'default'
         self.dependencies['frameworks/kdesignerplugin'] = 'default'
+        self.dependencies['frameworks/kcompletion'] = 'default'
+        self.dependencies['frameworks/kitemmodels'] = 'default'
+        self.dependencies['frameworks/kio'] = 'default'
 
 from Package.CMakePackageBase import *
 
