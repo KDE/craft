@@ -241,8 +241,8 @@ diff -Nru -x '*~' openldap-2.4.45-old/CMakeLists.txt openldap-2.4.45/CMakeLists.
 +endif(BUILD_TOOLS)
 diff -Nru -x '*~' openldap-2.4.45-old/ConfigureChecks.cmake openldap-2.4.45/ConfigureChecks.cmake
 --- openldap-2.4.45-old/ConfigureChecks.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ openldap-2.4.45/ConfigureChecks.cmake	2017-06-28 08:15:31.936517801 +0200
-@@ -0,0 +1,481 @@
++++ openldap-2.4.45/ConfigureChecks.cmake	2017-06-28 09:00:25.855236942 +0200
+@@ -0,0 +1,483 @@
 +if(BUILD_REENTRANT)
 +set(REENTRANT 1)
 +set(_REENTRANT 1)
@@ -274,7 +274,9 @@ diff -Nru -x '*~' openldap-2.4.45-old/ConfigureChecks.cmake openldap-2.4.45/Conf
 +#/* define if you have winsock2 */
 +set(HAVE_WINSOCK2 1)
 +#/* define to snprintf routine */
-+set(snprintf _snprintf)
++if(MSVC_VERSION LESS 1899)
++   set(snprintf _snprintf)
++endif()
 +set(HAVE_SYS_ERRLIST 1)
 +
 +if(${OPENSSL_FOUND})
