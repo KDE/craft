@@ -15,8 +15,8 @@ The packager used can be decided at runtime
 """
     def __init__( self, defaultType = eval(craftSettings.get("Packager", "PackageType", "NullsoftInstallerPackager")) ):
         craftDebug.log.debug("TypePackager __init__ %s" % defaultType)
-        PackagerBase.__init__(self)
-        self.__packager = defaultType
+        self.__packager = None
+        self.changePackager(defaultType)
 
     def changePackager(self, packager=None):
         if not packager == None and ("Packager", "PackageType") in craftSettings:
@@ -26,11 +26,14 @@ The packager used can be decided at runtime
         if packager == None:
             return
 
+        if self.__packager:
+            bases = list(self.__class__.__bases__)
+            for i in range(len(bases)):
+                if bases[i] == self.__packager:
+                    craftDebug.log.info(f"Replace Packager: {bases[i]} with {packager}")
+                    bases[i] = packager
+            self.__class__.__bases__ = tuple(bases)
+        else:
+            self.__class__.__bases__ += (packager,)
+        packager.__init__(self, self.__packager is not None)
         self.__packager = packager
-
-    def createPackage( self ):
-        # slightly awkward: change base to the desired packager dynamically at runtime
-        TypePackager.__bases__ = (self.__packager,)
-        TypePackager.__bases__[0].__init__(self, initialized=True)
-
-        return TypePackager.__bases__[0].createPackage(self)
