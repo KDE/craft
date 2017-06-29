@@ -42,8 +42,7 @@ class CMakePackage(BinaryPackageBase):
         return True
 
 
-class Package(MaybeVirtualPackageBase):
+
+class Package(VirtualIfSufficientVerison):
     def __init__(self):
-        MaybeVirtualPackageBase.__init__(self,
-                                         not utils.utilsCache.checkVersionGreaterOrEqual("cmake", version="3.8.0"),
-                                         classA=CMakePackage)
+        VirtualIfSufficientVerison.__init__(self, app="cmake", version="3.8.0", classA=CMakePackage)

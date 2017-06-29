@@ -1,5 +1,5 @@
 import info
-from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
+from Package.MaybeVirtualPackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -42,8 +42,7 @@ class PerlPackage(BinaryPackageBase):
 
 
 
-class Package(MaybeVirtualPackageBase):
+
+class Package(VirtualIfSufficientVerison):
     def __init__(self):
-        MaybeVirtualPackageBase.__init__(self,
-                                         not utils.utilsCache.checkVersionGreaterOrEqual("perl", version="5.20.0"),
-                                         classA=PerlPackage)
+        VirtualIfSufficientVerison.__init__(self, app="perl", version="5.20.0", classA=PerlPackage)

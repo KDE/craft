@@ -1,6 +1,6 @@
 import info
 from CraftVersion import CraftVersion
-from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
+from Package.MaybeVirtualPackageBase import *
 
 
 class subinfo( info.infoclass ):
@@ -32,8 +32,6 @@ class SevenZipPackage( BinaryPackageBase ):
             return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
 
 
-class Package(MaybeVirtualPackageBase):
+class Package(VirtualIfSufficientVerison):
     def __init__(self):
-        MaybeVirtualPackageBase.__init__(self,
-                                         not utils.utilsCache.checkVersionGreaterOrEqual("7za", version="16.04", versionCommand="-version"),
-                                         classA=SevenZipPackage)
+        VirtualIfSufficientVerison.__init__(self, app="7za", version="16.04", versionCommand="-version", classA=SevenZipPackage)
