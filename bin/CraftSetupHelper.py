@@ -10,6 +10,7 @@ import collections
 import shutil
 
 from CraftConfig import *
+from CraftOS.osutils import OsUtils
 import compiler
 
 
@@ -51,37 +52,36 @@ class CaseInsensitiveDict(dict):
         return super(CaseInsensitiveDict, self).__contains__(CaseInsensitiveKey(item))
 
 class SetupHelper( object ):
-    def __init__( self ):
-        self.env = os.environ.copy()
-        parser = argparse.ArgumentParser( )
-        parser.add_argument( "--subst", action = "store_true" )
-        parser.add_argument( "--get", action = "store_true" )
-        parser.add_argument( "--print-banner", action = "store_true" )
-        parser.add_argument( "--getenv", action = "store_true" )
-        parser.add_argument( "--setup", action = "store_true" )
-        parser.add_argument( "--run", action = "store_true" )
-        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" }, default="powershell" )
-        parser.add_argument( "rest", nargs = argparse.REMAINDER )
-        self.args = parser.parse_args( )
+    def __init__(self, args=None):
+        self.args = args
 
     def run( self ):
-        if self.args.subst:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--subst", action="store_true")
+        parser.add_argument("--get", action="store_true")
+        parser.add_argument("--print-banner", action="store_true")
+        parser.add_argument("--getenv", action="store_true")
+        parser.add_argument("--setup", action="store_true")
+        parser.add_argument("rest", nargs=argparse.REMAINDER)
+        args = parser.parse_args()
+
+        if args.subst:
             self.subst( )
-        elif self.args.get:
+        elif args.get:
             default = ""
-            if len( self.args.rest ) == 3:
-                default = self.args.rest[ 2 ]
-            print( craftSettings.get( self.args.rest[ 0 ], self.args.rest[ 1 ], default ) )
-        elif self.args.print_banner:
+            if len( args.rest ) == 3:
+                default = args.rest[ 2 ]
+            print( craftSettings.get( args.rest[ 0 ], args.rest[ 1 ], default ) )
+        elif args.print_banner:
             self.printBanner( )
-        elif self.args.getenv:
+        elif args.getenv:
             self.printEnv()
-        elif self.args.run:
+        elif args.run:
             self.subst()
             self.setupEnvironment()
-            out = subprocess.run(self.args.rest)
+            out = subprocess.run(args.rest)
             exit(out.returncode)
-        elif self.args.setup:
+        elif args.setup:
             self.subst( )
             self.printEnv()
             self.printBanner( )
@@ -89,7 +89,7 @@ class SetupHelper( object ):
 
     def checkForEvilApplication(self):
         blackList = []
-        if self.args.mode != "bash":
+        if OsUtils.isWin():
             blackList += ["sh"]
         if compiler.isMSVC():
             blackList += ["gcc", "g++"]
@@ -139,15 +139,15 @@ class SetupHelper( object ):
         printRow("Svn  directory", CraftStandardDirs.svnDir( ))
         printRow("Git  directory", CraftStandardDirs.gitDir( ))
         printRow("Download directory", CraftStandardDirs.downloadDir( ))
-        if "CraftDeprecatedEntryScript" in os.environ:
-            oldScript = os.environ["CraftDeprecatedEntryScript"]
-            ext = ".ps1" if self.args.mode != "bash" else ".sh"
+        if "CraftDeprecatedEntryScript" in self.env:
+            oldScript = self.env["CraftDeprecatedEntryScript"]
+            ext = ".ps1" if OsUtils.isWin() else ".sh"
             print(f"You used the deprecated script {oldScript}\n"
                   f"Please use craftenv{ext} instead", file=sys.stderr)
 
     def addEnvVar( self, key, val ):
         self.env[ key ] = val
-        os.environ[ key ] = val
+        os.environ[key] = val
 
     def prependPath( self, key, var ):
         if not type(var) == list:
@@ -166,7 +166,6 @@ class SetupHelper( object ):
 
     def getEnv( self ):
         if compiler.isMSVC( ):
-
             architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
             version = compiler.internalVerison()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
@@ -194,14 +193,14 @@ class SetupHelper( object ):
                 exit(1)
             return self.stringToEnv( result )
         out = CaseInsensitiveDict()
-        for k,v in os.environ.items():
+        for k, v in os.environ.items():
             out[k] = v
         return out
 
 
     def setXDG(self):
         self.prependPath( "XDG_DATA_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "share" )])
-        if self.args.mode == "bash":
+        if OsUtils.isUnix():
             self.prependPath( "XDG_CONFIG_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "etc", "xdg" )])
             self.addEnvVar( "XDG_DATA_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
             self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".config" ))
@@ -247,7 +246,7 @@ class SetupHelper( object ):
 
 
 
-        if self.args.mode == "bash":
+        if OsUtils.isUnix():
             self.prependPath("LD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                                   os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu") ])
 
@@ -267,7 +266,7 @@ class SetupHelper( object ):
                 compilerMap = {"mingw53_32":"mingw530_32"}
                 self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") ,"Tools", compilerMap.get(compilerName, compilerName), "bin" ))
 
-        if self.args.mode in ["bat", "bash"]:  #don't put craft.bat in path when using powershell
+        if OsUtils.isUnix():
             self.prependPath( "PATH", CraftStandardDirs.craftBin( ) )
         self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "dev-utils", "bin" ) )
 
@@ -287,6 +286,5 @@ class SetupHelper( object ):
 
 
 if __name__ == '__main__':
-    helper = SetupHelper( )
+    helper = SetupHelper()
     helper.run( )
-

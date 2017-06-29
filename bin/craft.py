@@ -29,6 +29,15 @@ import portage
 import utils
 import threading
 from CraftConfig import *
+import CraftSetupHelper
+
+if not "KDEROOT" in os.environ:
+    helper = CraftSetupHelper.SetupHelper()
+    helper.setupEnvironment()
+    # apply to own env
+    for key, val in helper.env.items():
+        os.environ[str(key)] = val
+
 
 def destroyCraftRoot():
     del InstallDB.installdb

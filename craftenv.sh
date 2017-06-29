@@ -16,7 +16,7 @@ fi
 
 export craftRoot
 
-CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup --mode bash))
+CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup))
 
 for line in "${CRAFT_ENV[@]}"; do
   if [[ "$line"  =~ "=" ]];then

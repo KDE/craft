@@ -77,7 +77,7 @@ if( -Not $env:CRAFT_PYTHON)
     $env:CRAFT_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
 }
 
-(& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup" "--mode" "powershell") |
+(& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=")
