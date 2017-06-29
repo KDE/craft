@@ -11,7 +11,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["master"] = "https://github.com/KDAB/FatCRM.git|frameworks"
         self.defaultTarget = "master"
+
         self.shortDescription = "Desktop Application for SugarCRM"
+        self.homepage = "http://www.kdab.com/"
 
 
     def setDependencies( self ):

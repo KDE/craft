@@ -17,7 +17,9 @@ class subinfo(info.infoclass):
         self.targetDigests["1.6.0"] = (["3bedfdb5355096be434ed7cd7ce2529df823edbc75b6ca1ba4a48f0d647fd67e"], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.6.0"
-        self.shortDescription = "A Qt-based client-side and server-side SOAP component "
+        self.shortDescription = "A Qt-based client-side and server-side SOAP component"
+        self.homepage = "http://www.kdab.com/products/kd-soap"
+
 
 
     def setDependencies( self ):

@@ -17,6 +17,9 @@ class subinfo( info.infoclass ):
 
         self.defaultTarget = "1.7.1"
 
+        self.shortDescription = "Qt library for generating printable and exportable reports from code and from XML descriptions."
+        self.homepage = "http://www.kdab.com/kd-reports/"
+
 
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
