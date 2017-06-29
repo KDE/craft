@@ -133,16 +133,15 @@ class UtilsCache(object):
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
-    def checkVersionGreaterOrEqual(self, app, version, pattern="\d+\.\d+\.\d+", versionCommand="--version") -> bool:
+    def checkVersionGreaterOrEqual(self, app, version, pattern=re.compile(r"(\d+\.\d+(?:\.\d+)?)"), versionCommand="--version") -> bool:
         app = self.findApplication(app)
         if not app:
             return False
         if app in self._versionCache:
             appVersion = self._versionCache[app]
         else:
-
-            if isinstance(pattern, str):
-                pattern = re.compile(f".*({pattern}).*")
+            if not isinstance(pattern, re._pattern_type):
+                raise Exception("checkVersionGreaterOrEqual can only handle a compiled regular expression as pattern")
             output = self.getCommandOutput(app, versionCommand)
             if not output:
                 return False

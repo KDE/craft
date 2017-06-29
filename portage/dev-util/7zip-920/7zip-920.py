@@ -31,8 +31,6 @@ class SevenZipPackage( BinaryPackageBase ):
 
 class Package(MaybeVirtualPackageBase):
     def __init__(self):
-        # why does the commone pattern not work here \d+\.\d+
         MaybeVirtualPackageBase.__init__(self,
-                                         not utils.utilsCache.checkVersionGreaterOrEqual("7za", version="16.04",
-                                                                                         pattern=re.compile(".*(\d+\.\d+).*", re.DOTALL), versionCommand="-version"),
+                                         not utils.utilsCache.checkVersionGreaterOrEqual("7za", version="16.04", versionCommand="-version"),
                                          classA=SevenZipPackage)
