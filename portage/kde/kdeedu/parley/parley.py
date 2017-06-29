@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies['libs/qtmultimedia'] = 'default'
         
+        
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
@@ -27,6 +28,9 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kcmutils"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
         self.runtimeDependencies["frameworks/knotifications"] = "default"
+        self.runtimeDependencies["kde/libkeduvocdocument"] = "default"
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
 
 from Package.CMakePackageBase import *
 
