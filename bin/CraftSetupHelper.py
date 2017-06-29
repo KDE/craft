@@ -76,11 +76,6 @@ class SetupHelper( object ):
             self.printBanner( )
         elif args.getenv:
             self.printEnv()
-        elif args.run:
-            self.subst()
-            self.setupEnvironment()
-            out = subprocess.run(args.rest)
-            exit(out.returncode)
         elif args.setup:
             self.subst( )
             self.printEnv()
