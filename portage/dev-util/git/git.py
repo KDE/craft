@@ -5,6 +5,8 @@ import tempfile
 from CraftDebug import craftDebug
 import info
 import utils
+from Package.MaybeVirtualPackageBase import *
+from Package.VirtualPackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -22,39 +24,8 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies['dev-util/7zip']   = 'default'
 
-from Package.BinaryPackageBase import *
 
-class Package(BinaryPackageBase):
-    def __init__( self):
-        BinaryPackageBase.__init__(self)
-        self.gitIsInstalled = False
-        if utils.utilsCache.checkVersionGreaterOrEqual("git", version="2.10.0"):
-            self.gitIsInstalled = True
-
-    def fetch(self):
-        if self.gitIsInstalled:
-            return True
-        return BinaryPackageBase.fetch(self)
-
-    def unpack(self):
-        if self.gitIsInstalled:
-            return True
-        return BinaryPackageBase.unpack(self)
-
-    def install( self ):
-        if self.gitIsInstalled:
-            return True
-        if not BinaryPackageBase.install(self):
-            return False
-        utils.copyFile(os.path.join(self.packageDir(), "git.exe"),
-                       os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"))
-        return True
-
-    def qmerge(self):
-        if not BinaryPackageBase.qmerge(self):
-            return False
-        if not self.gitIsInstalled:
-            utils.system( "cmd /C post-install.bat", cwd = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git"))
+    def gitPostInstall(self):
         git = utils.utilsCache.findApplication("git")
         if utils.utilsCache.checkCommandOutputFor(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
             return True
@@ -63,5 +34,39 @@ class Package(BinaryPackageBase):
         utils.system( f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
         utils.system( f"\"{git}\" config --global core.autocrlf false")
         utils.system( f"\"{git}\" config --system core.autocrlf false")
+
+from Package.BinaryPackageBase import *
+
+class GitPackage(BinaryPackageBase):
+    def __init__( self):
+        BinaryPackageBase.__init__(self)
+
+    def install( self ):
+        if not BinaryPackageBase.install(self):
+            return False
+        utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
+                       os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"))
         return True
 
+    def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+            return False
+        gitDir = os.path.join( CraftStandardDirs.craftRoot(), "dev-utils", "git")
+        utils.system( os.path.join(gitDir, "post-install.bat"), cwd = gitDir)
+        self.subinfo.gitPostInstall()
+        return True
+
+class GitVirtualPackage(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)
+
+    def install( self ):
+        self.subinfo.gitPostInstall()
+        return True
+
+
+class Package(MaybeVirtualPackageBase):
+    def __init__(self):
+        MaybeVirtualPackageBase.__init__(self,
+                                         not utils.utilsCache.checkVersionGreaterOrEqual("git", version="2.10.0"),
+                                         classA=GitPackage, classB=GitVirtualPackage)
