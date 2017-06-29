@@ -60,7 +60,7 @@ class SetupHelper( object ):
         parser.add_argument( "--getenv", action = "store_true" )
         parser.add_argument( "--setup", action = "store_true" )
         parser.add_argument( "--run", action = "store_true" )
-        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" } )
+        parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" }, default="powershell" )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
 
