@@ -38,7 +38,7 @@ from CraftVersion import CraftVersion
 
 class UtilsCache(object):
     _instance = None
-    _version = 4
+    _version = 5
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
@@ -135,20 +135,26 @@ class UtilsCache(object):
 
     def checkVersionGreaterOrEqual(self, app, version, pattern="\d+\.\d+\.\d+", versionCommand="--version") -> bool:
         app = self.findApplication(app)
-        if (app, version) in self._versionCache:
-            return self._versionCache[(app, version)]
         if not app:
             return False
-        if isinstance(pattern, str):
-            pattern = re.compile(f".*({pattern}).*")
-        output = self.getCommandOutput(app, versionCommand)
-        if not output:
-            return False
-        match = pattern.match(output)
-        ver = match.group(1)
-        ge = CraftVersion(ver) >= CraftVersion(version)
-        craftDebug.log.debug(f"Installed version of {app} version: {ver} >= {version} = {ge}")
-        self._versionCache[(app, version)] = ge
+        if app in self._versionCache:
+            appVersion = self._versionCache[app]
+        else:
+
+            if isinstance(pattern, str):
+                pattern = re.compile(f".*({pattern}).*")
+            output = self.getCommandOutput(app, versionCommand)
+            if not output:
+                return False
+            match = pattern.match(output)
+            if not match:
+                craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
+                return False
+            appVersion = match.group(1)
+            self._versionCache[app] = appVersion
+
+        ge = CraftVersion(appVersion) >= CraftVersion(version)
+        craftDebug.log.debug(f"Installed version of {app} version: {appVersion} {'>=' if  ge else '<'} {version}")
         return ge
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
