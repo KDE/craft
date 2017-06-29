@@ -43,6 +43,6 @@ class CMakePackage(BinaryPackageBase):
 
 
 
-class Package(VirtualIfSufficientVerison):
+class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVerison.__init__(self, app="cmake", version="3.8.0", classA=CMakePackage)
+        VirtualIfSufficientVersion.__init__(self, app="cmake", version="3.8.0", classA=CMakePackage)

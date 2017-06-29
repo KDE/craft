@@ -11,7 +11,7 @@ class MaybeVirtualPackageBase(object):
         self.__class__.__bases__[0].__init__(self)
 
 
-class VirtualIfSufficientVerison(MaybeVirtualPackageBase):
+class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
     def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
         newer = utils.utilsCache.checkVersionGreaterOrEqual(app=app, version=version, pattern=pattern, versionCommand=versionCommand)
         self.skipCondition  = not newer or not craftSettings.getboolean("CraftDebug", "AllowToSkipPackages", True)

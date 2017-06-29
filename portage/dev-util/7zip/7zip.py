@@ -32,6 +32,6 @@ class SevenZipPackage( BinaryPackageBase ):
             return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
 
 
-class Package(VirtualIfSufficientVerison):
+class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVerison.__init__(self, app="7za", version="16.04", versionCommand="-version", classA=SevenZipPackage)
+        VirtualIfSufficientVersion.__init__(self, app="7za", version="16.04", versionCommand="-version", classA=SevenZipPackage)

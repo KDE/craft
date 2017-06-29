@@ -65,6 +65,6 @@ class GitVirtualPackage(VirtualPackageBase):
         return True
 
 
-class Package(VirtualIfSufficientVerison):
+class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVerison.__init__(self, app="git", version="2.10.0", classA=GitPackage, classB=GitVirtualPackage)
+        VirtualIfSufficientVersion.__init__(self, app="git", version="2.10.0", classA=GitPackage, classB=GitVirtualPackage)

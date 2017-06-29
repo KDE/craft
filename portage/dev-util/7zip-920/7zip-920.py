@@ -30,6 +30,6 @@ class SevenZipPackage( BinaryPackageBase ):
 
 
 
-class Package(VirtualIfSufficientVerison):
+class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVerison.__init__(self, app="7za", version="16.04", versionCommand="-version", classA=SevenZipPackage)
+        VirtualIfSufficientVersion.__init__(self, app="7za", version="16.04", versionCommand="-version", classA=SevenZipPackage)

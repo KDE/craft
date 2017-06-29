@@ -43,6 +43,6 @@ class PerlPackage(BinaryPackageBase):
 
 
 
-class Package(VirtualIfSufficientVerison):
+class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVerison.__init__(self, app="perl", version="5.20.0", classA=PerlPackage)
+        VirtualIfSufficientVersion.__init__(self, app="perl", version="5.20.0", classA=PerlPackage)
