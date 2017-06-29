@@ -59,6 +59,7 @@ class SetupHelper( object ):
         parser.add_argument( "--print-banner", action = "store_true" )
         parser.add_argument( "--getenv", action = "store_true" )
         parser.add_argument( "--setup", action = "store_true" )
+        parser.add_argument( "--run", action = "store_true" )
         parser.add_argument( "--mode", action = "store", choices = { "bat", "powershell", "bash" } )
         parser.add_argument( "rest", nargs = argparse.REMAINDER )
         self.args = parser.parse_args( )
@@ -74,10 +75,15 @@ class SetupHelper( object ):
         elif self.args.print_banner:
             self.printBanner( )
         elif self.args.getenv:
-            self.printEnv( )
+            self.printEnv()
+        elif self.args.run:
+            self.subst()
+            self.setupEnvironment()
+            out = subprocess.run(self.args.rest)
+            exit(out.returncode)
         elif self.args.setup:
             self.subst( )
-            self.printEnv( )
+            self.printEnv()
             self.printBanner( )
 
 
@@ -204,7 +210,7 @@ class SetupHelper( object ):
 
 
 
-    def printEnv( self ):
+    def setupEnvironment(self):
         for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var.upper(), value )
         self.env = self.getEnv( )
@@ -272,8 +278,12 @@ class SetupHelper( object ):
         # add python site packages to pythonpath
         self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
 
+
+    def printEnv(self):
+        self.setupEnvironment()
         for key, val in self.env.items( ):
-            print( "%s=%s" % (key, val) )
+            print( f"{key}={val}" )
+
 
 
 if __name__ == '__main__':
