@@ -1,4 +1,5 @@
 import info
+from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
 
 
 class subinfo(info.infoclass):
@@ -21,7 +22,7 @@ class subinfo(info.infoclass):
 
 from Package.BinaryPackageBase import *
 
-class Package(BinaryPackageBase):
+class PerlPackage(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.unpack.runInstaller = True
@@ -39,3 +40,10 @@ class Package(BinaryPackageBase):
         utils.deleteFile(os.path.join(self.sourceDir(), "{0}.msi".format(name)))
         return True
 
+
+
+class Package(MaybeVirtualPackageBase):
+    def __init__(self):
+        MaybeVirtualPackageBase.__init__(self,
+                                         not utils.utilsCache.checkVersionGreaterOrEqual("perl", version="5.20.0"),
+                                         classA=PerlPackage)

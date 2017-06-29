@@ -1,5 +1,7 @@
 import info
 from CraftVersion import CraftVersion
+from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
+
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -18,7 +20,7 @@ class subinfo( info.infoclass ):
 
 from Package.BinaryPackageBase import *
 
-class Package( BinaryPackageBase ):
+class SevenZipPackage( BinaryPackageBase ):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
 
@@ -28,3 +30,12 @@ class Package( BinaryPackageBase ):
             return utils.copyFile(os.path.join(self.sourceDir(), "x64", "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
         else:
             return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
+
+
+class Package(MaybeVirtualPackageBase):
+    def __init__(self):
+        # why does the commone pattern not work here \d+\.\d+
+        MaybeVirtualPackageBase.__init__(self,
+                                         not utils.utilsCache.checkVersionGreaterOrEqual("7za", version="16.04",
+                                                                                         pattern=re.compile(".*(\d\d\.\d+).*", re.DOTALL), versionCommand="-version"),
+                                         classA=SevenZipPackage)
