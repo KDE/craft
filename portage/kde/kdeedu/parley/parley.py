@@ -12,6 +12,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
         
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
