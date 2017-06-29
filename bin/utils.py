@@ -146,7 +146,7 @@ class UtilsCache(object):
             output = self.getCommandOutput(app, versionCommand)
             if not output:
                 return False
-            match = pattern.match(output)
+            match = pattern.search(output)
             if not match:
                 craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
                 return False
