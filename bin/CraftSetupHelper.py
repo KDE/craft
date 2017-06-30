@@ -74,7 +74,7 @@ class SetupHelper( object ):
                           f"PATH="
                           f"\n", file=sys.stderr)
                 else:
-                    path = collections.OrderedDict.fromkeys(self.env["Path"].split(os.path.pathsep))
+                    path = collections.OrderedDict.fromkeys(os.environ["Path"].split(os.path.pathsep))
                     del path[location]
                     self.addEnvVar("Path", os.path.pathsep.join(path))
 
@@ -107,30 +107,28 @@ class SetupHelper( object ):
         printRow("Svn  directory", CraftStandardDirs.svnDir( ))
         printRow("Git  directory", CraftStandardDirs.gitDir( ))
         printRow("Download directory", CraftStandardDirs.downloadDir( ))
-        if "CraftDeprecatedEntryScript" in self.env:
-            oldScript = self.env["CraftDeprecatedEntryScript"]
+        if "CraftDeprecatedEntryScript" in os.environ:
+            oldScript = os.environ["CraftDeprecatedEntryScript"]
             ext = ".ps1" if OsUtils.isWin() else ".sh"
             print(f"You used the deprecated script {oldScript}\n"
                   f"Please use craftenv{ext} instead", file=sys.stderr)
 
     def addEnvVar( self, key, val ):
-        self.env[ key ] = val
+        os.environ[ key ] = val
         os.environ[key] = val
 
     def prependPath( self, key, var ):
         if not type(var) == list:
             var = [var]
-        if key in self.env:
-            env = var + self.env[ key ].split(os.path.pathsep)
+        if key in os.environ:
+            env = var + os.environ[ key ].split(os.path.pathsep)
             var = list(collections.OrderedDict.fromkeys(env))
-        self.env[ key ] = os.path.pathsep.join( var )
+        os.environ[ key ] = os.path.pathsep.join( var )
 
     def stringToEnv( self, string ):
-        out = os.environ.copy()
         for line in string.split( "\n" ):
             key, value = line.strip( ).split( "=", 1 )
-            out[ key ] = value
-        return out
+            os.environ[ key ] = value
 
     def getEnv( self ):
         if compiler.isMSVC( ):
@@ -160,8 +158,6 @@ class SetupHelper( object ):
                 print( "Failed to setup intel compiler", file = sys.stderr )
                 exit(1)
             return self.stringToEnv( result )
-        out = os.environ.copy()
-        return out
 
 
     def setXDG(self):
@@ -177,8 +173,8 @@ class SetupHelper( object ):
 
     def setupEnvironment(self):
         for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
-            self.addEnvVar( var.upper(), value )
-        self.env = self.getEnv( )
+            self.addEnvVar( var, value )
+        self.getEnv( )
         self.checkForEvilApplication()
         self.version = int(craftSettings.get("Version", "EMERGE_SETTINGS_VERSION"))
 
@@ -193,7 +189,7 @@ class SetupHelper( object ):
             self.addEnvVar( "GIT_SSH", "plink" )
             self.addEnvVar( "SVN_SSH", "plink" )
 
-        if not "HOME" in self.env:
+        if not "HOME" in os.environ:
             self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
 
         self.prependPath( "PKG_CONFIG_PATH", os.path.join( CraftStandardDirs.craftRoot( ), "lib", "pkgconfig" ))
@@ -208,7 +204,7 @@ class SetupHelper( object ):
         self.prependPath( "QML2_IMPORT_PATH", [ os.path.join( CraftStandardDirs.craftRoot(), "lib", "qml"),os.path.join( CraftStandardDirs.craftRoot(), "lib64", "qml"),
                                                 os.path.join( CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu", "qml")
                                                 ])
-        self.prependPath("QML_IMPORT_PATH", self.env["QML2_IMPORT_PATH"])
+        self.prependPath("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
 
 
 
@@ -246,7 +242,7 @@ class SetupHelper( object ):
 
     def printEnv(self):
         self.setupEnvironment()
-        for key, val in self.env.items( ):
+        for key, val in os.environ.items( ):
             print( f"{key}={val}" )
 
 
