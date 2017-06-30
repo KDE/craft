@@ -36,8 +36,9 @@ from CraftOS.osutils import OsUtils
 from CraftVersion import CraftVersion
 
 
+utilsCache = None
+
 class UtilsCache(object):
-    _instance = None
     _version = 5
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
@@ -54,22 +55,23 @@ class UtilsCache(object):
         self._jsonCache = {}
 
     @staticmethod
-    def instance():
-        if not UtilsCache._instance:
-            UtilsCache._instance = UtilsCache()
+    def globalInstance():
+        global utilsCache
+        if not utilsCache:
+            utilsCache = UtilsCache()
             if os.path.exists(UtilsCache._cacheFile()):
                 with open(UtilsCache._cacheFile(), "rb") as f:
                     try:
                         data = pickle.load(f)
                     except:
                         craftDebug.log.warning("Cache corrupted")
-                        return UtilsCache._instance
+                        return utilsCache
 
                 if data.version != UtilsCache._version or (time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
                     craftDebug.log.debug("Clear cache")
                 else:
-                    UtilsCache._instance = data
-        return UtilsCache._instance
+                    utilsCache = data
+        return utilsCache
 
     @staticmethod
     def _cacheFile():
@@ -81,13 +83,14 @@ class UtilsCache(object):
         try:
             with open(UtilsCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
-                pick.dump(UtilsCache.instance())
+                pick.dump(UtilsCache.globalInstance())
         except Exception as e:
          craftDebug.log.warning(f"Failed to save cache {e}",exc_info=e, stack_info=True)
          deleteFile(UtilsCache._cacheFile())
 
     def clear(self):
-        UtilsCache._instance = UtilsCache()
+        craftDebug.log.debug("Clear utils cache")
+        utilsCache = UtilsCache()
 
 
     def findApplication(self, app) -> str:
@@ -208,7 +211,7 @@ class UtilsCache(object):
                 craftDebug.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
 
-utilsCache = UtilsCache.instance()
+UtilsCache.globalInstance()
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
