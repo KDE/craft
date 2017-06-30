@@ -23,6 +23,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/base'] = 'default'
+        self.buildDependencies['dev-util/python3'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):
@@ -33,7 +34,7 @@ class Package(CMakePackageBase):
         
     def make(self):
         self.enterSourceDir()
-        command = "python configure.py --bootstrap"
+        command = "python3 configure.py --bootstrap"
         if compiler.isMinGW():
             command += " --platform=mingw"
         print(command)
