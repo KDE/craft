@@ -35,11 +35,3 @@ class VirtualPackageBase( SourceOnlyPackageBase):
 
     def sourceRevision( self ):
         return ""
-
-# from PackagerBase:
-    def createPackage( self ):
-        for dep in self.subinfo.dependencies:
-            category,package = dep.split( "/" )
-            if not portage.getPackageInstance(category,package).createPackage():
-                return False
-        return True
