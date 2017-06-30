@@ -506,7 +506,7 @@ def main( ):
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
         elif tempArgs.list_file:
-            handleSinglePackage( "", action, tempArgs )
+            return handleSinglePackage( "", action, tempArgs )
         else:
             for packageName in tempArgs.packageNames:
                 if not handleSinglePackage( packageName, action, tempArgs, directTargets=tempArgs.packageNames ):
