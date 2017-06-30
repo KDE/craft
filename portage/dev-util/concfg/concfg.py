@@ -30,6 +30,7 @@ class Package(BinaryPackageBase):
             return False
         utils.createShim(os.path.join(self.imageDir(),"dev-utils","bin","concfg.exe"),
                          utils.utilsCache.findApplication("powershell"),
+                         args="-NoProfile {path}".format(path=os.path.join(self.imageDir(),"dev-utils","concfg","bin", "concfg.ps1")),
                          useAbsolutePath=True)
         return True
 
