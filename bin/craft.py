@@ -35,8 +35,9 @@ if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
     helper.setupEnvironment()
     # apply to own env
-    for key, val in helper.env.items():
-        os.environ[str(key)] = val
+    os.environ = helper.env
+    helper.printBanner()
+
 
 
 def destroyCraftRoot():
