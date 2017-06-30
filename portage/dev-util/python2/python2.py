@@ -28,6 +28,7 @@ class Package( BinaryPackageBase ):
                                     "\tPYTHON27\n"
                                     "Points to a valid Python installation.")
             return False
+        utils.utilsCache.clear()
         return utils.createShim(os.path.join(self.installDir(), "bin", "python2.exe"),
                                 os.path.join(craftSettings.get("Paths","PYTHON27"), "python.exe"),
                                 useAbsolutePath=True)
