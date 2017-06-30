@@ -21,13 +21,6 @@ class Package( BinaryPackageBase ):
     def install( self ):
         if not BinaryPackageBase.install(self):
             return False
-        if not ("Paths","PYTHON") in craftSettings or \
-                not os.path.isfile(os.path.join(craftSettings.get("Paths","PYTHON"), "python.exe")):
-            craftDebug.log.critical("Please make sure that\n"
-                                    "\t[Paths]\n"
-                                    "\tPython\n"
-                                    "Points to a valid Python installation.")
-            return False
         return utils.createShim(os.path.join(self.installDir(), "bin", "python3.exe"),
-                                os.path.join(craftSettings.get("Paths","PYTHON"), "python.exe"),
+                                sys.executable,
                                 useAbsolutePath=True)
