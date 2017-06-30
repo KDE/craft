@@ -8,12 +8,12 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Scripts and data for building API documentation (dox) in a standard format and style."
-        
+
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/cmake"] = "default"
-        self.runtimeDependencies["dev-util/python2"] = "default"
+        self.runtimeDependencies["dev-util/python3"] = "default"
         self.runtimeDependencies["dev-util/doxygen"] = "default"
         self.runtimeDependencies["python-modules/pyyaml"] = "default"
         self.runtimeDependencies["python-modules/jinja2"] = "default"
@@ -26,10 +26,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
         #the shims are not portable
         self.subinfo.options.package.disableBinaryCache = True
-        # this program needs python 2.7
-        self.subinfo.options.configure.defines = f" -DPYTHON_EXECUTABLE={utils.utilsCache.findApplication('python2')}"
 
-    
+
     def install(self):
         if not CMakeBuildSystem.install(self):
             return False
