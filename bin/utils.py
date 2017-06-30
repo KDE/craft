@@ -89,6 +89,7 @@ class UtilsCache(object):
          deleteFile(UtilsCache._cacheFile())
 
     def clear(self):
+        global utilsCache
         craftDebug.log.debug("Clear utils cache")
         utilsCache = UtilsCache()
 
