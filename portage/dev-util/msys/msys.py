@@ -2,6 +2,7 @@ import info
 import shells
 import io
 
+from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -16,11 +17,17 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.dependencies['virtual/bin-base'] = 'default'
+        self.dependencies['dev-util/python3'] = 'default'
 
+
+    def msysInstallShim(self, installDir):
+        return utils.createShim(os.path.join(installDir,"dev-utils","bin","msys.exe"),
+                                os.path.join(installDir,"dev-utils","bin","python3.exe"),
+                                args=os.path.join(CraftStandardDirs.craftBin(), "shells.py"))
 
 from Package.BinaryPackageBase import *
 
-class Package(BinaryPackageBase):
+class MsysPackage(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.shell = shells.MSysShell()
@@ -33,9 +40,7 @@ class Package(BinaryPackageBase):
         return True
     
     def qmerge(self):
-        if not utils.createShim(os.path.join(self.installDir(),"dev-utils","bin","msys.exe"),
-                                os.path.join(self.installDir(),"dev-utils","bin","python3.exe"),
-                                args=os.path.join(CraftStandardDirs.craftBin(), "shells.py")):
+        if not self.subinfo.msysInstallShim(self.installDir()):
             return False
         if not BinaryPackageBase.qmerge(self):
             return False
@@ -62,3 +67,18 @@ class Package(BinaryPackageBase):
             return False
         return (self.shell.execute(".", "pacman -S base-devel --noconfirm --force --needed") and
                 utils.system("autorebase.bat", cwd=msysDir) )
+
+
+class VirtualPackage(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)
+
+    def install( self ):
+        return self.subinfo.msysInstallShim(self.installDir())
+
+class Package(MaybeVirtualPackageBase):
+    def __init__(self):
+        condition = ("Paths", "Msys") not in craftSettings
+        if not condition:
+            craftDebug.log.info(f"Using manually installed msys {CraftStandardDirs.msysDir()}")
+        MaybeVirtualPackageBase.__init__(self, condition=condition, classA=MsysPackage, classB=VirtualPackage)

@@ -17,7 +17,7 @@ from options import *
 
 class MSysShell(object):
     def __init__(self):
-        self.msysdir = os.path.join( CraftStandardDirs.craftRoot(), "msys" )
+        self.msysdir = os.path.join( CraftStandardDirs.msysDir())
         self.environment = {}
         self._sh = os.path.join( self.msysdir, "bin", "sh.exe" )
         if not os.path.exists( self._sh ):

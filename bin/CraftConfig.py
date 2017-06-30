@@ -133,6 +133,12 @@ class CraftStandardDirs( object ):
         """the etc directory for portage"""
         return os.path.join( CraftStandardDirs.etcDir( ), "portage" )
 
+    @staticmethod
+    def msysDir():
+        if ("Paths", "Msys") in craftSettings:
+            return craftSettings.get("Paths", "Msys")
+        return os.path.join(CraftStandardDirs.craftRoot(), "msys")
+
 
 class CraftConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
