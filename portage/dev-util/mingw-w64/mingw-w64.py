@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
 
 from Package.BinaryPackageBase import *
 
-class Package(BinaryPackageBase):
+class PackageMinGW(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
 
@@ -32,3 +32,9 @@ class Package(BinaryPackageBase):
         return True
 
 
+
+from Package.Qt5CorePackageBase import *
+
+class Package( Qt5CoreSdkPackageBase ):
+    def __init__(self):
+        Qt5CoreSdkPackageBase.__init__(self, condition=compiler.isMinGW(), classA=PackageMinGW)

@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
 from Package.Qt5CorePackageBase import *
 
-class Package( Qt5CorePackageBase ):
+class QtPackage(Qt5CorePackageBase):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
         self.subinfo.options.fetch.checkoutSubmodules = True
@@ -40,3 +40,9 @@ class Package( Qt5CorePackageBase ):
        
 
         
+
+
+class Package( Qt5CoreSdkPackageBase ):
+    def __init__(self):
+        Qt5CoreSdkPackageBase.__init__(self, classA=QtPackage)
+

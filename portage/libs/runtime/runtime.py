@@ -46,11 +46,8 @@ class PackageMinGW( BinaryPackageBase ):
             utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ), linkOnly=False )
         return True
 
+from Package.Qt5CorePackageBase import *
 
-if compiler.isMinGW():
-    class Package(PackageMinGW):
-        def __init__( self ):
-            PackageMinGW.__init__( self )
-else:
-    class Package(VirtualPackageBase):
-        pass
+class Package( Qt5CoreSdkPackageBase ):
+    def __init__(self):
+        Qt5CoreSdkPackageBase.__init__(self, condition=compiler.isMinGW(), classA=PackageMinGW)

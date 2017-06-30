@@ -69,7 +69,7 @@ class subinfo(info.infoclass):
             self.dependencies['win32libs/icu'] = 'default'
             self.dependencies['win32libs/zlib'] = 'default'
 
-class Package(Qt5CorePackageBase):
+class QtPackage(Qt5CorePackageBase):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__(self)
 
@@ -195,3 +195,8 @@ class Package(Qt5CorePackageBase):
             if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
         return super(Qt5CorePackageBase, self).makeProgramm
+
+class Package( Qt5CoreSdkPackageBase ):
+    def __init__(self):
+        Qt5CoreSdkPackageBase.__init__(self, classA=QtPackage)
+
