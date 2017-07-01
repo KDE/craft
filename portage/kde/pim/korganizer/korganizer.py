@@ -36,7 +36,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
         self.runtimeDependencies["kde/akonadi-calendar"] = "default"
-        self.runtimeDependencies["kde/eventview"] = "default"
+        self.runtimeDependencies["kde/eventviews"] = "default"
         self.runtimeDependencies["kde/kcalcore"] = "default"
         self.runtimeDependencies["kde/kcalutils"] = "default"
         self.runtimeDependencies["kde/calendarsupport"] = "default"
