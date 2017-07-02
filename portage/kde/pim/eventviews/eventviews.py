@@ -19,6 +19,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/akonadi-calendar"] = "default"
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/calendarsupport"] = "default"
+        self.runtimeDependencies["kde/kdiagram"] = "default"
         
 
 from Package.CMakePackageBase import *
