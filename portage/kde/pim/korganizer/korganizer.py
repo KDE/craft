@@ -46,6 +46,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kmailtransport"] = "default"
         self.runtimeDependencies["kde/kidentitymanagement"] = "default"
         self.runtimeDependencies["kde/kontactinterface"] = "default"
+        self.runtimeDependencies["kde/incidenceeditor"] = "default"
         
 
 from Package.CMakePackageBase import *
