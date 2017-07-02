@@ -30,7 +30,7 @@ function findPython([string] $name)
 
 function FetchPython()
 {
-    switch($host.UI.PromptForChoice("Get python", "Do you wan't us to install python for you or do you want to manually specify the location of your python installation?",
+    switch($host.UI.PromptForChoice("Get python", "Do you want us to install python for you or do you want to manually specify the location of your python installation?",
          @("&Install Python", "&Specify Installation", "&Quit"),
         0))
         {
