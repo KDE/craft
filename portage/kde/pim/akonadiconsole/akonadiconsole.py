@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.dependencies['frameworks/kcrash'] = 'default'
         self.dependencies['kde/kpimtextedit'] = 'default'
         self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['kde/kcontats'] = 'default'
+        self.dependencies['kde/kcontacts'] = 'default'
         self.dependencies['kde/akonadi-contacts'] = 'default'
         self.dependencies['kde/kcalcore'] = 'default'
         self.dependencies['kde/calendarsupport'] = 'default'
