@@ -37,3 +37,7 @@ The packager used can be decided at runtime
             self.__class__.__bases__ += (packager,)
         packager.__init__(self, self.__packager is not None)
         self.__packager = packager
+
+    def createPackage(self):
+        return self.__packager.createPackage(self)
+
