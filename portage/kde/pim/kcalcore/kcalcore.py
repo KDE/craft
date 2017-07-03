@@ -8,7 +8,8 @@ class subinfo( info.infoclass ):
 
         self.shortDescription = "KCalcore library"
         self.patchToApply['17.04.1'] = [("kcalcore-fix-linking.diff", 1)]
-        
+        self.patchToApply['17.04.2'] = [("kcalcore-fix-linking.diff", 1)]
+
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
