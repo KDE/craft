@@ -64,6 +64,17 @@ def destroyCraftRoot():
             utils.cleanDirectory(path)
             utils.OsUtils.rmDir(path, True)
 
+
+def readListFile(listFile):
+    packageNames = []
+    parser = configparser.ConfigParser(allow_no_value=True)
+    parser.read(listFile)
+    for sections in parser.keys():
+        for packageName in parser[sections]:
+            craftSettings.set("PortageVersions", packageName, parser.get(sections, packageName))
+            packageNames.append(packageName)
+    return packageNames
+
 def packageIsOutdated( category, package ):
     newest = portage.PortageInstance.getNewestVersion( category, package )
     installed = InstallDB.installdb.getInstalledPackages(category, package)
@@ -180,18 +191,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
                 categoryList.append( mainCategory )
                 packageList.append( mainPackage )
         craftDebug.log.debug("Will update packages: " + str(packageList))
-    elif args.list_file:
-        if not directTargets:
-            directTargets = []
-        parser = configparser.ConfigParser(allow_no_value=True)
-        parser.read(args.list_file)
-        for sections in parser.keys():
-            for packageName in parser[sections]:
-                craftSettings.set("PortageVersions", packageName, parser.get(sections, packageName))
-                package, category = portage.getPackagesCategories(packageName)
-                directTargets.append(f"{category[0]}/{package[0]}")
-                packageList.extend(package)
-                categoryList.extend(category)
     elif packageName:
         packageList, categoryList = portage.getPackagesCategories( packageName )
 
@@ -249,8 +248,7 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
 
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
-        not action in [ "all", "install-deps"] and\
-        not args.list_file:#not all commands should be executed on the deps if we are a virtual packages
+        not action in [ "all", "install-deps"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -267,8 +265,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
             if args.outDateVCS or (args.outDatePackage and isLastPackage):
                 isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets( info.category, info.package ) != [ ]
             isInstalled = InstallDB.installdb.isInstalled(info.category, info.package)
-            if args.list_file and action != "all":
-                info.enabled = info.package in originalPackageList
             if ( isInstalled and not info.enabled ) and not (
                             isInstalled and (args.outDateVCS or (
                                     args.outDatePackage and isLastPackage) ) and isVCSTarget ):
@@ -501,15 +497,19 @@ def main( ):
         craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
         craftDebug.debug_line()
 
+        packageNames = tempArgs.packageNames
+        if tempArgs.list_file:
+            if not packageNames:
+                packageNames = []
+            packageNames += readListFile(args.list_file)
+
         if action == "print-installed":
             InstallDB.printInstalled( )
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
-        elif tempArgs.list_file:
-            return handleSinglePackage( "", action, tempArgs )
         else:
-            for packageName in tempArgs.packageNames:
-                if not handleSinglePackage( packageName, action, tempArgs, directTargets=tempArgs.packageNames ):
+            for packageName in packageNames:
+                if not handleSinglePackage( packageName, action, tempArgs, packageNames):
                     return False
     return True
 
