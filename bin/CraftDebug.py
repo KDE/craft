@@ -41,8 +41,8 @@ class CraftDebug(object):
             self._log.addHandler(fileHandler)
             fileHandler.setLevel(logging.DEBUG)
         except Exception as e:
-            self.log.debug(f"Failed to setup log file: {e}")
-            self.log.debug(f"Right now we don't support running multiple Craft instances with the same configuration.")
+            print(f"Failed to setup log file: {e}", file=sys.stderr)
+            print(f"Right now we don't support running multiple Craft instances with the same configuration.", file=sys.stderr)
         self.log.debug("#" * 80)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
