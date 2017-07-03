@@ -1,7 +1,7 @@
 #
 # copyright (c) 2012 Hannah von Reth <vonreth@kde.org>
 #
-# definitions for the qt5 modules 
+# definitions for the qt5 modules
 
 from BuildSystem.QMakeBuildSystem import *
 
@@ -9,13 +9,16 @@ from BuildSystem.QMakeBuildSystem import *
 class Qt5CoreBuildSystem( QMakeBuildSystem ):
     def __init__( self ):
         QMakeBuildSystem.__init__( self )
-        if not craftSettings.getboolean("QtSDK", "Enabled", "False"):
+        if not craftSettings.getboolean("QtSDK", "Enabled", False):
             utils.putenv( "QMAKESPEC", os.path.join( CraftStandardDirs.craftRoot( ), 'mkspecs', self.platform ) )
 
 
     def install( self, options = "" ):
         """implements the make step for Qt projects"""
-        options += " INSTALL_ROOT=%s install" % self.imageDir( )
+        imageDir = self.imageDir( )
+        if craftSettings.getboolean("QtSDK", "Enabled", False):
+            imageDir = imageDir[2:]
+        options += f" INSTALL_ROOT={imageDir} install"
         if not QMakeBuildSystem.install( self, options ):
             return False
         if OsUtils.isWin():
@@ -27,7 +30,7 @@ class Qt5CoreBuildSystem( QMakeBuildSystem ):
             for subdir in os.listdir( badPrefix ):
                 utils.moveFile( os.path.join( badPrefix, subdir ), self.installDir( ) )
             utils.rmtree( badPrefix )
- 
+
         if OsUtils.isWin():
             if os.path.exists( os.path.join( self.installDir( ), "bin", "mkspecs" ) ):
                 utils.moveFile( os.path.join( self.installDir( ), "bin", "mkspecs" ),
@@ -36,5 +39,5 @@ class Qt5CoreBuildSystem( QMakeBuildSystem ):
 
 
 
-          
+
 
