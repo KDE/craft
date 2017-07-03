@@ -7,6 +7,8 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
         self.patchToApply["17.04.0"] = [("akonadi-17.04.0-20170530.diff", 1)]
+        self.patchToApply["17.04.1"] = [("akonadi-17.04.0-20170530.diff", 1)]
+        self.patchToApply["17.04.2"] = [("akonadi-17.04.0-20170530.diff", 1)]
 
         self.shortDescription = "A storage service for PIM data and meta data"
 
