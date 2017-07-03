@@ -57,7 +57,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        if craftSettings.getboolean("Packager", "UseCache"):
+        if craftSettings.getboolean("Packager", "UseCache") and not craftSettings.getboolean("QtSDK", "Enabled", False):
             self.buildDependencies['dev-util/qtbinpatcher'] = 'default'
         self.dependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
@@ -151,7 +151,7 @@ class QtPackage(Qt5CorePackageBase):
         if not Qt5CorePackageBase.install(self):
             return False
         utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
-            
+
         # install msvc debug files if available
         if compiler.isMSVC():
             srcdir = os.path.join( self.buildDir(), "lib" )
@@ -164,9 +164,9 @@ class QtPackage(Qt5CorePackageBase):
                     utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
 
         return True
-        
-         
-         
+
+
+
     def setPathes( self ):
         # for building qt with qmake
         utils.prependPath(os.path.join(self.buildDir(),"bin"))
