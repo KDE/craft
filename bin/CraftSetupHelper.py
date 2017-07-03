@@ -95,10 +95,11 @@ class SetupHelper( object ):
                     _subst( CraftStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
 
     def printBanner( self ):
+        stream = sys.stderr
         if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-            return
+            stream = sys.stdout
         def printRow(name, value):
-            print(f"{name:20}: {value}", file=sys.stderr)
+            print(f"{name:20}: {value}", file=stream)
         if CraftStandardDirs.isShortPathEnabled():
             with TemporaryUseShortpath(False):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
