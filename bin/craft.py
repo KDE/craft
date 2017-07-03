@@ -33,6 +33,7 @@ import CraftSetupHelper
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
+    helper.subst()
     helper.setupEnvironment()
     helper.printBanner()
 
