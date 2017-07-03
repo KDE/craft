@@ -36,4 +36,11 @@ class Package( CMakePackageBase ):
         self.subinfo.options.make.makeOptions = "package"
         out = CMakePackageBase.make(self)
         self.subinfo.options.make.makeOptions = old
-        return out
+        if not out:
+            return False
+
+        reName = re.compile(r"^Charm-\d+.\d+.*\.exe$")
+        for f in os.listdir(self.buildDir()):
+            match = reName.match(f)
+            if match:
+                return utils.copyFile(os.path.join(self.buildDir(), f), os.path.join(self.packageDestinationDir(), f))
