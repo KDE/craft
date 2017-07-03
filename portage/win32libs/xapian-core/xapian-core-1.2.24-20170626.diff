@@ -1,6 +1,6 @@
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/api/compactor.cc xapian-core-1.2.24/api/compactor.cc
 --- xapian-core-1.2.24.orig/api/compactor.cc	2016-09-16 03:59:15.000000000 +0200
-+++ xapian-core-1.2.24/api/compactor.cc	2017-06-29 16:10:21.805820600 +0200
++++ xapian-core-1.2.24/api/compactor.cc	2017-07-03 08:37:06.837180000 +0200
 @@ -80,43 +80,6 @@
  
  namespace Xapian {
@@ -47,7 +47,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/api
  Compactor::~Compactor() { }
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/cmake/xapian-config.cmake.in xapian-core-1.2.24/cmake/xapian-config.cmake.in
 --- xapian-core-1.2.24.orig/cmake/xapian-config.cmake.in	2016-09-16 03:59:15.000000000 +0200
-+++ xapian-core-1.2.24/cmake/xapian-config.cmake.in	2017-06-29 15:35:48.657854700 +0200
++++ xapian-core-1.2.24/cmake/xapian-config.cmake.in	2017-07-03 08:37:06.842219500 +0200
 @@ -1,5 +1,5 @@
  SET(prefix "@prefix@")
  SET(exec_prefix "@exec_prefix@")
@@ -57,7 +57,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/cma
  SET(XAPIAN_FOUND "TRUE")
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/CMakeLists.txt xapian-core-1.2.24/CMakeLists.txt
 --- xapian-core-1.2.24.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.24/CMakeLists.txt	2017-06-29 16:25:57.341966600 +0200
++++ xapian-core-1.2.24/CMakeLists.txt	2017-07-03 08:37:06.846230700 +0200
 @@ -0,0 +1,331 @@
 +cmake_minimum_required(VERSION 3.0)
 +
@@ -390,9 +390,29 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/CMa
 +    ${CMAKE_BINARY_DIR}/cmake/xapian-config-version.cmake
 +    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/xapian/
 +)
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/common/realtime.h xapian-core-1.2.24/common/realtime.h
+--- xapian-core-1.2.24.orig/common/realtime.h	2016-09-16 03:59:15.000000000 +0200
++++ xapian-core-1.2.24/common/realtime.h	2017-07-03 08:40:30.136696100 +0200
+@@ -25,6 +25,7 @@
+ #include <ctime>
+ #include "safeerrno.h"
+ #include "safeunistd.h"
++#include "xapian/visibility.h"
+ 
+ #ifndef __WIN32__
+ # ifdef HAVE_FTIME
+@@ -36,7 +37,7 @@
+ #else
+ # include <sys/types.h>
+ # include <sys/timeb.h>
+-extern void xapian_sleep_milliseconds(unsigned int millisecs);
++extern XAPIAN_VISIBILITY_DEFAULT void xapian_sleep_milliseconds(unsigned int millisecs);
+ #endif
+ 
+ namespace RealTime {
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/config.h xapian-core-1.2.24/config.h
 --- xapian-core-1.2.24.orig/config.h	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.24/config.h	2017-06-29 15:35:48.661864700 +0200
++++ xapian-core-1.2.24/config.h	2017-07-03 08:37:06.851216100 +0200
 @@ -0,0 +1,302 @@
 +/* config.h.  Generated from config.h.in by configure.  */
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
@@ -698,7 +718,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/con
 +
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/include/xapian/compactor.h xapian-core-1.2.24/include/xapian/compactor.h
 --- xapian-core-1.2.24.orig/include/xapian/compactor.h	2016-09-16 03:59:15.000000000 +0200
-+++ xapian-core-1.2.24/include/xapian/compactor.h	2017-06-29 16:13:20.569932200 +0200
++++ xapian-core-1.2.24/include/xapian/compactor.h	2017-07-03 08:37:06.859245300 +0200
 @@ -24,21 +24,63 @@
  #define XAPIAN_INCLUDED_COMPACTOR_H
  
@@ -767,7 +787,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/inc
  
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/include/xapian/version.h xapian-core-1.2.24/include/xapian/version.h
 --- xapian-core-1.2.24.orig/include/xapian/version.h	1970-01-01 01:00:00.000000000 +0100
-+++ xapian-core-1.2.24/include/xapian/version.h	2017-06-29 16:22:16.419842000 +0200
++++ xapian-core-1.2.24/include/xapian/version.h	2017-07-03 08:41:24.618528600 +0200
 @@ -0,0 +1,58 @@
 +/** @file version.h
 + * @brief Define preprocessor symbols for the library version
@@ -829,7 +849,7 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/inc
 +#endif /* XAPIAN_INCLUDED_VERSION_H */
 diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/include/xapian/visibility.h xapian-core-1.2.24/include/xapian/visibility.h
 --- xapian-core-1.2.24.orig/include/xapian/visibility.h	2016-09-16 03:59:15.000000000 +0200
-+++ xapian-core-1.2.24/include/xapian/visibility.h	2017-06-29 16:17:26.731597400 +0200
++++ xapian-core-1.2.24/include/xapian/visibility.h	2017-07-03 08:37:06.870776400 +0200
 @@ -24,6 +24,12 @@
  #if defined XAPIAN_ENABLE_VISIBILITY && defined __GNUC__ && (__GNUC__ >= 4)
  // GCC 3.4 has visibility support, but it's a bit buggy so we require 4.0.
@@ -843,9 +863,9 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/inc
  #else
  # define XAPIAN_VISIBILITY_DEFAULT
  #endif
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' '-x*\.o' xapian-core-1.2.24-old/include/xapian/weight.h xapian-core-1.2.24/include/xapian/weight.h
---- xapian-core-1.2.24-old/include/xapian/weight.h	2017-07-01 15:19:32.885334969 +0200
-+++ xapian-core-1.2.24/include/xapian/weight.h	2017-07-01 15:43:22.280918038 +0200
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' xapian-core-1.2.24.orig/include/xapian/weight.h xapian-core-1.2.24/include/xapian/weight.h
+--- xapian-core-1.2.24.orig/include/xapian/weight.h	2016-09-16 03:59:15.000000000 +0200
++++ xapian-core-1.2.24/include/xapian/weight.h	2017-07-03 08:37:06.877312200 +0200
 @@ -280,7 +280,7 @@
       *  This would ideally be private, but that causes a compilation error
       *  with GCC 4.1 (which appears to be a bug).
@@ -855,27 +875,3 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' '-x*\.o' xapian-core-1.2.24-old/incl
  
  #ifdef SWIG
    public: /* So SWIG wraps this constructor correctly for PHP */
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' '-x*\.o' xapian-core-1.2.24-old/common/realtime.h xapian-core-1.2.24/common/realtime.h
---- xapian-core-1.2.24-old/common/realtime.h	2017-07-01 15:19:32.913335122 +0200
-+++ xapian-core-1.2.24/common/realtime.h	2017-07-01 15:44:44.017340234 +0200
-@@ -36,7 +36,7 @@
- #else
- # include <sys/types.h>
- # include <sys/timeb.h>
--extern void xapian_sleep_milliseconds(unsigned int millisecs);
-+extern __declspec(dllexport) void xapian_sleep_milliseconds(unsigned int millisecs);
- #endif
- 
- namespace RealTime {
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' '-x*\.o' xapian-core-1.2.24-old/common/safe.cc xapian-core-1.2.24/common/safe.cc
---- xapian-core-1.2.24-old/common/safe.cc	2017-07-01 15:19:32.917335143 +0200
-+++ xapian-core-1.2.24/common/safe.cc	2017-07-01 15:45:07.441461051 +0200
-@@ -26,7 +26,7 @@
- #include "safewindows.h"
- 
- // Used by safeunistd.h:
--void
-+__declspec(dllexport) void
- xapian_sleep_milliseconds(unsigned int millisecs)
- {
-     Sleep(millisecs);
