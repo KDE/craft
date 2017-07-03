@@ -539,8 +539,6 @@ if __name__ == '__main__':
             craftDebug.log.error( e, exc_info=e)
         finally:
             doUpdateTitle = False
-            if craftSettings.getboolean( "CraftDebug", "DumpSettings", False ):
-                craftSettings.dump( )
 
     if not success:
         exit( 1 )

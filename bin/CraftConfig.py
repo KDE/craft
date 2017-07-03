@@ -10,6 +10,8 @@ import os
 import platform
 import re
 
+import atexit
+
 craftSettings = None
 
 class CraftStandardDirs( object ):
@@ -144,7 +146,7 @@ class CraftConfig( object ):
     variablePatern = re.compile( "\$\{[A-Za-z0-9_]*\}", re.IGNORECASE )
 
     def __init__( self, iniPath=None ):
-        self._config = configparser.ConfigParser( )
+        self._config = configparser.ConfigParser( interpolation=configparser.ExtendedInterpolation() )
         if iniPath:
             self.iniPath = iniPath
         else:
@@ -173,17 +175,14 @@ class CraftConfig( object ):
             return
 
         self._config.read( self.iniPath )
-        clean = False
-        #replace possible vatiables within a section
-        while not clean:
-            clean = True
-            for section in self._config.keys( ):
-                for key in self._config[ section ]:
-                    val = self._config[ section ][ key ]
-                    if self.variablePatern.match( val ):
-                        clean = False
-                        match = self.variablePatern.findall( val )[ 0 ]
-                        self._config[ section ][ key ] = val.replace( match, self._config[ section ][ match[ 2:-1 ] ] )
+        if not "Variables" in self._config.sections():
+            self._config.add_section("Variables")
+        for  key, value in {
+            "CraftRoot" : os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
+            "CraftDir" : os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        }.items():
+            if not key in self._config["Variables"]:
+                self._config["Variables"][key] = value
         if not os.name == "nt":
             self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*")
             if self.get("General", "KDECompiler") == "linux-gcc":
@@ -256,6 +255,13 @@ class CraftConfig( object ):
             self._config.write( configfile )
 
 
+    @staticmethod
+    @atexit.register
+    def _dump():
+        if craftSettings.getboolean("CraftDebug", "DumpSettings", False):
+            craftSettings.dump()
+
+
 class TemporaryUseShortpath(object):
     """Context handler for temporarily different shortpath setting"""
     def __init__(self, enabled):
@@ -270,7 +276,6 @@ class TemporaryUseShortpath(object):
 
 
 craftSettings = CraftConfig( )
-
 
 
 
