@@ -27,21 +27,25 @@ class subinfo(info.infoclass):
 
 
 class Package(BinaryPackageBase):
-  def __init__(self):
-    BinaryPackageBase.__init__( self )
-    self.subinfo.options.package.disableStriping = True
-    self.subinfo.options.package.packSources = False
+    def __init__(self):
+        BinaryPackageBase.__init__( self )
+        self.subinfo.options.package.disableStriping = True
+        self.subinfo.options.package.packSources = False
 
 
-  def install( self ):
-    shutil.copytree( os.path.join( self.sourceDir() , "bin" ) , os.path.join( self.installDir(), "bin") , ignore=shutil.ignore_patterns('*.pdb','*.map','*test*','mysqld-debug.exe','*.pl','debug*') )    
-    shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysqld.dll" ) , os.path.join( self.installDir(), "bin" , "libmysqld.dll" ) )
-    shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysql.dll" ) , os.path.join( self.installDir(), "bin" , "libmysql.dll" ) )
-    shutil.copytree( os.path.join( self.sourceDir() , "lib" ) , os.path.join( self.installDir(), "lib") , ignore=shutil.ignore_patterns('*.pdb','*.map','debug*','libmysqld.dll','libmysql.dll','mysql*') ) 
-    if compiler.isMinGW():
-        utils.createImportLibs( "libmysqld" , self.installDir() )
-        utils.createImportLibs( "libmysql" , self.installDir() )        
-    shutil.copytree( os.path.join( self.sourceDir() , "include" ) , os.path.join( self.installDir(), "include" ) ,  ignore=shutil.ignore_patterns('*.def') )
-    shutil.copytree( os.path.join( self.sourceDir() , "share" ) , os.path.join( self.installDir(), "share" ) , ignore=shutil.ignore_patterns('Makefile*') )
-    return True
+    def install( self ):
+        shutil.copytree( os.path.join( self.sourceDir() , "bin" ) , os.path.join( self.installDir(), "bin") , ignore=shutil.ignore_patterns('*.pdb','*.map','*test*','mysqld-debug.exe','*.pl','debug*') )
+        shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysqld.dll" ) , os.path.join( self.installDir(), "bin" , "libmysqld.dll" ) )
+        shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysql.dll" ) , os.path.join( self.installDir(), "bin" , "libmysql.dll" ) )
+        shutil.copytree( os.path.join( self.sourceDir() , "lib" ) , os.path.join( self.installDir(), "lib") , ignore=shutil.ignore_patterns('*.pdb','*.map','debug*','libmysqld.dll','libmysql.dll','mysql*') )
+        if compiler.isMinGW():
+            utils.createImportLibs( "libmysqld" , self.installDir() )
+            utils.createImportLibs( "libmysql" , self.installDir() )
+        shutil.copytree( os.path.join( self.sourceDir() , "include" ) , os.path.join( self.installDir(), "include" ) ,  ignore=shutil.ignore_patterns('*.def') )
+        shutil.copytree( os.path.join( self.sourceDir() , "share" ) , os.path.join( self.installDir(), "share" ) , ignore=shutil.ignore_patterns('Makefile*') )
+        return True
 
+    def qmerge(self):
+        if not BinaryPackageBase.qmerge(self):
+            return False
+        return self.system("mysqld --console --initialize-insecure")
