@@ -26,7 +26,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kmailtransport"] = "default"
         self.runtimeDependencies["kde/kidentitymanagement"] = "default"
         self.runtimeDependencies["kde/kimap"] = "default"
-        self.dependencies['win32libs/cyrus-sasl'] = 'default'
+        self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
 
 from Package.CMakePackageBase import *
 

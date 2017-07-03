@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/akonadi-contacts"] = "default"
         self.runtimeDependencies["kde/kldap"] = "default"
         self.runtimeDependencies["kde/akonadi-search"] = "default"
-        self.dependencies['frameworks/kdesignerplugin'] = 'default'
+        self.runtimeDependencies['frameworks/kdesignerplugin'] = 'default'
 
 from Package.CMakePackageBase import *
 

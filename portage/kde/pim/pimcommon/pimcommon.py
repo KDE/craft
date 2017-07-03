@@ -28,7 +28,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.dependencies['frameworks/kdesignerplugin'] = 'default'
+        self.runtimeDependencies['frameworks/kdesignerplugin'] = 'default'
         
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
@@ -38,7 +38,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kimap"] = "default"
         self.runtimeDependencies["kde/libkdepim"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
-        self.dependencies['win32libs/libxslt'] = 'default'
+        self.runtimeDependencies['win32libs/libxslt'] = 'default'
         
 
 from Package.CMakePackageBase import *

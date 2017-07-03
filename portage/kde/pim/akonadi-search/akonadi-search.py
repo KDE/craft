@@ -10,16 +10,16 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kcrash'] = 'default'
-        self.dependencies['frameworks/kcmutils'] = 'default'
-        self.dependencies['frameworks/krunner'] = 'default'
-        self.dependencies['kde/akonadi-mime'] = 'default'
-        self.dependencies['kde/kmime'] = 'default'
-        self.dependencies['kde/kcalcore'] = 'default'
-        self.dependencies['kde/kcontacts'] = 'default'
+        self.runtimeDependencies['kde/akonadi'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kcrash'] = 'default'
+        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
+        self.runtimeDependencies['frameworks/krunner'] = 'default'
+        self.runtimeDependencies['kde/akonadi-mime'] = 'default'
+        self.runtimeDependencies['kde/kmime'] = 'default'
+        self.runtimeDependencies['kde/kcalcore'] = 'default'
+        self.runtimeDependencies['kde/kcontacts'] = 'default'
 
 
 from Package.CMakePackageBase import *

@@ -14,8 +14,8 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -14,17 +14,17 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kcompletion'] = 'default'
-        self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/ktextwidgets'] = 'default'
+        self.runtimeDependencies['kde/akonadi'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
+        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
+        self.runtimeDependencies['frameworks/ktextwidgets'] = 'default'
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
-        self.dependencies['kde/kcontacts'] = 'default'
-        self.dependencies['kde/kmime'] = 'default'
-        self.dependencies['kde/akonadi-mime'] = 'default'
+        self.runtimeDependencies['kde/kcontacts'] = 'default'
+        self.runtimeDependencies['kde/kmime'] = 'default'
+        self.runtimeDependencies['kde/akonadi-mime'] = 'default'
 
 
 from Package.CMakePackageBase import *

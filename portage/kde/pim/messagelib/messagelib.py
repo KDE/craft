@@ -37,7 +37,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/pimcommon"] = "default"
         self.runtimeDependencies["kde/kldap"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
-        self.dependencies['win32libs/libxslt'] = 'default'
+        self.runtimeDependencies['win32libs/libxslt'] = 'default'
         self.runtimeDependencies['libs/qtwebengine'] = 'default'
         
 

@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['kde/kcalcore'] = 'default'
-        self.dependencies['kde/akonadi-contacts'] = 'default'
-        self.dependencies['kde/kmailtransport'] = 'default'
-        self.dependencies['kde/kcalutils'] = 'default'
-        self.dependencies['kde/kidentitymanagement'] = 'default'
+        self.runtimeDependencies['kde/akonadi'] = 'default'
+        self.runtimeDependencies['kde/kcalcore'] = 'default'
+        self.runtimeDependencies['kde/akonadi-contacts'] = 'default'
+        self.runtimeDependencies['kde/kmailtransport'] = 'default'
+        self.runtimeDependencies['kde/kcalutils'] = 'default'
+        self.runtimeDependencies['kde/kidentitymanagement'] = 'default'
 
 from Package.CMakePackageBase import *
 

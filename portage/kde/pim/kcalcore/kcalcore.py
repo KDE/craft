@@ -14,7 +14,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
-        self.dependencies["win32libs/libical"] = "default"
+        self.runtimeDependencies["win32libs/libical"] = "default"
         self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
 
 from Package.CMakePackageBase import *

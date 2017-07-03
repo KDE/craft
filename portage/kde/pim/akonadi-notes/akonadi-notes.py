@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['kde/kmime'] = 'default'
+        self.runtimeDependencies['kde/akonadi'] = 'default'
+        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['kde/kmime'] = 'default'
 
 
 from Package.CMakePackageBase import *

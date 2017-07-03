@@ -10,16 +10,16 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['kde/akonadi'] = 'default'
-        self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kxmlgui'] = 'default'
-        self.dependencies['kde/kmime'] = 'default'
-        self.dependencies['frameworks/kitemmodels'] = 'default'
-        self.dependencies['win32libs/libxslt'] = 'default'
-        self.dependencies['win32libs/shared-mime-info'] = 'default'
+        self.runtimeDependencies['kde/akonadi'] = 'default'
+        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
+        self.runtimeDependencies['kde/kmime'] = 'default'
+        self.runtimeDependencies['frameworks/kitemmodels'] = 'default'
+        self.runtimeDependencies['win32libs/libxslt'] = 'default'
+        self.runtimeDependencies['win32libs/shared-mime-info'] = 'default'
 
 
 from Package.CMakePackageBase import *

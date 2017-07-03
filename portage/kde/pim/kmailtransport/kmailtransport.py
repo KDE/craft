@@ -21,7 +21,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        self.dependencies['win32libs/cyrus-sasl'] = 'default'
+        self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
         self.runtimeDependencies["frameworks/kcmutils"] = "default"
 
 

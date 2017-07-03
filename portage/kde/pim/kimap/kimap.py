@@ -17,7 +17,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
         self.runtimeDependencies["frameworks/ki18n"] = "default"
         self.runtimeDependencies["kde/kmime"] = "default"
-        self.dependencies['win32libs/cyrus-sasl'] = 'default'        
+        self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'        
 
 
 from Package.CMakePackageBase import *

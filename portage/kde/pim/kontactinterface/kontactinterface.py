@@ -12,11 +12,11 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
-        self.dependencies['frameworks/kcoreaddons'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kwindowsystem'] = 'default'
-        self.dependencies['frameworks/kxmlgui'] = 'default'
-        self.dependencies['frameworks/kiconthemes'] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
+        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
+        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
         
 
 

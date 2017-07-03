@@ -15,14 +15,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
-        self.dependencies['win32libs/libxslt'] = 'default'
-        self.dependencies['win32libs/sqlite'] = 'default'
-        self.dependencies['win32libs/shared-mime-info'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/kdesignerplugin'] = 'default'
-        self.dependencies['frameworks/kcompletion'] = 'default'
-        self.dependencies['frameworks/kitemmodels'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['win32libs/libxslt'] = 'default'
+        self.runtimeDependencies['win32libs/sqlite'] = 'default'
+        self.runtimeDependencies['win32libs/shared-mime-info'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/kdesignerplugin'] = 'default'
+        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
+        self.runtimeDependencies['frameworks/kitemmodels'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
 
 from Package.CMakePackageBase import *
 
