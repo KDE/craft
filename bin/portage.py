@@ -115,7 +115,7 @@ class DependencyPackage(PackageObjectBase):
                     p.getDependencies( depList, depType, single )
                 elif depth < maxDepth:
                     p.getDependencies( depList, depType, single, maxDepth = maxDepth, depth = depth + 1 )
-                    
+
         #if self.category != internalCategory:
         if not self in depList and not PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
             depList.append( self )
@@ -465,31 +465,6 @@ def getPackageInstance(category, package):
     """return instance of class Package from package file"""
     return PortageInstance.getPackageInstance(category, package)
 
-def getDependencies( category, package, runtimeOnly = False ):
-    """returns the dependencies of this package as list of strings:
-    category/package"""
-
-    subpackage, package = getSubPackage( category, package )
-    if subpackage:
-        craftDebug.log.debug("solving package %s/%s/%s %s" % (category, subpackage, package,
-                                                          getFilename(category, package)))
-    else:
-        craftDebug.log.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
-
-    deps = []
-    info = _getSubinfo(category, package)
-    if not info is None:
-        depDict = info.dependencies
-        depDict.update( info.runtimeDependencies )
-        if not runtimeOnly:
-            depDict.update( info.buildDependencies )
-
-        for line in depDict:
-            (category, package) = line.split( "/" )
-            version = PortageInstance.getNewestVersion( category, package )
-            deps.append( [ category, package, version, depDict[ line ] ] )
-    return deps
-
 def parseListFile( filename ):
     """parses a csv file used for building a list of specific packages"""
     categoryList = []
@@ -534,13 +509,7 @@ def readChildren( category, package ):
     if subinfo is None:
         return OrderedDict(), OrderedDict()
 
-    runtimeDependencies = subinfo.runtimeDependencies
-    buildDependencies = subinfo.buildDependencies
-
-    commonDependencies = subinfo.dependencies
-    runtimeDependencies.update(commonDependencies)
-    buildDependencies.update(commonDependencies)
-    return runtimeDependencies, buildDependencies
+    return subinfo.runtimeDependencies, subinfo.buildDependencies
 
 def isPackageUpdateable( category, package ):
     craftDebug.log.debug("isPackageUpdateable: importing file %s" % getFilename(category, package))

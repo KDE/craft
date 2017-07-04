@@ -41,12 +41,9 @@ class infoclass(object):
         self.svnTargets = {}
 
 
-        # dependencies is the common way to define dependencies that are both
-        # run time and build time dependencies,
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies
-        self.dependencies = OrderedDict()
         self.runtimeDependencies = OrderedDict()
         self.buildDependencies = OrderedDict()
 
@@ -220,7 +217,7 @@ class infoclass(object):
                 out = (out, CraftHash.HashAlgorithm.getAlgorithmFromFile(out[0]))
             return out
         return None
-        
-        
 
-   
+
+
+
