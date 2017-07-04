@@ -7,11 +7,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for version in ['3.3.0']:
-            self.targets[ version ] = "http://codesynthesis.com/download/xsd/3.3/windows/i686/xsd-3.3.0-i686-windows.zip"
-        self.targetDigests['3.3.0'] = '4d5ed0f88b2ac45fb596b5e56bb1169f3ad19550'
+        for version in ['4.0.0']:
+            self.targets[ version ] = f"http://codesynthesis.com/download/xsd/{version[:3]}/windows/i686/xsd-{version}-i686-windows.zip"
+            self.targetInstSrc[version] = f"xsd-{version}-i686-windows"
+            self.targetInstallPath[version] = f"dev-utils/xsd"
+        self.targetDigests['4.0.0'] = (['73c478ea76c9847bdd292f4db80900b93a9798334687999e54e5796971f11dc1'], CraftHash.HashAlgorithm.SHA256)
 
-        self.defaultTarget = '3.3.0'
+        self.defaultTarget = '4.0.0'
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/bin-base'] = 'default'
@@ -20,13 +22,11 @@ class subinfo(info.infoclass):
 class Package(BinaryPackageBase):
     def __init__( self ):
         BinaryPackageBase.__init__( self )
-        self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.package.withSources = False
 
-    def unpack( self ):
-        if not BinaryPackageBase.unpack( self ): return False
-        os.renames( os.path.join( self.imageDir(), "xsd-3.3.0-i686-windows", "libxsd" ), os.path.join( self.imageDir(), "include" ) )
-        os.renames( os.path.join( self.imageDir(), "xsd-3.3.0-i686-windows", "bin" ), os.path.join( self.imageDir(), "bin" ) )
-        shutil.rmtree( os.path.join( self.imageDir(), "xsd-3.3.0-i686-windows" ) )
-        return True
+
+    def install( self ):
+        if not BinaryPackageBase.install( self ):
+            return False
+        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "xsd.exe"),
+                       os.path.join(self.imageDir(), "dev-utils", "xsd", "bin", "xsd.exe"))
 
