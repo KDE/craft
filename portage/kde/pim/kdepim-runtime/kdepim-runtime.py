@@ -35,7 +35,8 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/pimcommon"] = "default"
         
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        self.runtimeDependencies["kde/libkgapi"] = "default"
+        #Laurent reactivate when libkgapi will be fixed
+        #self.runtimeDependencies["kde/libkgapi"] = "default"
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
