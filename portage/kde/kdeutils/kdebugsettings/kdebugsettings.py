@@ -16,7 +16,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/ki18n"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
         self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependencies["frameworks/kcompetion"] = "default"
+        self.runtimeDependencies["frameworks/kcompletion"] = "default"
         self.runtimeDependencies["frameworks/kitemviews"] = "default"
 
 from Package.CMakePackageBase import *
