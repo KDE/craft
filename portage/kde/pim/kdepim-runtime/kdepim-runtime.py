@@ -41,6 +41,8 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
         self.runtimeDependencies['libs/qtwebengine'] = 'default'
+        self.runtimeDependencies['win32libs/libkolabxml'] = 'default'
+        self.runtimeDependencies['win32libs/libkolab'] = 'default'
 
 from Package.CMakePackageBase import *
 
