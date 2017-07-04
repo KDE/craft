@@ -25,7 +25,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kdav"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
         self.runtimeDependencies["kde/akonadi-contacts"] = "default"
-        self.runtimeDependencies["kde/akonadi-calendars"] = "default"
+        self.runtimeDependencies["kde/akonadi-calendar"] = "default"
         self.runtimeDependencies["kde/akonadi-notes"] = "default"
         self.runtimeDependencies["kde/kcontacts"] = "default"
         self.runtimeDependencies["kde/kimap"] = "default"
