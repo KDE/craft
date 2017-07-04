@@ -7,13 +7,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/karchive'] = 'default'
-        self.dependencies['frameworks/kcoreaddons'] = 'default'
-        self.dependencies['frameworks/kdoctools'] = 'default'
-        self.dependencies['frameworks/kwidgetsaddons'] = 'default'
-        self.dependencies['frameworks/kxmlgui'] = 'default'
-        self.dependencies['frameworks/kdelibs4support'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/karchive'] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
+        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
+        self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
 
 from Package.CMakePackageBase import *
 

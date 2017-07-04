@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies['virtual/bin-base'] = 'default'
         self.buildDependencies['binary/php'] = 'default'
         self.buildDependencies['dev-util/libphutil'] = 'default'
 

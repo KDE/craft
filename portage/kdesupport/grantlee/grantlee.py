@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['kde/kdeedu'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kde/kdeedu'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):

@@ -7,16 +7,16 @@ class subinfo(info.infoclass):
         self.shortDescription = "All kind of addons to improve your Plasma experience"
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kde-workspace'] = 'default'
-        self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['kde/marble'] = 'default'
-        self.dependencies['kde/libkexiv2'] = 'default'
-        self.dependencies['kdesupport/attica'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['kdesupport/qjson'] = 'default'
-        self.dependencies['kdesupport/dbusmenu-qt'] = 'default'
-        self.dependencies['win32libs/eigen2'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kde-workspace'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kde/marble'] = 'default'
+        self.runtimeDependencies['kde/libkexiv2'] = 'default'
+        self.runtimeDependencies['kdesupport/attica'] = 'default'
+        self.runtimeDependencies['kdesupport/qca'] = 'default'
+        self.runtimeDependencies['kdesupport/qjson'] = 'default'
+        self.runtimeDependencies['kdesupport/dbusmenu-qt'] = 'default'
+        self.runtimeDependencies['win32libs/eigen2'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
             self.defaultTarget = "master"
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/python3'] = 'default'
 
 class Package(CMakePackageBase):

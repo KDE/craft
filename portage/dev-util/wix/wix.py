@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         # requires nant, which is not supported yet

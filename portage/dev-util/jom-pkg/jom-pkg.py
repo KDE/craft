@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/msys'] = 'default'  # for flex
         self.buildDependencies['dev-util/qlalr'] = 'default'
 

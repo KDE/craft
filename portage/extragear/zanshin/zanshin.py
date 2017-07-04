@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):

@@ -15,16 +15,16 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.38.0"
 
     def setDependencies( self ):
-        self.dependencies['win32libs/freetype'] = 'default'
-        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.dependencies['win32libs/lcms'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
-        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.dependencies['win32libs/libpng'] = 'default'
-        self.dependencies['win32libs/libcurl'] = 'default'
-        self.dependencies['win32libs/tiff'] = 'default'
+        self.runtimeDependencies['win32libs/freetype'] = 'default'
+        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
+        self.runtimeDependencies['win32libs/lcms'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
+        self.runtimeDependencies['win32libs/libpng'] = 'default'
+        self.runtimeDependencies['win32libs/libcurl'] = 'default'
+        self.runtimeDependencies['win32libs/tiff'] = 'default'
         self.runtimeDependencies['data/poppler-data'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

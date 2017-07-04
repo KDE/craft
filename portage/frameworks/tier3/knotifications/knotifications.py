@@ -11,13 +11,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/kwindowsystem"] = "default"
-        self.dependencies["frameworks/kservice"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kiconthemes"] = "default"
-        self.dependencies["frameworks/kcodecs"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["qt-libs/phonon"] = "default"
+        self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/kservice"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["qt-libs/phonon"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -11,14 +11,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/qtsvg"] = "default"
-        self.dependencies["frameworks/karchive"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kconfigwidgets"] = "default"
-        self.dependencies["frameworks/kwidgetsaddons"] = "default"
-        self.dependencies["frameworks/kitemviews"] = "default"
-        self.dependencies["frameworks/breeze-icons"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtsvg"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/kitemviews"] = "default"
+        self.runtimeDependencies["frameworks/breeze-icons"] = "default"
 
 from Package.CMakePackageBase import *
 

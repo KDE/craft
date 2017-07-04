@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.13.0+svn270'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
 
 from Package.CMakePackageBase import *
 

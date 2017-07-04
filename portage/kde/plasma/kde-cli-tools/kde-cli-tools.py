@@ -5,13 +5,13 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
         
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kinit'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies["frameworks/kcmutils"] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['frameworks/kwindowsystem'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kinit'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies["frameworks/kcmutils"] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
 
 
 from Package.CMakePackageBase import *

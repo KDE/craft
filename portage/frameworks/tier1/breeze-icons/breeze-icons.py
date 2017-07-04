@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
 
 from Package.CMakePackageBase import *
 

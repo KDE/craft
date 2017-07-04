@@ -3,10 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base']  = 'default'
-        self.dependencies['libs/qt']            = 'default'
-        self.dependencies['win32libs/librdf']   = 'default'
-        self.dependencies['binary/virtuoso']             = 'default'
+        self.runtimeDependencies['virtual/base']  = 'default'
+        self.runtimeDependencies['libs/qt']            = 'default'
+        self.runtimeDependencies['win32libs/librdf']   = 'default'
+        self.runtimeDependencies['binary/virtuoso']             = 'default'
 
     def setTargets( self ):
         self.svnTargets['master'] = '[git]kde:soprano.git'

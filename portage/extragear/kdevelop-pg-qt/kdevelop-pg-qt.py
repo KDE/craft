@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '2.0'
 
     def setDependencies( self ):
-        self.dependencies[ 'extragear/kdevplatform' ] = 'default'
+        self.runtimeDependencies[ 'extragear/kdevplatform' ] = 'default'
 
 from Package.CMakePackageBase import *
 

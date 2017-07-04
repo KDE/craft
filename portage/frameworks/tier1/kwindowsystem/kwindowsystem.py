@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/qttools"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qttools"] = "default"
         if OsUtils.isUnix():
-            self.dependencies["libs/qtx11extras"] = "default"
+            self.runtimeDependencies["libs/qtx11extras"] = "default"
         else:
-            self.dependencies["libs/qtwinextras"] = "default"
+            self.runtimeDependencies["libs/qtwinextras"] = "default"
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):

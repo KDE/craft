@@ -234,7 +234,7 @@ diff -Naur ghostscript-9.10-orig/base/unix-aux.mak ghostscript-9.10/base/unix-au
 - $(AUX)gpmisc.$(OBJ) $(AUX)gp_getnv.$(OBJ) \
 - $(AUX)gp_unix.$(OBJ) $(AUX)gp_unifs.$(OBJ) $(AUX)gp_unifn.$(OBJ) \
 - $(AUX)gp_stdia.$(OBJ) $(AUX)gsutil.$(OBJ)
-+# (here two, MINGW has a different set of dependencies,
++# (here two, MINGW has a different set of runtimeDependencies,
 +# most notably gp_ntfs and gp_wutf8)
 +ifeq ($(MINGW_BUILD), 1)
 +    MKROMFS_OBJS_1=$(GLOBJ)gp_ntfs.$(OBJ) $(GLOBJ)gp_wutf8.$(OBJ) \

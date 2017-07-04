@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
-        self.dependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kdelibs'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

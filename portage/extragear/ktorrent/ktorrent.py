@@ -18,11 +18,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['win32libs/mpir'] = 'default'
-        self.dependencies['extragear/libktorrent'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kdesupport/qca'] = 'default'
+        self.runtimeDependencies['win32libs/mpir'] = 'default'
+        self.runtimeDependencies['extragear/libktorrent'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
 class Package(CMakePackageBase):

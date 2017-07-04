@@ -18,14 +18,14 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["frameworks/kwallet"] = "default"
-        self.dependencies["kde/akonadi"] = "default"
-        self.dependencies["kde/kcontacts"] = "default"
-        self.dependencies["kde/kcalcore"] = "default"
-        self.dependencies["kde/akonadi-contacts"] = "default"
-        self.dependencies["qt-libs/kdsoap"] = "default"
-        self.dependencies["qt-libs/kdreports"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kwallet"] = "default"
+        self.runtimeDependencies["kde/akonadi"] = "default"
+        self.runtimeDependencies["kde/kcontacts"] = "default"
+        self.runtimeDependencies["kde/kcalcore"] = "default"
+        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
+        self.runtimeDependencies["qt-libs/kdsoap"] = "default"
+        self.runtimeDependencies["qt-libs/kdreports"] = "default"
 
 
 class Package( CMakePackageBase ):

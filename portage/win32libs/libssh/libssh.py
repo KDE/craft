@@ -16,9 +16,9 @@ class subinfo(info.infoclass):
         #self.options.configure.defines = "-DWITH_STATIC_LIB=ON"
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
-        self.dependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['win32libs/openssl'] = 'default'
 
 from Package.CMakePackageBase import *
 

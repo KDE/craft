@@ -5,22 +5,22 @@ class subinfo( info.infoclass ):
         self.versionInfo.setDefaultValues( )
         
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kconfigwidgets'] = 'default'
-        self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/kcoreaddons'] = 'default'
-        self.dependencies['frameworks/kcmutils'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['frameworks/kdelibs4support'] = 'default'
-        self.dependencies['frameworks/kxmlgui'] = 'default'
-        self.dependencies['frameworks/kiconthemes'] = 'default'
-        self.dependencies['frameworks/kservice'] = 'default'
-        self.dependencies['frameworks/kcompletion'] = 'default'
-        self.dependencies['frameworks/kdeclarative'] = 'default'
-        self.dependencies['frameworks/kpackage'] = 'default'
-        self.dependencies['frameworks/solid'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
+        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
+        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
+        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
+        self.runtimeDependencies['frameworks/kservice'] = 'default'
+        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
+        self.runtimeDependencies['frameworks/kdeclarative'] = 'default'
+        self.runtimeDependencies['frameworks/kpackage'] = 'default'
+        self.runtimeDependencies['frameworks/solid'] = 'default'
 
 
 

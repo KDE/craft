@@ -1134,7 +1134,7 @@ diff -Nru qjson.orig/cmake/modules/FindQt4.cmake qjson/cmake/modules/FindQt4.cma
 +      GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
 +      GET_FILENAME_COMPONENT(rc_path ${infile} PATH)
 +      SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${outfilename}.cxx)
-+      #  parse file for dependencies 
++      #  parse file for runtimeDependencies 
 +      #  all files are absolute paths or relative to the location of the qrc file
 +      FILE(READ "${infile}" _RC_FILE_CONTENTS)
 +      STRING(REGEX MATCHALL "<file[^<]+" _RC_FILES "${_RC_FILE_CONTENTS}")

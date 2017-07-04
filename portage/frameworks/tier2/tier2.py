@@ -7,16 +7,16 @@ class subinfo(info.infoclass):
         self.shortDescription = 'kf5 tier1'
 
     def setDependencies( self ):
-        self.dependencies['frameworks/kauth'] = 'default'
-        self.dependencies['frameworks/kcompletion'] = 'default'
-        self.dependencies['frameworks/kcrash'] = 'default'
-        self.dependencies['frameworks/kdnssd'] = 'default'
-        self.dependencies['frameworks/kdoctools'] = 'default'
-        self.dependencies['frameworks/kfilemetadata'] = 'default'
-        self.dependencies['frameworks/kjobwidgets'] = 'default'
-        self.dependencies['frameworks/kpackage'] = 'default'
-        self.dependencies['frameworks/kunitconversion'] = 'default'
-        self.dependencies['frameworks/kirigami'] = 'default'
+        self.runtimeDependencies['frameworks/kauth'] = 'default'
+        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
+        self.runtimeDependencies['frameworks/kcrash'] = 'default'
+        self.runtimeDependencies['frameworks/kdnssd'] = 'default'
+        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
+        self.runtimeDependencies['frameworks/kfilemetadata'] = 'default'
+        self.runtimeDependencies['frameworks/kjobwidgets'] = 'default'
+        self.runtimeDependencies['frameworks/kpackage'] = 'default'
+        self.runtimeDependencies['frameworks/kunitconversion'] = 'default'
+        self.runtimeDependencies['frameworks/kirigami'] = 'default'
 
 from Package.VirtualPackageBase import *
 

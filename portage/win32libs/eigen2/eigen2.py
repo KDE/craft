@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
 
     def setTargets( self ):
         for ver in ['2.0.17']:

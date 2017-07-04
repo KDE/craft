@@ -14,10 +14,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.17.2'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/jasper'] = 'default'
-        self.dependencies['win32libs/lcms'] = 'default'
-        self.dependencies['win32libs/libjpeg-turbo'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/jasper'] = 'default'
+        self.runtimeDependencies['win32libs/lcms'] = 'default'
+        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self ):

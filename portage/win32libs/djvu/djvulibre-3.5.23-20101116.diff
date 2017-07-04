@@ -33,7 +33,7 @@ diff -Nru djvulibre-3.5.23.orig/CMakeLists.txt djvulibre-3.5.23/CMakeLists.txt
 +    add_definitions(-DHAVE_STDINT_H=1)
 +endif(MINGW)
 +# ******************************************************************************
-+# cmake handles the dependencies itself
++# cmake handles the runtimeDependencies itself
 +add_subdirectory(gui)
 +add_subdirectory(libdjvu)
 +add_subdirectory(tools)

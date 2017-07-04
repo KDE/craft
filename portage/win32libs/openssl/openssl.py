@@ -29,11 +29,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.2j'
 
     def setDependencies(self):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
-            self.dependencies['win32libs/zlib'] = 'default'
+            self.runtimeDependencies['win32libs/zlib'] = 'default'
         elif compiler.isMSVC():
             self.buildDependencies['dev-util/nasm'] = 'default'
 

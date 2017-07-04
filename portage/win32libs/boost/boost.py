@@ -9,20 +9,20 @@ class subinfo(info.infoclass):
         self.shortDescription = 'portable C++ libraries'
 
     def setDependencies( self ):
-        self.dependencies['win32libs/boost-headers'] = 'default'
-        self.dependencies['win32libs/boost-bjam'] = 'default'
-        self.dependencies['win32libs/boost-atomic'] = 'default'
-        self.dependencies['win32libs/boost-graph'] = 'default'
-        self.dependencies['win32libs/boost-program-options'] = 'default'
+        self.runtimeDependencies['win32libs/boost-headers'] = 'default'
+        self.runtimeDependencies['win32libs/boost-bjam'] = 'default'
+        self.runtimeDependencies['win32libs/boost-atomic'] = 'default'
+        self.runtimeDependencies['win32libs/boost-graph'] = 'default'
+        self.runtimeDependencies['win32libs/boost-program-options'] = 'default'
         if self.options.features.pythonSupport:
-            self.dependencies['win32libs/boost-python'] = 'default'
-        self.dependencies['win32libs/boost-regex'] = 'default'
-        self.dependencies['win32libs/boost-system'] = 'default'
-        self.dependencies['win32libs/boost-thread'] = 'default'
-        self.dependencies['win32libs/boost-random'] = 'default'
-        self.dependencies['win32libs/boost-iostreams'] = 'default'
-        self.dependencies['win32libs/boost-filesystem'] = 'default'
-        self.dependencies['win32libs/boost-date-time'] = 'default'
+            self.runtimeDependencies['win32libs/boost-python'] = 'default'
+        self.runtimeDependencies['win32libs/boost-regex'] = 'default'
+        self.runtimeDependencies['win32libs/boost-system'] = 'default'
+        self.runtimeDependencies['win32libs/boost-thread'] = 'default'
+        self.runtimeDependencies['win32libs/boost-random'] = 'default'
+        self.runtimeDependencies['win32libs/boost-iostreams'] = 'default'
+        self.runtimeDependencies['win32libs/boost-filesystem'] = 'default'
+        self.runtimeDependencies['win32libs/boost-date-time'] = 'default'
 
 from Package.VirtualPackageBase import *
 

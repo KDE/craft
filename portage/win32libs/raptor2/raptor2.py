@@ -19,12 +19,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.0.8'
 
     def setDependencies( self ):
-        self.dependencies['win32libs/yajl'] = 'default'
-        self.dependencies['win32libs/expat'] = 'default'
-        self.dependencies['win32libs/libcurl'] = 'default'
-        self.dependencies['win32libs/libxml2'] = 'default'
-        self.dependencies['win32libs/libxslt'] = 'default'
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/yajl'] = 'default'
+        self.runtimeDependencies['win32libs/expat'] = 'default'
+        self.runtimeDependencies['win32libs/libcurl'] = 'default'
+        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies['win32libs/libxslt'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

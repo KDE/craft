@@ -1950,7 +1950,7 @@ diff -Nru tiff-3.9.2.orig/test/Makefile.in tiff-3.9.2/test/Makefile.in
 -
 -# Be sure to run check first, and then to convert the result.
 -# Beware of concurrent executions.  Run "check" not "check-TESTS", as
--# check-SCRIPTS and other dependencies are rebuilt by the former only.
+-# check-SCRIPTS and other runtimeDependencies are rebuilt by the former only.
 -# And expect check to fail.
 -check-html:
 -	@if $(MAKE) $(AM_MAKEFLAGS) check; then			\
@@ -4819,7 +4819,7 @@ diff -Nru tiff-3.9.2.orig/tests/Makefile.in tiff-3.9.2/tests/Makefile.in
 +
 +# Be sure to run check first, and then to convert the result.
 +# Beware of concurrent executions.  Run "check" not "check-TESTS", as
-+# check-SCRIPTS and other dependencies are rebuilt by the former only.
++# check-SCRIPTS and other runtimeDependencies are rebuilt by the former only.
 +# And expect check to fail.
 +check-html:
 +	@if $(MAKE) $(AM_MAKEFLAGS) check; then			\

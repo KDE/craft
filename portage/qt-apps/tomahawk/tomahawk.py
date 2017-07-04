@@ -5,22 +5,22 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['libs/qt5'] = 'default'
-        self.dependencies['qt-libs/quazip'] = 'default'
-        self.dependencies['qt-libs/libjreen'] = 'default'
-        #self.dependencies['qt-libs/qtsparkle'] = 'default
-        self.dependencies['qt-libs/qtkeychain'] = 'default'
-        # self.dependencies['qt-libs/qtweetlib'] = 'default'
-        self.dependencies['binary/vlc'] = 'default'
-        self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['qt-libs/libechonest'] = 'default'
-        self.dependencies['frameworks/attica'] = 'default'
-        self.dependencies['qt-libs/liblastfm'] = 'default'
-        self.dependencies['win32libs/luceneplusplus'] = 'default'
-        self.dependencies['win32libs/taglib'] = 'default'
-        self.dependencies['win32libs/gnutls'] = 'default'
+        self.runtimeDependencies['libs/qt5'] = 'default'
+        self.runtimeDependencies['qt-libs/quazip'] = 'default'
+        self.runtimeDependencies['qt-libs/libjreen'] = 'default'
+        #self.runtimeDependencies['qt-libs/qtsparkle'] = 'default
+        self.runtimeDependencies['qt-libs/qtkeychain'] = 'default'
+        # self.runtimeDependencies['qt-libs/qtweetlib'] = 'default'
+        self.runtimeDependencies['binary/vlc'] = 'default'
+        self.runtimeDependencies['kdesupport/qca'] = 'default'
+        self.runtimeDependencies['qt-libs/libechonest'] = 'default'
+        self.runtimeDependencies['frameworks/attica'] = 'default'
+        self.runtimeDependencies['qt-libs/liblastfm'] = 'default'
+        self.runtimeDependencies['win32libs/luceneplusplus'] = 'default'
+        self.runtimeDependencies['win32libs/taglib'] = 'default'
+        self.runtimeDependencies['win32libs/gnutls'] = 'default'
         self.buildDependencies['win32libs/websocketpp'] = 'default'
-        self.dependencies['win32libs/libsparsehash'] = 'default'
+        self.runtimeDependencies['win32libs/libsparsehash'] = 'default'
         
     def setTargets( self ):
         self.svnTargets['master'] = 'https://github.com/tomahawk-player/tomahawk.git'

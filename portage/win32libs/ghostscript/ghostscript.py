@@ -5,16 +5,16 @@ import utils
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
-            self.dependencies['win32libs/lcms'] = 'default'
-            self.dependencies['win32libs/lcms2'] = 'default'
-            self.dependencies['win32libs/freetype'] = 'default'
-            self.dependencies['win32libs/libjpeg-turbo'] = 'default'
-            self.dependencies['win32libs/libpng'] = 'default'
-            self.dependencies['win32libs/tiff'] = 'default'
+            self.runtimeDependencies['win32libs/lcms'] = 'default'
+            self.runtimeDependencies['win32libs/lcms2'] = 'default'
+            self.runtimeDependencies['win32libs/freetype'] = 'default'
+            self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
+            self.runtimeDependencies['win32libs/libpng'] = 'default'
+            self.runtimeDependencies['win32libs/tiff'] = 'default'
 
     def setTargets( self ):
         for ver in ['9.19']:

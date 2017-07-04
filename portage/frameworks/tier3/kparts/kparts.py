@@ -11,16 +11,16 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kiconthemes"] = "default"
-        self.dependencies["frameworks/kio"] = "default"
-        self.dependencies["frameworks/kjobwidgets"] = "default"
-        self.dependencies["frameworks/kservice"] = "default"
-        self.dependencies["frameworks/ktextwidgets"] = "default"
-        self.dependencies["frameworks/kwidgetsaddons"] = "default"
-        self.dependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kjobwidgets"] = "default"
+        self.runtimeDependencies["frameworks/kservice"] = "default"
+        self.runtimeDependencies["frameworks/ktextwidgets"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
 
 from Package.CMakePackageBase import *
 

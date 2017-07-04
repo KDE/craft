@@ -2,13 +2,13 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['win32libs/exiv2'] = 'default'
-        self.dependencies['win32libs/win_iconv'] = 'default'
-        self.dependencies['win32libs/libbzip2'] = 'default'
-        self.dependencies['win32libs/libxml2'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['win32libs/exiv2'] = 'default'
+        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
+        self.runtimeDependencies['win32libs/libbzip2'] = 'default'
+        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
 
 
     def setTargets( self ):

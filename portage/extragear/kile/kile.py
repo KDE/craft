@@ -12,9 +12,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['qt-libs/poppler'] = 'default' # this is only a dependency for kile > 2.1, but we keep it like that for now
-        self.dependencies['kde/okular'] = 'default'         # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['qt-libs/poppler'] = 'default' # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies['kde/okular'] = 'default'         # this is only a dependency for kile > 2.1, but we keep it like that for now
         self.runtimeDependencies['kde/kate'] = 'default'
 
 class Package( CMakePackageBase ):

@@ -7,9 +7,9 @@ class subinfo( info.infoclass ):
         self.shortDescription = "the next generation nepomuk"
         
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/kfilemetadata'] = 'default'
-        self.dependencies['win32libs/lmdb'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/kfilemetadata'] = 'default'
+        self.runtimeDependencies['win32libs/lmdb'] = 'default'
 
 from Package.CMakePackageBase import *
 

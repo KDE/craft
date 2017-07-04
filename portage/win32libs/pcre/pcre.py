@@ -15,8 +15,8 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.buildDependencies[ 'virtual/base' ] = 'default'
-        self.dependencies[ 'win32libs/libbzip2' ] = 'default'
-        self.dependencies[ 'win32libs/zlib' ] = 'default'
+        self.runtimeDependencies[ 'win32libs/libbzip2' ] = 'default'
+        self.runtimeDependencies[ 'win32libs/zlib' ] = 'default'
 
 
 class Package( CMakePackageBase ):

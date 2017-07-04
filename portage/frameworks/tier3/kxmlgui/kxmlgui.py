@@ -11,15 +11,15 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/kitemviews"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kglobalaccel"] = "default"
-        self.dependencies["frameworks/kconfigwidgets"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kiconthemes"] = "default"
-        self.dependencies["frameworks/ktextwidgets"] = "default"
-        self.dependencies["frameworks/kwidgetsaddons"] = "default"
-        self.dependencies["frameworks/attica"] = "default"
+        self.runtimeDependencies["frameworks/kitemviews"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kglobalaccel"] = "default"
+        self.runtimeDependencies["frameworks/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/ktextwidgets"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/attica"] = "default"
 
 from Package.CMakePackageBase import *
 

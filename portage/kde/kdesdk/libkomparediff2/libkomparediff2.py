@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
     def setDependencies( self ): 
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["frameworks/kcodecs"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kio"] = "default"
-        self.dependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
 
 from Package.CMakePackageBase import *
 

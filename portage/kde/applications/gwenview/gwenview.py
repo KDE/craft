@@ -11,14 +11,14 @@ class subinfo( info.infoclass ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.buildDependencies["libs/qtbase"] = "default"
-        self.dependencies["win32libs/libjpeg-turbo"] = "default"
-        self.dependencies["win32libs/libpng"] = "default"
-        self.dependencies["win32libs/exiv2"] = "default"
-        self.dependencies["win32libs/lcms2"] = "default"
-        self.dependencies["kde/libkdcraw"] = "default"
-        self.dependencies["frameworks/kactivities"] = "default"
-        self.dependencies["frameworks/kdelibs4support"] = "default"
-        self.dependencies["qt-libs/phonon"] = "default"
+        self.runtimeDependencies["win32libs/libjpeg-turbo"] = "default"
+        self.runtimeDependencies["win32libs/libpng"] = "default"
+        self.runtimeDependencies["win32libs/exiv2"] = "default"
+        self.runtimeDependencies["win32libs/lcms2"] = "default"
+        self.runtimeDependencies["kde/libkdcraw"] = "default"
+        self.runtimeDependencies["frameworks/kactivities"] = "default"
+        self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
+        self.runtimeDependencies["qt-libs/phonon"] = "default"
 
 from Package.CMakePackageBase import *
 

@@ -11,14 +11,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/kauth"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["frameworks/kcodecs"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kdoctools"] = "default"
-        self.dependencies["frameworks/kguiaddons"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/kauth"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"
 
 from Package.CMakePackageBase import *

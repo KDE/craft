@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
 
 
 from Package.BoostPackageBase import *

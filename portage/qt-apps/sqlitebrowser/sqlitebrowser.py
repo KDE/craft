@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
 
 
 class Package( CMakePackageBase ):

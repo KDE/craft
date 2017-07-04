@@ -25,8 +25,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.11.4'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/expat'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/expat'] = 'default'
 
 from Package.CMakePackageBase import *
 

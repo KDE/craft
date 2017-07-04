@@ -16,10 +16,10 @@ class subinfo(info.infoclass):
         self.shortDescription = "common KDE graphics application plugins"
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/kdegraphics'] = 'default'
-        self.dependencies['win32libs/expat'] = 'default'
-        self.dependencies['win32libs/gettext'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/kdegraphics'] = 'default'
+        self.runtimeDependencies['win32libs/expat'] = 'default'
+        self.runtimeDependencies['win32libs/gettext'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
 class Package(CMakePackageBase):

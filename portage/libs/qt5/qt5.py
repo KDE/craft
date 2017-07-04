@@ -6,22 +6,22 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtactiveqt'] = 'default'
-        self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['libs/qtgraphicaleffects'] = 'default'
-        self.dependencies['libs/qtimageformats'] = 'default'
-        self.dependencies['libs/qtmultimedia'] = 'default'
-        self.dependencies['libs/qtscript'] = 'default'
-        self.dependencies['libs/qtsvg'] = 'default'
-        self.dependencies['libs/qttools'] = 'default'
-        self.dependencies['libs/qtwebkit'] = 'default'
-        self.dependencies['libs/qtwebchannel'] = 'default'
-        self.dependencies['libs/qtxmlpatterns'] = 'default'
-        self.dependencies['libs/qtwinextras'] = 'default'
-        self.dependencies['libs/qtquickcontrols'] = 'default'
-        self.dependencies['libs/qtquickcontrols2'] = 'default'
-        self.dependencies['libs/qtserialport'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtactiveqt'] = 'default'
+        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['libs/qtgraphicaleffects'] = 'default'
+        self.runtimeDependencies['libs/qtimageformats'] = 'default'
+        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
+        self.runtimeDependencies['libs/qtscript'] = 'default'
+        self.runtimeDependencies['libs/qtsvg'] = 'default'
+        self.runtimeDependencies['libs/qttools'] = 'default'
+        self.runtimeDependencies['libs/qtwebkit'] = 'default'
+        self.runtimeDependencies['libs/qtwebchannel'] = 'default'
+        self.runtimeDependencies['libs/qtxmlpatterns'] = 'default'
+        self.runtimeDependencies['libs/qtwinextras'] = 'default'
+        self.runtimeDependencies['libs/qtquickcontrols'] = 'default'
+        self.runtimeDependencies['libs/qtquickcontrols2'] = 'default'
+        self.runtimeDependencies['libs/qtserialport'] = 'default'
 
 
 

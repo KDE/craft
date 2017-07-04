@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/png2ico'] = 'default'
         # needed for many kf5's
         self.buildDependencies['dev-util/winflexbison'] = 'default'

@@ -8,9 +8,9 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/libxml2'] = 'default'
-        self.dependencies['win32libs/llvm'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies['win32libs/llvm'] = 'default'
 
 from Package.SourceOnlyPackageBase import *
 

@@ -2,8 +2,8 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
         self.shortDescriptions = "audio meta-data library"
 
     def setTargets( self ):

@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '5.1'
 
     def setDependencies( self ):
-        self.dependencies[ 'extragear/kdevelop-pg-qt' ] = 'default'
+        self.runtimeDependencies[ 'extragear/kdevelop-pg-qt' ] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -11,9 +11,9 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['master'] = "libindi"
 
     def setDependencies( self ):
-        self.dependencies['virtual/base']  = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['win32libs/libnova'] = 'default'
+        self.runtimeDependencies['virtual/base']  = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['win32libs/libnova'] = 'default'
 
 from Package.CMakePackageBase import *
 

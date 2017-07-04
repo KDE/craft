@@ -6,9 +6,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['extragear/kdevplatform'] = 'default'
-        self.dependencies['extragear/kdevelop'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['extragear/kdevplatform'] = 'default'
+        self.runtimeDependencies['extragear/kdevelop'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/perl"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["frameworks/karchive"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["win32libs/libxslt"] = "default"
-        self.dependencies["data/docbook-dtd"] = "default"
-        self.dependencies["data/docbook-xsl"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["data/docbook-dtd"] = "default"
+        self.runtimeDependencies["data/docbook-xsl"] = "default"
         
 from Package.CMakePackageBase import *
 

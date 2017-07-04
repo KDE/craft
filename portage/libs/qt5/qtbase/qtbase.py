@@ -59,15 +59,15 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if craftSettings.getboolean("Packager", "UseCache") and not craftSettings.getboolean("QtSDK", "Enabled", False):
             self.buildDependencies['dev-util/qtbinpatcher'] = 'default'
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/perl'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
         if not self.options.buildStatic:
-            self.dependencies['win32libs/openssl'] = 'default'
-            self.dependencies['win32libs/dbus'] = 'default'
-            self.dependencies['binary/mysql'] = 'default'
-            self.dependencies['win32libs/icu'] = 'default'
-            self.dependencies['win32libs/zlib'] = 'default'
+            self.runtimeDependencies['win32libs/openssl'] = 'default'
+            self.runtimeDependencies['win32libs/dbus'] = 'default'
+            self.runtimeDependencies['binary/mysql'] = 'default'
+            self.runtimeDependencies['win32libs/icu'] = 'default'
+            self.runtimeDependencies['win32libs/zlib'] = 'default'
 
 class QtPackage(Qt5CorePackageBase):
     def __init__( self, **args ):

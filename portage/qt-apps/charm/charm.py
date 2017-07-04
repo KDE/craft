@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtwinextras'] = 'default'
-        self.dependencies['qt-libs/qtkeychain'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtwinextras'] = 'default'
+        self.runtimeDependencies['qt-libs/qtkeychain'] = 'default'
 
 
 class Package( CMakePackageBase ):

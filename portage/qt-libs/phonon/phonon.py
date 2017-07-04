@@ -3,10 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
         # qtquick1 is optional
-        #self.dependencies['libs/qtquick1'] = 'default'
+        #self.runtimeDependencies['libs/qtquick1'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['master'] = '[git]kde:phonon'        

@@ -7,7 +7,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies['virtual/bin-base'] = 'default'
 
     def setTargets( self ):
         for ver in ['1_0_14','1_0_15','1_0_16', '1_1_2']:

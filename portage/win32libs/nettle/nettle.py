@@ -19,8 +19,8 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         if compiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
-            self.dependencies['win32libs/libgmp'] = 'default'
-            self.dependencies['win32libs/openssl'] = 'default'
+            self.runtimeDependencies['win32libs/libgmp'] = 'default'
+            self.runtimeDependencies['win32libs/openssl'] = 'default'
 
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):

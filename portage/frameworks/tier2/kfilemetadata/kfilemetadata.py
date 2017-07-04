@@ -11,14 +11,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
         
-        self.dependencies["frameworks/karchive"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
         
-        # self.dependencies['qt-libs/poppler'] = 'default'
-        self.dependencies['win32libs/taglib'] = 'default'
-        self.dependencies['win32libs/exiv2'] = 'default'
+        # self.runtimeDependencies['qt-libs/poppler'] = 'default'
+        self.runtimeDependencies['win32libs/taglib'] = 'default'
+        self.runtimeDependencies['win32libs/exiv2'] = 'default'
         
 from Package.CMakePackageBase import *
 

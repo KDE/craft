@@ -2,10 +2,10 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['win32libs/openssl'] = 'default'
-        self.dependencies['win32libs/cyrus-sasl'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['master'] = 'kde:qca.git|qt5'

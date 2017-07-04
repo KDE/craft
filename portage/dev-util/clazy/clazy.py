@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-      self.dependencies['virtual/base'] = 'default'
-      self.dependencies['win32libs/llvm'] = 'default'
+      self.runtimeDependencies['virtual/base'] = 'default'
+      self.runtimeDependencies['win32libs/llvm'] = 'default'
 
         
     def setTargets( self ):

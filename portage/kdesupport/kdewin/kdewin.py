@@ -4,12 +4,12 @@ import compiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         # will be moved to kdewin-qt
-        self.dependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
         # will be moved to kdewin-tools
-        self.dependencies['win32libs/zlib'] = 'default'
-        self.dependencies['win32libs/libpng'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['win32libs/libpng'] = 'default'
 
     def setTargets( self ):
         self.svnTargets['0.3.9'] = 'http://gitweb.kde.org/kdewin.git/snapshot/fc116df1dc204d8a06dc5c874a4cdecc335115ec.tar.gz'

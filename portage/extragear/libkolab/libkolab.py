@@ -14,16 +14,16 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.5.0'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['win32libs/libkolabxml'] = 'default'
 
-        # the following dependencies are dragged in by the static libkolabxml library
-        self.dependencies['binary/xerces-c-bin'] = 'default'
-        self.dependencies['win32libs/boost-system'] = 'default'
-        self.dependencies['win32libs/boost-thread'] = 'default'
+        # the following runtimeDependencies are dragged in by the static libkolabxml library
+        self.runtimeDependencies['binary/xerces-c-bin'] = 'default'
+        self.runtimeDependencies['win32libs/boost-system'] = 'default'
+        self.runtimeDependencies['win32libs/boost-thread'] = 'default'
 
         # this is a real dependency of libkolab
-        self.dependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

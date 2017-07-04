@@ -11,16 +11,16 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kcoreaddons"] = "default"
-        self.dependencies["frameworks/kdbusaddons"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kiconthemes"] = "default"
-        self.dependencies["frameworks/knotifications"] = "default"
-        self.dependencies["frameworks/kwindowsystem"] = "default"
-        self.dependencies["win32libs/gcrypt"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
+        self.runtimeDependencies["win32libs/gcrypt"] = "default"
         if OsUtils.isUnix():
-            self.dependencies["kde/gpgmepp"] = "default"
+            self.runtimeDependencies["kde/gpgmepp"] = "default"
 
 from Package.CMakePackageBase import *
 

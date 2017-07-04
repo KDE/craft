@@ -15,9 +15,9 @@ class subinfo( info.infoclass ):
 
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.buildDependencies['dev-util/pkg-config'] = 'default'
-        self.dependencies['win32libs/glib'] = 'default'
+        self.runtimeDependencies['win32libs/glib'] = 'default'
 
 
 

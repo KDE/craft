@@ -20,8 +20,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.5.3'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/gpg-error'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/gpg-error'] = 'default'
 
 from Package.CMakePackageBase import *
 

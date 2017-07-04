@@ -6,18 +6,18 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
     def setDependencies( self ):
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kguiaddons'] = 'default'
-        self.dependencies["frameworks/kwidgetsaddons"] = 'default'
-        self.dependencies['frameworks/kservice'] = 'default'
-        self.dependencies['frameworks/kcompletion'] = 'default'
-        self.dependencies['frameworks/frameworkintegration'] = 'default'
-        self.dependencies['frameworks/kcmutils'] = 'default'
-        self.dependencies['frameworks/kwindowsystem'] = 'default'
-        self.dependencies['frameworks/plasma-framework'] = 'default'
-        self.dependencies['kde/kdecoration'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kguiaddons'] = 'default'
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = 'default'
+        self.runtimeDependencies['frameworks/kservice'] = 'default'
+        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
+        self.runtimeDependencies['frameworks/frameworkintegration'] = 'default'
+        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
+        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
+        self.runtimeDependencies['frameworks/plasma-framework'] = 'default'
+        self.runtimeDependencies['kde/kdecoration'] = 'default'
 
 
 from Package.CMakePackageBase import *

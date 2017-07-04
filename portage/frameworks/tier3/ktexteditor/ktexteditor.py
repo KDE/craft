@@ -9,14 +9,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["frameworks/karchive"] = "default"
-        self.dependencies["frameworks/kconfig"] = "default"
-        self.dependencies["frameworks/kguiaddons"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kio"] = "default"
-        self.dependencies["frameworks/kparts"] = "default"
-        self.dependencies["frameworks/sonnet"] = "default"
-        self.dependencies["frameworks/syntax-highlighting"] = "default"
+        self.runtimeDependencies["frameworks/karchive"] = "default"
+        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/kparts"] = "default"
+        self.runtimeDependencies["frameworks/sonnet"] = "default"
+        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
 
 from Package.CMakePackageBase import *
 

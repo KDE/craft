@@ -9,24 +9,24 @@ class subinfo( info.infoclass ):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['frameworks/kactivities'] = 'default'
-        self.dependencies['frameworks/karchive'] = 'default'
-        self.dependencies['frameworks/kbookmarks'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kconfigwidgets'] = 'default'
-        self.dependencies['frameworks/kcoreaddons'] = 'default'
-        self.dependencies['frameworks/kdbusaddons'] = 'default'
-        self.dependencies['frameworks/kdoctools'] = 'default'
-        self.dependencies['frameworks/kdnssd'] = 'default'
-        self.dependencies['frameworks/kguiaddons'] = 'default'
-        self.dependencies['frameworks/kiconthemes'] = 'default'
-        self.dependencies['frameworks/ki18n'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['frameworks/khtml'] = 'default'
-        self.dependencies['frameworks/solid'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['frameworks/kactivities'] = 'default'
+        self.runtimeDependencies['frameworks/karchive'] = 'default'
+        self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
+        self.runtimeDependencies['frameworks/kdnssd'] = 'default'
+        self.runtimeDependencies['frameworks/kguiaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
+        self.runtimeDependencies['frameworks/ki18n'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['frameworks/khtml'] = 'default'
+        self.runtimeDependencies['frameworks/solid'] = 'default'
 # Would be nice, but... yeah, pty on windows may happen, but not yet
-#        self.dependencies['frameworks/kpty'] = 'default'
+#        self.runtimeDependencies['frameworks/kpty'] = 'default'
 
 from Package.CMakePackageBase import *
 

@@ -10,14 +10,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies['libs/qtwebkit'] = "default"
-        self.dependencies['frameworks/kconfig'] = "default"
-        self.dependencies['frameworks/kcoreaddons'] = "default"
-        self.dependencies['frameworks/kio'] = "default"
-        self.dependencies['frameworks/kjobwidgets'] = "default"
-        self.dependencies['frameworks/kparts'] = "default"
-        self.dependencies['frameworks/kservice'] = "default"
-        self.dependencies['frameworks/kwallet'] = "default"
+        self.runtimeDependencies['libs/qtwebkit'] = "default"
+        self.runtimeDependencies['frameworks/kconfig'] = "default"
+        self.runtimeDependencies['frameworks/kcoreaddons'] = "default"
+        self.runtimeDependencies['frameworks/kio'] = "default"
+        self.runtimeDependencies['frameworks/kjobwidgets'] = "default"
+        self.runtimeDependencies['frameworks/kparts'] = "default"
+        self.runtimeDependencies['frameworks/kservice'] = "default"
+        self.runtimeDependencies['frameworks/kwallet'] = "default"
 
 from Package.CMakePackageBase import *
 

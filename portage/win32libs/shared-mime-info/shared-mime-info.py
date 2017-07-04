@@ -22,10 +22,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.1'
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/gettext'] = 'default'
-        self.dependencies['win32libs/libxml2'] = 'default'
-        self.dependencies['gnuwin32/sed'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/gettext'] = 'default'
+        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies['gnuwin32/sed'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self, **args ):

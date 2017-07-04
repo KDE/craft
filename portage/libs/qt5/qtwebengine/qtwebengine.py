@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['gnuwin32/gperf'] = 'default'
         self.buildDependencies['dev-util/python2'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtlocation'] = 'default'
-        self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['libs/qtwebchannel'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtlocation'] = 'default'
+        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['libs/qtwebchannel'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *

@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
             self.patchToApply[ ver ] = [("fix_shortpath.patch", 1), ("0041-libcxx-add-support-for-mingw-w64.patch", 1)]
 
     def setDependencies( self ):
-        self.dependencies['virtual/base'] = 'default'
-        self.dependencies['win32libs/llvm'] = 'default'
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/llvm'] = 'default'
 
 from Package.CMakePackageBase import *
 

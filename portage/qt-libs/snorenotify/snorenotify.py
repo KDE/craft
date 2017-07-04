@@ -6,12 +6,12 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qttools'] = 'default'
-        self.dependencies['libs/qtwebsockets'] = 'default'
-        self.dependencies['libs/qtmultimedia'] = 'default'
-        self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['win32libs/snoregrowl'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qttools'] = 'default'
+        self.runtimeDependencies['libs/qtwebsockets'] = 'default'
+        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
+        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['win32libs/snoregrowl'] = 'default'
 
 
 

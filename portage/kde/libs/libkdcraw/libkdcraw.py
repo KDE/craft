@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["win32libs/libraw"] = 'default'
+        self.runtimeDependencies["win32libs/libraw"] = 'default'
 
 from Package.CMakePackageBase import *
 

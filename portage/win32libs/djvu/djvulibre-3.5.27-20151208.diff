@@ -36,7 +36,7 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' djvulibre-3.5.27.orig/CMakeLists.txt dj
 +    add_definitions(-DHAVE_STDINT_H=1)
 +endif(MINGW)
 +# ******************************************************************************
-+# cmake handles the dependencies itself
++# cmake handles the runtimeDependencies itself
 +add_subdirectory(libdjvu)
 +if(BUILD_TOOLS)
 +    add_subdirectory(tools)

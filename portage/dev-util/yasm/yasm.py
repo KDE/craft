@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "The Yasm Modular Assembler Project"
         self.defaultTarget = '1.2.0'
     def setDependencies( self ):
-        self.dependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies['virtual/bin-base'] = 'default'
 
 from Package.BinaryPackageBase import *
 

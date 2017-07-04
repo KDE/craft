@@ -12,18 +12,18 @@ class subinfo( info.infoclass ):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies[ 'binary/r-base' ] = 'default'
+        self.runtimeDependencies[ 'binary/r-base' ] = 'default'
         if self.buildTarget in ['0.6.4', '0.6.5']:
             # Hm, will this still work at all? kate port does not seem to provide KDE 4 version, anymore
-            self.dependencies[ 'kde/kate' ] = 'default'  # provides katepart
+            self.runtimeDependencies[ 'kde/kate' ] = 'default'  # provides katepart
         else:
-            self.dependencies["frameworks/ki18n"] = "default"
-            self.dependencies["frameworks/ktexteditor"] = "default"
-            self.dependencies["frameworks/kwindowsystem"] = "default"
-            self.dependencies["frameworks/kdewebkit"] = "default"
-            # not strictly dependencies, but should be included in the package
-            self.dependencies["kde/kate"] = "default"
-            self.dependencies["frameworks/breeze-icons"] = "default"
+            self.runtimeDependencies["frameworks/ki18n"] = "default"
+            self.runtimeDependencies["frameworks/ktexteditor"] = "default"
+            self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
+            self.runtimeDependencies["frameworks/kdewebkit"] = "default"
+            # not strictly runtimeDependencies, but should be included in the package
+            self.runtimeDependencies["kde/kate"] = "default"
+            self.runtimeDependencies["frameworks/breeze-icons"] = "default"
 
 from Source.GitSource import *
 

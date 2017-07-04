@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3.3.10"
 
     def setDependencies( self ):
-        self.dependencies["win32libs/gcrypt"] = "default"
-        self.dependencies["win32libs/nettle"] = "default"
+        self.runtimeDependencies["win32libs/gcrypt"] = "default"
+        self.runtimeDependencies["win32libs/nettle"] = "default"
         if compiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 

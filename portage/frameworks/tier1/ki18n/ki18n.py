@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["libs/qttools"] = "default"
-        self.dependencies["libs/qtscript"] = "default"
-        self.dependencies["libs/qtdeclarative"] = "default"
-        self.dependencies["win32libs/gettext"] = "default"
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qttools"] = "default"
+        self.runtimeDependencies["libs/qtscript"] = "default"
+        self.runtimeDependencies["libs/qtdeclarative"] = "default"
+        self.runtimeDependencies["win32libs/gettext"] = "default"
 
 from Package.CMakePackageBase import *
 

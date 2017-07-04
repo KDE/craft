@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdelibs'] = 'default'
+        self.runtimeDependencies['kde/kdelibs'] = 'default'
 
 from Package.CMakePackageBase import *
 

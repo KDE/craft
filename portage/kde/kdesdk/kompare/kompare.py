@@ -7,16 +7,16 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies( self ):
-        self.dependencies['kde/libkomparediff2'] = 'default'
-        self.dependencies['frameworks/kcoreaddons'] = 'default'
-        self.dependencies['frameworks/kcodecs'] = 'default'
-        self.dependencies['frameworks/kdoctools'] = 'default'
-        self.dependencies['frameworks/kiconthemes'] = 'default'
-        self.dependencies['frameworks/kjobwidgets'] = 'default'
-        self.dependencies['frameworks/kconfig'] = 'default'
-        self.dependencies['frameworks/kparts'] = 'default'
-        self.dependencies['frameworks/ktexteditor'] = 'default'
-        self.dependencies['frameworks/kwidgetsaddons'] = 'default'
+        self.runtimeDependencies['kde/libkomparediff2'] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
+        self.runtimeDependencies['frameworks/kcodecs'] = 'default'
+        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
+        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
+        self.runtimeDependencies['frameworks/kjobwidgets'] = 'default'
+        self.runtimeDependencies['frameworks/kconfig'] = 'default'
+        self.runtimeDependencies['frameworks/kparts'] = 'default'
+        self.runtimeDependencies['frameworks/ktexteditor'] = 'default'
+        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
 
 from Package.CMakePackageBase import *
 

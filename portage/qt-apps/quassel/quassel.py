@@ -26,15 +26,15 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
-        self.dependencies['qt-libs/snorenotify'] = 'default'
-        self.dependencies['win32libs/zlib'] = 'default'
-        self.dependencies['win32libs/openssl'] = 'default'
-        #self.dependencies['kdesupport/qca'] = 'default'
-        self.dependencies['dev-util/pkg-config'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtwebengine'] = 'default'
-        self.dependencies['libs/qtscript'] = 'default'
-        self.dependencies['libs/qttools'] = 'default'
+        self.runtimeDependencies['qt-libs/snorenotify'] = 'default'
+        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        #self.runtimeDependencies['kdesupport/qca'] = 'default'
+        self.runtimeDependencies['dev-util/pkg-config'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtwebengine'] = 'default'
+        self.runtimeDependencies['libs/qtscript'] = 'default'
+        self.runtimeDependencies['libs/qttools'] = 'default'
         self.shortDescription = "a distributed IRC client"
 
 

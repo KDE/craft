@@ -30,7 +30,7 @@ diff -Nru CMakeLists.txt CMakeLists.txt
 +endif(MINGW)
 +
 +# ******************************************************************************
-+# cmake handles the dependencies itself
++# cmake handles the runtimeDependencies itself
 +add_subdirectory(gui)
 +add_subdirectory(libdjvu)
 +add_subdirectory(tools)

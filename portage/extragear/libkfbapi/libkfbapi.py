@@ -14,8 +14,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = '1.0'
 
     def setDependencies( self ):
-        self.dependencies['kde/kdepimlibs'] = 'default'
-        self.dependencies['kdesupport/qjson'] = 'default'
+        self.runtimeDependencies['kde/kdepimlibs'] = 'default'
+        self.runtimeDependencies['kdesupport/qjson'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "KDE library for accessing Facebook services"
 

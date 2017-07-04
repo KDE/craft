@@ -10,13 +10,13 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies['frameworks/kservice'] = 'default'
-        self.dependencies['frameworks/kio'] = 'default'
-        self.dependencies['win32libs/boost-headers'] = 'default'
+        self.runtimeDependencies['frameworks/kservice'] = 'default'
+        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.runtimeDependencies['win32libs/boost-headers'] = 'default'
 
         # those are only needed for building the activity manager daemon
-#        self.dependencies['win32libs/boost-range'] = 'default'
-#        self.dependencies['win32libs/boost-containers'] = 'default'
+#        self.runtimeDependencies['win32libs/boost-range'] = 'default'
+#        self.runtimeDependencies['win32libs/boost-containers'] = 'default'
 
 from Package.CMakePackageBase import *
 

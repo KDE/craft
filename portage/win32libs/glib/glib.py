@@ -19,10 +19,10 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
-        self.dependencies["win32libs/libffi"] = "default"
-        self.dependencies["win32libs/pcre"] = "default"
-        self.dependencies["win32libs/zlib"] = "default"
-        self.dependencies["win32libs/gettext"] = "default"
+        self.runtimeDependencies["win32libs/libffi"] = "default"
+        self.runtimeDependencies["win32libs/pcre"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/gettext"] = "default"
         if compiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 

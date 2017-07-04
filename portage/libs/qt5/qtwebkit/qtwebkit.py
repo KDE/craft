@@ -27,13 +27,13 @@ class subinfo(info.infoclass):
             self.patchToApply[ ver ] = self.patchToApply[ branch ]
 
     def setDependencies( self ):
-        self.dependencies['win32libs/sqlite'] = 'default'
-        self.dependencies['win32libs/icu'] = 'default'
-        self.dependencies['libs/qtbase'] = 'default'
-        self.dependencies['libs/qtscript'] = 'default'
-        self.dependencies['libs/qtdeclarative'] = 'default'
-        self.dependencies['libs/qtmultimedia'] = 'default'
-        self.dependencies['libs/qtwebchannel'] = 'default'
+        self.runtimeDependencies['win32libs/sqlite'] = 'default'
+        self.runtimeDependencies['win32libs/icu'] = 'default'
+        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies['libs/qtscript'] = 'default'
+        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
+        self.runtimeDependencies['libs/qtwebchannel'] = 'default'
         self.buildDependencies['dev-util/ruby'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.buildDependencies['gnuwin32/gperf'] = 'default'

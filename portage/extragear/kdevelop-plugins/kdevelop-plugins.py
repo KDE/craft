@@ -7,11 +7,11 @@ class subinfo(info.infoclass):
         self.shortDescription = 'kdevelop languages and other plugins'
 
     def setDependencies( self ):
-        self.dependencies['extragear/kdev-python'] = 'default'
-        self.dependencies['extragear/kdev-ruby'] = 'default'
-        self.dependencies['extragear/kdev-php'] = 'default'
-        self.dependencies['extragear/kdev-qmljs'] = 'default'
-#        self.dependencies['extragear/kdev-clang'] = 'default'
+        self.runtimeDependencies['extragear/kdev-python'] = 'default'
+        self.runtimeDependencies['extragear/kdev-ruby'] = 'default'
+        self.runtimeDependencies['extragear/kdev-php'] = 'default'
+        self.runtimeDependencies['extragear/kdev-qmljs'] = 'default'
+#        self.runtimeDependencies['extragear/kdev-clang'] = 'default'
 
 
 from Package.VirtualPackageBase import *

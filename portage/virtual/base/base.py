@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         if craftSettings.getboolean("Compile","UseCCache", False):
             self.buildDependencies['dev-util/ccache'] = 'default'
 
-        self.dependencies['libs/runtime'] = 'default'
+        self.runtimeDependencies['libs/runtime'] = 'default'
 
 
 class Package( VirtualPackageBase ):

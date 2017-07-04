@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.shortDescription = 'a small application for image scanning'
 
     def setDependencies( self ):
-        self.dependencies['kde/kde-runtime'] = 'default'
-        self.dependencies['kde/libksane'] = 'default'
+        self.runtimeDependencies['kde/kde-runtime'] = 'default'
+        self.runtimeDependencies['kde/libksane'] = 'default'
 
 class Package(CMakePackageBase):
     def __init__( self):

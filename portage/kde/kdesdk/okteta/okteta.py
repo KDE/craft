@@ -10,22 +10,22 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.dependencies["libs/qtbase"] = "default"
-        self.dependencies["frameworks/kbookmarks"] = "default"
-        self.dependencies["frameworks/kcodecs"] = "default"
-        self.dependencies["frameworks/kcompletion"] = "default"
-        self.dependencies["frameworks/kconfigwidgets"] = "default"
-        self.dependencies["frameworks/kdbusaddons"] = "default"
-        self.dependencies["frameworks/kdoctools"] = "default"
-        self.dependencies["frameworks/ki18n"] = "default"
-        self.dependencies["frameworks/kcmutils"] = "default"
-        self.dependencies["frameworks/kio"] = "default"
-        self.dependencies["frameworks/knewstuff"] = "default"
-        self.dependencies["frameworks/kparts"] = "default"
-        self.dependencies["frameworks/kservice"] = "default"
-        self.dependencies["frameworks/kwidgetsaddons"] = "default"
-        self.dependencies["frameworks/kxmlgui"] = "default"
-        #self.dependencies["kdesupport/qca"] = 'default'
+        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/kbookmarks"] = "default"
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/kio"] = "default"
+        self.runtimeDependencies["frameworks/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/kparts"] = "default"
+        self.runtimeDependencies["frameworks/kservice"] = "default"
+        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        #self.runtimeDependencies["kdesupport/qca"] = 'default'
 
 from Package.CMakePackageBase import *
 

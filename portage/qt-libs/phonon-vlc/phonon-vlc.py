@@ -8,10 +8,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
-        self.dependencies['qt-libs/phonon'] = 'default'
-        self.dependencies['binary/vlc'] = 'default'
+        self.runtimeDependencies['qt-libs/phonon'] = 'default'
+        self.runtimeDependencies['binary/vlc'] = 'default'
         if compiler.isMSVC() or compiler.isIntel():
-            self.dependencies['kdesupport/kdewin'] = 'default'
+            self.runtimeDependencies['kdesupport/kdewin'] = 'default'
 
     def setTargets( self ):
       for ver in ['0.9.0']:
