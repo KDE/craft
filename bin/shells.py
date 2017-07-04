@@ -26,8 +26,8 @@ class MSysShell(object):
         mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
         if compiler.isMSVC():
             ldflags = ""
-            cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX"  # dynamic and exceptions enabled
-            if compiler.isMSVC2013() or compiler.isMSVC2015():
+            cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
+            if compiler.msvcPlatformToolset() > 120:
                 cflags += " -FS"
         else:
             ldflags = "-L%s/lib " % mergeroot
@@ -44,11 +44,13 @@ class MSysShell(object):
 
         if "make" in self.environment:
             del self.environment[ "make" ]
+        arch = "32"
+        if compiler.isX64():
+            arch = "64"
         if compiler.isMinGW():
-            arch = "32"
-            if compiler.isX64():
-                arch = "64"
-            self.environment[ "MSYSTEM" ] = "MINGW%s_EMERGE" % arch
+            self.environment[ "MSYSTEM" ] = f"MINGW{arch}_CRAFT"
+        elif compiler.isMSVC():
+            self.environment["MSYSTEM"] = f"CYGWIN{arch}_CRAFT"
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
         self.environment[ "LDFLAGS" ] = ldflags
@@ -58,8 +60,8 @@ class MSysShell(object):
                 cl = "clang-cl"
             else:
                 cl = "cl"
-            self.environment[ "LIB" ] = "%s;%s\\lib" % ( os.getenv("LIB"), CraftStandardDirs.craftRoot())
-            self.environment[ "INCLUDE" ] = "%s;%s\\include" % ( os.getenv("INCLUDE"), CraftStandardDirs.craftRoot())
+            self.environment[ "LIB" ] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
+            self.environment[ "INCLUDE" ] = f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot()}\\include"
             self.environment[ "LD" ] = "link -NOLOGO"
             self.environment[ "CC" ] = "%s -nologo" % cl
             self.environment[ "CXX" ] = self.environment[ "CC" ]
