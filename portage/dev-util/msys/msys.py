@@ -38,7 +38,7 @@ class MsysPackage(BinaryPackageBase):
         else:
            utils.copyDir(os.path.join( self.sourceDir(), "msys32"), os.path.join( self.installDir(), "msys"))
         return True
-    
+
     def qmerge(self):
         if not self.subinfo.msysInstallShim(self.installDir()):
             return False
@@ -74,6 +74,8 @@ class VirtualPackage(VirtualPackageBase):
         VirtualPackageBase.__init__(self)
 
     def install( self ):
+        if not VirtualPackageBase.install(self):
+            return False
         return self.subinfo.msysInstallShim(self.installDir())
 
 class Package(MaybeVirtualPackageBase):

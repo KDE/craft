@@ -62,7 +62,7 @@ class GitVirtualPackage(VirtualPackageBase):
 
     def install( self ):
         self.subinfo.gitPostInstall()
-        return True
+        return VirtualPackageBase.install(self)
 
 
 class Package(VirtualIfSufficientVersion):
