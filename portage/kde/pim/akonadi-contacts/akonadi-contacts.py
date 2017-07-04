@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
+        self.runtimeDependencies['libs/qtwebengine'] = 'default'
         self.runtimeDependencies['kde/akonadi'] = 'default'
         self.runtimeDependencies['frameworks/kio'] = 'default'
         self.runtimeDependencies['frameworks/ki18n'] = 'default'
