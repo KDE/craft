@@ -32,6 +32,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kcalutils"] = "default"
         self.runtimeDependencies["kde/kcalcore"] = "default"
         self.runtimeDependencies["kde/kmbox"] = "default"
+        self.runtimeDependencies["kde/pimcommon"] = "default"
         
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
         self.runtimeDependencies["kde/libkgapi"] = "default"
