@@ -2,7 +2,7 @@
 import os
 
 import info
-from Package.CMakePackageBase import *
+from Package.Qt5CorePackageBase import *
 
 from CraftOS.osutils import OsUtils
 
@@ -11,10 +11,9 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         self.svnTargets["master"] = "https://github.com/KDAB/KDSoap.git"
         for ver in ["1.6.0"]:
-            self.targets[ver] = f"https://github.com/KDAB/KDSoap/archive/kdsoap-{ver}.tar.gz"
-            self.targetInstSrc[ver] = f"KDSoap-kdsoap-{ver}"
-            self.archiveNames[ver] = f"kdsoap-{ver}.tar.gz"
-        self.targetDigests["1.6.0"] = (["3bedfdb5355096be434ed7cd7ce2529df823edbc75b6ca1ba4a48f0d647fd67e"], CraftHash.HashAlgorithm.SHA256)
+            self.targets[ver] = f"https://github.com/KDAB/KDSoap/releases/download/kdsoap-{ver}/kdsoap-{ver}.tar.gz"
+            self.targetInstSrc[ver] = f"kdsoap-{ver}"
+        self.targetDigests['1.6.0'] = (['d6b6b01348d2e1453f7e12724d1848ee41c86a1b19168ca67ac98fedb0408668'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.6.0"
         self.shortDescription = "A Qt-based client-side and server-side SOAP component"
@@ -23,9 +22,32 @@ class subinfo(info.infoclass):
 
 
     def setDependencies( self ):
+        self.buildDependencies["dev-util/python2"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
 
-
-class Package( CMakePackageBase ):
+class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
+        Qt5CorePackageBase.__init__(self)
+
+    def configure(self):
+        self.enterBuildDir()
+        buildType = "release"
+        if self.buildType() == "Debug":
+            buildType = "debug"
+        prefix = CraftStandardDirs.craftRoot().replace("\\", "/")
+        if not (os.path.isfile(os.path.join(self.sourceDir(), "configure.bat")) or os.path.isfile(os.path.join(self.sourceDir(), "configure.sh"))):
+            return self.system(f"python2 {self.sourceDir()}/autogen.py -prefix {prefix} -shared -{buildType}")
+        else:
+            with open(os.path.join(self.buildDir(), ".license.accepted"), "wt+") as touch:#build lgpl
+                touch.write("can't touch this")
+            return self.system(f"{self.sourceDir()}/configure -prefix {prefix} -shared -{buildType}")
+
+
+    def install(self):
+        if not Qt5CorePackageBase.install(self):
+            return False
+        for f in os.listdir(os.path.join(self.installDir(), "lib")):
+            if f.endswith(".dll"):
+                utils.copyFile(os.path.join(self.installDir(), "lib", f),
+                               os.path.join(self.installDir(), "bin", f))
+        return True
