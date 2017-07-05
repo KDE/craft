@@ -10,12 +10,13 @@ class subinfo(info.infoclass):
         self.targets[ "6.0.0" ] = "ftp://ftp.gmplib.org/pub/gmp-6.0.0/gmp-6.0.0.tar.bz2"
         self.targetDigests['6.0.0'] = 'c4976716a277b1d3b595171143f52f8c1a788284'
         self.targetInstSrc[ "6.0.0" ] = "gmp-6.0.0"
-        self.defaultTarget =  "6.0.0" 
+        self.defaultTarget =  "6.0.0"
 
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/msys'] = 'default'
+        if compiler.isMinGW():
+            self.buildDependencies['dev-util/msys'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *
@@ -27,7 +28,7 @@ class PackageMinGW(AutoToolsPackageBase):
         self.subinfo.options.package.withCompiler = False
         self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx "
         self.subinfo.options.useShadowBuild = False
-        
+
 
 if compiler.isMinGW():
     class Package(PackageMinGW):
@@ -39,4 +40,3 @@ else:
             VirtualPackageBase.__init__( self )
 
 
-    
