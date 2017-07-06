@@ -30,7 +30,7 @@ class Package( CMakePackageBase ):
         self.defines[ "productname" ] = "AtCoreTest"
         self.defines[ "executable" ] = "bin\\AtCoreTest.exe"
         self.defines[ "setupname" ] = "AtCore-x64.exe"
-        self.defines[ "icon" ] = os.path.join(self.packageDir(), "atelier.ico")
+        self.defines[ "icon" ] = os.path.join(self.packageDir(), "atcore.ico")
 
 
         return TypePackager.createPackage(self)
