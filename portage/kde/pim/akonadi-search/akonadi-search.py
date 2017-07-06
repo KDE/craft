@@ -15,7 +15,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
         self.runtimeDependencies['frameworks/kcrash'] = 'default'
         self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies['frameworks/krunner'] = 'default'
         self.runtimeDependencies['kde/akonadi-mime'] = 'default'
         self.runtimeDependencies['kde/kmime'] = 'default'
         self.runtimeDependencies['kde/kcalcore'] = 'default'

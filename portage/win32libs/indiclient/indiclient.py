@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['virtual/base']  = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['win32libs/libnova'] = 'default'
+        self.buildDependencies['gnuwin32/grep'] = '2.5.4'
 
 from Package.CMakePackageBase import *
 
