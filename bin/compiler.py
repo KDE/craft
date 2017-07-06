@@ -125,14 +125,22 @@ def getGCCLikeVersion(compilerExecutable):
 
 def getVersion():
     if isGCCLike():
-        return f"{getCompilerName()} {getGCCLikeVersion(getCompilerExecutableName())}"
+        return getGCCLikeVersion(getCompilerExecutableName())
+    elif isMSVC():
+        return "20{0}".format(_compiler()[len(_compiler())-2:])
+    else:
+        return None
+
+def getVersionWithName():
+    if isGCCLike():
+        return f"{getCompilerName()} {getVersion()}"
     elif isIntel():
         return os.getenv("PRODUCT_NAME_FULL")
     elif isMSVC():
-        return "Microsoft Visual Studio 20%s" %  _compiler()[len(_compiler())-2:]
+        return f"Microsoft Visual Studio {getVersion()}"
     else:
         return None
-    
+
 def getShortName():
     if not isMSVC():
         return getCompilerName()
@@ -169,7 +177,7 @@ def msvcPlatformToolset():
 if __name__ == '__main__':
     print("Testing Compiler.py")
     print("Configured compiler (KDECOMPILER): %s" % _compiler())
-    print("Version: %s" % getVersion())
+    print("Version: %s" % getVersionWithName())
     print("Compiler Name: %s" % getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[isNative()])
     if isGCCLike():
