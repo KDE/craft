@@ -104,10 +104,10 @@ class UtilsCache(object):
 
         appLocation = shutil.which(app)
         if appLocation:
-            craftDebug.log.debug("Adding %s to app cache" % appLocation)
+            craftDebug.log.debug(f"Adding %s to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
-            craftDebug.log.debug("Craft was unable to locate: %s" % app)
+            craftDebug.log.debug("Craft was unable to locate: {app}")
             return None
         return appLocation
 
@@ -955,10 +955,13 @@ class ScopedEnv(object):
         self.key = key
         putenv(key, value)
 
+    def reset(self):
+        putenv(self.key, self.old)
+
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, trback):
-        putenv(self.key, self.old)
+        self.reset()
 
 

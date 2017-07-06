@@ -26,7 +26,8 @@ class subinfo(info.infoclass):
                     ("qtbase-5.8.patch", 1),  # https://codereview.qt-project.org/#/c/149550/
                     ("qdbus-manager-quit-5.9.patch", 1),  # https://phabricator.kde.org/D2545#69186
                     ("hack-fix-syncqt.patch", 1),
-                    ("0001-Fix-private-headers.patch", 1)]#https://bugreports.qt.io/browse/QTBUG-37417
+                    ("0001-Fix-private-headers.patch", 1)#https://bugreports.qt.io/browse/QTBUG-37417
+                ]
                 if qtVer < CraftVersion("5.10"):
                     self.patchToApply[ver] += [("0001-Add-APPDIR-data-APPNAME-to-the-non-Generic-paths-on-.patch", 1)] # https://codereview.qt-project.org/#/c/197855/
             elif qtVer >= CraftVersion("5.8"):
@@ -74,6 +75,9 @@ class QtPackage(Qt5CorePackageBase):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__(self)
 
+    def compile(self):
+        with ScopedQtBaseEnv(self):
+            return Qt5CorePackageBase.compile(self)
 
     def configure( self, unused1=None, unused2=""):
         if compiler.isMinGW() and "DXSDK_DIR" not in os.environ:
@@ -81,7 +85,6 @@ class QtPackage(Qt5CorePackageBase):
             craftDebug.log.critical("Please visite https://community.kde.org/Guidelines_and_HOWTOs/Build_from_source/Windows#Direct_X_SDK for instructions")
             return False
         self.enterBuildDir()
-        self.setPathes()
         if OsUtils.isWin():
             configure = os.path.join( self.sourceDir() ,"configure.bat" ).replace( "/", "\\" )
             if not os.path.exists(os.path.join(self.sourceDir(), ".gitignore")):  # force bootstrap of configure.exe
@@ -142,43 +145,24 @@ class QtPackage(Qt5CorePackageBase):
 
         return utils.system( command )
 
-    def make(self, unused=''):
-        self.setPathes()
-        return Qt5CorePackageBase.make(self)
-
-
     def install( self ):
-        self.setPathes()
-        if not Qt5CorePackageBase.install(self):
-            return False
-        utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
+        with ScopedQtBaseEnv(self):
+            if not Qt5CorePackageBase.install(self):
+                return False
+            utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
 
-        # install msvc debug files if available
-        if compiler.isMSVC():
-            srcdir = os.path.join( self.buildDir(), "lib" )
-            destdir = os.path.join( self.installDir(), "lib" )
+            # install msvc debug files if available
+            if compiler.isMSVC():
+                srcdir = os.path.join( self.buildDir(), "lib" )
+                destdir = os.path.join( self.installDir(), "lib" )
 
-            filelist = os.listdir( srcdir )
+                filelist = os.listdir( srcdir )
 
-            for file in filelist:
-                if file.endswith( ".pdb" ):
-                    utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
+                for file in filelist:
+                    if file.endswith( ".pdb" ):
+                        utils.copyFile( os.path.join( srcdir, file ), os.path.join( destdir, file ) )
 
-        return True
-
-
-
-    def setPathes( self ):
-        # for building qt with qmake
-        utils.prependPath(os.path.join(self.buildDir(),"bin"))
-        if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
-            # so that the mkspecs can be found, when -prefix is set
-            utils.putenv( "QMAKEPATH", self.sourceDir() )
-        if CraftVersion(self.subinfo.buildTarget) <  CraftVersion("5.8"):
-            utils.putenv( "QMAKESPEC", os.path.join(self.sourceDir(), 'mkspecs', self.platform ))
-        else:
-            utils.putenv("QMAKESPEC", None)
-
+            return True
 
     def qmerge( self ):
         if not Qt5CorePackageBase.qmerge(self):
@@ -201,3 +185,22 @@ class Package( Qt5CoreSdkPackageBase ):
     def __init__(self):
         Qt5CoreSdkPackageBase.__init__(self, classA=QtPackage)
 
+
+class ScopedQtBaseEnv(object):
+    def __init__(self, package):
+        self.envs = []
+        self.envs.append(utils.ScopedEnv("Path", os.path.join(package.buildDir(), "bin") + ";" + os.environ["Path"]))
+        if CraftVersion(package.subinfo.buildTarget) < CraftVersion("5.9"):
+            # so that the mkspecs can be found, when -prefix is set
+            self.envs.append(utils.ScopedEnv("QMAKEPATH", package.sourceDir()))
+        if CraftVersion(package.subinfo.buildTarget) < CraftVersion("5.8"):
+            self.envs.append(utils.ScopedEnv("QMAKESPEC", os.path.join(package.sourceDir(), 'mkspecs', package.platform)))
+        else:
+            self.envs.append(utils.ScopedEnv("QMAKESPEC", None))
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for env in self.envs:
+            env.reset()
