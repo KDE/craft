@@ -25,8 +25,9 @@ class subinfo(info.infoclass):
                     ("fix-angle-mingw.patch", 1),
                     ("qtbase-5.8.patch", 1),  # https://codereview.qt-project.org/#/c/149550/
                     ("qdbus-manager-quit-5.9.patch", 1),  # https://phabricator.kde.org/D2545#69186
-                    ("hack-fix-syncqt.patch", 1)]
-                if qtVer < CraftVersion("5.9.1"):
+                    ("hack-fix-syncqt.patch", 1),
+                    ("0001-Fix-private-headers.patch", 1)]#https://bugreports.qt.io/browse/QTBUG-37417
+                if qtVer < CraftVersion("5.10"):
                     self.patchToApply[ver] += [("0001-Add-APPDIR-data-APPNAME-to-the-non-Generic-paths-on-.patch", 1)] # https://codereview.qt-project.org/#/c/197855/
             elif qtVer >= CraftVersion("5.8"):
                 self.patchToApply[ver] = [
