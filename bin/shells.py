@@ -30,8 +30,8 @@ class MSysShell(object):
             if compiler.msvcPlatformToolset() > 120:
                 cflags += " -FS"
         else:
-            ldflags = "-L%s/lib " % mergeroot
-            cflags = "-I%s/include " % mergeroot
+            ldflags = f"-L{mergeroot}/lib "
+            cflags = f"-I{mergeroot}/include "
 
             if self.buildType == "RelWithDebInfo":
                 cflags += " -O2 -g "
