@@ -948,3 +948,17 @@ def printProgress(percent):
     times = int(width / 100 * percent)
     sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress = "#" * times, space = " " * (width- times), percent=percent))
     sys.stdout.flush()
+
+class ScopedEnv(object):
+    def __init__(self, key, value):
+        self.old = os.environ.get(key, None)
+        self.key = key
+        putenv(key, value)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        putenv(self.key, self.old)
+
+
