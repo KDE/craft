@@ -30,7 +30,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/threadweaver'] = 'default'
         self.runtimeDependencies['frameworks/kwallet'] = 'default'
         self.runtimeDependencies['frameworks/khtml'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
 
 from Package.CMakePackageBase import *
 
