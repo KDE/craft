@@ -950,13 +950,15 @@ def printProgress(percent):
     sys.stdout.flush()
 
 class ScopedEnv(object):
-    def __init__(self, key, value):
-        self.old = os.environ.get(key, None)
-        self.key = key
-        putenv(key, value)
+    def __init__(self, env):
+        self.oldEnv = {}
+        for key, value in env.items():
+            self.oldEnv[key] = os.environ.get(key, None)
+            putenv(key, value)
 
     def reset(self):
-        putenv(self.key, self.old)
+        for key, value in self.oldEnv.items():
+            putenv(key, value)
 
     def __enter__(self):
         return self
