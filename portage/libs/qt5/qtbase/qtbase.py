@@ -76,7 +76,7 @@ class QtPackage(Qt5CorePackageBase):
         Qt5CorePackageBase.__init__(self)
 
     def compile(self):
-        with ScopedQtBaseEnv(self):
+        with self.getQtBaseEnv():
             return Qt5CorePackageBase.compile(self)
 
     def configure( self, unused1=None, unused2=""):
@@ -146,7 +146,7 @@ class QtPackage(Qt5CorePackageBase):
         return utils.system( command )
 
     def install( self ):
-        with ScopedQtBaseEnv(self):
+        with self.getQtBaseEnv():
             if not Qt5CorePackageBase.install(self):
                 return False
             utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
@@ -181,26 +181,21 @@ class QtPackage(Qt5CorePackageBase):
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
         return super(Qt5CorePackageBase, self).makeProgramm
 
+
+    def getQtBaseEnv(self):
+        envs = {}
+        envs["Path"] = os.path.join(self.buildDir(), "bin") + ";" + os.environ["Path"]
+        if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
+            # so that the mkspecs can be found, when -prefix is set
+            envs["QMAKEPATH"] = self.sourceDir()
+        if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.8"):
+            envs["QMAKESPEC"] =  os.path.join(self.sourceDir(), 'mkspecs', self.platform)
+        else:
+            envs["QMAKESPEC"] = None
+        return utils.ScopedEnv(envs)
+
+
 class Package( Qt5CoreSdkPackageBase ):
     def __init__(self):
         Qt5CoreSdkPackageBase.__init__(self, classA=QtPackage)
 
-
-class ScopedQtBaseEnv(object):
-    def __init__(self, package):
-        self.envs = []
-        self.envs.append(utils.ScopedEnv("Path", os.path.join(package.buildDir(), "bin") + ";" + os.environ["Path"]))
-        if CraftVersion(package.subinfo.buildTarget) < CraftVersion("5.9"):
-            # so that the mkspecs can be found, when -prefix is set
-            self.envs.append(utils.ScopedEnv("QMAKEPATH", package.sourceDir()))
-        if CraftVersion(package.subinfo.buildTarget) < CraftVersion("5.8"):
-            self.envs.append(utils.ScopedEnv("QMAKESPEC", os.path.join(package.sourceDir(), 'mkspecs', package.platform)))
-        else:
-            self.envs.append(utils.ScopedEnv("QMAKESPEC", None))
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        for env in self.envs:
-            env.reset()
