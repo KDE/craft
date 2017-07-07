@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
+        self.runtimeDependencies['win32libs/xapian-core'] = 'default'
         self.runtimeDependencies['kde/akonadi'] = 'default'
         self.runtimeDependencies['frameworks/ki18n'] = 'default'
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
