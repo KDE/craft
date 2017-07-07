@@ -25,7 +25,8 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = " -DGAMMARAY_MULTI_BUILD=OFF"
+        if not craftSettings.getboolean("QtSDK", "Enabled", False):
+            self.subinfo.options.configure.defines = " -DGAMMARAY_MULTI_BUILD=OFF"
 
 
     def createPackage(self):
