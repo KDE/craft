@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['libs/qtquickcontrols2'] = 'default'
         self.runtimeDependencies['libs/qtsvg'] = 'default'
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'        
+        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
         self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
         self.runtimeDependencies['frameworks/knewstuff'] = 'default'
         self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
@@ -40,12 +40,12 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self):
         CMakePackageBase.__init__( self )
-        self.blacklists_file = [PackagerLists.runtimeBlacklist,os.path.join(os.path.dirname(__file__), 'blacklist.txt')]
+        self.blacklist_file = [PackagerLists.runtimeBlacklist,os.path.join(self.packageDir(), 'blacklist.txt')]
 
     def createPackage(self):
         self.defines[ "productname" ] = "KStars Desktop Planetarium"
         self.defines[ "executable" ] = "bin\\kstars.exe"
-        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kstars.ico")
+        self.defines[ "icon" ] = os.path.join(self.packageDir(), "kstars.ico")
 
         return TypePackager.createPackage(self)
 
