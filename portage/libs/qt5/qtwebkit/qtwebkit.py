@@ -10,8 +10,6 @@ class subinfo(info.infoclass):
             self.patchToApply[ ver ] = [("build-with-mysql.diff", 1),
                                          ("disable-icu-test.diff", 1)]
 
-        self.patchToApply["5.6"].append(("revert-version-to562.patch", 1))
-
         branchRegEx = re.compile("\d\.\d\.\d")
         for ver in self.versionInfo.tarballs():
             branch = branchRegEx.findall(ver)[0][:-2]
@@ -37,7 +35,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/ruby'] = 'default'
         self.buildDependencies['dev-util/winflexbison'] = 'default'
         self.buildDependencies['gnuwin32/gperf'] = 'default'
-        
+
 
 from Package.Qt5CorePackageBase import *
 class QtPackage(Qt5CorePackageBase):
@@ -49,6 +47,15 @@ class QtPackage(Qt5CorePackageBase):
             self.subinfo.options.configure.defines += """ "QT_CONFIG+=no-pkg-config" """
         if compiler.isMinGW():
             self.subinfo.options.configure.defines += """ "QMAKE_CXXFLAGS += -g0 -O3" """
+
+    def configure( self, configureDefines="" ):
+        if not len(self.subinfo.buildTarget) == 3:#5.9
+            with open(os.path.join(self.sourceDir(), ".qmake.conf"), "rt+") as conf:
+                text = conf.read()
+            text = re.sub(re.compile(r"MODULE_VERSION = \d\.\d+\.\d+"), f"MODULE_VERSION = {self.subinfo.buildTarget}", text)
+            with open(os.path.join(self.sourceDir(), ".qmake.conf"), "wt+") as conf:
+                conf.write(text)
+        return Qt5CorePackageBase.configure(self)
 
 
 
