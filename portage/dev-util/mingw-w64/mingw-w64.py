@@ -7,13 +7,12 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        for ver, rev, rt in [("5.3.0", "0", "4"), ("5.4.0", "0", "5"),("6.2.0", "0", "5")]:
-            if compiler.isX64():
-                self.targets[ "%s-%s" % ( ver, rev ) ] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/x86_64-%s-release-posix-seh-rt_v%s-rev%s.7z" % ( ver, rt, rev )
-            else:
-                self.targets[ "%s-%s" % ( ver, rev )] = "http://downloads.sourceforge.net/sourceforge/mingw-w64/i686-%s-release-posix-sjlj-rt_v%s-rev%s.7z" % ( ver, rt, rev )
-            
-        self.defaultTarget = "5.4.0-0"
+        for ver, rev, rt in [("5.3.0", "0", "4"), ("5.4.0", "0", "5"), ("6.2.0", "0", "5"), ("7.1.0", "0", "5")]:
+            arch = "i686" if compiler.isX86() else "x86_64"
+            exceptionType = "sjlj" if compiler.isX86() else "seh"
+            self.targets[f"{ver}-{rev}"] = f"http://downloads.sourceforge.net/sourceforge/mingw-w64/{arch}-{ver}-release-posix-{exceptionType}-rt_v{rt}-rev{rev}.7z"
+
+        self.defaultTarget = "7.1.0-0"
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/bin-base'] = 'default'
