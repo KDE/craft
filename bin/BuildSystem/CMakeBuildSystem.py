@@ -202,11 +202,12 @@ class CMakeBuildSystem(BuildSystemBase):
         if compiler.isGCC():
             out  =  " -DCMAKE_CXX_COMPILER=clang++"
             out  += " -DCMAKE_C_COMPILER=clang"
+            return out
         elif compiler.isMSVC():
             out = " -DCMAKE_CXX_COMPILER=clang-cl"
             out += " -DCMAKE_C_COMPILER=clang-cl"
-        return out
-
+            return out
+        return ""
 
     def _fixCmakeImageDir(self, imagedir, rootdir ):
         """
