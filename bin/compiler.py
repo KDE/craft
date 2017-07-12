@@ -65,19 +65,19 @@ def isMSVC():
     return _compiler().startswith("msvc")
 
 def isMSVC2010():
-    return _compiler() == "msvc2010"
+    return _compiler().startswith("msvc2010")
 
 def isMSVC2012():
-    return _compiler() == "msvc2012"
+    return _compiler().startswith("msvc2012")
 
 def isMSVC2013():
-    return _compiler() == "msvc2013"
+    return _compiler().startswith("msvc2013")
 
 def isMSVC2015():
-    return _compiler() == "msvc2015"
+    return _compiler().startswith("msvc2015")
 
 def isMSVC2017():
-    return _compiler() == "msvc2017"
+    return _compiler().startswith("msvc2017")
 
 def isIntel():
     return _compiler() == "intel"
@@ -157,9 +157,10 @@ def internalVerison():
         "msvc2015": 14,
         "msvc2017": 15
     }
-    if _compiler() not in versions:
-        craftDebug.log.critical(f"Unknown MSVC Compiler {_compiler()}")
-    return versions[_compiler()]
+    c = _compiler().split("-", 1)[0]
+    if c not in versions:
+        craftDebug.log.critical(f"Unknown MSVC Compiler {c}")
+    return versions[c]
 
 
 def msvcPlatformToolset():
@@ -170,9 +171,10 @@ def msvcPlatformToolset():
         "msvc2015": 140,
         "msvc2017": 141
     }
-    if _compiler() not in versions:
-        craftDebug.log.critical(f"Unknown MSVC Compiler {_compiler()}")
-    return versions[_compiler()]
+    c = _compiler().split("-", 1)[0]
+    if c not in versions:
+        craftDebug.log.critical(f"Unknown MSVC Compiler {c}")
+    return versions[c]
 
 if __name__ == '__main__':
     print("Testing Compiler.py")

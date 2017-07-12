@@ -11,17 +11,15 @@ manifest\\.*
 # QSL data
 data\\.*
 
-# multiple docs
-bin\\data\\doc\\.*
-bin\\data\\designer\\.*
-share\\man\\.*
-share\\xml\\.*
-share\\locale\\.*
+# Lib
+lib\\.*
 
-# common app stuff
-share\\apps\\ark\\.*
-share\\apps\\kgpg\\.*
-share\\kf5\\kdoctools\\.*
+# Share
+share\\.*
+
+# multiple docs
+bin\\doc\\.*
+bin\\designer\\.*
 
 # Unused Qt modules
 qml\\QtMultimedia
@@ -53,6 +51,7 @@ mkspecs\\.*
 # unneeded stuff from bin\
 bin\\qt\.conf
 bin\\syncqt\.pl
+bin\\libmysql.*
 bin\\Qt5Designer.dll
 bin\\Qt5DesignerComponents.dll
 bin\\Qt5Script.dll

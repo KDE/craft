@@ -27,7 +27,6 @@ import atexit
 import json
 
 from CraftDebug import craftDebug
-import CraftHash
 import Notifier.NotificationLoader
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
@@ -457,43 +456,6 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     if not result:
         craftDebug.log.debug(f"Coammand {cmd} failed with exit code {proc.returncode}")
     return result
-
-def getFileListFromDirectory( imagedir ):
-    """ create a file list containing hashes """
-    ret = []
-
-    algorithm = CraftHash.HashAlgorithm.SHA256
-    for root, _, files in os.walk(imagedir):
-        for fileName in files:
-            filePath = os.path.join(root, fileName)
-            relativeFilePath = os.path.relpath(filePath, imagedir)
-            digest = algorithm.stringPrefix() + CraftHash.digestFile(os.path.join( root, fileName), algorithm)
-            ret.append((relativeFilePath, digest))
-    return ret
-
-
-def unmergeFileList(rootdir, fileList, forced=False):
-    """ delete files in the fileList if has matches or forced is True """
-    for filename, filehash in fileList:
-        fullPath = os.path.join(rootdir, os.path.normcase( filename))
-        if os.path.isfile(fullPath):
-            algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
-            if not algorithm:
-                currentHash = CraftHash.digestFile(fullPath, CraftHash.HashAlgorithm.MD5)
-            else:
-                currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
-            if currentHash == filehash or filehash == "":
-                OsUtils.rm(fullPath, True)
-            else:
-                if forced:
-                    craftDebug.log.warning("file %s has different hash: %s %s, deleting anyway" % \
-                            (fullPath, currentHash, filehash ))
-                    OsUtils.rm(fullPath, True)
-                else:
-                    craftDebug.log.warning("file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                            (fullPath, currentHash, filehash ))
-        elif not os.path.isdir(fullPath):
-            craftDebug.log.warning("file %s does not exist" % fullPath)
 
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = craftSettings.getboolean("General", "UseHardlinks", False )):
     copyDir( imagedir, rootdir , linkOnly)

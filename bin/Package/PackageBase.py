@@ -7,6 +7,8 @@ from CraftBase import *
 from InstallDB import *
 from compiler import *
 
+from CraftOS.osutils import OsUtils
+
 class PackageBase (CraftBase):
     """
      provides a generic interface for packages and implements the basic stuff for all
@@ -57,7 +59,7 @@ class PackageBase (CraftBase):
 
         revision = self.sourceRevision()
         package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
-        package.addFiles( utils.getFileListFromDirectory( self.mergeSourceDir() ) )
+        package.addFiles( self.getFileListFromDirectory( self.mergeSourceDir() ) )
         package.install()
 
 
@@ -75,7 +77,7 @@ class PackageBase (CraftBase):
         packageList = installdb.getInstalledPackages(self.category, self.package)
         for package in packageList:
             fileList = package.getFilesWithHashes()
-            utils.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+            self.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
             package.uninstall()
 
         installdb.getInstalledPackages(self.category, self.package)
@@ -197,6 +199,45 @@ class PackageBase (CraftBase):
                    and utils.unpackFile(downloadFolder, archiveName, self.imageDir()) \
                    and self.qmerge()
         return False
+
+    @staticmethod
+    def getFileListFromDirectory(imagedir):
+        """ create a file list containing hashes """
+        ret = []
+
+        algorithm = CraftHash.HashAlgorithm.SHA256
+        for root, _, files in os.walk(imagedir):
+            for fileName in files:
+                filePath = os.path.join(root, fileName)
+                relativeFilePath = os.path.relpath(filePath, imagedir)
+                digest = algorithm.stringPrefix() + CraftHash.digestFile(os.path.join(root, fileName), algorithm)
+                ret.append((relativeFilePath, digest))
+        return ret
+
+    @staticmethod
+    def unmergeFileList(rootdir, fileList, forced=False):
+        """ delete files in the fileList if has matches or forced is True """
+        for filename, filehash in fileList:
+            fullPath = os.path.join(rootdir, os.path.normcase(filename))
+            if os.path.isfile(fullPath):
+                algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
+                if not algorithm:
+                    currentHash = CraftHash.digestFile(fullPath, CraftHash.HashAlgorithm.MD5)
+                else:
+                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
+                if currentHash == filehash or filehash == "":
+                    OsUtils.rm(fullPath, True)
+                else:
+                    if forced:
+                        craftDebug.log.warning("file %s has different hash: %s %s, deleting anyway" % \
+                                               (fullPath, currentHash, filehash))
+                        OsUtils.rm(fullPath, True)
+                    else:
+                        craftDebug.log.warning(
+                            "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                            (fullPath, currentHash, filehash))
+            elif not os.path.isdir(fullPath):
+                craftDebug.log.warning("file %s does not exist" % fullPath)
 
     def runAction( self, command ):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
