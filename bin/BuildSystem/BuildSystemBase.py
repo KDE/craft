@@ -19,7 +19,7 @@ class BuildSystemBase(CraftBase):
         CraftBase.__init__(self)
         self.supportsNinja = False
         self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
-        self.supportsClang = craftSettings.getboolean("Compile","UseClang", False )
+        self.supportsClang = True
         self.buildSystemType = typeName
 
 
@@ -69,10 +69,10 @@ class BuildSystemBase(CraftBase):
         """return options for configure command line"""
         if self.subinfo.options.configure.defines != None:
             defines += " %s" % self.subinfo.options.configure.defines
-        
+
         if self.supportsCCACHE:
             defines += " %s" % self.ccacheOptions()
-        if self.supportsClang:
+        if compiler.isClang() and self.supportsClang:
             defines += " %s" % self.clangOptions()
         return defines
 
@@ -91,10 +91,10 @@ class BuildSystemBase(CraftBase):
 
     def configure(self):
         return True
-        
+
     def make(self):
         return True
-        
+
     def install(self):
 
         # create post (un)install scripts

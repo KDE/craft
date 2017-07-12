@@ -7,6 +7,8 @@ from CraftBase import *
 from InstallDB import *
 from compiler import *
 
+from CraftOS.osutils import OsUtils
+
 class PackageBase (CraftBase):
     """
      provides a generic interface for packages and implements the basic stuff for all
