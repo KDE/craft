@@ -4,10 +4,11 @@
 from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
-from Packager.SevenZipPackager import *
-from Packager.MSIFragmentPackager import *
 from Packager.InnoSetupPackager import *
+from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
+from Packager.PortablePackager import *
+from Packager.SevenZipPackager import *
 
 class TypePackager( PackagerBase ):
     """packager that is used in place of different other packagers

@@ -15,10 +15,6 @@ import shutil
 import glob
 from Packager.CollectionPackagerBase import *
 
-
-class NSIPackagerLists( PackagerLists ):
-    """ dummy name for PackagerLists """
-
 class NullsoftInstallerPackager( CollectionPackagerBase ):
     """
 Packager for Nullsoft scriptable install system
