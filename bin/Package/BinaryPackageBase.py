@@ -12,6 +12,6 @@ class BinaryPackageBase (PackageBase, MultiSource, BinaryBuildSystem, TypePackag
     def __init__(self):
         craftDebug.log.debug("BinaryPackageBase.__init__ called")
         PackageBase.__init__(self)
-        MultiSource.__init__(self)
         BinaryBuildSystem.__init__(self)
+        MultiSource.__init__(self)
         TypePackager.__init__(self)

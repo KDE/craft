@@ -57,7 +57,7 @@ class BuildSystemBase(CraftBase):
         # this class never defines self.source, that happens only
         # in MultiSource.
         if hasattr(self,'source'):
-            sourcedir = self.source.sourceDir()
+            sourcedir = self.source.sourceDir(self)
         else:
             sourcedir = self.sourceDir()
 
