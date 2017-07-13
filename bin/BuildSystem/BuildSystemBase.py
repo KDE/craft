@@ -9,6 +9,7 @@ import compiler
 
 from CraftOS.osutils import OsUtils
 
+import multiprocessing
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
@@ -79,6 +80,8 @@ class BuildSystemBase(CraftBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
+        if self.makeProgramm == "make":
+            defines += " -j%s" % multiprocessing.cpu_count()
         if craftDebug.verbose() > 0:
             if self.makeProgramm == "ninja":
                 defines += " -v "
