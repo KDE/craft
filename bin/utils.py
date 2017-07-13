@@ -458,9 +458,6 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         craftDebug.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return result
 
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = craftSettings.getboolean("General", "UseHardlinks", False )):
-    copyDir( imagedir, rootdir , linkOnly)
-
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
         src = os.path.join( srcdir, entry )
@@ -622,6 +619,11 @@ def toMSysPath( path ):
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
 
+def createSymlink(source, linkName):
+    craftDebug.log.debug(f"creating symlink: {linkName} -> {source}")
+    os.symlink(source, linkName)
+    return True
+
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
@@ -647,16 +649,20 @@ def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardli
     shutil.copy(src,dest)
     return True
 
-def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
+def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ), copiedFiles=None ):
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
+
+    # FIXME: Without the next line + the pop() afterwards, copiedFiles on the caller side will stay empty. WHY?
+    if copiedFiles:
+        copiedFiles.append(None) # dummy.
 
     if ( not srcdir.endswith( os.path.sep ) ):
         srcdir += os.path.sep
     if ( not destdir.endswith( os.path.sep ) ):
         destdir += os.path.sep
 
-    for root, _, files in os.walk( srcdir ):
+    for root, dirNames, files in os.walk( srcdir ):
         # do not copy files under .svn directories, because they are write-protected
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
@@ -664,7 +670,30 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
             if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly)
+                # symlinks to files are included in `files`
+                if copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly) and copiedFiles:
+                    copiedFiles.append(os.path.join( tmpdir, fileName ))
+
+            if OsUtils.isUnix():
+                for dirName in dirNames:
+                    # symlinks to directories are included in `dirNames` -- we only want to copy the symlinks
+                    srcPath = os.path.join(root, dirName)
+                    if os.path.islink(srcPath):
+                        linkTo = os.readlink(srcPath)
+                        if os.path.isabs(linkTo):
+                            craftDebug.log.warning(f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
+                            continue
+
+                        newLinkName = os.path.join(tmpdir, dirName)
+                        if os.path.exists(newLinkName):
+                            continue
+
+                        # re-create exact same symlink, but this time in the destdir
+                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles:
+                            copiedFiles.append(newLinkName)
+
+    if copiedFiles:
+        copiedFiles.pop(0)
 
     return True
 

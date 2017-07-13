@@ -38,7 +38,9 @@ class PackageBase (CraftBase):
             self.unmerge()
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
-        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
+
+        copiedFiles = [] # will be populated by the next call
+        utils.copyDir( self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles )
 
         # run post-install scripts
         if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
@@ -59,7 +61,7 @@ class PackageBase (CraftBase):
 
         revision = self.sourceRevision()
         package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
-        package.addFiles( self.getFileListFromDirectory( self.mergeSourceDir() ) )
+        package.addFiles(self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles))
         package.install()
 
 
@@ -201,17 +203,17 @@ class PackageBase (CraftBase):
         return False
 
     @staticmethod
-    def getFileListFromDirectory(imagedir):
+    def getFileListFromDirectory(imagedir, filePaths):
         """ create a file list containing hashes """
         ret = []
 
         algorithm = CraftHash.HashAlgorithm.SHA256
-        for root, _, files in os.walk(imagedir):
-            for fileName in files:
-                filePath = os.path.join(root, fileName)
+        for filePath in filePaths:
+            if OsUtils.isUnix() and os.path.islink(filePath):
                 relativeFilePath = os.path.relpath(filePath, imagedir)
-                digest = algorithm.stringPrefix() + CraftHash.digestFile(os.path.join(root, fileName), algorithm)
-                ret.append((relativeFilePath, digest))
+                ret.append((relativeFilePath, ""))
+            else:
+                digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
         return ret
 
     @staticmethod
