@@ -20,6 +20,7 @@ class MultiSource(SourceBase):
         SourceBase.__init__(self)
         craftDebug.trace("MultiSource __init__")
 
+        self.source = None
         if self.subinfo.hasSvnTarget():
             url = self.subinfo.svnTarget()
             sourceType = utils.getVCSType(url)
@@ -32,10 +33,9 @@ class MultiSource(SourceBase):
         elif self.subinfo.hasTarget():
             self.source = ArchiveSource
 
-        if self.source == None:
-            craftDebug.log.critical("none or unsupported source system set")
-        self.__class__.__bases__ += (self.source,)
-        self.source.__init__(self)
+        if self.source:
+            self.__class__.__bases__ += (self.source,)
+            self.source.__init__(self)
 
     # todo: find a more general way to publish all members
     def fetch(self):

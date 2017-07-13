@@ -17,18 +17,16 @@ class subinfo(info.infoclass):
 from Package.SourceOnlyPackageBase import *
 
 
-class Package(SourceOnlyPackageBase, GitSource):
+class Package(SourceOnlyPackageBase):
     def __init__(self):
         SourceOnlyPackageBase.__init__(self)
-        GitSource.__init__(self, subinfo=self.subinfo)
-        setattr(self.source, "checkoutDir", lambda: os.path.join(CraftStandardDirs.craftBin(), ".."))
         self.subinfo.options.package.disableBinaryCache = True
 
     def unpack(self):
         return True
 
     def fetch(self):
-        return GitSource.fetch(self)
+        return MultiSource.fetch(self)
 
     def install(self):
         return True
@@ -39,3 +37,6 @@ class Package(SourceOnlyPackageBase, GitSource):
 
     def createPackage(self):
         return True
+
+    def checkoutDir(self, index=0):
+        return os.path.join(CraftStandardDirs.craftBin(), "..")
