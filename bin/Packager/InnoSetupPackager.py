@@ -7,8 +7,10 @@ from Packager.PackagerBase import *
 
 class InnoSetupPackager (PackagerBase):
     """Packager for Inno Setup installations"""
-    def __init__( self, initialized = False ):
-        if not initialized: PackagerBase.__init__( self )
+
+    @InitGuard.init_once
+    def __init__( self ):
+        PackagerBase.__init__( self )
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe:
             craftDebug.log.debug("using inno setup packager from %s" % self.packagerExe)

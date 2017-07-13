@@ -28,8 +28,9 @@ class MSIFragmentPackager( PackagerBase ):
     __beginString = re.compile( r"(^[^A-Za-z_])" )
     __invalidChars = re.compile( r"[^A-Za-z0-9_.]" )
 
-    def __init__( self, initialized = False ):
-        if not initialized: PackagerBase.__init__( self )
+    @InitGuard.init_once
+    def __init__( self):
+        PackagerBase.__init__( self )
         craftDebug.log.debug("MSIFragmentPackager __init__")
         self.outDestination = self.packageDestinationDir()
         self.objectFiles = []

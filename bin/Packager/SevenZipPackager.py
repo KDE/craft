@@ -19,8 +19,9 @@ import json
 
 class SevenZipPackager (PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
-    def __init__( self, initialized = False ):
-        if not initialized: PackagerBase.__init__( self )
+    @InitGuard.init_once
+    def __init__( self ):
+        PackagerBase.__init__( self )
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)

@@ -1,10 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import inspect
 import os
 import sys
 import datetime
 from ctypes import *
+
+import functools
 
 from CraftDebug import craftDebug
 import utils
@@ -22,11 +25,33 @@ import utils
 # question: How to detect reliable this case ?
 
 
+class InitGuard(object):
+    _initialized = {}
 
+    @staticmethod
+    def _dummy_init(key, *args, **kwargs):
+        #print("dummy_init", key)
+        args[0].__dict__ = InitGuard._initialized[key].__dict__
+
+    @staticmethod
+    def init_once(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            if fun.__name__ != "__init__":
+                raise Exception("InitGuard can only handle __init__ calls")
+            key = (args[0].__class__, fun.__code__)
+            if key not in InitGuard._initialized:
+                #print("init", key)
+                InitGuard._initialized[key] = args[0]
+                return fun(*args, **kwargs)
+            else:
+                return InitGuard._dummy_init(key, *args, **kwargs)
+        return inner
 
 class CraftBase(object):
     """base class for craft system - holds attributes and methods required by base classes"""
 
+    @InitGuard.init_once
     def __init__( self):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
