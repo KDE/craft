@@ -29,13 +29,18 @@ class QMakeBuildSystem(BuildSystemBase):
             else:
                 craftDebug.log.critical("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
         elif OsUtils.isUnix():
-            if not OsUtils.isFreeBSD():
-                if compiler.isClang():
-                    self.platform = "linux-clang"
-                else:
-                    self.platform = "linux-g++"
+            if OsUtils.isMac():
+                osPart = "macx"
+            elif OsUtils.isFreeBSD():
+                osPart = "freebsd"
             else:
-                self.platform = "freebsd-clang"
+                osPart = "linux"
+
+            if compiler.isClang():
+                compilerPart = "clang"
+            else:
+                compilerPart = "g++"
+            self.platform = osPart + "-" + compilerPart
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
