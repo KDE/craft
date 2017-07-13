@@ -56,7 +56,7 @@ class Package( CMakePackageBase ):
                 self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "x64" )
             else:
                 self.r_dir = os.path.join( self.mergeDestinationDir(), "lib", "R", "bin", "i386" )
-            self.subinfo.options.configure.defines = " -DR_EXECUTABLE=" + os.path.join (self.r_dir, "R.exe").replace( "\\\\", "/" )
+            self.subinfo.options.configure.args = " -DR_EXECUTABLE=" + os.path.join (self.r_dir, "R.exe").replace( "\\\\", "/" )
             if compiler.isMSVC():
                 self.realconfigure = self.configure
                 self.configure = self.msvcconfigure

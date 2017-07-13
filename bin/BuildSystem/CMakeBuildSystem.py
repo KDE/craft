@@ -110,8 +110,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
-        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticDefine:
-            options += " " + self.subinfo.options.configure.staticDefine + " "
+        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
+            options += " " + self.subinfo.options.configure.staticArgs + " "
         if self.subinfo.options.configure.onlyBuildTargets :
             options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets )
         if self.subinfo.options.cmake.useCTest:

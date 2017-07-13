@@ -23,7 +23,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DKACTIVITIES_LIBRARY_ONLY=YES"
+        self.subinfo.options.configure.args = "-DKACTIVITIES_LIBRARY_ONLY=YES"
 
 
     

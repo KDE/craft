@@ -106,9 +106,10 @@ class OptionsUnpack(OptionsBase):
 ## options for the configure action
 class OptionsConfigure(OptionsBase):
     def __init__(self):
-        ## with this option additional definitions could be added to the configure commmand line
-        self.defines = None
-        self.staticDefine = None
+        ## with this option additional arguments could be added to the configure commmand line
+        self.args = None
+        ## with this option additional arguments could be added to the configure commmand line (for static builds)
+        self.staticArgs = None
         ## set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of

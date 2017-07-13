@@ -40,4 +40,4 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         if OsUtils.isWin() or OsUtils.isMac():
-            self.subinfo.options.configure.defines = " -DKIO_FORK_SLAVES=ON "
+            self.subinfo.options.configure.args = " -DKIO_FORK_SLAVES=ON "

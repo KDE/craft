@@ -25,6 +25,6 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_TESTS=ON -DBUILD_UTILS=OFF"
+        self.subinfo.options.configure.args = "-DBUILD_TESTS=ON -DBUILD_UTILS=OFF"
 
 

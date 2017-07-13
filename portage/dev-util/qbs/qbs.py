@@ -21,6 +21,6 @@ class Package( Qt5CorePackageBase ):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
         self.subinfo.options.configure.projectFile = "qbs.pro"
-        self.subinfo.options.configure.defines = " \"QBS_INSTALL_PREFIX = %s\" " % CraftStandardDirs.craftRoot().replace("\\", "/")
+        self.subinfo.options.configure.args = " \"QBS_INSTALL_PREFIX = %s\" " % CraftStandardDirs.craftRoot().replace("\\", "/")
 
 

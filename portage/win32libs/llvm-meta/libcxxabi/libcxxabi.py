@@ -18,7 +18,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = '-DLIBCXXABI_ENABLE_SHARED=OFF '
+        self.subinfo.options.configure.args = '-DLIBCXXABI_ENABLE_SHARED=OFF '
 
 
     def configureOptions(self, defines=""):

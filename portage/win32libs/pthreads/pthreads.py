@@ -25,7 +25,7 @@ from Package.VirtualPackageBase import *
 class PthreadsPackage(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " -DBUILD_TESTS=OFF"
+        self.subinfo.options.configure.args = " -DBUILD_TESTS=OFF"
 
 
 if compiler.isMSVC() or compiler.isIntel():

@@ -30,11 +30,11 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
           # required for package generating because we build from svnHEAD by default
 #        self.subinfo.options.package.version = '0.5.4'
-        self.subinfo.options.configure.defines = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON -DBUILD_PNG2ICO=OFF '
-        self.subinfo.options.configure.defines += ' -DBUILD_TOOLS=ON '
+        self.subinfo.options.configure.args = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON -DBUILD_PNG2ICO=OFF '
+        self.subinfo.options.configure.args += ' -DBUILD_TOOLS=ON '
         if compiler.isMinGW_W32():
-          self.subinfo.options.configure.defines += ' -DMINGW_W32=ON '
+          self.subinfo.options.configure.args += ' -DMINGW_W32=ON '
         if compiler.isMinGW():
-            self.subinfo.options.configure.defines += ' -DKDEWIN_DEFINITIONS="-DKDEWIN_NO_LOCALTIME_R -DKDEWIN_NO_GMTIME_R" '
+            self.subinfo.options.configure.args += ' -DKDEWIN_DEFINITIONS="-DKDEWIN_NO_LOCALTIME_R -DKDEWIN_NO_GMTIME_R" '
 
 

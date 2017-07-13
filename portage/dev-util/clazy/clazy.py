@@ -21,7 +21,7 @@ class Package( CMakePackageBase ):
         self.supportsClang = False
         if compiler.isMSVC():
             clangLib =  os.path.join(portage.getPackageInstance('win32libs', 'llvm').buildDir(), "lib", "clang.lib")
-            self.subinfo.options.configure.defines = f"-DCLANG_LIBRARY_IMPORT='{clangLib}'"
+            self.subinfo.options.configure.args = f"-DCLANG_LIBRARY_IMPORT='{clangLib}'"
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)

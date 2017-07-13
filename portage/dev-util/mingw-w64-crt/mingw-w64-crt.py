@@ -28,6 +28,6 @@ class Package( AutoToolsPackageBase ):
             disable = "--disable-lib32 --enable-lib64"
         else:
             disable = "--disable-lib64 --enable-lib32"
-        self.subinfo.options.configure.defines = " --with-sysroot=%s --enable-wildcard --without-headers  %s  " % (self.shell.toNativePath(self.mergeDestinationDir()),disable)
+        self.subinfo.options.configure.args = " --with-sysroot=%s --enable-wildcard --without-headers  %s  " % (self.shell.toNativePath(self.mergeDestinationDir()),disable)
 
 

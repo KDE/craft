@@ -24,7 +24,7 @@ class subinfo( info.infoclass ):
         
         self.patchToApply['2.3'] = ('OpenCV-2.3.0-20110817.diff', 1)
         
-        self.options.configure.defines = "-DBUILD_NEW_PYTHON_SUPPORT=OFF"
+        self.options.configure.args = "-DBUILD_NEW_PYTHON_SUPPORT=OFF"
         
 
     def setDependencies( self ):

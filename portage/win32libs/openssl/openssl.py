@@ -117,7 +117,7 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.useShadowBuild = False
 
         # target install needs perl with native path on configure time
-        self.subinfo.options.configure.defines = " shared zlib-dynamic enable-camellia enable-idea enable-mdc2 enable-tlsext enable-rfc3779"
+        self.subinfo.options.configure.args = " shared zlib-dynamic enable-camellia enable-idea enable-mdc2 enable-tlsext enable-rfc3779"
 
     def make(self, dummyBuildType=None):
         return self.shell.execute(self.sourceDir(), self.makeProgram, "depend") and \

@@ -23,6 +23,6 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.package.packageName = 'giflib'
-        self.subinfo.options.configure.defines = "-DBUILD_utils=OFF"
+        self.subinfo.options.configure.args = "-DBUILD_utils=OFF"
 
 

@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
+        self.subinfo.options.configure.args = "-DPNG_TESTS=OFF -DPNG_STATIC=OFF -DPNG_NO_STDIO=OFF"
         self.subinfo.options.package.packageName = 'libpng'
 
 

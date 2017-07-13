@@ -26,7 +26,7 @@ class PerlPackage(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.unpack.runInstaller = True
-        self.subinfo.options.configure.defines = "/extract {0}".format(self.workDir())
+        self.subinfo.options.configure.args = "/extract {0}".format(self.workDir())
 
 
     def unpack(self):

@@ -31,7 +31,7 @@ class PackageCMake(MSBuildPackageBase):
         MSBuildPackageBase.__init__( self )
         self.toolset = "vs14"
         self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "build", "win32", self.toolset, "glib.sln")
-        self.subinfo.options.configure.defines = "/p:useenv=true"
+        self.subinfo.options.configure.args = "/p:useenv=true"
 
 
     def configure(self):
@@ -67,7 +67,7 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static --with-pcre=internal"
+        self.subinfo.options.configure.args = "--enable-shared --disable-static --with-pcre=internal"
 
     def install( self ):
         if not AutoToolsBuildSystem.install(self):

@@ -47,7 +47,7 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static "
+        self.subinfo.options.configure.args = "--enable-shared --disable-static "
 
 if compiler.isMinGW():
     class Package(PackageMSys): pass

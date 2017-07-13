@@ -33,7 +33,7 @@ class Package(CMakePackageBase):
         # adjust some vars for proper compile
         GLIB_VER = "2.24.0"
         self.glibDir=os.path.join( self.sourceDir() , ".."  , "glib-" + GLIB_VER );
-        self.subinfo.options.configure.defines = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
+        self.subinfo.options.configure.args = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
 
 
     def sedFile(self, directory, fileName, sedcommand ):

@@ -19,6 +19,6 @@ class Package(CMakePackageBase):
 
     def configure(self):
         if self.buildTarget == 'amarokHEAD':
-            self.subinfo.configure.defines = " -DBUILD_FOR_AMAROK=ON"
+            self.subinfo.configure.args = " -DBUILD_FOR_AMAROK=ON"
         return CMakePackageBase.configure(self)
 

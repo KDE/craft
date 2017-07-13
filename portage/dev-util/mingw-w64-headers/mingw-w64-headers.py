@@ -20,6 +20,6 @@ from Package.AutoToolsPackageBase import *
 class Package( AutoToolsPackageBase ):
     def __init__( self ):
         AutoToolsPackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "--enable-sdk=all --enable-secure-api --without-crt"
+        self.subinfo.options.configure.args = "--enable-sdk=all --enable-secure-api --without-crt"
 
 

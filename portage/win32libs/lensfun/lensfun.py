@@ -19,12 +19,12 @@ class subinfo(info.infoclass):
     def setBuildOptions( self ):
         info.infoclass.setBuildOptions(self)
         
-        self.options.configure.defines = "-DBUILD_STATIC=OFF"
-        self.options.configure.defines += " -DBUILD_TESTS=OFF"
-        self.options.configure.defines += " -DBUILD_AUXFUN=OFF"
-        self.options.configure.defines += " -DBUILD_FOR_SSE=ON"
-        self.options.configure.defines += " -DBUILD_FOR_SSE2=ON"
-        self.options.configure.defines += " -DBUILD_DOC=OFF"
+        self.options.configure.args = "-DBUILD_STATIC=OFF"
+        self.options.configure.args += " -DBUILD_TESTS=OFF"
+        self.options.configure.args += " -DBUILD_AUXFUN=OFF"
+        self.options.configure.args += " -DBUILD_FOR_SSE=ON"
+        self.options.configure.args += " -DBUILD_FOR_SSE2=ON"
+        self.options.configure.args += " -DBUILD_DOC=OFF"
         
     
     def setDependencies( self ):

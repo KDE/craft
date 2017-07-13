@@ -21,7 +21,7 @@ from Package.VirtualPackageBase import *
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--with-bundled-zlib "
+        self.subinfo.options.configure.args = "--with-bundled-zlib "
         self.supportsCCACHE = False
 
 if compiler.isMinGW():

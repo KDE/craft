@@ -23,7 +23,7 @@ from Package.QMakePackageBase import *
 class Package( QMakePackageBase ):
     def __init__( self, **args ):
         QMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ' "QWT_INSTALL_PREFIX = %s" ' % self.imageDir().replace("\\","/")
+        self.subinfo.options.configure.args = ' "QWT_INSTALL_PREFIX = %s" ' % self.imageDir().replace("\\","/")
         if compiler.isMinGW():
             self.subinfo.options.make.supportsMultijob = False
         

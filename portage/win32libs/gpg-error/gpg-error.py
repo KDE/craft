@@ -35,6 +35,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DBUILD_TOOL=ON -DBUILD_TESTS=ON "
+        self.subinfo.options.configure.args = "-DBUILD_TOOL=ON -DBUILD_TESTS=ON "
 
 

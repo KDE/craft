@@ -19,5 +19,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
         # building examples and debugging tools
-        self.subinfo.options.configure.defines = "-DBUILD_examples=OFF"
+        self.subinfo.options.configure.args = "-DBUILD_examples=OFF"
 

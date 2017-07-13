@@ -33,7 +33,7 @@ class PackageMinGW(AutoToolsPackageBase):
         if compiler.isX86():
             abi = "ABI=32"
             self.platform = ""
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
+        self.subinfo.options.configure.args = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
 
 class PackageMSVC(MSBuildPackageBase):
     def __init__( self, **args ):

@@ -47,11 +47,11 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         self.subinfo.options.fetch.checkoutSubmodules = True
-        self.subinfo.options.configure.defines = ""
-        self.subinfo.options.configure.defines += "-DENABLE_CLUCENE=OFF "
+        self.subinfo.options.configure.args = ""
+        self.subinfo.options.configure.args += "-DENABLE_CLUCENE=OFF "
 
         if self.buildTarget == "master":
-            self.subinfo.options.configure.defines = (
+            self.subinfo.options.configure.args = (
                 " -DSTRIGI_SYNC_SUBMODULES=ON "
                 " -DGIT_EXECUTABLE=%s "
                 % os.path.join(self.rootdir, "dev-utils", "git", "bin",

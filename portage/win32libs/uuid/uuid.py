@@ -19,5 +19,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
         # building dce and c++ interface not needed
-        self.subinfo.options.configure.defines = "-DWITH_DCE=OFF -DWITH_CXX=OFF -DWITH_EXEC=OFF"
+        self.subinfo.options.configure.args = "-DWITH_DCE=OFF -DWITH_CXX=OFF -DWITH_EXEC=OFF"
 

@@ -19,13 +19,13 @@ class Package(CMakePackageBase):
         self.clang = portage.getPackageInstance('win32libs', 'clang')
         self.lld = portage.getPackageInstance('win32libs', 'lld')
         self.subPackages = [self.clang, self.lld]
-        self.subinfo.options.configure.defines = "-DLLVM_TARGETS_TO_BUILD='X86'"
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
         if compiler.isMSVC():
-            self.subinfo.options.configure.defines += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
+            self.subinfo.options.configure.args += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
         else:
-            self.subinfo.options.configure.defines += " -DBUILD_SHARED_LIBS=ON"
+            self.subinfo.options.configure.args += " -DBUILD_SHARED_LIBS=ON"
 
     def fetch(self):
         if not CMakePackageBase.fetch(self):

@@ -22,4 +22,4 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         if compiler.isMSVC():
-            self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF"
+            self.subinfo.options.configure.args = "-DBUILD_TESTS=OFF"

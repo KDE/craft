@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " --enable-shared  --enable-public-key --disable-documentation"
+        self.subinfo.options.configure.args = " --enable-shared  --enable-public-key --disable-documentation"
 
 if compiler.isMinGW():
     class Package(PackageMinGW):

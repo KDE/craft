@@ -32,5 +32,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 
         self.subinfo.options.package.packageName = 'poppler'
-        self.subinfo.options.configure.defines = "-DENABLE_XPDF_HEADERS=ON -DENABLE_ZLIB=ON -DENABLE_LIBCURL=ON -DENABLE_UTILS=OFF"
+        self.subinfo.options.configure.args = "-DENABLE_XPDF_HEADERS=ON -DENABLE_ZLIB=ON -DENABLE_LIBCURL=ON -DENABLE_UTILS=OFF"
 

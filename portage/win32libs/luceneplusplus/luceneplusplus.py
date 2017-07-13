@@ -32,4 +32,4 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DENABLE_TEST=OFF -DENABLE_DEMO=OFF"
+        self.subinfo.options.configure.args = "-DENABLE_TEST=OFF -DENABLE_DEMO=OFF"

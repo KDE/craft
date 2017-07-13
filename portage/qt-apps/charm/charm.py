@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DCHARM_SIGN_INSTALLER=OFF"
+        self.subinfo.options.configure.args = "-DCHARM_SIGN_INSTALLER=OFF"
 
     def createPackage(self):
         if craftSettings.getboolean("QtSDK", "Enabled", False):
