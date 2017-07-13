@@ -54,9 +54,9 @@ class MultiSource(SourceBase):
         craftDebug.trace("MultiSource localFileNames")
         return self.source.localFileNames(self)
 
-    def checkoutDir(self):
+    def checkoutDir(self, index=0):
         craftDebug.trace("MultiSource checkoutDir")
-        return self.source.checkoutDir(self)
+        return self.source.checkoutDir(self, index=index)
 
     def sourceDir(self):
         craftDebug.trace("MultiSource sourceDir")
@@ -64,7 +64,7 @@ class MultiSource(SourceBase):
 
     def repositoryUrl(self, index=0):
         craftDebug.trace("MultiSource repositoryUrl")
-        return self.source.repositoryUrl(index)
+        return self.source.repositoryUrl(self, index)
 
     def repositoryUrlCount(self):
         craftDebug.trace("MultiSource repositoryUrlCount")
