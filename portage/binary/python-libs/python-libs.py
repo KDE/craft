@@ -12,15 +12,15 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies['binary/python'] = 'default'
 
 
 from Package.BinaryPackageBase import *
 from Package.VirtualPackageBase import *
 
-class Package(BinaryPackageBase, VirtualPackageBase ):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
-        VirtualPackageBase.__init__(self)
 
     def unpack(self):
         utils.cleanDirectory(self.workDir())
