@@ -20,6 +20,7 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
         self.runtimeDependencies['libs/qtwebengine'] = 'default'
         self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies["frameworks/khtml"] = "default"
         
 from Package.CMakePackageBase import *
 
