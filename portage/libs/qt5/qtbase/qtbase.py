@@ -174,12 +174,12 @@ class QtPackage(Qt5CorePackageBase):
         return True
 
     @property
-    def makeProgramm(self):
+    def makeProgram(self):
         if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.9"):
             # workaround for broken qmake make file.... building with mingw and jom is broken
             if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
-        return super(Qt5CorePackageBase, self).makeProgramm
+        return super(Qt5CorePackageBase, self).makeProgram
 
 
     def getQtBaseEnv(self):

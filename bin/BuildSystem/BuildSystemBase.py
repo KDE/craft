@@ -25,7 +25,7 @@ class BuildSystemBase(CraftBase):
 
 
     @property
-    def makeProgramm(self):
+    def makeProgram(self):
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
@@ -80,10 +80,10 @@ class BuildSystemBase(CraftBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
-        if self.makeProgramm == "make":
+        if self.makeProgram == "make":
             defines += " -j%s" % multiprocessing.cpu_count()
         if craftDebug.verbose() > 0:
-            if self.makeProgramm == "ninja":
+            if self.makeProgram == "ninja":
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

@@ -25,7 +25,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.makeProgramm == "ninja":
+        if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
             if compiler.isMSVC() and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or compiler.isIntel():
@@ -152,10 +152,10 @@ class CMakeBuildSystem(BuildSystemBase):
                 craftDebug.log.critical("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
-            self.system( self.makeProgramm + " clean", "make clean" )
+            self.system( self.makeProgram + " clean", "make clean" )
             command = "ctest -M " + "Nightly" + " -T Start -T Update -T Configure -T Build -T Submit"
         else:
-            command = ' '.join([self.makeProgramm, self.makeOptions()])
+            command = ' '.join([self.makeProgram, self.makeOptions()])
 
 
         return self.system( command, "make" )
@@ -177,7 +177,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
                 env["DESTDIR"] = self.installDir()
-                command = "%s install%s" % ( self.makeProgramm, fastString )
+                command = "%s install%s" % ( self.makeProgram, fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 

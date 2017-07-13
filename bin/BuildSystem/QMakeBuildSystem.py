@@ -62,7 +62,7 @@ class QMakeBuildSystem(BuildSystemBase):
             self.enterSourceDir()
         else:
             self.enterBuildDir()
-        command = ' '.join([self.makeProgramm, self.makeOptions(options)])
+        command = ' '.join([self.makeProgram, self.makeOptions(options)])
 
         return self.system( command, "make" )
 
@@ -80,7 +80,7 @@ class QMakeBuildSystem(BuildSystemBase):
             elif compiler.isMinGW():
                 installmake="mingw32-make"
         else:
-            installmake = self.makeProgramm
+            installmake = self.makeProgram
 
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
