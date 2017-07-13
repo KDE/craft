@@ -184,7 +184,7 @@ class QtPackage(Qt5CorePackageBase):
 
     def getQtBaseEnv(self):
         envs = {}
-        envs["PATH"] = os.path.join(self.buildDir(), "bin") + ";" + os.environ["PATH"]
+        envs["PATH"] = os.pathsep.join([os.path.join(self.buildDir(), "bin"), os.environ["PATH"]])
         if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
             # so that the mkspecs can be found, when -prefix is set
             envs["QMAKEPATH"] = self.sourceDir()
