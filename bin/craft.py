@@ -363,7 +363,7 @@ def main( ):
     parser.add_argument("--no-cache", action="store_true", dest="noCache",
                         default=False, help = "Don't create or use the binary cache")
     parser.add_argument( "--destroy-craft-root", action = "store_true", dest = "doDestroyCraftRoot",
-                         default=False)
+                         default=False, help = "DANGEROUS: Recursively delete everything in the Craft root directory besides the kdesettings.ini, the download directory and the craft folder itself" )
     parser.add_argument( "--offline", action = "store_true",
                          default = craftSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
