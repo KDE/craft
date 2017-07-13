@@ -106,7 +106,7 @@ class UtilsCache(object):
             craftDebug.log.debug(f"Adding %s to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
-            craftDebug.log.debug("Craft was unable to locate: {app}")
+            craftDebug.log.debug(f"Craft was unable to locate: {app}")
             return None
         return appLocation
 
