@@ -7,37 +7,30 @@ import utils
 from .CollectionPackagerBase import *
 from .SevenZipPackager import *
 
-class PortablePackagerList( PackagerLists ):
-    """ dummy name for PackagerLists """
-
 class PortablePackager( CollectionPackagerBase, SevenZipPackager ):
     """
 Packager for portal 7zip archives
 """
+    @InitGuard.init_once
     def __init__( self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__( self, whitelists, blacklists )
         SevenZipPackager.__init__(self)
+        CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
 
     def createPortablePackage( self ):
         """create portable 7z package with digest files located in the manifest subdir"""
-
-        if not self.packagerExe:
-            craftDebug.log.critical("could not find 7za in your path!")
-
-
         if not "setupname" in self.defines or not self.defines[ "setupname" ]:
             self.defines[ "setupname" ] = self.binaryArchiveName("")
         if not "srcdir" in self.defines or not self.defines[ "srcdir" ]:
-            self.defines[ "srcdir" ] = self.imageDir()
-            
+            self.defines[ "srcdir" ] = self.archiveDir()
+
 
         self._compress(self.defines[ "setupname" ], self.defines[ "srcdir" ], self.packageDestinationDir())
 
     def createPackage( self ):
         """ create a package """
         print("packaging using the PortablePackager")
-        
+
         self.internalCreatePackage()
 
         self.createPortablePackage()

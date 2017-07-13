@@ -56,10 +56,7 @@ class BuildSystemBase(CraftBase):
         # pylint: disable=E1101
         # this class never defines self.source, that happens only
         # in MultiSource.
-        if hasattr(self,'source'):
-            sourcedir = self.source.sourceDir()
-        else:
-            sourcedir = self.sourceDir()
+        sourcedir = self.sourceDir()
 
         if self.subinfo.hasConfigurePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.configurePath())

@@ -7,6 +7,8 @@ from CraftBase import *
 
 class PackagerBase(CraftBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
+
+    @InitGuard.init_once
     def __init__(self):
         CraftBase.__init__(self)
         self.whitelist_file = None

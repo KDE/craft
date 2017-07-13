@@ -1,10 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import inspect
 import os
 import sys
 import datetime
 from ctypes import *
+
+import functools
 
 from CraftDebug import craftDebug
 import utils
@@ -22,31 +25,46 @@ import utils
 # question: How to detect reliable this case ?
 
 
+class InitGuard(object):
+    _initialized = {}
+    _verbose = False
 
+    @staticmethod
+    def _dummy_init(key, *args, **kwargs):
+        if InitGuard._verbose:
+            print("dummy_init", key)
+        args[0].__dict__ = InitGuard._initialized[key].__dict__
+
+    @staticmethod
+    def init_once(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            if fun.__name__ != "__init__":
+                raise Exception("InitGuard can only handle __init__ calls")
+            key = (args[0].__class__, fun.__code__)
+            if key not in InitGuard._initialized:
+                if InitGuard._verbose:
+                    print("init", key)
+                InitGuard._initialized[key] = args[0]
+                return fun(*args, **kwargs)
+            else:
+                return InitGuard._dummy_init(key, *args, **kwargs)
+        return inner
 
 class CraftBase(object):
     """base class for craft system - holds attributes and methods required by base classes"""
 
+    @InitGuard.init_once
     def __init__( self):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
         craftDebug.log.debug("CraftBase.__init__ called")
 
-        if not hasattr(self, 'subinfo'):
-            self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
-            self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
-            self.subinfo.__evilHack = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
-        else:
-            self.filename, self.category, self.subpackage, self.package, mod = self.subinfo.__evilHack
+        self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
+        self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
 
-        if not hasattr(self, 'buildSystemType'):
-            self.buildSystemType = None
-
-
-        if hasattr(self,'alreadyCalled'):
-            return
-        self.alreadyCalled = True
+        self.buildSystemType = None
 
         self.versioned              = False
         self.CustomDefines       = ""

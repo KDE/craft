@@ -12,26 +12,23 @@ import CraftHash
 
 class ArchiveSource(SourceBase):
     """ file download source"""
-    def __init__(self, subinfo=None):
+    def __init__(self):
         craftDebug.log.debug("ArchiveSource.__init__ called")
-        if subinfo:
-            self.subinfo = subinfo
         SourceBase.__init__( self )
 
     def localFileNames(self):
-        # pylint: disable=E0202
-        # but I have no idea why pylint thinks this overrides
-        # MultiSource.localFileNames
         if self.subinfo.archiveName() == [""]:
             return self.localFileNamesBase()
-        return self.subinfo.archiveName()
+        if isinstance(self.subinfo.archiveName(), (tuple,list)):
+            return self.subinfo.archiveName()
+        return [self.subinfo.archiveName()]
 
     def localFileNamesBase(self):
         """ collect local filenames """
         craftDebug.log.debug("ArchiveSource.localFileNamesBase called")
 
         filenames = []
-        for url in self.subinfo.targets:
+        for url in self.subinfo.targets.values():
             filenames.append( os.path.basename( url ) )
         return filenames
 
@@ -156,11 +153,11 @@ class ArchiveSource(SourceBase):
 
     def createPatch( self ):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
-        
+
         diffExe = os.path.join( self.rootdir, "dev-utils", "bin", "diff.exe" )
         if not os.path.exists( diffExe ):
             craftDebug.log.critical("could not find diff tool, please run 'craft diffutils'")
-        
+
         # get the file paths of the tarballs
         filenames = self.localFileNames()
 
