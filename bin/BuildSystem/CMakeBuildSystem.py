@@ -171,16 +171,17 @@ class CMakeBuildSystem(BuildSystemBase):
         if not self.noFast:
             fastString = "/fast"
 
+        env = os.environ
         if self.subinfo.options.install.useMakeToolForInstall:
             if compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
-                os.putenv("DESTDIR",self.installDir())
+                env["DESTDIR"] = self.installDir()
                 command = "%s install%s" % ( self.makeProgramm, fastString )
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
-        self.system( command, "install" )
+        self.system( command, "install", env=env )
 
         if self.subinfo.options.install.useMakeToolForInstall and not (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
             self._fixCmakeImageDir(self.installDir(), self.mergeDestinationDir())
