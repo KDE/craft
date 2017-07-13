@@ -5,7 +5,7 @@ class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in [ '10.23' ]:
             self.targets[ ver ] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-' + ver + '.tar.bz2'
-            self.targetInstSrc[ ver ] = 'pcre-' + ver
+            self.targetInstSrc[ ver ] = 'pcre2-' + ver
         self.patchToApply[ '10.23' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
 
         self.targetDigests['8.39'] = '5e38289fd1b4ef3e8426f31a01e34b6924d80b90'
