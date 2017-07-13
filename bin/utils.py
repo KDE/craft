@@ -351,8 +351,9 @@ def unpackFile( downloaddir, filename, workdir ):
     if ext == "":
         craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
-    elif utilsCache.findApplication("7za") and (
-                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
+    # do not use 7za on Unix: it won't set the correct file permissions after extraction
+    elif not OsUtils.isUnix() and utilsCache.findApplication("7za") and (
+               OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     else:
         try:
