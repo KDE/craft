@@ -36,7 +36,7 @@ The packager used can be decided at runtime
             self.__class__.__bases__ = tuple(bases)
         else:
             self.__class__.__bases__ += (packager,)
-        packager.__init__(self, self.__packager is not None)
+        packager.__init__(self)
         self.__packager = packager
 
     def createPackage(self):

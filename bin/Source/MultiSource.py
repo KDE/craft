@@ -11,18 +11,9 @@ class MultiSource(object):
     def __init__(self):
         object.__init__(self)
         craftDebug.trace("MultiSource __init__")
-        self.__source = None
+        self.source = SourceFactory(self.subinfo)
+        self.source.localFileNames = self.localFileNames.__get__(self, MultiSource)
 
-    @property
-    def source(self):
-        # pylint: disable=E1101
-        # multiple inheritance: MultiSource is never the only
-        # superclass, others define self.source, self.subinfo etc.
-        # TODO: This code should mostly be in the class defining self.source etc.
-        if not self.__source:
-            self.__source = SourceFactory(self.subinfo)
-            self.__source.localFileNames = self.localFileNames.__get__(self, MultiSource)
-        return self.__source
 
     def localFileNames( self ):
         craftDebug.trace("MultiSource localFileNames")
@@ -91,7 +82,7 @@ class MultiSource(object):
         craftDebug.trace("MultiSource sourceVersion")
         return self.source.sourceRevision()
 
-        
+
     def printSourceVersion(self):
         craftDebug.trace("MultiSource printSourceVersion")
         print(self.source.sourceVersion())

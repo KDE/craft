@@ -27,10 +27,12 @@ import utils
 
 class InitGuard(object):
     _initialized = {}
+    _verbose = False
 
     @staticmethod
     def _dummy_init(key, *args, **kwargs):
-        #print("dummy_init", key)
+        if InitGuard._verbose:
+            print("dummy_init", key)
         args[0].__dict__ = InitGuard._initialized[key].__dict__
 
     @staticmethod
@@ -41,7 +43,8 @@ class InitGuard(object):
                 raise Exception("InitGuard can only handle __init__ calls")
             key = (args[0].__class__, fun.__code__)
             if key not in InitGuard._initialized:
-                #print("init", key)
+                if InitGuard._verbose:
+                    print("init", key)
                 InitGuard._initialized[key] = args[0]
                 return fun(*args, **kwargs)
             else:
@@ -58,20 +61,10 @@ class CraftBase(object):
         object.__init__(self)
         craftDebug.log.debug("CraftBase.__init__ called")
 
-        if not hasattr(self, 'subinfo'):
-            self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
-            self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
-            self.subinfo.__evilHack = portage.PortageInstance._CURRENT_MODULE#ugly workaround we need to replace the constructor
-        else:
-            self.filename, self.category, self.subpackage, self.package, mod = self.subinfo.__evilHack
+        self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
+        self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
 
-        if not hasattr(self, 'buildSystemType'):
-            self.buildSystemType = None
-
-
-        if hasattr(self,'alreadyCalled'):
-            return
-        self.alreadyCalled = True
+        self.buildSystemType = None
 
         self.versioned              = False
         self.CustomDefines       = ""
