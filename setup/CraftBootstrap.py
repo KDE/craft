@@ -107,22 +107,16 @@ def run(args, command):
 def setUp(args):
     if not os.path.exists(args.root):
         os.makedirs(args.root)
-    if args.architecture:
-        architecture = args.architecture
-    else:
-        architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
+    architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
 
-    if args.compiler:
-        compiler = args.compiler
-    else:
-        compiler = CraftBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
+    compiler = CraftBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
                                                "Mingw-w64")
     if compiler == "Mingw-w64":
         compiler = "mingw4"
     else:
         compiler = "msvc2015"
 
-    if not args.noShortPath:
+    if CraftBootstrap.isWin():
         print("Windows has problems with too long commands.")
         print("For that reason we mount Craft directories to drive letters.")
         print("It just maps the folder to a drive letter you will assign.")
@@ -137,7 +131,7 @@ def setUp(args):
     boot.setSettignsValue("Architecture", architecture)
     boot.setSettignsValue("KDECompiler", compiler)
 
-    if not args.noShortPath:
+    if CraftBootstrap.isWin():
         boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
         for key, value in shortPath.items():
             boot.setSettignsValue(key, value)
@@ -146,58 +140,21 @@ def setUp(args):
 
 
     boot.writeSettings()
-    if args.set:
-        writeSettings(args)
 
-    if not args.noCloneCraft:
-        craftDir = os.path.join(args.root, "craft")
-        verbosityFlag = "-vvv" if args.verbose else ""
-        run(args, f"craft --ci-mode --no-cache {verbosityFlag} git")
-        run(args, f"git clone --branch={args.branch} kde:craft {craftDir}")
-        shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
-    else:
-        shutil.move(os.path.join(args.root, f"craft-{args.branch}"), os.path.join(args.root, "craft"))
+    craftDir = os.path.join(args.root, "craft")
+    verbosityFlag = "-vvv" if args.verbose else ""
+    run(args, f"craft --ci-mode --no-cache {verbosityFlag} git")
+    run(args, f"git clone --branch={args.branch} kde:craft {craftDir}")
+    shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
     print("Setup complete")
     print(f"Please run {args.root}/craft/craftenv.ps1")
-
-
-def writeSettings(args):
-    settings = configparser.ConfigParser()
-    ini = os.path.join(args.root, "etc", "kdesettings.ini")
-    if not os.path.exists(ini):
-        os.makedirs(os.path.dirname(ini))
-        shutil.copy(os.path.join(args.root, "craft", "kdesettings.ini"), ini)
-    settings.read(ini)
-
-    for setting in args.values:
-        section, key = setting.split("/", 1)
-        key, value = key.split("=", 1)
-        if section not in settings.sections():
-            settings.add_section(section)
-        settings.set(section, key, value)
-
-    with open(ini, 'wt+') as configfile:
-        settings.write(configfile)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
     parser.add_argument("--root", action="store")
     parser.add_argument("--branch", action="store")
-    parser.add_argument("--compiler", action="store")
-    parser.add_argument("--architecture", action="store")
-    parser.add_argument("--no-short-path", action="store_true", dest="noShortPath")
-    parser.add_argument("--no-bootstrap", action="store_true", dest="noBootstrap")
-    parser.add_argument("--no-clone-craft", action="store_true", dest="noCloneCraft")
-    parser.add_argument("--set", action="store_true")
     parser.add_argument("--verbose", action="store_true")
 
-    parser.add_argument("values", nargs = argparse.REMAINDER)
-
     args = parser.parse_args()
-
-    if not args.noBootstrap:
-        setUp(args)
-    elif args.set:
-        writeSettings(args)
-
+    setUp(args)
 
