@@ -16,6 +16,23 @@ class CraftBootstrap(object):
             self.settings = ini.read()
 
     @staticmethod
+    def isWin():
+        return os.name == 'nt'
+
+    @staticmethod
+    def isUnix():
+        return os.name == 'posix'
+
+    @staticmethod
+    def printProgress(percent):
+        width, _ = shutil.get_terminal_size((80, 20))
+        width -= 20  # margin
+        times = int(width / 100 * percent)
+        sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times),
+                                                                  percent=percent))
+        sys.stdout.flush()
+
+    @staticmethod
     def promptForChoice(title, choices, default):
         print(title)
         promp = "%s (Default is %s): " %(", ".join(["[%d] %s" % (i, val) for i, val in enumerate(choices)]), default)
@@ -69,17 +86,15 @@ class CraftBootstrap(object):
         if os.path.exists(os.path.join( destdir, filename )):
             return True
 
-        width, _ =  shutil.get_terminal_size((80,20))
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
                 percent = int(count * blockSize * 100 / totalSize)
-                times = int((width - 20)/100 * percent)
-                sys.stdout.write(("\r%s%3d%%" % ("#" * times, percent)))
+                CraftBootstrap.printProgress(percent)
             else:
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-            sys.stdout.flush()
+                sys.stdout.flush()
 
-        urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress)
+        urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook=dlProgress)
         print()
         return os.path.exists(os.path.join( destdir, filename ))
 
