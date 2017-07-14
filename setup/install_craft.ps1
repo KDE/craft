@@ -2,7 +2,6 @@ param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
     [alias("branch")][string]$Script:branch="2017.05",
-    [alias("settings")][string[]]$Script:extraArgs
     )
 
 
@@ -128,7 +127,7 @@ Write-Host "Downloading:" $url
 (new-object net.webclient).DownloadFile("$url", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
-[string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--root", "$Script:installRoot", "--branch", "$Script:branch") + $Script:extraArgs
+[string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--root", "$Script:installRoot", "--branch", "$Script:branch")
 Write-Host "$Script:python" $command
 & "$Script:python" $command
 cd $Script:installRoot
