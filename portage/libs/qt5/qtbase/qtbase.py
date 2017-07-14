@@ -110,8 +110,8 @@ class QtPackage(Qt5CorePackageBase):
         if OsUtils.isWin():
             command += "-opengl dynamic "
             command += "-plugin-sql-odbc "
-        if not (OsUtils.isFreeBSD() or compiler.isMinGW()):
-            command += "-ltcg "
+        #if not (OsUtils.isFreeBSD() or compiler.isMinGW()):#currently breaks unmaintained modules like qtscript and webkit
+        #    command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
         if self.buildType() == "Debug":
