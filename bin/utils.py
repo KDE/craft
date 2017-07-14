@@ -458,7 +458,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     proc.communicate()
     result = proc.wait() == 0
     if not result:
-        craftDebug.log.debug(f"Coammand {cmd} failed with exit code {proc.returncode}")
+        craftDebug.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return result
 
 def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = craftSettings.getboolean("General", "UseHardlinks", False )):
