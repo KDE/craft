@@ -99,9 +99,10 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    script = os.path.join(args.root, f"craft-{args.branch}", "craftenv.ps1")
-    print(f"Execute: powershell {script} {command}")
-    if not subprocess.run(f"powershell {script} {command}").returncode == 0:
+    script = os.path.join(args.root, f"craft-{args.branch}", "bin", "craft.py")
+    command = f"{sys.executable} {script} {command}"
+    print(f"Execute: {command}")
+    if not subprocess.run(f"{command}").returncode == 0:
         exit(1)
 
 
