@@ -101,7 +101,8 @@ class CraftBootstrap(object):
 def run(args, command):
     script = os.path.join(args.root, f"craft-{args.branch}", "craftenv.ps1")
     print(f"Execute: powershell {script} {command}")
-    subprocess.check_call(f"powershell {script} {command}", stderr=subprocess.PIPE)
+    if not subprocess.run(f"powershell {script} {command}").returncode == 0:
+        exit(1)
 
 
 def setUp(args):
