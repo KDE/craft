@@ -109,7 +109,7 @@ def run(args, command):
 def setUp(args):
     if not os.path.exists(args.root):
         os.makedirs(args.root)
-    architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x86")
+    architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x64")
 
     compiler = CraftBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
                                                "Mingw-w64")
