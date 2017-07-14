@@ -144,8 +144,8 @@ def setUp(args):
 
     craftDir = os.path.join(args.root, "craft")
     verbosityFlag = "-vvv" if args.verbose else ""
-    run(args, f"craft --ci-mode --no-cache {verbosityFlag} git")
-    run(args, f"git clone --branch={args.branch} kde:craft {craftDir}")
+    run(args, f"craft --no-cache {verbosityFlag} git")
+    run(args, f"git clone --progress --branch={args.branch} kde:craft {craftDir}")
     shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
     print("Setup complete")
     print(f"Please run {args.root}/craft/craftenv.ps1")
