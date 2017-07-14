@@ -351,8 +351,7 @@ def unpackFile( downloaddir, filename, workdir ):
     if ext == "":
         craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
-    # do not use 7za on Unix: it won't set the correct file permissions after extraction
-    elif not OsUtils.isUnix() and utilsCache.findApplication("7za") and (
+    elif utilsCache.findApplication("7za") and (
                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     else:
@@ -381,11 +380,15 @@ def un7zip( fileName, destdir, flag = None ):
         type = "-t7z"
     if re.match( "(.*\.tar.*$|.*\.tgz$)", fileName):
         type = "-ttar"
-        resolveSymlinks = OsUtils.isWin()
-        command = f"\"{app}\" x \"{fileName}\" -so | \"{app}\" x -si -o\"{destdir}\""
+        command = f"\"{app}\" x \"{fileName}\" -so |"
+        if OsUtils.isWin():
+            resolveSymlinks = True
+            command += f"\"{app}\" x -si -o\"{destdir}\" {type} {progressFlags}"
+        else:
+            tar = utilsCache.findApplication("tar")
+            command += f"\"{tar}\" --directory=\"{destdir}\" -xf -"
     else:
-        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\""
-    command = f"{command} {type} {progressFlags}"
+        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\" {type} {progressFlags}"
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system( command , displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
