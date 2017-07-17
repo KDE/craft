@@ -28,7 +28,7 @@ class PackagerBase(CraftBase):
         if self.subinfo.options.package.version != None:
             pkgVersion = self.subinfo.options.package.version
         elif self.subinfo.hasSvnTarget():
-            pkgVersion = self.source.sourceVersion()
+            pkgVersion = self.sourceVersion()
         else:
             pkgVersion = self.subinfo.buildTarget
 
