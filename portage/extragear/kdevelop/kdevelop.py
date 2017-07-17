@@ -14,7 +14,6 @@ class subinfo( info.infoclass ):
         self.buildDependencies["dev-util/zip"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["libs/qtdeclarative"] = "default"
-        self.runtimeDependencies["libs/qtwebkit"] = "default"
         self.runtimeDependencies[ 'frameworks/karchive' ] = 'default'
         self.runtimeDependencies[ 'frameworks/kconfig' ] = 'default'
         self.runtimeDependencies[ 'frameworks/kguiaddons' ] = 'default'
