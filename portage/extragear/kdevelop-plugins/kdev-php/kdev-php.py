@@ -5,7 +5,7 @@ class subinfo( info.infoclass ):
         self.svnTargets[ '5.0' ] = '[git]kde:kdev-php|5.0'
         self.svnTargets[ '5.1' ] = '[git]kde:kdev-php|5.1'
         self.svnTargets[ 'master' ] = '[git]kde:kdev-php|master'
-        self.defaultTarget = '5.1'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.runtimeDependencies[ 'extragear/kdevelop-pg-qt' ] = 'default'

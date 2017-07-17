@@ -6,7 +6,7 @@ class subinfo( info.infoclass ):
         self.svnTargets[ '5.0' ] = '[git]kde:kdevelop|5.0'
         self.svnTargets[ '5.1' ] = '[git]kde:kdevelop|5.1'
         self.svnTargets[ 'master' ] = '[git]kde:kdevelop|master'
-        self.defaultTarget = '5.1'
+        self.defaultTarget = 'master'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
