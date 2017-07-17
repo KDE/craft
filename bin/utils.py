@@ -386,7 +386,8 @@ def un7zip( fileName, destdir, flag = None ):
             command += f"\"{app}\" x -si -o\"{destdir}\" {type} {progressFlags}"
         else:
             tar = utilsCache.findApplication("tar")
-            command += f"\"{tar}\" --directory=\"{destdir}\" -xf -"
+            command += f"\"{tar}\" --directory=\"{destdir}\" -xvf -"
+            kw = {}
     else:
         command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\" {type} {progressFlags}"
 
