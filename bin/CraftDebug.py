@@ -130,9 +130,9 @@ def deprecated(replacement=None):
     """
 
     def outer(fun):
-        msg = "%s is deprecated" % fun.__name__
+        msg = f"{fun.__name__} is deprecated"
         if replacement is not None:
-            msg += "; use %s instead" % replacement
+            msg += f"; use {replacement} instead"
         if fun.__doc__ is None:
             fun.__doc__ = msg
 
@@ -141,7 +141,7 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                craftDebug.log.debug("Trace for the usage of %s" % fun.__name__, stack_info=True)
+                craftDebug.log.debug(msg, stack_info=True)
             return fun(*args, **kwargs)
 
         return inner
