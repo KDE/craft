@@ -11,7 +11,7 @@ import shutil
 
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
-import compiler
+from compiler import craftCompiler
 
 
 # The minimum python version for craft please edit here
@@ -59,7 +59,7 @@ class SetupHelper( object ):
         blackList = []
         if OsUtils.isWin():
             blackList += ["sh"]
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             blackList += ["gcc", "g++"]
         for app in blackList:
             location = shutil.which(app)
@@ -104,7 +104,7 @@ class SetupHelper( object ):
             with TemporaryUseShortpath(False):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
         printRow("Craft", CraftStandardDirs.craftRoot( ))
-        printRow("Compiler", compiler.getCompilerName( ))
+        printRow("ABI", craftCompiler)
         printRow("Svn  directory", CraftStandardDirs.svnDir( ))
         printRow("Git  directory", CraftStandardDirs.gitDir( ))
         printRow("Download directory", CraftStandardDirs.downloadDir( ))
@@ -132,13 +132,13 @@ class SetupHelper( object ):
             os.environ[ key ] = value
 
     def getEnv( self ):
-        if compiler.isMSVC( ):
+        if craftCompiler.isMSVC():
             architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
-            version = compiler.internalVerison()
+            version = craftCompiler.internalVerison()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
                                         f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest")
-            arg = architectures[ compiler.architecture() ] + ("_cross" if not compiler.isNative() else "")
+            arg = architectures[ craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
                 path = os.path.join(path, "Auxiliary","Build")
@@ -149,12 +149,12 @@ class SetupHelper( object ):
                 exit(1)
             return self.stringToEnv( result )
 
-        elif compiler.isIntel( ):
+        elif craftCompiler.isIntel():
             architectures = { "x86": "ia32", "x64": "intel64" }
             programFiles = os.getenv( "ProgramFiles(x86)" ) or os.getenv( "ProgramFiles" )
             status, result = subprocess.getstatusoutput(
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
-                    programFiles, architectures[ compiler.architecture( ) ]) )
+                    programFiles, architectures[ craftCompiler.architecture]) )
             if status != 0:
                 print( "Failed to setup intel compiler", file = sys.stderr )
                 exit(1)
@@ -218,9 +218,9 @@ class SetupHelper( object ):
         if craftSettings.getboolean("QtSDK", "Enabled", "false"):
             self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler"), "bin"))
 
-        if compiler.isMinGW( ):
+        if craftCompiler.isMinGW():
             if not craftSettings.getboolean("QtSDK", "Enabled", "false"):
-                if compiler.isX86( ):
+                if craftCompiler.isX86():
                     self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw", "bin" ) )
                 else:
                     self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw64", "bin" ) )

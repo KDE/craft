@@ -9,7 +9,7 @@ import sys
 
 from CraftDebug import craftDebug
 import utils
-import compiler
+from compiler import craftCompiler
 from options import *
 
 
@@ -24,10 +24,10 @@ class MSysShell(object):
             self._sh = os.path.join( self.msysdir, "usr", "bin", "bash.exe" )
 
         mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             ldflags = ""
             cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
-            if compiler.msvcPlatformToolset() > 120:
+            if craftCompiler.msvcPlatformToolset() > 120:
                 cflags += " -FS"
         else:
             ldflags = "-L%s/lib " % mergeroot
@@ -45,17 +45,17 @@ class MSysShell(object):
         if "make" in self.environment:
             del self.environment[ "make" ]
         arch = "32"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = "64"
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.environment[ "MSYSTEM" ] = f"MINGW{arch}_CRAFT"
-        elif compiler.isMSVC():
+        elif craftCompiler.isMSVC():
             self.environment["MSYSTEM"] = f"CYGWIN{arch}_CRAFT"
         self.environment[ "CFLAGS" ] = cflags
         self.environment[ "CXXFLAGS" ] = cflags
         self.environment[ "LDFLAGS" ] = ldflags
 
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             if False:
                 cl = "clang-cl"
             else:

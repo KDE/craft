@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.8.4'] = [('dont_include_afxres.diff', 1)]
         self.patchToApply['1.10.4'] = [('dont_include_afxres.diff', 1)]
         self.patchToApply['1.11.4'] = [('dbus-1.11.4-20160903.diff', 1)]
-        
+
         self.targetDigests['1.10.4'] = 'ec1921a09199c81ea20b20448237146a414d51ae'
         self.targetDigests['1.11.4'] = (['474de2afde8087adbd26b3fc5cbf6ec45559763c75b21981169a9a1fbac256c9'], CraftHash.HashAlgorithm.SHA256)
 
@@ -57,12 +57,12 @@ class Package(CMakePackageBase):
         # TODO: fix
         if self.buildType() == "Debug":
             imagedir = os.path.join( self.installDir(), "lib" )
-            if compiler.isMSVC():
+            if craftCompiler.isMSVC():
                 if os.path.exists(os.path.join(imagedir, "dbus-1d.lib")):
                     utils.copyFile(os.path.join(imagedir, "dbus-1d.lib"), os.path.join(imagedir, "dbus-1.lib"))
                 if not os.path.exists(os.path.join(imagedir, "dbus-1d.lib")):
                     utils.copyFile(os.path.join(imagedir, "dbus-1.lib"), os.path.join(imagedir, "dbus-1d.lib"))
-            if compiler.isMinGW():
+            if craftCompiler.isMinGW():
                 if os.path.exists(os.path.join(imagedir, "libdbus-1.dll.a")):
                         utils.copyFile( os.path.join(imagedir, "libdbus-1.dll.a"), os.path.join(imagedir, "libdbus-1d.dll.a") )
 

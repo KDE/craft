@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.7.2'] = (['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.7.2"
-        if compiler.isMSVC2017():
+        if craftCompiler.isMSVC2017():
             self.defaultTarget = "master"
 
     def setDependencies( self ):
@@ -31,15 +31,15 @@ class Package(CMakePackageBase):
 
     def configure(self):
         return True
-        
+
     def make(self):
         self.enterSourceDir()
         command = "python3 configure.py --bootstrap"
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             command += " --platform=mingw"
         print(command)
         return self.system( command, "make" )
-        
+
     def install(self):
         utils.copyFile(os.path.join(self.sourceDir(),"ninja.exe"),os.path.join(self.installDir(),"bin","ninja.exe"))
         return True

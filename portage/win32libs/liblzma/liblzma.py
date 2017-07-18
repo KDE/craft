@@ -4,7 +4,7 @@ import os
 import shutil
 
 import info
-import compiler
+from compiler import craftCompiler
 
 
 class subinfo(info.infoclass):

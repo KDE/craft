@@ -22,7 +22,7 @@ import argparse
 import collections
 import copy
 
-import compiler
+from compiler import craftCompiler
 import portageSearch
 import InstallDB
 import portage
@@ -159,7 +159,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
             success = True
         elif buildAction == "print-package-version":
-            print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
+            print( "%s-%s-%s" % (packageName, craftCompiler.getCompilerName(), package.sourceVersion()))
             success = True
         else:
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)

@@ -12,7 +12,7 @@ import functools
 from CraftDebug import craftDebug
 import utils
 import portage
-import compiler
+from compiler import craftCompiler
 from CraftConfig import *
 import utils
 
@@ -116,20 +116,15 @@ class CraftBase(object):
         """return currently selected build type"""
         return craftSettings.get("Compile","BuildType")
 
-    def compiler(self):
-        """deprecated"""
-        """return currently selected compiler"""
-        return compiler.getCompilerName()
-
     def buildArchitecture(self):
         """return the target CPU architecture"""
-        compiler.architecture()
+        craftCompiler.architecture()
 
     def workDirPattern(self):
         """return base directory name for package related work directory"""
         directory = ""
         if self.subinfo.options.useCompilerType == True:
-            directory += "%s-" % compiler.getCompilerName()
+            directory += "%s-" % craftCompiler.getCompilerName()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -145,7 +140,7 @@ class CraftBase(object):
         directory = "image"
 
         if self.subinfo.options.useCompilerType == True:
-            directory += '-' + compiler.getCompilerName()
+            directory += '-' + craftCompiler.getCompilerName()
         if self.subinfo.options.useBuildType == True:
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget
@@ -281,7 +276,7 @@ class CraftBase(object):
             fileType = f".{fileType}"
         else:
             fileType = ""
-        return f"{self.package}-{compiler.architecture()}-{version}-{compiler.getShortName()}{pkgSuffix}{fileType}"
+        return f"{self.package}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
@@ -290,8 +285,7 @@ class CraftBase(object):
             version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
-        return os.path.join(cacheDir, sys.platform, version,
-                               compiler.getCompilerName(), self.buildType())
+        return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
@@ -299,6 +293,5 @@ class CraftBase(object):
         else:
             version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        return ["/".join([url, sys.platform, version,
-                                compiler.getCompilerName(), self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
+        return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
 

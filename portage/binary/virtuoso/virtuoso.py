@@ -6,7 +6,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        if compiler.isX64():
+        if craftCompiler.isX64():
             self.targets[ '20100330' ] =  'http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.1/vos6-win64-20100330.zip'
             self.targets['6.1.6'] = \
                 "http://downloads.sourceforge.net/project/virtuoso/virtuoso/6.1.6/virtuoso-opensource-win64-20120802.zip"

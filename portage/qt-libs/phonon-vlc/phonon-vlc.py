@@ -2,7 +2,7 @@
 import os
 
 import info
-import compiler
+from compiler import craftCompiler
 from Package.CMakePackageBase import *
 
 
@@ -10,18 +10,18 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.runtimeDependencies['qt-libs/phonon'] = 'default'
         self.runtimeDependencies['binary/vlc'] = 'default'
-        if compiler.isMSVC() or compiler.isIntel():
+        if craftCompiler.isMSVC() or craftCompiler.isIntel():
             self.runtimeDependencies['kdesupport/kdewin'] = 'default'
 
     def setTargets( self ):
       for ver in ['0.9.0']:
         self.targets[ ver ] = "http://download.kde.org/stable/phonon/phonon-backend-vlc/%s/phonon-backend-vlc-%s.tar.xz" % ( ver ,ver )
         self.targetInstSrc[ ver ] = "phonon-vlc-%s" % ver
-        
+
       self.targetDigests['0.9.0'] = (['c0ced7ca571acc22211eecf5158241714fa9ccdb82d4fe0a970ad702860ccdbe'], CraftHash.HashAlgorithm.SHA256)
 
       self.svnTargets['master'] = '[git]kde:phonon-vlc'
-      
+
       self.shortDescription = "the vlc based phonon multimedia backend"
       self.defaultTarget = '0.9.0'
 

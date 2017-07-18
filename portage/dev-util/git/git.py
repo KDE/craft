@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
     def setTargets( self ):
         ver = "2.11.0"
         arch = 32
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = 64
 
         self.targets[ver]  ="https://github.com/git-for-windows/git/releases/download/v%s.windows.1/PortableGit-%s-%s-bit.7z.exe" % (ver, ver, arch)

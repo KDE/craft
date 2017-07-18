@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         versions = utils.utilsCache.getNightlyVersionsFromUrl("http://windows.php.net/downloads/releases", re.compile(r"7\.\d\.\d\d"))
         versions.sort(key=lambda v: StrictVersion(v))
         for ver in versions:
-            self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, compiler.architecture())
+            self.targets[ver] = "http://windows.php.net/downloads/releases/php-%s-Win32-VC14-%s.zip" % (ver, craftCompiler.architecture)
             self.targetDigestUrls[ver] = ("http://windows.php.net/downloads/releases/sha1sum.txt", CraftHash.HashAlgorithm.SHA1)
             self.targetInstallPath[ver] = os.path.join("dev-utils", "php")
             self.defaultTarget = ver

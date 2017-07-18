@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
+from compiler import craftCompiler
 
 
 class subinfo(info.infoclass):

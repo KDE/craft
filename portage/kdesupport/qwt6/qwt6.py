@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import compiler
+from compiler import craftCompiler
 import info
 
 class subinfo(info.infoclass):
-    def setTargets( self ):        
+    def setTargets( self ):
         self.shortDescription = "The Qwt library contains GUI Components and utility classes which are primarily useful for programs with a technical background"
         for ver in ["6.0.1","6.0.2"]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/qwt/qwt-%s.tar.bz2" % ver
@@ -24,9 +24,9 @@ class Package( QMakePackageBase ):
     def __init__( self, **args ):
         QMakePackageBase.__init__( self )
         self.subinfo.options.configure.args = ' "QWT_INSTALL_PREFIX = %s" ' % self.imageDir().replace("\\","/")
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.subinfo.options.make.supportsMultijob = False
-        
+
     def install( self ):
         if not QMakePackageBase.install( self ):
             return False
@@ -37,6 +37,6 @@ class Package( QMakePackageBase ):
             if file.endswith( ".dll" ):
                 utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
         return True
-        
 
-        
+
+

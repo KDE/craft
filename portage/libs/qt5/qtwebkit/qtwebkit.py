@@ -45,7 +45,7 @@ class QtPackage(Qt5CorePackageBase):
         self.subinfo.options.configure.args = ""
         if OsUtils.isWin():
             self.subinfo.options.configure.args += """ "QT_CONFIG+=no-pkg-config" """
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
 
     def configure( self, configureDefines="" ):

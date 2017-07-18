@@ -5,7 +5,7 @@
 """ \package BuildSystemBase"""
 from CraftDebug import craftDebug
 from CraftBase import *
-import compiler
+from compiler import craftCompiler
 
 from CraftOS.osutils import OsUtils
 
@@ -19,7 +19,7 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
+        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and craftCompiler.isMinGW()
         self.supportsClang = True
         self.buildSystemType = typeName
 
@@ -37,12 +37,12 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if compiler.isMSVC() or compiler.isIntel() :
+            if craftCompiler.isMSVC() or craftCompiler.isIntel() :
                 return "nmake /NOLOGO"
-            elif compiler.isMinGW():
+            elif craftCompiler.isMinGW():
                 return "mingw32-make"
             else:
-                craftDebug.log.critical("unknown %s compiler" % self.compiler())
+                craftDebug.log.critical(f"unknown {craftCompiler} compiler")
         elif OsUtils.isUnix():
             return "make"
 
@@ -70,7 +70,7 @@ class BuildSystemBase(CraftBase):
 
         if self.supportsCCACHE:
             defines += " %s" % self.ccacheOptions()
-        if compiler.isClang() and self.supportsClang:
+        if craftCompiler.isClang() and self.supportsClang:
             defines += " %s" % self.clangOptions()
         return defines
 

@@ -5,7 +5,7 @@ import shutil
 import utils
 import info
 import info
-import compiler
+from compiler import craftCompiler
 from Package.CMakePackageBase import *
 
 # do not forget to update CMakeLists.txt!
@@ -112,7 +112,7 @@ class Package(CMakePackageBase):
     def install( self ):
         if not CMakePackageBase.install( self ):
             return False
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
             executable = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
             utils.embedManifest( executable, manifest )

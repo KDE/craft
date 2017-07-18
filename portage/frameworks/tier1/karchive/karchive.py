@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues( )
 
         self.shortDescription = "Qt 5 addon providing access to numerous types of archives"
-        
+
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/qttools"] = "default"
         self.runtimeDependencies["win32libs/libbzip2"] = "default"
         self.runtimeDependencies["win32libs/zlib"] = "default"
-        if not compiler.isMSVC2010() and not compiler.isMSVC2012():
+        if not craftCompiler.isMSVC2010() and not craftCompiler.isMSVC2012():
             self.runtimeDependencies["win32libs/liblzma"] = "default"
 
         for ver in ('5.0.0', '5.1.0', '5.2.0'):
@@ -28,5 +28,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__( self )
 
 
-    
+
 

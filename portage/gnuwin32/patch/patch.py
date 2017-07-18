@@ -2,7 +2,7 @@ import os
 
 import info
 import utils
-import compiler
+from compiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.5.9'
 
     def setDependencies( self ):
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.runtimeDependencies['dev-util/uactools'] = 'default'
         self.runtimeDependencies['virtual/bin-base'] = 'default'
 
@@ -29,4 +29,4 @@ class Package( BinaryPackageBase ):
         manifest = os.path.join( self.packageDir(), "patch.exe.manifest" )
         patch = os.path.join( self.installDir(), "bin", "patch.exe" )
         return utils.embedManifest(patch, manifest)
-        
+

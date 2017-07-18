@@ -23,7 +23,7 @@ class Package(BoostPackageBase):
         BoostPackageBase.__init__(self)
 
     def install(self):
-        if OsUtils.isUnix():        
+        if OsUtils.isUnix():
             return utils.copyFile( os.path.join(portage.getPackageInstance('win32libs', 'boost-headers').sourceDir(),"tools","build", "bjam" ),
                                 os.path.join( self.imageDir(), "bin", "bjam" ) )
         else:
@@ -34,18 +34,18 @@ class Package(BoostPackageBase):
     def make(self):
         if OsUtils.isUnix():
             cmd = "./bootstrap.sh  --with-toolset="
-            if compiler.isClang():
+            if craftCompiler.isClang():
                 cmd += "clang"
-            elif compiler.isGCC():
+            elif craftCompiler.isGCC():
                 cmd += "gcc"
         else:
             cmd = "bootstrap.bat "
-            if compiler.isClang():
+            if craftCompiler.isClang():
                 cmd += "clang"
-            elif compiler.isMinGW():
+            elif craftCompiler.isMinGW():
                 cmd += "mingw"
-            elif compiler.isMSVC():
-                platform = str(compiler.msvcPlatformToolset())
+            elif craftCompiler.isMSVC():
+                platform = str(craftCompiler.msvcPlatformToolset())
                 cmd += f"vc{platform[:2]}"
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
                 'boost-headers').sourceDir(),"tools","build")) or craftDebug.log.critical(

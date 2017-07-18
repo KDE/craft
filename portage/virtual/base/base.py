@@ -1,7 +1,7 @@
 import os
 
 import info
-import compiler
+from compiler import craftCompiler
 from Package.VirtualPackageBase import *
 
 
@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/git'] = 'default'
         self.buildDependencies['dev-util/putty'] = 'default'
 
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies['dev-util/mingw-w64'] = 'default'
         if craftSettings.get("Compile","MakeProgram" ,"" ) == "jom":
             self.buildDependencies['dev-util/jom'] = 'default'

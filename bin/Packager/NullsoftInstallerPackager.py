@@ -53,9 +53,9 @@ file collection process is skipped, and only the installer is generated.
 
 
     def _setDefaults(self):
-        self.defines.setdefault( "architecture", compiler.architecture())
+        self.defines.setdefault( "architecture", craftCompiler.architecture)
         self.defines.setdefault( "company", "KDE")
-        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES")
+        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if craftCompiler.isX64() else "$PROGRAMFILES")
         self.defines.setdefault( "executable",  "")
         self.defines.setdefault( "icon",  "")
         self.defines.setdefault( "license",  "")
@@ -123,15 +123,15 @@ file collection process is skipped, and only the installer is generated.
         return _path
 
     def getVCRedistLocation(self):
-        if not compiler.isMSVC():
+        if not craftCompiler.isMSVC():
             return "none"
         _file = None
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             arch = "x86"
-            if compiler.isX64(): arch = "x64"
-            if compiler.isMSVC2015():
+            if craftCompiler.isX64(): arch = "x64"
+            if craftCompiler.isMSVC2015():
                 _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe" )
-            elif compiler.isMSVC2017():
+            elif craftCompiler.isMSVC2017():
                 _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")
             if not os.path.isfile(_file):
                 craftDebug.new_line()

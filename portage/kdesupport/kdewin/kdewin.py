@@ -1,6 +1,6 @@
 import info
 import utils
-import compiler
+from compiler import craftCompiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
@@ -32,9 +32,9 @@ class Package(CMakePackageBase):
 #        self.subinfo.options.package.version = '0.5.4'
         self.subinfo.options.configure.args = '-DBUILD_BASE_LIB_WITH_QT=ON -DBUILD_QT_LIB=ON -DBUILD_PNG2ICO=OFF '
         self.subinfo.options.configure.args += ' -DBUILD_TOOLS=ON '
-        if compiler.isMinGW_W32():
+        if craftCompiler.isMinGW_W32():
           self.subinfo.options.configure.args += ' -DMINGW_W32=ON '
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.subinfo.options.configure.args += ' -DKDEWIN_DEFINITIONS="-DKDEWIN_NO_LOCALTIME_R -DKDEWIN_NO_GMTIME_R" '
 
 

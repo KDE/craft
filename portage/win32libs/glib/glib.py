@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["win32libs/pcre"] = "default"
         self.runtimeDependencies["win32libs/zlib"] = "default"
         self.runtimeDependencies["win32libs/gettext"] = "default"
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
 class PackageCMake(MSBuildPackageBase):
@@ -53,7 +53,7 @@ class PackageCMake(MSBuildPackageBase):
     def install(self):
         self.cleanImage()
         arch = "x86"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = "x64"
         utils.mergeTree(
             os.path.join(self.sourceDir(), "..", self.toolset, arch, "lib", "glib-2.0", "include"),
@@ -76,7 +76,7 @@ class PackageMSys(AutoToolsPackageBase):
                        os.path.join(self.imageDir(), "include", "glib-2.0", "glibconfig.h"), False)
         return True
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMSys): pass
 else:
     class Package(PackageCMake): pass

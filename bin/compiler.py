@@ -7,181 +7,208 @@ import os
 import subprocess
 import re
 
-from CraftDebug import craftDebug
+from CraftDebug import craftDebug, deprecated
 import utils
 from CraftConfig import *
 
 
+class Compiler(object):
+    __supportedPlatforms = ["windows", "linux", "macos", "freebsd"]
 
-
-def _getGCCTarget():
-    result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine")
-    if result:
-        result = result.strip()
-        craftDebug.log.debug(f"GCC Target Processor: {result}")
-    else:
-        #if no mingw is installed return mingw-w32 it is part of base
-        if isX64():
-            result = "x86_64-w64-mingw32"
+    def __init__(self):
+        compiler = craftSettings.get("General","KDECOMPILER", "")
+        if compiler != "":
+            arch = "32" if craftSettings.get("General", "Architecture") == "x86" else "64"
+            if compiler.startswith("msvc"):
+                split = ["windows", f"{compiler}_{arch}" , "cl"]
+            elif compiler.startswith("mingw"):
+                split = ["windows", f"mingw_{arch}", "gcc"]
+            if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+                print(f"Your using the old compiler setting\n"
+                                    f"\t[General]\n"
+                                    f"\tKDECOMPILER={compiler}\n"
+                                    f"please update your settings to\n"
+                                    f"\t[General]\n"
+                                    f"\tABI=" + "-".join(split),
+                                    file=sys.stderr)
         else:
-            result = "i686-w64-mingw32"
-    return result
+            split = craftSettings.get("General","ABI").split("-")
+        if len(split) != 3:
+            raise Exception("Invalid compiler: " + craftSettings.get("General","ABI"))
 
-def architecture():
-    return craftSettings.get("General", "Architecture" )
+        self._platform, self._abi, self._compiler = split
 
-def isNative():
-    return craftSettings.getboolean("General", "Native", True)
+        self._architecture = "x86" if self._abi.endswith("32") else "x64"
 
-def isX64():
-    return architecture() == "x64"
+        if not self._platform in Compiler.__supportedPlatforms:
+            raise Exception("Unsupported platform: " + self._platform)
 
-def isX86():
-    return architecture() == "x86"
+    def __str__(self):
+        return "-".join(self.signature)
 
+    @property
+    def signature(self):
+        return (self.platform, self.abi, self.compiler)
 
-def _compiler():
-    return craftSettings.get("General","KDECOMPILER")
+    @property
+    def platform(self):
+        return self._platform
 
-def isGCC():
-    return isMinGW() or _compiler().endswith("-gcc")
+    @property
+    def abi(self):
+        return self._abi
 
-def isClang():
-    return _compiler().endswith("-clang")
+    @property
+    def compiler(self):
+        return self._compiler
 
-def isGCCLike():
-    return (isGCC() or isClang())
+    @property
+    def architecture(self):
+        return self._architecture
 
-def isMinGW():
-    return _compiler().startswith("mingw")
+    def _getGCCTarget(self):
+        result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine")
+        if result:
+            result = result.strip()
+            craftDebug.log.debug(f"GCC Target Processor: {result}")
+        else:
+            # if no mingw is installed return mingw-w32 it is part of base
+            if self.isX64():
+                result = "x86_64-w64-mingw32"
+            else:
+                result = "i686-w64-mingw32"
+        return result
 
-def isMinGW_W32():
-    return isMinGW() and _getGCCTarget() == "i686-w64-mingw32"
+    def isNative(self):
+        # TODO: any reason to keep that?
+        return craftSettings.getboolean("General", "Native", True)
 
-def isMinGW_W64():
-    return isMinGW() and isX64()
+    def isX64(self):
+        return self.architecture == "x64"
 
-def isMSVC():
-    return _compiler().startswith("msvc")
+    def isX86(self):
+        return self.architecture == "x86"
 
-def isMSVC2010():
-    return _compiler().startswith("msvc2010")
+    def isGCC(self):
+        return self.compiler == "gcc"
 
-def isMSVC2012():
-    return _compiler().startswith("msvc2012")
+    def isClang(self):
+        return self.compiler == "clang"
 
-def isMSVC2013():
-    return _compiler().startswith("msvc2013")
+    def isGCCLike(self):
+        return self.isGCC() or self.isClang()
 
-def isMSVC2015():
-    return _compiler().startswith("msvc2015")
+    def isCl(self):
+        return self.compiler == "cl"
 
-def isMSVC2017():
-    return _compiler().startswith("msvc2017")
+    def isMinGW(self):
+        return self.abi.startswith("mingw")
 
-def isIntel():
-    return _compiler() == "intel"
+    def isMinGW_W32(self):
+        return self.isMinGW() and self.isX86()
 
-def getCompilerExecutableName():
-    if isGCC():
-        return "gcc"
-    elif isClang():
-        return "clang"
-    elif isMSVC():
-        return "cl"
-    else:
-        craftDebug.log.critical(f"Unsupported Compiler {_compiler()}")
+    def isMinGW_W64(self):
+        return self.isMinGW() and self.isX64()
 
-def getCompilerName():
-    if isMinGW():
-        return "mingw-w64"
-    elif isMSVC():
-        return _compiler()
-    elif isIntel():
-        return "intel-%s-%s" % (os.getenv("TARGET_ARCH"), os.getenv("TARGET_VS"))
-    elif isGCC():
-        return "gcc"
-    elif isClang():
-        return "clang"
-    else:
-        craftDebug.log.critical("Unknown Compiler %s" % _compiler())
+    def isMSVC(self):
+        return self.abi.startswith("msvc")
 
-def getSimpleCompilerName():
-    if isMinGW():
-        return "mingw64"
-    elif isMSVC():
-        return "msvc"
-    elif isIntel():
-        return "intel"
-    else:
-        return getCompilerName()
+    def isMSVC2010(self):
+        return self.abi == "msvc10"
 
-def getGCCLikeVersion(compilerExecutable):
-    result = utils.utilsCache.getCommandOutput(compilerExecutable, "--version")
-    if result:
-        result = re.findall("\d+\.\d+\.?\d*",result)[0]
-        craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
-    return result or "0"
+    def isMSVC2012(self):
+        return self.abi == "msvc12"
 
-def getVersion():
-    if isGCCLike():
-        return getGCCLikeVersion(getCompilerExecutableName())
-    elif isMSVC():
-        return "20{0}".format(_compiler()[len(_compiler())-2:])
-    else:
-        return None
+    def isMSVC2013(self):
+        return self.abi == "msvc13"
 
-def getVersionWithName():
-    if isGCCLike():
-        return f"{getCompilerName()} {getVersion()}"
-    elif isIntel():
-        return os.getenv("PRODUCT_NAME_FULL")
-    elif isMSVC():
-        return f"Microsoft Visual Studio {getVersion()}"
-    else:
-        return None
+    def isMSVC2015(self):
+        return self.abi == "msvc15"
 
-def getShortName():
-    if not isMSVC():
-        return getCompilerName()
-    return f"vc{internalVerison()}"
+    def isMSVC2017(self):
+        return self.abi == " msvc17"
 
+    def isIntel(self):
+        return self.compiler == "intel"
 
-def internalVerison():
-    if not isMSVC():
-        return getVersion()
-    versions = {
-        "msvc2010": 10,
-        "msvc2012": 11,
-        "msvc2013": 12,
-        "msvc2015": 14,
-        "msvc2017": 15
-    }
-    c = _compiler().split("-", 1)[0]
-    if c not in versions:
-        craftDebug.log.critical(f"Unknown MSVC Compiler {c}")
-    return versions[c]
+    @deprecated("self.compiler")
+    def getCompilerExecutableName(self):
+        return self.compiler
 
+    @deprecated("craftCompiler")
+    def getCompilerName(self):
+        return str(craftCompiler)
 
-def msvcPlatformToolset():
-    versions = {
-        "msvc2010": 100,
-        "msvc2012": 110,
-        "msvc2013": 120,
-        "msvc2015": 140,
-        "msvc2017": 141
-    }
-    c = _compiler().split("-", 1)[0]
-    if c not in versions:
-        craftDebug.log.critical(f"Unknown MSVC Compiler {c}")
-    return versions[c]
+    @deprecated("craftCompiler")
+    def getSimpleCompilerName(self):
+        return str(craftCompiler)
+
+    def getGCCLikeVersion(self, compilerExecutable):
+        result = utils.utilsCache.getCommandOutput(compilerExecutable, "--version")
+        if result:
+            result = re.findall("\d+\.\d+\.?\d*", result)[0]
+            craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
+        return result or "0"
+
+    def getVersion(self):
+        if self.isGCCLike():
+            return self.getGCCLikeVersion(self.getCompilerExecutableName())
+        elif self.isMSVC():
+            return self.internalVerison()
+        else:
+            return None
+
+    def getVersionWithName(self):
+        if self.isGCCLike():
+            return f"{self.getCompilerName()} {self.getVersion()}"
+        elif self.isIntel():
+            return os.getenv("PRODUCT_NAME_FULL")
+        elif self.isMSVC():
+            return f"Microsoft Visual Studio {self.getVersion()}"
+        else:
+            return None
+
+    def getShortName(self):
+        if not self.isMSVC():
+            return self.getCompilerName()
+        return f"vc{self.internalVerison()}"
+
+    def internalVerison(self):
+        if not self.isMSVC():
+            return self.getVersion()
+        versions = {
+            "msvc2010": 10,
+            "msvc2012": 11,
+            "msvc2013": 12,
+            "msvc2015": 14,
+            "msvc2017": 15
+        }
+        c = self.abi.split("_")[0]
+        if c not in versions:
+            craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
+        return versions[c]
+
+    def msvcPlatformToolset(self):
+        versions = {
+            "msvc2010": 100,
+            "msvc2012": 110,
+            "msvc2013": 120,
+            "msvc2015": 140,
+            "msvc2017": 141
+        }
+        c = self.abi.split("_")[0]
+        if c not in versions:
+            craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
+        return versions[c]
+
+craftCompiler = Compiler()
 
 if __name__ == '__main__':
     print("Testing Compiler.py")
-    print("Configured compiler (KDECOMPILER): %s" % _compiler())
-    print("Version: %s" % getVersionWithName())
-    print("Compiler Name: %s" % getCompilerName())
-    print("Native compiler: %s" % ("No", "Yes")[isNative()])
-    if isGCCLike():
-        print("Compiler Version: %s" % getGCCLikeVersion(getCompilerExecutableName()))
-        print("Compiler Target: %s" % _getGCCTarget())
+    print(f"Configured compiler (ABI): {craftCompiler}")
+    print("Version: %s" % craftCompiler.getVersionWithName())
+    print("Compiler Name: %s" % craftCompiler.getCompilerName())
+    print("Native compiler: %s" % ("No", "Yes")[craftCompiler.isNative()])
+    if craftCompiler.isGCCLike():
+        print("Compiler Version: %s" % craftCompiler.getGCCLikeVersion(craftCompiler.getCompilerExecutableName()))
+        print("Compiler Target: %s" % craftCompiler._getGCCTarget())

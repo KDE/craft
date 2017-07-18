@@ -5,7 +5,7 @@ import os
 import utils
 import info
 import portage
-import compiler
+from compiler import craftCompiler
 from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
@@ -80,7 +80,7 @@ class QtPackage(Qt5CorePackageBase):
             return Qt5CorePackageBase.compile(self)
 
     def configure( self, unused1=None, unused2=""):
-        if compiler.isMinGW() and "DXSDK_DIR" not in os.environ:
+        if craftCompiler.isMinGW() and "DXSDK_DIR" not in os.environ:
             craftDebug.log.critical("Failed to detec a DirectX SDK")
             craftDebug.log.critical("Please visite https://community.kde.org/Guidelines_and_HOWTOs/Build_from_source/Windows#Direct_X_SDK for instructions")
             return False
@@ -131,7 +131,7 @@ class QtPackage(Qt5CorePackageBase):
                 command += " -icu "
             if self.subinfo.options.isActive("win32libs/zlib"):
                 command += " -system-zlib "
-                if compiler.isMSVC():
+                if craftCompiler.isMSVC():
                     command += " ZLIB_LIBS=zlib.lib "
         else:
             command += " -static -static-runtime "
@@ -140,7 +140,7 @@ class QtPackage(Qt5CorePackageBase):
         command += "-nomake examples "
         command += "-nomake tests "
 
-        if (compiler.isMSVC() and compiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
+        if (craftCompiler.isMSVC() and craftCompiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
             command += "-no-pch "
 
         return utils.system( command )
@@ -152,7 +152,7 @@ class QtPackage(Qt5CorePackageBase):
             utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
 
             # install msvc debug files if available
-            if compiler.isMSVC():
+            if craftCompiler.isMSVC():
                 srcdir = os.path.join( self.buildDir(), "lib" )
                 destdir = os.path.join( self.installDir(), "lib" )
 
@@ -177,7 +177,7 @@ class QtPackage(Qt5CorePackageBase):
     def makeProgram(self):
         if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.9"):
             # workaround for broken qmake make file.... building with mingw and jom is broken
-            if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
+            if self.subinfo.options.make.supportsMultijob and craftCompiler.isMinGW():
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
         return super(Qt5CorePackageBase, self).makeProgram
 

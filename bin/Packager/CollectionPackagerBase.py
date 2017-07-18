@@ -87,7 +87,7 @@ class CollectionPackagerBase( PackagerBase ):
         directory = "image"
 
         if package.subinfo.options.useCompilerType == True:
-            directory += '-' + compiler.getCompilerName()
+            directory += '-' + craftCompiler.getCompilerName()
         if package.subinfo.options.useBuildType == True:
             directory += '-' + package.buildType()
         directory += '-' + buildTarget

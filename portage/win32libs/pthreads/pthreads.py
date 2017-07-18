@@ -1,4 +1,4 @@
-import compiler
+from compiler import craftCompiler
 import info
 
 class subinfo(info.infoclass):
@@ -28,7 +28,7 @@ class PthreadsPackage(CMakePackageBase):
         self.subinfo.options.configure.args = " -DBUILD_TESTS=OFF"
 
 
-if compiler.isMSVC() or compiler.isIntel():
+if craftCompiler.isMSVC() or craftCompiler.isIntel():
     class Package(PthreadsPackage):
         def __init__( self ):
             PthreadsPackage.__init__( self )
