@@ -272,9 +272,6 @@ class Options(object):
         self.disableReleaseBuild = False
         ## exit if system command returns errors
         self.exitOnErrors = True
-        ## use short pathes (usefull for mingw to
-        #  avoid exceeding the maximum path length)
-        self.useShortPathes = False
 
         ## there is a special option available already
         self.buildTools = False

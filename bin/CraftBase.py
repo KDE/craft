@@ -10,7 +10,6 @@ from ctypes import *
 import functools
 
 from CraftDebug import craftDebug
-import utils
 import portage
 from compiler import craftCompiler
 from CraftConfig import *
@@ -98,20 +97,6 @@ class CraftBase(object):
     def buildTests(self):
         return craftSettings.getboolean("Compile", "BuildTests")
 
-
-    def __adjustPath(self, directory):
-        """return adjusted path"""
-        if not self.subinfo.options.useShortPathes:
-            return directory
-        path = c_char_p(directory)
-        length = windll.kernel32.GetShortPathNameA(path, 0, 0)
-        if length == 0:
-            return directory
-        buf = create_string_buffer('\000' * (length + 1))
-        windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        craftDebug.log.debug("converting " + directory + " to " + buf.value)
-        return buf.value
-
     def buildType(self):
         """return currently selected build type"""
         return craftSettings.get("Compile","BuildType")
@@ -151,17 +136,15 @@ class CraftBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return self.__adjustPath( portage.getDirname( self.category, self.package ) )
+        return portage.getDirname( self.category, self.package )
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        buildroot    = os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
-        return self.__adjustPath(buildroot)
+        return os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        _workDir = os.path.join( self.buildRoot(), "work" )
-        return self.__adjustPath(_workDir)
+        return os.path.join( self.buildRoot(), "work" )
 
     def buildDir(self):
         craftDebug.log.debug("CraftBase.buildDir() called")
@@ -169,13 +152,12 @@ class CraftBase(object):
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         craftDebug.log.debug("package builddir is: %s" % builddir)
-        return self.__adjustPath(builddir)
+        return builddir
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imageDir =  os.path.join( self.buildRoot(), self.imageDirPattern() )
-        return self.__adjustPath(imageDir)
+        return os.path.join( self.buildRoot(), self.imageDirPattern() )
 
     def installDir(self):
         """return absolute path to the install directory of the currently active package.
@@ -185,7 +167,7 @@ class CraftBase(object):
             installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
         else:
             installDir = self.imageDir()
-        return self.__adjustPath(installDir)
+        return installDir
 
     def mergeSourceDir(self):
         """return absolute path to the merge source directory of the currently active package.
@@ -196,12 +178,12 @@ class CraftBase(object):
             directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
             directory = self.imageDir()
-        return self.__adjustPath(directory)
+        return directory
 
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
         """
-        return self.__adjustPath(CraftStandardDirs.craftRoot())
+        return CraftStandardDirs.craftRoot()
 
     def packageDestinationDir( self, withBuildType=True ):
         """return absolute path to the directory where binary packages are placed into.
