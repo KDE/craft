@@ -108,8 +108,6 @@ class CraftBase(object):
     def workDirPattern(self):
         """return base directory name for package related work directory"""
         directory = ""
-        if self.subinfo.options.useCompilerType == True:
-            directory += "%s-" % craftCompiler.getCompilerName()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -124,8 +122,6 @@ class CraftBase(object):
         """return base directory name for package related image directory"""
         directory = "image"
 
-        if self.subinfo.options.useCompilerType == True:
-            directory += '-' + craftCompiler.getCompilerName()
         if self.subinfo.options.useBuildType == True:
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget

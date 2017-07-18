@@ -86,8 +86,6 @@ class CollectionPackagerBase( PackagerBase ):
         """ return base directory name for package related image directory """
         directory = "image"
 
-        if package.subinfo.options.useCompilerType == True:
-            directory += '-' + craftCompiler.getCompilerName()
         if package.subinfo.options.useBuildType == True:
             directory += '-' + package.buildType()
         directory += '-' + buildTarget

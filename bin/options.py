@@ -257,15 +257,6 @@ class Options(object):
         #
         self.useBuildType = True
 
-        ## this option controls if the active compiler is used when creating build and install directories.
-        # The following example shows the difference:
-        # \code
-        #               True                                  False
-        # work/msvc2008-RelWithDebInfo-svnHEAD     work/RelWithDebInfo-svnHEAD
-        # image-msvc2008-RelWithDebInfo-svnHEAD    image-RelWithDebInfo-svnHEAD
-        # \endcode
-        #
-        self.useCompilerType = True
         ## skip the related package from debug builds
         self.disableDebugBuild = False
         ## skip the related package from release builds
