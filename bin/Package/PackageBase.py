@@ -121,7 +121,7 @@ class PackageBase (CraftBase):
 
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
-        if self.subinfo.options.package.disableStriping or not isMinGW():
+        if self.subinfo.options.package.disableStriping or not craftCompiler.isMinGW():
             craftDebug.log.debug("Skiping stipping of " + fileName)
             return True
         basepath = os.path.join( self.installDir() )
