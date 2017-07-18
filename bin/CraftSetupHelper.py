@@ -239,7 +239,7 @@ class SetupHelper( object ):
 
         # add python site packages to pythonpath
         self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
-
+        self.prependPath("PATH", os.path.dirname(sys.executable))
 
     def printEnv(self):
         self.setupEnvironment()
