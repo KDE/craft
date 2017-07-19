@@ -126,7 +126,7 @@ class Compiler(object):
         return self.abi == "msvc15"
 
     def isMSVC2017(self):
-        return self.abi == " msvc17"
+        return self.abi == "msvc17"
 
     def isIntel(self):
         return self.compiler == "intel"
@@ -154,7 +154,7 @@ class Compiler(object):
         if self.isGCCLike():
             return self.getGCCLikeVersion(self.getCompilerExecutableName())
         elif self.isMSVC():
-            return self.internalVerison()
+            return self.getInternalVersion()
         else:
             return None
 
@@ -171,9 +171,9 @@ class Compiler(object):
     def getShortName(self):
         if not self.isMSVC():
             return self.getCompilerName()
-        return f"vc{self.internalVerison()}"
+        return f"vc{self.getInternalVersion()}"
 
-    def internalVerison(self):
+    def getInternalVersion(self):
         if not self.isMSVC():
             return self.getVersion()
         versions = {
@@ -188,7 +188,7 @@ class Compiler(object):
             craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
 
-    def msvcPlatformToolset(self):
+    def getMsvcPlatformToolset(self):
         versions = {
             "msvc2010": 100,
             "msvc2012": 110,

@@ -45,7 +45,7 @@ class Package(BoostPackageBase):
             elif craftCompiler.isMinGW():
                 cmd += "mingw"
             elif craftCompiler.isMSVC():
-                platform = str(craftCompiler.msvcPlatformToolset())
+                platform = str(craftCompiler.getMsvcPlatformToolset())
                 cmd += f"vc{platform[:2]}"
         utils.system(cmd, cwd = os.path.join(portage.getPackageInstance('win32libs',
                 'boost-headers').sourceDir(),"tools","build")) or craftDebug.log.critical(

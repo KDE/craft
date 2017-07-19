@@ -27,7 +27,7 @@ class MSysShell(object):
         if craftCompiler.isMSVC():
             ldflags = ""
             cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
-            if craftCompiler.msvcPlatformToolset() > 120:
+            if craftCompiler.getMsvcPlatformToolset() > 120:
                 cflags += " -FS"
         else:
             ldflags = "-L%s/lib " % mergeroot

@@ -134,7 +134,7 @@ class SetupHelper( object ):
     def getEnv( self ):
         if craftCompiler.isMSVC():
             architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
-            version = craftCompiler.internalVerison()
+            version = craftCompiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
                                         f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest")

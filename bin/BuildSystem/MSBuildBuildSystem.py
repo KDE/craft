@@ -16,7 +16,7 @@ class MSBuildBuildSystem(BuildSystemBase):
         for target in self.msbuildTargets:
             if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
                                 f" /p:Configuration={buildType}"
-                                f" /tv:{craftCompiler.internalVerison()}.0 /property:PlatformToolset=v{craftCompiler.msvcPlatformToolset()}"
+                                f" /tv:{craftCompiler.getInternalVersion()}.0 /property:PlatformToolset=v{craftCompiler.getMsvcPlatformToolset()}"
                                 f" {defines}"):
                 return False
         return True

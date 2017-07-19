@@ -62,7 +62,7 @@ class BoostBuildSystem(BuildSystemBase):
         elif craftCompiler.isMinGW():
             options += "gcc"
         elif craftCompiler.isMSVC():
-            platform = str(craftCompiler.msvcPlatformToolset())
+            platform = str(craftCompiler.getMsvcPlatformToolset())
             if craftCompiler.isMSVC2017():
                 options += f"msvc-{platform[:2]}.0"
             else:
