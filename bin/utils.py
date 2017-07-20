@@ -103,7 +103,7 @@ class UtilsCache(object):
 
         appLocation = shutil.which(app)
         if appLocation:
-            craftDebug.log.debug(f"Adding %s to app cache {appLocation}")
+            craftDebug.log.debug(f"Adding {app} to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
             craftDebug.log.debug(f"Craft was unable to locate: {app}")
