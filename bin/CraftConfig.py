@@ -167,7 +167,7 @@ class CraftConfig( object ):
         self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
         self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
         self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
-        self.addAlias("ShortPath", "Enabled", "ShortPath", "Enabled")
+        self.addAlias("ShortPath", "Enabled", "ShortPath", "EMERGE_USE_SHORT_PATH")
 
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )
@@ -206,7 +206,7 @@ class CraftConfig( object ):
 
     @property
     def version(self):
-        return int(self.get("Version", "EMERGE_SETTINGS_VERSION", 1))
+        return int(self.get("Version", "ConfigVersion", 2))
 
     def addAlias( self, group, key, destGroup, destKey ):
         self._alias[ (group, key) ] = (destGroup, destKey)
