@@ -83,9 +83,9 @@ class CraftStandardDirs( object ):
     @staticmethod
     def gitDir( ):
         if not "GITDIR" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_GIT_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "GitDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "GITDIR" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "GitDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "GITDIR" ] = craftSettings.get( "Paths", "KDEGITDIR",
                                                                                    os.path.join(
@@ -164,6 +164,7 @@ class CraftConfig( object ):
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
         self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
+        self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
 
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )

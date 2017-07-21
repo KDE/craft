@@ -91,8 +91,8 @@ class SetupHelper( object ):
                     _subst( CraftStandardDirs.craftRoot( ), "EMERGE_ROOT_DRIVE" )
                 if ("ShortPath", "EMERGE_DOWNLOAD_DRIVE") in craftSettings:
                     _subst( CraftStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
-                if ("ShortPath", "EMERGE_GIT_DRIVE") in craftSettings:
-                    _subst( CraftStandardDirs.gitDir( ), "EMERGE_GIT_DRIVE" )
+                if ("ShortPath", "GitDrive") in craftSettings:
+                    _subst( CraftStandardDirs.gitDir( ), "GitDrive" )
 
     def printBanner( self ):
         stream = sys.stderr

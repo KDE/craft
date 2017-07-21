@@ -60,7 +60,7 @@ class CraftBootstrap(object):
                         return drive + ":"
                     return drive[:2]
         return { "EMERGE_ROOT_DRIVE" : promptDriveLetter("the build root", "R:"),
-                 "EMERGE_GIT_DRIVE" : promptDriveLetter("the location where the git checkouts are located", "Q:")}
+                 "GitDrive" : promptDriveLetter("the location where the git checkouts are located", "Q:")}
 
 
 
