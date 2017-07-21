@@ -164,6 +164,7 @@ class CraftConfig( object ):
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
         self.addAlias("General", "Notify", "General", "EMERGE_USE_NOTIFY")
+        self.addAlias("General", "Portages", "General", "EMERGE_PORTAGE_ROOT")
         self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
         self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
         self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")

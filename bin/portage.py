@@ -128,8 +128,8 @@ def buildType():
 
 def rootDirectories():
     # this function should return all currently set portage directories
-    if ("General", "EMERGE_PORTAGE_ROOT" ) in craftSettings:
-        rootDirs = craftSettings.get("General", "EMERGE_PORTAGE_ROOT" ).split( ";" )
+    if ("General", "Portages" ) in craftSettings:
+        rootDirs = craftSettings.get("General", "Portages" ).split( ";" )
     else:
         rootDirs = []
     if len( rootDirs ) == 0:
