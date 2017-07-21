@@ -232,14 +232,6 @@ class CraftBase(object):
         craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
-    def proxySettings(self):
-        host = craftSettings.get("General", 'EMERGE_PROXY_HOST', "")
-        port = craftSettings.get("General", 'EMERGE_PROXY_PORT', "")
-        username = craftSettings.get("General", 'EMERGE_PROXY_USERNAME', "")
-        password = craftSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
-        return [host, port, username, password]
-
-
     def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
