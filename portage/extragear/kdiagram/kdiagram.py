@@ -3,8 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['master'] = '[git]kde:kdiagram|master'
-        self.defaultTarget = 'master'
+        self.svnTargets["master"] = "[git]kde:kdiagram"
+        self.defaultTarget = "master"
+
+        self.shortDescription = "Powerful libraries (KChart, KGantt) for creating business diagrams"
 
 
     def setDependencies( self ):
