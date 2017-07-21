@@ -221,8 +221,9 @@ class CraftConfig( object ):
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                print( "Warning: %s/%s is deprecated and has been renamed to %s/%s, please update your kdesettings.ini" % (dg, dk, group, key ),
-                       file = sys.stderr )
+                if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+                    print( "Warning: %s/%s is deprecated and has been renamed to %s/%s, please update your kdesettings.ini" % (dg, dk, group, key ),
+                           file = sys.stderr )
                 val = self.get( dg, dk, default )
                 if not group in self._config.sections():
                     self._config.add_section(group)
