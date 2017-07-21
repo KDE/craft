@@ -110,9 +110,9 @@ class CraftStandardDirs( object ):
     @staticmethod
     def craftRoot( ):
         if not "EMERGEROOT" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_ROOT_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "RootDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "RootDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
                     os.path.join( os.path.dirname( CraftStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
