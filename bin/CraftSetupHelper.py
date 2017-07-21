@@ -89,8 +89,8 @@ class SetupHelper( object ):
             with TemporaryUseShortpath( False):
                 if ("ShortPath", "RootDrive") in craftSettings:
                     _subst( CraftStandardDirs.craftRoot( ), "RootDrive" )
-                if ("ShortPath", "EMERGE_DOWNLOAD_DRIVE") in craftSettings:
-                    _subst( CraftStandardDirs.downloadDir( ), "EMERGE_DOWNLOAD_DRIVE" )
+                if ("ShortPath", "DownloadDrive") in craftSettings:
+                    _subst( CraftStandardDirs.downloadDir( ), "DownloadDrive" )
                 if ("ShortPath", "GitDrive") in craftSettings:
                     _subst( CraftStandardDirs.gitDir( ), "GitDrive" )
 

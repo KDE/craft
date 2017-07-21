@@ -61,9 +61,9 @@ class CraftStandardDirs( object ):
     def downloadDir( ):
         """ location of directory where fetched files are  stored """
         if not "DOWNLOADDIR" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "DownloadDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "DownloadDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = craftSettings.get( "Paths", "DOWNLOADDIR",
                                                                                         os.path.join(
@@ -165,6 +165,8 @@ class CraftConfig( object ):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
         self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
         self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
+        self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
+        self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
 
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )
