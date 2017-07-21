@@ -11,21 +11,6 @@ class SourceBase(CraftBase):
         CraftBase.__init__(self)
         self.url = ""
 
-    def setProxy(self):
-        """set proxy for fetching sources - the default implementation is to set the
-        environment variables http_proxy and ftp_proxy"""
-        (host, port, username, password) = self.proxySettings()
-        if host == "":
-            return
-
-        name = ""
-        if username != "" and password != "":
-            name = "%s:%s@" % (username, password)
-
-        proxy = "http://%s%s:%s" % (name, host, port)
-        utils.putenv("http_proxy", proxy)
-        utils.putenv("ftp_proxy", proxy)
-
     def fetch(self, dummyRepoSource=None):
         """fetch the source from a remote host and save it into a local destination"""
         utils.abstract()
