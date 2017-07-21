@@ -27,7 +27,7 @@ class CraftDebug(object):
         self._handler.setLevel(logging.INFO)
 
 
-        logDir = craftSettings.get("General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/"))
+        logDir = craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
 

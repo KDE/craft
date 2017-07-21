@@ -163,6 +163,7 @@ class CraftConfig( object ):
 
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
+        self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
 
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )

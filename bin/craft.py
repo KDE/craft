@@ -396,7 +396,7 @@ def main( ):
                          default = craftSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
                          help = "This will add a patch level when used together with --package" )
     parser.add_argument( "--log-dir", action = "store",
-                         default = craftSettings.get( "General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/")),
+                         default = craftSettings.get( "CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
                          help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
@@ -458,7 +458,7 @@ def main( ):
     craftSettings.set( "Compile", "BuildTests", args.buildTests )
     craftSettings.set( "Compile", "BuildType", args.buildType )
     craftSettings.set( "General", "Options", ";".join( args.options ) )
-    craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
+    craftSettings.set( "CraftDebug", "LogDir", args.log_dir )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
     craftSettings.set( "Packager", "CreateCache", not args.noCache and args.createCache)
     craftSettings.set( "Packager", "UseCache", not args.noCache and args.useCache)
