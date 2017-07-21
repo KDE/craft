@@ -69,7 +69,6 @@ class ArchiveSource(SourceBase):
             craftDebug.log.debug("skipping fetch (--offline)")
             return True
 
-        self.setProxy()
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
                 craftDebug.log.debug("files and digests available, no need to download files")

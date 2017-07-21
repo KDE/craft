@@ -111,7 +111,6 @@ class GitSource ( VersionSystemSourceBase ):
             return True
         else:
             ret = True
-            self.setProxy()
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
