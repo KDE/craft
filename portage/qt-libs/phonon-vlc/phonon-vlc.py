@@ -2,7 +2,7 @@
 import os
 
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
 

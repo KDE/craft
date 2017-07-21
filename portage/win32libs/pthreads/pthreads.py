@@ -1,4 +1,4 @@
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 import info
 
 class subinfo(info.infoclass):

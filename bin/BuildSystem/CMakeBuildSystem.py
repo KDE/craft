@@ -10,7 +10,7 @@ from CraftDebug import craftDebug
 import utils
 from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 import utils
 from CraftOS.osutils import OsUtils
 

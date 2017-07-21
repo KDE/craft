@@ -1,5 +1,5 @@
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 import os
 import utils
 

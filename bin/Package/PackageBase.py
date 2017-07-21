@@ -5,7 +5,7 @@ from CraftDebug import craftDebug
 import CraftHash
 from CraftBase import *
 from InstallDB import *
-from compiler import *
+from CraftCompiler import *
 
 from CraftOS.osutils import OsUtils
 

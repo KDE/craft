@@ -11,7 +11,7 @@ import functools
 
 from CraftDebug import craftDebug
 import portage
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from CraftConfig import *
 import utils
 

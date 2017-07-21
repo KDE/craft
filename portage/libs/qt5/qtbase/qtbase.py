@@ -5,7 +5,7 @@ import os
 import utils
 import info
 import portage
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 

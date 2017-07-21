@@ -2,7 +2,7 @@ import os
 
 from CraftDebug import craftDebug
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

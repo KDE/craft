@@ -4,7 +4,7 @@ import re
 
 from Package.BinaryPackageBase import *
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 class subinfo(info.infoclass):
     vlc_ver = None

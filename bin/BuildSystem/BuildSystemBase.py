@@ -5,7 +5,7 @@
 """ \package BuildSystemBase"""
 from CraftDebug import craftDebug
 from CraftBase import *
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 from CraftOS.osutils import OsUtils
 

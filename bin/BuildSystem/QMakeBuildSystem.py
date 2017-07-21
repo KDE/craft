@@ -4,7 +4,7 @@
 # definitions for the qmake build system
 from CraftDebug import craftDebug
 import utils
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 from CraftOS.osutils import OsUtils
 

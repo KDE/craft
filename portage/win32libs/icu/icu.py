@@ -3,7 +3,7 @@ import os
 
 import utils
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

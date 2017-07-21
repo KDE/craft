@@ -11,7 +11,7 @@ import shutil
 
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 
 # The minimum python version for craft please edit here

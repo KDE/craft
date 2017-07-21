@@ -15,7 +15,7 @@ class subinfo( info.infoclass ):
             self.buildDependencies[ "dev-util/mingw-w64" ] = "default"
 
 from Package.BinaryPackageBase import *
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 
 class PackageMinGW( BinaryPackageBase ):

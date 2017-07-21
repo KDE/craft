@@ -3,13 +3,9 @@
 # copyright:
 # Hannah von Reth <vonreth@kde.org>
 
-import os
-import subprocess
-import re
-
-from CraftDebug import craftDebug, deprecated
 import utils
 from CraftConfig import *
+from CraftDebug import craftDebug, deprecated
 
 
 class Compiler(object):
@@ -48,7 +44,7 @@ class Compiler(object):
 
     @property
     def signature(self):
-        return (self.platform, self.abi, self.compiler)
+        return self.platform, self.abi, self.compiler
 
     @property
     def platform(self):

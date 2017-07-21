@@ -11,7 +11,7 @@ import os
 from collections import OrderedDict
 
 import utils
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from options import *
 import VersionInfo
 import CraftHash

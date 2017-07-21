@@ -9,7 +9,7 @@ import sys
 
 from CraftDebug import craftDebug
 import utils
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from options import *
 
 

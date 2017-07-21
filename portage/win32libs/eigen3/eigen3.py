@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):

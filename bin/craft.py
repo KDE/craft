@@ -22,7 +22,7 @@ import argparse
 import collections
 import copy
 
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 import portageSearch
 import InstallDB
 import portage

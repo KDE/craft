@@ -1,6 +1,6 @@
 import info
 import utils
-from compiler import craftCompiler
+from CraftCompiler import craftCompiler
 
 class subinfo(info.infoclass):
     def setDependencies( self ):
