@@ -7,13 +7,14 @@ import subprocess
 import urllib.parse
 import urllib.request
 import shutil
+import platform
 
 class CraftBootstrap(object):
     def __init__(self, kdeRoot, branch):
         self.kdeRoot = kdeRoot
         self.branch = branch
         with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"),  "rt+") as ini:
-            self.settings = ini.read()
+            self.settings = ini.read().splitlines()
 
     @staticmethod
     def isWin():
@@ -22,6 +23,19 @@ class CraftBootstrap(object):
     @staticmethod
     def isUnix():
         return os.name == 'posix'
+
+    @staticmethod
+    def isFreeBSD():
+        return CraftBootstrap.isUnix() and platform.system() == 'FreeBSD'
+
+    @staticmethod
+    def isMac():
+        return CraftBootstrap.isUnix() and platform.system() == 'Darwin'
+
+    @staticmethod
+    def isLinux():
+        return CraftBootstrap.isUnix() and platform.system() == 'Linux'
+
 
     @staticmethod
     def printProgress(percent):
@@ -64,14 +78,21 @@ class CraftBootstrap(object):
 
 
 
-    def setSettignsValue(self, key, value):
-        regex = re.compile("^\s*%s\s*=.*$" % key, re.MULTILINE | re.IGNORECASE )
-        self.settings = regex.sub("%s = %s" % (key, value), self.settings)
+    def setSettignsValue(self, section, key, value):
+        reKey = re.compile(r"^\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
+        reSection = re.compile(r"^\[(.*)\]$".format(section=section))
+        inSection = False
+        for i, line in enumerate(self.settings):
+            sectionMatch = reSection.match(line)
+            if sectionMatch:
+                inSection = sectionMatch.group(1) == section
+            elif inSection and reKey.match(line):
+                self.settings[i] = f"{key} = {value}"
 
     def writeSettings(self):
         os.makedirs(os.path.join(self.kdeRoot, "etc"))
         with open(os.path.join(self.kdeRoot, "etc", "kdesettings.ini"), "wt+") as out:
-            out.write(self.settings)
+            out.write(os.linesep.join(self.settings))
 
     @staticmethod
     def downloadFile(url, destdir, filename = None):
@@ -99,25 +120,57 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    script = os.path.join(args.root, f"craft-{args.branch}", "bin", "craft.py")
-    command = f"{sys.executable} {script} {command}"
+    ext = "ps1" if CraftBootstrap.isWin() else "sh"
+    host = ""
+    if CraftBootstrap.isWin():
+        host = "powershell"
+    script = os.path.join(args.root, f"craft-{args.branch}", f"craftenv.{ext}")
+    command = f"{host} {script} {command}"
     print(f"Execute: {command}")
     if not subprocess.run(f"{command}").returncode == 0:
         exit(1)
 
+def getArchitecture():
+    return CraftBootstrap.promptForChoice("Select Architecture", ["32", "64"], "64")
+
+def getABI():
+    if CraftBootstrap.isWin():
+        platform = "windows"
+        abi = CraftBootstrap.promptForChoice("Select Compiler",
+                                                  ["Mingw-w64", "Microsoft Visual Studio 2015", "Microsoft Visual Studio 2017"],
+                                                   "Microsoft Visual Studio 2015")
+        compiler = "cl"
+        if abi == "Mingw-w64":
+            abi = "mingw"
+            compiler = "gcc"
+        elif abi == "Microsoft Visual Studio 2015":
+            abi = "msvc2015"
+        else:
+            abi = "msvc2017"
+        abi += f"_{getArchitecture()}"
+
+    elif CraftBootstrap.isUnix():
+        if CraftBootstrap.isMac():
+            platform = "macos"
+            compiler = "clang"
+            abi = "64"
+        else:
+            if CraftBootstrap.isLinux():
+                platform = "linux"
+            elif CraftBootstrap.isFreeBSD():
+                platform = "freebsd"
+            compiler = CraftBootstrap.promptForChoice("Select Compiler",
+                                                      ["gcc", "clang"],
+                                                      "gcc")
+            abi = getArchitecture()
+
+    return f"{platform}-{abi}-{compiler}"
 
 def setUp(args):
     if not os.path.exists(args.root):
         os.makedirs(args.root)
-    architecture = CraftBootstrap.promptForChoice("Select Architecture", ["x86", "x64"], "x64")
 
-    compiler = CraftBootstrap.promptForChoice("Select Compiler", ["Mingw-w64", "Microsoft Visual Studio 2015"],
-                                               "Mingw-w64")
-    if compiler == "Mingw-w64":
-        compiler = "mingw4"
-    else:
-        compiler = "msvc2015"
-
+    abi = getABI()
     if CraftBootstrap.isWin():
         print("Windows has problems with too long commands.")
         print("For that reason we mount Craft directories to drive letters.")
@@ -129,21 +182,21 @@ def setUp(args):
     shutil.unpack_archive(os.path.join(args.root, "download", f"craft-{args.branch}.zip"), args.root)
 
     boot = CraftBootstrap(args.root, args.branch)
-    boot.setSettignsValue("Python", os.path.dirname(sys.executable).replace("\\", "/"))
-    boot.setSettignsValue("Architecture", architecture)
-    boot.setSettignsValue("KDECompiler", compiler)
+    boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable).replace("\\", "/"))
+    boot.setSettignsValue("General", "ABI", abi)
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue("Enabled", "True")
+        boot.setSettignsValue("ShortPath", "Enabled", "True")
         for key, value in shortPath.items():
-            boot.setSettignsValue(key, value)
+            boot.setSettignsValue("ShortPath", key, value)
     else:
-        boot.setSettignsValue("Enabled", "False")
+        boot.setSettignsValue("ShortPath", "Enabled", "False")
 
 
     boot.writeSettings()
 
     craftDir = os.path.join(args.root, "craft")
+
     verbosityFlag = "-vvv" if args.verbose else ""
     run(args, f"craft --no-cache {verbosityFlag} git")
     run(args, f"git clone --progress --branch={args.branch} kde:craft {craftDir}")
@@ -153,8 +206,8 @@ def setUp(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
-    parser.add_argument("--root", action="store")
-    parser.add_argument("--branch", action="store")
+    parser.add_argument("--root", action="store", default=os.getcwd())
+    parser.add_argument("--branch", action="store", default="master")
     parser.add_argument("--verbose", action="store_true")
 
     args = parser.parse_args()
