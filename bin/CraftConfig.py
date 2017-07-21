@@ -55,7 +55,7 @@ class CraftStandardDirs( object ):
 
     @staticmethod
     def isShortPathEnabled():
-        return CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
+        return CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "Enabled", False )
 
     @staticmethod
     def downloadDir( ):
@@ -167,6 +167,7 @@ class CraftConfig( object ):
         self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
         self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
         self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
+        self.addAlias("ShortPath", "Enabled", "ShortPath", "Enabled")
 
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )

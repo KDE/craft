@@ -85,7 +85,7 @@ class SetupHelper( object ):
             command = "subst %s %s" % ( craftSettings.get( "ShortPath", drive ), path)
             subprocess.getoutput( command )
 
-        if craftSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False ):
+        if craftSettings.getboolean( "ShortPath", "Enabled", False ):
             with TemporaryUseShortpath( False):
                 if ("ShortPath", "RootDrive") in craftSettings:
                     _subst( CraftStandardDirs.craftRoot( ), "RootDrive" )

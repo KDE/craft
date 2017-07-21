@@ -134,11 +134,11 @@ def setUp(args):
     boot.setSettignsValue("KDECompiler", compiler)
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "True")
+        boot.setSettignsValue("Enabled", "True")
         for key, value in shortPath.items():
             boot.setSettignsValue(key, value)
     else:
-        boot.setSettignsValue("EMERGE_USE_SHORT_PATH", "False")
+        boot.setSettignsValue("Enabled", "False")
 
 
     boot.writeSettings()
