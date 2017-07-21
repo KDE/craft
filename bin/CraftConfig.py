@@ -158,6 +158,9 @@ class CraftConfig( object ):
         if self.version < 3:
             self._setAliasesV2()
 
+    def _setAliasesV3(self):
+        self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
+
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )
         self.addAlias( "Compile", "BuildTests", "General", "EMERGE_BUILDTESTS" )

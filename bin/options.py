@@ -6,7 +6,7 @@
 # properties from classes in this package could be set
 #
 # - by package scripts,
-# - by setting the 'EMERGE_OPTIONS' environment variable or
+# - by setting the 'Options' environment variable or
 # - by command line
 #
 # for example:
@@ -21,7 +21,7 @@
 #
 # or
 #
-# set EMERGE_OPTIONS=cmake.openIDE=1
+# set Options=cmake.openIDE=1
 # craft --make kdewin-installer
 #
 # The parser in this package is able to set all attributes
@@ -274,14 +274,14 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(craftSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
+        self.__readFromList(craftSettings.get( "General", "Options", "").split(" "))
         self.readFromEnv()
         self.__readFromList(optionslist)
 
     def readFromEnv( self ):
         """ read craft related variables from environment and map them to public
         attributes in the option class and sub classes """
-        _o = os.getenv("EMERGE_OPTIONS")
+        _o = os.getenv("Options")
         if _o:
             _o = _o.split(" ")
         else:

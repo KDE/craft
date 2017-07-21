@@ -338,7 +338,7 @@ def main( ):
                          help = "probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
     parser.add_argument( "--list-file", action = "store",
                          help = "Build all packages from the csv file provided" )
-    _def = craftSettings.get( "General", "EMERGE_OPTIONS", "" )
+    _def = craftSettings.get( "General", "Options", "" )
     if _def == "": _def = []
     else: _def = _def.split( ";" )
     parser.add_argument( "--options", action = "append",
@@ -457,7 +457,7 @@ def main( ):
     craftSettings.set( "General", "EMERGE_FORCED", args.forced )
     craftSettings.set( "Compile", "BuildTests", args.buildTests )
     craftSettings.set( "Compile", "BuildType", args.buildType )
-    craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
+    craftSettings.set( "General", "Options", ";".join( args.options ) )
     craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
     craftSettings.set( "Packager", "CreateCache", not args.noCache and args.createCache)
