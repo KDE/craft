@@ -8,7 +8,7 @@ from CraftConfig import *
 from CraftDebug import craftDebug, deprecated
 
 
-class Compiler(object):
+class CraftCompiler(object):
     __supportedPlatforms = ["windows", "linux", "macos", "freebsd"]
 
     def __init__(self):
@@ -36,7 +36,7 @@ class Compiler(object):
 
         self._architecture = "x86" if self._abi.endswith("32") else "x64"
 
-        if not self._platform in Compiler.__supportedPlatforms:
+        if not self._platform in CraftCompiler.__supportedPlatforms:
             raise Exception("Unsupported platform: " + self._platform)
 
     def __str__(self):
@@ -197,7 +197,7 @@ class Compiler(object):
             craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
 
-craftCompiler = Compiler()
+craftCompiler = CraftCompiler()
 
 if __name__ == '__main__':
     print("Testing Compiler.py")
