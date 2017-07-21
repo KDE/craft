@@ -158,6 +158,9 @@ class CraftConfig( object ):
         if self.version < 3:
             self._setAliasesV2()
 
+        if self.version < 4:
+            self._setAliasesV3()
+
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
 
