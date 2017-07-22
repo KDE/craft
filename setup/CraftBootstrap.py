@@ -211,6 +211,7 @@ def setUp(args):
             boot.setSettignsValue("ShortPath", key, value)
     else:
         boot.setSettignsValue("ShortPath", "Enabled", "False")
+        boot.setSettignsValue("Compile", "MakeProgram", "make")
 
 
     boot.writeSettings()
