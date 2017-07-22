@@ -26,6 +26,14 @@ class Package(SourceOnlyPackageBase):
         return True
 
     def fetch(self):
+        git = utils.utilsCache.findApplication("git")
+        if not utils.utilsCache.checkCommandOutputFor(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
+            craftDebug.log.debug("adding kde related settings to global git config file")
+            utils.system( f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
+            utils.system( f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
+            utils.system( f"\"{git}\" config --global core.autocrlf false")
+            utils.system( f"\"{git}\" config --system core.autocrlf false")
+
         return MultiSource.fetch(self)
 
     def install(self):
