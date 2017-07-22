@@ -175,6 +175,7 @@ class SetupHelper( object ):
     def setupEnvironment(self):
         for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
             self.addEnvVar( var, value )
+        self.prependPath("PATH", os.path.dirname(sys.executable))
         self.getEnv( )
         self.checkForEvilApplication()
 
@@ -238,7 +239,6 @@ class SetupHelper( object ):
 
         # add python site packages to pythonpath
         self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
-        self.prependPath("PATH", os.path.dirname(sys.executable))
 
     def printEnv(self):
         self.setupEnvironment()
