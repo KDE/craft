@@ -117,7 +117,7 @@ class GitSource ( VersionSystemSourceBase ):
             if os.path.exists(checkoutDir) \
                     and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
-            if os.path.exists(checkoutDir):
+            if os.path.isdir(checkoutDir):
                 if not repoTag:
                     ret = self.__git("fetch")\
                             and self.__git("checkout", repoBranch or "master") \

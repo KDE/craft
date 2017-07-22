@@ -39,4 +39,4 @@ class Package(SourceOnlyPackageBase):
         return True
 
     def checkoutDir(self, index=0):
-        return os.path.join(CraftStandardDirs.craftBin(), "..")
+        return os.path.abspath(os.path.join(CraftStandardDirs.craftBin(), ".."))
