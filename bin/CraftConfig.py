@@ -55,7 +55,7 @@ class CraftStandardDirs( object ):
 
     @staticmethod
     def isShortPathEnabled():
-        return CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "Enabled", False )
+        return platform.system() == "Windows" and CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "Enabled", False )
 
     @staticmethod
     def downloadDir( ):
