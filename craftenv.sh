@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 craftRoot="${BASH_SOURCE[0]}"
 if [[ -z "$craftRoot" ]];then
     craftRoot="$0"
@@ -25,8 +24,4 @@ for line in "${CRAFT_ENV[@]}"; do
   fi
 done
 
-if [ $# -eq 0 ];then
 cd "$KDEROOT"
-else
-$@
-fi
