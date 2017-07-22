@@ -120,12 +120,8 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    ext = "ps1" if CraftBootstrap.isWin() else "sh"
-    host = ""
-    if CraftBootstrap.isWin():
-        host = "powershell"
-    script = os.path.join(args.root, f"craft-{args.branch}", f"craftenv.{ext}")
-    command = f"{host} {script} {command}"
+    script = os.path.join(args.root, f"craft-{args.branch}", "bin", "craft.py")
+    command = f"{sys.executable} {script} {command}"
     print(f"Execute: {command}")
     if not subprocess.run(f"{command}").returncode == 0:
         exit(1)
@@ -195,14 +191,14 @@ def setUp(args):
 
     boot.writeSettings()
 
-    craftDir = os.path.join(args.root, "craft")
-
     verbosityFlag = "-vvv" if args.verbose else ""
-    run(args, f"craft --no-cache {verbosityFlag} git")
-    run(args, f"git clone --progress --branch={args.branch} kde:craft {craftDir}")
+    run(args, f"--no-cache {verbosityFlag} craft")
     shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
     print("Setup complete")
-    print(f"Please run {args.root}/craft/craftenv.ps1")
+    if CraftBootstrap.isWin():
+        print(f"Please run {args.root}/craft/craftenv.ps1")
+    else:
+        print(f"Please source {args.root}/craft/craftenv.sh")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="SetupHelper")
