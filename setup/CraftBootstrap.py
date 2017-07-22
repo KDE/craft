@@ -1,5 +1,4 @@
 import argparse
-import configparser
 import os
 import sys
 import re
@@ -49,26 +48,42 @@ class CraftBootstrap(object):
     @staticmethod
     def promptForChoice(title, choices, default=None):
         if not default:
-            default = choices[0]
-        print(title)
-        promp = "%s (Default is %s): " %(", ".join(["[%d] %s" % (i, val) for i, val in enumerate(choices)]), default)
+            if isinstance(choices[0], tuple):
+                default, _ = choices[0]
+            else:
+                default = choices[0]
+        selection = ", ".join(["[{index}] {value}".format(index=index,
+                                                          value=value[0] if isinstance(value, tuple) else value)
+                               for index, value in enumerate(choices)])
+        promp = "{selection} (Default is {default}): ".format(selection=selection, default=default[0] if isinstance(default, tuple) else default)
         while(True):
+            print(title)
             choice = input(promp)
             try:
                 choiceInt = int(choice)
             except:
                 choiceInt = -1
             if choice == "":
-                return default
+                for choice in choices:
+                    if isinstance(choice, tuple):
+                        key, val = choice
+                    else:
+                        key = val = choice
+                    if key == default:
+                        return val
             elif choiceInt in range(len(choices)):
-                return choices[choiceInt]
+                if isinstance(choices[choiceInt], tuple):
+                    return choices[choiceInt][1]
+                else:
+                    return choices[choiceInt]
 
     @staticmethod
     def promptShortPath():
         drivePatern = re.compile("^[A-Z](:|:\\\\)?$", re.IGNORECASE)
         def promptDriveLetter(purpose, default):
             while(True):
-                drive = input("Enter drive for %s [Possibilities A-Z] (Default is %s): " % (purpose, default))
+                print(f"Enter drive for {purpose}")
+                drive = input(f"[Possibilities A-Z] (Default is {default}):")
                 if drive == "":
                     return default
                 if drivePatern.match(drive):
@@ -94,7 +109,7 @@ class CraftBootstrap(object):
     def writeSettings(self):
         os.makedirs(os.path.join(self.kdeRoot, "etc"))
         with open(os.path.join(self.kdeRoot, "etc", "kdesettings.ini"), "wt+") as out:
-            out.write(os.linesep.join(self.settings))
+            out.write("\n".join(self.settings))
 
     @staticmethod
     def downloadFile(url, destdir, filename = None):
@@ -129,22 +144,17 @@ def run(args, command):
         exit(1)
 
 def getArchitecture():
-    return CraftBootstrap.promptForChoice("Select Architecture", ["32", "64"], "64")
+    return CraftBootstrap.promptForChoice("Select Architecture", [("x86", "32"),
+                                                                  ("x64", "64")], "x64")
 
 def getABI():
     if CraftBootstrap.isWin():
         platform = "windows"
-        abi = CraftBootstrap.promptForChoice("Select Compiler",
-                                                  ["Mingw-w64", "Microsoft Visual Studio 2015", "Microsoft Visual Studio 2017"],
+        abi, compiler = CraftBootstrap.promptForChoice("Select Compiler",
+                                                  [("Mingw-w64", ("mingw", "gcc")),
+                                                   ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
+                                                   ("Microsoft Visual Studio 2017", ("msvc2017", "cl"))],
                                                    "Microsoft Visual Studio 2015")
-        compiler = "cl"
-        if abi == "Mingw-w64":
-            abi = "mingw"
-            compiler = "gcc"
-        elif abi == "Microsoft Visual Studio 2015":
-            abi = "msvc2015"
-        else:
-            abi = "msvc2017"
         abi += f"_{getArchitecture()}"
 
     elif CraftBootstrap.isUnix():
@@ -158,8 +168,7 @@ def getABI():
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select Compiler",
-                                                      ["gcc", "clang"],
-                                                      "gcc")
+                                                      ["gcc","clang"])
             abi = getArchitecture()
 
     return f"{platform}-{abi}-{compiler}"
@@ -170,13 +179,15 @@ def getIgnores():
     ignores = "gnuwin32/.*;dev-util/.*;binary/.*;kdesupport/kdewin"
     print(f"On your os we blacklist the following packages.\n"
           f"Ignores: {ignores}")
-    ignores += CraftBootstrap.promptForChoice("We recommend to also ignore the win32libs category\n"
-                                              "and get 3rd party library from your distributions package manager.",
-                                              [";win32libs/.*", ""])
-    ignores += CraftBootstrap.promptForChoice("Craft can provide you with the whole Qt5 SDK,\n"
-                                              "but if you intend to get Qt5 from your distribution you can\n"
-                                              "add Qt5 to the ignores",
-                                              ["", ";libs/qt5/*"])
+    print("On unix systems we recommend to get 3rd party library\n"
+          "from your distributions package manager.")
+    ignores += CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs category?",
+                                              [("Yes",";win32libs/.*"), ("No", "")])
+    print("Craft can provide you with the whole Qt5 SDK,\n"
+          "but you can also use the distribution provided SDK.")
+    ignores += CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
+                                              [("Yes", ";libs/qt5/*"), ("No", "")],
+                                              default="No")
     print(f"Your blacklist.\n"
           f"Ignores: {ignores}")
 
