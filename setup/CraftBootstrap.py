@@ -47,7 +47,9 @@ class CraftBootstrap(object):
         sys.stdout.flush()
 
     @staticmethod
-    def promptForChoice(title, choices, default):
+    def promptForChoice(title, choices, default=None):
+        if not default:
+            default = choices[0]
         print(title)
         promp = "%s (Default is %s): " %(", ".join(["[%d] %s" % (i, val) for i, val in enumerate(choices)]), default)
         while(True):
@@ -162,6 +164,25 @@ def getABI():
 
     return f"{platform}-{abi}-{compiler}"
 
+def getIgnores():
+    if CraftBootstrap.isWin():
+        return ""
+    ignores = "dev-util/.*;binary/.*;kdesupport/kdewin"
+    print(f"On your os we blacklist the following packages.\n"
+          f"Ignores: {ignores}")
+    ignores += CraftBootstrap.promptForChoice("We recommend to also ignore the win32libs category\n"
+                                              "and get 3rd party library from your distributions package manager.",
+                                              [";win32libs/.*", ""])
+    ignores += CraftBootstrap.promptForChoice("Craft can provide you with the whole Qt5 SDK,\n"
+                                              "but if you intend to get Qt5 from your distribution you can\n"
+                                              "add Qt5 to the ignores",
+                                              ["", ";libs/qt5/*"])
+    print(f"Your blacklist.\n"
+          f"Ignores: {ignores}")
+
+    return ignores
+
+
 def setUp(args):
     if not os.path.exists(args.root):
         os.makedirs(args.root)
@@ -173,6 +194,8 @@ def setUp(args):
         print("It just maps the folder to a drive letter you will assign.")
         shortPath = CraftBootstrap.promptShortPath()
 
+    ignores = getIgnores()
+
     CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip", os.path.join(args.root, "download"),
                                  f"craft-{args.branch}.zip")
     shutil.unpack_archive(os.path.join(args.root, "download", f"craft-{args.branch}.zip"), args.root)
@@ -180,6 +203,7 @@ def setUp(args):
     boot = CraftBootstrap(args.root, args.branch)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("General", "ABI", abi)
+    boot.setSettignsValue("Portage", "Ignores", ignores)
 
     if CraftBootstrap.isWin():
         boot.setSettignsValue("ShortPath", "Enabled", "True")
