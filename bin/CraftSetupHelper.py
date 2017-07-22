@@ -143,9 +143,11 @@ class SetupHelper( object ):
             if version >= 15:
                 path = os.path.join(path, "Auxiliary","Build")
             path = os.path.join(path, "vcvarsall.bat")
-            status, result = subprocess.getstatusoutput(f"\"{path}\" {arg} > NUL && set")
+            command = f"\"{path}\" {arg}"
+            status, result = subprocess.getstatusoutput(f"{command} > NUL && set")
             if status != 0:
-                print( "Failed to setup msvc compiler", file = sys.stderr )
+                print( f"Failed to setup msvc compiler.\n"
+                       f"Command: {command} ", file = sys.stderr )
                 exit(1)
             return self.stringToEnv( result )
 
