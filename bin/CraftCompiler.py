@@ -110,19 +110,19 @@ class CraftCompiler(object):
         return self.abi.startswith("msvc")
 
     def isMSVC2010(self):
-        return self.abi == "msvc10"
+        return self.abi == "msvc2010"
 
     def isMSVC2012(self):
-        return self.abi == "msvc12"
+        return self.abi == "msvc2012"
 
     def isMSVC2013(self):
-        return self.abi == "msvc13"
+        return self.abi == "msvc2013"
 
     def isMSVC2015(self):
-        return self.abi == "msvc15"
+        return self.abi == "msvc2015"
 
     def isMSVC2017(self):
-        return self.abi == "msvc17"
+        return self.abi == "msvc2017"
 
     def isIntel(self):
         return self.compiler == "intel"
