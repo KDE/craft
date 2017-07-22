@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['libs/qtwebsockets'] = 'default'
         self.runtimeDependencies['libs/qtmultimedia'] = 'default'
         self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['libs/qtspeech'] = 'default'
         self.runtimeDependencies['win32libs/snoregrowl'] = 'default'
 
 
