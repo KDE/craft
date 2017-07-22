@@ -177,7 +177,6 @@ class SetupHelper( object ):
             self.addEnvVar( var, value )
         self.getEnv( )
         self.checkForEvilApplication()
-        self.version = int(craftSettings.get("Version", "ConfigVersion"))
 
         self.addEnvVar( "KDEROOT", CraftStandardDirs.craftRoot( ) )
 
@@ -246,6 +245,9 @@ class SetupHelper( object ):
         for key, val in os.environ.items( ):
             print( f"{key}={val}" )
 
+    @property
+    def version(self):
+        return craftSettings.version
 
 
 if __name__ == '__main__':
