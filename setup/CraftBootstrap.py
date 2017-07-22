@@ -137,7 +137,7 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join( destdir, filename ))
 
 def run(args, command):
-    script = os.path.join(args.root, f"craft-{args.branch}", "bin", "craft.py")
+    script = os.path.join(args.prefix, f"craft-{args.branch}", "bin", "craft.py")
     command = f"{sys.executable} {script} {command}"
     print(f"Execute: {command}")
     if not subprocess.run(f"{command}", shell=True).returncode == 0:
@@ -195,8 +195,8 @@ def getIgnores():
 
 
 def setUp(args):
-    if not os.path.exists(args.root):
-        os.makedirs(args.root)
+    if not os.path.exists(args.prefix):
+        os.makedirs(args.prefix)
 
     abi = getABI()
     if CraftBootstrap.isWin():
@@ -207,11 +207,11 @@ def setUp(args):
 
     ignores = getIgnores()
 
-    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip", os.path.join(args.root, "download"),
+    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip", os.path.join(args.prefix, "download"),
                                  f"craft-{args.branch}.zip")
-    shutil.unpack_archive(os.path.join(args.root, "download", f"craft-{args.branch}.zip"), args.root)
+    shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
 
-    boot = CraftBootstrap(args.root, args.branch)
+    boot = CraftBootstrap(args.prefix, args.branch)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable).replace("\\", "/"))
     boot.setSettignsValue("General", "ABI", abi)
     boot.setSettignsValue("Portage", "Ignores", ignores)
@@ -229,19 +229,24 @@ def setUp(args):
 
     verbosityFlag = "-vvv" if args.verbose else ""
     run(args, f"--no-cache {verbosityFlag} craft")
-    shutil.rmtree(os.path.join(args.root, f"craft-{args.branch}"))
+    shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
     print("Setup complete")
     if CraftBootstrap.isWin():
-        print(f"Please run {args.root}/craft/craftenv.ps1")
+        print(f"Please run {args.prefix}/craft/craftenv.ps1")
     else:
-        print(f"Please source {args.root}/craft/craftenv.sh")
+        print(f"Please source {args.prefix}/craft/craftenv.sh")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog="SetupHelper")
-    parser.add_argument("--root", action="store", default=os.getcwd())
-    parser.add_argument("--branch", action="store", default="master")
-    parser.add_argument("--verbose", action="store_true")
+    parser = argparse.ArgumentParser(prog="CraftSetupHelper")
+    parser.add_argument("--root", action="store", help="Deprecated: use prefix instead.")
+    parser.add_argument("--prefix", action="store", default=os.getcwd(), help="The installation directory.")
+    parser.add_argument("--branch", action="store", default="master", help="The branch to install")
+    parser.add_argument("--verbose", action="store_true", help="The verbosity.")
+    parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()
+    if args.root:
+        args.prefix = args.root
+
     setUp(args)
 
