@@ -196,8 +196,6 @@ class CraftConfig( object ):
         }.items():
             if not key in self._config["Variables"]:
                 self._config["Variables"][key] = value
-        if not os.name == "nt":
-            self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*")
 
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \

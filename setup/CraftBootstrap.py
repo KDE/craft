@@ -167,7 +167,7 @@ def getABI():
 def getIgnores():
     if CraftBootstrap.isWin():
         return ""
-    ignores = "dev-util/.*;binary/.*;kdesupport/kdewin"
+    ignores = "gnuwin32/.*;dev-util/.*;binary/.*;kdesupport/kdewin"
     print(f"On your os we blacklist the following packages.\n"
           f"Ignores: {ignores}")
     ignores += CraftBootstrap.promptForChoice("We recommend to also ignore the win32libs category\n"
