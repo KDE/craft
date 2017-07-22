@@ -123,7 +123,7 @@ def run(args, command):
     script = os.path.join(args.root, f"craft-{args.branch}", "bin", "craft.py")
     command = f"{sys.executable} {script} {command}"
     print(f"Execute: {command}")
-    if not subprocess.run(f"{command}").returncode == 0:
+    if not subprocess.run(f"{command}", shell=True).returncode == 0:
         exit(1)
 
 def getArchitecture():
