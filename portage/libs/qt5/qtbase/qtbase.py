@@ -126,7 +126,7 @@ class QtPackage(Qt5CorePackageBase):
             if self.subinfo.options.isActive("binary/mysql"):
                 command += " -plugin-sql-mysql "
             if self.subinfo.options.isActive("win32libs/dbus"):
-                command += " -qdbus -dbus-linked "
+                command += " -qdbus -dbus-linked -I\"%s\" -I\"%s\" " % (os.path.join(CraftStandardDirs.craftRoot(), "include/dbus-1.0"), os.path.join(CraftStandardDirs.craftRoot(), "lib/dbus-1.0/include"))
             if self.subinfo.options.isActive("win32libs/icu"):
                 command += " -icu "
             if self.subinfo.options.isActive("win32libs/zlib"):
