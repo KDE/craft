@@ -231,10 +231,12 @@ def setUp(args):
     run(args, f"--no-cache {verbosityFlag} craft")
     shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
     print("Setup complete")
+    print()
+    print("Please run the following command to get started:")
     if CraftBootstrap.isWin():
-        print(f"Please run {args.prefix}/craft/craftenv.ps1")
+        print(f"  {args.prefix}/craft/craftenv.ps1")
     else:
-        print(f"Please source {args.prefix}/craft/craftenv.sh")
+        print(f"  source {args.prefix}/craft/craftenv.sh")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CraftSetupHelper")
