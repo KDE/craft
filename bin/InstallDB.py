@@ -53,14 +53,14 @@ class InstallPackage(object):
     def getFilesWithHashes( self ):
         """ get the list of files (filename, fileHash tuples) for the given package """
         cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getFiles( self ):
         """ get the list of files for the given package """
         cmd = '''SELECT filename FROM fileList WHERE packageId=?;'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
@@ -76,10 +76,10 @@ class InstallPackage(object):
     def uninstall( self ):
         """ really uninstall that package """
         cmd = '''DELETE FROM fileList WHERE packageId=?;'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         cmd = '''DELETE FROM packageList WHERE packageId=?;'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
@@ -92,7 +92,7 @@ class InstallPackage(object):
         dataList = list(zip( [ None ] * fileNumber, [ self.packageId ] * fileNumber, list(self.fileDict.keys()), list(self.fileDict.values()) ))
 
         cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
-        craftDebug.log.debug("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)))
+        InstallDB.log("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)))
         self.cursor.executemany( cmd, dataList )
 
         # at last, commit all the changes so that they are committed only after everything is written to the
@@ -122,6 +122,11 @@ class InstallDB(object):
 
         self.dbfilename = filename
         self._prepareDatabase()
+
+    @staticmethod
+    def log(command):
+        if craftDebug.verbose() > 0:
+            craftDebug.log.debug(command)
 
     def getLastId( self ):
         """ returns the last id from a table, which is essentially the  """
@@ -157,16 +162,16 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package, 'version': version } )
         cmd += stmt
         cmd += ''';'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
         isPackageInstalled = len( cursor.fetchall() ) > 0
         if isPackageInstalled:
-            craftDebug.log.debug("""The package %s/%s has been installed with
+            InstallDB.log("""The package %s/%s has been installed with
                             version '%s'.""" % (category, package, version))
         else:
-            craftDebug.log.debug("""Couldn't find a trace that the package %s/%s has been installed with version '%s'""" % (category, package, version))
+            InstallDB.log("""Couldn't find a trace that the package %s/%s has been installed with version '%s'""" % (category, package, version))
         cursor.close()
         return isPackageInstalled
 
@@ -178,7 +183,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -194,7 +199,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -210,7 +215,7 @@ class InstallDB(object):
         stmt, params = self.__constructWhereStmt( { 'prefix': None, 'category': category, 'packageName': package } )
         cmd += stmt
         cmd += ''';'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute( cmd, tuple( params ) )
@@ -224,7 +229,7 @@ class InstallDB(object):
 
         cursor = self.connection.cursor()
         cmd = '''SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)))
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)))
         cursor.execute(cmd, ("%" + filename + "%",))
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
@@ -237,7 +242,7 @@ class InstallDB(object):
 
         params = [ None, None, category, package, version, revision ]
         cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
-        craftDebug.log.debug("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
         cursor.execute( cmd, tuple( params ) )
         return InstallPackage( cursor, self.getLastId() )
 
