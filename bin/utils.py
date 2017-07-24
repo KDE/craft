@@ -136,32 +136,28 @@ class UtilsCache(object):
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
-    def checkVersionGreaterOrEqual(self, app, version, pattern=None, versionCommand=None) -> bool:
+    def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
+        if app in self._versionCache:
+           return self._versionCache[app]
         app = self.findApplication(app)
         if not app:
-            return False
+            return None
         if not pattern:
             pattern = re.compile(r"(\d+\.\d+(?:\.\d+)?)")
         if not versionCommand:
             versionCommand = "--version"
-        if app in self._versionCache:
-            appVersion = self._versionCache[app]
-        else:
-            if not isinstance(pattern, re._pattern_type):
-                raise Exception("checkVersionGreaterOrEqual can only handle a compiled regular expression as pattern")
-            output = self.getCommandOutput(app, versionCommand)
-            if not output:
-                return False
-            match = pattern.search(output)
-            if not match:
-                craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
-                return False
-            appVersion = match.group(1)
-            self._versionCache[app] = appVersion
-
-        ge = CraftVersion(appVersion) >= CraftVersion(version)
-        craftDebug.log.debug(f"Installed version of {app} version: {appVersion} {'>=' if  ge else '<'} {version}")
-        return ge
+        if not isinstance(pattern, re._pattern_type):
+            raise Exception("getVersion can only handle a compiled regular expression as pattern")
+        output = self.getCommandOutput(app, versionCommand)
+        if not output:
+            return False
+        match = pattern.search(output)
+        if not match:
+            craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
+            return False
+        appVersion = CraftVersion(match.group(1))
+        self._versionCache[app] = appVersion
+        return appVersion
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
         craftDebug.log.debug(f"Fetch Json: {url}")

@@ -1,4 +1,5 @@
 import utils
+from CraftVersion import CraftVersion
 from Package.VirtualPackageBase import *
 
 class MaybeVirtualPackageBase(object):
@@ -13,10 +14,12 @@ class MaybeVirtualPackageBase(object):
 
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
     def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
-        newer = utils.utilsCache.checkVersionGreaterOrEqual(app=app, version=version, pattern=pattern, versionCommand=versionCommand)
+        appVersion = utils.utilsCache.getVersion(app, pattern, versionCommand)
+        newer = appVersion and appVersion >= CraftVersion(version)
         self.skipCondition  = not newer or not craftSettings.getboolean("CraftDebug", "AllowToSkipPackages", True)
         self.checkVersion = version
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
+        self.subinfo.defaultTarget = str(appVersion)
 
         # override the install method
         def install():
