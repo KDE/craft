@@ -161,6 +161,8 @@ class CraftConfig( object ):
         if self.version < 4:
             self._setAliasesV3()
 
+        self._warned = set()
+
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
         self.addAlias("General", "Notify", "General", "EMERGE_USE_NOTIFY")
@@ -180,6 +182,14 @@ class CraftConfig( object ):
         self.addAlias("Package", "CreateCache", "ContinuousIntegration", "UseCache")
         self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")
         self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
+
+    def _warnDeprecated(self, deprecatedSection, deprecatedKey, section, key):
+        if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+            if not (deprecatedSection, deprecatedKey) in self._warned:
+                self._warned.add((deprecatedSection, deprecatedKey))
+                print(
+                    f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to {section}/{key}, please update your kdesettings.ini",
+                    file=sys.stderr)
 
 
     def _readSettings( self ):
@@ -212,21 +222,14 @@ class CraftConfig( object ):
         self._alias[ (group, key) ] = (destGroup, destKey)
 
     def get( self, group, key, default = None ):
-        if self.__contains_no_alias((group, key)):
-            #print((group,key,self._config[ group ][ key ]))
-            return self._config[ group ][ key ]
-
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-                    print( "Warning: %s/%s is deprecated and has been renamed to %s/%s, please update your kdesettings.ini" % (dg, dk, group, key ),
-                           file = sys.stderr )
-                val = self.get( dg, dk, default )
-                if not group in self._config.sections():
-                    self._config.add_section(group)
-                self._config[ group ][ key ] = val
-                return val
+                self._warnDeprecated(dg, dk, group, key)
+                return self.get( dg, dk, default )
+
+        if self.__contains_no_alias((group, key)):
+            return self._config[group][key]
 
         if default != None:
             return default
