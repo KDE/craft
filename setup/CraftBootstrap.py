@@ -186,7 +186,7 @@ def getIgnores():
     print("Craft can provide you with the whole Qt5 SDK,\n"
           "but you can also use the distribution provided SDK.")
     ignores += CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
-                                              [("Yes", ";libs/qt5/*"), ("No", "")],
+                                              [("Yes", ";libs/qt5/.*"), ("No", "")],
                                               default="No")
     print(f"Your blacklist.\n"
           f"Ignores: {ignores}")
