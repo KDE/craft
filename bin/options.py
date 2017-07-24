@@ -206,6 +206,9 @@ class OptionsPackage(OptionsBase):
         ##disable the binary cache for this package
         self.disableBinaryCache = False
 
+        ## wheter to move the plugins to bin
+        self.movePluginsToBin = utils.OsUtils.isWin()
+
 class OptionsCMake(OptionsBase):
     def __init__(self):
         ## use IDE for msvc2008 projects
