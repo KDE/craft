@@ -80,7 +80,13 @@ class VirtualPackage(VirtualPackageBase):
 
 class Package(MaybeVirtualPackageBase):
     def __init__(self):
-        condition = ("Paths", "Msys") not in craftSettings
-        if not condition:
-            craftDebug.log.info(f"Using manually installed msys {CraftStandardDirs.msysDir()}")
-        MaybeVirtualPackageBase.__init__(self, condition=condition, classA=MsysPackage, classB=VirtualPackage)
+        self.skipCondition = ("Paths", "Msys") not in craftSettings
+        MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=MsysPackage, classB=VirtualPackage)
+
+        # override the install method
+        def install():
+            if not self.skipCondition:
+                craftDebug.log.info(f"Using manually installed msys {CraftStandardDirs.msysDir()}")
+            return self.baseClass.install(self)
+        setattr(self, "install", install)
+
