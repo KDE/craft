@@ -56,6 +56,8 @@ class CraftBootstrap(object):
                                                           value=value[0] if isinstance(value, tuple) else value)
                                for index, value in enumerate(choices)])
         promp = "{selection} (Default is {default}): ".format(selection=selection, default=default[0] if isinstance(default, tuple) else default)
+
+        print()
         while(True):
             print(title)
             choice = input(promp)
@@ -144,13 +146,13 @@ def run(args, command):
         exit(1)
 
 def getArchitecture():
-    return CraftBootstrap.promptForChoice("Select Architecture", [("x86", "32"),
+    return CraftBootstrap.promptForChoice("Select architecture", [("x86", "32"),
                                                                   ("x64", "64")], "x64")
 
 def getABI():
     if CraftBootstrap.isWin():
         platform = "windows"
-        abi, compiler = CraftBootstrap.promptForChoice("Select Compiler",
+        abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                   [("Mingw-w64", ("mingw", "gcc")),
                                                    ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
                                                    ("Microsoft Visual Studio 2017", ("msvc2017", "cl"))],
@@ -167,7 +169,7 @@ def getABI():
                 platform = "linux"
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
-            compiler = CraftBootstrap.promptForChoice("Select Compiler",
+            compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                       ["gcc","clang"])
             abi = getArchitecture()
 
@@ -176,15 +178,14 @@ def getABI():
 def getIgnores():
     if CraftBootstrap.isWin():
         return ""
+
     ignores = "gnuwin32/.*;dev-util/.*;binary/.*;kdesupport/kdewin"
-    print(f"On your os we blacklist the following packages.\n"
-          f"Ignores: {ignores}")
-    print("On unix systems we recommend to get 3rd party library\n"
-          "from your distributions package manager.")
+    print(f"On your OS we blacklist the following packages.\n"
+          f"  {ignores}")
+    print("On Unix systems we recommend to get third party libraries from your distributions package manager.")
     ignores += CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs category?",
                                               [("Yes",";win32libs/.*"), ("No", "")])
-    print("Craft can provide you with the whole Qt5 SDK,\n"
-          "but you can also use the distribution provided SDK.")
+    print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development packages provided by the distribution.")
     ignores += CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
                                               [("Yes", ";libs/qt5/.*"), ("No", "")],
                                               default="No")
@@ -197,6 +198,8 @@ def getIgnores():
 def setUp(args):
     if not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
+
+    print("Welcome to the Craft setup wizard!")
 
     abi = getABI()
     if CraftBootstrap.isWin():
