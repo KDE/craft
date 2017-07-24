@@ -60,7 +60,7 @@ file collection process is skipped, and only the installer is generated.
         self.defines.setdefault( "icon",  "")
         self.defines.setdefault( "license",  "")
         self.defines.setdefault( "productname",  self.package.capitalize())
-        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
+        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe", includeRevision=True))
         self.defines.setdefault( "srcdir",  self.archiveDir())
         self.defines.setdefault( "extrashortcuts", "")
         self.defines.setdefault( "version", self.getPackageVersion()[0])

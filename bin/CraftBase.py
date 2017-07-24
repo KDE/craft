@@ -232,14 +232,17 @@ class CraftBase(object):
         craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")) -> str:
+    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"), includeRevision=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
         if self.subinfo.hasSvnTarget():
-            version = "latest"
+            if includeRevision:
+                version = self.sourceRevision()
+            else:
+                version = "latest"
         else:
             version = self.getPackageVersion()[0]
         if fileType:

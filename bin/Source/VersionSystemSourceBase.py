@@ -125,6 +125,7 @@ class VersionSystemSourceBase (SourceBase):
     def sourceRevision(self):
         craftDebug.trace("VersionSystemSourceBase sourceRevision")
         if craftSettings.getboolean("Packager", "UseCache", False):
+            # as we are using the cahce we don't have the git clone present
             return "latest"
         return self.sourceVersion()
 
