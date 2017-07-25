@@ -24,7 +24,7 @@ class SvnSource (VersionSystemSourceBase):
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join(CraftStandardDirs.srcDir(), url )
+                sourcedir = os.path.join(CraftStandardDirs.svnDir(), url )
             else:
                 sourcedir = os.path.join( CraftStandardDirs.downloadDir(), "svn-src" )
                 sourcedir = os.path.join( sourcedir, self.package )
