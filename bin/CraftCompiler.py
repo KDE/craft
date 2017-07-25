@@ -19,6 +19,10 @@ class CraftCompiler(object):
                 split = ["windows", f"{compiler}_{arch}" , "cl"]
             elif compiler.startswith("mingw"):
                 split = ["windows", f"mingw_{arch}", "gcc"]
+            elif compiler.startswith("linux"):
+                split = ["linux", "gcc"]
+            elif compiler.startswith("mac"):
+                split = ["macos", "clang"]
             if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
                 print(f"Your using the old compiler setting\n"
                                     f"\t[General]\n"
