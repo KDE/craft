@@ -19,7 +19,6 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
         self.skipCondition  = not newer or not craftSettings.getboolean("CraftDebug", "AllowToSkipPackages", True)
         self.checkVersion = version
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
-        self.subinfo.defaultTarget = str(appVersion)
 
         # override the install method
         def install():
@@ -28,4 +27,14 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
                     f"Skipping installation of {self} as the installed version is >= {self.checkVersion}")
             return self.baseClass.install(self)
 
+        def sourceRevision():
+            return "system-installation: " + utils.utilsCache.findApplication(app)
+
+        def version(self):
+            return str(appVersion)
+
         setattr(self, "install", install)
+        setattr(self, "sourceRevision", sourceRevision)
+        setattr(self.__class__, "version", property(version))
+
+
