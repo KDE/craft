@@ -1,7 +1,7 @@
 param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
-    [alias("branch")][string]$Script:branch="2017.05"
+    [alias("branch")][string]$Script:branch="master"
     )
 
 
@@ -9,11 +9,11 @@ param(
 
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-amd64.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2-embed-amd64.zip"
 }
 else
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-embed-win32.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2-embed-win32.zip"
 }
 #####
 $Script:pythonVersion = "0"
@@ -127,7 +127,7 @@ Write-Host "Downloading:" $url
 (new-object net.webclient).DownloadFile("$url", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
-[string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--root", "$Script:installRoot", "--branch", "$Script:branch")
+[string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--prefix", "$Script:installRoot", "--branch", "$Script:branch")
 Write-Host "$Script:python" $command
 & "$Script:python" $command
 cd $Script:installRoot
