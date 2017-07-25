@@ -92,7 +92,7 @@ class SetupHelper( object ):
                 if ("ShortPath", "DownloadDrive") in craftSettings:
                     _subst( CraftStandardDirs.downloadDir( ), "DownloadDrive" )
                 if ("ShortPath", "GitDrive") in craftSettings:
-                    _subst( CraftStandardDirs.gitDir( ), "GitDrive" )
+                    _subst( CraftStandardDirs.srcDir( ), "GitDrive" )
 
     def printBanner( self ):
         stream = sys.stderr
@@ -105,8 +105,7 @@ class SetupHelper( object ):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
         printRow("Craft", CraftStandardDirs.craftRoot( ))
         printRow("ABI", craftCompiler)
-        printRow("Svn  directory", CraftStandardDirs.svnDir( ))
-        printRow("Git  directory", CraftStandardDirs.gitDir( ))
+        printRow("Source directory", CraftStandardDirs.srcDir( ))
         printRow("Download directory", CraftStandardDirs.downloadDir( ))
         if "CraftDeprecatedEntryScript" in os.environ:
             oldScript = os.environ["CraftDeprecatedEntryScript"]

@@ -72,26 +72,17 @@ class CraftStandardDirs( object ):
         return CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ]
 
     @staticmethod
-    def svnDir( ):
-        if not "SVNDIR" in CraftStandardDirs._pathCache( ):
-            CraftStandardDirs._pathCache( )[ "SVNDIR" ] = craftSettings.get( "Paths", "KDESVNDIR",
-                                                                                   os.path.join(
-                                                                                   CraftStandardDirs.downloadDir( ),
-                                                                                   "svn" ) )
-        return CraftStandardDirs._pathCache( )[ "SVNDIR" ]
-
-    @staticmethod
-    def gitDir( ):
-        if not "GITDIR" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "GitDrive" ) in craftSettings:
-                CraftStandardDirs._pathCache( )[ "GITDIR" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "GitDrive" ) )
+    def srcDir( ):
+        if not "SRCDIR" in CraftStandardDirs._pathCache( ):
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "SrcDrive" ) in craftSettings:
+                CraftStandardDirs._pathCache( )[ "SRCDIR" ] = CraftStandardDirs.nomalizePath(
+                    craftSettings.get( "ShortPath", "SrcDrive" ) )
             else:
-                CraftStandardDirs._pathCache( )[ "GITDIR" ] = craftSettings.get( "Paths", "KDEGITDIR",
+                CraftStandardDirs._pathCache( )[ "SRCDIR" ] = craftSettings.get( "Paths", "SRCDIR",
                                                                                    os.path.join(
-                                                                                       CraftStandardDirs.downloadDir( ),
-                                                                                       "git" ) )
-        return CraftStandardDirs._pathCache( )[ "GITDIR" ]
+                                                                                       CraftStandardDirs.craftRoot( ),
+                                                                                       "src" ) )
+        return CraftStandardDirs._pathCache( )[ "SRCDIR" ]
 
     @staticmethod
     def tmpDir():
@@ -161,7 +152,14 @@ class CraftConfig( object ):
         if self.version < 4:
             self._setAliasesV3()
 
+        if self.version < 5:
+            self._setAliasesV4()
+
         self._warned = set()
+
+    def _setAliasesV4(self):
+        self.addAlias("Paths", "SrcDir", "Paths", "KDEGitDir")
+        self.addAlias("ShortPath", "SrcDrive", "ShortPath", "GitDrive")
 
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")

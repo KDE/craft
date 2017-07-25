@@ -100,7 +100,7 @@ class VersionSystemSourceBase (SourceBase):
         if ( "ContinuousIntegration", "SourceDir") in craftSettings:
             return craftSettings.get( "ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
-            sourcedir = os.path.join(  CraftStandardDirs.gitDir(), self.package )
+            sourcedir = os.path.join(  CraftStandardDirs.srcDir(), self.package )
         else:
             craftDebug.log.critical("svnTarget property not set for this target")
 
