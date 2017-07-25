@@ -221,8 +221,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     if not deplist:
         craftDebug.log.debug("<none>")
 
-    craftDebug.debug_line()
-
     #for item in deplist:
     #    cat = item[ 0 ]
     #    pac = item[ 1 ]
@@ -495,7 +493,6 @@ def main( ):
         craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
         craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
-        craftDebug.debug_line()
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:

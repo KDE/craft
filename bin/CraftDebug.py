@@ -70,7 +70,7 @@ class CraftDebug(object):
         self.log.info("\n")
 
     def debug_line(self):
-        self.log.info("_" * 80)
+        self.log.info("=" * 80)
 
     @property
     def log(self):
