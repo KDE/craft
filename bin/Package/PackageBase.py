@@ -61,7 +61,8 @@ class PackageBase (CraftBase):
 
         revision = self.sourceRevision()
         package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
-        package.addFiles(self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles))
+        fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
+        package.addFiles(fileList)
         package.install()
 
 
@@ -77,6 +78,7 @@ class PackageBase (CraftBase):
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
         packageList = installdb.getInstalledPackages(self.category, self.package)
+
         for package in packageList:
             fileList = package.getFilesWithHashes()
             self.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
@@ -209,11 +211,12 @@ class PackageBase (CraftBase):
 
         algorithm = CraftHash.HashAlgorithm.SHA256
         for filePath in filePaths:
+            relativeFilePath = os.path.relpath(filePath, imagedir)
             if OsUtils.isUnix() and os.path.islink(filePath):
-                relativeFilePath = os.path.relpath(filePath, imagedir)
-                ret.append((relativeFilePath, ""))
+                digest = ""
             else:
                 digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
+            ret.append((relativeFilePath, ""))
         return ret
 
     @staticmethod

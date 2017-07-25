@@ -685,7 +685,7 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
                             continue
 
                         # re-create exact same symlink, but this time in the destdir
-                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles:
+                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles != None:
                             copiedFiles.append(newLinkName)
 
     return True
