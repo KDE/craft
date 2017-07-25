@@ -653,10 +653,6 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
-    # FIXME: Without the next line + the pop() afterwards, copiedFiles on the caller side will stay empty. WHY?
-    if copiedFiles:
-        copiedFiles.append(None) # dummy.
-
     if ( not srcdir.endswith( os.path.sep ) ):
         srcdir += os.path.sep
     if ( not destdir.endswith( os.path.sep ) ):
@@ -671,7 +667,7 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
                 os.makedirs( tmpdir )
             for fileName in files:
                 # symlinks to files are included in `files`
-                if copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly) and copiedFiles:
+                if copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly) and copiedFiles != None:
                     copiedFiles.append(os.path.join( tmpdir, fileName ))
 
             if OsUtils.isUnix():
@@ -691,9 +687,6 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
                         # re-create exact same symlink, but this time in the destdir
                         if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles:
                             copiedFiles.append(newLinkName)
-
-    if copiedFiles:
-        copiedFiles.pop(0)
 
     return True
 
