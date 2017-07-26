@@ -1,6 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import CraftDependencies
 from CraftDebug import craftDebug
 import CraftHash
 from CraftBase import *
@@ -271,7 +272,7 @@ class PackageBase (CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise portage.PortageException( str( e ), self.category, self.package, e )
+                raise CraftDependencies.PortageException(str(e), self.category, self.package, e)
 
         else:
             ok = craftDebug.log.error( "command %s not understood" % command )

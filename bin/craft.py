@@ -12,6 +12,7 @@
 
 import sys
 
+import CraftDependencies
 from CraftDebug import craftDebug
 import CraftTimer
 
@@ -99,9 +100,9 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         craftDebug.step("Handling package: %s, action: %s" % (packageName, buildAction))
 
         success = True
-        package = portage.getPackageInstance( category, packageName )
+        package = portage.PortageInstance.getPackageInstance( category, packageName )
         if package is None:
-            raise portage.PortageException( "Package not found", category, packageName )
+            raise CraftDependencies.PortageException("Package not found", category, packageName)
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
             if craftSettings.getboolean("Packager", "UseCache", "False")\
@@ -200,8 +201,8 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     for mainCategory, entry in zip( categoryList, packageList ):
         if args.target:
             craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
-        deplist = portage.solveDependencies( mainCategory, entry, deplist, portage.DependencyType(args.dependencyType),
-                                              maxDepth = args.dependencydepth )
+        deplist = portage.solveDependencies(mainCategory, entry, deplist, CraftDependencies.DependencyType(args.dependencyType),
+                                            maxDepth = args.dependencydepth)
     # no package found
     if len( deplist ) == 0:
         category = ""
@@ -530,7 +531,7 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except portage.PortageException as e:
+        except CraftDependencies.PortageException as e:
             craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error( e, exc_info=e)

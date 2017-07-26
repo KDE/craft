@@ -1,19 +1,38 @@
 #!/usr/bin/env python
+from collections import OrderedDict
+
+from CraftDebug import craftDebug
+
 
 class PackageObjectBase(object):
+    PortageInstance = None
 
-    def __init__(self, category=None, subpackage=None, package=None, enabled=False, version = ""):
+    def __init__(self, category=None, subpackage=None, package=None, version = None):
         self.category = category
         self.subpackage = subpackage
         self.package = package
-        self.enabled = enabled
-        self.version = version
+        self._version = version
 
     def fullName(self):
         if self.subpackage:
-            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
+            return "/".join((self.category,self.subpackage,self.package))
         else:
-            return "%s/%s" % (self.category,self.package)
+            return "/".join((self.category,self.package))
+
+    @property
+    def version(self):
+        if not self._version:
+            self._version = PackageObjectBase.PortageInstance.getNewestVersion(self.category, self.package)
+        return self._version
+
+    def _readChildren(self, category, package):
+        craftDebug.log.debug("solving package {self}")
+        subinfo = PackageObjectBase.PortageInstance._getSubinfo(category, package)
+
+        if subinfo is None:
+            return OrderedDict(), OrderedDict()
+
+        return subinfo.runtimeDependencies, subinfo.buildDependencies
 
 
     def __eq__(self, other):
@@ -30,7 +49,3 @@ class PackageObjectBase(object):
 
     def __str__(self):
         return self.fullName()
-
-    def __bool__(self):
-        #print("bool:", self.enabled)
-        return self.enabled

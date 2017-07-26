@@ -15,7 +15,7 @@ from CraftVersion import CraftVersion
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "qmake")
-        self.qtVer = CraftVersion(portage.getPackageInstance("libs", "qt5").subinfo.buildTarget)
+        self.qtVer = CraftVersion(portage.PortageInstance.getPackageInstance("libs", "qt5").subinfo.buildTarget)
         self.platform = ""
         #todo: use new craftCompiler platform code
         if OsUtils.isWin():

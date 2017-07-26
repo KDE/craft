@@ -281,5 +281,4 @@ installdb = InstallDB()
 # an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
-    host = target = portage.alwaysTrue
-    portage.printCategoriesPackagesAndVersions(installdb.getDistinctInstalled(), portage.alwaysTrue, host, target)
+    portage.printCategoriesPackagesAndVersions(installdb.getDistinctInstalled())
