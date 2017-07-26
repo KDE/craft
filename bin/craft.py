@@ -11,6 +11,7 @@
 # if you add code that changes this requirement
 
 import sys
+from collections import OrderedDict
 
 import CraftDependencies
 from CraftDebug import craftDebug
@@ -172,7 +173,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
 
 
 def handleSinglePackage( packageName, action, args, directTargets = None ):
-    deplist = [ ]
+    deplist = OrderedDict()
     packageList = [ ]
     originalPackageList = [ ]
     categoryList = [ ]
@@ -201,8 +202,11 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     for mainCategory, entry in zip( categoryList, packageList ):
         if args.target:
             craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
-        deplist = portage.solveDependencies(mainCategory, entry, deplist, CraftDependencies.DependencyType(args.dependencyType),
-                                            maxDepth = args.dependencydepth)
+        #we are resolvinf the deps for each target, so we need to remove dublicates
+        # TODO: directly pass a list
+        deplist.update(OrderedDict.fromkeys(portage.solveDependencies(mainCategory, entry, CraftDependencies.DependencyType(args.dependencyType),
+                                            maxDepth = args.dependencydepth)))
+    deplist = list(deplist.keys())
     # no package found
     if len( deplist ) == 0:
         category = ""
@@ -239,7 +243,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
         for item in deplist:
             item.enabled = True
 
-    deplist.reverse( )
 
     # package[0] -> category
     # package[1] -> package

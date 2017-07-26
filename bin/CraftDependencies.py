@@ -1,5 +1,7 @@
 from enum import unique, Enum
 
+import collections
+
 from CraftDebug import craftDebug
 from CraftPackageObject import PackageObjectBase
 
@@ -26,65 +28,59 @@ class PortageException(Exception,PackageObjectBase):
 
 
 class DependencyPackage(PackageObjectBase):
-    """ This class wraps each package and constructs the dependency tree
-        original code is from dependencies.py, integration will come later...
-        """
+    _packageCache = dict()
 
-    def __init__( self, category, name, autoExpand = True, parent = None ):
+    @unique
+    class State(Enum):
+        Unvisited = 0
+        Visiting  = 1
+        Visited = 2
+
+
+    def __init__( self, category, name):
         subpackage, package = PackageObjectBase.PortageInstance.getSubPackage(category,name)
         PackageObjectBase.__init__(self, category, subpackage, package)
         self.runtimeChildren = []
         self.buildChildren = []
         self._version = None
-        if parent is None:
-            self._dependencyList = dict()
-        else:
-            self._dependencyList = parent._dependencyList
+        self.state = DependencyPackage.State.Unvisited
 
-        if autoExpand:
-            self.__readChildren()
 
     @property
     def name(self):
         return self.package
 
-
-    def __hash__(self):
-        return self.__str__().__hash__()
-
-    def __eq__( self, other ):
-        return self.category == other.category and self.name == other.name
-
-    def __ne__( self, other ):
-        return self.category != other.category or self.name != other.name
-
     def __str__(self):
         return f"{PackageObjectBase.__str__(self)}: {self.version}"
 
-    def __readChildren( self ):
-        runtimeDependencies, buildDependencies = self._readChildren(self.category, self.name)
-        self.runtimeChildren = self.__readDependenciesForChildren( list(runtimeDependencies.keys()) )
-        self.buildChildren = self.__readDependenciesForChildren( list(buildDependencies.keys()) )
+    def __resolveDependencies(self):
+        craftDebug.log.debug("solving package {self}")
+        subinfo = PackageObjectBase.PortageInstance._getSubinfo(self.category, self.package)
+        self.runtimeChildren = self.__readDependenciesForChildren( subinfo.runtimeDependencies.keys() )
+        self.buildChildren = self.__readDependenciesForChildren( subinfo.buildDependencies.keys() )
 
     def __readDependenciesForChildren( self, deps):
         children = []
         if deps:
             for line in deps:
-                ( category, package ) = line.split( "/" )
-                if not line in self._dependencyList.keys():
-                    p = DependencyPackage( category, package, False, self )
+                if line not in DependencyPackage._packageCache:
+                    category, package = line.split( "/" )
+                    p = DependencyPackage( category, package)
                     craftDebug.log.debug("adding package {line}")
-                    self._dependencyList[ line ] = p
-                    p.__readChildren()
+                    DependencyPackage._packageCache[ line ] = p
+                    p.__resolveDependencies()
                 else:
-                    p = self._dependencyList[ line ]
+                    p = DependencyPackage._packageCache[ line ]
                 children.append( p )
         return children
 
-    def getDependencies( self, depList = None, depType=DependencyType.Both, single = set(), maxDepth = -1, depth = 0, ignoredPackages = None):
+    def __getDependencies( self, depType, maxDepth, depth, ignoredPackages ):
         """ returns all dependencies """
-        if depList is None:
-            depList = []
+        if PackageObjectBase.PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
+            return []
+
+        depList = []
+
         if depType == DependencyType.Runtime:
             children = self.runtimeChildren
         elif depType == DependencyType.Buildtime:
@@ -92,18 +88,22 @@ class DependencyPackage(PackageObjectBase):
         else:
             children = self.runtimeChildren + self.buildChildren
 
-        single.add(self)
+        self.state = DependencyPackage.State.Visiting
         for p in children:
-            if not p in single and not p in depList\
-                    and not PackageObjectBase.PortageInstance.ignores.match(p.fullName())\
-                    and not p.fullName() in (ignoredPackages or []):
-                if maxDepth == -1:
-                    p.getDependencies( depList, depType, single )
-                elif depth < maxDepth:
-                    p.getDependencies( depList, depType, single, maxDepth = maxDepth, depth = depth + 1 )
+            if p.state != DependencyPackage.State.Unvisited:
+                continue
+            if not PackageObjectBase.PortageInstance.ignores.match(p.fullName())\
+                    and ( not ignoredPackages or p.fullName() in ignoredPackages ):
+                if maxDepth == -1 or depth < maxDepth:
+                    depList.extend(p.__getDependencies(depType, maxDepth, depth + 1, ignoredPackages))
 
-        #if self.category != internalCategory:
-        if not self in depList and not PackageObjectBase.PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
-            depList.append( self )
-
+        if self.state != DependencyPackage.State.Visited:
+            self.state = DependencyPackage.State.Visited
+            depList.append(self)
         return depList
+
+    def getDependencies(self, depType=DependencyType.Both, maxDepth=-1, depth=0, ignoredPackages=None):
+        self.__resolveDependencies()
+        for p in DependencyPackage._packageCache.values():
+            p.state = DependencyPackage.State.Unvisited
+        return self.__getDependencies(depType, maxDepth, depth, ignoredPackages)

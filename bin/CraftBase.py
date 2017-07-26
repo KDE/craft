@@ -132,7 +132,7 @@ class CraftBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return portage.getDirname( self.category, self.package )
+        return portage.PortageInstance.getDirname( self.category, self.package )
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
