@@ -52,7 +52,10 @@ class DependencyPackage(PackageObjectBase):
             dummy.buildChildren = dummy.__readDependenciesForChildren(list)
         else:
             dummy.runtimeChildren = dummy.__readDependenciesForChildren(list)
-        return dummy.getDependencies(depType=depType,maxDepth=maxDepth, ignoredPackages=ignoredPackages)
+        out = dummy.getDependencies(depType=depType,maxDepth=maxDepth, ignoredPackages=ignoredPackages)
+        # remove the dummy
+        del out[-1]
+        return out
 
 
     @property

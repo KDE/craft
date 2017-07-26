@@ -204,8 +204,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
         deplist.append(f"{mainCategory}/{entry}")
 
     deplist = CraftDependencies.DependencyPackage.resolveDependenciesForList(deplist, CraftDependencies.DependencyType(args.dependencyType), maxDepth=args.dependencydepth)
-    # remove the dummy
-    del deplist[-1]
     # no package found
     if len( deplist ) == 0:
         category = ""
