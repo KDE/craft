@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from collections import OrderedDict
 
 from CraftDebug import craftDebug
 
@@ -12,7 +11,7 @@ class PackageObjectBase(object):
         self.subpackage = subpackage
         self.package = package
         self._version = version
-        self._fullName = "/".join(self._signature())
+        self._fullName = None
 
 
     def _signature(self):
@@ -23,6 +22,8 @@ class PackageObjectBase(object):
 
 
     def fullName(self):
+        if not self._fullName:
+            self._fullName = "/".join(self._signature())
         return self._fullName
 
     @property

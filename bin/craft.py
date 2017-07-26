@@ -11,7 +11,6 @@
 # if you add code that changes this requirement
 
 import sys
-from collections import OrderedDict
 
 import CraftDependencies
 from CraftDebug import craftDebug
@@ -173,7 +172,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
 
 
 def handleSinglePackage( packageName, action, args, directTargets = None ):
-    deplist = OrderedDict()
     packageList = [ ]
     originalPackageList = [ ]
     categoryList = [ ]
@@ -199,14 +197,15 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     for entry in packageList:
         craftDebug.log.debug("Checking dependencies for: %s" % entry)
 
+    deplist = []
     for mainCategory, entry in zip( categoryList, packageList ):
         if args.target:
             craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
-        #we are resolvinf the deps for each target, so we need to remove dublicates
-        # TODO: directly pass a list
-        deplist.update(OrderedDict.fromkeys(portage.solveDependencies(mainCategory, entry, CraftDependencies.DependencyType(args.dependencyType),
-                                            maxDepth = args.dependencydepth)))
-    deplist = list(deplist.keys())
+        deplist.append(f"{mainCategory}/{entry}")
+
+    deplist = CraftDependencies.DependencyPackage.resolveDependenciesForList(deplist, CraftDependencies.DependencyType(args.dependencyType), maxDepth=args.dependencydepth)
+    # remove the dummy
+    del deplist[-1]
     # no package found
     if len( deplist ) == 0:
         category = ""
@@ -237,7 +236,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
 
     if action == "install-deps":
         # the first dependency is the package itself - ignore it
-        # TODO: why are we our own dependency?
         del deplist[ 0 ]
     elif action == "update-direct-deps":
         for item in deplist:
@@ -250,7 +248,7 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
 
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
-        not action in [ "all", "install-deps"]:#not all commands should be executed on the deps if we are a virtual packages
+            not action in [ "all", "install-deps"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -277,14 +275,14 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                        craftDebug.log.warning("pretending %s" % info)
+                    craftDebug.log.warning("pretending %s" % info)
                 else:
                     if action in [ "install-deps", "update-direct-deps" ]:
                         action = "all"
 
                     if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast, directTargets=directTargets ):
                         craftDebug.log.error("fatal error: package %s/%s %s failed" % \
-                                          ( info.category, info.package, action ))
+                                             ( info.category, info.package, action ))
                         return False
 
     craftDebug.new_line()

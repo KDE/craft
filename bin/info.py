@@ -8,8 +8,6 @@
 
 import datetime
 import os
-from collections import OrderedDict
-
 import utils
 from CraftCompiler import craftCompiler
 from options import *
@@ -44,8 +42,8 @@ class infoclass(object):
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies
-        self.runtimeDependencies = OrderedDict()
-        self.buildDependencies = OrderedDict()
+        self.runtimeDependencies = {}
+        self.buildDependencies = {}
 
         # a long and a short description for the package
         self.shortDescription = ''
