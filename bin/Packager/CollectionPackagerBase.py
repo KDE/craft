@@ -93,8 +93,7 @@ class CollectionPackagerBase( PackagerBase ):
     def __getImageDirectories( self ):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = []
-        depList = portage.solveDependencies(self.category, self.package, depList, DependencyType.Runtime)
+        depList = portage.solveDependencies(self.category, self.package, DependencyType.Runtime)
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
