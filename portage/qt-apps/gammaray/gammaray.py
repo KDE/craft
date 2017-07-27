@@ -25,24 +25,35 @@ from Package.CMakePackageBase import *
 class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
+        self.subinfo.options.configure.args = "-DGAMMARAY_INSTALL_QT_LAYOUT=ON"
         if not craftSettings.getboolean("QtSDK", "Enabled", False):
-            self.subinfo.options.configure.args = " -DGAMMARAY_MULTI_BUILD=OFF"
-        else:
-            self.subinfo.options.package.movePluginsToBin = False
+            self.subinfo.options.configure.args += " -DGAMMARAY_MULTI_BUILD=OFF"
+        self.blacklist_file = [
+            PackagerLists.runtimeBlacklist
+        ]
 
+    def preArchive(self):
+        if self.buildType() == "Debug":
+            buildType = "debug"
+        else:
+            buildType = "release"
+        for pattern  in ["**/*.exe", "**/*.dll"]:
+            for f in glob.glob( os.path.join(self.archiveDir(),  pattern), recursive=True ):
+                self.system(f"windeployqt --{buildType} --compiler-runtime --dir \"{self.archiveDir()}/bin\" --qmldir \"{self.sourceDir()}\" \"{f}\"")
+        return True
 
     def createPackage(self):
+        self.deployQt = False
         self.defines["productname"] = "GammaRay"
         self.defines["website"] = "http://www.kdab.com/gammaray"
-        self.defines["executable"] = "bin\\gammaray.exe"
-#            self.defines["icon"] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
-        if craftSettings.getboolean("QtSDK", "Enabled", False):
-            self.defines["defaultinstdir"] = os.path.join(craftSettings.get("QtSDK", "Path"),
-                                                          craftSettings.get("QtSDK", "Version"),
-                                                          craftSettings.get("QtSDK", "Compiler"))
-
+        self.defines["company"] = "Klarälvdalens Datakonsult AB"
+        self.defines["executable"] = "bin\\gammaray-launcher.exe"
+        self.defines["license"] = os.path.join(self.sourceDir(), "LICENSE.BSD3.txt")
+        self.defines["icon"] = os.path.join(self.sourceDir(), "ui", "resources", "gammaray", "GammaRay.ico")
         self.ignoredPackages.append("binary/mysql")
-
+        self.ignoredPackages.append("win32libs/icu")
+        #we are using windeploy
+        self.ignoredPackages.append("libs/qtbase")
         return TypePackager.createPackage(self)
 
 
