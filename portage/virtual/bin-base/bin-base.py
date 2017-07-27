@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.buildDependencies['dev-util/7zip'] = 'default'
         self.buildDependencies['dev-util/shimgen'] = 'default'
         self.buildDependencies['gnuwin32/patch'] = 'default'
+        self.runtimeDependencies['libs/craft'] = 'default'
 
 from Package.VirtualPackageBase import *
 from Source.SourceBase import *

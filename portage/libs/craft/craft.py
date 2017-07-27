@@ -21,6 +21,7 @@ class Package(SourceOnlyPackageBase):
     def __init__(self):
         SourceOnlyPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
+        self.subinfo.options.dailyUpdate = True
 
     def unpack(self):
         return True
@@ -34,12 +35,14 @@ class Package(SourceOnlyPackageBase):
             utils.system( f"\"{git}\" config --global core.autocrlf false")
             utils.system( f"\"{git}\" config --system core.autocrlf false")
 
-        return MultiSource.fetch(self)
+        return SourceOnlyPackageBase.fetch(self)
 
     def install(self):
         return True
 
     def qmerge(self):
+        if not SourceOnlyPackageBase.qmerge(self):
+            return False
         utils.utilsCache.clear()
         return True
 

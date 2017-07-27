@@ -198,7 +198,9 @@ class CraftBase(object):
 
     @property
     def version(self):
-        return self.subinfo.defaultTarget
+        if self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
+            return str(datetime.date.today()).replace("-", ".")
+        return self.subinfo.buildTarget
 
     @property
     def rootdir(self):

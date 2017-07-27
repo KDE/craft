@@ -4,6 +4,8 @@
 import builtins
 import importlib
 
+import datetime
+
 import InstallDB
 import utils
 from CraftConfig import *
@@ -243,6 +245,8 @@ class Portage(object):
 
         info = self._getSubinfo( category, package )
         if not info is None:
+            if info.options.dailyUpdate and info.hasSvnTarget():
+                return str(datetime.date.today()).replace("-", ".")
             return info.defaultTarget
         else:
             return None

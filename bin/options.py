@@ -94,6 +94,7 @@ class OptionsFetch(OptionsBase):
         ## enable submodule support in git single branch mode
         self.checkoutSubmodules = False
 
+
 ## options for the unpack action
 class OptionsUnpack(OptionsBase):
     def __init__(self):
@@ -249,6 +250,9 @@ class Options(object):
         self.cmake = OptionsCMake()
         ## options of the git module
         self.git = OptionsGit()
+
+        ## add the date to the target
+        self.dailyUpdate = False
 
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
