@@ -54,6 +54,8 @@ class CollectionPackagerBase( PackagerBase ):
             self.blacklist_file = blacklists
         self._whitelist = []
         self._blacklist = []
+        self.scriptname = None
+        self.deployQt = True
 
 
     @property
@@ -108,7 +110,7 @@ class CollectionPackagerBase( PackagerBase ):
             craftDebug.log.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (
             _package.category, x.package, _package.version, _package.buildTarget))
 
-        if craftSettings.getboolean("QtSDK", "Enabled", False) and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
+        if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
             imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), False))
 
         return imageDirs
