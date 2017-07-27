@@ -146,6 +146,10 @@ file collection process is skipped, and only the installer is generated.
 
         if not self.defines["icon"] == "":
             self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
+        if not self.defines["license"] == "":
+            self.defines["license"] = "!define MUI_PAGE_LICENSE \"%s\"" % self.defines["license"]
+
+
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
