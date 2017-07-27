@@ -106,7 +106,7 @@ class DependencyPackage(PackageObjectBase):
             if p.state != DependencyPackage.State.Unvisited:
                 continue
             if not PackageObjectBase.PortageInstance.ignores.match(p.fullName())\
-                    and ( not ignoredPackages or p.fullName() in ignoredPackages ):
+                    and ( not ignoredPackages or p.fullName() not in ignoredPackages ):
                 if maxDepth == -1 or depth < maxDepth:
                     depList.extend(p.__getDependencies(depType, maxDepth, depth + 1, ignoredPackages))
 
