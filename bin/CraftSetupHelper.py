@@ -214,6 +214,8 @@ class SetupHelper( object ):
         if OsUtils.isUnix():
             self.prependPath("LD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                                   os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu") ])
+        if OsUtils.isMac():
+            self.prependPath("DYLD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib") ])
 
         self.setXDG()
 
