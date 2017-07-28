@@ -66,7 +66,7 @@ class DependencyPackage(PackageObjectBase):
         return f"{PackageObjectBase.__str__(self)}: {self.version}"
 
     def __resolveDependencies(self):
-        craftDebug.log.debug("solving package {self}")
+        craftDebug.log.debug(f"solving package {self}")
         if self.package:
             subinfo = PackageObjectBase.PortageInstance._getSubinfo(self.category, self.package)
             self.runtimeChildren.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.keys()))
@@ -79,7 +79,7 @@ class DependencyPackage(PackageObjectBase):
                 if line not in DependencyPackage._packageCache:
                     category, package = line.split( "/" )
                     p = DependencyPackage( category, package)
-                    craftDebug.log.debug("adding package {line}")
+                    craftDebug.log.debug(f"adding package {line}")
                     DependencyPackage._packageCache[ line ] = p
                     p.__resolveDependencies()
                 else:
