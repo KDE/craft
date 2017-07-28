@@ -48,6 +48,7 @@ class DependencyPackage(PackageObjectBase):
     @staticmethod
     def resolveDependenciesForList(list, depType=DependencyType.Both, maxDepth=-1, ignoredPackages=None):
         dummy = DependencyPackage(None, None)
+        dummy._fullName = "dependency resolutinon package"
         if depType == DependencyType.Buildtime:
             dummy.buildChildren = dummy.__readDependenciesForChildren(list)
         else:
@@ -66,7 +67,7 @@ class DependencyPackage(PackageObjectBase):
         return f"{PackageObjectBase.__str__(self)}: {self.version}"
 
     def __resolveDependencies(self):
-        craftDebug.log.debug(f"solving package {self}")
+        craftDebug.log.debug(f"solving package {PackageObjectBase.__str__(self)}")
         if self.package:
             subinfo = PackageObjectBase.PortageInstance._getSubinfo(self.category, self.package)
             self.runtimeChildren.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.keys()))
