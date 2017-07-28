@@ -156,11 +156,10 @@ file collection process is skipped, and only the installer is generated.
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        definestring = ""
+        defines = []
         for key, value in self.defines.items():
             if value is not None:
-                value = value.replace("\"", "\\\"")
-                definestring += f" /D{key}=\"{value}\""
+                defines.append(f"/D{key}={value}")
 
         craftDebug.new_line()
         craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
@@ -168,8 +167,8 @@ file collection process is skipped, and only the installer is generated.
         verboseString = "/V4" if craftDebug.verbose() > 0 else "/V3"
 
         if self.isNsisInstalled:
-            if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (self.nsisExe, verboseString, definestring,
-                    self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
+            if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [self.scriptname],
+                                             cwd = os.path.abspath( self.packageDir() ) ):
                 craftDebug.log.critical("Error in makensis execution")
 
     def createPackage( self ):
