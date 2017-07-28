@@ -22,7 +22,7 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.args = " -DBINARY_ICONS_RESOURCE=ON"
 
     def install(self):
-        if OsUtils.isWin():
+        if OsUtils.isWin() or OsUtils.isMac():
             dest = os.path.join(self.installDir(), "bin","data")
             if not os.path.exists(dest):
                 os.makedirs(dest)
