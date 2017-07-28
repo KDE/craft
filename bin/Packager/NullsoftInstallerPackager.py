@@ -159,6 +159,7 @@ file collection process is skipped, and only the installer is generated.
         definestring = ""
         for key, value in self.defines.items():
             if value is not None:
+                value = value.replace("\"", "\\\"")
                 definestring += f" /D{key}=\"{value}\""
 
         craftDebug.new_line()
