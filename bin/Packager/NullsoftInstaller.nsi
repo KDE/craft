@@ -88,7 +88,7 @@ ${EndIf}
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
   WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
   WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "${website}"
-  WriteRegStr HKLM "${uninstkey}" "Publisher" "KDE"
+  WriteRegStr HKLM "${uninstkey}" "Publisher" "${company}"
   WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "${version}"
 
   SetOutPath $INSTDIR
