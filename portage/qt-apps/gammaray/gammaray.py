@@ -38,7 +38,8 @@ class Package( CMakePackageBase ):
             buildType = "debug"
         else:
             buildType = "release"
-        for pattern  in ["**/*.exe", "**/*.dll"]:
+        ## TODO: prevend calling deploy on deployed files...
+        for pattern  in ["**/*.dll", "**/*.exe"]:
             for f in glob.glob( os.path.join(self.archiveDir(),  pattern), recursive=True ):
                 self.system(f"windeployqt --{buildType} --compiler-runtime --dir \"{self.archiveDir()}/bin\" --qmldir \"{self.sourceDir()}\" \"{f}\"")
         return True
