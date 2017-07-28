@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
             self.buildDependencies['dev-util/ccache'] = 'default'
 
         self.runtimeDependencies['libs/runtime'] = 'default'
-        self.runtimeDependencies['libs/craft'] = 'default'
+        self.buildDependencies['libs/craft'] = 'default'
 
 
 class Package( VirtualPackageBase ):
