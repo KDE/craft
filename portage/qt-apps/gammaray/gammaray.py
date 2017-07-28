@@ -29,7 +29,8 @@ class Package( CMakePackageBase ):
         if not craftSettings.getboolean("QtSDK", "Enabled", False):
             self.subinfo.options.configure.args += " -DGAMMARAY_MULTI_BUILD=OFF"
         self.blacklist_file = [
-            PackagerLists.runtimeBlacklist
+            PackagerLists.runtimeBlacklist,
+            lambda : (re.compile(r"^.*\.pdb$|^.*\.pri$|^share.*$|^etc.*$"),)
         ]
 
     def preArchive(self):
@@ -48,10 +49,11 @@ class Package( CMakePackageBase ):
         self.defines["website"] = "http://www.kdab.com/gammaray"
         self.defines["company"] = "Klarälvdalens Datakonsult AB"
         self.defines["executable"] = "bin\\gammaray-launcher.exe"
-        self.defines["license"] = os.path.join(self.sourceDir(), "LICENSE.BSD3.txt")
+        self.defines["license"] = os.path.join(self.sourceDir(), "LICENSE.GPL.txt")
         self.defines["icon"] = os.path.join(self.sourceDir(), "ui", "resources", "gammaray", "GammaRay.ico")
         self.ignoredPackages.append("binary/mysql")
         self.ignoredPackages.append("win32libs/icu")
+        self.ignoredPackages.append("win32libs/dbus")
         #we are using windeploy
         self.ignoredPackages.append("libs/qtbase")
         return TypePackager.createPackage(self)
