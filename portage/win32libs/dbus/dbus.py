@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.patchToApply["1.8.4"] = [("dont_include_afxres.diff", 1)]
         self.patchToApply["1.10.4"] = [("dont_include_afxres.diff", 1)]
         self.patchToApply["1.11.4"] = [("dbus-1.11.4-20160903.diff", 1)]
+        self.patchToApply["1.11.14"] = [("dbus-1.11.4-20160903.diff", 1)]
 
         self.targetDigests["1.10.4"] = "ec1921a09199c81ea20b20448237146a414d51ae"
         self.targetDigests["1.11.4"] = (["474de2afde8087adbd26b3fc5cbf6ec45559763c75b21981169a9a1fbac256c9"], CraftHash.HashAlgorithm.SHA256)
