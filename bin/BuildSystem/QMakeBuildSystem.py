@@ -25,6 +25,7 @@ class QMakeBuildSystem(BuildSystemBase):
                         _compiler = "msvc2015"
                     else:
                         _compiler = craftCompiler.abi.split("_")[0]
+                else:
                     _compiler = "msvc"
                 if craftCompiler.isClang():
                     self.platform = f"win32-clang-{_compiler}"
