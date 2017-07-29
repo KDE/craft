@@ -20,10 +20,16 @@ class QMakeBuildSystem(BuildSystemBase):
         #todo: use new craftCompiler platform code
         if OsUtils.isWin():
             if craftCompiler.isMSVC():
+                if self.qtVer < CraftVersion("5.8"):
+                    if craftCompiler.isMSVC2017():
+                        _compiler = "msvc2015"
+                    else:
+                        _compiler = craftCompiler.abi.split("_")[0]
+                    _compiler = "msvc"
                 if craftCompiler.isClang():
-                    self.platform = "win32-clang-%s" % (craftCompiler.abi.split("_")[0] if self.qtVer < CraftVersion("5.8") else "msvc")
+                    self.platform = f"win32-clang-{_compiler}"
                 else:
-                    self.platform = "win32-%s" % (craftCompiler.abi.split("_")[0] if self.qtVer < CraftVersion("5.8") else "msvc")
+                    self.platform = f"win32-{_compiler}"
             elif craftCompiler.isMinGW():
                 self.platform = "win32-g++"
             elif craftCompiler.isIntel():
