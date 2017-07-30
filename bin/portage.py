@@ -2,198 +2,23 @@
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import builtins
-from enum import Enum, unique
 import importlib
-from collections import OrderedDict
 
-from CraftVersion import CraftVersion
-from CraftDebug import craftDebug
-from CraftPackageObject import PackageObjectBase
-from CraftConfig import *
+import datetime
+
 import InstallDB
 import utils
+from CraftConfig import *
+from CraftDebug import craftDebug
+from CraftDependencies import DependencyType, PortageException, DependencyPackage
+from CraftPackageObject import PackageObjectBase
+from CraftVersion import CraftVersion
 
-@unique
-class DependencyType(Enum):
-    Runtime     = "runtime"
-    Buildtime   = "buildtime"
-    Both        = "both"
-
-class PortageCache(object):
-    _rootDirCache = dict()
-
-class PortageException(Exception,PackageObjectBase):
-    def __init__(self, message, category, package , exception = None):
-        Exception.__init__(self, message)
-        subpackage, package = getSubPackage(category,package)
-        PackageObjectBase.__init__(self,category,subpackage,package)
-        self.exception = exception
-
-    def __hash__(self):
-        return self.__str__().__hash__()
-
-    def __str__(self):
-        return "%s failed: %s" % (PackageObjectBase.__str__(self),Exception.__str__(self))
-
-class DependencyPackage(PackageObjectBase):
-    """ This class wraps each package and constructs the dependency tree
-        original code is from dependencies.py, integration will come later...
-        """
-
-    def __init__( self, category, name, autoExpand = True, parent = None ):
-        subpackage, package = getSubPackage(category,name)
-        PackageObjectBase.__init__(self,category,subpackage,package,version = PortageInstance.getDefaultTarget(category,package))
-        self.category = category
-        self.runtimeChildren = []
-        self.buildChildren = []
-        if parent is None:
-            self._dependencyList = dict()
-        else:
-            self._dependencyList = parent._dependencyList
-
-        if autoExpand:
-            self.__readChildren()
-
-    @property
-    def name(self):
-        return self.package
-
-    def __hash__(self):
-        return self.__str__().__hash__()
-
-    def __eq__( self, other ):
-        return self.category == other.category and self.name == other.name
-
-    def __ne__( self, other ):
-        return self.category != other.category or self.name != other.name
-
-    def __str__(self):
-        return "%s: %s" % (PackageObjectBase.__str__(self), self.version)
-
-    def __readChildren( self ):
-        runtimeDependencies, buildDependencies = readChildren( self.category, self.name )
-        self.runtimeChildren = self.__readDependenciesForChildren( list(runtimeDependencies.keys()) )
-        self.buildChildren = self.__readDependenciesForChildren( list(buildDependencies.keys()) )
-
-    def __readDependenciesForChildren( self, deps):
-        children = []
-        if deps:
-            for line in deps:
-                ( category, package ) = line.split( "/" )
-                craftDebug.log.debug("category: %s, name: %s" % (category, package))
-                try:
-                    version = PortageInstance.getNewestVersion( category, package )
-                except PortageException as e:
-                    craftDebug.log.warning("%s for %s/%s as a dependency of %s/%s" % (e, e.category, e.package, self.category , self.name))
-                    continue
-
-                if not line in self._dependencyList.keys():
-                    p = DependencyPackage( category, package, False, self )
-                    craftDebug.log.debug("adding package %s/%s-%s" % (category, package, version))
-                    self._dependencyList[ line ] = p
-                    p.__readChildren()
-                else:
-                    p = self._dependencyList[ line ]
-                children.append( p )
-        return children
-
-    def getDependencies( self, depList = [], depType=DependencyType.Both, single = set(), maxDepth = -1, depth = 0, ignoredPackages = None):
-        """ returns all dependencies """
-        if depType == DependencyType.Runtime:
-            children = self.runtimeChildren
-        elif depType == DependencyType.Buildtime:
-            children = self.buildChildren
-        else:
-            children = self.runtimeChildren + self.buildChildren
-
-        single.add(self)
-        for p in children:
-            if not p in single and not p in depList\
-                    and not PortageInstance.ignores.match(p.fullName())\
-                    and not p.fullName() in (ignoredPackages or []):
-                if maxDepth == -1:
-                    p.getDependencies( depList, depType, single )
-                elif depth < maxDepth:
-                    p.getDependencies( depList, depType, single, maxDepth = maxDepth, depth = depth + 1 )
-
-        #if self.category != internalCategory:
-        if not self in depList and not PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
-            depList.append( self )
-
-        return depList
-
-def buildType():
-    """return currently selected build type"""
-    return craftSettings.get("Compile","BuildType")
-
-def rootDirectories():
-    # this function should return all currently set portage directories
-    if ("General", "EMERGE_PORTAGE_ROOT" ) in craftSettings:
-        rootDirs = craftSettings.get("General", "EMERGE_PORTAGE_ROOT" ).split( ";" )
-    else:
-        rootDirs = []
-    if len( rootDirs ) == 0:
-        rootDirs = [ CraftStandardDirs.craftRepositoryDir() ]
-    return rootDirs
-
-def rootDirForCategory( category ):
-    """this function should return the portage directory where it finds the first occurance of the category
-
-throws exception if not found
-"""
-    # this function should return the portage directory where it finds the
-    # first occurance of a category or the default value
-    for i in rootDirectories():
-        if category and os.path.exists( os.path.join( i, category ) ):
-            return i
-    craftDebug.log.critical("can't find category %s" % category)
-
-def rootDirForPackage( category, package ):
-    """returns the portage directory where it finds the first occurance of this package
-"""
-    name = "%s/%s" % ( category, package )
-    if not name in PortageCache._rootDirCache:
-        for i in rootDirectories():
-            if os.path.exists( os.path.join( i, category, package ) ):
-                PortageCache._rootDirCache[ name ] = i
-    return PortageCache._rootDirCache[ name ]
-
-def getFullPackage( package ):
-    """tries to find a package and returns either category / subpackage / package or category / package
-
-returns an empty list if not found
-"""
-    category = PortageInstance.getCategory( package )
-    if not category: return []
-    if package in PortageInstance.subpackages:
-        _cat, subpackage = PortageInstance.subpackages[ package ][0].split('/')
-        if not _cat == category: return []
-        return [category, subpackage, package]
-    else:
-        return [category, package]
-
-
-def getDirname( category, package ):
-    """ return absolute pathname for a given category and package """
-    subpackage, package = getSubPackage( category, package )
-    if category and package:
-        if subpackage:
-            return os.path.join( rootDirForPackage( category, subpackage ), category, subpackage, package )
-        else:
-            return os.path.join( rootDirForPackage( category, package ), category, package )
-    else:
-        craftDebug.log.critical("broken category or package %s/%s" % (category, package))
-
-def getFilename( category, package ):
-    """ return absolute filename for a given category, package  """
-    return os.path.join( getDirname( category, package ), "%s.py" % package  )
-
-def VCSDirs():
-    return [ '.svn', 'CVS', '.hg', '.git' ]
 
 class Portage(object):
     #cache for pacages
-    _packageDict = OrderedDict()
+    _rootDirCache = dict()
+    _packageDict = dict()
     options = ""
 
     def __init__( self ):
@@ -210,6 +35,82 @@ class Portage(object):
     def generateIgnoreList(ignores):
         return re.compile("(%s)" % "|".join( ["^%s$" % entry for entry in ignores]))
 
+    @staticmethod
+    def buildType():
+        """return currently selected build type"""
+        return craftSettings.get("Compile", "BuildType")
+
+    @staticmethod
+    def rootDirectories():
+        # this function should return all currently set portage directories
+        if ("General", "Portages") in craftSettings:
+            rootDirs = craftSettings.get("General", "Portages").split(";")
+        else:
+            rootDirs = []
+        if len(rootDirs) == 0:
+            rootDirs = [CraftStandardDirs.craftRepositoryDir()]
+        return rootDirs
+
+    @staticmethod
+    def rootDirForCategory(category):
+        """this function should return the portage directory where it finds the first occurance of the category
+
+    throws exception if not found
+    """
+        # this function should return the portage directory where it finds the
+        # first occurance of a category or the default value
+        for i in Portage.rootDirectories():
+            if category and os.path.exists(os.path.join(i, category)):
+                return i
+        craftDebug.log.critical("can't find category %s" % category)
+
+    @staticmethod
+    def rootDirForPackage(category, package):
+        """returns the portage directory where it finds the first occurance of this package
+    """
+        name = "%s/%s" % (category, package)
+        if not name in Portage._rootDirCache:
+            for i in Portage.rootDirectories():
+                if os.path.exists(os.path.join(i, category, package)):
+                    Portage._rootDirCache[name] = i
+        return Portage._rootDirCache[name]
+
+    @staticmethod
+    def getFullPackage(package):
+        """tries to find a package and returns either category / subpackage / package or category / package
+
+    returns an empty list if not found
+    """
+        category = PortageInstance.getCategory(package)
+        if not category: return []
+        if package in PortageInstance.subpackages:
+            _cat, subpackage = PortageInstance.subpackages[package][0].split('/')
+            if not _cat == category: return []
+            return [category, subpackage, package]
+        else:
+            return [category, package]
+
+    @staticmethod
+    def getDirname(category, package):
+        """ return absolute pathname for a given category and package """
+        subpackage, package = PortageInstance.getSubPackage(category, package)
+        if category and package:
+            if subpackage:
+                return os.path.join(Portage.rootDirForPackage(category, subpackage), category, subpackage, package)
+            else:
+                return os.path.join(Portage.rootDirForPackage(category, package), category, package)
+        else:
+            craftDebug.log.critical("broken category or package %s/%s" % (category, package))
+
+    @staticmethod
+    def getFilename(category, package):
+        """ return absolute filename for a given category, package  """
+        return os.path.join(Portage.getDirname(category, package), "%s.py" % package)
+
+    @staticmethod
+    def VCSDirs():
+        return ['.svn', 'CVS', '.hg', '.git']
+
     def addPortageDir( self, directory ):
         """ adds the categories and packages of a portage directory """
         if not os.path.exists( directory ):
@@ -218,13 +119,11 @@ class Portage(object):
         categoryList = os.listdir( directory )
 
         # remove vcs directories
-        for vcsdir in VCSDirs():
+        for vcsdir in Portage.VCSDirs():
             if vcsdir in categoryList:
                 categoryList.remove( vcsdir )
         if "__pycache__" in categoryList:
             categoryList.remove( "__pycache__" )
-
-        dontBuildCategoryList = self.getDontBuildPackagesList( os.path.join( directory ) )
 
         self.portages[ directory ] = []
         for category in categoryList:
@@ -236,13 +135,11 @@ class Portage(object):
             packageList = os.listdir( os.path.join( directory, category ) )
 
             # remove vcs directories
-            for vcsdir in VCSDirs():
+            for vcsdir in Portage.VCSDirs():
                 if vcsdir in packageList:
                     packageList.remove( vcsdir )
             if "__pycache__" in packageList:
                 packageList.remove( "__pycache__" )
-
-            dontBuildPackageList = self.getDontBuildPackagesList( os.path.join( directory, category ) )
 
             if not category in list(self.categories.keys()):
                 self.categories[ category ] = []
@@ -251,36 +148,32 @@ class Portage(object):
                 if not os.path.isdir( os.path.join( directory, category, package ) ):
                     continue
                 if not package in self.categories[ category ]:
-                    _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList
-                    self.categories[ category ].append( PackageObjectBase( category=category, package=package, enabled=_enabled ) )
+                    subpackage, package = self.getSubPackage(category, package)
+                    self.categories[ category ].append( PackageObjectBase(category=category, subpackage=subpackage, package=package ) )
 
                 subPackageList = os.listdir( os.path.join( directory, category, package ) )
 
                 # remove vcs directories
-                for vcsdir in VCSDirs():
+                for vcsdir in Portage.VCSDirs():
                     if vcsdir in subPackageList:
                         subPackageList.remove( vcsdir )
                 if "__pycache__" in subPackageList:
                     subPackageList.remove( "__pycache__" )
 
                 for subPackage in subPackageList:
-                    if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in VCSDirs():
+                    if not os.path.isdir( os.path.join( directory, category, package, subPackage ) ) or subPackage in Portage.VCSDirs():
                         continue
-
-                    dontBuildSubPackageList = self.getDontBuildPackagesList( os.path.join( directory, category, package ) )
 
                     if not subPackage in self.subpackages:
                         self.subpackages[ subPackage ] = []
-                    if not subPackage in self.categories[ category ]:
-                        _enabled = not category in dontBuildCategoryList and not package in dontBuildPackageList and not subPackage in dontBuildSubPackageList
-                        self.categories[ category ].append( PackageObjectBase( category=category, subpackage=package, package=subPackage, enabled=_enabled ) )
+                        self.categories[ category ].append( PackageObjectBase( category=category, subpackage=package, package=subPackage ) )
                     self.subpackages[ subPackage ].append( category + "/" + package )
 
     def getCategory( self, package ):
         """ returns the category of this package """
         craftDebug.log.debug("getCategory: %s" % package)
 
-        for cat in list(self.categories.keys()):
+        for cat in self.categories:
             if package in self.categories[ cat ]:
                 craftDebug.log.debug("getCategory: found category %s for package %s" % (cat, package))
                 return cat
@@ -288,7 +181,7 @@ class Portage(object):
 
     def isCategory( self, category ):
         """ returns whether a certain category exists """
-        return category in list(self.categories.keys())
+        return category in self.categories
 
     def isPackage( self, category, package ):
         """ returns whether a certain package exists within a category """
@@ -298,37 +191,23 @@ class Portage(object):
         """ check if that package is of VirtualPackageBase """
         if not self.isPackage( category, package ):
             return False
-        mod = getPackageInstance(category,package)
+        mod = self.getPackageInstance(category,package)
         for baseClassObject in mod.__class__.__bases__:
             if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
 
-    def getDontBuildPackagesList( self, path ):
-        """ get a list of packages from a dont_build file"""
-        plist = []
-        if os.path.exists( os.path.join( path, "dont_build.txt" ) ):
-            with open( os.path.join( path, "dont_build.txt" ), "r" ) as f:
-                for line in f:
-                    if line.strip().startswith('#'): continue
-                    if not line.strip() == "":
-                        plist.append(line.strip())
-        return plist
 
     def getAllPackages( self, category ):
-        """returns all packages of a category except those that are listed in a file 'dont_build.txt' in the category directory
+        """returns all packages of a category
         in case the category doesn't exist, nothing is returned"""
         if self.isCategory( category ):
-            plist = []
-            for _p in self.categories[ category ]:
-                if _p:
-                    plist.append(_p.package)
-            return plist
+            return self.categories[ category ]
         else:
-            return
+            return []
 
     def getPackageInstance(self, category, package):
         """return instance of class Package from package file"""
-        fileName =  getFilename( category, package )
+        fileName =  Portage.getFilename( category, package )
         pack = None
         mod = None
         if fileName.endswith(".py") and os.path.isfile(fileName):
@@ -348,7 +227,7 @@ class Portage(object):
                     except Exception as e:
                         raise PortageException("Failed to load file %s" % fileName, category, package, e)
                 if not mod is None:
-                    subpackage, package = getSubPackage( category, package )
+                    subpackage, package = self.getSubPackage( category, package )
                     self._CURRENT_MODULE  = ( fileName, category,subpackage, package, mod )
                     pack = mod.Package( )
                     self._packageDict[ fileName ] = pack
@@ -360,22 +239,24 @@ class Portage(object):
 
     def getDefaultTarget( self, category, package ):
         """ returns the default package of a specified package """
-        craftDebug.log.debug("getDefaultTarget: importing file %s" % getFilename(category, package))
+        craftDebug.log.debug("getDefaultTarget: importing file %s" % Portage.getFilename(category, package))
         if not ( category and package ):
             return dict()
 
-        info = _getSubinfo( category, package )
+        info = self._getSubinfo( category, package )
         if not info is None:
+            if info.options.dailyUpdate and info.hasSvnTarget():
+                return str(datetime.date.today()).replace("-", ".")
             return info.defaultTarget
         else:
             return None
 
     def getAllTargets( self, category, package ):
         """ returns all targets of a specified package """
-        craftDebug.log.debug("getAllTargets: importing file %s" % getFilename(category, package))
+        craftDebug.log.debug("getAllTargets: importing file %s" % Portage.getFilename(category, package))
         if not ( category and package ):
             return dict()
-        info = _getSubinfo( category, package )
+        info = self._getSubinfo( category, package )
         if not info is None:
             tagDict = info.svnTargets.copy()
             tagDict.update( info.targets )
@@ -387,8 +268,8 @@ class Portage(object):
     def getAllVCSTargets( self, category, package ):
         """ returns all version control system targets of a specified package,
             excluding those which do contain tags """
-        craftDebug.log.debug("getAllVCSTargets: importing file %s" % getFilename(category, package))
-        info = _getSubinfo(  category, package )
+        craftDebug.log.debug("getAllVCSTargets: importing file %s" % Portage.getFilename(category, package))
+        info = self._getSubinfo(  category, package )
         if not info is None:
             tagDict = info.svnTargets
             for key in tagDict:
@@ -421,11 +302,11 @@ class Portage(object):
     def getNewestVersion( self, category, package ):
         """ returns the newest version of this category/package """
         if( category == None ):
-            raise PortageException( "Empty category", category, package )
+            raise PortageException("Empty category", category, package)
         if not self.isCategory( category ):
-            raise PortageException( "Could not find category", category, package )
+            raise PortageException("Could not find category", category, package)
         if not self.isPackage( category, package ):
-            raise PortageException( "Could not find package", category, package )
+            raise PortageException("Could not find package", category, package)
 
         installed = InstallDB.installdb.getInstalledPackages(category, package)
         newest = PortageInstance.getDefaultTarget( category, package )
@@ -445,75 +326,39 @@ class Portage(object):
                 instList.append(package)
         return instList
 
+    def getSubPackage(self, category, package):
+        """ returns package and subpackage names """
+        """ in case no subpackage could be found, None is returned """
+        if package in PortageInstance.subpackages:
+            for entry in PortageInstance.subpackages[package]:
+                cat, pac = entry.split("/")
+                if cat == category: return pac, package
+        return None, package
+
+    def _getSubinfo(self, category, package):
+        pack = self.getPackageInstance(category, package)
+        if pack:
+            return pack.subinfo
+        return None
+
 # when importing this, this static Object should get added
 PortageInstance = Portage()
-for _dir in rootDirectories():
+PackageObjectBase.PortageInstance = PortageInstance#we can't include that file due to circlic dependencies...
+for _dir in Portage.rootDirectories():
     PortageInstance.addPortageDir( _dir )
 
-def getSubPackage( category, package ):
-    """ returns package and subpackage names """
-    """ in case no subpackage could be found, None is returned """
-    if package in PortageInstance.subpackages:
-        for entry in PortageInstance.subpackages[ package ]:
-            cat, pac = entry.split("/")
-            if cat == category: return pac, package
-    return None, package
 
-
-
-def getPackageInstance(category, package):
-    """return instance of class Package from package file"""
-    return PortageInstance.getPackageInstance(category, package)
-
-def parseListFile( filename ):
-    """parses a csv file used for building a list of specific packages"""
-    categoryList = []
-    packageList = []
-    infoDict = {}
-    listFileObject = open( filename, 'r' )
-    for line in listFileObject:
-        if line.strip().startswith('#'): continue
-        try:
-            cat, pac, tar, plvl = line.split( ',' )
-        except:
-            continue
-        categoryList.append( cat )
-        packageList.append( pac )
-        infoDict[ cat + "/" + pac ] = (tar, plvl)
-    return categoryList, packageList, infoDict
-
-
-def solveDependencies( category, package, depList, depType = DependencyType.Both, maxDepth = -1, ignoredPackages = None ):
-    depList.reverse()
+def solveDependencies(category, package, depType = DependencyType.Both, maxDepth = -1, ignoredPackages = None):
     if ( category == "" ):
         category = PortageInstance.getCategory( package )
         craftDebug.log.debug("found package in category %s" % category)
 
-    pac = DependencyPackage( category, package, parent = None )
-    depList = pac.getDependencies( depList, depType=depType, maxDepth = maxDepth, single = set(), ignoredPackages = ignoredPackages )
-
-    depList.reverse()
-    return depList
-
-def _getSubinfo( category, package  ):
-    pack = getPackageInstance( category, package  )
-    if pack:
-        return pack.subinfo
-    return None
-
-
-def readChildren( category, package ):
-    craftDebug.log.debug("solving package %s/%s %s" % (category, package, getFilename(category, package)))
-    subinfo = _getSubinfo( category, package  )
-
-    if subinfo is None:
-        return OrderedDict(), OrderedDict()
-
-    return subinfo.runtimeDependencies, subinfo.buildDependencies
+    pac = DependencyPackage(category, package)
+    return pac.getDependencies(depType=depType, maxDepth = maxDepth, ignoredPackages = ignoredPackages )
 
 def isPackageUpdateable( category, package ):
-    craftDebug.log.debug("isPackageUpdateable: importing file %s" % getFilename(category, package))
-    subinfo = _getSubinfo( category, package )
+    craftDebug.log.debug("isPackageUpdateable: importing file %s" % Portage.getFilename(category, package))
+    subinfo = PortageInstance._getSubinfo( category, package )
     if not subinfo is None:
         if len( subinfo.svnTargets ) == 1 and not subinfo.svnTargets[ list(subinfo.svnTargets.keys())[0] ]:
             return False
@@ -521,25 +366,7 @@ def isPackageUpdateable( category, package ):
     else:
         return False
 
-def alwaysTrue( *dummyArgs):
-    """we sometimes need a function that always returns True"""
-    return True
-
-def getHostAndTarget( hostEnabled, targetEnabled ):
-    """used for messages"""
-    msg = ""
-    if hostEnabled or targetEnabled:
-        msg += "("
-        if hostEnabled:
-            msg += "H"
-        if hostEnabled and targetEnabled:
-            msg += "/"
-        if targetEnabled:
-            msg += "T"
-        msg += ")"
-    return msg
-
-def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue, targetEnabled=alwaysTrue ):
+def printCategoriesPackagesAndVersions(lines):
     """prints a number of 'lines', each consisting of category, package and version field"""
     def printLine( cat, pack, ver, hnt="" ):
         catlen = 25
@@ -549,8 +376,7 @@ def printCategoriesPackagesAndVersions( lines, condition, hostEnabled=alwaysTrue
     printLine( 'Category', 'Package', 'Version' )
     printLine( '--------', '-------', '-------' )
     for category, package, version in lines:
-        if condition( category, package, version ):
-            printLine( category, package, version )
+        printLine( category, package, version )
 
 def printPackagesForFileSearch(filename):
     packages = InstallDB.installdb.getPackagesForFileSearch(filename)
@@ -568,8 +394,11 @@ def getPackagesCategories(packageName, defaultCategory = None):
     if len( split ) == 1:
         if PortageInstance.isCategory( packageName ):
             craftDebug.log.debug("isCategory=True")
-            packageList = PortageInstance.getAllPackages( packageName )
-            categoryList = [ packageName ] * len(packageList)
+            packages = PortageInstance.getAllPackages( packageName )
+            # TODO: directly return the package...
+            for p in packages:
+                categoryList.append(p.category)
+                packageList.append(p.package)
         else:
             craftDebug.log.debug("isCategory=False")
             if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
@@ -596,9 +425,8 @@ def getPackagesCategories(packageName, defaultCategory = None):
     else:
         craftDebug.log.error("unknown packageName")
 
-    if len(packageList) > 1 or len(categoryList) > 1:
-        craftDebug.log.error(f"Package clash detected:  packages:{packageList}, categories: {categoryList}")
+    uniqeCategories = set(categoryList)
+    if len(uniqeCategories) > 1:
+        craftDebug.log.error(f"Package clash detected:  packages:{packageList}, categories: {uniqeCategories}")
         #todo: return value instead of list
     return packageList, categoryList
-
-

@@ -12,7 +12,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = MSysShell()
-        if compiler.isX86():
+        if craftCompiler.isX86():
             self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
         else:
             self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
@@ -20,7 +20,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     @property
     def makeProgram(self):
         make = "make "
-        if self.subinfo.options.make.supportsMultijob and not compiler.isMSVC():
+        if self.subinfo.options.make.supportsMultijob and not craftCompiler.isMSVC():
             make += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
         return make
 
@@ -45,7 +45,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment[ "CFLAGS" ] =  self.subinfo.options.configure.cflags + self.shell.environment[ "CFLAGS" ]
         self.shell.environment[ "CXXFLAGS" ] = self.subinfo.options.configure.cxxflags + self.shell.environment[ "CXXFLAGS" ]
         self.shell.environment[ "LDFLAGS" ] = self.subinfo.options.configure.ldflags + self.shell.environment[ "LDFLAGS" ]
-        if compiler.isMSVC() or self.subinfo.options.configure.bootstrap == True:
+        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap == True:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)

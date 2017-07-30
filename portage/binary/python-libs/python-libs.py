@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         arch = "win32"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = "amd64"
 
         self.targets["default"] = ""

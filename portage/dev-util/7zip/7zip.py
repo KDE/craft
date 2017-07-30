@@ -26,7 +26,7 @@ class SevenZipPackage( BinaryPackageBase ):
 
     def install( self ):
         utils.utilsCache.clear()
-        if compiler.isX64():
+        if craftCompiler.isX64():
             return utils.copyFile(os.path.join(self.sourceDir(), "x64", "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
         else:
             return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"), linkOnly=False)

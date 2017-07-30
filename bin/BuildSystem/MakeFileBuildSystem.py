@@ -24,7 +24,7 @@ class MakeFileBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        command = ' '.join([self.makeProgramm, self.makeOptions()])
+        command = ' '.join([self.makeProgram, self.makeOptions()])
 
         return self.system( command, "make" )
 
@@ -34,7 +34,7 @@ class MakeFileBuildSystem(BuildSystemBase):
             return False
 
         self.enterBuildDir()
-        command = "%s install DESTDIR=%s" % (self.makeProgramm, self.installDir())
+        command = "%s install DESTDIR=%s" % (self.makeProgram, self.installDir())
         self.system( command, "install" )
         return True
 
@@ -43,4 +43,4 @@ class MakeFileBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        return self.system( "%s test" % ( self.makeProgramm ), "test" )
+        return self.system( "%s test" % ( self.makeProgram ), "test" )

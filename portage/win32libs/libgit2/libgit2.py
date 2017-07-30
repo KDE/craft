@@ -17,5 +17,5 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-#        self.subinfo.options.configure.defines = "-DDBUS_REPLACE_LOCAL_DIR=ON "
+#        self.subinfo.options.configure.args = "-DDBUS_REPLACE_LOCAL_DIR=ON "
 

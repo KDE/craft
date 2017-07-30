@@ -22,8 +22,8 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         # both examples and tests can be run here
-        self.subinfo.options.configure.defines = "-DBUILD_tests=OFF -DBUILD_examples=OFF -DBUILD_tools=OFF"
+        self.subinfo.options.configure.args = "-DBUILD_tests=OFF -DBUILD_examples=OFF -DBUILD_tools=OFF"
         self.subinfo.options.configure.testDefine = "-DBUILD_tests=ON  -DBUILD_examples=ON"
         self.subinfo.options.configure.toolsDefine = "-DBUILD_tools=ON" # available only from 2.1.0-beta3
-        self.subinfo.options.configure.staticDefine = "-DBUILD_shared=OFF" # available only from 2.1.0-beta3
+        self.subinfo.options.configure.staticArgs = "-DBUILD_shared=OFF" # available only from 2.1.0-beta3
 

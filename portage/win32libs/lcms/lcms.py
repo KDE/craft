@@ -18,5 +18,5 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         # both examples and tests can be run here
-        self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF -DBUILD_SAMPLES=ON -DBUILD_TOOLS=OFF"
+        self.subinfo.options.configure.args = "-DBUILD_TESTS=OFF -DBUILD_SAMPLES=ON -DBUILD_TOOLS=OFF"
 

@@ -42,11 +42,11 @@ class QtPackage(Qt5CorePackageBase):
     def __init__( self, **args ):
         Qt5CorePackageBase.__init__( self )
         utils.putenv("SQLITE3SRCDIR",CraftStandardDirs.craftRoot())
-        self.subinfo.options.configure.defines = ""
+        self.subinfo.options.configure.args = ""
         if OsUtils.isWin():
-            self.subinfo.options.configure.defines += """ "QT_CONFIG+=no-pkg-config" """
-        if compiler.isMinGW():
-            self.subinfo.options.configure.defines += """ "QMAKE_CXXFLAGS += -g0 -O3" """
+            self.subinfo.options.configure.args += """ "QT_CONFIG+=no-pkg-config" """
+        if craftCompiler.isMinGW():
+            self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
 
     def configure( self, configureDefines="" ):
         if not len(self.subinfo.buildTarget) == 3:#5.9

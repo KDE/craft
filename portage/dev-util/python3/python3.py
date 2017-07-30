@@ -1,7 +1,7 @@
 import os
 
 import info
-import compiler
+from CraftCompiler import craftCompiler
 from Package.BinaryPackageBase import *
 
 

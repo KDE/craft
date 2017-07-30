@@ -3,7 +3,7 @@ import os
 
 import utils
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"http://download.icu-project.org/files/icu4c/{ver}/icu4c-{ver2}-src.tgz"
             self.targetDigestUrls[ver] = ([f"https://ssl.icu-project.org/files/icu4c/{ver}/icu4c-src-{ver2}.md5"], CraftHash.HashAlgorithm.MD5)
             self.targetInstSrc[ver] = os.path.join("icu", "source")
-        if compiler.isMSVC2015() or compiler.isMinGW():
+        if craftCompiler.isMSVC2015() or craftCompiler.isMinGW():
             self.patchToApply["55.1"] = ("icu-20150414.diff", 2)
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.patchToApply["55.1"] = [("icu-20150414.diff", 2),("icu-msys.diff", 2)]
             self.patchToApply["58.2"] = ("0020-workaround-missing-locale.patch", 2)#https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0020-workaround-missing-locale.patch
 
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
 from Package.MSBuildPackageBase import *
@@ -42,7 +42,7 @@ class PackageCMake(MSBuildPackageBase):
             return False
         utils.copyDir(os.path.join(self.sourceDir(), "..", "include"), os.path.join(self.imageDir(), "include"))
 
-        if compiler.isMSVC() and self.buildType() == "Debug":
+        if craftCompiler.isMSVC() and self.buildType() == "Debug":
             imagedir = os.path.join( self.installDir(), "lib" )
             filelist = os.listdir( imagedir )
             for f in filelist:
@@ -77,7 +77,7 @@ class PackageMSys(AutoToolsPackageBase):
                 utils.copyFile( os.path.join( self.installDir() , "lib" ,dll) , os.path.join( self.installDir(), "bin" ,dll) )
         return True
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMSys): pass
 else:
     class Package(PackageCMake): pass

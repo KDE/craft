@@ -34,14 +34,14 @@ class Package( Qt5CorePackageBase ):
         buildType = "release"
         if self.buildType() == "Debug":
             buildType = "debug"
+        ext = ".bat" if OsUtils.isWin() else ".sh"
         prefix = CraftStandardDirs.craftRoot().replace("\\", "/")
-        if not (os.path.isfile(os.path.join(self.sourceDir(), "configure.bat")) or os.path.isfile(os.path.join(self.sourceDir(), "configure.sh"))):
+        if not os.path.isfile(os.path.join(self.sourceDir(), f"configure{ext}")):
             return self.system(f"python2 {self.sourceDir()}/autogen.py -prefix {prefix} -shared -{buildType}")
         else:
             with open(os.path.join(self.buildDir(), ".license.accepted"), "wt+") as touch:#build lgpl
                 touch.write("can't touch this")
-            return self.system(f"{self.sourceDir()}/configure -prefix {prefix} -shared -{buildType}")
-
+            return self.system(f"{self.sourceDir()}/configure{ext} -prefix {prefix} -shared -{buildType}")
 
     def install(self):
         if not Qt5CorePackageBase.install(self):

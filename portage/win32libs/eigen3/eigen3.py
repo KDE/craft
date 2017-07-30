@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
+from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
@@ -21,5 +21,5 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
-        if compiler.isMSVC():
-            self.subinfo.options.configure.defines = "-DBUILD_TESTS=OFF"
+        if craftCompiler.isMSVC():
+            self.subinfo.options.configure.args = "-DBUILD_TESTS=OFF"

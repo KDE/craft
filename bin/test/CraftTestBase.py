@@ -16,7 +16,7 @@ class CraftTestBase(unittest.TestCase):
         CraftConfig.CraftStandardDirs._pathCache().clear()
         CraftConfig.CraftStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
         os.environ["KDEROOT"] = self.kdeRoot.name
-        CraftConfig.craftSettings.set("General", "EMERGE_PORTAGE_ROOT", os.path.join(craftRoot, "craft", "portage") )
+        CraftConfig.craftSettings.set("General", "Portages", os.path.join(craftRoot, "craft", "portage") )
         CraftConfig.craftSettings.set("Compile","BuildType", "RelWithDebInfo")
 
     def tearDown(self):

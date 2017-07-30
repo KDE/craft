@@ -2,11 +2,8 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        self.svnTargets['5.0'] = '[git]kde:kdevplatform|5.0'
-        self.svnTargets['5.1'] = '[git]kde:kdevplatform|5.1'
-        self.svnTargets['master'] = '[git]kde:kdevplatform|master'
+        self.versionInfo.setDefaultValues( )
         self.shortDescription = 'Framework to build IDE-like applications'
-        self.defaultTarget = '5.1'
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
@@ -15,7 +12,7 @@ class subinfo( info.infoclass ):
         self.buildDependencies["win32libs/boost-headers"] = "default"
         self.runtimeDependencies["libs/qtscript"] = "default"
         self.runtimeDependencies["libs/qtquickcontrols"] = "default"
-        self.runtimeDependencies["libs/qtwebkit"] = "default"
+        self.runtimeDependencies["libs/qtwebengine"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies[ 'frameworks/karchive' ] = 'default'
         self.runtimeDependencies[ 'frameworks/kconfig' ] = 'default'

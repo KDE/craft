@@ -22,7 +22,7 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMinGW):
         def __init__( self ):
             PackageMinGW.__init__( self )

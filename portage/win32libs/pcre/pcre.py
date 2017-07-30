@@ -26,5 +26,5 @@ class Package( CMakePackageBase ):
         defines += "-DPCRE_SUPPORT_UNICODE_PROPERTIES=ON "
         defines += "-DPCRE_SUPPORT_UTF8=ON "
         defines += "-DPCRE_EBCDIC=OFF "
-        self.subinfo.options.configure.defines = defines
+        self.subinfo.options.configure.args = defines
 

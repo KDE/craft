@@ -29,5 +29,5 @@ class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__( self )
         self.supportsNinja = False
-        self.subinfo.options.configure.defines = "-DEXIV2_ENABLE_BUILD_SAMPLES=OFF"
+        self.subinfo.options.configure.args = "-DEXIV2_ENABLE_BUILD_SAMPLES=OFF"
 

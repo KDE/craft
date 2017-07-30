@@ -16,7 +16,7 @@ import glob
 
 from Package.CMakePackageBase import *
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -44,7 +44,7 @@ class Package(CMakePackageBase):
             return False
     # This package is built with MinGW gcc, since the msvc expects a different
     # Name it shall get it.
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             gcc_names = glob.glob( self.sourceDir() + '/lib/*.dll.a' )
             for gcc_name in gcc_names:
                 msvc_name = gcc_name.replace( ".dll.a", ".lib" )

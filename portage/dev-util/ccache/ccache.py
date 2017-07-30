@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
 
 
@@ -21,10 +21,10 @@ from Package.VirtualPackageBase import *
 class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--with-bundled-zlib "
+        self.subinfo.options.configure.args = "--with-bundled-zlib "
         self.supportsCCACHE = False
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMinGW):
         def __init__( self ):
             PackageMinGW.__init__( self )

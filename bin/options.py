@@ -6,7 +6,7 @@
 # properties from classes in this package could be set
 #
 # - by package scripts,
-# - by setting the 'EMERGE_OPTIONS' environment variable or
+# - by setting the 'Options' environment variable or
 # - by command line
 #
 # for example:
@@ -21,7 +21,7 @@
 #
 # or
 #
-# set EMERGE_OPTIONS=cmake.openIDE=1
+# set Options=cmake.openIDE=1
 # craft --make kdewin-installer
 #
 # The parser in this package is able to set all attributes
@@ -94,6 +94,7 @@ class OptionsFetch(OptionsBase):
         ## enable submodule support in git single branch mode
         self.checkoutSubmodules = False
 
+
 ## options for the unpack action
 class OptionsUnpack(OptionsBase):
     def __init__(self):
@@ -106,9 +107,10 @@ class OptionsUnpack(OptionsBase):
 ## options for the configure action
 class OptionsConfigure(OptionsBase):
     def __init__(self):
-        ## with this option additional definitions could be added to the configure commmand line
-        self.defines = None
-        self.staticDefine = None
+        ## with this option additional arguments could be added to the configure commmand line
+        self.args = None
+        ## with this option additional arguments could be added to the configure commmand line (for static builds)
+        self.staticArgs = None
         ## set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of
@@ -205,6 +207,9 @@ class OptionsPackage(OptionsBase):
         ##disable the binary cache for this package
         self.disableBinaryCache = False
 
+        ## wheter to move the plugins to bin
+        self.movePluginsToBin = utils.OsUtils.isWin()
+
 class OptionsCMake(OptionsBase):
     def __init__(self):
         ## use IDE for msvc2008 projects
@@ -246,6 +251,9 @@ class Options(object):
         ## options of the git module
         self.git = OptionsGit()
 
+        ## add the date to the target
+        self.dailyUpdate = False
+
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
         # \code
@@ -256,24 +264,12 @@ class Options(object):
         #
         self.useBuildType = True
 
-        ## this option controls if the active compiler is used when creating build and install directories.
-        # The following example shows the difference:
-        # \code
-        #               True                                  False
-        # work/msvc2008-RelWithDebInfo-svnHEAD     work/RelWithDebInfo-svnHEAD
-        # image-msvc2008-RelWithDebInfo-svnHEAD    image-RelWithDebInfo-svnHEAD
-        # \endcode
-        #
-        self.useCompilerType = True
         ## skip the related package from debug builds
         self.disableDebugBuild = False
         ## skip the related package from release builds
         self.disableReleaseBuild = False
         ## exit if system command returns errors
         self.exitOnErrors = True
-        ## use short pathes (usefull for mingw to
-        #  avoid exceeding the maximum path length)
-        self.useShortPathes = False
 
         ## there is a special option available already
         self.buildTools = False
@@ -285,14 +281,14 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(craftSettings.get( "General", "EMERGE_OPTIONS", "").split(" "))
+        self.__readFromList(craftSettings.get( "General", "Options", "").split(" "))
         self.readFromEnv()
         self.__readFromList(optionslist)
 
     def readFromEnv( self ):
         """ read craft related variables from environment and map them to public
         attributes in the option class and sub classes """
-        _o = os.getenv("EMERGE_OPTIONS")
+        _o = os.getenv("Options")
         if _o:
             _o = _o.split(" ")
         else:

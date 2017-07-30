@@ -19,10 +19,10 @@ class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
 
-        self.subinfo.options.configure.defines = " -DBINARY_ICONS_RESOURCE=ON"
+        self.subinfo.options.configure.args = " -DBINARY_ICONS_RESOURCE=ON"
 
     def install(self):
-        if OsUtils.isWin():
+        if OsUtils.isWin() or OsUtils.isMac():
             dest = os.path.join(self.installDir(), "bin","data")
             if not os.path.exists(dest):
                 os.makedirs(dest)

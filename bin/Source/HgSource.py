@@ -41,7 +41,6 @@ class HgSource ( VersionSystemSourceBase ):
         # only run if wanted (e.g. no --offline is given on the commandline) or no hg support is given by the python installation
         if ( not self.noFetch and self.enableHg ):
             # question whether mercurial stuff uses these proxies
-            self.setProxy()
             checkoutDir = self.checkoutDir()
 
             # check corrupted checkout dir

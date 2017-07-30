@@ -16,5 +16,5 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DCMAKE_EXE_LINKER_FLAGS=-static"
+        self.subinfo.options.configure.args = "-DCMAKE_EXE_LINKER_FLAGS=-static"
 

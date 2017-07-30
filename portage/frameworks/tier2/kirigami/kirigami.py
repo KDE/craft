@@ -22,4 +22,4 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = '-DDESKTOP_ENABLED=ON '
+        self.subinfo.options.configure.args = '-DDESKTOP_ENABLED=ON '

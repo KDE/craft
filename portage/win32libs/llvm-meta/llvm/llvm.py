@@ -16,16 +16,16 @@ class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
-        self.clang = portage.getPackageInstance('win32libs', 'clang')
-        self.lld = portage.getPackageInstance('win32libs', 'lld')
+        self.clang = portage.PortageInstance.getPackageInstance('win32libs', 'clang')
+        self.lld = portage.PortageInstance.getPackageInstance('win32libs', 'lld')
         self.subPackages = [self.clang, self.lld]
-        self.subinfo.options.configure.defines = "-DLLVM_TARGETS_TO_BUILD='X86'"
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
-        self.subinfo.options.configure.defines += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
-        if compiler.isMSVC():
-            self.subinfo.options.configure.defines += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
+        self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
+        if craftCompiler.isMSVC():
+            self.subinfo.options.configure.args += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
         else:
-            self.subinfo.options.configure.defines += " -DBUILD_SHARED_LIBS=ON"
+            self.subinfo.options.configure.args += " -DBUILD_SHARED_LIBS=ON"
 
     def fetch(self):
         if not CMakePackageBase.fetch(self):
@@ -42,7 +42,7 @@ class Package(CMakePackageBase):
             if not p.unpack():
                 return False
         return True
-    
+
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)
         # just expect that we don't want to debug our compiler
@@ -52,7 +52,7 @@ class Package(CMakePackageBase):
     def install(self):
         if not CMakePackageBase.install(self):
             return False
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             files = os.listdir(os.path.join(self.buildDir(), "lib"))
             for f in files:
                 if f.endswith("dll.a"):
@@ -68,9 +68,9 @@ class Package(CMakePackageBase):
 
         # the build system is broken so....
         src = os.path.join(self.imageDir(), "bin", "clang" + exeSuffix)
-        if compiler.isGCCLike():
+        if craftCompiler.isGCCLike():
             dest = os.path.join(self.imageDir(), "bin", "clang++" + exeSuffix)
-        elif compiler.isMSVC():
+        elif craftCompiler.isMSVC():
             dest = os.path.join(self.imageDir(), "bin", "clang-cl" + exeSuffix)
         else:
             craftDebug.log.error("Unknown compiler")

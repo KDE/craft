@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['libs/qtwebsockets'] = 'default'
         self.runtimeDependencies['libs/qtmultimedia'] = 'default'
         self.runtimeDependencies['libs/qtdeclarative'] = 'default'
+        self.runtimeDependencies['libs/qtspeech'] = 'default'
         self.runtimeDependencies['win32libs/snoregrowl'] = 'default'
 
 
@@ -29,4 +30,4 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.staticDefine = "-DSNORE_STATIC=ON -DSNORE_STATIC_QT=ON"
+        self.subinfo.options.configure.staticArgs = "-DSNORE_STATIC=ON -DSNORE_STATIC_QT=ON"

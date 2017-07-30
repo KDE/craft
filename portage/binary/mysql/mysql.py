@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         baseURL = "http://dev.mysql.com/get/Downloads/MySQL-5.7/"
         ver = '5.7.18'
         arch = "32"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = "x64"
         self.targets[ ver ] = f"{baseURL}mysql-{ver}-win{arch}.zip"
         self.targetInstSrc[ ver ] = f"mysql-{ver}-win{arch}"
@@ -38,7 +38,7 @@ class Package(BinaryPackageBase):
         shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysqld.dll" ) , os.path.join( self.installDir(), "bin" , "libmysqld.dll" ) )
         shutil.copy( os.path.join( self.sourceDir() , "lib" , "libmysql.dll" ) , os.path.join( self.installDir(), "bin" , "libmysql.dll" ) )
         shutil.copytree( os.path.join( self.sourceDir() , "lib" ) , os.path.join( self.installDir(), "lib") , ignore=shutil.ignore_patterns('*.pdb','*.map','debug*','libmysqld.dll','libmysql.dll','mysql*') )
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             utils.createImportLibs( "libmysqld" , self.installDir() )
             utils.createImportLibs( "libmysql" , self.installDir() )
         shutil.copytree( os.path.join( self.sourceDir() , "include" ) , os.path.join( self.installDir(), "include" ) ,  ignore=shutil.ignore_patterns('*.def') )

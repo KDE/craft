@@ -23,5 +23,5 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
         # do not install docs
-        self.subinfo.options.configure.defines = "-DINSTALL_DOCS=OFF"
+        self.subinfo.options.configure.args = "-DINSTALL_DOCS=OFF"
 

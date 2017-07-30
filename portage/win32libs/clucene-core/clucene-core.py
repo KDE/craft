@@ -32,7 +32,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = "-DCLUCENE_VERSION:STRING="+self.buildTarget
+        self.subinfo.options.configure.args = "-DCLUCENE_VERSION:STRING="+self.buildTarget
         if self.buildTarget.startswith('0.9'):
             self.subinfo.options.configure.configurePath = "src"
 

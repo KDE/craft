@@ -69,7 +69,6 @@ class ArchiveSource(SourceBase):
             craftDebug.log.debug("skipping fetch (--offline)")
             return True
 
-        self.setProxy()
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
                 craftDebug.log.debug("files and digests available, no need to download files")
@@ -132,9 +131,9 @@ class ArchiveSource(SourceBase):
                 if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext( filename )
                     if ext == ".exe":
-                        return utils.system("%s %s" % (filePath, self.subinfo.options.configure.defines ))
+                        return utils.system("%s %s" % (filePath, self.subinfo.options.configure.args ))
                     elif ( ext == ".msi" ):
-                        return utils.system("msiexec /package %s %s" % (filePath, self.subinfo.options.configure.defines) )
+                        return utils.system("msiexec /package %s %s" % (filePath, self.subinfo.options.configure.args) )
                 if not utils.copyFile( filePath, os.path.join(self.workDir(), filename) ):
                     return False
             else:

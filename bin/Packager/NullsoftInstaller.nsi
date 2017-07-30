@@ -31,12 +31,12 @@ ${icon}
 ;!define MUI_ICON
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_DIRECTORY
 
 ;!insertmacro MUI_PAGE_LICENSE
 ${license}
 ;!insertmacro MUI_PAGE_LICENSE
 
+!insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
@@ -88,7 +88,7 @@ ${EndIf}
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
   WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
   WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "${website}"
-  WriteRegStr HKLM "${uninstkey}" "Publisher" "KDE"
+  WriteRegStr HKLM "${uninstkey}" "Publisher" "${company}"
   WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "${version}"
 
   SetOutPath $INSTDIR

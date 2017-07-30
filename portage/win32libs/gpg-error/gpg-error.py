@@ -30,4 +30,3 @@ class Package(MaybeVirtualPackageBase):
     def __init__(self):
         MaybeVirtualPackageBase.__init__(self, not compiler.isGCCLike(), classA=BinPackage)
 
-

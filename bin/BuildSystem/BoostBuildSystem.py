@@ -23,7 +23,7 @@ class BoostBuildSystem(BuildSystemBase):
     def configureOptions( self, defines="" ):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
-                
+
         if OsUtils.isWin():
             options += " -j"+ os.getenv("NUMBER_OF_PROCESSORS")
             options += " --build-dir=" + self.buildDir()
@@ -31,20 +31,20 @@ class BoostBuildSystem(BuildSystemBase):
             # TODO: real value
             options += " install --prefix=%s" % self.buildDir()
             options += " -j10"
-            
-            
+
+
         options += (" --build-type=minimal"
 #                " --debug-configuration"
                 " threading=multi"
                 )
-                
+
         if not self.subinfo.options.buildStatic:
             options += (" link=shared"
                        " runtime-link=shared")
         else:
             options += (" link=static"
                        " runtime-link=static")
-        if compiler.isX64():
+        if craftCompiler.isX64():
             options += " address-model=64 architecture=x86"
         else:
             options += " address-model=32 architecture=x86"
@@ -55,19 +55,19 @@ class BoostBuildSystem(BuildSystemBase):
             options += " variant=release"
 
         options += " toolset="
-        if compiler.isClang():
+        if craftCompiler.isClang():
             options += "clang"
-            if compiler.isGCC():
+            if craftCompiler.isGCC():
                 options += " threadapi=pthread"
-        elif compiler.isMinGW():
+        elif craftCompiler.isMinGW():
             options += "gcc"
-        elif compiler.isMSVC():
-            platform = str(compiler.msvcPlatformToolset())
-            if compiler.isMSVC2017():
+        elif craftCompiler.isMSVC():
+            platform = str(craftCompiler.getMsvcPlatformToolset())
+            if craftCompiler.isMSVC2017():
                 options += f"msvc-{platform[:2]}.0"
             else:
                 options += f"msvc-{platform[:2]}.{platform[2:]}"
-        elif compiler.isIntel():
+        elif craftCompiler.isIntel():
                 options += "intel"
                 options += " -sINTEL_PATH=\"%s\"" % os.path.join( os.getenv( "INTELDIR" ), "bin", os.getenv( "TARGET_ARCH" ) )
                 options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % ({ "vs2008" : "9_0", "vs2010" : "10_0", "vs2012" : "11_0" }[os.getenv("INTEL_VSSHELL")])
@@ -82,12 +82,12 @@ class BoostBuildSystem(BuildSystemBase):
 
     def make( self ):
         """implements the make step for cmake projects"""
-        self.boost = portage.getPackageInstance('win32libs', 'boost-headers')
+        self.boost = portage.PortageInstance.getPackageInstance('win32libs', 'boost-headers')
         self.subinfo.targetInstSrc[ self.subinfo.buildTarget ] = os.path.join(self.boost.sourceDir(),"libs",self.subinfo.targetInstSrc[ self.subinfo.buildTarget ],"build")
-        
+
         self.enterSourceDir()
         cmd  = "bjam"
-        cmd += self.configureOptions(self.subinfo.options.configure.defines)
+        cmd += self.configureOptions(self.subinfo.options.configure.args)
         craftDebug.log.debug(cmd)
         return self.system(cmd)
 
@@ -101,7 +101,7 @@ class BoostBuildSystem(BuildSystemBase):
         else:
             if not BuildSystemBase.install(self):
                 return False
-            
+
 
             for root, dirs, files in os.walk( self.buildDir() ):
                 for f in files:
@@ -110,9 +110,9 @@ class BoostBuildSystem(BuildSystemBase):
                         utils.copyFile( os.path.join( root, f ),os.path.join( self.imageDir(), "bin", f ) )
                     elif f.endswith( ".a" ) or f.endswith( ".lib" ):
                         utils.copyFile( os.path.join( root, f ), os.path.join( self.imageDir(), "lib", f ) )
-                    
-                        
-                        
+
+
+
             return True
 
     def unittest( self ):

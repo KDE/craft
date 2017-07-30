@@ -1,5 +1,5 @@
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 class subinfo(info.infoclass):
     def setTargets( self ):

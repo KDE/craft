@@ -15,7 +15,6 @@ class SvnSource (VersionSystemSourceBase):
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__( self )
-        self.options = None
 
 
     def checkoutDir( self, index=0 ):
@@ -46,20 +45,6 @@ class SvnSource (VersionSystemSourceBase):
         if fileName:
             return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
-
-    def setProxy(self):
-        """set proxy for fetching sources from subversion repository"""
-        (host, port, username, password) = self.proxySettings()
-        if host == "":
-            return
-
-        proxyOptions = " --config-option servers:global:http-proxy-host=%s" % host
-        proxyOptions += " --config-option servers:global:http-proxy-port=%s" % port
-        if username != "":
-            proxyOptions += " --config-option servers:global:http-proxy-username=%s" % username
-            proxyOptions += " --config-option servers:global:http-proxy-password=%s" % password
-
-        self.options = proxyOptions
 
     def fetch( self, repopath = None ):
         """ checkout or update an existing repository path """
@@ -178,11 +163,6 @@ class SvnSource (VersionSystemSourceBase):
 
         if craftDebug.verbose() < 2 and not craftSettings.getboolean("General", "KDESVNVERBOSE", True):
             option += " --quiet"
-
-        self.setProxy()
-
-        if self.options != None:
-            option += self.options
 
         if self.subinfo.options.fetch.ignoreExternals:
             option += " --ignore-externals "

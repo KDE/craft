@@ -7,7 +7,7 @@ import re
 import types
 import fileinput
 
-from portage import DependencyPackage, DependencyType
+from CraftDependencies import DependencyType, DependencyPackage
 from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
@@ -54,9 +54,9 @@ class CollectionPackagerBase( PackagerBase ):
             self.blacklist_file = blacklists
         self._whitelist = []
         self._blacklist = []
+        self.scriptname = None
+        self.deployQt = True
 
-        if not hasattr(self, "scriptname"):
-            self.scriptname = None
 
     @property
     def whitelist(self):
@@ -86,8 +86,6 @@ class CollectionPackagerBase( PackagerBase ):
         """ return base directory name for package related image directory """
         directory = "image"
 
-        if package.subinfo.options.useCompilerType == True:
-            directory += '-' + compiler.getCompilerName()
         if package.subinfo.options.useBuildType == True:
             directory += '-' + package.buildType()
         directory += '-' + buildTarget
@@ -97,15 +95,14 @@ class CollectionPackagerBase( PackagerBase ):
     def __getImageDirectories( self ):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = []
-        depList = portage.solveDependencies(self.category, self.package, depList, DependencyType.Runtime)
+        depList = portage.solveDependencies(self.category, self.package, depType=DependencyType.Runtime, ignoredPackages=self.ignoredPackages)
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
                 craftDebug.log.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
                 continue
 
-            _package = portage.getPackageInstance( x.category, x.package )
+            _package = portage.PortageInstance.getPackageInstance( x.category, x.package )
 
             imageDirs.append(( os.path.join( self.rootdir, "build", x.category, x.package,
                     self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.package.disableStriping ) )
@@ -113,7 +110,7 @@ class CollectionPackagerBase( PackagerBase ):
             craftDebug.log.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (
             _package.category, x.package, _package.version, _package.buildTarget))
 
-        if craftSettings.getboolean("QtSDK", "Enabled", False) and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
+        if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
             imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), False))
 
         return imageDirs
@@ -236,11 +233,12 @@ class CollectionPackagerBase( PackagerBase ):
         if not os.path.exists( archiveDir ):
             os.makedirs( archiveDir )
 
-        # Qt expects plugins and qml files below bin, on the target sytsem
-        binPath = os.path.join(archiveDir, "bin")
-        for path in [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]:
-            if os.path.isdir(path):
-                utils.mergeTree(path, binPath)
+        if self.subinfo.options.package.movePluginsToBin:
+            # Qt expects plugins and qml files below bin, on the target sytsem
+            binPath = os.path.join(archiveDir, "bin")
+            for path in [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]:
+                if os.path.isdir(path):
+                    utils.mergeTree(path, binPath)
 
         return True
 

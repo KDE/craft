@@ -10,9 +10,8 @@ from ctypes import *
 import functools
 
 from CraftDebug import craftDebug
-import utils
 import portage
-import compiler
+from CraftCompiler import craftCompiler
 from CraftConfig import *
 import utils
 
@@ -98,38 +97,17 @@ class CraftBase(object):
     def buildTests(self):
         return craftSettings.getboolean("Compile", "BuildTests")
 
-
-    def __adjustPath(self, directory):
-        """return adjusted path"""
-        if not self.subinfo.options.useShortPathes:
-            return directory
-        path = c_char_p(directory)
-        length = windll.kernel32.GetShortPathNameA(path, 0, 0)
-        if length == 0:
-            return directory
-        buf = create_string_buffer('\000' * (length + 1))
-        windll.kernel32.GetShortPathNameA(path, byref(buf), length+1) # ignore function result...
-        craftDebug.log.debug("converting " + directory + " to " + buf.value)
-        return buf.value
-
     def buildType(self):
         """return currently selected build type"""
         return craftSettings.get("Compile","BuildType")
 
-    def compiler(self):
-        """deprecated"""
-        """return currently selected compiler"""
-        return compiler.getCompilerName()
-
     def buildArchitecture(self):
         """return the target CPU architecture"""
-        compiler.architecture()
+        craftCompiler.architecture()
 
     def workDirPattern(self):
         """return base directory name for package related work directory"""
         directory = ""
-        if self.subinfo.options.useCompilerType == True:
-            directory += "%s-" % compiler.getCompilerName()
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
@@ -144,8 +122,6 @@ class CraftBase(object):
         """return base directory name for package related image directory"""
         directory = "image"
 
-        if self.subinfo.options.useCompilerType == True:
-            directory += '-' + compiler.getCompilerName()
         if self.subinfo.options.useBuildType == True:
             directory += '-' + self.buildType()
         directory += '-' + self.buildTarget
@@ -156,17 +132,15 @@ class CraftBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return self.__adjustPath( portage.getDirname( self.category, self.package ) )
+        return portage.PortageInstance.getDirname( self.category, self.package )
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        buildroot    = os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
-        return self.__adjustPath(buildroot)
+        return os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        _workDir = os.path.join( self.buildRoot(), "work" )
-        return self.__adjustPath(_workDir)
+        return os.path.join( self.buildRoot(), "work" )
 
     def buildDir(self):
         craftDebug.log.debug("CraftBase.buildDir() called")
@@ -174,13 +148,12 @@ class CraftBase(object):
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         craftDebug.log.debug("package builddir is: %s" % builddir)
-        return self.__adjustPath(builddir)
+        return builddir
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        imageDir =  os.path.join( self.buildRoot(), self.imageDirPattern() )
-        return self.__adjustPath(imageDir)
+        return os.path.join( self.buildRoot(), self.imageDirPattern() )
 
     def installDir(self):
         """return absolute path to the install directory of the currently active package.
@@ -190,7 +163,7 @@ class CraftBase(object):
             installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
         else:
             installDir = self.imageDir()
-        return self.__adjustPath(installDir)
+        return installDir
 
     def mergeSourceDir(self):
         """return absolute path to the merge source directory of the currently active package.
@@ -201,12 +174,12 @@ class CraftBase(object):
             directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
         else:
             directory = self.imageDir()
-        return self.__adjustPath(directory)
+        return directory
 
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
         """
-        return self.__adjustPath(CraftStandardDirs.craftRoot())
+        return CraftStandardDirs.craftRoot()
 
     def packageDestinationDir( self, withBuildType=True ):
         """return absolute path to the directory where binary packages are placed into.
@@ -225,7 +198,9 @@ class CraftBase(object):
 
     @property
     def version(self):
-        return self.subinfo.defaultTarget
+        if self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
+            return str(datetime.date.today()).replace("-", ".")
+        return self.subinfo.buildTarget
 
     @property
     def rootdir(self):
@@ -259,46 +234,39 @@ class CraftBase(object):
         craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
-    def proxySettings(self):
-        host = craftSettings.get("General", 'EMERGE_PROXY_HOST', "")
-        port = craftSettings.get("General", 'EMERGE_PROXY_PORT', "")
-        username = craftSettings.get("General", 'EMERGE_PROXY_USERNAME', "")
-        password = craftSettings.get("General", 'EMERGE_PROXY_PASSWORD', "")
-        return [host, port, username, password]
-
-
-    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z")) -> str:
+    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"), includeRevision=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
         if self.subinfo.hasSvnTarget():
-            version = "latest"
+            if includeRevision:
+                version = self.sourceRevision()
+            else:
+                version = "latest"
         else:
             version = self.getPackageVersion()[0]
         if fileType:
             fileType = f".{fileType}"
         else:
             fileType = ""
-        return f"{self.package}-{compiler.architecture()}-{version}-{compiler.getShortName()}{pkgSuffix}{fileType}"
+        return f"{self.package}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
+            version = portage.PortageInstance.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
-        return os.path.join(cacheDir, sys.platform, version,
-                               compiler.getCompilerName(), self.buildType())
+        return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = portage.getPackageInstance("libs", "qtbase").subinfo.buildTarget
+            version = portage.PortageInstance.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        return ["/".join([url, sys.platform, version,
-                                compiler.getCompilerName(), self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
+        return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
 

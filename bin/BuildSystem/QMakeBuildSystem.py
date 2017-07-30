@@ -4,7 +4,7 @@
 # definitions for the qmake build system
 from CraftDebug import craftDebug
 import utils
-import compiler
+from CraftCompiler import craftCompiler
 
 from CraftOS.osutils import OsUtils
 
@@ -15,27 +15,41 @@ from CraftVersion import CraftVersion
 class QMakeBuildSystem(BuildSystemBase):
     def __init__( self ):
         BuildSystemBase.__init__(self, "qmake")
+        self.qtVer = CraftVersion(portage.PortageInstance.getPackageInstance("libs", "qt5").subinfo.buildTarget)
         self.platform = ""
+        #todo: use new craftCompiler platform code
         if OsUtils.isWin():
-            if compiler.isMSVC():
-                if compiler.isClang():
-                    self.platform = "win32-clang-%s" % (self.compiler() if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.8") else "msvc")
+            if craftCompiler.isMSVC():
+                if self.qtVer < CraftVersion("5.8"):
+                    if craftCompiler.isMSVC2017():
+                        _compiler = "msvc2015"
+                    else:
+                        _compiler = craftCompiler.abi.split("_")[0]
                 else:
-                    self.platform = "win32-%s" % (self.compiler() if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.8") else "msvc")
-            elif compiler.isMinGW():
+                    _compiler = "msvc"
+                if craftCompiler.isClang():
+                    self.platform = f"win32-clang-{_compiler}"
+                else:
+                    self.platform = f"win32-{_compiler}"
+            elif craftCompiler.isMinGW():
                 self.platform = "win32-g++"
-            elif compiler.isIntel():
+            elif craftCompiler.isIntel():
                 self.platform = "win32-icc"
             else:
-                craftDebug.log.critical("QMakeBuildSystem: unsupported compiler platform %s" % self.compiler())
+                craftDebug.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
         elif OsUtils.isUnix():
-            if not OsUtils.isFreeBSD():
-                if compiler.isClang():
-                    self.platform = "linux-clang"
-                else:
-                    self.platform = "linux-g++"
+            if OsUtils.isMac():
+                osPart = "macx"
+            elif OsUtils.isFreeBSD():
+                osPart = "freebsd"
             else:
-                self.platform = "freebsd-clang"
+                osPart = "linux"
+
+            if craftCompiler.isClang():
+                compilerPart = "clang"
+            else:
+                compilerPart = "g++"
+            self.platform = osPart + "-" + compilerPart
 
     def configure( self, configureDefines="" ):
         """inplements configure step for Qt projects"""
@@ -57,7 +71,7 @@ class QMakeBuildSystem(BuildSystemBase):
             self.enterSourceDir()
         else:
             self.enterBuildDir()
-        command = ' '.join([self.makeProgramm, self.makeOptions(options)])
+        command = ' '.join([self.makeProgram, self.makeOptions(options)])
 
         return self.system( command, "make" )
 
@@ -70,12 +84,12 @@ class QMakeBuildSystem(BuildSystemBase):
             # There is a bug in jom that parallel installation of qmake projects
             # does not work. So just use the usual make programs. It's hacky but
             # this was decided on the 2012 Windows sprint.
-            if compiler.isMSVC() or compiler.isIntel():
+            if craftCompiler.isMSVC() or craftCompiler.isIntel():
                 installmake="nmake /NOLOGO"
-            elif compiler.isMinGW():
+            elif craftCompiler.isMinGW():
                 installmake="mingw32-make"
         else:
-            installmake = self.makeProgramm
+            installmake = self.makeProgram
 
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -92,8 +106,8 @@ class QMakeBuildSystem(BuildSystemBase):
     def runTest( self ):
         """running qmake based unittests"""
         return True
-    
-    
+
+
     def configureOptions( self, defines=""):
         """returns default configure options"""
         defines += BuildSystemBase.configureOptions(self, defines)
@@ -103,12 +117,12 @@ class QMakeBuildSystem(BuildSystemBase):
         elif self.buildType() == "Debug":
             defines += ' "CONFIG += debug"'
             defines += ' "CONFIG -= release"'
-            
+
         return defines
-        
+
     def ccacheOptions(self):
         return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" "CONFIG -= precompile_header" '
-    
+
     def clangOptions(self):
         if OsUtils.isUnix():
             return ' "CONFIG -= precompile_header" '

@@ -21,7 +21,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DINDI_BUILD_SERVER=OFF -DINDI_BUILD_DRIVERS=OFF -DINDI_BUILD_CLIENT=ON -DINDI_BUILD_QT5_CLIENT=OFF"
+        self.subinfo.options.configure.args = "-DINDI_BUILD_SERVER=OFF -DINDI_BUILD_DRIVERS=OFF -DINDI_BUILD_CLIENT=ON -DINDI_BUILD_QT5_CLIENT=OFF"
 
     # Need to copy all drivers XML files manually since indiserver and drivers are not built on Windows
     def install(self):

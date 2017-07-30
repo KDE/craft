@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -23,6 +23,6 @@ class Package(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.configure.defines = "--disable-static --enable-shared " 
+        self.subinfo.options.configure.args = "--disable-static --enable-shared "
 
 

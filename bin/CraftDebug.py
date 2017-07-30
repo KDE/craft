@@ -6,6 +6,8 @@ import logging
 import logging.handlers
 import functools
 
+import shutil
+
 from CraftConfig import craftSettings, CraftStandardDirs
 
 class CraftDebug(object):
@@ -27,7 +29,7 @@ class CraftDebug(object):
         self._handler.setLevel(logging.INFO)
 
 
-        logDir = craftSettings.get("General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/"))
+        logDir = craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
 
@@ -43,10 +45,15 @@ class CraftDebug(object):
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.", file=sys.stderr)
-        self.log.debug("#" * 80)
+        self.log.debug("#" * self._lineWidgt)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
         self.setVerbose(0)
+
+    @property
+    def _lineWidgt(self):
+        width, _ = shutil.get_terminal_size((80, 20))
+        return width
 
     def verbose(self):
         """return the value of the verbose level"""
@@ -70,7 +77,7 @@ class CraftDebug(object):
         self.log.info("\n")
 
     def debug_line(self):
-        self.log.info("_" * 80)
+        self.log.info("=" * self._lineWidgt)
 
     @property
     def log(self):
@@ -130,9 +137,9 @@ def deprecated(replacement=None):
     """
 
     def outer(fun):
-        msg = "%s is deprecated" % fun.__name__
+        msg = f"{fun.__name__} is deprecated"
         if replacement is not None:
-            msg += "; use %s instead" % replacement
+            msg += f"; use {replacement} instead"
         if fun.__doc__ is None:
             fun.__doc__ = msg
 
@@ -141,7 +148,7 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                craftDebug.log.debug("Trace for the usage of %s" % fun.__name__, stack_info=True)
+                craftDebug.log.debug(msg, stack_info=True)
             return fun(*args, **kwargs)
 
         return inner

@@ -5,7 +5,7 @@ import shutil
 import utils
 import info
 import info
-import compiler
+from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
 # do not forget to update CMakeLists.txt!
@@ -33,7 +33,7 @@ class Package(CMakePackageBase):
         # adjust some vars for proper compile
         GLIB_VER = "2.24.0"
         self.glibDir=os.path.join( self.sourceDir() , ".."  , "glib-" + GLIB_VER );
-        self.subinfo.options.configure.defines = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
+        self.subinfo.options.configure.args = " -DGLIB_DIR=%s " % self.glibDir.replace( "\\", "/" )
 
 
     def sedFile(self, directory, fileName, sedcommand ):
@@ -112,7 +112,7 @@ class Package(CMakePackageBase):
     def install( self ):
         if not CMakePackageBase.install( self ):
             return False
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             manifest = os.path.join( self.packageDir(), "update-mime-database.exe.manifest" )
             executable = os.path.join( self.installDir(), "bin", "update-mime-database.exe" )
             utils.embedManifest( executable, manifest )

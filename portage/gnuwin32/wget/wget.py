@@ -18,7 +18,7 @@ class Package(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
     def install( self ):
-        if compiler.isX64():
+        if craftCompiler.isX64():
             utils.copyFile(os.path.join(self.sourceDir(), "wget64.exe"), os.path.join(self.installDir(), "bin", "wget.exe"))
         else:
             utils.copyFile(os.path.join(self.sourceDir(), "wget.exe"), os.path.join(self.installDir(), "bin", "wget.exe"))

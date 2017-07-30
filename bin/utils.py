@@ -103,10 +103,10 @@ class UtilsCache(object):
 
         appLocation = shutil.which(app)
         if appLocation:
-            craftDebug.log.debug(f"Adding %s to app cache {appLocation}")
+            craftDebug.log.debug(f"Adding {app} to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
-            craftDebug.log.debug("Craft was unable to locate: {app}")
+            craftDebug.log.debug(f"Craft was unable to locate: {app}")
             return None
         return appLocation
 
@@ -136,32 +136,28 @@ class UtilsCache(object):
             craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
-    def checkVersionGreaterOrEqual(self, app, version, pattern=None, versionCommand=None) -> bool:
+    def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
+        if app in self._versionCache:
+           return self._versionCache[app]
         app = self.findApplication(app)
         if not app:
-            return False
+            return None
         if not pattern:
             pattern = re.compile(r"(\d+\.\d+(?:\.\d+)?)")
         if not versionCommand:
             versionCommand = "--version"
-        if app in self._versionCache:
-            appVersion = self._versionCache[app]
-        else:
-            if not isinstance(pattern, re._pattern_type):
-                raise Exception("checkVersionGreaterOrEqual can only handle a compiled regular expression as pattern")
-            output = self.getCommandOutput(app, versionCommand)
-            if not output:
-                return False
-            match = pattern.search(output)
-            if not match:
-                craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
-                return False
-            appVersion = match.group(1)
-            self._versionCache[app] = appVersion
-
-        ge = CraftVersion(appVersion) >= CraftVersion(version)
-        craftDebug.log.debug(f"Installed version of {app} version: {appVersion} {'>=' if  ge else '<'} {version}")
-        return ge
+        if not isinstance(pattern, re._pattern_type):
+            raise Exception("getVersion can only handle a compiled regular expression as pattern")
+        output = self.getCommandOutput(app, versionCommand)
+        if not output:
+            return False
+        match = pattern.search(output)
+        if not match:
+            craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
+            return False
+        appVersion = CraftVersion(match.group(1))
+        self._versionCache[app] = appVersion
+        return appVersion
 
     def cacheJsonFromUrl(self, url, timeout = 10) -> object:
         craftDebug.log.debug(f"Fetch Json: {url}")
@@ -352,7 +348,7 @@ def unpackFile( downloaddir, filename, workdir ):
         craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
     elif utilsCache.findApplication("7za") and (
-                OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
+               OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
         return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
     else:
         try:
@@ -380,11 +376,16 @@ def un7zip( fileName, destdir, flag = None ):
         type = "-t7z"
     if re.match( "(.*\.tar.*$|.*\.tgz$)", fileName):
         type = "-ttar"
-        resolveSymlinks = OsUtils.isWin()
-        command = f"\"{app}\" x \"{fileName}\" -so | \"{app}\" x -si -o\"{destdir}\""
+        command = f"\"{app}\" x \"{fileName}\" -so |"
+        if OsUtils.isWin():
+            resolveSymlinks = True
+            command += f"\"{app}\" x -si -o\"{destdir}\" {type} {progressFlags}"
+        else:
+            tar = utilsCache.findApplication("tar")
+            command += f"\"{tar}\" --directory=\"{destdir}\" -xvf -"
+            kw = {}
     else:
-        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\""
-    command = f"{command} {type} {progressFlags}"
+        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\" {type} {progressFlags}"
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system( command , displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
@@ -428,7 +429,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     craftDebug.log.debug(f"executing command: {repr(cmd)} in {repr(cwd)}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
-        craftDebug.log.debug("Environment: \n" + "\n".join(f"{key}={value}" for key, value in environment.items()))
+        craftDebug.log.debug("Environment: \n" + "\n".join(f"  {key}={value}" for key, value in environment.items()))
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
@@ -454,11 +455,8 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     proc.communicate()
     result = proc.wait() == 0
     if not result:
-        craftDebug.log.debug(f"Coammand {cmd} failed with exit code {proc.returncode}")
+        craftDebug.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return result
-
-def mergeImageDirToRootDir( imagedir, rootdir , linkOnly = craftSettings.getboolean("General", "UseHardlinks", False )):
-    copyDir( imagedir, rootdir , linkOnly)
 
 def moveEntries( srcdir, destdir ):
     for entry in os.listdir( srcdir ):
@@ -621,6 +619,11 @@ def toMSysPath( path ):
 def cleanPackageName( basename, packagename ):
     return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
 
+def createSymlink(source, linkName):
+    craftDebug.log.debug(f"creating symlink: {linkName} -> {source}")
+    os.symlink(source, linkName)
+    return True
+
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists( path ):
@@ -646,7 +649,7 @@ def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardli
     shutil.copy(src,dest)
     return True
 
-def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ) ):
+def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ), copiedFiles=None ):
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
@@ -655,7 +658,7 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
     if ( not destdir.endswith( os.path.sep ) ):
         destdir += os.path.sep
 
-    for root, _, files in os.walk( srcdir ):
+    for root, dirNames, files in os.walk( srcdir ):
         # do not copy files under .svn directories, because they are write-protected
         # and the they cannot easily be deleted...
         if ( root.find( ".svn" ) == -1 ):
@@ -663,7 +666,27 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
             if not os.path.exists( tmpdir ):
                 os.makedirs( tmpdir )
             for fileName in files:
-                copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly)
+                # symlinks to files are included in `files`
+                if copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly) and copiedFiles != None:
+                    copiedFiles.append(os.path.join( tmpdir, fileName ))
+
+            if OsUtils.isUnix():
+                for dirName in dirNames:
+                    # symlinks to directories are included in `dirNames` -- we only want to copy the symlinks
+                    srcPath = os.path.join(root, dirName)
+                    if os.path.islink(srcPath):
+                        linkTo = os.readlink(srcPath)
+                        if os.path.isabs(linkTo):
+                            craftDebug.log.warning(f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
+                            continue
+
+                        newLinkName = os.path.join(tmpdir, dirName)
+                        if os.path.exists(newLinkName):
+                            continue
+
+                        # re-create exact same symlink, but this time in the destdir
+                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles != None:
+                            copiedFiles.append(newLinkName)
 
     return True
 
@@ -839,7 +862,7 @@ def prependPath(*parts):
 
 def notify(title,message,alertClass = None):
     craftDebug.step("%s: %s" % (title, message))
-    backends = craftSettings.get( "General","EMERGE_USE_NOTIFY", "")
+    backends = craftSettings.get( "General","Notify", "")
     if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))

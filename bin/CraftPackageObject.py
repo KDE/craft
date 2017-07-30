@@ -1,26 +1,40 @@
 #!/usr/bin/env python
 
-class PackageObjectBase(object):
+from CraftDebug import craftDebug
 
-    def __init__(self, category=None, subpackage=None, package=None, enabled=False, version = ""):
+
+class PackageObjectBase(object):
+    PortageInstance = None
+
+    def __init__(self, category, subpackage, package, version = None):
         self.category = category
         self.subpackage = subpackage
         self.package = package
-        self.enabled = enabled
-        self.version = version
+        self._version = version
+        self._fullName = None
+
+
+    def _signature(self):
+        if self.subpackage:
+            return self.category, self.subpackage, self.package
+        else:
+            return self.category, self.package
+
 
     def fullName(self):
-        if self.subpackage:
-            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
-        else:
-            return "%s/%s" % (self.category,self.package)
+        if not self._fullName:
+            self._fullName = "/".join(self._signature())
+        return self._fullName
 
+    @property
+    def version(self):
+        if not self._version:
+            self._version = PackageObjectBase.PortageInstance.getNewestVersion(self.category, self.package)
+        return self._version
 
     def __eq__(self, other):
-        #print("eq", type(other), other)
         if isinstance(other, PackageObjectBase):
-            if other.package == self.package and other.category == self.category and other.subpackage == self.subpackage:
-                return True
+            return other._signature() == self._signature()
         if isinstance(other, str):
             if other == self.package:
                 return True
@@ -31,6 +45,5 @@ class PackageObjectBase(object):
     def __str__(self):
         return self.fullName()
 
-    def __bool__(self):
-        #print("bool:", self.enabled)
-        return self.enabled
+    def __hash__(self):
+        return self._signature().__hash__()

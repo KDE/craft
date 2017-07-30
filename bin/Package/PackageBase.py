@@ -1,11 +1,12 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import CraftDependencies
 from CraftDebug import craftDebug
 import CraftHash
 from CraftBase import *
 from InstallDB import *
-from compiler import *
+from CraftCompiler import *
 
 from CraftOS.osutils import OsUtils
 
@@ -38,7 +39,9 @@ class PackageBase (CraftBase):
             self.unmerge()
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
-        utils.mergeImageDirToRootDir( self.mergeSourceDir(), self.mergeDestinationDir() )
+
+        copiedFiles = [] # will be populated by the next call
+        utils.copyDir( self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles )
 
         # run post-install scripts
         if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
@@ -59,7 +62,8 @@ class PackageBase (CraftBase):
 
         revision = self.sourceRevision()
         package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
-        package.addFiles( self.getFileListFromDirectory( self.mergeSourceDir() ) )
+        fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
+        package.addFiles(fileList)
         package.install()
 
 
@@ -75,6 +79,7 @@ class PackageBase (CraftBase):
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
         packageList = installdb.getInstalledPackages(self.category, self.package)
+
         for package in packageList:
             fileList = package.getFilesWithHashes()
             self.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
@@ -121,7 +126,7 @@ class PackageBase (CraftBase):
 
     def strip( self , fileName ):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
-        if self.subinfo.options.package.disableStriping or not isMinGW():
+        if self.subinfo.options.package.disableStriping or not craftCompiler.isMinGW():
             craftDebug.log.debug("Skiping stipping of " + fileName)
             return True
         basepath = os.path.join( self.installDir() )
@@ -201,17 +206,18 @@ class PackageBase (CraftBase):
         return False
 
     @staticmethod
-    def getFileListFromDirectory(imagedir):
+    def getFileListFromDirectory(imagedir, filePaths):
         """ create a file list containing hashes """
         ret = []
 
         algorithm = CraftHash.HashAlgorithm.SHA256
-        for root, _, files in os.walk(imagedir):
-            for fileName in files:
-                filePath = os.path.join(root, fileName)
-                relativeFilePath = os.path.relpath(filePath, imagedir)
-                digest = algorithm.stringPrefix() + CraftHash.digestFile(os.path.join(root, fileName), algorithm)
-                ret.append((relativeFilePath, digest))
+        for filePath in filePaths:
+            relativeFilePath = os.path.relpath(filePath, imagedir)
+            if OsUtils.isUnix() and os.path.islink(filePath):
+                digest = ""
+            else:
+                digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
+            ret.append((relativeFilePath, ""))
         return ret
 
     @staticmethod
@@ -266,7 +272,7 @@ class PackageBase (CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise portage.PortageException( str( e ), self.category, self.package, e )
+                raise CraftDependencies.PortageException(str(e), self.category, self.package, e)
 
         else:
             ok = craftDebug.log.error( "command %s not understood" % command )

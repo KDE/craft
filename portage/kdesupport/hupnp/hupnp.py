@@ -23,11 +23,11 @@ from Package.QMakePackageBase import *
 class Package( QMakePackageBase ):
     def __init__( self, **args ):
         QMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
-        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_TESTAPP"'
-        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_AVTESTAPP"'
-        self.subinfo.options.configure.defines += ' "CONFIG += DISABLE_QTSOAP"'
-        self.subinfo.options.configure.defines += ' "CONFIG += rtti"'
+        self.subinfo.options.configure.args = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
+        self.subinfo.options.configure.args += ' "CONFIG += DISABLE_TESTAPP"'
+        self.subinfo.options.configure.args += ' "CONFIG += DISABLE_AVTESTAPP"'
+        self.subinfo.options.configure.args += ' "CONFIG += DISABLE_QTSOAP"'
+        self.subinfo.options.configure.args += ' "CONFIG += rtti"'
         
     def install( self ):
         if not QMakePackageBase.install( self ):

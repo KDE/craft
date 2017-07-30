@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
                 self.buildDependencies['dev-util/msys'] = 'default'
         else:
                 self.buildDependencies['dev-util/yasm'] = 'default'
@@ -30,10 +30,10 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         abi = "ABI=64"
-        if compiler.isX86():
+        if craftCompiler.isX86():
             abi = "ABI=32"
             self.platform = ""
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
+        self.subinfo.options.configure.args = "--enable-shared --disable-static --enable-gmpcompat --enable-cxx " + abi
 
 class PackageMSVC(MSBuildPackageBase):
     def __init__( self, **args ):
@@ -53,7 +53,7 @@ class PackageMSVC(MSBuildPackageBase):
         utils.copyFile(os.path.join( self.installDir() , "lib" , "mpir.lib"), os.path.join( self.installDir() , "lib" , "gmp.lib") )
         return True
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMinGW):
         def __init__( self ):
             PackageMinGW.__init__( self )

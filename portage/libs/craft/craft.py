@@ -21,17 +21,28 @@ class Package(SourceOnlyPackageBase):
     def __init__(self):
         SourceOnlyPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
+        self.subinfo.options.dailyUpdate = True
 
     def unpack(self):
         return True
 
     def fetch(self):
-        return MultiSource.fetch(self)
+        git = utils.utilsCache.findApplication("git")
+        if not utils.utilsCache.checkCommandOutputFor(git, "kde:", "config --global --get url.git://anongit.kde.org/.insteadof"):
+            craftDebug.log.debug("adding kde related settings to global git config file")
+            utils.system( f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
+            utils.system( f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
+            utils.system( f"\"{git}\" config --global core.autocrlf false")
+            utils.system( f"\"{git}\" config --system core.autocrlf false")
+
+        return SourceOnlyPackageBase.fetch(self)
 
     def install(self):
         return True
 
     def qmerge(self):
+        if not SourceOnlyPackageBase.qmerge(self):
+            return False
         utils.utilsCache.clear()
         return True
 
@@ -39,4 +50,4 @@ class Package(SourceOnlyPackageBase):
         return True
 
     def checkoutDir(self, index=0):
-        return os.path.join(CraftStandardDirs.craftBin(), "..")
+        return os.path.join(CraftStandardDirs.craftRoot(), "craft")

@@ -2,7 +2,7 @@
 import os
 
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
 
 
@@ -26,11 +26,11 @@ class PackageMinGW(AutoToolsPackageBase):
     def __init__( self, **args ):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.package.withCompiler = False
-        self.subinfo.options.configure.defines = "--disable-static --enable-shared --enable-cxx "
+        self.subinfo.options.configure.args = "--disable-static --enable-shared --enable-cxx "
         self.subinfo.options.useShadowBuild = False
 
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMinGW):
         def __init__( self ):
             PackageMinGW.__init__( self )

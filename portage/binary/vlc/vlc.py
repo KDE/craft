@@ -4,14 +4,14 @@ import re
 
 from Package.BinaryPackageBase import *
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 class subinfo(info.infoclass):
     vlc_ver = None
 
     def setTargets( self ):
         vlcArch = "32"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             vlcArch = "64"
         vlcBaseUrl = "http://nightlies.videolan.org/build/win"+vlcArch+"/last/"
         vlcTagName = "3.0.0"
@@ -48,7 +48,7 @@ class Package(BinaryPackageBase):
 
     def install( self ):
         utils.copyDir(   self.sourceDir() , os.path.join( self.installDir(), "bin" ) )
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             utils.deleteFile(os.path.join( self.installDir(), "bin", "libgcc_s_seh-1.dll" ) )
         shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "include") , os.path.join( self.installDir(), "include" ) )
         shutil.move( os.path.join( self.installDir() , "bin" , "sdk" , "lib") , os.path.join( self.installDir(), "lib" ) )

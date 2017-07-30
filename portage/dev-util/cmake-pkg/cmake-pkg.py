@@ -17,7 +17,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DKWSYS_INSTALL_LIB_DIR=lib -DKWSYS_INSTALL_INCLUDE_DIR=include"
+        self.subinfo.options.configure.args = "-DKWSYS_INSTALL_LIB_DIR=lib -DKWSYS_INSTALL_INCLUDE_DIR=include"
 
     def install(self):
         if not CMakePackageBase.install(self):

@@ -111,14 +111,13 @@ class GitSource ( VersionSystemSourceBase ):
             return True
         else:
             ret = True
-            self.setProxy()
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
             if os.path.exists(checkoutDir) \
                     and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
-            if os.path.exists(checkoutDir):
+            if os.path.isdir(checkoutDir):
                 if not repoTag:
                     ret = self.__git("fetch")\
                             and self.__git("checkout", repoBranch or "master") \

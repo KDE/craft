@@ -19,10 +19,10 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self ):
         CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.defines = ""
-#        self.subinfo.options.configure.defines += " -DBUILD_TESTS=ON"
-#        self.subinfo.options.configure.defines += " -DBUILD_EXAMPLES=ON"
-#        self.subinfo.options.configure.defines += " -DNO_ITUNES_HACKS=ON"
-        self.subinfo.options.configure.defines += " -DWITH_ASF=ON"
-        self.subinfo.options.configure.defines += " -DWITH_MP4=ON"
+        self.subinfo.options.configure.args = ""
+#        self.subinfo.options.configure.args += " -DBUILD_TESTS=ON"
+#        self.subinfo.options.configure.args += " -DBUILD_EXAMPLES=ON"
+#        self.subinfo.options.configure.args += " -DNO_ITUNES_HACKS=ON"
+        self.subinfo.options.configure.args += " -DWITH_ASF=ON"
+        self.subinfo.options.configure.args += " -DWITH_MP4=ON"
 

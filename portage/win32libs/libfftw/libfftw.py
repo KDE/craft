@@ -21,5 +21,5 @@ class Package( CMakePackageBase ):
     def __init__( self ):
         CMakePackageBase.__init__( self )
         self.supportsNinja = False
-        self.subinfo.options.configure.defines = "-DFFTW_SINGLE=ON -DFFTW_DOUBLE=OFF -DBUILD_BENCHMARKS=OFF"
+        self.subinfo.options.configure.args = "-DFFTW_SINGLE=ON -DFFTW_DOUBLE=OFF -DBUILD_BENCHMARKS=OFF"
 

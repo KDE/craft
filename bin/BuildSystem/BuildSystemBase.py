@@ -5,10 +5,11 @@
 """ \package BuildSystemBase"""
 from CraftDebug import craftDebug
 from CraftBase import *
-import compiler
+from CraftCompiler import craftCompiler
 
 from CraftOS.osutils import OsUtils
 
+import multiprocessing
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
@@ -18,13 +19,13 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and compiler.isMinGW()
+        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and craftCompiler.isMinGW()
         self.supportsClang = True
         self.buildSystemType = typeName
 
 
     @property
-    def makeProgramm(self):
+    def makeProgram(self):
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
@@ -36,12 +37,12 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if compiler.isMSVC() or compiler.isIntel() :
+            if craftCompiler.isMSVC() or craftCompiler.isIntel() :
                 return "nmake /NOLOGO"
-            elif compiler.isMinGW():
+            elif craftCompiler.isMinGW():
                 return "mingw32-make"
             else:
-                craftDebug.log.critical("unknown %s compiler" % self.compiler())
+                craftDebug.log.critical(f"unknown {craftCompiler} compiler")
         elif OsUtils.isUnix():
             return "make"
 
@@ -64,12 +65,12 @@ class BuildSystemBase(CraftBase):
 
     def configureOptions(self, defines=""):
         """return options for configure command line"""
-        if self.subinfo.options.configure.defines != None:
-            defines += " %s" % self.subinfo.options.configure.defines
+        if self.subinfo.options.configure.args != None:
+            defines += " %s" % self.subinfo.options.configure.args
 
         if self.supportsCCACHE:
             defines += " %s" % self.ccacheOptions()
-        if compiler.isClang() and self.supportsClang:
+        if craftCompiler.isClang() and self.supportsClang:
             defines += " %s" % self.clangOptions()
         return defines
 
@@ -79,8 +80,10 @@ class BuildSystemBase(CraftBase):
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
             defines += " %s" % self.subinfo.options.make.makeOptions
+        if self.makeProgram == "make":
+            defines += " -j%s" % multiprocessing.cpu_count()
         if craftDebug.verbose() > 0:
-            if self.makeProgramm == "ninja":
+            if self.makeProgram == "ninja":
                 defines += " -v "
             else:
                 defines += " VERBOSE=1 V=1"

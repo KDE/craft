@@ -1,5 +1,5 @@
 import info
-import compiler
+from CraftCompiler import craftCompiler
 import os
 import utils
 
@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/zlib'] = 'default'
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies['dev-util/msys'] = 'default'
             self.runtimeDependencies['win32libs/lcms'] = 'default'
             self.runtimeDependencies['win32libs/lcms2'] = 'default'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'ghostscript-%s' % ver
             self.targetDigestUrls[ver] = (["https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/SHA1SUMS" % ver.replace(".","")], CraftHash.HashAlgorithm.SHA1)
 
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.patchToApply['9.19'] = [
                 #("mingw-build.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
                                          #("ghostscript-sys-zlib.patch", 1),# origin: https://github.com/Alexpux/MINGW-packages/tree/master/mingw-w64-ghostscript
@@ -45,10 +45,10 @@ class PackageMSVC(CMakePackageBase):
         self.enterSourceDir()
         _win64 = ""
         _rcomp = ""
-        if compiler.isX64(): _win64 = " WIN64="
+        if craftCompiler.isX64(): _win64 = " WIN64="
         # because ghostscript doesn't know about msvc2015, it guesses wrong on this. But,
         # because of where we are, rc /should/ be in the path, so we'll just use that.
-        if compiler.isMSVC(): _rcomp = " RCOMP=rc.exe"
+        if craftCompiler.isMSVC(): _rcomp = " RCOMP=rc.exe"
         self.system( "nmake -f psi\\msvc.mak" + _rcomp + _win64 )
         return True
 
@@ -67,7 +67,7 @@ class PackageMSVC(CMakePackageBase):
         if not os.path.isdir(os.path.join(dst, "include", "ghostscript")):
             os.mkdir(os.path.join(dst, "include", "ghostscript"))
 
-        if compiler.isX64():
+        if craftCompiler.isX64():
             _bit = "64"
         else:
             _bit = "32"
@@ -118,7 +118,7 @@ class PackageMSys(AutoToolsPackageBase):
         return True
 
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMSys): pass
 else:
     class Package(PackageMSVC): pass

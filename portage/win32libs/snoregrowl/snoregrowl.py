@@ -27,7 +27,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.staticDefine = "-DSNOREGROWL_STATIC=ON"
+        self.subinfo.options.configure.staticArgs = "-DSNOREGROWL_STATIC=ON"
 
         
 

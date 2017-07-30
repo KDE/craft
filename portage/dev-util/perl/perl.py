@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         ver = "5.24.1.2402"
         build = "401627"
         arch = "x86-64int"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             arch = "x64"
         self.targets[ver] = "http://downloads.activestate.com/ActivePerl/releases/{ver}/ActivePerl-{ver}-MSWin32-{arch}-{build}.exe".format(
             ver=ver, arch=arch, build=build)
@@ -26,7 +26,7 @@ class PerlPackage(BinaryPackageBase):
     def __init__( self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.unpack.runInstaller = True
-        self.subinfo.options.configure.defines = "/extract {0}".format(self.workDir())
+        self.subinfo.options.configure.args = "/extract {0}".format(self.workDir())
 
 
     def unpack(self):

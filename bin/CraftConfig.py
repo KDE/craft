@@ -55,15 +55,15 @@ class CraftStandardDirs( object ):
 
     @staticmethod
     def isShortPathEnabled():
-        return CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "EMERGE_USE_SHORT_PATH", False )
+        return platform.system() == "Windows" and CraftStandardDirs._allowShortpaths and craftSettings.getboolean( "ShortPath", "Enabled", False )
 
     @staticmethod
     def downloadDir( ):
         """ location of directory where fetched files are  stored """
         if not "DOWNLOADDIR" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "DownloadDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_DOWNLOAD_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "DownloadDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "DOWNLOADDIR" ] = craftSettings.get( "Paths", "DOWNLOADDIR",
                                                                                         os.path.join(
@@ -83,9 +83,9 @@ class CraftStandardDirs( object ):
     @staticmethod
     def gitDir( ):
         if not "GITDIR" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_GIT_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "GitDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "GITDIR" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_GIT_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "GitDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "GITDIR" ] = craftSettings.get( "Paths", "KDEGITDIR",
                                                                                    os.path.join(
@@ -110,9 +110,9 @@ class CraftStandardDirs( object ):
     @staticmethod
     def craftRoot( ):
         if not "EMERGEROOT" in CraftStandardDirs._pathCache( ):
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "EMERGE_ROOT_DRIVE" ) in craftSettings:
+            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "RootDrive" ) in craftSettings:
                 CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get( "ShortPath", "EMERGE_ROOT_DRIVE" ) )
+                    craftSettings.get( "ShortPath", "RootDrive" ) )
             else:
                 CraftStandardDirs._pathCache( )[ "EMERGEROOT" ] = os.path.abspath(
                     os.path.join( os.path.dirname( CraftStandardDirs._deSubstPath(__file__ )), "..", ".." ) )
@@ -158,6 +158,21 @@ class CraftConfig( object ):
         if self.version < 3:
             self._setAliasesV2()
 
+        if self.version < 4:
+            self._setAliasesV3()
+
+        self._warned = set()
+
+    def _setAliasesV3(self):
+        self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
+        self.addAlias("General", "Notify", "General", "EMERGE_USE_NOTIFY")
+        self.addAlias("General", "Portages", "General", "EMERGE_PORTAGE_ROOT")
+        self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
+        self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
+        self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
+        self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
+        self.addAlias("ShortPath", "Enabled", "ShortPath", "EMERGE_USE_SHORT_PATH")
+
     def _setAliasesV2(self):
         self.addAlias( "Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM" )
         self.addAlias( "Compile", "BuildTests", "General", "EMERGE_BUILDTESTS" )
@@ -167,6 +182,14 @@ class CraftConfig( object ):
         self.addAlias("Package", "CreateCache", "ContinuousIntegration", "UseCache")
         self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")
         self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
+
+    def _warnDeprecated(self, deprecatedSection, deprecatedKey, section, key):
+        if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+            if not (deprecatedSection, deprecatedKey) in self._warned:
+                self._warned.add((deprecatedSection, deprecatedKey))
+                print(
+                    f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to {section}/{key}, please update your kdesettings.ini",
+                    file=sys.stderr)
 
 
     def _readSettings( self ):
@@ -183,10 +206,6 @@ class CraftConfig( object ):
         }.items():
             if not key in self._config["Variables"]:
                 self._config["Variables"][key] = value
-        if not os.name == "nt":
-            self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";dev-util/.*;gnuwin32/.*")
-            if self.get("General", "KDECompiler") == "linux-gcc":
-                self.set("Portage", "Ignores", self.get("Portage", "Ignores")  + ";binary/.*")
 
     def __contains__( self, key ):
         return self.__contains_no_alias(key) or \
@@ -197,26 +216,20 @@ class CraftConfig( object ):
 
     @property
     def version(self):
-        return int(self.get("Version", "EMERGE_SETTINGS_VERSION", 1))
+        return int(self.get("Version", "ConfigVersion", 2))
 
     def addAlias( self, group, key, destGroup, destKey ):
         self._alias[ (group, key) ] = (destGroup, destKey)
 
     def get( self, group, key, default = None ):
-        if self.__contains_no_alias((group, key)):
-            #print((group,key,self._config[ group ][ key ]))
-            return self._config[ group ][ key ]
-
         if (group, key) in self._alias:
             dg, dk = self._alias[ (group, key) ]
             if (dg, dk) in self:
-                print( "Warning: %s/%s is deprecated and has been renamed to %s/%s, please update your kdesettings.ini" % (dg, dk, group, key ),
-                       file = sys.stderr )
-                val = self.get( dg, dk, default )
-                if not group in self._config.sections():
-                    self._config.add_section(group)
-                self._config[ group ][ key ] = val
-                return val
+                self._warnDeprecated(dg, dk, group, key)
+                return self.get( dg, dk, default )
+
+        if self.__contains_no_alias((group, key)):
+            return self._config[group][key]
 
         if default != None:
             return default

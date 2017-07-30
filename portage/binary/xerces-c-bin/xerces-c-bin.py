@@ -35,7 +35,7 @@ class PackageBin(BinaryPackageBase):
 
 from Package.VirtualPackageBase import *
 
-if compiler.isMSVC():
+if craftCompiler.isMSVC():
     class Package(PackageBin):
         def __init__( self ):
             PackageBin.__init__( self )
@@ -43,5 +43,5 @@ else:
     class Package(VirtualPackageBase):
         def __init__( self ):
             VirtualPackageBase.__init__( self )
-            
+
 

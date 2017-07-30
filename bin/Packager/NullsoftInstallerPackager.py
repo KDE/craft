@@ -53,14 +53,14 @@ file collection process is skipped, and only the installer is generated.
 
 
     def _setDefaults(self):
-        self.defines.setdefault( "architecture", compiler.architecture())
+        self.defines.setdefault( "architecture", craftCompiler.architecture)
         self.defines.setdefault( "company", "KDE")
-        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if compiler.isX64() else "$PROGRAMFILES")
+        self.defines.setdefault( "defaultinstdir", "$PROGRAMFILES64" if craftCompiler.isX64() else "$PROGRAMFILES")
         self.defines.setdefault( "executable",  "")
         self.defines.setdefault( "icon",  "")
         self.defines.setdefault( "license",  "")
         self.defines.setdefault( "productname",  self.package.capitalize())
-        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe"))
+        self.defines.setdefault("setupname",  self.binaryArchiveName(fileType="exe", includeRevision=True))
         self.defines.setdefault( "srcdir",  self.archiveDir())
         self.defines.setdefault( "extrashortcuts", "")
         self.defines.setdefault( "version", self.getPackageVersion()[0])
@@ -123,15 +123,15 @@ file collection process is skipped, and only the installer is generated.
         return _path
 
     def getVCRedistLocation(self):
-        if not compiler.isMSVC():
+        if not craftCompiler.isMSVC():
             return "none"
         _file = None
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
             arch = "x86"
-            if compiler.isX64(): arch = "x64"
-            if compiler.isMSVC2015():
+            if craftCompiler.isX64(): arch = "x64"
+            if craftCompiler.isMSVC2015():
                 _file = os.path.join( self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe" )
-            elif compiler.isMSVC2017():
+            elif craftCompiler.isMSVC2017():
                 _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")
             if not os.path.isfile(_file):
                 craftDebug.new_line()
@@ -146,16 +146,20 @@ file collection process is skipped, and only the installer is generated.
 
         if not self.defines["icon"] == "":
             self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
+        if not self.defines["license"] == "":
+            self.defines["license"] = "!define MUI_PAGE_LICENSE \"%s\"" % self.defines["license"]
+
+
 
         # make absolute path for output file
         if not os.path.isabs( self.defines[ "setupname" ] ):
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        definestring = ""
+        defines = []
         for key, value in self.defines.items():
             if value is not None:
-                definestring += f" /D{key}=\"{value}\""
+                defines.append(f"/D{key}={value}")
 
         craftDebug.new_line()
         craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
@@ -163,8 +167,8 @@ file collection process is skipped, and only the installer is generated.
         verboseString = "/V4" if craftDebug.verbose() > 0 else "/V3"
 
         if self.isNsisInstalled:
-            if not utils.systemWithoutShell( "\"%s\" %s %s %s" % (self.nsisExe, verboseString, definestring,
-                    self.scriptname ), cwd = os.path.abspath( self.packageDir() ) ):
+            if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [self.scriptname],
+                                             cwd = os.path.abspath( self.packageDir() ) ):
                 craftDebug.log.critical("Error in makensis execution")
 
     def createPackage( self ):

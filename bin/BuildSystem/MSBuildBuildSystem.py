@@ -12,11 +12,11 @@ class MSBuildBuildSystem(BuildSystemBase):
     def make(self):
         self.enterSourceDir()
         buildType = "Debug" if self.buildType() == "Debug" else "Release"
-        defines = self.subinfo.options.configure.defines or ""
+        defines = self.subinfo.options.configure.args or ""
         for target in self.msbuildTargets:
             if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
                                 f" /p:Configuration={buildType}"
-                                f" /tv:{compiler.internalVerison()}.0 /property:PlatformToolset=v{compiler.msvcPlatformToolset()}"
+                                f" /tv:{craftCompiler.getInternalVersion()}.0 /property:PlatformToolset=v{craftCompiler.getMsvcPlatformToolset()}"
                                 f" {defines}"):
                 return False
         return True

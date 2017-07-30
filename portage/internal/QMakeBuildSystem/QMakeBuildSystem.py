@@ -2,7 +2,7 @@ import os
 
 from CraftDebug import craftDebug
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         #self.runtimeDependencies['libs/qt'] = 'default'
         self.buildDependencies['dev-util/jom'] = 'default'
 
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies['dev-util/mingw-w64']    = 'default'
 
 from Package.InternalPackageBase import *

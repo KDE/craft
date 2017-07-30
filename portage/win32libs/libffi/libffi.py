@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.buildDependencies["virtual/base"] = "default"
-        if compiler.isMinGW():
+        if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/msys"] = "default"
 
 
@@ -28,7 +28,7 @@ class PackageCMake(MSBuildPackageBase):
         MSBuildPackageBase.__init__( self )
 
         self.arch = "x86"
-        if compiler.isX64():
+        if craftCompiler.isX64():
             self.arch = "x64"
         self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "win32", f"vc14_{self.arch}", "libffi-msvc.sln")
 
@@ -47,9 +47,9 @@ from Package.AutoToolsPackageBase import *
 class PackageMSys(AutoToolsPackageBase):
     def __init__( self ):
         AutoToolsPackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "--enable-shared --disable-static "
+        self.subinfo.options.configure.args = "--enable-shared --disable-static "
 
-if compiler.isMinGW():
+if craftCompiler.isMinGW():
     class Package(PackageMSys): pass
 else:
     class Package(PackageCMake): pass

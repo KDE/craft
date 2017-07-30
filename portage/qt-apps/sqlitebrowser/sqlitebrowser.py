@@ -25,4 +25,4 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DUSE_QT5=ON"
+        self.subinfo.options.configure.args = "-DUSE_QT5=ON"

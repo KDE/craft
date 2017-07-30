@@ -12,6 +12,7 @@
 
 import sys
 
+import CraftDependencies
 from CraftDebug import craftDebug
 import CraftTimer
 
@@ -22,7 +23,7 @@ import argparse
 import collections
 import copy
 
-import compiler
+from CraftCompiler import craftCompiler
 import portageSearch
 import InstallDB
 import portage
@@ -99,9 +100,9 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
         craftDebug.step("Handling package: %s, action: %s" % (packageName, buildAction))
 
         success = True
-        package = portage.getPackageInstance( category, packageName )
+        package = portage.PortageInstance.getPackageInstance( category, packageName )
         if package is None:
-            raise portage.PortageException( "Package not found", category, packageName )
+            raise CraftDependencies.PortageException("Package not found", category, packageName)
 
         if buildAction in [ "all", "full-package", "update", "update-all" ]:
             if craftSettings.getboolean("Packager", "UseCache", "False")\
@@ -159,7 +160,7 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
             print( "%s-%s" % ( packageName, package.sourceVersion( ) ) )
             success = True
         elif buildAction == "print-package-version":
-            print( "%s-%s-%s" % ( packageName, compiler.getCompilerName( ), package.sourceVersion( ) ) )
+            print( "%s-%s-%s" % (packageName, craftCompiler.getCompilerName(), package.sourceVersion()))
             success = True
         else:
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
@@ -171,7 +172,6 @@ def handlePackage( category, packageName, buildAction, continueFlag, skipUpToDat
 
 
 def handleSinglePackage( packageName, action, args, directTargets = None ):
-    deplist = [ ]
     packageList = [ ]
     originalPackageList = [ ]
     categoryList = [ ]
@@ -197,11 +197,13 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     for entry in packageList:
         craftDebug.log.debug("Checking dependencies for: %s" % entry)
 
+    deplist = []
     for mainCategory, entry in zip( categoryList, packageList ):
         if args.target:
             craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
-        deplist = portage.solveDependencies( mainCategory, entry, deplist, portage.DependencyType(args.dependencyType),
-                                              maxDepth = args.dependencydepth )
+        deplist.append(f"{mainCategory}/{entry}")
+
+    deplist = CraftDependencies.DependencyPackage.resolveDependenciesForList(deplist, CraftDependencies.DependencyType(args.dependencyType), maxDepth=args.dependencydepth)
     # no package found
     if len( deplist ) == 0:
         category = ""
@@ -221,8 +223,6 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
     if not deplist:
         craftDebug.log.debug("<none>")
 
-    craftDebug.debug_line()
-
     #for item in deplist:
     #    cat = item[ 0 ]
     #    pac = item[ 1 ]
@@ -234,13 +234,11 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
 
     if action == "install-deps":
         # the first dependency is the package itself - ignore it
-        # TODO: why are we our own dependency?
         del deplist[ 0 ]
     elif action == "update-direct-deps":
         for item in deplist:
             item.enabled = True
 
-    deplist.reverse( )
 
     # package[0] -> category
     # package[1] -> package
@@ -248,7 +246,7 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
 
     info = deplist[ -1 ]
     if not portage.PortageInstance.isVirtualPackage( info.category, info.package ) and \
-        not action in [ "all", "install-deps"]:#not all commands should be executed on the deps if we are a virtual packages
+            not action in [ "all", "install-deps"]:#not all commands should be executed on the deps if we are a virtual packages
         # if a buildAction is given, then do not try to build dependencies
         # and do the action although the package might already be installed.
         # This is still a bit problematic since packageName might not be a valid
@@ -275,14 +273,14 @@ def handleSinglePackage( packageName, action, args, directTargets = None ):
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                        craftDebug.log.warning("pretending %s" % info)
+                    craftDebug.log.warning("pretending %s" % info)
                 else:
                     if action in [ "install-deps", "update-direct-deps" ]:
                         action = "all"
 
                     if not handlePackage( info.category, info.package, action, args.doContinue, args.update_fast, directTargets=directTargets ):
                         craftDebug.log.error("fatal error: package %s/%s %s failed" % \
-                                          ( info.category, info.package, action ))
+                                             ( info.category, info.package, action ))
                         return False
 
     craftDebug.new_line()
@@ -338,7 +336,7 @@ def main( ):
                          help = "probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package." )
     parser.add_argument( "--list-file", action = "store",
                          help = "Build all packages from the csv file provided" )
-    _def = craftSettings.get( "General", "EMERGE_OPTIONS", "" )
+    _def = craftSettings.get( "General", "Options", "" )
     if _def == "": _def = []
     else: _def = _def.split( ";" )
     parser.add_argument( "--options", action = "append",
@@ -363,7 +361,7 @@ def main( ):
     parser.add_argument("--no-cache", action="store_true", dest="noCache",
                         default=False, help = "Don't create or use the binary cache")
     parser.add_argument( "--destroy-craft-root", action = "store_true", dest = "doDestroyCraftRoot",
-                         default=False)
+                         default=False, help = "DANGEROUS: Recursively delete everything in the Craft root directory besides the kdesettings.ini, the download directory and the craft folder itself" )
     parser.add_argument( "--offline", action = "store_true",
                          default = craftSettings.getboolean( "General", "WorkOffline", False ),
                          help = "do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
@@ -396,7 +394,7 @@ def main( ):
                          default = craftSettings.get( "General", "EMERGE_PKGPATCHLVL", "" ),
                          help = "This will add a patch level when used together with --package" )
     parser.add_argument( "--log-dir", action = "store",
-                         default = craftSettings.get( "General", "EMERGE_LOG_DIR", os.path.expanduser("~/.craft/")),
+                         default = craftSettings.get( "CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
                          help = "This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs." )
     parser.add_argument( "--dt", action = "store", choices = [ "both", "runtime", "buildtime" ], default = "both",
                          dest = "dependencyType" )
@@ -457,8 +455,8 @@ def main( ):
     craftSettings.set( "General", "EMERGE_FORCED", args.forced )
     craftSettings.set( "Compile", "BuildTests", args.buildTests )
     craftSettings.set( "Compile", "BuildType", args.buildType )
-    craftSettings.set( "General", "EMERGE_OPTIONS", ";".join( args.options ) )
-    craftSettings.set( "General", "EMERGE_LOG_DIR", args.log_dir )
+    craftSettings.set( "General", "Options", ";".join( args.options ) )
+    craftSettings.set( "CraftDebug", "LogDir", args.log_dir )
     craftSettings.set( "General", "EMERGE_PKGPATCHLVL", args.patchlevel )
     craftSettings.set( "Packager", "CreateCache", not args.noCache and args.createCache)
     craftSettings.set( "Packager", "UseCache", not args.noCache and args.useCache)
@@ -495,7 +493,6 @@ def main( ):
         craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
         craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
-        craftDebug.debug_line()
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
@@ -533,7 +530,7 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except portage.PortageException as e:
+        except CraftDependencies.PortageException as e:
             craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error( e, exc_info=e)

@@ -1,5 +1,5 @@
 import info
-import compiler
+from CraftCompiler import craftCompiler
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
@@ -8,7 +8,7 @@ class subinfo( info.infoclass ):
         self.targetInstSrc['0.9.10'] = "libofx-0.9.10"
         self.patchToApply['0.9.10'] = [("libofx-0.9.5-20120131.diff", 1)]
 
-        if compiler.isMSVC():
+        if craftCompiler.isMSVC():
                 self.patchToApply['0.9.10'] += [("patch_daylight.diff", 1)]
 
         self.shortDescription = "a parser and an API for the OFX (Open Financial eXchange) specification"

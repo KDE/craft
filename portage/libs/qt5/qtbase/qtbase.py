@@ -5,7 +5,7 @@ import os
 import utils
 import info
 import portage
-import compiler
+from CraftCompiler import craftCompiler
 from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
@@ -80,7 +80,7 @@ class QtPackage(Qt5CorePackageBase):
             return Qt5CorePackageBase.compile(self)
 
     def configure( self, unused1=None, unused2=""):
-        if compiler.isMinGW() and "DXSDK_DIR" not in os.environ:
+        if craftCompiler.isMinGW() and "DXSDK_DIR" not in os.environ:
             craftDebug.log.critical("Failed to detec a DirectX SDK")
             craftDebug.log.critical("Please visite https://community.kde.org/Guidelines_and_HOWTOs/Build_from_source/Windows#Direct_X_SDK for instructions")
             return False
@@ -110,8 +110,8 @@ class QtPackage(Qt5CorePackageBase):
         if OsUtils.isWin():
             command += "-opengl dynamic "
             command += "-plugin-sql-odbc "
-        if not (OsUtils.isFreeBSD() or compiler.isMinGW()):
-            command += "-ltcg "
+        #if not (OsUtils.isFreeBSD() or compiler.isMinGW()):#currently breaks unmaintained modules like qtscript and webkit
+        #    command += "-ltcg "
         if self.buildType() == "RelWithDebInfo":
             command += "-force-debug-info "
         if self.buildType() == "Debug":
@@ -126,12 +126,12 @@ class QtPackage(Qt5CorePackageBase):
             if self.subinfo.options.isActive("binary/mysql"):
                 command += " -plugin-sql-mysql "
             if self.subinfo.options.isActive("win32libs/dbus"):
-                command += " -qdbus -dbus-linked "
+                command += " -qdbus -dbus-linked -I \"%s\" -I \"%s\" " % (os.path.join(CraftStandardDirs.craftRoot(), "include/dbus-1.0"), os.path.join(CraftStandardDirs.craftRoot(), "lib/dbus-1.0/include"))
             if self.subinfo.options.isActive("win32libs/icu"):
                 command += " -icu "
             if self.subinfo.options.isActive("win32libs/zlib"):
                 command += " -system-zlib "
-                if compiler.isMSVC():
+                if craftCompiler.isMSVC():
                     command += " ZLIB_LIBS=zlib.lib "
         else:
             command += " -static -static-runtime "
@@ -140,7 +140,7 @@ class QtPackage(Qt5CorePackageBase):
         command += "-nomake examples "
         command += "-nomake tests "
 
-        if (compiler.isMSVC() and compiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
+        if (craftCompiler.isMSVC() and craftCompiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
             command += "-no-pch "
 
         return utils.system( command )
@@ -152,7 +152,7 @@ class QtPackage(Qt5CorePackageBase):
             utils.copyFile( os.path.join( self.buildDir(), "bin", "qt.conf"), os.path.join( self.imageDir(), "bin", "qt.conf" ) )
 
             # install msvc debug files if available
-            if compiler.isMSVC():
+            if craftCompiler.isMSVC():
                 srcdir = os.path.join( self.buildDir(), "lib" )
                 destdir = os.path.join( self.installDir(), "lib" )
 
@@ -174,17 +174,17 @@ class QtPackage(Qt5CorePackageBase):
         return True
 
     @property
-    def makeProgramm(self):
+    def makeProgram(self):
         if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.9"):
             # workaround for broken qmake make file.... building with mingw and jom is broken
-            if self.subinfo.options.make.supportsMultijob and compiler.isMinGW():
+            if self.subinfo.options.make.supportsMultijob and craftCompiler.isMinGW():
                 return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
-        return super(Qt5CorePackageBase, self).makeProgramm
+        return super(Qt5CorePackageBase, self).makeProgram
 
 
     def getQtBaseEnv(self):
         envs = {}
-        envs["Path"] = os.path.join(self.buildDir(), "bin") + ";" + os.environ["Path"]
+        envs["PATH"] = os.pathsep.join([os.path.join(self.buildDir(), "bin"), os.environ["PATH"]])
         if CraftVersion(self.subinfo.buildTarget) < CraftVersion("5.9"):
             # so that the mkspecs can be found, when -prefix is set
             envs["QMAKEPATH"] = self.sourceDir()

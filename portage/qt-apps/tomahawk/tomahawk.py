@@ -30,5 +30,5 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = " -DWITH_CRASHREPORTER=OFF -DBUILD_WITH_QT4=OFF -DWITH_KDE4=OFF -DBUILD_HATCHET=ON"
+        self.subinfo.options.configure.args = " -DWITH_CRASHREPORTER=OFF -DBUILD_WITH_QT4=OFF -DWITH_KDE4=OFF -DBUILD_HATCHET=ON"
 

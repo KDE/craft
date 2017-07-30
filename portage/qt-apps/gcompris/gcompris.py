@@ -19,4 +19,4 @@ class subinfo(info.infoclass):
 class Package( CMakePackageBase ):
     def __init__( self, **args ):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.defines = "-DQt5_DIR=%s -DBUILD_STANDALONE=OFF" % CraftStandardDirs.craftRoot()
+        self.subinfo.options.configure.args = "-DQt5_DIR=%s -DBUILD_STANDALONE=OFF" % CraftStandardDirs.craftRoot()
