@@ -6,6 +6,8 @@ import logging
 import logging.handlers
 import functools
 
+import shutil
+
 from CraftConfig import craftSettings, CraftStandardDirs
 
 class CraftDebug(object):
@@ -43,10 +45,15 @@ class CraftDebug(object):
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.", file=sys.stderr)
-        self.log.debug("#" * 80)
+        self.log.debug("#" * self._lineWidgt)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
         self.setVerbose(0)
+
+    @property
+    def _lineWidgt(self):
+        width, _ = shutil.get_terminal_size((80, 20))
+        return width
 
     def verbose(self):
         """return the value of the verbose level"""
@@ -70,7 +77,7 @@ class CraftDebug(object):
         self.log.info("\n")
 
     def debug_line(self):
-        self.log.info("=" * 80)
+        self.log.info("=" * self._lineWidgt)
 
     @property
     def log(self):
