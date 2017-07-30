@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in ["1.9.0"]:
-            self.targets[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gpgme-src-{compiler.architecture()}-{ver}-mingw-w64.7z"
+            self.targets[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gpgme-src-{craftCompiler.architecture}-{ver}-mingw-w64.7z"
             #self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gpgme-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
 
         self.shortDescription = "GnuPG cryptography support library (runtime)"
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
     def setDependencies( self ):
         self.runtimeDependencies['virtual/base'] = 'default'
-        if compiler.isGCCLike():
+        if craftCompiler.isGCCLike():
             self.runtimeDependencies["autotools/gpgme-src"] = "default"
         else:
             self.runtimeDependencies["win32libs/mingw-crt4msvc"] = "default"
@@ -31,4 +31,4 @@ class BinPackage(BinaryPackageBase):
 
 class Package(MaybeVirtualPackageBase):
     def __init__(self):
-        MaybeVirtualPackageBase.__init__(self, not compiler.isGCCLike(), classA=BinPackage)
+        MaybeVirtualPackageBase.__init__(self, not craftCompiler.isGCCLike(), classA=BinPackage)
