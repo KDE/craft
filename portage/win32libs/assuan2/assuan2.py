@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets( self ):
         for ver in ["2.4.3"]:
-            self.targets[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{craftCompiler.architecture()}-{ver}-mingw-w64.7z"
+            self.targets[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{craftCompiler.architecture}-{ver}-mingw-w64.7z"
             #self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
 
 
