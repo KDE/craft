@@ -2,18 +2,19 @@ import info
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "KMail"
-        
-    def setDependencies( self ):
+
+    def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"        
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
         self.runtimeDependencies["frameworks/kcompletion"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
         self.runtimeDependencies["frameworks/kcrash"] = "default"
@@ -30,7 +31,6 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
 
-        
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
         self.runtimeDependencies["kde/akonadi-contacts"] = "default"
@@ -47,8 +47,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/ktnef"] = "default"
         self.runtimeDependencies['libs/qtwebengine'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

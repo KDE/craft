@@ -8,15 +8,14 @@ from CraftOS.osutils import OsUtils
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets["master"] = "https://github.com/KDAB/FatCRM.git|frameworks"
         self.defaultTarget = "master"
 
         self.shortDescription = "Desktop Application for SugarCRM"
         self.homepage = "http://www.kdab.com/"
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/kwallet"] = "default"
@@ -28,6 +27,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["qt-libs/kdreports"] = "default"
 
 
-class Package( CMakePackageBase ):
-    def __init__( self, **args ):
+class Package(CMakePackageBase):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)

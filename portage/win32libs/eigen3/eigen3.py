@@ -3,8 +3,9 @@ import info
 from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['3.2.5']:
             self.targets[ver] = 'http://bitbucket.org/eigen/eigen/get/%s.tar.bz2' % ver
             self.archiveNames[ver] = "eigen-%s.tar.bz2" % ver
@@ -15,11 +16,12 @@ class subinfo(info.infoclass):
         self.shortDescription = 'C++ template library for linear algebra'
         self.defaultTarget = '3.2.5'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)
         if craftCompiler.isMSVC():
             self.subinfo.options.configure.args = "-DBUILD_TESTS=OFF"

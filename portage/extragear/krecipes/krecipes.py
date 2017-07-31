@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['svnHEAD'] = 'trunk/extragear/utils/krecipes'
         self.targets['2.0-alpha3'] = 'http://downloads.sourceforge.net/krecipes/krecipes-2.0-alpha3.tar.gz'
         self.targets['2.0-beta2'] = 'http://downloads.sourceforge.net/krecipes/krecipes-2.0-beta2.tar.gz'
@@ -13,10 +13,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.0-beta2'] = 'krecipes-2.0-beta2'
         self.defaultTarget = 'svnHEAD'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

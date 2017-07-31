@@ -43,7 +43,6 @@ import CraftTestBase
 
 
 class DatabaseTest(CraftTestBase.CraftTestBase):
-
     def setUp(self):
         super().setUp()
         self.db = InstallDB.InstallDB(os.path.join(CraftConfig.CraftStandardDirs.etcDir(), "test.db"))
@@ -52,10 +51,10 @@ class DatabaseTest(CraftTestBase.CraftTestBase):
         del self.db
         super().tearDown()
 
-class TestAPI(DatabaseTest):
 
+class TestAPI(DatabaseTest):
     def test_addInstalled(self):
         package = self.db.addInstalled('win32libs', 'dbus-src', '1.4.0')
-        package.addFiles( dict().fromkeys( [ 'test', 'test1', 'test2' ], 'empty hash' ) )
+        package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
         package.install()
         self.assertEquals(self.db.isInstalled('win32libs', 'dbus-src', '1.4.0'), True)

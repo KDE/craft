@@ -34,8 +34,8 @@ from CraftOS.osutils import OsUtils
 # TODO: Rename
 from CraftVersion import CraftVersion
 
-
 utilsCache = None
+
 
 class UtilsCache(object):
     _version = 5
@@ -49,7 +49,7 @@ class UtilsCache(object):
         self._versionCache = {}
         self._nightlyVersions = {}
         self.cacheCreationTime = time.time()
-        #defined in portageSearch
+        # defined in portageSearch
         self.availablePackages = None
         self._jsonCache = {}
 
@@ -66,7 +66,8 @@ class UtilsCache(object):
                         craftDebug.log.warning("Cache corrupted")
                         return utilsCache
 
-                if data.version != UtilsCache._version or (time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
+                if data.version != UtilsCache._version or (
+                    time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
                     craftDebug.log.debug("Clear cache")
                 else:
                     utilsCache = data
@@ -84,14 +85,13 @@ class UtilsCache(object):
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(UtilsCache.globalInstance())
         except Exception as e:
-         craftDebug.log.warning(f"Failed to save cache {e}",exc_info=e, stack_info=True)
-         deleteFile(UtilsCache._cacheFile())
+            craftDebug.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
+            deleteFile(UtilsCache._cacheFile())
 
     def clear(self):
         global utilsCache
         craftDebug.log.debug("Clear utils cache")
         utilsCache = UtilsCache()
-
 
     def findApplication(self, app) -> str:
         if app in self._appCache:
@@ -121,9 +121,8 @@ class UtilsCache(object):
             self._outputCache[(app, command)] = output
         return self._outputCache[(app, command)]
 
-
     # TODO: rename, cleanup
-    def checkCommandOutputFor(self, app, command, helpCommand ="-h") -> str:
+    def checkCommandOutputFor(self, app, command, helpCommand="-h") -> str:
         if not (app, command) in self._helpCache:
             output = self.getCommandOutput(app, helpCommand)
             if not output:
@@ -138,7 +137,7 @@ class UtilsCache(object):
 
     def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
         if app in self._versionCache:
-           return self._versionCache[app]
+            return self._versionCache[app]
         app = self.findApplication(app)
         if not app:
             return None
@@ -159,7 +158,7 @@ class UtilsCache(object):
         self._versionCache[app] = appVersion
         return appVersion
 
-    def cacheJsonFromUrl(self, url, timeout = 10) -> object:
+    def cacheJsonFromUrl(self, url, timeout=10) -> object:
         craftDebug.log.debug(f"Fetch Json: {url}")
         if not url in self._jsonCache:
             if os.path.isfile(url):
@@ -182,7 +181,7 @@ class UtilsCache(object):
                     craftDebug.log.debug(f"Failed to download {url}: {e}")
         return self._jsonCache.get(url, {})
 
-    def getNightlyVersionsFromUrl(self, url, pattern, timeout = 10) -> [str]:
+    def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:
         """
         Returns a list of possible version number matching the regular expression in pattern.
         :param url: The url to look for the nightly builds.
@@ -195,9 +194,9 @@ class UtilsCache(object):
                 craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
                 return []
             try:
-                with urllib.request.urlopen(url, timeout = timeout) as fh:
+                with urllib.request.urlopen(url, timeout=timeout) as fh:
                     data = str(fh.read(), "UTF-8")
-                    vers = re.findall( pattern , data)
+                    vers = re.findall(pattern, data)
                     if not vers:
                         print(data)
                         raise Exception("Pattern %s does not match." % pattern)
@@ -207,17 +206,20 @@ class UtilsCache(object):
                 craftDebug.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
 
+
 UtilsCache.globalInstance()
+
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
+
 def getCallerFilename():
     """ returns the file name of the """
     filename = None
     try:
-        frame=inspect.currentframe()
+        frame = inspect.currentframe()
         count = 2
         while count > 0 and frame:
             frame = frame.f_back
@@ -230,14 +232,15 @@ def getCallerFilename():
             del frame
     return filename
 
+
 ### fetch functions
 
-def getFiles( urls, destdir, suffix='' , filenames = ''):
+def getFiles(urls, destdir, suffix='', filenames=''):
     """download files from 'url' into 'destdir'"""
     craftDebug.log.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix))
     # make sure distfiles dir exists
-    if ( not os.path.exists( destdir ) ):
-        os.makedirs( destdir )
+    if (not os.path.exists(destdir)):
+        os.makedirs(destdir)
 
     if type(urls) == list:
         urlList = urls
@@ -245,22 +248,23 @@ def getFiles( urls, destdir, suffix='' , filenames = ''):
         urlList = urls.split()
 
     if filenames == '':
-        filenames = [ os.path.basename(x) for x in urlList ]
+        filenames = [os.path.basename(x) for x in urlList]
 
     if type(filenames) == list:
         filenameList = filenames
     else:
         filenameList = filenames.split()
 
-    dlist = list(zip( urlList , filenameList ))
+    dlist = list(zip(urlList, filenameList))
 
-    for url,filename in dlist:
-        if ( not getFile( url + suffix, destdir , filename ) ):
+    for url, filename in dlist:
+        if (not getFile(url + suffix, destdir, filename)):
             return False
 
     return True
 
-def getFile( url, destdir , filename='' ) -> bool:
+
+def getFile(url, destdir, filename='') -> bool:
     """download file from 'url' into 'destdir'"""
     craftDebug.log.debug("getFile called. url: %s" % url)
     if url == "":
@@ -268,14 +272,13 @@ def getFile( url, destdir , filename='' ) -> bool:
         return False
 
     if utilsCache.findApplication("wget"):
-        return wgetFile( url, destdir , filename )
-
+        return wgetFile(url, destdir, filename)
 
     if not filename:
-        _, _, path, _, _, _ = urllib.parse.urlparse( url )
-        filename = os.path.basename( path )
+        _, _, path, _, _, _ = urllib.parse.urlparse(url)
+        filename = os.path.basename(path)
 
-    if os.path.exists(os.path.join( destdir, filename )):
+    if os.path.exists(os.path.join(destdir, filename)):
         return True
 
     if utilsCache.findApplication("powershell"):
@@ -291,75 +294,79 @@ def getFile( url, destdir , filename='' ) -> bool:
             else:
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
                 sys.stdout.flush()
+
         try:
-            urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook= dlProgress if craftDebug.verbose() >= 0 else None )
+            urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
+                                       reporthook=dlProgress if craftDebug.verbose() >= 0 else None)
         except Exception as e:
             craftDebug.log.warning(e)
             return False
 
-    if craftDebug.verbose()>=0:
+    if craftDebug.verbose() >= 0:
         sys.stdout.write("\n")
         sys.stdout.flush()
     return True
 
 
-def wgetFile( url, destdir, filename=''):
+def wgetFile(url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     wget = utilsCache.findApplication("wget")
     command = f"\"{wget}\" -c -t 10"
     # the default of 20 might not be enough for sourceforge ...
     command += " --max-redirect 50"
-    if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False ):
+    if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
         command += " --no-passive-ftp "
-    if(filename ==''):
+    if (filename == ''):
         command += "  -P \"%s\"" % destdir
     else:
-        command += " -O \"%s\"" % os.path.join( destdir, filename )
+        command += " -O \"%s\"" % os.path.join(destdir, filename)
     command += " %s" % url
     craftDebug.log.debug("wgetfile called")
 
     if craftDebug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
         command += " -q --show-progress"
-        ret = system( command, displayProgress=True, stderr=subprocess.STDOUT)
+        ret = system(command, displayProgress=True, stderr=subprocess.STDOUT)
     else:
-        ret = system( command )
+        ret = system(command)
     craftDebug.log.debug("wget ret: %s" % ret)
     return ret
 
+
 ### unpack functions
 
-def unpackFiles( downloaddir, filenames, workdir ):
+def unpackFiles(downloaddir, filenames, workdir):
     """unpack (multiple) files specified by 'filenames' from 'downloaddir' into 'workdir'"""
 
     for filename in filenames:
-        if ( not unpackFile( downloaddir, filename, workdir ) ):
+        if (not unpackFile(downloaddir, filename, workdir)):
             return False
 
     return True
 
-def unpackFile( downloaddir, filename, workdir ):
+
+def unpackFile(downloaddir, filename, workdir):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     craftDebug.log.debug(f"unpacking this file: {filename}")
     if not filename:
         return True
 
-    ( shortname, ext ) = os.path.splitext( filename )
+    (shortname, ext) = os.path.splitext(filename)
     if ext == "":
         craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
     elif utilsCache.findApplication("7za") and (
-               OsUtils.supportsSymlinks() or not re.match( "(.*\.tar.*$|.*\.tgz$)", filename )):
-        return un7zip( os.path.join( downloaddir, filename ), workdir, ext )
+                OsUtils.supportsSymlinks() or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
+        return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
-            shutil.unpack_archive(os.path.join(downloaddir, filename),workdir)
+            shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
         except Exception as e:
-            craftDebug.log.error(f"Failed to unpack {filename}", exc_info=e )
+            craftDebug.log.error(f"Failed to unpack {filename}", exc_info=e)
             return False
     return True
 
 
-def un7zip( fileName, destdir, flag = None ):
+def un7zip(fileName, destdir, flag=None):
     kw = {}
     progressFlags = ""
     type = ""
@@ -374,7 +381,7 @@ def un7zip( fileName, destdir, flag = None ):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         type = "-t7z"
-    if re.match( "(.*\.tar.*$|.*\.tgz$)", fileName):
+    if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
         type = "-ttar"
         command = f"\"{app}\" x \"{fileName}\" -so |"
         if OsUtils.isWin():
@@ -388,13 +395,15 @@ def un7zip( fileName, destdir, flag = None ):
         command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\" {type} {progressFlags}"
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    return system( command , displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
+    return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
 
-def system(cmd, displayProgress=False, **kw ):
+
+def system(cmd, displayProgress=False, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
     kw['shell'] = True
     return systemWithoutShell(cmd, displayProgress, **kw)
+
 
 def systemWithoutShell(cmd, displayProgress=False, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
@@ -406,7 +415,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
 
-    #if the first argument is not an absolute path replace it with the full path to the application
+    # if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
         arg0 = cmd[0]
     else:
@@ -422,7 +431,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         if isinstance(cmd, list):
             cmd[0] = app
         elif not matchQuoted:
-            cmd = cmd.replace(arg0, f"\"{app}\"",  1)
+            cmd = cmd.replace(arg0, f"\"{app}\"", 1)
     else:
         app = arg0
 
@@ -458,21 +467,23 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
         craftDebug.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return result
 
-def moveEntries( srcdir, destdir ):
-    for entry in os.listdir( srcdir ):
-        src = os.path.join( srcdir, entry )
-        dest = os.path.join( destdir, entry )
-        craftDebug.log.debug("move: %s -> %s" % (src, dest))
-        if( os.path.isfile( dest ) ):
-            os.remove( dest )
-        if( os.path.isdir( dest ) ):
-            continue
-        os.rename( src, dest )
 
-def cleanDirectory( directory ):
+def moveEntries(srcdir, destdir):
+    for entry in os.listdir(srcdir):
+        src = os.path.join(srcdir, entry)
+        dest = os.path.join(destdir, entry)
+        craftDebug.log.debug("move: %s -> %s" % (src, dest))
+        if (os.path.isfile(dest)):
+            os.remove(dest)
+        if (os.path.isdir(dest)):
+            continue
+        os.rename(src, dest)
+
+
+def cleanDirectory(directory):
     craftDebug.log.debug("clean directory %s" % directory)
-    if ( os.path.exists( directory ) ):
-        for root, dirs, files in os.walk( directory, topdown=False):
+    if (os.path.exists(directory)):
+        for root, dirs, files in os.walk(directory, topdown=False):
             for name in files:
                 if not OsUtils.rm(os.path.join(root, name), True):
                     craftDebug.log.critical("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
@@ -480,13 +491,14 @@ def cleanDirectory( directory ):
                 if not OsUtils.rmDir(os.path.join(root, name), True):
                     craftDebug.log.critical("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
-        os.makedirs( directory )
+        os.makedirs(directory)
 
-def getVCSType( url ):
+
+def getVCSType(url):
     """ return the type of the vcs url """
     if not url:
         return ""
-    if isGitUrl( url ):
+    if isGitUrl(url):
         return "git"
     elif url.find("://") == -1:
         return "svn"
@@ -500,7 +512,8 @@ def getVCSType( url ):
     else:
         return ""
 
-def isGitUrl( Url ):
+
+def isGitUrl(Url):
     """ this function returns true, if the Url given as parameter is a git url:
         it either starts with git:// or the first part before the first '|' ends with .git
         or if the url starts with the token [git] """
@@ -514,7 +527,8 @@ def isGitUrl( Url ):
         return True
     return False
 
-def splitVCSUrl( Url ):
+
+def splitVCSUrl(Url):
     """ this function splits up an url provided by Url into the server name, the path, a branch or tag;
         it will return a list with 3 strings according to the following scheme:
         git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
@@ -528,38 +542,40 @@ def splitVCSUrl( Url ):
         c = splitUrl[0:3]
     return c
 
-def replaceVCSUrl( Url ):
+
+def replaceVCSUrl(Url):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(CraftStandardDirs.etcPortageDir(), "..", "crafthosts.conf" )
+    configfile = os.path.join(CraftStandardDirs.etcPortageDir(), "..", "crafthosts.conf")
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
-    #todo WTF
-    if ( ("General", "KDESVNUSERNAME") in craftSettings and
-     craftSettings.get("General", "KDESVNUSERNAME") != "username" ) :
-        replacedict[ "git://git.kde.org/" ] = "git@git.kde.org:"
-    if os.path.exists( configfile ):
+    # todo WTF
+    if (("General", "KDESVNUSERNAME") in craftSettings and
+                craftSettings.get("General", "KDESVNUSERNAME") != "username"):
+        replacedict["git://git.kde.org/"] = "git@git.kde.org:"
+    if os.path.exists(configfile):
         config = configparser.ConfigParser()
-        config.read( configfile )
+        config.read(configfile)
         # add the default KDE stuff if the KDE username is set.
         for section in config.sections():
-            host = config.get( section, "host" )
-            replace = config.get( section, "replace" )
-            replacedict[ host ] = replace
+            host = config.get(section, "host")
+            replace = config.get(section, "replace")
+            replacedict[host] = replace
 
     for host in list(replacedict.keys()):
-        if not Url.find( host ) == -1:
-            Url = Url.replace( host, replacedict[ host ] )
+        if not Url.find(host) == -1:
+            Url = Url.replace(host, replacedict[host])
             break
     return Url
 
-def createImportLibs( dll_name, basepath ):
+
+def createImportLibs(dll_name, basepath):
     """creating the import libraries for the other compiler(if ANSI-C libs)"""
 
-    dst = os.path.join( basepath, "lib" )
-    if( not os.path.exists( dst ) ):
-        os.mkdir( dst )
+    dst = os.path.join(basepath, "lib")
+    if (not os.path.exists(dst)):
+        os.mkdir(dst)
 
     # check whether the required binary tools exist
     HAVE_GENDEF = utilsCache.findApplication("gendef") is not None
@@ -572,103 +588,110 @@ def createImportLibs( dll_name, basepath ):
     craftDebug.log.debug(f"lib found: {HAVE_LIB}")
     craftDebug.log.debug(f"dlltool found: {HAVE_DLLTOOL}")
 
-    dllpath = os.path.join( basepath, "bin", "%s.dll" % dll_name )
-    defpath = os.path.join( basepath, "lib", "%s.def" % dll_name )
-    exppath = os.path.join( basepath, "lib", "%s.exp" % dll_name )
-    imppath = os.path.join( basepath, "lib", "%s.lib" % dll_name )
-    gccpath = os.path.join( basepath, "lib", "%s.dll.a" % dll_name )
+    dllpath = os.path.join(basepath, "bin", "%s.dll" % dll_name)
+    defpath = os.path.join(basepath, "lib", "%s.def" % dll_name)
+    exppath = os.path.join(basepath, "lib", "%s.exp" % dll_name)
+    imppath = os.path.join(basepath, "lib", "%s.lib" % dll_name)
+    gccpath = os.path.join(basepath, "lib", "%s.dll.a" % dll_name)
 
-    if not HAVE_GENDEF and os.path.exists( defpath ):
+    if not HAVE_GENDEF and os.path.exists(defpath):
         HAVE_GENDEF = True
         USE_GENDEF = False
     if not HAVE_GENDEF:
         craftDebug.log.warning("system does not have gendef.exe")
         return False
-    if not HAVE_LIB  and not os.path.isfile( imppath ):
+    if not HAVE_LIB and not os.path.isfile(imppath):
         craftDebug.log.warning("system does not have lib.exe (from msvc)")
-    if not HAVE_DLLTOOL and not os.path.isfile( gccpath ):
+    if not HAVE_DLLTOOL and not os.path.isfile(gccpath):
         craftDebug.log.warning("system does not have dlltool.exe")
 
     # create .def
     if USE_GENDEF:
-        cmd = "gendef - %s -a > %s " % ( dllpath, defpath )
-        system( cmd )
+        cmd = "gendef - %s -a > %s " % (dllpath, defpath)
+        system(cmd)
 
-    if( HAVE_LIB and not os.path.isfile( imppath ) ):
+    if (HAVE_LIB and not os.path.isfile(imppath)):
         # create .lib
-        cmd = "lib /machine:x86 /def:%s /out:%s" % ( defpath, imppath )
-        system( cmd )
+        cmd = "lib /machine:x86 /def:%s /out:%s" % (defpath, imppath)
+        system(cmd)
 
-    if( HAVE_DLLTOOL and not os.path.isfile( gccpath ) ):
+    if (HAVE_DLLTOOL and not os.path.isfile(gccpath)):
         # create .dll.a
-        cmd = "dlltool -d %s -l %s -k" % ( defpath, gccpath )
-        system( cmd )
+        cmd = "dlltool -d %s -l %s -k" % (defpath, gccpath)
+        system(cmd)
 
-    if os.path.exists( defpath ):
-        os.remove( defpath )
-    if os.path.exists( exppath ):
-        os.remove( exppath )
+    if os.path.exists(defpath):
+        os.remove(defpath)
+    if os.path.exists(exppath):
+        os.remove(exppath)
     return True
 
-def toMSysPath( path ):
-    path = path.replace( '\\', '/' )
-    if ( len(path) > 1 and path[1] == ':' ):
+
+def toMSysPath(path):
+    path = path.replace('\\', '/')
+    if (len(path) > 1 and path[1] == ':'):
         path = '/' + path[0].lower() + '/' + path[3:]
     return path
 
-def cleanPackageName( basename, packagename ):
-    return os.path.basename( basename ).replace( packagename + "-", "" ).replace( ".py", "" )
+
+def cleanPackageName(basename, packagename):
+    return os.path.basename(basename).replace(packagename + "-", "").replace(".py", "")
+
 
 def createSymlink(source, linkName):
     craftDebug.log.debug(f"creating symlink: {linkName} -> {source}")
     os.symlink(source, linkName)
     return True
 
+
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
-    if not os.path.exists( path ):
+    if not os.path.exists(path):
         craftDebug.log.debug("creating directory %s " % (path))
-        os.makedirs( path )
+        os.makedirs(path)
     return True
 
-def copyFile(src, dest,linkOnly = craftSettings.getboolean("General", "UseHardlinks", False)):
+
+def copyFile(src, dest, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
     craftDebug.log.debug("copy file from %s to %s" % (src, dest))
-    destDir = os.path.dirname( dest )
-    if not os.path.exists( destDir ):
-        os.makedirs( destDir )
-    if os.path.exists( dest ):
+    destDir = os.path.dirname(dest)
+    if not os.path.exists(destDir):
+        os.makedirs(destDir)
+    if os.path.exists(dest):
         craftDebug.log.warning("Overriding %s" % dest)
-        OsUtils.rm( dest, True )
+        OsUtils.rm(dest, True)
     if linkOnly:
         try:
-            os.link( src , dest )
+            os.link(src, dest)
             return True
         except:
             craftDebug.log.warning("Failed to create hardlink %s for %s" % (dest, src))
-    shutil.copy(src,dest)
+    shutil.copy(src, dest)
     return True
 
-def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "UseHardlinks", False ), copiedFiles=None ):
+
+def copyDir(srcdir, destdir, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False), copiedFiles=None):
     """ copy directory from srcdir to destdir """
     craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
-    if ( not srcdir.endswith( os.path.sep ) ):
+    if (not srcdir.endswith(os.path.sep)):
         srcdir += os.path.sep
-    if ( not destdir.endswith( os.path.sep ) ):
+    if (not destdir.endswith(os.path.sep)):
         destdir += os.path.sep
 
-    for root, dirNames, files in os.walk( srcdir ):
+    for root, dirNames, files in os.walk(srcdir):
         # do not copy files under .svn directories, because they are write-protected
         # and the they cannot easily be deleted...
-        if ( root.find( ".svn" ) == -1 ):
-            tmpdir = root.replace( srcdir, destdir )
-            if not os.path.exists( tmpdir ):
-                os.makedirs( tmpdir )
+        if (root.find(".svn") == -1):
+            tmpdir = root.replace(srcdir, destdir)
+            if not os.path.exists(tmpdir):
+                os.makedirs(tmpdir)
             for fileName in files:
                 # symlinks to files are included in `files`
-                if copyFile(os.path.join( root, fileName ), os.path.join( tmpdir, fileName ), linkOnly=linkOnly) and copiedFiles != None:
-                    copiedFiles.append(os.path.join( tmpdir, fileName ))
+                if copyFile(os.path.join(root, fileName), os.path.join(tmpdir, fileName),
+                            linkOnly=linkOnly) and copiedFiles != None:
+                    copiedFiles.append(os.path.join(tmpdir, fileName))
 
             if OsUtils.isUnix():
                 for dirName in dirNames:
@@ -677,7 +700,8 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
                     if os.path.islink(srcPath):
                         linkTo = os.readlink(srcPath)
                         if os.path.isabs(linkTo):
-                            craftDebug.log.warning(f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
+                            craftDebug.log.warning(
+                                f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
                             continue
 
                         newLinkName = os.path.join(tmpdir, dirName)
@@ -689,6 +713,7 @@ def copyDir( srcdir, destdir, linkOnly = craftSettings.getboolean("General", "Us
                             copiedFiles.append(newLinkName)
 
     return True
+
 
 def mergeTree(srcdir, destdir):
     """ copy directory from @p srcdir to @p destdir
@@ -711,36 +736,41 @@ def mergeTree(srcdir, destdir):
     # Cleanup (only removing empty folders)
     os.rmdir(srcdir)
 
-def moveDir( srcdir, destdir ):
+
+def moveDir(srcdir, destdir):
     """ move directory from srcdir to destdir """
     craftDebug.log.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
     try:
-        shutil.move( srcdir, destdir )
+        shutil.move(srcdir, destdir)
     except Exception as e:
         craftDebug.log.warning(e)
         return False
     return True
 
-def rmtree( directory ):
+
+def rmtree(directory):
     """ recursively delete directory """
     craftDebug.log.debug("rmtree called. directory: %s" % (directory))
-    shutil.rmtree ( directory, True ) # ignore errors
+    shutil.rmtree(directory, True)  # ignore errors
+
 
 def moveFile(src, dest):
     """move file from src to dest"""
     craftDebug.log.debug("move file from %s to %s" % (src, dest))
-    shutil.move( src, dest )
+    shutil.move(src, dest)
     return True
+
 
 def deleteFile(fileName):
     """delete file """
-    if not os.path.exists( fileName ):
+    if not os.path.exists(fileName):
         return False
     craftDebug.log.debug("delete file %s " % (fileName))
-    os.remove( fileName )
+    os.remove(fileName)
     return True
 
-def findFiles( directory, pattern=None, fileNames=None):
+
+def findFiles(directory, pattern=None, fileNames=None):
     """find files recursivly"""
     if fileNames == None:
         fileNames = []
@@ -755,6 +785,7 @@ def findFiles( directory, pattern=None, fileNames=None):
             fileNames.append(fileName)
     return fileNames
 
+
 def putenv(name, value):
     """set environment variable"""
     craftDebug.log.debug("set environment variable -- set %s=%s" % (name, value))
@@ -765,14 +796,16 @@ def putenv(name, value):
         os.environ[name] = value
     return True
 
+
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = 'patch -d "%s" -p%s -i "%s"' % (sourceDir, patchLevel, f)
     craftDebug.log.debug("applying %s" % cmd)
-    result = system( cmd )
+    result = system(cmd)
     if not result:
         craftDebug.log.warning("applying %s failed!" % f)
     return result
+
 
 def getWinVer():
     '''
@@ -780,15 +813,16 @@ def getWinVer():
         can not be determined
     '''
     try:
-        result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0],"windows-1252")
+        result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0], "windows-1252")
     except OSError:
         craftDebug.log.debug("Windows Version can not be determined")
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
-    if(version):
+    if (version):
         return version.group(0)
     craftDebug.log.debug("Windows Version can not be determined")
     return "0"
+
 
 def regQuery(key, value):
     '''
@@ -798,7 +832,7 @@ def regQuery(key, value):
     query = 'reg query "%s" /v "%s"' % (key, value)
     craftDebug.log.debug("Executing registry query %s " % query)
     result = subprocess.Popen(query,
-                stdout = subprocess.PIPE).communicate()[0]
+                              stdout=subprocess.PIPE).communicate()[0]
     # Output of this command is either an error to stderr
     # or the key with the value in the next line
     reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)
@@ -806,6 +840,7 @@ def regQuery(key, value):
     if match and match.group(2):
         return match.group(2).rstrip()
     return False
+
 
 def embedManifest(executable, manifest):
     '''
@@ -818,36 +853,37 @@ def embedManifest(executable, manifest):
         # We die here because this is a problem with the portage files
         craftDebug.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
     craftDebug.log.debug("embedding ressource manifest %s into %s" % \
-                     (manifest, executable))
+                         (manifest, executable))
     mtExe = None
     mtExe = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "mt.exe")
 
-    if(not os.path.isfile(mtExe)):
+    if (not os.path.isfile(mtExe)):
         # If there is no free manifest tool installed on the system
         # try to fallback on the manifest tool provided by visual studio
         sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
-            "CurrentInstallFolder")
+                          "CurrentInstallFolder")
         if not sdkdir:
             craftDebug.log.debug("embedManifest could not find the Registry Key"
-                             " for the Windows SDK")
+                                 " for the Windows SDK")
         else:
             mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
             if not os.path.isfile(os.path.normpath(mtExe)):
                 craftDebug.log.debug("embedManifest could not find a mt.exe in\n\t %s" % \
-                                 os.path.dirname(mtExe))
+                                     os.path.dirname(mtExe))
     if os.path.isfile(mtExe):
         return system([mtExe, "-nologo", "-manifest", manifest,
-            "-outputresource:%s;1" % executable])
+                       "-outputresource:%s;1" % executable])
     else:
         return system(["mt", "-nologo", "-manifest", manifest,
-            "-outputresource:%s;1" % executable])
+                       "-outputresource:%s;1" % executable])
 
 
 def getscriptname():
     if __name__ == '__main__':
-        return sys.argv[ 0 ]
+        return sys.argv[0]
     else:
         return __name__
+
 
 def prependPath(*parts):
     """put path in front of the PATH environment variable, if it is not there yet.
@@ -858,16 +894,18 @@ def prependPath(*parts):
         if old[0] != fullPath:
             craftDebug.log.debug("adding %s to system path" % fullPath)
             old.insert(0, fullPath)
-            putenv( "PATH", os.path.pathsep.join(old))
+            putenv("PATH", os.path.pathsep.join(old))
 
-def notify(title,message,alertClass = None):
+
+def notify(title, message, alertClass=None):
     craftDebug.step("%s: %s" % (title, message))
-    backends = craftSettings.get( "General","Notify", "")
+    backends = craftSettings.get("General", "Notify", "")
     if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():
-        backend.notify(title,message,alertClass)
+        backend.notify(title, message, alertClass)
+
 
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
@@ -879,13 +917,15 @@ def levenshtein(s1, s2):
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
-            deletions = current_row[j] + 1       # than s2
+            insertions = previous_row[
+                             j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
+            deletions = current_row[j] + 1  # than s2
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
 
     return previous_row[-1]
+
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
     app = utilsCache.findApplication("shimgen")
@@ -907,7 +947,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
 def replaceSymlinksWithCopys(path):
     def resolveLink(path):
         while os.path.islink(path):
-            toReplace  = os.readlink(path)
+            toReplace = os.readlink(path)
             if not os.path.isabs(toReplace):
                 path = os.path.join(os.path.dirname(path), toReplace)
             else:
@@ -927,12 +967,15 @@ def replaceSymlinksWithCopys(path):
                     copyFile(toReplace, path)
     return True
 
+
 def printProgress(percent):
     width, _ = shutil.get_terminal_size((80, 20))
-    width -= 20 # margin
+    width -= 20  # margin
     times = int(width / 100 * percent)
-    sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress = "#" * times, space = " " * (width- times), percent=percent))
+    sys.stdout.write(
+        "\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=percent))
     sys.stdout.flush()
+
 
 class ScopedEnv(object):
     def __init__(self, env):
@@ -950,5 +993,3 @@ class ScopedEnv(object):
 
     def __exit__(self, exc_type, exc_value, trback):
         self.reset()
-
-

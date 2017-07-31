@@ -1,11 +1,12 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kmymoney|master'
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['frameworks/karchive'] = 'default'
         self.runtimeDependencies["frameworks/kconfig"] = 'default'
         self.runtimeDependencies["frameworks/kconfigwidgets"] = 'default'
@@ -22,31 +23,33 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/knotifications"] = 'default'
         self.runtimeDependencies["frameworks/kxmlgui"] = 'default'
         self.runtimeDependencies["frameworks/ktextwidgets"] = 'default'
-        #self.runtimeDependencies['testing/gpgmepp'] = 'default'
+        # self.runtimeDependencies['testing/gpgmepp'] = 'default'
         self.runtimeDependencies['kde/kholidays'] = 'default'
         self.runtimeDependencies['binary/mysql'] = 'default'
         self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        #self.runtimeDependencies['win32libs/libofx'] = 'default'
+        # self.runtimeDependencies['win32libs/libofx'] = 'default'
         self.runtimeDependencies['win32libs/gettext'] = 'default'
         self.runtimeDependencies['extragear/libalkimia'] = 'default'
         self.runtimeDependencies['extragear/kdiagram'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
         self.shortDescription = "a personal finance manager for KDE"
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "KMyMoney"
-        self.defines[ "executable" ] = "bin\\kmymoney.exe"
-        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "kmymoney.ico")
+        self.defines["productname"] = "KMyMoney"
+        self.defines["executable"] = "bin\\kmymoney.exe"
+        self.defines["icon"] = os.path.join(os.path.dirname(__file__), "kmymoney.ico")
 
         self.ignoredPackages.append("binary/mysql")
 

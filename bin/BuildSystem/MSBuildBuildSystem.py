@@ -43,7 +43,5 @@ class MSBuildBuildSystem(BuildSystemBase):
                         utils.copyFile(path, os.path.join(self.imageDir(), "include", f), linkOnly=False)
         return True
 
-
     def unittest(self):
         return True
-

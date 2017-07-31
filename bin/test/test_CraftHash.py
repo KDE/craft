@@ -10,8 +10,8 @@ import CraftHash
 from CraftDebug import craftDebug
 import CraftTestBase
 
-class CraftHashTest(CraftTestBase.CraftTestBase):
 
+class CraftHashTest(CraftTestBase.CraftTestBase):
     def setUp(self):
         super().setUp()
         random.seed(42)
@@ -19,17 +19,15 @@ class CraftHashTest(CraftTestBase.CraftTestBase):
         for i in range(0, 1000):
             data += str(random.random())
         self.tmpDir = tempfile.TemporaryDirectory()
-        #self.tmpDir = collections.namedtuple("tmp", ["name"])
-        #self.tmpDir.name = "R:/tmp"
+        # self.tmpDir = collections.namedtuple("tmp", ["name"])
+        # self.tmpDir.name = "R:/tmp"
         self.tmpFile = os.path.join(self.tmpDir.name, "tmpFile")
         with open(self.tmpFile, "wt+") as tmpFIle:
             tmpFIle.write(data)
 
-
     def tearDown(self):
         del self.tmpDir
         super().tearDown()
-
 
     def hashTest(self, hash, algorithm):
         path, name = os.path.split(self.tmpFile)
@@ -37,7 +35,6 @@ class CraftHashTest(CraftTestBase.CraftTestBase):
 
 
 class TestAPI(CraftHashTest):
-
     def test_MD5(self):
         self.hashTest("953700da7dfea74714b08f8a7cf69151", CraftHash.HashAlgorithm.MD5)
 
@@ -48,7 +45,8 @@ class TestAPI(CraftHashTest):
         self.hashTest("deef4b9f1cf9e7bdfa34ba05521740a7fdf3e1570b704a3d4088cec2", CraftHash.HashAlgorithm.SHA224)
 
     def test_SHA256(self):
-        self.hashTest("4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30", CraftHash.HashAlgorithm.SHA256)
+        self.hashTest("4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30",
+                      CraftHash.HashAlgorithm.SHA256)
 
     def test_SHA512(self):
         self.hashTest(
@@ -60,8 +58,9 @@ class TestAPI(CraftHashTest):
         log = io.StringIO()
         with contextlib.redirect_stdout(log):
             CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
-        self.assertEquals("self.targetDigests['test'] = (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n",
-                          log.getvalue())
+        self.assertEquals(
+            "self.targetDigests['test'] = (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n",
+            log.getvalue())
 
     def test_createDigestFiles(self):
         # TODO: check file content

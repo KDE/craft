@@ -1,12 +1,13 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = ''
         self.defaultTarget = 'master'
         self.shortDescription = 'kf5 tier3'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['frameworks/kactivities'] = 'default'
         self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
         self.runtimeDependencies['frameworks/kcmutils'] = 'default'
@@ -37,8 +38,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/plasma-framework'] = 'default'
         self.runtimeDependencies['frameworks/kglobalaccel'] = 'default'
 
+
 from Package.VirtualPackageBase import *
 
-class Package( VirtualPackageBase ):
-    def __init__( self ):
-        VirtualPackageBase.__init__( self )
+
+class Package(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)

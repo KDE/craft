@@ -2,7 +2,7 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['1.3.0', '1.3.1', '1.4.3', '1.8.0', '1.9.0']:
             self.targets[ver] = 'ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'gpgme-' + ver
@@ -24,15 +24,15 @@ class subinfo(info.infoclass):
         self.shortDescription = "GnuPG cryptography support library (runtime)"
         self.defaultTarget = '1.4.3'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/gpg-error'] = 'default'
         self.runtimeDependencies['win32libs/assuan2'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
-
-
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)

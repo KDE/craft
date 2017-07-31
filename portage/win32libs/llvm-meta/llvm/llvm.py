@@ -4,24 +4,28 @@ from Package import CMakePackageBase
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
+
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
         self.clang = portage.PortageInstance.getPackageInstance('win32libs', 'clang')
         self.lld = portage.PortageInstance.getPackageInstance('win32libs', 'lld')
         self.subPackages = [self.clang, self.lld]
         self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
-        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
-        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace(
+            "\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace(
+            "\\", "/")
         if craftCompiler.isMSVC():
             self.subinfo.options.configure.args += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
         else:

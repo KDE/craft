@@ -1,12 +1,13 @@
 import info
 from CraftConfig import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
         self.shortDescription = "KDE document viewer"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['win32libs/chm'] = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['qt-libs/poppler'] = 'default'
@@ -31,16 +32,17 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kwallet'] = 'default'
         self.runtimeDependencies['frameworks/khtml'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
-
 
     def createPackage(self):
         self.defines["productname"] = "Okular"
@@ -53,7 +55,6 @@ class Package( CMakePackageBase ):
         self.ignoredPackages.append("frameworks/kemoticons")
 
         return TypePackager.createPackage(self)
-
 
     def preArchive(self):
         archiveDir = self.archiveDir()

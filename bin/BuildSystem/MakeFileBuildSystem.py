@@ -8,39 +8,41 @@ import utils
 
 from BuildSystem.BuildSystemBase import *
 
+
 class MakeFileBuildSystem(BuildSystemBase):
     """ make file build support """
-    def __init__( self ):
+
+    def __init__(self):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "makefile")
 
-    def configure( self, dummyDefines=""):
+    def configure(self, dummyDefines=""):
         """implements configure step for cmake projects"""
 
         return True
 
-    def make( self ):
+    def make(self):
         """implements the make step for Makefile projects"""
 
         self.enterBuildDir()
 
         command = ' '.join([self.makeProgram, self.makeOptions()])
 
-        return self.system( command, "make" )
+        return self.system(command, "make")
 
-    def install( self):
+    def install(self):
         """install the target"""
         if not BuildSystemBase.install(self):
             return False
 
         self.enterBuildDir()
         command = "%s install DESTDIR=%s" % (self.makeProgram, self.installDir())
-        self.system( command, "install" )
+        self.system(command, "install")
         return True
 
-    def unittest( self ):
+    def unittest(self):
         """running make tests"""
 
         self.enterBuildDir()
 
-        return self.system( "%s test" % ( self.makeProgram ), "test" )
+        return self.system("%s test" % (self.makeProgram), "test")

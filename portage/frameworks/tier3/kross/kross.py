@@ -2,15 +2,15 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.versionInfo.setDefaultValues(
-            tarballUrl = "http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/kross-${VERSION}.tar.xz",
-            tarballDigestUrl = "http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/kross-${VERSION}.tar.xz.sha1"
+            tarballUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/kross-${VERSION}.tar.xz",
+            tarballDigestUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/kross-${VERSION}.tar.xz.sha1"
         )
 
         self.shortDescription = "Multi-language application scripting"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies['libs/qttools'] = "default"
@@ -25,12 +25,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kwidgetsaddons'] = "default"
         self.runtimeDependencies['frameworks/kxmlgui'] = "default"
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-
-
-    
-
+    def __init__(self):
+        CMakePackageBase.__init__(self)

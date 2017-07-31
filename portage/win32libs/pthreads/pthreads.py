@@ -1,8 +1,9 @@
 from CraftCompiler import craftCompiler
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['2.8.0', '2.9.1']:
             ver2 = ver.replace('.', '-')
             self.targets[ver] = "ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-" + ver2 + "-release.tar.gz"
@@ -16,24 +17,25 @@ class subinfo(info.infoclass):
         self.shortDescription = 'a POSIX thread implementation for windows'
         self.defaultTarget = '2.9.1'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
+
 
 from Package.CMakePackageBase import *
 from Package.VirtualPackageBase import *
 
+
 class PthreadsPackage(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = " -DBUILD_TESTS=OFF"
 
 
 if craftCompiler.isMSVC() or craftCompiler.isIntel():
     class Package(PthreadsPackage):
-        def __init__( self ):
-            PthreadsPackage.__init__( self )
+        def __init__(self):
+            PthreadsPackage.__init__(self)
 else:
     class Package(VirtualPackageBase):
-        def __init__( self ):
-            VirtualPackageBase.__init__( self )
-
+        def __init__(self):
+            VirtualPackageBase.__init__(self)

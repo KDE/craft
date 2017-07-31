@@ -14,7 +14,6 @@ from CraftVersion import *
 
 
 class TestCraftVersion(CraftTestBase.CraftTestBase):
-
     def test_str(self):
         self.assertEquals(str(CraftVersion("5.8.1")), "5.8.1")
 

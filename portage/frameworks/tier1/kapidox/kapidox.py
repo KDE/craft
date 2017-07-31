@@ -4,13 +4,12 @@ import shutil
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Scripts and data for building API documentation (dox) in a standard format and style."
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/cmake"] = "default"
         self.runtimeDependencies["dev-util/python3"] = "default"
@@ -19,14 +18,15 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["python-modules/jinja2"] = "default"
         self.runtimeDependencies["python-modules/doxyqml"] = "default"
 
+
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-        #the shims are not portable
-        self.subinfo.options.package.disableBinaryCache = True
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
+        # the shims are not portable
+        self.subinfo.options.package.disableBinaryCache = True
 
     def install(self):
         if not CMakeBuildSystem.install(self):

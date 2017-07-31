@@ -1,12 +1,13 @@
 import info
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
+
+class subinfo(info.infoclass):
+    def setTargets(self):
         self.versionInfo.setDefaultValues()
         self.shortDescription = 'a desktop planetarium'
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['libs/qtdeclarative'] = 'default'
         self.runtimeDependencies['libs/qtquickcontrols'] = 'default'
@@ -33,19 +34,21 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['win32libs/gsl'] = 'default'
 
         # Install proper theme
-        self.runtimeDependencies[ 'frameworks/breeze-icons' ] = 'default'
+        self.runtimeDependencies['frameworks/breeze-icons'] = 'default'
+
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
-        self.blacklist_file = [PackagerLists.runtimeBlacklist,os.path.join(self.packageDir(), 'blacklist.txt')]
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
+        self.blacklist_file = [PackagerLists.runtimeBlacklist, os.path.join(self.packageDir(), 'blacklist.txt')]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "KStars Desktop Planetarium"
-        self.defines[ "executable" ] = "bin\\kstars.exe"
-        self.defines[ "icon" ] = os.path.join(self.packageDir(), "kstars.ico")
+        self.defines["productname"] = "KStars Desktop Planetarium"
+        self.defines["executable"] = "bin\\kstars.exe"
+        self.defines["icon"] = os.path.join(self.packageDir(), "kstars.ico")
 
         return TypePackager.createPackage(self)
 

@@ -8,7 +8,7 @@ from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         ver = '5.0.5'
         self.targets[ver] = 'http://tukaani.org/xz/xz-' + ver + '.tar.xz'
         self.targetInstSrc[ver] = 'xz-' + ver
@@ -18,12 +18,13 @@ class subinfo(info.infoclass):
         self.shortDescription = "free general-purpose data compression software with high compression ratio"
         self.defaultTarget = ver
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)

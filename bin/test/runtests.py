@@ -47,13 +47,14 @@ sys.path.append(os.path.join(thisdir, os.pardir))
 from CraftDebug import craftDebug
 import CraftConfig
 
+
 def main():
     """Run all the tests in the craft test suite"""
 
     parser = optparse.OptionParser()
     parser.set_defaults(verbosity=1)
     parser.add_option("-v", "--verbose", action="store_const", const=3, dest="verbosity")
-    parser.add_option("-t", "--target", action="store", dest="target" , default=None)
+    parser.add_option("-t", "--target", action="store", dest="target", default=None)
     opts, rest = parser.parse_args()
 
     craftDebug.setVerbose(opts.verbosity)
@@ -64,7 +65,7 @@ def main():
         suite = loader.discover(start_dir=thisdir)
     else:
         suite = loader.loadTestsFromName(opts.target)
-    runner = unittest.TextTestRunner(verbosity = opts.verbosity + 1)
+    runner = unittest.TextTestRunner(verbosity=opts.verbosity + 1)
     result = runner.run(suite)
 
     sys.exit(not result.wasSuccessful())

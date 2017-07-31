@@ -8,8 +8,10 @@ from Source.MultiSource import *
 from BuildSystem.BoostBuildSystem import *
 from Packager.TypePackager import *
 
-class BoostPackageBase (PackageBase, MultiSource, BoostBuildSystem, TypePackager):
+
+class BoostPackageBase(PackageBase, MultiSource, BoostBuildSystem, TypePackager):
     """provides a base class for cmake packages from any source"""
+
     def __init__(self):
         craftDebug.log.debug("BoostPackageBase.__init__ called")
         PackageBase.__init__(self)

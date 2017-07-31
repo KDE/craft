@@ -7,8 +7,10 @@ from Source.MultiSource import *
 from BuildSystem.BinaryBuildSystem import *
 from Packager.TypePackager import *
 
-class BinaryPackageBase (PackageBase, MultiSource, BinaryBuildSystem, TypePackager):
+
+class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackager):
     """provides a base class for binary packages"""
+
     def __init__(self):
         craftDebug.log.debug("BinaryPackageBase.__init__ called")
         PackageBase.__init__(self)

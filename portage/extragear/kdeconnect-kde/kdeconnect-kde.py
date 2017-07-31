@@ -3,12 +3,12 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kdeconnect-kde'
         self.defaultTarget = 'master'
         self.shortDescription = "KDE Connect adds communication between KDE and your smartphone"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['kdesupport/qca'] = 'default'
@@ -18,20 +18,21 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
         self.runtimeDependencies['frameworks/knotifications'] = 'default'
         self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies[ 'frameworks/breeze-icons' ] = 'default'
+        self.runtimeDependencies['frameworks/breeze-icons'] = 'default'
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "KDE Connect"
-        self.defines[ "executable" ] = "bin\\kdeconnect-indicator.exe"
-        self.defines[ "icon" ] = os.path.join(os.path.dirname(__file__), "icon.ico")
+        self.defines["productname"] = "KDE Connect"
+        self.defines["executable"] = "bin\\kdeconnect-indicator.exe"
+        self.defines["icon"] = os.path.join(os.path.dirname(__file__), "icon.ico")
 
         self.ignoredPackages.append("binary/mysql")
 
@@ -46,4 +47,3 @@ class Package( CMakePackageBase ):
 
         # TODO: Just blacklisting this doesn't work. WTF?
         utils.rmtree(os.path.join(archiveDir, "dev-utils"))
-

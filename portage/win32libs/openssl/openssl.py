@@ -6,6 +6,7 @@ import utils
 import info
 from CraftCompiler import craftCompiler
 
+
 class subinfo(info.infoclass):
     def setTargets(self):
         def addTarget(baseUrl, ver):
@@ -138,6 +139,8 @@ class PackageMSys(AutoToolsPackageBase):
 
 
 if craftCompiler.isMinGW():
-    class Package(PackageMSys): pass
+    class Package(PackageMSys):
+        pass
 else:
-    class Package(PackageCMake): pass
+    class Package(PackageCMake):
+        pass

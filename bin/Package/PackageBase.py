@@ -10,7 +10,8 @@ from CraftCompiler import *
 
 from CraftOS.osutils import OsUtils
 
-class PackageBase (CraftBase):
+
+class PackageBase(CraftBase):
     """
      provides a generic interface for packages and implements the basic stuff for all
      packages
@@ -19,19 +20,19 @@ class PackageBase (CraftBase):
     # uses the following instance variables
     # todo: place in related ...Base
 
-    #rootdir    -> CraftBase
-    #package    -> PackageBase
-    #force      -> PackageBase
-    #category   -> PackageBase
-    #version    -> PackageBase
-    #packagedir -> PackageBase
-    #imagedir   -> PackageBase
+    # rootdir    -> CraftBase
+    # package    -> PackageBase
+    # force      -> PackageBase
+    # category   -> PackageBase
+    # version    -> PackageBase
+    # packagedir -> PackageBase
+    # imagedir   -> PackageBase
 
     def __init__(self):
         craftDebug.log.debug("PackageBase.__init__ called")
         CraftBase.__init__(self)
 
-    def qmerge( self ):
+    def qmerge(self):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
@@ -40,17 +41,17 @@ class PackageBase (CraftBase):
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
 
-        copiedFiles = [] # will be populated by the next call
-        utils.copyDir( self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles )
+        copiedFiles = []  # will be populated by the next call
+        utils.copyDir(self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
 
         # run post-install scripts
-        if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
+        if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
-                scriptName = "post-install-%s-%s.cmd" % ( self.package, pkgtype )
-                script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
-                if os.path.exists( script ):
+                scriptName = "post-install-%s-%s.cmd" % (self.package, pkgtype)
+                script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
+                if os.path.exists(script):
                     craftDebug.log.debug("run post install script '%s'" % script)
-                    cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
+                    cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
                     if not utils.system(cmd):
                         craftDebug.log.warning("%s failed!" % cmd)
                 else:
@@ -66,10 +67,9 @@ class PackageBase (CraftBase):
         package.addFiles(fileList)
         package.install()
 
-
         return True
 
-    def unmerge( self ):
+    def unmerge(self):
         """unmergeing the files from the filesystem"""
         craftDebug.log.debug("Packagebase unmerge called")
 
@@ -82,19 +82,19 @@ class PackageBase (CraftBase):
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
-            self.unmergeFileList( self.mergeDestinationDir(), fileList, self.forced )
+            self.unmergeFileList(self.mergeDestinationDir(), fileList, self.forced)
             package.uninstall()
 
         installdb.getInstalledPackages(self.category, self.package)
 
         # run post-uninstall scripts
-        if not craftSettings.getboolean("General","EMERGE_NO_POST_INSTALL", False ):
+        if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
-                scriptName = "post-uninstall-%s-%s.cmd" % ( self.package, pkgtype )
-                script = os.path.join( self.mergeDestinationDir(), "manifest", scriptName )
-                if os.path.exists( script ):
+                scriptName = "post-uninstall-%s-%s.cmd" % (self.package, pkgtype)
+                script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
+                if os.path.exists(script):
                     craftDebug.log.debug("run post uninstall script '%s'" % script)
-                    cmd = "cd /D %s && %s" % ( self.mergeDestinationDir(), script )
+                    cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
                     if not utils.system(cmd):
                         craftDebug.log.warning("%s failed!" % cmd)
                 else:
@@ -104,43 +104,43 @@ class PackageBase (CraftBase):
 
         return True
 
-    def cleanImage( self ) -> bool:
+    def cleanImage(self) -> bool:
         """cleanup before install to imagedir"""
-        if ( os.path.exists( self.imageDir() ) ):
+        if (os.path.exists(self.imageDir())):
             craftDebug.log.debug("cleaning image dir: %s" % self.imageDir())
-            utils.cleanDirectory( self.imageDir() )
+            utils.cleanDirectory(self.imageDir())
             os.rmdir(self.imageDir())
         return True
 
-    def cleanBuild( self ) -> bool:
+    def cleanBuild(self) -> bool:
         """cleanup currently used build dir"""
-        if os.path.exists( self.buildDir() ):
-            utils.cleanDirectory( self.buildDir() )
+        if os.path.exists(self.buildDir()):
+            utils.cleanDirectory(self.buildDir())
             craftDebug.log.debug("cleaning build dir: %s" % self.buildDir())
 
         return True
 
-    def stripLibs( self, pkgName ):
+    def stripLibs(self, pkgName):
         """strip debugging informations from shared libraries - mingw only!!! """
-        return self.strip(pkgName + ".dll" )
+        return self.strip(pkgName + ".dll")
 
-    def strip( self , fileName ):
+    def strip(self, fileName):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or not craftCompiler.isMinGW():
             craftDebug.log.debug("Skiping stipping of " + fileName)
             return True
-        basepath = os.path.join( self.installDir() )
-        filepath = os.path.join( basepath, "bin",  fileName )
+        basepath = os.path.join(self.installDir())
+        filepath = os.path.join(basepath, "bin", fileName)
 
         cmd = "strip -s " + filepath
         craftDebug.log.debug(cmd)
-        os.system( cmd )
+        os.system(cmd)
         return True
 
-    def createImportLibs( self, pkgName ):
+    def createImportLibs(self, pkgName):
         """create the import libraries for the other compiler(if ANSI-C libs)"""
-        basepath = os.path.join( self.installDir() )
-        utils.createImportLibs( pkgName, basepath )
+        basepath = os.path.join(self.installDir())
+        utils.createImportLibs(pkgName, basepath)
 
     def printFiles(self):
         packageList = installdb.getInstalledPackages(self.category, self.package)
@@ -151,20 +151,20 @@ class PackageBase (CraftBase):
                 print(file[0])
         return True
 
-    def getAction(self, cmd = None ):
+    def getAction(self, cmd=None):
         if not cmd:
-            command = sys.argv[ 1 ]
+            command = sys.argv[1]
             options = None
-#            print sys.argv
-            if ( len( sys.argv )  > 2 ):
-                options = sys.argv[ 2: ]
+            #            print sys.argv
+            if (len(sys.argv) > 2):
+                options = sys.argv[2:]
         else:
             command = cmd
             options = None
         # \todo options are not passed through by craft.py fix it
         return [command, options]
 
-    def execute( self, cmd=None ):
+    def execute(self, cmd=None):
         """called to run the derived class
         this will be executed from the package if the package is started on its own
         it shouldn't be called if the package is imported as a python module"""
@@ -189,7 +189,6 @@ class PackageBase (CraftBase):
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
 
-
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             craftDebug.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
             cache = utils.utilsCache.cacheJsonFromUrl(f"{url}/manifest.json")
@@ -199,7 +198,9 @@ class PackageBase (CraftBase):
                 if not os.path.exists(os.path.join(downloadFolder, archiveName)):
                     if not utils.getFile(f"{url}/{archiveName}", downloadFolder):
                         return False
-            return CraftHash.checkFilesDigests(downloadFolder, [archiveName], digests=cache[str(self)][archiveName]["checksum"], digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
+            return CraftHash.checkFilesDigests(downloadFolder, [archiveName],
+                                               digests=cache[str(self)][archiveName]["checksum"],
+                                               digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
                    and utils.unpackFile(downloadFolder, archiveName, self.imageDir()) \
                    and self.qmerge()
@@ -245,29 +246,29 @@ class PackageBase (CraftBase):
             elif not os.path.isdir(fullPath):
                 craftDebug.log.warning("file %s does not exist" % fullPath)
 
-    def runAction( self, command ):
+    def runAction(self, command):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
         then we get by without this dict:
             ok = getattr(self, 'cmd' + command.capitalize()()
         next we could """
-        functions = {"fetch":          "fetch",
-                     "cleanimage":     "cleanImage",
-                     "cleanbuild":     "cleanBuild",
-                     "unpack":         "unpack",
-                     "compile":        "compile",
-                     "configure":      "configure",
-                     "make":           "make",
-                     "install":        "install",
-                     "test":           "unittest",
-                     "qmerge":         "qmerge",
-                     "unmerge":        "unmerge",
-                     "package":        "createPackage",
-                     "createpatch":    "createPatch",
-                     "geturls":        "getUrls",
+        functions = {"fetch": "fetch",
+                     "cleanimage": "cleanImage",
+                     "cleanbuild": "cleanBuild",
+                     "unpack": "unpack",
+                     "compile": "compile",
+                     "configure": "configure",
+                     "make": "make",
+                     "install": "install",
+                     "test": "unittest",
+                     "qmerge": "qmerge",
+                     "unmerge": "unmerge",
+                     "package": "createPackage",
+                     "createpatch": "createPatch",
+                     "geturls": "getUrls",
                      "print-revision": "printSourceVersion",
-                     "print-files":    "printFiles",
-                     "checkdigest":    "checkDigest",
-                     "fetch-binary":   "fetchBinary"}
+                     "print-files": "printFiles",
+                     "checkdigest": "checkDigest",
+                     "fetch-binary": "fetchBinary"}
         if command in functions:
             try:
                 ok = getattr(self, functions[command])()
@@ -275,6 +276,6 @@ class PackageBase (CraftBase):
                 raise CraftDependencies.PortageException(str(e), self.category, self.package, e)
 
         else:
-            ok = craftDebug.log.error( "command %s not understood" % command )
+            ok = craftDebug.log.error("command %s not understood" % command)
 
         return ok

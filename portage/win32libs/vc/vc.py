@@ -1,8 +1,9 @@
 import info
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.targets['0.7.3'] = 'http://code.compeng.uni-frankfurt.de/attachments/download/174/Vc-0.7.3.tar.gz'
         self.targetDigests['0.7.3'] = 'aa41aeddac59abc60f292de8fdedbe70a4b49108'
         self.targetInstSrc['0.7.3'] = "Vc-0.7.3"
@@ -14,13 +15,13 @@ class subinfo(info.infoclass):
         self.shortDescription = 'Portable, zero-overhead SIMD library for C++'
         self.defaultTarget = '0.7.3'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
 
+class Package(CMakePackageBase):
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)
 
         self.subinfo.options.configure.args = " -DBUILD_TESTING=OFF "
         if craftCompiler.isMSVC():

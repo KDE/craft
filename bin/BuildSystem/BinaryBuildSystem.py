@@ -5,21 +5,21 @@
 
 from BuildSystem.BuildSystemBase import *
 
+
 class BinaryBuildSystem(BuildSystemBase):
-    def __init__( self):
+    def __init__(self):
         BuildSystemBase.__init__(self, "binary")
 
-    def configure( self ):
+    def configure(self):
         return True
 
-    def make( self ):
+    def make(self):
         return True
 
-    def install( self ):
+    def install(self):
         self.cleanImage()
         utils.copyDir(self.sourceDir(), self.installDir(), linkOnly=False)
         return BuildSystemBase.install(self)
 
-
-    def runTest( self ):
+    def runTest(self):
         return False

@@ -7,8 +7,10 @@ from Source.MultiSource import *
 from BuildSystem.BuildSystemBase import *
 from Packager.PackagerBase import *
 
-class SetupPackageBase (PackageBase, MultiSource, BuildSystemBase, PackagerBase):
+
+class SetupPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
     """provides a base class for 3rd party installers or msi packages"""
+
     def __init__(self):
         craftDebug.log.debug("SetupPackageBase.__init__ called")
         PackageBase.__init__(self)

@@ -13,22 +13,22 @@ from CraftConfig import *
 from CraftOS.osutils import OsUtils
 from CraftCompiler import craftCompiler
 
-
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 6, 0)
 
-if sys.version_info[ 0:3 ] < MIN_PY_VERSION:
-    print( "Error: Python too old!", file= sys.stderr )
-    print( "Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file= sys.stderr )
-    print( "Please install it and adapt your kdesettings.ini", file= sys.stderr )
-    exit( 1 )
+if sys.version_info[0:3] < MIN_PY_VERSION:
+    print("Error: Python too old!", file=sys.stderr)
+    print("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file=sys.stderr)
+    print("Please install it and adapt your kdesettings.ini", file=sys.stderr)
+    exit(1)
 
-class SetupHelper( object ):
+
+class SetupHelper(object):
     def __init__(self, args=None):
         self.args = args
 
-    def run( self ):
+    def run(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--subst", action="store_true")
         parser.add_argument("--get", action="store_true")
@@ -39,21 +39,20 @@ class SetupHelper( object ):
         args = parser.parse_args()
 
         if args.subst:
-            self.subst( )
+            self.subst()
         elif args.get:
             default = ""
-            if len( args.rest ) == 3:
-                default = args.rest[ 2 ]
-            print( craftSettings.get( args.rest[ 0 ], args.rest[ 1 ], default ) )
+            if len(args.rest) == 3:
+                default = args.rest[2]
+            print(craftSettings.get(args.rest[0], args.rest[1], default))
         elif args.print_banner:
-            self.printBanner( )
+            self.printBanner()
         elif args.getenv:
             self.printEnv()
         elif args.setup:
-            self.subst( )
+            self.subst()
             self.printEnv()
-            self.printBanner( )
-
+            self.printBanner()
 
     def checkForEvilApplication(self):
         blackList = []
@@ -78,176 +77,181 @@ class SetupHelper( object ):
                     del path[location]
                     self.addEnvVar("Path", os.path.pathsep.join(path))
 
-    def subst( self, ):
-        def _subst( path, drive ):
-            if not os.path.exists( path ):
-                os.makedirs( path )
-            command = "subst %s %s" % ( craftSettings.get( "ShortPath", drive ), path)
-            subprocess.getoutput( command )
+    def subst(self, ):
+        def _subst(path, drive):
+            if not os.path.exists(path):
+                os.makedirs(path)
+            command = "subst %s %s" % (craftSettings.get("ShortPath", drive), path)
+            subprocess.getoutput(command)
 
-        if craftSettings.getboolean( "ShortPath", "Enabled", False ):
-            with TemporaryUseShortpath( False):
+        if craftSettings.getboolean("ShortPath", "Enabled", False):
+            with TemporaryUseShortpath(False):
                 if ("ShortPath", "RootDrive") in craftSettings:
-                    _subst( CraftStandardDirs.craftRoot( ), "RootDrive" )
+                    _subst(CraftStandardDirs.craftRoot(), "RootDrive")
                 if ("ShortPath", "DownloadDrive") in craftSettings:
-                    _subst( CraftStandardDirs.downloadDir( ), "DownloadDrive" )
+                    _subst(CraftStandardDirs.downloadDir(), "DownloadDrive")
                 if ("ShortPath", "GitDrive") in craftSettings:
-                    _subst( CraftStandardDirs.gitDir( ), "GitDrive" )
+                    _subst(CraftStandardDirs.gitDir(), "GitDrive")
 
-    def printBanner( self ):
+    def printBanner(self):
         stream = sys.stderr
         if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
             stream = sys.stdout
+
         def printRow(name, value):
             print(f"{name:20}: {value}", file=stream)
+
         if CraftStandardDirs.isShortPathEnabled():
             with TemporaryUseShortpath(False):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
-        printRow("Craft", CraftStandardDirs.craftRoot( ))
+        printRow("Craft", CraftStandardDirs.craftRoot())
         printRow("ABI", craftCompiler)
-        printRow("Svn  directory", CraftStandardDirs.svnDir( ))
-        printRow("Git  directory", CraftStandardDirs.gitDir( ))
-        printRow("Download directory", CraftStandardDirs.downloadDir( ))
+        printRow("Svn  directory", CraftStandardDirs.svnDir())
+        printRow("Git  directory", CraftStandardDirs.gitDir())
+        printRow("Download directory", CraftStandardDirs.downloadDir())
         if "CraftDeprecatedEntryScript" in os.environ:
             oldScript = os.environ["CraftDeprecatedEntryScript"]
             ext = ".ps1" if OsUtils.isWin() else ".sh"
             print(f"You used the deprecated script {oldScript}\n"
                   f"Please use craftenv{ext} instead", file=sys.stderr)
 
-    def addEnvVar( self, key, val ):
-        os.environ[ key ] = val
+    def addEnvVar(self, key, val):
+        os.environ[key] = val
         os.environ[key] = val
 
-    def prependPath( self, key, var ):
+    def prependPath(self, key, var):
         if not type(var) == list:
             var = [var]
         if key in os.environ:
-            env = var + os.environ[ key ].split(os.path.pathsep)
+            env = var + os.environ[key].split(os.path.pathsep)
             var = list(collections.OrderedDict.fromkeys(env))
-        os.environ[ key ] = os.path.pathsep.join( var )
+        os.environ[key] = os.path.pathsep.join(var)
 
-    def stringToEnv( self, string ):
-        for line in string.split( "\n" ):
-            key, value = line.strip( ).split( "=", 1 )
-            os.environ[ key ] = value
+    def stringToEnv(self, string):
+        for line in string.split("\n"):
+            key, value = line.strip().split("=", 1)
+            os.environ[key] = value
 
-    def getEnv( self ):
+    def getEnv(self):
         if craftCompiler.isMSVC():
-            architectures = { "x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64" }
+            architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
             version = craftCompiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
                                         f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest")
-            arg = architectures[ craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
+            arg = architectures[craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
-                path = os.path.join(path, "Auxiliary","Build")
+                path = os.path.join(path, "Auxiliary", "Build")
             path = os.path.join(path, "vcvarsall.bat")
             command = f"\"{path}\" {arg}"
             status, result = subprocess.getstatusoutput(f"{command} > NUL && set")
             if status != 0:
-                print( f"Failed to setup msvc compiler.\n"
-                       f"Command: {command} ", file = sys.stderr )
+                print(f"Failed to setup msvc compiler.\n"
+                      f"Command: {command} ", file=sys.stderr)
                 exit(1)
-            return self.stringToEnv( result )
+            return self.stringToEnv(result)
 
         elif craftCompiler.isIntel():
-            architectures = { "x86": "ia32", "x64": "intel64" }
-            programFiles = os.getenv( "ProgramFiles(x86)" ) or os.getenv( "ProgramFiles" )
+            architectures = {"x86": "ia32", "x64": "intel64"}
+            programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
             status, result = subprocess.getstatusoutput(
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
-                    programFiles, architectures[ craftCompiler.architecture]) )
+                    programFiles, architectures[craftCompiler.architecture]))
             if status != 0:
-                print( "Failed to setup intel compiler", file = sys.stderr )
+                print("Failed to setup intel compiler", file=sys.stderr)
                 exit(1)
-            return self.stringToEnv( result )
-
+            return self.stringToEnv(result)
 
     def setXDG(self):
-        self.prependPath( "XDG_DATA_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "share" )])
+        self.prependPath("XDG_DATA_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "share")])
         if OsUtils.isUnix():
-            self.prependPath( "XDG_CONFIG_DIRS", [os.path.join( CraftStandardDirs.craftRoot( ), "etc", "xdg" )])
-            self.addEnvVar( "XDG_DATA_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".local5", "share" ))
-            self.addEnvVar( "XDG_CONFIG_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".config" ))
-            self.addEnvVar( "XDG_CACHE_HOME", os.path.join( CraftStandardDirs.craftRoot( ), "home", os.getenv("USER"), ".cache" ))
-
-
-
+            self.prependPath("XDG_CONFIG_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "etc", "xdg")])
+            self.addEnvVar("XDG_DATA_HOME",
+                           os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".local5", "share"))
+            self.addEnvVar("XDG_CONFIG_HOME",
+                           os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".config"))
+            self.addEnvVar("XDG_CACHE_HOME",
+                           os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
 
     def setupEnvironment(self):
-        for var, value in craftSettings.getSection( "Environment" ):  #set and overide existing values
-            self.addEnvVar( var, value )
+        for var, value in craftSettings.getSection("Environment"):  # set and overide existing values
+            self.addEnvVar(var, value)
         self.prependPath("PATH", os.path.dirname(sys.executable))
-        self.getEnv( )
+        self.getEnv()
         self.checkForEvilApplication()
 
-        self.addEnvVar( "KDEROOT", CraftStandardDirs.craftRoot( ) )
+        self.addEnvVar("KDEROOT", CraftStandardDirs.craftRoot())
 
-        if craftSettings.getboolean( "Compile", "UseCCache", False ):
-            self.addEnvVar( "CCACHE_DIR",
-                            craftSettings.get( "Paths", "CCACHE_DIR", os.path.join( CraftStandardDirs.craftRoot( ),
-                                                                                     "build", "CCACHE" ) ) )
+        if craftSettings.getboolean("Compile", "UseCCache", False):
+            self.addEnvVar("CCACHE_DIR",
+                           craftSettings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
+                                                                                 "build", "CCACHE")))
 
         if self.version < 2:
-            self.addEnvVar( "GIT_SSH", "plink" )
-            self.addEnvVar( "SVN_SSH", "plink" )
+            self.addEnvVar("GIT_SSH", "plink")
+            self.addEnvVar("SVN_SSH", "plink")
 
         if not "HOME" in os.environ:
-            self.addEnvVar( "HOME", os.getenv( "USERPROFILE" ) )
+            self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
-        self.prependPath( "PKG_CONFIG_PATH", os.path.join( CraftStandardDirs.craftRoot( ), "lib", "pkgconfig" ))
+        self.prependPath("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
-        self.prependPath( "QT_PLUGIN_PATH", [ os.path.join( CraftStandardDirs.craftRoot( ), "plugins" ),
-                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "plugins" ),
-                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib64", "plugins" ),
-                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "x86_64-linux-gnu", "plugins" ),
-                                              os.path.join( CraftStandardDirs.craftRoot( ), "lib", "plugin" )
+        self.prependPath("QT_PLUGIN_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "plugins"),
+                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugins"),
+                                            os.path.join(CraftStandardDirs.craftRoot(), "lib64", "plugins"),
+                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
+                                                         "plugins"),
+                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugin")
                                             ])
 
-        self.prependPath( "QML2_IMPORT_PATH", [ os.path.join( CraftStandardDirs.craftRoot(), "lib", "qml"),os.path.join( CraftStandardDirs.craftRoot(), "lib64", "qml"),
-                                                os.path.join( CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu", "qml")
-                                                ])
+        self.prependPath("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib64", "qml"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
+                                                           "qml")
+                                              ])
         self.prependPath("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
 
-
-
         if OsUtils.isUnix():
-            self.prependPath("LD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib"),
-                                                  os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu") ])
+            self.prependPath("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
+                                                 os.path.join(CraftStandardDirs.craftRoot(), "lib",
+                                                              "x86_64-linux-gnu")])
         if OsUtils.isMac():
-            self.prependPath("DYLD_LIBRARY_PATH", [ os.path.join(CraftStandardDirs.craftRoot(), "lib") ])
+            self.prependPath("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
         self.setXDG()
 
         if craftSettings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler"), "bin"))
+            self.prependPath("PATH",
+                             os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
+                                          craftSettings.get("QtSDK", "Compiler"), "bin"))
 
         if craftCompiler.isMinGW():
             if not craftSettings.getboolean("QtSDK", "Enabled", "false"):
                 if craftCompiler.isX86():
-                    self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw", "bin" ) )
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
                 else:
-                    self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "mingw64", "bin" ) )
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
             else:
                 compilerName = craftSettings.get("QtSDK", "Compiler")
-                compilerMap = {"mingw53_32":"mingw530_32"}
-                self.prependPath( "PATH", os.path.join( craftSettings.get("QtSDK", "Path") ,"Tools", compilerMap.get(compilerName, compilerName), "bin" ))
+                compilerMap = {"mingw53_32": "mingw530_32"}
+                self.prependPath("PATH", os.path.join(craftSettings.get("QtSDK", "Path"), "Tools",
+                                                      compilerMap.get(compilerName, compilerName), "bin"))
 
         if OsUtils.isUnix():
-            self.prependPath( "PATH", CraftStandardDirs.craftBin( ) )
-        self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "dev-utils", "bin" ) )
+            self.prependPath("PATH", CraftStandardDirs.craftBin())
+        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
 
-
-        #make sure thate craftroot bin is the first to look for dlls etc
-        self.prependPath( "PATH", os.path.join( CraftStandardDirs.craftRoot( ), "bin" ) )
+        # make sure thate craftroot bin is the first to look for dlls etc
+        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "bin"))
 
         # add python site packages to pythonpath
-        self.prependPath( "PythonPath",  os.path.join( CraftStandardDirs.craftRoot( ), "lib", "site-packages"))
+        self.prependPath("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
 
     def printEnv(self):
         self.setupEnvironment()
-        for key, val in os.environ.items( ):
-            print( f"{key}={val}" )
+        for key, val in os.environ.items():
+            print(f"{key}={val}")
 
     @property
     def version(self):
@@ -256,4 +260,4 @@ class SetupHelper( object ):
 
 if __name__ == '__main__':
     helper = SetupHelper()
-    helper.run( )
+    helper.run()

@@ -3,34 +3,35 @@ from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.svnTargets[ 'master' ] = '[git]kde:atcore|master'
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.svnTargets['master'] = '[git]kde:atcore|master'
         self.defaultTarget = 'master'
         self.shortDescription = "the KDE core of Atelier Printer Host"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["libs/qtserialport"] = "default"
         self.runtimeDependencies["libs/qtcharts"] = "default"
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(self.packageDir(), 'blacklist.txt')
         ]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "AtCoreTest"
-        self.defines[ "executable" ] = "bin\\AtCoreTest.exe"
-        self.defines[ "setupname" ] = "AtCore-x64.exe"
-        self.defines[ "icon" ] = os.path.join(self.packageDir(), "atcore.ico")
-
+        self.defines["productname"] = "AtCoreTest"
+        self.defines["executable"] = "bin\\AtCoreTest.exe"
+        self.defines["setupname"] = "AtCore-x64.exe"
+        self.defines["icon"] = os.path.join(self.packageDir(), "atcore.ico")
 
         return TypePackager.createPackage(self)
 

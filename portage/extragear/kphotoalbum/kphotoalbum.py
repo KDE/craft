@@ -4,15 +4,15 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kphotoalbum.git'
 
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['kde/kdegraphics'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

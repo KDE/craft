@@ -1,16 +1,16 @@
 import info
 
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
+class subinfo(info.infoclass):
+    def setTargets(self):
         for ver in ['1.5.0', '1.5.3']:
-            self.targets[ ver ] = 'ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-' + ver + '.tar.bz2'
-            self.targetInstSrc[ ver ] = 'libgcrypt-' + ver
+            self.targets[ver] = 'ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'libgcrypt-' + ver
 
-        self.patchToApply['1.5.0'] = [('libgcrypt-1.5.0-20110831.diff', 1), 
+        self.patchToApply['1.5.0'] = [('libgcrypt-1.5.0-20110831.diff', 1),
                                       ('libgcrypt-1.5.0-cmake.diff', 1),
                                       ('libgcrypt-win64.diff', 1)]
-        self.patchToApply['1.5.3'] = [('libgcrypt-1.5.0-20110831.diff', 1), 
+        self.patchToApply['1.5.3'] = [('libgcrypt-1.5.0-20110831.diff', 1),
                                       ('libgcrypt-1.5.3-cmake.diff', 1),
                                       ('libgcrypt-win64.diff', 1)]
         self.targetDigests['1.5.0'] = '3e776d44375dc1a710560b98ae8437d5da6e32cf'
@@ -19,14 +19,15 @@ class subinfo( info.infoclass ):
         self.shortDescription = " General purpose crypto library based on the code used in GnuPG."
         self.defaultTarget = '1.5.3'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/gpg-error'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-        self.subinfo.options.configure.testDefine = "-DBUILD_TESTS=ON"
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
+        self.subinfo.options.configure.testDefine = "-DBUILD_TESTS=ON"

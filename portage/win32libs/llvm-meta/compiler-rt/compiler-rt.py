@@ -2,24 +2,30 @@
 import info
 import portage
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.versionInfo.setDefaultValues()
         self.targetDigests['3.7.0'] = 'b61362b409bb7909a6d11097b5f69fded061073c'
-        
-        for ver in self.svnTargets.keys() | self.targets.keys():
-            self.patchToApply[ ver ] = [("fix_shortpath.patch", 1)]
 
-    def setDependencies( self ):
+        for ver in self.svnTargets.keys() | self.targets.keys():
+            self.patchToApply[ver] = [("fix_shortpath.patch", 1)]
+
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/llvm'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.args = " -DPYTHON_EXECUTABLE=%s/python.exe" % craftSettings.get("Paths","PYTHON","").replace("\\","/")
+        self.subinfo.options.configure.args = " -DPYTHON_EXECUTABLE=%s/python.exe" % craftSettings.get("Paths",
+                                                                                                       "PYTHON",
+                                                                                                       "").replace("\\",
+                                                                                                                   "/")
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)

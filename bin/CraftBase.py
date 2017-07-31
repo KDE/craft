@@ -48,13 +48,15 @@ class InitGuard(object):
                 return fun(*args, **kwargs)
             else:
                 return InitGuard._dummy_init(key, *args, **kwargs)
+
         return inner
+
 
 class CraftBase(object):
     """base class for craft system - holds attributes and methods required by base classes"""
 
     @InitGuard.init_once
-    def __init__( self):
+    def __init__(self):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
@@ -65,17 +67,17 @@ class CraftBase(object):
 
         self.buildSystemType = None
 
-        self.versioned              = False
-        self.CustomDefines       = ""
-        self.createCombinedPackage  = False
+        self.versioned = False
+        self.CustomDefines = ""
+        self.createCombinedPackage = False
 
-        self.isoDateToday           = str( datetime.date.today() ).replace('-', '')
+        self.isoDateToday = str(datetime.date.today()).replace('-', '')
 
     def __str__(self):
         if self.subpackage:
-            return "%s/%s/%s" % (self.category,self.subpackage,self.package)
+            return "%s/%s/%s" % (self.category, self.subpackage, self.package)
         else:
-            return "%s/%s" % (self.category,self.package)
+            return "%s/%s" % (self.category, self.package)
 
     @property
     def noFetch(self):
@@ -83,15 +85,15 @@ class CraftBase(object):
 
     @property
     def noFast(self):
-        return craftSettings.getboolean("General", "EMERGE_NOFAST", True )
+        return craftSettings.getboolean("General", "EMERGE_NOFAST", True)
 
     @property
     def noClean(self):
-        return craftSettings.getboolean("General", "EMERGE_NOCLEAN", False )
+        return craftSettings.getboolean("General", "EMERGE_NOCLEAN", False)
 
     @property
     def forced(self):
-        return craftSettings.getboolean("General", "EMERGE_FORCED", False )
+        return craftSettings.getboolean("General", "EMERGE_FORCED", False)
 
     @property
     def buildTests(self):
@@ -99,7 +101,7 @@ class CraftBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        return craftSettings.get("Compile","BuildType")
+        return craftSettings.get("Compile", "BuildType")
 
     def buildArchitecture(self):
         """return the target CPU architecture"""
@@ -112,7 +114,7 @@ class CraftBase(object):
             directory += "ide-"
         if self.subinfo.options.useBuildType == False:
             directory += "%s" % (self.buildTarget)
-        elif( self.buildType() == None ):
+        elif (self.buildType() == None):
             directory += "%s-%s" % ("default", self.buildTarget)
         else:
             directory += "%s-%s" % (self.buildType(), self.buildTarget)
@@ -132,15 +134,15 @@ class CraftBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return portage.PortageInstance.getDirname( self.category, self.package )
+        return portage.PortageInstance.getDirname(self.category, self.package)
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        return os.path.join( CraftStandardDirs.craftRoot(), "build", self.category, self.package )
+        return os.path.join(CraftStandardDirs.craftRoot(), "build", self.category, self.package)
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        return os.path.join( self.buildRoot(), "work" )
+        return os.path.join(self.buildRoot(), "work")
 
     def buildDir(self):
         craftDebug.log.debug("CraftBase.buildDir() called")
@@ -153,14 +155,14 @@ class CraftBase(object):
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
         """
-        return os.path.join( self.buildRoot(), self.imageDirPattern() )
+        return os.path.join(self.buildRoot(), self.imageDirPattern())
 
     def installDir(self):
         """return absolute path to the install directory of the currently active package.
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used
         """
         if self.subinfo.hasInstallPath():
-            installDir = os.path.join( self.imageDir(), self.subinfo.installPath())
+            installDir = os.path.join(self.imageDir(), self.subinfo.installPath())
         else:
             installDir = self.imageDir()
         return installDir
@@ -171,7 +173,7 @@ class CraftBase(object):
         specific target or @ref self.subinfo.options.merge.sourcePath is used
         """
         if not self.subinfo.options.merge.sourcePath == None:
-            directory = os.path.join( self.imageDir(), self.subinfo.options.merge.sourcePath )
+            directory = os.path.join(self.imageDir(), self.subinfo.options.merge.sourcePath)
         else:
             directory = self.imageDir()
         return directory
@@ -181,12 +183,12 @@ class CraftBase(object):
         """
         return CraftStandardDirs.craftRoot()
 
-    def packageDestinationDir( self, withBuildType=True ):
+    def packageDestinationDir(self, withBuildType=True):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
         craftDebug.log.debug("CraftBase.packageDestinationDir called")
-        dstpath = craftSettings.get("General","EMERGE_PKGDSTDIR", os.path.join( CraftStandardDirs.craftRoot(), "tmp" ) )
+        dstpath = craftSettings.get("General", "EMERGE_PKGDSTDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
 
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)
@@ -209,32 +211,33 @@ class CraftBase(object):
     def enterBuildDir(self):
         craftDebug.trace("CraftBase.enterBuildDir called")
 
-        if ( not os.path.exists( self.buildDir() ) ):
-            os.makedirs( self.buildDir() )
+        if (not os.path.exists(self.buildDir())):
+            os.makedirs(self.buildDir())
             craftDebug.log.debug("creating: %s" % self.buildDir())
 
-        os.chdir( self.buildDir() )
+        os.chdir(self.buildDir())
         craftDebug.log.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
-        if ( not os.path.exists( self.sourceDir() ) ):
+        if (not os.path.exists(self.sourceDir())):
             return False
         craftDebug.log.warning("entering the source directory!")
-        os.chdir( self.sourceDir() )
+        os.chdir(self.sourceDir())
         craftDebug.log.debug("entering: %s" % self.sourceDir())
 
-    def system( self, command, errorMessage="", debuglevel=1, **kw):
+    def system(self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
         This method prints a debug message and then runs a system command.
         If the system command returns with errors the method prints an error
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
 
-        if utils.system( command, **kw):
+        if utils.system(command, **kw):
             return True
         craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"), includeRevision=False) -> str:
+    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),
+                          includeRevision=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -268,5 +271,5 @@ class CraftBase(object):
         else:
             version = portage.PortageInstance.getPackageInstance("libs", "qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
-        return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in craftSettings.get("Packager", "RepositoryUrl").split(";")]
-
+        return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
+                craftSettings.get("Packager", "RepositoryUrl").split(";")]

@@ -6,7 +6,6 @@ import sys
 
 
 class OsUtilsBase(metaclass=abc.ABCMeta):
-
     @abc.abstractstaticmethod
     def rm(path, force=False):
         """ Removes a file"""
@@ -38,7 +37,7 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     @staticmethod
     def isUnix():
         return os.name == 'posix'
-    
+
     @staticmethod
     def isFreeBSD():
         return OsUtilsBase.isUnix() and platform.system() == 'FreeBSD'
@@ -50,7 +49,6 @@ class OsUtilsBase(metaclass=abc.ABCMeta):
     @staticmethod
     def isLinux():
         return OsUtilsBase.isUnix() and platform.system() == 'Linux'
-
 
     @staticmethod
     def name():

@@ -1,7 +1,8 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['4.0', '4.1', '4.2.1']:
             self.targets[ver] = 'http://downloads.sourceforge.net/libmsn/libmsn-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'libmsn-' + ver
@@ -12,13 +13,14 @@ class subinfo(info.infoclass):
         self.shortDescription = "a library for connecting to Microsoft's MSN Messenger service"
         self.defaultTarget = '4.2.1'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/openssl'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)

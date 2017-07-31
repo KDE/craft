@@ -8,8 +8,10 @@ from BuildSystem.Qt5CoreBuildSystem import *
 from Packager.TypePackager import *
 from Package.MaybeVirtualPackageBase import *
 
-class Qt5CorePackageBase (PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):
+
+class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):
     """provides a base class for qt5 modules"""
+
     def __init__(self):
         craftDebug.log.debug("Qt5CorePackageBase.__init__ called")
         PackageBase.__init__(self)

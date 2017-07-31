@@ -2,13 +2,12 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( tarballUrl = "http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz",
-                                           tarballDigestUrl = "http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz.sha1")
+    def setTargets(self):
+        self.versionInfo.setDefaultValues(
+            tarballUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz",
+            tarballDigestUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz.sha1")
 
-
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies['data/docbook-dtd42'] = 'default'
@@ -40,12 +39,9 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         # this package is currently not portable due to hardcoded paths in the kdewin defines
         self.subinfo.options.package.disableBinaryCache = True
-
-
-    
-

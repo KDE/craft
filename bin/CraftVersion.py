@@ -25,7 +25,7 @@ class CraftVersion(Version):
         if not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
         if self.isBranch or other.isBranch:
-            return 0 if (self.versionstr == other.versionstr or (self.isBranch and other.isBranch))\
+            return 0 if (self.versionstr == other.versionstr or (self.isBranch and other.isBranch)) \
                 else 1 if self.isBranch and not other.isBranch else -1
         return 0 if self.version == other.version else -1 if self.version < other.version else 1
 
@@ -33,7 +33,9 @@ class CraftVersion(Version):
     def strictVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftDebug.craftDebug.log.warn("Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr, stack_info=True)
+            CraftDebug.craftDebug.log.warn(
+                "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr,
+                stack_info=True)
             return StrictVersion("0.0.0")
         loose = LooseVersion(v)
         out = []
@@ -50,12 +52,10 @@ class CraftVersion(Version):
             else:
                 out.append(str(entry))
 
-        vstring = ".".join(out[0 : min(len(out), 3)])
+        vstring = ".".join(out[0: min(len(out), 3)])
         if len(out) > 3:
             vstring += "".join(out[3:])
         return StrictVersion(vstring)
-
-
 
     def parse(self, s):
         """
@@ -118,4 +118,3 @@ class CraftVersion(Version):
                 yield '*' + part
 
         yield '*final'  # ensure that alpha/beta/candidate are before final
-

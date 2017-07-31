@@ -1,16 +1,17 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = ''
         self.defaultTarget = 'master'
         self.shortDescription = 'kf5 tier1'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['frameworks/attica'] = 'default'
         self.runtimeDependencies['frameworks/karchive'] = 'default'
         # kapidox doesn't work as we are not tied to a python interpreter / library
-        #self.runtimeDependencies['frameworks/kapidox'] = 'default'
+        # self.runtimeDependencies['frameworks/kapidox'] = 'default'
         self.runtimeDependencies['frameworks/kcodecs'] = 'default'
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
         self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
@@ -32,7 +33,7 @@ class subinfo(info.infoclass):
 
 from Package.VirtualPackageBase import *
 
-class Package( VirtualPackageBase ):
-    def __init__( self ):
-        VirtualPackageBase.__init__( self )
 
+class Package(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)

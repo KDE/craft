@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):        
+    def setTargets(self):
         self.shortDescription = "Herqq UPnP (HUPnP) is a software library for building UPnP devices and control points conforming to the UPnP Device Architecture version 1.1"
         self.svnTargets['svnHEAD'] = "https://hupnp.svn.sourceforge.net/svnroot/hupnp/trunk/herqq"
         self.patchToApply['svnHEAD'] = ("HUpnp1.diff", 0)
@@ -10,35 +11,34 @@ class subinfo(info.infoclass):
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/hupnp/herqq-%s.zip" % ver
             self.targetInstSrc[ver] = "herqq-%s" % ver
         self.targetDigests['1.0.0'] = '543a67802c37c66c29c8527522b1630c42756545'
-        
+
         self.defaultTarget = "1.0.0"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qt'] = 'default'
         self.runtimeDependencies['kdesupport/libqtsoap'] = 'default'
 
 
 from Package.QMakePackageBase import *
 
-class Package( QMakePackageBase ):
-    def __init__( self, **args ):
-        QMakePackageBase.__init__( self )
-        self.subinfo.options.configure.args = ' "PREFIX = %s" ' % self.imageDir().replace("\\","/")
+
+class Package(QMakePackageBase):
+    def __init__(self, **args):
+        QMakePackageBase.__init__(self)
+        self.subinfo.options.configure.args = ' "PREFIX = %s" ' % self.imageDir().replace("\\", "/")
         self.subinfo.options.configure.args += ' "CONFIG += DISABLE_TESTAPP"'
         self.subinfo.options.configure.args += ' "CONFIG += DISABLE_AVTESTAPP"'
         self.subinfo.options.configure.args += ' "CONFIG += DISABLE_QTSOAP"'
         self.subinfo.options.configure.args += ' "CONFIG += rtti"'
-        
-    def install( self ):
-        if not QMakePackageBase.install( self ):
-            return False
-        #sic.: the .lib file is placed under bin dir in hupnp)
-        os.mkdir( os.path.join( self.installDir(), "bin" ) )
-        # copy over dlls as required by KDE convention
-        for file in os.listdir( os.path.join( self.installDir(), "lib" ) ):
-            if file.endswith( ".dll" ):
-                utils.copyFile( os.path.join( self.installDir(), "lib" , file ), os.path.join( self.installDir(), "bin" , file ) )
-        return True
-        
 
-        
+    def install(self):
+        if not QMakePackageBase.install(self):
+            return False
+        # sic.: the .lib file is placed under bin dir in hupnp)
+        os.mkdir(os.path.join(self.installDir(), "bin"))
+        # copy over dlls as required by KDE convention
+        for file in os.listdir(os.path.join(self.installDir(), "lib")):
+            if file.endswith(".dll"):
+                utils.copyFile(os.path.join(self.installDir(), "lib", file),
+                               os.path.join(self.installDir(), "bin", file))
+        return True

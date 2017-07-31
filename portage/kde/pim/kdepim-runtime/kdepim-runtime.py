@@ -2,13 +2,14 @@ import info
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "kdepim runtime"
-        
-    def setDependencies( self ):
+
+    def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
@@ -17,10 +18,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/knotifyconfig"] = "default"
         self.runtimeDependencies["frameworks/kio"] = "default"
         self.runtimeDependencies["frameworks/kitemmodels"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"        
+        self.runtimeDependencies["frameworks/kcodecs"] = "default"
         self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
         self.runtimeDependencies["frameworks/ktextwidgets"] = "default"
-        
+
         self.runtimeDependencies["kde/kmime"] = "default"
         self.runtimeDependencies["kde/kdav"] = "default"
         self.runtimeDependencies["kde/akonadi"] = "default"
@@ -33,10 +34,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["kde/kcalcore"] = "default"
         self.runtimeDependencies["kde/kmbox"] = "default"
         self.runtimeDependencies["kde/pimcommon"] = "default"
-        
+
         self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        #Laurent reactivate when libkgapi will be fixed
-        #self.runtimeDependencies["kde/libkgapi"] = "default"
+        # Laurent reactivate when libkgapi will be fixed
+        # self.runtimeDependencies["kde/libkgapi"] = "default"
         self.runtimeDependencies["kde/kpimtextedit"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['win32libs/cyrus-sasl'] = 'default'
@@ -44,8 +45,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['win32libs/libkolabxml'] = 'default'
         self.runtimeDependencies['win32libs/libkolab'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

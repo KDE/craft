@@ -3,29 +3,32 @@ import glob
 import os
 from xml.etree import ElementTree as et
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
+
+class subinfo(info.infoclass):
+    def setTargets(self):
         self.svnTargets['master'] = "https://github.com/indilib/indi.git"
         self.shortDescription = 'INDI Library'
         self.defaultTarget = 'master'
         self.targetInstSrc['master'] = "libindi"
 
-    def setDependencies( self ):
-        self.runtimeDependencies['virtual/base']  = 'default'
+    def setDependencies(self):
+        self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['win32libs/libnova'] = 'default'
         self.buildDependencies['gnuwin32/grep'] = '2.5.4'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
+    def __init__(self):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = "-DINDI_BUILD_SERVER=OFF -DINDI_BUILD_DRIVERS=OFF -DINDI_BUILD_CLIENT=ON -DINDI_BUILD_QT5_CLIENT=OFF"
 
     # Need to copy all drivers XML files manually since indiserver and drivers are not built on Windows
     def install(self):
-        dest = os.path.join(self.installDir(), "bin","data","indi")
+        dest = os.path.join(self.installDir(), "bin", "data", "indi")
         if not os.path.exists(dest):
             os.makedirs(dest)
         # File all drivers XML files including *.xml.cmake template files
@@ -48,5 +51,5 @@ class Package(CMakePackageBase):
                     tree.write(destFilename)
                 # Regular .xml file get copied directly
                 else:
-                   utils.copyFile(filename, dest)
+                    utils.copyFile(filename, dest)
         return CMakePackageBase.install(self)

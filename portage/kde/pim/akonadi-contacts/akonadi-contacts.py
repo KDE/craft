@@ -11,8 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply['17.04.1'] = [("akonadi-contacts-17.04.1-fix-compile.diff", 1)]
         self.patchToApply['17.04.2'] = [("akonadi-contacts-17.04.1-fix-compile.diff", 1)]
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.runtimeDependencies['libs/qtwebengine'] = 'default'
         self.runtimeDependencies['kde/akonadi'] = 'default'
@@ -30,8 +29,7 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-
-
+    def __init__(self):
+        CMakePackageBase.__init__(self)

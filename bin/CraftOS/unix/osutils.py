@@ -4,8 +4,8 @@ import shutil
 import os
 import sys
 
-class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
+class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def rm(path, force=False):
         craftDebug.log.debug("deleting file %s" % path)
@@ -36,7 +36,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def setConsoleTitle(title):
-         # TODO: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html
-        #sys.stdout.write( "\033]2;%s\007" % title)
-        #sys.stdout.flush()
+        # TODO: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html
+        # sys.stdout.write( "\033]2;%s\007" % title)
+        # sys.stdout.flush()
         return True

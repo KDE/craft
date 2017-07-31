@@ -16,6 +16,7 @@ from Source.SvnSource import SvnSource
 
 class MultiSource(SourceBase):
     """ provides multi source type api """
+
     def __init__(self):
         SourceBase.__init__(self)
         craftDebug.trace("MultiSource __init__")
@@ -73,7 +74,6 @@ class MultiSource(SourceBase):
     def applyPatches(self):
         craftDebug.trace("MultiSource applyPatches")
         return self.source.applyPatches(self)
-
 
     def createPatch(self):
         craftDebug.trace("MultiSource createPatch")

@@ -1,33 +1,37 @@
 import info
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kile'
         self.svnTargets['gitStable-2.1'] = '[git]kde:kile|2.1|'
-        for ver in ['2.1.1','2.1b5']:
+        for ver in ['2.1.1', '2.1b5']:
             self.targets[ver] = 'http://downloads.sourceforge.net/kile/kile-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'kile-' + ver
         self.shortDescription = "a user friendly TeX/LaTeX editor for KDE"
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies['qt-libs/poppler'] = 'default' # this is only a dependency for kile > 2.1, but we keep it like that for now
-        self.runtimeDependencies['kde/okular'] = 'default'         # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies[
+            'qt-libs/poppler'] = 'default'  # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies[
+            'kde/okular'] = 'default'  # this is only a dependency for kile > 2.1, but we keep it like that for now
         self.runtimeDependencies['kde/kate'] = 'default'
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), 'blacklist.txt')
         ]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "Kile"
-        self.defines[ "executable" ] = "bin\\kile.exe"
+        self.defines["productname"] = "Kile"
+        self.defines["executable"] = "bin\\kile.exe"
 
         self.ignoredPackages.append("binary/mysql")
 

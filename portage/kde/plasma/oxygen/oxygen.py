@@ -1,10 +1,11 @@
 import info
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
 
-    def setDependencies( self ):
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
+
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['frameworks/ki18n'] = 'default'
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
@@ -17,10 +18,9 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['kde/kdecoration'] = 'default'
 
 
-
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

@@ -1,12 +1,13 @@
 import info
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
-        
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
+
         self.shortDescription = "Extra plugins for KIO (thumbnail generators, archives, remote filesystems and more)"
-        
-    def setDependencies( self ):
+
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies['libs/qtbase'] = 'default'
@@ -25,11 +26,14 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies['frameworks/kio'] = 'default'
         self.runtimeDependencies['frameworks/khtml'] = 'default'
         self.runtimeDependencies['frameworks/solid'] = 'default'
+
+
 # Would be nice, but... yeah, pty on windows may happen, but not yet
 #        self.runtimeDependencies['frameworks/kpty'] = 'default'
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
+    def __init__(self):
         CMakePackageBase.__init__(self)

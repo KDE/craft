@@ -11,6 +11,7 @@ from CraftOS.osutils import OsUtils
 
 import multiprocessing
 
+
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
     debug = True
@@ -19,10 +20,9 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = craftSettings.getboolean("Compile","UseCCache", False ) and craftCompiler.isMinGW()
+        self.supportsCCACHE = craftSettings.getboolean("Compile", "UseCCache", False) and craftCompiler.isMinGW()
         self.supportsClang = True
         self.buildSystemType = typeName
-
 
     @property
     def makeProgram(self):
@@ -30,14 +30,14 @@ class BuildSystemBase(CraftBase):
             if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
             if ("Compile", "MakeProgram") in craftSettings:
-                craftDebug.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", "" ))
-                return craftSettings.get("Compile", "MakeProgram", "" )
+                craftDebug.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", ""))
+                return craftSettings.get("Compile", "MakeProgram", "")
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if craftCompiler.isMSVC() or craftCompiler.isIntel() :
+            if craftCompiler.isMSVC() or craftCompiler.isIntel():
                 return "nmake /NOLOGO"
             elif craftCompiler.isMinGW():
                 return "mingw32-make"
@@ -103,25 +103,25 @@ class BuildSystemBase(CraftBase):
         elif OsUtils.isUnix():
             scriptExt = ".sh"
         for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
-            script = os.path.join( self.packageDir(), "post-install-%s.%s" ) % (pkgtype, scriptExt)
-            scriptName = "post-install-%s-%s.%s" % ( self.package, pkgtype, scriptExt )
+            script = os.path.join(self.packageDir(), "post-install-%s.%s") % (pkgtype, scriptExt)
+            scriptName = "post-install-%s-%s.%s" % (self.package, pkgtype, scriptExt)
             # are there any cases there installDir should be honored ?
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
-            if os.path.exists( script ):
-                utils.copyFile( script, destscript )
-            script = os.path.join( self.packageDir(), "post-uninstall-%s.%s" ) % (pkgtype, scriptExt)
-            scriptName = "post-uninstall-%s-%s.%s" % ( self.package, pkgtype, scriptExt )
+            destscript = os.path.join(self.imageDir(), "manifest", scriptName)
+            if not os.path.exists(os.path.join(self.imageDir(), "manifest")):
+                utils.createDir(os.path.join(self.imageDir(), "manifest"))
+            if os.path.exists(script):
+                utils.copyFile(script, destscript)
+            script = os.path.join(self.packageDir(), "post-uninstall-%s.%s") % (pkgtype, scriptExt)
+            scriptName = "post-uninstall-%s-%s.%s" % (self.package, pkgtype, scriptExt)
             # are there any cases there installDir should be honored ?
-            destscript = os.path.join( self.imageDir(), "manifest", scriptName )
-            if not os.path.exists( os.path.join( self.imageDir(), "manifest" ) ):
-                utils.createDir( os.path.join( self.imageDir(), "manifest" ) )
-            if os.path.exists( script ):
-                utils.copyFile( script, destscript )
+            destscript = os.path.join(self.imageDir(), "manifest", scriptName)
+            if not os.path.exists(os.path.join(self.imageDir(), "manifest")):
+                utils.createDir(os.path.join(self.imageDir(), "manifest"))
+            if os.path.exists(script):
+                utils.copyFile(script, destscript)
         return True
 
-    def unittest( self ):
+    def unittest(self):
         """running unittests"""
         return True
 

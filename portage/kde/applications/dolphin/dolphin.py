@@ -2,17 +2,16 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['frameworks/kdoctools'] = 'default'
         self.runtimeDependencies['frameworks/kinit'] = 'default'
         self.runtimeDependencies['frameworks/kcmutils'] = 'default'
         self.runtimeDependencies['frameworks/knewstuff'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons' ] = 'default'
+        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
         self.runtimeDependencies['frameworks/ki18n'] = 'default'
         self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
         self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
@@ -27,14 +26,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/knotifications'] = 'default'
         self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
 
-        
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-
-
-    
-
+    def __init__(self):
+        CMakePackageBase.__init__(self)

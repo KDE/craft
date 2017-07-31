@@ -11,20 +11,18 @@ import CraftTestBase
 import CraftConfig
 import portage
 
-class CraftPortageTest(CraftTestBase.CraftTestBase):
 
+class CraftPortageTest(CraftTestBase.CraftTestBase):
     def portageTest(self, compiler):
         CraftConfig.craftSettings.set("General", "ABI", compiler)
 
-        importlib.reload(portage)#clear cache
+        importlib.reload(portage)  # clear cache
         installable = portage.PortageInstance.getInstallables()
         for _p in installable:
-            portage.PortageInstance.getPackageInstance( _p.category, _p.package)
-
+            portage.PortageInstance.getPackageInstance(_p.category, _p.package)
 
 
 class TestAPI(CraftPortageTest):
-
     def test_mingw_x86(self):
         self.portageTest("windows-mingw_86-gcc")
 

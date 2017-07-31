@@ -3,8 +3,9 @@ from CraftDebug import craftDebug
 
 import datetime
 
+
 class Timer(object):
-    def __init__(self, name, verbosity = 0):
+    def __init__(self, name, verbosity=0):
         self.name = name
         self.__startTime = None
         self.__stopTime = None
@@ -16,12 +17,12 @@ class Timer(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
-        if CraftConfig.craftSettings.getboolean( "CraftDebug", "MeasureTime", False ):
-            craftDebug.step( "Task: %s stopped after: %s" % (self.name , self))
+        if CraftConfig.craftSettings.getboolean("CraftDebug", "MeasureTime", False):
+            craftDebug.step("Task: %s stopped after: %s" % (self.name, self))
 
     def __str__(self):
         out = str(self.duration)
-        return out[:out.rfind(".")]#remove milli seconds
+        return out[:out.rfind(".")]  # remove milli seconds
 
     @property
     def duration(self):

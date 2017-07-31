@@ -2,12 +2,12 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Configuration system for KNotify"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
@@ -17,8 +17,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/kio"] = "default"
         self.runtimeDependencies["frameworks/kservice"] = "default"
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)

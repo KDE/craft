@@ -12,60 +12,61 @@ from Source.VersionSystemSourceBase import *
 
 ## \todo requires installed git package -> add suport for installing packages
 
-class GitSource ( VersionSystemSourceBase ):
+class GitSource(VersionSystemSourceBase):
     """git support"""
+
     def __init__(self, subinfo=None):
         craftDebug.trace('GitSource __init__')
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__( self )
+        VersionSystemSourceBase.__init__(self)
 
-    def __getCurrentBranch( self ):
+    def __getCurrentBranch(self):
         branch = None
-        if os.path.exists( self.checkoutDir() ):
+        if os.path.exists(self.checkoutDir()):
             tmpFile = tempfile.TemporaryFile()
-            self.__git("branch -a", stdout=tmpFile )
+            self.__git("branch -a", stdout=tmpFile)
             # TODO: check return value for success
-            tmpFile.seek( 0 )
+            tmpFile.seek(0)
             for line in tmpFile:
-                line = str(line,"UTF-8")
+                line = str(line, "UTF-8")
                 if line.startswith("*"):
                     branch = line[2:].rstrip()
                     break
         return branch
 
-    def __isLocalBranch( self, branch ):
-        if os.path.exists( self.checkoutDir() ):
+    def __isLocalBranch(self, branch):
+        if os.path.exists(self.checkoutDir()):
             tmpFile = tempfile.TemporaryFile()
-            self.__git("branch", stdout=tmpFile )
+            self.__git("branch", stdout=tmpFile)
             # TODO: check return value for success
-            tmpFile.seek( 0 )
+            tmpFile.seek(0)
             for line in tmpFile:
                 if str(line[2:].rstrip(), "UTF-8") == branch.rstrip():
                     return True
         return False
 
-    def __isTag( self, _tag ):
-        if os.path.exists( self.checkoutDir() ):
+    def __isTag(self, _tag):
+        if os.path.exists(self.checkoutDir()):
             tmpFile = tempfile.TemporaryFile()
-            self.__git("tag", stdout=tmpFile )
+            self.__git("tag", stdout=tmpFile)
             # TODO: check return value for success
-            tmpFile.seek( 0 )
+            tmpFile.seek(0)
             for line in tmpFile:
                 if str(line.rstrip(), "UTF-8") == _tag:
                     return True
         return False
 
-    def __getCurrentRevision( self ):
+    def __getCurrentRevision(self):
         """return the revision returned by git show"""
 
         # run the command
         branch = self.__getCurrentBranch()
-        if not self.__isTag( branch ):
+        if not self.__isTag(branch):
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
             with tempfile.TemporaryFile() as tmpFile:
-                self.__git("show", "--abbrev-commit", stdout=tmpFile )
-                tmpFile.seek( os.SEEK_SET )
+                self.__git("show", "--abbrev-commit", stdout=tmpFile)
+                tmpFile.seek(os.SEEK_SET)
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
                 line = tmpFile.readline()
@@ -82,7 +83,7 @@ class GitSource ( VersionSystemSourceBase ):
             if craftDebug.verbose() < 0:
                 command += ' -q'
             else:
-                kwargs["displayProgress"]  = True
+                kwargs["displayProgress"] = True
                 command += ' --progress'
         parts = ["git", command]
         parts.extend(args)
@@ -119,9 +120,9 @@ class GitSource ( VersionSystemSourceBase ):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
                 if not repoTag:
-                    ret = self.__git("fetch")\
-                            and self.__git("checkout", repoBranch or "master") \
-                            and self.__git("merge")
+                    ret = self.__git("fetch") \
+                          and self.__git("checkout", repoBranch or "master") \
+                          and self.__git("merge")
                     if self.subinfo.options.fetch.checkoutSubmodules:
                         ret = ret and self.__git("submodule update --init --recursive")
             else:
@@ -150,41 +151,40 @@ class GitSource ( VersionSystemSourceBase ):
                     ret = self.__git('checkout', repoTag)
         return ret
 
-
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
         craftDebug.trace('GitSource ')
         if fileName:
-            patchfile = os.path.join ( self.packageDir(), fileName )
+            patchfile = os.path.join(self.packageDir(), fileName)
             sourceDir = self.sourceDir()
-            #FIXME this reverts previously applied patches !
-            #self.__git('checkout', '-f',cwd=sourceDir)
+            # FIXME this reverts previously applied patches !
+            # self.__git('checkout', '-f',cwd=sourceDir)
             sourceDir = self.checkoutDir()
             return self.__git('apply', '--whitespace=fix',
-                    '-p %d' % patchdepth, patchfile, cwd=sourceDir)
+                              '-p %d' % patchdepth, patchfile, cwd=sourceDir)
         return True
 
-    def createPatch( self ):
+    def createPatch(self):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
         craftDebug.trace('GitSource createPatch')
-        patchFileName = os.path.join( self.packageDir(), "%s-%s.patch" % \
-                ( self.package, str( datetime.date.today() ).replace('-', '') ) )
+        patchFileName = os.path.join(self.packageDir(), "%s-%s.patch" % \
+                                     (self.package, str(datetime.date.today()).replace('-', '')))
         craftDebug.log.debug("git diff %s" % patchFileName)
-        with open(patchFileName,'wt+') as patchFile:
+        with open(patchFileName, 'wt+') as patchFile:
             return self.__git('diff', stdout=patchFile)
 
-    def sourceVersion( self ):
+    def sourceVersion(self):
         """print the revision returned by git show"""
         craftDebug.trace('GitSource sourceVersion')
 
         return self.__getCurrentRevision()
 
-    def checkoutDir(self, index=0 ):
+    def checkoutDir(self, index=0):
         craftDebug.trace('GitSource checkoutDir')
-        return VersionSystemSourceBase.checkoutDir( self, index )
+        return VersionSystemSourceBase.checkoutDir(self, index)
 
-    def sourceDir(self, index=0 ):
+    def sourceDir(self, index=0):
         craftDebug.trace('GitSource sourceDir')
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
@@ -197,12 +197,12 @@ class GitSource ( VersionSystemSourceBase ):
         craftDebug.log.debug("using sourcedir: %s" % sourcedir)
         return sourcedir
 
-    def getUrls( self ):
+    def getUrls(self):
         """print the url where to clone from and the branch/tag/hash"""
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
-        repopath = self.repositoryUrl().replace( "[git]", "" )
-        repoString = utils.replaceVCSUrl( repopath )
-        [ repoUrl, repoBranch, repoTag ] = utils.splitVCSUrl( repoString )
+        repopath = self.repositoryUrl().replace("[git]", "")
+        repoString = utils.replaceVCSUrl(repopath)
+        [repoUrl, repoBranch, repoTag] = utils.splitVCSUrl(repoString)
         if not repoBranch and not repoTag:
             repoBranch = "master"
         print('|'.join([repoUrl, repoBranch, repoTag]))
