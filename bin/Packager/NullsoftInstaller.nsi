@@ -4,10 +4,10 @@
 ; Copyright 2016 Kevin Funk <kfunk@kde.org>
 
 ; registry stuff
-!define regkey "Software\${company}\${productname}"
-!define uninstkey "Software\Microsoft\Windows\CurrentVersion\Uninstall\${productname}"
+!define regkey "Software\@{company}\@{productname}"
+!define uninstkey "Software\Microsoft\Windows\CurrentVersion\Uninstall\@{productname}"
 
-!define startmenu "$SMPROGRAMS\${productname}"
+!define startmenu "$SMPROGRAMS\@{productname}"
 !define uninstaller "uninstall.exe"
 
 ;--------------------------------
@@ -18,32 +18,32 @@ ShowUninstDetails hide
 
 SetCompressor /SOLID lzma
 
-Name "${productname}"
-Caption "${productname} ${version}"
+Name "@{productname}"
+Caption "@{productname} @{version}"
 
-OutFile "${setupname}"
+OutFile "@{setupname}"
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
 
 ;!define MUI_ICON
-${icon}
+@{icon}
 ;!define MUI_ICON
 
 !insertmacro MUI_PAGE_WELCOME
 
 ;!insertmacro MUI_PAGE_LICENSE
-${license}
+@{license}
 ;!insertmacro MUI_PAGE_LICENSE
 
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
-;!define MUI_FINISHPAGE_RUN_TEXT "Run ${productname}"
-;!define MUI_FINISHPAGE_RUN "$INSTDIR\${executable}"
+;!define MUI_FINISHPAGE_RUN_TEXT "Run @{productname}"
+;!define MUI_FINISHPAGE_RUN "$INSTDIR\@{executable}"
 !define MUI_FINISHPAGE_LINK "Visit project homepage"
-!define MUI_FINISHPAGE_LINK_LOCATION "${website}"
+!define MUI_FINISHPAGE_LINK_LOCATION "@{website}"
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_LANGUAGE "English"
@@ -53,13 +53,13 @@ SetDatablockOptimize on
 CRCCheck on
 SilentInstall normal
 
-InstallDir "${defaultinstdir}\${productname}"
+InstallDir "@{defaultinstdir}\@{productname}"
 InstallDirRegKey HKLM "${regkey}" "Install_Dir"
 
 Var /global ExistingInstallation
 
 Function .onInit
-!if ${architecture} == "x64"
+!if @{architecture} == "x64"
   ${IfNot} ${RunningX64}
   MessageBox MB_OK|MB_ICONEXCLAMATION "This installer can only be run on 64-bit Windows."
   Abort
@@ -84,12 +84,12 @@ ${IfNot} $ExistingInstallation == ""
 ${EndIf}
   WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "${productname}"
+  WriteRegStr HKLM "${uninstkey}" "DisplayName" "@{productname}"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
-  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\${executable}"
-  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "${website}"
-  WriteRegStr HKLM "${uninstkey}" "Publisher" "${company}"
-  WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "${version}"
+  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\@{executable}"
+  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "@{website}"
+  WriteRegStr HKLM "${uninstkey}" "Publisher" "@{company}"
+  WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "@{version}"
 
   SetOutPath $INSTDIR
 
@@ -97,7 +97,7 @@ ${EndIf}
 ; package all files, recursively, preserving attributes
 ; assume files are in the correct places
 
-File /a /r /x "*.nsi" /x "${setupname}" "${srcdir}\*.*"
+File /a /r /x "*.nsi" /x "@{setupname}" "@{srcdir}\*.*"
 
 WriteUninstaller "${uninstaller}"
 
@@ -108,16 +108,16 @@ Section
 SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
-CreateShortCut "${startmenu}\${productname}.lnk" "$INSTDIR\${executable}"
+CreateShortCut "${startmenu}\@{productname}.lnk" "$INSTDIR\@{executable}"
 CreateShortCut "${startmenu}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-${extrashortcuts}
+@{extrashortcuts}
 SectionEnd
 
 ;post install
 Section
 SetOutPath "$INSTDIR"
-!if "${vcredist}" != "none"
-    File /a /oname=vcredist.exe "${vcredist}"
+!if "@{vcredist}" != "none"
+    File /a /oname=vcredist.exe "@{vcredist}"
     ExecWait '"$INSTDIR\vcredist.exe" /passive /norestart'
 !endif
 ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
@@ -128,7 +128,7 @@ SectionEnd
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
 
-UninstallText "This will uninstall ${productname}."
+UninstallText "This will uninstall @{productname}."
 
 Section "Uninstall"
 SetShellVarContext all
@@ -138,7 +138,7 @@ ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
 
-Delete "${startmenu}\${productname}.lnk"
+Delete "${startmenu}\@{productname}.lnk"
 Delete "${startmenu}\Uninstall.lnk"
 
 RMDir /r "${startmenu}"

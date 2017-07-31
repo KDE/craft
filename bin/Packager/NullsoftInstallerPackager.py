@@ -45,11 +45,14 @@ The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
 if EMERGE_NOCLEAN is given (e.g. because you call craft --update --package Packagename), the
 file collection process is skipped, and only the installer is generated.
 """
+    configPatter = re.compile(r"@{([^{}]+)}")
+
     @InitGuard.init_once
     def __init__( self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__( self, whitelists, blacklists )
         self.nsisExe = None
         self._isInstalled = False
+
 
 
     def _setDefaults(self):
@@ -77,20 +80,20 @@ file collection process is skipped, and only the installer is generated.
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
                 craftDebug.log.critical("could not find installed nsis package, "
-                           "you can install it using craft nsis or"
-                           "download and install it from "
-                           "http://sourceforge.net/projects/nsis/")
+                                        "you can install it using craft nsis or"
+                                        "download and install it from "
+                                        "http://sourceforge.net/projects/nsis/")
+                return False
+        return True
 
     def __isInstalled( self ):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
-        if os.name != 'nt':
-            return False
 
-        # pylint: disable=E0602
-        # if pylint is done on linux, we don't have those toys
         self.nsisExe = utils.utilsCache.findApplication("makensis")
         if self.nsisExe:
             return True
+        if not utils.OsUtils.isWin():
+            return False
         try:
             key = OpenKey( HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ )
             _, nsisPath, _ = EnumValue( key, 0 )#????
@@ -138,16 +141,34 @@ file collection process is skipped, and only the installer is generated.
                 craftDebug.log.critical("Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
+
+    def _configureScript(self):
+        with open(self.scriptname, "rt+") as f:
+            script = f.read()
+        matches = NullsoftInstallerPackager.configPatter.findall(script)
+        if not matches:
+            return self.scriptname
+
+        for match in matches:
+            if not match in self.defines:
+                craftDebug.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
+            script = script.replace(f"@{{{match}}}", self.defines[match])
+
+        outFile = os.path.join(self.workDir(), f"{self.package}.nsi")
+        with open(outFile, "wt+") as f:
+            f.write(script)
+        return outFile
+
+
     def generateNSISInstaller( self ):
         """ runs makensis to generate the installer itself """
 
-        self.isNsisInstalled()
         self._setDefaults()
 
         if not self.defines["icon"] == "":
-            self.defines["icon"] = "!define MUI_ICON \"%s\"" % self.defines["icon"]
+            self.defines["icon"] = "!define MUI_ICON " + self.defines["icon"]
         if not self.defines["license"] == "":
-            self.defines["license"] = "!define MUI_PAGE_LICENSE \"%s\"" % self.defines["license"]
+            self.defines["license"] = "!define MUI_PAGE_LICENSE " + self.defines["license"]
 
 
 
@@ -156,24 +177,27 @@ file collection process is skipped, and only the installer is generated.
             dstpath = self.packageDestinationDir()
             self.defines[ "setupname" ] = os.path.join( dstpath, self.defines[ "setupname" ] )
 
-        defines = []
-        for key, value in self.defines.items():
-            if value is not None:
-                defines.append(f"/D{key}={value}")
-
         craftDebug.new_line()
         craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
 
         verboseString = "/V4" if craftDebug.verbose() > 0 else "/V3"
 
-        if self.isNsisInstalled:
-            if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [self.scriptname],
-                                             cwd = os.path.abspath( self.packageDir() ) ):
-                craftDebug.log.critical("Error in makensis execution")
+        defines = []
+        scriptName = self._configureScript()
+        if scriptName == self.scriptname:
+            # this script uses the old behaviour, using defines
+            for key, value in self.defines.items():
+                if value is not None:
+                    defines.append(f"/D{key}={value}")
+
+        if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [scriptName],
+                                        cwd = os.path.abspath( self.packageDir() ) ):
+            craftDebug.log.critical("Error in makensis execution")
 
     def createPackage( self ):
         """ create a package """
-        self.isNsisInstalled()
+        if not self.isNsisInstalled():
+            return False
 
         craftDebug.log.debug("packaging using the NullsoftInstallerPackager")
 
