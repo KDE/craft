@@ -168,7 +168,7 @@ file collection process is skipped, and only the installer is generated.
         if not self.defines["icon"] == "":
             self.defines["icon"] = f"""!define MUI_ICON "{self.defines["icon"]}" """
         if not self.defines["license"] == "":
-            self.defines["license"] = f"""!define MUI_PAGE_LICENSE "{self.defines["license"]}" """
+            self.defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{self.defines["license"]}" """
 
 
 
