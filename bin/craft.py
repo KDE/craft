@@ -168,9 +168,8 @@ def handlePackage(category, packageName, buildAction, continueFlag, skipUpToDate
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
 
         timer.stop()
-        utils.notify("Craft %s %s" % (buildAction, "succeeded" if success else "failed"),
-                     "%s of %s/%s %s after %s" % (
-                     buildAction, category, packageName, "succeeded" if success else "failed", timer), buildAction)
+        utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}",
+                     f"{package} after {timer}", buildAction)
         return success
 
 

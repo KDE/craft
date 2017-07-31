@@ -19,10 +19,9 @@ class Snore(NotificationInterface):
             snore = utilsCache.findApplication("snoresend")
             if not snore:
                 return
-            command = """%s -t "%s" -m "%s" -i "%s" -a "Craft" -c "%s" --silent """ % (
-            snore, title, message, self.icon, alertClass)
+            command = f"""{snore} -t "{title}" -m "{message}" -i "{self.icon}" -a "Craft" -c "{alertClass}" --silent """
             if OsUtils.isWin():
-                command += " --bring-window-to-front %s" % ctypes.windll.kernel32.GetConsoleWindow()
+                command += f" --bring-window-to-front {ctypes.windll.kernel32.GetConsoleWindow()}"
             CraftDebug.craftDebug.log.debug(command)
             subprocess.Popen(command,
                              shell=True,

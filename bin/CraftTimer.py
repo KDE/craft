@@ -18,11 +18,22 @@ class Timer(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
         if CraftConfig.craftSettings.getboolean("CraftDebug", "MeasureTime", False):
-            craftDebug.step("Task: %s stopped after: %s" % (self.name, self))
+            craftDebug.step(f"Task: {self.name} stopped after: {self}")
 
     def __str__(self):
-        out = str(self.duration)
-        return out[:out.rfind(".")]  # remove milli seconds
+        minutes, seconds = divmod(self.duration.total_seconds(), 60)
+        hours, _ = divmod(minutes, 60)
+        def format(time, string):
+            time = int(time)
+            s = "s" if time != 1 else ""
+            return f"{time} {string}{s}"
+        out = []
+        if hours:
+            out.append(format(hours, "hours"))
+        if minutes:
+            out.append(format(minutes, "minute"))
+        out.append(format(seconds, "second"))
+        return " ".join(out)
 
     @property
     def duration(self):

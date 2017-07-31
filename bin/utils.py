@@ -890,7 +890,7 @@ def prependPath(*parts):
 
 
 def notify(title, message, alertClass=None):
-    craftDebug.step("%s: %s" % (title, message))
+    craftDebug.step(f"{title}: {message}")
     backends = craftSettings.get("General", "Notify", "")
     if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
