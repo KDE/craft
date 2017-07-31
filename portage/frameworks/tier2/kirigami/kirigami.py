@@ -3,13 +3,10 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        # The master target will (currently) build Kirigami's 2.x work.
-        # We need the release version, at least until 2.x has had an
-        # official release, and as such we set the detault to 1.1
-        for ver in ["1.0.0", "1.0.1", "1.0.2", "1.1.0"]:
-            self.targets[ver] = "http://download.kde.org/stable/kirigami/kirigami-" + ver + ".tar.xz"
-            self.targetInstSrc[ ver ] = 'kirigami-' + ver
-        self.defaultTarget = "1.1.0"
+        for ver in ["2.2.0"]:
+            self.targets[ver] = "http://download.kde.org/stable/kirigami/kirigami2-" + ver + ".tar.xz"
+            self.targetInstSrc[ ver ] = f"kirigami2-{ver}"
+        self.defaultTarget = "2.2.0"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
@@ -22,4 +19,3 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.configure.args = '-DDESKTOP_ENABLED=ON '
