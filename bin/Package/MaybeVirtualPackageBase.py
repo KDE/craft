@@ -20,21 +20,21 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
         self.checkVersion = version
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
 
-        # override the install method
-        def install():
-            if not self.skipCondition:
+        if not self.skipCondition:
+            # override the install method
+            def install():
                 craftDebug.log.info(
                     f"Skipping installation of {self} as the installed version is >= {self.checkVersion}")
-            return self.baseClass.install(self)
+                return self.baseClass.install(self)
 
-        def sourceRevision():
-            return "system-installation: " + utils.utilsCache.findApplication(app)
+            def sourceRevision():
+                return "system-installation: " + utils.utilsCache.findApplication(app)
 
-        def version(self):
-            return str(appVersion)
+            def version(self):
+                return str(appVersion)
 
-        setattr(self, "install", install)
-        setattr(self, "sourceRevision", sourceRevision)
-        setattr(self.__class__, "version", property(version))
+            setattr(self, "install", install)
+            setattr(self, "sourceRevision", sourceRevision)
+            setattr(self.__class__, "version", property(version))
 
 

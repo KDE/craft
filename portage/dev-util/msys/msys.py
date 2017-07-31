@@ -83,10 +83,10 @@ class Package(MaybeVirtualPackageBase):
         self.skipCondition = ("Paths", "Msys") not in craftSettings
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=MsysPackage, classB=VirtualPackage)
 
-        # override the install method
-        def install():
-            if not self.skipCondition:
+        if not self.skipCondition:
+            # override the install method
+            def install():
                 craftDebug.log.info(f"Using manually installed msys {CraftStandardDirs.msysDir()}")
-            return self.baseClass.install(self)
-        setattr(self, "install", install)
+                return self.baseClass.install(self)
+            setattr(self, "install", install)
 

@@ -23,10 +23,10 @@ class Qt5CoreSdkPackageBase(MaybeVirtualPackageBase):
         sdkNotEnabled = not craftSettings.getboolean("QtSDK", "Enabled", False)
         MaybeVirtualPackageBase.__init__(self, condition and sdkNotEnabled, classA=classA)
 
-        # override the install method
-        def install():
-            if not sdkNotEnabled:
+        if not sdkNotEnabled:
+            # override the install method
+            def install():
                 craftDebug.log.info(f"Skip installation of {self} as [QtSdk]Enabled=True")
-            return self.baseClass.install(self)
+                return self.baseClass.install(self)
 
-        setattr(self, "install", install)
+            setattr(self, "install", install)
