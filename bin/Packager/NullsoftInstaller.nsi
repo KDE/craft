@@ -40,8 +40,8 @@ ${license}
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
-!define MUI_FINISHPAGE_RUN_TEXT "Run ${productname}"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\${executable}"
+;!define MUI_FINISHPAGE_RUN_TEXT "Run ${productname}"
+;!define MUI_FINISHPAGE_RUN "$INSTDIR\${executable}"
 !define MUI_FINISHPAGE_LINK "Visit project homepage"
 !define MUI_FINISHPAGE_LINK_LOCATION "${website}"
 !insertmacro MUI_PAGE_FINISH
