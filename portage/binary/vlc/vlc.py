@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         vlcTagName = "3.0.0"
 
 
-        for ver in utils.utilsCache.getNightlyVersionsFromUrl(vlcBaseUrl, "\d\d\d\d\d\d\d\d-\d\d\d\d"):
+        for ver in utils.utilsCache.getNightlyVersionsFromUrl(vlcBaseUrl, r"\d\d\d\d\d\d\d\d-\d\d\d\d"):
             self.targets[ vlcTagName + "-git" ]  =  "%svlc-%s-%s-git-win%s.7z" % (vlcBaseUrl, vlcTagName, ver, vlcArch  )
             self.targetInstSrc[ vlcTagName + "-git" ] = "vlc-%s-git" % (vlcTagName)
             self.patchToApply[ vlcTagName  + "-git" ] = [("vlc-2.1.5.diff" ,1)]
@@ -26,14 +26,14 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ vlcTagName + "-debug-git" ] = "vlc-%s-git" % (vlcTagName)
             self.patchToApply[ vlcTagName + "-debug-git" ] = [("vlc-2.1.5.diff" ,1)]
 
-        for releaseTag in [ "2.2.0", "2.2.1", "2.2.4" ]:
+        for releaseTag in [ "2.2.0", "2.2.1", "2.2.4", "2.2.6" ]:
             self.targets[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z" % ( releaseTag ,vlcArch,releaseTag , vlcArch )
             self.targetInstSrc[ releaseTag ] = "vlc-" + releaseTag
             self.targetDigestUrls[ releaseTag ] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z.sha1" % ( releaseTag ,vlcArch,releaseTag , vlcArch )
             self.patchToApply[ releaseTag ] = [("vlc-2.1.5.diff" ,1)]
         self.shortDescription = "an open-source multimedia framework"
 
-        self.defaultTarget = "2.2.4"
+        self.defaultTarget = "2.2.6"
 
 
     def setDependencies( self ):
