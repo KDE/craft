@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import info
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):
@@ -16,7 +15,6 @@ class subinfo(info.infoclass):
 
 
 from Package.AutoToolsPackageBase import *
-from Package.VirtualPackageBase import *
 
 
 class Package(AutoToolsPackageBase):

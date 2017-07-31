@@ -1,10 +1,10 @@
 import re
 
 import CraftTimer
-from CraftDebug import craftDebug
+import InstallDB
 import portage
 import utils
-import InstallDB
+from CraftDebug import craftDebug
 from CraftVersion import CraftVersion
 
 

@@ -1,7 +1,7 @@
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BuildSystemBase import *
+from Package.PackageBase import *
 from Packager.PackagerBase import *
+from Source.MultiSource import *
 
 
 class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):

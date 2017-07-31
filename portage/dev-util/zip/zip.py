@@ -1,5 +1,5 @@
-from Package.BinaryPackageBase import *
 import info
+from Package.BinaryPackageBase import *
 
 
 class subinfo(info.infoclass):

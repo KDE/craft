@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
 
-import utils
 import info
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

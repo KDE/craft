@@ -4,14 +4,8 @@
 
 """@package provides cmake build system"""
 
-import os
-
-from CraftDebug import craftDebug
-import utils
-from BuildSystem.CMakeDependencies import *
 from BuildSystem.BuildSystemBase import *
 from CraftCompiler import craftCompiler
-import utils
 from CraftOS.osutils import OsUtils
 
 

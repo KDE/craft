@@ -3,14 +3,13 @@
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
 
-import sys
-import subprocess
+import atexit
 import configparser
 import os
 import platform
 import re
-
-import atexit
+import subprocess
+import sys
 
 craftSettings = None
 

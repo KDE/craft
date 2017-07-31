@@ -1,5 +1,4 @@
 import info
-from CraftConfig import *
 
 
 class subinfo(info.infoclass):

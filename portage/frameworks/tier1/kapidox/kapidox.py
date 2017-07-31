@@ -1,6 +1,4 @@
-from CraftDebug import craftDebug
 import info
-import shutil
 
 
 class subinfo(info.infoclass):

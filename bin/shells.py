@@ -4,11 +4,6 @@
     provides shells
 """
 
-import os
-import sys
-
-from CraftDebug import craftDebug
-import utils
 from CraftCompiler import craftCompiler
 from options import *
 

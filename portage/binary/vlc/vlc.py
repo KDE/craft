@@ -1,10 +1,7 @@
 import shutil
-import os
-import re
 
-from Package.BinaryPackageBase import *
 import info
-from CraftCompiler import craftCompiler
+from Package.BinaryPackageBase import *
 
 
 class subinfo(info.infoclass):

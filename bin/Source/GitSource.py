@@ -6,7 +6,6 @@
 
 import tempfile
 
-from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
 

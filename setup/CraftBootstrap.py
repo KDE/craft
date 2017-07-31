@@ -1,12 +1,12 @@
 import argparse
 import os
-import sys
+import platform
 import re
+import shutil
 import subprocess
+import sys
 import urllib.parse
 import urllib.request
-import shutil
-import platform
 
 
 class CraftBootstrap(object):

@@ -1,11 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from functools import partial
-from types import FunctionType
 
-from CraftDebug import craftDebug
-import utils
 from Source.ArchiveSource import ArchiveSource
 from Source.GitSource import GitSource
 from Source.HgSource import HgSource

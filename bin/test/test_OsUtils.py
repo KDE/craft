@@ -1,8 +1,8 @@
-import unittest
 import tempfile
+import unittest
 
-from CraftDebug import craftDebug
 import CraftTestBase
+
 from CraftOS.osutils import OsUtils
 
 

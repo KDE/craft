@@ -3,15 +3,13 @@
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
 
-import subprocess
 import argparse
 import collections
-
 import shutil
 
+from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
-from CraftCompiler import craftCompiler
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement

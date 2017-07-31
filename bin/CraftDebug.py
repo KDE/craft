@@ -1,12 +1,11 @@
+import functools
 import inspect
-import os
-import re
-import sys
 import logging
 import logging.handlers
-import functools
-
+import os
+import re
 import shutil
+import sys
 
 from CraftConfig import craftSettings, CraftStandardDirs
 

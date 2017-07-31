@@ -1,7 +1,6 @@
-from CraftDebug import craftDebug
-from BuildSystem.BuildSystemBase import *
-
 import shutil
+
+from BuildSystem.BuildSystemBase import *
 
 
 class PipBuildSystem(BuildSystemBase):

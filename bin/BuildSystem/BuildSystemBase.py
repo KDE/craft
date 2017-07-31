@@ -3,13 +3,11 @@
 #
 
 """ \package BuildSystemBase"""
-from CraftDebug import craftDebug
+import multiprocessing
+
 from CraftBase import *
 from CraftCompiler import craftCompiler
-
 from CraftOS.osutils import OsUtils
-
-import multiprocessing
 
 
 class BuildSystemBase(CraftBase):

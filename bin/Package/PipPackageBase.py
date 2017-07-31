@@ -1,8 +1,7 @@
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.SourceBase import *
 from BuildSystem.PipBuildSystem import *
+from Package.PackageBase import *
 from Packager.PackagerBase import *
+from Source.SourceBase import *
 
 
 class PipPackageBase(PackageBase, SourceBase, PipBuildSystem, PackagerBase):

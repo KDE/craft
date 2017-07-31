@@ -2,11 +2,10 @@
 # this package contains functions to check the current compiler
 # copyright:
 # Hannah von Reth <vonreth@kde.org>
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BoostBuildSystem import *
+from Package.PackageBase import *
 from Packager.TypePackager import *
+from Source.MultiSource import *
 
 
 class BoostPackageBase(PackageBase, MultiSource, BoostBuildSystem, TypePackager):

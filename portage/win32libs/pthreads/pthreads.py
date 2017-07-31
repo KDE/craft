@@ -1,4 +1,3 @@
-from CraftCompiler import craftCompiler
 import info
 
 

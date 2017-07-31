@@ -1,8 +1,6 @@
 #
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
-from CraftDebug import craftDebug
-from Packager.PackagerBase import *
 
 from Packager.InnoSetupPackager import *
 from Packager.MSIFragmentPackager import *

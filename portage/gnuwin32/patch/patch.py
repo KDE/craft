@@ -1,8 +1,4 @@
-import os
-
 import info
-import utils
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

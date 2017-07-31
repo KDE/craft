@@ -1,7 +1,7 @@
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.MSBuildBuildSystem import *
+from Package.PackageBase import *
 from Packager.TypePackager import *
+from Source.MultiSource import *
 
 
 class MSBuildPackageBase(PackageBase, MultiSource, MSBuildBuildSystem, TypePackager):

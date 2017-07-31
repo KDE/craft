@@ -2,9 +2,8 @@
 #  @brief contains portage tree related functions
 #  @note this file should replace all other related portage related files
 import builtins
-import importlib
-
 import datetime
+import importlib
 
 import InstallDB
 import utils

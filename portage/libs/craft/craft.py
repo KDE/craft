@@ -1,5 +1,4 @@
 import info
-from Package import VirtualPackageBase
 
 
 class subinfo(info.infoclass):

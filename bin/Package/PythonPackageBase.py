@@ -1,11 +1,10 @@
 #
 # copyright (c) 2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BuildSystemBase import *
+from Package.PackageBase import *
 from Packager.PackagerBase import *
+from Source.MultiSource import *
 
 
 class PythonPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
@@ -22,7 +21,7 @@ class PythonPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase)
         return True
 
     def unmerge(self):
-        # setup.py do not support uninstalling 
+        # setup.py do not support uninstalling
         print("not supported yet")
         # we do not want to break unmerging other packages
         return True

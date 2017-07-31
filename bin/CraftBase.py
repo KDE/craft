@@ -1,19 +1,14 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import inspect
-import os
-import sys
 import datetime
-from ctypes import *
-
 import functools
 
-from CraftDebug import craftDebug
 import portage
+import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
-import utils
+from CraftDebug import craftDebug
 
 
 ## @todo complete a release and binary merge dir below rootdir

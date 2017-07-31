@@ -1,7 +1,4 @@
-import os
-
 import info
-from CraftCompiler import craftCompiler
 from Package.BinaryPackageBase import *
 
 

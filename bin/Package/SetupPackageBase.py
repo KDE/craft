@@ -1,11 +1,10 @@
 #
 # copyright (c) 2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BuildSystemBase import *
+from Package.PackageBase import *
 from Packager.PackagerBase import *
+from Source.MultiSource import *
 
 
 class SetupPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
 
 import info
-from CraftCompiler import craftCompiler
 from Package.CMakePackageBase import *
 
 

@@ -1,11 +1,10 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.CMakeBuildSystem import *
+from Package.PackageBase import *
 from Packager.TypePackager import *
+from Source.MultiSource import *
 
 
 class CMakePackageBase(PackageBase, MultiSource, CMakeBuildSystem, TypePackager):

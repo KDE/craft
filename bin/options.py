@@ -30,14 +30,11 @@
 #
 #  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
-import os
-import inspect
-import shlex
 
-from CraftDebug import craftDebug, deprecated
-from CraftConfig import *
-import utils
 import portage
+import utils
+from CraftConfig import *
+from CraftDebug import craftDebug
 
 
 class OptionsBase(object):

@@ -1,12 +1,8 @@
-import os
 import sqlite3
-import threading
 
-from CraftDebug import craftDebug
-from CraftConfig import *
-
-import utils
 import portage
+from CraftConfig import *
+from CraftDebug import craftDebug
 
 
 class InstallPackage(object):

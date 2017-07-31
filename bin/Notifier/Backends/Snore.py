@@ -1,11 +1,10 @@
+import ctypes
 import os
 import subprocess
-import ctypes
+
 import CraftConfig
 import CraftDebug
-
 from CraftOS.osutils import OsUtils
-
 from Notifier.NotificationInterface import *
 from utils import utilsCache
 

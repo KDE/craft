@@ -8,11 +8,7 @@ import os
 if os.name == 'nt':
     from winreg import *  # pylint: disable=F0401
 
-from CraftDebug import craftDebug
 import CraftHash
-import utils
-import shutil
-import glob
 from Packager.CollectionPackagerBase import *
 
 

@@ -1,5 +1,4 @@
 import info
-from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class subinfo(info.infoclass):
@@ -16,7 +15,6 @@ class subinfo(info.infoclass):
 
 
 from Package.BinaryPackageBase import *
-from CraftCompiler import craftCompiler
 
 
 class PackageMinGW(BinaryPackageBase):

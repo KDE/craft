@@ -1,5 +1,4 @@
 from Package.SourceOnlyPackageBase import *
-import portage
 
 
 class VirtualPackageBase(SourceOnlyPackageBase):

@@ -1,8 +1,8 @@
+import os
+import shutil
+
 import CraftOS.OsUtilsBase
 from CraftDebug import craftDebug
-import shutil
-import os
-import sys
 
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):

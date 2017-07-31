@@ -1,7 +1,7 @@
-from enum import Enum
-import os
 import hashlib
+import os
 import re
+from enum import Enum
 
 from CraftDebug import craftDebug
 

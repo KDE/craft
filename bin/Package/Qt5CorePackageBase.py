@@ -1,12 +1,9 @@
 #
 # copyright (c) 2012 Hannah von Reth <vonreth@kde.org>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.Qt5CoreBuildSystem import *
-from Packager.TypePackager import *
 from Package.MaybeVirtualPackageBase import *
+from Packager.TypePackager import *
 
 
 class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):

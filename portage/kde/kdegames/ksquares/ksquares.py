@@ -1,6 +1,4 @@
 import info
-from CraftConfig import *
-from CraftOS.osutils import OsUtils
 
 
 class subinfo(info.infoclass):

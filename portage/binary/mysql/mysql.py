@@ -1,8 +1,7 @@
 import shutil
-import os
 
-from Package.BinaryPackageBase import *
 import info
+from Package.BinaryPackageBase import *
 
 
 # currently only needed from kdenetwork

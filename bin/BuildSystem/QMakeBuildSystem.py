@@ -2,11 +2,6 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
-from CraftDebug import craftDebug
-import utils
-from CraftCompiler import craftCompiler
-
-from CraftOS.osutils import OsUtils
 
 from BuildSystem.BuildSystemBase import *
 from CraftVersion import CraftVersion

@@ -7,15 +7,15 @@
 # This packager is in an experimental state - the implementation
 # and features may change in further versions
 
+import json
+
 # TODO:
 # - password support
 # - self extraction archives
 #
 #
-from CraftDebug import craftDebug
 import CraftHash
 from Packager.PackagerBase import *
-import json
 
 
 class SevenZipPackager(PackagerBase):

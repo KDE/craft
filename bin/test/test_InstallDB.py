@@ -34,12 +34,11 @@
 """ Functional tests for InstallDB """
 
 import os
-import sys
-import unittest
 
-import InstallDB
-import CraftConfig
 import CraftTestBase
+
+import CraftConfig
+import InstallDB
 
 
 class DatabaseTest(CraftTestBase.CraftTestBase):

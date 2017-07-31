@@ -1,7 +1,7 @@
+import datetime
+
 import CraftConfig
 from CraftDebug import craftDebug
-
-import datetime
 
 
 class Timer(object):

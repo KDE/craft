@@ -15,7 +15,6 @@ class subinfo(info.infoclass):
 
 
 from Package.VirtualPackageBase import *
-from Source.SourceBase import *
 
 
 class Package(VirtualPackageBase):

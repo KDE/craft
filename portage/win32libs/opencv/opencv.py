@@ -1,8 +1,5 @@
-import os
-
 import info
 from Package.CMakePackageBase import *
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

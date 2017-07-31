@@ -1,13 +1,11 @@
 # copyright (c) 2011 Patrick Spendrin <ps_ml@gmx.de>
 
-import uuid
-from xml.dom.minidom import Document
 import hashlib
-from string import Template
+import uuid
 from io import StringIO
-import re
+from string import Template
+from xml.dom.minidom import Document
 
-from CraftDebug import craftDebug
 from .CollectionPackagerBase import *
 
 

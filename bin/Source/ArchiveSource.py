@@ -2,12 +2,10 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-import os
 import shutil
 
-from CraftDebug import craftDebug
-from Source.SourceBase import *
 import CraftHash
+from Source.SourceBase import *
 
 
 class ArchiveSource(SourceBase):

@@ -1,5 +1,4 @@
 import info
-from CraftVersion import CraftVersion
 from Package.MaybeVirtualPackageBase import *
 
 

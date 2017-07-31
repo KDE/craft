@@ -1,5 +1,3 @@
-import os
-import subprocess
 import info
 from CraftOS.osutils import OsUtils
 

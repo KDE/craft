@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from CraftDebug import craftDebug
 import info
 
 

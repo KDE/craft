@@ -1,6 +1,6 @@
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 
 import CraftConfig
 from CraftDebug import craftDebug

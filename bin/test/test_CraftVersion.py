@@ -1,15 +1,5 @@
-import os
-import sys
-import unittest
-import random
-import tempfile
-import contextlib
-import importlib
-
-from CraftDebug import craftDebug
 import CraftTestBase
-import CraftConfig
-import portage
+
 from CraftVersion import *
 
 

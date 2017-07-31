@@ -1,11 +1,10 @@
 #
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.AutoToolsBuildSystem import *
+from Package.PackageBase import *
 from Packager.TypePackager import *
+from Source.MultiSource import *
 
 
 class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):

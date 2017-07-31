@@ -1,14 +1,12 @@
-import os
-import sys
-import unittest
-import random
-import tempfile
 import contextlib
 import io
-import collections
-import CraftHash
-from CraftDebug import craftDebug
+import os
+import random
+import tempfile
+
 import CraftTestBase
+
+import CraftHash
 
 
 class CraftHashTest(CraftTestBase.CraftTestBase):

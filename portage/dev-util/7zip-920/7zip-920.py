@@ -1,7 +1,4 @@
-from multiprocessing import sharedctypes
-
 import info
-from CraftVersion import CraftVersion
 from Package.MaybeVirtualPackageBase import *
 
 

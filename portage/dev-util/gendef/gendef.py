@@ -1,5 +1,4 @@
 import info
-from shells import *
 
 
 class subinfo(info.infoclass):

@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-import subprocess
-import tempfile
 
-from CraftDebug import craftDebug
 import info
-import utils
 from Package.MaybeVirtualPackageBase import *
-from Package.VirtualPackageBase import *
 
 
 class subinfo(info.infoclass):

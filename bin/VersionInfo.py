@@ -2,9 +2,8 @@
 # this package contains functions to easily set versions for packages like qt5 or kde
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
-from CraftDebug import craftDebug
 from CraftConfig import *
-import utils
+from CraftDebug import craftDebug
 
 
 class VersionInfo(object):

@@ -7,12 +7,10 @@
 # the definition
 
 import datetime
-import os
-import utils
-from CraftCompiler import craftCompiler
-from options import *
-import VersionInfo
+
 import CraftHash
+import VersionInfo
+from options import *
 
 
 class infoclass(object):

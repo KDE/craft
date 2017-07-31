@@ -1,10 +1,6 @@
-import os
-import re
 import shutil
 
-import utils
 import info
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

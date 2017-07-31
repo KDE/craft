@@ -10,27 +10,23 @@
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
 
-import sys
-
-import CraftDependencies
-from CraftDebug import craftDebug
-import CraftTimer
-
-import time
-import datetime
-import traceback
 import argparse
 import collections
 import copy
+import datetime
+import threading
+import time
 
-from CraftCompiler import craftCompiler
-import portageSearch
+import CraftDependencies
+import CraftSetupHelper
+import CraftTimer
 import InstallDB
 import portage
+import portageSearch
 import utils
-import threading
+from CraftCompiler import craftCompiler
 from CraftConfig import *
-import CraftSetupHelper
+from CraftDebug import craftDebug
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()

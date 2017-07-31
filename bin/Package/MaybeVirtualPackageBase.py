@@ -1,4 +1,3 @@
-import utils
 from CraftVersion import CraftVersion
 from Package.VirtualPackageBase import *
 

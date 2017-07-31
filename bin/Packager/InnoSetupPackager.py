@@ -2,7 +2,6 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
-from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
 

@@ -2,13 +2,11 @@
 # copyright (c) 2010-2011 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-import shutil
-import re
-import types
 import fileinput
+import shutil
+import types
 
-from CraftDependencies import DependencyType, DependencyPackage
-from CraftDebug import craftDebug
+from CraftDependencies import DependencyType
 from Packager.PackagerBase import *
 
 

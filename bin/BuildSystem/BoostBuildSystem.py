@@ -5,12 +5,8 @@
 
 """@package provides boost build system"""
 
-import os
-
-from CraftDebug import craftDebug
-import utils
-from CraftOS.osutils import OsUtils
 from BuildSystem.BuildSystemBase import *
+from CraftOS.osutils import OsUtils
 
 
 class BoostBuildSystem(BuildSystemBase):

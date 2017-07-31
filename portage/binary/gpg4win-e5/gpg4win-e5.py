@@ -14,9 +14,8 @@
 
 import glob
 
-from Package.CMakePackageBase import *
 import info
-from CraftCompiler import craftCompiler
+from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):

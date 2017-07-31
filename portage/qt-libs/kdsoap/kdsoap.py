@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
 
 import info
-from Package.Qt5CorePackageBase import *
-
 from CraftOS.osutils import OsUtils
+from Package.Qt5CorePackageBase import *
 
 
 class subinfo(info.infoclass):

@@ -1,9 +1,9 @@
+import ctypes
+import os
 import platform
 
 import CraftOS.OsUtilsBase
 from CraftDebug import craftDebug
-import ctypes
-import os
 
 
 class FileAttributes():

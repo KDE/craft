@@ -1,10 +1,6 @@
-import os
-
 import info
 
-from Package.AutoToolsPackageBase import *
 from Package.MSBuildPackageBase import MSBuildPackageBase
-from Package.PackageBase import *
 
 
 class subinfo(info.infoclass):

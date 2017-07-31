@@ -2,13 +2,11 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import CraftDependencies
-from CraftDebug import craftDebug
 import CraftHash
 from CraftBase import *
-from InstallDB import *
 from CraftCompiler import *
-
 from CraftOS.osutils import OsUtils
+from InstallDB import *
 
 
 class PackageBase(CraftBase):

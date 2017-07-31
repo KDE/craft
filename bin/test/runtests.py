@@ -35,17 +35,15 @@ Main entry point for the craft test suite.
 Just run this file as a python script to execute all tests
 """
 
+import optparse
 import os
 import sys
 import unittest
-import optparse
-from asyncio import log
 
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
 from CraftDebug import craftDebug
-import CraftConfig
 
 
 def main():

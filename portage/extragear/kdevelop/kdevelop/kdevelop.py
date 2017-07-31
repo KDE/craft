@@ -1,5 +1,6 @@
-import info
 from distutils.dir_util import mkpath
+
+import info
 
 
 class subinfo(info.infoclass):

@@ -1,7 +1,7 @@
-import info
 import glob
-import os
 from xml.etree import ElementTree as et
+
+import info
 
 
 class subinfo(info.infoclass):

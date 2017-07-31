@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import tempfile
 from distutils.version import StrictVersion
 
 import info
-import utils
 
 
 class subinfo(info.infoclass):

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from CraftDebug import craftDebug
-
 
 class PackageObjectBase(object):
     PortageInstance = None

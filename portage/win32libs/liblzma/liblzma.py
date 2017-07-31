@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
-import shutil
-
 import info
-from CraftCompiler import craftCompiler
 
 
 class subinfo(info.infoclass):

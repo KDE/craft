@@ -14,8 +14,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["virtual/base"] = "default"
 
 
-from Package.BinaryPackageBase import *
-
 from Package.CMakePackageBase import *
 
 

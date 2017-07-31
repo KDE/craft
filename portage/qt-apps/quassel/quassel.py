@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
 
 import info
-from Package.CMakePackageBase import *
-
 from CraftOS.osutils import OsUtils
+from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):

@@ -2,7 +2,6 @@
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
 # mercurial support based on the git support
-from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
 

@@ -8,29 +8,21 @@ this file contains some helper functions for craft
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
-import configparser
-import io
-import shlex
-import time
-import ftplib
-import http.client
 import inspect
+import io
+import json
 import pickle
+import shlex
 import shutil
-import tarfile
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import zipfile
-from operator import itemgetter
-import atexit
-import json
 
-from CraftDebug import craftDebug
 import Notifier.NotificationLoader
 from CraftConfig import *
+from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
-
 # TODO: Rename
 from CraftVersion import CraftVersion
 
