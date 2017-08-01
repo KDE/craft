@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[v] = 'libarchive-' + v
         self.targetDigests['2.8.4'] = 'b9cc3bbd20bd71f996be9ec738f19fda8653f7af'
         self.patchToApply['2.8.4'] = ("libarchive-2.8.4-20101205.diff", 1)
+        self.patchToApply['3.3.1'] = ("libarchive-no-fatal-warnings-in-debug-mode.diff", 1)
         self.shortDescription = "C library and command-line tools for reading and writing tar, cpio, zip, ISO, and other archive formats"
         self.defaultTarget = '3.3.1'
 
