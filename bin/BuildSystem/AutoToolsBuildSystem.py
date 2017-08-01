@@ -43,7 +43,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment[
             "CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
-        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap == True:
+        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)
