@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 import CraftOS.OsUtilsBase
 from CraftDebug import craftDebug
@@ -36,7 +37,8 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def setConsoleTitle(title):
-        # TODO: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html
-        # sys.stdout.write( "\033]2;%s\007" % title)
-        # sys.stdout.flush()
+        sys.stdout.buffer.write(b"\x1b]0;")
+        sys.stdout.buffer.write(bytes(title, "UTF-8"))
+        sys.stdout.buffer.write(b"\x07")
+        sys.stdout.flush()
         return True
