@@ -1,0 +1,21 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' gpgme-1.9.0.orig/Makefile.in gpgme-1.9.0/Makefile.in
+--- gpgme-1.9.0.orig/Makefile.in	2017-03-28 16:25:45.000000000 +0200
++++ gpgme-1.9.0/Makefile.in	2017-08-01 22:20:04.885861700 +0200
+@@ -189,7 +189,7 @@
+ ETAGS = etags
+ CTAGS = ctags
+ CSCOPE = cscope
+-DIST_SUBDIRS = src tests doc lang
++DIST_SUBDIRS = src tests lang
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ distdir = $(PACKAGE)-$(VERSION)
+ top_distdir = $(distdir)
+@@ -434,7 +434,7 @@
+ 
+ @RUN_GPG_TESTS_FALSE@tests = 
+ @RUN_GPG_TESTS_TRUE@tests = tests
+-SUBDIRS = src ${tests} doc lang
++SUBDIRS = src ${tests} lang
+ gen_start_date = 2011-12-01T00:00:00
+ all: config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
