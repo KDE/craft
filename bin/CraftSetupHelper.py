@@ -203,7 +203,8 @@ class SetupHelper(object):
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugin")
                                             ])
 
-        self.prependPath("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
+        self.prependPath("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "qml"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
                                               os.path.join(CraftStandardDirs.craftRoot(), "lib64", "qml"),
                                               os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
                                                            "qml")
