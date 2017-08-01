@@ -3,8 +3,11 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ["5.4.0"]:
-            self.targets[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/runtime-{craftCompiler.architecture}-{ver}-mingw-w64.7z"
+        arch = "32"
+        if craftCompiler.isX64():
+            arch = "64"
+        for ver in ["7.1.0"]:
+            self.targets[ ver ] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/runtime-{ver}-windows-mingw_{arch}-gcc.7z"
             #self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/runtime-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
 
 
