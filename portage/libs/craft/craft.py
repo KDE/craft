@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "[git]kde:craft"
-        for ver in ["2017.05"]:
+        for ver in ["2017.05", "gpg"]:
             self.svnTargets[ver] = f"[git]kde:craft|{ver}|"
         self.defaultTarget = "master"
 
