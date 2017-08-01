@@ -24,11 +24,16 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[3:])
         else:
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[1:])
-            print(badPrefix)
-        if CraftStandardDirs.craftRoot()[3:] != "" and os.path.exists(badPrefix):
-            for subdir in os.listdir(badPrefix):
-                utils.moveFile(os.path.join(badPrefix, subdir), self.installDir())
-            utils.rmtree(badPrefix)
+        if os.path.exists(badPrefix):
+            utils.mergeTree(badPrefix, self.installDir())
+        if craftSettings.getboolean("QtSDK", "Enabled", False):
+            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
+                                 craftSettings.get("QtSDK", "Compiler"))
+            # drop the drive letter and the first slash [3:]
+            path = os.path.join(self.installDir(), qtDir[3:])
+            if os.path.exists(path):
+                utils.mergeTree(path, self.installDir())
+                utils.rmtree(os.path.join(self.installDir(), craftSettings.get("QtSDK", "Path")[3:]))
 
         if OsUtils.isWin():
             if os.path.exists(os.path.join(self.installDir(), "bin", "mkspecs")):
