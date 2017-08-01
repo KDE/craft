@@ -522,20 +522,15 @@ def main():
 
 if __name__ == '__main__':
     success = False
-    with CraftTimer.Timer("Craft", 0):
+    with CraftTimer.Timer("Craft", 0) as timer:
         try:
             doUpdateTitle = True
-
-
-            def updateTitle(startTime, title):
+            title = f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:])
+            def updateTitle():
                 while (doUpdateTitle):
-                    delta = datetime.datetime.now() - startTime
-                    utils.OsUtils.setConsoleTitle("craft %s %s" % (title, delta))
+                    utils.OsUtils.setConsoleTitle(f"{title}: {timer}")
                     time.sleep(1)
-
-
-            tittleThread = threading.Thread(target=updateTitle,
-                                            args=(datetime.datetime.now(), " ".join(sys.argv[1:]),))
+            tittleThread = threading.Thread(target=updateTitle)
             tittleThread.setDaemon(True)
             tittleThread.start()
             success = main()
