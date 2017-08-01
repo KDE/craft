@@ -1,8 +1,9 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        for ver in [ '0.29.6', '0.30.0' ]:
+    def setTargets(self):
+        for ver in ['0.29.6', '0.30.0']:
             self.targets[ver] = 'http://www.webdav.org/neon/neon-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'neon-' + ver
         self.targetDigests['0.29.6'] = 'ae1109923303f67ed3421157927bc4bc29c58961'
@@ -13,10 +14,12 @@ class subinfo(info.infoclass):
         self.shortDescription = "an HTTP and WebDAV client library, with a C interface"
         self.defaultTarget = '0.30.0'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
+
 from Package.CMakePackageBase import *
+
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
@@ -24,4 +27,3 @@ class Package(CMakePackageBase):
 
         # do not install docs
         self.subinfo.options.configure.args = "-DINSTALL_DOCS=OFF"
-

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from CraftDebug import craftDebug
 import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['gnuwin32/gperf'] = 'default'
         self.buildDependencies['dev-util/python2'] = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
@@ -18,9 +17,10 @@ class subinfo(info.infoclass):
 
 from Package.Qt5CorePackageBase import *
 
+
 class QtPackage(Qt5CorePackageBase):
-    def __init__( self, **args ):
-        Qt5CorePackageBase.__init__( self )
+    def __init__(self, **args):
+        Qt5CorePackageBase.__init__(self)
         self.subinfo.options.fetch.checkoutSubmodules = True
         # sources on different partitions other than the one of the build dir
         # fails. some submodules fail even with the common shadow build...
@@ -33,16 +33,12 @@ class QtPackage(Qt5CorePackageBase):
         if isinstance(self.source, GitSource):
             self.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
         return Qt5CorePackageBase.fetch(self)
-        
+
     def compile(self):
-        utils.prependPath(craftSettings.get("Paths","PYTHON27"))
+        utils.prependPath(craftSettings.get("Paths", "PYTHON27"))
         return Qt5CorePackageBase.compile(self)
-       
-
-        
 
 
-class Package( Qt5CoreSdkPackageBase ):
+class Package(Qt5CoreSdkPackageBase):
     def __init__(self):
         Qt5CoreSdkPackageBase.__init__(self, classA=QtPackage)
-

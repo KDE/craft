@@ -3,15 +3,16 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
 
 
 from Package.Qt5CorePackageBase import *
 
-class Package( Qt5CorePackageBase ):
-    def __init__( self, **args ):
-        Qt5CorePackageBase.__init__( self )
+
+class Package(Qt5CorePackageBase):
+    def __init__(self, **args):
+        Qt5CorePackageBase.__init__(self)

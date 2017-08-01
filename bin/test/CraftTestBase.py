@@ -1,12 +1,12 @@
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 
 import CraftConfig
 from CraftDebug import craftDebug
 
-class CraftTestBase(unittest.TestCase):
 
+class CraftTestBase(unittest.TestCase):
     def setUp(self):
         craftDebug.setVerbose(int(os.environ["EMERGE_TEST_VERBOSITY"]))
         self.kdeRoot = tempfile.TemporaryDirectory()
@@ -16,8 +16,8 @@ class CraftTestBase(unittest.TestCase):
         CraftConfig.CraftStandardDirs._pathCache().clear()
         CraftConfig.CraftStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
         os.environ["KDEROOT"] = self.kdeRoot.name
-        CraftConfig.craftSettings.set("General", "Portages", os.path.join(craftRoot, "craft", "portage") )
-        CraftConfig.craftSettings.set("Compile","BuildType", "RelWithDebInfo")
+        CraftConfig.craftSettings.set("General", "Portages", os.path.join(craftRoot, "craft", "portage"))
+        CraftConfig.craftSettings.set("Compile", "BuildType", "RelWithDebInfo")
 
     def tearDown(self):
         del self.kdeRoot

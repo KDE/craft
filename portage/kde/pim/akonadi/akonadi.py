@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "A storage service for PIM data and meta data"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.buildDependencies['win32libs/boost-headers'] = 'default'
         self.runtimeDependencies['win32libs/libxslt'] = 'default'
@@ -24,13 +24,13 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kitemmodels'] = 'default'
         self.runtimeDependencies['frameworks/kio'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = ""
         if not self.subinfo.options.isActive("binary/mysql"):
             self.subinfo.options.configure.args += " -DDATABASE_BACKEND=SQLITE "
-
-

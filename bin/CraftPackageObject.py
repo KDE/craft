@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 
-from CraftDebug import craftDebug
-
 
 class PackageObjectBase(object):
     PortageInstance = None
 
-    def __init__(self, category, subpackage, package, version = None):
+    def __init__(self, category, subpackage, package, version=None):
         self.category = category
         self.subpackage = subpackage
         self.package = package
         self._version = version
         self._fullName = None
 
-
     def _signature(self):
         if self.subpackage:
             return self.category, self.subpackage, self.package
         else:
             return self.category, self.package
-
 
     def fullName(self):
         if not self._fullName:

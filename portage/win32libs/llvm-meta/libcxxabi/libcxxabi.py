@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import info
-import portage
+
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.versionInfo.setDefaultValues()
-        
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/llvm'] = 'default'
         self.runtimeDependencies['dev-util/libcxx'] = 'default'
@@ -15,11 +14,11 @@ class subinfo(info.infoclass):
 
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = '-DLIBCXXABI_ENABLE_SHARED=OFF '
-
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)

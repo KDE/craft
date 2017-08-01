@@ -1,7 +1,8 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['2.3.12', '2.5.0.1']:
             self.targets[ver] = "http://downloads.sourceforge.net/freetype/freetype-" + ver + ".tar.bz2"
             self.targetInstSrc[ver] = "freetype-" + ver
@@ -13,11 +14,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.5.0.1'
         self.shortDescription = "A Free, High-Quality, and Portable Font Engine"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
-from Package.CMakePackageBase import *
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
 
+from Package.CMakePackageBase import *
+
+
+class Package(CMakePackageBase):
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)

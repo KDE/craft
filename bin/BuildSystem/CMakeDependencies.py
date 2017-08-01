@@ -11,19 +11,21 @@ import utils
 
 def toNodeName(fileName):
     """convert filename to dot node name"""
-    return fileName.replace('\\','').replace('-','').replace('.','').replace(':','').replace('/','').replace('+','')
+    return fileName.replace('\\', '').replace('-', '').replace('.', '').replace(':', '').replace('/', '').replace('+',
+                                                                                                                  '')
+
 
 def toNodeLabel(fileName, baseDir=None):
     """convert filename to dot node label"""
     if baseDir:
-        s = fileName.replace(baseDir,'')
+        s = fileName.replace(baseDir, '')
     # TODO: we can simply say fileName = fileName.replace() and remove the else clause
     else:
         s = fileName
-    if s.find('\\CMakeLists.txt') > -1: # TODO: this find is superfluous
-        s = s.replace('\\CMakeLists.txt','')
+    if s.find('\\CMakeLists.txt') > -1:  # TODO: this find is superfluous
+        s = s.replace('\\CMakeLists.txt', '')
 
-    s = s.replace('.\\','').replace('\\','\\\\')
+    s = s.replace('.\\', '').replace('\\', '\\\\')
 
     if s.startswith('\\'):
         return s[2:]
@@ -32,12 +34,13 @@ def toNodeLabel(fileName, baseDir=None):
         return "toplevel"
     return s
 
+
 class CMakeDependencies(object):
     def __init__(self):
         self.files1 = []
         self.files2 = []
-        self.packageIncludes = dict() # where a package is included
-        self.packageUsage = dict()    # where package related variables are used (search string=xxx_INCLUDE or xxx_LIBRAR)
+        self.packageIncludes = dict()  # where a package is included
+        self.packageUsage = dict()  # where package related variables are used (search string=xxx_INCLUDE or xxx_LIBRAR)
 
     def parse(self, directory):
         """find CMakeLists.txt and parse it"""
@@ -100,7 +103,6 @@ class CMakeDependencies(object):
         print("B -> C [label=\"directory C uses variables provided by cmake package B\"];")
         print("}")
 
-
         print("{ rank=same; ")
         for fileName in self.files1:
             print("%s_include [label=\"%s\"];" % (toNodeName(fileName), toNodeLabel(fileName, baseDir)))
@@ -117,7 +119,7 @@ class CMakeDependencies(object):
         print("}")
 
         for node in self.packageIncludes:
-            #print "%s;" % (node[0])
+            # print "%s;" % (node[0])
             for fileName in self.packageIncludes[node]:
                 print("%s_include -> %s [color=green];" % (toNodeName(fileName), node[0]))
 
@@ -143,6 +145,7 @@ class CMakeDependencies(object):
             sys.stdout = sys.__stdout__
         return True
 
+
 def main():
     directory = sys.argv[1]
     a = CMakeDependencies()
@@ -159,6 +162,7 @@ def main():
         outFile = sys.argv[4]
 
     a.toDot(title, baseDir, outFile)
+
 
 if __name__ == '__main__':
     main()

@@ -5,32 +5,32 @@
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
 import tempfile
 
-from CraftDebug import craftDebug
 from Source.VersionSystemSourceBase import *
 
-class SvnSource (VersionSystemSourceBase):
+
+class SvnSource(VersionSystemSourceBase):
     """subversion support"""
+
     def __init__(self, subinfo=None):
         craftDebug.trace("SvnSource.__init__")
         if subinfo:
             self.subinfo = subinfo
-        VersionSystemSourceBase.__init__( self )
+        VersionSystemSourceBase.__init__(self)
 
-
-    def checkoutDir( self, index=0 ):
+    def checkoutDir(self, index=0):
         craftDebug.trace("SvnSource.checkoutDir")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (url, dummy) = self.splitUrl(u)
 
             if url.find("://") == -1:
-                sourcedir = os.path.join(CraftStandardDirs.svnDir(), url )
+                sourcedir = os.path.join(CraftStandardDirs.svnDir(), url)
             else:
-                sourcedir = os.path.join( CraftStandardDirs.downloadDir(), "svn-src" )
-                sourcedir = os.path.join( sourcedir, self.package )
+                sourcedir = os.path.join(CraftStandardDirs.downloadDir(), "svn-src")
+                sourcedir = os.path.join(sourcedir, self.package)
                 _, path = self.__splitPath(url)
                 if path and craftSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
-                    sourcedir = os.path.join( sourcedir, path )
+                    sourcedir = os.path.join(sourcedir, path)
         else:
             craftDebug.log.critical("svnTarget property not set for this target")
 
@@ -46,7 +46,7 @@ class SvnSource (VersionSystemSourceBase):
             return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
 
-    def fetch( self, repopath = None ):
+    def fetch(self, repopath=None):
         """ checkout or update an existing repository path """
         craftDebug.trace("SvnSource.fetch")
         if self.noFetch:
@@ -61,7 +61,7 @@ class SvnSource (VersionSystemSourceBase):
             self.__tryCheckoutFromRoot(url, self.checkoutDir(i), self.repositoryUrlOptions(i) != 'norecursive')
         return True
 
-    def __getCurrentRevision( self ):
+    def __getCurrentRevision(self):
         """ return the revision returned by svn info """
 
         revision = None
@@ -78,19 +78,19 @@ class SvnSource (VersionSystemSourceBase):
                     break
             # if not found use the second last one
             if sourcedir == None:
-                sourcedir = self.checkoutDir(n-2)
+                sourcedir = self.checkoutDir(n - 2)
         else:
             sourcedir = self.checkoutDir()
 
         # set up the command
-        cmd = "svn info %s" % ( sourcedir )
+        cmd = "svn info %s" % (sourcedir)
 
         with tempfile.TemporaryFile() as tmp:
 
             # run the command
             env = os.environ.copy()
             env["LANG"] = "C"
-            utils.system( cmd, stdout=tmp , env=env)
+            utils.system(cmd, stdout=tmp, env=env)
 
             tmp.seek(os.SEEK_SET)
             # read the temporary file and find the line with the revision
@@ -113,10 +113,10 @@ class SvnSource (VersionSystemSourceBase):
         if pos == -1:
             ret = [path, None]
         else:
-            ret = [path[:pos-1], path[pos:]]
+            ret = [path[:pos - 1], path[pos:]]
         return ret
 
-    def __tryCheckoutFromRoot ( self, url, sourcedir, recursive=True ):
+    def __tryCheckoutFromRoot(self, url, sourcedir, recursive=True):
         """This method checkout source with svn informations from
         the svn root repository directory. It detects the svn root
         by searching the predefined root subdirectories 'trunk', 'branches'
@@ -126,7 +126,7 @@ class SvnSource (VersionSystemSourceBase):
         if urlPath == None:
             return self.__checkout(url, sourcedir, recursive)
 
-        (srcBase, srcPath)  = self.__splitPath(sourcedir)
+        (srcBase, srcPath) = self.__splitPath(sourcedir)
         if srcPath == None:
             return self.__checkout(url, sourcedir, recursive)
 
@@ -140,22 +140,22 @@ class SvnSource (VersionSystemSourceBase):
         if len(urlParts) != len(srcParts):
             return self.__checkout(url, sourcedir, recursive)
 
-        for i in range(0, len(urlParts)-1):
+        for i in range(0, len(urlParts) - 1):
             urlPart = urlParts[i]
             srcPart = srcParts[i]
-            if ( urlPart == "" ):
+            if (urlPart == ""):
                 continue
 
-            urlRepo +=  '/' + urlPart
-            srcDir +=  pathSep + srcPart
+            urlRepo += '/' + urlPart
+            srcDir += pathSep + srcPart
 
             if os.path.exists(srcDir):
                 continue
-            self.__checkout( urlRepo, srcDir, False )
+            self.__checkout(urlRepo, srcDir, False)
 
-        self.__checkout( url, sourcedir, recursive )
+        self.__checkout(url, sourcedir, recursive)
 
-    def __checkout( self, url, sourcedir, recursive=True ):
+    def __checkout(self, url, sourcedir, recursive=True):
         """internal method for subversion checkout and update"""
         option = ""
         if not recursive:
@@ -167,26 +167,27 @@ class SvnSource (VersionSystemSourceBase):
         if self.subinfo.options.fetch.ignoreExternals:
             option += " --ignore-externals "
 
-        url = utils.replaceVCSUrl( url )
+        url = utils.replaceVCSUrl(url)
 
-        if os.path.exists( sourcedir ):
-            cmd = "svn update %s %s" % ( option, sourcedir )
+        if os.path.exists(sourcedir):
+            cmd = "svn update %s %s" % (option, sourcedir)
         else:
-            cmd = "svn checkout %s %s %s" % ( option, url, sourcedir )
+            cmd = "svn checkout %s %s %s" % (option, url, sourcedir)
 
-        return utils.system( cmd )
+        return utils.system(cmd)
 
-    def createPatch( self ):
+    def createPatch(self):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
-        cmd = "svn diff %s > %s" % ( self.checkoutDir(), os.path.join( self.packageDir(), "%s-%s.patch" % \
-                ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
-        return utils.system( cmd )
+        cmd = "svn diff %s > %s" % (self.checkoutDir(), os.path.join(self.packageDir(), "%s-%s.patch" % \
+                                                                     (self.package,
+                                                                      str(datetime.date.today()).replace('-', ''))))
+        return utils.system(cmd)
 
-    def sourceVersion( self ):
+    def sourceVersion(self):
         """ print the revision returned by svn info """
         return self.__getCurrentRevision()
 
-    def getUrls( self ):
+    def getUrls(self):
         """print the url where to check out from"""
         for i in range(self.repositoryUrlCount()):
             url = self.repositoryUrl(i)

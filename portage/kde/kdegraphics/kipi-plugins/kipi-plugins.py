@@ -4,12 +4,12 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "common KDE graphics application plugins"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.runtimeDependencies['frameworks/kconfig'] = 'default'
         self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
@@ -20,5 +20,5 @@ class subinfo(info.infoclass):
 
 
 class Package(CMakePackageBase):
-    def __init__( self):
+    def __init__(self):
         CMakePackageBase.__init__(self)

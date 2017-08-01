@@ -1,16 +1,19 @@
 import info
-import CraftHash
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        for ver in ["3.2.1", "3.2.2", "3.2.3", "3.3.1", "3.4.1","3.4.3", "3.6.1", "3.7.0", "3.8.0", "3.8.1"]:
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        for ver in ["3.2.1", "3.2.2", "3.2.3", "3.3.1", "3.4.1", "3.4.3", "3.6.1", "3.7.0", "3.8.0", "3.8.1"]:
             self.targets[ver] = f"https://www.cmake.org/files/v{ver[:3]}/cmake-{ver}-win32-x86.zip"
             self.targetInstSrc[ver] = f"cmake-{ver}-win32-x86"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
-            self.targetDigestUrls[ver] = ("https://cmake.org/files/v%s/cmake-%s-SHA-256.txt"% (ver[:3], ver), CraftHash.HashAlgorithm.SHA256)
+            self.targetDigestUrls[ver] = (
+            "https://cmake.org/files/v%s/cmake-%s-SHA-256.txt" % (ver[:3], ver), CraftHash.HashAlgorithm.SHA256)
 
         nightlyUrl = "https://cmake.org/files/dev/"
-        for ver in utils.utilsCache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0", "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape("-win32-x86")):
+        for ver in utils.utilsCache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0",
+                                                              "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape(
+                                                                      "-win32-x86")):
             self.targets[ver] = f"{nightlyUrl}/cmake-{ver}.zip"
             self.targetInstSrc[ver] = f"cmake-{ver}"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
@@ -20,16 +23,17 @@ class subinfo( info.infoclass ):
 
         self.defaultTarget = "3.8.1"
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = "default"
         self.buildDependencies["gnuwin32/patch"] = "default"
+
 
 from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
 
+
 class CMakePackage(BinaryPackageBase):
-    def __init__( self):
+    def __init__(self):
         BinaryPackageBase.__init__(self)
 
     def install(self):
@@ -40,7 +44,6 @@ class CMakePackage(BinaryPackageBase):
                                     os.path.join(self.imageDir(), "dev-utils", "cmake", "bin", f"{name}.exe")):
                 return False
         return True
-
 
 
 class Package(VirtualIfSufficientVersion):

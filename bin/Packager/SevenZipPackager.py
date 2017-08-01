@@ -7,21 +7,23 @@
 # This packager is in an experimental state - the implementation
 # and features may change in further versions
 
+import json
+
 # TODO:
 # - password support
 # - self extraction archives
 #
 #
-from CraftDebug import craftDebug
 import CraftHash
 from Packager.PackagerBase import *
-import json
 
-class SevenZipPackager (PackagerBase):
+
+class SevenZipPackager(PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
+
     @InitGuard.init_once
-    def __init__( self ):
-        PackagerBase.__init__( self )
+    def __init__(self):
+        PackagerBase.__init__(self)
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
@@ -48,10 +50,9 @@ class SevenZipPackager (PackagerBase):
                 cache = {}
             if not str(self) in cache:
                 cache[str(self)] = {}
-            cache[str(self)][archiveName] = {"checksum" : CraftHash.digestFile(archive, CraftHash.HashAlgorithm.SHA256)}
+            cache[str(self)][archiveName] = {"checksum": CraftHash.digestFile(archive, CraftHash.HashAlgorithm.SHA256)}
             with open(cacheFilePath, "wt+") as cacheFile:
                 json.dump(cache, cacheFile, sort_keys=True, indent=2)
-
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
@@ -68,4 +69,3 @@ class SevenZipPackager (PackagerBase):
         if craftSettings.getboolean("Packager", "PackageSrc", "True"):
             self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
         return True
-

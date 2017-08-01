@@ -2,15 +2,15 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
-from CraftDebug import craftDebug
 from Packager.PackagerBase import *
 
-class InnoSetupPackager (PackagerBase):
+
+class InnoSetupPackager(PackagerBase):
     """Packager for Inno Setup installations"""
 
     @InitGuard.init_once
-    def __init__( self ):
-        PackagerBase.__init__( self )
+    def __init__(self):
+        PackagerBase.__init__(self)
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe:
             craftDebug.log.debug("using inno setup packager from %s" % self.packagerExe)
@@ -61,25 +61,25 @@ class InnoSetupPackager (PackagerBase):
 
         if self.buildArchitecture() == "x64":
             pkgName += "-x64"
-        #else:
+        # else:
         #    pkgName += "-x86"
 
         # todo: this is probably code for dealing with svn repositories
         # needs to be refactored
         # determine source in case MultiSource is used
-        #if hasattr(self,'source'):
+        # if hasattr(self,'source'):
         #    sourcedir = self.source.sourceDir()
-        #elif hasattr(self.parent,'source'):
+        # elif hasattr(self.parent,'source'):
         #    sourcedir = self.parent.source.sourceDir()
-        #else:
+        # else:
         #    sourcedir = self.sourceDir()
 
-        #if ( self.subinfo.options.package.packSources ):
+        # if ( self.subinfo.options.package.packSources ):
         #    srcCmd = " -srcroot " + sourcedir
-        #else:
+        # else:
         #    srcCmd = ""
 
-        if( self.subinfo.options.package.withCompiler ):
+        if (self.subinfo.options.package.withCompiler):
             pkgName += "-%s" % craftCompiler.getShortName()
 
         dstpath = self.packageDestinationDir()
@@ -92,11 +92,11 @@ class InnoSetupPackager (PackagerBase):
         infile = self.configFile()
         if infile == None:
             craftDebug.log.critical("could not find config file %s" % infile)
-        with open(infile,'r') as _in:
+        with open(infile, 'r') as _in:
             lines = _in.read().splitlines()
 
         outfile = os.path.join(self.buildDir(), "temp.iss")
-        with open(outfile,'w') as out:
+        with open(outfile, 'w') as out:
             for line in lines:
                 a = line
                 for pattern in replacementPatterns:
@@ -109,6 +109,3 @@ class InnoSetupPackager (PackagerBase):
         if not utils.systemWithoutShell(cmd):
             craftDebug.log.critical("while packaging. cmd: %s" % cmd)
         return True
-
-
-

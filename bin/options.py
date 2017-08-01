@@ -30,19 +30,17 @@
 #
 #  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
-import os
-import inspect
-import shlex
 
-from CraftDebug import craftDebug, deprecated
-from CraftConfig import  *
-import utils
 import portage
+import utils
+from CraftConfig import *
+from CraftDebug import craftDebug
 
 
 class OptionsBase(object):
     def __init__(self):
         pass
+
 
 class OptionsPortage(OptionsBase):
     def __init__(self):
@@ -85,6 +83,7 @@ class OptionsFeatures(OptionsBase):
         ## enable or disable the dependency to plasma
         self.fullplasma = False
 
+
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):
@@ -103,6 +102,7 @@ class OptionsUnpack(OptionsBase):
         self.unpackIntoBuildDir = False
         #  Use this option to run 3rd party installers
         self.runInstaller = False
+
 
 ## options for the configure action
 class OptionsConfigure(OptionsBase):
@@ -163,6 +163,7 @@ class OptionsMake(OptionsBase):
         self.slnBaseName = None
         self.supportsMultijob = True
 
+
 ## options for the install action
 class OptionsInstall(OptionsBase):
     def __init__(self):
@@ -172,11 +173,13 @@ class OptionsInstall(OptionsBase):
         ## add DESTDIR=xxx support for autotools build system
         self.useDestDir = True
 
+
 ## options for the merge action
 class OptionsMerge(OptionsBase):
     def __init__(self):
         ## subdir based on installDir() used as merge source directory
         self.sourcePath = None
+
 
 ## options for the package action
 class OptionsPackage(OptionsBase):
@@ -201,7 +204,7 @@ class OptionsPackage(OptionsBase):
         # currently supported by SevenZipPackager
         self.withDigests = True
         ##disable stripping of binary files
-        #needed for mysql, striping make the library unusable
+        # needed for mysql, striping make the library unusable
         self.disableStriping = False
 
         ##disable the binary cache for this package
@@ -210,6 +213,7 @@ class OptionsPackage(OptionsBase):
         ## wheter to move the plugins to bin
         self.movePluginsToBin = utils.OsUtils.isWin()
 
+
 class OptionsCMake(OptionsBase):
     def __init__(self):
         ## use IDE for msvc2008 projects
@@ -217,13 +221,14 @@ class OptionsCMake(OptionsBase):
         ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
         self.openIDE = False
         ## use CTest instead of the make utility
-        self.useCTest = craftSettings.getboolean("General","EMERGE_USECTEST", False )
+        self.useCTest = craftSettings.getboolean("General", "EMERGE_USECTEST", False)
 
 
 class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
         self.enableFormattedPatch = False
+
 
 ## main option class
 class Options(object):
@@ -275,17 +280,16 @@ class Options(object):
         self.buildTools = False
         self.buildStatic = craftSettings.getboolean("Compile", "Static")
 
-
         self.useShadowBuild = True
 
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(craftSettings.get( "General", "Options", "").split(" "))
+        self.__readFromList(craftSettings.get("General", "Options", "").split(" "))
         self.readFromEnv()
         self.__readFromList(optionslist)
 
-    def readFromEnv( self ):
+    def readFromEnv(self):
         """ read craft related variables from environment and map them to public
         attributes in the option class and sub classes """
         _o = os.getenv("Options")
@@ -298,7 +302,7 @@ class Options(object):
     def isActive(self, package):
         return not portage.PortageInstance.ignores.match(package)
 
-    def __setInstanceAttribute( self, key, value ):
+    def __setInstanceAttribute(self, key, value):
         """set attribute in an instance"""
         currentObject = self
         currentKey = None
@@ -320,12 +324,10 @@ class Options(object):
         if type(getattr(currentObject, currentKey)) is bool:
             value = value in ['True', 'true', '1', 'ON', 'on']
 
-        setattr( currentObject, currentKey, value )
+        setattr(currentObject, currentKey, value)
         return True
 
-
-
-    def __readFromList( self, opts ):
+    def __readFromList(self, opts):
         """collect properties from a list of key=value string"""
         if opts == None:
             return False
@@ -334,7 +336,7 @@ class Options(object):
             if entry.find('=') == -1:
                 craftDebug.log.debug('incomplete option %s' % entry)
                 continue
-            (key, value) = entry.split( '=', 1 )
+            (key, value) = entry.split('=', 1)
             if self.__setInstanceAttribute(key, value):
                 result = True
                 continue

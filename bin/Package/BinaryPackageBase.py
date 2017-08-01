@@ -1,14 +1,15 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BinaryBuildSystem import *
+from Package.PackageBase import *
 from Packager.TypePackager import *
+from Source.MultiSource import *
 
-class BinaryPackageBase (PackageBase, MultiSource, BinaryBuildSystem, TypePackager):
+
+class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackager):
     """provides a base class for binary packages"""
+
     def __init__(self):
         craftDebug.log.debug("BinaryPackageBase.__init__ called")
         PackageBase.__init__(self)

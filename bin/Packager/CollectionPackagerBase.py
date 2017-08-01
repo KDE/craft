@@ -2,30 +2,29 @@
 # copyright (c) 2010-2011 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-import shutil
-import re
-import types
 import fileinput
+import shutil
+import types
 
-from CraftDependencies import DependencyType, DependencyPackage
-from CraftDebug import craftDebug
+from CraftDependencies import DependencyType
 from Packager.PackagerBase import *
 
 
 class PackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
+
     @staticmethod
     def runtimeBlacklist():
-        blacklisted = [ "include\\\\.*",
-                        "lib\\\\.*\.lib",
-                        "lib\\\\.*\.dll\.a",
-                        "lib\\\\cmake\\.*",
-                        "lib\\\\pkgconfig\\.*" ]
+        blacklisted = ["include\\\\.*",
+                       "lib\\\\.*\.lib",
+                       "lib\\\\.*\.dll\.a",
+                       "lib\\\\cmake\\.*",
+                       "lib\\\\pkgconfig\\.*"]
         ret = []
         for line in blacklisted:
             try:
-                exp = re.compile( line, re.IGNORECASE )
-                ret.append( exp )
+                exp = re.compile(line, re.IGNORECASE)
+                ret.append(exp)
                 craftDebug.log.debug("%s added to blacklist as %s" % (line, exp.pattern))
             except re.error:
                 craftDebug.log.debug("%s is not a valid regexp" % line)
@@ -33,21 +32,21 @@ class PackagerLists(object):
 
     @staticmethod
     def defaultWhitelist():
-        return [ re.compile( ".*" ) ]
+        return [re.compile(".*")]
 
     @staticmethod
     def defaultBlacklist():
         return []
 
 
-class CollectionPackagerBase( PackagerBase ):
+class CollectionPackagerBase(PackagerBase):
     @InitGuard.init_once
-    def __init__( self, whitelists=None, blacklists=None):
+    def __init__(self, whitelists=None, blacklists=None):
         PackagerBase.__init__(self)
         if not whitelists:
-            whitelists = [ PackagerLists.defaultWhitelist ]
+            whitelists = [PackagerLists.defaultWhitelist]
         if not blacklists:
-            blacklists = [ PackagerLists.defaultBlacklist ]
+            blacklists = [PackagerLists.defaultBlacklist]
         if not self.whitelist_file:
             self.whitelist_file = whitelists
         if not self.blacklist_file:
@@ -57,17 +56,16 @@ class CollectionPackagerBase( PackagerBase ):
         self.scriptname = None
         self.deployQt = True
 
-
     @property
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
                 craftDebug.log.debug("reading whitelist: %s" % entry)
-                if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
                     for line in entry():
-                        self._whitelist.append( line )
+                        self._whitelist.append(line)
                 else:
-                    self.read_whitelist( entry )
+                    self.read_whitelist(entry)
         return self._whitelist
 
     @property
@@ -75,14 +73,14 @@ class CollectionPackagerBase( PackagerBase ):
         if not self._blacklist:
             for entry in self.blacklist_file:
                 craftDebug.log.debug("reading blacklist: %s" % entry)
-                if isinstance( entry, types.FunctionType ) or isinstance( entry, types.MethodType ):
+                if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
                     for line in entry():
-                        self._blacklist.append( line )
+                        self._blacklist.append(line)
                 else:
-                    self.read_blacklist( entry )
+                    self.read_blacklist(entry)
         return self._blacklist
 
-    def __imageDirPattern( self, package, buildTarget ):
+    def __imageDirPattern(self, package, buildTarget):
         """ return base directory name for package related image directory """
         directory = "image"
 
@@ -91,27 +89,31 @@ class CollectionPackagerBase( PackagerBase ):
         directory += '-' + buildTarget
         return directory
 
-
-    def __getImageDirectories( self ):
+    def __getImageDirectories(self):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = portage.solveDependencies(self.category, self.package, depType=DependencyType.Runtime, ignoredPackages=self.ignoredPackages)
+        depList = portage.solveDependencies(self.category, self.package, depType=DependencyType.Runtime,
+                                            ignoredPackages=self.ignoredPackages)
 
         for x in depList:
             if portage.PortageInstance.isVirtualPackage(x.category, x.package):
                 craftDebug.log.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
                 continue
 
-            _package = portage.PortageInstance.getPackageInstance( x.category, x.package )
+            _package = portage.PortageInstance.getPackageInstance(x.category, x.package)
 
-            imageDirs.append(( os.path.join( self.rootdir, "build", x.category, x.package,
-                    self.__imageDirPattern( _package, _package.buildTarget )), _package.subinfo.options.package.disableStriping ) )
+            imageDirs.append((os.path.join(self.rootdir, "build", x.category, x.package,
+                                           self.__imageDirPattern(_package, _package.buildTarget)),
+                              _package.subinfo.options.package.disableStriping))
             # this loop collects the files from all image directories
             craftDebug.log.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (
-            _package.category, x.package, _package.version, _package.buildTarget))
+                _package.category, x.package, _package.version, _package.buildTarget))
 
-        if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK", "PackageQtSDK", True):
-            imageDirs.append((os.path.join( craftSettings.get("QtSDK", "Path") , craftSettings.get("QtSDK", "Version"), craftSettings.get("QtSDK", "Compiler")), False))
+        if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK",
+                                                                                                              "PackageQtSDK",
+                                                                                                              True):
+            imageDirs.append((os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
+                                           craftSettings.get("QtSDK", "Compiler")), False))
 
         return imageDirs
 
@@ -130,92 +132,92 @@ class CollectionPackagerBase( PackagerBase ):
             try:
                 tmp = "^%s$" % line
                 regex += "%s|" % tmp
-                re.compile(tmp, re.IGNORECASE) #for debug
+                re.compile(tmp, re.IGNORECASE)  # for debug
                 craftDebug.log.debug("%s added to %s as %s" % (line, targetName, tmp))
             except re.error:
                 craftDebug.log.critical("%s is not a valid regexp" % tmp)
         return re.compile("%s)" % regex[:-2], re.IGNORECASE)
 
-    def read_whitelist( self, fname ):
+    def read_whitelist(self, fname):
         """ Read regular expressions from fname """
-        self._whitelist.append(self.__toRegExp(fname,"whitelist"))
+        self._whitelist.append(self.__toRegExp(fname, "whitelist"))
 
-    def read_blacklist( self, fname ):
+    def read_blacklist(self, fname):
         """ Read regular expressions from fname """
         self._blacklist.append(self.__toRegExp(fname, "blacklist"))
 
-    def whitelisted( self, pathname ):
+    def whitelisted(self, pathname):
         """ return True if pathname is included in the pattern, and False if not """
         for pattern in self.whitelist:
-            if pattern.search( pathname ):
+            if pattern.search(pathname):
                 return True
         return False
 
-    def blacklisted( self, filename ):
+    def blacklisted(self, filename):
         """ return False if file is not blacklisted, and True if it is blacklisted """
         for pattern in self.blacklist:
-            if pattern.search( filename ):
+            if pattern.search(filename):
                 return True
         return False
 
-    def traverse( self, directory, whitelist = lambda f: True, blacklist = lambda g: False ):
+    def traverse(self, directory, whitelist=lambda f: True, blacklist=lambda g: False):
         """
             Traverse through a directory tree and return every
             filename that the function whitelist returns as true and
             which do not match blacklist entries
         """
-        if blacklist( directory ):
+        if blacklist(directory):
             return
-        dirs = [ directory ]
+        dirs = [directory]
         while dirs:
             path = dirs.pop()
-            for f in os.listdir( path ):
-                f = os.path.join( path, f )
-                z = f.replace( directory + os.sep, "" )
-                if blacklist( z ):
+            for f in os.listdir(path):
+                f = os.path.join(path, f)
+                z = f.replace(directory + os.sep, "")
+                if blacklist(z):
                     continue
-                if os.path.isdir( f ):
-                    dirs.append( f )
-                elif os.path.isfile( f ) and whitelist( z ):
+                if os.path.isdir(f):
+                    dirs.append(f)
+                elif os.path.isfile(f) and whitelist(z):
                     yield f
 
-    def copyFiles( self, srcDir, destDir, strip  ):
+    def copyFiles(self, srcDir, destDir, strip):
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
         """
-        utils.createDir( destDir )
+        utils.createDir(destDir)
         craftDebug.log.debug("Copying %s -> %s" % (srcDir, destDir))
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
 
-        for entry in self.traverse( srcDir, self.whitelisted, self.blacklisted ):
-            if os.path.basename( entry ) in uniquebasenames:
+        for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
+            if os.path.basename(entry) in uniquebasenames:
                 craftDebug.log.debug("Found duplicate filename: %s" % os.path.basename(entry))
-                duplicates.append( entry )
+                duplicates.append(entry)
             else:
-                self.unique_names.append( entry )
-                uniquebasenames.append( os.path.basename( entry ) )
+                self.unique_names.append(entry)
+                uniquebasenames.append(os.path.basename(entry))
 
         for entry in self.unique_names:
-            entry_target = entry.replace( srcDir, os.path.join( destDir + os.path.sep ) )
-            if not os.path.exists( os.path.dirname( entry_target ) ):
-                utils.createDir( os.path.dirname( entry_target ) )
-            shutil.copy( entry, entry_target )
+            entry_target = entry.replace(srcDir, os.path.join(destDir + os.path.sep))
+            if not os.path.exists(os.path.dirname(entry_target)):
+                utils.createDir(os.path.dirname(entry_target))
+            shutil.copy(entry, entry_target)
             craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
-                self.strip( entry_target )
+                self.strip(entry_target)
         for entry in duplicates:
-            entry_target = entry.replace( srcDir, destDir + os.path.sep)
-            if not os.path.exists( os.path.dirname( entry_target ) ):
-                utils.createDir( os.path.dirname( entry_target ) )
-            shutil.copy( entry, entry_target )
+            entry_target = entry.replace(srcDir, destDir + os.path.sep)
+            if not os.path.exists(os.path.dirname(entry_target)):
+                utils.createDir(os.path.dirname(entry_target))
+            shutil.copy(entry, entry_target)
             craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
-                self.strip( entry_target )
+                self.strip(entry_target)
 
-    def internalCreatePackage( self ):
+    def internalCreatePackage(self):
         """ create a package """
 
         archiveDir = self.archiveDir()
@@ -223,15 +225,15 @@ class CollectionPackagerBase( PackagerBase ):
         if not self.noClean:
             craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
             utils.cleanDirectory(archiveDir)
-            for directory, strip  in self.__getImageDirectories():
+            for directory, strip in self.__getImageDirectories():
                 imageDir = archiveDir
-                if os.path.exists( directory ):
+                if os.path.exists(directory):
                     self.copyFiles(directory, imageDir, strip)
                 else:
                     craftDebug.log.critical("image directory %s does not exist!" % directory)
 
-        if not os.path.exists( archiveDir ):
-            os.makedirs( archiveDir )
+        if not os.path.exists(archiveDir):
+            os.makedirs(archiveDir)
 
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target sytsem
@@ -241,7 +243,6 @@ class CollectionPackagerBase( PackagerBase ):
                     utils.mergeTree(path, binPath)
 
         return True
-
 
     def preArchive(self):
         return True

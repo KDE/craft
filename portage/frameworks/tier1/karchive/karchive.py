@@ -2,13 +2,12 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Qt 5 addon providing access to numerous types of archives"
 
-
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
@@ -21,12 +20,10 @@ class subinfo(info.infoclass):
         for ver in ('5.0.0', '5.1.0', '5.2.0'):
             self.patchToApply[ver] = [('get-rid-of-VLAs.diff', 1)]
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-
-
-
-
+    def __init__(self):
+        CMakePackageBase.__init__(self)

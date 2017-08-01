@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
         self.shortDescription = "Akonadi Console Tools"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['frameworks/kcompletion'] = 'default'
@@ -33,13 +33,13 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['kde/libkleo'] = 'default'
         self.runtimeDependencies['kde/libkdepim'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = ""
         if not self.subinfo.options.isActive("binary/mysql"):
             self.subinfo.options.configure.args += " -DDATABASE_BACKEND=SQLITE "
-
-

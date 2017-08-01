@@ -4,23 +4,23 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setDependencies( self ):
-      self.runtimeDependencies['virtual/base'] = 'default'
-      self.runtimeDependencies['win32libs/llvm'] = 'default'
+    def setDependencies(self):
+        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies['win32libs/llvm'] = 'default'
+
+    def setTargets(self):
+        self.svnTargets['master'] = '[git]kde:clazy'
+        self.svnTargets['1.2'] = '[git]kde:clazy|1.2'
+        self.defaultTarget = '1.2'
 
 
-    def setTargets( self ):
-      self.svnTargets['master'] = '[git]kde:clazy'
-      self.svnTargets['1.2'] = '[git]kde:clazy|1.2'
-      self.defaultTarget = '1.2'
-
-
-class Package( CMakePackageBase ):
-    def __init__( self, **args ):
+class Package(CMakePackageBase):
+    def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
         if craftCompiler.isMSVC():
-            clangLib =  os.path.join(portage.PortageInstance.getPackageInstance('win32libs', 'llvm').buildDir(), "lib", "clang.lib")
+            clangLib = os.path.join(portage.PortageInstance.getPackageInstance('win32libs', 'llvm').buildDir(), "lib",
+                                    "clang.lib")
             self.subinfo.options.configure.args = f"-DCLANG_LIBRARY_IMPORT='{clangLib}'"
 
     def configureOptions(self, defines=""):

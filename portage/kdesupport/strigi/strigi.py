@@ -1,7 +1,8 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['win32libs/exiv2'] = 'default'
@@ -10,20 +11,19 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['win32libs/libxml2'] = 'default'
         self.runtimeDependencies['win32libs/zlib'] = 'default'
 
-
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:strigi'
-        for ver in ['0.7.6','0.7.7','0.7.8']:
+        for ver in ['0.7.6', '0.7.7', '0.7.8']:
             self.svnTargets[ver] = '[git]kde:strigi||v%s' % ver
         self.svnTargets['komobranch'] = 'branches/work/komo/strigi'
         for i in ['4.3.0', '4.3.1', '4.3.2', '4.3.3', '4.3.4', '4.3']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
+            self.svnTargets[i] = 'tags/kdesupport-for-4.3/kdesupport/strigi'
         for i in ['4.4.0', '4.4.1', '4.4.2', '4.4.3', '4.4.4', '4.4']:
-            self.svnTargets[ i ] = 'tags/kdesupport-for-4.4/strigi'
+            self.svnTargets[i] = 'tags/kdesupport-for-4.4/strigi'
 
-        for ver in ['0.7.2','0.7.5']:
-          self.targets[ver] ='http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
-          self.targetInstSrc[ver] = 'strigi-' + ver
+        for ver in ['0.7.2', '0.7.5']:
+            self.targets[ver] = 'http://www.vandenoever.info/software/strigi/strigi-' + ver + '.tar.bz2'
+            self.targetInstSrc[ver] = 'strigi-' + ver
         self.patchToApply['0.7.2'] = ("strigi-0.7.2-20101223.diff", 1)
         self.patchToApply['0.7.5'] = [("strigi-0.7.5-20120225.diff", 1),
                                       ("add-intel-compiler-to-strigi-plugin-macros.diff", 1),
@@ -41,11 +41,13 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = '0.7.8'
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.subinfo.options.fetch.checkoutSubmodules = True
         self.subinfo.options.configure.args = ""
         self.subinfo.options.configure.args += "-DENABLE_CLUCENE=OFF "

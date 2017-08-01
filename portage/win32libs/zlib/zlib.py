@@ -2,11 +2,12 @@
 import info
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        for ver in [ '1.2.5', '1.2.6', '1.2.7', '1.2.8' ]:
-            self.targets[ ver ] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
-            self.targetInstSrc[ ver ] = "zlib-" + ver
+    def setTargets(self):
+        for ver in ['1.2.5', '1.2.6', '1.2.7', '1.2.8']:
+            self.targets[ver] = 'http://downloads.sourceforge.net/sourceforge/libpng/zlib-%s.tar.gz' % ver
+            self.targetInstSrc[ver] = "zlib-" + ver
         self.patchToApply['1.2.5'] = [("zlib-1.2.5-20110629.diff", 1)]
         self.patchToApply['1.2.6'] = [("zlib-1.2.6-20120421.diff", 1)]
         self.patchToApply['1.2.7'] = [("zlib-1.2.7-20130123.diff", 1)]
@@ -18,10 +19,10 @@ class subinfo(info.infoclass):
         self.shortDescription = 'The zlib compression and decompression library'
         self.defaultTarget = '1.2.8'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
 
+class Package(CMakePackageBase):
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)

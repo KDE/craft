@@ -1,8 +1,9 @@
 import info
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         for ver in ['4.1.6', '5.0.4', '5.0.5']:
             self.targets[ver] = 'http://downloads.sourceforge.net/sourceforge/giflib/giflib-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'giflib-' + ver
@@ -15,14 +16,13 @@ class subinfo(info.infoclass):
         self.shortDescription = "GIF file manipulation library (utilities and docs)"
         self.defaultTarget = '5.0.5'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/zlib'] = 'default'
 
+
 class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__( self )
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)
         self.subinfo.options.package.packageName = 'giflib'
         self.subinfo.options.configure.args = "-DBUILD_utils=OFF"
-
-

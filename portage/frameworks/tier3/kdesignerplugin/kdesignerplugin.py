@@ -2,20 +2,22 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Integration of our widgets in Qt Designer/Creator"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
         self.runtimeDependencies["frameworks/kdoctools"] = "default"
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)

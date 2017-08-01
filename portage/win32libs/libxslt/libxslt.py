@@ -1,8 +1,9 @@
 import info
 from Package.CMakePackageBase import *
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
+
+class subinfo(info.infoclass):
+    def setTargets(self):
         for ver in ['1.1.26', '1.1.28']:
             self.targets[ver] = 'ftp://xmlsoft.org/libxslt/libxslt-' + ver + '.tar.gz'
             self.targetInstSrc[ver] = 'libxslt-' + ver
@@ -14,15 +15,12 @@ class subinfo( info.infoclass ):
         self.shortDescription = "The GNOME XSLT C library and tools"
         self.defaultTarget = '1.1.28'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         self.runtimeDependencies['win32libs/libxml2'] = 'default'
 
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.subinfo.options.package.packageName = 'libxslt'
-
-
-

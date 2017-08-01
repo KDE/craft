@@ -1,10 +1,10 @@
-
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # Packager base
 
 from CraftBase import *
+
 
 class PackagerBase(CraftBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
@@ -21,7 +21,7 @@ class PackagerBase(CraftBase):
         utils.abstract()
 
     def archiveDir(self):
-        return os.path.join( self.buildRoot(), "archive" )
+        return os.path.join(self.buildRoot(), "archive")
 
     def getPackageVersion(self):
         """ return version information for the currently used package"""
@@ -34,11 +34,12 @@ class PackagerBase(CraftBase):
 
         pkgNotesVersion = pkgVersion
 
-        if ("General","EMERGE_PKGPATCHLVL") in craftSettings and craftSettings.get("General","EMERGE_PKGPATCHLVL") != "":
-            pkgVersion += "-" + craftSettings.get("General","EMERGE_PKGPATCHLVL")
+        if ("General", "EMERGE_PKGPATCHLVL") in craftSettings and craftSettings.get("General",
+                                                                                    "EMERGE_PKGPATCHLVL") != "":
+            pkgVersion += "-" + craftSettings.get("General", "EMERGE_PKGPATCHLVL")
 
         return [pkgVersion, pkgNotesVersion]
 
-    #""" create a package """
+    # """ create a package """
     def createPackage(self):
         utils.abstract()

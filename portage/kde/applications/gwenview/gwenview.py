@@ -1,13 +1,13 @@
 import info
-from CraftConfig import *
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Gwenview is a fast and easy to use image viewer for KDE."
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.buildDependencies["libs/qtbase"] = "default"
@@ -20,8 +20,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
         self.runtimeDependencies["qt-libs/phonon"] = "default"
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

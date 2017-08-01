@@ -1,18 +1,19 @@
 import argparse
 import os
-import sys
+import platform
 import re
+import shutil
 import subprocess
+import sys
 import urllib.parse
 import urllib.request
-import shutil
-import platform
+
 
 class CraftBootstrap(object):
     def __init__(self, kdeRoot, branch):
         self.kdeRoot = kdeRoot
         self.branch = branch
-        with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"),  "rt+") as ini:
+        with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"), "rt+") as ini:
             self.settings = ini.read().splitlines()
 
     @staticmethod
@@ -35,7 +36,6 @@ class CraftBootstrap(object):
     def isLinux():
         return CraftBootstrap.isUnix() and platform.system() == 'Linux'
 
-
     @staticmethod
     def printProgress(percent):
         width, _ = shutil.get_terminal_size((80, 20))
@@ -55,10 +55,12 @@ class CraftBootstrap(object):
         selection = ", ".join(["[{index}] {value}".format(index=index,
                                                           value=value[0] if isinstance(value, tuple) else value)
                                for index, value in enumerate(choices)])
-        promp = "{selection} (Default is {default}): ".format(selection=selection, default=default[0] if isinstance(default, tuple) else default)
+        promp = "{selection} (Default is {default}): ".format(selection=selection,
+                                                              default=default[0] if isinstance(default,
+                                                                                               tuple) else default)
 
         print()
-        while(True):
+        while (True):
             print(title)
             choice = input(promp)
             try:
@@ -82,8 +84,9 @@ class CraftBootstrap(object):
     @staticmethod
     def promptShortPath():
         drivePatern = re.compile("^[A-Z](:|:\\\\)?$", re.IGNORECASE)
+
         def promptDriveLetter(purpose, default):
-            while(True):
+            while (True):
                 print(f"Enter drive for {purpose}")
                 drive = input(f"[Possibilities A-Z] (Default is {default}):")
                 if drive == "":
@@ -92,10 +95,9 @@ class CraftBootstrap(object):
                     if len(drive) == 1:
                         return drive + ":"
                     return drive[:2]
-        return { "RootDrive" : promptDriveLetter("the build root", "R:"),
-                 "GitDrive" : promptDriveLetter("the location where the git checkouts are located", "Q:")}
 
-
+        return {"RootDrive": promptDriveLetter("the build root", "R:"),
+                "GitDrive": promptDriveLetter("the location where the git checkouts are located", "Q:")}
 
     def setSettignsValue(self, section, key, value):
         reKey = re.compile(r"^\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
@@ -114,16 +116,16 @@ class CraftBootstrap(object):
             out.write("\n".join(self.settings))
 
     @staticmethod
-    def downloadFile(url, destdir, filename = None):
+    def downloadFile(url, destdir, filename=None):
         if not os.path.exists(destdir):
             os.makedirs(destdir)
 
         if not filename:
-            _, _, path, _, _, _ = urllib.parse.urlparse( url )
-            filename = os.path.basename( path )
+            _, _, path, _, _, _ = urllib.parse.urlparse(url)
+            filename = os.path.basename(path)
 
-        print("Starting to download %s to %s" % (url, os.path.join( destdir, filename )))
-        if os.path.exists(os.path.join( destdir, filename )):
+        print("Starting to download %s to %s" % (url, os.path.join(destdir, filename)))
+        if os.path.exists(os.path.join(destdir, filename)):
             return True
 
         def dlProgress(count, blockSize, totalSize):
@@ -134,9 +136,10 @@ class CraftBootstrap(object):
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
                 sys.stdout.flush()
 
-        urllib.request.urlretrieve(url, filename =  os.path.join( destdir, filename ), reporthook=dlProgress)
+        urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename), reporthook=dlProgress)
         print()
-        return os.path.exists(os.path.join( destdir, filename ))
+        return os.path.exists(os.path.join(destdir, filename))
+
 
 def run(args, command):
     script = os.path.join(args.prefix, f"craft-{args.branch}", "bin", "craft.py")
@@ -145,18 +148,20 @@ def run(args, command):
     if not subprocess.run(f"{command}", shell=True).returncode == 0:
         exit(1)
 
+
 def getArchitecture():
     return CraftBootstrap.promptForChoice("Select architecture", [("x86", "32"),
                                                                   ("x64", "64")], "x64")
+
 
 def getABI():
     if CraftBootstrap.isWin():
         platform = "windows"
         abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
-                                                  [("Mingw-w64", ("mingw", "gcc")),
-                                                   ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
-                                                   ("Microsoft Visual Studio 2017", ("msvc2017", "cl"))],
-                                                   "Microsoft Visual Studio 2015")
+                                                       [("Mingw-w64", ("mingw", "gcc")),
+                                                        ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
+                                                        ("Microsoft Visual Studio 2017", ("msvc2017", "cl"))],
+                                                       "Microsoft Visual Studio 2015")
         abi += f"_{getArchitecture()}"
 
     elif CraftBootstrap.isUnix():
@@ -170,10 +175,11 @@ def getABI():
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
-                                                      ["gcc","clang"])
+                                                      ["gcc", "clang"])
             abi = getArchitecture()
 
     return f"{platform}-{abi}-{compiler}"
+
 
 def getIgnores():
     if CraftBootstrap.isWin():
@@ -184,8 +190,9 @@ def getIgnores():
           f"  {ignores}")
     print("On Unix systems we recommend to get third party libraries from your distributions package manager.")
     ignores += CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs category?",
-                                              [("Yes",";win32libs/.*"), ("No", "")])
-    print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development packages provided by the distribution.")
+                                              [("Yes", ";win32libs/.*"), ("No", "")])
+    print(
+        "Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development packages provided by the distribution.")
     ignores += CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
                                               [("Yes", ";libs/qt5/.*"), ("No", "")],
                                               default="No")
@@ -210,8 +217,9 @@ def setUp(args):
 
     ignores = getIgnores()
 
-    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip", os.path.join(args.prefix, "download"),
-                                 f"craft-{args.branch}.zip")
+    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
+                                os.path.join(args.prefix, "download"),
+                                f"craft-{args.branch}.zip")
     shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
 
     boot = CraftBootstrap(args.prefix, args.branch)
@@ -227,7 +235,6 @@ def setUp(args):
         boot.setSettignsValue("ShortPath", "Enabled", "False")
         boot.setSettignsValue("Compile", "MakeProgram", "make")
 
-
     boot.writeSettings()
 
     verbosityFlag = "-vvv" if args.verbose else ""
@@ -240,6 +247,7 @@ def setUp(args):
         print(f"  {args.prefix}/craft/craftenv.ps1")
     else:
         print(f"  source {args.prefix}/craft/craftenv.sh")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CraftSetupHelper")
@@ -254,4 +262,3 @@ if __name__ == "__main__":
         args.prefix = args.root
 
     setUp(args)
-

@@ -1,14 +1,14 @@
 import info
-from CraftConfig import *
+
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.versionInfo.setDefaultValues()
 
         self.shortDescription = "KDE hex editor for viewing and editing the raw data of files."
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/kbookmarks"] = "default"
@@ -25,23 +25,24 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/kservice"] = "default"
         self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        #self.runtimeDependencies["kdesupport/qca"] = 'default'
+        # self.runtimeDependencies["kdesupport/qca"] = 'default'
+
 
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
 
-
     def createPackage(self):
         self.defines["productname"] = "Okteta"
         self.defines["executable"] = "bin\\okteta.exe"
-        #self.defines["icon"] = os.path.join(self.packageDir(), "okular.ico")
+        # self.defines["icon"] = os.path.join(self.packageDir(), "okular.ico")
 
         self.ignoredPackages.append("binary/mysql")
         self.ignoredPackages.append("gnuwin32/sed")
@@ -50,7 +51,6 @@ class Package( CMakePackageBase ):
         self.ignoredPackages.append("kdesupport/qca")
 
         return TypePackager.createPackage(self)
-
 
     def preArchive(self):
         archiveDir = self.archiveDir()

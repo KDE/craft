@@ -1,14 +1,15 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.versionInfo.setDefaultValues("")
 
         self.homepage = 'http://www.boost.org/'
 
         self.shortDescription = 'portable C++ libraries'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['win32libs/boost-headers'] = 'default'
         self.runtimeDependencies['win32libs/boost-bjam'] = 'default'
         self.runtimeDependencies['win32libs/boost-atomic'] = 'default'
@@ -24,10 +25,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['win32libs/boost-filesystem'] = 'default'
         self.runtimeDependencies['win32libs/boost-date-time'] = 'default'
 
+
 from Package.VirtualPackageBase import *
 
-class Package( VirtualPackageBase ):
-    def __init__( self ):
-        VirtualPackageBase.__init__( self )
 
-
+class Package(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)

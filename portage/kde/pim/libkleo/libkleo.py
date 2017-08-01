@@ -1,14 +1,13 @@
 import info
-from CraftConfig import *
-from CraftOS.osutils import OsUtils
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "Crypto library"
-        
-    def setDependencies( self ):
+
+    def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
         self.runtimeDependencies["libs/qtbase"] = "default"
@@ -23,8 +22,10 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["win32libs/gpgme"] = "default"
         self.runtimeDependencies["win32libs/boost"] = "default"
 
+
 from Package.CMakePackageBase import *
 
-class Package( CMakePackageBase ):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

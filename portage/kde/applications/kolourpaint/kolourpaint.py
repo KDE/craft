@@ -1,12 +1,13 @@
 import info
 from Package.CMakePackageBase import *
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+
+class subinfo(info.infoclass):
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
         self.shortDescription = "KolourPaint is an easy-to-use paint program"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["libs/qtbase"] = "default"
         self.runtimeDependencies["frameworks/kconfig"] = "default"
@@ -18,18 +19,19 @@ class subinfo( info.infoclass ):
         self.runtimeDependencies["frameworks/kxmlgui"] = "default"
         self.runtimeDependencies["frameworks/breeze-icons"] = 'default'
 
-class Package( CMakePackageBase ):
-    def __init__( self):
-        CMakePackageBase.__init__( self )
+
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             os.path.join(os.path.dirname(__file__), "blacklist.txt")
         ]
 
     def createPackage(self):
-        self.defines[ "productname" ] = "Kolourpaint"
-        self.defines[ "executable" ] = "bin\\kolourpaint.exe"
-        self.defines[ "icon" ] = os.path.join(self.packageDir(), "kolourpaint.ico")
+        self.defines["productname"] = "Kolourpaint"
+        self.defines["executable"] = "bin\\kolourpaint.exe"
+        self.defines["icon"] = os.path.join(self.packageDir(), "kolourpaint.ico")
 
         self.ignoredPackages.append("binary/mysql")
         self.ignoredPackages.append("frameworks/kdesignerplugin")

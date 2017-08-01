@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
-import glob
-import os
-
-import utils
-from shells import *
 from BuildSystem.BuildSystemBase import *
+from shells import *
+import glob
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__( self ):
+    def __init__(self):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = MSysShell()
         if craftCompiler.isX86():
@@ -24,17 +21,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
             make += " -j%s" % os.getenv("NUMBER_OF_PROCESSORS")
         return make
 
-    #make sure shell cant be overwritten
+    # make sure shell cant be overwritten
     @property
     def shell(self):
         return self._shell
 
-    def configureDefaultDefines( self ):
+    def configureDefaultDefines(self):
 
         """defining the default cmake cmd line"""
         return ""
 
-    def configure( self ):
+    def configure(self):
         """configure the target"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -42,9 +39,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         configure = os.path.join(self.sourceDir(), "configure")
-        self.shell.environment[ "CFLAGS" ] =  self.subinfo.options.configure.cflags + self.shell.environment[ "CFLAGS" ]
-        self.shell.environment[ "CXXFLAGS" ] = self.subinfo.options.configure.cxxflags + self.shell.environment[ "CXXFLAGS" ]
-        self.shell.environment[ "LDFLAGS" ] = self.subinfo.options.configure.ldflags + self.shell.environment[ "LDFLAGS" ]
+        self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + self.shell.environment["CFLAGS"]
+        self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment[
+            "CXXFLAGS"]
+        self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
         if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap == True:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
@@ -52,14 +50,13 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 self.shell.execute(self.sourceDir(), "autoreconf -f -i")
 
-
         if not self.subinfo.options.useShadowBuild:
             ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
         else:
             ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
         return ret
 
-    def make( self, dummyBuildType=None ):
+    def make(self, dummyBuildType=None):
         """Using the *make program"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -72,18 +69,18 @@ class AutoToolsBuildSystem(BuildSystemBase):
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean"):
-                print( "while Make'ing. cmd: %s clean" % self.makeProgram)
+                print("while Make'ing. cmd: %s clean" % self.makeProgram)
                 return False
             if not self.shell.execute(self.sourceDir(), command, args):
-                print( "while Make'ing. cmd: %s" % command )
+                print("while Make'ing. cmd: %s" % command)
                 return False
         else:
             if not self.shell.execute(self.buildDir(), command, args):
-                print( "while Make'ing. cmd: %s" % command )
+                print("while Make'ing. cmd: %s" % command)
                 return False
         return True
 
-    def install( self ):
+    def install(self):
         """Using *make install"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -94,7 +91,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         args = "install"
 
         if self.subinfo.options.install.useDestDir == True:
-            args += " DESTDIR=%s prefix=" % self.shell.toNativePath( self.installDir() )
+            args += " DESTDIR=%s prefix=" % self.shell.toNativePath(self.installDir())
 
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
@@ -103,22 +100,22 @@ class AutoToolsBuildSystem(BuildSystemBase):
             args += " %s" % self.subinfo.options.make.makeOptions
         if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.sourceDir(), command, args):
-                print( "while installing. cmd: %s %s" % (command, args) )
+                print("while installing. cmd: %s %s" % (command, args))
                 return False
         else:
             if not self.shell.execute(self.buildDir(), command, args):
-                print( "while installing. cmd: %s %s" % (command, args) )
+                print("while installing. cmd: %s %s" % (command, args))
                 return False
-        if os.path.exists(os.path.join(self.imageDir(),"lib")):
+        if os.path.exists(os.path.join(self.imageDir(), "lib")):
             return self.shell.execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la")
         else:
             return True
 
-    def runTest( self ):
+    def runTest(self):
         """running unittests"""
         return True
 
-    def configureOptions( self, defines=""):
+    def configureOptions(self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         if self.subinfo.options.configure.noDefaultOptions == False:
@@ -129,7 +126,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
         options += self.platform
 
         return options;
-
 
     def ccacheOptions(self):
         return " CC='ccache gcc' CXX='ccache g++' "

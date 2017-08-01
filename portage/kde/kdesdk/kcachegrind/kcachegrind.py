@@ -1,12 +1,13 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
         self.shortDescription = "GUI to profilers such as Valgrind"
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['frameworks/karchive'] = 'default'
         self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
@@ -15,9 +16,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
         self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

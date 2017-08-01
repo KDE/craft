@@ -1,11 +1,12 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
 from CraftBase import *
+
 
 class SourceBase(CraftBase):
     """ implements basic stuff required for all sources"""
+
     def __init__(self):
         craftDebug.trace("SourceBase.__init__ called")
         CraftBase.__init__(self)
@@ -54,17 +55,17 @@ class SourceBase(CraftBase):
             return set(self.applyPatch(*x) for x in patches) == set([True])
         return True
 
-    def applyPatch(self, fileName, patchdepth, srcdir=None ):
+    def applyPatch(self, fileName, patchdepth, srcdir=None):
         """base implementation for applying a single patch to the source"""
         craftDebug.trace("SourceBase.applyPatch called")
         if not fileName:
             return True
         if not srcdir:
             srcdir = self.sourceDir()
-        patchfile = os.path.join ( self.packageDir(), fileName )
+        patchfile = os.path.join(self.packageDir(), fileName)
         # TODO: integrate utils.applyPatch() here and remove it from utils().
         # and change packages in portage accordingly
-        return utils.applyPatch( srcdir, patchfile, patchdepth )
+        return utils.applyPatch(srcdir, patchfile, patchdepth)
 
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""

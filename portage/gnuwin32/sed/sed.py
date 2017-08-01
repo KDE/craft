@@ -1,8 +1,9 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        for ver in [ '4.1.5' , '4.2.1' ]:
+    def setTargets(self):
+        for ver in ['4.1.5', '4.2.1']:
             self.targets[ver] = ["http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-bin.zip" % ver,
                                  "http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-dep.zip" % ver]
             self.targetInstallPath[ver] = "dev-utils"
@@ -12,12 +13,13 @@ class subinfo(info.infoclass):
                                        'f7edbd7152d8720c95d46dd128b87b8ba48a5d6f']
         self.defaultTarget = '4.2.1'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/bin-base'] = 'default'
+
 
 from Package.BinaryPackageBase import *
 
-class Package(BinaryPackageBase):
-    def __init__( self):
-        BinaryPackageBase.__init__(self)
 
+class Package(BinaryPackageBase):
+    def __init__(self):
+        BinaryPackageBase.__init__(self)

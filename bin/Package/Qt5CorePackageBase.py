@@ -1,15 +1,14 @@
 #
 # copyright (c) 2012 Hannah von Reth <vonreth@kde.org>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.Qt5CoreBuildSystem import *
-from Packager.TypePackager import *
 from Package.MaybeVirtualPackageBase import *
+from Packager.TypePackager import *
 
-class Qt5CorePackageBase (PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):
+
+class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):
     """provides a base class for qt5 modules"""
+
     def __init__(self):
         craftDebug.log.debug("Qt5CorePackageBase.__init__ called")
         PackageBase.__init__(self)
@@ -23,10 +22,10 @@ class Qt5CoreSdkPackageBase(MaybeVirtualPackageBase):
         sdkNotEnabled = not craftSettings.getboolean("QtSDK", "Enabled", False)
         MaybeVirtualPackageBase.__init__(self, condition and sdkNotEnabled, classA=classA)
 
-        # override the install method
-        def install():
-            if not sdkNotEnabled:
+        if not sdkNotEnabled:
+            # override the install method
+            def install():
                 craftDebug.log.info(f"Skip installation of {self} as [QtSdk]Enabled=True")
-            return self.baseClass.install(self)
+                return self.baseClass.install(self)
 
-        setattr(self, "install", install)
+            setattr(self, "install", install)

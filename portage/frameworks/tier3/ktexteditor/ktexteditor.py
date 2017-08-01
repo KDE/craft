@@ -1,12 +1,13 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
         self.shortDescription = "KTextEditor provides an advanced embeddable text editor"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.runtimeDependencies["frameworks/karchive"] = "default"
@@ -18,8 +19,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/sonnet"] = "default"
         self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
 
+
 from Package.CMakePackageBase import *
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
+    def __init__(self):
+        CMakePackageBase.__init__(self)

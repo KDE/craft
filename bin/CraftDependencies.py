@@ -1,29 +1,28 @@
 from enum import unique, Enum
 
-
 from CraftDebug import craftDebug
 from CraftPackageObject import PackageObjectBase
 
 
 @unique
 class DependencyType(Enum):
-    Runtime     = "runtime"
-    Buildtime   = "buildtime"
-    Both        = "both"
+    Runtime = "runtime"
+    Buildtime = "buildtime"
+    Both = "both"
 
 
-class PortageException(Exception,PackageObjectBase):
-    def __init__(self, message, category, package , exception = None):
+class PortageException(Exception, PackageObjectBase):
+    def __init__(self, message, category, package, exception=None):
         Exception.__init__(self, message)
-        subpackage, package = PackageObjectBase.PortageInstance.getSubPackage(category,package)
-        PackageObjectBase.__init__(self,category,subpackage,package)
+        subpackage, package = PackageObjectBase.PortageInstance.getSubPackage(category, package)
+        PackageObjectBase.__init__(self, category, subpackage, package)
         self.exception = exception
 
     def __hash__(self):
         return self.__str__().__hash__()
 
     def __str__(self):
-        return "%s failed: %s" % (PackageObjectBase.__str__(self),Exception.__str__(self))
+        return "%s failed: %s" % (PackageObjectBase.__str__(self), Exception.__str__(self))
 
 
 class DependencyPackage(PackageObjectBase):
@@ -32,18 +31,16 @@ class DependencyPackage(PackageObjectBase):
     @unique
     class State(Enum):
         Unvisited = 0
-        Visiting  = 1
+        Visiting = 1
         Visited = 2
 
-
-    def __init__( self, category, name):
-        subpackage, package = PackageObjectBase.PortageInstance.getSubPackage(category,name)
+    def __init__(self, category, name):
+        subpackage, package = PackageObjectBase.PortageInstance.getSubPackage(category, name)
         PackageObjectBase.__init__(self, category, subpackage, package)
         self.runtimeChildren = []
         self.buildChildren = []
         self._version = None
         self.state = DependencyPackage.State.Unvisited
-
 
     @staticmethod
     def resolveDependenciesForList(list, depType=DependencyType.Both, maxDepth=-1, ignoredPackages=None):
@@ -53,11 +50,10 @@ class DependencyPackage(PackageObjectBase):
             dummy.buildChildren = dummy.__readDependenciesForChildren(list)
         else:
             dummy.runtimeChildren = dummy.__readDependenciesForChildren(list)
-        out = dummy.getDependencies(depType=depType,maxDepth=maxDepth, ignoredPackages=ignoredPackages)
+        out = dummy.getDependencies(depType=depType, maxDepth=maxDepth, ignoredPackages=ignoredPackages)
         # remove the dummy
-        del out[-1]
+        out.remove(dummy)
         return out
-
 
     @property
     def name(self):
@@ -78,17 +74,17 @@ class DependencyPackage(PackageObjectBase):
         if deps:
             for line in deps:
                 if line not in DependencyPackage._packageCache:
-                    category, package = line.split( "/" )
-                    p = DependencyPackage( category, package)
+                    category, package = line.split("/")
+                    p = DependencyPackage(category, package)
                     craftDebug.log.debug(f"adding package {line}")
-                    DependencyPackage._packageCache[ line ] = p
+                    DependencyPackage._packageCache[line] = p
                     p.__resolveDependencies()
                 else:
-                    p = DependencyPackage._packageCache[ line ]
-                children.append( p )
+                    p = DependencyPackage._packageCache[line]
+                children.append(p)
         return children
 
-    def __getDependencies( self, depType, maxDepth, depth, ignoredPackages ):
+    def __getDependencies(self, depType, maxDepth, depth, ignoredPackages):
         """ returns all dependencies """
         if self.package and PackageObjectBase.PortageInstance.ignores.match(PackageObjectBase.__str__(self)):
             return []
@@ -106,8 +102,8 @@ class DependencyPackage(PackageObjectBase):
         for p in children:
             if p.state != DependencyPackage.State.Unvisited:
                 continue
-            if not PackageObjectBase.PortageInstance.ignores.match(p.fullName())\
-                    and ( not ignoredPackages or p.fullName() not in ignoredPackages ):
+            if not PackageObjectBase.PortageInstance.ignores.match(p.fullName()) \
+                    and (not ignoredPackages or p.fullName() not in ignoredPackages):
                 if maxDepth == -1 or depth < maxDepth:
                     depList.extend(p.__getDependencies(depType, maxDepth, depth + 1, ignoredPackages))
 

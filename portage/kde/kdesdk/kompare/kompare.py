@@ -1,12 +1,13 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
         self.shortDescription = "Graphical File Differences Tool"
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['kde/libkomparediff2'] = 'default'
         self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
         self.runtimeDependencies['frameworks/kcodecs'] = 'default'
@@ -18,9 +19,10 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['frameworks/ktexteditor'] = 'default'
         self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

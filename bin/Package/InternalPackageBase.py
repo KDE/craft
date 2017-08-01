@@ -3,6 +3,7 @@
 #
 from Package.PackageBase import *
 
+
 class InternalPackageBase(PackageBase):
     """
      provides a generic interface for packages which are used internal by the craft system

@@ -1,14 +1,14 @@
+import functools
 import inspect
-import os
-import re
-import sys
 import logging
 import logging.handlers
-import functools
-
+import os
+import re
 import shutil
+import sys
 
 from CraftConfig import craftSettings, CraftStandardDirs
+
 
 class CraftDebug(object):
     __instance = None
@@ -17,7 +17,7 @@ class CraftDebug(object):
     def instance():
         if not CraftDebug.__instance:
             CraftDebug.__instance = CraftDebug()
-        return  CraftDebug.__instance
+        return CraftDebug.__instance
 
     def __init__(self):
         self.seenDeprecatedFunctions = set()
@@ -28,23 +28,25 @@ class CraftDebug(object):
         self._log.addHandler(self._handler)
         self._handler.setLevel(logging.INFO)
 
-
         logDir = craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
 
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(CraftStandardDirs.craftRoot())))
+        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(
+            CraftStandardDirs.craftRoot())))
 
         try:
-            fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000, backupCount=20)
+            fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000,
+                                                               backupCount=20)
             fileHandler.doRollover()
             fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
             self._log.addHandler(fileHandler)
             fileHandler.setLevel(logging.DEBUG)
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
-            print(f"Right now we don't support running multiple Craft instances with the same configuration.", file=sys.stderr)
+            print(f"Right now we don't support running multiple Craft instances with the same configuration.",
+                  file=sys.stderr)
         self.log.debug("#" * self._lineWidgt)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
@@ -89,8 +91,10 @@ class CraftDebug(object):
 
 craftDebug = CraftDebug.instance()
 
+
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
+
     def __init__(self, tempLevel):
         self.prevLevel = craftDebug.verbose()
         craftDebug.setVerbose(tempLevel)
@@ -100,6 +104,7 @@ class TemporaryVerbosity(object):
 
     def __exit__(self, exc_type, exc_value, trback):
         craftDebug.setVerbose(self.prevLevel)
+
 
 def deprecated(replacement=None):
     """
@@ -152,7 +157,9 @@ def deprecated(replacement=None):
             return fun(*args, **kwargs)
 
         return inner
+
     return outer
+
 
 if __name__ == "__main__":
     craftDebug.log.debug("debug: foo")

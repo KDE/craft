@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "GnuPG cryptography support library (runtime)"
         self.defaultTarget = '1.9.0'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
         if craftCompiler.isGCCLike():
             self.runtimeDependencies["autotools/gpgme-src"] = "default"
@@ -18,7 +18,6 @@ class subinfo(info.infoclass):
             self.runtimeDependencies["win32libs/mingw-crt4msvc"] = "default"
             self.runtimeDependencies['win32libs/assuan2'] = 'default'
             self.runtimeDependencies["win32libs/gpg-error"] = "default"
-
 
 
 from Package.BinaryPackageBase import *

@@ -1,10 +1,10 @@
 import re
 
 import CraftTimer
-from CraftDebug import craftDebug
+import InstallDB
 import portage
 import utils
-import InstallDB
+from CraftDebug import craftDebug
 from CraftVersion import CraftVersion
 
 
@@ -17,16 +17,15 @@ class SeachPackage(object):
         self.shortDescription = package.subinfo.shortDescription
 
         versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
-        versions.sort(key=lambda x:CraftVersion(x))
+        versions.sort(key=lambda x: CraftVersion(x))
         self.availableVersions = ", ".join(versions)
-
 
     def __str__(self):
         installed = InstallDB.installdb.getInstalledPackages(self.category, self.package)
         version = None
         revision = None
         if installed:
-            if (len(installed)>1):
+            if (len(installed) > 1):
                 raise Exception("Multiple installs are not supported")
             version = installed[0].getVersion() or None
             revision = installed[0].getRevision() or None
@@ -54,42 +53,42 @@ def packages():
             if pi:
                 package = SeachPackage(pi)
                 utils.utilsCache.availablePackages.append(package)
-            percent = int(len(utils.utilsCache.availablePackages)/total * 100)
+            percent = int(len(utils.utilsCache.availablePackages) / total * 100)
             utils.printProgress(percent)
         utils.printProgress(100)
         craftDebug.log.info("")
     return utils.utilsCache.availablePackages
 
 
-def printSearch(search_category, search_package,maxDist = 2):
-        with CraftTimer.Timer("Search", 0) as timer:
-            similar = []
-            match = None
-            package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
-            for package in packages():
-                if search_category == "" or search_category == package.category:
-                    levDist = utils.levenshtein(search_package.lower(),package.package.lower())
-                    if levDist == 0 :
-                        match = (levDist,package)
-                        break
-                    elif package_re.match(package.package):
-                        similar.append((levDist-maxDist,package))
-                    elif len(package.package)>maxDist and levDist <= maxDist:
-                        similar.append((levDist,package))
-                    else:
-                        if package_re.match(package.shortDescription):
-                            similar.append((100,package))
-
-            if match == None:
-                if len(similar)>0:
-                    print("Craft was unable to find %s, similar packages are:" % search_package)
-                    similar.sort( key = lambda x: x[0])
+def printSearch(search_category, search_package, maxDist=2):
+    with CraftTimer.Timer("Search", 0) as timer:
+        similar = []
+        match = None
+        package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
+        for package in packages():
+            if search_category == "" or search_category == package.category:
+                levDist = utils.levenshtein(search_package.lower(), package.package.lower())
+                if levDist == 0:
+                    match = (levDist, package)
+                    break
+                elif package_re.match(package.package):
+                    similar.append((levDist - maxDist, package))
+                elif len(package.package) > maxDist and levDist <= maxDist:
+                    similar.append((levDist, package))
                 else:
-                    print("Craft was unable to find %s" % search_package)
-            else:
-                print("Package %s found:" % search_package)
-                similar = [match]
+                    if package_re.match(package.shortDescription):
+                        similar.append((100, package))
 
-            for levDist,package in similar:
-                craftDebug.log.debug((package, levDist))
-                print(package)
+        if match == None:
+            if len(similar) > 0:
+                print("Craft was unable to find %s, similar packages are:" % search_package)
+                similar.sort(key=lambda x: x[0])
+            else:
+                print("Craft was unable to find %s" % search_package)
+        else:
+            print("Package %s found:" % search_package)
+            similar = [match]
+
+        for levDist, package in similar:
+            craftDebug.log.debug((package, levDist))
+            print(package)

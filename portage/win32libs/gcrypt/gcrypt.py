@@ -1,6 +1,5 @@
 import info
 
-
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in ["1.7.8"]:

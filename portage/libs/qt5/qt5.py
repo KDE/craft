@@ -2,10 +2,10 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
-        self.versionInfo.setDefaultValues( )
+    def setTargets(self):
+        self.versionInfo.setDefaultValues()
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['libs/qtbase'] = 'default'
         self.runtimeDependencies['libs/qtactiveqt'] = 'default'
         self.runtimeDependencies['libs/qtdeclarative'] = 'default'
@@ -24,11 +24,9 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['libs/qtserialport'] = 'default'
 
 
-
-
 from Package.VirtualPackageBase import *
 
-class Package( VirtualPackageBase ):
-    def __init__( self ):
-        VirtualPackageBase.__init__( self )
 
+class Package(VirtualPackageBase):
+    def __init__(self):
+        VirtualPackageBase.__init__(self)

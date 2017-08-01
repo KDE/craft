@@ -1,8 +1,8 @@
 import info
-from shells import *
 
-class subinfo( info.infoclass ):
-    def setTargets( self ):
+
+class subinfo(info.infoclass):
+    def setTargets(self):
         self.svnTargets['master'] = 'git://git.code.sf.net/p/mingw-w64/mingw-w64'
 
         if craftCompiler.isX64():
@@ -11,15 +11,14 @@ class subinfo( info.infoclass ):
             self.targetInstallPath["master"] = "mingw/i686-w64-mingw32"
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.buildDependencies['dev-util/msys'] = 'default'
 
 
 from Package.AutoToolsPackageBase import *
 
-class Package( AutoToolsPackageBase ):
-    def __init__( self ):
-        AutoToolsPackageBase.__init__( self )
+
+class Package(AutoToolsPackageBase):
+    def __init__(self):
+        AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.args = "--enable-sdk=all --enable-secure-api --without-crt"
-
-

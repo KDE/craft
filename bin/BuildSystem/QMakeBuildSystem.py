@@ -2,22 +2,17 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # definitions for the qmake build system
-from CraftDebug import craftDebug
-import utils
-from CraftCompiler import craftCompiler
-
-from CraftOS.osutils import OsUtils
 
 from BuildSystem.BuildSystemBase import *
 from CraftVersion import CraftVersion
 
 
 class QMakeBuildSystem(BuildSystemBase):
-    def __init__( self ):
+    def __init__(self):
         BuildSystemBase.__init__(self, "qmake")
         self.qtVer = CraftVersion(portage.PortageInstance.getPackageInstance("libs", "qt5").subinfo.buildTarget)
         self.platform = ""
-        #todo: use new craftCompiler platform code
+        # todo: use new craftCompiler platform code
         if OsUtils.isWin():
             if craftCompiler.isMSVC():
                 if self.qtVer < CraftVersion("5.8"):
@@ -51,7 +46,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 compilerPart = "g++"
             self.platform = osPart + "-" + compilerPart
 
-    def configure( self, configureDefines="" ):
+    def configure(self, configureDefines=""):
         """inplements configure step for Qt projects"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -61,11 +56,11 @@ class QMakeBuildSystem(BuildSystemBase):
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
             proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
-        command = "%s -makefile %s %s" % (utils.utilsCache.findApplication("qmake") , proFile, self.configureOptions(configureDefines))
+        command = "%s -makefile %s %s" % (utils.utilsCache.findApplication("qmake"), proFile, self.configureOptions(configureDefines))
 
-        return self.system( command, "configure" )
+        return self.system(command, "configure")
 
-    def make( self, options=""):
+    def make(self, options=""):
         """implements the make step for Qt projects"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
@@ -73,9 +68,9 @@ class QMakeBuildSystem(BuildSystemBase):
             self.enterBuildDir()
         command = ' '.join([self.makeProgram, self.makeOptions(options)])
 
-        return self.system( command, "make" )
+        return self.system(command, "make")
 
-    def install( self, options=None ):
+    def install(self, options=None):
         """implements the make step for Qt projects"""
         if not BuildSystemBase.install(self):
             return False
@@ -85,9 +80,9 @@ class QMakeBuildSystem(BuildSystemBase):
             # does not work. So just use the usual make programs. It's hacky but
             # this was decided on the 2012 Windows sprint.
             if craftCompiler.isMSVC() or craftCompiler.isIntel():
-                installmake="nmake /NOLOGO"
+                installmake = "nmake /NOLOGO"
             elif craftCompiler.isMinGW():
-                installmake="mingw32-make"
+                installmake = "mingw32-make"
         else:
             installmake = self.makeProgram
 
@@ -96,19 +91,17 @@ class QMakeBuildSystem(BuildSystemBase):
         else:
             self.enterBuildDir()
         if options != None:
-            command = "%s %s" % ( installmake, options )
+            command = "%s %s" % (installmake, options)
         else:
-            command = "%s install" % ( installmake )
+            command = "%s install" % (installmake)
 
-        return self.system( command )
+        return self.system(command)
 
-
-    def runTest( self ):
+    def runTest(self):
         """running qmake based unittests"""
         return True
 
-
-    def configureOptions( self, defines=""):
+    def configureOptions(self, defines=""):
         """returns default configure options"""
         defines += BuildSystemBase.configureOptions(self, defines)
         if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":

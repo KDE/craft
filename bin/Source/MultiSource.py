@@ -1,11 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from functools import partial
-from types import FunctionType
 
-from CraftDebug import craftDebug
-import utils
 from Source.ArchiveSource import ArchiveSource
 from Source.GitSource import GitSource
 from Source.HgSource import HgSource
@@ -16,6 +12,7 @@ from Source.SvnSource import SvnSource
 
 class MultiSource(SourceBase):
     """ provides multi source type api """
+
     def __init__(self):
         SourceBase.__init__(self)
         craftDebug.trace("MultiSource __init__")
@@ -73,7 +70,6 @@ class MultiSource(SourceBase):
     def applyPatches(self):
         craftDebug.trace("MultiSource applyPatches")
         return self.source.applyPatches(self)
-
 
     def createPatch(self):
         craftDebug.trace("MultiSource createPatch")

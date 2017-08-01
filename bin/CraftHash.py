@@ -1,7 +1,7 @@
-from enum import Enum
-import os
 import hashlib
+import os
 import re
+from enum import Enum
 
 from CraftDebug import craftDebug
 
@@ -73,14 +73,14 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                     data = f.read()
                 if not re.findall(currentHash, data):
                     craftDebug.log.error("%s hash for file %s (%s) does not match (%s)" % (
-                    digestAlgorithm.name, pathName, currentHash, data))
+                        digestAlgorithm.name, pathName, currentHash, data))
                     return False
                     # digest provided in digests parameter
         else:
             currentHash = digestFile(pathName, digestAlgorithm)
             if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
                 craftDebug.log.error("%s hash for file %s (%s) does not match (%s)" % (
-                digestAlgorithm.name, pathName, currentHash, digests))
+                    digestAlgorithm.name, pathName, currentHash, digests))
                 return False
     return True
 
@@ -102,4 +102,3 @@ def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorit
             out += "'%s'," % digestFile(os.path.join(downloaddir, filename), algorithm)
     if not out == "":
         print("self.targetDigests['%s'] = ([%s], CraftHash.%s)" % (buildTarget, out[:-1], algorithm))
-

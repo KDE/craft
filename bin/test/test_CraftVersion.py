@@ -1,20 +1,9 @@
-import os
-import sys
-import unittest
-import random
-import tempfile
-import contextlib
-import importlib
-
-from CraftDebug import craftDebug
 import CraftTestBase
-import CraftConfig
-import portage
+
 from CraftVersion import *
 
 
 class TestCraftVersion(CraftTestBase.CraftTestBase):
-
     def test_str(self):
         self.assertEquals(str(CraftVersion("5.8.1")), "5.8.1")
 

@@ -1,14 +1,15 @@
 #
 # copyright (c) 2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftDebug import craftDebug
-from Package.PackageBase import *
-from Source.MultiSource import *
 from BuildSystem.BuildSystemBase import *
+from Package.PackageBase import *
 from Packager.PackagerBase import *
+from Source.MultiSource import *
 
-class SetupPackageBase (PackageBase, MultiSource, BuildSystemBase, PackagerBase):
+
+class SetupPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
     """provides a base class for 3rd party installers or msi packages"""
+
     def __init__(self):
         craftDebug.log.debug("SetupPackageBase.__init__ called")
         PackageBase.__init__(self)

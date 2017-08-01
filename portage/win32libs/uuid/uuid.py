@@ -1,7 +1,8 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.targets['1.6.2'] = 'http://downloads.sourceforge.net/kde-windows/uuid-1.6.2.tar.gz'
         self.patchToApply['1.6.2'] = [('uuid-cmake.diff', 1)]
         self.targetInstSrc['1.6.2'] = 'uuid-1.6.2'
@@ -9,10 +10,12 @@ class subinfo(info.infoclass):
         self.shortDescription = "OSSP uuid is a library and cli for the generation of multi standard compliant Universally Unique Identifier (UUID)."
         self.defaultTarget = '1.6.2'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
+
 from Package.CMakePackageBase import *
+
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
@@ -20,4 +23,3 @@ class Package(CMakePackageBase):
 
         # building dce and c++ interface not needed
         self.subinfo.options.configure.args = "-DWITH_DCE=OFF -DWITH_CXX=OFF -DWITH_EXEC=OFF"
-

@@ -3,7 +3,7 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.svnTargets['master'] = '[git]kde:libktorrent'
         for ver in ['1.3.1']:
             self.targets[ver] = "http://ktorrent.org/downloads/4." + ver[2:] + "/libktorrent-" + ver + ".tar.bz2"
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "A BitTorrent protocol implementation."
         self.defaultTarget = 'master'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.runtimeDependencies['kdesupport/qca'] = 'default'
         self.runtimeDependencies['win32libs/mpir'] = 'default'
@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['win32libs/gcrypt'] = 'default'
         self.buildDependencies['dev-util/gettext-tools'] = 'default'
 
-class Package(CMakePackageBase):
-    def __init__( self):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self):
+        CMakePackageBase.__init__(self)

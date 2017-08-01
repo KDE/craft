@@ -1,7 +1,8 @@
 import info
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         """ """
         for ver in ['0.2.1', '0.2.6', '0.2.7']:
             self.targets[ver] = "http://libspectre.freedesktop.org/releases/libspectre-" + ver + ".tar.gz"
@@ -15,13 +16,14 @@ class subinfo(info.infoclass):
         self.shortDescription = "a wrapper library for libgs"
         self.defaultTarget = '0.2.7'
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['win32libs/ghostscript'] = 'default'
         self.runtimeDependencies['virtual/base'] = 'default'
 
+
 from Package.CMakePackageBase import *
 
-class Package(CMakePackageBase):
-    def __init__( self, **args ):
-        CMakePackageBase.__init__(self)
 
+class Package(CMakePackageBase):
+    def __init__(self, **args):
+        CMakePackageBase.__init__(self)

@@ -2,8 +2,9 @@ import info
 
 from Package.CMakePackageBase import *
 
+
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         self.shortDescription = 'Yet Another JSON Library'
 
         self.svnTargets['master'] = 'https://github.com/lloyd/yajl'
@@ -18,11 +19,10 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = ver
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies['virtual/base'] = 'default'
 
+
 class Package(CMakePackageBase):
-    def __init__( self ):
-        CMakePackageBase.__init__( self )
-
-
+    def __init__(self):
+        CMakePackageBase.__init__(self)
