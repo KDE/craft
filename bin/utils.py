@@ -712,6 +712,7 @@ def mergeTree(srcdir, destdir):
 
     If a directory in @p destdir exists, just write into it
     """
+    craftDebug.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
 
     fileList = os.listdir(srcdir)
     for i in fileList:
@@ -722,11 +723,11 @@ def mergeTree(srcdir, destdir):
                 mergeTree(src, dest)
                 continue
             else:
-                os.remove(dest)
-        shutil.move(src, destdir)
+                rmtree(dest)
+        moveDir(src, destdir)
 
     # Cleanup (only removing empty folders)
-    os.rmdir(srcdir)
+    rmtree(srcdir)
 
 
 def moveDir(srcdir, destdir):
