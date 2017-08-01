@@ -236,8 +236,9 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
     #        deplist.remove( item )
 
     if action == "install-deps":
-        # the first dependency is the package itself - ignore it
-        del deplist[0]
+        # we don't intend to build the package itself
+        # TODO: explicitly remove the package
+        del deplist[-1]
     elif action == "update-direct-deps":
         for item in deplist:
             item.enabled = True
