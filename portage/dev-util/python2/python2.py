@@ -19,7 +19,7 @@ class Package(BinaryPackageBase):
             return False
         if not ("Paths", "PYTHON27") in craftSettings or \
                 not os.path.isfile(os.path.join(craftSettings.get("Paths", "PYTHON27"), "python.exe")):
-            craftDebug.log.critical("Please make sure that\n"
+            craftDebug.log.critical(f"Please have a look on {craftSettings.iniPath} and make sure that\n"
                                     "\t[Paths]\n"
                                     "\tPYTHON27\n"
                                     "Points to a valid Python installation.")
