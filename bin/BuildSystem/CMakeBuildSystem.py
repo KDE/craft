@@ -237,9 +237,8 @@ class CMakeBuildSystem(BuildSystemBase):
         if os.path.exists(tmp):
             utils.mergeTree(tmp, imagedir)
             utils.rmtree(os.path.join(tmp, rootpath.split(os.path.pathsep)[0]))
-        if craftSettings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"),
-                                 craftSettings.get("QtSDK", "Version")[:3],# they don't get installed to 5.9.1 but 5.9....
+        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
+            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
                                  craftSettings.get("QtSDK", "Compiler"))
             # drop the drive letter and the first slash [3:]
             path = os.path.join(imagedir, qtDir[3:])
