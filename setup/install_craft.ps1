@@ -39,8 +39,9 @@ function FetchPython()
                 {
                     Invoke-WebRequest $Script:pythonUrl -OutFile $archive
                 }
-                Write-Host "$archive" "/quiet InstallAllUsers=0 PrependPath=1 TargetDir=`"$Script:PythonInstallDir`" AssociateFiles=0 InstallLauncherAllUsers=0"
-                & "$archive" "/quiet InstallAllUsers=0 PrependPath=1 TargetDir=`"$Script:PythonInstallDir`" AssociateFiles=0 InstallLauncherAllUsers=0"
+                [string[]]$command = @("/quiet", "InstallAllUsers=0", "PrependPath=1", "TargetDir=`"$Script:PythonInstallDir`"", "AssociateFiles=0",  "InstallLauncherAllUsers=0")
+                Write-Host "$archive" $command
+                & "$archive" $command
                 $Script:python = "$Script:PythonInstallDir\python.exe"
                 break
             }
