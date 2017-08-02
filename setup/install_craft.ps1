@@ -108,7 +108,7 @@ while(Test-Path -Path $Script:installRoot\*){
     Write-Host "Directory $Script:installRoot already exists.`nChoose one of the options:"
 	switch($ask=Read-Host "[Q] Quit installation    `n[Y] Truncate directory: [$Script:installRoot] and continue installation in the same directory    `n[N] Change directory path.`n(default is 'Q')")
 	{
-		"y"		{rm $Script:installRoot\*}
+		"y"		{rm $Script:installRoot\* -Force}
 		"n"		{promptInstallRoot}
 		"q"		{exit}
 	}
