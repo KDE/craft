@@ -223,9 +223,14 @@ def setUp(args):
     shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
 
     boot = CraftBootstrap(args.prefix, args.branch)
-    boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable).replace("\\", "/"))
+    boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
     boot.setSettignsValue("General", "ABI", abi)
     boot.setSettignsValue("Portage", "Ignores", ignores)
+    py = shutil.which("py")
+    if py:
+        py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
+        if os.path.isfile(py2):
+            boot.setSettignsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
         boot.setSettignsValue("ShortPath", "Enabled", "True")
