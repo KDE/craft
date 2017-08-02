@@ -117,7 +117,13 @@ mkdir $Script:installRoot\download -Force | Out-Null
 if (!$Script:python) {
     $Script:python = findPython("python")
     if (!$Script:python) {
-        $Script:python=(where.exe python 2>$null)
+        $py = (Get-Command py -ErrorAction SilentlyContinue).Name
+        if ($py) {
+            $Script:python = findPython(&$py -3 -c "import sys; print(sys.executable)")
+        }
+        if (!$Script:python) {
+            $Script:python=(where.exe python 2>$null)
+        }
     }
     TestAndFetchPython
 }
