@@ -10,11 +10,18 @@ import urllib.request
 
 
 class CraftBootstrap(object):
-    def __init__(self, kdeRoot, branch):
+    def __init__(self, kdeRoot, branch, dryRun):
         self.kdeRoot = kdeRoot
         self.branch = branch
-        with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"), "rt+") as ini:
-            self.settings = ini.read().splitlines()
+        self.dryRun = dryRun
+
+        if not dryRun:
+            with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"), "rt+") as ini:
+                self.settings = ini.read().splitlines()
+        else:
+            with open(dryRun, "rt+") as ini:
+                self.settings = ini.read().splitlines()
+
 
     @staticmethod
     def isWin():
@@ -111,9 +118,15 @@ class CraftBootstrap(object):
                 self.settings[i] = f"{key} = {value}"
 
     def writeSettings(self):
-        os.makedirs(os.path.join(self.kdeRoot, "etc"))
-        with open(os.path.join(self.kdeRoot, "etc", "kdesettings.ini"), "wt+") as out:
-            out.write("\n".join(self.settings))
+        if not os.path.isdir(os.path.join(self.kdeRoot, "etc")):
+            os.makedirs(os.path.join(self.kdeRoot, "etc"))
+        if not self.dryRun:
+            with open(os.path.join(self.kdeRoot, "etc", "kdesettings.ini"), "wt+") as out:
+                out.write("\n".join(self.settings))
+        else:
+            with open(self.dryRun + ".dry_run", "wt+") as out:
+                out.write("\n".join(self.settings))
+
 
     @staticmethod
     def downloadFile(url, destdir, filename=None):
@@ -145,8 +158,9 @@ def run(args, command):
     script = os.path.join(args.prefix, f"craft-{args.branch}", "bin", "craft.py")
     command = f"{sys.executable} {script} {command}"
     print(f"Execute: {command}")
-    if not subprocess.run(f"{command}", shell=True).returncode == 0:
-        exit(1)
+    if not args.dry_run:
+        if not subprocess.run(f"{command}", shell=True).returncode == 0:
+            exit(1)
 
 
 def getArchitecture():
@@ -203,7 +217,7 @@ def getIgnores():
 
 
 def setUp(args):
-    if not os.path.exists(args.prefix):
+    if not args.dry_run and not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
 
     print("Welcome to the Craft setup wizard!")
@@ -217,12 +231,13 @@ def setUp(args):
 
     ignores = getIgnores()
 
-    CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
-                                os.path.join(args.prefix, "download"),
-                                f"craft-{args.branch}.zip")
-    shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
+    if not args.dry_run:
+        CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
+                                    os.path.join(args.prefix, "download"),
+                                    f"craft-{args.branch}.zip")
+        shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
 
-    boot = CraftBootstrap(args.prefix, args.branch)
+    boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
     boot.setSettignsValue("General", "ABI", abi)
     boot.setSettignsValue("Portage", "Ignores", ignores)
@@ -244,14 +259,16 @@ def setUp(args):
 
     verbosityFlag = "-vvv" if args.verbose else ""
     run(args, f"--no-cache {verbosityFlag} craft")
-    shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
+    if not args.dry_run:
+        shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
     print("Setup complete")
     print()
     print("Please run the following command to get started:")
+    path = os.path.join(args.prefix, "craft", "craftenv")
     if CraftBootstrap.isWin():
-        print(f"  {args.prefix}/craft/craftenv.ps1")
+        print(f"  {path}.ps1")
     else:
-        print(f"  source {args.prefix}/craft/craftenv.sh")
+        print(f"  source {path}.sh")
 
 
 if __name__ == "__main__":
@@ -260,6 +277,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", action="store", default=os.getcwd(), help="The installation directory.")
     parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
+    parser.add_argument("--dry-run", action="store", help="Configurea the passed kdesettings.ini and exit.")
     parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()
