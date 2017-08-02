@@ -107,7 +107,7 @@ class CraftBootstrap(object):
                 "GitDrive": promptDriveLetter("the location where the git checkouts are located", "Q:")}
 
     def setSettignsValue(self, section, key, value):
-        reKey = re.compile(r"^\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
+        reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
         reSection = re.compile(r"^\[(.*)\]$".format(section=section))
         inSection = False
         for i, line in enumerate(self.settings):
@@ -116,6 +116,11 @@ class CraftBootstrap(object):
                 inSection = sectionMatch.group(1) == section
             elif inSection and reKey.match(line):
                 self.settings[i] = f"{key} = {value}"
+                return
+        print(f"Unable to locate\n"
+              f"\t[{section}]\n"
+              f"\t{key}")
+        exit(1)
 
     def writeSettings(self):
         if not os.path.isdir(os.path.join(self.kdeRoot, "etc")):
