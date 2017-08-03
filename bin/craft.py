@@ -178,6 +178,10 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
     originalPackageList = []
     categoryList = []
 
+    if portage.PortageInstance.ignores.match(packageName):
+        craftDebug.log.info(f"Ignoring {packageName}")
+        return True
+
     if action == "update-all":
         installedPackages = portage.PortageInstance.getInstallables()
         if portage.PortageInstance.isCategory(packageName):
