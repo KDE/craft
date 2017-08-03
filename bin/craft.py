@@ -490,7 +490,7 @@ def main():
             portageSearch.printSearch(category, package)
         return True
 
-    if not args.packageNames:
+    if not args.packageNames or args.list_file:
         CraftSetupHelper.SetupHelper().printBanner()
         return True
 
