@@ -51,8 +51,7 @@ class QtPackage(Qt5CorePackageBase):
             self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
 
     def fetch(self):
-        if isinstance(self.source, GitSource):
-            self.system(["git", "reset", "--hard"], cwd=self.sourceDir())
+        self.system(["git", "reset", "--hard"], cwd=self.sourceDir())
         return Qt5CorePackageBase.fetch(self)
 
     def configure(self, configureDefines=""):
