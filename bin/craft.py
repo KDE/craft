@@ -211,7 +211,7 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
     if len(deplist) == 0:
         category = ""
         if not packageName.find("/") == -1:
-            (category, package) = packageName.split("/")
+            (category, package) = packageName.rsplit("/", 1)
         portageSearch.printSearch(category, packageName)
         return False
 
@@ -482,7 +482,7 @@ def main():
         for package in args.packageNames:
             category = ""
             if not package.find("/") == -1:
-                (category, package) = package.split("/")
+                (category, package) = package.rsplit("/", 1)
             portageSearch.printSearch(category, package)
         return True
 
