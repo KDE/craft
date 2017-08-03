@@ -9,7 +9,7 @@ import InstallDB
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug
-from CraftPackageObject import PackageObjectBase, DependencyType, PortageException, DependencyPackage
+from CraftPackageObject import CraftPackageObject, DependencyType, PortageException, DependencyPackage
 from CraftVersion import CraftVersion
 
 def getNewestVersion(package):

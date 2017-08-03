@@ -79,7 +79,7 @@ class BoostBuildSystem(BuildSystemBase):
 
     def make(self):
         """implements the make step for cmake projects"""
-        self.boost = CraftPackageObject.PackageObjectBase.instance('win32libs/boost/boost-headers')
+        self.boost = CraftPackageObject.instance('win32libs/boost/boost-headers')
         self.subinfo.targetInstSrc[self.subinfo.buildTarget] = os.path.join(self.boost.sourceDir(), "libs",
                                                                             self.subinfo.targetInstSrc[
                                                                                 self.subinfo.buildTarget], "build")

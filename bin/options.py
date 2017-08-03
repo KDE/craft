@@ -30,11 +30,11 @@
 #
 #  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
-import CraftPackageObject
 import portage
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftPackageObject import CraftPackageObject
 
 
 class OptionsBase(object):
@@ -301,7 +301,7 @@ class Options(object):
 
     def isActive(self, package):
         if isinstance(package, str):
-            package = CraftPackageObject.PackageObjectBase(package)
+            package = CraftPackageObject(package)
         return not package.isIgnored()
 
     def __setInstanceAttribute(self, key, value):

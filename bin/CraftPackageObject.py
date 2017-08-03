@@ -8,10 +8,12 @@ import os
 
 import builtins
 
+import copy
+
 from CraftConfig import craftSettings, CraftStandardDirs
 from CraftDebug import craftDebug
 
-class PackageObjectBase(object):
+class CraftPackageObject(object):
     options = None
     rootPackage = None
     _packages = None
@@ -19,40 +21,35 @@ class PackageObjectBase(object):
     IgnoredDirectories = [".git", "__pycache__"]
     Ignores = re.compile("a^")
 
-    def __init__(self, path, portageRoot=None, useCache=True):
-        if PackageObjectBase._packages == None:
-            PackageObjectBase._packages = {}
-            PackageObjectBase.load()
+    def __init__(self, path=None, portageRoot=None, useCache=True):
         self.path = None
-
-        self.children = []
+        self.children = {}
         self.source = None
         self._version = None
         self._instance = None
 
-        if isinstance(path, PackageObjectBase):
+        if path:
+            self.__getNode(path, portageRoot, useCache)
+
+    def __getNode(self, path, portageRoot, useCache):
+        if CraftPackageObject._packages == None:
+            CraftPackageObject._packages = {}
+            CraftPackageObject.load()
+
+        if isinstance(path, CraftPackageObject):
             self.__dict__ = path.__dict__
             return
 
         path = path.replace("\\", "/")
         if useCache:
-            # TODO: a real package resoulution
-            package = None
-            if path not in PackageObjectBase._packages:
-                for p in PackageObjectBase._packages.values():
-                    split = p.path.rsplit("/", 1)
-                    if len(split) > 1:
-                        cat, pack = split
-                        if path in cat or path == pack:
-                            package = p
-                            break
-                    else:
-                        if path in path:
-                            package = p
-                            continue
+            if path not in CraftPackageObject._packages:
+                if path in CraftPackageObject._recipes:
+                    package = CraftPackageObject._recipes[path]
+                else:
+                    package = CraftPackageObject.rootPackage.child(path.split("/"))
             else:
-                package = PackageObjectBase._packages[path]
-            #print(path, package)
+                package = CraftPackageObject._packages[path]
+
             self.__dict__ = package.__dict__
         else:
             if path == "/":
@@ -61,21 +58,46 @@ class PackageObjectBase(object):
             else:
                 self.path = path[len(portageRoot) + 1:]
             if portageRoot:
-                PackageObjectBase._packages[self.path] = self
+                CraftPackageObject._packages[self.path] = self
+            else:
+                return
 
             try:
+                hasChildren = False
                 for f in os.listdir(path):
                     fPath = os.path.join(path, f)
                     if os.path.isdir(fPath):
-                        if f not in PackageObjectBase.IgnoredDirectories:
-                            self.children.append(PackageObjectBase(fPath, portageRoot, useCache=False))
+                        if f not in CraftPackageObject.IgnoredDirectories:
+                            hasChildren = True
+                            child = CraftPackageObject(fPath, portageRoot, useCache=False)
+                            self.children[child.name] = child
                     elif f.endswith(".py"):
                         if self.source:
                             raise Exception("Multiple py files in one directory")
-                        PackageObjectBase._recipes[fPath] = self
+                        recipe = os.path.splitext(f)[0]
+                        if recipe in CraftPackageObject._recipes:
+                            raise PortageException(
+                                f"Multiple recipes found in {path}, previous recipe is {CraftPackageObject._recipes[recipe]}")
+                        CraftPackageObject._recipes[recipe] = self
                         self.source = fPath
-            except Exception:
-                pass
+                if hasChildren:
+                    if self.source:
+                        category = copy.deepcopy(self)
+                        category.source = None
+                    else:
+                        category = self
+                    self.children["*"] = category
+            except Exception as e:
+                raise e
+
+    def child(self, paths, pos = 0):
+        if paths:
+            key = paths[pos]
+            if key not in self.children:
+                raise Exception(f"{key} is not a child of {self}, path was {'/'.join(paths)}")
+            if pos + 1 == len(paths):
+                return self.children[key]
+            return self.children[key].child(paths, pos + 1)
 
     @property
     def parent(self):
@@ -83,11 +105,12 @@ class PackageObjectBase(object):
         Return the parent or the root node if we are a portage
         :return:
         """
-        return PackageObjectBase._packages.get(os.path.dirname(self.path), PackageObjectBase._packages[None])
+        return CraftPackageObject._packages.get(os.path.dirname(self.path), CraftPackageObject._packages[None])
 
     @property
     def name(self):
-        return self.path.rsplit("/", 1)[1]
+        split = self.path.rsplit("/", 1)
+        return split[0] if len(split) == 1 else split[1]
 
     @staticmethod
     def rootDirectories():
@@ -101,15 +124,16 @@ class PackageObjectBase(object):
 
     @staticmethod
     def load():
-        if not PackageObjectBase.rootPackage:
+        if not CraftPackageObject.rootPackage:
             if ("Portage", "Ignores") in craftSettings:
-                PackageObjectBase.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Portage", "Ignores").split(";")]))
+                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Portage", "Ignores").split(";")]))
 
-            PackageObjectBase.rootPackage = PackageObjectBase("/", None, useCache=False)
-            for portage in PackageObjectBase.rootDirectories():
+            CraftPackageObject.rootPackage = CraftPackageObject("/", None, useCache=False)
+            for portage in CraftPackageObject.rootDirectories():
                 portage = portage.replace("\\", "/")
-                PackageObjectBase.rootPackage.children.extend(PackageObjectBase("/", portage, useCache=False).children)
-        return PackageObjectBase.rootPackage
+                children = CraftPackageObject("/", portage, useCache=False).children
+                CraftPackageObject.rootPackage.children.update(children)
+        return CraftPackageObject.rootPackage
 
 
     @property
@@ -137,6 +161,8 @@ class PackageObjectBase(object):
 
     def isVirtualPackage(self):
         """ check if that package is of VirtualPackageBase """
+        if self.isCategory():
+            return False
         for baseClassObject in self.instance.__class__.__bases__:
             if baseClassObject.__name__ == 'VirtualPackageBase': return True
         return False
@@ -145,30 +171,31 @@ class PackageObjectBase(object):
         return not self.source
 
     def isIgnored(self):
-        return not self.path or PackageObjectBase.Ignores.match(self.path)
+        return self.path and CraftPackageObject.Ignores.match(self.path)
 
     @property
     def version(self):
+        if self.isCategory():
+            return None
         if not self._version:
             self._version = self.subinfo.defaultTarget
         return self._version
 
     def __eq__(self, other):
-        if isinstance(other, PackageObjectBase):
+        if isinstance(other, CraftPackageObject):
             return self.path == other.path
         return self.path == other
 
     def __str__(self):
-        return self.path
+        return self.path or "None"
 
     def __hash__(self):
         return self.path.__hash__()
 
     @staticmethod
     def installables():
-        PackageObjectBase.load()
-        print("\n".join([ str(x) for x in PackageObjectBase._recipes.values()]))
-        return PackageObjectBase._recipes.values()
+        CraftPackageObject.load()
+        return CraftPackageObject._recipes.values()
 
 
 @unique
@@ -178,17 +205,17 @@ class DependencyType(Enum):
     Both = "both"
 
 
-class PortageException(Exception, PackageObjectBase):
+class PortageException(Exception, CraftPackageObject):
     def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
-        PackageObjectBase.__init__(self, package.path)
+        CraftPackageObject.__init__(self, package.path)
         self.exception = exception
 
     def __str__(self):
-        return "%s failed: %s" % (PackageObjectBase.__str__(self), Exception.__str__(self))
+        return "%s failed: %s" % (CraftPackageObject.__str__(self), Exception.__str__(self))
 
 
-class DependencyPackage(PackageObjectBase):
+class DependencyPackage(CraftPackageObject):
     _packageCache = dict()
 
     @unique
@@ -198,17 +225,34 @@ class DependencyPackage(PackageObjectBase):
         Visited = 2
 
     def __init__(self, path):
-        PackageObjectBase.__init__(self, path)
+        CraftPackageObject.__init__(self, path)
+        self._depenendencyType = None
         self.runtimeChildren = []
-        self.buildChildren = []
+        self.dependencies = []
         self.state = DependencyPackage.State.Unvisited
+
+
+    @property
+    def depenendencyType(self):
+        return self._depenendencyType
+
+    @depenendencyType.setter
+    def depenendencyType(self, depenendencyType):
+        if self._depenendencyType != depenendencyType:
+            self._depenendencyType = depenendencyType
+            self.dependencies = []
+            self.__resolveDependencies()
 
     def __resolveDependencies(self):
         craftDebug.log.debug(f"solving package {self}")
-        if self.path != "null":
+        if not self.isCategory():
             subinfo = self.subinfo
-            self.runtimeChildren.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.keys()))
-            self.buildChildren.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.keys()))
+            if self.depenendencyType in [DependencyType.Both, DependencyType.Runtime]:
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.keys()))
+            if self.depenendencyType in [DependencyType.Both, DependencyType.Buildtime]:
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.keys()))
+        else:
+            self.dependencies.extend(self.__readDependenciesForChildren(self.children.values()))
 
     def __readDependenciesForChildren(self, deps):
         children = []
@@ -218,42 +262,37 @@ class DependencyPackage(PackageObjectBase):
                     p = DependencyPackage(line)
                     craftDebug.log.debug(f"adding package {line}")
                     DependencyPackage._packageCache[line] = p
-                    p.__resolveDependencies()
                 else:
                     p = DependencyPackage._packageCache[line]
+                p.depenendencyType = self.depenendencyType
                 children.append(p)
         return children
 
-    def __getDependencies(self, depType, maxDepth, depth, ignoredPackages):
+    def __getDependencies(self, depenendencyType, maxDepth, depth, ignoredPackages):
         """ returns all dependencies """
         if self.isIgnored():
             return []
 
         depList = []
 
-        if depType == DependencyType.Runtime:
-            children = self.runtimeChildren
-        elif depType == DependencyType.Buildtime:
-            children = self.buildChildren
-        else:
-            children = self.runtimeChildren + self.buildChildren
-
         self.state = DependencyPackage.State.Visiting
-        for p in children:
+        for p in self.dependencies:
             if p.state != DependencyPackage.State.Unvisited:
                 continue
             if not p.isIgnored() \
-                    and (not ignoredPackages or p.fullName() not in ignoredPackages):
+                    and (not ignoredPackages or p.path not in ignoredPackages):
                 if maxDepth == -1 or depth < maxDepth:
-                    depList.extend(p.__getDependencies(depType, maxDepth, depth + 1, ignoredPackages))
+                    depList.extend(p.__getDependencies(depenendencyType, maxDepth, depth + 1, ignoredPackages))
 
         if self.state != DependencyPackage.State.Visited:
             self.state = DependencyPackage.State.Visited
-            depList.append(self)
+            if not self.isCategory():
+                depList.append(self)
         return depList
 
     def getDependencies(self, depType=DependencyType.Both, maxDepth=-1, ignoredPackages=None):
-        self.__resolveDependencies()
+        self.depenendencyType = depType
         for p in DependencyPackage._packageCache.values():
+            #reset visited state
             p.state = DependencyPackage.State.Unvisited
         return self.__getDependencies(depType, maxDepth, 0, ignoredPackages)

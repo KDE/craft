@@ -713,6 +713,9 @@ def mergeTree(srcdir, destdir):
     If a directory in @p destdir exists, just write into it
     """
     craftDebug.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
+    if os.path.samefile(srcdir,destdir):
+        craftDebug.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
+        return False
 
     fileList = os.listdir(srcdir)
     for i in fileList:

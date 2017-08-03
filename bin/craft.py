@@ -17,7 +17,6 @@ import datetime
 import threading
 import time
 
-import CraftPackageObject
 import CraftSetupHelper
 import CraftTimer
 import InstallDB
@@ -27,6 +26,7 @@ import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
@@ -159,41 +159,40 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         return success
 
 
-def handleSinglePackage(package, action, args, directTargets=None):
+def run(package, action, args, directTargets=None):
     if package.isIgnored():
         craftDebug.log.info(f"Skipping package because it has been ignored: {package}")
         return True
 
-    depPackage = CraftPackageObject.DependencyPackage(package)
-    depList = depPackage.getDependencies(CraftPackageObject.DependencyType(args.dependencyType),
-                               maxDepth=args.dependencydepth)
-
-    packages = []
-    for item in depList:
-        #print(args.ignoreAllInstalled,args.ignoreInstalled,packageIsOutdated(item))
-        if args.ignoreAllInstalled or args.ignoreInstalled or packageIsOutdated(item):
-            packages.append(item)
-            craftDebug.log.debug(f"dependency: {item}")
-    if not packages:
-        craftDebug.log.debug("<none>")
-
-    if action == "install-deps":
-        # we don't intend to build the package itself
-        packages.remove(package)
-
-    # TODO: why do we call that after we resolved the deps?
-    if not package.isVirtualPackage() and not action in ["all", "install-deps"]:
-        # not all commands should be executed on the deps if we are a virtual packages
-        # if a buildAction is given, then do not try to build dependencies
-        # and do the action although the package might already be installed.
-        # This is still a bit problematic since packageName might not be a valid
-        # package
-        # for list files, we also want to handle fetching & packaging per package
-        if not handlePackage(package, action, args.doContinue,
-                             directTargets=directTargets):
-            return False
+    if action not in ["all", "install-deps"]:
+        for info in package.children.values():
+           # not all commands should be executed on the deps if we are a virtual packages
+            # if a buildAction is given, then do not try to build dependencies
+            # and do the action although the package might already be installed.
+            # This is still a bit problematic since packageName might not be a valid
+            # package
+            # for list files, we also want to handle fetching & packaging per package
+            if not handlePackage(info, action, args.doContinue,
+                                 directTargets=directTargets):
+                return False
 
     else:
+        depPackage = DependencyPackage(package)
+        depList = depPackage.getDependencies(DependencyType(args.dependencyType),
+                                             maxDepth=args.dependencydepth)
+
+        packages = []
+        for item in depList:
+            if args.ignoreAllInstalled or args.ignoreInstalled or packageIsOutdated(item):
+                packages.append(item)
+                craftDebug.log.debug(f"dependency: {item}")
+        if not packages:
+            craftDebug.log.debug("<none>")
+
+        if action == "install-deps":
+            # we don't intend to build the package itself
+            packages.remove(package)
+
         for info in packages:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
@@ -379,10 +378,10 @@ def main():
         # we are in cache creation mode, ensure to create a 7z image and not an installer
         craftSettings.set("Packager", "PackageType", "SevenZipPackager")
 
-    CraftPackageObject.PackageObjectBase.options = args.options
+    CraftPackageObject.options = args.options
     if args.search:
         for package in args.packageNames:
-            portageSearch.printSearch(CraftPackageObject.PackageObjectBase(package))
+            portageSearch.printSearch(CraftPackageObject(package))
         return True
 
     for action in actionHandler.parseFinalAction(args, "all"):
@@ -413,10 +412,12 @@ def main():
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
         else:
+            package = CraftPackageObject()
             for packageName in packageNames:
-                package = CraftPackageObject.PackageObjectBase(packageName)
-                if not handleSinglePackage(package, action, tempArgs, packageNames):
-                    return False
+                child = CraftPackageObject(packageName)
+                package.children[child.name] = child
+            if not run(package, action, tempArgs, packageNames):
+                return False
     return True
 
 
@@ -436,7 +437,7 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except CraftPackageObject.PortageException as e:
+        except PortageException as e:
             craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)

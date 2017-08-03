@@ -108,7 +108,7 @@ class VersionInfo(object):
 
         """
         if packageName is None:
-            packageName = self.subinfo.package.package.path
+            packageName = self.subinfo.package.package.name
         if tarballUrl is None:
             tarballUrl = self._getVersionInfo("tarballUrl", None)
         if tarballDigestUrl is None:

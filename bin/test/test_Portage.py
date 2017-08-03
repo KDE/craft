@@ -3,7 +3,7 @@ import importlib
 import CraftTestBase
 
 import CraftConfig
-import CraftPackageObject
+from CraftPackageObject import *
 import portage
 
 
@@ -12,7 +12,7 @@ class CraftPortageTest(CraftTestBase.CraftTestBase):
         CraftConfig.craftSettings.set("General", "ABI", compiler)
 
         importlib.reload(portage)  # clear cache
-        installable = CraftPackageObject.PackageObjectBase.installables()
+        installable = CraftPackageObject.installables()
         for _p in installable:
             _p.instance
 

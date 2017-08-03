@@ -25,12 +25,12 @@ class Package(BoostPackageBase):
     def install(self):
         if OsUtils.isUnix():
             return utils.copyFile(
-                os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
+                os.path.join(CraftPackageObject('win32libs/boost/boost-headers').instance.sourceDir(),
                              "tools", "build", "bjam"),
                 os.path.join(self.imageDir(), "bin", "bjam"))
         else:
             return utils.copyFile(
-                os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
+                os.path.join(CraftPackageObject('win32libs/boost/boost-headers').instance.sourceDir(),
                              "tools", "build", "bjam.exe"),
                 os.path.join(self.imageDir(), "bin", "bjam.exe"))
 
@@ -50,7 +50,7 @@ class Package(BoostPackageBase):
             elif craftCompiler.isMSVC():
                 platform = str(craftCompiler.getMsvcPlatformToolset())
                 cmd += f"vc{platform[:2]}"
-        utils.system(cmd, cwd=os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
+        utils.system(cmd, cwd=os.path.join(CraftPackageObject('win32libs/boost/boost-headers').instance.sourceDir(),
                                            "tools", "build")) or craftDebug.log.critical(
             "command: %s failed" % (cmd))
         return True

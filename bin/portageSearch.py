@@ -1,12 +1,12 @@
 import re
 
-import CraftPackageObject
 import CraftTimer
 import InstallDB
 import portage
 import utils
 from CraftDebug import craftDebug
 from CraftVersion import CraftVersion
+from CraftPackageObject import *
 
 
 class SeachPackage(object):
@@ -21,7 +21,7 @@ class SeachPackage(object):
 
     @property
     def package(self):
-        return CraftPackageObject.PackageObjectBase(self.path)
+        return CraftPackageObject(self.path)
 
     def __str__(self):
         installed = InstallDB.installdb.getInstalledPackages(self.package)
@@ -49,8 +49,8 @@ def packages():
     if not utils.utilsCache.availablePackages:
         utils.utilsCache.availablePackages = []
         craftDebug.log.info("Updating search cache:")
-        total = len(CraftPackageObject.PackageObjectBase.installables())
-        for p in CraftPackageObject.PackageObjectBase.installables():
+        total = len(CraftPackageObject.installables())
+        for p in CraftPackageObject.installables():
             package = SeachPackage(p)
             utils.utilsCache.availablePackages.append(package)
             percent = int(len(utils.utilsCache.availablePackages) / total * 100)

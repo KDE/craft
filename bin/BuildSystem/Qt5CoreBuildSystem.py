@@ -24,7 +24,7 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[3:])
         else:
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[1:])
-        if os.path.exists(badPrefix):
+        if not os.path.samefile(self.installDir(), badPrefix) and os.path.exists(badPrefix):
             utils.mergeTree(badPrefix, self.installDir())
         if craftSettings.getboolean("QtSDK", "Enabled", False):
             qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),

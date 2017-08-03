@@ -18,8 +18,8 @@ class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
-        self.clang = CraftPackageObject.PackageObjectBase('win32libs/llvm-meta/clang').instance
-        self.lld = CraftPackageObject.PackageObjectBase('win32libs/llvm-meta/lld').instance
+        self.clang = CraftPackageObject('win32libs/llvm-meta/clang').instance
+        self.lld = CraftPackageObject('win32libs/llvm-meta/lld').instance
         self.subPackages = [self.clang, self.lld]
         self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
         self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace(
