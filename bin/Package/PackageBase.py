@@ -1,8 +1,8 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import CraftDependencies
 import CraftHash
+import CraftPackageObject
 from CraftBase import *
 from CraftCompiler import *
 from CraftOS.osutils import OsUtils
@@ -271,7 +271,7 @@ class PackageBase(CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise CraftDependencies.PortageException(str(e), self.category, self.package, e)
+                raise CraftPackageObject.PortageException(str(e), self.category, self.package, e)
 
         else:
             ok = craftDebug.log.error("command %s not understood" % command)

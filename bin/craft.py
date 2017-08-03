@@ -18,6 +18,7 @@ import threading
 import time
 
 import CraftDependencies
+import CraftPackageObject
 import CraftSetupHelper
 import CraftTimer
 import InstallDB
@@ -103,7 +104,7 @@ def handlePackage(category, packageName, buildAction, continueFlag, skipUpToDate
         success = True
         package = portage.PortageInstance.getPackageInstance(category, packageName)
         if package is None:
-            raise CraftDependencies.PortageException("Package not found", category, packageName)
+            raise CraftPackageObject.PortageException("Package not found", category, packageName)
 
         if buildAction in ["all", "full-package", "update", "update-all"]:
             if craftSettings.getboolean("Packager", "UseCache", "False") \
@@ -209,7 +210,7 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
             craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
         deplist.append(f"{mainCategory}/{entry}")
 
-    deplist = CraftDependencies.DependencyPackage.resolveDependenciesForList(deplist, CraftDependencies.DependencyType(
+    deplist = CraftPackageObject.DependencyPackage.resolveDependenciesForList(deplist, CraftPackageObject.DependencyType(
         args.dependencyType), maxDepth=args.dependencydepth)
     # no package found
     if len(deplist) == 0:
@@ -282,7 +283,7 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
             else:
                 # in case we only want to see which packages are still to be build, simply return the package name
                 if args.probe:
-                    craftDebug.log.warning("pretending %s" % info)
+                    craftDebug.log.warning(f"pretending {info}: {info.version}")
                 else:
                     if action in ["install-deps", "update-direct-deps"]:
                         action = "all"
@@ -540,7 +541,7 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except CraftDependencies.PortageException as e:
+        except CraftPackageObject.PortageException as e:
             craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)

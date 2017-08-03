@@ -9,8 +9,7 @@ import InstallDB
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug
-from CraftDependencies import DependencyType, PortageException, DependencyPackage
-from CraftPackageObject import PackageObjectBase
+from CraftPackageObject import PackageObjectBase, DependencyType, PortageException, DependencyPackage
 from CraftVersion import CraftVersion
 
 

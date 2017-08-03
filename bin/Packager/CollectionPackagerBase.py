@@ -6,7 +6,7 @@ import fileinput
 import shutil
 import types
 
-from CraftDependencies import DependencyType
+from CraftPackageObject import DependencyType
 from Packager.PackagerBase import *
 
 
