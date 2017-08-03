@@ -24,9 +24,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libzip'] = 'default'
-        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libzip"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
 
 
 from Package.CMakePackageBase import *

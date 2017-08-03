@@ -18,9 +18,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/msys'] = 'default'  # for flex
-        self.buildDependencies['dev-util/qlalr'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/msys"] = "default"
+        self.buildDependencies["dev-util/qlalr"] = "default"
 
 
 class Package(CMakePackageBase):

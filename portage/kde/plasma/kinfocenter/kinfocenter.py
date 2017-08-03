@@ -6,22 +6,22 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
-        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
-        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
-        self.runtimeDependencies['frameworks/kservice'] = 'default'
-        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
-        self.runtimeDependencies['frameworks/kdeclarative'] = 'default'
-        self.runtimeDependencies['frameworks/kpackage'] = 'default'
-        self.runtimeDependencies['frameworks/solid'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kdeclarative"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kpackage"] = "default"
+        self.runtimeDependencies["frameworks/tier1/solid"] = "default"
 
 
 from Package.CMakePackageBase import *

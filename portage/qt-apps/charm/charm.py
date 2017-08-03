@@ -11,9 +11,9 @@ class subinfo(info.infoclass):
         self.shortDescription = "The Cross-Platform Time Tracker"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtwinextras'] = 'default'
-        self.runtimeDependencies['qt-libs/qtkeychain'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwinextras"] = "default"
+        self.runtimeDependencies["qt-libs/qtkeychain"] = "default"
 
 
 class Package(CMakePackageBase):

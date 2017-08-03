@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
     def setTargets(self):
         self.svnTargets["master"] = "[git]https://github.com/gonboy/QtBinPatcher.git"

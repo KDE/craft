@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.2.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/openssl"] = "default"
 
 
 from Package.CMakePackageBase import *

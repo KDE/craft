@@ -8,16 +8,16 @@ class subinfo(info.infoclass):
         self.shortDescription = 'kf5 tier1'
 
     def setDependencies(self):
-        self.runtimeDependencies['frameworks/kauth'] = 'default'
-        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
-        self.runtimeDependencies['frameworks/kcrash'] = 'default'
-        self.runtimeDependencies['frameworks/kdnssd'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
-        self.runtimeDependencies['frameworks/kfilemetadata'] = 'default'
-        self.runtimeDependencies['frameworks/kjobwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kpackage'] = 'default'
-        self.runtimeDependencies['frameworks/kunitconversion'] = 'default'
-        self.runtimeDependencies['frameworks/kirigami'] = 'default'
+        self.runtimeDependencies["frameworks/tier2/kauth"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdnssd"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kfilemetadata"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kjobwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kpackage"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kunitconversion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kirigami"] = "default"
 
 
 from Package.VirtualPackageBase import *

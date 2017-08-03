@@ -7,29 +7,29 @@ class subinfo(info.infoclass):
         self.shortDescription = "KDE document viewer"
 
     def setDependencies(self):
-        self.buildDependencies['win32libs/chm'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['qt-libs/poppler'] = 'default'
-        self.runtimeDependencies['win32libs/tiff'] = 'default'
-        self.runtimeDependencies['win32libs/djvu'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/freetype'] = 'default'
-        self.runtimeDependencies['win32libs/ebook-tools'] = 'default'
-        self.buildDependencies['win32libs/libspectre'] = 'default'
-        self.runtimeDependencies['win32libs/ghostscript'] = 'default'
-        self.runtimeDependencies['kde/libkexiv2'] = 'default'
-        self.runtimeDependencies['frameworks/karchive'] = 'default'
-        self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kjs'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kparts'] = 'default'
-        self.runtimeDependencies['frameworks/threadweaver'] = 'default'
-        self.runtimeDependencies['frameworks/kwallet'] = 'default'
-        self.runtimeDependencies['frameworks/khtml'] = 'default'
+        self.buildDependencies["win32libs/chm"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["qt-libs/poppler"] = "default"
+        self.runtimeDependencies["win32libs/tiff"] = "default"
+        self.runtimeDependencies["win32libs/djvu"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/freetype"] = "default"
+        self.runtimeDependencies["win32libs/ebook-tools"] = "default"
+        self.buildDependencies["win32libs/libspectre"] = "default"
+        self.runtimeDependencies["win32libs/ghostscript"] = "default"
+        self.runtimeDependencies["kde/applications/libkexiv2"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kbookmarks"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kjs"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier1/threadweaver"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/tier3/khtml"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -10,31 +10,31 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['data/docbook-dtd42'] = 'default'
-        self.runtimeDependencies['kdesupport/kdewin'] = 'default'
-        self.runtimeDependencies["frameworks/kcompletion"] = 'default'
-        self.runtimeDependencies["frameworks/kconfig"] = 'default'
-        self.runtimeDependencies["frameworks/kconfigwidgets"] = 'default'
-        self.runtimeDependencies["frameworks/kcrash"] = 'default'
-        self.runtimeDependencies["frameworks/kdesignerplugin"] = 'default'
-        self.runtimeDependencies["frameworks/kglobalaccel"] = 'default'
-        self.runtimeDependencies['frameworks/kded'] = 'default'
-        self.runtimeDependencies["frameworks/kdoctools"] = 'default'
-        self.runtimeDependencies["frameworks/kemoticons"] = 'default'
-        self.runtimeDependencies["frameworks/kguiaddons"] = 'default'
-        self.runtimeDependencies["frameworks/ki18n"] = 'default'
-        self.runtimeDependencies["frameworks/kiconthemes"] = 'default'
-        self.runtimeDependencies["frameworks/kinit"] = 'default'
-        self.runtimeDependencies["frameworks/kio"] = 'default'
-        self.runtimeDependencies["frameworks/kitemmodels"] = 'default'
-        self.runtimeDependencies["frameworks/knotifications"] = 'default'
-        self.runtimeDependencies["frameworks/kparts"] = 'default'
-        self.runtimeDependencies["frameworks/kservice"] = 'default'
-        self.runtimeDependencies["frameworks/ktextwidgets"] = 'default'
-        self.runtimeDependencies["frameworks/kunitconversion"] = 'default'
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = 'default'
-        self.runtimeDependencies["frameworks/kwindowsystem"] = 'default'
-        self.runtimeDependencies["frameworks/kxmlgui"] = 'default'
+        self.runtimeDependencies["data/docbook-dtd42"] = "default"
+        self.runtimeDependencies["kdesupport/kdewin"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kdesignerplugin"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kglobalaccel"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kded"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kemoticons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kinit"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemmodels"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier3/ktextwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kunitconversion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -17,11 +17,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.16'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/raptor2'] = 'default'
-        self.runtimeDependencies['win32libs/rasqal'] = 'default'
-        self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        self.runtimeDependencies['win32libs/pthreads'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/raptor2"] = "default"
+        self.runtimeDependencies["win32libs/rasqal"] = "default"
+        self.runtimeDependencies["win32libs/sqlite"] = "default"
+        self.runtimeDependencies["win32libs/pthreads"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.18'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
 
 
 class Package(CMakePackageBase):

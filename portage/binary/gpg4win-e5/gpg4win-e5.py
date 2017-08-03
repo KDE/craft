@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
         self.targetDigests[version] = '0e0c6ae454e85d682a7c88b95f95d37bd9f3b03d'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

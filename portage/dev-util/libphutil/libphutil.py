@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
-        self.buildDependencies['binary/php'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
+        self.buildDependencies["binary/php"] = "default"
 
 
 from Package.BinaryPackageBase import *

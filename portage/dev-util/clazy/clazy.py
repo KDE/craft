@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/llvm'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/llvm-meta/clang"] = "default"
 
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:clazy'

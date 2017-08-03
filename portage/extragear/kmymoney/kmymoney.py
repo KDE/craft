@@ -7,31 +7,31 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['frameworks/karchive'] = 'default'
-        self.runtimeDependencies["frameworks/kconfig"] = 'default'
-        self.runtimeDependencies["frameworks/kconfigwidgets"] = 'default'
-        self.runtimeDependencies["frameworks/ki18n"] = 'default'
-        self.runtimeDependencies['frameworks/khtml'] = 'default'
-        self.runtimeDependencies["frameworks/kcompletion"] = 'default'
-        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies["frameworks/kiconthemes"] = 'default'
-        self.runtimeDependencies["frameworks/kio"] = 'default'
-        self.runtimeDependencies["frameworks/kitemmodels"] = 'default'
-        self.runtimeDependencies["frameworks/kitemviews"] = 'default'
-        self.runtimeDependencies["frameworks/kservice"] = 'default'
-        self.runtimeDependencies["frameworks/kwallet"] = 'default'
-        self.runtimeDependencies["frameworks/knotifications"] = 'default'
-        self.runtimeDependencies["frameworks/kxmlgui"] = 'default'
-        self.runtimeDependencies["frameworks/ktextwidgets"] = 'default'
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/khtml"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemmodels"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemviews"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier3/ktextwidgets"] = "default"
         # self.runtimeDependencies['testing/gpgmepp'] = 'default'
-        self.runtimeDependencies['kde/kholidays'] = 'default'
-        self.runtimeDependencies['binary/mysql'] = 'default'
-        self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        # self.runtimeDependencies['win32libs/libofx'] = 'default'
-        self.runtimeDependencies['win32libs/gettext'] = 'default'
-        self.runtimeDependencies['extragear/libalkimia'] = 'default'
-        self.runtimeDependencies['extragear/kdiagram'] = 'default'
-        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.runtimeDependencies["kde/pim/kholidays"] = "default"
+        self.runtimeDependencies["binary/mysql"] = "default"
+        self.runtimeDependencies["win32libs/sqlite"] = "default"
+        # self.runtimeDependencies["win32libs/libofx"] = "default"
+        self.runtimeDependencies["win32libs/gettext"] = "default"
+        self.runtimeDependencies["extragear/libalkimia"] = "default"
+        self.runtimeDependencies["extragear/kdiagram"] = "default"
+        self.buildDependencies["dev-util/gettext-tools"] = "default"
         self.shortDescription = "a personal finance manager for KDE"
 
 

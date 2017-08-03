@@ -5,8 +5,8 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.buildDependencies['win32libs/boost-headers'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.buildDependencies["win32libs/boost/boost-headers"] = "default"
 
     def setTargets(self):
         self.svnTargets['master_KDE'] = '[git]kde:libechonest'

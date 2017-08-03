@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.60.6.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/perl'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/perl"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
 
 
 from Package.CMakePackageBase import *

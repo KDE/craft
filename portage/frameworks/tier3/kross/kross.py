@@ -13,17 +13,17 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['libs/qttools'] = "default"
-        self.runtimeDependencies['frameworks/kcompletion'] = "default"
-        self.runtimeDependencies['frameworks/kcoreaddons'] = "default"
-        self.runtimeDependencies['frameworks/kdoctools'] = "default"
-        self.runtimeDependencies['frameworks/ki18n'] = "default"
-        self.runtimeDependencies['frameworks/kiconthemes'] = "default"
-        self.runtimeDependencies['frameworks/kio'] = "default"
-        self.runtimeDependencies['frameworks/kparts'] = "default"
-        self.runtimeDependencies['frameworks/kservice'] = "default"
-        self.runtimeDependencies['frameworks/kwidgetsaddons'] = "default"
-        self.runtimeDependencies['frameworks/kxmlgui'] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
 
 
 from Package.CMakePackageBase import *

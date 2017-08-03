@@ -9,23 +9,23 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcrash"] = "default"
-        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/kwallet"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier1/syntax-highlighting"] = "default"
 
-        self.runtimeDependencies["kde/kblog"] = "default"
-        self.runtimeDependencies["kde/pimcommon"] = "default"
-        self.runtimeDependencies["kde/kpimtextedit"] = "default"
-        self.runtimeDependencies["kde/messagelib"] = "default"
-        self.runtimeDependencies["kde/kimap"] = "default"
-        self.runtimeDependencies["kde/libkgapi"] = "default"
-        self.runtimeDependencies['libs/qtwebengine'] = 'default'
+        self.runtimeDependencies["kde/pim/kblog"] = "default"
+        self.runtimeDependencies["kde/pim/pimcommon"] = "default"
+        self.runtimeDependencies["kde/pim/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/pim/messagelib"] = "default"
+        self.runtimeDependencies["kde/pim/kimap"] = "default"
+        self.runtimeDependencies["kde/pim/libkgapi"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebengine"] = "default"
 
 
 from Package.CMakePackageBase import *

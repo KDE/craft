@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
     def setTargets(self):
         self.targets['2.7_1'] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/qtsoap-2.7_1-opensource.zip'

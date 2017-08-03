@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-util/python2"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 class Package(Qt5CorePackageBase):

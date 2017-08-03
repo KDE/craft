@@ -10,15 +10,15 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"
-        self.runtimeDependencies["kde/kcalcore"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcodecs"] = "default"
+        self.runtimeDependencies["kde/pim/kcalcore"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
-        self.runtimeDependencies["kde/kidentitymanagement"] = "default"
+        self.runtimeDependencies["kde/pim/kidentitymanagement"] = "default"
 
 
 from Package.CMakePackageBase import *

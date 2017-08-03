@@ -24,12 +24,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['kdesupport/grantlee'] = 'default'
+        self.runtimeDependencies["libs/qt"] = "default"
+        self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['win32libs/libopensp'] = 'default'
-        self.runtimeDependencies['win32libs/libofx'] = 'default'
+        self.runtimeDependencies["win32libs/libopensp"] = "default"
+        self.runtimeDependencies["win32libs/libofx"] = "default"
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 

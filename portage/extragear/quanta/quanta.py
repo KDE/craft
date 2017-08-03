@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies['extragear/kdevplatform'] = 'default'
-        self.runtimeDependencies['extragear/kdevelop'] = 'default'
+        self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
+        self.runtimeDependencies["extragear/kdevelop/kdev-php"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "4.0.2"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 from Package.Qt5CorePackageBase import *

@@ -8,33 +8,33 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
-        self.runtimeDependencies['libs/qtquickcontrols'] = 'default'
-        self.runtimeDependencies['libs/qtquickcontrols2'] = 'default'
-        self.runtimeDependencies['libs/qtsvg'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
-        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
-        self.runtimeDependencies['frameworks/knewstuff'] = 'default'
-        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kinit'] = 'default'
-        self.runtimeDependencies['frameworks/kjobwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
-        self.runtimeDependencies['frameworks/kplotting'] = 'default'
-        self.runtimeDependencies['frameworks/knotifications'] = 'default'
-        self.runtimeDependencies['frameworks/knotifyconfig'] = 'default'
-        self.runtimeDependencies['win32libs/eigen3'] = 'default'
-        self.runtimeDependencies['win32libs/cfitsio'] = 'default'
-        self.runtimeDependencies['win32libs/wcslib'] = 'default'
-        self.runtimeDependencies['win32libs/indiclient'] = 'default'
-        self.runtimeDependencies['win32libs/libraw'] = 'default'
-        self.runtimeDependencies['win32libs/gsl'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols2"] = "default"
+        self.runtimeDependencies["libs/qt5/qtsvg"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kinit"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kjobwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kplotting"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifyconfig"] = "default"
+        self.runtimeDependencies["win32libs/eigen3"] = "default"
+        self.runtimeDependencies["win32libs/cfitsio"] = "default"
+        self.runtimeDependencies["win32libs/wcslib"] = "default"
+        self.runtimeDependencies["win32libs/indiclient"] = "default"
+        self.runtimeDependencies["win32libs/libraw"] = "default"
+        self.runtimeDependencies["win32libs/gsl"] = "default"
 
         # Install proper theme
-        self.runtimeDependencies['frameworks/breeze-icons'] = 'default'
+        self.runtimeDependencies["frameworks/tier1/breeze-icons"] = "default"
 
 
 from Package.CMakePackageBase import *

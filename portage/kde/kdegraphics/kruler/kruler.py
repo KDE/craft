@@ -9,13 +9,13 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.buildDependencies["libs/qtbase"] = "default"
-        self.buildDependencies["frameworks/kdoctools"] = "default"
-        self.buildDependencies["frameworks/ki18n"] = "default"
-        self.buildDependencies["frameworks/knotifications"] = "default"
-        self.buildDependencies["frameworks/kwindowsystem"] = "default"
-        self.buildDependencies["frameworks/kxmlgui"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.buildDependencies["libs/qt5/qtbase"] = "default"
+        self.buildDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.buildDependencies["frameworks/tier1/ki18n"] = "default"
+        self.buildDependencies["frameworks/tier3/knotifications"] = "default"
+        self.buildDependencies["frameworks/tier1/kwindowsystem"] = "default"
+        self.buildDependencies["frameworks/tier3/kxmlgui"] = "default"
 
 
 from Package.CMakePackageBase import *

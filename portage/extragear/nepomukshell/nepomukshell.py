@@ -12,10 +12,10 @@ class subinfo(info.infoclass):
             "query, and edit Nepomuk resources.")
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qt'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt"] = "default"
         self.runtimeDependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['kdesupport/soprano'] = 'default'
+        self.runtimeDependencies["kdesupport/soprano"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
     def setTargets(self):
         for ver in ['4.2', '4.5']:

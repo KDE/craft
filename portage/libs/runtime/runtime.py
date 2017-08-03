@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
         if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
 

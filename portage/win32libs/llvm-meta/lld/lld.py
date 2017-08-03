@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies["win32libs/llvm"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/llvm-meta/clang"] = "default"
 
 
 from Package.SourceOnlyPackageBase import *

@@ -26,13 +26,13 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.2j'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/perl'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/perl"] = "default"
         if craftCompiler.isMinGW():
-            self.buildDependencies['dev-util/msys'] = 'default'
-            self.runtimeDependencies['win32libs/zlib'] = 'default'
+            self.buildDependencies["dev-util/msys"] = "default"
+            self.runtimeDependencies["win32libs/zlib"] = "default"
         elif craftCompiler.isMSVC():
-            self.buildDependencies['dev-util/nasm'] = 'default'
+            self.buildDependencies["dev-util/nasm"] = "default"
 
 
 from Package.CMakePackageBase import *

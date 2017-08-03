@@ -6,18 +6,18 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kguiaddons'] = 'default'
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = 'default'
-        self.runtimeDependencies['frameworks/kservice'] = 'default'
-        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
-        self.runtimeDependencies['frameworks/frameworkintegration'] = 'default'
-        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
-        self.runtimeDependencies['frameworks/plasma-framework'] = 'default'
-        self.runtimeDependencies['kde/kdecoration'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier4/frameworkintegration"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
+        self.runtimeDependencies["kde/plasma/kdecoration"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -6,22 +6,22 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtactiveqt'] = 'default'
-        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
-        self.runtimeDependencies['libs/qtgraphicaleffects'] = 'default'
-        self.runtimeDependencies['libs/qtimageformats'] = 'default'
-        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
-        self.runtimeDependencies['libs/qtscript'] = 'default'
-        self.runtimeDependencies['libs/qtsvg'] = 'default'
-        self.runtimeDependencies['libs/qttools'] = 'default'
-        self.runtimeDependencies['libs/qtwebkit'] = 'default'
-        self.runtimeDependencies['libs/qtwebchannel'] = 'default'
-        self.runtimeDependencies['libs/qtxmlpatterns'] = 'default'
-        self.runtimeDependencies['libs/qtwinextras'] = 'default'
-        self.runtimeDependencies['libs/qtquickcontrols'] = 'default'
-        self.runtimeDependencies['libs/qtquickcontrols2'] = 'default'
-        self.runtimeDependencies['libs/qtserialport'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtactiveqt"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtgraphicaleffects"] = "default"
+        self.runtimeDependencies["libs/qt5/qtimageformats"] = "default"
+        self.runtimeDependencies["libs/qt5/qtmultimedia"] = "default"
+        self.runtimeDependencies["libs/qt5/qtscript"] = "default"
+        self.runtimeDependencies["libs/qt5/qtsvg"] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebkit"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebchannel"] = "default"
+        self.runtimeDependencies["libs/qt5/qtxmlpatterns"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwinextras"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols2"] = "default"
+        self.runtimeDependencies["libs/qt5/qtserialport"] = "default"
 
 
 from Package.VirtualPackageBase import *
