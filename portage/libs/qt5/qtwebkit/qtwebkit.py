@@ -50,6 +50,11 @@ class QtPackage(Qt5CorePackageBase):
         if craftCompiler.isMinGW():
             self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
 
+    def fetch(self):
+        if isinstance(self.source, GitSource):
+            self.system(["git", "reset", "--hard"], cwd=self.sourceDir())
+        return Qt5CorePackageBase.fetch(self)
+
     def configure(self, configureDefines=""):
         if not len(self.subinfo.buildTarget) == 3:  # 5.9
             with open(os.path.join(self.sourceDir(), ".qmake.conf"), "rt+") as conf:
