@@ -17,7 +17,6 @@ import datetime
 import threading
 import time
 
-import CraftDependencies
 import CraftPackageObject
 import CraftSetupHelper
 import CraftTimer
