@@ -30,7 +30,7 @@
 #
 #  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
-
+import CraftPackageObject
 import portage
 import utils
 from CraftConfig import *
@@ -300,7 +300,9 @@ class Options(object):
         self.__readFromList(_o)
 
     def isActive(self, package):
-        return not portage.PortageInstance.ignores.match(package)
+        if isinstance(package, str):
+            package = CraftPackageObject.PackageObjectBase(package)
+        return not package.isIgnored()
 
     def __setInstanceAttribute(self, key, value):
         """set attribute in an instance"""

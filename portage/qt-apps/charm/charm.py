@@ -25,7 +25,7 @@ class Package(CMakePackageBase):
         if craftSettings.getboolean("QtSDK", "Enabled", False):
             # windeployqt tries to deploy every lib starting with qt5....
             # therefore we need to make sure it can find qt5keychain
-            keychain = portage.PortageInstance.getPackageInstance("qt-libs", "qtkeychain")
+            keychain = CraftPackageObject.PackageObjectBase("qt-libs/qtkeychain").instance
             utils.copyDir(keychain.imageDir(),
                           os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
                                        craftSettings.get("QtSDK", "Compiler")))

@@ -19,7 +19,7 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
         if craftCompiler.isMSVC():
-            clangLib = os.path.join(portage.PortageInstance.getPackageInstance('win32libs', 'llvm').buildDir(), "lib",
+            clangLib = os.path.join(CraftPackageObject.PackageObjectBase('win32libs/llvm-meta/llvm').instance.buildDir(), "lib",
                                     "clang.lib")
             self.subinfo.options.configure.args = f"-DCLANG_LIBRARY_IMPORT='{clangLib}'"
 

@@ -4,7 +4,7 @@ from CraftOS.osutils import OsUtils
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.versionInfo.setDefaultValues("", tarballInstallSrc=self.package.replace("boost-", "").replace("-", "_"))
+        self.versionInfo.setDefaultValues("", tarballInstallSrc=self.package.package.name.replace("boost-", "").replace("-", "_"))
 
         self.homepage = 'http://www.boost.org/'
 
@@ -25,12 +25,12 @@ class Package(BoostPackageBase):
     def install(self):
         if OsUtils.isUnix():
             return utils.copyFile(
-                os.path.join(portage.PortageInstance.getPackageInstance('win32libs', 'boost-headers').sourceDir(),
+                os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
                              "tools", "build", "bjam"),
                 os.path.join(self.imageDir(), "bin", "bjam"))
         else:
             return utils.copyFile(
-                os.path.join(portage.PortageInstance.getPackageInstance('win32libs', 'boost-headers').sourceDir(),
+                os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
                              "tools", "build", "bjam.exe"),
                 os.path.join(self.imageDir(), "bin", "bjam.exe"))
 
@@ -50,8 +50,7 @@ class Package(BoostPackageBase):
             elif craftCompiler.isMSVC():
                 platform = str(craftCompiler.getMsvcPlatformToolset())
                 cmd += f"vc{platform[:2]}"
-        utils.system(cmd, cwd=os.path.join(portage.PortageInstance.getPackageInstance('win32libs',
-                                                                                      'boost-headers').sourceDir(),
+        utils.system(cmd, cwd=os.path.join(CraftPackageObject.PackageObjectBase('win32libs/boost/boost-headers').instance.sourceDir(),
                                            "tools", "build")) or craftDebug.log.critical(
             "command: %s failed" % (cmd))
         return True
