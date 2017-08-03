@@ -179,7 +179,7 @@ def handleSinglePackage(packageName, action, args, directTargets=None):
     categoryList = []
 
     if portage.PortageInstance.ignores.match(packageName):
-        craftDebug.log.info(f"Ignoring {packageName}")
+        craftDebug.log.info(f"Skipping package because it has been ignored: {packageName}")
         return True
 
     if action == "update-all":
