@@ -490,6 +490,10 @@ def main():
             portageSearch.printSearch(category, package)
         return True
 
+    if not args.packageNames:
+        CraftSetupHelper.SetupHelper().printBanner()
+        return True
+
     for action in actionHandler.parseFinalAction(args, "all"):
         tempArgs = copy.deepcopy(args)
 
