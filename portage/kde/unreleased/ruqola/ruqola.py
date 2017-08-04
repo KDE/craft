@@ -12,7 +12,9 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
         self.runtimeDependencies["libs/qt5/qtwebsockets"] = "default"
         self.runtimeDependencies["libs/qt5/qtnetworkauth"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
         self.runtimeDependencies["frameworks/tier1/kirigami"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
 
 
 from Package.CMakePackageBase import *
