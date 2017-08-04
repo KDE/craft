@@ -57,7 +57,7 @@ file collection process is skipped, and only the installer is generated.
         self.defines.setdefault("executable", "")
         self.defines.setdefault("icon", "")
         self.defines.setdefault("license", "")
-        self.defines.setdefault("productname", self.package.capitalize())
+        self.defines.setdefault("productname", self.package.name.capitalize())
         self.defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         self.defines.setdefault("srcdir", self.archiveDir())
         self.defines.setdefault("extrashortcuts", "")
@@ -149,7 +149,7 @@ file collection process is skipped, and only the installer is generated.
                 craftDebug.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
             script = script.replace(f"@{{{match}}}", self.defines[match])
 
-        outFile = os.path.join(self.workDir(), f"{self.package}.nsi")
+        outFile = os.path.join(self.workDir(), f"{self.package.name}.nsi")
         with open(outFile, "wt+") as f:
             f.write(script)
         return outFile

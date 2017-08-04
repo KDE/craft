@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import CraftHash
-import CraftPackageObject
+from CraftPackageObject import *
 from CraftBase import *
 from CraftCompiler import *
 from CraftOS.osutils import OsUtils
@@ -269,7 +269,7 @@ class PackageBase(CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise CraftPackageObject.PortageException(str(e), self.package, e)
+                raise PortageException(str(e), self.package, e)
 
         else:
             ok = craftDebug.log.error("command %s not understood" % command)

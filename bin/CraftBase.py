@@ -249,13 +249,13 @@ class CraftBase(object):
             fileType = f".{fileType}"
         else:
             fileType = ""
-        return f"{self.package}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
+        return f"{self.package.name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject("libs/qt5/qtbase").subinfo.buildTarget
+            version = CraftPackageObject.get("libs/qt5/qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
@@ -264,7 +264,7 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject("libs/qtbase").subinfo.buildTarget
+            version = CraftPackageObject.get("libs/qtbase").subinfo.buildTarget
             version = "Qt_%s" % version
         return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
                 craftSettings.get("Packager", "RepositoryUrl").split(";")]

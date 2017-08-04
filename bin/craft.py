@@ -381,7 +381,7 @@ def main():
     CraftPackageObject.options = args.options
     if args.search:
         for package in args.packageNames:
-            portageSearch.printSearch(CraftPackageObject(package))
+            portageSearch.printSearch(package)
         return True
 
     for action in actionHandler.parseFinalAction(args, "all"):
@@ -412,9 +412,12 @@ def main():
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
         else:
-            package = CraftPackageObject()
+            package = CraftPackageObject(None)
             for packageName in packageNames:
-                child = CraftPackageObject(packageName)
+                child = CraftPackageObject.get(packageName)
+                if not child:
+                    portageSearch.printSearch(packageName)
+                    return False
                 package.children[child.name] = child
             if not run(package, action, tempArgs, packageNames):
                 return False

@@ -21,7 +21,8 @@ class SeachPackage(object):
 
     @property
     def package(self):
-        return CraftPackageObject(self.path)
+        # we can't cache the whole instance
+        return CraftPackageObject.get(self.path)
 
     def __str__(self):
         installed = InstallDB.installdb.getInstalledPackages(self.package)
@@ -61,18 +62,23 @@ def packages():
 
 
 def printSearch(search_package, maxDist=2):
+    searchPackageLower = search_package.lower()
+    isPath = "/" in searchPackageLower
     with CraftTimer.Timer("Search", 0) as timer:
         similar = []
         match = None
         package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)
         for package in packages():
-            levDist = utils.levenshtein(search_package.path.lower(), package.package.path.lower())
+            packageString =  package.package.path if isPath else package.package.name
+            levDist = abs(len(searchPackageLower) - len(packageString))
+            if levDist <= maxDist:
+                levDist = utils.levenshtein(searchPackageLower, packageString.lower())
             if levDist == 0:
                 match = (levDist, package)
                 break
             elif package_re.match(package.package.path):
                 similar.append((levDist - maxDist, package))
-            elif len(package.package.path) > maxDist and levDist <= maxDist:
+            elif len(packageString) > maxDist and levDist <= maxDist:
                 similar.append((levDist, package))
             else:
                 if package_re.match(package.shortDescription):

@@ -6,8 +6,7 @@ from enum import unique, Enum
 
 import os
 
-import builtins
-
+from CraftOS.osutils import OsUtils
 import copy
 
 from CraftConfig import craftSettings, CraftStandardDirs
@@ -15,125 +14,115 @@ from CraftDebug import craftDebug
 
 class CraftPackageObject(object):
     options = None
-    rootPackage = None
-    _packages = None
-    _recipes = {}
+    __rootPackage = None
+    _nodes = {}#all nodes
+    # TODO: allow multiple recipes per key, and report crash
+    _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = [".git", "__pycache__"]
     Ignores = re.compile("a^")
 
-    def __init__(self, path=None, portageRoot=None, useCache=True):
+    def __init__(self, path):
+        if isinstance(path, CraftPackageObject):
+            self.__dict__ = path.__dict__
+            return
         self.path = None
         self.children = {}
         self.source = None
         self._version = None
         self._instance = None
 
-        if path:
-            self.__getNode(path, portageRoot, useCache)
+    def parent(self):
+        parent = self.path.rsplit("/", 1)[0]
+        return CraftPackageObject._nodes[parent]
 
-    def __getNode(self, path, portageRoot, useCache):
-        if CraftPackageObject._packages == None:
-            CraftPackageObject._packages = {}
-            CraftPackageObject.load()
-
+    @staticmethod
+    def get(path):
         if isinstance(path, CraftPackageObject):
-            self.__dict__ = path.__dict__
+            return path
+        CraftPackageObject.root()
+        package = None
+        if path not in CraftPackageObject._nodes:
+            if path in CraftPackageObject._recipes:
+                package = CraftPackageObject._recipes[path]
+        else:
+            package = CraftPackageObject._nodes[path]
+        return package
+
+    def _addNode(self, path, portageRoot):
+        package = CraftPackageObject(path)
+        if path:
+            if OsUtils.isWin():
+                path = path.replace("\\", "/")
+            package.path = path[len(portageRoot) + 1:]
+            if package.path in CraftPackageObject._nodes:
+                return
+            CraftPackageObject._nodes[package.path] = package
+        elif portageRoot:
+            path = portageRoot
+        else:
             return
 
-        path = path.replace("\\", "/")
-        if useCache:
-            if path not in CraftPackageObject._packages:
-                if path in CraftPackageObject._recipes:
-                    package = CraftPackageObject._recipes[path]
-                else:
-                    package = CraftPackageObject.rootPackage.child(path.split("/"))
+        hasChildren = False
+        for f in os.listdir(path):
+            fPath = os.path.abspath(os.path.join(path, f))
+            if os.path.isdir(fPath):
+                if f not in CraftPackageObject.IgnoredDirectories:
+                    hasChildren = True
+                    child = self._addNode(fPath, portageRoot)
+                    if child:
+                        package.children[child.name] = child
+            elif f.endswith(".py"):
+                if package.source:
+                    raise Exception("Multiple py files in one directory")
+                recipe = os.path.splitext(f)[0]
+                if recipe in CraftPackageObject._recipes:
+                    raise PortageException(
+                        f"Multiple recipes found in {path}, previous recipe is {CraftPackageObject._recipes[recipe]}")
+                CraftPackageObject._recipes[recipe] = package
+                package.source = fPath
+        if hasChildren:
+            if package.source:
+                # TODO: introduce a special recipe node?
+                category = copy.deepcopy(package)
+                category.source = None
             else:
-                package = CraftPackageObject._packages[path]
-
-            self.__dict__ = package.__dict__
-        else:
-            if path == "/":
-                self.path = path
-                path = portageRoot
-            else:
-                self.path = path[len(portageRoot) + 1:]
-            if portageRoot:
-                CraftPackageObject._packages[self.path] = self
-            else:
-                return
-
-            try:
-                hasChildren = False
-                for f in os.listdir(path):
-                    fPath = os.path.join(path, f)
-                    if os.path.isdir(fPath):
-                        if f not in CraftPackageObject.IgnoredDirectories:
-                            hasChildren = True
-                            child = CraftPackageObject(fPath, portageRoot, useCache=False)
-                            self.children[child.name] = child
-                    elif f.endswith(".py"):
-                        if self.source:
-                            raise Exception("Multiple py files in one directory")
-                        recipe = os.path.splitext(f)[0]
-                        if recipe in CraftPackageObject._recipes:
-                            raise PortageException(
-                                f"Multiple recipes found in {path}, previous recipe is {CraftPackageObject._recipes[recipe]}")
-                        CraftPackageObject._recipes[recipe] = self
-                        self.source = fPath
-                if hasChildren:
-                    if self.source:
-                        category = copy.deepcopy(self)
-                        category.source = None
-                    else:
-                        category = self
-                    self.children["*"] = category
-            except Exception as e:
-                raise e
-
-    def child(self, paths, pos = 0):
-        if paths:
-            key = paths[pos]
-            if key not in self.children:
-                raise Exception(f"{key} is not a child of {self}, path was {'/'.join(paths)}")
-            if pos + 1 == len(paths):
-                return self.children[key]
-            return self.children[key].child(paths, pos + 1)
-
-    @property
-    def parent(self):
-        """
-        Return the parent or the root node if we are a portage
-        :return:
-        """
-        return CraftPackageObject._packages.get(os.path.dirname(self.path), CraftPackageObject._packages[None])
+                category = package
+            package.children["*"] = category
+            CraftPackageObject._nodes[f"{category.path}/*"] = category
+        return package
 
     @property
     def name(self):
+        if not self.path:
+            return "[]"
         split = self.path.rsplit("/", 1)
         return split[0] if len(split) == 1 else split[1]
 
     @staticmethod
     def rootDirectories():
         # this function should return all currently set portage directories
+        rootDirs = None
         if ("General", "Portages") in craftSettings:
-            rootDirs = craftSettings.get("General", "Portages").split(";")
+            rootDirs = craftSettings.getList("General", "Portages")
         if not rootDirs:
             rootDirs = [CraftStandardDirs.craftRepositoryDir()]
         return rootDirs
 
 
     @staticmethod
-    def load():
-        if not CraftPackageObject.rootPackage:
+    def root():
+        if not CraftPackageObject.__rootPackage:
             if ("Portage", "Ignores") in craftSettings:
                 CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Portage", "Ignores").split(";")]))
 
-            CraftPackageObject.rootPackage = CraftPackageObject("/", None, useCache=False)
+            CraftPackageObject.__rootPackage = root = CraftPackageObject("/")
             for portage in CraftPackageObject.rootDirectories():
-                portage = portage.replace("\\", "/")
-                children = CraftPackageObject("/", portage, useCache=False).children
-                CraftPackageObject.rootPackage.children.update(children)
-        return CraftPackageObject.rootPackage
+                if OsUtils.isWin():
+                    portage = os.path.abspath(portage).replace("\\", "/")
+                # create a dummy package to load its children
+                child = root._addNode(None, portage)
+                root.children.update(child.children)
+        return CraftPackageObject.__rootPackage
 
 
     @property
@@ -194,7 +183,8 @@ class CraftPackageObject(object):
 
     @staticmethod
     def installables():
-        CraftPackageObject.load()
+        #ensure that everything is loaded
+        CraftPackageObject.root()
         return CraftPackageObject._recipes.values()
 
 
@@ -259,7 +249,7 @@ class DependencyPackage(CraftPackageObject):
         if deps:
             for line in deps:
                 if line not in DependencyPackage._packageCache:
-                    p = DependencyPackage(line)
+                    p = DependencyPackage(CraftPackageObject.get(line))
                     craftDebug.log.debug(f"adding package {line}")
                     DependencyPackage._packageCache[line] = p
                 else:

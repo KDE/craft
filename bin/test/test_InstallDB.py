@@ -39,7 +39,7 @@ import CraftTestBase
 
 import CraftConfig
 import InstallDB
-import CraftPackageObject
+from CraftPackageObject import *
 
 
 class DatabaseTest(CraftTestBase.CraftTestBase):
@@ -54,7 +54,7 @@ class DatabaseTest(CraftTestBase.CraftTestBase):
 
 class TestAPI(DatabaseTest):
     def test_addInstalled(self):
-        package = self.db.addInstalled(CraftPackageObject('win32libs/dbus-src'), '1.4.0')
+        package = self.db.addInstalled(CraftPackageObject.get('win32libs/dbus-src'), '1.4.0')
         package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
         package.install()
-        self.assertEquals(self.db.isInstalled(CraftPackageObject('win32libs/dbus-src'), '1.4.0'), True)
+        self.assertEquals(self.db.isInstalled(CraftPackageObject.get('win32libs/dbus-src'), '1.4.0'), True)
