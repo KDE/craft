@@ -239,6 +239,10 @@ class CraftConfig(object):
         print("in your kdesettings.ini")
         exit(1)
 
+    def getList(self, group, key, default=None):
+        val = self.get(group, key, default).split(";")
+        return [v.strip() for v in val if v]
+
     def getSection(self, group):
         if self._config.has_section(group):
             return self._config.items(group)
