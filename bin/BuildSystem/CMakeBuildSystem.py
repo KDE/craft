@@ -181,7 +181,8 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
-        self.system(command, "install", env=env)
+        if not self.system(command, "install", env=env):
+            return False
 
         if self.subinfo.options.install.useMakeToolForInstall and not (
             self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
