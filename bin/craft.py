@@ -422,7 +422,11 @@ def main():
                 if not child:
                     portageSearch.printSearch(packageName)
                     return False
-                package.children[child.name] = child
+
+                if child.isCategory():
+                    package.children = child.children
+                else:
+                    package.children[child.name] = child
             if not run(package, action, tempArgs, package.children.values()):
                 return False
     return True
