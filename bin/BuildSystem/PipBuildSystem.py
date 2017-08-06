@@ -42,7 +42,7 @@ class PipBuildSystem(BuildSystemBase):
                     "Could not find 'pip' executable for Python install: {0}, skipping install".format(pythonPath))
                 return False
 
-            command = "\"%s\" install --upgrade %s %s" % (pipExe, args, self.subinfo.package)
+            command = f"{pipExe} install --upgrade {arg} {self.package.name}"
             ok = ok and utils.system(command)
         return ok
 
