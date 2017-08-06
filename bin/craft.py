@@ -192,7 +192,8 @@ def run(package, action, args, directTargets=None):
 
         if action == "install-deps":
             # we don't intend to build the package itself
-            packages.remove(package)
+            for x in directTargets:
+                packages.remove(x)
 
         for info in packages:
                 # in case we only want to see which packages are still to be build, simply return the package name
