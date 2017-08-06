@@ -12,8 +12,8 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['frameworks/kparts'] = "default"
-        self.runtimeDependencies['frameworks/kxmlgui'] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -6,7 +6,7 @@ import fileinput
 import shutil
 import types
 
-from CraftPackageObject import DependencyType
+from CraftPackageObject import *
 from Packager.PackagerBase import *
 
 
@@ -92,22 +92,19 @@ class CollectionPackagerBase(PackagerBase):
     def __getImageDirectories(self):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = portage.solveDependencies(self.category, self.package, depType=DependencyType.Runtime,
+        depList = DependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime,
                                             ignoredPackages=self.ignoredPackages)
 
         for x in depList:
-            if portage.PortageInstance.isVirtualPackage(x.category, x.package):
-                craftDebug.log.debug("Ignoring package b/c it is virtual: %s/%s" % (x.category, x.package))
+            if x.isVirtualPackage():
+                craftDebug.log.debug(f"Ignoring package b/c it is virtual: {x}")
                 continue
 
-            _package = portage.PortageInstance.getPackageInstance(x.category, x.package)
+            _package = x.instance
 
-            imageDirs.append((os.path.join(self.rootdir, "build", x.category, x.package,
-                                           self.__imageDirPattern(_package, _package.buildTarget)),
-                              _package.subinfo.options.package.disableStriping))
+            imageDirs.append((x.instance.imageDir(), x.subinfo.options.package.disableStriping))
             # this loop collects the files from all image directories
-            craftDebug.log.debug("__getImageDirectories: category: %s, package: %s, version: %s, defaultTarget: %s" % (
-                _package.category, x.package, _package.version, _package.buildTarget))
+            craftDebug.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
 
         if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK",
                                                                                                               "PackageQtSDK",

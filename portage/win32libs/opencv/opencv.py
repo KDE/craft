@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.options.configure.args = "-DBUILD_NEW_PYTHON_SUPPORT=OFF"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

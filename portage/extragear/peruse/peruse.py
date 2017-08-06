@@ -9,20 +9,20 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['libs/qtbase'] = "default"
-        self.runtimeDependencies['frameworks/karchive'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kdeclarative'] = 'default'
-        self.runtimeDependencies['frameworks/kfilemetadata'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/plasma-framework'] = 'default'
-        self.runtimeDependencies['frameworks/kirigami'] = 'default'
-        self.runtimeDependencies['kde/okular'] = 'default'
-        self.runtimeDependencies['kde/kio-extras'] = 'default'
-        self.runtimeDependencies['frameworks/knewstuff'] = 'default'
-        self.runtimeDependencies['frameworks/breeze-icons'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kdeclarative"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kfilemetadata"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kirigami"] = "default"
+        self.runtimeDependencies["kde/applications/okular"] = "default"
+        self.runtimeDependencies["kde/kdenetwork/kio-extras"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/tier1/breeze-icons"] = "default"
 
 
 from Package.CMakePackageBase import *

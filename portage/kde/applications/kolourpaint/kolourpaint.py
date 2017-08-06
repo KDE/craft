@@ -9,15 +9,15 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kguiaddons"] = "default"
-        self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kio"] = "default"
-        self.runtimeDependencies["frameworks/kparts"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.runtimeDependencies["frameworks/breeze-icons"] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier1/breeze-icons"] = "default"
 
 
 class Package(CMakePackageBase):

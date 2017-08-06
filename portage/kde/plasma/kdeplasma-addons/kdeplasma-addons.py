@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['kde/kde-workspace'] = 'default'
         self.runtimeDependencies['kde/kdepimlibs'] = 'default'
         self.runtimeDependencies['kde/marble'] = 'default'
-        self.runtimeDependencies['kde/libkexiv2'] = 'default'
+        self.runtimeDependencies["kde/applications/libkexiv2"] = "default"
         self.runtimeDependencies['kdesupport/attica'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['kdesupport/qjson'] = 'default'
-        self.runtimeDependencies['kdesupport/dbusmenu-qt'] = 'default'
-        self.runtimeDependencies['win32libs/eigen2'] = 'default'
+        self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["kdesupport/qjson"] = "default"
+        self.runtimeDependencies["kdesupport/dbusmenu-qt"] = "default"
+        self.runtimeDependencies["win32libs/eigen2"] = "default"
 
 
 from Package.CMakePackageBase import *

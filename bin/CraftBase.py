@@ -4,6 +4,7 @@
 import datetime
 import functools
 
+import CraftPackageObject
 import portage
 import utils
 from CraftCompiler import craftCompiler
@@ -17,6 +18,7 @@ from CraftDebug import craftDebug
 # 3. binary packages which are build type independent should be
 # marked in both databases or should have a separate install database
 # question: How to detect reliable this case ?
+from CraftPackageObject import CraftPackageObject
 
 
 class InitGuard(object):
@@ -57,8 +59,9 @@ class CraftBase(object):
         object.__init__(self)
         craftDebug.log.debug("CraftBase.__init__ called")
 
-        self.filename, self.category, self.subpackage, self.package, mod = portage.PortageInstance._CURRENT_MODULE  # ugly workaround we need to replace the constructor
-        self.subinfo = mod.subinfo(self, portage.PortageInstance.options)
+        mod = sys.modules[self.__module__]
+        self.package = mod.CRAFT_CURRENT_MODULE  # ugly workaround we need to replace the constructor
+        self.subinfo = mod.subinfo(self, CraftPackageObject.options)
 
         self.buildSystemType = None
 
@@ -69,10 +72,7 @@ class CraftBase(object):
         self.isoDateToday = str(datetime.date.today()).replace('-', '')
 
     def __str__(self):
-        if self.subpackage:
-            return "%s/%s/%s" % (self.category, self.subpackage, self.package)
-        else:
-            return "%s/%s" % (self.category, self.package)
+        return self.package.__str__()
 
     @property
     def noFetch(self):
@@ -129,11 +129,11 @@ class CraftBase(object):
 
     def packageDir(self):
         """ add documentation """
-        return portage.PortageInstance.getDirname(self.category, self.package)
+        return os.path.dirname(self.package.source)
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        return os.path.join(CraftStandardDirs.craftRoot(), "build", self.category, self.package)
+        return os.path.realpath(os.path.join(CraftStandardDirs.craftRoot(), "build", self.package.path))
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
@@ -232,7 +232,7 @@ class CraftBase(object):
         return False
 
     def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),
-                          includeRevision=False) -> str:
+                          includeRevision=False, includePackagePath=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -249,14 +249,15 @@ class CraftBase(object):
             fileType = f".{fileType}"
         else:
             fileType = ""
-        return f"{self.package}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
+        name = self.package.name if not includePackagePath else self.package.path
+        return f"{name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = portage.PortageInstance.getPackageInstance("libs", "qtbase").subinfo.buildTarget
-            version = "Qt_%s" % version
+            version = CraftPackageObject.get("libs/qt5/qtbase").version
+            version = f"Qt_{version}"
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
 
@@ -264,7 +265,7 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = portage.PortageInstance.getPackageInstance("libs", "qtbase").subinfo.buildTarget
-            version = "Qt_%s" % version
+            version = CraftPackageObject.get("libs/qt5/qtbase").version
+            version = f"Qt_{version}"
         return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
-                craftSettings.get("Packager", "RepositoryUrl").split(";")]
+                craftSettings.getList("Packager", "RepositoryUrl")]

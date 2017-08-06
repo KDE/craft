@@ -18,11 +18,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = "2.7.0"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
-        self.runtimeDependencies['qt-apps/kdstatemachineeditor'] = 'default'
-        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/syntax-highlighting"] = "default"
+        self.runtimeDependencies["qt-apps/kdstatemachineeditor"] = "default"
+        self.runtimeDependencies["win32libs/openssl"] = "default"
 
 
 from Package.CMakePackageBase import *

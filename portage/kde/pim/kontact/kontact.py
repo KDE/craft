@@ -9,19 +9,19 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/kcmutils"] = "default"
-        self.runtimeDependencies["frameworks/kcrash"] = "default"
-        self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["kde/kpimtextedit"] = "default"
-        self.runtimeDependencies["kde/kontactinterface"] = "default"
-        self.runtimeDependencies["kde/libkdepim"] = "default"
-        self.runtimeDependencies["kde/grantleetheme"] = "default"
-        self.runtimeDependencies["kde/kdepim-apps-libs"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["kde/pim/kpimtextedit"] = "default"
+        self.runtimeDependencies["kde/pim/kontactinterface"] = "default"
+        self.runtimeDependencies["kde/pim/libkdepim"] = "default"
+        self.runtimeDependencies["kde/pim/grantleetheme"] = "default"
+        self.runtimeDependencies["kde/pim/kdepim-apps-libs"] = "default"
 
 
 from Package.CMakePackageBase import *

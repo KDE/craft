@@ -7,12 +7,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["libs/qtdeclarative"] = "default"
-        self.runtimeDependencies["libs/qtwebsockets"] = "default"
-        self.runtimeDependencies["libs/qtnetworkauth"] = "default"
-        self.runtimeDependencies["frameworks/kirigami"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebsockets"] = "default"
+        self.runtimeDependencies["libs/qt5/qtnetworkauth"] = "default"
+        self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kirigami"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
 
 
 from Package.CMakePackageBase import *

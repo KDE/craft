@@ -9,20 +9,20 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         self.runtimeDependencies["qt-libs/phonon"] = "default"
 
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/kguiaddons"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["frameworks/kitemviews"] = "default"
-        self.runtimeDependencies["frameworks/knotifyconfig"] = "default"
-        self.runtimeDependencies["frameworks/knotifications"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.runtimeDependencies["frameworks/kdelibs4support"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemviews"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifyconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
 
 
 from Package.CMakePackageBase import *

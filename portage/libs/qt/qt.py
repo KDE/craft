@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt5'] = 'default'
+        self.runtimeDependencies["libs/qt5"] = "default"
 
 
 from Package.VirtualPackageBase import *

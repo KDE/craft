@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import CraftHash
-import CraftPackageObject
+from CraftPackageObject import *
 from CraftBase import *
 from CraftCompiler import *
 from CraftOS.osutils import OsUtils
@@ -34,7 +34,7 @@ class PackageBase(CraftBase):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
-        if installdb.isInstalled(category=None, package=self.package):
+        if installdb.isInstalled(package=self.package):
             self.unmerge()
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
@@ -60,7 +60,7 @@ class PackageBase(CraftBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
-        package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
+        package = installdb.addInstalled(self.package, self.version, revision=revision)
         fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
         package.addFiles(fileList)
         package.install()
@@ -76,14 +76,12 @@ class PackageBase(CraftBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
-        packageList = installdb.getInstalledPackages(self.category, self.package)
+        packageList = installdb.getInstalledPackages(self.package)
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
             self.unmergeFileList(self.mergeDestinationDir(), fileList, self.forced)
             package.uninstall()
-
-        installdb.getInstalledPackages(self.category, self.package)
 
         # run post-uninstall scripts
         if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
@@ -141,7 +139,7 @@ class PackageBase(CraftBase):
         utils.createImportLibs(pkgName, basepath)
 
     def printFiles(self):
-        packageList = installdb.getInstalledPackages(self.category, self.package)
+        packageList = installdb.getInstalledPackages(self.package)
         for package in packageList:
             fileList = package.getFiles()
             fileList.sort()
@@ -181,7 +179,7 @@ class PackageBase(CraftBase):
         if self.subinfo.options.package.disableBinaryCache:
             return False
 
-        archiveName = self.binaryArchiveName()
+        archiveName = self.binaryArchiveName(includePackagePath=True)
         downloadFolder = self.cacheLocation()
 
         if not os.path.exists(downloadFolder):
@@ -216,7 +214,7 @@ class PackageBase(CraftBase):
                 digest = ""
             else:
                 digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
-            ret.append((relativeFilePath, ""))
+            ret.append((relativeFilePath, digest))
         return ret
 
     @staticmethod
@@ -271,7 +269,7 @@ class PackageBase(CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise CraftPackageObject.PortageException(str(e), self.category, self.package, e)
+                raise PortageException(str(e), self.package, e)
 
         else:
             ok = craftDebug.log.error("command %s not understood" % command)

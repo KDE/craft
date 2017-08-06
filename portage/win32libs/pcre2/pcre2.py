@@ -13,9 +13,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '10.23'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libbzip2'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libbzip2"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
 
 
 class Package(CMakePackageBase):

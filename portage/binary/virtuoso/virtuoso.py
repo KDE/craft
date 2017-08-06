@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '6.1.7'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
 
 
 class Package(CMakePackageBase):

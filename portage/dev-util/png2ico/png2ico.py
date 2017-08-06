@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "2002-12-08"
 
     def setDependencies(self):
-        self.buildDependencies['gnuwin32/wget'] = 'default'
+        self.buildDependencies["gnuwin32/wget"] = "default"
 
 
 from Package.BinaryPackageBase import *

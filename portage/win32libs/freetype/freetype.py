@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "A Free, High-Quality, and Portable Font Engine"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

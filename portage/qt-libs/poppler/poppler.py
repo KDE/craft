@@ -16,17 +16,17 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.38.0"
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/freetype'] = 'default'
-        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.runtimeDependencies['win32libs/lcms'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.runtimeDependencies['win32libs/libpng'] = 'default'
-        self.runtimeDependencies['win32libs/libcurl'] = 'default'
-        self.runtimeDependencies['win32libs/tiff'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
-        self.runtimeDependencies['data/poppler-data'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["win32libs/freetype"] = "default"
+        self.runtimeDependencies["win32libs/libjpeg-turbo"] = "default"
+        self.runtimeDependencies["win32libs/lcms"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/libjpeg-turbo"] = "default"
+        self.runtimeDependencies["win32libs/libpng"] = "default"
+        self.runtimeDependencies["win32libs/libcurl"] = "default"
+        self.runtimeDependencies["win32libs/tiff"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
+        self.runtimeDependencies["data/poppler-data"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -12,9 +12,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '3.1.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
         if craftCompiler.isMSVC():
-            self.buildDependencies['binary/xerces-c-bin'] = 'default'
+            self.buildDependencies["binary/xerces-c-bin"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

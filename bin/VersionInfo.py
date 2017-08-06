@@ -18,7 +18,7 @@ class VersionInfo(object):
     @property
     def _defaulVersions(self):
         if self.__defaulVersions is None:
-            name = self.subinfo.parent.filename
+            name = self.subinfo.parent.package.source
             if name in VersionInfo._VERSION_INFOS_HINTS:
                 if VersionInfo._VERSION_INFOS_HINTS[name] == None:
                     return None
@@ -90,7 +90,7 @@ class VersionInfo(object):
 
     def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                                  gitUrl=None):
-        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.filename), fileName))
+        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.package.source), fileName))
         self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
     def setDefaultValues(self, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
@@ -108,7 +108,7 @@ class VersionInfo(object):
 
         """
         if packageName is None:
-            packageName = self.subinfo.package
+            packageName = self.subinfo.package.package.name
         if tarballUrl is None:
             tarballUrl = self._getVersionInfo("tarballUrl", None)
         if tarballDigestUrl is None:
@@ -138,4 +138,4 @@ class VersionInfo(object):
         self.subinfo.defaultTarget = f"{self.defaultTarget( ) }-{patchLevel}" if patchLevel else self.defaultTarget()
 
     def packageName(self):
-        return self.subinfo.package
+        return self.subinfo.package.package.path

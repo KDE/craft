@@ -9,18 +9,18 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kcompletion"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"
-        self.runtimeDependencies["frameworks/kitemmodels"] = "default"
-        self.runtimeDependencies["kde/kpimtextedit"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemmodels"] = "default"
+        self.runtimeDependencies["kde/pim/kpimtextedit"] = "default"
         self.runtimeDependencies["win32libs/gpgme"] = "default"
-        self.runtimeDependencies["win32libs/boost"] = "default"
+        self.runtimeDependencies["win32libs/boost/boost-atomic"] = "default"
 
 
 from Package.CMakePackageBase import *

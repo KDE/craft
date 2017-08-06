@@ -12,10 +12,10 @@ class subinfo(info.infoclass):
         self.targetInstSrc['master'] = "libindi"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['win32libs/libnova'] = 'default'
-        self.buildDependencies['gnuwin32/grep'] = '2.5.4'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["win32libs/libnova"] = "default"
+        self.buildDependencies["gnuwin32/grep"] = "default"
 
 
 from Package.CMakePackageBase import *

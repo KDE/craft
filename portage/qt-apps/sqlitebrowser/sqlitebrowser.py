@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.shortDescription = "DB Browser for SQLite"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 class Package(CMakePackageBase):

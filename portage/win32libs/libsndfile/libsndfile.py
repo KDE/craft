@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.0.24'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libogg'] = 'default'
-        self.runtimeDependencies['win32libs/libvorbis'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libogg"] = "default"
+        self.runtimeDependencies["win32libs/libvorbis"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.1.36'] = 'cce65f21d52da1d21c6b60ca8defe7888a235b2f'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
 
 
 from Package.BinaryPackageBase import *

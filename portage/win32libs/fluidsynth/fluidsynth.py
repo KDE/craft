@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.1.6'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/pkg-config'] = 'default'
-        self.runtimeDependencies['win32libs/glib'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/pkg-config"] = "default"
+        self.runtimeDependencies["win32libs/glib"] = "default"
 
 
 from Package.CMakePackageBase import *

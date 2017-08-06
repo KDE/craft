@@ -3,16 +3,16 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
         if craftCompiler.isMinGW():
-            self.buildDependencies['dev-util/msys'] = 'default'
-            self.runtimeDependencies['win32libs/lcms'] = 'default'
-            self.runtimeDependencies['win32libs/lcms2'] = 'default'
-            self.runtimeDependencies['win32libs/freetype'] = 'default'
-            self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
-            self.runtimeDependencies['win32libs/libpng'] = 'default'
-            self.runtimeDependencies['win32libs/tiff'] = 'default'
+            self.buildDependencies["dev-util/msys"] = "default"
+            self.runtimeDependencies["win32libs/lcms"] = "default"
+            self.runtimeDependencies["win32libs/lcms2"] = "default"
+            self.runtimeDependencies["win32libs/freetype"] = "default"
+            self.runtimeDependencies["win32libs/libjpeg-turbo"] = "default"
+            self.runtimeDependencies["win32libs/libpng"] = "default"
+            self.runtimeDependencies["win32libs/tiff"] = "default"
 
     def setTargets(self):
         for ver in ['9.19']:

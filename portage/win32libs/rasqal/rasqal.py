@@ -16,14 +16,14 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.9.30'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/yajl'] = 'default'
-        self.runtimeDependencies['win32libs/expat'] = 'default'
-        self.runtimeDependencies['win32libs/libcurl'] = 'default'
-        self.runtimeDependencies['win32libs/pcre'] = 'default'
-        self.runtimeDependencies['win32libs/libxml2'] = 'default'
-        self.runtimeDependencies['win32libs/libxslt'] = 'default'
-        self.runtimeDependencies['win32libs/raptor2'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/yajl"] = "default"
+        self.runtimeDependencies["win32libs/expat"] = "default"
+        self.runtimeDependencies["win32libs/libcurl"] = "default"
+        self.runtimeDependencies["win32libs/pcre"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["win32libs/raptor2"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

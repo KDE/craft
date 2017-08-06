@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
                 self.svnTargets[ver] = self.svnTargets[branch]
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 from Package.Qt5CorePackageBase import *

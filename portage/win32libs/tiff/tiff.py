@@ -17,9 +17,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = '4.0.4'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/libjpeg-turbo'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/libjpeg-turbo"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

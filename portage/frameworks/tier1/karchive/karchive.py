@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["libs/qttools"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
         self.runtimeDependencies["win32libs/libbzip2"] = "default"
         self.runtimeDependencies["win32libs/zlib"] = "default"
         if not craftCompiler.isMSVC2010() and not craftCompiler.isMSVC2012():

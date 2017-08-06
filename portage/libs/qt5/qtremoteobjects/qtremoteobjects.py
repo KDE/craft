@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.svnTargets['5.6'] = '[git]https://codereview.qt-project.org/qt/qtremoteobjects|5.9'  # compatible with 5.6
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 from Package.Qt5CorePackageBase import *

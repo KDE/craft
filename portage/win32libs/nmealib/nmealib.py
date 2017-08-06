@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.5.3'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

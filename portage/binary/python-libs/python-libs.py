@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "default"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
-        self.runtimeDependencies['binary/python'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
+        self.runtimeDependencies["binary/python"] = "default"
 
 
 from Package.BinaryPackageBase import *

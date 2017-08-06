@@ -15,8 +15,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.0.0"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt'] = 'default'
-        self.runtimeDependencies['kdesupport/libqtsoap'] = 'default'
+        self.runtimeDependencies["libs/qt"] = "default"
+        self.runtimeDependencies["kdesupport/libqtsoap"] = "default"
 
 
 from Package.QMakePackageBase import *

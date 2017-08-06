@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "6.0.2"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt'] = 'default'
+        self.runtimeDependencies["libs/qt"] = "default"
 
 
 from Package.QMakePackageBase import *

@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.2.24'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/libxslt'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

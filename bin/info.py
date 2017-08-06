@@ -64,17 +64,13 @@ class infoclass(object):
 
     @property
     def package(self) -> str:
-        return self.parent.package
-
-    @property
-    def category(self) -> str:
-        return self.parent.category
+        return self.parent
 
     @property
     def defaultTarget(self) -> str:
         target = None
-        if ("PortageVersions", "%s/%s" % (self.category, self.package)) in craftSettings:
-            target = craftSettings.get("PortageVersions", "%s/%s" % (self.category, self.package))
+        if ("PortageVersions", self.package.package.path) in craftSettings:
+            target = craftSettings.get("PortageVersions", self.package.package.path)
         if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget
