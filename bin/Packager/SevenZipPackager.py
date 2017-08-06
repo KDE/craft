@@ -68,5 +68,5 @@ class SevenZipPackager(PackagerBase):
         if not self.subinfo.options.package.packSources:
             return True
         if craftSettings.getboolean("Packager", "PackageSrc", "True"):
-            self._compress(self.binaryArchiveName("-src"), self.sourceDir(), dstpath)
+            self._compress(self.binaryArchiveName("-src", includePackagePath=cacheMode), self.sourceDir(), dstpath)
         return True
