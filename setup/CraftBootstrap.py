@@ -291,7 +291,7 @@ if __name__ == "__main__":
     parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()
-    if args.load:
-        args.prefix = args.load
+    if args.root:
+        args.prefix = args.root
 
     setUp(args)
