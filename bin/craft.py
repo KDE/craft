@@ -183,7 +183,7 @@ def run(package, action, args, directTargets=None):
 
         packages = []
         for item in depList:
-            if args.ignoreAllInstalled or args.ignoreInstalled or packageIsOutdated(item):
+            if (args.ignoreInstalled and item in directTargets) or args.ignoreAllInstalled or packageIsOutdated(item):
                 packages.append(item)
                 craftDebug.log.debug(f"dependency: {item}")
         if not packages:
@@ -419,7 +419,7 @@ def main():
                     portageSearch.printSearch(packageName)
                     return False
                 package.children[child.name] = child
-            if not run(package, action, tempArgs, packageNames):
+            if not run(package, action, tempArgs, package.children.values()):
                 return False
     return True
 

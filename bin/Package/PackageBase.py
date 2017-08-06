@@ -179,7 +179,7 @@ class PackageBase(CraftBase):
         if self.subinfo.options.package.disableBinaryCache:
             return False
 
-        archiveName = self.binaryArchiveName()
+        archiveName = self.binaryArchiveName(includePackagePath=True)
         downloadFolder = self.cacheLocation()
 
         if not os.path.exists(downloadFolder):

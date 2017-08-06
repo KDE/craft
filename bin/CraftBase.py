@@ -232,7 +232,7 @@ class CraftBase(object):
         return False
 
     def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),
-                          includeRevision=False) -> str:
+                          includeRevision=False, includePackagePath=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ''
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -249,14 +249,15 @@ class CraftBase(object):
             fileType = f".{fileType}"
         else:
             fileType = ""
-        return f"{self.package.name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
+        name = self.package.name if not includePackagePath else self.package.path
+        return f"{name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject.get("libs/qt5/qtbase").subinfo.buildTarget
-            version = "Qt_%s" % version
+            version = CraftPackageObject.get("libs/qt5/qtbase").version
+            version = f"Qt_{version}"
         cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
 
@@ -264,7 +265,7 @@ class CraftBase(object):
         if craftSettings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject.get("libs/qtbase").subinfo.buildTarget
-            version = "Qt_%s" % version
+            version = CraftPackageObject.get("libs/qt5/qtbase").version
+            version = f"Qt_{version}"
         return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
-                craftSettings.get("Packager", "RepositoryUrl").split(";")]
+                craftSettings.getList("Packager", "RepositoryUrl")]
