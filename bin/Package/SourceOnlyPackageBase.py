@@ -19,6 +19,9 @@ class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerB
     def configure(self):
         return True
 
+    def install(self):
+        return True
+
     def uninstall(self):
         return True
 

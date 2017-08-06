@@ -78,9 +78,10 @@ def readListFile(listFile):
 
 
 def packageIsOutdated(package):
-    newest = portage.getNewestVersion(package)
     installed = InstallDB.installdb.getInstalledPackages(package)
-    if not installed: return True
+    if not installed:
+        return True
+    newest = portage.getNewestVersion(package)
     for pack in installed:
         version = pack.getVersion()
         if newest != version:

@@ -160,14 +160,14 @@ class InstallDB(object):
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
-        isPackageInstalled = len(cursor.fetchall()) > 0
-        if isPackageInstalled:
+        installedPackage  = cursor.fetchall()
+        if installedPackage:
             InstallDB.log(f"""The package {package} has been installed with
-                            version '{version}'.""")
+                            version '{installedPackage[0][3]}'.""")
         else:
             InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
-        return isPackageInstalled
+        return installedPackage
 
     def getInstalled(self, package=None):
         """ returns a list of the installed packages, which can be restricted by adding

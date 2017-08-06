@@ -167,7 +167,7 @@ class CraftPackageObject(object):
         if self.isCategory():
             return None
         if not self._version:
-            self._version = self.subinfo.defaultTarget
+            self._version = self.instance.version
         return self._version
 
     def __eq__(self, other):
