@@ -3,6 +3,7 @@ import sqlite3
 import portage
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftOS.osutils import OsUtils
 
 
 class InstallPackage(object):
@@ -263,6 +264,24 @@ class InstallDB(object):
                 self.connection = sqlite3.connect(self.dbfilename)
                 cursor = self.connection.cursor()
             cursor.execute('''PRAGMA table_info('packageList')''')
+            info = cursor.fetchall()
+            if OsUtils.isWin():
+                installCommand = "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/KDE/craft/master/setup/install_craft.ps1'))"
+            else:
+                installCommand = "wget https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py -O setup.py && python3.6 setup.py --prefix ~/kde"
+
+            if "packagePath" != info[2][1]:
+                print("Craft database and folder structure changed.\n"
+                      "Craft now uses full paths for dependencies and package names.\n"
+                      "Instead of building 'libs/qtbase' you know 'build libs/qt5/qtbase'"
+                      ", direct recipe invocation like 'qtbase' works as before.\n"
+                      "As a result of this change you need to start with a clean build.\n"
+                      "To do so either call 'craft --destroy-craft-root' which will delete "
+                      "everything besides craft and the download folder"
+                      "or manually remove everything manually and start fresh by calling:\n"
+                      + installCommand)
+                exit(1)
+
 
 
 # get a global object
