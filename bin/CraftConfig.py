@@ -125,7 +125,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftBin():
-        return os.path.join(CraftStandardDirs.craftRoot(), os.path.dirname(__file__))
+        return os.path.dirname(__file__)
 
     @staticmethod
     def craftRepositoryDir():
