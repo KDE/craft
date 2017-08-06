@@ -214,7 +214,7 @@ class PackageBase(CraftBase):
                 digest = ""
             else:
                 digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
-            ret.append((relativeFilePath, ""))
+            ret.append((relativeFilePath, digest))
         return ret
 
     @staticmethod
