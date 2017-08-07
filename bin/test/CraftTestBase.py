@@ -4,7 +4,7 @@ import unittest
 
 import CraftConfig
 from CraftDebug import craftDebug
-
+import InstallDB
 
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
@@ -18,6 +18,11 @@ class CraftTestBase(unittest.TestCase):
         os.environ["KDEROOT"] = self.kdeRoot.name
         CraftConfig.craftSettings.set("General", "Portages", os.path.join(craftRoot, "craft", "portage"))
         CraftConfig.craftSettings.set("Compile", "BuildType", "RelWithDebInfo")
+        if hasattr(InstallDB, "installdb"):
+            del InstallDB.installdb
+        InstallDB.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))
 
     def tearDown(self):
+        InstallDB.installdb.connection.close()
+        del InstallDB.installdb
         del self.kdeRoot
