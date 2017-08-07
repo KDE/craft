@@ -10,15 +10,23 @@ import shutil
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftOS.osutils import OsUtils
+from CraftDebug import craftDebug
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 6, 0)
 
+
+def log(msg):
+    old_stream = craftDebug._handler.stream
+    craftDebug._handler.stream = sys.stderr
+    craftDebug.log.info(msg)
+    craftDebug._handler.stream = old_stream
+
 if sys.version_info[0:3] < MIN_PY_VERSION:
-    print("Error: Python too old!", file=sys.stderr)
-    print("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION, file=sys.stderr)
-    print("Please install it and adapt your kdesettings.ini", file=sys.stderr)
+    log("Error: Python too old!")
+    log("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION)
+    log("Please install it and adapt your kdesettings.ini")
     exit(1)
 
 
@@ -42,7 +50,7 @@ class SetupHelper(object):
             default = ""
             if len(args.rest) == 3:
                 default = args.rest[2]
-            print(craftSettings.get(args.rest[0], args.rest[1], default))
+            craftDebug.log.info(craftSettings.get(args.rest[0], args.rest[1], default))
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
@@ -63,13 +71,14 @@ class SetupHelper(object):
             if location:
                 location = os.path.dirname(location)
                 if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-                    print(f"Found \"{app}\" in your PATH: \"{location}\"\n"
-                          f"This application is known to cause problems with your configuration of Craft.\n"
-                          f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
-                          f"\n"
-                          f"[Environment]\n"
-                          f"PATH="
-                          f"\n", file=sys.stderr)
+                    log(
+                        f"Found \"{app}\" in your PATH: \"{location}\"\n"
+                        f"This application is known to cause problems with your configuration of Craft.\n"
+                        f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
+                        f"\n"
+                        f"[Environment]\n"
+                        f"PATH="
+                        f"\n")
                 else:
                     path = collections.OrderedDict.fromkeys(os.environ["Path"].split(os.path.pathsep))
                     del path[location]
@@ -80,7 +89,7 @@ class SetupHelper(object):
             if not os.path.exists(path):
                 os.makedirs(path)
             command = "subst %s %s" % (craftSettings.get("ShortPath", drive), path)
-            subprocess.getoutput(command)
+            craftDebug.log.debug(subprocess.getoutput(command))
 
         if craftSettings.getboolean("ShortPath", "Enabled", False):
             with TemporaryUseShortpath(False):
@@ -97,7 +106,7 @@ class SetupHelper(object):
             stream = sys.stdout
 
         def printRow(name, value):
-            print(f"{name:20}: {value}", file=stream)
+            log(f"{name:20}: {value}")
 
         if CraftStandardDirs.isShortPathEnabled():
             with TemporaryUseShortpath(False):
@@ -110,8 +119,8 @@ class SetupHelper(object):
         if "CraftDeprecatedEntryScript" in os.environ:
             oldScript = os.environ["CraftDeprecatedEntryScript"]
             ext = ".ps1" if OsUtils.isWin() else ".sh"
-            print(f"You used the deprecated script {oldScript}\n"
-                  f"Please use craftenv{ext} instead", file=sys.stderr)
+            log(f"You used the deprecated script {oldScript}\n"
+                  f"Please use craftenv{ext} instead")
 
     def addEnvVar(self, key, val):
         os.environ[key] = val
@@ -142,11 +151,16 @@ class SetupHelper(object):
             if version >= 15:
                 path = os.path.join(path, "Auxiliary", "Build")
             path = os.path.join(path, "vcvarsall.bat")
+            if not os.path.isfile(path):
+                log(f"Failed to setup msvc compiler.\n"
+                    f"{path} does not exist.")
+                exit(1)
             command = f"\"{path}\" {arg}"
             status, result = subprocess.getstatusoutput(f"{command} > NUL && set")
+            craftDebug.log.debug(result)
             if status != 0:
-                print(f"Failed to setup msvc compiler.\n"
-                      f"Command: {command} ", file=sys.stderr)
+                log(f"Failed to setup msvc compiler.\n"
+                    f"Command: {command} ")
                 exit(1)
             return self.stringToEnv(result)
 
@@ -157,7 +171,7 @@ class SetupHelper(object):
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
                     programFiles, architectures[craftCompiler.architecture]))
             if status != 0:
-                print("Failed to setup intel compiler", file=sys.stderr)
+                log("Failed to setup intel compiler")
                 exit(1)
             return self.stringToEnv(result)
 
@@ -250,7 +264,7 @@ class SetupHelper(object):
     def printEnv(self):
         self.setupEnvironment()
         for key, val in os.environ.items():
-            print(f"{key}={val}")
+            craftDebug.log.info(f"{key}={val}")
 
     @property
     def version(self):
