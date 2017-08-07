@@ -350,6 +350,7 @@ def main():
     if args.doDestroyCraftRoot:
         destroyCraftRoot()
         return True
+    InstallDB.installdb.migrateDatabase()
 
     if args.stayQuiet:
         craftDebug.setVerbose(-1)
