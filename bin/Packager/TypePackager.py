@@ -4,6 +4,7 @@
 
 from Packager.CreateArchivePackager import *
 from Packager.InnoSetupPackager import *
+from Packager.MacDMGPackager import *
 from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
 from Packager.PortablePackager import *
