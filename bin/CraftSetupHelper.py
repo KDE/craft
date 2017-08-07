@@ -18,10 +18,13 @@ MIN_PY_VERSION = (3, 6, 0)
 
 
 def log(msg):
-    old_stream = craftDebug._handler.stream
-    craftDebug._handler.stream = sys.stderr
+    ciMode = craftSettings.getboolean("ContinuousIntegration", "Enabled", False)
+    if not ciMode:
+        old_stream = craftDebug._handler.stream
+        craftDebug._handler.stream = sys.stderr
     craftDebug.log.info(msg)
-    craftDebug._handler.stream = old_stream
+    if not ciMode:
+        craftDebug._handler.stream = old_stream
 
 if sys.version_info[0:3] < MIN_PY_VERSION:
     log("Error: Python too old!")
@@ -101,10 +104,6 @@ class SetupHelper(object):
                     _subst(CraftStandardDirs.gitDir(), "GitDrive")
 
     def printBanner(self):
-        stream = sys.stderr
-        if craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-            stream = sys.stdout
-
         def printRow(name, value):
             log(f"{name:20}: {value}")
 
