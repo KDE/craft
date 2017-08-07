@@ -24,18 +24,6 @@ def getNewestVersion(package):
             newest = version
     return newest
 
-def printCategoriesPackagesAndVersions(installed):
-    """prints a number of 'lines', each consisting of category, package and version field"""
-    width = 40
-    def printLine(first, second):
-        craftDebug.log.info(f"{first:{width}}: {second}")
-
-    printLine("Package", "Version")
-    printLine("=" * width, "=" * 10)
-    installed = sorted(installed, key=lambda x :x[0])
-    for package, version in installed:
-        printLine(package, version)
-
 
 def printPackagesForFileSearch(filename):
     packages = InstallDB.installdb.getPackagesForFileSearch(filename)

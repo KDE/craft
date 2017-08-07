@@ -291,4 +291,13 @@ installdb = InstallDB()
 # an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
-    portage.printCategoriesPackagesAndVersions(installdb.getDistinctInstalled())
+    installed = installdb.getDistinctInstalled()
+    width = 40
+    def printLine(first, second):
+        craftDebug.log.info(f"{first:{width}}: {second}")
+
+    printLine("Package", "Version")
+    printLine("=" * width, "=" * 10)
+    installed = sorted(installed, key=lambda x :x[0])
+    for package, version in installed:
+        printLine(package, version)
