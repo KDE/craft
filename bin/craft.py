@@ -412,7 +412,7 @@ def main():
         if action == "print-installed":
             InstallDB.printInstalled()
         elif action == "search-file":
-            portage.printPackagesForFileSearch(tempArgs.search_file)
+            InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         else:
             if not args.packageNames and not args.list_file:
                 CraftSetupHelper.SetupHelper().printBanner()

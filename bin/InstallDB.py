@@ -301,3 +301,9 @@ def printInstalled():
     installed = sorted(installed, key=lambda x :x[0])
     for package, version in installed:
         printLine(package, version)
+
+def printPackagesForFileSearch(filename):
+    packages = installdb.getPackagesForFileSearch(filename)
+    for pId, filename in packages:
+        path , version = pId.getPackageInfo()
+        craftDebug.log.info(f"{path}: {filename}")

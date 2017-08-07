@@ -24,9 +24,3 @@ def getNewestVersion(package):
             newest = version
     return newest
 
-
-def printPackagesForFileSearch(filename):
-    packages = InstallDB.installdb.getPackagesForFileSearch(filename)
-    for pId, filename in packages:
-        category, packageName, version = pId.getPackageInfo()
-        craftDebug.log.info("%s/%s: %s" % (category, packageName, filename))
