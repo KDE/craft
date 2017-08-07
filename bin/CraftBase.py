@@ -241,7 +241,10 @@ class CraftBase(object):
             if includeRevision:
                 version = self.sourceRevision()
             else:
-                version = "latest"
+                if craftSettings.get("ContinuousIntegration", "SourceDir") and "APPVEYOR_BUILD_VERSION" in os.environ:
+                    version = os.environ["APPVEYOR_BUILD_VERSION"]
+                else:
+                    version = "latest"
         else:
             version = self.getPackageVersion()[0]
         if fileType:
