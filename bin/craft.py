@@ -386,10 +386,6 @@ def main():
             portageSearch.printSearch(package)
         return True
 
-    if not args.packageNames and not args.list_file:
-        CraftSetupHelper.SetupHelper().printBanner()
-        return True
-
     for action in actionHandler.parseFinalAction(args, "all"):
         tempArgs = copy.deepcopy(args)
 
@@ -418,6 +414,10 @@ def main():
         elif action == "search-file":
             portage.printPackagesForFileSearch(tempArgs.search_file)
         else:
+            if not args.packageNames and not args.list_file:
+                CraftSetupHelper.SetupHelper().printBanner()
+                return True
+
             package = CraftPackageObject(None)
             for packageName in packageNames:
                 child = CraftPackageObject.get(packageName)

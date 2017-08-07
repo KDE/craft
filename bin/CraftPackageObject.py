@@ -31,9 +31,18 @@ class CraftPackageObject(object):
         self._version = None
         self._instance = None
 
+    @property
+    def parentPath(self):
+        if not self.path:
+            return []
+        split = self.path.rsplit("/", 1)
+        return split[1] if len(split)>1 else "/"
+
+    @property
     def parent(self):
-        parent = self.path.rsplit("/", 1)[0]
-        return CraftPackageObject._nodes[parent]
+        if not self.path:
+            return "/"
+        return CraftPackageObject._nodes[self.parentPath]
 
     @staticmethod
     def get(path):

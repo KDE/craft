@@ -24,18 +24,18 @@ def getNewestVersion(package):
             newest = version
     return newest
 
-def printCategoriesPackagesAndVersions(lines):
+def printCategoriesPackagesAndVersions(installed):
     """prints a number of 'lines', each consisting of category, package and version field"""
+    width = 40
+    def printLine(first, second):
+        craftDebug.log.info(f"{first:{width}}: {second}")
 
-    def printLine(cat, pack, ver, hnt=""):
-        catlen = 25
-        packlen = 25
-        craftDebug.log.info(cat + " " * (catlen - len(cat)) + pack + " " * (packlen - len(pack)) + ver + hnt)
-
-    printLine('Category', 'Package', 'Version')
-    printLine('--------', '-------', '-------')
-    for category, package, version in lines:
-        printLine(category, package, version)
+    printLine("Package", "Version")
+    printLine("=" * width, "=" * 10)
+    installed = [(CraftPackageObject.get(x), y) for x, y in installed]
+    installed = sorted(installed, key=lambda x :x[0].path)
+    for package, version in installed:
+        printLine(package.path, version)
 
 
 def printPackagesForFileSearch(filename):

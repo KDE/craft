@@ -47,13 +47,13 @@ class CraftDebug(object):
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.",
                   file=sys.stderr)
-        self.log.debug("#" * self._lineWidgt)
+        self.log.debug("#" * self.lineWidth)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
         self.setVerbose(0)
 
     @property
-    def _lineWidgt(self):
+    def lineWidth(self):
         width, _ = shutil.get_terminal_size((80, 20))
         return width
 
@@ -79,7 +79,7 @@ class CraftDebug(object):
         self.log.info("\n")
 
     def debug_line(self):
-        self.log.info("=" * self._lineWidgt)
+        self.log.info("=" * self.lineWidth)
 
     @property
     def log(self):
