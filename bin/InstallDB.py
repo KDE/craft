@@ -162,11 +162,11 @@ class InstallDB(object):
         installedPackage  = cursor.fetchall()
         if installedPackage:
             InstallDB.log(f"""The package {package} has been installed with
-                            version '{installedPackage[0][3]}'.""")
+                            version '{version}'.""")
         else:
             InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
-        return installedPackage
+        return bool(installedPackage)
 
     def getInstalled(self, package=None):
         """ returns a list of the installed packages, which can be restricted by adding

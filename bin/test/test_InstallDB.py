@@ -55,4 +55,4 @@ class TestAPI(DatabaseTest):
         package = InstallDB.installdb.addInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0')
         package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
         package.install()
-        self.assertEquals(InstallDB.installdb.isInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0') is not [], True)
+        self.assertEquals(InstallDB.installdb.isInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0'), True)
