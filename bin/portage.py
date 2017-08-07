@@ -32,10 +32,9 @@ def printCategoriesPackagesAndVersions(installed):
 
     printLine("Package", "Version")
     printLine("=" * width, "=" * 10)
-    installed = [(CraftPackageObject.get(x), y) for x, y in installed]
-    installed = sorted(installed, key=lambda x :x[0].path)
+    installed = sorted(installed, key=lambda x :x[0])
     for package, version in installed:
-        printLine(package.path, version)
+        printLine(package, version)
 
 
 def printPackagesForFileSearch(filename):
