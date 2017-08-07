@@ -42,15 +42,7 @@ import InstallDB
 from CraftPackageObject import *
 
 
-class DatabaseTest(CraftTestBase.CraftTestBase):
-    def setUp(self):
-        super().setUp()
-
-    def tearDown(self):
-        super().tearDown()
-
-
-class TestAPI(DatabaseTest):
+class TestAPI(CraftTestBase.CraftTestBase):
     def test_addInstalled(self):
         package = InstallDB.installdb.addInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0')
         package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))

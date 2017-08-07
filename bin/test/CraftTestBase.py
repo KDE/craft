@@ -8,7 +8,7 @@ import InstallDB
 
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
-        craftDebug.setVerbose(3)
+        craftDebug.setVerbose(1)
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         CraftConfig.craftSettings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "kdesettings.ini"))

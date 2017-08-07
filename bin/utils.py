@@ -73,6 +73,8 @@ class UtilsCache(object):
     @atexit.register
     def _save():
         try:
+            if not os.path.isdir(os.path.dirname(UtilsCache._cacheFile())):
+                return
             with open(UtilsCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(UtilsCache.globalInstance())
