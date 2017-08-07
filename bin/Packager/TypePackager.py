@@ -2,6 +2,7 @@
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
 
+from Packager.CreateArchivePackager import *
 from Packager.InnoSetupPackager import *
 from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
