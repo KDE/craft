@@ -207,8 +207,8 @@ class CMakeBuildSystem(BuildSystemBase):
                    " -DCMAKE_C_COMPILER=clang-cl"
             return out
         else:
-            return " -DCMAKE_CXX_COMPILER=clang++" \
-                   " -DCMAKE_C_COMPILER=clang"
+            return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
+                   " -DCMAKE_C_COMPILER=/usr/bin/clang"
 
     def _fixCmakeImageDir(self, imagedir, rootdir):
         """
