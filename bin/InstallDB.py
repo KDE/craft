@@ -279,7 +279,7 @@ class InstallDB(object):
                   ", direct recipe invocation like 'qtbase' works as before.\n"
                   "As a result of this change you need to start with a clean build.\n"
                   "To do so either call 'craft --destroy-craft-root' which will delete "
-                  "everything besides craft and the download folder"
+                  "everything besides craft and the download folder, "
                   "or manually remove everything manually and start fresh by calling:\n"
                   + installCommand)
             exit(1)
