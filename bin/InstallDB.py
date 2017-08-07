@@ -1,6 +1,5 @@
 import sqlite3
 
-import portage
 from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils

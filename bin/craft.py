@@ -20,13 +20,13 @@ import time
 import CraftSetupHelper
 import CraftTimer
 import InstallDB
-import portage
 import portageSearch
 import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftPackageObject import *
+from CraftVersion import CraftVersion
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
@@ -81,12 +81,10 @@ def packageIsOutdated(package):
     installed = InstallDB.installdb.getInstalledPackages(package)
     if not installed:
         return True
-    newest = portage.getNewestVersion(package)
     for pack in installed:
         version = pack.getVersion()
-        if newest != version:
-            return True
-
+        if not version: continue
+        return CraftVersion(package.version) > CraftVersion(version)
 
 def doExec(package, action, continueFlag=False):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):

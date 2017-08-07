@@ -30,7 +30,6 @@
 #
 #  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
-import portage
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug

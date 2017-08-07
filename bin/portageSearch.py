@@ -2,7 +2,6 @@ import re
 
 import CraftTimer
 import InstallDB
-import portage
 import utils
 from CraftDebug import craftDebug
 from CraftVersion import CraftVersion

@@ -5,7 +5,6 @@ import datetime
 import functools
 
 import CraftPackageObject
-import portage
 import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *

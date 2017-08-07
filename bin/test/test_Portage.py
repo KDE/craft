@@ -3,16 +3,15 @@ import importlib
 import CraftTestBase
 
 import CraftConfig
-from CraftPackageObject import *
-import portage
+import CraftPackageObject
 
 
 class CraftPortageTest(CraftTestBase.CraftTestBase):
     def portageTest(self, compiler):
         CraftConfig.craftSettings.set("General", "ABI", compiler)
 
-        importlib.reload(portage)  # clear cache
-        installable = CraftPackageObject.installables()
+        importlib.reload(CraftPackageObject)  # clear cache
+        installable = CraftPackageObject.CraftPackageObject.installables()
         for _p in installable:
             _p.instance
 
