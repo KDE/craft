@@ -41,9 +41,9 @@ class OptionsBase(object):
         pass
 
 
-class OptionsPortage(OptionsBase):
+class OptionsDynamic(OptionsBase):
     def __init__(self):
-        self._packages = dict()
+        self._packages = {}
 
     def __setattr__(self, name, value):
         if name == "_packages":
@@ -55,7 +55,7 @@ class OptionsPortage(OptionsBase):
         if name in self._packages:
             return self._packages[name]
         else:
-            return True
+            return None
 
 
 ## options for enabling or disabling features of KDE
@@ -235,7 +235,7 @@ class Options(object):
         ## options for the dependency generation
         self.features = OptionsFeatures()
         ## options for package exclusion
-        self.packages = OptionsPortage()
+        self.dynamic = OptionsDynamic()
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
@@ -284,19 +284,9 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(craftSettings.get("General", "Options", "").split(" "))
-        self.readFromEnv()
+        self.__readFromList(craftSettings.getList("General", "Options", ""))
         self.__readFromList(optionslist)
 
-    def readFromEnv(self):
-        """ read craft related variables from environment and map them to public
-        attributes in the option class and sub classes """
-        _o = os.getenv("Options")
-        if _o:
-            _o = _o.split(" ")
-        else:
-            _o = []
-        self.__readFromList(_o)
 
     def isActive(self, package):
         if isinstance(package, str):
@@ -317,13 +307,13 @@ class Options(object):
                 else:
                     currentObject = o
             else:
-                if isinstance(currentObject, OptionsPortage):
+                if isinstance(currentObject, OptionsDynamic):
                     break
+                craftDebug.log.warning(f"Unsupported option{key}={value}")
+                exit(1)
                 return False
 
-        # if the type is already bool, we'll keep it that way and interpret the string accordingly
-        if type(getattr(currentObject, currentKey)) is bool:
-            value = value in ['True', 'true', '1', 'ON', 'on']
+        value = value.lower() in ['true', '1', 'on']
 
         setattr(currentObject, currentKey, value)
         return True

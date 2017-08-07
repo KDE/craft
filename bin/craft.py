@@ -260,13 +260,8 @@ def main():
                         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
     parser.add_argument("--list-file", action="store",
                         help="Build all packages from the ini file provided")
-    _def = craftSettings.get("General", "Options", "")
-    if _def == "":
-        _def = []
-    else:
-        _def = _def.split(";")
     parser.add_argument("--options", action="append",
-                        default=_def,
+                        default=craftSettings.getList("General", "Options", ""),
                         help="Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations.")
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
