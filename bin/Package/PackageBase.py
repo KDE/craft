@@ -180,7 +180,9 @@ class PackageBase(CraftBase):
             return False
 
         archiveName = self.binaryArchiveName(includePackagePath=True)
-        downloadFolder = self.cacheLocation()
+        archvieFolder, localArchiveName = self.binaryArchiveName(includePackagePath=True).rsplit("/", 1)
+        downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
+        print(downloadFolder)
 
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
@@ -191,14 +193,14 @@ class PackageBase(CraftBase):
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
                 continue
             if url != self.cacheLocation():
-                if not os.path.exists(os.path.join(downloadFolder, archiveName)):
-                    if not utils.getFile(f"{url}/{archiveName}", downloadFolder):
+                if not os.path.exists(os.path.join(downloadFolder, localArchiveName)):
+                    if not utils.getFile(f"{url}/{archiveName}", downloadFolder, localArchiveName):
                         return False
-            return CraftHash.checkFilesDigests(downloadFolder, [archiveName],
+            return CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
                                                digests=cache[str(self)][archiveName]["checksum"],
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
-                   and utils.unpackFile(downloadFolder, archiveName, self.imageDir()) \
+                   and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir()) \
                    and self.qmerge()
         return False
 
