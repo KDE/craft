@@ -33,7 +33,7 @@
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug
-from CraftPackageObject import CraftPackageObject
+from Portage.CraftPackageObject import CraftPackageObject
 
 
 class OptionsBase(object):

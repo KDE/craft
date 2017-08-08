@@ -12,8 +12,6 @@
 
 import argparse
 import collections
-import copy
-import datetime
 import threading
 import time
 
@@ -22,11 +20,9 @@ import CraftTimer
 import InstallDB
 import portageSearch
 import utils
-from CraftCompiler import craftCompiler
 from CraftConfig import *
-from CraftDebug import craftDebug
-from CraftPackageObject import *
 from CraftVersion import CraftVersion
+from Portage.CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()

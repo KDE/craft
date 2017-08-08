@@ -2,11 +2,10 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import CraftHash
-from CraftPackageObject import *
 from CraftBase import *
 from CraftCompiler import *
-from CraftOS.osutils import OsUtils
 from InstallDB import *
+from Portage.CraftPackageObject import *
 
 
 class PackageBase(CraftBase):

@@ -6,8 +6,8 @@ import fileinput
 import shutil
 import types
 
-from CraftPackageObject import *
 from Packager.PackagerBase import *
+from Portage.CraftPackageObject import *
 
 
 class PackagerLists(object):

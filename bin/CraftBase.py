@@ -4,20 +4,18 @@
 import datetime
 import functools
 
-import CraftPackageObject
 import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
-
-
+from Portage import CraftPackageObject
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
 # 2a. use different install databases for debug and release
 # 3. binary packages which are build type independent should be
 # marked in both databases or should have a separate install database
 # question: How to detect reliable this case ?
-from CraftPackageObject import CraftPackageObject
+from Portage.CraftPackageObject import CraftPackageObject
 
 
 class InitGuard(object):

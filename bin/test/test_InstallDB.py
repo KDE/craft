@@ -33,13 +33,10 @@
 
 """ Functional tests for InstallDB """
 
-import os
-
 import CraftTestBase
 
-import CraftConfig
 import InstallDB
-from CraftPackageObject import *
+from Portage.CraftPackageObject import *
 
 
 class TestAPI(CraftTestBase.CraftTestBase):

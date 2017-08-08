@@ -5,7 +5,7 @@
 
 from BuildSystem.BuildSystemBase import *
 from CraftVersion import CraftVersion
-from CraftPackageObject import *
+from Portage.CraftPackageObject import *
 
 
 class QMakeBuildSystem(BuildSystemBase):

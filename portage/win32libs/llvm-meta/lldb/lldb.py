@@ -19,11 +19,11 @@ class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.subinfo.options.configure.args = "-DLLDB_PATH_TO_LLVM_BUILD=\"%s\" -DLLDB_PATH_TO_LLVM_SOURCE=\"%s\"" % (
-        CraftStandardDirs.craftRoot().replace("\\", "/"),
-        CraftPackageObject.get('win32libs/llvm-meta/llvm').instance.sourceDir().replace("\\", "/"))
+            CraftStandardDirs.craftRoot().replace("\\", "/"),
+            CraftPackageObject.get('win32libs/llvm-meta/llvm').instance.sourceDir().replace("\\", "/"))
         self.subinfo.options.configure.args += " -DLLDB_PATH_TO_CLANG_BUILD=\"%s\" -DLLDB_PATH_TO_CLANG_SOURCE=\"%s\"" % (
-        CraftStandardDirs.craftRoot().replace("\\", "/"),
-        CraftPackageObject.get('win32libs/llvm-meta/clang').instance.sourceDir().replace("\\", "/"))
+            CraftStandardDirs.craftRoot().replace("\\", "/"),
+            CraftPackageObject.get('win32libs/llvm-meta/clang').instance.sourceDir().replace("\\", "/"))
 
     def configureOptions(self, defines=""):
         options = CMakePackageBase.configureOptions(self, defines)

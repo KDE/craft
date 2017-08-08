@@ -1,9 +1,8 @@
 import importlib
 
-import CraftTestBase
-
 import CraftConfig
-import CraftPackageObject
+import CraftTestBase
+from Portage import CraftPackageObject
 
 
 class CraftPortageTest(CraftTestBase.CraftTestBase):
