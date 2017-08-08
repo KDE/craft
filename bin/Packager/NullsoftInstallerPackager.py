@@ -63,7 +63,7 @@ file collection process is skipped, and only the installer is generated.
         self.defines.setdefault("extrashortcuts", "")
         self.defines.setdefault("version", self.getPackageVersion()[0])
         self.defines.setdefault("website",
-                                self.subinfo.homepage if not self.subinfo.homepage == "" else "https://community.kde.org/Windows")
+                                self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         # runtime distributable files
         self.defines.setdefault("vcredist", self.getVCRedistLocation())
 
