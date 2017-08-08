@@ -24,6 +24,7 @@ from CraftConfig import *
 from CraftVersion import CraftVersion
 from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Portage.CraftPackageObject import *
+from Portage.PortageException import PortageException
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()

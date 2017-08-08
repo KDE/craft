@@ -7,6 +7,7 @@ import re
 from CraftConfig import craftSettings, CraftStandardDirs
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
+from Portage.PortageException import PortageException
 
 
 class CraftPackageObject(object):
@@ -192,15 +193,3 @@ class CraftPackageObject(object):
         #ensure that everything is loaded
         CraftPackageObject.root()
         return CraftPackageObject._recipes.values()
-
-
-class PortageException(Exception, CraftPackageObject):
-    def __init__(self, message, package, exception=None):
-        Exception.__init__(self, message)
-        CraftPackageObject.__init__(self, package.path)
-        self.exception = exception
-
-    def __str__(self):
-        return "%s failed: %s" % (CraftPackageObject.__str__(self), Exception.__str__(self))
-
-
