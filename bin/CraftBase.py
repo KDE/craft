@@ -62,12 +62,6 @@ class CraftBase(object):
 
         self.buildSystemType = None
 
-        self.versioned = False
-        self.CustomDefines = ""
-        self.createCombinedPackage = False
-
-        self.isoDateToday = str(datetime.date.today()).replace('-', '')
-
     def __str__(self):
         return self.package.__str__()
 

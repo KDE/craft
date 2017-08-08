@@ -18,8 +18,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
-        # header-only package
-        self.createCombinedPackage = True
 
     def unpack(self):
         if not CMakePackageBase.unpack(self):

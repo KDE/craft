@@ -284,7 +284,6 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(craftSettings.getList("General", "Options", ""))
         self.__readFromList(optionslist)
 
 

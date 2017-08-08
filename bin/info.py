@@ -50,7 +50,6 @@ class infoclass(object):
         self.webpage = ""
 
         self.patchToApply = {}  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
-        self.isoDateToday = str(datetime.date.today()).replace('-', '')
         self.svnTargets = {}
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
