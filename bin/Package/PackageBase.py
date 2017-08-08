@@ -6,7 +6,6 @@ from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
 from Portage.CraftPackageObject import *
-from Portage.PortageException import PortageException
 
 
 class PackageBase(CraftBase):
