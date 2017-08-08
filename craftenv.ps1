@@ -101,7 +101,7 @@ function Global:cb([string] $package)
     if($LASTEXITCODE) {
         Write-Host $dir
     } else {
-        cd $dir
+        cd "$dir".Trim()
     }
 }
 
@@ -111,7 +111,7 @@ function Global:cs([string] $package)
     if($LASTEXITCODE) {
         Write-Host $dir
     } else {
-        cd $dir
+        cd "$dir".Trim()
     }
 }
 
