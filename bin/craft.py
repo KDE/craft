@@ -175,7 +175,8 @@ def run(package, action, args, directTargets):
                 print(value)
                 return True
             else:
-               craftDebug.log.warning(f"{p} has no member {key}")
+               craftDebug.log.debug(f"{p} has no member {key}")
+               print(f"{p} has no member {key}", file=sys.stderr)
                return False
     elif action not in ["all", "install-deps"]:
         for info in package.children.values():

@@ -90,20 +90,33 @@ cd "$env:KDEROOT"
 }
 
 
-function Global:craft() {
+function Global:craft()
+{
     return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
-function Global:cb([string] $package) {
-    $dir = craft -q --get "buildDir()" $package
-    cd $dir
+function Global:cb([string] $package)
+{
+    $dir = craft -q --get "buildDir()" $package | Out-String
+    if($LASTEXITCODE) {
+        Write-Host $dir
+    } else {
+        cd $dir
+    }
 }
 
-function Global:cs([string] $package) {
-    $dir = craft -q --get "sourceDir()" $package
-    cd $dir
+function Global:cs([string] $package)
+{
+    $dir = craft -q --get "sourceDir()" $package | Out-String
+    if($LASTEXITCODE) {
+        Write-Host $dir
+    } else {
+        cd $dir
+    }
 }
-function Global:cr() {
+
+function Global:cr()
+{
     cd $env:KDEROOT
 }
 
