@@ -265,11 +265,11 @@ class ActionHandler:
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="craft",
+    parser = argparse.ArgumentParser(prog="Craft",
                                      description="Craft is an open source meta build system and package manager."
                                                  "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
-                                     epilog="""More information see the README or http://windows.kde.org/.
-    Send feedback to <kde-windows@kde.org>.""")
+                                     epilog="For more information visit https://community.kde.org/Craft.\n"
+                                            "Send feedback to <kde-windows@kde.org>.")
 
     parser.add_argument("-p", "--probe", action="store_true",
                         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
@@ -359,6 +359,8 @@ def main():
     actionHandler.addActionWithArg("get", help="Get any value from a recipe")
 
     # other actions
+
+    parser.add_argument("--version", action="version", version = f"%(prog)s {CraftSetupHelper.SetupHelper.CraftVersion}")
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
 
     args = parser.parse_args()

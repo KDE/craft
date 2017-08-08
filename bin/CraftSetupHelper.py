@@ -34,6 +34,7 @@ if sys.version_info[0:3] < MIN_PY_VERSION:
 
 
 class SetupHelper(object):
+    CraftVersion = "master"
     def __init__(self, args=None):
         self.args = args
 
@@ -111,6 +112,7 @@ class SetupHelper(object):
             with TemporaryUseShortpath(False):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
         printRow("Craft", CraftStandardDirs.craftRoot())
+        printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", craftCompiler)
         printRow("Svn directory", CraftStandardDirs.svnDir())
         printRow("Git directory", CraftStandardDirs.gitDir())
@@ -119,7 +121,7 @@ class SetupHelper(object):
             oldScript = os.environ["CraftDeprecatedEntryScript"]
             ext = ".ps1" if OsUtils.isWin() else ".sh"
             log(f"You used the deprecated script {oldScript}\n"
-                  f"Please use craftenv{ext} instead")
+                f"Please use craftenv{ext} instead")
 
     def addEnvVar(self, key, val):
         os.environ[key] = val
