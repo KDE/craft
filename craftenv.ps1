@@ -103,7 +103,7 @@ function Global:cs([string] $package) {
     $dir = craft -q --get "sourceDir()" $package
     cd $dir
 }
-function Global:cr([string] $package) {
+function Global:cr() {
     cd $env:KDEROOT
 }
 
