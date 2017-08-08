@@ -155,12 +155,27 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         return success
 
 
-def run(package, action, args, directTargets=None):
+def run(package, action, args, directTargets):
     if package.isIgnored():
         craftDebug.log.info(f"Skipping package because it has been ignored: {package}")
         return True
 
-    if action not in ["all", "install-deps"]:
+    if action == "get":
+        key = args.get.replace("()", "")
+        isMethode = args.get.endswith("()")
+        for p in directTargets:
+            instance = p.instance
+            if hasattr(instance, key.replace("()", "")):
+                attr = getattr(instance, key)
+                if isMethode:
+                    craftDebug.log.info(attr())
+                else:
+                    craftDebug.log.info(attr)
+                return True
+            else:
+               craftDebug.log.warning(f"{p} has no member {key}")
+               return False
+    elif action not in ["all", "install-deps"]:
         for info in package.children.values():
            # not all commands should be executed on the deps if we are a virtual packages
             # if a buildAction is given, then do not try to build dependencies
@@ -338,6 +353,7 @@ def main():
     actionHandler.addAction("print-revision", help="Print the revision of the package and exit")
     actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
+    actionHandler.addActionWithArg("get", help="Get any value from a recipe")
 
     # other actions
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
