@@ -22,7 +22,7 @@ import portageSearch
 import utils
 from CraftConfig import *
 from CraftVersion import CraftVersion
-from Portage.CraftDependencyPackage import DependencyType, DependencyPackage
+from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Portage.CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
@@ -173,7 +173,7 @@ def run(package, action, args, directTargets=None):
                 return False
 
     else:
-        depPackage = DependencyPackage(package)
+        depPackage = CraftDependencyPackage(package)
         depList = depPackage.getDependencies(DependencyType(args.dependencyType),
                                              maxDepth=args.dependencydepth)
 

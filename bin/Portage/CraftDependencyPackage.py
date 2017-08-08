@@ -11,7 +11,7 @@ class DependencyType(Enum):
     Both = "both"
 
 
-class DependencyPackage(CraftPackageObject):
+class CraftDependencyPackage(CraftPackageObject):
     _packageCache = dict()
 
     @unique
@@ -25,7 +25,7 @@ class DependencyPackage(CraftPackageObject):
         self._depenendencyType = None
         self.runtimeChildren = []
         self.dependencies = []
-        self.state = DependencyPackage.State.Unvisited
+        self.state = CraftDependencyPackage.State.Unvisited
 
 
     @property
@@ -54,12 +54,12 @@ class DependencyPackage(CraftPackageObject):
         children = []
         if deps:
             for line in deps:
-                if line not in DependencyPackage._packageCache:
-                    p = DependencyPackage(CraftPackageObject.get(line))
+                if line not in CraftDependencyPackage._packageCache:
+                    p = CraftDependencyPackage(CraftPackageObject.get(line))
                     craftDebug.log.debug(f"adding package {line}")
-                    DependencyPackage._packageCache[line] = p
+                    CraftDependencyPackage._packageCache[line] = p
                 else:
-                    p = DependencyPackage._packageCache[line]
+                    p = CraftDependencyPackage._packageCache[line]
                 p.depenendencyType = self.depenendencyType
                 children.append(p)
         return children
@@ -71,24 +71,24 @@ class DependencyPackage(CraftPackageObject):
 
         depList = []
 
-        self.state = DependencyPackage.State.Visiting
+        self.state = CraftDependencyPackage.State.Visiting
         for p in self.dependencies:
-            if p.state != DependencyPackage.State.Unvisited:
+            if p.state != CraftDependencyPackage.State.Unvisited:
                 continue
             if not p.isIgnored() \
                     and (not ignoredPackages or p.path not in ignoredPackages):
                 if maxDepth == -1 or depth < maxDepth:
                     depList.extend(p.__getDependencies(depenendencyType, maxDepth, depth + 1, ignoredPackages))
 
-        if self.state != DependencyPackage.State.Visited:
-            self.state = DependencyPackage.State.Visited
+        if self.state != CraftDependencyPackage.State.Visited:
+            self.state = CraftDependencyPackage.State.Visited
             if not self.isCategory():
                 depList.append(self)
         return depList
 
     def getDependencies(self, depType=DependencyType.Both, maxDepth=-1, ignoredPackages=None):
         self.depenendencyType = depType
-        for p in DependencyPackage._packageCache.values():
+        for p in CraftDependencyPackage._packageCache.values():
             #reset visited state
-            p.state = DependencyPackage.State.Unvisited
+            p.state = CraftDependencyPackage.State.Unvisited
         return self.__getDependencies(depType, maxDepth, 0, ignoredPackages)

@@ -7,7 +7,7 @@ import shutil
 import types
 
 from Packager.PackagerBase import *
-from Portage.CraftDependencyPackage import DependencyType, DependencyPackage
+from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Portage.CraftPackageObject import *
 
 
@@ -93,8 +93,8 @@ class CollectionPackagerBase(PackagerBase):
     def __getImageDirectories(self):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = DependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime,
-                                            ignoredPackages=self.ignoredPackages)
+        depList = CraftDependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime,
+                                                                       ignoredPackages=self.ignoredPackages)
 
         for x in depList:
             if x.isVirtualPackage():
