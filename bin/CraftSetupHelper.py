@@ -112,8 +112,8 @@ class SetupHelper(object):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
         printRow("Craft", CraftStandardDirs.craftRoot())
         printRow("ABI", craftCompiler)
-        printRow("Svn  directory", CraftStandardDirs.svnDir())
-        printRow("Git  directory", CraftStandardDirs.gitDir())
+        printRow("Svn directory", CraftStandardDirs.svnDir())
+        printRow("Git directory", CraftStandardDirs.gitDir())
         printRow("Download directory", CraftStandardDirs.downloadDir())
         if "CraftDeprecatedEntryScript" in os.environ:
             oldScript = os.environ["CraftDeprecatedEntryScript"]
