@@ -440,6 +440,8 @@ def main():
                 if child.isCategory():
                     package.children = child.children
                 else:
+                    if tempArgs.target:
+                        craftSettings.set("PortageVersions", child.path, args.target)
                     package.children[child.name] = child
             if not run(package, action, tempArgs, package.children.values()):
                 return False
