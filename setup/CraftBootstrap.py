@@ -161,10 +161,11 @@ class CraftBootstrap(object):
 
 def run(args, command):
     script = os.path.join(args.prefix, f"craft-{args.branch}", "bin", "craft.py")
-    command = f"{sys.executable} {script} {command}"
-    print(f"Execute: {command}")
+    command = [sys.executable, script] + command
+    commandStr = " ".join(command)
+    print(f"Execute: {commandStr}")
     if not args.dry_run:
-        if not subprocess.run(f"{command}", shell=True).returncode == 0:
+        if not subprocess.run(command).returncode == 0:
             exit(1)
 
 
@@ -267,8 +268,11 @@ def setUp(args):
 
     boot.writeSettings()
 
-    verbosityFlag = "-vvv" if args.verbose else ""
-    run(args, f"--no-cache {verbosityFlag} craft")
+    cmd = []
+    if args.verbose:
+        cmd.append("-vvv")
+    cmd += ["--no-cache", "craft"]
+    run(args, cmd)
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
     print("Setup complete")
