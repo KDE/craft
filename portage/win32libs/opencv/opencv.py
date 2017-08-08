@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.defaultTarget = '2.4.5'
-        self.shortDescription = 'a library for real time computer vision'
+        self.description = 'a library for real time computer vision'
 
         self.svnTargets['master'] = 'git://code.opencv.org/opencv.git'
 

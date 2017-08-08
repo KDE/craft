@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
         for ver in ['20100330', '6.1.6', '6.1.7']:
             self.targetInstSrc[ver] = "virtuoso-opensource"
 
-        self.shortDescription = "a middleware and database engine hybrid for RDBMS, ORDBMS, virtual database, RDF, XML, free-text, web application server and file server functionality"
+        self.description = "a middleware and database engine hybrid for RDBMS, ORDBMS, virtual database, RDF, XML, free-text, web application server and file server functionality"
         self.defaultTarget = '6.1.7'
 
     def setDependencies(self):

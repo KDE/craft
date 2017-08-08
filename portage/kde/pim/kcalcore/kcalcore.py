@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KCalcore library"
+        self.description = "KCalcore library"
         self.patchToApply['17.04.1'] = [("kcalcore-fix-linking.diff", 1)]
         self.patchToApply['17.04.2'] = [("kcalcore-fix-linking.diff", 1)]
 

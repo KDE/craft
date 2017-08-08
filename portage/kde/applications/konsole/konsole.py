@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "the KDE terminal emulator"
+        self.description = "the KDE terminal emulator"
         self.defaultTarget = 'master'
 
     def setDependencies(self):

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:atcore|master'
         self.defaultTarget = 'master'
-        self.shortDescription = "the KDE core of Atelier Printer Host"
+        self.description = "the KDE core of Atelier Printer Host"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"

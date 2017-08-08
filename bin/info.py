@@ -44,10 +44,10 @@ class infoclass(object):
         self.buildDependencies = {}
 
         # a long and a short description for the package
-        self.shortDescription = ''
-        self.description = ''
-        # a url to the projects homepage
-        self.homepage = ''
+        self.description = ""
+        self.tags = ""
+        # a url to the projects webpage
+        self.webpage = ""
 
         self.patchToApply = {}  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.isoDateToday = str(datetime.date.today()).replace('-', '')

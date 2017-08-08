@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "KolourPaint is an easy-to-use paint program"
+        self.description = "KolourPaint is an easy-to-use paint program"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"

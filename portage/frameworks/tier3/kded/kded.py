@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Extensible deamon for providing system level services"
+        self.description = "Extensible deamon for providing system level services"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

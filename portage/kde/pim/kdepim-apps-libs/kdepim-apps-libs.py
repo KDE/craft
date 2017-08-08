@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KDEPIM-apps library"
+        self.description = "KDEPIM-apps library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

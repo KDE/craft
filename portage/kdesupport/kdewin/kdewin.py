@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/kdewin-' + ver + '.tar.xz'
             self.targetInstSrc[ver] = 'kdewin-' + ver
         self.patchToApply['0.5.6'] = [("kdewin-0.5.6-20130530.diff", 1), ("invert-if-msvc.diff", 1)]
-        self.shortDescription = "kde supplementary package for win32"
+        self.description = "kde supplementary package for win32"
         self.defaultTarget = 'master'
 
 

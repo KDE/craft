@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Library to compare files and strings, used in Kompare and KDevelop"
+        self.description = "Library to compare files and strings, used in Kompare and KDevelop"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "A KDE Software for Music Education."
+        self.description = "A KDE Software for Music Education."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

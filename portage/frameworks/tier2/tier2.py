@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = ''
         self.defaultTarget = 'master'
-        self.shortDescription = 'kf5 tier1'
+        self.description = 'kf5 tier1'
 
     def setDependencies(self):
         self.runtimeDependencies["frameworks/tier2/kauth"] = "default"

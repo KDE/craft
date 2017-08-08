@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Application for importing mbox files."
+        self.description = "Application for importing mbox files."
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.9.3'] = '16e94bc0327f1a76a0296a28908cf6439b0a0a67'
         self.targetDigests['0.11.1'] = '3c82cdc0de51f06d5e1c60f098d3d9cc0d48f8a7'
 
-        self.shortDescription = "a library for handling zip archives"
+        self.description = "a library for handling zip archives"
         self.defaultTarget = '0.11.1'
 
     def setDependencies(self):

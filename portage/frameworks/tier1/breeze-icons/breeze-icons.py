@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Breeze icon theme."
+        self.description = "Breeze icon theme."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

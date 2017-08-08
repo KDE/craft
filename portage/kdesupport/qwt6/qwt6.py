@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.shortDescription = "The Qwt library contains GUI Components and utility classes which are primarily useful for programs with a technical background"
+        self.description = "The Qwt library contains GUI Components and utility classes which are primarily useful for programs with a technical background"
         for ver in ["6.0.1", "6.0.2"]:
             self.targets[ver] = "http://downloads.sourceforge.net/sourceforge/qwt/qwt-%s.tar.bz2" % ver
             self.targetInstSrc[ver] = "qwt-%s" % ver

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "This library contains simple XML-RPC Client support"
+        self.description = "This library contains simple XML-RPC Client support"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

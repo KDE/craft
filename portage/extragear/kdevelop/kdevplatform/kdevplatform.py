@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = 'Framework to build IDE-like applications'
+        self.description = 'Framework to build IDE-like applications'
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

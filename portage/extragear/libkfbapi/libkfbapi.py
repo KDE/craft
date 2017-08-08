@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies['kde/kdepimlibs'] = 'default'
         self.runtimeDependencies["kdesupport/qjson"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"
-        self.shortDescription = "KDE library for accessing Facebook services"
+        self.description = "KDE library for accessing Facebook services"
 
 
 from Package.CMakePackageBase import *

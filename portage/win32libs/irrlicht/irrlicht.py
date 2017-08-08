@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'irrlicht-' + ver + '/source/Irrlicht'
         self.patchToApply['1.8'] = ('irrlicht-1.8-20130411.diff', 3)
         self.targetDigests['1.8'] = 'a24c2183e3c7dd909f92699c373a68382958b09d'
-        self.shortDescription = 'lightning fast realtime 3D engine'
+        self.description = 'lightning fast realtime 3D engine'
         self.defaultTarget = '1.8'
 
     def setDependencies(self):

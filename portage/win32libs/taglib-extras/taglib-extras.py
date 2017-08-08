@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         self.runtimeDependencies["win32libs/taglib"] = "default"
-        self.shortDescription = "more plugins for the taglib library"
+        self.description = "more plugins for the taglib library"
 
     def setTargets(self):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib-extras'

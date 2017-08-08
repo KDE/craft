@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kdeconnect-kde'
         self.defaultTarget = 'master'
-        self.shortDescription = "KDE Connect adds communication between KDE and your smartphone"
+        self.description = "KDE Connect adds communication between KDE and your smartphone"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"

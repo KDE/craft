@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[v] = 'poppler-data-' + v
         self.targetDigests['0.4.7'] = '556a5bebd0eb743e0d91819ba11fd79947d8c674'
 
-        self.shortDescription = "the poppler CJK encoding data"
+        self.description = "the poppler CJK encoding data"
         self.defaultTarget = '0.4.7'
 
     def setDependencies(self):

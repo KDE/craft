@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
         self.targets['master'] = ""
-        self.shortDescription = "the mingw compiler runtime package"
+        self.description = "the mingw compiler runtime package"
         self.defaultTarget = 'master'
 
     def setDependencies(self):

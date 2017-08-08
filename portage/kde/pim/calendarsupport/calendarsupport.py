@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Calendar Support library"
+        self.description = "Calendar Support library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

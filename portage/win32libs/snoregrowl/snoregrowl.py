@@ -13,8 +13,8 @@ class subinfo(info.infoclass):
         self.targetDigests['0.5.0'] = (
         ['5180628ce1c732abfc1001db48302b0d63534a3d62dc50a4655e0b4675a918be'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "SnoreGrowl is a library providing Growl network notifications"
-        self.homepage = "https://github.com/Snorenotify/SnoreGrowl"
+        self.description = "SnoreGrowl is a library providing Growl network notifications"
+        self.webpage = "https://github.com/Snorenotify/SnoreGrowl"
         self.defaultTarget = '0.5.0'
 
     def setDependencies(self):

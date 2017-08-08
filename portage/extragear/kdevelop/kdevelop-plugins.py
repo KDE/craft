@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = ''
         self.defaultTarget = 'master'
-        self.shortDescription = 'kdevelop languages and other plugins'
+        self.description = 'kdevelop languages and other plugins'
 
     def setDependencies(self):
         self.runtimeDependencies["extragear/kdevelop/kdev-python"] = "default"

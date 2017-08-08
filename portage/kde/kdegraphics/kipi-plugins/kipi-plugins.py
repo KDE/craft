@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "common KDE graphics application plugins"
+        self.description = "common KDE graphics application plugins"
 
     def setDependencies(self):
         self.runtimeDependencies["frameworks/extra-cmake-modules"] = "default"

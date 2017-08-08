@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.0.3'] = '2bf4eba3b588758e349976a7eb9e8a509960c3b5'
         self.targetDigests['2.1.1'] = '8bd3826de30651eb8f9b8673e2edff77cd70aca1'
 
-        self.shortDescription = "an IPC library used by some of the other GnuPG related packages"
+        self.description = "an IPC library used by some of the other GnuPG related packages"
         self.defaultTarget = '2.1.1'
 
     def setDependencies(self):

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Gwenview is a fast and easy to use image viewer for KDE."
+        self.description = "Gwenview is a fast and easy to use image viewer for KDE."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

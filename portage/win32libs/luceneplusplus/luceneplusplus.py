@@ -21,8 +21,8 @@ class subinfo(info.infoclass):
 
         self.svnTargets["master"] = "https://github.com/luceneplusplus/LucenePlusPlus.git"
 
-        self.shortDescription = "Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine."
-        self.homepage = "https://github.com/luceneplusplus/LucenePlusPlus/"
+        self.description = "Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine."
+        self.webpage = "https://github.com/luceneplusplus/LucenePlusPlus/"
         self.defaultTarget = "master"
 
 

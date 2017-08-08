@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Configure Debug Categories"
+        self.description = "Configure Debug Categories"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

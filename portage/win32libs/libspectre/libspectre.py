@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.2.6'] = '819475c7e34a1e9bc2e876110fee530b42aecabd'
         self.targetDigests['0.2.7'] = 'a7efd97b82b84ff1bb7a0d88c7e35ad10cc84ea8'
 
-        self.shortDescription = "a wrapper library for libgs"
+        self.description = "a wrapper library for libgs"
         self.defaultTarget = '0.2.7'
 
     def setDependencies(self):

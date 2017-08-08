@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Ark"
+        self.description = "Ark"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

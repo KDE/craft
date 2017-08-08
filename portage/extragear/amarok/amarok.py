@@ -36,7 +36,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["win32libs/gettext"] = "default"
         self.runtimeDependencies["kdesupport/qtscriptgenerator"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"
-        self.shortDescription = "a powerful music player"
+        self.description = "a powerful music player"
 
 
 class Package(CMakePackageBase):

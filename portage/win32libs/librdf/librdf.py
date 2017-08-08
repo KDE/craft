@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.0.16'] = [('redland-1.0.16-20130901.diff', 1)]
         self.targetDigests['1.0.16'] = '0dc3d65bee6d580cae84ed261720b5b4e6b1f856'
 
-        self.shortDescription = "Resource Description Framework (RDF)"
+        self.description = "Resource Description Framework (RDF)"
         self.defaultTarget = '1.0.16'
 
     def setDependencies(self):

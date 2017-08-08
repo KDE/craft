@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Support for bookmarks and the XBEL format"
+        self.description = "Support for bookmarks and the XBEL format"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

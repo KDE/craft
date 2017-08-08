@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:nepomukshell'
         self.defaultTarget = 'master'
-        self.shortDescription = (
+        self.description = (
             "NepomukShell is a maintenance and debugging "
             "tool intended for developers. It allows to browse, "
             "query, and edit Nepomuk resources.")

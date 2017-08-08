@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['4.1'] = ('libmsn-4.1-20101012.diff', 1)
         self.patchToApply['4.2.1'] = ('libmsn-4.1-20101012.diff', 1)
 
-        self.shortDescription = "a library for connecting to Microsoft's MSN Messenger service"
+        self.description = "a library for connecting to Microsoft's MSN Messenger service"
         self.defaultTarget = '4.2.1'
 
     def setDependencies(self):

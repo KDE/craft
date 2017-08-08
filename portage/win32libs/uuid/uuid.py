@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.patchToApply['1.6.2'] = [('uuid-cmake.diff', 1)]
         self.targetInstSrc['1.6.2'] = 'uuid-1.6.2'
         self.targetDigests['1.6.2'] = '3e22126f0842073f4ea6a50b1f59dcb9d094719f'
-        self.shortDescription = "OSSP uuid is a library and cli for the generation of multi standard compliant Universally Unique Identifier (UUID)."
+        self.description = "OSSP uuid is a library and cli for the generation of multi standard compliant Universally Unique Identifier (UUID)."
         self.defaultTarget = '1.6.2'
 
     def setDependencies(self):

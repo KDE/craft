@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Framework for managing menu and toolbar actions"
+        self.description = "Framework for managing menu and toolbar actions"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

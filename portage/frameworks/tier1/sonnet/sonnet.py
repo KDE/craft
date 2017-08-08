@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Spelling framework for Qt, plugin-based."
+        self.description = "Spelling framework for Qt, plugin-based."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

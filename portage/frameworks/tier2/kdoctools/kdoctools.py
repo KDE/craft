@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Documentation generation from docbook "
+        self.description = "Documentation generation from docbook "
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

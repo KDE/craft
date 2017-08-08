@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['svnHEAD'] = 'svn://dev.exiv2.org/svn/trunk'
 
-        self.shortDescription = "an image metadata library"
+        self.description = "an image metadata library"
         self.defaultTarget = '0.25'
 
     def setDependencies(self):

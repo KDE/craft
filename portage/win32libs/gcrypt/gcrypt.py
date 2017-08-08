@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.5.0'] = '3e776d44375dc1a710560b98ae8437d5da6e32cf'
         self.targetDigests['1.5.3'] = '2c6553cc17f2a1616d512d6870fe95edf6b0e26e'
 
-        self.shortDescription = " General purpose crypto library based on the code used in GnuPG."
+        self.description = " General purpose crypto library based on the code used in GnuPG."
         self.defaultTarget = '1.5.3'
 
     def setDependencies(self):

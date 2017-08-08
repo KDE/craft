@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = ''
-        self.shortDescription = "PyYAML is a Python module that implements the next generation YAML parser and emitter."
+        self.description = "PyYAML is a Python module that implements the next generation YAML parser and emitter."
         self.defaultTarget = 'master'
 
 

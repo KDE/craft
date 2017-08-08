@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KDE hex editor for viewing and editing the raw data of files."
+        self.description = "KDE hex editor for viewing and editing the raw data of files."
         self.defaultTarget = 'master'
 
     def setDependencies(self):

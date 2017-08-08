@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
         self.patchToApply['562'] = [('cmake.diff', 1)]
         self.targetDigests['561'] = '31dbb456c21f50865218c57b7eaf4c955a222ba1'
         self.targetDigests['562'] = 'ddc18ae41c2c940317cd6efe81871686846fa293'
-        self.shortDescription = "Crypto++ Library is a free C++ class library of cryptographic schemes"
-        self.homepage = "http://www.cryptopp.com/"
+        self.description = "Crypto++ Library is a free C++ class library of cryptographic schemes"
+        self.webpage = "http://www.cryptopp.com/"
         self.defaultTarget = '562'
 
     def setDependencies(self):

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Extra API to write KConfigModules"
+        self.description = "Extra API to write KConfigModules"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

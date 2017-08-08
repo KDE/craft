@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KService provides a plugin framework for handling desktop services."
+        self.description = "KService provides a plugin framework for handling desktop services."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

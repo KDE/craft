@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
                                       ("intel-cmake-adaptations-0.7.8.diff", 1)]
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
 
-        self.shortDescription = "a desktop search engine and indexer"
+        self.description = "a desktop search engine and indexer"
 
         self.defaultTarget = '0.7.8'
 

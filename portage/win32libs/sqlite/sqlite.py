@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['3.8.1.0'] = "sqlite-amalgamation-3080100"
         self.targetInstSrc['3.15.0'] = "sqlite-amalgamation-3150000"
 
-        self.shortDescription = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
+        self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
         self.defaultTarget = '3.15.0'
 
     def setDependencies(self):

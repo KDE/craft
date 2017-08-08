@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Identity Management library"
+        self.description = "Identity Management library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

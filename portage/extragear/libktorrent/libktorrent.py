@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.patchToApply[ver] = [("libktorrent-1.3.1-20130607.diff", 1)]
         self.patchToApply['master'] = [("libktorrent-1.3.1-20130607.diff", 1)]
 
-        self.shortDescription = "A BitTorrent protocol implementation."
+        self.description = "A BitTorrent protocol implementation."
         self.defaultTarget = 'master'
 
     def setDependencies(self):

@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.defaultTarget = '0.2.6'
-        self.shortDescription = "a library to perform image correction based on lens profiles"
+        self.description = "a library to perform image correction based on lens profiles"
 
         for ver in ['0.2.6']:
             self.targets[

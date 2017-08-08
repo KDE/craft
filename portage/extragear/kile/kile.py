@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in ['2.1.1', '2.1b5']:
             self.targets[ver] = 'http://downloads.sourceforge.net/kile/kile-' + ver + '.tar.bz2'
             self.targetInstSrc[ver] = 'kile-' + ver
-        self.shortDescription = "a user friendly TeX/LaTeX editor for KDE"
+        self.description = "a user friendly TeX/LaTeX editor for KDE"
         self.defaultTarget = 'master'
 
     def setDependencies(self):

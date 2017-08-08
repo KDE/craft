@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Process launcher to speed up launching KDE applications"
+        self.description = "Process launcher to speed up launching KDE applications"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

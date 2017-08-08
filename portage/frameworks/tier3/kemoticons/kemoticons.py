@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Support for emoticons and emoticons themes"
+        self.description = "Support for emoticons and emoticons themes"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

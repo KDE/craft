@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = 'https://github.com/KDAB/Charm.git'
         self.defaultTarget = 'master'
-        self.shortDescription = "The Cross-Platform Time Tracker"
+        self.description = "The Cross-Platform Time Tracker"
 
     def setDependencies(self):
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Qt 5 addon providing access to numerous types of archives"
+        self.description = "Qt 5 addon providing access to numerous types of archives"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

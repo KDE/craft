@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.5'] = 'bab3470471fc7756c5fbe71be9a3c7d677d2ee7b'
         self.targetDigests['2.7'] = '625f0d74bad4a0f6f917120fd992437d26f754d2'
 
-        self.shortDescription = "A small-footprint, speed optimized color management engine"
+        self.description = "A small-footprint, speed optimized color management engine"
         self.defaultTarget = '2.7'
 
     def setDependencies(self):

@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'pcre2-' + ver
         self.patchToApply['10.23'] = [("pcre-8.10-20101125.diff", 1)]
 
-        self.shortDescription = "Perl-Compatible Regular Expressions (version2)"
+        self.description = "Perl-Compatible Regular Expressions (version2)"
         self.defaultTarget = '10.23'
 
     def setDependencies(self):

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KMail Account Wizard"
+        self.description = "KMail Account Wizard"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

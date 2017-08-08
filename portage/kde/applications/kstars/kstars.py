@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = 'a desktop planetarium'
+        self.description = 'a desktop planetarium'
         self.defaultTarget = 'master'
 
     def setDependencies(self):

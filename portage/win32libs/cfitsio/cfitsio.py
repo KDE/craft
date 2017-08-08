@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.patchToApply['3.31'] = [("cfitsio-20130124.diff", 1)]
         self.patchToApply['3.35'] = [("cfitsio-20130124.diff", 1)]
 
-        self.shortDescription = "library for the FITS (Flexible Image Transport System) file format"
+        self.description = "library for the FITS (Flexible Image Transport System) file format"
         self.defaultTarget = '3.35'
 
     def setDependencies(self):

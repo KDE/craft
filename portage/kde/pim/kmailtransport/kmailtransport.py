@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Mailtransport library"
+        self.description = "Mailtransport library"
         self.patchToApply['17.04.1'] = [("fix-kmailtransport.diff", 1)]
 
     def setDependencies(self):

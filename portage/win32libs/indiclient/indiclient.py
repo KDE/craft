@@ -7,7 +7,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = "https://github.com/indilib/indi.git"
-        self.shortDescription = 'INDI Library'
+        self.description = 'INDI Library'
         self.defaultTarget = 'master'
         self.targetInstSrc['master'] = "libindi"
 

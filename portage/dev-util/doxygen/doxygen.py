@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.8.11'] = (
         ['f25964e0203739d77e79d74bafdbef212bd97748e20fdafad078a8e2d315a7ff'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = 'Automated C, C++, and Java Documentation Generator'
+        self.description = 'Automated C, C++, and Java Documentation Generator'
         self.defaultTarget = '1.8.11'
 
 

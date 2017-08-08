@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Extra plugins for KIO (thumbnail generators, archives, remote filesystems and more)"
+        self.description = "Extra plugins for KIO (thumbnail generators, archives, remote filesystems and more)"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

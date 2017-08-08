@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "KDE library for Google API"
+        self.description = "KDE library for Google API"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

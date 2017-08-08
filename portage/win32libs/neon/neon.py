@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.30.0'] = '9e6297945226f90d66258b7ee05f757ff5cea10a'
         self.patchToApply['0.30.0'] = [('neon-0.30.0-cmake.diff', 1)]
 
-        self.shortDescription = "an HTTP and WebDAV client library, with a C interface"
+        self.description = "an HTTP and WebDAV client library, with a C interface"
         self.defaultTarget = '0.30.0'
 
     def setDependencies(self):

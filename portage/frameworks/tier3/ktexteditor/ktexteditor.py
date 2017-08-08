@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KTextEditor provides an advanced embeddable text editor"
+        self.description = "KTextEditor provides an advanced embeddable text editor"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

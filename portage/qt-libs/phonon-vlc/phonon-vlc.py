@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['master'] = '[git]kde:phonon-vlc'
 
-        self.shortDescription = "the vlc based phonon multimedia backend"
+        self.description = "the vlc based phonon multimedia backend"
         self.defaultTarget = '0.9.0'
 
 

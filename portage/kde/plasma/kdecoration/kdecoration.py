@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Plugin based library to create window decorations."
+        self.description = "Plugin based library to create window decorations."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

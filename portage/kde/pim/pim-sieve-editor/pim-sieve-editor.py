@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KDE Sieve Editor"
+        self.description = "KDE Sieve Editor"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "the next generation nepomuk"
+        self.description = "the next generation nepomuk"
 
     def setDependencies(self):
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"

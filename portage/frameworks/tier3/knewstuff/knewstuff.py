@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Support for downloading application assets from the network"
+        self.description = "Support for downloading application assets from the network"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

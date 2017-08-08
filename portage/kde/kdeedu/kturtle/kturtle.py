@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KTurtle"
+        self.description = "KTurtle"
         self.patchToApply['17.04.1'] = [("fix_kturtle_include.diff", 1)]
 
     def setDependencies(self):

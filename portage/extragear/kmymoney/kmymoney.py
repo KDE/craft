@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["extragear/libalkimia"] = "default"
         self.runtimeDependencies["extragear/kdiagram"] = "default"
         self.buildDependencies["dev-util/gettext-tools"] = "default"
-        self.shortDescription = "a personal finance manager for KDE"
+        self.description = "a personal finance manager for KDE"
 
 
 from Package.CMakePackageBase import *

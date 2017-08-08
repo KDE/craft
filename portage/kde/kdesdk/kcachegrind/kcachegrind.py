@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "GUI to profilers such as Valgrind"
+        self.description = "GUI to profilers such as Valgrind"
         self.defaultTarget = 'master'
 
     def setDependencies(self):

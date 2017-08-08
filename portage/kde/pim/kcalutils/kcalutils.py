@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Calendar Utils library"
+        self.description = "Calendar Utils library"
         self.patchToApply['17.04.1'] = [("fix-kcalutils.diff", 1)]
 
     def setDependencies(self):

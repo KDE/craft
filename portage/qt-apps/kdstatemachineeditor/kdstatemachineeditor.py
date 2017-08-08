@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.2.1'] = (
         ['a97597aa3c67356bba7f6c1503018ddf3369ada5534f33129adab29a53f6ed11'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "The KDAB State Machine Editor Library is a framework that can be used to help develop full-featured State Machine Editing graphical user interfaces and tools."
+        self.description = "The KDAB State Machine Editor Library is a framework that can be used to help develop full-featured State Machine Editing graphical user interfaces and tools."
         self.defaultTarget = "1.2.1"
 
     def setDependencies(self):

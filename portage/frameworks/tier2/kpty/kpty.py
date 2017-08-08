@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Pty abstraction"
+        self.description = "Pty abstraction"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

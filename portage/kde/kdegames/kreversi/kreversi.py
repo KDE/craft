@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KReversi"
+        self.description = "KReversi"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "MailCommon library"
+        self.description = "MailCommon library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

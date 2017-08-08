@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:phonon-directshow'
-        self.shortDescription = "the DirectShow based phonon multimedia backend"
+        self.description = "the DirectShow based phonon multimedia backend"
         self.defaultTarget = 'master'
 
 

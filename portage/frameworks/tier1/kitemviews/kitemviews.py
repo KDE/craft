@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KItemViews"
+        self.description = "KItemViews"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KCrash"
+        self.description = "KCrash"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.5.0.1'] = '4bbd8357b4b723e1ff38414a9eaf50bf99dacb84'
 
         self.defaultTarget = '2.5.0.1'
-        self.shortDescription = "A Free, High-Quality, and Portable Font Engine"
+        self.description = "A Free, High-Quality, and Portable Font Engine"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

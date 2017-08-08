@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = ''
-        self.shortDescription = "Review Board Tools."
+        self.description = "Review Board Tools."
         self.defaultTarget = 'master'
 
 

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.4.33'] = '0cea642ba2dae1eb719da41bfedb9eba72ad504d'
         self.targetDigests['2.4.36'] = 'da0e18a28a5dade5c98d9a382fd8f0a676a12aca'
 
-        self.shortDescription = "an open source implementation of the Lightweight Directory Access Protocol"
+        self.description = "an open source implementation of the Lightweight Directory Access Protocol"
         self.defaultTarget = '2.4.45'
 
     def setDependencies(self):

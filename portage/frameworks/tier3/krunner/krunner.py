@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Parallelized query system"
+        self.description = "Parallelized query system"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

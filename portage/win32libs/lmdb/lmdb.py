@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.9.16'] = [('lmdb-LMDB_0.9.16-20151004.diff', 3)]
         self.targetDigests['0.9.16'] = '367182e1d9dbc314db76459a71be719209f131b4'
 
-        self.shortDescription = 'in memory database from the openldap project'
+        self.description = 'in memory database from the openldap project'
         self.defaultTarget = '0.9.16'
 
     def setDependencies(self):

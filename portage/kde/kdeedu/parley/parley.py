@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Parley"
+        self.description = "Parley"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

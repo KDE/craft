@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'openal-soft-' + ver
         self.patchToApply['1.15.1'] = ('openal-soft-1.15.1-20130411.diff', 1)
         self.targetDigests['1.15.1'] = 'a0e73a46740c52ccbde38a3912c5b0fd72679ec8'
-        self.shortDescription = 'a library for audio support'
+        self.description = 'a library for audio support'
         self.defaultTarget = '1.18.0'
 
     def setDependencies(self):

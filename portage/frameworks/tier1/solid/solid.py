@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Solid"
+        self.description = "Solid"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

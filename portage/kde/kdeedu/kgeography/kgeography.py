@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KGeography"
+        self.description = "KGeography"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

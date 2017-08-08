@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.1.26'] = '69f74df8228b504a87e2b257c2d5238281c65154'
         self.targetDigests['1.1.28'] = '4df177de629b2653db322bfb891afa3c0d1fa221'
 
-        self.shortDescription = "The GNOME XSLT C library and tools"
+        self.description = "The GNOME XSLT C library and tools"
         self.defaultTarget = '1.1.28'
 
     def setDependencies(self):

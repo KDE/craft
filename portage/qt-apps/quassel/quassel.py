@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.targetDigests['0.12.2'] = '12e9a88597f724498c40a1548b5f788e7c40858c'
         self.patchToApply['0.11.0'] = ('quassel-0.11.0-20141002.diff', 1)
 
-        self.homepage = "http://quassel-irc.org"
+        self.webpage = "http://quassel-irc.org"
         self.defaultTarget = '0.12.2'
 
     def setDependencies(self):
@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/qt5/qtwebengine"] = "default"
         self.runtimeDependencies["libs/qt5/qtscript"] = "default"
         self.runtimeDependencies["libs/qt5/qttools"] = "default"
-        self.shortDescription = "a distributed IRC client"
+        self.description = "a distributed IRC client"
 
 
 class Package(CMakePackageBase):

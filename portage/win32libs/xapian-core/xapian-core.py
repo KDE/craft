@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.targets['1.2.24'] = 'http://oligarchy.co.uk/xapian/1.2.24/xapian-core-1.2.24.tar.xz'
         self.targetDigests['1.2.24'] = '5c63be033157e030f41e128956b873fbd9ad6a1c'
         self.targetInstSrc['1.2.24'] = 'xapian-core-1.2.24'
-        self.shortDescription = "Open Source Search Engine library"
+        self.description = "Open Source Search Engine library"
         self.patchToApply['1.2.24'] = [("xapian-core-1.2.24-20170626.diff", 1)]
         self.defaultTarget = '1.2.24'
 

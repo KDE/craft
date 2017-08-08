@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.targetDigests['1.9.0'] = '6c0dd8d6af14db93868bb5482b55e784b2dc1127'
         self.targetDigests['1.10.0'] = 'da45a883ca9b2a8e8fc1a642bd043f251ad69151'
 
-        self.shortDescription = "OpenGL Extension Wrangler Library"
+        self.description = "OpenGL Extension Wrangler Library"
         self.defaultTarget = '1.10.0'
 
     def setDependencies(self):

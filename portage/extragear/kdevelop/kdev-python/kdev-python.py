@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.shortDescription = "python support for kdevelop"
+        self.description = "python support for kdevelop"
         self.runtimeDependencies["virtual/base"] = "default"
         self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
         self.runtimeDependencies["extragear/kdevelop/kdev-php"] = "default"

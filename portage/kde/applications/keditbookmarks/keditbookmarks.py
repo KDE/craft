@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KEditBookmarks"
+        self.description = "KEditBookmarks"
         self.patchToApply['17.04.1'] = [("fix_keditbookmarks_unistd.patch", 1)]
 
     def setDependencies(self):

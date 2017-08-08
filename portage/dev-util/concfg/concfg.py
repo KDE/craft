@@ -6,8 +6,8 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "https://github.com/lukesampson/concfg.git"
         self.targetInstallPath["master"] = "dev-utils/concfg/"
 
-        self.shortDescription = "Concfg is a utility to import and export Windows console settings like fonts and colors."
-        self.homepage = "https://github.com/lukesampson/concfg"
+        self.description = "Concfg is a utility to import and export Windows console settings like fonts and colors."
+        self.webpage = "https://github.com/lukesampson/concfg"
 
         self.defaultTarget = "master"
 

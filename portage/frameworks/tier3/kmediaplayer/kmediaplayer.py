@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
             tarballUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz",
             tarballDigestUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz.sha1")
 
-        self.shortDescription = "Plugin interface for media player features"
+        self.description = "Plugin interface for media player features"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

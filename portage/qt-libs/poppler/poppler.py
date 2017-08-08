@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.38.0'] = ("poppler-0.38.0-20151130.diff", 1)
         self.targetDigests['0.38.0'] = '62d334116e509d59cd1d8f172f02c0a81e73182f'
 
-        self.shortDescription = "PDF rendering library based on xpdf-3.0"
+        self.description = "PDF rendering library based on xpdf-3.0"
         self.defaultTarget = "0.38.0"
 
     def setDependencies(self):

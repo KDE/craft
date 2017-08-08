@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.shortDescription = 'Yet Another JSON Library'
+        self.description = 'Yet Another JSON Library'
 
         self.svnTargets['master'] = 'https://github.com/lloyd/yajl'
 

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc["1.1"] = "shared-mime-info-1.1"
         self.targetDigests['1.1'] = ['752668b0cc5729433c99cbad00f21241ec4797ef',
                                      '32714e64fff52d18db5f077732910215790e0c5b']
-        self.shortDescription = "common mimetype library"
+        self.description = "common mimetype library"
         self.defaultTarget = '1.1'
 
     def setDependencies(self):

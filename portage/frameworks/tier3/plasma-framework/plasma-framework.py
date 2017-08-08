@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Plugin based UI runtime used to write primary user interfaces"
+        self.description = "Plugin based UI runtime used to write primary user interfaces"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

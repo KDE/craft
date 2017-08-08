@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Integration of our widgets in Qt Designer/Creator"
+        self.description = "Integration of our widgets in Qt Designer/Creator"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
                 releaseTag] = "http://download.videolan.org/pub/videolan/vlc/%s/win%s/vlc-%s-win%s.7z.sha1" % (
             releaseTag, vlcArch, releaseTag, vlcArch)
             self.patchToApply[releaseTag] = [("vlc-2.1.5.diff", 1)]
-        self.shortDescription = "an open-source multimedia framework"
+        self.description = "an open-source multimedia framework"
 
         self.defaultTarget = "2.2.6"
 

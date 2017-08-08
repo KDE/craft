@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Plugins allowing Qt applications to access further types of images"
+        self.description = "Plugins allowing Qt applications to access further types of images"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

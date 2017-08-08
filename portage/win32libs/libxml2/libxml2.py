@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.patchToApply['2.8.0'] = [("libxml2-2.8.0-20110105.diff", 1),
                                       ("fix-mingw-catalog.diff", 1)]
         self.targetDigests['2.8.0'] = 'a0c553bd51ba79ab6fff26dc700004c6a41f5250'
-        self.shortDescription = "XML C parser and toolkit (runtime and applications)"
+        self.description = "XML C parser and toolkit (runtime and applications)"
 
         self.defaultTarget = '2.8.0'
 

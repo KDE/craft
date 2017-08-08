@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.archiveNames[ver] = f"gsl-{ver}.tar.gz"
         self.targetDigests['2.2.1'] = (
         ['ca58c082a925efe83a30ae4b9882511aee5937f6e6db17e43365a60e29a0a52e'], CraftHash.HashAlgorithm.SHA256)
-        self.shortDescription = 'GNU Scientific Library'
+        self.description = 'GNU Scientific Library'
         self.patchToApply['2.2.1'] = [("disable-broken-pdb-install.patch", 1)]
         self.defaultTarget = '2.2.1'
 

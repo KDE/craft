@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.shortDescription = "ruby support for kdevelop"
+        self.description = "ruby support for kdevelop"
         self.runtimeDependencies["virtual/base"] = "default"
         self.buildDependencies["dev-util/winflexbison"] = "default"
         self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"

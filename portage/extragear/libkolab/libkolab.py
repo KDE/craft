@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.4.1'] = [("libkolab-fixes.diff", 1)]
         self.patchToApply['0.5.0'] = [("libkolab-0.5.0-fixes.diff", 1)]
 
-        self.shortDescription = ''
+        self.description = ''
         self.defaultTarget = '0.5.0'
 
     def setDependencies(self):

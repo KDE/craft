@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KMail"
+        self.description = "KMail"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

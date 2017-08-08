@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
             baseUrl = 'ftp://ftp.openssl.org/source/'
             addTarget(baseUrl, ver)
 
-        self.shortDescription = "The OpenSSL runtime environment"
+        self.description = "The OpenSSL runtime environment"
 
         self.defaultTarget = '1.0.2j'
 

@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.patchToApply[ver] = [('xz-5.0.5.diff', 1), ('xz-cmake-5.0.5.diff', 1)]
         self.targetDigests['5.0.5'] = '56f1d78117f0c32bbb1cfd40117aa7f55bee8765'
 
-        self.shortDescription = "free general-purpose data compression software with high compression ratio"
+        self.description = "free general-purpose data compression software with high compression ratio"
         self.defaultTarget = ver
 
     def setDependencies(self):

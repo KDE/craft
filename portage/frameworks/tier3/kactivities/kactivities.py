@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Runtime and library to organize the user work in separate activities"
+        self.description = "Runtime and library to organize the user work in separate activities"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

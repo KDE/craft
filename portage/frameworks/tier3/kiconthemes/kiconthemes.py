@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Classes to improve the handling of icons"
+        self.description = "Classes to improve the handling of icons"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

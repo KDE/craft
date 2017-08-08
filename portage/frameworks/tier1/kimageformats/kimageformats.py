@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KImageFormats"
+        self.description = "KImageFormats"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

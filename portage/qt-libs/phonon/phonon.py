@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.targetDigests['4.9.1'] = (
         ['67bee986f85ca8b575186c8ba58a85886cb3b1c3567c86a118d56129f221e69c'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "a Qt based multimedia framework"
+        self.description = "a Qt based multimedia framework"
         self.defaultTarget = '4.9.1'
 
 

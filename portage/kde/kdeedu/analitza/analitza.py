@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Analitza Library"
+        self.description = "Analitza Library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

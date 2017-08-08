@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "All kind of addons to improve your Plasma experience"
+        self.description = "All kind of addons to improve your Plasma experience"
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'

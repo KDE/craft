@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
             ("0010-lc_numeric-locale-win32-fix.patch", 1)
         ]
         self.targetDigests['0.5.3'] = '54a30c4791fd27a8e631728219ace8729d6d92f9'
-        self.shortDescription = "library for handling NMEA protocol"
+        self.description = "library for handling NMEA protocol"
         self.defaultTarget = '0.5.3'
 
     def setDependencies(self):

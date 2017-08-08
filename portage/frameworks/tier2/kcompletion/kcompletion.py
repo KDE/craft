@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KCompletion"
+        self.description = "KCompletion"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

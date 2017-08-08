@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
         self.targetDigests['7.54.0'] = (
         ['f50ebaf43c507fa7cc32be4b8108fa8bbd0f5022e90794388f3c7694a302ff06'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "a free and easy-to-use client-side URL transfer library"
+        self.description = "a free and easy-to-use client-side URL transfer library"
         self.defaultTarget = '7.54.0'
 
     def setDependencies(self):

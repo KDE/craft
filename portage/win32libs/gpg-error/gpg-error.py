@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.patchToApply['267'] = [('libgpg-error-r267-20101205.diff', 1),
                                     ('libgpg-error-cmake.diff', 1)]
 
-        self.shortDescription = "Small library with error codes and descriptions shared by most GnuPG related software"
+        self.description = "Small library with error codes and descriptions shared by most GnuPG related software"
         self.defaultTarget = '1.12'
 
     def setDependencies(self):

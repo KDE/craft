@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'xerces-c-' + ver
         self.targetDigests['3.1.1'] = '177ec838c5119df57ec77eddec9a29f7e754c8b2'
 
-        self.shortDescription = "A Validating XML Parser"
+        self.description = "A Validating XML Parser"
         self.defaultTarget = '3.1.1'
 
     def setDependencies(self):

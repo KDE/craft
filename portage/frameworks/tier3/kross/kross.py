@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
             tarballDigestUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/kross-${VERSION}.tar.xz.sha1"
         )
 
-        self.shortDescription = "Multi-language application scripting"
+        self.description = "Multi-language application scripting"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
                 ver] = f"http://download.kde.org/stable/{self.package}/{ver}/src/{self.package}-{ver}.tar.bz2"
             self.targetInstSrc[ver] = f"{self.package}-{ver}"
         self.defaultTarget = 'master'
-        self.shortDescription = 'a small application for image scanning'
+        self.description = 'a small application for image scanning'
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'

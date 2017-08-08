@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Graphical File Differences Tool"
+        self.description = "Graphical File Differences Tool"
         self.defaultTarget = 'master'
 
     def setDependencies(self):

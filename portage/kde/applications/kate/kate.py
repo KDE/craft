@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "the KDE text editor"
+        self.description = "the KDE text editor"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

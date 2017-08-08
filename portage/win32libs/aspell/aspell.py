@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
         self.patchToApply['0.60.6'] = [('aspell-0.60.6-20100726.diff', 1)]
         self.patchToApply['0.60.6.1'] = [('aspell-0.60.6-20100726.diff', 1)]
-        self.shortDescription = "A powerful spell checker, designed to replace ispell"
+        self.description = "A powerful spell checker, designed to replace ispell"
         self.defaultTarget = '0.60.6.1'
 
     def setDependencies(self):

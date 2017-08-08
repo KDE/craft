@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.targetDigests['8.41'] = (
         ['e62c7eac5ae7c0e7286db61ff82912e1c0b7a0c13706616e94a7dd729321b530'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "Perl-Compatible Regular Expressions"
+        self.description = "Perl-Compatible Regular Expressions"
         self.defaultTarget = "8.41"
 
     def setDependencies(self):

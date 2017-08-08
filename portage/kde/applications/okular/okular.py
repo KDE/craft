@@ -4,7 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "KDE document viewer"
+        self.description = "KDE document viewer"
 
     def setDependencies(self):
         self.buildDependencies["win32libs/chm"] = "default"

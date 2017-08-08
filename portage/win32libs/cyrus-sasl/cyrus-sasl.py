@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'cyrus-sasl-' + ver
         self.patchToApply['2.1.26'] = [('cyrus-sasl-2.1.26.patch', 1)]
         self.targetDigests['2.1.26'] = 'd6669fb91434192529bd13ee95737a8a5040241c'
-        self.shortDescription = "Cyrus SASL implementation"
+        self.description = "Cyrus SASL implementation"
         self.defaultTarget = '2.1.26'
 
     def setDependencies(self):

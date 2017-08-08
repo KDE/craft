@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Support for unit conversion"
+        self.description = "Support for unit conversion"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Provides integration of QML and KDE Frameworks"
+        self.description = "Provides integration of QML and KDE Frameworks"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

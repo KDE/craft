@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
         self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
         self.runtimeDependencies["qt-libs/phonon"] = "default"
-        self.shortDescription = "a KDE based irc client"
+        self.description = "a KDE based irc client"
 
 
 class Package(CMakePackageBase):

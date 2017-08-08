@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
         self.options.package.packSources = False
 
-        self.shortDescription = "document translation defintions for docbook format"
+        self.description = "document translation defintions for docbook format"
         self.defaultTarget = '1.78.1'
 
     def setDependencies(self):

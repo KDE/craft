@@ -6,7 +6,7 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "[git]kde:kdiagram"
         self.defaultTarget = "master"
 
-        self.shortDescription = "Powerful libraries (KChart, KGantt) for creating business diagrams"
+        self.description = "Powerful libraries (KChart, KGantt) for creating business diagrams"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.targetDigests['2.8.0'] = 'da8371cb20e8e238f96a1d0651212f154d84a9ac'
         self.targetDigests['2.9.1'] = '24d40e89c2e66a765733e8c98d6f94500343da86'
 
-        self.shortDescription = 'a POSIX thread implementation for windows'
+        self.description = 'a POSIX thread implementation for windows'
         self.defaultTarget = '2.9.1'
 
     def setDependencies(self):

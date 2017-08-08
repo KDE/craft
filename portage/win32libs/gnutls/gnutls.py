@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = "gnutls-%s" % ver
         self.patchToApply["3.3.10"] = ("0005-fix-strtok-conflict.mingw.patch", 1)
         self.targetDigests['3.3.10'] = 'b47af4ee116ba2099a24ff7a8e686079f80ec23a'
-        self.shortDescription = "A library which provides a secure layer over a reliable transport layer"
+        self.description = "A library which provides a secure layer over a reliable transport layer"
         self.defaultTarget = "3.3.10"
 
     def setDependencies(self):

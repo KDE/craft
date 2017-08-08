@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Akonadi-Import-Wizard Application"
+        self.description = "Akonadi-Import-Wizard Application"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

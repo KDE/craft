@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "https://github.com/KDAB/FatCRM.git|frameworks"
         self.defaultTarget = "master"
 
-        self.shortDescription = "Desktop Application for SugarCRM"
-        self.homepage = "http://www.kdab.com/"
+        self.description = "Desktop Application for SugarCRM"
+        self.webpage = "http://www.kdab.com/"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"

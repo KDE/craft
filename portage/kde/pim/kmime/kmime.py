@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KMime library"
+        self.description = "KMime library"
         self.patchToApply['17.04.0'] = [("001-fix_compile_under_windows.diff", 1)]
         self.patchToApply['17.04.1'] = [("001-fix_compile_under_windows.diff", 1)]
 

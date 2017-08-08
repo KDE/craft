@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Network transparent access to files and data"
+        self.description = "Network transparent access to files and data"
 
         self.patchToApply['5.31.0'] = ('0001-Fix-double-export-in-already-exported-class.patch', 1)
 

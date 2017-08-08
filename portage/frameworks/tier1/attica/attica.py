@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Attica is a Qt library that implements the Open Collaboration Services API."
+        self.description = "Attica is a Qt library that implements the Open Collaboration Services API."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

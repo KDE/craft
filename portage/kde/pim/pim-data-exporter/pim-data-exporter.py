@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "PIM Data Exporter"
+        self.description = "PIM Data Exporter"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"

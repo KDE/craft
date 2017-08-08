@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Extra widgets for easier configuration support"
+        self.description = "Extra widgets for easier configuration support"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

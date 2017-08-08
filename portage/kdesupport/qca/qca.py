@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = 'kde:qca.git|qt5'
-        self.shortDescription = "Qt Cryptographic Architecture (QCA)"
+        self.description = "Qt Cryptographic Architecture (QCA)"
         self.defaultTarget = 'master'
 
 

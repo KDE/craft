@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Configuration system for KNotify"
+        self.description = "Configuration system for KNotify"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

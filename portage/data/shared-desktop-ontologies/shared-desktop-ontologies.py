@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
         self.patchToApply['0.10.0'] = ('shared-desktop-ontologies-0.7.1-20110811.diff', 1)
         self.patchToApply['0.11.0'] = ('shared-desktop-ontologies-0.7.1-20110811.diff', 1)
 
-        self.shortDescription = "the core ontologies such as RDF or RDFS and all Nepomuk ontologies"
+        self.description = "the core ontologies such as RDF or RDFS and all Nepomuk ontologies"
         self.options.package.withCompiler = False
         self.defaultTarget = '0.11.0'
 

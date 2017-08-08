@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "A file metadata and text extraction library"
+        self.description = "A file metadata and text extraction library"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
