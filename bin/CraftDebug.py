@@ -50,6 +50,7 @@ class CraftDebug(object):
         self.log.debug("#" * self.lineWidth)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
+        self.logEnv()
         self.setVerbose(0)
 
     @property
@@ -84,6 +85,13 @@ class CraftDebug(object):
     @property
     def log(self):
         return self._log
+
+    def logEnv(self, env=None):
+        if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
+            if not env:
+                env = os.environ
+            self.log.debug(
+                "Environment: \n" + "\n".join(f"    {key}={value}" for key, value in env.items()))
 
     def trace(self, message):
         self.log.debug("craft trace: %s" % message)
