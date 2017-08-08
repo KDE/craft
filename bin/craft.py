@@ -168,9 +168,11 @@ def run(package, action, args, directTargets):
             if hasattr(instance, key.replace("()", "")):
                 attr = getattr(instance, key)
                 if isMethode:
-                    craftDebug.log.info(attr())
+                    value = attr()
                 else:
-                    craftDebug.log.info(attr)
+                    value = attr
+                craftDebug.log.debug(value)
+                print(value)
                 return True
             else:
                craftDebug.log.warning(f"{p} has no member {key}")

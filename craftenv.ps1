@@ -94,6 +94,19 @@ function Global:craft() {
     return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
+function Global:cb([string] $package) {
+    $dir = craft -q --get "buildDir()" $package
+    cd $dir
+}
+
+function Global:cs([string] $package) {
+    $dir = craft -q --get "sourceDir()" $package
+    cd $dir
+}
+function Global:cr([string] $package) {
+    cd $env:KDEROOT
+}
+
 
 if($args.Length -ne 0)
 {
