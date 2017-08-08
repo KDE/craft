@@ -7,6 +7,7 @@ import shutil
 import types
 
 from Packager.PackagerBase import *
+from Portage.CraftDependencyPackage import DependencyType, DependencyPackage
 from Portage.CraftPackageObject import *
 
 

@@ -22,6 +22,7 @@ import portageSearch
 import utils
 from CraftConfig import *
 from CraftVersion import CraftVersion
+from Portage.CraftDependencyPackage import DependencyType, DependencyPackage
 from Portage.CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
