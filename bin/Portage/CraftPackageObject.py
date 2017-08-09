@@ -13,7 +13,6 @@ class CraftPackageObject(object):
     options = None
     __rootPackage = None
     _nodes = {}#all nodes
-    # TODO: allow multiple recipes per key, and report crash
     _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = [".git", "__pycache__"]
     Ignores = re.compile("a^")
@@ -49,7 +48,14 @@ class CraftPackageObject(object):
         package = None
         if path not in CraftPackageObject._nodes:
             if path in CraftPackageObject._recipes:
-                package = CraftPackageObject._recipes[path]
+                packages = CraftPackageObject._recipes[path]
+                if len(packages) > 1:
+                    craftDebug.log.info(f"Found multiple recipes for {path}")
+                    for p in packages:
+                        craftDebug.log.info(p)
+                    craftDebug.log.info(f"Please use the full path to the recipe.")
+                    exit(1)
+                package = packages[0]
         else:
             package = CraftPackageObject._nodes[path]
         return package
@@ -81,14 +87,13 @@ class CraftPackageObject(object):
                 if package.source:
                     raise Exception("Multiple py files in one directory")
                 recipe = os.path.splitext(f)[0]
-                if recipe in CraftPackageObject._recipes:
-                    raise PortageException(
-                        f"Multiple recipes found in {path}, previous recipe is {CraftPackageObject._recipes[recipe]}")
-                CraftPackageObject._recipes[recipe] = package
+                if recipe not in CraftPackageObject._recipes:
+                    CraftPackageObject._recipes[recipe] = []
+                CraftPackageObject._recipes[recipe].append(package)
                 package.source = fPath
         if hasChildren:
             if package.source:
-                raise PortageException(f"{package} has has children but also a recipe {package.source}!", self)
+                raise PortageException(f"{package} has has children but also a recipe {package.source}!")
         return package
 
     @property
