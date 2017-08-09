@@ -88,13 +88,7 @@ class CraftPackageObject(object):
                 package.source = fPath
         if hasChildren:
             if package.source:
-                # TODO: introduce a special recipe node?
-                category = copy.deepcopy(package)
-                category.source = None
-            else:
-                category = package
-            package.children["*"] = category
-            CraftPackageObject._nodes[f"{category.path}/*"] = category
+                raise PortageException(f"{package} has has children but also a recipe {package.source}!", self)
         return package
 
     @property
