@@ -85,7 +85,9 @@ class CraftPackageObject(object):
                         package.children[child.name] = child
             elif f.endswith(".py"):
                 if package.source:
-                    raise Exception("Multiple py files in one directory")
+                    raise PortageException(f"Multiple py files in one directory: {package.source} and {f}", package)
+                if f[:-3] != package.name:
+                    raise PortageException(f"Recipes must math the name of the directory: {f}", package)
                 recipe = os.path.splitext(f)[0]
                 if recipe not in CraftPackageObject._recipes:
                     CraftPackageObject._recipes[recipe] = []
@@ -93,7 +95,7 @@ class CraftPackageObject(object):
                 package.source = fPath
         if hasChildren:
             if package.source:
-                raise PortageException(f"{package} has has children but also a recipe {package.source}!")
+                raise PortageException(f"{package} has has children but also a recipe {package.source}!", package)
         return package
 
     @property
@@ -196,7 +198,7 @@ class CraftPackageObject(object):
 class PortageException(Exception, CraftPackageObject):
     def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
-        CraftPackageObject.__init__(self, package.path)
+        CraftPackageObject.__init__(self, package)
         self.exception = exception
 
     def __str__(self):
