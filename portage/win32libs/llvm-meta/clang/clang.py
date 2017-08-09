@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         self.runtimeDependencies["win32libs/libxml2"] = "default"
-        self.runtimeDependencies["win32libs/llvm-meta/clang"] = "default"
+        self.runtimeDependencies["win32libs/llvm-meta/llvm"] = "default"
 
 
 from Package.SourceOnlyPackageBase import *
