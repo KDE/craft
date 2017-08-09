@@ -17,7 +17,9 @@ class subinfo(info.infoclass):
         self.targetDigests['1.7.2'] = (
         ['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
 
-        self.defaultTarget = "1.7.2"
+        # unconditionally use master for now, to fix:
+        # https://github.com/ninja-build/ninja/issues/1161
+        self.defaultTarget = "master" # TODO: Use 1.7.3 once released
         if craftCompiler.isMSVC2017():
             self.defaultTarget = "master"
 
