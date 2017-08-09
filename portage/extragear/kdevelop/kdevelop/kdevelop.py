@@ -1,4 +1,5 @@
 from distutils.dir_util import mkpath
+from CraftVersion import CraftVersion
 
 import info
 
@@ -39,7 +40,8 @@ class subinfo(info.infoclass):
         if self.options.features.fullplasma:
             self.runtimeDependencies["frameworks/tier3/krunner"] = "default"
             self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
-        self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
+        if CraftVersion(self.buildTarget) < CraftVersion("5.2") and self.buildTarget != "masterda":
+            self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
         self.runtimeDependencies["extragear/kdevelop-pg-qt"] = "default"
 
         # Install extra plugins shipped by Kate

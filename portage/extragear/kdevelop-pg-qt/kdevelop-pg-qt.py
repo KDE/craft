@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.0'
 
     def setDependencies(self):
-        self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 from Package.CMakePackageBase import *
