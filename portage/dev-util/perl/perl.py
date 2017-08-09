@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class PerlPackage(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.unpack.runInstaller = True
@@ -42,8 +42,3 @@ class PerlPackage(BinaryPackageBase):
         _, name = os.path.split(self.subinfo.targets[self.subinfo.buildTarget])
         utils.deleteFile(os.path.join(self.sourceDir(), "{0}.msi".format(name)))
         return True
-
-
-class Package(VirtualIfSufficientVersion):
-    def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="perl", version="5.20.0", classA=PerlPackage)
