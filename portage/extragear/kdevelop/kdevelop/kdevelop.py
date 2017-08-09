@@ -40,7 +40,7 @@ class subinfo(info.infoclass):
         if self.options.features.fullplasma:
             self.runtimeDependencies["frameworks/tier3/krunner"] = "default"
             self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
-        if CraftVersion(self.buildTarget) < CraftVersion("5.2") and self.buildTarget != "masterda":
+        if self.buildTarget != "master" and CraftVersion(self.buildTarget) < CraftVersion("5.2"):
             self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
         self.runtimeDependencies["extragear/kdevelop-pg-qt"] = "default"
 
