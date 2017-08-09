@@ -501,7 +501,8 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         except PortageException as e:
-            craftDebug.log.error(e, exc_info=e.exception or e)
+            craftDebug.log.error(e)
+            craftDebug.log.debug(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)
         finally:
