@@ -32,6 +32,46 @@ if not "KDEROOT" in os.environ:
     helper.printBanner()
 
 
+class TitleUpdater(object):
+    def __init__(self):
+        self.doUpdateTitle = True
+        self.title = None
+        self.timer = None
+        self.dynamicMessage = None
+
+    def run(self):
+        while (self.doUpdateTitle):
+            dynamicPart = ""
+            if self.dynamicMessage:
+                dynamicPart = f" {self.dynamicMessage()}"
+            utils.OsUtils.setConsoleTitle(f"{self.title}: {self.timer}{dynamicPart}")
+            time.sleep(1)
+
+    def start(self, message, timer):
+        self.title = message
+        self.timer = timer
+        self.doUpdateTitle = True
+        tittleThread = threading.Thread(target=self.run)
+        tittleThread.setDaemon(True)
+        tittleThread.start()
+
+    def stop(self):
+        self.doUpdateTitle = False
+
+
+    @staticmethod
+    def usePackageProgressTitle(packages):
+        initialSize = len(packages)
+        def title():
+            if not packages:
+                TitleUpdater.instance.dynamicMessage = None
+                return ""
+            progress = int((1 - len(packages) / initialSize) * 100)
+            return f"{progress}% {[x.path for x in packages]}"
+        TitleUpdater.instance.dynamicMessage = title
+
+
+
 def destroyCraftRoot():
     del InstallDB.installdb
     root = CraftStandardDirs.craftRoot()
@@ -208,18 +248,21 @@ def run(package, action, args, directTargets):
             for x in directTargets:
                 packages.remove(x)
 
-        for info in packages:
-                # in case we only want to see which packages are still to be build, simply return the package name
-                if args.probe:
-                    craftDebug.log.warning(f"pretending {info}: {info.version}")
-                else:
-                    if action in ["install-deps"]:
-                        action = "all"
+        TitleUpdater.usePackageProgressTitle(packages)
+        while packages:
+            info = packages[0]
+            # in case we only want to see which packages are still to be build, simply return the package name
+            if args.probe:
+                craftDebug.log.warning(f"pretending {info}: {info.version}")
+            else:
+                if action in ["install-deps"]:
+                    action = "all"
 
-                    if not handlePackage(info, action, args.doContinue,
-                                         directTargets=directTargets):
-                        craftDebug.log.error(f"fatal error: package {info} {action} failed")
-                        return False
+                if not handlePackage(info, action, args.doContinue,
+                                     directTargets=directTargets):
+                    craftDebug.log.error(f"fatal error: package {info} {action} failed")
+                    return False
+            packages.pop(0)
 
     craftDebug.new_line()
     return True
@@ -451,16 +494,9 @@ def main():
 if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
+        TitleUpdater.instance = TitleUpdater()
+        TitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
-            doUpdateTitle = True
-            title = f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:])
-            def updateTitle():
-                while (doUpdateTitle):
-                    utils.OsUtils.setConsoleTitle(f"{title}: {timer}")
-                    time.sleep(1)
-            tittleThread = threading.Thread(target=updateTitle)
-            tittleThread.setDaemon(True)
-            tittleThread.start()
             success = main()
         except KeyboardInterrupt:
             pass
@@ -469,7 +505,6 @@ if __name__ == '__main__':
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)
         finally:
-            doUpdateTitle = False
-
+            TitleUpdater.instance.stop()
     if not success:
         exit(1)
