@@ -9,8 +9,6 @@ from BuildSystem.QMakeBuildSystem import *
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__(self):
         QMakeBuildSystem.__init__(self)
-        if not craftSettings.getboolean("QtSDK", "Enabled", False):
-            utils.putenv("QMAKESPEC", os.path.join(CraftStandardDirs.craftRoot(), 'mkspecs', self.platform))
 
     def install(self, options=""):
         """implements the make step for Qt projects"""
