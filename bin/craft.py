@@ -292,8 +292,6 @@ def main():
                         default=craftSettings.getboolean("General", "WorkOffline", False),
                         help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail.")
-    parser.add_argument("-f", "--force", action="store_true", dest="forced",
-                        default=craftSettings.getboolean("General", "EMERGE_FORCED", False))
     parser.add_argument("--buildtype", choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
                         dest="buildType",
                         default=craftSettings.get("Compile", "BuildType", "RelWithDebInfo"),
@@ -352,7 +350,6 @@ def main():
         craftDebug.setVerbose(args.verbose)
 
     craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
-    craftSettings.set("General", "EMERGE_FORCED", args.forced)
     craftSettings.set("Compile", "BuildType", args.buildType)
     craftSettings.set("General", "Options", ";".join(args.options))
     craftSettings.set("CraftDebug", "LogDir", args.log_dir)

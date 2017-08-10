@@ -79,7 +79,7 @@ class PackageBase(CraftBase):
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
-            self.unmergeFileList(self.mergeDestinationDir(), fileList, self.forced)
+            self.unmergeFileList(self.mergeDestinationDir(), fileList)
             package.uninstall()
 
         # run post-uninstall scripts
@@ -219,8 +219,8 @@ class PackageBase(CraftBase):
         return ret
 
     @staticmethod
-    def unmergeFileList(rootdir, fileList, forced=False):
-        """ delete files in the fileList if has matches or forced is True """
+    def unmergeFileList(rootdir, fileList):
+        """ delete files in the fileList if has matches """
         for filename, filehash in fileList:
             fullPath = os.path.join(rootdir, os.path.normcase(filename))
             if os.path.isfile(fullPath):
@@ -232,14 +232,9 @@ class PackageBase(CraftBase):
                 if currentHash == filehash or filehash == "":
                     OsUtils.rm(fullPath, True)
                 else:
-                    if forced:
-                        craftDebug.log.warning("file %s has different hash: %s %s, deleting anyway" % \
-                                               (fullPath, currentHash, filehash))
-                        OsUtils.rm(fullPath, True)
-                    else:
-                        craftDebug.log.warning(
-                            "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                            (fullPath, currentHash, filehash))
+                    craftDebug.log.warning(
+                        "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
+                        (fullPath, currentHash, filehash))
             elif not os.path.isdir(fullPath):
                 craftDebug.log.warning("file %s does not exist" % fullPath)
 

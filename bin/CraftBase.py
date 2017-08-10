@@ -70,10 +70,6 @@ class CraftBase(object):
         return craftSettings.getboolean("General", "WorkOffline", False)
 
     @property
-    def forced(self):
-        return craftSettings.getboolean("General", "EMERGE_FORCED", False)
-
-    @property
     def buildTests(self):
         return craftSettings.getboolean("Compile", "BuildTests")
 
