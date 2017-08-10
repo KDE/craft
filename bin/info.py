@@ -10,6 +10,7 @@ import datetime
 
 import CraftHash
 import VersionInfo
+from CraftCompiler import craftCompiler
 from options import *
 
 
@@ -33,6 +34,7 @@ class infoclass(object):
         self.targetInstallPath = {}
 
         self.targetDigests = {}
+        self.targetDigestsX64 = {}
         self.targetDigestUrls = {}
         ## \todo prelimary
         self.svnTargets = {}
@@ -172,13 +174,17 @@ class infoclass(object):
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetDigests
+        if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+            return True
+        return self.buildTarget in self.targetDigests
 
     def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            out = self.targetDigests[self.buildTarget]
+            if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+                out = self.targetDigestsX64[self.buildTarget]
+            else:
+                out = self.targetDigests[self.buildTarget]
             if type(out) == str:
                 out = [out]
             if not type(out) == tuple:
