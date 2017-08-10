@@ -96,9 +96,9 @@ def createDigestFiles(path, algorithms=None):
 
 
 def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorithm.SHA256):
-    out = ""
+    digests = []
     for filename in filenames:
         if not filename == "":
-            out += "'%s'," % digestFile(os.path.join(downloaddir, filename), algorithm)
-    if not out == "":
-        print("self.targetDigests['%s'] = ([%s], CraftHash.%s)" % (buildTarget, out[:-1], algorithm))
+            digests.append(digestFile(os.path.join(downloaddir, filename), algorithm))
+    if digests:
+        craftDebug.log.info(f"Digests for {buildTarget}: ({digests}, CraftHash.{algorithm})")
