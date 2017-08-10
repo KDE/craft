@@ -21,7 +21,7 @@ import utils
 from CraftConfig import *
 from CraftTitleUpdater import CraftTitleUpdater
 from CraftVersion import CraftVersion
-from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
+from Portage.CraftDependencyPackage import CraftDependencyPackage
 from Portage.CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
@@ -184,7 +184,7 @@ def run(package, action, args, directTargets):
 
     else:
         depPackage = CraftDependencyPackage(package)
-        depList = depPackage.getDependencies(DependencyType(args.dependencyType))
+        depList = depPackage.getDependencies()
 
         packages = []
         for item in depList:
@@ -308,8 +308,6 @@ def main():
     parser.add_argument("--log-dir", action="store",
                         default=craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
                         help="This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs.")
-    parser.add_argument("--dt", action="store", choices=["both", "runtime", "buildtime"], default="both",
-                        dest="dependencyType")
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
 
