@@ -233,8 +233,8 @@ class PackageBase(CraftBase):
                     OsUtils.rm(fullPath, True)
                 else:
                     craftDebug.log.warning(
-                        "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                        (fullPath, currentHash, filehash))
+                        f"We can't remove {fullPath} as its hash has changed,"
+                        f" that usually implies that the fiel was modified or replaced")
             elif not os.path.isdir(fullPath):
                 craftDebug.log.warning("file %s does not exist" % fullPath)
 
