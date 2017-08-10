@@ -381,7 +381,6 @@ def main():
         craftDebug.log.debug("doPretend: %s" % tempArgs.probe)
         craftDebug.log.debug("packageName: %s" % tempArgs.packageNames)
         craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
-        craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
         craftDebug.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
 
