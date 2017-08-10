@@ -66,6 +66,10 @@ class CraftCompiler(object):
     def architecture(self):
         return self._architecture
 
+    @property
+    def bits(self):
+        return "64" if self.isX64() else "32"
+
     def _getGCCTarget(self):
         result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine")
         if result:
