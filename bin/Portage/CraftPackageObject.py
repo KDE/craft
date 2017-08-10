@@ -192,7 +192,10 @@ class CraftPackageObject(object):
     def installables():
         #ensure that everything is loaded
         CraftPackageObject.root()
-        return CraftPackageObject._recipes.values()
+        recipes = []
+        for p in CraftPackageObject._recipes.values():
+            recipes.extend(p)
+        return recipes
 
 
 class PortageException(Exception, CraftPackageObject):
