@@ -127,25 +127,21 @@ class infoclass(object):
 
     def targetSourceSuffix(self) -> str:
         """return local source path suffix for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetSrcSuffix:
+        if self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[self.buildTarget]
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetInstSrc
+        return self.buildTarget in self.targetInstSrc
 
     def targetSourcePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetInstSrc:
+        if self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[self.buildTarget]
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetConfigurePath
+        return self.buildTarget in self.targetConfigurePath
 
     def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
@@ -155,13 +151,11 @@ class infoclass(object):
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetInstallPath
+        return self.buildTarget in self.targetInstallPath
 
     def installPath(self) -> str:
         """return relative path appendable to local install path for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetInstallPath:
+        if self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[self.buildTarget]
         craftDebug.log.critical("no install path for this build target defined")
 
@@ -194,8 +188,7 @@ class infoclass(object):
 
     def hasTargetDigestUrls(self) -> bool:
         """return state if target has digest url(s) for the recent build target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetDigestUrls
+        return self.buildTarget in self.targetDigestUrls
 
     def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
