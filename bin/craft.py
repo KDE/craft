@@ -130,7 +130,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success or continueFlag
         elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
                              "test",
-                             "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
+                             "package", "unmerge", "createpatch",
                              "print-files"
                              ]:
             success = doExec(package, buildAction, continueFlag)
@@ -322,7 +322,7 @@ def main():
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                      "install", "install-deps", "qmerge", "package", "unmerge", "test",
                      "checkdigest",
-                     "full-package", "cleanimage", "cleanbuild", "createpatch"]):
+                     "full-package", "createpatch"]):
         actionHandler.addAction(x)
 
     # read-only actions
