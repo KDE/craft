@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
         for v in ['0.4.6', '0.4.7']:
             self.targets[v] = 'http://poppler.freedesktop.org/poppler-data-' + v + '.tar.gz'
             self.targetInstSrc[v] = 'poppler-data-' + v
+        self.patchToApply['0.4.7'] = [("poppler-data-0.4.7-20170810.diff", 1)]
         self.targetDigests['0.4.7'] = '556a5bebd0eb743e0d91819ba11fd79947d8c674'
 
         self.description = "the poppler CJK encoding data"
