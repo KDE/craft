@@ -405,7 +405,7 @@ def main():
         craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
         craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
-        craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
+        craftDebug.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
