@@ -262,7 +262,6 @@ class PackageBase(CraftBase):
                      "package": "createPackage",
                      "createpatch": "createPatch",
                      "geturls": "getUrls",
-                     "print-revision": "printSourceVersion",
                      "print-files": "printFiles",
                      "checkdigest": "checkDigest",
                      "fetch-binary": "fetchBinary"}

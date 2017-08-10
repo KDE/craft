@@ -132,7 +132,6 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                              "test",
                              "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
                              "geturls",
-                             "print-revision",
                              "print-files"
                              ]:
             success = doExec(package, buildAction, continueFlag)
@@ -344,7 +343,6 @@ def main():
     # read-only actions
     actionHandler.addAction("print-installed",
                             help="This will show a list of all packages that are installed currently.")
-    actionHandler.addAction("print-revision", help="Print the revision of the package and exit")
     actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a recipe")
