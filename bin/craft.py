@@ -185,8 +185,7 @@ def run(package, action, args, directTargets):
 
     else:
         depPackage = CraftDependencyPackage(package)
-        depList = depPackage.getDependencies(DependencyType(args.dependencyType),
-                                             maxDepth=args.dependencydepth)
+        depList = depPackage.getDependencies(DependencyType(args.dependencyType))
 
         packages = []
         for item in depList:
@@ -319,9 +318,6 @@ def main():
                         help="This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs.")
     parser.add_argument("--dt", action="store", choices=["both", "runtime", "buildtime"], default="both",
                         dest="dependencyType")
-    parser.add_argument("-d", "--dependencydepth", action="store", type=int, default=-1,
-                        help="By default craft resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package")
-
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
 

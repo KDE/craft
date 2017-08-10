@@ -64,7 +64,7 @@ class CraftDependencyPackage(CraftPackageObject):
                 children.append(p)
         return children
 
-    def __getDependencies(self, depenendencyType, maxDepth, depth, ignoredPackages):
+    def __getDependencies(self, depenendencyType, ignoredPackages):
         """ returns all dependencies """
         if self.isIgnored():
             return []
@@ -77,8 +77,7 @@ class CraftDependencyPackage(CraftPackageObject):
                 continue
             if not p.isIgnored() \
                     and (not ignoredPackages or p.path not in ignoredPackages):
-                if maxDepth == -1 or depth < maxDepth:
-                    depList.extend(p.__getDependencies(depenendencyType, maxDepth, depth + 1, ignoredPackages))
+                depList.extend(p.__getDependencies(depenendencyType, ignoredPackages))
 
         if self.state != CraftDependencyPackage.State.Visited:
             self.state = CraftDependencyPackage.State.Visited
@@ -86,9 +85,9 @@ class CraftDependencyPackage(CraftPackageObject):
                 depList.append(self)
         return depList
 
-    def getDependencies(self, depType=DependencyType.Both, maxDepth=-1, ignoredPackages=None):
+    def getDependencies(self, depType=DependencyType.Both, ignoredPackages=None):
         self.depenendencyType = depType
         for p in CraftDependencyPackage._packageCache.values():
             #reset visited state
             p.state = CraftDependencyPackage.State.Unvisited
-        return self.__getDependencies(depType, maxDepth, 0, ignoredPackages)
+        return self.__getDependencies(depType, ignoredPackages)
