@@ -97,7 +97,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
 
         success = True
 
-        if buildAction in ["all", "full-package"]:
+        if buildAction == "all":
             if craftSettings.getboolean("Packager", "UseCache", "False") \
                     and not package.isVirtualPackage():
                 if doExec(package, "fetch-binary"):
@@ -110,9 +110,8 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "install")
             if buildAction == "all":
                 success = success and doExec(package, "qmerge")
-            if buildAction == "full-package" or craftSettings.getboolean("Packager", "CreateCache"):
-                if craftSettings.getboolean("Packager", "CreateCache") and craftSettings.getboolean("Packager",
-                                                                                                    "CacheDirectTargetsOnly"):
+            if craftSettings.getboolean("Packager", "CreateCache"):
+                if craftSettings.getboolean("Packager", "CacheDirectTargetsOnly"):
                     nameRe = re.compile(".*\/.*")
                     for target in directTargets:
                         if not nameRe.match(target):
@@ -321,8 +320,7 @@ def main():
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
                      "install", "install-deps", "qmerge", "package", "unmerge", "test",
-                     "checkdigest",
-                     "full-package", "createpatch"]):
+                     "checkdigest", "createpatch"]):
         actionHandler.addAction(x)
 
     # read-only actions
