@@ -74,10 +74,6 @@ class CraftBase(object):
         return craftSettings.getboolean("General", "EMERGE_NOFAST", True)
 
     @property
-    def noClean(self):
-        return craftSettings.getboolean("General", "EMERGE_NOCLEAN", False)
-
-    @property
     def forced(self):
         return craftSettings.getboolean("General", "EMERGE_FORCED", False)
 

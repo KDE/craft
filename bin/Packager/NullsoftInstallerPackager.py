@@ -37,10 +37,6 @@ productname:    contains the capitalized PACKAGENAME and the buildTarget of the 
 executable:     executable is defined empty by default, but it is used to add a link into the
                 start menu.
 You can add your own defines into self.defines as well.
-
-The output directory is determined by the environment variable EMERGE_PKGDSTDIR.
-if EMERGE_NOCLEAN is given (e.g. because you call craft --update --package Packagename), the
-file collection process is skipped, and only the installer is generated.
 """
     configPatter = re.compile(r"@{([^{}]+)}")
 

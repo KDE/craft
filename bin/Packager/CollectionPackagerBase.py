@@ -220,15 +220,14 @@ class CollectionPackagerBase(PackagerBase):
 
         archiveDir = self.archiveDir()
 
-        if not self.noClean:
-            craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
-            utils.cleanDirectory(archiveDir)
-            for directory, strip in self.__getImageDirectories():
-                imageDir = archiveDir
-                if os.path.exists(directory):
-                    self.copyFiles(directory, imageDir, strip)
-                else:
-                    craftDebug.log.critical("image directory %s does not exist!" % directory)
+        craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
+        utils.cleanDirectory(archiveDir)
+        for directory, strip in self.__getImageDirectories():
+            imageDir = archiveDir
+            if os.path.exists(directory):
+                self.copyFiles(directory, imageDir, strip)
+            else:
+                craftDebug.log.critical("image directory %s does not exist!" % directory)
 
         if not os.path.exists(archiveDir):
             os.makedirs(archiveDir)

@@ -319,11 +319,6 @@ def main():
                         help="This will override the build of the default target.")
     parser.add_argument("--search", action="store_true",
                         help="This will search for a package or a description matching or similar to the search term.")
-    parser.add_argument("--noclean", action="store_true",
-                        default=craftSettings.getboolean("General", "EMERGE_NOCLEAN", False),
-                        help="this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing.")
-    parser.add_argument("--clean", action="store_false", dest="noclean",
-                        help="oposite of --noclean")
     parser.add_argument("--patchlevel", action="store",
                         default=craftSettings.get("General", "EMERGE_PKGPATCHLVL", ""),
                         help="This will add a patch level when used together with --package")
@@ -377,7 +372,6 @@ def main():
         craftDebug.setVerbose(args.verbose)
 
     craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
-    craftSettings.set("General", "EMERGE_NOCLEAN", args.noclean)
     craftSettings.set("General", "EMERGE_FORCED", args.forced)
     craftSettings.set("Compile", "BuildTests", args.buildTests)
     craftSettings.set("Compile", "BuildType", args.buildType)
@@ -404,9 +398,6 @@ def main():
 
         if action in ["install-deps", "update", "package"]:
             tempArgs.ignoreInstalled = True
-
-        if action in ["update"]:
-            tempArgs.noclean = True
 
         craftDebug.log.debug("buildAction: %s" % action)
         craftDebug.log.debug("doPretend: %s" % tempArgs.probe)

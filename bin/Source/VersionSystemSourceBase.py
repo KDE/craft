@@ -47,9 +47,8 @@ class VersionSystemSourceBase(SourceBase):
         craftDebug.trace("VersionSystemSourceBase unpack")
         self.enterBuildDir()
 
-        if not self.noClean:
-            craftDebug.log.debug("cleaning %s" % self.buildDir())
-            utils.cleanDirectory(self.buildDir())
+        craftDebug.log.debug("cleaning %s" % self.buildDir())
+        utils.cleanDirectory(self.buildDir())
         ret = self.applyPatches()
         if craftSettings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret
