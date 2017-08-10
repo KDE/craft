@@ -276,8 +276,6 @@ def main():
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
                         help="quiet: there should be no output - The verbose level should be 0")
-    parser.add_argument("-t", "--buildtests", action="store_true", dest="buildTests",
-                        default=craftSettings.getboolean("Compile", "BuildTests", True))
     parser.add_argument("-c", "--continue", action="store_true", dest="doContinue")
     parser.add_argument("--create-cache", action="store_true", dest="createCache",
                         default=craftSettings.getboolean("Packager", "CreateCache", "False"),
@@ -355,7 +353,6 @@ def main():
 
     craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     craftSettings.set("General", "EMERGE_FORCED", args.forced)
-    craftSettings.set("Compile", "BuildTests", args.buildTests)
     craftSettings.set("Compile", "BuildType", args.buildType)
     craftSettings.set("General", "Options", ";".join(args.options))
     craftSettings.set("CraftDebug", "LogDir", args.log_dir)
