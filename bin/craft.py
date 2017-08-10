@@ -190,7 +190,7 @@ def run(package, action, args, directTargets):
 
         packages = []
         for item in depList:
-            if (args.ignoreInstalled and item in directTargets) or args.ignoreAllInstalled or packageIsOutdated(item):
+            if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
                 packages.append(item)
                 craftDebug.log.debug(f"dependency: {item}")
         if not packages:
@@ -307,9 +307,6 @@ def main():
                           verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3.")
     parser.add_argument("-i", "--ignoreInstalled", action="store_true",
                         help="ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.")
-    parser.add_argument("-ia", "--ignoreAllInstalled", action="store_true",
-                        help="ignore all install: using this option will install all package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.")
-
     parser.add_argument("--target", action="store",
                         help="This will override the build of the default target.")
     parser.add_argument("--search", action="store_true",
