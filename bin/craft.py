@@ -97,7 +97,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
 
         success = True
 
-        if buildAction in ["all", "full-package", "update"]:
+        if buildAction in ["all", "full-package"]:
             if craftSettings.getboolean("Packager", "UseCache", "False") \
                     and not package.isVirtualPackage():
                 if doExec(package, "fetch-binary"):
@@ -108,7 +108,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "compile")
             success = success and doExec(package, "cleanimage")
             success = success and doExec(package, "install")
-            if buildAction in ["all", "update"]:
+            if buildAction == "all":
                 success = success and doExec(package, "qmerge")
             if buildAction == "full-package" or craftSettings.getboolean("Packager", "CreateCache"):
                 if craftSettings.getboolean("Packager", "CreateCache") and craftSettings.getboolean("Packager",
@@ -343,7 +343,6 @@ def main():
                      "checkdigest",
                      "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"]):
         actionHandler.addAction(x)
-    actionHandler.addAction("update", help="Update a single package")
 
     # read-only actions
     actionHandler.addAction("print-source-version")
@@ -396,7 +395,7 @@ def main():
     for action in actionHandler.parseFinalAction(args, "all"):
         tempArgs = copy.deepcopy(args)
 
-        if action in ["install-deps", "update", "package"]:
+        if action in ["install-deps", "package"]:
             tempArgs.ignoreInstalled = True
 
         craftDebug.log.debug("buildAction: %s" % action)
