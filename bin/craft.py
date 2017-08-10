@@ -339,7 +339,7 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
-                     "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
+                     "install", "install-deps", "qmerge", "package", "unmerge", "test",
                      "checkdigest",
                      "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"]):
         actionHandler.addAction(x)
