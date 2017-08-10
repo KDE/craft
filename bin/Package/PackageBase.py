@@ -261,7 +261,6 @@ class PackageBase(CraftBase):
                      "unmerge": "unmerge",
                      "package": "createPackage",
                      "createpatch": "createPatch",
-                     "geturls": "getUrls",
                      "print-files": "printFiles",
                      "checkdigest": "checkDigest",
                      "fetch-binary": "fetchBinary"}
