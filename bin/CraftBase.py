@@ -70,10 +70,6 @@ class CraftBase(object):
         return craftSettings.getboolean("General", "WorkOffline", False)
 
     @property
-    def noFast(self):
-        return craftSettings.getboolean("General", "EMERGE_NOFAST", True)
-
-    @property
     def forced(self):
         return craftSettings.getboolean("General", "EMERGE_FORCED", False)
 
