@@ -1,0 +1,23 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' poppler-data-0.4.7.orig/CMakeLists.txt poppler-data-0.4.7/CMakeLists.txt
+--- poppler-data-0.4.7.orig/CMakeLists.txt	2014-08-12 20:46:01.000000000 +0200
++++ poppler-data-0.4.7/CMakeLists.txt	2017-08-10 15:16:25.876692700 +0200
+@@ -2,8 +2,11 @@
+ 
+ cmake_minimum_required(VERSION 2.6)
+ 
++
++set(VERSION "0.4.7")
+ set(datadir ${CMAKE_INSTALL_PREFIX}/share)
+ set(pkgdatadir ${datadir}/poppler)
++set(prefix ${CMAKE_INSTALL_PREFIX})
+ 
+ set(unicode-map-files
+   unicodeMap/Big5
+@@ -283,3 +286,7 @@
+   cidToUnicode/Adobe-Korea1
+ )
+ install(FILES ${cid-to-unicode-files} DESTINATION ${pkgdatadir}/cidToUnicode)
++
++
++configure_file(poppler-data.pc.in poppler-data.pc @ONLY)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/poppler-data.pc DESTINATION ${datadir}/pkgconfig)
