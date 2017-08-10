@@ -35,7 +35,7 @@ class Package(CMakePackageBase):
         if not craftSettings.getboolean("QtSDK", "Enabled", False):
             self.subinfo.options.configure.args += " -DGAMMARAY_MULTI_BUILD=OFF"
         if self.subinfo.options.dynamic.gammarayProbeOnly:
-            self.subinfo.options.configure.args += " -DGAMMARAY_PROBE_ONLY_BUILD=ON"
+            self.subinfo.options.configure.args += " -DGAMMARAY_BUILD_UI=OFF -DGAMMARAY_BUILD_DOCS=OFF"
             self.changePackager(SevenZipPackager)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,

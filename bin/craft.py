@@ -12,8 +12,6 @@
 
 import argparse
 import collections
-import threading
-import time
 
 import CraftSetupHelper
 import CraftTimer
@@ -21,6 +19,7 @@ import InstallDB
 import portageSearch
 import utils
 from CraftConfig import *
+from CraftTitleUpdater import CraftTitleUpdater
 from CraftVersion import CraftVersion
 from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Portage.CraftPackageObject import *
@@ -30,47 +29,6 @@ if not "KDEROOT" in os.environ:
     helper.subst()
     helper.setupEnvironment()
     helper.printBanner()
-
-
-class TitleUpdater(object):
-    def __init__(self):
-        self.doUpdateTitle = True
-        self.title = None
-        self.timer = None
-        self.dynamicMessage = None
-
-    def run(self):
-        while (self.doUpdateTitle):
-            dynamicPart = ""
-            if self.dynamicMessage:
-                dynamicPart = f" {self.dynamicMessage()}"
-            utils.OsUtils.setConsoleTitle(f"{self.title}: {self.timer}{dynamicPart}")
-            time.sleep(1)
-
-    def start(self, message, timer):
-        self.title = message
-        self.timer = timer
-        self.doUpdateTitle = True
-        tittleThread = threading.Thread(target=self.run)
-        tittleThread.setDaemon(True)
-        tittleThread.start()
-
-    def stop(self):
-        self.doUpdateTitle = False
-
-
-    @staticmethod
-    def usePackageProgressTitle(packages):
-        initialSize = len(packages)
-        def title():
-            if not packages:
-                TitleUpdater.instance.dynamicMessage = None
-                return ""
-            progress = int((1 - len(packages) / initialSize) * 100)
-            return f"{progress}% {[x.path for x in packages]}"
-        TitleUpdater.instance.dynamicMessage = title
-
-
 
 def destroyCraftRoot():
     del InstallDB.installdb
@@ -248,7 +206,7 @@ def run(package, action, args, directTargets):
             for x in directTargets:
                 packages.remove(x)
 
-        TitleUpdater.usePackageProgressTitle(packages)
+        CraftTitleUpdater.usePackageProgressTitle(packages)
         while packages:
             info = packages[0]
             # in case we only want to see which packages are still to be build, simply return the package name
@@ -494,8 +452,8 @@ def main():
 if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
-        TitleUpdater.instance = TitleUpdater()
-        TitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
+        CraftTitleUpdater.instance = CraftTitleUpdater()
+        CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
             success = main()
         except KeyboardInterrupt:
@@ -506,6 +464,6 @@ if __name__ == '__main__':
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)
         finally:
-            TitleUpdater.instance.stop()
+            CraftTitleUpdater.instance.stop()
     if not success:
         exit(1)
