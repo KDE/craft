@@ -127,11 +127,8 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                 else:
                     success = success and doExec(package, "package")
             success = success or continueFlag
-        elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
-                             "test",
-                             "package", "unmerge", "createpatch",
-                             "print-files"
-                             ]:
+        elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
+                             "test", "package", "unmerge", "createpatch", "print-files" ]:
             success = doExec(package, buildAction, continueFlag)
         elif buildAction == "install":
             success = doExec(package, "cleanimage")
@@ -317,8 +314,7 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
-                     "install", "install-deps", "qmerge", "package", "unmerge", "test",
-                     "checkdigest", "createpatch"]):
+                     "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"]):
         actionHandler.addAction(x)
 
     # read-only actions
