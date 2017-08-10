@@ -141,9 +141,6 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "install", continueFlag)
         elif buildAction == "qmerge":
             success = success and doExec(package, "qmerge")
-        elif buildAction == "print-source-version":
-            print(f"{package}-{package.instance.sourceVersion()}")
-            success = True
         else:
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
 
@@ -345,7 +342,6 @@ def main():
         actionHandler.addAction(x)
 
     # read-only actions
-    actionHandler.addAction("print-source-version")
     actionHandler.addAction("print-installed",
                             help="This will show a list of all packages that are installed currently.")
     actionHandler.addAction("print-revision", help="Print the revision of the package and exit")
