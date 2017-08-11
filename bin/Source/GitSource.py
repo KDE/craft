@@ -88,7 +88,7 @@ class GitSource(VersionSystemSourceBase):
         parts.extend(args)
         if not kwargs.get('cwd'):
             kwargs['cwd'] = self.checkoutDir()
-        return self.system(' '.join(parts), **kwargs)
+        return self.system(' '.join(parts), logCommand=False, **kwargs)
 
     def fetch(self):
         craftDebug.trace('GitSource fetch')

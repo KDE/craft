@@ -392,14 +392,14 @@ def un7zip(fileName, destdir, flag=None):
     return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
 
 
-def system(cmd, displayProgress=False, **kw):
+def system(cmd, displayProgress=False, logCommand=True, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
     kw['shell'] = True
-    return systemWithoutShell(cmd, displayProgress, **kw)
+    return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, **kw)
 
 
-def systemWithoutShell(cmd, displayProgress=False, **kw):
+def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -429,7 +429,10 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
     else:
         app = arg0
 
-    craftDebug.log.info(f"executing command: {cmd!r}")
+    if logCommand:
+        craftDebug.log.info(f"executing command: {cmd!r}")
+    else:
+        craftDebug.log.debug(f"executing command: {cmd!r}")
     craftDebug.log.debug(f"CWD: {cwd!r}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     craftDebug.logEnv(environment)
