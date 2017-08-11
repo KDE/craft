@@ -17,10 +17,14 @@ class CraftPackageObject(object):
     IgnoredDirectories = [".git", "__pycache__"]
     Ignores = re.compile("a^")
 
-    def __init__(self, path):
+    def __init__(self, path=None):
         if isinstance(path, CraftPackageObject):
             self.__dict__ = path.__dict__
             return
+        if path:
+            raise Exception("Calling CraftPackageObject(str) directly is not supported,"
+                            " use CraftPackageObject.get(str) instead.")
+
         self.path = None
         self.children = {}
         self.source = None
@@ -61,7 +65,7 @@ class CraftPackageObject(object):
         return package
 
     def _addNode(self, path, portageRoot):
-        package = CraftPackageObject(path)
+        package = CraftPackageObject()
         if path:
             if OsUtils.isWin():
                 path = path.replace("\\", "/")
@@ -126,7 +130,8 @@ class CraftPackageObject(object):
             if ("Portage", "Ignores") in craftSettings:
                 CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Portage", "Ignores").split(";")]))
 
-            CraftPackageObject.__rootPackage = root = CraftPackageObject("/")
+            CraftPackageObject.__rootPackage = root = CraftPackageObject()
+            root.path = "/"
             for portage in CraftPackageObject.rootDirectories():
                 if OsUtils.isWin():
                     portage = os.path.abspath(portage).replace("\\", "/")

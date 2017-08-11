@@ -289,7 +289,7 @@ class Options(object):
 
     def isActive(self, package):
         if isinstance(package, str):
-            package = CraftPackageObject(package)
+            package = CraftPackageObject.get(package)
         return not package.isIgnored()
 
     def __setInstanceAttribute(self, key, value):
