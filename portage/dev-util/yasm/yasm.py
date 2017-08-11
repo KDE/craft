@@ -14,11 +14,11 @@ class subinfo(info.infoclass):
             if craftCompiler.isMSVC():
                 self.targets['1.2.0'] = "http://www.tortall.net/projects/yasm/releases/vsyasm-1.2.0-win32.zip"
         self.targetInstallPath["1.2.0"] = os.path.join("dev-utils", "bin")
-        self.shortDescription = "The Yasm Modular Assembler Project"
+        self.description = "The Yasm Modular Assembler Project"
         self.defaultTarget = '1.2.0'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
 
 
 from Package.BinaryPackageBase import *

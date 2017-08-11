@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
     def setTargets(self):
         for ver in ['1.75.2', '1.78.0', '1.78.1']:
@@ -17,11 +17,11 @@ class subinfo(info.infoclass):
         self.options.package.withCompiler = False
         self.options.package.packSources = False
 
-        self.shortDescription = "document translation defintions for docbook format"
+        self.description = "document translation defintions for docbook format"
         self.defaultTarget = '1.78.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['data/docbook-dtd'] = '4.5'  # actually, all v4 should work
+        self.runtimeDependencies["data/docbook-dtd"] = "default"
 
 
 from Package.BinaryPackageBase import *

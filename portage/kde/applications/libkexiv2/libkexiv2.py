@@ -5,11 +5,11 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
+        self.description = "Libkexiv2 is a wrapper around Exiv2 library to manipulate pictures metadata as EXIF IPTC and XMP."
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/exiv2'] = 'default'
-        self.runtimeDependencies['frameworks/extra-cmake-modules'] = 'default'
+        self.runtimeDependencies["win32libs/exiv2"] = "default"
+        self.runtimeDependencies["frameworks/extra-cmake-modules"] = "default"
 
 
 from Package.CMakePackageBase import *

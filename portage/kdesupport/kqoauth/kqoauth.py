@@ -7,7 +7,7 @@ from Package.QMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.defaultTarget = '0.97'
-        self.shortDescription = "kQOAuth is a library written in C++ for Qt that implements the OAuth 1.0 authentication specification RFC 5849"
+        self.description = "kQOAuth is a library written in C++ for Qt that implements the OAuth 1.0 authentication specification RFC 5849"
 
         self.svnTargets['master'] = 'https://github.com/kypeli/kQOAuth.git'
 
@@ -20,8 +20,8 @@ class subinfo(info.infoclass):
         self.patchToApply['0.97'] = ('kqoauth-no-examples-or-tests.diff', 1)
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qt'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt"] = "default"
 
 
 class Package(QMakePackageBase):

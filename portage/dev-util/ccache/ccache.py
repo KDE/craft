@@ -9,9 +9,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
         if craftCompiler.isMinGW():
-            self.buildDependencies['dev-util/msys'] = 'default'
+            self.buildDependencies["dev-util/msys"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

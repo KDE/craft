@@ -4,16 +4,16 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Documentation generation from docbook "
+        self.description = "Documentation generation from docbook "
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/karchive"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
 
 
 from Package.CMakePackageBase import *

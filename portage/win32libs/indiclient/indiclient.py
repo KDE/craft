@@ -7,15 +7,15 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = "https://github.com/indilib/indi.git"
-        self.shortDescription = 'INDI Library'
+        self.description = 'INDI Library'
         self.defaultTarget = 'master'
         self.targetInstSrc['master'] = "libindi"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['win32libs/libnova'] = 'default'
-        self.buildDependencies['gnuwin32/grep'] = '2.5.4'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["win32libs/libnova"] = "default"
+        self.buildDependencies["gnuwin32/grep"] = "default"
 
 
 from Package.CMakePackageBase import *

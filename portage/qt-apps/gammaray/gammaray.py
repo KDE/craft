@@ -13,16 +13,16 @@ class subinfo(info.infoclass):
         self.targetDigests['2.7.0'] = (
         ['74251d9de4bfa31994431c7a493e5de17d0b90853557a245bf3f7f4e0227fd14'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "GammaRay is a tool to poke around in a Qt-application and also to manipulate the application to some extent"
+        self.description = "GammaRay is a tool to poke around in a Qt-application and also to manipulate the application to some extent"
 
         self.defaultTarget = "2.7.0"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/syntax-highlighting"] = "default"
-        self.runtimeDependencies['qt-apps/kdstatemachineeditor'] = 'default'
-        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/syntax-highlighting"] = "default"
+        self.runtimeDependencies["qt-apps/kdstatemachineeditor"] = "default"
+        self.runtimeDependencies["win32libs/openssl"] = "default"
 
 
 from Package.CMakePackageBase import *
@@ -34,6 +34,9 @@ class Package(CMakePackageBase):
         self.subinfo.options.configure.args = "-DGAMMARAY_INSTALL_QT_LAYOUT=ON"
         if not craftSettings.getboolean("QtSDK", "Enabled", False):
             self.subinfo.options.configure.args += " -DGAMMARAY_MULTI_BUILD=OFF"
+        if self.subinfo.options.dynamic.gammarayProbeOnly:
+            self.subinfo.options.configure.args += " -DGAMMARAY_BUILD_UI=OFF -DGAMMARAY_BUILD_DOCS=OFF"
+            self.changePackager(SevenZipPackager)
         self.blacklist_file = [
             PackagerLists.runtimeBlacklist,
             lambda: (re.compile(r"^.*\.pdb$|^.*\.pri$|^share.*$|^etc.*$"),)

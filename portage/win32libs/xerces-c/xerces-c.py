@@ -8,13 +8,13 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'xerces-c-' + ver
         self.targetDigests['3.1.1'] = '177ec838c5119df57ec77eddec9a29f7e754c8b2'
 
-        self.shortDescription = "A Validating XML Parser"
+        self.description = "A Validating XML Parser"
         self.defaultTarget = '3.1.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
         if craftCompiler.isMSVC():
-            self.buildDependencies['binary/xerces-c-bin'] = 'default'
+            self.buildDependencies["binary/xerces-c-bin"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

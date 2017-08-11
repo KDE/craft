@@ -26,8 +26,8 @@ class subinfo(info.infoclass):
         self.targetDigests['1.11.14'] = (
         ['55cfc7fdd2cccb2fce1f75d2132ad4801b5ed6699fc2ce79ed993574adf90c80'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "Freedesktop message bus system (daemon and clients)"
-        self.homepage = "http://www.freedesktop.org/wiki/Software/dbus/"
+        self.description = "Freedesktop message bus system (daemon and clients)"
+        self.webpage = "http://www.freedesktop.org/wiki/Software/dbus/"
         self.defaultTarget = "1.11.14"
 
     def setDependencies(self):

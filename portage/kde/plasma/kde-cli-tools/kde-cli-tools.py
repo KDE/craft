@@ -6,13 +6,13 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kinit'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies["frameworks/kcmutils"] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kinit"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -22,7 +22,7 @@ class Timer(object):
 
     def __str__(self):
         minutes, seconds = divmod(self.duration.total_seconds(), 60)
-        hours, _ = divmod(minutes, 60)
+        hours, minutes = divmod(minutes, 60)
         def format(time, string):
             time = int(time)
             s = "s" if time != 1 else ""

@@ -5,14 +5,14 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Runtime and library to organize the user work in separate activities"
+        self.description = "Runtime and library to organize the user work in separate activities"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['frameworks/kservice'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['win32libs/boost-headers'] = 'default'
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["win32libs/boost/boost-headers"] = "default"
 
         # those are only needed for building the activity manager daemon
 

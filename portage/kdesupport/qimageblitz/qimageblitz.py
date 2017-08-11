@@ -3,13 +3,13 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
     def setTargets(self):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/qimageblitz'
 
-        self.shortDescription = "Graphical effects library for KDE4"
+        self.description = "Graphical effects library for KDE4"
         self.defaultTarget = 'svnHEAD'
 
 

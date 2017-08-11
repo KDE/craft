@@ -5,13 +5,13 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KCompletion"
+        self.description = "KCompletion"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
 
 
 from Package.CMakePackageBase import *

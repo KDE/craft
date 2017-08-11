@@ -1,8 +1,8 @@
 import sqlite3
 
-import portage
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftOS.osutils import OsUtils
 
 
 class InstallPackage(object):
@@ -60,7 +60,7 @@ class InstallPackage(object):
         return self.cursor.fetchall()
 
     def getPackageInfo(self):
-        cmd = '''SELECT category, packageName, version FROM packageList WHERE packageId=?'''
+        cmd = '''SELECT packagePath, version FROM packageList WHERE packageId=?'''
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()[0]
 
@@ -136,48 +136,44 @@ class InstallDB(object):
         params = []
         parametersUsed = False
         stmt = ""
-        #        if not prefix == '' or not category == '' or not package == '':
-        #            cmd += ''' WHERE'''
-        #
         for key in list(_dict.keys()):
-            if not _dict[key] == None:
+            if _dict[key]:
                 if parametersUsed:
                     stmt += ''' AND'''
-                stmt += ''' %s=?''' % key
-                params.append(_dict[key])
+                stmt += f''' {key}=?'''
+                params.append(str(_dict[key]))
                 parametersUsed = True
         if not stmt == "":
             stmt = ''' WHERE''' + stmt
 
         return stmt, params
 
-    def isInstalled(self, category, package, version=None):
+    def isInstalled(self,  package, version=None):
         """ returns whether a package is installed. If version is empty, all versions will be checked. """
         cmd = '''SELECT * FROM packageList'''
         stmt, params = self.__constructWhereStmt(
-            {'prefix': None, 'category': category, 'packageName': package, 'version': version})
+            {'prefix': None, 'packagePath': package, 'version': version})
         cmd += stmt
         cmd += ''';'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
-        isPackageInstalled = len(cursor.fetchall()) > 0
-        if isPackageInstalled:
-            InstallDB.log("""The package %s/%s has been installed with
-                            version '%s'.""" % (category, package, version))
+        installedPackage  = cursor.fetchall()
+        if installedPackage:
+            InstallDB.log(f"""The package {package} has been installed with
+                            version '{version}'.""")
         else:
-            InstallDB.log("""Couldn't find a trace that the package %s/%s has been installed with version '%s'""" % (
-            category, package, version))
+            InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
-        return isPackageInstalled
+        return bool(installedPackage)
 
-    def getInstalled(self, category=None, package=None):
+    def getInstalled(self, package=None):
         """ returns a list of the installed packages, which can be restricted by adding
-            package, category.
+            package.
         """
-        cmd = '''SELECT category, packageName, version, prefix FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'category': category, 'packageName': package})
+        cmd = '''SELECT packagePath, version, prefix FROM packageList'''
+        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package})
         cmd += stmt
         cmd += ''';'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -188,12 +184,12 @@ class InstallDB(object):
         cursor.close()
         return values
 
-    def getDistinctInstalled(self, category=None, package=None):
+    def getDistinctInstalled(self, package=None):
         """ returns a list of the installed packages, which can be restricted by adding
-            package, category.
+            package.
         """
-        cmd = '''SELECT DISTINCT category, packageName, version FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'category': category, 'packageName': package})
+        cmd = '''SELECT DISTINCT packagePath, version FROM packageList'''
+        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package})
         cmd += stmt
         cmd += ''';'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -204,12 +200,12 @@ class InstallDB(object):
         cursor.close()
         return values
 
-    def getPackageIds(self, category=None, package=None):
+    def getPackageIds(self, package):
         """ returns a list of the ids of the packages, which can be restricted by adding
-            package, category.
+            package.
         """
         cmd = '''SELECT packageId FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'category': category, 'packageName': package})
+        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package.path})
         cmd += stmt
         cmd += ''';'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
@@ -231,22 +227,22 @@ class InstallDB(object):
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
 
-    def addInstalled(self, category, package, version, ignoreInstalled=False, revision=""):
+    def addInstalled(self, package, version, ignoreInstalled=False, revision=""):
         """ adds an installed package """
         cursor = self.connection.cursor()
-        if self.isInstalled(category, package, version) and not ignoreInstalled:
-            raise Exception('package %s/%s-%s already installed' % (category, package, version))
+        if self.isInstalled(package, version) and not ignoreInstalled:
+            raise Exception(f'package {package}-{version} already installed')
 
-        params = [None, None, category, package, version, revision]
-        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
+        params = [None, None, package.path, version, revision]
+        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
         cursor.execute(cmd, tuple(params))
         return InstallPackage(cursor, self.getLastId())
 
-    def getInstalledPackages(self, category, package):
+    def getInstalledPackages(self, package):
         """ return an installed package """
         cursor = self.connection.cursor()
-        return [InstallPackage(cursor, pId) for pId in self.getPackageIds(category, package)]
+        return [InstallPackage(cursor, pId) for pId in self.getPackageIds(package)]
 
     def _prepareDatabase(self):
         """ prepare a new database and add the required table layout """
@@ -259,17 +255,35 @@ class InstallDB(object):
 
                 # first, create the required tables
                 cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                   prefix TEXT, category TEXT, packageName TEXT, version TEXT, revision TEXT)''')
+                                   prefix TEXT, packagePath TEXT, version TEXT, revision TEXT)''')
                 cursor.execute('''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
                                    packageId INTEGER, filename TEXT, fileHash TEXT)''')
                 self.connection.commit()
             else:
                 self.connection = sqlite3.connect(self.dbfilename)
-                cursor = self.connection.cursor()
-            cursor.execute('''PRAGMA table_info('packageList')''')
-            if not len(cursor.fetchall()) == 6:
-                cursor.execute('''ALTER TABLE packageList ADD COLUMN revision TEXT''')
-                self.connection.commit()
+
+
+    def migrateDatabase(self):
+        cursor = self.connection.cursor()
+        cursor.execute('''PRAGMA table_info('packageList')''')
+        info = cursor.fetchall()
+        if OsUtils.isWin():
+            installCommand = "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/KDE/craft/master/setup/install_craft.ps1'))"
+        else:
+            installCommand = "wget https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py -O setup.py && python3.6 setup.py --prefix ~/kde"
+
+        if "packagePath" != info[2][1]:
+            print("Craft database and folder structure changed.\n"
+                  "Craft now uses full paths for dependencies and package names.\n"
+                  "Instead of building 'libs/qtbase' you know 'build libs/qt5/qtbase'"
+                  ", direct recipe invocation like 'qtbase' works as before.\n"
+                  "As a result of this change you need to start with a clean build.\n"
+                  "To do so either call 'craft --destroy-craft-root' which will delete "
+                  "everything besides craft and the download folder, "
+                  "or manually remove everything manually and start fresh by calling:\n"
+                  + installCommand)
+            exit(1)
+
 
 
 # get a global object
@@ -279,4 +293,19 @@ installdb = InstallDB()
 # an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
-    portage.printCategoriesPackagesAndVersions(installdb.getDistinctInstalled())
+    installed = installdb.getDistinctInstalled()
+    width = 40
+    def printLine(first, second):
+        craftDebug.log.info(f"{first:{width}}: {second}")
+
+    printLine("Package", "Version")
+    printLine("=" * width, "=" * 10)
+    installed = sorted(installed, key=lambda x :x[0])
+    for package, version in installed:
+        printLine(package, version)
+
+def printPackagesForFileSearch(filename):
+    packages = installdb.getPackagesForFileSearch(filename)
+    for pId, filename in packages:
+        path , version = pId.getPackageInfo()
+        craftDebug.log.info(f"{path}: {filename}")

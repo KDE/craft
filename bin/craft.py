@@ -12,28 +12,23 @@
 
 import argparse
 import collections
-import copy
-import datetime
-import threading
-import time
 
-import CraftDependencies
 import CraftSetupHelper
 import CraftTimer
 import InstallDB
-import portage
 import portageSearch
 import utils
-from CraftCompiler import craftCompiler
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftTitleUpdater import CraftTitleUpdater
+from CraftVersion import CraftVersion
+from Portage.CraftDependencyPackage import CraftDependencyPackage
+from Portage.CraftPackageObject import *
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
     helper.subst()
     helper.setupEnvironment()
     helper.printBanner()
-
 
 def destroyCraftRoot():
     del InstallDB.installdb
@@ -77,93 +72,69 @@ def readListFile(listFile):
     return packageNames
 
 
-def packageIsOutdated(category, package):
-    newest = portage.PortageInstance.getNewestVersion(category, package)
-    installed = InstallDB.installdb.getInstalledPackages(category, package)
+def packageIsOutdated(package):
+    installed = InstallDB.installdb.getInstalledPackages(package)
+    if not installed:
+        return True
     for pack in installed:
         version = pack.getVersion()
-        if newest != version:
-            return True
-
+        if not version: continue
+        return CraftVersion(package.version) > CraftVersion(version)
 
 def doExec(package, action, continueFlag=False):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
         craftDebug.step("Action: %s for %s" % (action, package))
-        ret = package.execute(action)
+        ret = package.instance.execute(action)
         if not ret:
             craftDebug.log.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
 
-def handlePackage(category, packageName, buildAction, continueFlag, skipUpToDateVcs, directTargets):
-    with CraftTimer.Timer("HandlePackage %s/%s" % (category, packageName), 3) as timer:
+def handlePackage(package, buildAction, continueFlag, directTargets):
+    with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
         craftDebug.debug_line()
-        craftDebug.step("Handling package: %s, action: %s" % (packageName, buildAction))
+        craftDebug.step(f"Handling package: {package}, action: {buildAction}")
 
         success = True
-        package = portage.PortageInstance.getPackageInstance(category, packageName)
-        if package is None:
-            raise CraftDependencies.PortageException("Package not found", category, packageName)
 
-        if buildAction in ["all", "full-package", "update", "update-all"]:
+        if buildAction == "all":
             if craftSettings.getboolean("Packager", "UseCache", "False") \
-                    and not portage.PortageInstance.isVirtualPackage(category, packageName):
+                    and not package.isVirtualPackage():
                 if doExec(package, "fetch-binary"):
                     return True
             success = success and doExec(package, "fetch", continueFlag)
-            skip = False
-            if success and skipUpToDateVcs and package.subinfo.hasSvnTarget():
-                revision = package.sourceVersion()
-                for p in InstallDB.installdb.getInstalledPackages(category, packageName):
-                    if p.getRevision() == revision:
-                        craftDebug.step("Skipping further actions, package is up-to-date")
-                        skip = True
-            if not skip:
-                success = success and doExec(package, "unpack", continueFlag)
-                success = success and doExec(package, "compile")
-                success = success and doExec(package, "cleanimage")
-                success = success and doExec(package, "install")
-                if buildAction in ["all", "update", "update-all"]:
-                    success = success and doExec(package, "qmerge")
-                if buildAction == "full-package" or craftSettings.getboolean("Packager", "CreateCache"):
-                    if craftSettings.getboolean("Packager", "CreateCache") and craftSettings.getboolean("Packager",
-                                                                                                        "CacheDirectTargetsOnly"):
-                        nameRe = re.compile(".*\/.*")
-                        for target in directTargets:
-                            if not nameRe.match(target):
-                                craftDebug.log.error("Error:\n"
-                                                     "[Packager]\n"
-                                                     "CacheDirectTargetsOnly = True\n"
-                                                     "Only works with fully specified packages 'category/package'")
-                                return False
-                        if f"{category}/{packageName}" in directTargets:
-                            success = success and doExec(package, "package")
-                        else:
-                            craftDebug.log.info("skip packaging of non direct targets")
-                    else:
+
+            success = success and doExec(package, "unpack", continueFlag)
+            success = success and doExec(package, "compile")
+            success = success and doExec(package, "cleanimage")
+            success = success and doExec(package, "install")
+            if buildAction == "all":
+                success = success and doExec(package, "qmerge")
+            if craftSettings.getboolean("Packager", "CreateCache"):
+                if craftSettings.getboolean("Packager", "CacheDirectTargetsOnly"):
+                    nameRe = re.compile(".*\/.*")
+                    for target in directTargets:
+                        if not nameRe.match(target):
+                            craftDebug.log.error("Error:\n"
+                                                 "[Packager]\n"
+                                                 "CacheDirectTargetsOnly = True\n"
+                                                 "Only works with fully specified packages 'category/package'")
+                            return False
+                    if package in directTargets:
                         success = success and doExec(package, "package")
-                success = success or continueFlag
-        elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make", "checkdigest",
-                             "test",
-                             "package", "unmerge", "cleanimage", "cleanbuild", "createpatch",
-                             "geturls",
-                             "print-revision",
-                             "print-files"
-                             ]:
+                    else:
+                        craftDebug.log.info("skip packaging of non direct targets")
+                else:
+                    success = success and doExec(package, "package")
+            success = success or continueFlag
+        elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
+                             "test", "package", "unmerge", "createpatch", "print-files" ]:
             success = doExec(package, buildAction, continueFlag)
         elif buildAction == "install":
             success = doExec(package, "cleanimage")
             success = success and doExec(package, "install", continueFlag)
         elif buildAction == "qmerge":
-            # success = doExec( package, "cleanimage" )
-            # success = success and doExec( package, "install")
             success = success and doExec(package, "qmerge")
-        elif buildAction == "print-source-version":
-            print("%s-%s" % (packageName, package.sourceVersion()))
-            success = True
-        elif buildAction == "print-package-version":
-            print("%s-%s-%s" % (packageName, craftCompiler.getCompilerName(), package.sourceVersion()))
-            success = True
         else:
             success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
 
@@ -173,121 +144,73 @@ def handlePackage(category, packageName, buildAction, continueFlag, skipUpToDate
         return success
 
 
-def handleSinglePackage(packageName, action, args, directTargets=None):
-    packageList = []
-    originalPackageList = []
-    categoryList = []
+def run(package, action, args, directTargets):
+    if package.isIgnored():
+        craftDebug.log.info(f"Skipping package because it has been ignored: {package}")
+        return True
 
-    if action == "update-all":
-        installedPackages = portage.PortageInstance.getInstallables()
-        if portage.PortageInstance.isCategory(packageName):
-            craftDebug.log.debug("Updating installed packages from category " + packageName)
-        else:
-            craftDebug.log.debug("Updating all installed packages")
-        packageList = []
-        for mainCategory, mainPackage in installedPackages:
-            if portage.PortageInstance.isCategory(packageName) and (mainCategory != packageName):
-                continue
-            if InstallDB.installdb.isInstalled(mainCategory, mainPackage, args.buildType) \
-                    and portage.isPackageUpdateable(mainCategory, mainPackage):
-                categoryList.append(mainCategory)
-                packageList.append(mainPackage)
-        craftDebug.log.debug("Will update packages: " + str(packageList))
-    elif packageName:
-        packageList, categoryList = portage.getPackagesCategories(packageName)
-
-    for entry in packageList:
-        craftDebug.log.debug("Checking dependencies for: %s" % entry)
-
-    deplist = []
-    for mainCategory, entry in zip(categoryList, packageList):
-        if args.target:
-            craftSettings.set("PortageVersions", f"{mainCategory}/{entry}", args.target)
-        deplist.append(f"{mainCategory}/{entry}")
-
-    deplist = CraftDependencies.DependencyPackage.resolveDependenciesForList(deplist, CraftDependencies.DependencyType(
-        args.dependencyType), maxDepth=args.dependencydepth)
-    # no package found
-    if len(deplist) == 0:
-        category = ""
-        if not packageName.find("/") == -1:
-            (category, package) = packageName.split("/")
-        portageSearch.printSearch(category, packageName)
-        return False
-
-    for item in deplist:
-        item.enabled = args.ignoreAllInstalled
-
-        if args.ignoreInstalled and item.category in categoryList and item.package in packageList or packageIsOutdated(
-                item.category, item.package):
-            item.enabled = True
-
-        craftDebug.log.debug("dependency: %s" % item)
-    if not deplist:
-        craftDebug.log.debug("<none>")
-
-    # for item in deplist:
-    #    cat = item[ 0 ]
-    #    pac = item[ 1 ]
-    #    ver = item[ 2 ]
-
-    #    if portage.isInstalled( cat, pac, ver, buildType) and updateAll and not portage.isPackageUpdateable( cat, pac, ver ):
-    #        print "remove:", cat, pac, ver
-    #        deplist.remove( item )
-
-    if action == "install-deps":
-        # we don't intend to build the package itself
-        # TODO: explicitly remove the package
-        del deplist[-1]
-    elif action == "update-direct-deps":
-        for item in deplist:
-            item.enabled = True
-
-    # package[0] -> category
-    # package[1] -> package
-    # package[2] -> version
-
-    info = deplist[-1]
-    if not portage.PortageInstance.isVirtualPackage(info.category, info.package) and \
-            not action in ["all",
-                           "install-deps"]:  # not all commands should be executed on the deps if we are a virtual packages
-        # if a buildAction is given, then do not try to build dependencies
-        # and do the action although the package might already be installed.
-        # This is still a bit problematic since packageName might not be a valid
-        # package
-        # for list files, we also want to handle fetching & packaging per package
-        if not handlePackage(info.category, info.package, action, args.doContinue, args.update_fast,
-                             directTargets=directTargets):
-            return False
+    if action == "get":
+        key = args.get.replace("()", "")
+        isMethode = args.get.endswith("()")
+        for p in directTargets:
+            instance = p.instance
+            if hasattr(instance, key.replace("()", "")):
+                attr = getattr(instance, key)
+                if isMethode:
+                    value = attr()
+                else:
+                    value = attr
+                craftDebug.log.debug(value)
+                print(value)
+                return True
+            else:
+               craftDebug.log.debug(f"{p} has no member {key}")
+               print(f"{p} has no member {key}", file=sys.stderr)
+               return False
+    elif action not in ["all", "install-deps"]:
+        for info in package.children.values():
+           # not all commands should be executed on the deps if we are a virtual packages
+            # if a buildAction is given, then do not try to build dependencies
+            # and do the action although the package might already be installed.
+            # This is still a bit problematic since packageName might not be a valid
+            # package
+            # for list files, we also want to handle fetching & packaging per package
+            if not handlePackage(info, action, args.doContinue,
+                                 directTargets=directTargets):
+                return False
 
     else:
-        for info in deplist:
-            isVCSTarget = False
+        depPackage = CraftDependencyPackage(package)
+        depList = depPackage.getDependencies()
 
-            isLastPackage = info == deplist[-1]
-            if args.outDateVCS or (args.outDatePackage and isLastPackage):
-                isVCSTarget = portage.PortageInstance.getUpdatableVCSTargets(info.category, info.package) != []
-            isInstalled = InstallDB.installdb.isInstalled(info.category, info.package)
-            if (isInstalled and not info.enabled) and not (
-                            isInstalled and (args.outDateVCS or (
-                                    args.outDatePackage and isLastPackage)) and isVCSTarget):
-                if info.package == packageName:
-                    craftDebug.log.debug("already installed %s/%s" % (info.category, info.package))
-                elif not info.package == packageName:
-                    craftDebug.log.debug("already installed %s/%s" % (info.category, info.package))
+        packages = []
+        for item in depList:
+            if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
+                packages.append(item)
+                craftDebug.log.debug(f"dependency: {item}")
+        if not packages:
+            craftDebug.log.debug("<none>")
+
+        if action == "install-deps":
+            # we don't intend to build the package itself
+            for x in directTargets:
+                packages.remove(x)
+
+        CraftTitleUpdater.usePackageProgressTitle(packages)
+        while packages:
+            info = packages[0]
+            # in case we only want to see which packages are still to be build, simply return the package name
+            if args.probe:
+                craftDebug.log.warning(f"pretending {info}: {info.version}")
             else:
-                # in case we only want to see which packages are still to be build, simply return the package name
-                if args.probe:
-                    craftDebug.log.warning("pretending %s" % info)
-                else:
-                    if action in ["install-deps", "update-direct-deps"]:
-                        action = "all"
+                if action in ["install-deps"]:
+                    action = "all"
 
-                    if not handlePackage(info.category, info.package, action, args.doContinue, args.update_fast,
-                                         directTargets=directTargets):
-                        craftDebug.log.error("fatal error: package %s/%s %s failed" % \
-                                             (info.category, info.package, action))
-                        return False
+                if not handlePackage(info, action, args.doContinue,
+                                     directTargets=directTargets):
+                    craftDebug.log.error(f"fatal error: package {info} {action} failed")
+                    return False
+            packages.pop(0)
 
     craftDebug.new_line()
     return True
@@ -333,33 +256,22 @@ class ActionHandler:
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="craft",
+    parser = argparse.ArgumentParser(prog="Craft",
                                      description="Craft is an open source meta build system and package manager."
                                                  "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
-                                     epilog="""More information see the README or http://windows.kde.org/.
-    Send feedback to <kde-windows@kde.org>.""")
+                                     epilog="For more information visit https://community.kde.org/Craft.\n"
+                                            "Send feedback to <kde-windows@kde.org>.")
 
     parser.add_argument("-p", "--probe", action="store_true",
                         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
     parser.add_argument("--list-file", action="store",
-                        help="Build all packages from the csv file provided")
-    _def = craftSettings.get("General", "Options", "")
-    if _def == "":
-        _def = []
-    else:
-        _def = _def.split(";")
+                        help="Build all packages from the ini file provided")
     parser.add_argument("--options", action="append",
-                        default=_def,
+                        default=craftSettings.getList("General", "Options", ""),
                         help="Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations.")
-    parser.add_argument("--outDateVCS", action="store_true",
-                        help="if packages from version control system sources are installed, it marks them as out of date and rebuilds them (tags are not marked as out of date).")
-    parser.add_argument("-sz", "--outDatePackage", action="store_true",
-                        help="similar to -z, only that it acts only on the last package, and works as normal on the rest.")
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
                         help="quiet: there should be no output - The verbose level should be 0")
-    parser.add_argument("-t", "--buildtests", action="store_true", dest="buildTests",
-                        default=craftSettings.getboolean("Compile", "BuildTests", True))
     parser.add_argument("-c", "--continue", action="store_true", dest="doContinue")
     parser.add_argument("--create-cache", action="store_true", dest="createCache",
                         default=craftSettings.getboolean("Packager", "CreateCache", "False"),
@@ -376,8 +288,6 @@ def main():
                         default=craftSettings.getboolean("General", "WorkOffline", False),
                         help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail.")
-    parser.add_argument("-f", "--force", action="store_true", dest="forced",
-                        default=craftSettings.getboolean("General", "EMERGE_FORCED", False))
     parser.add_argument("--buildtype", choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
                         dest="buildType",
                         default=craftSettings.get("Compile", "BuildType", "RelWithDebInfo"),
@@ -388,36 +298,15 @@ def main():
                           verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3.")
     parser.add_argument("-i", "--ignoreInstalled", action="store_true",
                         help="ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.")
-    parser.add_argument("-ia", "--ignoreAllInstalled", action="store_true",
-                        help="ignore all install: using this option will install all package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.")
-
     parser.add_argument("--target", action="store",
                         help="This will override the build of the default target.")
     parser.add_argument("--search", action="store_true",
                         help="This will search for a package or a description matching or similar to the search term.")
-    parser.add_argument("--noclean", action="store_true",
-                        default=craftSettings.getboolean("General", "EMERGE_NOCLEAN", False),
-                        help="this option will try to use an existing build directory. Please handle this option with care - it will possibly break if the directory isn't existing.")
-    parser.add_argument("--clean", action="store_false", dest="noclean",
-                        help="oposite of --noclean")
-    parser.add_argument("--patchlevel", action="store",
-                        default=craftSettings.get("General", "EMERGE_PKGPATCHLVL", ""),
-                        help="This will add a patch level when used together with --package")
     parser.add_argument("--log-dir", action="store",
                         default=craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
                         help="This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs.")
-    parser.add_argument("--dt", action="store", choices=["both", "runtime", "buildtime"], default="both",
-                        dest="dependencyType")
-    parser.add_argument("--update-fast", action="store_true",
-                        help="If the package is installed from svn/git and the revision did not change all steps after fetch are skipped")
-    parser.add_argument("-d", "--dependencydepth", action="store", type=int, default=-1,
-                        help="By default craft resolves the whole dependency graph, this option limits the depth of the graph, so a value of 1 would mean only dependencies defined in that package")
-
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
-
-    parser.add_argument("--snore-settings", action="store_true", default=False, dest="snoreSettings",
-                        help="Calls the notification settings")
 
     parser.add_argument("--ci-mode", action="store_true",
                         default=craftSettings.getboolean("ContinuousIntegration", "Enabled", False),
@@ -425,22 +314,19 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
-                     "install", "install-deps", "qmerge", "manifest", "package", "unmerge", "test",
-                     "checkdigest",
-                     "full-package", "cleanimage", "cleanbuild", "createpatch", "geturls"]):
+                     "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"]):
         actionHandler.addAction(x)
-    actionHandler.addAction("update", help="Update a single package")
 
     # read-only actions
-    actionHandler.addAction("print-source-version")
-    actionHandler.addAction("print-package-version")
     actionHandler.addAction("print-installed",
                             help="This will show a list of all packages that are installed currently.")
-    actionHandler.addAction("print-revision", help="Print the revision of the package and exit")
     actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
+    actionHandler.addActionWithArg("get", help="Get any value from a recipe")
 
     # other actions
+
+    parser.add_argument("--version", action="version", version = f"%(prog)s {CraftSetupHelper.SetupHelper.CraftVersion}")
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
@@ -448,12 +334,7 @@ def main():
     if args.doDestroyCraftRoot:
         destroyCraftRoot()
         return True
-
-    if args.snoreSettings:
-        snoresettigns = utils.utilsCache.findApplication("snoresettings")
-        if snoresettigns:
-            return utils.system("%s -a snoresend" % snoresettigns)
-        return False
+    InstallDB.installdb.migrateDatabase()
 
     if args.stayQuiet:
         craftDebug.setVerbose(-1)
@@ -461,13 +342,9 @@ def main():
         craftDebug.setVerbose(args.verbose)
 
     craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
-    craftSettings.set("General", "EMERGE_NOCLEAN", args.noclean)
-    craftSettings.set("General", "EMERGE_FORCED", args.forced)
-    craftSettings.set("Compile", "BuildTests", args.buildTests)
     craftSettings.set("Compile", "BuildType", args.buildType)
     craftSettings.set("General", "Options", ";".join(args.options))
     craftSettings.set("CraftDebug", "LogDir", args.log_dir)
-    craftSettings.set("General", "EMERGE_PKGPATCHLVL", args.patchlevel)
     craftSettings.set("Packager", "CreateCache", not args.noCache and args.createCache)
     craftSettings.set("Packager", "UseCache", not args.noCache and args.useCache)
     craftSettings.set("ContinuousIntegration", "SourceDir", args.srcDir)
@@ -477,31 +354,24 @@ def main():
         # we are in cache creation mode, ensure to create a 7z image and not an installer
         craftSettings.set("Packager", "PackageType", "SevenZipPackager")
 
-    portage.PortageInstance.options = args.options
+    CraftPackageObject.options = args.options
     if args.search:
         for package in args.packageNames:
-            category = ""
-            if not package.find("/") == -1:
-                (category, package) = package.split("/")
-            portageSearch.printSearch(category, package)
+            portageSearch.printSearch(package)
         return True
 
     for action in actionHandler.parseFinalAction(args, "all"):
         tempArgs = copy.deepcopy(args)
 
-        if action in ["install-deps", "update", "update-all", "package"] or tempArgs.update_fast:
+        if action in ["install-deps", "package"]:
             tempArgs.ignoreInstalled = True
-
-        if action in ["update", "update-all"]:
-            tempArgs.noclean = True
 
         craftDebug.log.debug("buildAction: %s" % action)
         craftDebug.log.debug("doPretend: %s" % tempArgs.probe)
         craftDebug.log.debug("packageName: %s" % tempArgs.packageNames)
         craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
-        craftDebug.log.debug("buildTests: %s" % tempArgs.buildTests)
         craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
-        craftDebug.log.debug("KDEROOT: %s" % CraftStandardDirs.craftRoot())
+        craftDebug.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
@@ -512,36 +382,45 @@ def main():
         if action == "print-installed":
             InstallDB.printInstalled()
         elif action == "search-file":
-            portage.printPackagesForFileSearch(tempArgs.search_file)
+            InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         else:
+            if not args.packageNames and not args.list_file:
+                CraftSetupHelper.SetupHelper().printBanner()
+                return True
+
+            package = CraftPackageObject(None)
             for packageName in packageNames:
-                if not handleSinglePackage(packageName, action, tempArgs, packageNames):
+                child = CraftPackageObject.get(packageName)
+                if not child:
+                    portageSearch.printSearch(packageName)
                     return False
+
+                if child.isCategory():
+                    package.children = child.children
+                else:
+                    if tempArgs.target:
+                        craftSettings.set("PortageVersions", child.path, args.target)
+                    package.children[child.name] = child
+            if not run(package, action, tempArgs, package.children.values()):
+                return False
     return True
 
 
 if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
+        CraftTitleUpdater.instance = CraftTitleUpdater()
+        CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
-            doUpdateTitle = True
-            title = f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:])
-            def updateTitle():
-                while (doUpdateTitle):
-                    utils.OsUtils.setConsoleTitle(f"{title}: {timer}")
-                    time.sleep(1)
-            tittleThread = threading.Thread(target=updateTitle)
-            tittleThread.setDaemon(True)
-            tittleThread.start()
             success = main()
         except KeyboardInterrupt:
             pass
-        except CraftDependencies.PortageException as e:
-            craftDebug.log.error(e, exc_info=e.exception or e)
+        except PortageException as e:
+            craftDebug.log.error(e)
+            craftDebug.log.debug(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)
         finally:
-            doUpdateTitle = False
-
+            CraftTitleUpdater.instance.stop()
     if not success:
         exit(1)

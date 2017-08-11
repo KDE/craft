@@ -5,23 +5,23 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "IncidenceEditor library"
+        self.description = "IncidenceEditor library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"
-        self.runtimeDependencies["kde/kmime"] = "default"
-        self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        self.runtimeDependencies["kde/kldap"] = "default"
-        self.runtimeDependencies["kde/calendarsupport"] = "default"
-        self.runtimeDependencies["kde/eventviews"] = "default"
-        self.runtimeDependencies["kde/kcalutils"] = "default"
-        self.runtimeDependencies["kde/kcalcore"] = "default"
-        self.runtimeDependencies["kde/kmailtransport"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcodecs"] = "default"
+        self.runtimeDependencies["kde/pim/kmime"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-mime"] = "default"
+        self.runtimeDependencies["kde/pim/kldap"] = "default"
+        self.runtimeDependencies["kde/pim/calendarsupport"] = "default"
+        self.runtimeDependencies["kde/pim/eventviews"] = "default"
+        self.runtimeDependencies["kde/pim/kcalutils"] = "default"
+        self.runtimeDependencies["kde/pim/kcalcore"] = "default"
+        self.runtimeDependencies["kde/pim/kmailtransport"] = "default"
 
 
 from Package.CMakePackageBase import *

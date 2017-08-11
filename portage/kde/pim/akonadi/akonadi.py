@@ -10,19 +10,19 @@ class subinfo(info.infoclass):
         self.patchToApply["17.04.1"] = [("akonadi-17.04.0-20170530.diff", 1)]
         self.patchToApply["17.04.2"] = [("akonadi-17.04.0-20170530.diff", 1)]
 
-        self.shortDescription = "A storage service for PIM data and meta data"
+        self.description = "A storage service for PIM data and meta data"
 
     def setDependencies(self):
-        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.buildDependencies['win32libs/boost-headers'] = 'default'
-        self.runtimeDependencies['win32libs/libxslt'] = 'default'
-        self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        self.runtimeDependencies['win32libs/shared-mime-info'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/kdesignerplugin'] = 'default'
-        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
-        self.runtimeDependencies['frameworks/kitemmodels'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.buildDependencies["win32libs/boost/boost-headers"] = "default"
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["win32libs/sqlite"] = "default"
+        self.runtimeDependencies["win32libs/shared-mime-info"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kdesignerplugin"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemmodels"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
 
 
 from Package.CMakePackageBase import *

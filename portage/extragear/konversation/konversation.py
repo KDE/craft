@@ -10,23 +10,23 @@ class subinfo(info.infoclass):
         self.defaultTarget = '1.7'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/karchive'] = 'default'
-        self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kemoticons'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kidletime'] = 'default'
-        self.runtimeDependencies['frameworks/knotifyconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kparts'] = 'default'
-        self.runtimeDependencies['frameworks/solid'] = 'default'
-        self.runtimeDependencies['frameworks/sonnet'] = 'default'
-        self.runtimeDependencies['frameworks/kwallet'] = 'default'
-        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
-        self.runtimeDependencies['qt-libs/phonon'] = 'default'
-        self.shortDescription = "a KDE based irc client"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kbookmarks"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kemoticons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kidletime"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifyconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier1/solid"] = "default"
+        self.runtimeDependencies["frameworks/tier1/sonnet"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["qt-libs/phonon"] = "default"
+        self.description = "a KDE based irc client"
 
 
 class Package(CMakePackageBase):

@@ -7,10 +7,10 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
-        self.runtimeDependencies['libs/qtsvg'] = 'default'
-        self.runtimeDependencies['libs/qtxmlpatterns'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtsvg"] = "default"
+        self.runtimeDependencies["libs/qt5/qtxmlpatterns"] = "default"
 
 
 from Package.Qt5CorePackageBase import *

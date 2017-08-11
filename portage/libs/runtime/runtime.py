@@ -5,11 +5,11 @@ class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
         self.targets['master'] = ""
-        self.shortDescription = "the mingw compiler runtime package"
+        self.description = "the mingw compiler runtime package"
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
         if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
 

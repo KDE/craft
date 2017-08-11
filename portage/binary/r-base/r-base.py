@@ -8,7 +8,7 @@ PACKAGE_PATH = '/bin/windows/base/'
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
 
     def setTargets(self):
         self.targets['stable_latest'] = PACKAGE_CRAN_MIRROR + PACKAGE_PATH + 'R-release.exe'
@@ -56,7 +56,7 @@ class Package(BinaryPackageBase):
         os.makedirs(os.path.join(dstdir, "bin"))
 
         # place everything in dstdir/lib/R (similar to debian packaging)
-        installdb.getInstalledPackages(self.category, self.package)
+        installdb.getInstalledPackages(self.package)
         utils.copyDir(srcdir, os.path.join(dstdir, "lib", "R"))
 
         # create a shortcut in dstdir/bin

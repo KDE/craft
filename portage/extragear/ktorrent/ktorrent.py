@@ -14,16 +14,16 @@ class subinfo(info.infoclass):
         self.patchToApply['4.3.1'] = [("0001-Do-not-include-signalcatcher.h-in-windows.patch", 1),
                                       ("0002-Cast-activateWindow-param-to-improved-portability.patch", 1)]
 
-        self.shortDescription = "A powerful BitTorrent client."
+        self.description = "A powerful BitTorrent client."
         self.defaultTarget = 'master'
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
         self.runtimeDependencies['kde/kdepimlibs'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['win32libs/mpir'] = 'default'
-        self.runtimeDependencies['extragear/libktorrent'] = 'default'
-        self.buildDependencies['dev-util/gettext-tools'] = 'default'
+        self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["win32libs/mpir"] = "default"
+        self.runtimeDependencies["extragear/libktorrent"] = "default"
+        self.buildDependencies["dev-util/gettext-tools"] = "default"
 
 
 class Package(CMakePackageBase):

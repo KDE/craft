@@ -5,20 +5,20 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KCalc"
+        self.description = "KCalc"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kconfigwidgets"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kinit"] = "default"
-        self.runtimeDependencies["frameworks/knotifications"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kinit"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
         self.runtimeDependencies["win32libs/libgmp"] = "default"
         self.runtimeDependencies["dev-util/msys"] = "default"
 

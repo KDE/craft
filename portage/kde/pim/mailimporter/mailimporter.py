@@ -5,18 +5,18 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "MailImporter library"
+        self.description = "MailImporter library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/karchive"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/libkdepim"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi"] = "default"
+        self.runtimeDependencies["kde/pim/libkdepim"] = "default"
 
 
 from Package.CMakePackageBase import *

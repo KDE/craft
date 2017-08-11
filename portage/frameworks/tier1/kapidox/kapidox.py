@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Scripts and data for building API documentation (dox) in a standard format and style."
+        self.description = "Scripts and data for building API documentation (dox) in a standard format and style."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"

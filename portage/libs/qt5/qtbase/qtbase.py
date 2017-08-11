@@ -53,20 +53,20 @@ class subinfo(info.infoclass):
                     ("fix-angle-mingw-5.6.2-20161027.diff", 1),
                     ("qdbus-manager-quit-5.7.patch", 1)  # https://phabricator.kde.org/D2545#69186
                 ]
-        self.shortDescription = "a cross-platform application framework"
+        self.description = "a cross-platform application framework"
 
     def setDependencies(self):
         if craftSettings.getboolean("Packager", "UseCache") and not craftSettings.getboolean("QtSDK", "Enabled", False):
-            self.buildDependencies['dev-util/qtbinpatcher'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/perl'] = 'default'
-        self.buildDependencies['dev-util/winflexbison'] = 'default'
+            self.buildDependencies["dev-util/qtbinpatcher"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/perl"] = "default"
+        self.buildDependencies["dev-util/winflexbison"] = "default"
         if not self.options.buildStatic:
-            self.runtimeDependencies['win32libs/openssl'] = 'default'
-            self.runtimeDependencies['win32libs/dbus'] = 'default'
-            self.runtimeDependencies['binary/mysql'] = 'default'
-            self.runtimeDependencies['win32libs/icu'] = 'default'
-            self.runtimeDependencies['win32libs/zlib'] = 'default'
+            self.runtimeDependencies["win32libs/openssl"] = "default"
+            self.runtimeDependencies["win32libs/dbus"] = "default"
+            self.runtimeDependencies["binary/mysql"] = "default"
+            self.runtimeDependencies["win32libs/icu"] = "default"
+            self.runtimeDependencies["win32libs/zlib"] = "default"
 
 
 class QtPackage(Qt5CorePackageBase):

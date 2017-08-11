@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.19'] = "lcms-1.19"
         self.patchToApply['1.19'] = ('lcms-1.19-20101212.diff', 1)
         self.targetDigests['1.19'] = 'd5b075ccffc0068015f74f78e4bc39138bcfe2d4'
-        self.shortDescription = "A small-footprint, speed optimized color management engine"
+        self.description = "A small-footprint, speed optimized color management engine"
         self.defaultTarget = '1.19'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

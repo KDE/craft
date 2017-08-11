@@ -6,11 +6,11 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.shortDescription = "python support for kdevelop"
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['extragear/kdevplatform'] = 'default'
-        self.runtimeDependencies['extragear/kdevelop'] = 'default'
-        self.runtimeDependencies['binary/python-libs'] = 'default'
+        self.description = "python support for kdevelop"
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["extragear/kdevelop/kdevelop"] = "default"
+        self.runtimeDependencies["extragear/kdevelop/kdev-php"] = "default"
+        self.runtimeDependencies["binary/python-libs"] = "default"
 
 
 from Package.CMakePackageBase import *

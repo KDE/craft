@@ -5,13 +5,13 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:atcore|master'
         self.defaultTarget = 'master'
-        self.shortDescription = "the KDE core of Atelier Printer Host"
+        self.description = "the KDE core of Atelier Printer Host"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["libs/qtserialport"] = "default"
-        self.runtimeDependencies["libs/qtcharts"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtserialport"] = "default"
+        self.runtimeDependencies["libs/qt5/qtcharts"] = "default"
 
 
 from Package.CMakePackageBase import *

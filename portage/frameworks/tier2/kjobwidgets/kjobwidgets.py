@@ -5,14 +5,14 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KJobWidgets"
+        self.description = "KJobWidgets"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
 
 
 from Package.CMakePackageBase import *

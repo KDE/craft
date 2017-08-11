@@ -3,10 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/doxygen'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        # self.runtimeDependencies['kdesupport/qjson'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/doxygen"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        # self.runtimeDependencies["kdesupport/qjson"] = "default"
 
     def setTargets(self):
         # Dbusmenu-qt moved to bazaar in launchpad
@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'libdbusmenu-qt-' + ver
         self.targets["qt5"] = "http://winkde.org/~pvonreth/other/tars/libdbusmenu-qt-qt5.tar.gz"
         self.targetInstSrc["qt5"] = 'libdbusmenu-qt-qt5'
-        self.shortDescription = "a Qt implementation of the DBusMenu spec"
+        self.description = "a Qt implementation of the DBusMenu spec"
 
         self.patchToApply['0.9.2'] = [('dbusmenu-qt-0.9.2.diff', 1)]
         self.defaultTarget = 'qt5'

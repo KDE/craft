@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.28"
 
     def setDependencies(self):
-        self.buildDependencies['virtual/bin-base'] = 'default'
+        self.buildDependencies["virtual/bin-base"] = "default"
 
 
 class Package(BinaryPackageBase):

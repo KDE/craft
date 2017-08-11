@@ -7,9 +7,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['win32libs/mpir'] = 'default'
-        self.shortDescription = "A library with common classes and functionality used by finance applications for the KDE SC."
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["win32libs/mpir"] = "default"
+        self.description = "A library with common classes and functionality used by finance applications for the KDE SC."
 
 
 from Package.CMakePackageBase import *

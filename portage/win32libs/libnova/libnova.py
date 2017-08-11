@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['0.13.0+svn270'] = '1d618a5a1f4282e531b2a3d434407bac941cd700'
         self.patchToApply['0.13.0+svn270'] = [('libnova-20101215.diff', 1),
                                               ('libnova-20130629.diff', 1)]
-        self.shortDescription = "a Celestial Mechanics, Astrometry and Astrodynamics library"
+        self.description = "a Celestial Mechanics, Astrometry and Astrodynamics library"
         self.defaultTarget = '0.13.0+svn270'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

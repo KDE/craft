@@ -3,10 +3,10 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qt'] = 'default'
-        self.runtimeDependencies['win32libs/librdf'] = 'default'
-        self.runtimeDependencies['binary/virtuoso'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt"] = "default"
+        self.runtimeDependencies["win32libs/librdf"] = "default"
+        self.runtimeDependencies["binary/virtuoso"] = "default"
 
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:soprano.git'
@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
                                        ("0002-use-QLocalSocket-on-Windows-since-this-is-what-the-o.patch", 1)]
         self.patchToApply['2.9.4'] = self.patchToApply['v2.9.4']
 
-        self.shortDescription = "a RDF storage solutions library"
+        self.description = "a RDF storage solutions library"
         self.defaultTarget = 'v2.9.4'
 
 

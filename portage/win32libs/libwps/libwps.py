@@ -10,12 +10,12 @@ class subinfo(info.infoclass):
         self.patchToApply['0.2.4'] = ('libwps-0.2.4-cmake.diff', 1)
         self.targetDigests['0.2.4'] = '9fff59d92d9f34259ea5b1d9eca5c30313453a64'
 
-        self.shortDescription = "A library to read and parse Microsoft Works format"
+        self.description = "A library to read and parse Microsoft Works format"
         self.defaultTarget = '0.2.4'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libwpd'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libwpd"] = "default"
 
 
 class Package(CMakePackageBase):

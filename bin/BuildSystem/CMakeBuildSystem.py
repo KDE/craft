@@ -167,21 +167,18 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        fastString = ""
-        if not self.noFast:
-            fastString = "/fast"
-
         env = os.environ
         if self.subinfo.options.install.useMakeToolForInstall:
             if craftCompiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
                 env["DESTDIR"] = self.installDir()
-                command = "%s install%s" % (self.makeProgram, fastString)
+                command = f"{self.makeProgram} install"
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
-        self.system(command, "install", env=env)
+        if not self.system(command, "install", env=env):
+            return False
 
         if self.subinfo.options.install.useMakeToolForInstall and not (
             self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
@@ -206,8 +203,8 @@ class CMakeBuildSystem(BuildSystemBase):
                    " -DCMAKE_C_COMPILER=clang-cl"
             return out
         else:
-            return " -DCMAKE_CXX_COMPILER=clang++" \
-                   " -DCMAKE_C_COMPILER=clang"
+            return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
+                   " -DCMAKE_C_COMPILER=/usr/bin/clang"
 
     def _fixCmakeImageDir(self, imagedir, rootdir):
         """
@@ -237,9 +234,8 @@ class CMakeBuildSystem(BuildSystemBase):
         if os.path.exists(tmp):
             utils.mergeTree(tmp, imagedir)
             utils.rmtree(os.path.join(tmp, rootpath.split(os.path.pathsep)[0]))
-        if craftSettings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"),
-                                 craftSettings.get("QtSDK", "Version")[:3],# they don't get installed to 5.9.1 but 5.9....
+        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
+            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
                                  craftSettings.get("QtSDK", "Compiler"))
             # drop the drive letter and the first slash [3:]
             path = os.path.join(imagedir, qtDir[3:])

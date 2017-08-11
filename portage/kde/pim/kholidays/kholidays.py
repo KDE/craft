@@ -5,12 +5,12 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KHolidays library"
+        self.description = "KHolidays library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 from Package.CMakePackageBase import *

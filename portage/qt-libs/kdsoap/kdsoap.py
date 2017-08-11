@@ -15,12 +15,12 @@ class subinfo(info.infoclass):
         ['d6b6b01348d2e1453f7e12724d1848ee41c86a1b19168ca67ac98fedb0408668'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.6.0"
-        self.shortDescription = "A Qt-based client-side and server-side SOAP component"
-        self.homepage = "http://www.kdab.com/products/kd-soap"
+        self.description = "A Qt-based client-side and server-side SOAP component"
+        self.webpage = "http://www.kdab.com/products/kd-soap"
 
     def setDependencies(self):
         self.buildDependencies["dev-util/python2"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 class Package(Qt5CorePackageBase):

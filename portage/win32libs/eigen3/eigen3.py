@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['3.2.5'] = 'aa4667f0b134f5688c5dff5f03335d9a19aa9b3d'
         self.patchToApply['3.2.5'] = [('eigen-3.2.5.tar-20160526.diff', 1)]
 
-        self.shortDescription = 'C++ template library for linear algebra'
+        self.description = 'C++ template library for linear algebra'
         self.defaultTarget = '3.2.5'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

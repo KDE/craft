@@ -13,14 +13,14 @@ class subinfo(info.infoclass):
         self.targetDigests['2.3.1'] = 'b2dd1638eaf7e6d350110b1561aeb23b03552846'
         self.targetDigests['2.3.2'] = 'b8831a308617d1c78a790479523e43524f07d50d'
 
-        self.shortDescription = "library to convert the various file formats used in chemical software"
+        self.description = "library to convert the various file formats used in chemical software"
         self.defaultTarget = '2.3.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['win32libs/boost-headers'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["win32libs/boost/boost-headers"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
 
 
 from Package.CMakePackageBase import *

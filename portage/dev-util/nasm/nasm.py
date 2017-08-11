@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
         self.targetDigests['2.11.08'] = 'db67cb1286b01e835b703402d631c88c8f494d6b'
         self.targetInstSrc['2.11.08'] = 'nasm-2.11.08'
 
-        self.shortDescription = "This is NASM - the famous Netwide Assembler"
+        self.description = "This is NASM - the famous Netwide Assembler"
         self.defaultTarget = '2.11.08'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
 
 
 from Package.BinaryPackageBase import *

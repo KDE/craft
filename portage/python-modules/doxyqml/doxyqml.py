@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = ''
-        self.shortDescription = "Doxyqml is an input filter for Doxygen, a documentation system for C++ and a few other languages."
+        self.description = "Doxyqml is an input filter for Doxygen, a documentation system for C++ and a few other languages."
         self.defaultTarget = 'master'
 
 

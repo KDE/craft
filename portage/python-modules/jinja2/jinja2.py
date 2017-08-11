@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets['master'] = ''
-        self.shortDescription = "Jinja2 is a Python module that implements a simple pythonic template language. "
+        self.description = "Jinja2 is a Python module that implements a simple pythonic template language. "
         self.defaultTarget = 'master'
 
 

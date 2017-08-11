@@ -5,14 +5,14 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.buildDependencies['frameworks/extra-cmake-modules'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qttools'] = 'default'
-        self.runtimeDependencies['libs/qtwebsockets'] = 'default'
-        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
-        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
-        self.runtimeDependencies['libs/qtspeech'] = 'default'
-        self.runtimeDependencies['win32libs/snoregrowl'] = 'default'
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebsockets"] = "default"
+        self.runtimeDependencies["libs/qt5/qtmultimedia"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtspeech"] = "default"
+        self.runtimeDependencies["win32libs/snoregrowl"] = "default"
 
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:snorenotify'
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
             "http://download.kde.org/stable/snorenotify/%s/src/snorenotify-%s.tar.xz.sha256" % (ver, ver),
             CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "Snorenotify is a multi platform Qt notification framework. Using a plugin system it is possible to create notifications with many different notification systems on Windows, Mac OS and Unix."
+        self.description = "Snorenotify is a multi platform Qt notification framework. Using a plugin system it is possible to create notifications with many different notification systems on Windows, Mac OS and Unix."
         self.defaultTarget = '0.7.0'
 
 

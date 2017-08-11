@@ -13,10 +13,10 @@ class subinfo(info.infoclass):
         ['f638a751bccde4bf0305a75685e2a72d26fc3e3a69d7e15fd84573f88c1a4d92'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = '3.8.0'
-        self.shortDescription = "DB Browser for SQLite"
+        self.description = "DB Browser for SQLite"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
 
 class Package(CMakePackageBase):

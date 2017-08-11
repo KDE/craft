@@ -5,31 +5,31 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KReversi"
+        self.description = "KReversi"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kcompletion"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcrash"] = "default"
-        self.runtimeDependencies["frameworks/kdnssd"] = "default"
-        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["frameworks/kitemviews"] = "default"
-        self.runtimeDependencies["frameworks/kitemmodels"] = "default"
-        self.runtimeDependencies["frameworks/knewstuff"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.runtimeDependencies["frameworks/kio"] = "default"
-        self.runtimeDependencies["frameworks/kservice"] = "default"
-        self.runtimeDependencies["frameworks/kguiaddons"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
-        self.runtimeDependencies["kde/libkdegames"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdnssd"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemviews"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kitemmodels"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["kde/kdegames/libkdegames"] = "default"
 
 
 from Package.CMakePackageBase import *

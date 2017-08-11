@@ -5,12 +5,12 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "the next generation nepomuk"
+        self.description = "the next generation nepomuk"
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/kfilemetadata'] = 'default'
-        self.runtimeDependencies['win32libs/lmdb'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kfilemetadata"] = "default"
+        self.runtimeDependencies["win32libs/lmdb"] = "default"
 
 
 from Package.CMakePackageBase import *

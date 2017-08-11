@@ -33,11 +33,6 @@ class PackagerBase(CraftBase):
             pkgVersion = self.subinfo.buildTarget
 
         pkgNotesVersion = pkgVersion
-
-        if ("General", "EMERGE_PKGPATCHLVL") in craftSettings and craftSettings.get("General",
-                                                                                    "EMERGE_PKGPATCHLVL") != "":
-            pkgVersion += "-" + craftSettings.get("General", "EMERGE_PKGPATCHLVL")
-
         return [pkgVersion, pkgNotesVersion]
 
     # """ create a package """

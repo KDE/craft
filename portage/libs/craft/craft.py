@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.buildDependencies['dev-util/git'] = 'default'
-        self.buildDependencies['dev-util/7zip'] = 'default'
+        self.buildDependencies["dev-util/git"] = "default"
+        self.buildDependencies["dev-util/7zip"] = "default"
 
 
 from Package.SourceOnlyPackageBase import *
@@ -33,7 +33,6 @@ class Package(SourceOnlyPackageBase):
             utils.system(f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
             utils.system(f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
             utils.system(f"\"{git}\" config --global core.autocrlf false")
-            utils.system(f"\"{git}\" config --system core.autocrlf false")
 
         return SourceOnlyPackageBase.fetch(self)
 

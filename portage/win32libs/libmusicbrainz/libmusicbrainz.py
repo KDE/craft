@@ -7,12 +7,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['5.0.1'] = 'libmusicbrainz-5.0.1'
         self.targetDigests['5.0.1'] = 'd4823beeca3faf114756370dc7dd6e3cd01d7e4f'
         self.patchToApply['5.0.1'] = [("support-out-of-source-builds.diff", 1), ("libmusicbrainz-windows.diff", 1)]
-        self.shortDescription = "a library for MusicBrainz lookup capabilities"
+        self.description = "a library for MusicBrainz lookup capabilities"
         self.defaultTarget = '5.0.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/neon'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/neon"] = "default"
 
 
 from Package.CMakePackageBase import *

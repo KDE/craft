@@ -5,46 +5,52 @@
 
 from BuildSystem.BuildSystemBase import *
 from CraftVersion import CraftVersion
+from Portage.CraftPackageObject import *
 
 
 class QMakeBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "qmake")
-        self.qtVer = CraftVersion(portage.PortageInstance.getPackageInstance("libs", "qt5").subinfo.buildTarget)
-        self.platform = ""
-        # todo: use new craftCompiler platform code
-        if OsUtils.isWin():
-            if craftCompiler.isMSVC():
-                if self.qtVer < CraftVersion("5.8"):
-                    if craftCompiler.isMSVC2017():
-                        _compiler = "msvc2015"
-                    else:
-                        _compiler = craftCompiler.abi.split("_")[0]
-                else:
-                    _compiler = "msvc"
-                if craftCompiler.isClang():
-                    self.platform = f"win32-clang-{_compiler}"
-                else:
-                    self.platform = f"win32-{_compiler}"
-            elif craftCompiler.isMinGW():
-                self.platform = "win32-g++"
-            elif craftCompiler.isIntel():
-                self.platform = "win32-icc"
-            else:
-                craftDebug.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
-        elif OsUtils.isUnix():
-            if OsUtils.isMac():
-                osPart = "macx"
-            elif OsUtils.isFreeBSD():
-                osPart = "freebsd"
-            else:
-                osPart = "linux"
+        self._platform = None
 
-            if craftCompiler.isClang():
-                compilerPart = "clang"
-            else:
-                compilerPart = "g++"
-            self.platform = osPart + "-" + compilerPart
+    @property
+    def platform(self):
+        if not self._platform:
+            self.qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").version)
+            # todo: use new craftCompiler platform code
+            if OsUtils.isWin():
+                if craftCompiler.isMSVC():
+                    if self.qtVer < CraftVersion("5.8"):
+                        if craftCompiler.isMSVC2017():
+                            _compiler = "msvc2015"
+                        else:
+                            _compiler = craftCompiler.abi.split("_")[0]
+                    else:
+                        _compiler = "msvc"
+                    if craftCompiler.isClang():
+                        self._platform = f"win32-clang-{_compiler}"
+                    else:
+                        self._platform = f"win32-{_compiler}"
+                elif craftCompiler.isMinGW():
+                    self._platform = "win32-g++"
+                elif craftCompiler.isIntel():
+                    self._platform = "win32-icc"
+                else:
+                    craftDebug.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
+            elif OsUtils.isUnix():
+                if OsUtils.isMac():
+                    osPart = "macx"
+                elif OsUtils.isFreeBSD():
+                    osPart = "freebsd"
+                else:
+                    osPart = "linux"
+
+                if craftCompiler.isClang():
+                    compilerPart = "clang"
+                else:
+                    compilerPart = "g++"
+                self._platform = osPart + "-" + compilerPart
+            return self._platform
 
     def configure(self, configureDefines=""):
         """inplements configure step for Qt projects"""

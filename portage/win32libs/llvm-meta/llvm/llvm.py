@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *
@@ -18,8 +18,8 @@ class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
         self.supportsClang = False
-        self.clang = portage.PortageInstance.getPackageInstance('win32libs', 'clang')
-        self.lld = portage.PortageInstance.getPackageInstance('win32libs', 'lld')
+        self.clang = CraftPackageObject.get('win32libs/llvm-meta/clang').instance
+        self.lld = CraftPackageObject.get('win32libs/llvm-meta/lld').instance
         self.subPackages = [self.clang, self.lld]
         self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
         self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace(

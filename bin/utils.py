@@ -73,6 +73,8 @@ class UtilsCache(object):
     @atexit.register
     def _save():
         try:
+            if not os.path.isdir(os.path.dirname(UtilsCache._cacheFile())):
+                return
             with open(UtilsCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(UtilsCache.globalInstance())
@@ -429,8 +431,7 @@ def systemWithoutShell(cmd, displayProgress=False, **kw):
 
     craftDebug.log.debug(f"executing command: {repr(cmd)} in {repr(cwd)}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
-    if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
-        craftDebug.log.debug("Environment: \n" + "\n".join(f"  {key}={value}" for key, value in environment.items()))
+    craftDebug.logEnv(environment)
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
@@ -713,6 +714,9 @@ def mergeTree(srcdir, destdir):
     If a directory in @p destdir exists, just write into it
     """
     craftDebug.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
+    if os.path.samefile(srcdir, destdir):
+        craftDebug.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
+        return False
 
     fileList = os.listdir(srcdir)
     for i in fileList:

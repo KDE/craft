@@ -6,25 +6,25 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
-        self.runtimeDependencies['frameworks/kinit'] = 'default'
-        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies['frameworks/knewstuff'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kbookmarks'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kio'] = 'default'
-        self.runtimeDependencies['frameworks/kparts'] = 'default'
-        self.runtimeDependencies['frameworks/solid'] = 'default'
-        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
-        self.runtimeDependencies['frameworks/kcompletion'] = 'default'
-        self.runtimeDependencies['frameworks/ktexteditor'] = 'default'
-        self.runtimeDependencies['frameworks/kwindowsystem'] = 'default'
-        self.runtimeDependencies['frameworks/knotifications'] = 'default'
-        self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kinit"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knewstuff"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kbookmarks"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier1/solid"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier3/ktexteditor"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
 
 
 from Package.CMakePackageBase import *

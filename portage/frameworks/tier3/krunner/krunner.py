@@ -5,19 +5,19 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Parallelized query system"
+        self.description = "Parallelized query system"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['frameworks/kconfig'] = "default"
-        self.runtimeDependencies['frameworks/kcoreaddons'] = "default"
-        self.runtimeDependencies['frameworks/ki18n'] = "default"
-        self.runtimeDependencies['frameworks/kio'] = "default"
-        self.runtimeDependencies['frameworks/kservice'] = "default"
-        self.runtimeDependencies['frameworks/plasma-framework'] = "default"
-        self.runtimeDependencies['frameworks/solid'] = "default"
-        self.runtimeDependencies['frameworks/threadweaver'] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
+        self.runtimeDependencies["frameworks/tier1/solid"] = "default"
+        self.runtimeDependencies["frameworks/tier1/threadweaver"] = "default"
 
 
 from Package.CMakePackageBase import *

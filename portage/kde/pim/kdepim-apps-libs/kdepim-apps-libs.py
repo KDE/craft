@@ -5,26 +5,26 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "KDEPIM-apps library"
+        self.description = "KDEPIM-apps library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["frameworks/kio"] = "default"
-        self.runtimeDependencies["frameworks/kservice"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
 
-        self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
-        self.runtimeDependencies["kde/kcontacts"] = "default"
-        self.runtimeDependencies["kde/grantleetheme"] = "default"
-        self.runtimeDependencies["kde/libkleo"] = "default"
-        self.runtimeDependencies["kde/pimcommon"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-contacts"] = "default"
+        self.runtimeDependencies["kde/pim/kcontacts"] = "default"
+        self.runtimeDependencies["kde/pim/grantleetheme"] = "default"
+        self.runtimeDependencies["kde/pim/libkleo"] = "default"
+        self.runtimeDependencies["kde/pim/pimcommon"] = "default"
         self.runtimeDependencies["kdesupport/grantlee"] = "default"
 
 

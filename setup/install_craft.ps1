@@ -6,14 +6,14 @@ param(
 
 
 [version]$minPythonVersion = 3.6
-
+$Script:PythonInstallDir = "C:\python36"
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2-embed-amd64.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe"
 }
 else
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2-embed-win32.zip"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.2/python-3.6.2.exe"
 }
 #####
 $Script:pythonVersion = "0"
@@ -39,10 +39,10 @@ function FetchPython()
                 {
                     Invoke-WebRequest $Script:pythonUrl -OutFile $archive
                 }
-                $Script:python = "$Script:installRoot\python\python.exe"
-                Expand-Archive "$archive" "$Script:installRoot\python\"
-                # https://bugs.python.org/issue29319
-                rm $Script:installRoot\python\python*._pth -ErrorAction SilentlyContinue
+                [string[]]$command = @("/quiet", "InstallAllUsers=0", "PrependPath=1", "TargetDir=`"$Script:PythonInstallDir`"", "AssociateFiles=0",  "InstallLauncherAllUsers=0")
+                Write-Host "$archive" $command
+                & "$archive" $command
+                $Script:python = "$Script:PythonInstallDir\python.exe"
                 break
             }
             1 {
@@ -93,21 +93,24 @@ function TestAndFetchPython()
 ####################################################
 # Start
 Write-Host "Start to boostrap Craft."
-if (!$Script:installRoot) {
+function promptInstallRoot()
+{
     Write-Host "Where to you want us to install Craft"
     $Script:installRoot="C:\KDE\"
     $Script:installRoot = if (($result = Read-Host "Craft install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
 }
 
+if (!$Script:installRoot) {
+    promptInstallRoot
+}
 
-while(Test-Path -Path $Script:installRoot){
+while(Test-Path -Path $Script:installRoot\*){
     Write-Host "Directory $Script:installRoot already exists.`nChoose one of the options:"
 	switch($ask=Read-Host "[Q] Quit installation    `n[Y] Truncate directory: [$Script:installRoot] and continue installation in the same directory    `n[N] Change directory path.`n(default is 'Q')")
 	{
-		"y"		{rmdir $Script:installRoot}
-		"n"		{$Script:installRoot=if (($result = Read-Host "Enter another directory to install craft (default is ["$Script:installRoot"(1)])") -eq '') {$Script:installRoot+"(1)"} else {$result}}
+		"y"		{rm $Script:installRoot\* -Force}
+		"n"		{promptInstallRoot}
 		"q"		{exit}
-		default	{exit}
 	}
 }
 
@@ -117,7 +120,13 @@ mkdir $Script:installRoot\download -Force | Out-Null
 if (!$Script:python) {
     $Script:python = findPython("python")
     if (!$Script:python) {
-        $Script:python=(where.exe python 2>$null)
+        $py = (Get-Command py -ErrorAction SilentlyContinue).Name
+        if ($py) {
+            $Script:python = findPython(&$py -3 -c "import sys; print(sys.executable)")
+        }
+        if (!$Script:python) {
+            $Script:python=(where.exe python 2>$null)
+        }
     }
     TestAndFetchPython
 }

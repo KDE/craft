@@ -1,12 +1,11 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-import CraftDependencies
 import CraftHash
 from CraftBase import *
 from CraftCompiler import *
-from CraftOS.osutils import OsUtils
 from InstallDB import *
+from Portage.CraftPackageObject import *
 
 
 class PackageBase(CraftBase):
@@ -34,7 +33,7 @@ class PackageBase(CraftBase):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
-        if installdb.isInstalled(category=None, package=self.package):
+        if installdb.isInstalled(package=self.package):
             self.unmerge()
 
         craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
@@ -60,7 +59,7 @@ class PackageBase(CraftBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
-        package = installdb.addInstalled(self.category, self.package, self.version, revision=revision)
+        package = installdb.addInstalled(self.package, self.version, revision=revision)
         fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
         package.addFiles(fileList)
         package.install()
@@ -76,14 +75,12 @@ class PackageBase(CraftBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/portage/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
-        packageList = installdb.getInstalledPackages(self.category, self.package)
+        packageList = installdb.getInstalledPackages(self.package)
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
-            self.unmergeFileList(self.mergeDestinationDir(), fileList, self.forced)
+            self.unmergeFileList(self.mergeDestinationDir(), fileList)
             package.uninstall()
-
-        installdb.getInstalledPackages(self.category, self.package)
 
         # run post-uninstall scripts
         if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
@@ -141,7 +138,7 @@ class PackageBase(CraftBase):
         utils.createImportLibs(pkgName, basepath)
 
     def printFiles(self):
-        packageList = installdb.getInstalledPackages(self.category, self.package)
+        packageList = installdb.getInstalledPackages(self.package)
         for package in packageList:
             fileList = package.getFiles()
             fileList.sort()
@@ -181,8 +178,10 @@ class PackageBase(CraftBase):
         if self.subinfo.options.package.disableBinaryCache:
             return False
 
-        archiveName = self.binaryArchiveName()
-        downloadFolder = self.cacheLocation()
+        archiveName = self.binaryArchiveName(includePackagePath=True)
+        archvieFolder, localArchiveName = self.binaryArchiveName(includePackagePath=True).rsplit("/", 1)
+        downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
+        print(downloadFolder)
 
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)
@@ -193,14 +192,14 @@ class PackageBase(CraftBase):
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
                 continue
             if url != self.cacheLocation():
-                if not os.path.exists(os.path.join(downloadFolder, archiveName)):
-                    if not utils.getFile(f"{url}/{archiveName}", downloadFolder):
+                if not os.path.exists(os.path.join(downloadFolder, localArchiveName)):
+                    if not utils.getFile(f"{url}/{archiveName}", downloadFolder, localArchiveName):
                         return False
-            return CraftHash.checkFilesDigests(downloadFolder, [archiveName],
+            return CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
                                                digests=cache[str(self)][archiveName]["checksum"],
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
-                   and utils.unpackFile(downloadFolder, archiveName, self.imageDir()) \
+                   and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir()) \
                    and self.qmerge()
         return False
 
@@ -216,12 +215,12 @@ class PackageBase(CraftBase):
                 digest = ""
             else:
                 digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
-            ret.append((relativeFilePath, ""))
+            ret.append((relativeFilePath, digest))
         return ret
 
     @staticmethod
-    def unmergeFileList(rootdir, fileList, forced=False):
-        """ delete files in the fileList if has matches or forced is True """
+    def unmergeFileList(rootdir, fileList):
+        """ delete files in the fileList if has matches """
         for filename, filehash in fileList:
             fullPath = os.path.join(rootdir, os.path.normcase(filename))
             if os.path.isfile(fullPath):
@@ -233,14 +232,9 @@ class PackageBase(CraftBase):
                 if currentHash == filehash or filehash == "":
                     OsUtils.rm(fullPath, True)
                 else:
-                    if forced:
-                        craftDebug.log.warning("file %s has different hash: %s %s, deleting anyway" % \
-                                               (fullPath, currentHash, filehash))
-                        OsUtils.rm(fullPath, True)
-                    else:
-                        craftDebug.log.warning(
-                            "file %s has different hash: %s %s, run with option --force to delete it anyway" % \
-                            (fullPath, currentHash, filehash))
+                    craftDebug.log.warning(
+                        f"We can't remove {fullPath} as its hash has changed,"
+                        f" that usually implies that the fiel was modified or replaced")
             elif not os.path.isdir(fullPath):
                 craftDebug.log.warning("file %s does not exist" % fullPath)
 
@@ -262,8 +256,6 @@ class PackageBase(CraftBase):
                      "unmerge": "unmerge",
                      "package": "createPackage",
                      "createpatch": "createPatch",
-                     "geturls": "getUrls",
-                     "print-revision": "printSourceVersion",
                      "print-files": "printFiles",
                      "checkdigest": "checkDigest",
                      "fetch-binary": "fetchBinary"}
@@ -271,7 +263,7 @@ class PackageBase(CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise CraftDependencies.PortageException(str(e), self.category, self.package, e)
+                raise PortageException(str(e), self.package, e)
 
         else:
             ok = craftDebug.log.error("command %s not understood" % command)

@@ -5,18 +5,18 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Application for importing mbox files."
+        self.description = "Application for importing mbox files."
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kservice"] = "default"
-        self.runtimeDependencies["frameworks/kcrash"] = "default"
-        self.runtimeDependencies["frameworks/kio"] = "default"
-        self.runtimeDependencies["kde/mailcommon"] = "default"
-        self.runtimeDependencies["kde/pimcommon"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kservice"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kio"] = "default"
+        self.runtimeDependencies["kde/pim/mailcommon"] = "default"
+        self.runtimeDependencies["kde/pim/pimcommon"] = "default"
 
 
 from Package.CMakePackageBase import *

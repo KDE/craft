@@ -4,20 +4,20 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "Graphical File Differences Tool"
+        self.description = "Graphical File Differences Tool"
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['kde/libkomparediff2'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kcodecs'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
-        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
-        self.runtimeDependencies['frameworks/kjobwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kconfig'] = 'default'
-        self.runtimeDependencies['frameworks/kparts'] = 'default'
-        self.runtimeDependencies['frameworks/ktexteditor'] = 'default'
-        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
+        self.runtimeDependencies["kde/kdesdk/libkomparediff2"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcodecs"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kjobwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/ktexteditor"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
 
 
 from Package.CMakePackageBase import *

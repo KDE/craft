@@ -20,13 +20,13 @@ class subinfo(info.infoclass):
         self.targetDigests['0.2.1'] = '1340eb7141b453088d39e62bba771413053a6d18'
         self.targetDigests['0.2.2'] = '1f10bef62c9125cf804366134e486a58308f07ff'
 
-        self.shortDescription = "Tools for accessing and converting various ebook file formats"
+        self.description = "Tools for accessing and converting various ebook file formats"
         self.defaultTarget = '0.2.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libzip'] = 'default'
-        self.runtimeDependencies['win32libs/libxml2'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libzip"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
 
 
 from Package.CMakePackageBase import *

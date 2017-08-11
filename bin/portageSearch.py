@@ -1,27 +1,28 @@
-import re
-
 import CraftTimer
 import InstallDB
-import portage
 import utils
-from CraftDebug import craftDebug
 from CraftVersion import CraftVersion
+from Portage.CraftPackageObject import *
 
 
 class SeachPackage(object):
     def __init__(self, package):
-        self.category = package.category
-        self.subpackage = package.subpackage
-        self.package = package.package
-        self.homepage = package.subinfo.homepage
-        self.shortDescription = package.subinfo.shortDescription
+        self.path = package.path
+        self.webpage = package.subinfo.webpage
+        self.description = package.subinfo.description
+        self.tags = package.subinfo.tags
 
         versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
         versions.sort(key=lambda x: CraftVersion(x))
         self.availableVersions = ", ".join(versions)
 
+    @property
+    def package(self):
+        # we can't cache the whole instance
+        return CraftPackageObject.get(self.path)
+
     def __str__(self):
-        installed = InstallDB.installdb.getInstalledPackages(self.category, self.package)
+        installed = InstallDB.installdb.getInstalledPackages(self.package)
         version = None
         revision = None
         if installed:
@@ -29,12 +30,12 @@ class SeachPackage(object):
                 raise Exception("Multiple installs are not supported")
             version = installed[0].getVersion() or None
             revision = installed[0].getRevision() or None
-        subpackage = f"/{self.subpackage}" if self.subpackage else ""
-        latestVersion = portage.PortageInstance.getDefaultTarget(self.category, self.package)
+        latestVersion = self.package.version
         return f"""\
-{self.category}{subpackage}/{self.package}
-    Homepage: {self.homepage}
-    Description: {self.shortDescription}
+{self.package}
+    Homepage: {self.webpage}
+    Description: {self.description}
+    Tags: {self.tags}
     Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}
@@ -47,12 +48,10 @@ def packages():
     if not utils.utilsCache.availablePackages:
         utils.utilsCache.availablePackages = []
         craftDebug.log.info("Updating search cache:")
-        total = len(portage.PortageInstance.getInstallables())
-        for p in portage.PortageInstance.getInstallables():
-            pi = portage.PortageInstance.getPackageInstance(p.category, p.package)
-            if pi:
-                package = SeachPackage(pi)
-                utils.utilsCache.availablePackages.append(package)
+        total = len(CraftPackageObject.installables())
+        for p in CraftPackageObject.installables():
+            package = SeachPackage(p)
+            utils.utilsCache.availablePackages.append(package)
             percent = int(len(utils.utilsCache.availablePackages) / total * 100)
             utils.printProgress(percent)
         utils.printProgress(100)
@@ -60,24 +59,29 @@ def packages():
     return utils.utilsCache.availablePackages
 
 
-def printSearch(search_category, search_package, maxDist=2):
+def printSearch(search_package, maxDist=2):
+    searchPackageLower = search_package.lower()
+    isPath = "/" in searchPackageLower
     with CraftTimer.Timer("Search", 0) as timer:
         similar = []
         match = None
-        package_re = re.compile(".*%s.*" % search_package, re.IGNORECASE)
+        package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)
         for package in packages():
-            if search_category == "" or search_category == package.category:
-                levDist = utils.levenshtein(search_package.lower(), package.package.lower())
-                if levDist == 0:
-                    match = (levDist, package)
-                    break
-                elif package_re.match(package.package):
-                    similar.append((levDist - maxDist, package))
-                elif len(package.package) > maxDist and levDist <= maxDist:
-                    similar.append((levDist, package))
-                else:
-                    if package_re.match(package.shortDescription):
-                        similar.append((100, package))
+            packageString =  package.package.path if isPath else package.package.name
+            levDist = abs(len(searchPackageLower) - len(packageString))
+            if levDist <= maxDist:
+                levDist = utils.levenshtein(searchPackageLower, packageString.lower())
+            if levDist == 0:
+                match = (levDist, package)
+                break
+            elif package_re.match(package.package.path):
+                similar.append((levDist - maxDist, package))
+            elif len(packageString) > maxDist and levDist <= maxDist:
+                similar.append((levDist, package))
+            else:
+                if package_re.match(package.description) or \
+                        package_re.match(package.tags):
+                    similar.append((100, package))
 
         if match == None:
             if len(similar) > 0:

@@ -5,13 +5,13 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Attica is a Qt library that implements the Open Collaboration Services API."
+        self.description = "Attica is a Qt library that implements the Open Collaboration Services API."
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["libs/qttools"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
 
 
 from Package.CMakePackageBase import *

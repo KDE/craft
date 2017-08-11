@@ -7,13 +7,13 @@ class subinfo(info.infoclass):
             tarballUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz",
             tarballDigestUrl="http://download.kde.org/stable/frameworks/${VERSION_MAJOR}.${VERSION_MINOR}/portingAids/${PACKAGE_NAME}-${VERSION}.tar.xz.sha1")
 
-        self.shortDescription = "Plugin interface for media player features"
+        self.description = "Plugin interface for media player features"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['frameworks/kparts'] = "default"
-        self.runtimeDependencies['frameworks/kxmlgui'] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
 
 
 from Package.CMakePackageBase import *

@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/boost-thread'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/boost/boost-thread"] = "default"
 
     def setTargets(self):
         for ver in ['0.9.16a', '0.9.20', '0.9.21b']:
@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.3.3.4'] = "clucene-core-2.3.3.4"
         self.patchToApply['2.3.3.4'] = [('clucene-core-2.3.3.4-20120704.diff', 1)]
 
-        self.shortDescription = "high-performance, full-featured text search engine (required for compiling strigi)"
+        self.description = "high-performance, full-featured text search engine (required for compiling strigi)"
         self.defaultTarget = '2.3.3.4'
 
 

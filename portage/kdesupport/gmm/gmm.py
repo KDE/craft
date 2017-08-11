@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
     def setTargets(self):
         for ver in ['3.0', '4.1']:
@@ -18,8 +18,6 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
-        # header-only package
-        self.createCombinedPackage = True
 
     def unpack(self):
         if not CMakePackageBase.unpack(self):

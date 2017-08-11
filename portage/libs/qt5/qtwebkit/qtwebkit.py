@@ -25,16 +25,16 @@ class subinfo(info.infoclass):
             self.patchToApply[ver] = self.patchToApply[branch]
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        self.runtimeDependencies['win32libs/icu'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtscript'] = 'default'
-        self.runtimeDependencies['libs/qtdeclarative'] = 'default'
-        self.runtimeDependencies['libs/qtmultimedia'] = 'default'
-        self.runtimeDependencies['libs/qtwebchannel'] = 'default'
-        self.buildDependencies['dev-util/ruby'] = 'default'
-        self.buildDependencies['dev-util/winflexbison'] = 'default'
-        self.buildDependencies['gnuwin32/gperf'] = 'default'
+        self.runtimeDependencies["win32libs/sqlite"] = "default"
+        self.runtimeDependencies["win32libs/icu"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtscript"] = "default"
+        self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["libs/qt5/qtmultimedia"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebchannel"] = "default"
+        self.buildDependencies["dev-util/ruby"] = "default"
+        self.buildDependencies["dev-util/winflexbison"] = "default"
+        self.buildDependencies["gnuwin32/gperf"] = "default"
 
 
 from Package.Qt5CorePackageBase import *
@@ -49,6 +49,11 @@ class QtPackage(Qt5CorePackageBase):
             self.subinfo.options.configure.args += """ "QT_CONFIG+=no-pkg-config" """
         if craftCompiler.isMinGW():
             self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
+
+    def fetch(self):
+        if os.path.exists(self.sourceDir()):
+            self.system(["git", "reset", "--hard"], cwd=self.sourceDir())
+        return Qt5CorePackageBase.fetch(self)
 
     def configure(self, configureDefines=""):
         if not len(self.subinfo.buildTarget) == 3:  # 5.9

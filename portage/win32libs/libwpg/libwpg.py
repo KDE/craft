@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
         self.patchToApply['0.2.0'] = ('libwpg-0.2.0-20110722.diff', 1)
 
         self.targetDigests['0.2.0'] = '34a692566bda66488f83c635774d1bd92cee0fdf'
-        self.shortDescription = "A library to read and parse graphics in WPG (WordPerfect Graphics) format"
+        self.description = "A library to read and parse graphics in WPG (WordPerfect Graphics) format"
         self.defaultTarget = '0.2.0'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libwpd'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libwpd"] = "default"
 
 
 class Package(CMakePackageBase):

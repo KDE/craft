@@ -4,17 +4,17 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
-        self.shortDescription = "GUI to profilers such as Valgrind"
+        self.description = "GUI to profilers such as Valgrind"
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['frameworks/karchive'] = 'default'
-        self.runtimeDependencies['frameworks/kcoreaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kdoctools'] = 'default'
-        self.runtimeDependencies['frameworks/kwidgetsaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kxmlgui'] = 'default'
-        self.runtimeDependencies['frameworks/kdelibs4support'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier4/kdelibs4support"] = "default"
 
 
 from Package.CMakePackageBase import *

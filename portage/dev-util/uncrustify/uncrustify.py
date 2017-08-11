@@ -12,12 +12,12 @@ class subinfo(info.infoclass):
         self.targetDigests['0.64'] = (
         ['2a8cb3ab82ca53202d50fc2c2cec0edd11caa584def58d356c1c759b57db0b32'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "Source Code Beautifier for C, C++, C#, ObjectiveC, D, Java, Pawn and VALA"
-        self.homepage = "http://uncrustify.sourceforge.net/"
+        self.description = "Source Code Beautifier for C, C++, C#, ObjectiveC, D, Java, Pawn and VALA"
+        self.webpage = "http://uncrustify.sourceforge.net/"
         self.defaultTarget = '0.64'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

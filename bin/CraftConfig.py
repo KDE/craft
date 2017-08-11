@@ -125,7 +125,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftBin():
-        return os.path.join(CraftStandardDirs.craftRoot(), os.path.dirname(__file__))
+        return os.path.dirname(__file__)
 
     @staticmethod
     def craftRepositoryDir():
@@ -238,6 +238,10 @@ class CraftConfig(object):
         print("\t%s = ..." % key)
         print("in your kdesettings.ini")
         exit(1)
+
+    def getList(self, group, key, default=None):
+        val = self.get(group, key, default).split(";")
+        return [v.strip() for v in val if v]
 
     def getSection(self, group):
         if self._config.has_section(group):

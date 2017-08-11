@@ -6,19 +6,19 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:kdeconnect-kde'
         self.defaultTarget = 'master'
-        self.shortDescription = "KDE Connect adds communication between KDE and your smartphone"
+        self.description = "KDE Connect adds communication between KDE and your smartphone"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['frameworks/ki18n'] = 'default'
-        self.runtimeDependencies['frameworks/kconfigwidgets'] = 'default'
-        self.runtimeDependencies['frameworks/kdbusaddons'] = 'default'
-        self.runtimeDependencies['frameworks/kiconthemes'] = 'default'
-        self.runtimeDependencies['frameworks/knotifications'] = 'default'
-        self.runtimeDependencies['frameworks/kcmutils'] = 'default'
-        self.runtimeDependencies['frameworks/breeze-icons'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kconfigwidgets"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier1/breeze-icons"] = "default"
 
 
 class Package(CMakePackageBase):

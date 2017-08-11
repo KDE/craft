@@ -3,13 +3,13 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['win32libs/exiv2'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
-        self.runtimeDependencies['win32libs/libbzip2'] = 'default'
-        self.runtimeDependencies['win32libs/libxml2'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["win32libs/exiv2"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
+        self.runtimeDependencies["win32libs/libbzip2"] = "default"
+        self.runtimeDependencies["win32libs/libxml2"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
 
     def setTargets(self):
         self.svnTargets['master'] = '[git]kde:strigi'
@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
                                       ("intel-cmake-adaptations-0.7.8.diff", 1)]
         self.targetDigests['0.7.2'] = 'b4c1472ef068536acf9c5c4c8f033a97f9c69f9f'
 
-        self.shortDescription = "a desktop search engine and indexer"
+        self.description = "a desktop search engine and indexer"
 
         self.defaultTarget = '0.7.8'
 

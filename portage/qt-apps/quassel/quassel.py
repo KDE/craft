@@ -20,20 +20,20 @@ class subinfo(info.infoclass):
         self.targetDigests['0.12.2'] = '12e9a88597f724498c40a1548b5f788e7c40858c'
         self.patchToApply['0.11.0'] = ('quassel-0.11.0-20141002.diff', 1)
 
-        self.homepage = "http://quassel-irc.org"
+        self.webpage = "http://quassel-irc.org"
         self.defaultTarget = '0.12.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['qt-libs/snorenotify'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/openssl'] = 'default'
-        # self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['dev-util/pkg-config'] = 'default'
-        self.runtimeDependencies['libs/qtbase'] = 'default'
-        self.runtimeDependencies['libs/qtwebengine'] = 'default'
-        self.runtimeDependencies['libs/qtscript'] = 'default'
-        self.runtimeDependencies['libs/qttools'] = 'default'
-        self.shortDescription = "a distributed IRC client"
+        self.runtimeDependencies["qt-libs/snorenotify"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/openssl"] = "default"
+        # self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["dev-util/pkg-config"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtwebengine"] = "default"
+        self.runtimeDependencies["libs/qt5/qtscript"] = "default"
+        self.runtimeDependencies["libs/qt5/qttools"] = "default"
+        self.description = "a distributed IRC client"
 
 
 class Package(CMakePackageBase):

@@ -1,3 +1,4 @@
+from BuildSystem import BuildSystemBase
 from BuildSystem.BuildSystemBase import *
 from Package.PackageBase import *
 from Packager.PackagerBase import *
@@ -19,10 +20,6 @@ class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerB
         return True
 
     def install(self):
-        if installdb.isInstalled(self.category, self.package):
-            for p in installdb.getInstalledPackages(self.category, self.package):
-                p.uninstall()
-        installdb.addInstalled(self.category, self.package, self.version, revision=self.sourceRevision())
         return True
 
     def uninstall(self):

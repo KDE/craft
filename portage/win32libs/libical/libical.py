@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['2.0.0'] = (
         ['20f4a98475052e1200d2691ba50b27969e4bedc6e50bffd5e2fa81f4ac90de9a'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "Reference implementation of the icalendar data type and serialization format"
+        self.description = "Reference implementation of the icalendar data type and serialization format"
         self.defaultTarget = '2.0.0'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

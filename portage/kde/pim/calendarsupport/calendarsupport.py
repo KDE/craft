@@ -5,25 +5,25 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Calendar Support library"
+        self.description = "Calendar Support library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kcodecs"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcodecs"] = "default"
 
-        self.runtimeDependencies["kde/kmime"] = "default"
-        self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        self.runtimeDependencies["kde/kcalutils"] = "default"
-        self.runtimeDependencies["kde/kcalcore"] = "default"
-        self.runtimeDependencies["kde/kidentitymanagement"] = "default"
-        self.runtimeDependencies["kde/kholidays"] = "default"
-        self.runtimeDependencies["kde/akonadi-calendar"] = "default"
-        self.runtimeDependencies["kde/kimap"] = "default"
-        self.runtimeDependencies["kde/pimcommon"] = "default"
-        self.runtimeDependencies["kde/kdepim-apps-libs"] = "default"
+        self.runtimeDependencies["kde/pim/kmime"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-mime"] = "default"
+        self.runtimeDependencies["kde/pim/kcalutils"] = "default"
+        self.runtimeDependencies["kde/pim/kcalcore"] = "default"
+        self.runtimeDependencies["kde/pim/kidentitymanagement"] = "default"
+        self.runtimeDependencies["kde/pim/kholidays"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-calendar"] = "default"
+        self.runtimeDependencies["kde/pim/kimap"] = "default"
+        self.runtimeDependencies["kde/pim/pimcommon"] = "default"
+        self.runtimeDependencies["kde/pim/kdepim-apps-libs"] = "default"
 
 
 from Package.CMakePackageBase import *

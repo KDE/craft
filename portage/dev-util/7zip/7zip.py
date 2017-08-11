@@ -11,8 +11,8 @@ class subinfo(info.infoclass):
         self.targetDigests['1604.1'] = (
         ['59f41025acc40cf2e0b30b5cc6e4bcb1e07573201e256fbe8edb3c9c514dd251'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "7-Zip is a file archiver with a high compression ratio."
-        self.homepage = "http://www.7-zip.org/"
+        self.description = "7-Zip is a file archiver with a high compression ratio."
+        self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "1604.1"
 
     def setDependencies(self):

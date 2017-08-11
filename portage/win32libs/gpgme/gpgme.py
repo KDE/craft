@@ -2,13 +2,13 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         arch = "32"
         if craftCompiler.isX64():
             arch = "64"
         for ver in ["1.9.0"]:
-            self.targets[ ver ] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/gpgme-src-{ver}-windows-mingw_{arch}-gcc.7z"
-            #self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gpgme-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/gpgme-src-{ver}-windows-mingw_{arch}-gcc.7z"
+            # self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gpgme-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
 
         self.shortDescription = "GnuPG cryptography support library (runtime)"
         self.defaultTarget = '1.9.0'
@@ -26,9 +26,10 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
 
+
 class BinPackage(BinaryPackageBase):
-    def __init__( self, **args ):
-        BinaryPackageBase.__init__( self )
+    def __init__(self, **args):
+        BinaryPackageBase.__init__(self)
 
 
 class Package(MaybeVirtualPackageBase):

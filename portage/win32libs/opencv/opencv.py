@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.defaultTarget = '2.4.5'
-        self.shortDescription = 'a library for real time computer vision'
+        self.description = 'a library for real time computer vision'
 
         self.svnTargets['master'] = 'git://code.opencv.org/opencv.git'
 
@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.options.configure.args = "-DBUILD_NEW_PYTHON_SUPPORT=OFF"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

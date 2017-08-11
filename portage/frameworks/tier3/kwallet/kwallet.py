@@ -5,21 +5,21 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "TODO"
+        self.description = "TODO"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["frameworks/knotifications"] = "default"
-        self.runtimeDependencies["frameworks/kwindowsystem"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwindowsystem"] = "default"
         self.runtimeDependencies["win32libs/gcrypt"] = "default"
         if OsUtils.isUnix():
-            self.runtimeDependencies["kde/gpgmepp"] = "default"
+            self.runtimeDependencies["kde/applications/gpgmepp"] = "default"
 
 
 from Package.CMakePackageBase import *

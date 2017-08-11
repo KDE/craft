@@ -13,15 +13,15 @@ class subinfo(info.infoclass):
         self.patchToApply['1.0.16'] = [('redland-1.0.16-20130901.diff', 1)]
         self.targetDigests['1.0.16'] = '0dc3d65bee6d580cae84ed261720b5b4e6b1f856'
 
-        self.shortDescription = "Resource Description Framework (RDF)"
+        self.description = "Resource Description Framework (RDF)"
         self.defaultTarget = '1.0.16'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/raptor2'] = 'default'
-        self.runtimeDependencies['win32libs/rasqal'] = 'default'
-        self.runtimeDependencies['win32libs/sqlite'] = 'default'
-        self.runtimeDependencies['win32libs/pthreads'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/raptor2"] = "default"
+        self.runtimeDependencies["win32libs/rasqal"] = "default"
+        self.runtimeDependencies["win32libs/sqlite"] = "default"
+        self.runtimeDependencies["win32libs/pthreads"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

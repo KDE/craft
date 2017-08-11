@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
                 version] = "http://www.apache.org/dist/xerces/c/3/binaries/xerces-c-3.1.1-x86-windows-vc-10.0.zip"
         self.targetDigests['3.1.1'] = '34df759e1ffe4acce301887007cccb62f9496ea0'
 
-        self.shortDescription = "A Validating XML Parser"
+        self.description = "A Validating XML Parser"
         self.defaultTarget = '3.1.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/bin-base'] = 'default'
-        self.buildDependencies['win32libs/xerces-c'] = 'default'
+        self.runtimeDependencies["virtual/bin-base"] = "default"
+        self.buildDependencies["win32libs/xerces-c"] = "default"
 
 
 class PackageBin(BinaryPackageBase):

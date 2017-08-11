@@ -13,14 +13,14 @@ class subinfo(info.infoclass):
             self.patchToApply[ver] = ("nettle-2.7.1-20140630.diff", 1)
         self.targetDigests['2.7.1'] = 'e7477df5f66e650c4c4738ec8e01c2efdb5d1211'
 
-        self.shortDescription = "A low-level cryptographic library"
+        self.description = "A low-level cryptographic library"
         self.defaultTarget = "2.7.1"
 
     def setDependencies(self):
         if craftCompiler.isMinGW():
-            self.buildDependencies['dev-util/msys'] = 'default'
-            self.runtimeDependencies['win32libs/libgmp'] = 'default'
-            self.runtimeDependencies['win32libs/openssl'] = 'default'
+            self.buildDependencies["dev-util/msys"] = "default"
+            self.runtimeDependencies["win32libs/libgmp"] = "default"
+            self.runtimeDependencies["win32libs/openssl"] = "default"
 
 
 class PackageMinGW(AutoToolsPackageBase):

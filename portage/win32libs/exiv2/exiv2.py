@@ -13,15 +13,15 @@ class subinfo(info.infoclass):
 
         self.svnTargets['svnHEAD'] = 'svn://dev.exiv2.org/svn/trunk'
 
-        self.shortDescription = "an image metadata library"
+        self.description = "an image metadata library"
         self.defaultTarget = '0.25'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
-        self.runtimeDependencies['win32libs/gettext'] = 'default'
-        self.runtimeDependencies['win32libs/expat'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
+        self.runtimeDependencies["win32libs/gettext"] = "default"
+        self.runtimeDependencies["win32libs/expat"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

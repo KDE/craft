@@ -20,16 +20,16 @@ class subinfo(info.infoclass):
                                       ("0001-320226-Monthly-report-does-not-work-due-to-missing-t.patch", 1)]
         self.targetDigests['1.1.1'] = '063af1a04c2406babc59203e0d57912e834e46f1'
         self.targetDigests['1.2.0'] = '1587d493f6064637805e3601bdae08fd5258a633'
-        self.shortDescription = "a personal finance manager for KDE"
+        self.description = "a personal finance manager for KDE"
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt'] = 'default'
-        self.runtimeDependencies['kdesupport/qca'] = 'default'
-        self.runtimeDependencies['kdesupport/grantlee'] = 'default'
+        self.runtimeDependencies["libs/qt"] = "default"
+        self.runtimeDependencies["kdesupport/qca"] = "default"
+        self.runtimeDependencies["kdesupport/grantlee"] = "default"
         self.runtimeDependencies['kde/kdelibs'] = 'default'
-        self.runtimeDependencies['win32libs/libopensp'] = 'default'
-        self.runtimeDependencies['win32libs/libofx'] = 'default'
+        self.runtimeDependencies["win32libs/libopensp"] = "default"
+        self.runtimeDependencies["win32libs/libofx"] = "default"
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
 
 

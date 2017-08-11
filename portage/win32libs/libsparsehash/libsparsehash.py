@@ -8,13 +8,13 @@ class subinfo(info.infoclass):
         self.targetInstSrc['2.0.2'] = "sparsehash-2.0.2"
         self.targetDigests['2.0.2'] = '12c7552400b3e20464b3362286653fc17366643e'
 
-        self.shortDescription = "An extremely memory-efficient hash_map implementation."
-        self.homepage = "http://code.google.com/p/sparsehash/"
+        self.description = "An extremely memory-efficient hash_map implementation."
+        self.webpage = "http://code.google.com/p/sparsehash/"
         self.defaultTarget = '2.0.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/msys'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/msys"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

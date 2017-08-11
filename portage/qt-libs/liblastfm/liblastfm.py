@@ -13,13 +13,13 @@ class subinfo(info.infoclass):
         self.targetDigests['1.0.3'] = '4c6dc0eb2a32049fed72f8d713489edfad7b4eff'
         self.patchToApply['1.0.8'] = [('remove_atl_stuff.patch', 1)]
 
-        self.shortDescription = "a C++/Qt4 library provided by Last.fm for use with their web services"
+        self.description = "a C++/Qt4 library provided by Last.fm for use with their web services"
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['libs/qt'] = 'default'
-        self.runtimeDependencies['win32libs/libfftw'] = 'default'
-        self.runtimeDependencies['win32libs/libsamplerate'] = 'default'
+        self.runtimeDependencies["libs/qt"] = "default"
+        self.runtimeDependencies["win32libs/libfftw"] = "default"
+        self.runtimeDependencies["win32libs/libsamplerate"] = "default"
 
 
 from Package.CMakePackageBase import *

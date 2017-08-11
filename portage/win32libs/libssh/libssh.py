@@ -13,14 +13,14 @@ class subinfo(info.infoclass):
 
         self.svnTargets['master'] = "git://git.libssh.org/projects/libssh.git"
 
-        self.shortDescription = "a working SSH implementation by the mean of a library"
+        self.description = "a working SSH implementation by the mean of a library"
         self.defaultTarget = '0.7.3'
         # self.options.configure.args = "-DWITH_STATIC_LIB=ON"
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/openssl'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/openssl"] = "default"
 
 
 from Package.CMakePackageBase import *

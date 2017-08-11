@@ -1,0 +1,54 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' poppler-0.57.0.orig/cmake/modules/FindLIBOPENJPEG2.cmake poppler-0.57.0/cmake/modules/FindLIBOPENJPEG2.cmake
+--- poppler-0.57.0.orig/cmake/modules/FindLIBOPENJPEG2.cmake	2016-12-06 23:48:26.000000000 +0100
++++ poppler-0.57.0/cmake/modules/FindLIBOPENJPEG2.cmake	2017-08-10 14:52:29.424891100 +0200
+@@ -18,12 +18,11 @@
+ 
+ else ()
+ 
+-  set(LIBOPENJPEG2_FOUND FALSE)
+-  set(LIBOPENJPEG2_INCLUDE_DIRS)
+-  set(LIBOPENJPEG2_LIBRARIES)
++  find_package(OPENJPEG REQUIRED)
++  set(LIBOPENJPEG2_FOUND ${OPENJPEG_FOUND})
++  set(LIBOPENJPEG2_INCLUDE_DIRS ${OPENJPEG_INCLUDE_DIRS})
++  set(LIBOPENJPEG2_LIBRARIES ${OPENJPEG_LIBRARIES})
+ 
+-  find_package(PkgConfig REQUIRED)
+-  pkg_check_modules(LIBOPENJPEG2 libopenjp2)
+   if (LIBOPENJPEG2_FOUND)
+     add_definitions(-DUSE_OPENJPEG2)
+   endif ()
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' poppler-0.57.0.orig/CMakeLists.txt poppler-0.57.0/CMakeLists.txt
+--- poppler-0.57.0.orig/CMakeLists.txt	2017-07-31 23:39:14.000000000 +0200
++++ poppler-0.57.0/CMakeLists.txt	2017-08-10 15:28:09.858093000 +0200
+@@ -186,7 +186,7 @@
+ set(USE_OPENJPEG2 FALSE)
+ set(WITH_OPENJPEG FALSE)
+ if(ENABLE_LIBOPENJPEG STREQUAL "auto")
+-  find_package(LIBOPENJPEG2)
++  find_package(OPENJPEG)
+   set(USE_OPENJPEG2 ${LIBOPENJPEG2_FOUND})
+   set(WITH_OPENJPEG ${LIBOPENJPEG2_FOUND})
+   if(NOT LIBOPENJPEG2_FOUND)
+@@ -520,6 +520,7 @@
+ endif(USE_CMS)
+ if(WIN32)
+   # gdi32 is needed under win32
++  add_definitions(-DWIN32_LEAN_AND_MEAN)
+   set(poppler_LIBS ${poppler_LIBS} gdi32)
+ endif(WIN32)
+ if(PNG_FOUND)
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x'*\.o' poppler-0.57.0.orig/cpp/CMakeLists.txt poppler-0.57.0/cpp/CMakeLists.txt
+--- poppler-0.57.0.orig/cpp/CMakeLists.txt	2017-01-16 22:36:57.000000000 +0100
++++ poppler-0.57.0/cpp/CMakeLists.txt	2017-08-10 15:18:46.056958400 +0200
+@@ -25,9 +25,7 @@
+ add_library(poppler-cpp SHARED ${poppler_cpp_SRCS})
+ set_target_properties(poppler-cpp PROPERTIES VERSION 0.3.0 SOVERSION 0)
+ target_link_libraries(poppler-cpp poppler ${ICONV_LIBRARIES})
+-if(MSVC)
+-target_link_libraries(poppler-cpp LINK_PRIVATE ${poppler_LIBS})
+-endif(MSVC)
++
+ install(TARGETS poppler-cpp RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ 
+ install(FILES

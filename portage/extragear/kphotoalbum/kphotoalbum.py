@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies['kde/kdegraphics'] = 'default'
+        self.runtimeDependencies["kde/kdegraphics/kipi-plugins"] = "default"
 
 
 class Package(CMakePackageBase):

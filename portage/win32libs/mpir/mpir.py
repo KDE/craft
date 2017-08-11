@@ -9,15 +9,15 @@ class subinfo(info.infoclass):
         self.targetDigests['2.7.2'] = 'a285352d4299eb18d4f02a97e3232efab225e174'
         self.targetInstSrc['2.7.2'] = 'mpir-2.7.2'
 
-        self.shortDescription = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
+        self.description = "Library for arbitrary precision integer arithmetic derived from version 4.2.1 of gmp"
         self.defaultTarget = '2.7.2'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
         if craftCompiler.isMinGW():
-            self.buildDependencies['dev-util/msys'] = 'default'
+            self.buildDependencies["dev-util/msys"] = "default"
         else:
-            self.buildDependencies['dev-util/yasm'] = 'default'
+            self.buildDependencies["dev-util/yasm"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

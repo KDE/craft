@@ -9,8 +9,8 @@ class subinfo(info.infoclass):
         self.targetDigests["920"] = (
         ['2a3afe19c180f8373fa02ff00254d5394fec0349f5804e0ad2f6067854ff28ac'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "7-Zip is a file archiver with a high compression ratio."
-        self.homepage = "http://www.7-zip.org/"
+        self.description = "7-Zip is a file archiver with a high compression ratio."
+        self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "920"
 
 

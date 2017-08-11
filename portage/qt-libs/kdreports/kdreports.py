@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
     def setTargets(self):
         self.svnTargets["master"] = "[git]https://github.com/KDAB/KDReports.git"
@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "1.7.1"
 
-        self.shortDescription = "Qt library for generating printable and exportable reports from code and from XML descriptions."
-        self.homepage = "http://www.kdab.com/kd-reports/"
+        self.description = "Qt library for generating printable and exportable reports from code and from XML descriptions."
+        self.webpage = "http://www.kdab.com/kd-reports/"
 
 
 class Package(CMakePackageBase):

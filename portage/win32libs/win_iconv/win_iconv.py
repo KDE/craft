@@ -12,11 +12,11 @@ class subinfo(info.infoclass):
         self.targetDigests['0.0.8'] = (
         ['23adea990a8303c6e69e32a64a30171efcb1b73824a1c2da1bbf576b0ae7c520'], CraftHash.HashAlgorithm.SHA256)
 
-        self.shortDescription = "a character set conversion library binary compatible with GNU iconv"
+        self.description = "a character set conversion library binary compatible with GNU iconv"
         self.defaultTarget = '0.0.8'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

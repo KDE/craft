@@ -3,8 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['libs/qt'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["libs/qt"] = "default"
 
     def setTargets(self):
         self.targets['0.1.0'] = 'http://qtscriptgenerator.googlecode.com/files/qtscriptgenerator-src-0.1.0.tar.gz'
@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
                                       ("qtscriptgenerator.diff", 1),
                                       ("qtscriptgenerator.gcc-4.4.diff", 1),
                                       ("qtscriptgenerator-0.1.0-qt48.diff", 1)]
-        self.shortDescription = "a tool that generates Qt bindings for Qt Script"
+        self.description = "a tool that generates Qt bindings for Qt Script"
         self.defaultTarget = '0.1.0'
 
 

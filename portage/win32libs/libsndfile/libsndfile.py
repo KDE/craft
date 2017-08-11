@@ -10,13 +10,13 @@ class subinfo(info.infoclass):
         self.patchToApply['1.0.24'] = [('libsndfile-1.0.24-20131003.diff', 1)]
         self.targetDigests['1.0.24'] = 'ade2dad272b52f61bb58aca3a4004b28549ee0f8'
 
-        self.shortDescription = "a C library for reading and writing files containing sampled sound"
+        self.description = "a C library for reading and writing files containing sampled sound"
         self.defaultTarget = '1.0.24'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libogg'] = 'default'
-        self.runtimeDependencies['win32libs/libvorbis'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libogg"] = "default"
+        self.runtimeDependencies["win32libs/libvorbis"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.18'] = "gettext-0.18"
         self.patchToApply['0.18'] = [("gettext-0.18-20130523.diff", 1)]
         self.targetDigests['0.18'] = 'de396ec6877a451427d8597197d18c2d4b8f1a26'
-        self.shortDescription = "GNU internationalization (i18n)"
+        self.description = "GNU internationalization (i18n)"
         self.defaultTarget = '0.18'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
 
 
 class Package(CMakePackageBase):

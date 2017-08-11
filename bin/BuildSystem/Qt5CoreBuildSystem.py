@@ -9,8 +9,6 @@ from BuildSystem.QMakeBuildSystem import *
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__(self):
         QMakeBuildSystem.__init__(self)
-        if not craftSettings.getboolean("QtSDK", "Enabled", False):
-            utils.putenv("QMAKESPEC", os.path.join(CraftStandardDirs.craftRoot(), 'mkspecs', self.platform))
 
     def install(self, options=""):
         """implements the make step for Qt projects"""
@@ -24,7 +22,7 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[3:])
         else:
             badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[1:])
-        if os.path.exists(badPrefix):
+        if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             utils.mergeTree(badPrefix, self.installDir())
         if craftSettings.getboolean("QtSDK", "Enabled", False):
             qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),

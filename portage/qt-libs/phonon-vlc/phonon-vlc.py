@@ -6,10 +6,10 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['qt-libs/phonon'] = 'default'
-        self.runtimeDependencies['binary/vlc'] = 'default'
+        self.runtimeDependencies["qt-libs/phonon"] = "default"
+        self.runtimeDependencies["binary/vlc"] = "default"
         if craftCompiler.isMSVC() or craftCompiler.isIntel():
-            self.runtimeDependencies['kdesupport/kdewin'] = 'default'
+            self.runtimeDependencies["kdesupport/kdewin"] = "default"
 
     def setTargets(self):
         for ver in ['0.9.0']:
@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets['master'] = '[git]kde:phonon-vlc'
 
-        self.shortDescription = "the vlc based phonon multimedia backend"
+        self.description = "the vlc based phonon multimedia backend"
         self.defaultTarget = '0.9.0'
 
 

@@ -13,12 +13,12 @@ class subinfo(info.infoclass):
         self.patchToApply['5.0.4'] = [("giflib-5.0.4-20130202.diff", 1)]
         self.patchToApply['5.0.5'] = [("giflib-5.0.5-20130916.diff", 1)]
 
-        self.shortDescription = "GIF file manipulation library (utilities and docs)"
+        self.description = "GIF file manipulation library (utilities and docs)"
         self.defaultTarget = '5.0.5'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -2,19 +2,18 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setTargets( self ):
+    def setTargets(self):
         arch = "32"
         if craftCompiler.isX64():
             arch = "64"
         for ver in ["2.4.3"]:
-            self.targets[ ver ] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/assuan2-src-{ver}-windows-mingw_{arch}-gcc.7z"
-            #self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
-
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/assuan2-src-{ver}-windows-mingw_{arch}-gcc.7z"
+            # self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
 
         self.shortDescription = "An IPC library used by some of the other GnuPG related packages"
         self.defaultTarget = "2.4.3"
 
-    def setDependencies( self ):
+    def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
         if craftCompiler.isGCCLike():
             self.runtimeDependencies["autotools/assuan-src"] = "default"
@@ -22,12 +21,14 @@ class subinfo(info.infoclass):
             self.runtimeDependencies["win32libs/mingw-crt4msvc"] = "default"
             self.runtimeDependencies["win32libs/gpg-error"] = "default"
 
+
 from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
 
+
 class BinPackage(BinaryPackageBase):
-    def __init__( self, **args ):
-        BinaryPackageBase.__init__( self )
+    def __init__(self, **args):
+        BinaryPackageBase.__init__(self)
 
 
 class Package(MaybeVirtualPackageBase):

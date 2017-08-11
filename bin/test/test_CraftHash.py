@@ -7,6 +7,7 @@ import tempfile
 import CraftTestBase
 
 import CraftHash
+from CraftDebug import craftDebug
 
 
 class CraftHashTest(CraftTestBase.CraftTestBase):
@@ -54,14 +55,16 @@ class TestAPI(CraftHashTest):
     def test_printFilesDigests(self):
         path, name = os.path.split(self.tmpFile)
         log = io.StringIO()
-        with contextlib.redirect_stdout(log):
-            CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
+        oldLog = craftDebug._handler.stream
+        craftDebug._handler.stream = log
+        CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
         self.assertEquals(
-            "self.targetDigests['test'] = (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n",
-            log.getvalue())
+            "Digests for test: (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n", log.getvalue())
+        craftDebug._handler.stream = oldLog
 
     def test_createDigestFiles(self):
         # TODO: check file content
         CraftHash.createDigestFiles(self.tmpFile)
         for algorithms in CraftHash.HashAlgorithm.__members__.values():
             self.assertEquals(os.path.exists(self.tmpFile + algorithms.fileEnding()), True)
+

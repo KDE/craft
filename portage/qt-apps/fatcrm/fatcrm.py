@@ -9,17 +9,17 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "https://github.com/KDAB/FatCRM.git|frameworks"
         self.defaultTarget = "master"
 
-        self.shortDescription = "Desktop Application for SugarCRM"
-        self.homepage = "http://www.kdab.com/"
+        self.description = "Desktop Application for SugarCRM"
+        self.webpage = "http://www.kdab.com/"
 
     def setDependencies(self):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kwallet"] = "default"
-        self.runtimeDependencies["kde/akonadi"] = "default"
-        self.runtimeDependencies["kde/kcontacts"] = "default"
-        self.runtimeDependencies["kde/kcalcore"] = "default"
-        self.runtimeDependencies["kde/akonadi-contacts"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kwallet"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi"] = "default"
+        self.runtimeDependencies["kde/pim/kcontacts"] = "default"
+        self.runtimeDependencies["kde/pim/kcalcore"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-contacts"] = "default"
         self.runtimeDependencies["qt-libs/kdsoap"] = "default"
         self.runtimeDependencies["qt-libs/kdreports"] = "default"
 

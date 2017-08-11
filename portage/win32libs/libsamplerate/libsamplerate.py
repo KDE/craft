@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['0.1.7'] = 'libsamplerate-0.1.7'
         self.targetDigests['0.1.7'] = 'f3f803ec5feae5a3fdb0fa3937277669e854386e'
         self.patchToApply['0.1.7'] = ('libsamplerate-0.1.7-20091002.diff', 1)
-        self.shortDescription = "an audio sample rate converter library"
+        self.description = "an audio sample rate converter library"
         self.defaultTarget = '0.1.7'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.runtimeDependencies['win32libs/libsndfile'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["win32libs/libsndfile"] = "default"
 
 
 class Package(CMakePackageBase):

@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.svnTargets['master'] = '[git]kde:skanlite.git'
         for ver in ['0.9', '1.0']:
             self.targets[
-                ver] = "http://download.kde.org/stable/" + self.package + "/" + ver + "/src/" + self.package + "-" + ver + ".tar.bz2"
-            self.targetInstSrc[ver] = self.package + '-' + ver
+                ver] = f"http://download.kde.org/stable/{self.package}/{ver}/src/{self.package}-{ver}.tar.bz2"
+            self.targetInstSrc[ver] = f"{self.package}-{ver}"
         self.defaultTarget = 'master'
-        self.shortDescription = 'a small application for image scanning'
+        self.description = 'a small application for image scanning'
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'

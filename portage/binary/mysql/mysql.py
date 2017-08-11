@@ -17,11 +17,11 @@ class subinfo(info.infoclass):
         self.targets[ver] = f"{baseURL}mysql-{ver}-win{arch}.zip"
         self.targetInstSrc[ver] = f"mysql-{ver}-win{arch}"
 
-        self.shortDescription = "MySql database server and embedded library"
+        self.description = "MySql database server and embedded library"
         self.defaultTarget = ver
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(BinaryPackageBase):

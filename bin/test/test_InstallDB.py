@@ -33,27 +33,15 @@
 
 """ Functional tests for InstallDB """
 
-import os
-
 import CraftTestBase
 
-import CraftConfig
 import InstallDB
+from Portage.CraftPackageObject import *
 
 
-class DatabaseTest(CraftTestBase.CraftTestBase):
-    def setUp(self):
-        super().setUp()
-        self.db = InstallDB.InstallDB(os.path.join(CraftConfig.CraftStandardDirs.etcDir(), "test.db"))
-
-    def tearDown(self):
-        del self.db
-        super().tearDown()
-
-
-class TestAPI(DatabaseTest):
+class TestAPI(CraftTestBase.CraftTestBase):
     def test_addInstalled(self):
-        package = self.db.addInstalled('win32libs', 'dbus-src', '1.4.0')
+        package = InstallDB.installdb.addInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0')
         package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
         package.install()
-        self.assertEquals(self.db.isInstalled('win32libs', 'dbus-src', '1.4.0'), True)
+        self.assertEquals(InstallDB.installdb.isInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0'), True)

@@ -1,0 +1,31 @@
+--- gsl-2.2.1.orig/CMakeLists.txt	2016-12-20 12:18:57.000000000 +1300
++++ gsl-2.2.1/CMakeLists.txt	2017-08-05 08:49:42.637623970 +1200
+@@ -675,20 +675,20 @@
+         RUNTIME DESTINATION bin/${config}
+         ARCHIVE DESTINATION lib/${config})
+     endforeach ()
+-    install(FILES ${PROJECT_BINARY_DIR}/Debug/gsl.pdb
+-                  ${PROJECT_BINARY_DIR}/Debug/gslcblas.pdb
+-          DESTINATION lib/Debug
+-          CONFIGURATIONS Debug)
++    #install(FILES ${PROJECT_BINARY_DIR}/Debug/gsl.pdb
++    #              ${PROJECT_BINARY_DIR}/Debug/gslcblas.pdb
++    #      DESTINATION lib/Debug
++    #      CONFIGURATIONS Debug)
+   else ()
+     install(TARGETS gsl gslcblas
+       LIBRARY DESTINATION lib
+       RUNTIME DESTINATION bin
+       ARCHIVE DESTINATION lib)
+     if (MSVC)
+-      install(FILES ${PROJECT_BINARY_DIR}/Debug/gsl.pdb
+-                    ${PROJECT_BINARY_DIR}/Debug/gslcblas.pdb
+-            DESTINATION lib
+-            CONFIGURATIONS Debug)
++      #install(FILES ${PROJECT_BINARY_DIR}/Debug/gsl.pdb
++      #              ${PROJECT_BINARY_DIR}/Debug/gslcblas.pdb
++      #      DESTINATION lib
++      #      CONFIGURATIONS Debug)
+     endif ()
+   endif ()
+   install(FILES ${GSL_HEADER_PATHS} DESTINATION include/gsl)

@@ -9,11 +9,11 @@ class subinfo(info.infoclass):
         self.targetDigests['0.9.0'] = 'd667654a329509c458f6e425868fa56ac12cd6b8'
         self.patchToApply['0.9.0'] = ('libwpd-0.9.0-20110721.diff', 1)
 
-        self.shortDescription = "A library designed to help process WordPerfect documents"
+        self.description = "A library designed to help process WordPerfect documents"
         self.defaultTarget = '0.9.0'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

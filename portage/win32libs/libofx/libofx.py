@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
         if craftCompiler.isMSVC():
             self.patchToApply['0.9.10'] += [("patch_daylight.diff", 1)]
 
-        self.shortDescription = "a parser and an API for the OFX (Open Financial eXchange) specification"
+        self.description = "a parser and an API for the OFX (Open Financial eXchange) specification"
         self.defaultTarget = '0.9.10'
 
     def setDependencies(self):
-        self.runtimeDependencies['win32libs/libopensp'] = 'default'
-        self.runtimeDependencies['win32libs/win_iconv'] = 'default'
+        self.runtimeDependencies["win32libs/libopensp"] = "default"
+        self.runtimeDependencies["win32libs/win_iconv"] = "default"
 
 
 from Package.CMakePackageBase import *

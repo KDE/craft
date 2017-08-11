@@ -9,12 +9,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['3.2.2'] = "fftw-3.2.2"
         self.patchToApply['3.2.2'] = [('fftw-3.2.2-20111221.diff', 1),
                                       ('fftw-3.2.2-20130818.diff', 1)]
-        self.shortDescription = "a C subroutine library for computing the discrete Fourier transform (DFT)"
+        self.description = "a C subroutine library for computing the discrete Fourier transform (DFT)"
 
         self.defaultTarget = '3.2.2'
 
     def setDependencies(self):
-        self.buildDependencies['virtual/base'] = 'default'
+        self.buildDependencies["virtual/base"] = "default"
 
 
 from Package.CMakePackageBase import *

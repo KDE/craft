@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"cmake-{ver}"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
 
-        self.shortDescription = "CMake, the cross-platform, open-source build system."
-        self.homepage = "http://www.cmake.org/"
+        self.description = "CMake, the cross-platform, open-source build system."
+        self.webpage = "http://www.cmake.org/"
 
         self.defaultTarget = "3.8.1"
 

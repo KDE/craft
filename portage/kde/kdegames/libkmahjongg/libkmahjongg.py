@@ -5,18 +5,18 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "libkmahjongg Library"
+        self.description = "libkmahjongg Library"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
 
-        self.runtimeDependencies["frameworks/kcoreaddons"] = "default"
-        self.runtimeDependencies["frameworks/kconfig"] = "default"
-        self.runtimeDependencies["frameworks/kwidgetsaddons"] = "default"
-        self.runtimeDependencies["frameworks/kcompletion"] = "default"
-        self.runtimeDependencies["frameworks/ki18n"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kcoreaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcompletion"] = "default"
+        self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
 
 
 from Package.CMakePackageBase import *

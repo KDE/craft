@@ -5,11 +5,11 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "kdeedu-data"
+        self.description = "kdeedu-data"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
 
 
 from Package.CMakePackageBase import *

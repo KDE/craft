@@ -5,30 +5,30 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
-        self.shortDescription = "Akregator"
+        self.description = "Akregator"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["frameworks/extra-cmake-modules"] = "master"
-        self.runtimeDependencies["libs/qtbase"] = "default"
-        self.runtimeDependencies["frameworks/kcrash"] = "default"
-        self.runtimeDependencies["frameworks/kdoctools"] = "default"
-        self.runtimeDependencies["frameworks/kcmutils"] = "default"
-        self.runtimeDependencies["frameworks/knotifications"] = "default"
-        self.runtimeDependencies["frameworks/kiconthemes"] = "default"
-        self.runtimeDependencies["frameworks/kparts"] = "default"
-        self.runtimeDependencies["frameworks/ktexteditor"] = "default"
-        self.runtimeDependencies["frameworks/kxmlgui"] = "default"
-        self.runtimeDependencies["frameworks/kdbusaddons"] = "default"
+        self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kcrash"] = "default"
+        self.runtimeDependencies["frameworks/tier2/kdoctools"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kcmutils"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kparts"] = "default"
+        self.runtimeDependencies["frameworks/tier3/ktexteditor"] = "default"
+        self.runtimeDependencies["frameworks/tier3/kxmlgui"] = "default"
+        self.runtimeDependencies["frameworks/tier1/kdbusaddons"] = "default"
 
-        self.runtimeDependencies["kde/grantleetheme"] = "default"
-        self.runtimeDependencies["kde/kontactinterface"] = "default"
-        self.runtimeDependencies["kde/libkdepim"] = "default"
-        self.runtimeDependencies["kde/libkleo"] = "default"
-        self.runtimeDependencies["kde/messagelib"] = "default"
-        self.runtimeDependencies["kde/syndication"] = "default"
-        self.runtimeDependencies["kde/akonadi-mime"] = "default"
-        self.runtimeDependencies["kde/pimcommon"] = "default"
+        self.runtimeDependencies["kde/pim/grantleetheme"] = "default"
+        self.runtimeDependencies["kde/pim/kontactinterface"] = "default"
+        self.runtimeDependencies["kde/pim/libkdepim"] = "default"
+        self.runtimeDependencies["kde/pim/libkleo"] = "default"
+        self.runtimeDependencies["kde/pim/messagelib"] = "default"
+        self.runtimeDependencies["kde/pim/syndication"] = "default"
+        self.runtimeDependencies["kde/pim/akonadi-mime"] = "default"
+        self.runtimeDependencies["kde/pim/pimcommon"] = "default"
 
 
 from Package.CMakePackageBase import *

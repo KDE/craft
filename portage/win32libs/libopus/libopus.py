@@ -11,12 +11,12 @@ class subinfo(info.infoclass):
         self.targetInstSrc['1.0.3'] = "opus-1.0.3"
         self.targetInstSrc['1.1'] = "opus-1.1"
 
-        self.shortDescription = "Opus codec library"
+        self.description = "Opus codec library"
         self.defaultTarget = '1.1'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
-        self.buildDependencies['dev-util/msys'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
+        self.buildDependencies["dev-util/msys"] = "default"
 
 
 from Package.AutoToolsPackageBase import *

@@ -16,11 +16,11 @@ class subinfo(info.infoclass):
         self.targetDigests['1.2.7'] = '4aa358a95d1e5774603e6fa149c926a80df43559'
         self.targetDigests['1.2.8'] = 'a4d316c404ff54ca545ea71a27af7dbc29817088'
 
-        self.shortDescription = 'The zlib compression and decompression library'
+        self.description = 'The zlib compression and decompression library'
         self.defaultTarget = '1.2.8'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 class Package(CMakePackageBase):

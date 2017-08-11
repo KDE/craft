@@ -3,12 +3,12 @@ import info
 
 class subinfo(info.infoclass):
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
         # will be moved to kdewin-qt
-        self.runtimeDependencies['libs/qtbase'] = 'default'
+        self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         # will be moved to kdewin-tools
-        self.runtimeDependencies['win32libs/zlib'] = 'default'
-        self.runtimeDependencies['win32libs/libpng'] = 'default'
+        self.runtimeDependencies["win32libs/zlib"] = "default"
+        self.runtimeDependencies["win32libs/libpng"] = "default"
 
     def setTargets(self):
         self.svnTargets[
@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = 'http://www.winkde.org/pub/kde/ports/win32/repository/other/kdewin-' + ver + '.tar.xz'
             self.targetInstSrc[ver] = 'kdewin-' + ver
         self.patchToApply['0.5.6'] = [("kdewin-0.5.6-20130530.diff", 1), ("invert-if-msvc.diff", 1)]
-        self.shortDescription = "kde supplementary package for win32"
+        self.description = "kde supplementary package for win32"
         self.defaultTarget = 'master'
 
 

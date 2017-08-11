@@ -10,6 +10,7 @@ import datetime
 
 import CraftHash
 import VersionInfo
+from CraftCompiler import craftCompiler
 from options import *
 
 
@@ -33,6 +34,7 @@ class infoclass(object):
         self.targetInstallPath = {}
 
         self.targetDigests = {}
+        self.targetDigestsX64 = {}
         self.targetDigestUrls = {}
         ## \todo prelimary
         self.svnTargets = {}
@@ -44,13 +46,12 @@ class infoclass(object):
         self.buildDependencies = {}
 
         # a long and a short description for the package
-        self.shortDescription = ''
-        self.description = ''
-        # a url to the projects homepage
-        self.homepage = ''
+        self.description = ""
+        self.tags = ""
+        # a url to the projects webpage
+        self.webpage = ""
 
         self.patchToApply = {}  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
-        self.isoDateToday = str(datetime.date.today()).replace('-', '')
         self.svnTargets = {}
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
@@ -64,17 +65,13 @@ class infoclass(object):
 
     @property
     def package(self) -> str:
-        return self.parent.package
-
-    @property
-    def category(self) -> str:
-        return self.parent.category
+        return self.parent
 
     @property
     def defaultTarget(self) -> str:
         target = None
-        if ("PortageVersions", "%s/%s" % (self.category, self.package)) in craftSettings:
-            target = craftSettings.get("PortageVersions", "%s/%s" % (self.category, self.package))
+        if ("PortageVersions", self.package.package.path) in craftSettings:
+            target = craftSettings.get("PortageVersions", self.package.package.path)
         if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget
@@ -132,25 +129,21 @@ class infoclass(object):
 
     def targetSourceSuffix(self) -> str:
         """return local source path suffix for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetSrcSuffix:
+        if self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[self.buildTarget]
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetInstSrc
+        return self.buildTarget in self.targetInstSrc
 
     def targetSourcePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetInstSrc:
+        if self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[self.buildTarget]
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetConfigurePath
+        return self.buildTarget in self.targetConfigurePath
 
     def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
@@ -160,13 +153,11 @@ class infoclass(object):
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetInstallPath
+        return self.buildTarget in self.targetInstallPath
 
     def installPath(self) -> str:
         """return relative path appendable to local install path for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) \
-                and self.buildTarget in self.targetInstallPath:
+        if self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[self.buildTarget]
         craftDebug.log.critical("no install path for this build target defined")
 
@@ -183,13 +174,17 @@ class infoclass(object):
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetDigests
+        if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+            return True
+        return self.buildTarget in self.targetDigests
 
     def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            out = self.targetDigests[self.buildTarget]
+            if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+                out = self.targetDigestsX64[self.buildTarget]
+            else:
+                out = self.targetDigests[self.buildTarget]
             if type(out) == str:
                 out = [out]
             if not type(out) == tuple:
@@ -199,8 +194,7 @@ class infoclass(object):
 
     def hasTargetDigestUrls(self) -> bool:
         """return state if target has digest url(s) for the recent build target"""
-        return (self.hasTarget() or self.hasSvnTarget()) \
-               and self.buildTarget in self.targetDigestUrls
+        return self.buildTarget in self.targetDigestUrls
 
     def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""

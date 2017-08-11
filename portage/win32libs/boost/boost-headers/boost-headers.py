@@ -15,12 +15,12 @@ class subinfo(info.infoclass):
             ('boost_1_56_0-spirit-20131114.diff', 1)]  # TODO: also include in future releases!
         self.patchToApply['1_57_0'] = [('boost_1_56_0-spirit-20131114.diff', 1)]
 
-        self.homepage = 'http://www.boost.org/'
+        self.webpage = 'http://www.boost.org/'
 
-        self.shortDescription = 'portable C++ libraries'
+        self.description = 'portable C++ libraries'
 
     def setDependencies(self):
-        self.runtimeDependencies['virtual/base'] = 'default'
+        self.runtimeDependencies["virtual/base"] = "default"
 
 
 from Package.BoostPackageBase import *
