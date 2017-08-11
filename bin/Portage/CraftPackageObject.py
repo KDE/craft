@@ -67,8 +67,12 @@ class CraftPackageObject(object):
                 path = path.replace("\\", "/")
             package.path = path[len(portageRoot) + 1:]
             if package.path in CraftPackageObject._nodes:
-                return
-            CraftPackageObject._nodes[package.path] = package
+                existingNode = CraftPackageObject._nodes[package.path]
+                if not existingNode.isCategory():
+                    raise PortageException(f"Found a recipe clash {existingNode.source} and {portageRoot}/{package.path}", existingNode)
+                package = existingNode
+            else:
+                CraftPackageObject._nodes[package.path] = package
         elif portageRoot:
             path = portageRoot
         else:
