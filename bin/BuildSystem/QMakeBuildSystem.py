@@ -17,7 +17,6 @@ class QMakeBuildSystem(BuildSystemBase):
     def platform(self):
         if not self._platform:
             self.qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").version)
-            # todo: use new craftCompiler platform code
             if OsUtils.isWin():
                 if craftCompiler.isMSVC():
                     if self.qtVer < CraftVersion("5.8"):
@@ -50,7 +49,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 else:
                     compilerPart = "g++"
                 self._platform = osPart + "-" + compilerPart
-            return self._platform
+        return self._platform
 
     def configure(self, configureDefines=""):
         """inplements configure step for Qt projects"""
