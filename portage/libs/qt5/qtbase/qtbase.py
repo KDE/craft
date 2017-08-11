@@ -145,7 +145,7 @@ class QtPackage(Qt5CorePackageBase):
         if (craftCompiler.isMSVC() and craftCompiler.isClang()) or OsUtils.isUnix() or self.supportsCCACHE:
             command += "-no-pch "
 
-        return utils.system(command)
+        return self.system(command)
 
     def install(self):
         with self.getQtBaseEnv():
