@@ -82,6 +82,9 @@ class OptionsFeatures(OptionsBase):
         ## enable or disable the dependency to plasma
         self.fullplasma = False
 
+        ## enable plugins of kdevelop
+        self.fullkdevelop = False
+
 
 ## options for the fetch action
 class OptionsFetch(OptionsBase):

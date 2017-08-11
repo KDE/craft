@@ -42,6 +42,9 @@ class subinfo(info.infoclass):
             self.runtimeDependencies["frameworks/tier3/plasma-framework"] = "default"
         if self.buildTarget != "master" and CraftVersion(self.buildTarget) < CraftVersion("5.2"):
             self.runtimeDependencies["extragear/kdevelop/kdevplatform"] = "default"
+        if self.options.features.fullkdevelop:
+            self.runtimeDependencies["extragear/kdevelop/kdev-python"] = "default"
+            self.runtimeDependencies["extragear/kdevelop/kdev-php"] = "default"
         self.runtimeDependencies["extragear/kdevelop-pg-qt"] = "default"
 
         # Install extra plugins shipped by Kate
