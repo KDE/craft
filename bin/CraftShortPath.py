@@ -1,0 +1,61 @@
+from typing import Dict
+
+import os
+
+import CraftHash
+import utils
+from CraftConfig import craftSettings, CraftStandardDirs
+from CraftDebug import craftDebug
+
+
+class CraftShortPath(object):
+    _shortpathDir = craftSettings.get("ShortPath", "JunctionDir", os.path.join(CraftStandardDirs.craftRoot(), "build", "shortPath"))
+    _useShortpaths = utils.OsUtils.isWin() and craftSettings.getboolean("ShortPath", "EnableJunctions")
+
+    def __init__(self, path) -> None:
+        self.longPath = path
+        self._shortPath = None
+
+
+    @property
+    def shortPath(self) -> str:
+        if not CraftShortPath._useShortpaths:
+            return self.longPath
+        if not utils.utilsCache._shortPaths:
+            CraftShortPath._clear()
+        if not self._shortPath:
+            self._shortPath = utils.utilsCache._shortPaths.get(self.longPath, None)
+            if not self._shortPath:
+                self._shortPath = CraftShortPath._createShortPath(self.longPath)
+                utils.utilsCache._shortPaths[self.longPath] = self._shortPath
+        craftDebug.log.info(f"Mapped \n"
+                            f"{self.longPath} to \n"
+                            f"{self._shortPath}, gained {len(self.longPath) - len(self._shortPath)}")
+        return self._shortPath
+
+    @staticmethod
+    def _createShortPath(longPath) -> str:
+        if not os.path.isdir(CraftShortPath._shortpathDir):
+            os.makedirs(CraftShortPath._shortpathDir)
+        path = os.path.join(CraftShortPath._shortpathDir, str(len(utils.utilsCache._shortPaths)))
+        if not os.path.isdir(path):
+            if not utils.system(["mklink", "/J", path, longPath]):
+                craftDebug.log.critical(f"Could not create shortpath {path}, for {longPath}")
+                return longPath
+        else:
+            if not os.path.samefile(path, longPath):
+                craftDebug.log.critical(f"Existing short path {path}, did not match {longPath}")
+                return longPath
+        return path
+
+
+    @staticmethod
+    def _clear():
+        if not os.path.isdir(CraftShortPath._shortpathDir):
+            os.makedirs(CraftShortPath._shortpathDir)
+            return
+        craftDebug.log.info(f"Clear PathCache {utils.utilsCache._shortPaths}")
+        for f in os.listdir(CraftShortPath._shortpathDir):
+            os.remove(os.path.join(CraftShortPath._shortpathDir, f))
+        utils.utilsCache._shortPaths = {} # type: Dict[str, str]
+

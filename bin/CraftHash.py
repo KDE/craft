@@ -38,6 +38,11 @@ class HashAlgorithm(Enum):
         return None
 
 
+def digestString(string : str, algorithm=HashAlgorithm.SHA256)-> str:
+    hash = getattr(hashlib, algorithm.name.lower())()
+    hash.update(bytes(string, "UTF-8"))
+    return hash.digest()
+
 def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     """ digests a file """
     blockSize = 65536

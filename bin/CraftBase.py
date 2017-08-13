@@ -8,6 +8,7 @@ import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftShortPath import CraftShortPath
 from Portage import CraftPackageObject
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
@@ -124,7 +125,7 @@ class CraftBase(object):
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         craftDebug.log.debug("package builddir is: %s" % builddir)
-        return builddir
+        return CraftShortPath(builddir).shortPath
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
