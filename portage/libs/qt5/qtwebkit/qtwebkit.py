@@ -49,6 +49,7 @@ class QtPackage(Qt5CorePackageBase):
             self.subinfo.options.configure.args += """ "QT_CONFIG+=no-pkg-config" """
         if craftCompiler.isMinGW():
             self.subinfo.options.configure.args += """ "QMAKE_CXXFLAGS += -g0 -O3" """
+        self.subinfo.options.configure.args += """ "WEBKIT_CONFIG-=geolocation" """
 
     def fetch(self):
         if os.path.exists(self.sourceDir()):
