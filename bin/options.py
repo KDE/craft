@@ -311,7 +311,7 @@ class Options(object):
             else:
                 if isinstance(currentObject, OptionsDynamic):
                     break
-                craftDebug.log.warning(f"Unsupported option{key}={value}")
+                craftDebug.log.warning(f"Unsupported option: {key}={value}")
                 exit(1)
                 return False
 
