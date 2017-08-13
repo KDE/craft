@@ -10,7 +10,8 @@ from CraftDebug import craftDebug
 
 class CraftShortPath(object):
     _shortpathDir = craftSettings.get("ShortPath", "JunctionDir", os.path.join(CraftStandardDirs.craftRoot(), "build", "shortPath"))
-    _useShortpaths = utils.OsUtils.isWin() and craftSettings.getboolean("ShortPath", "EnableJunctions")
+    _useShortpaths = utils.OsUtils.isWin() and craftSettings.getboolean("ShortPath", "EnableJunctions", False)
+    _useHash = craftSettings.getboolean("ShortPath", "JunctionHash", False)
 
     def __init__(self, path) -> None:
         self.longPath = path
@@ -37,7 +38,10 @@ class CraftShortPath(object):
     def _createShortPath(longPath) -> str:
         if not os.path.isdir(CraftShortPath._shortpathDir):
             os.makedirs(CraftShortPath._shortpathDir)
-        path = os.path.join(CraftShortPath._shortpathDir, str(len(utils.utilsCache._shortPaths)))
+        if CraftShortPath._useHash:
+            path = os.path.join(CraftShortPath._shortpathDir, CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
+        else:
+            path = os.path.join(CraftShortPath._shortpathDir, str(len(utils.utilsCache._shortPaths)))
         if not os.path.isdir(path):
             if not utils.system(["mklink", "/J", path, longPath]):
                 craftDebug.log.critical(f"Could not create shortpath {path}, for {longPath}")
