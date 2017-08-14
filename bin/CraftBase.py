@@ -175,7 +175,8 @@ class CraftBase(object):
 
     @property
     def version(self):
-        if self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
+        if craftSettings.getboolean("PortageVersions", "EnableDailyUpdates", True)\
+                and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
             return str(datetime.date.today()).replace("-", ".")
         return self.subinfo.buildTarget
 
