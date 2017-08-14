@@ -12,11 +12,17 @@ class QMakeBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "qmake")
         self._platform = None
+        self._qtVer = None
+
+    @property
+    def qtVer(self):
+        if not self._qtVer:
+            self._qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").version)
+        return self._qtVer
 
     @property
     def platform(self):
         if not self._platform:
-            self.qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").version)
             if OsUtils.isWin():
                 if craftCompiler.isMSVC():
                     if self.qtVer < CraftVersion("5.8"):
