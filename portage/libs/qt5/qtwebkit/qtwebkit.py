@@ -27,6 +27,9 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["win32libs/sqlite"] = "default"
         self.runtimeDependencies["win32libs/icu"] = "default"
+        self.runtimeDependencies["win32libs/libxslt"] = "default"
+        self.runtimeDependencies["win32libs/libsml2"] = "default"
+        self.runtimeDependencies["win32libs/zlib"] = "default"
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         self.runtimeDependencies["libs/qt5/qtscript"] = "default"
         self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
@@ -43,7 +46,6 @@ from Package.Qt5CorePackageBase import *
 class QtPackage(Qt5CorePackageBase):
     def __init__(self, **args):
         Qt5CorePackageBase.__init__(self)
-        utils.putenv("SQLITE3SRCDIR", CraftStandardDirs.craftRoot())
         self.subinfo.options.configure.args = ""
         if OsUtils.isWin():
             self.subinfo.options.configure.args += """ "QT_CONFIG+=no-pkg-config" """
@@ -57,15 +59,15 @@ class QtPackage(Qt5CorePackageBase):
         return Qt5CorePackageBase.fetch(self)
 
     def configure(self, configureDefines=""):
-        if not len(self.subinfo.buildTarget) == 3:  # 5.9
-            with open(os.path.join(self.sourceDir(), ".qmake.conf"), "rt+") as conf:
-                text = conf.read()
-            text = re.sub(re.compile(r"MODULE_VERSION = \d\.\d+\.\d+"), f"MODULE_VERSION = {self.subinfo.buildTarget}",
-                          text)
-            with open(os.path.join(self.sourceDir(), ".qmake.conf"), "wt+") as conf:
-                conf.write(text)
-        return Qt5CorePackageBase.configure(self)
-
+        with utils.ScopedEnv({"SQLITE3SRCDIR" : CraftPackageObject.get("win32libs/sqlite").instance.sourceDir()}):
+            if not len(self.subinfo.buildTarget) == 3:  # 5.9
+                with open(os.path.join(self.sourceDir(), ".qmake.conf"), "rt+") as conf:
+                    text = conf.read()
+                text = re.sub(re.compile(r"MODULE_VERSION = \d\.\d+\.\d+"), f"MODULE_VERSION = {self.subinfo.buildTarget}",
+                              text)
+                with open(os.path.join(self.sourceDir(), ".qmake.conf"), "wt+") as conf:
+                    conf.write(text)
+            return Qt5CorePackageBase.configure(self)
 
 class Package(Qt5CoreSdkPackageBase):
     def __init__(self):
