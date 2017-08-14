@@ -30,7 +30,7 @@ utilsCache = None
 
 
 class UtilsCache(object):
-    _version = 5
+    _version = 6
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):

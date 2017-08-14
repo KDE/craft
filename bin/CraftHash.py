@@ -41,7 +41,7 @@ class HashAlgorithm(Enum):
 def digestString(string : str, algorithm=HashAlgorithm.SHA256)-> str:
     hash = getattr(hashlib, algorithm.name.lower())()
     hash.update(bytes(string, "UTF-8"))
-    return hash.digest()
+    return hash.hexdigest()
 
 def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     """ digests a file """
