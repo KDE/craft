@@ -14,15 +14,15 @@ import argparse
 import collections
 
 import CraftSetupHelper
-import CraftTimer
 import InstallDB
 import portageSearch
 import utils
 from CraftConfig import *
-from CraftTitleUpdater import CraftTitleUpdater
-from CraftVersion import CraftVersion
 from Portage.CraftDependencyPackage import CraftDependencyPackage
 from Portage.CraftPackageObject import *
+from Portage.CraftVersion import CraftVersion
+from Utils import CraftTimer
+from Utils.CraftTitleUpdater import CraftTitleUpdater
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()

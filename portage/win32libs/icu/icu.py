@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             ver2 = ver.replace(".", "_")
             self.targets[ver] = f"http://download.icu-project.org/files/icu4c/{ver}/icu4c-{ver2}-src.tgz"
             self.targetDigestUrls[ver] = (
-            [f"https://ssl.icu-project.org/files/icu4c/{ver}/icu4c-src-{ver2}.md5"], CraftHash.HashAlgorithm.MD5)
+                [f"https://ssl.icu-project.org/files/icu4c/{ver}/icu4c-src-{ver2}.md5"], CraftHash.HashAlgorithm.MD5)
             self.targetInstSrc[ver] = os.path.join("icu", "source")
         if craftCompiler.isMSVC2015() or craftCompiler.isMinGW():
             self.patchToApply["55.1"] = ("icu-20150414.diff", 2)

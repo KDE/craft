@@ -1,8 +1,8 @@
-import CraftTimer
 import InstallDB
 import utils
-from CraftVersion import CraftVersion
 from Portage.CraftPackageObject import *
+from Portage.CraftVersion import CraftVersion
+from Utils import CraftTimer
 
 
 class SeachPackage(object):

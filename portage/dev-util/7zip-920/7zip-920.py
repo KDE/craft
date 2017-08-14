@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.targets["920"] = "http://www.7-zip.org/a/7za920.zip"
         self.targetInstallPath["920"] = os.path.join("dev-utils", "bin")
         self.targetDigests["920"] = (
-        ['2a3afe19c180f8373fa02ff00254d5394fec0349f5804e0ad2f6067854ff28ac'], CraftHash.HashAlgorithm.SHA256)
+            ['2a3afe19c180f8373fa02ff00254d5394fec0349f5804e0ad2f6067854ff28ac'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"

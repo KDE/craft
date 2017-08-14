@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"KDReports-kdreports-{ver}"
             self.archiveNames[ver] = f"kdreports-{ver}.tar.gz"
         self.targetDigests["1.7.1"] = (
-        ["d75f4bf3399bea51837b7a931be8640823168ba19d6dfd346db3e2270a26ca23"], CraftHash.HashAlgorithm.SHA256)
+            ["d75f4bf3399bea51837b7a931be8640823168ba19d6dfd346db3e2270a26ca23"], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.7.1"
 

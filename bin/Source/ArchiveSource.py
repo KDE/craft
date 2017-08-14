@@ -4,8 +4,8 @@
 
 import shutil
 
-import CraftHash
 from Source.SourceBase import *
+from Utils import CraftHash
 
 
 class ArchiveSource(SourceBase):

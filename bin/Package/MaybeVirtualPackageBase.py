@@ -1,5 +1,5 @@
-from CraftVersion import CraftVersion
 from Package.VirtualPackageBase import *
+from Portage.CraftVersion import CraftVersion
 
 
 class MaybeVirtualPackageBase(object):

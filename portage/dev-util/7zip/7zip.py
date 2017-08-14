@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targets[ver + patchLvl] = f"http://www.7-zip.org/a/7z{ver}-extra.7z"
             self.targetInstallPath[ver + patchLvl] = os.path.join("dev-utils", "bin")
         self.targetDigests['1604.1'] = (
-        ['59f41025acc40cf2e0b30b5cc6e4bcb1e07573201e256fbe8edb3c9c514dd251'], CraftHash.HashAlgorithm.SHA256)
+            ['59f41025acc40cf2e0b30b5cc6e4bcb1e07573201e256fbe8edb3c9c514dd251'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"

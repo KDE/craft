@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f'uncrustify-uncrustify-{ver}'
             self.targetInstallPath[ver] = 'dev-utils/uncrustify'
         self.targetDigests['0.64'] = (
-        ['2a8cb3ab82ca53202d50fc2c2cec0edd11caa584def58d356c1c759b57db0b32'], CraftHash.HashAlgorithm.SHA256)
+            ['2a8cb3ab82ca53202d50fc2c2cec0edd11caa584def58d356c1c759b57db0b32'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "Source Code Beautifier for C, C++, C#, ObjectiveC, D, Java, Pawn and VALA"
         self.webpage = "http://uncrustify.sourceforge.net/"

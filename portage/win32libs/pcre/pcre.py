@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"pcre-{ver}"
         self.patchToApply["8.41"] = [("pcre-8.10-20101125.diff", 1)]
         self.targetDigests['8.41'] = (
-        ['e62c7eac5ae7c0e7286db61ff82912e1c0b7a0c13706616e94a7dd729321b530'], CraftHash.HashAlgorithm.SHA256)
+            ['e62c7eac5ae7c0e7286db61ff82912e1c0b7a0c13706616e94a7dd729321b530'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "Perl-Compatible Regular Expressions"
         self.defaultTarget = "8.41"

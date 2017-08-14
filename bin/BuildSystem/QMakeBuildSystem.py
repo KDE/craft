@@ -4,8 +4,8 @@
 # definitions for the qmake build system
 
 from BuildSystem.BuildSystemBase import *
-from CraftVersion import CraftVersion
 from Portage.CraftPackageObject import *
+from Portage.CraftVersion import CraftVersion
 
 
 class QMakeBuildSystem(BuildSystemBase):

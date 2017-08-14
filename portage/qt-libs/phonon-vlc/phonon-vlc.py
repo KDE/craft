@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = "phonon-vlc-%s" % ver
 
         self.targetDigests['0.9.0'] = (
-        ['c0ced7ca571acc22211eecf5158241714fa9ccdb82d4fe0a970ad702860ccdbe'], CraftHash.HashAlgorithm.SHA256)
+            ['c0ced7ca571acc22211eecf5158241714fa9ccdb82d4fe0a970ad702860ccdbe'], CraftHash.HashAlgorithm.SHA256)
 
         self.svnTargets['master'] = '[git]kde:phonon-vlc'
 

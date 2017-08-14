@@ -6,11 +6,9 @@
 # by methods to be able to separate the access from
 # the definition
 
-import datetime
-
-import CraftHash
 import VersionInfo
 from CraftCompiler import craftCompiler
+from Utils import CraftHash
 from options import *
 
 

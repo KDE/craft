@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import info
-from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
 
@@ -12,7 +11,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://github.com/KDAB/KDSoap/releases/download/kdsoap-{ver}/kdsoap-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kdsoap-{ver}"
         self.targetDigests['1.6.0'] = (
-        ['d6b6b01348d2e1453f7e12724d1848ee41c86a1b19168ca67ac98fedb0408668'], CraftHash.HashAlgorithm.SHA256)
+            ['d6b6b01348d2e1453f7e12724d1848ee41c86a1b19168ca67ac98fedb0408668'], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.6.0"
         self.description = "A Qt-based client-side and server-side SOAP component"

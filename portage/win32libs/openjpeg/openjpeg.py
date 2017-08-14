@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.archiveNames[ver] = f"openjpeg-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openjpeg-{ver}"
         self.targetDigests['2.1.2'] = (
-        ['4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7'], CraftHash.HashAlgorithm.SHA256)
+            ['4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "OpenJPEG is an open-source JPEG 2000 codec written in C language."
         self.webpage = "http://www.openjpeg.org/"

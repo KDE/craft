@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
 
         self.targetDigests['3.8.1.0'] = '75a1ab154e796d2d1b391a2c7078679e15512bda'
         self.targetDigests['3.15.0'] = (
-        ['356109b55f76a9851f9bb90e8e3d722da222e26f657f76a471fdf4d7983964b9'], CraftHash.HashAlgorithm.SHA256)
+            ['356109b55f76a9851f9bb90e8e3d722da222e26f657f76a471fdf4d7983964b9'], CraftHash.HashAlgorithm.SHA256)
 
         self.patchToApply['3.8.1.0'] = [("sqlite_cmake_and_wince_20130124.diff", 1)]
         self.patchToApply['3.15.0'] = [("sqlite-amalgamation-3150000-20161021.diff", 1)]

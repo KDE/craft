@@ -8,7 +8,6 @@ import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
-from CraftShortPath import CraftShortPath
 from Portage import CraftPackageObject
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
@@ -17,6 +16,7 @@ from Portage import CraftPackageObject
 # marked in both databases or should have a separate install database
 # question: How to detect reliable this case ?
 from Portage.CraftPackageObject import CraftPackageObject
+from Utils.CraftShortPath import CraftShortPath
 
 
 class InitGuard(object):

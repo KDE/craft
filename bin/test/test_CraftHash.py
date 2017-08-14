@@ -1,13 +1,11 @@
-import contextlib
 import io
 import os
 import random
 import tempfile
 
 import CraftTestBase
-
-import CraftHash
 from CraftDebug import craftDebug
+from Utils import CraftHash
 
 
 class CraftHashTest(CraftTestBase.CraftTestBase):

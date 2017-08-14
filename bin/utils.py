@@ -24,7 +24,7 @@ from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
 # TODO: Rename
-from CraftVersion import CraftVersion
+from Portage.CraftVersion import CraftVersion
 
 utilsCache = None
 

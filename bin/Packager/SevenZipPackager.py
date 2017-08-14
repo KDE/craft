@@ -9,13 +9,13 @@
 
 import json
 
+from Packager.PackagerBase import *
 # TODO:
 # - password support
 # - self extraction archives
 #
 #
-import CraftHash
-from Packager.PackagerBase import *
+from Utils import CraftHash
 
 
 class SevenZipPackager(PackagerBase):

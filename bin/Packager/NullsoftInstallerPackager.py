@@ -8,7 +8,7 @@ import os
 if os.name == 'nt':
     from winreg import *  # pylint: disable=F0401
 
-import CraftHash
+from Utils import CraftHash
 from Packager.CollectionPackagerBase import *
 
 

@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"qtbinpatcher-{ver}"
             self.targetInstallPath[ver] = "dev-utils"
         self.targetDigests["2.2.0"] = (
-        ["7196199cd59777bf78ee0e3f77baa3c44e02e69dded192d6f0e59cf9b7bbd18e"], CraftHash.HashAlgorithm.SHA256)
+            ["7196199cd59777bf78ee0e3f77baa3c44e02e69dded192d6f0e59cf9b7bbd18e"], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "2.2.0"
 

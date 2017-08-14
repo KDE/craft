@@ -1,10 +1,3 @@
-import os
-
-from CraftDebug import craftDebug
-import CraftHash
-import utils
-import shutil
-import glob
 from Packager.CollectionPackagerBase import *
 
 class CreateArchivePackager(CollectionPackagerBase):

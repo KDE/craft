@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = 'SnoreGrowl-%s' % ver
         self.targetDigests['0.4.0'] = '16b84d2fb673438c8250cefd95f7e4c145e4cf22'
         self.targetDigests['0.5.0'] = (
-        ['5180628ce1c732abfc1001db48302b0d63534a3d62dc50a4655e0b4675a918be'], CraftHash.HashAlgorithm.SHA256)
+            ['5180628ce1c732abfc1001db48302b0d63534a3d62dc50a4655e0b4675a918be'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "SnoreGrowl is a library providing Growl network notifications"
         self.webpage = "https://github.com/Snorenotify/SnoreGrowl"

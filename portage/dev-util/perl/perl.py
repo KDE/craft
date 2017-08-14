@@ -1,5 +1,4 @@
 import info
-from Package.MaybeVirtualPackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -15,8 +14,8 @@ class subinfo(info.infoclass):
             ver=ver, arch=arch, build=build)
         self.targetInstallPath[ver] = "dev-utils"
         self.targetDigestUrls[ver] = (
-        ["http://downloads.activestate.com/ActivePerl/releases/{0}/SHA256SUM".format(ver)],
-        CraftHash.HashAlgorithm.SHA256)
+            ["http://downloads.activestate.com/ActivePerl/releases/{0}/SHA256SUM".format(ver)],
+            CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = ver
 
     def setDependencies(self):

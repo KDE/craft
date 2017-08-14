@@ -1,11 +1,9 @@
-from typing import Dict
-
 import os
 
-import CraftHash
 import utils
 from CraftConfig import craftSettings, CraftStandardDirs
 from CraftDebug import craftDebug
+from Utils import CraftHash
 
 
 class CraftShortPath(object):

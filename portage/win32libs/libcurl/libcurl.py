@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.targetDigests['7.32.0'] = 'f6989fca0dac0c35628523436fc17869972d4251'
         self.targetDigests['7.46.0'] = '96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96'
         self.targetDigests['7.54.0'] = (
-        ['f50ebaf43c507fa7cc32be4b8108fa8bbd0f5022e90794388f3c7694a302ff06'], CraftHash.HashAlgorithm.SHA256)
+            ['f50ebaf43c507fa7cc32be4b8108fa8bbd0f5022e90794388f3c7694a302ff06'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "a free and easy-to-use client-side URL transfer library"
         self.defaultTarget = '7.54.0'

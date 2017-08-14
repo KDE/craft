@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.targetInstSrc["2.0.4"] = "AStyle"
         self.targetInstallPath["2.0.4"] = "dev-utils"
         self.targetDigests['2.0.4'] = (
-        ['55af23dc101154f9645c10e3352142b6e8bc4992ec82953677f6a03f4a7e10be'], CraftHash.HashAlgorithm.SHA256)
+            ['55af23dc101154f9645c10e3352142b6e8bc4992ec82953677f6a03f4a7e10be'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = '2.0.4'
 
 

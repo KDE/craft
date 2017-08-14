@@ -7,8 +7,8 @@ class subinfo(info.infoclass):
         self.targets["1.4.4"] = "http://download.qt.io/official_releases/qbs/1.4.4/qbs-src-1.4.4.tar.gz"
         self.targetInstSrc["1.4.4"] = "qbs-src-1.4.4"
         self.targetDigestUrls["1.4.4"] = (
-        ["http://download.qt.io/official_releases/qbs/1.4.4/qbs-src-1.4.4.tar.gz.sha256"],
-        CraftHash.HashAlgorithm.SHA256)
+            ["http://download.qt.io/official_releases/qbs/1.4.4/qbs-src-1.4.4.tar.gz.sha256"],
+            CraftHash.HashAlgorithm.SHA256)
 
         self.svnTargets["master"] = "git://code.qt.io/qt-labs/qbs.git"
         self.defaultTarget = "1.4.4"
