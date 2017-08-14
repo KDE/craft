@@ -38,6 +38,12 @@ class SetupHelper(object):
     def __init__(self, args=None):
         self.args = args
 
+    def _getOutput(self, command):
+        craftDebug.log.debug(f"SetupHelper._getOutput: {command}")
+        status, output = subprocess.getstatusoutput(command)
+        craftDebug.log.debug(f"SetupHelper._getOutput: return {status} {output}")
+        return status, output
+
     def run(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--subst", action="store_true")
@@ -88,12 +94,13 @@ class SetupHelper(object):
                     del path[location]
                     self.addEnvVar("Path", os.path.pathsep.join(path))
 
-    def subst(self, ):
+    def subst(self):
+        if not OsUtils.isWin():
+            return
         def _subst(path, drive):
             if not os.path.exists(path):
                 os.makedirs(path)
-            command = "subst %s %s" % (craftSettings.get("ShortPath", drive), path)
-            craftDebug.log.debug(subprocess.getoutput(command))
+            self._getOutput("subst {drive} {path}".format(drive=craftSettings.get("ShortPath", drive),path=path))
 
         if craftSettings.getboolean("ShortPath", "Enabled", False):
             with TemporaryUseShortpath(False):
