@@ -29,7 +29,7 @@ class Timer(object):
             return f"{time} {string}{s}"
         out = []
         if hours:
-            out.append(format(hours, "hours"))
+            out.append(format(hours, "hour"))
         if minutes:
             out.append(format(minutes, "minute"))
         out.append(format(seconds, "second"))
