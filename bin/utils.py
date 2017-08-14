@@ -44,7 +44,6 @@ class UtilsCache(object):
         # defined in portageSearch
         self.availablePackages = None
         self._jsonCache = {}
-        self._shortPaths = {}
 
     @staticmethod
     def globalInstance():
