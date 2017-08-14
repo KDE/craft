@@ -9,7 +9,6 @@ from CraftDebug import craftDebug
 
 
 class CraftShortPath(object):
-    _shortpathDir = craftSettings.get("ShortPath", "JunctionDir", os.path.join(CraftStandardDirs.craftRoot(), "build", "shortPath"))
     _useShortpaths = utils.OsUtils.isWin() and craftSettings.getboolean("ShortPath", "EnableJunctions", False)
     _useHash = craftSettings.getboolean("ShortPath", "JunctionHash", False)
 
@@ -30,18 +29,19 @@ class CraftShortPath(object):
                 self._shortPath = CraftShortPath._createShortPath(self.longPath)
                 utils.utilsCache._shortPaths[self.longPath] = self._shortPath
         craftDebug.log.info(f"Mapped \n"
-                            f"{self.longPath} to \n"
+                            f"{self.longPath} to\n"
                             f"{self._shortPath}, gained {len(self.longPath) - len(self._shortPath)}")
         return self._shortPath
 
     @staticmethod
     def _createShortPath(longPath) -> str:
-        if not os.path.isdir(CraftShortPath._shortpathDir):
-            os.makedirs(CraftShortPath._shortpathDir)
+        if not os.path.isdir(CraftStandardDirs.junctionsDir()):
+            os.makedirs(CraftStandardDirs.junctionsDir())
         if CraftShortPath._useHash:
-            path = os.path.join(CraftShortPath._shortpathDir, CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
+            print(CraftStandardDirs.junctionsDir(), CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
+            path = os.path.join(CraftStandardDirs.junctionsDir(), CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
         else:
-            path = os.path.join(CraftShortPath._shortpathDir, str(len(utils.utilsCache._shortPaths)))
+            path = os.path.join(CraftStandardDirs.junctionsDir(), str(len(utils.utilsCache._shortPaths)))
         if not os.path.isdir(path):
             if not utils.system(["mklink", "/J", path, longPath]):
                 craftDebug.log.critical(f"Could not create shortpath {path}, for {longPath}")
@@ -55,11 +55,11 @@ class CraftShortPath(object):
 
     @staticmethod
     def _clear():
-        if not os.path.isdir(CraftShortPath._shortpathDir):
-            os.makedirs(CraftShortPath._shortpathDir)
+        if not os.path.isdir(CraftStandardDirs.junctionsDir()):
+            os.makedirs(CraftStandardDirs.junctionsDir())
             return
         craftDebug.log.info(f"Clear PathCache {utils.utilsCache._shortPaths}")
-        for f in os.listdir(CraftShortPath._shortpathDir):
-            os.remove(os.path.join(CraftShortPath._shortpathDir, f))
+        for f in os.listdir(CraftStandardDirs.junctionsDir()):
+            os.remove(os.path.join(CraftStandardDirs.junctionsDir(), f))
         utils.utilsCache._shortPaths = {} # type: Dict[str, str]
 

@@ -111,6 +111,11 @@ class SetupHelper(object):
                 if ("ShortPath", "GitDrive") in craftSettings:
                     _subst(CraftStandardDirs.gitDir(), "GitDrive")
 
+        if craftSettings.getboolean("ShortPath", "EnableJunctions", False):
+            with TemporaryUseShortpath(False):
+                if ("ShortPath", "JunctionDrive") in craftSettings:
+                    _subst(CraftStandardDirs.junctionsDir(getDir=True), "JunctionsDrive")
+
     def printBanner(self):
         def printRow(name, value):
             log(f"{name:20}: {value}")

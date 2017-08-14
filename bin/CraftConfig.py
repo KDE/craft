@@ -142,6 +142,22 @@ class CraftStandardDirs(object):
             return craftSettings.get("Paths", "Msys")
         return os.path.join(CraftStandardDirs.craftRoot(), "msys")
 
+    @staticmethod
+    def junctionsDir(getDir=False):
+        if "JunctionDir" not in CraftStandardDirs._pathCache():
+            if not getDir and ("ShortPath", "JunctionDrive") in craftSettings:
+                CraftStandardDirs._pathCache()["JunctionDir"] = CraftStandardDirs.nomalizePath(
+                    craftSettings.get("ShortPath", "JunctionDrive"))
+            else:
+                path = craftSettings.get("ShortPath", "JunctionDir",
+                                     os.path.join(CraftStandardDirs.craftRoot(), "build", "shortPath"))
+                if not os.path.isdir(path):
+                    os.makedirs(path)
+                CraftStandardDirs._pathCache()["JunctionDir"] = path
+                if getDir:
+                    return path
+        return CraftStandardDirs.__pathCache["JunctionDir"]
+
 
 class CraftConfig(object):
     variablePatern = re.compile("\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
