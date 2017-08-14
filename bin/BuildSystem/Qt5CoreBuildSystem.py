@@ -14,7 +14,8 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
         """implements the make step for Qt projects"""
         imageDir = self.imageDir()
         if craftSettings.getboolean("QtSDK", "Enabled", False):
-            imageDir = imageDir[2:]
+            if os.path.splitdrive(imageDir)[0] == os.path.splitdrive(self.buildDir())[0]:
+                imageDir = imageDir[2:]
         options += f" INSTALL_ROOT={imageDir} install"
         if not QMakeBuildSystem.install(self, options):
             return False
