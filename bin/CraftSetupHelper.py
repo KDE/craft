@@ -114,7 +114,7 @@ class SetupHelper(object):
         if craftSettings.getboolean("ShortPath", "EnableJunctions", False):
             with TemporaryUseShortpath(False):
                 if ("ShortPath", "JunctionDrive") in craftSettings:
-                    _subst(CraftStandardDirs.junctionsDir(getDir=True), "JunctionsDrive")
+                    _subst(CraftStandardDirs.junctionsDir(getDir=True), "JunctionDrive")
 
     def printBanner(self):
         def printRow(name, value):
