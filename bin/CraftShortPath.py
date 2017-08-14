@@ -55,8 +55,7 @@ class CraftShortPath(object):
 
     @staticmethod
     def _clear():
-        if not os.path.isdir(CraftStandardDirs.junctionsDir()):
-            os.makedirs(CraftStandardDirs.junctionsDir())
+        if CraftShortPath._useHash:
             return
         craftDebug.log.info(f"Clear PathCache {utils.utilsCache._shortPaths}")
         for f in os.listdir(CraftStandardDirs.junctionsDir()):
