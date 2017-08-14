@@ -25,9 +25,6 @@ class QtPackage(Qt5CorePackageBase):
         # sources on different partitions other than the one of the build dir
         # fails. some submodules fail even with the common shadow build...
         self.subinfo.options.useShadowBuild = False
-        if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.10"):
-            craftDebug.log.warning("Please try to build QtWebengine useShadowBuild enabled")
-            exit()
 
     def fetch(self):
         if isinstance(self.source, GitSource):
