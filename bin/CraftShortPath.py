@@ -38,11 +38,12 @@ class CraftShortPath(object):
         if not os.path.isdir(CraftStandardDirs.junctionsDir()):
             os.makedirs(CraftStandardDirs.junctionsDir())
         if CraftShortPath._useHash:
-            print(CraftStandardDirs.junctionsDir(), CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
             path = os.path.join(CraftStandardDirs.junctionsDir(), CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
         else:
             path = os.path.join(CraftStandardDirs.junctionsDir(), str(len(utils.utilsCache._shortPaths)))
-        if not os.path.isdir(path):
+        if not os.path.exists(path):
+            if not os.path.isdir(path):
+                os.makedirs(path)
             if not utils.system(["mklink", "/J", path, longPath]):
                 craftDebug.log.critical(f"Could not create shortpath {path}, for {longPath}")
                 return longPath
