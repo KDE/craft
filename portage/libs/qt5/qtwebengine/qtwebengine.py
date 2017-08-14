@@ -25,6 +25,7 @@ class QtPackage(Qt5CorePackageBase):
         # sources on different partitions other than the one of the build dir
         # fails. some submodules fail even with the common shadow build...
         self.subinfo.options.useShadowBuild = False
+        self.subinfo.options.needsShortPath = True
 
     def fetch(self):
         if isinstance(self.source, GitSource):

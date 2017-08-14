@@ -261,6 +261,9 @@ class Options(object):
         ## add the date to the target
         self.dailyUpdate = False
 
+        ## has an issue with a too long path
+        self.needsShortPath = False
+
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
         # \code

@@ -57,7 +57,7 @@ class MultiSource(SourceBase):
 
     def sourceDir(self):
         craftDebug.trace("MultiSource sourceDir")
-        return CraftShortPath(self.source.sourceDir(self)).shortPath
+        return CraftShortPath(self.source.sourceDir(self)).conditionalShortPath(self.subinfo.options.needsShortPath)
 
     def repositoryUrl(self, index=0):
         craftDebug.trace("MultiSource repositoryUrl")

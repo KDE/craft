@@ -15,6 +15,9 @@ class CraftShortPath(object):
         self._shortPath = None
 
 
+    def conditionalShortPath(self, condition):
+        return self.shortPath if condition else self.longPath
+
     @property
     def shortPath(self) -> str:
         if not CraftShortPath._useShortpaths:
