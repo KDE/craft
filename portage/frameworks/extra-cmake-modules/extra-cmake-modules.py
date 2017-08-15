@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/png2ico"] = "default"
         # needed for many kf5's
         self.buildDependencies["dev-util/winflexbison"] = "default"
+        self.buildDependencies["libs/qt5/qttools"] = "default"
 
 
 from Package.CMakePackageBase import *
