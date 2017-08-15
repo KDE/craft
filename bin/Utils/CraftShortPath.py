@@ -4,6 +4,7 @@ import utils
 from CraftConfig import craftSettings, CraftStandardDirs
 from CraftDebug import craftDebug
 from Utils import CraftHash
+import zlib
 
 
 class CraftShortPath(object):
@@ -36,7 +37,7 @@ class CraftShortPath(object):
     def _createShortPath(longPath) -> str:
         if not os.path.isdir(CraftStandardDirs.junctionsDir()):
             os.makedirs(CraftStandardDirs.junctionsDir())
-        path = os.path.join(CraftStandardDirs.junctionsDir(), CraftHash.digestString(longPath, CraftHash.HashAlgorithm.MD5))
+        path = os.path.join(CraftStandardDirs.junctionsDir(), str(zlib.crc32(bytes(longPath, "UTF-8"))))
         if len(longPath) < len(path):
             craftDebug.log.info(f"Using junctions for {longPath} wouldn't save characters returning original path")
             return longPath
