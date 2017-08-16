@@ -45,11 +45,12 @@ class Package(CMakePackageBase):
             buildType = "debug"
         else:
             buildType = "release"
-        ## TODO: prevend calling deploy on deployed files...
-        for pattern in ["**/*.dll", "**/*.exe"]:
-            for f in glob.glob(os.path.join(self.archiveDir(), pattern), recursive=True):
-                self.system(
-                    f"windeployqt --{buildType} --compiler-runtime --dir \"{self.archiveDir()}/bin\" --qmldir \"{self.sourceDir()}\" \"{f}\"")
+        files = []
+        pattern = re.compile(r".*\.(dll|exe)")
+        for p in installdb.getInstalledPackages(self.package):
+            files.extend([f[0] for f in p.getFiles() if pattern.match(f[0])])
+        for f in files:
+            self.system(f"windeployqt --{buildType} --dir \"{self.archiveDir()}/bin\" --qmldir \"{self.sourceDir()}\" \"{f}\"")
         return True
 
     def createPackage(self):
