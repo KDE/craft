@@ -2,7 +2,6 @@ import glob
 
 import info
 
-
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "[git]https://github.com/KDAB/GammaRay.git"
@@ -67,5 +66,5 @@ class Package(CMakePackageBase):
         self.ignoredPackages.append("win32libs/icu")
         self.ignoredPackages.append("win32libs/dbus")
         # we are using windeploy
-        self.ignoredPackages.append("libs/qtbase")
+        self.ignoredPackages.extend(CraftPackageObject.get("libs/qt5").children.values())
         return TypePackager.createPackage(self)
