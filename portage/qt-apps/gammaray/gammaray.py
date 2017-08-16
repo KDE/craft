@@ -1,3 +1,5 @@
+import glob
+
 import info
 
 
@@ -42,15 +44,15 @@ class Package(CMakePackageBase):
 
     def preArchive(self):
         if self.buildType() == "Debug":
-            buildType = "debug"
+            buildType = "--debug"
         else:
-            buildType = "release"
+            buildType = "--release"
         files = []
-        pattern = re.compile(r".*\.(dll|exe)")
-        for p in installdb.getInstalledPackages(self.package):
-            files.extend([f[0] for f in p.getFiles() if pattern.match(f[0])])
+        for pattern in ["**/*.dll", "**/*.exe"]:
+            files.extend(glob.glob(os.path.join(self.imageDir(), pattern), recursive=True))
         for f in files:
-            self.system(f"windeployqt --{buildType} --dir \"{self.archiveDir()}/bin\" --qmldir \"{self.sourceDir()}\" \"{f}\"")
+            self.system(["windeployqt" , buildType, "--dir", os.path.join(self.archiveDir(), "bin"),
+                         "--qmldir", self.sourceDir(), f])
         return True
 
     def createPackage(self):
