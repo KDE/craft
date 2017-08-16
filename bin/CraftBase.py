@@ -215,20 +215,20 @@ class CraftBase(object):
     def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False) -> str:
         if not pkgSuffix:
-            pkgSuffix = ''
+            pkgSuffix = ""
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
-        if self.subinfo.hasSvnTarget():
-            if includeRevision:
-                version = self.sourceRevision()
-            else:
-                if craftSettings.get("ContinuousIntegration", "SourceDir", "") and "APPVEYOR_BUILD_VERSION" in os.environ:
-                    version = os.environ["APPVEYOR_BUILD_VERSION"]
+        if craftSettings.get("ContinuousIntegration", "SourceDir", "") and "APPVEYOR_BUILD_VERSION" in os.environ:
+            version = os.environ["APPVEYOR_BUILD_VERSION"]
+        else:
+            if self.subinfo.hasSvnTarget():
+                if includeRevision:
+                    version = self.sourceRevision()
                 else:
                     version = "latest"
-        else:
-            version = self.getPackageVersion()[0]
+            else:
+                version = self.getPackageVersion()[0]
         if fileType:
             fileType = f".{fileType}"
         else:
