@@ -72,7 +72,7 @@ class CraftBase(object):
 
     @property
     def buildTests(self):
-        return craftSettings.getboolean("Compile", "BuildTests")
+        return craftSettings.getboolean("Compile", "BuildTests", True)
 
     def buildType(self):
         """return currently selected build type"""
