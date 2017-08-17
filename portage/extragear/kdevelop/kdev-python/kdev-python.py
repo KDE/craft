@@ -19,3 +19,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
+
+        pythonExe = os.getenv('KDEV_PYTHON_PYTHON_EXECUTABLE', '')
+        if pythonExe:
+            self.subinfo.options.configure.args = f" -DPYTHON_EXECUTABLE=\"{pythonExe}\""
