@@ -396,7 +396,7 @@ def main():
                     return False
 
                 if child.isCategory():
-                    package.children = child.children
+                    package.children.update(child.children)
                 else:
                     if tempArgs.target:
                         craftSettings.set("PortageVersions", child.path, args.target)
