@@ -362,31 +362,31 @@ def unpackFile(downloaddir, filename, workdir):
 
 def un7zip(fileName, destdir, flag=None):
     kw = {}
-    progressFlags = ""
-    type = ""
+    progressFlags = []
+    type = []
     resolveSymlinks = False
     app = utilsCache.findApplication("7za")
     if utilsCache.checkCommandOutputFor(app, "-bs"):
-        progressFlags = " -bso2 -bsp1"
+        progressFlags = ["-bso2",  "-bsp1"]
         kw["stderr"] = subprocess.PIPE
 
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
-        type = "-t7z"
+        type = ["-t7z"]
     if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
-        type = "-ttar"
-        command = f"\"{app}\" x \"{fileName}\" -so |"
+        type = ["-ttar"]
+        command = [app, "x", fileName, "-so", "|"]
         if OsUtils.isWin():
             resolveSymlinks = True
-            command += f"\"{app}\" x -si -o\"{destdir}\" {type} {progressFlags}"
+            command += [app, "x", "-si", f"-o{destdir}"]+ type + progressFlags
         else:
             tar = utilsCache.findApplication("tar")
-            command += f"\"{tar}\" --directory=\"{destdir}\" -xvf -"
+            command += [tar, "--directory", destdir, "-xvf", "-"]
             kw = {}
     else:
-        command = f"\"{app}\" x -r -y -o\"{destdir}\" \"{fileName}\" {type} {progressFlags}"
+        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
