@@ -497,12 +497,10 @@ def getVCSType(url):
         return ""
     if isGitUrl(url):
         return "git"
-    elif url.find("://") == -1:
+    elif isSvnUrl(url):
         return "svn"
     elif url.startswith("[hg]"):
         return "hg"
-    elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
-        return "svn"
     ## \todo complete more cvs access schemes
     elif url.find("pserver:") >= 0:
         return "cvs"
@@ -524,6 +522,15 @@ def isGitUrl(Url):
         return True
     return False
 
+def isSvnUrl(url):
+    """ this function returns true, if the Url given as parameter is a svn url """
+    if url.startswith("[svn]"):
+        return True
+    elif url.find("://") == -1:
+        return True
+    elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
+        return True
+    return False
 
 def splitVCSUrl(Url):
     """ this function splits up an url provided by Url into the server name, the path, a branch or tag;

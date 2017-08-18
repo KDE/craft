@@ -21,13 +21,14 @@ class SvnSource(VersionSystemSourceBase):
         craftDebug.trace("SvnSource.checkoutDir")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
-            (url, dummy) = self.splitUrl(u)
+            (url, _) = self.splitUrl(u)
+            url = url.replace("[svn]", "")
 
             if url.find("://") == -1:
                 sourcedir = os.path.join(CraftStandardDirs.svnDir(), url)
             else:
                 sourcedir = os.path.join(CraftStandardDirs.downloadDir(), "svn-src")
-                sourcedir = os.path.join(sourcedir, self.package)
+                sourcedir = os.path.join(sourcedir, self.package.path)
                 _, path = self.__splitPath(url)
                 if path and craftSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
                     sourcedir = os.path.join(sourcedir, path)

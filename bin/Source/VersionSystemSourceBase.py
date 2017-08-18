@@ -71,13 +71,15 @@ class VersionSystemSourceBase(SourceBase):
         craftDebug.trace("VersionSystemSourceBase repositoryUrl")
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
-            (u, dummy) = self.splitUrl(u1)
+            (u, _) = self.splitUrl(u1)
             # check relative kde url
             # @todo this is svn specific - move to SvnSource
             if u.find("://") == -1 and utils.getVCSType(u) == "svn":
                 url = self.__repositoryBaseUrl() + u
             else:
                 url = u
+            if url.startswith("["):
+                url = url[url.find("]", 1) + 1:]
             return url
         else:
             return False
