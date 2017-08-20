@@ -24,12 +24,13 @@ class subinfo( info.infoclass ):
 from Package.CMakePackageBase import *
 
 class Package( CMakePackageBase ):
-    def __init__(self):
-        CMakePackageBase.__init__(self)
+    def init( self):
+        CMakePackageBase.init( self )
         self.blacklist_file = [
-            PackagerLists.runtimeBlacklist,
+            NSIPackagerLists.runtimeBlacklist,
             os.path.join(self.packageDir(), 'blacklist.txt')
         ]
+        self.changePackager( NullsoftInstallerPackager )
 
     def createPackage(self):
         self.defines[ "productname" ] = "Atelier"
