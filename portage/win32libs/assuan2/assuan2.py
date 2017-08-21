@@ -3,12 +3,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        arch = "32"
-        if craftCompiler.isX64():
-            arch = "64"
         for ver in ["2.4.3"]:
-            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/assuan2-src-{ver}-windows-mingw_{arch}-gcc.7z"
-            # self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/assuan2-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{craftCompiler.bits}/gcc/Release/assuan2-src-{ver}-windows-mingw_{craftCompiler.bits}-gcc.7z"
+            self.targetDigestUrls[ver] = f"{self.targets[ver]}.sha256"
 
         self.shortDescription = "An IPC library used by some of the other GnuPG related packages"
         self.defaultTarget = "2.4.3"

@@ -3,12 +3,9 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        arch = "32"
-        if craftCompiler.isX64():
-            arch = "64"
         for ver in ["1.7.8"]:
-            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{arch}/gcc/Release/gcrypt-src-{ver}-windows-mingw_{arch}-gcc.7z"
-            # self.targetDigestUrls[ ver ] = f"http://files.kde.org/craft/3rdparty/gpgme/gcrypt-src-{compiler.architecture()}-{ver}-mingw-w64.7z.sha256"
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/gpgme/mingw_{craftCompiler.bits}/gcc/Release/gcrypt-src-{ver}-windows-mingw_{craftCompiler.bits}-gcc.7z"
+            self.targetDigestUrls[ver] = f"{self.targets[ver]}.sha256"
 
         self.shortDescription = " General purpose crypto library based on the code used in GnuPG."
         self.defaultTarget = '1.7.8'
