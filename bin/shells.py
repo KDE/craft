@@ -14,9 +14,9 @@ class MSysShell(object):
     def __init__(self):
         self.msysdir = os.path.join(CraftStandardDirs.msysDir())
         self.environment = {}
-        self._sh = os.path.join(self.msysdir, "bin", "sh.exe")
+        self._sh = os.path.join(self.msysdir, "bin", "bash")
         if not os.path.exists(self._sh):
-            self._sh = os.path.join(self.msysdir, "usr", "bin", "bash.exe")
+            self._sh = os.path.join(self.msysdir, "usr", "bin", "bash")
 
         mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
         if craftCompiler.isMSVC():
