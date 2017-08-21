@@ -96,7 +96,7 @@ Write-Host "Start to boostrap Craft."
 function promptInstallRoot()
 {
     Write-Host "Where to you want us to install Craft"
-    $Script:installRoot="C:\KDE\"
+    $Script:installRoot="C:\CraftRoot\"
     $Script:installRoot = if (($result = Read-Host "Craft install root: [$Script:installRoot]") -eq '') {$Script:installRoot} else {$result}
 }
 

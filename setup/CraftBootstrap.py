@@ -10,13 +10,13 @@ import urllib.request
 
 
 class CraftBootstrap(object):
-    def __init__(self, kdeRoot, branch, dryRun):
-        self.kdeRoot = kdeRoot
+    def __init__(self, craftRoot, branch, dryRun):
+        self.craftRoot = craftRoot
         self.branch = branch
         self.dryRun = dryRun
 
         if not dryRun:
-            with open(os.path.join(kdeRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt+") as ini:
+            with open(os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt+") as ini:
                 self.settings = ini.read().splitlines()
         else:
             with open(dryRun, "rt+") as ini:
@@ -123,10 +123,10 @@ class CraftBootstrap(object):
         exit(1)
 
     def writeSettings(self):
-        if not os.path.isdir(os.path.join(self.kdeRoot, "etc")):
-            os.makedirs(os.path.join(self.kdeRoot, "etc"))
+        if not os.path.isdir(os.path.join(self.craftRoot, "etc")):
+            os.makedirs(os.path.join(self.craftRoot, "etc"))
         if not self.dryRun:
-            with open(os.path.join(self.kdeRoot, "etc", "CraftSettings.ini"), "wt+") as out:
+            with open(os.path.join(self.craftRoot, "etc", "CraftSettings.ini"), "wt+") as out:
                 out.write("\n".join(self.settings))
         else:
             with open(self.dryRun + ".dry_run", "wt+") as out:
