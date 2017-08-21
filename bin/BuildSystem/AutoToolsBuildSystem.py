@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
-
 from BuildSystem.BuildSystemBase import *
 from shells import *
+import glob
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
@@ -43,7 +43,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment[
             "CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
-        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap == True:
+        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)
@@ -129,3 +129,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def ccacheOptions(self):
         return " CC='ccache gcc' CXX='ccache g++' "
+
+
+    def copyToMsvcImportLib(self):
+        reDlla = re.compile(r"\.dll\.a$")
+        reLib = re.compile(r"^lib")
+        for f in glob.glob(f"{self.installDir()}/lib/*.dll.a"):
+            path, name = os.path.split(f)
+            name = re.sub(reDlla, ".lib", name)
+            name = re.sub(reLib, "", name)
+            if not utils.copyFile(f, os.path.join(path, name), linkOnly=False):
+                return False
+        return True
