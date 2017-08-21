@@ -2,15 +2,10 @@
 #    this file sets some environment variables that are needed
 #    for finding programs and libraries etc.
 #    by Hannah von Reth <vonreth@kde.org>
-#    you should copy kdesettings.ini to ..\etc\kdesettings.ini
+#    you should copy CraftSettings.ini.template to ..\etc\CraftSettings.ini
 #    and adapt it to your needs (see that file for more info)
 
-#    this file should contain all path settings - and provide thus an environment
-#    to build and run kde programs
-#    based on kdeenv.bat
-
 cls
-
 
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
@@ -48,14 +43,19 @@ function readINI([string] $fileName)
 }
 
 
-
 if(test-path -path $env:CraftRoot\..\etc\kdesettings.ini)
 {
-    $settings = readINI $env:CraftRoot\..\etc\kdesettings.ini
+    mv $env:CraftRoot\..\etc\kdesettings.ini $env:CraftRoot\..\etc\CraftSettings.ini
+}
+
+
+if(test-path -path $env:CraftRoot\..\etc\CraftSettings.ini)
+{
+    $settings = readINI $env:CraftRoot\..\etc\CraftSettings.ini
 }
 else
 {
-    Write-Error("$env:CraftRoot\..\etc\kdesettings.ini Does not exist")
+    Write-Error("$env:CraftRoot\..\etc\CraftSettings.ini Does not exist")
     break
 }
 if( $CRAFT_ARGUMENTS[0] -eq "--get")

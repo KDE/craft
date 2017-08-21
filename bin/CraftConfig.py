@@ -8,6 +8,7 @@ import configparser
 import os
 import platform
 import re
+import shutil
 import subprocess
 import sys
 
@@ -168,7 +169,11 @@ class CraftConfig(object):
             self.iniPath = iniPath
         else:
             with TemporaryUseShortpath(False):
-                self.iniPath = os.path.join(CraftStandardDirs.etcDir(), "kdesettings.ini")
+                oldPath = os.path.join(CraftStandardDirs.etcDir(), "kdesettings.ini")
+                newPath = os.path.join(CraftStandardDirs.etcDir(), "CraftSettings.ini")
+                if os.path.isfile(oldPath):
+                    shutil.move(oldPath, newPath)
+                self.iniPath = os.path.join(newPath)
         self._alias = dict()
         self._readSettings()
 
@@ -205,7 +210,8 @@ class CraftConfig(object):
             if not (deprecatedSection, deprecatedKey) in self._warned:
                 self._warned.add((deprecatedSection, deprecatedKey))
                 print(
-                    f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to {section}/{key}, please update your kdesettings.ini",
+                    f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
+                    f"{section}/{key}, please update your CraftSettings.ini",
                     file=sys.stderr)
 
     def _readSettings(self):
@@ -252,7 +258,7 @@ class CraftConfig(object):
         print("Failed to find")
         print("\t[%s]" % group)
         print("\t%s = ..." % key)
-        print("in your kdesettings.ini")
+        print("in your CraftSettings.ini")
         exit(1)
 
     def getList(self, group, key, default=None):

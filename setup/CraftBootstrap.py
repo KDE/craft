@@ -16,7 +16,7 @@ class CraftBootstrap(object):
         self.dryRun = dryRun
 
         if not dryRun:
-            with open(os.path.join(kdeRoot, f"craft-{branch}", "kdesettings.ini"), "rt+") as ini:
+            with open(os.path.join(kdeRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt+") as ini:
                 self.settings = ini.read().splitlines()
         else:
             with open(dryRun, "rt+") as ini:
@@ -126,7 +126,7 @@ class CraftBootstrap(object):
         if not os.path.isdir(os.path.join(self.kdeRoot, "etc")):
             os.makedirs(os.path.join(self.kdeRoot, "etc"))
         if not self.dryRun:
-            with open(os.path.join(self.kdeRoot, "etc", "kdesettings.ini"), "wt+") as out:
+            with open(os.path.join(self.kdeRoot, "etc", "CraftSettings.ini"), "wt+") as out:
                 out.write("\n".join(self.settings))
         else:
             with open(self.dryRun + ".dry_run", "wt+") as out:
@@ -291,7 +291,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", action="store", default=os.getcwd(), help="The installation directory.")
     parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
-    parser.add_argument("--dry-run", action="store", help="Configurea the passed kdesettings.ini and exit.")
+    parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
     parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()

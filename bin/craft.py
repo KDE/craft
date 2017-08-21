@@ -37,7 +37,7 @@ def destroyCraftRoot():
         path = os.path.join(root, entry)
         if os.path.exists(CraftStandardDirs.etcDir()) and os.path.samefile(path, CraftStandardDirs.etcDir()):
             for entry in os.listdir(path):
-                if not entry == "kdesettings.ini":
+                if entry not in ["kdesettings.ini", "CraftSettings.ini"]:
                     etcPath = os.path.join(path, entry)
                     if os.path.isdir(etcPath):
                         if utils.OsUtils.isLink(etcPath):
@@ -283,7 +283,7 @@ def main():
                         default=False, help="Don't create or use the binary cache")
     parser.add_argument("--destroy-craft-root", action="store_true", dest="doDestroyCraftRoot",
                         default=False,
-                        help="DANGEROUS: Recursively delete everything in the Craft root directory besides the kdesettings.ini, the download directory and the craft folder itself")
+                        help="DANGEROUS: Recursively delete everything in the Craft root directory besides the CraftSettings.ini, the download directory and the craft folder itself")
     parser.add_argument("--offline", action="store_true",
                         default=craftSettings.getboolean("General", "WorkOffline", False),
                         help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
@@ -291,7 +291,7 @@ def main():
     parser.add_argument("--buildtype", choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
                         dest="buildType",
                         default=craftSettings.get("Compile", "BuildType", "RelWithDebInfo"),
-                        help="This will override the build type set in your kdesettings.ini.")
+                        help="This will override the build type set in your CraftSettings.ini.")
     parser.add_argument("-v", "--verbose", action="count",
                         default=int(craftSettings.get("CraftDebug", "Verbose", "0")),
                         help=" verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\

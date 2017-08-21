@@ -29,7 +29,7 @@ def log(msg):
 if sys.version_info[0:3] < MIN_PY_VERSION:
     log("Error: Python too old!")
     log("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION)
-    log("Please install it and adapt your kdesettings.ini")
+    log("Please install it and adapt your CraftSettings.ini")
     exit(1)
 
 
@@ -84,7 +84,7 @@ class SetupHelper(object):
                     log(
                         f"Found \"{app}\" in your PATH: \"{location}\"\n"
                         f"This application is known to cause problems with your configuration of Craft.\n"
-                        f"Please remove it from PATH or manually set a value for PATH in your kdesettings.ini:\n"
+                        f"Please remove it from PATH or manually set a value for PATH in your CraftSettings.ini:\n"
                         f"\n"
                         f"[Environment]\n"
                         f"PATH="
