@@ -6,6 +6,11 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValues()
 
+        for ver in self.versionInfo.tarballs() + self.versionInfo.branches() + self.versionInfo.tags():
+            qtVer = CraftVersion(ver)
+            if qtVer >= CraftVersion("5.9"):
+                self.patchToApply[ver] = [("0001-Fix-the-detection-of-python2.exe.patch", 1)]#https://codereview.qt-project.org/#/c/203000/
+
     def setDependencies(self):
         self.buildDependencies["gnuwin32/gperf"] = "default"
         self.buildDependencies["dev-util/python2"] = "default"
@@ -33,7 +38,8 @@ class QtPackage(Qt5CorePackageBase):
         return Qt5CorePackageBase.fetch(self)
 
     def compile(self):
-        utils.prependPath(craftSettings.get("Paths", "PYTHON27"))
+        if self.qtVer < CraftVersion("5.9"):
+            utils.prependPath(craftSettings.get("Paths", "PYTHON27"))
         return Qt5CorePackageBase.compile(self)
 
 

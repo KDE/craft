@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["frameworks/tier1/ki18n"] = "default"
         self.runtimeDependencies["frameworks/tier1/kwidgetsaddons"] = "default"
         self.runtimeDependencies["frameworks/tier2/kpackage"] = "default"
+        self.runtimeDependencies["frameworks/tier3/knewstuff"] = "default"
         self.runtimeDependencies["frameworks/tier3/kiconthemes"] = "default"
         self.runtimeDependencies["frameworks/tier3/kio"] = "default"
         self.runtimeDependencies["frameworks/tier3/knotifications"] = "default"
