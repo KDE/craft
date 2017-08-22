@@ -309,25 +309,24 @@ def getFile(url, destdir, filename='') -> bool:
 def wgetFile(url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     wget = utilsCache.findApplication("wget")
-    command = f"\"{wget}\" -c -t 10"
+    command = [wget, "-c", "-t", "10"]
     # the default of 20 might not be enough for sourceforge ...
-    command += " --max-redirect 50"
+    command += ["--max-redirect",  "50"]
     if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
-        command += " --no-passive-ftp "
-    if (filename == ''):
-        command += "  -P \"%s\"" % destdir
+        command += ["--no-passive-ftp"]
+    if not filename:
+        command += ["-P", destdir]
     else:
-        command += " -O \"%s\"" % os.path.join(destdir, filename)
-    command += " %s" % url
+        command += ["-O", os.path.join(destdir, filename)]
+    command += [url]
     craftDebug.log.debug("wgetfile called")
 
     if craftDebug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
-        command += " -q --show-progress"
-        ret = system(command, displayProgress=True, stderr=subprocess.STDOUT)
+        command += ["-q", "--show-progress"]
+        craftDebug.log.info(f"wget {url}")
+        return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     else:
-        ret = system(command)
-    craftDebug.log.debug("wget ret: %s" % ret)
-    return ret
+        return system(command)
 
 
 ### unpack functions
