@@ -20,12 +20,12 @@ class Package(CMakePackageBase):
         self.supportsClang = False
         self.clang = CraftPackageObject.get('win32libs/llvm-meta/clang').instance
         self.lld = CraftPackageObject.get('win32libs/llvm-meta/lld').instance
-        self.subPackages = [self.clang, self.lld]
+        self.lldb = CraftPackageObject.get('win32libs/llvm-meta/lldb').instance
+        self.subPackages = [self.clang, self.lld, self.lldb]
         self.subinfo.options.configure.args = "-DLLVM_TARGETS_TO_BUILD='X86'"
-        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace(
-            "\\", "/")
-        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace(
-            "\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLD_SOURCE_DIR=\"%s\"" % self.lld.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=\"%s\"" % self.clang.sourceDir().replace("\\", "/")
+        self.subinfo.options.configure.args += " -DLLVM_EXTERNAL_LLDB_SOURCE_DIR=\"%s\"" % self.lldb.sourceDir().replace("\\", "/")
         if craftCompiler.isMSVC():
             self.subinfo.options.configure.args += " -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=ON"
         else:
