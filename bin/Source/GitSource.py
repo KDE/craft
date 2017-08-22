@@ -24,7 +24,7 @@ class GitSource(VersionSystemSourceBase):
         branch = None
         if os.path.exists(self.checkoutDir()):
             tmpFile = tempfile.TemporaryFile()
-            self.__git("branch" ["-a"], stdout=tmpFile)
+            self.__git("branch", ["-a"], stdout=tmpFile)
             # TODO: check return value for success
             tmpFile.seek(0)
             for line in tmpFile:
