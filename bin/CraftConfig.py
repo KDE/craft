@@ -12,6 +12,8 @@ import shutil
 import subprocess
 import sys
 
+from CraftOS.OsDetection import OsDetection
+
 craftSettings = None
 
 
@@ -25,7 +27,7 @@ class CraftStandardDirs(object):
     def _deSubstPath(path):
         """desubstitude craft short path"""
 
-        if platform.system() != 'Windows':
+        if not OsDetection.isWin():
             return path
         drive, tail = os.path.splitdrive(path)
         drive = drive.upper()
@@ -139,9 +141,12 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def msysDir():
-        if ("Paths", "Msys") in craftSettings:
-            return craftSettings.get("Paths", "Msys")
-        return os.path.join(CraftStandardDirs.craftRoot(), "msys")
+        if not OsDetection.isWin():
+            craftSettings.get("Paths", "Msys", "/")
+        else:
+            if ("Paths", "Msys") in craftSettings:
+                return craftSettings.get("Paths", "Msys")
+            return os.path.join(CraftStandardDirs.craftRoot(), "msys")
 
     @staticmethod
     def junctionsDir(getDir=False):
