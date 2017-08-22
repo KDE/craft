@@ -77,9 +77,9 @@ class BuildSystemBase(CraftBase):
         if self.subinfo.options.make.ignoreErrors:
             defines += " -i"
         if self.subinfo.options.make.makeOptions:
-            defines += " %s" % self.subinfo.options.make.makeOptions
-        if self.makeProgram == "make":
-            defines += " -j%s" % multiprocessing.cpu_count()
+            defines += f" {self.subinfo.options.make.makeOptions}"
+        if self.makeProgram in ["make", "gmake", "mingw32-make"]:
+            defines += f" -j{ multiprocessing.cpu_count()}"
         if craftDebug.verbose() > 0:
             if self.makeProgram == "ninja":
                 defines += " -v "
