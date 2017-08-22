@@ -24,7 +24,7 @@ class GitSource(VersionSystemSourceBase):
         branch = None
         if os.path.exists(self.checkoutDir()):
             tmpFile = tempfile.TemporaryFile()
-            self.__git("branch -a", stdout=tmpFile)
+            self.__git("branch" ["-a"], stdout=tmpFile)
             # TODO: check return value for success
             tmpFile.seek(0)
             for line in tmpFile:
@@ -64,7 +64,7 @@ class GitSource(VersionSystemSourceBase):
         if not self.__isTag(branch):
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
             with tempfile.TemporaryFile() as tmpFile:
-                self.__git("show", "--abbrev-commit", stdout=tmpFile)
+                self.__git("show", ["--abbrev-commit"], stdout=tmpFile)
                 tmpFile.seek(os.SEEK_SET)
                 # read the temporary file and grab the first line
                 # print the revision - everything else should be quiet now
@@ -74,21 +74,22 @@ class GitSource(VersionSystemSourceBase):
             # in case this is a tag, print out the tag version
             return branch
 
-    def __git(self, command, *args, **kwargs):
+    def __git(self, command, args=None, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        displayProgress = False
-        if command in ('clone', 'checkout', 'fetch', 'pull', 'submodule'):
+        parts = ["git", command]
+        if command in ("clone", "checkout", "fetch", "pull", "submodule"):
             if craftDebug.verbose() < 0:
-                command += ' -q'
+                parts += ["-q"]
             else:
                 kwargs["displayProgress"] = True
-                command += ' --progress'
-        parts = ["git", command]
-        parts.extend(args)
-        if not kwargs.get('cwd'):
-            kwargs['cwd'] = self.checkoutDir()
-        return self.system(' '.join(parts), logCommand=False, **kwargs)
+        else:
+            kwargs["logCommand"] = False
+        if args:
+            parts += args
+        if not kwargs.get("cwd"):
+            kwargs["cwd"] = self.checkoutDir()
+        return self.system(parts, **kwargs)
 
     def fetch(self):
         craftDebug.trace('GitSource fetch')
@@ -120,34 +121,37 @@ class GitSource(VersionSystemSourceBase):
             if os.path.isdir(checkoutDir):
                 if not repoTag:
                     ret = self.__git("fetch") \
-                          and self.__git("checkout", repoBranch or "master") \
+                          and self.__git("checkout", [repoBranch or "master"]) \
                           and self.__git("merge")
                     if self.subinfo.options.fetch.checkoutSubmodules:
-                        ret = ret and self.__git("submodule update --init --recursive")
+                        ret = ret and self.__git("submodule", ["update", "--init", "--recursive"])
             else:
+                args = []
                 # it doesn't exist so clone the repo
                 os.makedirs(checkoutDir)
                 # first try to replace with a repo url from etc/portage/crafthosts.conf
-                recursive = '--recursive' if self.subinfo.options.fetch.checkoutSubmodules else ''
-                ret = self.__git('clone', recursive, repoUrl, '.')
+                if self.subinfo.options.fetch.checkoutSubmodules:
+                    args += ["--recursive"]
+                ret = self.__git('clone', args + [repoUrl, "."])
 
             # if a branch is given, we should check first if the branch is already downloaded
             # locally, otherwise we can track the remote branch
             if ret and repoBranch and not repoTag:
-                track = ""
                 if not self.__isLocalBranch(repoBranch):
-                    track = "--track origin/"
-                ret = self.__git('checkout', "%s%s" % (track, repoBranch))
+                    track = ["--track", f"origin/{repoBranch}"]
+                else:
+                    track = [repoBranch]
+                ret = self.__git("checkout", track)
 
             # we can have tags or revisions in repoTag
             if ret and repoTag:
                 if self.__isTag(repoTag):
                     if not self.__isLocalBranch("_" + repoTag):
-                        ret = self.__git('checkout', '-b', '_%s' % repoTag, repoTag)
+                        ret = self.__git('checkout', ['-b', f"_{repoTag}", repoTag])
                     else:
-                        ret = self.__git('checkout', '_%s' % repoTag)
+                        ret = self.__git('checkout', f"_{repoTag}")
                 else:
-                    ret = self.__git('checkout', repoTag)
+                    ret = self.__git('checkout', [repoTag])
         return ret
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
@@ -159,8 +163,8 @@ class GitSource(VersionSystemSourceBase):
             # FIXME this reverts previously applied patches !
             # self.__git('checkout', '-f',cwd=sourceDir)
             sourceDir = self.checkoutDir()
-            return self.__git('apply', '--whitespace=fix',
-                              '-p %d' % patchdepth, patchfile, cwd=sourceDir)
+            return self.__git('apply', ['--whitespace=fix',
+                              '-p', patchdepth, patchfile], cwd=sourceDir)
         return True
 
     def createPatch(self):
