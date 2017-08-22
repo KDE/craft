@@ -159,12 +159,8 @@ class GitSource(VersionSystemSourceBase):
         craftDebug.trace('GitSource ')
         if fileName:
             patchfile = os.path.join(self.packageDir(), fileName)
-            sourceDir = self.sourceDir()
-            # FIXME this reverts previously applied patches !
-            # self.__git('checkout', '-f',cwd=sourceDir)
-            sourceDir = self.checkoutDir()
             return self.__git('apply', ['--whitespace=fix',
-                              '-p', patchdepth, patchfile], cwd=sourceDir)
+                              '-p', str(patchdepth), patchfile])
         return True
 
     def createPatch(self):
