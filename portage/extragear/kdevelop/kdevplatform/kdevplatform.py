@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
         self.buildDependencies["dev-util/7zip"] = "default"
         self.buildDependencies["win32libs/boost/boost-headers"] = "default"
-        self.runtimeDependencies["libs/qt5/qtscript"] = "default"
         self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
         self.runtimeDependencies["libs/qt5/qtwebkit"] = "default"
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"
