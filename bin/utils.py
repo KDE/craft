@@ -97,6 +97,10 @@ class UtilsCache(object):
 
         appLocation = shutil.which(app)
         if appLocation:
+            if OsUtils.isWin():
+                # prettify command
+                path, ext = os.path.splitext(appLocation)
+                appLocation = path + ext.lower()
             craftDebug.log.debug(f"Adding {app} to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
@@ -430,9 +434,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
         app = arg0
 
     if logCommand:
-        craftDebug.log.info(f"executing command: {cmd!r}")
-    else:
-        craftDebug.log.debug(f"executing command: {cmd!r}")
+        craftDebug.print("executing command: {0}".format(" ".join(cmd) if isinstance(cmd, list) else cmd))
+    craftDebug.log.debug(f"executing command: {cmd!r}")
     craftDebug.log.debug(f"CWD: {cwd!r}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     craftDebug.logEnv(environment)

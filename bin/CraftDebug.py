@@ -86,6 +86,10 @@ class CraftDebug(object):
     def log(self):
         return self._log
 
+    def print(self, msg):
+        if self.verbose() >= 0:
+            print(msg)
+
     def logEnv(self, env=None):
         if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:

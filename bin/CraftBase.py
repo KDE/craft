@@ -201,13 +201,13 @@ class CraftBase(object):
         os.chdir(self.sourceDir())
         craftDebug.log.debug("entering: %s" % self.sourceDir())
 
-    def system(self, command, errorMessage="", debuglevel=1, logCommand=True, **kw):
+    def system(self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
         This method prints a debug message and then runs a system command.
         If the system command returns with errors the method prints an error
         message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
 
-        if utils.system(command, logCommand=logCommand, **kw):
+        if utils.system(command, **kw):
             return True
         craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
