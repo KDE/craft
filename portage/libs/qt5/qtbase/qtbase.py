@@ -176,14 +176,6 @@ class QtPackage(Qt5CorePackageBase):
             return self.system(f"\"{patcher}\" --nobackup --qt-dir=\"{binRoot}\"")
         return True
 
-    @property
-    def makeProgram(self):
-        if CraftVersion(self.subinfo.buildTarget) >= CraftVersion("5.9"):
-            # workaround for broken qmake make file.... building with mingw and jom is broken
-            if self.subinfo.options.make.supportsMultijob and craftCompiler.isMinGW():
-                return f"mingw32-make -j{os.environ['NUMBER_OF_PROCESSORS']}"
-        return super(Qt5CorePackageBase, self).makeProgram
-
     def getQtBaseEnv(self):
         envs = {}
         envs["PATH"] = os.pathsep.join([os.path.join(self.buildDir(), "bin"), os.environ["PATH"]])

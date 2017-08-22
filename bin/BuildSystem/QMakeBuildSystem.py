@@ -86,25 +86,14 @@ class QMakeBuildSystem(BuildSystemBase):
         if not BuildSystemBase.install(self):
             return False
 
-        if OsUtils.isWin():
-            # There is a bug in jom that parallel installation of qmake projects
-            # does not work. So just use the usual make programs. It's hacky but
-            # this was decided on the 2012 Windows sprint.
-            if craftCompiler.isMSVC() or craftCompiler.isIntel():
-                installmake = "nmake /NOLOGO"
-            elif craftCompiler.isMinGW():
-                installmake = "mingw32-make"
-        else:
-            installmake = self.makeProgram
-
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
         if options != None:
-            command = "%s %s" % (installmake, options)
+            command = f"{self.makeProgram} {options}"
         else:
-            command = "%s install" % (installmake)
+            command = f"{self.makeProgram} install"
 
         return self.system(command)
 
