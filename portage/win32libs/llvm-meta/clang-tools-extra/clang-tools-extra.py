@@ -4,7 +4,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.versionInfo.setDefaultValues(packageName="cfe", gitUrl="[git]https://git.llvm.org/git/clang-tools-extra.git")
+        self.versionInfo.setDefaultValues(packageName="clang-tools-extra", gitUrl="[git]https://git.llvm.org/git/clang-tools-extra.git")
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
