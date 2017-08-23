@@ -259,7 +259,7 @@ def setUp(args):
             boot.setSettignsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if abi.startswith("mingw") else "jom")
+        boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
         boot.setSettignsValue("ShortPath", "Enabled", "True")
         for key, value in shortPath.items():
             boot.setSettignsValue("ShortPath", key, value)
