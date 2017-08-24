@@ -14,10 +14,10 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies['kde/kde-runtime'] = 'default'
-        self.runtimeDependencies[
-            'qt-libs/poppler'] = 'default'  # this is only a dependency for kile > 2.1, but we keep it like that for now
-        self.runtimeDependencies[
-            'kde/okular'] = 'default'  # this is only a dependency for kile > 2.1, but we keep it like that for now
+        # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies['qt-libs/poppler'] = 'default'
+        # this is only a dependency for kile > 2.1, but we keep it like that for now
+        self.runtimeDependencies['kde/applications/okular'] = 'default'
         self.runtimeDependencies["kde/applications/kate"] = "default"
         self.runtimeDependencies["frameworks/tier3/khtml"] = "default"
 
