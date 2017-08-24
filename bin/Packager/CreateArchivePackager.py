@@ -15,4 +15,7 @@ class CreateArchivePackager(CollectionPackagerBase):
 
         self.internalCreatePackage()
         self.preArchive()
+
+        craftDebug.log.info(f"Archive created in {self.archiveDir()}")
+
         return True
