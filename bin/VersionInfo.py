@@ -7,6 +7,7 @@ from CraftDebug import craftDebug
 
 
 class VersionInfo(object):
+    variablePatern = re.compile("\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
     _VERSION_INFOS = {}
     _VERSION_INFOS_HINTS = {}
 
@@ -83,8 +84,8 @@ class VersionInfo(object):
             replaces["VERSION_MINOR"] = split_ver[1]
             replaces["VERSION_PATCH_LEVEL"] = split_ver[2]
 
-        while CraftConfig.variablePatern.search(text):
-            for match in CraftConfig.variablePatern.findall(text):
+        while VersionInfo.variablePatern.search(text):
+            for match in VersionInfo.variablePatern.findall(text):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
 
