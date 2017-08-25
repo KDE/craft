@@ -6,6 +6,10 @@ class subinfo(info.infoclass):
         self.versionInfo.setDefaultValues()
         self.description = "Breeze icon theme."
 
+        if self.defaultTarget.startswith("5."):
+            self.defaultTarget = "v" + self.defaultTarget
+            craftDebug.log.warning(f"Using git tag {self.defaultTarget} instead of tarball for breeze-icons to avoid missing icons")
+
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
         self.buildDependencies["frameworks/extra-cmake-modules"] = "default"
