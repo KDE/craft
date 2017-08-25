@@ -166,8 +166,6 @@ class CraftStandardDirs(object):
 
 
 class CraftConfig(object):
-    variablePatern = re.compile("\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
-
     def __init__(self, iniPath=None):
         self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         if iniPath:
