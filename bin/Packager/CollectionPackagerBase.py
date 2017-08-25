@@ -11,25 +11,15 @@ from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackag
 from Portage.CraftPackageObject import *
 
 
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class PackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
 
     @staticmethod
     def runtimeBlacklist():
-        blacklisted = ["include\\\\.*",
-                       "lib\\\\.*\.lib",
-                       "lib\\\\.*\.dll\.a",
-                       "lib\\\\cmake\\.*",
-                       "lib\\\\pkgconfig\\.*"]
-        ret = []
-        for line in blacklisted:
-            try:
-                exp = re.compile(line, re.IGNORECASE)
-                ret.append(exp)
-                craftDebug.log.debug("%s added to blacklist as %s" % (line, exp.pattern))
-            except re.error:
-                craftDebug.log.debug("%s is not a valid regexp" % line)
-        return ret
+        return os.path.join(THIS_DIR, "applications_blacklist.txt")
 
     @staticmethod
     def defaultWhitelist():

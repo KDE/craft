@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/7zip"] = "default"
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
+        self.runtimeDependencies["frameworks/tier1/breeze-icons"] = "default"
         self.runtimeDependencies["frameworks/tier1/karchive"] = "default"
         self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
         self.runtimeDependencies["frameworks/tier1/kguiaddons"] = "default"

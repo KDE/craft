@@ -54,7 +54,9 @@ class QtPackage(Qt5CorePackageBase):
         self.subinfo.options.configure.args += """ "WEBKIT_CONFIG-=geolocation" """
 
     def fetch(self):
+        print(self.sourceDir())
         if os.path.exists(self.sourceDir()):
+            print("YES")
             self.system(["git", "reset", "--hard"], cwd=self.sourceDir())
         return Qt5CorePackageBase.fetch(self)
 
