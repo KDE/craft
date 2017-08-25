@@ -31,7 +31,7 @@ from Package.BinaryPackageBase import *
 class MsysPackage(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
-        self.shell = shells.MSysShell()
+        self.shell = shells.BashShell()
 
     def install(self):
         if craftCompiler.isX64():

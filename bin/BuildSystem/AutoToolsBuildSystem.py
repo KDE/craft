@@ -8,7 +8,7 @@ import glob
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "autotools")
-        self._shell = MSysShell()
+        self._shell = BashShell()
         if not OsUtils.isWin():
             self.platform = ""# hope for auto detection
         else:
