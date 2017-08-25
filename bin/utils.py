@@ -436,8 +436,15 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         app = arg0
 
     if logCommand:
-        craftDebug.print("executing command: {0}".format(" ".join(cmd) if isinstance(cmd, list) else cmd))
-    craftDebug.log.debug(f"executing command: {cmd!r}")
+        _logCommand = ""
+        if pipeProcess:
+            _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
+        _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
+        craftDebug.print("executing command: {0}".format(_logCommand))
+    if pipeProcess:
+        craftDebug.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
+    else:
+        craftDebug.log.debug(f"executing command: {cmd!r}")
     craftDebug.log.debug(f"CWD: {cwd!r}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     craftDebug.logEnv(environment)
