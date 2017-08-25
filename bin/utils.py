@@ -420,6 +420,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
         arg0 = shlex.split(cmd, posix=False)[0]
 
     matchQuoted = re.match("^\"(.*)\"$", arg0)
+    if matchQuoted:
+        craftDebug.log.warning(f"Please don't pass quoted paths to systemWithoutShell, app={arg0}")
     if not os.path.isfile(arg0) and not matchQuoted:
         app = utilsCache.findApplication(arg0)
     else:
