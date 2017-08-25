@@ -149,7 +149,7 @@ class GitSource(VersionSystemSourceBase):
                     if not self.__isLocalBranch("_" + repoTag):
                         ret = self.__git('checkout', ['-b', f"_{repoTag}", repoTag])
                     else:
-                        ret = self.__git('checkout', f"_{repoTag}")
+                        ret = self.__git('checkout', [f"_{repoTag}"])
                 else:
                     ret = self.__git('checkout', [repoTag])
         return ret
