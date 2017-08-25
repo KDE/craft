@@ -142,7 +142,7 @@ class CraftStandardDirs(object):
     @staticmethod
     def msysDir():
         if not OsDetection.isWin():
-            craftSettings.get("Paths", "Msys", "/")
+            return craftSettings.get("Paths", "Msys", "/")
         else:
             if ("Paths", "Msys") in craftSettings:
                 return craftSettings.get("Paths", "Msys")
