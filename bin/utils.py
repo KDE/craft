@@ -282,8 +282,8 @@ def getFile(url, destdir, filename='') -> bool:
     if utilsCache.findApplication("powershell"):
         powershell = utilsCache.findApplication("powershell")
         filename = os.path.join(destdir, filename)
-        return system(f"\"{powershell}\" -NoProfile -Command (new-object net.webclient).DownloadFile"
-                      f"('{url}', '{filename}')")
+        return system([powershell, "-NoProfile", "-Command",
+                       f"(new-object net.webclient).DownloadFile('{url}', '{filename}')"])
     else:
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
