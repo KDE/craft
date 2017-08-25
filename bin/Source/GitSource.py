@@ -146,12 +146,14 @@ class GitSource(VersionSystemSourceBase):
             # we can have tags or revisions in repoTag
             if ret and repoTag:
                 if self.__isTag(repoTag):
-                    self.__git('fetch', ['--tags'])
                     if not self.__isLocalBranch("_" + repoTag):
                         ret = self.__git('checkout', ['-b', f"_{repoTag}", repoTag])
                     else:
                         ret = self.__git('checkout', [f"_{repoTag}"])
                 else:
+                    # unknown tag, try to fetch it first
+                    self.__git('fetch', ['--tags'])
+
                     ret = self.__git('checkout', [repoTag])
         return ret
 
