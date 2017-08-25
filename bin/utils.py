@@ -87,7 +87,7 @@ class UtilsCache(object):
         craftDebug.log.debug("Clear utils cache")
         utilsCache = UtilsCache()
 
-    def findApplication(self, app) -> str:
+    def findApplication(self, app, path=None) -> str:
         if app in self._appCache:
             appLocation = self._appCache[app]
             if os.path.exists(appLocation):
@@ -95,7 +95,7 @@ class UtilsCache(object):
             else:
                 self._helpCache.clear()
 
-        appLocation = shutil.which(app)
+        appLocation = shutil.which(app, path=path)
         if appLocation:
             if OsUtils.isWin():
                 # prettify command

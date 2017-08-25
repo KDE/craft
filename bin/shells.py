@@ -12,11 +12,7 @@ from options import *
 
 class MSysShell(object):
     def __init__(self):
-        self.msysdir = os.path.join(CraftStandardDirs.msysDir())
         self.environment = {}
-        self._sh = os.path.join(self.msysdir, "bin", "bash")
-        if not os.path.exists(self._sh):
-            self._sh = os.path.join(self.msysdir, "usr", "bin", "bash")
 
         mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
         if craftCompiler.isMSVC():
@@ -33,43 +29,45 @@ class MSysShell(object):
             elif self.buildType == "Debug":
                 cflags += " -O0 -g3 "
 
-        self.environment["MSYS2_PATH_TYPE"] = "inherit"  # inherit the windows path
+        if OsDetection.isWin():
+            self.environment["MSYS2_PATH_TYPE"] = "inherit"  # inherit the windows path
+            if "make" in self.environment:
+                del self.environment["make"]
+            if craftCompiler.isMinGW():
+                self.environment["MSYSTEM"] = f"MINGW{craftCompiler.bits}_CRAFT"
+            elif craftCompiler.isMSVC():
+                self.environment["MSYSTEM"] = f"CYGWIN{craftCompiler.bits}_CRAFT"
+
+            if craftCompiler.isMSVC():
+                if False:
+                    cl = "clang-cl"
+                else:
+                    cl = "cl"
+                self.environment["LIB"] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
+                self.environment["INCLUDE"] = f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot()}\\include"
+                self.environment["LD"] = "link -NOLOGO"
+                self.environment["CC"] = "%s -nologo" % cl
+                self.environment["CXX"] = self.environment["CC"]
+                self.environment["CPP"] = "%s -nologo -EP" % cl
+                self.environment["CXXCPP"] = self.environment["CPP"]
+                self.environment["NM"] = "dumpbin -symbols"
+                self.environment["AR"] = "lib"
+                self.environment["WINDRES"] = "rc"
+                # self.environment[ "RC","rc-windres"
+                self.environment["STRIP"] = ":"
+                self.environment["RANLIB"] = ":"
+                self.environment["F77"] = "no"
+                self.environment["FC"] = "no"
+
         self.environment["PKG_CONFIG_PATH"] = self.toNativePath(
             os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
-        if "make" in self.environment:
-            del self.environment["make"]
-        arch = "32"
-        if craftCompiler.isX64():
-            arch = "64"
-        if craftCompiler.isMinGW():
-            self.environment["MSYSTEM"] = f"MINGW{arch}_CRAFT"
-        elif craftCompiler.isMSVC():
-            self.environment["MSYSTEM"] = f"CYGWIN{arch}_CRAFT"
+
         self.environment["CFLAGS"] = cflags
         self.environment["CXXFLAGS"] = cflags
         self.environment["LDFLAGS"] = ldflags
 
-        if craftCompiler.isMSVC():
-            if False:
-                cl = "clang-cl"
-            else:
-                cl = "cl"
-            self.environment["LIB"] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
-            self.environment["INCLUDE"] = f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot()}\\include"
-            self.environment["LD"] = "link -NOLOGO"
-            self.environment["CC"] = "%s -nologo" % cl
-            self.environment["CXX"] = self.environment["CC"]
-            self.environment["CPP"] = "%s -nologo -EP" % cl
-            self.environment["CXXCPP"] = self.environment["CPP"]
-            self.environment["NM"] = "dumpbin -symbols"
-            self.environment["AR"] = "lib"
-            self.environment["WINDRES"] = "rc"
-            # self.environment[ "RC","rc-windres"
-            self.environment["STRIP"] = ":"
-            self.environment["RANLIB"] = ":"
-            self.environment["F77"] = "no"
-            self.environment["FC"] = "no"
+
 
     @property
     def buildType(self):
@@ -79,16 +77,29 @@ class MSysShell(object):
     def toNativePath(path):
         return utils.toMSysPath(path)
 
+
+    def _findBash(self):
+        msysdir = CraftStandardDirs.msysDir()
+        bash = utils.utilsCache.findApplication("bash", os.path.join(msysdir, "bin"))
+        if not bash:
+            bash = utils.utilsCache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
+        if not bash:
+            craftDebug.log.critical("Failed to detect bash")
+        return bash
+
+
+
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
+
         export = ""
         env = os.environ.copy()
         for k, v in self.environment.items():
             export += "%s='%s' " % (k, v)
             env[k] = v
         command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
-                  (self._sh, export, self.toNativePath(path), self.toNativePath(cmd), args)
-        craftDebug.step("msys execute: %s" % command)
-        craftDebug.log.debug("msys environment: %s" % self.environment)
+                  (self._findBash(), export, self.toNativePath(path), self.toNativePath(cmd), args)
+        craftDebug.step("bash execute: %s" % command)
+        craftDebug.log.debug("bash environment: %s" % self.environment)
         return utils.system(command, stdout=out, stderr=err, env=env, displayProgress=displayProgress)
 
     def login(self):
