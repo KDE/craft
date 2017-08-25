@@ -380,13 +380,13 @@ def un7zip(fileName, destdir, flag=None):
         type = ["-t7z"]
     if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
         type = ["-ttar"]
-        command = [app, "x", fileName, "-so", "|"]
+        kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"], stdout = subprocess.PIPE)
         if OsUtils.isWin():
             resolveSymlinks = True
-            command += [app, "x", "-si", f"-o{destdir}"]+ type + progressFlags
+            command = [app, "x", "-si", f"-o{destdir}"]+ type + progressFlags
         else:
             tar = utilsCache.findApplication("tar")
-            command += [tar, "--directory", destdir, "-xvf", "-"]
+            command = [tar, "--directory", destdir, "-xvf", "-"]
             kw = {}
     else:
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
@@ -402,7 +402,7 @@ def system(cmd, displayProgress=False, logCommand=True, **kw):
     return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, **kw)
 
 
-def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
+def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -441,11 +441,15 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
     craftDebug.log.debug(f"CWD: {cwd!r}")
     craftDebug.log.debug(f"displayProgress={displayProgress}")
     craftDebug.logEnv(environment)
+    if pipeProcess:
+        kw["stdin"] = pipeProcess.stdout
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
+        if pipeProcess:
+            pipeProcess.stdout.close()
         for line in proc.stdout:
             if isinstance(stdout, io.TextIOWrapper):
                 if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
@@ -459,6 +463,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, **kw):
             craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
     else:
         proc = subprocess.Popen(cmd, **kw)
+        if pipeProcess:
+            pipeProcess.stdout.close()
         if proc.stderr:
             for line in proc.stderr:
                 craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
