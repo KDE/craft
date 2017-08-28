@@ -15,7 +15,7 @@ data\\.*
 lib\\.*
 
 # Share
-share\\.*
+#share\\.*
 
 # multiple docs
 bin\\doc\\.*
