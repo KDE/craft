@@ -61,4 +61,4 @@ bin\\syncqt\.pl
 bin\\dbus-.*
 
 # strip most executables
-bin\\(?!(kate|kwrite|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
+bin\\(?!(kate|kwrite|update-mime-database|kioslave)).*\.exe
