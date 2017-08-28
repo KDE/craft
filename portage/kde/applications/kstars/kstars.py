@@ -11,7 +11,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/qt5/qtbase"] = "default"
         self.runtimeDependencies["libs/qt5/qtdeclarative"] = "default"
         self.runtimeDependencies["libs/qt5/qtquickcontrols"] = "default"
-        self.runtimeDependencies["libs/qt5/qtlocation"] = "default"
         self.runtimeDependencies["libs/qt5/qtquickcontrols2"] = "default"
         self.runtimeDependencies["libs/qt5/qtsvg"] = "default"
         self.runtimeDependencies["frameworks/tier1/kconfig"] = "default"
@@ -49,7 +48,7 @@ class Package(CMakePackageBase):
     def createPackage(self):
         self.defines["productname"] = "KStars Desktop Planetarium"
         self.defines["executable"] = "bin\\kstars.exe"
-        self.defines["setupname"] = "kstars-latest.exe"
+        self.defines["setupname"] = "kstars-latest-win64.exe"
         self.defines["icon"] = os.path.join(self.packageDir(), "kstars.ico")
 
         return TypePackager.createPackage(self)
