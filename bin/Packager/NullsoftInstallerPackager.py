@@ -129,7 +129,7 @@ You can add your own defines into self.defines as well.
             if craftCompiler.isMSVC2015():
                 _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
             elif craftCompiler.isMSVC2017():
-                _file = os.path.join(os.environ["VCINSTALLDIR", "Redist", "MSVC", "14.11.25325", f"vcredist_{arch}.exe")
+                _file = os.path.join(os.environ["VCINSTALLDIR"], "Redist", "MSVC", "14.11.25325", f"vcredist_{arch}.exe")
                 if not os.path.exists(_file):
                     _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")
 
