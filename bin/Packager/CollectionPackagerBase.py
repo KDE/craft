@@ -14,6 +14,29 @@ from Portage.CraftPackageObject import *
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+def toRegExp(fname, targetName) -> re:
+    """ Read regular expressions from fname """
+    assert os.path.isabs(fname)
+
+    if not os.path.isfile(fname):
+        craftDebug.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+    regex = "("
+    for line in fileinput.input(fname):
+        # Cleanup white spaces / line endings
+        line = line.splitlines()
+        line = line[0].rstrip()
+        if line.startswith("#") or len(line) == 0:
+            continue
+        try:
+            tmp = "^%s$" % line
+            regex += "%s|" % tmp
+            re.compile(tmp, re.IGNORECASE)  # for debug
+            craftDebug.log.debug("%s added to %s as %s" % (line, targetName, tmp))
+        except re.error:
+            craftDebug.log.critical("%s is not a valid regexp" % tmp)
+    return re.compile("%s)" % regex[:-2], re.IGNORECASE)
+
+
 class PackagerLists(object):
     """ This class provides some staticmethods that can be used as pre defined black or whitelists """
 
@@ -27,7 +50,7 @@ class PackagerLists(object):
 
     @staticmethod
     def defaultBlacklist():
-        return []
+        return [toRegExp(PackagerLists.runtimeBlacklist(), "blacklist")]
 
 
 class CollectionPackagerBase(PackagerBase):
@@ -65,6 +88,11 @@ class CollectionPackagerBase(PackagerBase):
             for entry in self.blacklist_file:
                 craftDebug.log.debug("reading blacklist: %s" % entry)
                 if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
+                    if entry == PackagerLists.runtimeBlacklist:
+                        craftDebug.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
+                        self.read_blacklist(entry())
+                        continue
+
                     for line in entry():
                         self._blacklist.append(line)
                 else:
@@ -105,34 +133,17 @@ class CollectionPackagerBase(PackagerBase):
 
         return imageDirs
 
-    def __toRegExp(self, fname, targetName) -> re:
-        """ Read regular expressions from fname """
-        fname = os.path.join(self.packageDir(), fname)
-        if not os.path.isfile(fname):
-            craftDebug.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
-        regex = "("
-        for line in fileinput.input(fname):
-            # Cleanup white spaces / line endings
-            line = line.splitlines()
-            line = line[0].rstrip()
-            if line.startswith("#") or len(line) == 0:
-                continue
-            try:
-                tmp = "^%s$" % line
-                regex += "%s|" % tmp
-                re.compile(tmp, re.IGNORECASE)  # for debug
-                craftDebug.log.debug("%s added to %s as %s" % (line, targetName, tmp))
-            except re.error:
-                craftDebug.log.critical("%s is not a valid regexp" % tmp)
-        return re.compile("%s)" % regex[:-2], re.IGNORECASE)
-
     def read_whitelist(self, fname):
+        if not os.path.isabs(fname):
+            fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
-        self._whitelist.append(self.__toRegExp(fname, "whitelist"))
+        self._whitelist.append(toRegExp(fname, "whitelist"))
 
     def read_blacklist(self, fname):
+        if not os.path.isabs(fname):
+            fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
-        self._blacklist.append(self.__toRegExp(fname, "blacklist"))
+        self._blacklist.append(toRegExp(fname, "blacklist"))
 
     def whitelisted(self, pathname):
         """ return True if pathname is included in the pattern, and False if not """
