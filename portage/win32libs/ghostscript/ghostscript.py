@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
             self.runtimeDependencies["win32libs/tiff"] = "default"
 
     def setTargets(self):
+        self.svnTargets['master'] = 'git://git.ghostscript.com/ghostpdl.git'
         for ver in ['9.19']:
             self.targets[
                 ver] = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%s/ghostscript-%s.tar.gz" % (
