@@ -45,9 +45,3 @@ mkspecs\\.*
 # unneeded stuff from bin\
 bin\\qt\.conf
 bin\\syncqt\.pl
-
-bin\\dbus-*\.exe
-bin\\dbus-env\.bat
-
-# strip most executables
-bin\\(?!(kdevelop|kbuildsycoca5|update-mime-database|kioslave)).*\.exe
