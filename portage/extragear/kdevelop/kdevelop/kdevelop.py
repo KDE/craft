@@ -75,7 +75,7 @@ class Package(CMakePackageBase):
         self.defines["website"] = "https://kdevelop.org"
         self.defines["executable"] = "bin\\kdevelop.exe"
         self.defines["icon"] = os.path.join(os.path.dirname(__file__), "kdevelop.ico")
-        self.defines["extrashortcuts"] = 'CreateShortCut "${startmenu}\KDevelop - Microsoft Visual C++ compiler.lnk" "$INSTDIR\bin\kdevelop-msvc.bat"'
+        self.defines["extrashortcuts"] = 'CreateShortCut "${startmenu}\\KDevelop - Microsoft Visual C++ compiler.lnk" "$INSTDIR\\bin\\kdevelop-msvc.bat"'
 
         self.ignoredPackages.append("binary/mysql")
 
