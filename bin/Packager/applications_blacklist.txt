@@ -5,9 +5,12 @@ manifest\\.*
 .*\.exp
 .*\.pdb
 .*\.la
-.*\.lib
 .*\.nsis
 .*\.prl
+
+# development files
+.*\.lib
+include\\.*
 
 # multiple docs
 bin\\data\\man\\.*
