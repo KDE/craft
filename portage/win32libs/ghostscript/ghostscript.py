@@ -49,20 +49,18 @@ class PackageMSVC(CMakePackageBase):
     def make(self):
         self.enterSourceDir()
 
-        win64Arg = ""
-        rcompArg = ""
-        devstudioArg = ""
+        extraArgs = []
         if craftCompiler.isX64():
-            win64Arg = " WIN64="
+            extraArgs.append("WIN64=")
         # because ghostscript doesn't know about msvc2015, it guesses wrong on this. But,
         # because of where we are, rc /should/ be in the path, so we'll just use that.
         if craftCompiler.isMSVC():
-            rcompArg = " RCOMP=rc.exe"
+            extraArgs.append("RCOMP=rc.exe")
         if craftCompiler.isMSVC2017():
             # work-around: https://bugs.ghostscript.com/show_bug.cgi?id=698426
             vcInstallDir = os.environ['VCINSTALLDIR'].rstrip('\\')
-            devstudioArg = f" DEVSTUDIO=\"{vcInstallDir}\""
-        self.system("nmake -f psi\\msvc.mak" + rcompArg + win64Arg + devstudioArg)
+            extraArgs+= ["MSVC_VERSION=15", f"DEVSTUDIO=\"{vcInstallDir}\""]
+        self.system(["nmake", "-f",  "psi\\msvc.mak"] + extraArgs)
         return True
 
     def install(self):
