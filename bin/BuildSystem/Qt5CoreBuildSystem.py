@@ -4,6 +4,7 @@
 # definitions for the qt5 modules
 
 from BuildSystem.QMakeBuildSystem import *
+from CraftStandardDirs import CraftStandardDirs
 
 
 class Qt5CoreBuildSystem(QMakeBuildSystem):

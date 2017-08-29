@@ -3,8 +3,9 @@
 """
     provides shells
 """
-
+import CraftStandardDirs
 from CraftCompiler import craftCompiler
+from CraftOS.OsDetection import OsDetection
 from options import *
 
 

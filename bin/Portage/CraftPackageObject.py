@@ -4,7 +4,8 @@ import importlib
 import os
 import re
 
-from CraftConfig import craftSettings, CraftStandardDirs
+from CraftConfig import craftSettings
+from CraftStandardDirs import CraftStandardDirs
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
 

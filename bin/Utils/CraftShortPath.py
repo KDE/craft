@@ -1,7 +1,8 @@
 import os
 
 import utils
-from CraftConfig import craftSettings, CraftStandardDirs
+from CraftConfig import craftSettings
+from CraftStandardDirs import CraftStandardDirs
 from CraftDebug import craftDebug
 from Utils import CraftHash
 import zlib

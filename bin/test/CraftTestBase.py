@@ -3,6 +3,7 @@ import tempfile
 import unittest
 
 import CraftConfig
+import CraftStandardDirs
 from CraftDebug import craftDebug
 import InstallDB
 
@@ -12,9 +13,9 @@ class CraftTestBase(unittest.TestCase):
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         CraftConfig.craftSettings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
-        CraftConfig.CraftStandardDirs.allowShortpaths(False)
-        CraftConfig.CraftStandardDirs._pathCache().clear()
-        CraftConfig.CraftStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
+        CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
+        CraftStandardDirs.CraftStandardDirs._pathCache().clear()
+        CraftStandardDirs.CraftStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
         os.environ["KDEROOT"] = self.kdeRoot.name
         CraftConfig.craftSettings.set("General", "Portages", os.path.join(craftRoot, "craft", "portage"))
         CraftConfig.craftSettings.set("Compile", "BuildType", "RelWithDebInfo")

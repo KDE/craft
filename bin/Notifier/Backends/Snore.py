@@ -4,6 +4,7 @@ import subprocess
 
 import CraftConfig
 import CraftDebug
+import CraftStandardDirs
 from CraftOS.osutils import OsUtils
 from Notifier.NotificationInterface import *
 from utils import utilsCache
@@ -12,7 +13,7 @@ from utils import utilsCache
 class Snore(NotificationInterface):
     def __init__(self):
         NotificationInterface.__init__(self, "Snore")
-        self.icon = os.path.join(CraftConfig.CraftStandardDirs.craftBin(), "data", "icons", "craftyBENDER.png")
+        self.icon = os.path.join(CraftStandardDirs.CraftStandardDirs.craftBin(), "data", "icons", "craftyBENDER.png")
 
     def notify(self, title, message, alertClass):
         try:
@@ -27,7 +28,7 @@ class Snore(NotificationInterface):
                              shell=True,
                              stdout=subprocess.DEVNULL,
                              stderr=subprocess.DEVNULL,
-                             cwd=CraftConfig.CraftStandardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
+                             cwd=CraftStandardDirs.CraftStandardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
         except Exception as e:
             CraftDebug.craftDebug.log.debug(e)
             return

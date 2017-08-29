@@ -12,8 +12,9 @@ import inspect
 import io
 import json
 import pickle
+import re
 import shlex
-import shutil
+import subprocess
 import time
 import urllib.error
 import urllib.parse
@@ -24,6 +25,7 @@ from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
 # TODO: Rename
+from CraftStandardDirs import CraftStandardDirs
 from Portage.CraftVersion import CraftVersion
 
 utilsCache = None

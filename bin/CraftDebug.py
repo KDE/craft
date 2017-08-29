@@ -7,7 +7,8 @@ import re
 import shutil
 import sys
 
-from CraftConfig import craftSettings, CraftStandardDirs
+from CraftConfig import craftSettings
+from CraftStandardDirs import CraftStandardDirs
 
 
 class CraftDebug(object):

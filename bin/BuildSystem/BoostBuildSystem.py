@@ -7,6 +7,7 @@
 
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
+from CraftStandardDirs import CraftStandardDirs
 
 
 class BoostBuildSystem(BuildSystemBase):

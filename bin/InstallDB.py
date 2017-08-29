@@ -3,6 +3,7 @@ import sqlite3
 from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
+from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
 
 
 class InstallPackage(object):

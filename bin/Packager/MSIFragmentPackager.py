@@ -2,6 +2,7 @@
 # copyright (c) 2015 Patrick Spendrin <ps_ml@gmx.de>
 #
 import hashlib
+import re
 import uuid
 from xml.dom.minidom import Document
 

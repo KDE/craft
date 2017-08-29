@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import info
-from CraftOS.osutils import OsUtils
 from Package.Qt5CorePackageBase import *
 
 

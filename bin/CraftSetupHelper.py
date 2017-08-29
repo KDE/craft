@@ -5,15 +5,16 @@
 
 import argparse
 import collections
-import shutil
+import subprocess
 
 from CraftCompiler import craftCompiler
 from CraftConfig import *
-from CraftOS.osutils import OsUtils
 from CraftDebug import craftDebug
-
+from CraftOS.osutils import OsUtils
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
+from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
+
 MIN_PY_VERSION = (3, 6, 0)
 
 

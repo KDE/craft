@@ -2,6 +2,8 @@
 # this package contains functions to easily set versions for packages like qt5 or kde
 # copyright:
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
+import re
+
 from CraftConfig import *
 from CraftDebug import craftDebug
 

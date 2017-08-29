@@ -2,8 +2,6 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
-import shutil
-
 from Source.SourceBase import *
 from Utils import CraftHash
 

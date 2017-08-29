@@ -8,6 +8,7 @@ import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftDebug import craftDebug
+from CraftStandardDirs import CraftStandardDirs
 from Portage import CraftPackageObject
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
