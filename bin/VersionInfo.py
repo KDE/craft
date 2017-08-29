@@ -70,11 +70,11 @@ class VersionInfo(object):
         return out.split(";") if out else {}
 
     def defaultTarget(self):
-        if ("PortageVersions", self.packageName()) in craftSettings:
-            return craftSettings.get("PortageVersions", self.packageName())
+        if ("BlueprintVersions", self.packageName()) in craftSettings:
+            return craftSettings.get("BlueprintVersions", self.packageName())
         name = self._getVersionInfo("name", "")
-        if ("PortageVersions", name) in craftSettings:
-            return craftSettings.get("PortageVersions", name)
+        if ("BlueprintVersions", name) in craftSettings:
+            return craftSettings.get("BlueprintVersions", name)
         return self._getVersionInfo("defaulttarget")
 
     def _replaceVar(self, text, ver, name):

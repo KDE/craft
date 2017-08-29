@@ -22,7 +22,8 @@ class CraftConfig(object):
             if os.path.isfile(oldPath):
                 shutil.move(oldPath, newPath)
             self.iniPath = os.path.join(newPath)
-        self._alias = dict()
+        self._alias = {}
+        self._groupAlias = {}
         self._readSettings()
 
         if self.version < 3:
@@ -31,11 +32,19 @@ class CraftConfig(object):
         if self.version < 4:
             self._setAliasesV3()
 
+        if self.version < 5:
+            self._setAliasesV4()
+
         self._warned = set()
 
     @staticmethod
     def _craftRoot():
         return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+    def _setAliasesV4(self):
+        self.addGroupAlias("Blueprints", "Portage")
+        self.addGroupAlias("BlueprintVersions", "PortageVersions")
+        self.addAlias("Blueprints", "Locations", "General", "Portages")
 
     def _setAliasesV3(self):
         self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
@@ -83,7 +92,8 @@ class CraftConfig(object):
 
     def __contains__(self, key):
         return self.__contains_no_alias(key) or \
-               (key in self._alias and self.__contains__(self._alias[key]))
+               (key in self._alias and self.__contains__(self._alias[key])) or \
+               (key[0] in self._groupAlias and self.__contains__((self._groupAlias[key[0]], key[1])))
 
     def __contains_no_alias(self, key):
         return self._config and self._config.has_section(key[0]) and key[1] in self._config[key[0]]
@@ -95,12 +105,23 @@ class CraftConfig(object):
     def addAlias(self, group, key, destGroup, destKey):
         self._alias[(group, key)] = (destGroup, destKey)
 
+    def addGroupAlias(self, group, destGroup):
+        self._groupAlias[group] = destGroup
+
     def get(self, group, key, default=None):
         if (group, key) in self._alias:
             dg, dk = self._alias[(group, key)]
             if (dg, dk) in self:
                 self._warnDeprecated(dg, dk, group, key)
                 return self.get(dg, dk, default)
+
+        if group in self._groupAlias:
+            oldGroup = self._groupAlias[group]
+            if oldGroup in self._config.sections():
+                if (oldGroup, key) in self:
+                    self._warnDeprecated(oldGroup, key, group, key)
+                    return self.get(oldGroup, key)
+
 
         if self.__contains_no_alias((group, key)):
             return self._config[group][key]

@@ -68,8 +68,8 @@ class infoclass(object):
     @property
     def defaultTarget(self) -> str:
         target = None
-        if ("PortageVersions", self.package.package.path) in craftSettings:
-            target = craftSettings.get("PortageVersions", self.package.package.path)
+        if ("BlueprintVersions", self.package.package.path) in craftSettings:
+            target = craftSettings.get("BlueprintVersions", self.package.package.path)
         if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget

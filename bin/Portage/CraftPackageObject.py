@@ -118,8 +118,8 @@ class CraftPackageObject(object):
     def rootDirectories():
         # this function should return all currently set portage directories
         rootDirs = None
-        if ("General", "Portages") in craftSettings:
-            rootDirs = craftSettings.getList("General", "Portages")
+        if ("Blueprints", "Locations") in craftSettings:
+            rootDirs = craftSettings.getList("Blueprints", "Locations")
         if not rootDirs:
             rootDirs = [CraftStandardDirs.craftRepositoryDir()]
         return rootDirs

@@ -251,7 +251,7 @@ def setUp(args):
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
     boot.setSettignsValue("General", "ABI", abi)
-    boot.setSettignsValue("Portage", "Ignores", ignores)
+    boot.setSettignsValue("Blueprints", "Ignores", ignores)
     py = shutil.which("py")
     if py:
         py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)

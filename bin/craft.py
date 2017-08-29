@@ -67,7 +67,7 @@ def readListFile(listFile):
     parser.read(listFile)
     for sections in parser.keys():
         for packageName in parser[sections]:
-            craftSettings.set("PortageVersions", packageName, parser.get(sections, packageName))
+            craftSettings.set("BlueprintVersions", packageName, parser.get(sections, packageName))
             packageNames.append(packageName)
     return packageNames
 
@@ -399,7 +399,7 @@ def main():
                     package.children.update(child.children)
                 else:
                     if tempArgs.target:
-                        craftSettings.set("PortageVersions", child.path, args.target)
+                        craftSettings.set("BlueprintVersions", child.path, args.target)
                     package.children[child.name] = child
             if not run(package, action, tempArgs, package.children.values()):
                 return False

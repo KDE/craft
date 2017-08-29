@@ -30,11 +30,6 @@ Notify = Snore
 ## Speed up the merging of packages by using hard links
 UseHardlinks = True
 
-## The locations of the recipes
-## You can specify multiple locations in ; seperated list
-#Portages = ${Variables:CraftDir}/portage;C:\portage
-Portages = ${Variables:CraftDir}/portage
-
 [Variables]
 ## Values here are usually set by craft and can be used for dynamic values
 ## To override the variables, uncomment them
@@ -125,18 +120,24 @@ GitDrive = Q:
 
 
 
-[Portage]
-## This adds the possibility to disable cretin packages
-## For portage recipes configure options can be added by
+[Blueprints]
+## The locations of the recipes
+## You can specify multiple locations in ; seperated list
+#Locations = ${Variables:CraftDir}/plueprints;C:\plueprints
+Locations = ${Variables:CraftDir}/plueprints
+
+
+## This adds the possibility to disable cretin blueprints
+## Whether a blueprint is active can be determined with options.isActive
 ## "if self.subinfo.options.isActive("binary/mysql"):"
 ## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
 Ignores =
 
-[PortageVersions]
+[BlueprintVersions]
 ## Allow to automatically update certain recipes once a day.
 EnableDailyUpdates = True
 
-## Overide the default version for a package.
+## Override the default version for a package.
 ## For a normal package add category/package, like win32libs/libpng and set the Version
 ## For meta packages like Qt5 you can directly set the version for the whole package
 #libs/craft = master
@@ -209,4 +210,4 @@ Version = 5.9
 Compiler = mingw482_32
 
 [Version]
-ConfigVersion = 3
+ConfigVersion = 4
