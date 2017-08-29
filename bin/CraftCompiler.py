@@ -2,6 +2,7 @@
 # this package contains functions to check the current compiler
 # copyright:
 # Hannah von Reth <vonreth@kde.org>
+import re
 
 import utils
 from CraftConfig import *
