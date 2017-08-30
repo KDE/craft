@@ -123,6 +123,10 @@ class CraftStandardDirs(object):
         return os.path.join(CraftStandardDirs.craftBin(), "..", "blueprints")
 
     @staticmethod
+    def blueprintRoot():
+        return os.path.join(CraftStandardDirs.etcBlueprintDir(), "locations")
+
+    @staticmethod
     def etcBlueprintDir():
         """the etc directory for blueprints"""
         return os.path.join(CraftStandardDirs.etcDir(), "blueprints")

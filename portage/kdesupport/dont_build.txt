@@ -1,2 +1,0 @@
-kdewin-installer-static
-clucene-core

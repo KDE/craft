@@ -118,12 +118,13 @@ class CraftPackageObject(object):
     @staticmethod
     def rootDirectories():
         # this function should return all currently set blueprint directories
-        rootDirs = None
+        rootDirs =  {CraftStandardDirs.craftRepositoryDir()}
         if ("Blueprints", "Locations") in craftSettings:
-            rootDirs = craftSettings.getList("Blueprints", "Locations")
-        if not rootDirs:
-            rootDirs = [CraftStandardDirs.craftRepositoryDir()]
-        return rootDirs
+            rootDirs.update(craftSettings.getList("Blueprints", "Locations"))
+        if os.path.isdir(CraftStandardDirs.blueprintRoot()):
+            for f in os.listdir(CraftStandardDirs.blueprintRoot()):
+                rootDirs.add(os.path.join(CraftStandardDirs.blueprintRoot(), f))
+        return list(rootDirs)
 
 
     @staticmethod
@@ -135,6 +136,9 @@ class CraftPackageObject(object):
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
             root.path = "/"
             for blueprintRoot in CraftPackageObject.rootDirectories():
+                if not os.path.isdir(blueprintRoot):
+                    craftDebug.log.warning(f"{blueprintRoot} does not exist")
+                    continue
                 if OsUtils.isWin():
                     blueprintRoot = os.path.abspath(blueprintRoot).replace("\\", "/")
                 # create a dummy package to load its children
