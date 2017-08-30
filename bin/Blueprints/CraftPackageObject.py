@@ -118,7 +118,7 @@ class CraftPackageObject(object):
     @staticmethod
     def rootDirectories():
         # this function should return all currently set blueprint directories
-        rootDirs =  {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
+        rootDirs = {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
         if ("Blueprints", "Locations") in craftSettings:
             for path in craftSettings.getList("Blueprints", "Locations"):
                 rootDirs.add(utils.normalisePath(path))

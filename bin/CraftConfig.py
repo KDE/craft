@@ -169,5 +169,5 @@ class CraftConfig(object):
         if craftSettings.getboolean("CraftDebug", "DumpSettings", False):
             craftSettings.dump()
 
-
-craftSettings = CraftConfig()
+if not craftSettings:
+    craftSettings = CraftConfig()

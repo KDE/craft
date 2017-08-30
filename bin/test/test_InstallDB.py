@@ -41,7 +41,10 @@ from Blueprints.CraftPackageObject import *
 
 class TestAPI(CraftTestBase.CraftTestBase):
     def test_addInstalled(self):
-        package = InstallDB.installdb.addInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0')
+        print(CraftPackageObject.rootDirectories())
+        packageInstance = CraftPackageObject.get('win32libs/dbus')
+        self.assertNotEquals(packageInstance, None)
+        package = InstallDB.installdb.addInstalled(packageInstance, '1.4.0')
         package.addFiles(dict().fromkeys(['test', 'test1', 'test2'], 'empty hash'))
         package.install()
-        self.assertEquals(InstallDB.installdb.isInstalled(CraftPackageObject.get('win32libs/dbus'), '1.4.0'), True)
+        self.assertEquals(InstallDB.installdb.isInstalled(packageInstance, '1.4.0'), True)
