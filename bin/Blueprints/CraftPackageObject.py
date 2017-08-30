@@ -97,7 +97,7 @@ class CraftPackageObject(object):
                 if package.source:
                     raise BlueprintException(f"Multiple py files in one directory: {package.source} and {f}", package)
                 if f[:-3] != package.name:
-                    raise BlueprintException(f"Recipes must match the name of the directory: {f}", package)
+                    raise BlueprintException(f"Recipes must match the name of the directory: {blueprintRoot}/{f}", package)
                 recipe = os.path.splitext(f)[0]
                 if recipe not in CraftPackageObject._recipes:
                     CraftPackageObject._recipes[recipe] = []
