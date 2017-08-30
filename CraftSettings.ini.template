@@ -122,10 +122,8 @@ GitDrive = Q:
 
 [Blueprints]
 ## The locations of the recipes
-## You can specify multiple locations in ; seperated list
-#Locations = ${Variables:CraftDir}/blueprints;C:\blueprints
-Locations = ${Variables:CraftDir}/blueprints
-
+## You can specify additional external locations in ; seperated list
+#Locations = C:\blueprints
 
 ## This adds the possibility to disable cretin blueprints
 ## Whether a blueprint is active can be determined with options.isActive
