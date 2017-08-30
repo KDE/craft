@@ -8,6 +8,7 @@
 # and features may change in further versions
 
 import json
+import subprocess
 
 from Packager.PackagerBase import *
 # TODO:
