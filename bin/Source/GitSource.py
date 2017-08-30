@@ -132,7 +132,7 @@ class GitSource(VersionSystemSourceBase):
                 # first try to replace with a repo url from etc/blueprints/crafthosts.conf
                 if self.subinfo.options.fetch.checkoutSubmodules:
                     args += ["--recursive"]
-                ret = self.__git('clone', args + [repoUrl, "."])
+                ret = self.__git('clone', args + [repoUrl, self.checkoutDir()])
 
             # if a branch is given, we should check first if the branch is already downloaded
             # locally, otherwise we can track the remote branch
