@@ -1,7 +1,7 @@
 import InstallDB
 import utils
-from Portage.CraftPackageObject import *
-from Portage.CraftVersion import CraftVersion
+from Blueprints.CraftPackageObject import *
+from Blueprints.CraftVersion import CraftVersion
 from Utils import CraftTimer
 
 

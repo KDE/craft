@@ -1,6 +1,6 @@
 import CraftTestBase
 
-from Portage.CraftVersion import *
+from Blueprints.CraftVersion import *
 
 
 class TestCraftVersion(CraftTestBase.CraftTestBase):

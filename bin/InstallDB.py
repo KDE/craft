@@ -114,7 +114,7 @@ class InstallDB(object):
     def __init__(self, filename=None):
         if filename == None:
             with TemporaryUseShortpath(False):
-                filename = os.path.join(CraftStandardDirs.etcPortageDir(), 'install.db')
+                filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), 'install.db')
 
         self.dbfilename = filename
         self._prepareDatabase()
@@ -249,8 +249,8 @@ class InstallDB(object):
         """ prepare a new database and add the required table layout """
         with TemporaryUseShortpath(False):
             if not os.path.exists(self.dbfilename):
-                if not os.path.exists(CraftStandardDirs.etcPortageDir()):
-                    os.makedirs(CraftStandardDirs.etcPortageDir())
+                if not os.path.exists(CraftStandardDirs.etcBlueprintDir()):
+                    os.makedirs(CraftStandardDirs.etcBlueprintDir())
                 self.connection = sqlite3.connect(self.dbfilename)
                 cursor = self.connection.cursor()
 
@@ -291,7 +291,6 @@ class InstallDB(object):
 installdb = InstallDB()
 
 
-# an additional function from portage.py
 def printInstalled():
     """get all the packages that are already installed"""
     installed = installdb.getDistinctInstalled()

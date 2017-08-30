@@ -7,8 +7,8 @@ import shutil
 import types
 
 from Packager.PackagerBase import *
-from Portage.CraftDependencyPackage import DependencyType, CraftDependencyPackage
-from Portage.CraftPackageObject import *
+from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
+from Blueprints.CraftPackageObject import *
 
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))

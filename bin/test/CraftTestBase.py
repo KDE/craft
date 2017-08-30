@@ -17,7 +17,7 @@ class CraftTestBase(unittest.TestCase):
         CraftStandardDirs.CraftStandardDirs._pathCache().clear()
         CraftStandardDirs.CraftStandardDirs._pathCache()["EMERGEROOT"] = self.kdeRoot.name
         os.environ["KDEROOT"] = self.kdeRoot.name
-        CraftConfig.craftSettings.set("Blueprints", "Locations", os.path.join(craftRoot, "craft", "portage"))
+        CraftConfig.craftSettings.set("Blueprints", "Locations", os.path.join(craftRoot, "craft", "blueprints"))
         CraftConfig.craftSettings.set("Compile", "BuildType", "RelWithDebInfo")
         if hasattr(InstallDB, "installdb"):
             del InstallDB.installdb

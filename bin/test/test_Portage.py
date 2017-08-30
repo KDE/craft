@@ -2,11 +2,11 @@ import importlib
 
 import CraftConfig
 import CraftTestBase
-from Portage import CraftPackageObject
+from Blueprints import CraftPackageObject
 
 
-class CraftPortageTest(CraftTestBase.CraftTestBase):
-    def portageTest(self, compiler):
+class CraftBlueprintTest(CraftTestBase.CraftTestBase):
+    def blueprintTest(self, compiler):
         CraftConfig.craftSettings.set("General", "ABI", compiler)
 
         importlib.reload(CraftPackageObject)  # clear cache
@@ -15,15 +15,15 @@ class CraftPortageTest(CraftTestBase.CraftTestBase):
             _p.instance
 
 
-class TestAPI(CraftPortageTest):
+class TestAPI(CraftBlueprintTest):
     def test_mingw_x86(self):
-        self.portageTest("windows-mingw_86-gcc")
+        self.blueprintTest("windows-mingw_86-gcc")
 
     def test_mingw_x64(self):
-        self.portageTest("windows-mingw_64-gcc")
+        self.blueprintTest("windows-mingw_64-gcc")
 
     def test_msvc2015_x86(self):
-        self.portageTest("windows-msvc2015_86-cl")
+        self.blueprintTest("windows-msvc2015_86-cl")
 
     def test_msvc2015_x64(self):
-        self.portageTest("windows-msvc2015_64-cl")
+        self.blueprintTest("windows-msvc2015_64-cl")

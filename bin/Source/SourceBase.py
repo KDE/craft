@@ -63,7 +63,7 @@ class SourceBase(CraftBase):
             srcdir = self.sourceDir()
         patchfile = os.path.join(self.packageDir(), fileName)
         # TODO: integrate utils.applyPatch() here and remove it from utils().
-        # and change packages in portage accordingly
+        # and change packages in blueprints accordingly
         return utils.applyPatch(srcdir, patchfile, patchdepth)
 
     def createPatch(self):

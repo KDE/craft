@@ -1,7 +1,7 @@
 from distutils.dir_util import mkpath
 
 import info
-from Portage.CraftVersion import CraftVersion
+from Blueprints.CraftVersion import CraftVersion
 
 
 class subinfo(info.infoclass):

@@ -4,7 +4,7 @@
 from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
-from Portage.CraftPackageObject import *
+from Blueprints.CraftPackageObject import *
 from Utils import CraftHash
 
 
@@ -73,7 +73,7 @@ class PackageBase(CraftBase):
         ## \todo mergeDestinationDir() reads the real used merge dir from the
         ## package definition, which fails if this is changed
         ## a better solution will be to save the merge sub dir into
-        ## /etc/portage/installed and to read from it on unmerge
+        ## /etc/blueprints/installed and to read from it on unmerge
         craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
         packageList = installdb.getInstalledPackages(self.package)
 
@@ -263,7 +263,7 @@ class PackageBase(CraftBase):
             try:
                 ok = getattr(self, functions[command])()
             except AttributeError as e:
-                raise PortageException(str(e), self.package, e)
+                raise BlueprintException(str(e), self.package, e)
 
         else:
             ok = craftDebug.log.error("command %s not understood" % command)

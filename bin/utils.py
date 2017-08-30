@@ -26,7 +26,7 @@ from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
 # TODO: Rename
 from CraftStandardDirs import CraftStandardDirs
-from Portage.CraftVersion import CraftVersion
+from Blueprints.CraftVersion import CraftVersion
 
 utilsCache = None
 
@@ -43,7 +43,7 @@ class UtilsCache(object):
         self._versionCache = {}
         self._nightlyVersions = {}
         self.cacheCreationTime = time.time()
-        # defined in portageSearch
+        # defined in blueprintSearch
         self.availablePackages = None
         self._jsonCache = {}
 
@@ -570,7 +570,7 @@ def splitVCSUrl(Url):
 def replaceVCSUrl(Url):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(CraftStandardDirs.etcPortageDir(), "..", "crafthosts.conf")
+    configfile = os.path.join(CraftStandardDirs.etcBlueprintDir(), "..", "crafthosts.conf")
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
@@ -878,7 +878,7 @@ def embedManifest(executable, manifest):
        is installed'
     '''
     if not os.path.isfile(executable) or not os.path.isfile(manifest):
-        # We die here because this is a problem with the portage files
+        # We die here because this is a problem with the blueprint files
         craftDebug.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
     craftDebug.log.debug("embedding ressource manifest %s into %s" % \
                          (manifest, executable))

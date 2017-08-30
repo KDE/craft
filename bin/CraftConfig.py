@@ -60,7 +60,7 @@ class CraftConfig(object):
         self.addAlias("Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM")
         self.addAlias("Compile", "BuildTests", "General", "EMERGE_BUILDTESTS")
         self.addAlias("Compile", "BuildType", "General", "EMERGE_BUILDTYPE")
-        self.addAlias("Portage", "Ignores", "Portage", "PACKAGE_IGNORES")
+        self.addAlias("Blueprints", "Ignores", "Blueprints", "PACKAGE_IGNORES")
         self.addAlias("Package", "UseCache", "ContinuousIntegration", "UseCache")
         self.addAlias("Package", "CreateCache", "ContinuousIntegration", "UseCache")
         self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")

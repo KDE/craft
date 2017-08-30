@@ -1,5 +1,5 @@
 from Package.VirtualPackageBase import *
-from Portage.CraftVersion import CraftVersion
+from Blueprints.CraftVersion import CraftVersion
 
 
 class MaybeVirtualPackageBase(object):

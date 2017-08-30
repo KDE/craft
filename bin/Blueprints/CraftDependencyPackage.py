@@ -1,7 +1,7 @@
 from enum import unique, Enum
 
 from CraftDebug import craftDebug
-from Portage.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftPackageObject import CraftPackageObject
 
 
 @unique

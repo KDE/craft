@@ -120,12 +120,12 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftRepositoryDir():
-        return os.path.join(CraftStandardDirs.craftBin(), "..", "portage")
+        return os.path.join(CraftStandardDirs.craftBin(), "..", "blueprints")
 
     @staticmethod
-    def etcPortageDir():
-        """the etc directory for portage"""
-        return os.path.join(CraftStandardDirs.etcDir(), "portage")
+    def etcBlueprintDir():
+        """the etc directory for blueprints"""
+        return os.path.join(CraftStandardDirs.etcDir(), "blueprints")
 
     @staticmethod
     def msysDir():

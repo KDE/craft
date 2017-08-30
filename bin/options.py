@@ -11,7 +11,7 @@
 #
 # for example:
 #
-# in portage/subdir/package/file.py
+# in blueprints/subdir/package/file.py
 #   ...
 #   self.subinfo.options.cmake.openIDE=1
 #
@@ -33,7 +33,7 @@
 import utils
 from CraftConfig import *
 from CraftDebug import craftDebug
-from Portage.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftPackageObject import CraftPackageObject
 
 
 class OptionsBase(object):

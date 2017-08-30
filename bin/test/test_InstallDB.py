@@ -36,7 +36,7 @@
 import CraftTestBase
 
 import InstallDB
-from Portage.CraftPackageObject import *
+from Blueprints.CraftPackageObject import *
 
 
 class TestAPI(CraftTestBase.CraftTestBase):

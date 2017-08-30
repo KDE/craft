@@ -129,7 +129,7 @@ class GitSource(VersionSystemSourceBase):
                 args = []
                 # it doesn't exist so clone the repo
                 os.makedirs(checkoutDir)
-                # first try to replace with a repo url from etc/portage/crafthosts.conf
+                # first try to replace with a repo url from etc/blueprints/crafthosts.conf
                 if self.subinfo.options.fetch.checkoutSubmodules:
                     args += ["--recursive"]
                 ret = self.__git('clone', args + [repoUrl, "."])

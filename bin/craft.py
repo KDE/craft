@@ -15,12 +15,12 @@ import collections
 
 import CraftSetupHelper
 import InstallDB
-import portageSearch
+import blueprintSearch
 import utils
 from CraftConfig import *
-from Portage.CraftDependencyPackage import CraftDependencyPackage
-from Portage.CraftPackageObject import *
-from Portage.CraftVersion import CraftVersion
+from Blueprints.CraftDependencyPackage import CraftDependencyPackage
+from Blueprints.CraftPackageObject import *
+from Blueprints.CraftVersion import CraftVersion
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 
@@ -29,6 +29,17 @@ if not "KDEROOT" in os.environ:
     helper.subst()
     helper.setupEnvironment()
     helper.printBanner()
+
+
+def migrate():
+    portageDir = os.path.join(CraftStandardDirs.etcDir(), "portage")
+    if os.path.isdir(portageDir):
+        del InstallDB.installdb
+        utils.moveEntries(portageDir, CraftStandardDirs.etcBlueprintDir())
+        utils.rmtree(portageDir)
+        InstallDB.installdb = InstallDB.InstallDB()
+    InstallDB.installdb.migrateDatabase()
+
 
 def destroyCraftRoot():
     del InstallDB.installdb
@@ -334,7 +345,8 @@ def main():
     if args.doDestroyCraftRoot:
         destroyCraftRoot()
         return True
-    InstallDB.installdb.migrateDatabase()
+
+    migrate()
 
     if args.stayQuiet:
         craftDebug.setVerbose(-1)
@@ -357,7 +369,7 @@ def main():
     CraftPackageObject.options = args.options
     if args.search:
         for package in args.packageNames:
-            portageSearch.printSearch(package)
+            blueprintSearch.printSearch(package)
         return True
 
     for action in actionHandler.parseFinalAction(args, "all"):
@@ -392,7 +404,7 @@ def main():
             for packageName in packageNames:
                 child = CraftPackageObject.get(packageName)
                 if not child:
-                    portageSearch.printSearch(packageName)
+                    blueprintSearch.printSearch(packageName)
                     return False
 
                 if child.isCategory():
@@ -415,7 +427,7 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except PortageException as e:
+        except BlueprintException as e:
             craftDebug.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             craftDebug.log.error(e, exc_info=e)

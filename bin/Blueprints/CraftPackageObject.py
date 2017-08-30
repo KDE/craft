@@ -65,21 +65,22 @@ class CraftPackageObject(object):
             package = CraftPackageObject._nodes[path]
         return package
 
-    def _addNode(self, path, portageRoot):
+    def _addNode(self, path, blueprintRoot):
         package = CraftPackageObject()
         if path:
             if OsUtils.isWin():
                 path = path.replace("\\", "/")
-            package.path = path[len(portageRoot) + 1:]
+            package.path = path[len(blueprintRoot) + 1:]
             if package.path in CraftPackageObject._nodes:
                 existingNode = CraftPackageObject._nodes[package.path]
                 if not existingNode.isCategory():
-                    raise PortageException(f"Found a recipe clash {existingNode.source} and {portageRoot}/{package.path}", existingNode)
+                    raise BlueprintException(
+                        f"Found a recipe clash {existingNode.source} and {blueprintRoot}/{package.path}", existingNode)
                 package = existingNode
             else:
                 CraftPackageObject._nodes[package.path] = package
-        elif portageRoot:
-            path = portageRoot
+        elif blueprintRoot:
+            path = blueprintRoot
         else:
             return
 
@@ -89,14 +90,14 @@ class CraftPackageObject(object):
             if os.path.isdir(fPath):
                 if f not in CraftPackageObject.IgnoredDirectories:
                     hasChildren = True
-                    child = self._addNode(fPath, portageRoot)
+                    child = self._addNode(fPath, blueprintRoot)
                     if child:
                         package.children[child.name] = child
             elif f.endswith(".py"):
                 if package.source:
-                    raise PortageException(f"Multiple py files in one directory: {package.source} and {f}", package)
+                    raise BlueprintException(f"Multiple py files in one directory: {package.source} and {f}", package)
                 if f[:-3] != package.name:
-                    raise PortageException(f"Recipes must math the name of the directory: {f}", package)
+                    raise BlueprintException(f"Recipes must math the name of the directory: {f}", package)
                 recipe = os.path.splitext(f)[0]
                 if recipe not in CraftPackageObject._recipes:
                     CraftPackageObject._recipes[recipe] = []
@@ -104,7 +105,7 @@ class CraftPackageObject(object):
                 package.source = fPath
         if hasChildren:
             if package.source:
-                raise PortageException(f"{package} has has children but also a recipe {package.source}!", package)
+                raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
         return package
 
     @property
@@ -116,7 +117,7 @@ class CraftPackageObject(object):
 
     @staticmethod
     def rootDirectories():
-        # this function should return all currently set portage directories
+        # this function should return all currently set blueprint directories
         rootDirs = None
         if ("Blueprints", "Locations") in craftSettings:
             rootDirs = craftSettings.getList("Blueprints", "Locations")
@@ -128,16 +129,16 @@ class CraftPackageObject(object):
     @staticmethod
     def root():
         if not CraftPackageObject.__rootPackage:
-            if ("Portage", "Ignores") in craftSettings:
-                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Portage", "Ignores").split(";")]))
+            if ("Blueprints", "Ignores") in craftSettings:
+                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Blueprints", "Ignores").split(";")]))
 
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
             root.path = "/"
-            for portage in CraftPackageObject.rootDirectories():
+            for blueprintRoot in CraftPackageObject.rootDirectories():
                 if OsUtils.isWin():
-                    portage = os.path.abspath(portage).replace("\\", "/")
+                    blueprintRoot = os.path.abspath(blueprintRoot).replace("\\", "/")
                 # create a dummy package to load its children
-                child = root._addNode(None, portage)
+                child = root._addNode(None, blueprintRoot)
                 root.children.update(child.children)
         return CraftPackageObject.__rootPackage
 
@@ -151,13 +152,13 @@ class CraftPackageObject(object):
             try:
                 mod = loader.load_module()
             except Exception as e:
-                raise PortageException(f"Failed to load file {self.source}", self, e)
+                raise BlueprintException(f"Failed to load file {self.source}", self, e)
             if not mod is None:
                 mod.CRAFT_CURRENT_MODULE = self
                 pack = mod.Package()
                 self._instance = pack
             else:
-                raise PortageException("Failed to find package", self)
+                raise BlueprintException("Failed to find package", self)
         return self._instance
 
     @property
@@ -208,7 +209,7 @@ class CraftPackageObject(object):
         return recipes
 
 
-class PortageException(Exception, CraftPackageObject):
+class BlueprintException(Exception, CraftPackageObject):
     def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
         CraftPackageObject.__init__(self, package)
