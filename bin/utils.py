@@ -1021,3 +1021,9 @@ class ScopedEnv(object):
 
     def __exit__(self, exc_type, exc_value, trback):
         self.reset()
+
+def normalisePath(path):
+    path = os.path.abspath(path)
+    if OsUtils.isWin():
+        return path.replace("\\", "/")
+    return path

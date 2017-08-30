@@ -8,6 +8,7 @@ from CraftConfig import craftSettings
 from CraftStandardDirs import CraftStandardDirs
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
+import utils
 
 
 class CraftPackageObject(object):
@@ -68,8 +69,7 @@ class CraftPackageObject(object):
     def _addNode(self, path, blueprintRoot):
         package = CraftPackageObject()
         if path:
-            if OsUtils.isWin():
-                path = path.replace("\\", "/")
+            path = utils.normalisePath(path)
             package.path = path[len(blueprintRoot) + 1:]
             if package.path in CraftPackageObject._nodes:
                 existingNode = CraftPackageObject._nodes[package.path]
@@ -118,12 +118,13 @@ class CraftPackageObject(object):
     @staticmethod
     def rootDirectories():
         # this function should return all currently set blueprint directories
-        rootDirs =  {CraftStandardDirs.craftRepositoryDir()}
+        rootDirs =  {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
         if ("Blueprints", "Locations") in craftSettings:
-            rootDirs.update(craftSettings.getList("Blueprints", "Locations"))
+            for path in craftSettings.getList("Blueprints", "Locations"):
+                rootDirs.add(utils.normalisePath(path))
         if os.path.isdir(CraftStandardDirs.blueprintRoot()):
             for f in os.listdir(CraftStandardDirs.blueprintRoot()):
-                rootDirs.add(os.path.join(CraftStandardDirs.blueprintRoot(), f))
+                rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
         return list(rootDirs)
 
 
@@ -139,8 +140,7 @@ class CraftPackageObject(object):
                 if not os.path.isdir(blueprintRoot):
                     craftDebug.log.warning(f"{blueprintRoot} does not exist")
                     continue
-                if OsUtils.isWin():
-                    blueprintRoot = os.path.abspath(blueprintRoot).replace("\\", "/")
+                blueprintRoot = utils.normalisePath(os.path.abspath(blueprintRoot))
                 # create a dummy package to load its children
                 child = root._addNode(None, blueprintRoot)
                 root.children.update(child.children)
