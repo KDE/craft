@@ -124,6 +124,8 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def blueprintRoot():
+        if ("Blueprints", "BlueprintRoot") in craftSettings:
+            return craftSettings.get("Blueprints", "BlueprintRoot")
         return os.path.join(CraftStandardDirs.etcBlueprintDir(), "locations")
 
     @staticmethod
