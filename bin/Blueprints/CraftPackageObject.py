@@ -71,20 +71,11 @@ class CraftPackageObject(object):
         if path:
             path = utils.normalisePath(path)
             package.path = path[len(blueprintRoot) + 1:]
-            if package.path in CraftPackageObject._nodes:
-                existingNode = CraftPackageObject._nodes[package.path]
-                if not existingNode.isCategory():
-                    raise BlueprintException(
-                        f"Found a recipe clash {existingNode.source} and {blueprintRoot}/{package.path}", existingNode)
-                package = existingNode
-            else:
-                CraftPackageObject._nodes[package.path] = package
         elif blueprintRoot:
             path = blueprintRoot
         else:
-            return
+            return None
 
-        hasChildren = False
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
             if os.path.isdir(fPath):
@@ -103,9 +94,24 @@ class CraftPackageObject(object):
                     CraftPackageObject._recipes[recipe] = []
                 CraftPackageObject._recipes[recipe].append(package)
                 package.source = fPath
-        if hasChildren:
+        if package.children:
             if package.source:
                 raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
+
+
+        if path != blueprintRoot:
+            if not package.source and not package.children:
+                craftDebug.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
+                                       f"You might wan't to run \"git clean -xdf\" in that directry.")
+                return None
+            if package.path in CraftPackageObject._nodes:
+                existingNode = CraftPackageObject._nodes[package.path]
+                if not existingNode.isCategory():
+                    raise BlueprintException(
+                        f"Found a recipe clash {existingNode.source} and {blueprintRoot}/{package.path}", existingNode)
+                package = existingNode
+            else:
+                CraftPackageObject._nodes[package.path] = package
         return package
 
     @property
