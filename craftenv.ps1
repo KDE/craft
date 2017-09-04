@@ -123,6 +123,6 @@ function Global:cr()
 
 if($args.Length -ne 0)
 {
-    invoke-expression -command "$args"
+    & $args
 }
 
