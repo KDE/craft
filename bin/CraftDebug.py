@@ -70,8 +70,10 @@ class CraftDebug(object):
             lvl = logging.INFO
         elif _verbose >= 2:
             lvl = logging.DEBUG
-        elif _verbose < 0:
+        elif _verbose == 0:
             lvl = logging.WARNING
+        elif _verbose <= -1:
+            lvl = logging.CRITICAL
         self._handler.setLevel(lvl)
 
     def step(self, message):
