@@ -12,6 +12,7 @@ manifest\\.*
 .*\.lib
 include\\.*
 lib\\cmake\\.*
+share\\ECM\\.*
 
 # multiple docs
 bin\\data\\man\\.*
