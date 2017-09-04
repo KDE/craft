@@ -11,6 +11,7 @@ manifest\\.*
 # development files
 .*\.lib
 include\\.*
+lib\\cmake\\.*
 
 # multiple docs
 bin\\data\\man\\.*
@@ -19,6 +20,9 @@ share\\man\\.*
 man\\.*
 share\\xml\\.*
 share\\locale\\.*
+
+# docbook stuff
+bin\\data\\xml\\.*
 
 # cmake stuff
 share\\apps\\cmake\\.*
