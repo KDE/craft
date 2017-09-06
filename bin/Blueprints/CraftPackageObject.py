@@ -16,7 +16,7 @@ class CraftPackageObject(object):
     __rootPackage = None
     _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
-    IgnoredDirectories = [".git", "__pycache__"]
+    IgnoredDirectories = [".git", "__pycache__", ".kdev4"]
     Ignores = re.compile("a^")
 
     def __init__(self, path=None):
