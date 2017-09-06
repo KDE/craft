@@ -93,6 +93,10 @@ UseNinja = True
 ## change the value to the path of the executable you want to use instead.
 MakeProgram = jom
 
+[CMake]
+## Fetch the translations for KDE projects when build from git
+KDE_L10N_AUTO_TRANSLATIONS = OFF
+
 [ShortPath]
 ## substitute pathes by drives
 ## This option is needed to avoid path limit problems in case of long base pathes

@@ -96,6 +96,9 @@ class CMakeBuildSystem(BuildSystemBase):
                                                                    "toolchains",
                                                                    "Toolchain-cross-mingw32-linux-%s.cmake" % craftCompiler.architecture)
 
+        if craftSettings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
+            options += " -DKDE_L10N_AUTO_TRANSLATIONS=ON"
+
         if OsUtils.isWin():
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
 
