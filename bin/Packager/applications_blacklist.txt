@@ -2,14 +2,16 @@
 
 # general
 manifest\\.*
+.*\.cmake
 .*\.exp
 .*\.pdb
+.*\.pc
 .*\.la
+.*\.lib
 .*\.nsis
 .*\.prl
-
-# development files
-.*\.lib
+.*\.dll\.a
+.*\.def
 include\\.*
 lib\\cmake\\.*
 share\\ECM\\.*
