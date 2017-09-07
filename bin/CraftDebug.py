@@ -89,9 +89,12 @@ class CraftDebug(object):
     def log(self):
         return self._log
 
-    def print(self, msg):
-        if self.verbose() >= 0:
-            print(msg)
+    def print(self, msg, file=sys.stdout):
+        if 0 <= self.verbose() < 2:
+            print(msg, file=file if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stderr)
+            self.log.debug(msg)
+        else:
+            self.log.debug(msg)
 
     def logEnv(self, env=None):
         if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
@@ -168,9 +171,10 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                if craftDebug.verbose() < 1 and craftDebug.getboolean("CraftDebug", "LogDeprecated", False):
+                if craftDebug.getboolean("CraftDebug", "LogDeprecated", False):
                     craftDebug.print(msg)
-                craftDebug.log.debug(msg, stack_info=True)
+                else:
+                    craftDebug.log.debug(msg, stack_info=True)
             return fun(*args, **kwargs)
 
         return inner

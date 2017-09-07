@@ -19,13 +19,7 @@ MIN_PY_VERSION = (3, 6, 0)
 
 
 def log(msg):
-    ciMode = craftSettings.getboolean("ContinuousIntegration", "Enabled", False)
-    if not ciMode:
-        old_stream = craftDebug._handler.stream
-        craftDebug._handler.stream = sys.stderr
-    craftDebug.log.info(msg)
-    if not ciMode:
-        craftDebug._handler.stream = old_stream
+    craftDebug.print(msg, sys.stderr)
 
 if sys.version_info[0:3] < MIN_PY_VERSION:
     log("Error: Python too old!")
