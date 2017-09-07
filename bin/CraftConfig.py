@@ -67,17 +67,16 @@ class CraftConfig(object):
         self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
 
     def _warnDeprecated(self, deprecatedSection, deprecatedKey, section, key):
-        if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-            if not (deprecatedSection, deprecatedKey) in self._warned:
-                self._warned.add((deprecatedSection, deprecatedKey))
-                print(
-                    f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
-                    f"{section}/{key}, please update your CraftSettings.ini",
-                    file=sys.stderr)
+        if not (deprecatedSection, deprecatedKey) in self._warned:
+            self._warned.add((deprecatedSection, deprecatedKey))
+            print(
+                f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
+                f"{section}/{key}, please update your CraftSettings.ini",
+                file=sys.stderr if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
 
     def _readSettings(self):
         if not os.path.exists(self.iniPath):
-            print("Could not find config: %s" % self.iniPath)
+            print("Could not find config: %s" % self.iniPath, file=sys.stderr)
             return
 
         self._config.read(self.iniPath)
