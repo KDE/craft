@@ -417,7 +417,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     # if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
         arg0 = cmd[0]
-        kw["shell"] = False
+        if not "shell" in kw:
+            kw["shell"] = False
     else:
         arg0 = shlex.split(cmd, posix=False)[0]
 

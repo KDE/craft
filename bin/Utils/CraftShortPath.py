@@ -45,7 +45,8 @@ class CraftShortPath(object):
         if not os.path.isdir(path):
             if not os.path.isdir(longPath):
                 os.makedirs(longPath)
-            if not utils.system(["mklink", "/J", path, longPath]):
+            # note: mklink is a CMD command => needs shell
+            if not utils.system(["mklink", "/J", path, longPath], shell=True):
                 craftDebug.log.critical(f"Could not create shortpath {path}, for {longPath}")
                 return longPath
         else:
