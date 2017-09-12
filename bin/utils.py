@@ -400,7 +400,6 @@ def un7zip(fileName, destdir, flag=None):
 def system(cmd, displayProgress=False, logCommand=True, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
-    kw['shell'] = True
     return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, **kw)
 
 
@@ -420,6 +419,9 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if not "shell" in kw:
             kw["shell"] = False
     else:
+        if not "shell" in kw:
+            # use shell, arg0 might end up with "/usr/bin/svn" => needs shell so it can be executed
+            kw["shell"] = True
         arg0 = shlex.split(cmd, posix=False)[0]
 
     matchQuoted = re.match("^\"(.*)\"$", arg0)
