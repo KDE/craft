@@ -153,7 +153,7 @@ class SetupHelper(object):
             version = craftCompiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
-                                        f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest")
+                                        f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest -products *")
             arg = architectures[craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
