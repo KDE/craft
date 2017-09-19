@@ -171,7 +171,7 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
                 craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                if craftDebug.getboolean("CraftDebug", "LogDeprecated", False):
+                if craftSettings.getboolean("CraftDebug", "LogDeprecated", False):
                     craftDebug.print(msg)
                 else:
                     craftDebug.log.debug(msg, stack_info=True)
