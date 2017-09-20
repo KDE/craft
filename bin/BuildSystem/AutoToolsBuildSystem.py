@@ -3,6 +3,7 @@
 from BuildSystem.BuildSystemBase import *
 from shells import *
 import glob
+import re
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
