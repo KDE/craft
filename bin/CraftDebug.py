@@ -91,7 +91,7 @@ class CraftDebug(object):
 
     def print(self, msg, file=sys.stdout):
         if 0 <= self.verbose() < 2:
-            print(msg, file=file if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stderr)
+            print(msg, file=file if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
             self.log.debug(msg)
         else:
             self.log.debug(msg)
