@@ -4,20 +4,15 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        patchLvl = ".1"
-        for ver in ["1604"]:
-            self.targets[ver + patchLvl] = f"http://www.7-zip.org/a/7z{ver}-extra.7z"
-            self.targetInstallPath[ver + patchLvl] = os.path.join("dev-utils", "bin")
-        self.targetDigests['1604.1'] = (
-            ['59f41025acc40cf2e0b30b5cc6e4bcb1e07573201e256fbe8edb3c9c514dd251'], CraftHash.HashAlgorithm.SHA256)
+        for ver in ["1604.1"]:
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/7z1604-extra.zip"
+            self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
+
+        self.targetDigests["1604.1"] = (["350a20ec1a005255713c39911982bdeb091fc94ad9800448505c4772f8e85074"], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "1604.1"
-
-    def setDependencies(self):
-        self.buildDependencies["dev-util/7zip-920"] = "default"
-
 
 from Package.BinaryPackageBase import *
 
