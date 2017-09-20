@@ -8,20 +8,16 @@ class subinfo(info.infoclass):
     def setTargets(self):
         """ """
         self.svnTargets['master'] = "https://github.com/martine/ninja.git"
-        for ver in ["1.6.0", "1.7.1", "1.7.2"]:
-            self.targets[ver] = "https://github.com/martine/ninja/archive/v%s.tar.gz" % ver
-            self.archiveNames[ver] = "ninja-%s.tar.gz" % ver
-            self.targetInstSrc[ver] = "ninja-%s" % ver
+        for ver in ["1.6.0", "1.7.1", "1.7.2", "1.8.2"]:
+            self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
+            self.archiveNames[ver] = f"ninja-{ver}.tar.gz"
+            self.targetInstSrc[ver] = f"ninja-{ver}"
             self.targetInstallPath[ver] = "dev-utils"
         self.targetDigests['1.6.0'] = 'a6ff055691f6d355234298c21cc18961b4ca2ed9'
-        self.targetDigests['1.7.2'] = (
-            ['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests['1.7.2'] = (['2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests['1.8.2'] = (['86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4'], CraftHash.HashAlgorithm.SHA256)
 
-        # unconditionally use master for now, to fix:
-        # https://github.com/ninja-build/ninja/issues/1161
-        self.defaultTarget = "master" # TODO: Use 1.7.3 once released
-        if craftCompiler.isMSVC2017():
-            self.defaultTarget = "master"
+        self.defaultTarget = "1.8.2"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
