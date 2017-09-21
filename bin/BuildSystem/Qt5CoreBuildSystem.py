@@ -14,7 +14,8 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
     def install(self, options=""):
         """implements the make step for Qt projects"""
         imageDir = self.imageDir()
-        if craftSettings.getboolean("QtSDK", "Enabled", False):
+        # Since 5.10 we don't apply the patch to Qt anymore which would accept a absolute path
+        if self.qtVer >= CraftVersion("5.10") or craftSettings.getboolean("QtSDK", "Enabled", False):
             if os.path.splitdrive(imageDir)[0] == os.path.splitdrive(self.buildDir())[0]:
                 imageDir = imageDir[2:]
         options += f" INSTALL_ROOT={imageDir} install"
