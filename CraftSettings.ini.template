@@ -125,6 +125,10 @@ GitDrive = Q:
 
 
 [Blueprints]
+## The location where the default blueprints are stored
+## This is especially useful when using multiple Craft setups
+#BlueprintRoot = ${Variables:CraftRoot}/etc/blueprints/locations
+
 ## The locations of the recipes
 ## You can specify additional external locations in ; seperated list
 #Locations = C:\blueprints
