@@ -131,6 +131,7 @@ class CraftPackageObject(object):
         if os.path.isdir(CraftStandardDirs.blueprintRoot()):
             for f in os.listdir(CraftStandardDirs.blueprintRoot()):
                 rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
+        craftDebug.log.debug(f"Craft BlueprintLocations: {rootDirs}")
         return list(rootDirs)
 
 
