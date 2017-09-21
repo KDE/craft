@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
             self.targets[
                 f"{ver}-{rev}"] = f"http://downloads.sourceforge.net/sourceforge/mingw-w64/{arch}-{ver}-release-posix-{exceptionType}-rt_v{rt}-rev{rev}.7z"
 
+        self.targetDigestsX64["7.1.0-0"] = (['5391e8e733dcdab71e6ac71d6524e841be5ea980dc14f22a23af64e92af5dcd7'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "7.1.0-0"
 
     def setDependencies(self):
