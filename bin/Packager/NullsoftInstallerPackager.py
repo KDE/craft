@@ -57,7 +57,7 @@ You can add your own defines into self.defines as well.
         self.defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         self.defines.setdefault("srcdir", self.archiveDir())
         self.defines.setdefault("extrashortcuts", "")
-        self.defines.setdefault("version", self.getPackageVersion()[0])
+        self.defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.getPackageVersion()[0])
         self.defines.setdefault("website",
                                 self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         # runtime distributable files
