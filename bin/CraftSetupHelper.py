@@ -152,8 +152,11 @@ class SetupHelper(object):
             architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
             version = craftCompiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-            path = subprocess.getoutput(f"\"{vswhere}\""
-                                        f"  -version \"[{version},{version+1})\" -property installationPath -legacy -nologo -latest -products *")
+            if version >= 15:
+                vswhereArgs = " -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+            else:
+                vswhereArgs = " -legacy"
+            path = subprocess.getoutput(f"\"{vswhere}\" -version \"[{version},{version+1})\" -property installationPath -nologo -latest {vswhereArgs}")
             arg = architectures[craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
