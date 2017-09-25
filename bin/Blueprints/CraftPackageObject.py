@@ -109,8 +109,10 @@ class CraftPackageObject(object):
                 if not existingNode.isCategory():
                     raise BlueprintException(
                         f"Found a recipe clash {existingNode.source} and {blueprintRoot}/{package.path}", existingNode)
+                existingNode.children.update(package.children)
                 package = existingNode
             else:
+                craftDebug.log.debug(f"Adding package {package} from {blueprintRoot}")
                 CraftPackageObject._nodes[package.path] = package
         return package
 
