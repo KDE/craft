@@ -19,11 +19,11 @@ class CraftPackageObject(object):
     IgnoredDirectories = [".git", "__pycache__", ".kdev4"]
     Ignores = re.compile("a^")
 
-    def __init__(self, path=None):
-        if isinstance(path, CraftPackageObject):
-            self.__dict__ = path.__dict__
+    def __init__(self, other=None):
+        if isinstance(other, CraftPackageObject):
+            self.__dict__ = other.__dict__
             return
-        if path:
+        if other:
             raise Exception("Calling CraftPackageObject(str) directly is not supported,"
                             " use CraftPackageObject.get(str) instead.")
 
