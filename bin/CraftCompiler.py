@@ -136,10 +136,6 @@ class CraftCompiler(object):
     def isIntel(self):
         return self.compiler == "intel"
 
-    @deprecated("self.compiler")
-    def getCompilerExecutableName(self):
-        return self.compiler
-
     @deprecated("craftCompiler")
     def getCompilerName(self):
         return str(craftCompiler)
@@ -157,7 +153,7 @@ class CraftCompiler(object):
 
     def getVersion(self):
         if self.isGCCLike():
-            return self.getGCCLikeVersion(self.getCompilerExecutableName())
+            return self.getGCCLikeVersion(self.compiler)
         elif self.isMSVC():
             return self.getInternalVersion()
         else:
@@ -216,5 +212,5 @@ if __name__ == '__main__':
     print("Compiler Name: %s" % craftCompiler.getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[craftCompiler.isNative()])
     if craftCompiler.isGCCLike():
-        print("Compiler Version: %s" % craftCompiler.getGCCLikeVersion(craftCompiler.getCompilerExecutableName()))
+        print("Compiler Version: %s" % craftCompiler.getGCCLikeVersion(craftCompiler.compiler))
         print("Compiler Target: %s" % craftCompiler._getGCCTarget())
