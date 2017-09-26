@@ -1,5 +1,4 @@
 import os
-import platform
 import subprocess
 
 from CraftConfig import craftSettings
@@ -47,7 +46,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def isShortPathEnabled():
-        return platform.system() == "Windows" and CraftStandardDirs._allowShortpaths and craftSettings.getboolean(
+        return OsDetection.isWin() and CraftStandardDirs._allowShortpaths and craftSettings.getboolean(
             "ShortPath", "Enabled", False)
 
     @staticmethod
@@ -107,7 +106,7 @@ class CraftStandardDirs(object):
                 CraftStandardDirs._pathCache()["EMERGEROOT"] = CraftStandardDirs.nomalizePath(
                     craftSettings.get("ShortPath", "RootDrive"))
             else:
-                CraftStandardDirs._pathCache()["EMERGEROOT"] = craftSettings._craftRoot()
+                CraftStandardDirs._pathCache()["EMERGEROOT"] = CraftStandardDirs._deSubstPath(craftSettings._craftRoot())
         return CraftStandardDirs._pathCache()["EMERGEROOT"]
 
     @staticmethod
