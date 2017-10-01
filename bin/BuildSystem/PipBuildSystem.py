@@ -25,9 +25,9 @@ class PipBuildSystem(BuildSystemBase):
         if self.python3:
             pythons[3] = craftSettings.get("Paths", "PYTHON")
 
-        args = ""
+        args = []
         if self.allowExternal:
-            args += " --allow-all-external "
+            args.append(" --allow-all-external")
 
         for pythonMajorVersion, pythonPath in pythons.items():
             pipExe = shutil.which("pip", path=os.path.join(pythonPath, "Scripts"))
@@ -42,7 +42,7 @@ class PipBuildSystem(BuildSystemBase):
                     "Could not find 'pip' executable for Python install: {0}, skipping install".format(pythonPath))
                 return False
 
-            command = f"{pipExe} install --upgrade {args} {self.package.name}"
+            command = [pipExe, "install", "--upgrade"] + args + [self.package.name]
             ok = ok and utils.system(command)
         return ok
 
