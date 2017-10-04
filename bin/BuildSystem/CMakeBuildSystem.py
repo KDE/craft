@@ -186,7 +186,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.install.useMakeToolForInstall and not (
             self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-            self._fixCmakeImageDir(self.installDir(), self.mergeDestinationDir())
+            self._fixInstallPrefix()
         return True
 
     def unittest(self):
@@ -210,39 +210,3 @@ class CMakeBuildSystem(BuildSystemBase):
             return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
                    " -DCMAKE_C_COMPILER=/usr/bin/clang"
 
-    def _fixCmakeImageDir(self, imagedir, rootdir):
-        """
-        when using DESTDIR=foo under windows, it does not _replace_
-        CMAKE_INSTALL_PREFIX with it, but prepends destdir to it.
-        so when we want to be able to install imagedir into KDEROOT,
-        we have to move things around...
-        """
-        craftDebug.log.debug("fixImageDir: %s %s" % (imagedir, rootdir))
-        # imagedir = e:\foo\thirdroot\tmp\dbus-0\image
-        # rootdir  = e:\foo\thirdroot
-        # files are installed to
-        # e:\foo\thirdroot\tmp\dbus-0\image\foo\thirdroot
-        _, rootpath = os.path.splitdrive(rootdir)
-        # print "rp:", rootpath
-        if (rootpath.startswith(os.path.sep)):
-            rootpath = rootpath[1:]
-        # CMAKE_INSTALL_PREFIX = X:\
-        # -> files are installed to
-        # x:\build\foo\dbus\image\
-        # --> all fine in this case
-        # print("rp:", rootpath)
-        if len(rootpath) == 0:
-            return
-
-        tmp = os.path.join(imagedir, rootpath)
-        if os.path.exists(tmp):
-            utils.mergeTree(tmp, imagedir)
-            utils.rmtree(os.path.join(tmp, rootpath.split(os.path.pathsep)[0]))
-        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
-            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
-                                 craftSettings.get("QtSDK", "Compiler"))
-            # drop the drive letter and the first slash [3:]
-            path = os.path.join(imagedir, qtDir[3:])
-            if os.path.exists(path):
-                utils.mergeTree(path, imagedir)
-                utils.rmtree(os.path.join(imagedir, craftSettings.get("QtSDK", "Path")[3:]))

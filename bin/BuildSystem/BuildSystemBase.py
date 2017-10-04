@@ -4,6 +4,7 @@
 
 """ \package BuildSystemBase"""
 import multiprocessing
+import os
 
 from CraftBase import *
 from CraftCompiler import craftCompiler
@@ -128,3 +129,25 @@ class BuildSystemBase(CraftBase):
 
     def clangOptions(self):
         return ""
+
+    def _fixInstallPrefix(self):
+        craftDebug.log.debug(f"Begin: fixInstallPrefix {self}")
+        def stripPath(path):
+            rootPath = os.path.splitdrive(path)[1]
+            if rootPath.startswith(os.path.sep):
+                rootPath = rootPath[1:]
+            return rootPath
+        badPrefix = os.path.join(self.installDir(), stripPath(CraftStandardDirs.craftRoot()))
+
+        if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
+            utils.mergeTree(badPrefix, self.installDir())
+
+        if craftSettings.getboolean("QtSDK", "Enabled", False):
+            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"),
+                                 craftSettings.get("QtSDK", "Version"),
+                                 craftSettings.get("QtSDK", "Compiler"))
+            path = os.path.join(self.installDir(), stripPath(qtDir))
+            if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
+                utils.mergeTree(path, self.installDir())
+
+        craftDebug.log.debug(f"End: fixInstallPrefix {self}")
