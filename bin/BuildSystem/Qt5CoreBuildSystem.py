@@ -17,14 +17,18 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
         # Since 5.10 we don't apply the patch to Qt anymore which would accept a absolute path
         if self.qtVer >= CraftVersion("5.10") or craftSettings.getboolean("QtSDK", "Enabled", False):
             if os.path.splitdrive(imageDir)[0] == os.path.splitdrive(self.buildDir())[0]:
-                imageDir = imageDir[2:]
+                imageDir = os.path.splitdrive(imageDir)[1]
         options += f" INSTALL_ROOT={imageDir} install"
         if not QMakeBuildSystem.install(self, options):
             return False
+
+        rootPath = CraftStandardDirs.craftRoot()
         if OsUtils.isWin():
-            badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[3:])
-        else:
-            badPrefix = os.path.join(self.installDir(), CraftStandardDirs.craftRoot()[1:])
+            rootPath = os.path.splitdrive(rootPath)[1]
+        if rootPath.startswith(os.path.sep):
+            rootPath = rootPath[1:]
+        badPrefix = os.path.join(self.installDir(), rootPath)
+
         if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             utils.mergeTree(badPrefix, self.installDir())
         if craftSettings.getboolean("QtSDK", "Enabled", False):
