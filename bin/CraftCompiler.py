@@ -6,7 +6,8 @@ import re
 
 import utils
 from CraftConfig import *
-from CraftCore import CraftCore, deprecated
+from CraftCore import CraftCore
+from CraftDebug import deprecated
 
 
 class CraftCompiler(object):

@@ -34,6 +34,3 @@ class CraftCore(object):
             exit(1)
         if not getattr(cls, name):
             setattr(cls, name, getattr(getattr(cls, source), obj))
-
-# make CraftDebug available from the start
-from CraftDebug import *

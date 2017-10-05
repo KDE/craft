@@ -13,7 +13,7 @@ class CraftShortPath(object):
     def __init__(self, path, createShortPath=None) -> None:
         self.longPath = path
         self._shortPath = None
-        if createShortPath:
+        if not createShortPath:
             self._createShortPathLambda = CraftShortPath._createShortPath
         else:
             self._createShortPathLambda = createShortPath

@@ -9,7 +9,7 @@ import sys
 
 
 from CraftCore import CraftCore
-from CraftConfig import craftSettings
+import CraftConfig
 
 
 class CraftDebug(object):
@@ -22,12 +22,12 @@ class CraftDebug(object):
         self._log.addHandler(self._handler)
         self._handler.setLevel(logging.INFO)
 
-        logDir = craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
+        logDir = CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
 
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", craftSettings._craftRoot()))
+        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftCore.settings._craftRoot()))
 
         try:
             fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000,
@@ -83,13 +83,13 @@ class CraftDebug(object):
 
     def print(self, msg, file=sys.stdout):
         if 0 <= self.verbose() < 2:
-            print(msg, file=file if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+            print(msg, file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
             self.log.debug(msg)
         else:
             self.log.debug(msg)
 
     def logEnv(self, env=None):
-        if craftSettings.getboolean("CraftDebug", "LogEnvironment", True):
+        if CraftCore.settings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:
                 env = os.environ
             self.log.debug(
@@ -163,7 +163,7 @@ def deprecated(replacement=None):
             _info = inspect.stack()[1]
             if not (_info.filename, _info.lineno) in CraftCore.debug.seenDeprecatedFunctions:
                 CraftCore.debug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
-                if craftSettings.getboolean("CraftDebug", "LogDeprecated", False):
+                if CraftCore.settings.getboolean("CraftDebug", "LogDeprecated", False):
                     CraftCore.debug.print(msg)
                 else:
                     CraftCore.log.debug(msg, stack_info=True)

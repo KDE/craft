@@ -451,7 +451,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         CraftCore.log.debug(f"executing command: {cmd!r}")
     CraftCore.log.debug(f"CWD: {cwd!r}")
     CraftCore.log.debug(f"displayProgress={displayProgress}")
-    CraftCore.logEnv(environment)
+    CraftCore.debug.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
