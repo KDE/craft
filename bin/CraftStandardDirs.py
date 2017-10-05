@@ -1,15 +1,27 @@
 import os
 import subprocess
 
+from CraftCore import CraftCore
+
 from CraftConfig import craftSettings
 from CraftOS.OsDetection import OsDetection
+from Utils.CraftShortPath import CraftShortPath
 
 
 class CraftStandardDirs(object):
-    __pathCache = dict()
-    __noShortPathCache = dict()
-    _allowShortpaths = True
     _SUBST = None
+    _allowShortpaths = True
+
+    def __init__(self):
+        self._useShortPath = False
+        self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(craftSettings._craftRoot()),
+                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "RootDrive", x)))
+        self._downloadDir = CraftShortPath(craftSettings.get("Paths", "DOWNLOADDIR", os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
+                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "DownloadDrive", x)))
+        self._gitDir = CraftShortPath(craftSettings.get("Paths", "KDEGITDIR", os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
+                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "GitDrive", x)))
+        self._junctionDir = CraftShortPath(craftSettings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
+                                        lambda x: CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "JunctionDrive", x)))
 
     @staticmethod
     def _deSubstPath(path):
@@ -21,7 +33,7 @@ class CraftStandardDirs(object):
         drive = drive.upper()
         if CraftStandardDirs._SUBST == None:
             tmp = subprocess.getoutput("subst").split("\n")
-            CraftStandardDirs._SUBST = dict()
+            CraftStandardDirs._SUBST = {}
             for s in tmp:
                 if s != "":
                     key, val = s.split("\\: => ")
@@ -32,11 +44,10 @@ class CraftStandardDirs(object):
         return path
 
     @staticmethod
-    def _pathCache():
-        if CraftStandardDirs._allowShortpaths:
-            return CraftStandardDirs.__pathCache
-        else:
-            return CraftStandardDirs.__noShortPathCache
+    def _nomalizePath(path):
+        if path.endswith(":"):
+            path += "\\"
+        return path
 
     @staticmethod
     def allowShortpaths(allowd):
@@ -52,62 +63,24 @@ class CraftStandardDirs(object):
     @staticmethod
     def downloadDir():
         """ location of directory where fetched files are  stored """
-        if not "DOWNLOADDIR" in CraftStandardDirs._pathCache():
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "DownloadDrive") in craftSettings:
-                CraftStandardDirs._pathCache()["DOWNLOADDIR"] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get("ShortPath", "DownloadDrive"))
-            else:
-                CraftStandardDirs._pathCache()["DOWNLOADDIR"] = craftSettings.get("Paths", "DOWNLOADDIR",
-                                                                                  os.path.join(
-                                                                                      CraftStandardDirs.craftRoot(),
-                                                                                      "download"))
-        return CraftStandardDirs._pathCache()["DOWNLOADDIR"]
+        return CraftCore.standardDirs._downloadDir.path(CraftStandardDirs.isShortPathEnabled())
 
     @staticmethod
     def svnDir():
-        if not "SVNDIR" in CraftStandardDirs._pathCache():
-            CraftStandardDirs._pathCache()["SVNDIR"] = craftSettings.get("Paths", "KDESVNDIR",
-                                                                         os.path.join(
-                                                                             CraftStandardDirs.downloadDir(),
-                                                                             "svn"))
-        return CraftStandardDirs._pathCache()["SVNDIR"]
+        return craftSettings.get("Paths", "KDESVNDIR", os.path.join(CraftStandardDirs.downloadDir(), "svn"))
 
     @staticmethod
     def gitDir():
-        if not "GITDIR" in CraftStandardDirs._pathCache():
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "GitDrive") in craftSettings:
-                CraftStandardDirs._pathCache()["GITDIR"] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get("ShortPath", "GitDrive"))
-            else:
-                CraftStandardDirs._pathCache()["GITDIR"] = craftSettings.get("Paths", "KDEGITDIR",
-                                                                             os.path.join(
-                                                                                 CraftStandardDirs.downloadDir(),
-                                                                                 "git"))
-        return CraftStandardDirs._pathCache()["GITDIR"]
+        return CraftCore.standardDirs._gitDir.path(CraftStandardDirs.isShortPathEnabled())
+
 
     @staticmethod
     def tmpDir():
-        if not "TMPDIR" in CraftStandardDirs._pathCache():
-            CraftStandardDirs._pathCache()["TMPDIR"] = craftSettings.get("Paths", "TMPDIR",
-                                                                         os.path.join(CraftStandardDirs.craftRoot(),
-                                                                                      "tmp"))
-        return CraftStandardDirs._pathCache()["TMPDIR"]
-
-    @staticmethod
-    def nomalizePath(path):
-        if path.endswith(":"):
-            path += "\\"
-        return path
+        return craftSettings.get("Paths", "TMPDIR",os.path.join(CraftStandardDirs.craftRoot(),"tmp"))
 
     @staticmethod
     def craftRoot():
-        if not "EMERGEROOT" in CraftStandardDirs._pathCache():
-            if CraftStandardDirs.isShortPathEnabled() and ("ShortPath", "RootDrive") in craftSettings:
-                CraftStandardDirs._pathCache()["EMERGEROOT"] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get("ShortPath", "RootDrive"))
-            else:
-                CraftStandardDirs._pathCache()["EMERGEROOT"] = CraftStandardDirs._deSubstPath(craftSettings._craftRoot())
-        return CraftStandardDirs._pathCache()["EMERGEROOT"]
+        return CraftCore.standardDirs._craftRoot.path(CraftStandardDirs.isShortPathEnabled())
 
     @staticmethod
     def etcDir():
@@ -123,9 +96,8 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def blueprintRoot():
-        if ("Blueprints", "BlueprintRoot") in craftSettings:
-            return craftSettings.get("Blueprints", "BlueprintRoot")
-        return os.path.join(CraftStandardDirs.etcBlueprintDir(), "locations")
+        return craftSettings.get("Blueprints", "BlueprintRoot",
+                                 os.path.join(CraftStandardDirs.etcBlueprintDir(), "locations"))
 
     @staticmethod
     def etcBlueprintDir():
@@ -137,26 +109,12 @@ class CraftStandardDirs(object):
         if not OsDetection.isWin():
             return craftSettings.get("Paths", "Msys", "/")
         else:
-            if ("Paths", "Msys") in craftSettings:
-                return craftSettings.get("Paths", "Msys")
-            return os.path.join(CraftStandardDirs.craftRoot(), "msys")
+            return craftSettings.get("Paths", "Msys",
+                                     os.path.join(CraftStandardDirs.craftRoot(), "msys"))
 
     @staticmethod
     def junctionsDir(getDir=False):
-        if "JunctionDir" not in CraftStandardDirs._pathCache():
-            if not getDir and ("ShortPath", "JunctionDrive") in craftSettings:
-                CraftStandardDirs._pathCache()["JunctionDir"] = CraftStandardDirs.nomalizePath(
-                    craftSettings.get("ShortPath", "JunctionDrive"))
-            else:
-                path = craftSettings.get("ShortPath", "JunctionDir",
-                                     os.path.join(CraftStandardDirs.craftRoot(), "build", "shortPath"))
-                if not os.path.isdir(path):
-                    os.makedirs(path)
-                CraftStandardDirs._pathCache()["JunctionDir"] = path
-                if getDir:
-                    return path
-        return CraftStandardDirs.__pathCache["JunctionDir"]
-
+        return CraftCore.standardDirs._junctionDir.path(CraftStandardDirs.isShortPathEnabled())
 
 class TemporaryUseShortpath(object):
     """Context handler for temporarily different shortpath setting"""
@@ -169,3 +127,5 @@ class TemporaryUseShortpath(object):
 
     def __exit__(self, exc_type, exc_value, trback):
         CraftStandardDirs.allowShortpaths(self.prev)
+
+CraftCore.registerInstance("standardDirs", CraftStandardDirs)

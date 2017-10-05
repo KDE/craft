@@ -24,7 +24,6 @@ import Notifier.NotificationLoader
 from CraftConfig import *
 from CraftDebug import craftDebug
 from CraftOS.osutils import OsUtils
-# TODO: Rename
 from CraftStandardDirs import CraftStandardDirs
 from Blueprints.CraftVersion import CraftVersion
 

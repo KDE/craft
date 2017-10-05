@@ -9,7 +9,8 @@ import os
 import shutil
 import sys
 
-craftSettings = None
+
+from CraftCore import CraftCore
 
 class CraftConfig(object):
     def __init__(self, iniPath=None):
@@ -168,5 +169,5 @@ class CraftConfig(object):
         if craftSettings.getboolean("CraftDebug", "DumpSettings", False):
             craftSettings.dump()
 
-if not craftSettings:
-    craftSettings = CraftConfig()
+CraftCore.registerInstance("settings", CraftConfig)
+craftSettings = CraftCore.settings

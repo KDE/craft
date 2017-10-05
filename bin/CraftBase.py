@@ -126,7 +126,7 @@ class CraftBase(object):
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         craftDebug.log.debug("package builddir is: %s" % builddir)
-        return CraftShortPath(builddir).conditionalShortPath(self.subinfo.options.needsShortPath)
+        return CraftShortPath(builddir).path(self.subinfo.options.needsShortPath)
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package

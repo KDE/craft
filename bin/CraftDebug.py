@@ -7,19 +7,12 @@ import re
 import shutil
 import sys
 
+
+from CraftCore import CraftCore
 from CraftConfig import craftSettings
-from CraftStandardDirs import CraftStandardDirs
 
 
 class CraftDebug(object):
-    __instance = None
-
-    @staticmethod
-    def instance():
-        if not CraftDebug.__instance:
-            CraftDebug.__instance = CraftDebug()
-        return CraftDebug.__instance
-
     def __init__(self):
         self.seenDeprecatedFunctions = set()
         self._handler = logging.StreamHandler(sys.stdout)
@@ -34,8 +27,7 @@ class CraftDebug(object):
             os.makedirs(logDir)
 
         cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftStandardDirs._deSubstPath(
-            CraftStandardDirs.craftRoot())))
+        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", craftSettings._craftRoot()))
 
         try:
             fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000,
@@ -107,7 +99,8 @@ class CraftDebug(object):
         self.log.debug("craft trace: %s" % message)
 
 
-craftDebug = CraftDebug.instance()
+CraftCore.registerInstance("debug", CraftDebug)
+craftDebug = CraftCore.debug
 
 
 class TemporaryVerbosity(object):
