@@ -28,10 +28,10 @@ class SevenZipPackager(PackagerBase):
 
     def _compress(self, archiveName, sourceDir, destDir):
         utils.deleteFile(archiveName)
-        app = utils.utilsCache.findApplication("7za")
+        app = CraftCore.cache.findApplication("7za")
         kw = {}
         progressFlags = ""
-        if utils.utilsCache.checkCommandOutputFor(app, "-bs"):
+        if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             progressFlags = " -bso2 -bsp1"
             kw["stderr"] = subprocess.PIPE
         archive = os.path.join(destDir, archiveName)

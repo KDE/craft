@@ -30,7 +30,7 @@ class Package(SourceOnlyPackageBase):
     def qmerge(self):
         if not SourceOnlyPackageBase.qmerge(self):
             return False
-        utils.utilsCache.clear()
+        CraftCore.cache.clear()
         return True
 
     def createPackage(self):

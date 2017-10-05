@@ -25,8 +25,8 @@ class Package(SourceOnlyPackageBase):
         return True
 
     def fetch(self):
-        git = utils.utilsCache.findApplication("git")
-        if not utils.utilsCache.checkCommandOutputFor(git, "kde:",
+        git = CraftCore.cache.findApplication("git")
+        if not CraftCore.cache.checkCommandOutputFor(git, "kde:",
                                                       "config --global --get url.git://anongit.kde.org/.insteadof"):
             CraftCore.log.debug("adding kde related settings to global git config file")
             utils.system(f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
@@ -41,7 +41,7 @@ class Package(SourceOnlyPackageBase):
     def qmerge(self):
         if not SourceOnlyPackageBase.qmerge(self):
             return False
-        utils.utilsCache.clear()
+        CraftCore.cache.clear()
         return True
 
     def createPackage(self):

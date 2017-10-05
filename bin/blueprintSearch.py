@@ -45,18 +45,18 @@ class SeachPackage(object):
 
 
 def packages():
-    if not utils.utilsCache.availablePackages:
-        utils.utilsCache.availablePackages = []
+    if not CraftCore.cache.availablePackages:
+        CraftCore.cache.availablePackages = []
         CraftCore.log.info("Updating search cache:")
         total = len(CraftPackageObject.installables())
         for p in CraftPackageObject.installables():
             package = SeachPackage(p)
-            utils.utilsCache.availablePackages.append(package)
-            percent = int(len(utils.utilsCache.availablePackages) / total * 100)
+            CraftCore.cache.availablePackages.append(package)
+            percent = int(len(CraftCore.cache.availablePackages) / total * 100)
             utils.printProgress(percent)
         utils.printProgress(100)
         CraftCore.log.info("")
-    return utils.utilsCache.availablePackages
+    return CraftCore.cache.availablePackages
 
 
 def printSearch(search_package, maxDist=2):

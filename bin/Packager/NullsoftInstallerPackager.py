@@ -80,7 +80,7 @@ You can add your own defines into self.defines as well.
     def __isInstalled(self):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
 
-        self.nsisExe = utils.utilsCache.findApplication("makensis")
+        self.nsisExe = CraftCore.cache.findApplication("makensis")
         if self.nsisExe:
             return True
         if not utils.OsUtils.isWin():

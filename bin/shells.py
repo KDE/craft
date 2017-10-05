@@ -86,9 +86,9 @@ class BashShell(object):
 
     def _findBash(self):
         msysdir = CraftStandardDirs.msysDir()
-        bash = utils.utilsCache.findApplication("bash", os.path.join(msysdir, "bin"))
+        bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "bin"))
         if not bash:
-            bash = utils.utilsCache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
+            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         if not bash:
             CraftCore.log.critical("Failed to detect bash")
         return bash

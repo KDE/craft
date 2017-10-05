@@ -1,5 +1,6 @@
 from Package.VirtualPackageBase import *
 from Blueprints.CraftVersion import CraftVersion
+import Utils.CraftCache
 
 
 class MaybeVirtualPackageBase(object):
@@ -14,7 +15,7 @@ class MaybeVirtualPackageBase(object):
 
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
     def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
-        appVersion = utils.utilsCache.getVersion(app, pattern, versionCommand)
+        appVersion = CraftCore.cache.getVersion(app, pattern, versionCommand)
         newer = appVersion and appVersion >= CraftVersion(version)
         self.skipCondition = not newer or not CraftCore.settings.getboolean("CraftDebug", "AllowToSkipPackages", True)
         self.checkVersion = version
@@ -28,7 +29,7 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
                 return self.baseClass.install(self)
 
             def sourceRevision():
-                return "system-installation: " + utils.utilsCache.findApplication(app)
+                return "system-installation: " + CraftCore.cache.findApplication(app)
 
             def version(self):
                 return str(appVersion)

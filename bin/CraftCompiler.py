@@ -73,7 +73,7 @@ class CraftCompiler(object):
         return "64" if self.isX64() else "32"
 
     def _getGCCTarget(self):
-        result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine")
+        result = CraftCore.cache.getCommandOutput("gcc", "-dumpmachine")
         if result:
             result = result.strip()
             CraftCore.log.debug(f"GCC Target Processor: {result}")
@@ -146,7 +146,7 @@ class CraftCompiler(object):
         return str(craftCompiler)
 
     def getGCCLikeVersion(self, compilerExecutable):
-        result = utils.utilsCache.getCommandOutput(compilerExecutable, "--version")
+        result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
         if result:
             result = re.findall("\d+\.\d+\.?\d*", result)[0]
             CraftCore.log.debug("{0} Version: {1}".format(compilerExecutable, result))

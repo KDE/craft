@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
             "https://cmake.org/files/v%s/cmake-%s-SHA-256.txt" % (ver[:3], ver), CraftHash.HashAlgorithm.SHA256)
 
         nightlyUrl = "https://cmake.org/files/dev/"
-        for ver in utils.utilsCache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0",
+        for ver in CraftCore.cache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0",
                                                               "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape(
                                                                       "-win32-x86")):
             self.targets[ver] = f"{nightlyUrl}/cmake-{ver}.zip"

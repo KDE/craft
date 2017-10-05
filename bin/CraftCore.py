@@ -6,9 +6,10 @@ class CraftCore(object):
     log = None
     standardDirs = None
     settings = None
+    cache = None
 
     @classmethod
-    def registerInstance(cls, name : str, _class : type) -> None:
+    def registerInstance(cls, name : str, instance : type) -> None:
         """
         Register a singleton with CraftCore
         """
@@ -16,7 +17,10 @@ class CraftCore(object):
             print(f"Unknown instance name {name}, please define  CraftCore.{name}", file=sys.stderr)
             exit(1)
         if not getattr(cls, name):
-            setattr(cls, name, _class())
+            if isinstance(instance, type):
+                setattr(cls, name, instance())
+            else:
+                setattr(cls, name, instance)
 
     @classmethod
     def registerObjectAlias(cls, name : str, source : str, obj : str) -> None:

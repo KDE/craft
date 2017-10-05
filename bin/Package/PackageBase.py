@@ -188,7 +188,7 @@ class PackageBase(CraftBase):
 
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
-            cache = utils.utilsCache.cacheJsonFromUrl(f"{url}/manifest.json")
+            cache = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
                 continue
             if url != self.cacheLocation():
