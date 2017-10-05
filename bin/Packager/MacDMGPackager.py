@@ -8,7 +8,7 @@ class MacDMGPackager( CollectionPackagerBase ):
 
     def createPackage(self):
         """ create a package """
-        craftDebug.log.debug("packaging using the MacDMGPackager")
+        CraftCore.log.debug("packaging using the MacDMGPackager")
 
         self.internalCreatePackage()
         self.preArchive()
@@ -26,9 +26,9 @@ class MacDMGPackager( CollectionPackagerBase ):
         env = os.environ
         env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
         if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/kdevelop"], env=env):
-            craftDebug.log.warning("Failed to run dylibbundler")
+            CraftCore.log.warning("Failed to run dylibbundler")
 
         if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
-            craftDebug.log.warning("Failed to run macdeployqt!")
+            CraftCore.log.warning("Failed to run macdeployqt!")
 
         return True

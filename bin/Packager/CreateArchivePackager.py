@@ -11,11 +11,11 @@ class CreateArchivePackager(CollectionPackagerBase):
 
     def createPackage( self ):
         """ create a package """
-        craftDebug.log.debug("packaging using the CreateArchivePackager")
+        CraftCore.log.debug("packaging using the CreateArchivePackager")
 
         self.internalCreatePackage()
         self.preArchive()
 
-        craftDebug.log.info(f"Archive created in {self.archiveDir()}")
+        CraftCore.log.info(f"Archive created in {self.archiveDir()}")
 
         return True

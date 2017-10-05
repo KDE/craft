@@ -29,7 +29,7 @@ class BuildSystemBase(CraftBase):
             if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
             if ("Compile", "MakeProgram") in craftSettings:
-                craftDebug.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", ""))
+                CraftCore.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", ""))
                 return craftSettings.get("Compile", "MakeProgram", "")
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
@@ -41,7 +41,7 @@ class BuildSystemBase(CraftBase):
             elif craftCompiler.isMinGW():
                 return "mingw32-make"
             else:
-                craftDebug.log.critical(f"unknown {craftCompiler} compiler")
+                CraftCore.log.critical(f"unknown {craftCompiler} compiler")
         elif OsUtils.isUnix():
             return "make"
 
@@ -81,7 +81,7 @@ class BuildSystemBase(CraftBase):
             defines += f" {self.subinfo.options.make.makeOptions}"
         if self.makeProgram in ["make", "gmake", "mingw32-make"]:
             defines += f" -j{ multiprocessing.cpu_count()}"
-        if craftDebug.verbose() > 0:
+        if CraftCore.debug.verbose() > 0:
             if self.makeProgram == "ninja":
                 defines += " -v "
             else:
@@ -131,7 +131,7 @@ class BuildSystemBase(CraftBase):
         return ""
 
     def _fixInstallPrefix(self):
-        craftDebug.log.debug(f"Begin: fixInstallPrefix {self}")
+        CraftCore.log.debug(f"Begin: fixInstallPrefix {self}")
         def stripPath(path):
             rootPath = os.path.splitdrive(path)[1]
             if rootPath.startswith(os.path.sep):
@@ -150,4 +150,4 @@ class BuildSystemBase(CraftBase):
             if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
                 utils.mergeTree(path, self.installDir())
 
-        craftDebug.log.debug(f"End: fixInstallPrefix {self}")
+        CraftCore.log.debug(f"End: fixInstallPrefix {self}")

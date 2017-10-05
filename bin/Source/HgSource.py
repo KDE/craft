@@ -9,7 +9,7 @@ class HgSource(VersionSystemSourceBase):
     """mercurial support"""
 
     def __init__(self, subinfo=None):
-        craftDebug.trace('HgSource __init__')
+        CraftCore.debug.trace('HgSource __init__')
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self)
@@ -27,7 +27,7 @@ class HgSource(VersionSystemSourceBase):
 
     def fetch(self, repopath=None):
         """try to clone or update the repository"""
-        craftDebug.trace("HgSource.fetch called")
+        CraftCore.debug.trace("HgSource.fetch called")
 
         # get the path where the repositories should be stored to
         if repopath == None:
@@ -58,12 +58,12 @@ class HgSource(VersionSystemSourceBase):
                 ret = self.system(
                     "%s update %s" % (self.hgExecutable, repoBranch))  # TODO: check return code for success
         else:
-            craftDebug.log.debug("skipping hg fetch (--offline)")
+            CraftCore.log.debug("skipping hg fetch (--offline)")
         return ret
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a mercurial repository checkout"""
-        craftDebug.trace("HgSource.applyPatches called")
+        CraftCore.debug.trace("HgSource.applyPatches called")
         if fileName and self.enableHg:
             patchfile = os.path.join(self.packageDir(), fileName)
             os.chdir(self.sourceDir())
@@ -72,7 +72,7 @@ class HgSource(VersionSystemSourceBase):
 
     def createPatch(self):
         """create patch file from git source into the related package dir. The patch file is named autocreated.patch"""
-        craftDebug.trace("HgSource.createPatch called")
+        CraftCore.debug.trace("HgSource.createPatch called")
         ret = False
         if self.enableHg:
             os.chdir(self.sourceDir())
@@ -83,7 +83,7 @@ class HgSource(VersionSystemSourceBase):
 
     def sourceVersion(self):
         """ return the revision of the repository """
-        craftDebug.trace("HgSource.sourceVersion called")
+        CraftCore.debug.trace("HgSource.sourceVersion called")
 
         if self.enableHg:
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python

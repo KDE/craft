@@ -11,7 +11,7 @@ class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackage
     """provides a base class for binary packages"""
 
     def __init__(self):
-        craftDebug.log.debug("BinaryPackageBase.__init__ called")
+        CraftCore.log.debug("BinaryPackageBase.__init__ called")
         PackageBase.__init__(self)
         BinaryBuildSystem.__init__(self)
         MultiSource.__init__(self)

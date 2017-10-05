@@ -32,7 +32,7 @@
 #
 import utils
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import CraftPackageObject
 
 
@@ -314,7 +314,7 @@ class Options(object):
             else:
                 if isinstance(currentObject, OptionsDynamic):
                     break
-                craftDebug.log.warning(f"Unsupported option: {key}={value}")
+                CraftCore.log.warning(f"Unsupported option: {key}={value}")
                 exit(1)
                 return False
 
@@ -330,7 +330,7 @@ class Options(object):
         result = False
         for entry in opts:
             if entry.find('=') == -1:
-                craftDebug.log.debug('incomplete option %s' % entry)
+                CraftCore.log.debug('incomplete option %s' % entry)
                 continue
             (key, value) = entry.split('=', 1)
             if self.__setInstanceAttribute(key, value):

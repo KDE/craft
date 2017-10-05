@@ -6,7 +6,7 @@ import re
 
 import utils
 from CraftConfig import *
-from CraftDebug import craftDebug, deprecated
+from CraftCore import CraftCore, deprecated
 
 
 class CraftCompiler(object):
@@ -75,7 +75,7 @@ class CraftCompiler(object):
         result = utils.utilsCache.getCommandOutput("gcc", "-dumpmachine")
         if result:
             result = result.strip()
-            craftDebug.log.debug(f"GCC Target Processor: {result}")
+            CraftCore.log.debug(f"GCC Target Processor: {result}")
         else:
             # if no mingw is installed return mingw-w32 it is part of base
             if self.isX64():
@@ -148,7 +148,7 @@ class CraftCompiler(object):
         result = utils.utilsCache.getCommandOutput(compilerExecutable, "--version")
         if result:
             result = re.findall("\d+\.\d+\.?\d*", result)[0]
-            craftDebug.log.debug("{0} Version: {1}".format(compilerExecutable, result))
+            CraftCore.log.debug("{0} Version: {1}".format(compilerExecutable, result))
         return result or "0"
 
     def getVersion(self):
@@ -186,7 +186,7 @@ class CraftCompiler(object):
         }
         c = self.abi.split("_")[0]
         if c not in versions:
-            craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
+            CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
 
     def getMsvcPlatformToolset(self):
@@ -199,7 +199,7 @@ class CraftCompiler(object):
         }
         c = self.abi.split("_")[0]
         if c not in versions:
-            craftDebug.log.critical(f"Unknown MSVC Compiler {self.abi}")
+            CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
 
 

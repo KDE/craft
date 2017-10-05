@@ -6,7 +6,7 @@ import re
 
 from CraftConfig import craftSettings
 from CraftStandardDirs import CraftStandardDirs
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 import utils
 
@@ -56,10 +56,10 @@ class CraftPackageObject(object):
             if path in CraftPackageObject._recipes:
                 packages = CraftPackageObject._recipes[path]
                 if len(packages) > 1:
-                    craftDebug.log.info(f"Found multiple recipes for {path}")
+                    CraftCore.log.info(f"Found multiple recipes for {path}")
                     for p in packages:
-                        craftDebug.log.info(p)
-                    craftDebug.log.info(f"Please use the full path to the recipe.")
+                        CraftCore.log.info(p)
+                    CraftCore.log.info(f"Please use the full path to the recipe.")
                     exit(1)
                 package = packages[0]
         else:
@@ -101,7 +101,7 @@ class CraftPackageObject(object):
 
         if path != blueprintRoot:
             if not package.source and not package.children:
-                craftDebug.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
+                CraftCore.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
                                        f"You might wan't to run \"git clean -xdf\" in that directry.")
                 return None
             if package.path in CraftPackageObject._nodes:
@@ -112,7 +112,7 @@ class CraftPackageObject(object):
                 existingNode.children.update(package.children)
                 package = existingNode
             else:
-                craftDebug.log.debug(f"Adding package {package} from {blueprintRoot}")
+                CraftCore.log.debug(f"Adding package {package} from {blueprintRoot}")
                 CraftPackageObject._nodes[package.path] = package
         return package
 
@@ -133,7 +133,7 @@ class CraftPackageObject(object):
         if os.path.isdir(CraftStandardDirs.blueprintRoot()):
             for f in os.listdir(CraftStandardDirs.blueprintRoot()):
                 rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
-        craftDebug.log.debug(f"Craft BlueprintLocations: {rootDirs}")
+        CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
         return list(rootDirs)
 
 
@@ -147,7 +147,7 @@ class CraftPackageObject(object):
             root.path = "/"
             for blueprintRoot in CraftPackageObject.rootDirectories():
                 if not os.path.isdir(blueprintRoot):
-                    craftDebug.log.warning(f"{blueprintRoot} does not exist")
+                    CraftCore.log.warning(f"{blueprintRoot} does not exist")
                     continue
                 blueprintRoot = utils.normalisePath(os.path.abspath(blueprintRoot))
                 # create a dummy package to load its children
@@ -159,7 +159,7 @@ class CraftPackageObject(object):
     @property
     def instance(self):
         if not self._instance:
-            craftDebug.log.debug(f"module to import: {self.source}")
+            CraftCore.log.debug(f"module to import: {self.source}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace('.', '_')
             loader = importlib.machinery.SourceFileLoader(modulename, self.source)
             try:

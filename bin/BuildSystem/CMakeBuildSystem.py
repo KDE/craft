@@ -38,7 +38,7 @@ class CMakeBuildSystem(BuildSystemBase):
         elif OsUtils.isUnix():
             return "Unix Makefiles"
         else:
-            craftDebug.log.critical(f"unknown {craftCompiler} compiler")
+            CraftCore.log.critical(f"unknown {craftCompiler} compiler")
 
     def __onlyBuildDefines(self, buildOnlyTargets):
         """This method returns a list of cmake defines to exclude targets from build"""
@@ -134,7 +134,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines))
-        craftDebug.step(command)
+        CraftCore.debug.step(command)
 
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
@@ -154,7 +154,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (
                 self.__slnFileName(), self.buildType())
             elif craftCompiler.isMSVC2010():
-                craftDebug.log.critical("has to be implemented");
+                CraftCore.log.critical("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
             self.system(self.makeProgram + " clean", "make clean")

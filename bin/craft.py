@@ -94,17 +94,17 @@ def packageIsOutdated(package):
 
 def doExec(package, action, continueFlag=False):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
-        craftDebug.step("Action: %s for %s" % (action, package))
+        CraftCore.debug.step("Action: %s for %s" % (action, package))
         ret = package.instance.execute(action)
         if not ret:
-            craftDebug.log.warning("Action: %s for %s FAILED" % (action, package))
+            CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
 
 def handlePackage(package, buildAction, continueFlag, directTargets):
     with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
-        craftDebug.debug_line()
-        craftDebug.step(f"Handling package: {package}, action: {buildAction}")
+        CraftCore.debug.debug_line()
+        CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
 
         success = True
 
@@ -126,7 +126,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                     nameRe = re.compile(".*\/.*")
                     for target in directTargets:
                         if not nameRe.match(target):
-                            craftDebug.log.error("Error:\n"
+                            CraftCore.log.error("Error:\n"
                                                  "[Packager]\n"
                                                  "CacheDirectTargetsOnly = True\n"
                                                  "Only works with fully specified packages 'category/package'")
@@ -134,7 +134,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                     if package in directTargets:
                         success = success and doExec(package, "package")
                     else:
-                        craftDebug.log.info("skip packaging of non direct targets")
+                        CraftCore.log.info("skip packaging of non direct targets")
                 else:
                     success = success and doExec(package, "package")
             success = success or continueFlag
@@ -147,7 +147,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         elif buildAction == "qmerge":
             success = success and doExec(package, "qmerge")
         else:
-            success = craftDebug.log.error("could not understand this buildAction: %s" % buildAction)
+            success = CraftCore.log.error("could not understand this buildAction: %s" % buildAction)
 
         timer.stop()
         utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}",
@@ -157,7 +157,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
 
 def run(package, action, args, directTargets):
     if package.isIgnored():
-        craftDebug.log.info(f"Skipping package because it has been ignored: {package}")
+        CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True
 
     if action == "get":
@@ -171,11 +171,11 @@ def run(package, action, args, directTargets):
                     value = attr()
                 else:
                     value = attr
-                craftDebug.log.debug(value)
+                CraftCore.log.debug(value)
                 print(value)
                 return True
             else:
-               craftDebug.log.debug(f"{p} has no member {key}")
+               CraftCore.log.debug(f"{p} has no member {key}")
                print(f"{p} has no member {key}", file=sys.stderr)
                return False
     elif action not in ["all", "install-deps"]:
@@ -198,9 +198,9 @@ def run(package, action, args, directTargets):
         for item in depList:
             if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
                 packages.append(item)
-                craftDebug.log.debug(f"dependency: {item}")
+                CraftCore.log.debug(f"dependency: {item}")
         if not packages:
-            craftDebug.log.debug("<none>")
+            CraftCore.log.debug("<none>")
 
         if action == "install-deps":
             # we don't intend to build the package itself
@@ -212,18 +212,18 @@ def run(package, action, args, directTargets):
             info = packages[0]
             # in case we only want to see which packages are still to be build, simply return the package name
             if args.probe:
-                craftDebug.log.warning(f"pretending {info}: {info.version}")
+                CraftCore.log.warning(f"pretending {info}: {info.version}")
             else:
                 if action in ["install-deps"]:
                     action = "all"
 
                 if not handlePackage(info, action, args.doContinue,
                                      directTargets=directTargets):
-                    craftDebug.log.error(f"fatal error: package {info} {action} failed")
+                    CraftCore.log.error(f"fatal error: package {info} {action} failed")
                     return False
             packages.pop(0)
 
-    craftDebug.new_line()
+    CraftCore.debug.new_line()
     return True
 
 
@@ -349,9 +349,9 @@ def main():
     migrate()
 
     if args.stayQuiet:
-        craftDebug.setVerbose(-1)
+        CraftCore.debug.setVerbose(-1)
     elif args.verbose:
-        craftDebug.setVerbose(args.verbose)
+        CraftCore.debug.setVerbose(args.verbose)
 
     craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     craftSettings.set("Compile", "BuildType", args.buildType)
@@ -378,12 +378,12 @@ def main():
         if action in ["install-deps", "package"]:
             tempArgs.ignoreInstalled = True
 
-        craftDebug.log.debug("buildAction: %s" % action)
-        craftDebug.log.debug("doPretend: %s" % tempArgs.probe)
-        craftDebug.log.debug("packageName: %s" % tempArgs.packageNames)
-        craftDebug.log.debug("buildType: %s" % tempArgs.buildType)
-        craftDebug.log.debug("verbose: %d" % craftDebug.verbose())
-        craftDebug.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
+        CraftCore.log.debug("buildAction: %s" % action)
+        CraftCore.log.debug("doPretend: %s" % tempArgs.probe)
+        CraftCore.log.debug("packageName: %s" % tempArgs.packageNames)
+        CraftCore.log.debug("buildType: %s" % tempArgs.buildType)
+        CraftCore.log.debug("verbose: %d" % CraftCore.debug.verbose())
+        CraftCore.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
@@ -428,9 +428,9 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         except BlueprintException as e:
-            craftDebug.log.error(e, exc_info=e.exception or e)
+            CraftCore.log.error(e, exc_info=e.exception or e)
         except Exception as e:
-            craftDebug.log.error(e, exc_info=e)
+            CraftCore.log.error(e, exc_info=e)
         finally:
             CraftTitleUpdater.instance.stop()
     if not success:

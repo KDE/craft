@@ -35,7 +35,7 @@ class MSIFragmentPackager(PackagerBase):
     @InitGuard.init_once
     def __init__(self):
         PackagerBase.__init__(self)
-        craftDebug.log.debug("MSIFragmentPackager __init__")
+        CraftCore.log.debug("MSIFragmentPackager __init__")
         self.outDestination = self.packageDestinationDir()
         self.objectFiles = []
 

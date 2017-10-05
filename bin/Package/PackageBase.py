@@ -26,7 +26,7 @@ class PackageBase(CraftBase):
     # imagedir   -> PackageBase
 
     def __init__(self):
-        craftDebug.log.debug("PackageBase.__init__ called")
+        CraftCore.log.debug("PackageBase.__init__ called")
         CraftBase.__init__(self)
 
     def qmerge(self):
@@ -36,7 +36,7 @@ class PackageBase(CraftBase):
         if installdb.isInstalled(package=self.package):
             self.unmerge()
 
-        craftDebug.log.debug("qmerge package to %s" % self.mergeDestinationDir())
+        CraftCore.log.debug("qmerge package to %s" % self.mergeDestinationDir())
 
         copiedFiles = []  # will be populated by the next call
         utils.copyDir(self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
@@ -47,14 +47,14 @@ class PackageBase(CraftBase):
                 scriptName = "post-install-%s-%s.cmd" % (self.package, pkgtype)
                 script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
                 if os.path.exists(script):
-                    craftDebug.log.debug("run post install script '%s'" % script)
+                    CraftCore.log.debug("run post install script '%s'" % script)
                     cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
                     if not utils.system(cmd):
-                        craftDebug.log.warning("%s failed!" % cmd)
+                        CraftCore.log.warning("%s failed!" % cmd)
                 else:
-                    craftDebug.log.debug("post install script '%s' not found" % script)
+                    CraftCore.log.debug("post install script '%s' not found" % script)
         else:
-            craftDebug.log.debug("running of post install scripts disabled!")
+            CraftCore.log.debug("running of post install scripts disabled!")
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -68,13 +68,13 @@ class PackageBase(CraftBase):
 
     def unmerge(self):
         """unmergeing the files from the filesystem"""
-        craftDebug.log.debug("Packagebase unmerge called")
+        CraftCore.log.debug("Packagebase unmerge called")
 
         ## \todo mergeDestinationDir() reads the real used merge dir from the
         ## package definition, which fails if this is changed
         ## a better solution will be to save the merge sub dir into
         ## /etc/blueprints/installed and to read from it on unmerge
-        craftDebug.log.debug("unmerge package from %s" % self.mergeDestinationDir())
+        CraftCore.log.debug("unmerge package from %s" % self.mergeDestinationDir())
         packageList = installdb.getInstalledPackages(self.package)
 
         for package in packageList:
@@ -88,21 +88,21 @@ class PackageBase(CraftBase):
                 scriptName = "post-uninstall-%s-%s.cmd" % (self.package, pkgtype)
                 script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
                 if os.path.exists(script):
-                    craftDebug.log.debug("run post uninstall script '%s'" % script)
+                    CraftCore.log.debug("run post uninstall script '%s'" % script)
                     cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
                     if not utils.system(cmd):
-                        craftDebug.log.warning("%s failed!" % cmd)
+                        CraftCore.log.warning("%s failed!" % cmd)
                 else:
-                    craftDebug.log.debug("post uninstall script '%s' not found" % script)
+                    CraftCore.log.debug("post uninstall script '%s' not found" % script)
         else:
-            craftDebug.log.debug("running of post uninstall scripts disabled!")
+            CraftCore.log.debug("running of post uninstall scripts disabled!")
 
         return True
 
     def cleanImage(self) -> bool:
         """cleanup before install to imagedir"""
         if (os.path.exists(self.imageDir())):
-            craftDebug.log.debug("cleaning image dir: %s" % self.imageDir())
+            CraftCore.log.debug("cleaning image dir: %s" % self.imageDir())
             utils.cleanDirectory(self.imageDir())
             os.rmdir(self.imageDir())
         return True
@@ -111,7 +111,7 @@ class PackageBase(CraftBase):
         """cleanup currently used build dir"""
         if os.path.exists(self.buildDir()):
             utils.cleanDirectory(self.buildDir())
-            craftDebug.log.debug("cleaning build dir: %s" % self.buildDir())
+            CraftCore.log.debug("cleaning build dir: %s" % self.buildDir())
 
         return True
 
@@ -122,13 +122,13 @@ class PackageBase(CraftBase):
     def strip(self, fileName):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or not craftCompiler.isMinGW():
-            craftDebug.log.debug("Skiping stipping of " + fileName)
+            CraftCore.log.debug("Skiping stipping of " + fileName)
             return True
         basepath = os.path.join(self.installDir())
         filepath = os.path.join(basepath, "bin", fileName)
 
         cmd = "strip -s " + filepath
-        craftDebug.log.debug(cmd)
+        CraftCore.log.debug(cmd)
         os.system(cmd)
         return True
 
@@ -164,7 +164,7 @@ class PackageBase(CraftBase):
         this will be executed from the package if the package is started on its own
         it shouldn't be called if the package is imported as a python module"""
 
-        craftDebug.log.debug("PackageBase.execute called. args: %s" % sys.argv)
+        CraftCore.log.debug("PackageBase.execute called. args: %s" % sys.argv)
         command, _ = self.getAction(cmd)
 
         if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
@@ -187,7 +187,7 @@ class PackageBase(CraftBase):
             os.makedirs(downloadFolder)
 
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
-            craftDebug.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
+            CraftCore.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
             cache = utils.utilsCache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
                 continue
@@ -232,11 +232,11 @@ class PackageBase(CraftBase):
                 if currentHash == filehash or filehash == "":
                     OsUtils.rm(fullPath, True)
                 else:
-                    craftDebug.log.warning(
+                    CraftCore.log.warning(
                         f"We can't remove {fullPath} as its hash has changed,"
                         f" that usually implies that the fiel was modified or replaced")
             elif not os.path.isdir(fullPath):
-                craftDebug.log.warning("file %s does not exist" % fullPath)
+                CraftCore.log.warning("file %s does not exist" % fullPath)
 
     def runAction(self, command):
         """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
@@ -266,6 +266,6 @@ class PackageBase(CraftBase):
                 raise BlueprintException(str(e), self.package, e)
 
         else:
-            ok = craftDebug.log.error("command %s not understood" % command)
+            ok = CraftCore.log.error("command %s not understood" % command)
 
         return ok

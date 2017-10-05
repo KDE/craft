@@ -157,7 +157,7 @@ class infoclass(object):
         """return relative path appendable to local install path for the recent target"""
         if self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[self.buildTarget]
-        craftDebug.log.critical("no install path for this build target defined")
+        CraftCore.log.critical("no install path for this build target defined")
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""

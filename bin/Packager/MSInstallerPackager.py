@@ -60,8 +60,8 @@ class MSInstallerPackager(CollectionPackagerBase):
             dstpath = self.packageDestinationDir()
             self.defines["setupname"] = os.path.join(dstpath, self.defines["setupname"])
 
-        craftDebug.new_line()
-        craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
+        CraftCore.debug.new_line()
+        CraftCore.log.debug("generating installer %s" % self.defines["setupname"])
 
         wxs = Document()
         componentRefs = Document()

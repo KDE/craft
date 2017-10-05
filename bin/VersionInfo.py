@@ -5,7 +5,7 @@
 import re
 
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 
 
 class VersionInfo(object):
@@ -40,14 +40,14 @@ class VersionInfo(object):
                 iniPath = os.path.abspath(iniPath)
                 if iniPath in VersionInfo._VERSION_INFOS.keys():
                     VersionInfo._VERSION_INFOS_HINTS[name] = iniPath
-                    craftDebug.log.debug("Found a version info for %s in cache" % name)
+                    CraftCore.log.debug("Found a version info for %s in cache" % name)
                     return VersionInfo._VERSION_INFOS[iniPath]
                 elif os.path.exists(iniPath):
                     config = configparser.ConfigParser()
                     config.read(iniPath)
                     VersionInfo._VERSION_INFOS[iniPath] = config
                     VersionInfo._VERSION_INFOS_HINTS[name] = iniPath
-                    craftDebug.log.debug("Found a version info for %s in %s" % (name, iniPath))
+                    CraftCore.log.debug("Found a version info for %s in %s" % (name, iniPath))
                     return config
             VersionInfo._VERSION_INFOS_HINTS[name] = None
         return self.__defaulVersions

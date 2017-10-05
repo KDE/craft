@@ -22,7 +22,7 @@ import urllib.request
 
 import Notifier.NotificationLoader
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Blueprints.CraftVersion import CraftVersion
@@ -56,12 +56,12 @@ class UtilsCache(object):
                     try:
                         data = pickle.load(f)
                     except:
-                        craftDebug.log.warning("Cache corrupted")
+                        CraftCore.log.warning("Cache corrupted")
                         return utilsCache
 
                 if data.version != UtilsCache._version or (
                     time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
-                    craftDebug.log.debug("Clear cache")
+                    CraftCore.log.debug("Clear cache")
                 else:
                     utilsCache = data
         return utilsCache
@@ -80,12 +80,12 @@ class UtilsCache(object):
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(UtilsCache.globalInstance())
         except Exception as e:
-            craftDebug.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
+            CraftCore.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
             deleteFile(UtilsCache._cacheFile())
 
     def clear(self):
         global utilsCache
-        craftDebug.log.debug("Clear utils cache")
+        CraftCore.log.debug("Clear utils cache")
         utilsCache = UtilsCache()
 
     def findApplication(self, app, path=None) -> str:
@@ -102,10 +102,10 @@ class UtilsCache(object):
                 # prettify command
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
-            craftDebug.log.debug(f"Adding {app} to app cache {appLocation}")
+            CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
-            craftDebug.log.debug(f"Craft was unable to locate: {app}")
+            CraftCore.log.debug(f"Craft was unable to locate: {app}")
             return None
         return appLocation
 
@@ -114,9 +114,9 @@ class UtilsCache(object):
         if not app:
             return None
         if not (app, command) in self._outputCache:
-            craftDebug.log.debug(f"\"{app}\" {command}")
+            CraftCore.log.debug(f"\"{app}\" {command}")
             output = subprocess.getoutput(f"\"{app}\" {command}")
-            craftDebug.log.debug(output)
+            CraftCore.log.debug(output)
             self._outputCache[(app, command)] = output
         return self._outputCache[(app, command)]
 
@@ -131,7 +131,7 @@ class UtilsCache(object):
             else:
                 supports = command.match(output) is not None
             self._helpCache[(app, command)] = supports
-            craftDebug.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
+            CraftCore.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
     def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
@@ -151,14 +151,14 @@ class UtilsCache(object):
             return False
         match = pattern.search(output)
         if not match:
-            craftDebug.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
+            CraftCore.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
             return False
         appVersion = CraftVersion(match.group(1))
         self._versionCache[app] = appVersion
         return appVersion
 
     def cacheJsonFromUrl(self, url, timeout=10) -> object:
-        craftDebug.log.debug(f"Fetch Json: {url}")
+        CraftCore.log.debug(f"Fetch Json: {url}")
         if not url in self._jsonCache:
             if os.path.isfile(url):
                 with open(url, "rt+") as jsonFile:
@@ -168,16 +168,16 @@ class UtilsCache(object):
                 try:
                     with urllib.request.urlopen(url, timeout=timeout) as fh:
                         jsonContent = str(fh.read(), "UTF-8")
-                        craftDebug.log.debug(f"Fetched json: {url}")
-                        craftDebug.log.debug(jsonContent)
+                        CraftCore.log.debug(f"Fetched json: {url}")
+                        CraftCore.log.debug(jsonContent)
                         self._jsonCache[url] = json.loads(jsonContent)
                 except urllib.error.HTTPError as e:
-                    craftDebug.log.debug(f"Failed to download {url}: {e}")
+                    CraftCore.log.debug(f"Failed to download {url}: {e}")
                     if e.code == 404:
                         # don't retry it
                         self._jsonCache[url] = {}
                 except Exception as e:
-                    craftDebug.log.debug(f"Failed to download {url}: {e}")
+                    CraftCore.log.debug(f"Failed to download {url}: {e}")
         return self._jsonCache.get(url, {})
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:
@@ -190,7 +190,7 @@ class UtilsCache(object):
         """
         if url not in self._nightlyVersions:
             if craftSettings.getboolean("General", "WorkOffline"):
-                craftDebug.step("Nightly builds unavailable for %s in offline mode." % url)
+                CraftCore.debug.step("Nightly builds unavailable for %s in offline mode." % url)
                 return []
             try:
                 with urllib.request.urlopen(url, timeout=timeout) as fh:
@@ -202,7 +202,7 @@ class UtilsCache(object):
                     self._nightlyVersions[url] = list(set(vers))
                     return self._nightlyVersions[url]
             except Exception as e:
-                craftDebug.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
+                CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
 
 
@@ -236,7 +236,7 @@ def getCallerFilename():
 
 def getFiles(urls, destdir, suffix='', filenames=''):
     """download files from 'url' into 'destdir'"""
-    craftDebug.log.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix))
+    CraftCore.log.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix))
     # make sure distfiles dir exists
     if (not os.path.exists(destdir)):
         os.makedirs(destdir)
@@ -265,9 +265,9 @@ def getFiles(urls, destdir, suffix='', filenames=''):
 
 def getFile(url, destdir, filename='') -> bool:
     """download file from 'url' into 'destdir'"""
-    craftDebug.log.debug("getFile called. url: %s" % url)
+    CraftCore.log.debug("getFile called. url: %s" % url)
     if url == "":
-        craftDebug.log.error("fetch: no url given")
+        CraftCore.log.error("fetch: no url given")
         return False
 
     if utilsCache.findApplication("wget"):
@@ -296,12 +296,12 @@ def getFile(url, destdir, filename='') -> bool:
 
         try:
             urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
-                                       reporthook=dlProgress if craftDebug.verbose() >= 0 else None)
+                                       reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
         except Exception as e:
-            craftDebug.log.warning(e)
+            CraftCore.log.warning(e)
             return False
 
-    if craftDebug.verbose() >= 0:
+    if CraftCore.debug.verbose() >= 0:
         sys.stdout.write("\n")
         sys.stdout.flush()
     return True
@@ -320,11 +320,11 @@ def wgetFile(url, destdir, filename=''):
     else:
         command += ["-O", os.path.join(destdir, filename)]
     command += [url]
-    craftDebug.log.debug("wgetfile called")
+    CraftCore.log.debug("wgetfile called")
 
-    if craftDebug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
+    if CraftCore.debug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
         command += ["-q", "--show-progress"]
-        craftDebug.log.info(f"wget {url}")
+        CraftCore.log.info(f"wget {url}")
         return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     else:
         return system(command)
@@ -344,13 +344,13 @@ def unpackFiles(downloaddir, filenames, workdir):
 
 def unpackFile(downloaddir, filename, workdir):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
-    craftDebug.log.debug(f"unpacking this file: {filename}")
+    CraftCore.log.debug(f"unpacking this file: {filename}")
     if not filename:
         return True
 
     (shortname, ext) = os.path.splitext(filename)
     if ext == "":
-        craftDebug.log.warning(f"unpackFile called on invalid file extension {filename}")
+        CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
     elif OsUtils.isWin() and utilsCache.findApplication("7za") and (
                 OsUtils.supportsSymlinks() or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
@@ -359,7 +359,7 @@ def unpackFile(downloaddir, filename, workdir):
         try:
             shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
         except Exception as e:
-            craftDebug.log.error(f"Failed to unpack {filename}", exc_info=e)
+            CraftCore.log.error(f"Failed to unpack {filename}", exc_info=e)
             return False
     return True
 
@@ -425,7 +425,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
     matchQuoted = re.match("^\"(.*)\"$", arg0)
     if matchQuoted:
-        craftDebug.log.warning(f"Please don't pass quoted paths to systemWithoutShell, app={arg0}")
+        CraftCore.log.warning(f"Please don't pass quoted paths to systemWithoutShell, app={arg0}")
     if not os.path.isfile(arg0) and not matchQuoted:
         app = utilsCache.findApplication(arg0)
     else:
@@ -444,14 +444,14 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if pipeProcess:
             _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
         _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
-        craftDebug.print("executing command: {0}".format(_logCommand))
+        CraftCore.debug.print("executing command: {0}".format(_logCommand))
     if pipeProcess:
-        craftDebug.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
+        CraftCore.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
     else:
-        craftDebug.log.debug(f"executing command: {cmd!r}")
-    craftDebug.log.debug(f"CWD: {cwd!r}")
-    craftDebug.log.debug(f"displayProgress={displayProgress}")
-    craftDebug.logEnv(environment)
+        CraftCore.log.debug(f"executing command: {cmd!r}")
+    CraftCore.log.debug(f"CWD: {cwd!r}")
+    CraftCore.log.debug(f"displayProgress={displayProgress}")
+    CraftCore.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
     if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
@@ -463,7 +463,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
             pipeProcess.stdout.close()
         for line in proc.stdout:
             if isinstance(stdout, io.TextIOWrapper):
-                if craftDebug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                if CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     stdout.buffer.write(line)
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
@@ -471,19 +471,19 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
             else:
                 stdout.write(line)
 
-            craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
+            CraftCore.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
     else:
         proc = subprocess.Popen(cmd, **kw)
         if pipeProcess:
             pipeProcess.stdout.close()
         if proc.stderr:
             for line in proc.stderr:
-                craftDebug.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
+                CraftCore.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
 
     proc.communicate()
     result = proc.wait() == 0
     if not result:
-        craftDebug.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
+        CraftCore.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return result
 
 
@@ -491,7 +491,7 @@ def moveEntries(srcdir, destdir):
     for entry in os.listdir(srcdir):
         src = os.path.join(srcdir, entry)
         dest = os.path.join(destdir, entry)
-        craftDebug.log.debug("move: %s -> %s" % (src, dest))
+        CraftCore.log.debug("move: %s -> %s" % (src, dest))
         if (os.path.isfile(dest)):
             os.remove(dest)
         if (os.path.isdir(dest)):
@@ -500,15 +500,15 @@ def moveEntries(srcdir, destdir):
 
 
 def cleanDirectory(directory):
-    craftDebug.log.debug("clean directory %s" % directory)
+    CraftCore.log.debug("clean directory %s" % directory)
     if (os.path.exists(directory)):
         for root, dirs, files in os.walk(directory, topdown=False):
             for name in files:
                 if not OsUtils.rm(os.path.join(root, name), True):
-                    craftDebug.log.critical("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
+                    CraftCore.log.critical("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
             for name in dirs:
                 if not OsUtils.rmDir(os.path.join(root, name), True):
-                    craftDebug.log.critical("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
+                    CraftCore.log.critical("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
     else:
         os.makedirs(directory)
 
@@ -609,10 +609,10 @@ def createImportLibs(dll_name, basepath):
     HAVE_LIB = utilsCache.findApplication("lib") is not None
     HAVE_DLLTOOL = utilsCache.findApplication("dlltool") is not None
 
-    craftDebug.log.debug(f"gendef found: {HAVE_GENDEF}")
-    craftDebug.log.debug(f"gendef used: {USE_GENDEF}")
-    craftDebug.log.debug(f"lib found: {HAVE_LIB}")
-    craftDebug.log.debug(f"dlltool found: {HAVE_DLLTOOL}")
+    CraftCore.log.debug(f"gendef found: {HAVE_GENDEF}")
+    CraftCore.log.debug(f"gendef used: {USE_GENDEF}")
+    CraftCore.log.debug(f"lib found: {HAVE_LIB}")
+    CraftCore.log.debug(f"dlltool found: {HAVE_DLLTOOL}")
 
     dllpath = os.path.join(basepath, "bin", "%s.dll" % dll_name)
     defpath = os.path.join(basepath, "lib", "%s.def" % dll_name)
@@ -624,12 +624,12 @@ def createImportLibs(dll_name, basepath):
         HAVE_GENDEF = True
         USE_GENDEF = False
     if not HAVE_GENDEF:
-        craftDebug.log.warning("system does not have gendef.exe")
+        CraftCore.log.warning("system does not have gendef.exe")
         return False
     if not HAVE_LIB and not os.path.isfile(imppath):
-        craftDebug.log.warning("system does not have lib.exe (from msvc)")
+        CraftCore.log.warning("system does not have lib.exe (from msvc)")
     if not HAVE_DLLTOOL and not os.path.isfile(gccpath):
-        craftDebug.log.warning("system does not have dlltool.exe")
+        CraftCore.log.warning("system does not have dlltool.exe")
 
     # create .def
     if USE_GENDEF:
@@ -665,7 +665,7 @@ def cleanPackageName(basename, packagename):
 
 
 def createSymlink(source, linkName):
-    craftDebug.log.debug(f"creating symlink: {linkName} -> {source}")
+    CraftCore.log.debug(f"creating symlink: {linkName} -> {source}")
     os.symlink(source, linkName)
     return True
 
@@ -673,33 +673,33 @@ def createSymlink(source, linkName):
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
     if not os.path.exists(path):
-        craftDebug.log.debug("creating directory %s " % (path))
+        CraftCore.log.debug("creating directory %s " % (path))
         os.makedirs(path)
     return True
 
 
 def copyFile(src, dest, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
-    craftDebug.log.debug("copy file from %s to %s" % (src, dest))
+    CraftCore.log.debug("copy file from %s to %s" % (src, dest))
     destDir = os.path.dirname(dest)
     if not os.path.exists(destDir):
         os.makedirs(destDir)
     if os.path.exists(dest):
-        craftDebug.log.warning("Overriding %s" % dest)
+        CraftCore.log.warning("Overriding %s" % dest)
         OsUtils.rm(dest, True)
     if linkOnly:
         try:
             os.link(src, dest)
             return True
         except:
-            craftDebug.log.warning("Failed to create hardlink %s for %s" % (dest, src))
+            CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
     shutil.copy(src, dest)
     return True
 
 
 def copyDir(srcdir, destdir, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False), copiedFiles=None):
     """ copy directory from srcdir to destdir """
-    craftDebug.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
+    CraftCore.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
     if (not srcdir.endswith(os.path.sep)):
         srcdir += os.path.sep
@@ -726,7 +726,7 @@ def copyDir(srcdir, destdir, linkOnly=craftSettings.getboolean("General", "UseHa
                     if os.path.islink(srcPath):
                         linkTo = os.readlink(srcPath)
                         if os.path.isabs(linkTo):
-                            craftDebug.log.warning(
+                            CraftCore.log.warning(
                                 f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
                             continue
 
@@ -746,9 +746,9 @@ def mergeTree(srcdir, destdir):
 
     If a directory in @p destdir exists, just write into it
     """
-    craftDebug.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
+    CraftCore.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
     if os.path.samefile(srcdir, destdir):
-        craftDebug.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
+        CraftCore.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
         return False
 
     fileList = os.listdir(srcdir)
@@ -769,24 +769,24 @@ def mergeTree(srcdir, destdir):
 
 def moveDir(srcdir, destdir):
     """ move directory from srcdir to destdir """
-    craftDebug.log.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
+    CraftCore.log.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
     try:
         shutil.move(srcdir, destdir)
     except Exception as e:
-        craftDebug.log.warning(e)
+        CraftCore.log.warning(e)
         return False
     return True
 
 
 def rmtree(directory):
     """ recursively delete directory """
-    craftDebug.log.debug("rmtree called. directory: %s" % (directory))
+    CraftCore.log.debug("rmtree called. directory: %s" % (directory))
     shutil.rmtree(directory, True)  # ignore errors
 
 
 def moveFile(src, dest):
     """move file from src to dest"""
-    craftDebug.log.debug("move file from %s to %s" % (src, dest))
+    CraftCore.log.debug("move file from %s to %s" % (src, dest))
     shutil.move(src, dest)
     return True
 
@@ -795,7 +795,7 @@ def deleteFile(fileName):
     """delete file """
     if not os.path.exists(fileName):
         return False
-    craftDebug.log.debug("delete file %s " % (fileName))
+    CraftCore.log.debug("delete file %s " % (fileName))
     os.remove(fileName)
     return True
 
@@ -818,7 +818,7 @@ def findFiles(directory, pattern=None, fileNames=None):
 
 def putenv(name, value):
     """set environment variable"""
-    craftDebug.log.debug("set environment variable -- set %s=%s" % (name, value))
+    CraftCore.log.debug("set environment variable -- set %s=%s" % (name, value))
     if not value:
         if name in os.environ:
             del os.environ[name]
@@ -830,10 +830,10 @@ def putenv(name, value):
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     cmd = 'patch -d "%s" -p%s -i "%s"' % (sourceDir, patchLevel, f)
-    craftDebug.log.debug("applying %s" % cmd)
+    CraftCore.log.debug("applying %s" % cmd)
     result = system(cmd)
     if not result:
-        craftDebug.log.warning("applying %s failed!" % f)
+        CraftCore.log.warning("applying %s failed!" % f)
     return result
 
 
@@ -845,12 +845,12 @@ def getWinVer():
     try:
         result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0], "windows-1252")
     except OSError:
-        craftDebug.log.debug("Windows Version can not be determined")
+        CraftCore.log.debug("Windows Version can not be determined")
         return "0"
     version = re.search(r"\d+\.\d+\.\d+", result)
     if (version):
         return version.group(0)
-    craftDebug.log.debug("Windows Version can not be determined")
+    CraftCore.log.debug("Windows Version can not be determined")
     return "0"
 
 
@@ -860,7 +860,7 @@ def regQuery(key, value):
     the result.
     '''
     query = 'reg query "%s" /v "%s"' % (key, value)
-    craftDebug.log.debug("Executing registry query %s " % query)
+    CraftCore.log.debug("Executing registry query %s " % query)
     result = subprocess.Popen(query,
                               stdout=subprocess.PIPE).communicate()[0]
     # Output of this command is either an error to stderr
@@ -881,8 +881,8 @@ def embedManifest(executable, manifest):
     '''
     if not os.path.isfile(executable) or not os.path.isfile(manifest):
         # We die here because this is a problem with the blueprint files
-        craftDebug.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
-    craftDebug.log.debug("embedding ressource manifest %s into %s" % \
+        CraftCore.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
+    CraftCore.log.debug("embedding ressource manifest %s into %s" % \
                          (manifest, executable))
     mtExe = None
     mtExe = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "mt.exe")
@@ -893,12 +893,12 @@ def embedManifest(executable, manifest):
         sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
                           "CurrentInstallFolder")
         if not sdkdir:
-            craftDebug.log.debug("embedManifest could not find the Registry Key"
+            CraftCore.log.debug("embedManifest could not find the Registry Key"
                                  " for the Windows SDK")
         else:
             mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
             if not os.path.isfile(os.path.normpath(mtExe)):
-                craftDebug.log.debug("embedManifest could not find a mt.exe in\n\t %s" % \
+                CraftCore.log.debug("embedManifest could not find a mt.exe in\n\t %s" % \
                                      os.path.dirname(mtExe))
     if os.path.isfile(mtExe):
         return system([mtExe, "-nologo", "-manifest", manifest,
@@ -922,13 +922,13 @@ def prependPath(*parts):
         fullPath = os.path.join(*parts)
         old = os.getenv("PATH").split(';')
         if old[0] != fullPath:
-            craftDebug.log.debug("adding %s to system path" % fullPath)
+            CraftCore.log.debug("adding %s to system path" % fullPath)
             old.insert(0, fullPath)
             putenv("PATH", os.path.pathsep.join(old))
 
 
 def notify(title, message, alertClass=None):
-    craftDebug.step(f"{title}: {message}")
+    CraftCore.debug.step(f"{title}: {message}")
     backends = craftSettings.get("General", "Notify", "")
     if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
@@ -990,7 +990,7 @@ def replaceSymlinksWithCopys(path):
             if os.path.islink(path):
                 toReplace = resolveLink(path)
                 if not os.path.exists(toReplace):
-                    craftDebug.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
+                    CraftCore.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
                     continue
                 if toReplace != path:
                     deleteFile(path)

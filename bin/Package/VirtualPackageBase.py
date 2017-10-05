@@ -5,7 +5,7 @@ class VirtualPackageBase(SourceOnlyPackageBase):
     """provides a base class for virtual packages"""
 
     def __init__(self):
-        craftDebug.log.debug("VirtualPackageBase.__init__ called")
+        CraftCore.log.debug("VirtualPackageBase.__init__ called")
         SourceOnlyPackageBase.__init__(self)
 
     # from SourceBase:

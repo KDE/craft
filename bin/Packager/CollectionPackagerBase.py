@@ -19,7 +19,7 @@ def toRegExp(fname, targetName) -> re:
     assert os.path.isabs(fname)
 
     if not os.path.isfile(fname):
-        craftDebug.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+        CraftCore.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
     regex = "("
     for line in fileinput.input(fname):
         # Cleanup white spaces / line endings
@@ -31,9 +31,9 @@ def toRegExp(fname, targetName) -> re:
             tmp = "^%s$" % line
             regex += "%s|" % tmp
             re.compile(tmp, re.IGNORECASE)  # for debug
-            craftDebug.log.debug("%s added to %s as %s" % (line, targetName, tmp))
+            CraftCore.log.debug("%s added to %s as %s" % (line, targetName, tmp))
         except re.error:
-            craftDebug.log.critical("%s is not a valid regexp" % tmp)
+            CraftCore.log.critical("%s is not a valid regexp" % tmp)
     return re.compile("%s)" % regex[:-2], re.IGNORECASE)
 
 
@@ -74,7 +74,7 @@ class CollectionPackagerBase(PackagerBase):
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
-                craftDebug.log.debug("reading whitelist: %s" % entry)
+                CraftCore.log.debug("reading whitelist: %s" % entry)
                 if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
                     for line in entry():
                         self._whitelist.append(line)
@@ -86,10 +86,10 @@ class CollectionPackagerBase(PackagerBase):
     def blacklist(self):
         if not self._blacklist:
             for entry in self.blacklist_file:
-                craftDebug.log.debug("reading blacklist: %s" % entry)
+                CraftCore.log.debug("reading blacklist: %s" % entry)
                 if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
                     if entry == PackagerLists.runtimeBlacklist:
-                        craftDebug.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
+                        CraftCore.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
                         self.read_blacklist(entry())
                         continue
 
@@ -116,14 +116,14 @@ class CollectionPackagerBase(PackagerBase):
 
         for x in depList:
             if x.isVirtualPackage():
-                craftDebug.log.debug(f"Ignoring package b/c it is virtual: {x}")
+                CraftCore.log.debug(f"Ignoring package b/c it is virtual: {x}")
                 continue
 
             _package = x.instance
 
             imageDirs.append((x.instance.imageDir(), x.subinfo.options.package.disableStriping))
             # this loop collects the files from all image directories
-            craftDebug.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
+            CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
 
         if craftSettings.getboolean("QtSDK", "Enabled", False) and self.deployQt and craftSettings.getboolean("QtSDK",
                                                                                                               "PackageQtSDK",
@@ -186,14 +186,14 @@ class CollectionPackagerBase(PackagerBase):
             directory
         """
         utils.createDir(destDir)
-        craftDebug.log.debug("Copying %s -> %s" % (srcDir, destDir))
+        CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
             if os.path.basename(entry) in uniquebasenames:
-                craftDebug.log.debug("Found duplicate filename: %s" % os.path.basename(entry))
+                CraftCore.log.debug("Found duplicate filename: %s" % os.path.basename(entry))
                 duplicates.append(entry)
             else:
                 self.unique_names.append(entry)
@@ -204,7 +204,7 @@ class CollectionPackagerBase(PackagerBase):
             if not os.path.exists(os.path.dirname(entry_target)):
                 utils.createDir(os.path.dirname(entry_target))
             shutil.copy(entry, entry_target)
-            craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
+            CraftCore.log.debug("Copied %s to %s" % (entry, entry_target))
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip(entry_target)
         for entry in duplicates:
@@ -212,7 +212,7 @@ class CollectionPackagerBase(PackagerBase):
             if not os.path.exists(os.path.dirname(entry_target)):
                 utils.createDir(os.path.dirname(entry_target))
             shutil.copy(entry, entry_target)
-            craftDebug.log.debug("Copied %s to %s" % (entry, entry_target))
+            CraftCore.log.debug("Copied %s to %s" % (entry, entry_target))
             if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
                 self.strip(entry_target)
 
@@ -221,14 +221,14 @@ class CollectionPackagerBase(PackagerBase):
 
         archiveDir = self.archiveDir()
 
-        craftDebug.log.debug("cleaning package dir: %s" % archiveDir)
+        CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
         for directory, strip in self.__getImageDirectories():
             imageDir = archiveDir
             if os.path.exists(directory):
                 self.copyFiles(directory, imageDir, strip)
             else:
-                craftDebug.log.critical("image directory %s does not exist!" % directory)
+                CraftCore.log.critical("image directory %s does not exist!" % directory)
 
         if not os.path.exists(archiveDir):
             os.makedirs(archiveDir)

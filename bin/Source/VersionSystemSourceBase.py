@@ -8,12 +8,12 @@ class VersionSystemSourceBase(SourceBase):
     """abstract base class for version system support"""
 
     def __init__(self):
-        craftDebug.trace("VersionSystemSourceBase __init__")
+        CraftCore.debug.trace("VersionSystemSourceBase __init__")
         SourceBase.__init__(self)
 
     def getUrl(self, index):
         """get the url at position 'index' from a ';' separated list of urls"""
-        craftDebug.trace("VersionSystemSourceBase getUrl")
+        CraftCore.debug.trace("VersionSystemSourceBase getUrl")
         u = self.subinfo.svnTarget()
         if u.find(';') == -1:
             if index == 0:
@@ -30,24 +30,24 @@ class VersionSystemSourceBase(SourceBase):
 
     def splitUrl(self, url):
         """ split url into real url and url option. the delimiter is '#'"""
-        craftDebug.trace("VersionSystemSourceBase splitUrl")
+        CraftCore.debug.trace("VersionSystemSourceBase splitUrl")
         if url.find('#') != -1:
             return url.split('#')
         return [url, ""]
 
     def __repositoryBaseUrl(self):
         """ this function return the base url to the KDE repository """
-        craftDebug.trace("VersionSystemSourceBase __repositoryBaseUrl")
+        CraftCore.debug.trace("VersionSystemSourceBase __repositoryBaseUrl")
         # @todo move to SvnSource
         server = craftSettings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
 
         return server + '/home/kde/'
 
     def unpack(self):
-        craftDebug.trace("VersionSystemSourceBase unpack")
+        CraftCore.debug.trace("VersionSystemSourceBase unpack")
         self.enterBuildDir()
 
-        craftDebug.log.debug("cleaning %s" % self.buildDir())
+        CraftCore.log.debug("cleaning %s" % self.buildDir())
         utils.cleanDirectory(self.buildDir())
         ret = self.applyPatches()
         if craftSettings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
@@ -56,7 +56,7 @@ class VersionSystemSourceBase(SourceBase):
 
     def repositoryUrlCount(self):
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""
-        craftDebug.trace("VersionSystemSourceBase repositoryUrlCount")
+        CraftCore.debug.trace("VersionSystemSourceBase repositoryUrlCount")
         if not self.subinfo.hasSvnTarget():
             return 0
         u = self.subinfo.svnTarget()
@@ -68,7 +68,7 @@ class VersionSystemSourceBase(SourceBase):
     def repositoryUrl(self, index=0):
         """this function returns the full url into a version system based repository at position 'index'.
         See @ref repositoryUrlCount how to define multiple repository urls."""
-        craftDebug.trace("VersionSystemSourceBase repositoryUrl")
+        CraftCore.debug.trace("VersionSystemSourceBase repositoryUrl")
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
             (u, _) = self.splitUrl(u1)
@@ -88,7 +88,7 @@ class VersionSystemSourceBase(SourceBase):
         """this function return options for the repository url at position 'index'.
         Options for a repository url are defined by adding '#' followed by the specific option.
         """
-        craftDebug.trace("VersionSystemSourceBase repositoryUrlOptions")
+        CraftCore.debug.trace("VersionSystemSourceBase repositoryUrlOptions")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (dummy, option) = self.splitUrl(u)
@@ -96,13 +96,13 @@ class VersionSystemSourceBase(SourceBase):
         return None
 
     def checkoutDir(self, dummyIndex=0):
-        craftDebug.trace("VersionSystemSourceBase checkoutDir")
+        CraftCore.debug.trace("VersionSystemSourceBase checkoutDir")
         if ("ContinuousIntegration", "SourceDir") in craftSettings:
             return craftSettings.get("ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
             sourcedir = os.path.join(CraftStandardDirs.gitDir(), self.package.path)
         else:
-            craftDebug.log.critical("svnTarget property not set for this target")
+            CraftCore.log.critical("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
@@ -110,7 +110,7 @@ class VersionSystemSourceBase(SourceBase):
         return os.path.abspath(sourcedir)
 
     def sourceDir(self, index=0):
-        craftDebug.trace("VersionSystemSourceBase sourceDir")
+        CraftCore.debug.trace("VersionSystemSourceBase sourceDir")
         if ("ContinuousIntegration", "SourceDir") in craftSettings:
             return craftSettings.get("ContinuousIntegration", "SourceDir")
 
@@ -119,11 +119,11 @@ class VersionSystemSourceBase(SourceBase):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
-        craftDebug.log.debug("using sourcedir: %s" % sourcedir)
+        CraftCore.log.debug("using sourcedir: %s" % sourcedir)
         return os.path.abspath(sourcedir)
 
     def sourceRevision(self):
-        craftDebug.trace("VersionSystemSourceBase sourceRevision")
+        CraftCore.debug.trace("VersionSystemSourceBase sourceRevision")
         if craftSettings.getboolean("Packager", "UseCache", False):
             # as we are using the cahce we don't have the git clone present
             return "latest"

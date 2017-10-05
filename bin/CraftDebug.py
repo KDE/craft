@@ -100,21 +100,20 @@ class CraftDebug(object):
 
 
 CraftCore.registerInstance("debug", CraftDebug)
-craftDebug = CraftCore.debug
-
+CraftCore.registerObjectAlias("log", "debug", "log")
 
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
 
     def __init__(self, tempLevel):
-        self.prevLevel = craftDebug.verbose()
-        craftDebug.setVerbose(tempLevel)
+        self.prevLevel = CraftCore.debug.verbose()
+        CraftCore.debug.setVerbose(tempLevel)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, trback):
-        craftDebug.setVerbose(self.prevLevel)
+        CraftCore.debug.setVerbose(self.prevLevel)
 
 
 def deprecated(replacement=None):
@@ -162,12 +161,12 @@ def deprecated(replacement=None):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             _info = inspect.stack()[1]
-            if not (_info.filename, _info.lineno) in craftDebug.seenDeprecatedFunctions:
-                craftDebug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
+            if not (_info.filename, _info.lineno) in CraftCore.debug.seenDeprecatedFunctions:
+                CraftCore.debug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
                 if craftSettings.getboolean("CraftDebug", "LogDeprecated", False):
-                    craftDebug.print(msg)
+                    CraftCore.debug.print(msg)
                 else:
-                    craftDebug.log.debug(msg, stack_info=True)
+                    CraftCore.log.debug(msg, stack_info=True)
             return fun(*args, **kwargs)
 
         return inner
@@ -176,5 +175,5 @@ def deprecated(replacement=None):
 
 
 if __name__ == "__main__":
-    craftDebug.log.debug("debug: foo")
-    craftDebug.log.info("info: foo")
+    CraftCore.log.debug("debug: foo")
+    CraftCore.log.info("info: foo")

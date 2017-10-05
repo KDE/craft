@@ -15,7 +15,7 @@ class MultiSource(SourceBase):
 
     def __init__(self):
         SourceBase.__init__(self)
-        craftDebug.trace("MultiSource __init__")
+        CraftCore.debug.trace("MultiSource __init__")
 
         self.source = None
         if self.subinfo.hasSvnTarget():
@@ -36,57 +36,57 @@ class MultiSource(SourceBase):
 
     # todo: find a more general way to publish all members
     def fetch(self):
-        craftDebug.trace("MultiSource fetch")
+        CraftCore.debug.trace("MultiSource fetch")
         return self.source.fetch(self)
 
     def checkDigest(self):
-        craftDebug.trace("MultiSource checkDigest")
+        CraftCore.debug.trace("MultiSource checkDigest")
         return self.source.checkDigest(self)
 
     def unpack(self):
-        craftDebug.trace("MultiSource unpack")
+        CraftCore.debug.trace("MultiSource unpack")
         return self.source.unpack(self)
 
     def localFileNames(self):
-        craftDebug.trace("MultiSource localFileNames")
+        CraftCore.debug.trace("MultiSource localFileNames")
         return self.source.localFileNames(self)
 
     def checkoutDir(self, index=0):
-        craftDebug.trace("MultiSource checkoutDir")
+        CraftCore.debug.trace("MultiSource checkoutDir")
         return self.source.checkoutDir(self, index=index)
 
     def sourceDir(self):
-        craftDebug.trace("MultiSource sourceDir")
+        CraftCore.debug.trace("MultiSource sourceDir")
         return CraftShortPath(self.source.sourceDir(self)).path(self.subinfo.options.needsShortPath)
 
     def repositoryUrl(self, index=0):
-        craftDebug.trace("MultiSource repositoryUrl")
+        CraftCore.debug.trace("MultiSource repositoryUrl")
         return self.source.repositoryUrl(self, index)
 
     def repositoryUrlCount(self):
-        craftDebug.trace("MultiSource repositoryUrlCount")
+        CraftCore.debug.trace("MultiSource repositoryUrlCount")
         return self.source.repositoryUrlCount(self)
 
     def applyPatches(self):
-        craftDebug.trace("MultiSource applyPatches")
+        CraftCore.debug.trace("MultiSource applyPatches")
         return self.source.applyPatches(self)
 
     def createPatch(self):
-        craftDebug.trace("MultiSource createPatch")
+        CraftCore.debug.trace("MultiSource createPatch")
         return self.source.createPatch(self)
 
     def getUrls(self):
-        craftDebug.trace("MultiSource getUrls")
+        CraftCore.debug.trace("MultiSource getUrls")
         return self.source.getUrls(self)
 
     def sourceVersion(self):
-        craftDebug.trace("MultiSource sourceVersion")
+        CraftCore.debug.trace("MultiSource sourceVersion")
         return self.source.sourceVersion(self)
 
     def sourceRevision(self):
-        craftDebug.trace("MultiSource sourceVersion")
+        CraftCore.debug.trace("MultiSource sourceVersion")
         return self.source.sourceRevision(self)
 
     def printSourceVersion(self):
-        craftDebug.trace("MultiSource printSourceVersion")
+        CraftCore.debug.trace("MultiSource printSourceVersion")
         return self.source.printSourceVersion(self)

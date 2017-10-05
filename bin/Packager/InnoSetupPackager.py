@@ -13,14 +13,14 @@ class InnoSetupPackager(PackagerBase):
         PackagerBase.__init__(self)
         self.packagerExe = os.path.join(os.environ["ProgramFiles"], "Inno Setup 5", "ISCC.exe")
         if self.packagerExe:
-            craftDebug.log.debug("using inno setup packager from %s" % self.packagerExe)
+            CraftCore.log.debug("using inno setup packager from %s" % self.packagerExe)
 
     def configFile(self):
         """ return path of installer config file"""
-        craftDebug.log.debug("searching package dir for setup config")
+        CraftCore.log.debug("searching package dir for setup config")
 
         fileName = os.path.join(self.buildDir(), "setup.iss")
-        craftDebug.log.debug("searching build dir for setup config %s" % fileName)
+        CraftCore.log.debug("searching build dir for setup config %s" % fileName)
         if os.path.exists(fileName):
             return fileName
 
@@ -39,7 +39,7 @@ class InnoSetupPackager(PackagerBase):
         print("createPackage from innosetupPackager")
 
         if not self.packagerExe:
-            craftDebug.log.critical("could not find packager in your path!")
+            CraftCore.log.critical("could not find packager in your path!")
 
         if self.subinfo.options.package.packageName != None:
             pkgName = self.subinfo.options.package.packageName
@@ -91,7 +91,7 @@ class InnoSetupPackager(PackagerBase):
         #
         infile = self.configFile()
         if infile == None:
-            craftDebug.log.critical("could not find config file %s" % infile)
+            CraftCore.log.critical("could not find config file %s" % infile)
         with open(infile, 'r') as _in:
             lines = _in.read().splitlines()
 
@@ -107,5 +107,5 @@ class InnoSetupPackager(PackagerBase):
 
         cmd += " \"%s\"" % (outfile)
         if not utils.systemWithoutShell(cmd):
-            craftDebug.log.critical("while packaging. cmd: %s" % cmd)
+            CraftCore.log.critical("while packaging. cmd: %s" % cmd)
         return True

@@ -7,7 +7,7 @@ import functools
 import utils
 from CraftCompiler import craftCompiler
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Blueprints import CraftPackageObject
 ## @todo complete a release and binary merge dir below rootdir
@@ -56,7 +56,7 @@ class CraftBase(object):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
-        craftDebug.log.debug("CraftBase.__init__ called")
+        CraftCore.log.debug("CraftBase.__init__ called")
 
         mod = sys.modules[self.__module__]
         self.package = mod.CRAFT_CURRENT_MODULE  # ugly workaround we need to replace the constructor
@@ -121,11 +121,11 @@ class CraftBase(object):
         return os.path.join(self.buildRoot(), "work")
 
     def buildDir(self):
-        craftDebug.log.debug("CraftBase.buildDir() called")
+        CraftCore.log.debug("CraftBase.buildDir() called")
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
-        craftDebug.log.debug("package builddir is: %s" % builddir)
+        CraftCore.log.debug("package builddir is: %s" % builddir)
         return CraftShortPath(builddir).path(self.subinfo.options.needsShortPath)
 
     def imageDir(self):
@@ -163,7 +163,7 @@ class CraftBase(object):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
-        craftDebug.log.debug("CraftBase.packageDestinationDir called")
+        CraftCore.log.debug("CraftBase.packageDestinationDir called")
         dstpath = craftSettings.get("General", "EMERGE_PKGDSTDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
 
         if not os.path.exists(dstpath):
@@ -186,21 +186,21 @@ class CraftBase(object):
         return CraftStandardDirs.craftRoot()
 
     def enterBuildDir(self):
-        craftDebug.trace("CraftBase.enterBuildDir called")
+        CraftCore.debug.trace("CraftBase.enterBuildDir called")
 
         if (not os.path.exists(self.buildDir())):
             os.makedirs(self.buildDir())
-            craftDebug.log.debug("creating: %s" % self.buildDir())
+            CraftCore.log.debug("creating: %s" % self.buildDir())
 
         os.chdir(self.buildDir())
-        craftDebug.log.debug("entering: %s" % self.buildDir())
+        CraftCore.log.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
         if (not os.path.exists(self.sourceDir())):
             return False
-        craftDebug.log.warning("entering the source directory!")
+        CraftCore.log.warning("entering the source directory!")
         os.chdir(self.sourceDir())
-        craftDebug.log.debug("entering: %s" % self.sourceDir())
+        CraftCore.log.debug("entering: %s" % self.sourceDir())
 
     def system(self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
@@ -210,7 +210,7 @@ class CraftBase(object):
 
         if utils.system(command, **kw):
             return True
-        craftDebug.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
+        CraftCore.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
     def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),

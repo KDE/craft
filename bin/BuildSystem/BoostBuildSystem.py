@@ -88,7 +88,7 @@ class BoostBuildSystem(BuildSystemBase):
         self.enterSourceDir()
         cmd = "bjam"
         cmd += self.configureOptions(self.subinfo.options.configure.args)
-        craftDebug.log.debug(cmd)
+        CraftCore.log.debug(cmd)
         return self.system(cmd)
 
     def install(self):

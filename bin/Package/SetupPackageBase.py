@@ -11,7 +11,7 @@ class SetupPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
     """provides a base class for 3rd party installers or msi packages"""
 
     def __init__(self):
-        craftDebug.log.debug("SetupPackageBase.__init__ called")
+        CraftCore.log.debug("SetupPackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         BuildSystemBase.__init__(self)

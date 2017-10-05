@@ -1,7 +1,7 @@
 import sqlite3
 
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
 
@@ -121,8 +121,8 @@ class InstallDB(object):
 
     @staticmethod
     def log(command):
-        if craftDebug.verbose() > 0:
-            craftDebug.log.debug(command)
+        if CraftCore.debug.verbose() > 0:
+            CraftCore.log.debug(command)
 
     def getLastId(self):
         """ returns the last id from a table, which is essentially the  """
@@ -296,7 +296,7 @@ def printInstalled():
     installed = installdb.getDistinctInstalled()
     width = 40
     def printLine(first, second):
-        craftDebug.log.info(f"{first:{width}}: {second}")
+        CraftCore.log.info(f"{first:{width}}: {second}")
 
     printLine("Package", "Version")
     printLine("=" * width, "=" * 10)
@@ -308,4 +308,4 @@ def printPackagesForFileSearch(filename):
     packages = installdb.getPackagesForFileSearch(filename)
     for pId, filename in packages:
         path , version = pId.getPackageInfo()
-        craftDebug.log.info(f"{path}: {filename}")
+        CraftCore.log.info(f"{path}: {filename}")

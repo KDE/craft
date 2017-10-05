@@ -39,7 +39,7 @@ class SevenZipPackager(PackagerBase):
             utils.deleteFile(archive)
         cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
         if not utils.system(cmd, displayProgress=True, **kw):
-            craftDebug.log.critical(f"while packaging. cmd: {cmd}")
+            CraftCore.log.critical(f"while packaging. cmd: {cmd}")
         if not craftSettings.getboolean("Packager", "CreateCache"):
             CraftHash.createDigestFiles(archive)
         else:

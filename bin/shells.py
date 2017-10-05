@@ -90,7 +90,7 @@ class BashShell(object):
         if not bash:
             bash = utils.utilsCache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         if not bash:
-            craftDebug.log.critical("Failed to detect bash")
+            CraftCore.log.critical("Failed to detect bash")
         return bash
 
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
@@ -102,8 +102,8 @@ class BashShell(object):
             env[k] = v
         command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
                   (self._findBash(), export, self.toNativePath(path), self.toNativePath(cmd), args)
-        craftDebug.step("bash execute: %s" % command)
-        craftDebug.log.debug("bash environment: %s" % self.environment)
+        CraftCore.debug.step("bash execute: %s" % command)
+        CraftCore.log.debug("bash environment: %s" % self.environment)
         return utils.system(command, stdout=out, stderr=err, env=env, displayProgress=displayProgress)
 
     def login(self):

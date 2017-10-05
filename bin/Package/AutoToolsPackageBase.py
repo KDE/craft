@@ -11,7 +11,7 @@ class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypeP
     """provides a base class for autotools based packages from any source"""
 
     def __init__(self):
-        craftDebug.log.debug("AutoToolsPackageBase.__init__ called")
+        CraftCore.log.debug("AutoToolsPackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         AutoToolsBuildSystem.__init__(self)

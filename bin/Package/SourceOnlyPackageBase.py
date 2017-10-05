@@ -9,7 +9,7 @@ class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerB
     """provides a base class for source dependency packages"""
 
     def __init__(self):
-        craftDebug.log.debug("SourceOnlyPackageBase.__init__ called")
+        CraftCore.log.debug("SourceOnlyPackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         BuildSystemBase.__init__(self, "")

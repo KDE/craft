@@ -38,7 +38,7 @@ class PipBuildSystem(BuildSystemBase):
                 pipExe = shutil.which("pip", path=pythonPath)  # Chocolatey installs pip.exe next to python.exe
 
             if not pipExe:
-                craftDebug.log.warning(
+                CraftCore.log.warning(
                     "Could not find 'pip' executable for Python install: {0}, skipping install".format(pythonPath))
                 return False
 

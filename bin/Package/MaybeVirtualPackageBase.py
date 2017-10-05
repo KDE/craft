@@ -23,7 +23,7 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
         if not self.skipCondition:
             # override the install method
             def install():
-                craftDebug.log.info(
+                CraftCore.log.info(
                     f"Skipping installation of {self} as the installed version is >= {self.checkVersion}")
                 return self.baseClass.install(self)
 

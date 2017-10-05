@@ -4,7 +4,7 @@ import random
 import tempfile
 
 import CraftTestBase
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from Utils import CraftHash
 
 
@@ -53,12 +53,12 @@ class TestAPI(CraftHashTest):
     def test_printFilesDigests(self):
         path, name = os.path.split(self.tmpFile)
         log = io.StringIO()
-        oldLog = craftDebug._handler.stream
-        craftDebug._handler.stream = log
+        oldLog = CraftCore.debug._handler.stream
+        CraftCore.debug._handler.stream = log
         CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
         self.assertEquals(
             "Digests for test: (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n", log.getvalue())
-        craftDebug._handler.stream = oldLog
+        CraftCore.debug._handler.stream = oldLog
 
     def test_createDigestFiles(self):
         # TODO: check file content

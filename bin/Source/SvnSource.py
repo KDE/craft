@@ -12,13 +12,13 @@ class SvnSource(VersionSystemSourceBase):
     """subversion support"""
 
     def __init__(self, subinfo=None):
-        craftDebug.trace("SvnSource.__init__")
+        CraftCore.debug.trace("SvnSource.__init__")
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self)
 
     def checkoutDir(self, index=0):
-        craftDebug.trace("SvnSource.checkoutDir")
+        CraftCore.debug.trace("SvnSource.checkoutDir")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
             (url, _) = self.splitUrl(u)
@@ -33,7 +33,7 @@ class SvnSource(VersionSystemSourceBase):
                 if path and craftSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
                     sourcedir = os.path.join(sourcedir, path)
         else:
-            craftDebug.log.critical("svnTarget property not set for this target")
+            CraftCore.log.critical("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
@@ -42,16 +42,16 @@ class SvnSource(VersionSystemSourceBase):
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply a patch to a svn repository checkout"""
-        craftDebug.trace("SvnSource.applyPatch")
+        CraftCore.debug.trace("SvnSource.applyPatch")
         if fileName:
             return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
 
     def fetch(self, repopath=None):
         """ checkout or update an existing repository path """
-        craftDebug.trace("SvnSource.fetch")
+        CraftCore.debug.trace("SvnSource.fetch")
         if self.noFetch:
-            craftDebug.log.debug("skipping svn fetch (--offline)")
+            CraftCore.log.debug("skipping svn fetch (--offline)")
             return True
 
         for i in range(self.repositoryUrlCount()):
@@ -162,7 +162,7 @@ class SvnSource(VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if craftDebug.verbose() < 2 and not craftSettings.getboolean("General", "KDESVNVERBOSE", True):
+        if CraftCore.debug.verbose() < 2 and not craftSettings.getboolean("General", "KDESVNVERBOSE", True):
             option += " --quiet"
 
         if self.subinfo.options.fetch.ignoreExternals:

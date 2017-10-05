@@ -2,15 +2,14 @@ import os
 import tempfile
 import unittest
 
-from CraftCore import CraftCore
 import CraftConfig
 import CraftStandardDirs
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 import InstallDB
 
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
-        craftDebug.setVerbose(1)
+        CraftCore.debug.setVerbose(1)
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         CraftConfig.craftSettings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))

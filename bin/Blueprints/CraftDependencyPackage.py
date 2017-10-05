@@ -1,6 +1,6 @@
 from enum import unique, Enum
 
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import CraftPackageObject
 
 
@@ -40,7 +40,7 @@ class CraftDependencyPackage(CraftPackageObject):
             self.__resolveDependencies()
 
     def __resolveDependencies(self):
-        craftDebug.log.debug(f"solving package {self}")
+        CraftCore.log.debug(f"solving package {self}")
         if not self.isCategory():
             subinfo = self.subinfo
             if self.depenendencyType in [DependencyType.Both, DependencyType.Runtime]:
@@ -56,7 +56,7 @@ class CraftDependencyPackage(CraftPackageObject):
             for line in deps:
                 if line not in CraftDependencyPackage._packageCache:
                     p = CraftDependencyPackage(CraftPackageObject.get(line))
-                    craftDebug.log.debug(f"adding package {line}")
+                    CraftCore.log.debug(f"adding package {line}")
                     CraftDependencyPackage._packageCache[line] = p
                 else:
                     p = CraftDependencyPackage._packageCache[line]

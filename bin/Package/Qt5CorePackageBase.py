@@ -10,7 +10,7 @@ class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePacka
     """provides a base class for qt5 modules"""
 
     def __init__(self):
-        craftDebug.log.debug("Qt5CorePackageBase.__init__ called")
+        CraftCore.log.debug("Qt5CorePackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         Qt5CoreBuildSystem.__init__(self)
@@ -25,7 +25,7 @@ class Qt5CoreSdkPackageBase(MaybeVirtualPackageBase):
         if not sdkNotEnabled:
             # override the install method
             def install():
-                craftDebug.log.info(f"Skip installation of {self} as [QtSdk]Enabled=True")
+                CraftCore.log.info(f"Skip installation of {self} as [QtSdk]Enabled=True")
                 return self.baseClass.install(self)
 
             setattr(self, "install", install)

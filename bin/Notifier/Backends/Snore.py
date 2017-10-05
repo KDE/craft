@@ -23,12 +23,12 @@ class Snore(NotificationInterface):
             command = f"""{snore} -t "{title}" -m "{message}" -i "{self.icon}" -a "Craft" -c "{alertClass}" --silent """
             if OsUtils.isWin():
                 command += f" --bring-window-to-front {ctypes.windll.kernel32.GetConsoleWindow()}"
-            CraftDebug.craftDebug.log.debug(command)
+            CraftDebug.CraftCore.log.debug(command)
             subprocess.Popen(command,
                              shell=True,
                              stdout=subprocess.DEVNULL,
                              stderr=subprocess.DEVNULL,
                              cwd=CraftStandardDirs.CraftStandardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
         except Exception as e:
-            CraftDebug.craftDebug.log.debug(e)
+            CraftDebug.CraftCore.log.debug(e)
             return

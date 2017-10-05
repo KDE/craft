@@ -8,7 +8,7 @@ class PipPackageBase(PackageBase, SourceBase, PipBuildSystem, PackagerBase):
     """provides a base class for pip packages"""
 
     def __init__(self):
-        craftDebug.log.debug("PipPackageBase.__init__ called")
+        CraftCore.log.debug("PipPackageBase.__init__ called")
         PackageBase.__init__(self)
         SourceBase.__init__(self)
         PipBuildSystem.__init__(self)

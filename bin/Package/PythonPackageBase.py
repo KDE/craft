@@ -9,7 +9,7 @@ from Source.MultiSource import *
 
 class PythonPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
     def __init__(self):
-        craftDebug.log.debug("PythonPackageBase.__init__ called")
+        CraftCore.log.debug("PythonPackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         BuildSystemBase.__init__(self)

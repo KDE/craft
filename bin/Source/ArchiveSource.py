@@ -10,7 +10,7 @@ class ArchiveSource(SourceBase):
     """ file download source"""
 
     def __init__(self):
-        craftDebug.log.debug("ArchiveSource.__init__ called")
+        CraftCore.log.debug("ArchiveSource.__init__ called")
         SourceBase.__init__(self)
 
     def localFileNames(self):
@@ -22,7 +22,7 @@ class ArchiveSource(SourceBase):
 
     def localFileNamesBase(self):
         """ collect local filenames """
-        craftDebug.log.debug("ArchiveSource.localFileNamesBase called")
+        CraftCore.log.debug("ArchiveSource.localFileNamesBase called")
 
         filenames = []
         for url in self.subinfo.targets.values():
@@ -58,23 +58,23 @@ class ArchiveSource(SourceBase):
 
     def fetch(self, dummyRepopath=None):
         """fetch normal tarballs"""
-        craftDebug.log.debug("ArchiveSource.fetch called")
+        CraftCore.log.debug("ArchiveSource.fetch called")
 
         filenames = self.localFileNames()
 
         if (self.noFetch):
-            craftDebug.log.debug("skipping fetch (--offline)")
+            CraftCore.log.debug("skipping fetch (--offline)")
             return True
 
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
-                craftDebug.log.debug("files and digests available, no need to download files")
+                CraftCore.log.debug("files and digests available, no need to download files")
                 return True
 
             result = utils.getFiles(self.subinfo.target(), CraftStandardDirs.downloadDir(),
                                     filenames=self.subinfo.archiveName())
             if not result:
-                craftDebug.log.debug("failed to download files")
+                CraftCore.log.debug("failed to download files")
                 return False
             if result and self.subinfo.hasTargetDigestUrls():
                 if type(self.subinfo.targetDigestUrl()) == tuple:
@@ -85,35 +85,35 @@ class ArchiveSource(SourceBase):
                 else:
                     return utils.getFiles(self.subinfo.targetDigestUrl(), CraftStandardDirs.downloadDir(), filenames='')
             else:
-                craftDebug.log.debug("no digestUrls present")
+                CraftCore.log.debug("no digestUrls present")
                 return True
         else:
             return utils.getFiles("", CraftStandardDirs.downloadDir())
 
     def checkDigest(self):
-        craftDebug.log.debug("ArchiveSource.checkDigest called")
+        CraftCore.log.debug("ArchiveSource.checkDigest called")
         filenames = self.localFileNames()
 
         if self.subinfo.hasTargetDigestUrls():
-            craftDebug.log.debug("check digests urls")
+            CraftCore.log.debug("check digests urls")
             if not CraftHash.checkFilesDigests(CraftStandardDirs.downloadDir(), filenames):
-                craftDebug.log.error("invalid digest file")
+                CraftCore.log.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
-            craftDebug.log.debug("check digests")
+            CraftCore.log.debug("check digests")
             digests, algorithm = self.subinfo.targetDigest()
             if not CraftHash.checkFilesDigests(CraftStandardDirs.downloadDir(), filenames, digests, algorithm):
-                craftDebug.log.error("invalid digest file")
+                CraftCore.log.error("invalid digest file")
                 return False
         else:
-            craftDebug.log.debug("print source file digests")
+            CraftCore.log.debug("print source file digests")
             CraftHash.printFilesDigests(CraftStandardDirs.downloadDir(), filenames, self.subinfo.buildTarget,
                                         algorithm=CraftHash.HashAlgorithm.SHA256)
         return True
 
     def unpack(self):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
-        craftDebug.log.debug("ArchiveSource.unpack called")
+        CraftCore.log.debug("ArchiveSource.unpack called")
 
         filenames = self.localFileNames()
 
@@ -154,7 +154,7 @@ class ArchiveSource(SourceBase):
 
         diffExe = os.path.join(self.rootdir, "dev-utils", "bin", "diff.exe")
         if not os.path.exists(diffExe):
-            craftDebug.log.critical("could not find diff tool, please run 'craft diffutils'")
+            CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
 
         # get the file paths of the tarballs
         filenames = self.localFileNames()
@@ -163,10 +163,10 @@ class ArchiveSource(SourceBase):
 
         # it makes no sense to make a diff against nothing
         if (not os.path.exists(self.sourceDir())):
-            craftDebug.log.error("source directory doesn't exist, please run unpack first")
+            CraftCore.log.error("source directory doesn't exist, please run unpack first")
             return False
 
-        craftDebug.log.debug("unpacking files into work root %s" % destdir)
+        CraftCore.log.debug("unpacking files into work root %s" % destdir)
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
         tmpdir = os.path.join(destdir, "tmp")
@@ -182,7 +182,7 @@ class ArchiveSource(SourceBase):
 
         # unpack all packages
         for filename in filenames:
-            craftDebug.log.debug("unpacking this file: %s" % filename)
+            CraftCore.log.debug("unpacking this file: %s" % filename)
             if (not utils.unpackFile(CraftStandardDirs.downloadDir(), filename, unpackDir)):
                 return False
 
@@ -197,7 +197,7 @@ class ArchiveSource(SourceBase):
             if not isinstance(patches, list):
                 patches = [patches]
             for fileName, patchdepth in patches[:-1]:
-                craftDebug.log.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
+                CraftCore.log.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
                 if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, packagelist[0])):
                     return False
             if patches[-1][0]:
@@ -220,7 +220,7 @@ class ArchiveSource(SourceBase):
             if not self.system(cmd):
                 return False
 
-        craftDebug.log.debug("patch created at %s" % patchName)
+        CraftCore.log.debug("patch created at %s" % patchName)
         # remove all directories that are not needed any more after making the patch
         # disabled for now
         # for directory in packagelist:

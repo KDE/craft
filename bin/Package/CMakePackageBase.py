@@ -11,7 +11,7 @@ class CMakePackageBase(PackageBase, MultiSource, CMakeBuildSystem, TypePackager)
     """provides a base class for cmake packages from any source"""
 
     def __init__(self):
-        craftDebug.log.debug("CMakePackageBase.__init__ called")
+        CraftCore.log.debug("CMakePackageBase.__init__ called")
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         CMakeBuildSystem.__init__(self)

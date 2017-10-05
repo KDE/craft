@@ -41,7 +41,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 elif craftCompiler.isIntel():
                     self._platform = "win32-icc"
                 else:
-                    craftDebug.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
+                    CraftCore.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
             elif OsUtils.isUnix():
                 if OsUtils.isMac():
                     osPart = "macx"

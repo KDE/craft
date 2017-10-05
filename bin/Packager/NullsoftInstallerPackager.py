@@ -70,7 +70,7 @@ You can add your own defines into self.defines as well.
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                craftDebug.log.critical("could not find installed nsis package, "
+                CraftCore.log.critical("could not find installed nsis package, "
                                         "you can install it using craft nsis or"
                                         "download and install it from "
                                         "http://sourceforge.net/projects/nsis/")
@@ -134,8 +134,8 @@ You can add your own defines into self.defines as well.
                     _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")
 
             if not os.path.isfile(_file):
-                craftDebug.new_line()
-                craftDebug.log.critical(
+                CraftCore.debug.new_line()
+                CraftCore.log.critical(
                     "Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
@@ -148,7 +148,7 @@ You can add your own defines into self.defines as well.
 
         for match in matches:
             if not match in self.defines:
-                craftDebug.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
+                CraftCore.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
             script = script.replace(f"@{{{match}}}", self.defines[match])
 
         outFile = os.path.join(self.workDir(), f"{self.package.name}.nsi")
@@ -171,10 +171,10 @@ You can add your own defines into self.defines as well.
             dstpath = self.packageDestinationDir()
             self.defines["setupname"] = os.path.join(dstpath, self.defines["setupname"])
 
-        craftDebug.new_line()
-        craftDebug.log.debug("generating installer %s" % self.defines["setupname"])
+        CraftCore.debug.new_line()
+        CraftCore.log.debug("generating installer %s" % self.defines["setupname"])
 
-        verboseString = "/V4" if craftDebug.verbose() > 0 else "/V3"
+        verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
         defines = []
         scriptName = self._configureScript()
@@ -186,14 +186,14 @@ You can add your own defines into self.defines as well.
 
         if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [scriptName],
                                         cwd=os.path.abspath(self.packageDir())):
-            craftDebug.log.critical("Error in makensis execution")
+            CraftCore.log.critical("Error in makensis execution")
 
     def createPackage(self):
         """ create a package """
         if not self.isNsisInstalled():
             return False
 
-        craftDebug.log.debug("packaging using the NullsoftInstallerPackager")
+        CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
         self.preArchive()

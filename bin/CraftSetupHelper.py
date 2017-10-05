@@ -9,7 +9,7 @@ import subprocess
 
 from CraftCompiler import craftCompiler
 from CraftConfig import *
-from CraftDebug import craftDebug
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
@@ -20,9 +20,9 @@ MIN_PY_VERSION = (3, 6, 0)
 
 def log(msg):
     if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
-        craftDebug.print(msg, sys.stderr)
+        CraftCore.debug.print(msg, sys.stderr)
     else:
-        craftDebug.log.debug(msg)
+        CraftCore.log.debug(msg)
 
 
 if sys.version_info[0:3] < MIN_PY_VERSION:
@@ -38,9 +38,9 @@ class SetupHelper(object):
         self.args = args
 
     def _getOutput(self, command):
-        craftDebug.log.debug(f"SetupHelper._getOutput: {command}")
+        CraftCore.log.debug(f"SetupHelper._getOutput: {command}")
         status, output = subprocess.getstatusoutput(command)
-        craftDebug.log.debug(f"SetupHelper._getOutput: return {status} {output}")
+        CraftCore.log.debug(f"SetupHelper._getOutput: return {status} {output}")
         return status, output
 
     def run(self):
@@ -59,7 +59,7 @@ class SetupHelper(object):
             default = ""
             if len(args.rest) == 3:
                 default = args.rest[2]
-            craftDebug.log.info(craftSettings.get(args.rest[0], args.rest[1], default))
+            CraftCore.log.info(craftSettings.get(args.rest[0], args.rest[1], default))
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
@@ -170,7 +170,7 @@ class SetupHelper(object):
                 exit(1)
             command = f"\"{path}\" {arg}"
             status, result = subprocess.getstatusoutput(f"{command} > NUL && set")
-            craftDebug.log.debug(result)
+            CraftCore.log.debug(result)
             if status != 0:
                 log(f"Failed to setup msvc compiler.\n"
                     f"Command: {command} ")
@@ -277,7 +277,7 @@ class SetupHelper(object):
     def printEnv(self):
         self.setupEnvironment()
         for key, val in os.environ.items():
-            craftDebug.log.info(f"{key}={val}")
+            CraftCore.log.info(f"{key}={val}")
 
     @property
     def version(self):
