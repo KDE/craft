@@ -3,6 +3,7 @@ import zlib
 
 from CraftCore import CraftCore
 import CraftConfig
+import CraftDebug
 from CraftOS.OsDetection import OsDetection
 
 
