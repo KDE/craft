@@ -4,7 +4,7 @@ import importlib
 import os
 import re
 
-from CraftConfig import craftSettings
+import CraftConfig
 from CraftStandardDirs import CraftStandardDirs
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -127,8 +127,8 @@ class CraftPackageObject(object):
     def rootDirectories():
         # this function should return all currently set blueprint directories
         rootDirs = {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
-        if ("Blueprints", "Locations") in craftSettings:
-            for path in craftSettings.getList("Blueprints", "Locations"):
+        if ("Blueprints", "Locations") in CraftCore.settings:
+            for path in CraftCore.settings.getList("Blueprints", "Locations"):
                 rootDirs.add(utils.normalisePath(path))
         if os.path.isdir(CraftStandardDirs.blueprintRoot()):
             for f in os.listdir(CraftStandardDirs.blueprintRoot()):
@@ -140,8 +140,8 @@ class CraftPackageObject(object):
     @staticmethod
     def root():
         if not CraftPackageObject.__rootPackage:
-            if ("Blueprints", "Ignores") in craftSettings:
-                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in craftSettings.get("Blueprints", "Ignores").split(";")]))
+            if ("Blueprints", "Ignores") in CraftCore.settings:
+                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in CraftCore.settings.get("Blueprints", "Ignores").split(";")]))
 
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
             root.path = "/"

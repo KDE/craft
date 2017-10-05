@@ -20,10 +20,10 @@ class PipBuildSystem(BuildSystemBase):
         ok = True
 
         pythons = {}  # dict: major version -> path
-        if self.python2 and ("Paths", "PYTHON27") in craftSettings:
-            pythons[2] = craftSettings.get("Paths", "PYTHON27")
+        if self.python2 and ("Paths", "PYTHON27") in CraftCore.settings:
+            pythons[2] = CraftCore.settings.get("Paths", "PYTHON27")
         if self.python3:
-            pythons[3] = craftSettings.get("Paths", "PYTHON")
+            pythons[3] = CraftCore.settings.get("Paths", "PYTHON")
 
         args = []
         if self.allowExternal:

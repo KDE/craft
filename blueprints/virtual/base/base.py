@@ -17,11 +17,11 @@ class subinfo(info.infoclass):
 
         if craftCompiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
-        if craftSettings.get("Compile", "MakeProgram", "") == "jom":
+        if CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-util/jom"] = "default"
-        if craftSettings.getboolean("Compile", "UseNinja", False):
+        if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-util/ninja"] = "default"
-        if craftSettings.getboolean("Compile", "UseCCache", False):
+        if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.buildDependencies["dev-util/ccache"] = "default"
 
         self.runtimeDependencies["libs/runtime"] = "default"

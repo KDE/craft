@@ -40,7 +40,7 @@ class SevenZipPackager(PackagerBase):
         cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
         if not utils.system(cmd, displayProgress=True, **kw):
             CraftCore.log.critical(f"while packaging. cmd: {cmd}")
-        if not craftSettings.getboolean("Packager", "CreateCache"):
+        if not CraftCore.settings.getboolean("Packager", "CreateCache"):
             CraftHash.createDigestFiles(archive)
         else:
             cacheFilePath = os.path.join(self.cacheLocation(), "manifest.json")
@@ -57,7 +57,7 @@ class SevenZipPackager(PackagerBase):
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
-        cacheMode = craftSettings.getboolean("Packager", "CreateCache", False)
+        cacheMode = CraftCore.settings.getboolean("Packager", "CreateCache", False)
         if cacheMode:
             if self.subinfo.options.package.disableBinaryCache:
                 return True
@@ -68,6 +68,6 @@ class SevenZipPackager(PackagerBase):
         self._compress(self.binaryArchiveName(includePackagePath=cacheMode), self.imageDir(), dstpath)
         if not self.subinfo.options.package.packSources:
             return True
-        if craftSettings.getboolean("Packager", "PackageSrc", "True"):
+        if CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
             self._compress(self.binaryArchiveName("-src", includePackagePath=cacheMode), self.sourceDir(), dstpath)
         return True

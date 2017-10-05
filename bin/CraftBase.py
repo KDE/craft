@@ -69,15 +69,15 @@ class CraftBase(object):
 
     @property
     def noFetch(self):
-        return craftSettings.getboolean("General", "WorkOffline", False)
+        return CraftCore.settings.getboolean("General", "WorkOffline", False)
 
     @property
     def buildTests(self):
-        return craftSettings.getboolean("Compile", "BuildTests", True)
+        return CraftCore.settings.getboolean("Compile", "BuildTests", True)
 
     def buildType(self):
         """return currently selected build type"""
-        return craftSettings.get("Compile", "BuildType")
+        return CraftCore.settings.get("Compile", "BuildType")
 
     def buildArchitecture(self):
         """return the target CPU architecture"""
@@ -164,7 +164,7 @@ class CraftBase(object):
         Default is to optionally append build type subdirectory"""
 
         CraftCore.log.debug("CraftBase.packageDestinationDir called")
-        dstpath = craftSettings.get("General", "EMERGE_PKGDSTDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
+        dstpath = CraftCore.settings.get("General", "EMERGE_PKGDSTDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
 
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)
@@ -176,7 +176,7 @@ class CraftBase(object):
 
     @property
     def version(self):
-        if craftSettings.getboolean("BlueprintVersions", "EnableDailyUpdates", True)\
+        if CraftCore.settings.getboolean("BlueprintVersions", "EnableDailyUpdates", True)\
                 and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
             return str(datetime.date.today()).replace("-", ".")
         return self.subinfo.buildTarget
@@ -213,14 +213,14 @@ class CraftBase(object):
         CraftCore.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
         return False
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=craftSettings.get("Packager", "7ZipArchiveType", "7z"),
+    def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ""
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
-        if craftSettings.get("ContinuousIntegration", "SourceDir", "") and "APPVEYOR_BUILD_VERSION" in os.environ:
+        if CraftCore.settings.get("ContinuousIntegration", "SourceDir", "") and "APPVEYOR_BUILD_VERSION" in os.environ:
             version = os.environ["APPVEYOR_BUILD_VERSION"]
         else:
             if self.subinfo.hasSvnTarget():
@@ -238,19 +238,19 @@ class CraftBase(object):
         return f"{name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
-        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
+            version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
         else:
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
-        cacheDir = craftSettings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
+        cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
-        if craftSettings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % craftSettings.get("QtSDK", "Version")
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
+            version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
         else:
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
         return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
-                craftSettings.getList("Packager", "RepositoryUrl")]
+                CraftCore.settings.getList("Packager", "RepositoryUrl")]

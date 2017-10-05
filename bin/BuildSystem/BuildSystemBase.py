@@ -19,18 +19,18 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = craftSettings.getboolean("Compile", "UseCCache", False) and craftCompiler.isMinGW()
+        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and craftCompiler.isMinGW()
         self.supportsClang = True
         self.buildSystemType = typeName
 
     @property
     def makeProgram(self):
         if self.subinfo.options.make.supportsMultijob:
-            if self.supportsNinja and craftSettings.getboolean("Compile", "UseNinja", False):
+            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
-            if ("Compile", "MakeProgram") in craftSettings:
-                CraftCore.log.debug("set custom make program: %s" % craftSettings.get("Compile", "MakeProgram", ""))
-                return craftSettings.get("Compile", "MakeProgram", "")
+            if ("Compile", "MakeProgram") in CraftCore.settings:
+                CraftCore.log.debug("set custom make program: %s" % CraftCore.settings.get("Compile", "MakeProgram", ""))
+                return CraftCore.settings.get("Compile", "MakeProgram", "")
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
@@ -142,10 +142,10 @@ class BuildSystemBase(CraftBase):
         if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             utils.mergeTree(badPrefix, self.installDir())
 
-        if craftSettings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(craftSettings.get("QtSDK", "Path"),
-                                 craftSettings.get("QtSDK", "Version"),
-                                 craftSettings.get("QtSDK", "Compiler"))
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", False):
+            qtDir = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
+                                 CraftCore.settings.get("QtSDK", "Version"),
+                                 CraftCore.settings.get("QtSDK", "Compiler"))
             path = os.path.join(self.installDir(), stripPath(qtDir))
             if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
                 utils.mergeTree(path, self.installDir())

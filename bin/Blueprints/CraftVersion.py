@@ -1,6 +1,7 @@
 import re
 from distutils.version import Version, LooseVersion, StrictVersion
 
+from CraftCore import CraftCore
 import CraftDebug
 
 
@@ -33,7 +34,7 @@ class CraftVersion(Version):
     def strictVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftDebug.CraftCore.log.warn(
+            CraftCore.log.warn(
                 "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr,
                 stack_info=True)
             return StrictVersion("0.0.0")

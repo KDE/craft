@@ -42,7 +42,7 @@ class PackageBase(CraftBase):
         utils.copyDir(self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
 
         # run post-install scripts
-        if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
+        if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s.cmd" % (self.package, pkgtype)
                 script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
@@ -83,7 +83,7 @@ class PackageBase(CraftBase):
             package.uninstall()
 
         # run post-uninstall scripts
-        if not craftSettings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
+        if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-uninstall-%s-%s.cmd" % (self.package, pkgtype)
                 script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)

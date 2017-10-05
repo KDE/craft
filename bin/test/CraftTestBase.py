@@ -12,13 +12,13 @@ class CraftTestBase(unittest.TestCase):
         CraftCore.debug.setVerbose(1)
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
-        CraftConfig.craftSettings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
-        CraftCore.settings = CraftConfig.craftSettings
+        oldSettings = CraftCore.settings
+        CraftCore.settings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs()
         CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
-        CraftConfig.craftSettings.set("Blueprints", "Locations", os.path.join(craftRoot, "craft", "blueprints"))
-        CraftConfig.craftSettings.set("Blueprints", "BlueprintRoot", os.path.join(craftRoot, "etc", "blueprints", "locations"))
-        CraftConfig.craftSettings.set("Compile", "BuildType", "RelWithDebInfo")
+        CraftCore.settings.set("Blueprints", "Locations", oldSettings.get("Blueprints", "Locations"))
+        CraftCore.settings.set("Blueprints", "BlueprintRoot", oldSettings.get("Blueprints", "BlueprintRoot"))
+        CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
         if hasattr(InstallDB, "installdb"):
             del InstallDB.installdb
         InstallDB.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))

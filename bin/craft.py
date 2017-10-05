@@ -78,7 +78,7 @@ def readListFile(listFile):
     parser.read(listFile)
     for sections in parser.keys():
         for packageName in parser[sections]:
-            craftSettings.set("BlueprintVersions", packageName, parser.get(sections, packageName))
+            CraftCore.settings.set("BlueprintVersions", packageName, parser.get(sections, packageName))
             packageNames.append(packageName)
     return packageNames
 
@@ -109,7 +109,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         success = True
 
         if buildAction == "all":
-            if craftSettings.getboolean("Packager", "UseCache", "False") \
+            if CraftCore.settings.getboolean("Packager", "UseCache", "False") \
                     and not package.isVirtualPackage():
                 if doExec(package, "fetch-binary"):
                     return True
@@ -121,8 +121,8 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "install")
             if buildAction == "all":
                 success = success and doExec(package, "qmerge")
-            if craftSettings.getboolean("Packager", "CreateCache"):
-                if craftSettings.getboolean("Packager", "CacheDirectTargetsOnly"):
+            if CraftCore.settings.getboolean("Packager", "CreateCache"):
+                if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly"):
                     nameRe = re.compile(".*\/.*")
                     for target in directTargets:
                         if not nameRe.match(target):
@@ -278,17 +278,17 @@ def main():
     parser.add_argument("--list-file", action="store",
                         help="Build all packages from the ini file provided")
     parser.add_argument("--options", action="append",
-                        default=craftSettings.getList("General", "Options", ""),
+                        default=CraftCore.settings.getList("General", "Options", ""),
                         help="Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations.")
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
                         help="quiet: there should be no output - The verbose level should be 0")
     parser.add_argument("-c", "--continue", action="store_true", dest="doContinue")
     parser.add_argument("--create-cache", action="store_true", dest="createCache",
-                        default=craftSettings.getboolean("Packager", "CreateCache", "False"),
+                        default=CraftCore.settings.getboolean("Packager", "CreateCache", "False"),
                         help="Create a binary cache, the setting is overwritten by --no-cache")
     parser.add_argument("--use-cache", action="store_true", dest="useCache",
-                        default=craftSettings.getboolean("Packager", "UseCache", "False"),
+                        default=CraftCore.settings.getboolean("Packager", "UseCache", "False"),
                         help="Use a binary cache, the setting is overwritten by --no-cache")
     parser.add_argument("--no-cache", action="store_true", dest="noCache",
                         default=False, help="Don't create or use the binary cache")
@@ -296,15 +296,15 @@ def main():
                         default=False,
                         help="DANGEROUS: Recursively delete everything in the Craft root directory besides the CraftSettings.ini, the download directory and the craft folder itself")
     parser.add_argument("--offline", action="store_true",
-                        default=craftSettings.getboolean("General", "WorkOffline", False),
+                        default=CraftCore.settings.getboolean("General", "WorkOffline", False),
                         help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
                           If that doesn't work, the build will fail.")
     parser.add_argument("--buildtype", choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
                         dest="buildType",
-                        default=craftSettings.get("Compile", "BuildType", "RelWithDebInfo"),
+                        default=CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo"),
                         help="This will override the build type set in your CraftSettings.ini.")
     parser.add_argument("-v", "--verbose", action="count",
-                        default=int(craftSettings.get("CraftDebug", "Verbose", "0")),
+                        default=int(CraftCore.settings.get("CraftDebug", "Verbose", "0")),
                         help=" verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\
                           verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3.")
     parser.add_argument("-i", "--ignoreInstalled", action="store_true",
@@ -314,13 +314,13 @@ def main():
     parser.add_argument("--search", action="store_true",
                         help="This will search for a package or a description matching or similar to the search term.")
     parser.add_argument("--log-dir", action="store",
-                        default=craftSettings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
+                        default=CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
                         help="This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs.")
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
 
     parser.add_argument("--ci-mode", action="store_true",
-                        default=craftSettings.getboolean("ContinuousIntegration", "Enabled", False),
+                        default=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
                         dest="ciMode", help="Enables the ci mode")
 
     actionHandler = ActionHandler(parser)
@@ -353,18 +353,18 @@ def main():
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
-    craftSettings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
-    craftSettings.set("Compile", "BuildType", args.buildType)
-    craftSettings.set("General", "Options", ";".join(args.options))
-    craftSettings.set("CraftDebug", "LogDir", args.log_dir)
-    craftSettings.set("Packager", "CreateCache", not args.noCache and args.createCache)
-    craftSettings.set("Packager", "UseCache", not args.noCache and args.useCache)
-    craftSettings.set("ContinuousIntegration", "SourceDir", args.srcDir)
-    craftSettings.set("ContinuousIntegration", "Enabled", args.ciMode)
+    CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
+    CraftCore.settings.set("Compile", "BuildType", args.buildType)
+    CraftCore.settings.set("General", "Options", ";".join(args.options))
+    CraftCore.settings.set("CraftDebug", "LogDir", args.log_dir)
+    CraftCore.settings.set("Packager", "CreateCache", not args.noCache and args.createCache)
+    CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
+    CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
+    CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
-    if craftSettings.getboolean("Packager", "CreateCache"):
+    if CraftCore.settings.getboolean("Packager", "CreateCache"):
         # we are in cache creation mode, ensure to create a 7z image and not an installer
-        craftSettings.set("Packager", "PackageType", "SevenZipPackager")
+        CraftCore.settings.set("Packager", "PackageType", "SevenZipPackager")
 
     CraftPackageObject.options = args.options
     if args.search:
@@ -411,7 +411,7 @@ def main():
                     package.children.update(child.children)
                 else:
                     if tempArgs.target:
-                        craftSettings.set("BlueprintVersions", child.path, args.target)
+                        CraftCore.settings.set("BlueprintVersions", child.path, args.target)
                     package.children[child.name] = child
             if not run(package, action, tempArgs, package.children.values()):
                 return False

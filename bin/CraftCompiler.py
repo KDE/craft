@@ -14,9 +14,9 @@ class CraftCompiler(object):
     __supportedPlatforms = ["windows", "linux", "macos", "freebsd"]
 
     def __init__(self):
-        compiler = craftSettings.get("General", "KDECOMPILER", "")
+        compiler = CraftCore.settings.get("General", "KDECOMPILER", "")
         if compiler != "":
-            arch = "32" if craftSettings.get("General", "Architecture") == "x86" else "64"
+            arch = "32" if CraftCore.settings.get("General", "Architecture") == "x86" else "64"
             if compiler.startswith("msvc"):
                 split = ["windows", f"{compiler}_{arch}", "cl"]
             elif compiler.startswith("mingw"):
@@ -25,7 +25,7 @@ class CraftCompiler(object):
                 split = ["linux", "gcc"]
             elif compiler.startswith("mac"):
                 split = ["macos", "clang"]
-            if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+            if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
                 print(f"Your using the old compiler setting\n"
                       f"\t[General]\n"
                       f"\tKDECOMPILER={compiler}\n"
@@ -34,9 +34,9 @@ class CraftCompiler(object):
                       f"\tABI=" + "-".join(split),
                       file=sys.stderr)
         else:
-            split = craftSettings.get("General", "ABI").split("-")
+            split = CraftCore.settings.get("General", "ABI").split("-")
         if len(split) != 3:
-            raise Exception("Invalid compiler: " + craftSettings.get("General", "ABI"))
+            raise Exception("Invalid compiler: " + CraftCore.settings.get("General", "ABI"))
 
         self._platform, self._abi, self._compiler = split
 
@@ -87,7 +87,7 @@ class CraftCompiler(object):
 
     def isNative(self):
         # TODO: any reason to keep that?
-        return craftSettings.getboolean("General", "Native", True)
+        return CraftCore.settings.getboolean("General", "Native", True)
 
     def isX64(self):
         return self.architecture == "x64"

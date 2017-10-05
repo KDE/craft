@@ -75,7 +75,7 @@ class BashShell(object):
 
     @property
     def buildType(self):
-        return craftSettings.get("Compile", "BuildType", "RelWithDebInfo")
+        return CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo")
 
     @staticmethod
     def toNativePath(path):

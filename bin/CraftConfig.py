@@ -73,7 +73,7 @@ class CraftConfig(object):
             print(
                 f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
                 f"{section}/{key}, please update your CraftSettings.ini",
-                file=sys.stderr if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+                file=sys.stderr if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
 
     def _readSettings(self):
         if not os.path.exists(self.iniPath):
@@ -166,8 +166,7 @@ class CraftConfig(object):
     @staticmethod
     @atexit.register
     def _dump():
-        if craftSettings.getboolean("CraftDebug", "DumpSettings", False):
-            craftSettings.dump()
+        if CraftCore.settings.getboolean("CraftDebug", "DumpSettings", False):
+            CraftCore.settings.dump()
 
 CraftCore.registerInstance("settings", CraftConfig)
-craftSettings = CraftCore.settings

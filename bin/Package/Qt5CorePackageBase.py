@@ -19,7 +19,7 @@ class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePacka
 
 class Qt5CoreSdkPackageBase(MaybeVirtualPackageBase):
     def __init__(self, condition=True, classA=Qt5CorePackageBase):
-        sdkNotEnabled = not craftSettings.getboolean("QtSDK", "Enabled", False)
+        sdkNotEnabled = not CraftCore.settings.getboolean("QtSDK", "Enabled", False)
         MaybeVirtualPackageBase.__init__(self, condition and sdkNotEnabled, classA=classA)
 
         if not sdkNotEnabled:

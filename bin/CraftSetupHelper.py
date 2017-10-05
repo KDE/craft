@@ -19,7 +19,7 @@ MIN_PY_VERSION = (3, 6, 0)
 
 
 def log(msg):
-    if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         CraftCore.debug.print(msg, sys.stderr)
     else:
         CraftCore.log.debug(msg)
@@ -59,7 +59,7 @@ class SetupHelper(object):
             default = ""
             if len(args.rest) == 3:
                 default = args.rest[2]
-            CraftCore.log.info(craftSettings.get(args.rest[0], args.rest[1], default))
+            CraftCore.log.info(CraftCore.settings.get(args.rest[0], args.rest[1], default))
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
@@ -79,7 +79,7 @@ class SetupHelper(object):
             location = shutil.which(app)
             if location:
                 location = os.path.dirname(location)
-                if not craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+                if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
                     log(
                         f"Found \"{app}\" in your PATH: \"{location}\"\n"
                         f"This application is known to cause problems with your configuration of Craft.\n"
@@ -99,21 +99,21 @@ class SetupHelper(object):
         def _subst(path, drive):
             if not os.path.exists(path):
                 os.makedirs(path)
-            self._getOutput("subst {drive} {path}".format(drive=craftSettings.get("ShortPath", drive),path=path))
+            self._getOutput("subst {drive} {path}".format(drive=CraftCore.settings.get("ShortPath", drive),path=path))
 
-        if craftSettings.getboolean("ShortPath", "Enabled", False):
+        if CraftCore.settings.getboolean("ShortPath", "Enabled", False):
             with TemporaryUseShortpath(False):
-                if ("ShortPath", "RootDrive") in craftSettings:
+                if ("ShortPath", "RootDrive") in CraftCore.settings:
                     _subst(CraftStandardDirs.craftRoot(), "RootDrive")
-                if ("ShortPath", "DownloadDrive") in craftSettings:
+                if ("ShortPath", "DownloadDrive") in CraftCore.settings:
                     _subst(CraftStandardDirs.downloadDir(), "DownloadDrive")
-                if ("ShortPath", "GitDrive") in craftSettings:
+                if ("ShortPath", "GitDrive") in CraftCore.settings:
                     _subst(CraftStandardDirs.gitDir(), "GitDrive")
 
-        if craftSettings.getboolean("ShortPath", "EnableJunctions", False):
+        if CraftCore.settings.getboolean("ShortPath", "EnableJunctions", False):
             with TemporaryUseShortpath(False):
-                if ("ShortPath", "JunctionDrive") in craftSettings:
-                    _subst(CraftStandardDirs.junctionsDir(getDir=True), "JunctionDrive")
+                if ("ShortPath", "JunctionDrive") in CraftCore.settings:
+                    _subst(CraftCore.standardDirs.junctionsDir.longPath, "JunctionDrive")
 
     def printBanner(self):
         def printRow(name, value):
@@ -157,7 +157,7 @@ class SetupHelper(object):
             version = craftCompiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
-                    f" -version \"[{version},{version+1})\" -property installationPath -nologo -latest" 
+                    f" -version \"[{version},{version+1})\" -property installationPath -nologo -latest"
                     +(" -legacy" if version < 15 else " -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"))
             arg = architectures[craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
             path = os.path.join(path, "VC")
@@ -200,7 +200,7 @@ class SetupHelper(object):
                            os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
 
     def setupEnvironment(self):
-        for var, value in craftSettings.getSection("Environment"):  # set and overide existing values
+        for var, value in CraftCore.settings.getSection("Environment"):  # set and overide existing values
             self.addEnvVar(var, value)
         self.prependPath("PATH", os.path.dirname(sys.executable))
         self.getEnv()
@@ -208,9 +208,9 @@ class SetupHelper(object):
 
         self.addEnvVar("KDEROOT", CraftStandardDirs.craftRoot())
 
-        if craftSettings.getboolean("Compile", "UseCCache", False):
+        if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.addEnvVar("CCACHE_DIR",
-                           craftSettings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
+                           CraftCore.settings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
                                                                                  "build", "CCACHE")))
 
         if self.version < 2:
@@ -247,21 +247,21 @@ class SetupHelper(object):
 
         self.setXDG()
 
-        if craftSettings.getboolean("QtSDK", "Enabled", "false"):
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
             self.prependPath("PATH",
-                             os.path.join(craftSettings.get("QtSDK", "Path"), craftSettings.get("QtSDK", "Version"),
-                                          craftSettings.get("QtSDK", "Compiler"), "bin"))
+                             os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
+                                          CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
 
         if craftCompiler.isMinGW():
-            if not craftSettings.getboolean("QtSDK", "Enabled", "false"):
+            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
                 if craftCompiler.isX86():
                     self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
                 else:
                     self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
             else:
-                compilerName = craftSettings.get("QtSDK", "Compiler")
+                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
                 compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependPath("PATH", os.path.join(craftSettings.get("QtSDK", "Path"), "Tools",
+                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
         if OsUtils.isUnix():
@@ -281,7 +281,7 @@ class SetupHelper(object):
 
     @property
     def version(self):
-        return craftSettings.version
+        return CraftCore.settings.version
 
 
 if __name__ == '__main__':

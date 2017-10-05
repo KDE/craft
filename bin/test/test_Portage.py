@@ -7,7 +7,7 @@ from Blueprints import CraftPackageObject
 
 class CraftBlueprintTest(CraftTestBase.CraftTestBase):
     def blueprintTest(self, compiler):
-        CraftConfig.craftSettings.set("General", "ABI", compiler)
+        CraftConfig.CraftCore.settings.set("General", "ABI", compiler)
 
         importlib.reload(CraftPackageObject)  # clear cache
         installable = CraftPackageObject.CraftPackageObject.installables()

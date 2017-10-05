@@ -2,12 +2,12 @@ import os
 import zlib
 
 from CraftCore import CraftCore
-from CraftConfig import craftSettings
+import CraftConfig
 from CraftOS.OsDetection import OsDetection
 
 
 class CraftShortPath(object):
-    _useShortpaths = OsDetection.isWin() and craftSettings.getboolean("ShortPath", "EnableJunctions", False)
+    _useShortpaths = OsDetection.isWin() and CraftCore.settings.getboolean("ShortPath", "EnableJunctions", False)
     _shortPaths = {}
 
     def __init__(self, path, createShortPath=None) -> None:

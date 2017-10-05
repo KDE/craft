@@ -189,7 +189,7 @@ class UtilsCache(object):
         :return: A list of matching strings or [None]
         """
         if url not in self._nightlyVersions:
-            if craftSettings.getboolean("General", "WorkOffline"):
+            if CraftCore.settings.getboolean("General", "WorkOffline"):
                 CraftCore.debug.step("Nightly builds unavailable for %s in offline mode." % url)
                 return []
             try:
@@ -313,7 +313,7 @@ def wgetFile(url, destdir, filename=''):
     command = [wget, "-c", "-t", "10"]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirect",  "50"]
-    if craftSettings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
+    if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
         command += ["--no-passive-ftp"]
     if not filename:
         command += ["-P", destdir]
@@ -454,7 +454,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     CraftCore.debug.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
-    if not displayProgress or craftSettings.getboolean("ContinuousIntegration", "Enabled", False):
+    if not displayProgress or CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
@@ -577,8 +577,8 @@ def replaceVCSUrl(Url):
 
     # FIXME handle svn/git usernames and settings with a distinct naming
     # todo WTF
-    if (("General", "KDESVNUSERNAME") in craftSettings and
-                craftSettings.get("General", "KDESVNUSERNAME") != "username"):
+    if (("General", "KDESVNUSERNAME") in CraftCore.settings and
+                CraftCore.settings.get("General", "KDESVNUSERNAME") != "username"):
         replacedict["git://git.kde.org/"] = "git@git.kde.org:"
     if os.path.exists(configfile):
         config = configparser.ConfigParser()
@@ -678,7 +678,7 @@ def createDir(path):
     return True
 
 
-def copyFile(src, dest, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False)):
+def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
     CraftCore.log.debug("copy file from %s to %s" % (src, dest))
     destDir = os.path.dirname(dest)
@@ -697,7 +697,7 @@ def copyFile(src, dest, linkOnly=craftSettings.getboolean("General", "UseHardlin
     return True
 
 
-def copyDir(srcdir, destdir, linkOnly=craftSettings.getboolean("General", "UseHardlinks", False), copiedFiles=None):
+def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False), copiedFiles=None):
     """ copy directory from srcdir to destdir """
     CraftCore.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
@@ -929,8 +929,8 @@ def prependPath(*parts):
 
 def notify(title, message, alertClass=None):
     CraftCore.debug.step(f"{title}: {message}")
-    backends = craftSettings.get("General", "Notify", "")
-    if craftSettings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
+    backends = CraftCore.settings.get("General", "Notify", "")
+    if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends.split(";"))
     for backend in backends.values():

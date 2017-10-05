@@ -30,7 +30,7 @@ class SvnSource(VersionSystemSourceBase):
                 sourcedir = os.path.join(CraftStandardDirs.downloadDir(), "svn-src")
                 sourcedir = os.path.join(sourcedir, self.package.path)
                 _, path = self.__splitPath(url)
-                if path and craftSettings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
+                if path and CraftCore.settings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
                     sourcedir = os.path.join(sourcedir, path)
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
@@ -162,7 +162,7 @@ class SvnSource(VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if CraftCore.debug.verbose() < 2 and not craftSettings.getboolean("General", "KDESVNVERBOSE", True):
+        if CraftCore.debug.verbose() < 2 and not CraftCore.settings.getboolean("General", "KDESVNVERBOSE", True):
             option += " --quiet"
 
         if self.subinfo.options.fetch.ignoreExternals:

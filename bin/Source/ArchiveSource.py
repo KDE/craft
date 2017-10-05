@@ -140,7 +140,7 @@ class ArchiveSource(SourceBase):
                     return False
 
         ret = self.applyPatches()
-        if craftSettings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
+        if CraftCore.settings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret
         return True
 

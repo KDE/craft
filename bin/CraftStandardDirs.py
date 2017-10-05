@@ -3,7 +3,7 @@ import subprocess
 
 from CraftCore import CraftCore
 
-from CraftConfig import craftSettings
+import CraftConfig
 from CraftOS.OsDetection import OsDetection
 from Utils.CraftShortPath import CraftShortPath
 
@@ -14,14 +14,14 @@ class CraftStandardDirs(object):
 
     def __init__(self):
         self._useShortPath = False
-        self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(craftSettings._craftRoot()),
-                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "RootDrive", x)))
-        self._downloadDir = CraftShortPath(craftSettings.get("Paths", "DOWNLOADDIR", os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
-                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "DownloadDrive", x)))
-        self._gitDir = CraftShortPath(craftSettings.get("Paths", "KDEGITDIR", os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
-                                        lambda x : CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "GitDrive", x)))
-        self._junctionDir = CraftShortPath(craftSettings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
-                                        lambda x: CraftStandardDirs._nomalizePath(craftSettings.get("ShortPath", "JunctionDrive", x)))
+        self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(CraftCore.settings._craftRoot()),
+                                        lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "RootDrive", x)))
+        self._downloadDir = CraftShortPath(CraftCore.settings.get("Paths", "DOWNLOADDIR", os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
+                                        lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "DownloadDrive", x)))
+        self._gitDir = CraftShortPath(CraftCore.settings.get("Paths", "KDEGITDIR", os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
+                                        lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "GitDrive", x)))
+        self._junctionDir = CraftShortPath(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
+                                        lambda x: CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "JunctionDrive", x)))
 
     @staticmethod
     def _deSubstPath(path):
@@ -57,7 +57,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def isShortPathEnabled():
-        return OsDetection.isWin() and CraftStandardDirs._allowShortpaths and craftSettings.getboolean(
+        return OsDetection.isWin() and CraftStandardDirs._allowShortpaths and CraftCore.settings.getboolean(
             "ShortPath", "Enabled", False)
 
     @staticmethod
@@ -67,7 +67,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def svnDir():
-        return craftSettings.get("Paths", "KDESVNDIR", os.path.join(CraftStandardDirs.downloadDir(), "svn"))
+        return CraftCore.settings.get("Paths", "KDESVNDIR", os.path.join(CraftStandardDirs.downloadDir(), "svn"))
 
     @staticmethod
     def gitDir():
@@ -76,7 +76,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def tmpDir():
-        return craftSettings.get("Paths", "TMPDIR",os.path.join(CraftStandardDirs.craftRoot(),"tmp"))
+        return CraftCore.settings.get("Paths", "TMPDIR",os.path.join(CraftStandardDirs.craftRoot(),"tmp"))
 
     @staticmethod
     def craftRoot():
@@ -96,7 +96,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def blueprintRoot():
-        return craftSettings.get("Blueprints", "BlueprintRoot",
+        return CraftCore.settings.get("Blueprints", "BlueprintRoot",
                                  os.path.join(CraftStandardDirs.etcBlueprintDir(), "locations"))
 
     @staticmethod
@@ -107,13 +107,13 @@ class CraftStandardDirs(object):
     @staticmethod
     def msysDir():
         if not OsDetection.isWin():
-            return craftSettings.get("Paths", "Msys", "/")
+            return CraftCore.settings.get("Paths", "Msys", "/")
         else:
-            return craftSettings.get("Paths", "Msys",
+            return CraftCore.settings.get("Paths", "Msys",
                                      os.path.join(CraftStandardDirs.craftRoot(), "msys"))
 
     @staticmethod
-    def junctionsDir(getDir=False):
+    def junctionsDir():
         return CraftCore.standardDirs._junctionDir.path(CraftStandardDirs.isShortPathEnabled())
 
 class TemporaryUseShortpath(object):

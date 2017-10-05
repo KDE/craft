@@ -17,7 +17,7 @@ class Timer(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
-        if CraftConfig.craftSettings.getboolean("CraftDebug", "MeasureTime", False):
+        if CraftConfig.CraftCore.settings.getboolean("CraftDebug", "MeasureTime", False):
             CraftCore.debug.step(f"Task: {self.name} stopped after: {self}")
 
     def __str__(self):

@@ -16,16 +16,16 @@ class TypePackager(PackagerBase):
 The packager used can be decided at runtime
 """
 
-    def __init__(self, defaultType=eval(craftSettings.get("Packager", "PackageType", "NullsoftInstallerPackager"))):
+    def __init__(self, defaultType=eval(CraftCore.settings.get("Packager", "PackageType", "NullsoftInstallerPackager"))):
         CraftCore.log.debug("TypePackager __init__ %s" % defaultType)
         self.__packager = None
         self.changePackager(defaultType)
 
     def changePackager(self, packager=None):
-        if not packager == None and ("Packager", "PackageType") in craftSettings:
+        if not packager == None and ("Packager", "PackageType") in CraftCore.settings:
             CraftCore.log.debug(
-                "Packager setting %s overriten by with %s" % (packager, craftSettings.get("Packager", "PackageType")))
-            packager = eval(craftSettings.get("Packager", "PackageType"))
+                "Packager setting %s overriten by with %s" % (packager, CraftCore.settings.get("Packager", "PackageType")))
+            packager = eval(CraftCore.settings.get("Packager", "PackageType"))
 
         if packager == None:
             return

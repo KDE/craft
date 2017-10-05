@@ -39,7 +39,7 @@ class VersionSystemSourceBase(SourceBase):
         """ this function return the base url to the KDE repository """
         CraftCore.debug.trace("VersionSystemSourceBase __repositoryBaseUrl")
         # @todo move to SvnSource
-        server = craftSettings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
+        server = CraftCore.settings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
 
         return server + '/home/kde/'
 
@@ -50,7 +50,7 @@ class VersionSystemSourceBase(SourceBase):
         CraftCore.log.debug("cleaning %s" % self.buildDir())
         utils.cleanDirectory(self.buildDir())
         ret = self.applyPatches()
-        if craftSettings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
+        if CraftCore.settings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret
         return True
 
@@ -97,8 +97,8 @@ class VersionSystemSourceBase(SourceBase):
 
     def checkoutDir(self, dummyIndex=0):
         CraftCore.debug.trace("VersionSystemSourceBase checkoutDir")
-        if ("ContinuousIntegration", "SourceDir") in craftSettings:
-            return craftSettings.get("ContinuousIntegration", "SourceDir")
+        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
+            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
             sourcedir = os.path.join(CraftStandardDirs.gitDir(), self.package.path)
         else:
@@ -111,8 +111,8 @@ class VersionSystemSourceBase(SourceBase):
 
     def sourceDir(self, index=0):
         CraftCore.debug.trace("VersionSystemSourceBase sourceDir")
-        if ("ContinuousIntegration", "SourceDir") in craftSettings:
-            return craftSettings.get("ContinuousIntegration", "SourceDir")
+        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
+            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
 
         sourcedir = self.checkoutDir(index)
 
@@ -124,7 +124,7 @@ class VersionSystemSourceBase(SourceBase):
 
     def sourceRevision(self):
         CraftCore.debug.trace("VersionSystemSourceBase sourceRevision")
-        if craftSettings.getboolean("Packager", "UseCache", False):
+        if CraftCore.settings.getboolean("Packager", "UseCache", False):
             # as we are using the cahce we don't have the git clone present
             return "latest"
         return self.sourceVersion()
