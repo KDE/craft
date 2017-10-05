@@ -84,7 +84,7 @@ def getFile(url, destdir, filename='') -> bool:
         CraftCore.log.error("fetch: no url given")
         return False
 
-    if utilsCache.findApplication("wget"):
+    if CraftCore.cache.findApplication("wget"):
         return wgetFile(url, destdir, filename)
 
     if not filename:
@@ -94,8 +94,8 @@ def getFile(url, destdir, filename='') -> bool:
     if os.path.exists(os.path.join(destdir, filename)):
         return True
 
-    if utilsCache.findApplication("powershell"):
-        powershell = utilsCache.findApplication("powershell")
+    if CraftCore.cache.findApplication("powershell"):
+        powershell = CraftCore.cache.findApplication("powershell")
         filename = os.path.join(destdir, filename)
         return system([powershell, "-NoProfile", "-Command",
                        f"(new-object net.webclient).DownloadFile('{url}', '{filename}')"])
@@ -123,7 +123,7 @@ def getFile(url, destdir, filename='') -> bool:
 
 def wgetFile(url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    wget = utilsCache.findApplication("wget")
+    wget = CraftCore.cache.findApplication("wget")
     command = [wget, "-c", "-t", "10"]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirect",  "50"]
@@ -136,7 +136,7 @@ def wgetFile(url, destdir, filename=''):
     command += [url]
     CraftCore.log.debug("wgetfile called")
 
-    if CraftCore.debug.verbose() < 1 and utilsCache.checkCommandOutputFor(wget, "--show-progress"):
+    if CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
         command += ["-q", "--show-progress"]
         CraftCore.log.info(f"wget {url}")
         return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
@@ -166,7 +166,7 @@ def unpackFile(downloaddir, filename, workdir):
     if ext == "":
         CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
-    elif OsUtils.isWin() and utilsCache.findApplication("7za") and (
+    elif OsUtils.isWin() and CraftCore.cache.findApplication("7za") and (
                 OsUtils.supportsSymlinks() or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
         return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
@@ -183,8 +183,8 @@ def un7zip(fileName, destdir, flag=None):
     progressFlags = []
     type = []
     resolveSymlinks = False
-    app = utilsCache.findApplication("7za")
-    if utilsCache.checkCommandOutputFor(app, "-bs"):
+    app = CraftCore.cache.findApplication("7za")
+    if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2",  "-bsp1"]
         kw["stderr"] = subprocess.PIPE
 
@@ -200,7 +200,7 @@ def un7zip(fileName, destdir, flag=None):
             resolveSymlinks = True
             command = [app, "x", "-si", f"-o{destdir}"]+ type + progressFlags
         else:
-            tar = utilsCache.findApplication("tar")
+            tar = CraftCore.cache.findApplication("tar")
             command = [tar, "--directory", destdir, "-xvf", "-"]
             kw = {}
     else:
@@ -241,7 +241,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     if matchQuoted:
         CraftCore.log.warning(f"Please don't pass quoted paths to systemWithoutShell, app={arg0}")
     if not os.path.isfile(arg0) and not matchQuoted:
-        app = utilsCache.findApplication(arg0)
+        app = CraftCore.cache.findApplication(arg0)
     else:
         app = arg0
 
@@ -418,10 +418,10 @@ def createImportLibs(dll_name, basepath):
         os.mkdir(dst)
 
     # check whether the required binary tools exist
-    HAVE_GENDEF = utilsCache.findApplication("gendef") is not None
+    HAVE_GENDEF = CraftCore.cache.findApplication("gendef") is not None
     USE_GENDEF = HAVE_GENDEF
-    HAVE_LIB = utilsCache.findApplication("lib") is not None
-    HAVE_DLLTOOL = utilsCache.findApplication("dlltool") is not None
+    HAVE_LIB = CraftCore.cache.findApplication("lib") is not None
+    HAVE_DLLTOOL = CraftCore.cache.findApplication("dlltool") is not None
 
     CraftCore.log.debug(f"gendef found: {HAVE_GENDEF}")
     CraftCore.log.debug(f"gendef used: {USE_GENDEF}")
@@ -772,7 +772,7 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
-    app = utilsCache.findApplication("shimgen")
+    app = CraftCore.cache.findApplication("shimgen")
     if not useAbsolutePath and os.path.isabs(target):
         srcPath = shim
         if srcPath.endswith(".exe"):
