@@ -22,6 +22,7 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
+import Utils.CraftCache
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
