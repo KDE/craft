@@ -62,7 +62,7 @@ class UtilsCache(object):
                 return
             with open(UtilsCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
-                pick.dump(UtilsCache._loadInstance())
+                pick.dump(CraftCore.cache)
         except Exception as e:
             CraftCore.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
             os.remove(UtilsCache._cacheFile())
@@ -189,4 +189,4 @@ class UtilsCache(object):
                 CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
 
-CraftCore.registerInstance("cache", UtilsCache._loadInstance())
+CraftCore.registerInstance("cache", UtilsCache._loadInstance)
