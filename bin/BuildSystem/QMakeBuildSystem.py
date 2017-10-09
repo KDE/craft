@@ -13,6 +13,7 @@ class QMakeBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "qmake")
         self._platform = None
         self._qtVer = None
+        self.subinfo.options.needsShortPath = craftCompiler.isMinGW()
 
     @property
     def qtVer(self):
