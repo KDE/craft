@@ -1,10 +1,16 @@
 from Packager.CollectionPackagerBase import *
+from Utils import CraftHash
 
 class MacDMGPackager( CollectionPackagerBase ):
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
+
+    def _setDefaults(self):
+        # TODO: Fix defaults
+        self.defines.setdefault("apppath", "")
+        self.defines.setdefault("appname", self.package.name.lower())
 
     def createPackage(self):
         """ create a package """
@@ -13,8 +19,12 @@ class MacDMGPackager( CollectionPackagerBase ):
         self.internalCreatePackage()
         self.preArchive()
 
+        self._setDefaults()
+
+
         archive = self.archiveDir()
-        appPath = os.path.join(archive, "Applications/KDE/kdevelop.app")
+        appPath = os.path.join(archive, self.defines['apppath'], f"{self.defines['appname']}.app")
+        print(appPath)
         utils.mergeTree(os.path.join(archive, "lib/plugins"), os.path.join(appPath, "Contents/PlugIns/"))
         targetLibdir = os.path.join(appPath, "Contents/Frameworks/")
         if not os.path.exists(targetLibdir):
@@ -25,10 +35,15 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         env = os.environ
         env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
-        if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/kdevelop"], env=env):
-            CraftCore.log.warning("Failed to run dylibbundler")
+        if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
+            craftDebug.log.warning("Failed to run dylibbundler")
 
         if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
             CraftCore.log.warning("Failed to run macdeployqt!")
+
+        dmgSrc = appPath.replace(".app", ".dmg")
+        dmgDest = os.path.join(self.packageDestinationDir(), os.path.basename(dmgSrc))
+        utils.copyFile(dmgSrc, dmgDest, linkOnly=False)
+        CraftHash.createDigestFiles(dmgDest)
 
         return True
