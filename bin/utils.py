@@ -16,6 +16,7 @@ import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
+from distutils.dir_util import mkpath
 
 import Notifier.NotificationLoader
 from CraftConfig import *
@@ -561,6 +562,10 @@ def mergeTree(srcdir, destdir):
 
     If a directory in @p destdir exists, just write into it
     """
+
+    if not os.path.exists(destdir):
+        mkpath(destdir)
+
     CraftCore.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
     if os.path.samefile(srcdir, destdir):
         CraftCore.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
