@@ -24,17 +24,6 @@ class Package(SourceOnlyPackageBase):
     def unpack(self):
         return True
 
-    def fetch(self):
-        git = CraftCore.cache.findApplication("git")
-        if not CraftCore.cache.checkCommandOutputFor(git, "kde:",
-                                                      "config --global --get url.git://anongit.kde.org/.insteadof"):
-            CraftCore.log.debug("adding kde related settings to global git config file")
-            utils.system(f"\"{git}\" config --global url.git://anongit.kde.org/.insteadOf kde:")
-            utils.system(f"\"{git}\" config --global url.ssh://git@git.kde.org/.pushInsteadOf kde:")
-            utils.system(f"\"{git}\" config --global core.autocrlf false")
-
-        return SourceOnlyPackageBase.fetch(self)
-
     def install(self):
         return True
 
