@@ -24,6 +24,9 @@ class Package(SourceOnlyPackageBase):
     def unpack(self):
         return True
 
+    def fetch(self):
+        return True
+
     def install(self):
         return True
 
