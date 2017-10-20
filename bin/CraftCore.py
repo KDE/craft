@@ -1,8 +1,30 @@
+import importlib
 import logging
 import sys
 
+# TODO: a more optimal solution would be to initialize all singletons in a
+# __init__.py but that would require massive refactoring as everything in bin/
+# is not part of a module wich could use such a __init__.py
+class AutoImport(object):
+    def __init__(self, name : str, module : str, className : str=None) -> None:
+        self.name = name
+        self.module = module
+        self.className = className or module
+
+    def __getattribute__(self, name : str):
+        _name = super().__getattribute__("name")
+        _module = super().__getattribute__("module")
+        _className = super().__getattribute__("className")
+
+        mod = importlib.import_module(_module)
+        cls = getattr(mod, _className)
+        instance = cls()
+        setattr(CraftCore, _name, instance)
+        return instance.__getattribute__(name)
+
+
 class CraftCore(object):
-    debug = None
+    debug = AutoImport("debug", "CraftDebug")
     log = None
     standardDirs = None
     settings = None
