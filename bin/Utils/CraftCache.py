@@ -68,9 +68,8 @@ class CraftCache(object):
             os.remove(CraftCache._cacheFile())
 
     def clear(self):
-        global utilsCache
         CraftCore.log.debug("Clear utils cache")
-        utilsCache = CraftCache()
+        CraftCore.cache = CraftCache()
 
     def findApplication(self, app, path=None) -> str:
         if app in self._appCache:
