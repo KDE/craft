@@ -16,12 +16,12 @@ from Blueprints.CraftVersion import CraftVersion
 from CraftOS.unix.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
-class UtilsCache(object):
+class CraftCache(object):
     _version = 6
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
-        self.version = UtilsCache._version
+        self.version = CraftCache._version
         self._appCache = {}
         self._outputCache = {}
         self._helpCache = {}
@@ -34,17 +34,17 @@ class UtilsCache(object):
 
     @staticmethod
     def _loadInstance():
-        utilsCache = UtilsCache()
-        if os.path.exists(UtilsCache._cacheFile()):
-            with open(UtilsCache._cacheFile(), "rb") as f:
+        utilsCache = CraftCache()
+        if os.path.exists(CraftCache._cacheFile()):
+            with open(CraftCache._cacheFile(), "rb") as f:
                 try:
                     data = pickle.load(f)
                 except:
                     CraftCore.log.warning("Cache corrupted")
                     return utilsCache
 
-            if data.version != UtilsCache._version or (
-                time.time() - data.cacheCreationTime) > UtilsCache._cacheLifetime:
+            if data.version != CraftCache._version or (
+                time.time() - data.cacheCreationTime) > CraftCache._cacheLifetime:
                 CraftCore.log.debug("Clear cache")
             else:
                 utilsCache = data
@@ -58,19 +58,19 @@ class UtilsCache(object):
     @atexit.register
     def _save():
         try:
-            if not os.path.isdir(os.path.dirname(UtilsCache._cacheFile())):
+            if not os.path.isdir(os.path.dirname(CraftCache._cacheFile())):
                 return
-            with open(UtilsCache._cacheFile(), "wb") as f:
+            with open(CraftCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(CraftCore.cache)
         except Exception as e:
             CraftCore.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
-            os.remove(UtilsCache._cacheFile())
+            os.remove(CraftCache._cacheFile())
 
     def clear(self):
         global utilsCache
         CraftCore.log.debug("Clear utils cache")
-        utilsCache = UtilsCache()
+        utilsCache = CraftCache()
 
     def findApplication(self, app, path=None) -> str:
         if app in self._appCache:
@@ -188,5 +188,3 @@ class UtilsCache(object):
             except Exception as e:
                 CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
-
-CraftCore.registerInstance("cache", UtilsCache._loadInstance)

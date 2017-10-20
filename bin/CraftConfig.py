@@ -168,5 +168,3 @@ class CraftConfig(object):
     def _dump():
         if CraftCore.settings.getboolean("CraftDebug", "DumpSettings", False):
             CraftCore.settings.dump()
-
-CraftCore.registerInstance("settings", CraftConfig)

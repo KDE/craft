@@ -127,5 +127,3 @@ class TemporaryUseShortpath(object):
 
     def __exit__(self, exc_type, exc_value, trback):
         CraftStandardDirs.allowShortpaths(self.prev)
-
-CraftCore.registerInstance("standardDirs", CraftStandardDirs)

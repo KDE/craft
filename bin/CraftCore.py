@@ -26,20 +26,9 @@ class AutoImport(object):
 class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")
     log = None
-    standardDirs = None
-    settings = None
-    cache = None
-
-    @classmethod
-    def registerInstance(cls, name : str, instance : type) -> None:
-        """
-        Register a singleton with CraftCore
-        """
-        if not hasattr(cls, name):
-            print(f"Unknown instance name {name}, please define  CraftCore.{name}", file=sys.stderr)
-            exit(1)
-        if not getattr(cls, name):
-            setattr(cls, name, instance())
+    standardDirs = AutoImport("standardDirs", "CraftStandardDirs")
+    settings = AutoImport("settings", "CraftConfig")
+    cache = AutoImport("cache", "Utils.CraftCache", "CraftCache")
 
     @classmethod
     def registerObjectAlias(cls, name : str, source : str, obj : str) -> None:
