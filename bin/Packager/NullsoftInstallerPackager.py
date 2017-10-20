@@ -47,9 +47,9 @@ You can add your own defines into self.defines as well.
         self._isInstalled = False
 
     def _setDefaults(self):
-        self.defines.setdefault("architecture", craftCompiler.architecture)
+        self.defines.setdefault("architecture", CraftCore.compiler.architecture)
         self.defines.setdefault("company", "KDE")
-        self.defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if craftCompiler.isX64() else "$PROGRAMFILES")
+        self.defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
         self.defines.setdefault("executable", "")
         self.defines.setdefault("icon", "")
         self.defines.setdefault("license", "")
@@ -117,18 +117,18 @@ You can add your own defines into self.defines as well.
         return _path
 
     def getVCRedistLocation(self):
-        if not craftCompiler.isMSVC():
+        if not CraftCore.compiler.isMSVC():
             return "none"
         _file = None
-        if craftCompiler.isMSVC():
+        if CraftCore.compiler.isMSVC():
             arch = "x86"
-            if craftCompiler.isX64():
+            if CraftCore.compiler.isX64():
                 arch = "x64"
 
             # TODO: This needs to be made more fail-safe: the version numbers can change with any VS upgrade...
-            if craftCompiler.isMSVC2015():
+            if CraftCore.compiler.isMSVC2015():
                 _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
-            elif craftCompiler.isMSVC2017():
+            elif CraftCore.compiler.isMSVC2017():
                 _file = os.path.join(os.environ["VCINSTALLDIR"], "Redist", "MSVC", "14.11.25325", f"vcredist_{arch}.exe")
                 if not os.path.exists(_file):
                     _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "..", "14.10.25008", f"vcredist_{arch}.exe")

@@ -22,7 +22,7 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
 
     def install(self):
-        if craftCompiler.isX64():
+        if CraftCore.compiler.isX64():
             utils.copyFile(os.path.join(self.sourceDir(), "wget64.exe"),
                            os.path.join(self.installDir(), "bin", "wget.exe"))
         else:

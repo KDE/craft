@@ -29,6 +29,7 @@ class CraftCore(object):
     standardDirs = AutoImport("standardDirs", "CraftStandardDirs")
     settings = AutoImport("settings", "CraftConfig")
     cache = AutoImport("cache", "Utils.CraftCache", "CraftCache")
+    compiler = AutoImport("compiler", "CraftCompiler")
 
     @classmethod
     def registerObjectAlias(cls, name : str, source : str, obj : str) -> None:

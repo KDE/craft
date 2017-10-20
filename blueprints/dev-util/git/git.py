@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         ver = "2.11.0"
         arch = 32
-        if craftCompiler.isX64():
+        if CraftCore.compiler.isX64():
             arch = 64
 
         self.targets[

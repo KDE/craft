@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
-        if craftCompiler.isMinGW():
+        if CraftCore.compiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
 
 
@@ -20,7 +20,7 @@ from Package.BinaryPackageBase import *
 class PackageMinGW(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.package.version = craftCompiler.getVersion()
+        self.subinfo.options.package.version = CraftCore.compiler.getVersion()
 
     def fetch(self):
         return True
@@ -34,10 +34,10 @@ class PackageMinGW(BinaryPackageBase):
             return True
 
         files = ['libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll']
-        if craftCompiler.isMinGW_W32():
+        if CraftCore.compiler.isMinGW_W32():
             files.append('libgcc_s_sjlj-1.dll')
             srcdir = os.path.join(self.rootdir, "mingw", "bin")
-        elif craftCompiler.isMinGW_W64():
+        elif CraftCore.compiler.isMinGW_W64():
             files.append('libgcc_s_seh-1.dll')
             srcdir = os.path.join(self.rootdir, "mingw64", "bin")
 
@@ -51,4 +51,4 @@ from Package.Qt5CorePackageBase import *
 
 class Package(Qt5CoreSdkPackageBase):
     def __init__(self):
-        Qt5CoreSdkPackageBase.__init__(self, condition=craftCompiler.isMinGW(), classA=PackageMinGW)
+        Qt5CoreSdkPackageBase.__init__(self, condition=CraftCore.compiler.isMinGW(), classA=PackageMinGW)

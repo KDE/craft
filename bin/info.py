@@ -7,7 +7,6 @@
 # the definition
 
 import VersionInfo
-from CraftCompiler import craftCompiler
 from Utils import CraftHash
 from options import *
 
@@ -172,14 +171,14 @@ class infoclass(object):
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+        if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
             return True
         return self.buildTarget in self.targetDigests
 
     def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            if craftCompiler.isX64() and self.buildTarget in self.targetDigestsX64:
+            if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
                 out = self.targetDigestsX64[self.buildTarget]
             else:
                 out = self.targetDigests[self.buildTarget]

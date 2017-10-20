@@ -7,7 +7,6 @@ import multiprocessing
 import os
 
 from CraftBase import *
-from CraftCompiler import craftCompiler
 from CraftOS.osutils import OsUtils
 
 
@@ -19,7 +18,7 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and craftCompiler.isMinGW()
+        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isMinGW()
         self.supportsClang = True
         self.buildSystemType = typeName
 
@@ -36,12 +35,12 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if craftCompiler.isMSVC() or craftCompiler.isIntel():
+            if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
                 return "nmake /NOLOGO"
-            elif craftCompiler.isMinGW():
+            elif CraftCore.compiler.isMinGW():
                 return "mingw32-make"
             else:
-                CraftCore.log.critical(f"unknown {craftCompiler} compiler")
+                CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
         elif OsUtils.isUnix():
             return "make"
 
@@ -69,7 +68,7 @@ class BuildSystemBase(CraftBase):
 
         if self.supportsCCACHE:
             defines += " %s" % self.ccacheOptions()
-        if craftCompiler.isClang() and self.supportsClang:
+        if CraftCore.compiler.isClang() and self.supportsClang:
             defines += " %s" % self.clangOptions()
         return defines
 

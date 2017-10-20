@@ -5,7 +5,6 @@
 """
 
 from CraftStandardDirs import CraftStandardDirs
-from CraftCompiler import craftCompiler
 from CraftOS.OsDetection import OsDetection
 from options import *
 
@@ -20,10 +19,10 @@ class BashShell(object):
             self._environment = {}
 
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
-            if craftCompiler.isMSVC():
+            if CraftCore.compiler.isMSVC():
                 ldflags = ""
                 cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
-                if craftCompiler.getMsvcPlatformToolset() > 120:
+                if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                     cflags += " -FS"
             else:
                 ldflags = f"-L{mergeroot}/lib "
@@ -38,12 +37,12 @@ class BashShell(object):
                 self._environment["MSYS2_PATH_TYPE"] = "inherit"  # inherit the windows path
                 if "make" in self._environment:
                     del self._environment["make"]
-                if craftCompiler.isMinGW():
-                    self._environment["MSYSTEM"] = f"MINGW{craftCompiler.bits}_CRAFT"
-                elif craftCompiler.isMSVC():
-                    self._environment["MSYSTEM"] = f"CYGWIN{craftCompiler.bits}_CRAFT"
+                if CraftCore.compiler.isMinGW():
+                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
+                elif CraftCore.compiler.isMSVC():
+                    self._environment["MSYSTEM"] = f"CYGWIN{CraftCore.compiler.bits}_CRAFT"
 
-                if craftCompiler.isMSVC():
+                if CraftCore.compiler.isMSVC():
                     if False:
                         cl = "clang-cl"
                     else:

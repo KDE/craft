@@ -80,7 +80,7 @@ class InnoSetupPackager(PackagerBase):
         #    srcCmd = ""
 
         if (self.subinfo.options.package.withCompiler):
-            pkgName += "-%s" % craftCompiler.getShortName()
+            pkgName += "-%s" % CraftCore.compiler.getShortName()
 
         dstpath = self.packageDestinationDir()
 

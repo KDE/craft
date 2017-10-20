@@ -5,7 +5,6 @@ import datetime
 import functools
 
 import utils
-from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
@@ -81,7 +80,7 @@ class CraftBase(object):
 
     def buildArchitecture(self):
         """return the target CPU architecture"""
-        craftCompiler.architecture()
+        CraftCore.compiler.architecture()
 
     def workDirPattern(self):
         """return base directory name for package related work directory"""
@@ -235,7 +234,7 @@ class CraftBase(object):
         else:
             fileType = ""
         name = self.package.name if not includePackagePath else self.package.path
-        return f"{name}-{version}-{craftCompiler}{pkgSuffix}{fileType}"
+        return f"{name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
 
     def cacheLocation(self) -> str:
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
@@ -244,7 +243,7 @@ class CraftBase(object):
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
         cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
-        return os.path.join(cacheDir, version, *craftCompiler.signature, self.buildType())
+        return os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
@@ -252,5 +251,5 @@ class CraftBase(object):
         else:
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
-        return ["/".join([url, version, *craftCompiler.signature, self.buildType()]) for url in
+        return ["/".join([url, version, *CraftCore.compiler.signature, self.buildType()]) for url in
                 CraftCore.settings.getList("Packager", "RepositoryUrl")]

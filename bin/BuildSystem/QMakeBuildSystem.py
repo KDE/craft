@@ -13,7 +13,7 @@ class QMakeBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "qmake")
         self._platform = None
         self._qtVer = None
-        self.subinfo.options.needsShortPath = craftCompiler.isMinGW()
+        self.subinfo.options.needsShortPath = CraftCore.compiler.isMinGW()
 
     @property
     def qtVer(self):
@@ -25,24 +25,24 @@ class QMakeBuildSystem(BuildSystemBase):
     def platform(self):
         if not self._platform:
             if OsUtils.isWin():
-                if craftCompiler.isMSVC():
+                if CraftCore.compiler.isMSVC():
                     if self.qtVer < CraftVersion("5.8"):
-                        if craftCompiler.isMSVC2017():
+                        if CraftCore.compiler.isMSVC2017():
                             _compiler = "msvc2015"
                         else:
-                            _compiler = craftCompiler.abi.split("_")[0]
+                            _compiler = CraftCore.compiler.abi.split("_")[0]
                     else:
                         _compiler = "msvc"
-                    if craftCompiler.isClang():
+                    if CraftCore.compiler.isClang():
                         self._platform = f"win32-clang-{_compiler}"
                     else:
                         self._platform = f"win32-{_compiler}"
-                elif craftCompiler.isMinGW():
+                elif CraftCore.compiler.isMinGW():
                     self._platform = "win32-g++"
-                elif craftCompiler.isIntel():
+                elif CraftCore.compiler.isIntel():
                     self._platform = "win32-icc"
                 else:
-                    CraftCore.log.critical(f"QMakeBuildSystem: unsupported compiler platform {craftCompiler}")
+                    CraftCore.log.critical(f"QMakeBuildSystem: unsupported compiler platform {CraftCore.compiler}")
             elif OsUtils.isUnix():
                 if OsUtils.isMac():
                     osPart = "macx"
@@ -51,7 +51,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 else:
                     osPart = "linux"
 
-                if craftCompiler.isClang():
+                if CraftCore.compiler.isClang():
                     compilerPart = "clang"
                 else:
                     compilerPart = "g++"

@@ -34,7 +34,7 @@ class Package(CMakePackageBase):
     def make(self):
         self.enterSourceDir()
         command = "python3 configure.py --bootstrap"
-        if craftCompiler.isMinGW():
+        if CraftCore.compiler.isMinGW():
             command += " --platform=mingw"
         print(command)
         return self.system(command, "make")

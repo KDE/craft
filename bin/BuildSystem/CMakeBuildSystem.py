@@ -5,7 +5,6 @@
 """@package provides cmake build system"""
 
 from BuildSystem.BuildSystemBase import *
-from CraftCompiler import craftCompiler
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
@@ -23,22 +22,22 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if craftCompiler.isMSVC() and not (
-                self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or craftCompiler.isIntel():
+            if CraftCore.compiler.isMSVC() and not (
+                self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or CraftCore.compiler.isIntel():
                 return "NMake Makefiles"
             else:
-                if craftCompiler.isMSVC2017():
-                    return "Visual Studio 15 2017" + (" Win64" if craftCompiler.isX64() else "")
-                elif craftCompiler.isMSVC2015():
-                    return "Visual Studio 14 2015" + (" Win64" if craftCompiler.isX64() else "")
-                elif craftCompiler.isMSVC2010():
+                if CraftCore.compiler.isMSVC2017():
+                    return "Visual Studio 15 2017" + (" Win64" if CraftCore.compiler.isX64() else "")
+                elif CraftCore.compiler.isMSVC2015():
+                    return "Visual Studio 14 2015" + (" Win64" if CraftCore.compiler.isX64() else "")
+                elif CraftCore.compiler.isMSVC2010():
                     return "Visual Studio 10"
-            if craftCompiler.isMinGW():
+            if CraftCore.compiler.isMinGW():
                 return "MinGW Makefiles"
         elif OsUtils.isUnix():
             return "Unix Makefiles"
         else:
-            CraftCore.log.critical(f"unknown {craftCompiler} compiler")
+            CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
 
     def __onlyBuildDefines(self, buildOnlyTargets):
         """This method returns a list of cmake defines to exclude targets from build"""
@@ -91,10 +90,10 @@ class CMakeBuildSystem(BuildSystemBase):
         if (not self.buildType() == None):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
 
-        if craftCompiler.isGCC() and not craftCompiler.isNative():
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
             options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin",
                                                                    "toolchains",
-                                                                   "Toolchain-cross-mingw32-linux-%s.cmake" % craftCompiler.architecture)
+                                                                   "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
             options += " -DKDE_L10N_AUTO_TRANSLATIONS=ON"
@@ -118,7 +117,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.subinfo.options.cmake.useCTest:
             options += " -DCMAKE_PROGRAM_PATH=\"%s\" " % \
                        (os.path.join(self.mergeDestinationDir(), "dev-utils", "svn", "bin").replace("\\", "/"))
-        if craftCompiler.isIntel():
+        if CraftCore.compiler.isIntel():
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
                                                                       "icl.exe").replace("\\", "/")
@@ -147,13 +146,13 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         if self.subinfo.options.cmake.openIDE:
-            if craftCompiler.isMSVC2010():
+            if CraftCore.compiler.isMSVC2010():
                 command = "start vcexpress %s" % self.__slnFileName()
         elif self.subinfo.options.cmake.useIDE:
-            if craftCompiler.isMSVC2015():
+            if CraftCore.compiler.isMSVC2015():
                 command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (
                 self.__slnFileName(), self.buildType())
-            elif craftCompiler.isMSVC2010():
+            elif CraftCore.compiler.isMSVC2010():
                 CraftCore.log.critical("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
@@ -173,7 +172,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         if self.subinfo.options.install.useMakeToolForInstall:
-            if craftCompiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+            if CraftCore.compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
                 command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
             else:
                 env["DESTDIR"] = self.installDir()
@@ -202,7 +201,7 @@ class CMakeBuildSystem(BuildSystemBase):
         return out
 
     def clangOptions(self):
-        if craftCompiler.isMSVC():
+        if CraftCore.compiler.isMSVC():
             return " -DCMAKE_CXX_COMPILER=clang-cl" \
                    " -DCMAKE_C_COMPILER=clang-cl"
             return out

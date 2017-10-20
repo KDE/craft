@@ -24,7 +24,7 @@ class SevenZipPackage(BinaryPackageBase):
 
     def install(self):
         CraftCore.cache.clear()
-        if craftCompiler.isX64():
+        if CraftCore.compiler.isX64():
             return utils.copyFile(os.path.join(self.sourceDir(), "x64", "7za.exe"),
                                   os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
         else:

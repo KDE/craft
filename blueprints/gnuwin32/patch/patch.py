@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '2.5.9'
 
     def setDependencies(self):
-        if craftCompiler.isMinGW():
+        if CraftCore.compiler.isMinGW():
             self.runtimeDependencies["dev-util/uactools"] = "default"
         self.runtimeDependencies["virtual/bin-base"] = "default"
 

@@ -137,13 +137,13 @@ class CraftCompiler(object):
     def isIntel(self):
         return self.compiler == "intel"
 
-    @deprecated("craftCompiler")
+    @deprecated("CraftCore.compiler")
     def getCompilerName(self):
-        return str(craftCompiler)
+        return str(CraftCore.compiler)
 
-    @deprecated("craftCompiler")
+    @deprecated("CraftCore.compiler")
     def getSimpleCompilerName(self):
-        return str(craftCompiler)
+        return str(CraftCore.compiler)
 
     def getGCCLikeVersion(self, compilerExecutable):
         result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
@@ -203,15 +203,12 @@ class CraftCompiler(object):
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
 
-
-craftCompiler = CraftCompiler()
-
 if __name__ == '__main__':
     print("Testing Compiler.py")
-    print(f"Configured compiler (ABI): {craftCompiler}")
-    print("Version: %s" % craftCompiler.getVersionWithName())
-    print("Compiler Name: %s" % craftCompiler.getCompilerName())
-    print("Native compiler: %s" % ("No", "Yes")[craftCompiler.isNative()])
-    if craftCompiler.isGCCLike():
-        print("Compiler Version: %s" % craftCompiler.getGCCLikeVersion(craftCompiler.compiler))
-        print("Compiler Target: %s" % craftCompiler._getGCCTarget())
+    print(f"Configured compiler (ABI): {CraftCore.compiler}")
+    print("Version: %s" % CraftCore.compiler.getVersionWithName())
+    print("Compiler Name: %s" % CraftCore.compiler.getCompilerName())
+    print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
+    if CraftCore.compiler.isGCCLike():
+        print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler))
+        print("Compiler Target: %s" % CraftCore.compiler._getGCCTarget())

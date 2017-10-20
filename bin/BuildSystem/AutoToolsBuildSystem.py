@@ -13,7 +13,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if not OsUtils.isWin():
             self.platform = ""# hope for auto detection
         else:
-            if craftCompiler.isX86():
+            if CraftCore.compiler.isX86():
                 self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
             else:
                 self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
@@ -44,7 +44,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment[
             "CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
-        if craftCompiler.isMSVC() or self.subinfo.options.configure.bootstrap:
+        if CraftCore.compiler.isMSVC() or self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self.shell.execute(self.sourceDir(), autogen)

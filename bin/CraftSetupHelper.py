@@ -7,7 +7,6 @@ import argparse
 import collections
 import subprocess
 
-from CraftCompiler import craftCompiler
 from CraftConfig import *
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -73,7 +72,7 @@ class SetupHelper(object):
         blackList = []
         if OsUtils.isWin():
             blackList += ["sh"]
-        if craftCompiler.isMSVC():
+        if CraftCore.compiler.isMSVC():
             blackList += ["gcc", "g++"]
         for app in blackList:
             location = shutil.which(app)
@@ -124,7 +123,7 @@ class SetupHelper(object):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
         printRow("Craft", CraftStandardDirs.craftRoot())
         printRow("Version", SetupHelper.CraftVersion)
-        printRow("ABI", craftCompiler)
+        printRow("ABI", CraftCore.compiler)
         printRow("Svn directory", CraftStandardDirs.svnDir())
         printRow("Git directory", CraftStandardDirs.gitDir())
         printRow("Download directory", CraftStandardDirs.downloadDir())
@@ -152,14 +151,14 @@ class SetupHelper(object):
             os.environ[key] = value
 
     def getEnv(self):
-        if craftCompiler.isMSVC():
+        if CraftCore.compiler.isMSVC():
             architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
-            version = craftCompiler.getInternalVersion()
+            version = CraftCore.compiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
             path = subprocess.getoutput(f"\"{vswhere}\""
                     f" -version \"[{version},{version+1})\" -property installationPath -nologo -latest"
                     +(" -legacy" if version < 15 else " -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"))
-            arg = architectures[craftCompiler.architecture] + ("_cross" if not craftCompiler.isNative() else "")
+            arg = architectures[CraftCore.compiler.architecture] + ("_cross" if not CraftCore.compiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
                 path = os.path.join(path, "Auxiliary", "Build")
@@ -177,12 +176,12 @@ class SetupHelper(object):
                 exit(1)
             return self.stringToEnv(result)
 
-        elif craftCompiler.isIntel():
+        elif CraftCore.compiler.isIntel():
             architectures = {"x86": "ia32", "x64": "intel64"}
             programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
             status, result = subprocess.getstatusoutput(
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
-                    programFiles, architectures[craftCompiler.architecture]))
+                    programFiles, architectures[CraftCore.compiler.architecture]))
             if status != 0:
                 log("Failed to setup intel compiler")
                 exit(1)
@@ -252,9 +251,9 @@ class SetupHelper(object):
                              os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
                                           CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
 
-        if craftCompiler.isMinGW():
+        if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if craftCompiler.isX86():
+                if CraftCore.compiler.isX86():
                     self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
                 else:
                     self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))

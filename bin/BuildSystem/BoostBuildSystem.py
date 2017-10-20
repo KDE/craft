@@ -41,7 +41,7 @@ class BoostBuildSystem(BuildSystemBase):
         else:
             options += (" link=static"
                         " runtime-link=static")
-        if craftCompiler.isX64():
+        if CraftCore.compiler.isX64():
             options += " address-model=64 architecture=x86"
         else:
             options += " address-model=32 architecture=x86"
@@ -52,19 +52,19 @@ class BoostBuildSystem(BuildSystemBase):
             options += " variant=release"
 
         options += " toolset="
-        if craftCompiler.isClang():
+        if CraftCore.compiler.isClang():
             options += "clang"
-            if craftCompiler.isGCC():
+            if CraftCore.compiler.isGCC():
                 options += " threadapi=pthread"
-        elif craftCompiler.isMinGW():
+        elif CraftCore.compiler.isMinGW():
             options += "gcc"
-        elif craftCompiler.isMSVC():
-            platform = str(craftCompiler.getMsvcPlatformToolset())
-            if craftCompiler.isMSVC2017():
+        elif CraftCore.compiler.isMSVC():
+            platform = str(CraftCore.compiler.getMsvcPlatformToolset())
+            if CraftCore.compiler.isMSVC2017():
                 options += f"msvc-{platform[:2]}.0"
             else:
                 options += f"msvc-{platform[:2]}.{platform[2:]}"
-        elif craftCompiler.isIntel():
+        elif CraftCore.compiler.isIntel():
             options += "intel"
             options += " -sINTEL_PATH=\"%s\"" % os.path.join(os.getenv("INTELDIR"), "bin", os.getenv("TARGET_ARCH"))
             options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % (

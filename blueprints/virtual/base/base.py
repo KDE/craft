@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/cmake"] = "default"
         self.buildDependencies["dev-util/git"] = "default"
 
-        if craftCompiler.isMinGW():
+        if CraftCore.compiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
         if CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-util/jom"] = "default"
