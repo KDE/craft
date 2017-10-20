@@ -777,6 +777,8 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
+    if not OsUtils.isWin():
+        return True
     app = CraftCore.cache.findApplication("shimgen")
     if not useAbsolutePath and os.path.isabs(target):
         srcPath = shim
