@@ -16,7 +16,7 @@ class CraftPackageObject(object):
     __rootPackage = None
     _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
-    IgnoredDirectories = [".git", "__pycache__", ".kdev4"]
+    IgnoredDirectories = ["__pycache__"]
     Ignores = re.compile("a^")
 
     def __init__(self, other=None):
@@ -79,7 +79,7 @@ class CraftPackageObject(object):
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
             if os.path.isdir(fPath):
-                if f not in CraftPackageObject.IgnoredDirectories:
+                if not f.startswith(".") and f not in CraftPackageObject.IgnoredDirectories:
                     hasChildren = True
                     child = self._addNode(fPath, blueprintRoot)
                     if child:
