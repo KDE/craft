@@ -3,15 +3,15 @@
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
 import fileinput
+import datetime
 import shutil
 import types
+import json
 
 from Packager.PackagerBase import *
 from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Blueprints.CraftPackageObject import *
-
-
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+from Utils import CraftHash
 
 
 def toRegExp(fname, targetName) -> re:
@@ -42,7 +42,7 @@ class PackagerLists(object):
 
     @staticmethod
     def runtimeBlacklist():
-        return os.path.join(THIS_DIR, "applications_blacklist.txt")
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "applications_blacklist.txt")
 
     @staticmethod
     def defaultWhitelist():
@@ -132,6 +132,28 @@ class CollectionPackagerBase(PackagerBase):
                                            CraftCore.settings.get("QtSDK", "Compiler")), False))
 
         return imageDirs
+
+    def _generateManifest(self, destDir, archiveName, manifestLocation=None):
+        if not manifestLocation:
+            manifestLocation = destDir
+        cacheFilePath = os.path.join(manifestLocation, "manifest.json")
+        cache = {}
+        if os.path.isfile(cacheFilePath):
+            with open(cacheFilePath, "rt+") as cacheFile:
+                cache = json.load(cacheFile)
+
+        cache["Date"] = datetime.date.today()
+        if "APPVEYOR_BUILD_VERSION" in os.environ:
+            cache["APPVEYOR_BUILD_VERSION"] = os.environ["APPVEYOR_BUILD_VERSION"]
+
+        archiveFile = os.path.join(destDir, archiveName)
+        if not str(self) in cache:
+            cache[str(self)] = {}
+        cache[str(self)][archiveName] = {"checksum": CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)}
+
+        with open(cacheFilePath, "wt+") as cacheFile:
+            json.dump(cache, cacheFile, sort_keys=True, indent=2)
+
 
     def read_whitelist(self, fname):
         if not os.path.isabs(fname):

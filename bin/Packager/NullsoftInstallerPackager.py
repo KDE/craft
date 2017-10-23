@@ -198,5 +198,7 @@ You can add your own defines into self.defines as well.
         self.internalCreatePackage()
         self.preArchive()
         self.generateNSISInstaller()
+        destDir, archiveName = os.path.split(self.defines["setupname"])
+        self._generateManifest(destDir, archiveName)
         CraftHash.createDigestFiles(self.defines["setupname"])
         return True

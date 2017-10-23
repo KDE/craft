@@ -43,17 +43,7 @@ class SevenZipPackager(PackagerBase):
         if not CraftCore.settings.getboolean("Packager", "CreateCache"):
             CraftHash.createDigestFiles(archive)
         else:
-            cacheFilePath = os.path.join(self.cacheLocation(), "manifest.json")
-            if os.path.exists(cacheFilePath):
-                with open(cacheFilePath, "rt+") as cacheFile:
-                    cache = json.load(cacheFile)
-            else:
-                cache = {}
-            if not str(self) in cache:
-                cache[str(self)] = {}
-            cache[str(self)][archiveName] = {"checksum": CraftHash.digestFile(archive, CraftHash.HashAlgorithm.SHA256)}
-            with open(cacheFilePath, "wt+") as cacheFile:
-                json.dump(cache, cacheFile, sort_keys=True, indent=2)
+            self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation())
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
