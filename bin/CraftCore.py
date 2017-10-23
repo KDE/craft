@@ -22,6 +22,12 @@ class AutoImport(object):
         setattr(CraftCore, _name, instance)
         return instance.__getattribute__(name)
 
+    def __str__(self):
+        # force replacement
+        self.__getattribute__
+        # TODO: find out why how self was replaced ....
+        return self.__str__()
+
 
 class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")

@@ -3,7 +3,12 @@
 #
 # Packager base
 
+import datetime
+import json
+
 from CraftBase import *
+
+from Utils import CraftHash
 
 
 class PackagerBase(CraftBase):
@@ -38,3 +43,25 @@ class PackagerBase(CraftBase):
     # """ create a package """
     def createPackage(self):
         utils.abstract()
+
+
+    def _generateManifest(self, destDir, archiveName, manifestLocation=None):
+        if not manifestLocation:
+            manifestLocation = destDir
+        cacheFilePath = os.path.join(manifestLocation, "manifest.json")
+        cache = {}
+        if os.path.isfile(cacheFilePath):
+            with open(cacheFilePath, "rt+") as cacheFile:
+                cache = json.load(cacheFile)
+
+        cache["Date"] = str(datetime.date.today())
+        if "APPVEYOR_BUILD_VERSION" in os.environ:
+            cache["APPVEYOR_BUILD_VERSION"] = os.environ["APPVEYOR_BUILD_VERSION"]
+
+        archiveFile = os.path.join(destDir, archiveName)
+        if not str(self) in cache:
+            cache[str(self)] = {}
+        cache[str(self)][archiveName] = {"checksum": CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)}
+
+        with open(cacheFilePath, "wt+") as cacheFile:
+            json.dump(cache, cacheFile, sort_keys=True, indent=2)
