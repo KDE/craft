@@ -41,6 +41,7 @@ class SevenZipPackager(PackagerBase):
         if not utils.system(cmd, displayProgress=True, **kw):
             CraftCore.log.critical(f"while packaging. cmd: {cmd}")
         if not CraftCore.settings.getboolean("Packager", "CreateCache"):
+            self._generateManifest(destDir, archiveName)
             CraftHash.createDigestFiles(archive)
         else:
             self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation())
