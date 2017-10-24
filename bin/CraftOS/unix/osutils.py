@@ -42,3 +42,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         sys.stdout.buffer.write(b"\x07")
         sys.stdout.flush()
         return True
+
+    @staticmethod
+    def toNativePath(path : str) -> str:
+        return OsUtils.toUnixPath(path)

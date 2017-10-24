@@ -35,3 +35,24 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     @staticmethod
     def supportsSymlinks() -> bool:
         return True
+
+    @staticmethod
+    def toWindowsPath(path : str) -> str:
+        return path.replace("/", "\\")
+
+    @staticmethod
+    def toUnixPath(path : str) -> str:
+        return path.replace("\\", "/")
+
+    @staticmethod
+    def toMSysPath(path):
+        path = OsUtilsBase.toUnixPath(path)
+        drive, path = os.path.splitdrive(path)
+        if drive:
+            return f"/{drive[0].lower()}/{path}"
+        return path
+
+    @staticmethod
+    def toNativePath(path : str) -> str:
+        """Return a native path"""
+        pass

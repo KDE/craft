@@ -55,3 +55,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         # Since Windows 10 14972 admin rights are no longer required to create symlinks
         # https://blogs.windows.com/buildingapps/2016/12/02/symlinks-windows-10/
         return ver[0] == "10" and int(ver[2]) >= 14972
+
+    @staticmethod
+    def toNativePath(path : str) -> str:
+        return OsUtils.toWindowsPath(path)

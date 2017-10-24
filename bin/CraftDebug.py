@@ -152,7 +152,7 @@ def deprecated(replacement=None):
     def outer(fun):
         msg = f"{fun.__name__} is deprecated"
         if replacement is not None:
-            msg += f"; use {replacement} instead"
+            msg += f", use {replacement} instead"
         if fun.__doc__ is None:
             fun.__doc__ = msg
 

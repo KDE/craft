@@ -181,7 +181,6 @@ class PackageBase(CraftBase):
         archiveName = self.binaryArchiveName(includePackagePath=True)
         archvieFolder, localArchiveName = self.binaryArchiveName(includePackagePath=True).rsplit("/", 1)
         downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
-        print(downloadFolder)
 
         if not os.path.exists(downloadFolder):
             os.makedirs(downloadFolder)

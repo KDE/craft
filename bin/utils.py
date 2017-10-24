@@ -24,6 +24,7 @@ from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 import Utils.CraftCache
+from CraftDebug import deprecated
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -468,13 +469,9 @@ def createImportLibs(dll_name, basepath):
         os.remove(exppath)
     return True
 
-
+@deprecated("OsUtils.toMSysPath")
 def toMSysPath(path):
-    path = path.replace('\\', '/')
-    if (len(path) > 1 and path[1] == ':'):
-        path = '/' + path[0].lower() + '/' + path[3:]
-    return path
-
+    return OsUtils.toMSysPath(path)
 
 def cleanPackageName(basename, packagename):
     return os.path.basename(basename).replace(packagename + "-", "").replace(".py", "")
