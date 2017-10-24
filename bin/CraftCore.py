@@ -36,6 +36,7 @@ class CraftCore(object):
     settings = AutoImport("settings", "CraftConfig")
     cache = AutoImport("cache", "Utils.CraftCache", "CraftCache")
     compiler = AutoImport("compiler", "CraftCompiler")
+    installdb = AutoImport("installdb", "InstallDB")
 
     @classmethod
     def registerObjectAlias(cls, name : str, source : str, obj : str) -> None:

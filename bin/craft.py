@@ -34,15 +34,15 @@ if not "KDEROOT" in os.environ:
 def migrate():
     portageDir = os.path.join(CraftStandardDirs.etcDir(), "portage")
     if os.path.isdir(portageDir):
-        del InstallDB.installdb
+        del CraftCore.installdb
         utils.moveEntries(portageDir, CraftStandardDirs.etcBlueprintDir())
         utils.rmtree(portageDir)
-        InstallDB.installdb = InstallDB.InstallDB()
-    InstallDB.installdb.migrateDatabase()
+        CraftCore.installdb =InstallDB.InstallDB()
+    CraftCore.installdb.migrateDatabase()
 
 
 def destroyCraftRoot():
-    del InstallDB.installdb
+    del CraftCore.installdb
     root = CraftStandardDirs.craftRoot()
     for entry in os.listdir(root):
         path = os.path.join(root, entry)
@@ -84,7 +84,7 @@ def readListFile(listFile):
 
 
 def packageIsOutdated(package):
-    installed = InstallDB.installdb.getInstalledPackages(package)
+    installed = CraftCore.installdb.getInstalledPackages(package)
     if not installed:
         return True
     for pack in installed:

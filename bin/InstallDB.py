@@ -14,7 +14,7 @@ class InstallPackage(object):
         similar to this one:
 
         # get an InstallPackage object p
-        p = InstallDB.installdb.addInstalled( "cat", "pac", "ver", "prefix" )
+        p = CraftCore.installdb.addInstalled( "cat", "pac", "ver", "prefix" )
         # add files ( including the hash )
         p.addFiles( [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ] )
         if failed:
@@ -25,7 +25,7 @@ class InstallPackage(object):
             p.install()
 
         Deinstallation works similar:
-        p = InstallDB.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
+        p = CraftCore.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
         # get the files ( including the hash )
         f = p.getFilesWithHashes()
         # f now contains [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ]
@@ -285,15 +285,9 @@ class InstallDB(object):
                   + installCommand)
             exit(1)
 
-
-
-# get a global object
-installdb = InstallDB()
-
-
 def printInstalled():
     """get all the packages that are already installed"""
-    installed = installdb.getDistinctInstalled()
+    installed = CraftCore.installdb.getDistinctInstalled()
     width = 40
     def printLine(first, second):
         CraftCore.log.info(f"{first:{width}}: {second}")
@@ -305,7 +299,7 @@ def printInstalled():
         printLine(package, version)
 
 def printPackagesForFileSearch(filename):
-    packages = installdb.getPackagesForFileSearch(filename)
+    packages = CraftCore.installdb.getPackagesForFileSearch(filename)
     for pId, filename in packages:
         path , version = pId.getPackageInfo()
         CraftCore.log.info(f"{path}: {filename}")

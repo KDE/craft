@@ -19,11 +19,11 @@ class CraftTestBase(unittest.TestCase):
         CraftCore.settings.set("Blueprints", "Locations", oldSettings.get("Blueprints", "Locations"))
         CraftCore.settings.set("Blueprints", "BlueprintRoot", oldSettings.get("Blueprints", "BlueprintRoot"))
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
-        if hasattr(InstallDB, "installdb"):
-            del InstallDB.installdb
-        InstallDB.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))
+        if hasattr(CraftCore, "installdb"):
+            del CraftCore.installdb
+        CraftCore.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))
 
     def tearDown(self):
-        InstallDB.installdb.connection.close()
-        del InstallDB.installdb
+        CraftCore.installdb.connection.close()
+        del CraftCore.installdb
         del self.kdeRoot

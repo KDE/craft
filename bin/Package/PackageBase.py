@@ -59,7 +59,7 @@ class PackageBase(CraftBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
-        package = installdb.addInstalled(self.package, self.version, revision=revision)
+        package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision)
         fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
         package.addFiles(fileList)
         package.install()
@@ -75,7 +75,7 @@ class PackageBase(CraftBase):
         ## a better solution will be to save the merge sub dir into
         ## /etc/blueprints/installed and to read from it on unmerge
         CraftCore.log.debug("unmerge package from %s" % self.mergeDestinationDir())
-        packageList = installdb.getInstalledPackages(self.package)
+        packageList = CraftCore.installdb.getInstalledPackages(self.package)
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
@@ -138,7 +138,7 @@ class PackageBase(CraftBase):
         utils.createImportLibs(pkgName, basepath)
 
     def printFiles(self):
-        packageList = installdb.getInstalledPackages(self.package)
+        packageList = CraftCore.installdb.getInstalledPackages(self.package)
         for package in packageList:
             fileList = package.getFiles()
             fileList.sort()
