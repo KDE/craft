@@ -50,6 +50,13 @@ class PackagerBase(CraftBase):
             manifestLocation = destDir
         cacheFilePath = os.path.join(manifestLocation, "manifest.json")
         cache = {}
+
+        if ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(cacheFilePath):
+            url = CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl")
+            if not url.endswith("/"):
+                url += "/"
+            utils.getFile(f"{url}manifest.json", manifestLocation)
+
         if os.path.isfile(cacheFilePath):
             with open(cacheFilePath, "rt+") as cacheFile:
                 cache = json.load(cacheFile)
