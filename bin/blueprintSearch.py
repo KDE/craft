@@ -22,10 +22,9 @@ class SeachPackage(object):
         return CraftPackageObject.get(self.path)
 
     def __str__(self):
-        installed = InstallDB.installdb.getInstalledPackages(self.package)
         version = None
         revision = None
-        if installed:
+        if self.package.isInstalled:
             if (len(installed) > 1):
                 raise Exception("Multiple installs are not supported")
             version = installed[0].getVersion() or None
@@ -39,7 +38,7 @@ class SeachPackage(object):
     Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}
-    
+
     Available versions: {self.availableVersions}
 """
 

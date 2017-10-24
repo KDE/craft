@@ -33,7 +33,7 @@ class PackageBase(CraftBase):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
-        if installdb.isInstalled(package=self.package):
+        if self.package.isInstalled:
             self.unmerge()
 
         CraftCore.log.debug("qmerge package to %s" % self.mergeDestinationDir())
