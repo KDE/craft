@@ -176,7 +176,7 @@ class CraftPackageObject(object):
 
     @property
     def isInstalled(self) -> bool:
-        return CraftCore.installdb.getInstalledPackages(self.package) is not None
+        return CraftCore.installdb.getInstalledPackages(self) is not None
 
     @property
     def subinfo(self):
