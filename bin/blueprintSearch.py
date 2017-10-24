@@ -22,9 +22,10 @@ class SeachPackage(object):
         return CraftPackageObject.get(self.path)
 
     def __str__(self):
+        installed = CraftCore.installdb.getInstalledPackages(self.package)
         version = None
         revision = None
-        if self.package.isInstalled:
+        if installed:
             if (len(installed) > 1):
                 raise Exception("Multiple installs are not supported")
             version = installed[0].getVersion() or None
