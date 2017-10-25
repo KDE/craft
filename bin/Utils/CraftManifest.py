@@ -16,7 +16,7 @@ class CraftManifestEntryFile(object):
     @staticmethod
     def fromJson(data : dict):
         out = CraftManifestEntryFile(data["fileName"], data["checksum"])
-        out.date = datetime.datetime.strptime(data["date"], "%Y-%m-%d %H:%M:%S.%f")
+        out.date = CraftManifest._parseTimeStamp(data["date"])
         return out
 
     def toJson(self) -> dict:
@@ -48,7 +48,7 @@ class CraftManifestEntry(object):
 
 class CraftManifest(object):
     def __init__(self):
-        self.date = str(datetime.datetime.utcnow())
+        self.date = datetime.datetime.utcnow()
         self.packages = {str(CraftCore.compiler) : {}}
 
     @staticmethod
@@ -65,7 +65,7 @@ class CraftManifest(object):
             p = packages[name]
             for fileName, pData in data[name].items():
                 f = p.addFile(fileName, pData["checksum"])
-                f.date = datetime.dateime(0, 0, 0)
+                f.date = datetime.datetime(0, 0, 0)
         return manifest
 
     @staticmethod
@@ -77,7 +77,7 @@ class CraftManifest(object):
             raise Exception("Invalid manifest version detected")
 
         manifest = CraftManifest()
-        manifest.date = data["date"]
+        manifest.date = CraftManifest._parseTimeStamp(data["date"])
         for compiler in data["packages"]:
             manifest.packages[compiler] = {}
             for package in data["packages"][compiler]:
@@ -86,7 +86,7 @@ class CraftManifest(object):
         return manifest
 
     def toJson(self) -> dict:
-        out = {"date":self.date, "packages":{}, "version": CraftManifest.version()}
+        out = {"date":str(self.date), "packages":{}, "version": CraftManifest.version()}
         for compiler, packages in self.packages.items():
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
@@ -122,3 +122,6 @@ class CraftManifest(object):
 
         return CraftManifest.fromJson(cache)
 
+    @staticmethod
+    def _parseTimeStamp(time : str) -> datetime.datetime:
+        return datetime.datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f")
