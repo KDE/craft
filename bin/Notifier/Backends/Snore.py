@@ -17,14 +17,14 @@ class Snore(NotificationInterface):
             snore = CraftCore.cache.findApplication("snoresend")
             if not snore:
                 return
-            command = [snore, "-t", "title", "-m", message, "-i", self.icon, "-a", "Craft", "-c", alertClass, "--silent"]
+            command = [snore, "-t", title, "-m", message, "-i", self.icon, "-a", "Craft", "-c", alertClass, "--silent"]
             if OsUtils.isWin():
                 command += ["--bring-window-to-front", str(ctypes.windll.kernel32.GetConsoleWindow())]
-            utils.systemWithoutShell(command,
-                                     logCommand=False,
-                                     stdout=subprocess.DEVNULL,
-                                     stderr=subprocess.DEVNULL,
-                                     cwd=CraftCore.standardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
+            CraftCore.log.debug(command)
+            subprocess.Popen(command,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                            cwd=CraftCore.standardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
         except Exception as e:
             CraftCore.log.debug(e)
             return
