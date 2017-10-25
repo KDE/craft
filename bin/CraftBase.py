@@ -251,5 +251,5 @@ class CraftBase(object):
         else:
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
-        return ["/".join([url, version, *CraftCore.compiler.signature, self.buildType()]) for url in
+        return ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, self.buildType()]) for url in
                 CraftCore.settings.getList("Packager", "RepositoryUrl")]

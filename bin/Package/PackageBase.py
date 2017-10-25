@@ -189,10 +189,8 @@ class PackageBase(CraftBase):
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
             manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
-            if not str(self) in manifest.packages:
-                continue
 
-            fileEntry = manifest.get(str(self)).files.get(archiveName)
+            fileEntry = manifest.get(str(self)).files.get(archiveName, None)
             if not fileEntry:
                 continue
 
