@@ -1,41 +1,50 @@
+import collections
 import datetime
 import json
 import os
+
 
 from CraftCore import CraftCore
 import utils
 
 class CraftManifestEntryFile(object):
-    def __init__(self, fileName : str, checksum : str, date=None) -> None:
+    def __init__(self, fileName : str, checksum : str) -> None:
         self.fileName = fileName
         self.checksum = checksum
-        self.date = date or str(datetime.datetime.utcnow())
+        self.date = datetime.datetime.utcnow()
+
+    @staticmethod
+    def fromJson(data : dict):
+        out = CraftManifestEntryFile(data["fileName"], data["checksum"])
+        out.date = datetime.datetime.strptime(data["date"], "%Y-%m-%d %H:%M:%S.%f")
+        return out
 
     def toJson(self) -> dict:
-        return self.__dict__
+        return {"fileName":self.fileName, "checksum":self.checksum, "date":str(self.date)}
 
 class CraftManifestEntry(object):
     def __init__(self, name : str) -> None:
         self.name = name
-        self.files = {}
-        self.appveyorBuildVersion = os.environ.get("APPVEYOR_BUILD_VERSION", None)
+        self.files = collections.OrderedDict()
 
     @staticmethod
     def fromJson(data : dict):
         entry = CraftManifestEntry(data["name"])
-        entry.appveyorBuildVersion = data["appveyorBuildVersion"]
-        for files in data["files"]:
-            f = entry.addFile(files["fileName"], files["checksum"])
-            f.date = files["date"]
+        files = sorted([CraftManifestEntryFile.fromJson(fileData) for fileData in data["files"]], key=lambda x:x.date)
+        entry.files = collections.OrderedDict([(x.fileName, x) for x in files])
         return entry
 
     def toJson(self) -> dict:
-        return {"name":self.name, "appveyorBuildVersion": self.appveyorBuildVersion, "files":[x.toJson() for x in self.files.values()]}
+        return {"name":self.name, "files":[x.toJson() for x in self.files.values()]}
 
     def addFile(self, fileName : str, checksum : str) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum)
         self.files[fileName] = f
         return f
+
+    @property
+    def latest(self) -> CraftManifestEntryFile:
+        return list(self.files.values())[-1]
 
 class CraftManifest(object):
     def __init__(self):
@@ -56,7 +65,7 @@ class CraftManifest(object):
             p = packages[name]
             for fileName, pData in data[name].items():
                 f = p.addFile(fileName, pData["checksum"])
-                f.date = None
+                f.date = datetime.dateime(0, 0, 0)
         return manifest
 
     @staticmethod
@@ -70,6 +79,7 @@ class CraftManifest(object):
         manifest = CraftManifest()
         manifest.date = data["date"]
         for compiler in data["packages"]:
+            manifest.packages[compiler] = {}
             for package in data["packages"][compiler]:
                 p = CraftManifestEntry.fromJson(package)
                 manifest.packages[compiler][p.name] = p
