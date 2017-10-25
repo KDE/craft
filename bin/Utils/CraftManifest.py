@@ -65,7 +65,7 @@ class CraftManifest(object):
             p = packages[name]
             for fileName, pData in data[name].items():
                 f = p.addFile(fileName, pData["checksum"])
-                f.date = datetime.datetime(0, 0, 0)
+                f.date = datetime.datetime(1, 1, 1)
         return manifest
 
     @staticmethod
