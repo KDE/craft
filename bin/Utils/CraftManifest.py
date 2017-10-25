@@ -99,7 +99,7 @@ class CraftManifest(object):
             url = CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl")
             if not url.endswith("/"):
                 url += "/"
-            utils.getFile(f"{url}manifest.json", os.path.basedir(manifestFileName))
+            utils.getFile(f"{url}manifest.json", os.path.dirname(manifestFileName))
 
         if os.path.isfile(manifestFileName):
             try:
