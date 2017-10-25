@@ -9,6 +9,7 @@ import json
 from CraftBase import *
 
 from Utils import CraftHash
+from Utils.CraftManifest import *
 
 
 class PackagerBase(CraftBase):
@@ -48,27 +49,12 @@ class PackagerBase(CraftBase):
     def _generateManifest(self, destDir, archiveName, manifestLocation=None):
         if not manifestLocation:
             manifestLocation = destDir
-        cacheFilePath = os.path.join(manifestLocation, "manifest.json")
-        cache = {}
-
-        if ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(cacheFilePath):
-            url = CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl")
-            if not url.endswith("/"):
-                url += "/"
-            utils.getFile(f"{url}manifest.json", manifestLocation)
-
-        if os.path.isfile(cacheFilePath):
-            with open(cacheFilePath, "rt+") as cacheFile:
-                cache = json.load(cacheFile)
-
-        cache["Date"] = str(datetime.date.today())
-        if "APPVEYOR_BUILD_VERSION" in os.environ:
-            cache["APPVEYOR_BUILD_VERSION"] = os.environ["APPVEYOR_BUILD_VERSION"]
-
+        manifestLocation = os.path.join(manifestLocation, "manifest.json")
         archiveFile = os.path.join(destDir, archiveName)
-        if not str(self) in cache:
-            cache[str(self)] = {}
-        cache[str(self)][archiveName] = {"checksum": CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)}
 
-        with open(cacheFilePath, "wt+") as cacheFile:
-            json.dump(cache, cacheFile, sort_keys=True, indent=2)
+        manifest = CraftManifest.load(manifestLocation)
+        entry = manifest.get(str(self))
+        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256))
+
+        manifest.dump(manifestLocation)
+

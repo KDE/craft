@@ -6,6 +6,7 @@ from CraftCompiler import *
 from InstallDB import *
 from Blueprints.CraftPackageObject import *
 from Utils import CraftHash
+from Utils.CraftManifest import CraftManifest
 
 
 class PackageBase(CraftBase):
@@ -187,15 +188,20 @@ class PackageBase(CraftBase):
 
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
-            cache = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
-            if not cache or not str(self) in cache or not archiveName in cache[str(self)]:
+            manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+            if not str(self) in manifest.packages:
                 continue
+
+            fileEntry = manifest.get(str(self)).files.get(archiveName)
+            if not fileEntry:
+                continue
+
             if url != self.cacheLocation():
                 if not os.path.exists(os.path.join(downloadFolder, localArchiveName)):
                     if not utils.getFile(f"{url}/{archiveName}", downloadFolder, localArchiveName):
                         return False
             return CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
-                                               digests=cache[str(self)][archiveName]["checksum"],
+                                               digests=fileEntry.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
                    and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir()) \

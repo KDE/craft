@@ -55,7 +55,8 @@ class CraftManifest(object):
                 packages[name] = CraftManifestEntry(name)
             p = packages[name]
             for fileName, pData in data[name].items():
-                p.addFile(fileName, pData["checksum"])
+                f = p.addFile(fileName, pData["checksum"])
+                f.date = None
         return manifest
 
     @staticmethod
