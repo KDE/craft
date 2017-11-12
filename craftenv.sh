@@ -19,7 +19,7 @@ export craftRoot
 CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup))
 
 for line in "${CRAFT_ENV[@]}"; do
-  if [[ "$line"  =~ "=" ]];then
+  if [[ "$line"  =~ "=" ]] && [[ $line != _=* ]];then
     export $line || true
   fi
 done
