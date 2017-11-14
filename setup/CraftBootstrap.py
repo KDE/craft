@@ -170,8 +170,11 @@ def run(args, command):
 
 
 def getArchitecture():
-    return CraftBootstrap.promptForChoice("Select architecture", [("x86", "32"),
-                                                                  ("x64", "64")], "x64")
+    if CraftBootstrap.isWin():
+        return CraftBootstrap.promptForChoice("Select architecture", [("x86", "32"),
+                                                                      ("x64", "64")], "x64")
+    else:
+        return 64 if sys.maxsize > 2**32 else 32
 
 
 def getABI():
@@ -188,7 +191,6 @@ def getABI():
         if CraftBootstrap.isMac():
             platform = "macos"
             compiler = "clang"
-            abi = "64"
         else:
             if CraftBootstrap.isLinux():
                 platform = "linux"
@@ -196,7 +198,7 @@ def getABI():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                       ["gcc", "clang"])
-            abi = getArchitecture()
+        abi = getArchitecture()
 
     return f"{platform}-{abi}-{compiler}"
 
