@@ -9,7 +9,7 @@ import time
 import urllib.error
 import urllib.request
 
-from CraftCore import CraftCore
+from CraftCore import CraftCore, AutoImport
 import CraftDebug
 
 from Blueprints.CraftVersion import CraftVersion
@@ -59,6 +59,8 @@ class CraftCache(object):
     def _save():
         try:
             if not os.path.isdir(os.path.dirname(CraftCache._cacheFile())):
+                return
+            if isinstance(CraftCore.cache, AutoImport):
                 return
             with open(CraftCache._cacheFile(), "wb") as f:
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
