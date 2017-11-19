@@ -422,7 +422,8 @@ if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
         CraftTitleUpdater.instance = CraftTitleUpdater()
-        CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
+        if not "CRAFT_NOTITLEUPDATE" in os.environ:
+            CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
             success = main()
         except KeyboardInterrupt:
