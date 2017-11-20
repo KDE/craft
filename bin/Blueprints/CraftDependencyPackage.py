@@ -1,7 +1,7 @@
 from enum import unique, Enum
 
 from CraftCore import CraftCore
-from Blueprints.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
 
 
 @unique
@@ -55,7 +55,10 @@ class CraftDependencyPackage(CraftPackageObject):
         if deps:
             for line in deps:
                 if line not in CraftDependencyPackage._packageCache:
-                    p = CraftDependencyPackage(CraftPackageObject.get(line))
+                    package = CraftPackageObject.get(line)
+                    if not package:
+                        raise BlueprintException(f"Failed to resolve {line} as a dependency of {self}", self)
+                    p = CraftDependencyPackage(package)
                     CraftCore.log.debug(f"adding package {line}")
                     CraftDependencyPackage._packageCache[line] = p
                 else:

@@ -429,7 +429,11 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         except BlueprintException as e:
-            CraftCore.log.error(e, exc_info=e.exception or e)
+            if 0 <= CraftCore.debug.verbose() < 2:
+                CraftCore.log.error(e)
+                CraftCore.log.debug(e, exc_info=e.exception or e)
+            else:
+                CraftCore.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             CraftCore.log.error(e, exc_info=e)
         finally:
