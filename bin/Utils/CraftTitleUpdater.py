@@ -3,6 +3,7 @@ import time
 
 import utils
 
+from CraftCore import CraftCore
 
 class CraftTitleUpdater(object):
     def __init__(self):
@@ -20,6 +21,8 @@ class CraftTitleUpdater(object):
             time.sleep(1)
 
     def start(self, message, timer):
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            return
         self.title = message
         self.timer = timer
         self.doUpdateTitle = True
