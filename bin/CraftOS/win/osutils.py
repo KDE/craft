@@ -48,13 +48,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def supportsSymlinks():
-        _, ver, _, _ = platform.win32_ver()
-        ver = ver.split(".")
-        if len(ver) < 3:
-            return False
-        # Since Windows 10 14972 admin rights are no longer required to create symlinks
-        # https://blogs.windows.com/buildingapps/2016/12/02/symlinks-windows-10/
-        return ver[0] == "10" and int(ver[2]) >= 14972
+        testFile = os.path.join(os.environ["TMP"], "CRAFT_LINK_TEST")
+        if os.path.exists(testFile):
+            os.remove(testFile)
+        return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} %CRAFTROOT%\\README.md")[0] == 0
 
     @staticmethod
     def toNativePath(path : str) -> str:

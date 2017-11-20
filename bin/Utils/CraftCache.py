@@ -17,7 +17,7 @@ from CraftOS.unix.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 class CraftCache(object):
-    _version = 6
+    _version = 7
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
@@ -100,15 +100,15 @@ class CraftCache(object):
             return None
         if not (app, command) in self._outputCache:
             CraftCore.log.debug(f"\"{app}\" {command}")
-            output = subprocess.getoutput(f"\"{app}\" {command}")
-            CraftCore.log.debug(output)
-            self._outputCache[(app, command)] = output
+            code, output = subprocess.getstatusoutput(f"\"{app}\" {command}")
+            CraftCore.log.debug(f"ExitedCode: {code} Output: {output}")
+            self._outputCache[(app, command)] = (code, output)
         return self._outputCache[(app, command)]
 
     # TODO: rename, cleanup
     def checkCommandOutputFor(self, app, command, helpCommand="-h") -> str:
         if not (app, command) in self._helpCache:
-            output = self.getCommandOutput(app, helpCommand)
+            _, output = self.getCommandOutput(app, helpCommand)
             if not output:
                 return False
             if type(command) == str:
@@ -131,7 +131,7 @@ class CraftCache(object):
             versionCommand = "--version"
         if not isinstance(pattern, re._pattern_type):
             raise Exception("getVersion can only handle a compiled regular expression as pattern")
-        output = self.getCommandOutput(app, versionCommand)
+        _, output = self.getCommandOutput(app, versionCommand)
         if not output:
             return False
         match = pattern.search(output)
