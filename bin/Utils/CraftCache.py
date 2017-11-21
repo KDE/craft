@@ -17,7 +17,7 @@ from CraftOS.unix.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 class CraftCache(object):
-    _version = 7
+    _version = 8
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
     def __init__(self):
@@ -94,16 +94,18 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(self, app, command):
+    def getCommandOutput(self, app:str, command:str, testName:str=None) -> (int, bool):
+        if not testName:
+            testName = f"\"{app}\" {command}"
         app = self.findApplication(app)
         if not app:
-            return None
-        if not (app, command) in self._outputCache:
+            return (-1, None)
+        if testName not in self._outputCache:
             CraftCore.log.debug(f"\"{app}\" {command}")
             code, output = subprocess.getstatusoutput(f"\"{app}\" {command}")
-            CraftCore.log.debug(f"ExitedCode: {code} Output: {output}")
-            self._outputCache[(app, command)] = (code, output)
-        return self._outputCache[(app, command)]
+            CraftCore.log.debug(f"{testName} Result: ExitedCode: {code} Output: {output}")
+            self._outputCache[testName] = (code, output)
+        return self._outputCache[testName]
 
     # TODO: rename, cleanup
     def checkCommandOutputFor(self, app, command, helpCommand="-h") -> str:

@@ -51,7 +51,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def supportsSymlinks():
         with tempfile.TemporaryDirectory() as tmp:
             testFile = os.path.join(tmp, "CRAFT_LINK_TEST")
-            return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} {__file__}")[0] == 0
+            return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} {__file__}", testName="CRAFT_LINK_TEST")[0] == 0
 
     @staticmethod
     def toNativePath(path : str) -> str:
