@@ -30,14 +30,14 @@ class SevenZipPackager(PackagerBase):
         utils.deleteFile(archiveName)
         app = CraftCore.cache.findApplication("7za")
         kw = {}
-        progressFlags = ""
+        progressFlags = []
         if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
-            progressFlags = " -bso2 -bsp1"
+            progressFlags = ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
         archive = os.path.join(destDir, archiveName)
         if os.path.isfile(archive):
             utils.deleteFile(archive)
-        cmd = f"\"{app}\" a {progressFlags} -r \"{archive}\" \"{sourceDir}/*\""
+        cmd = [app, "a", "-r",  archive, os.path.join(sourceDir, "*")] + progressFlags
         if not utils.system(cmd, displayProgress=True, **kw):
             CraftCore.log.critical(f"while packaging. cmd: {cmd}")
         if not CraftCore.settings.getboolean("Packager", "CreateCache"):
