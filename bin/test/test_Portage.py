@@ -2,7 +2,7 @@ import importlib
 
 import CraftConfig
 import CraftTestBase
-from Blueprints import CraftPackageObject
+from Blueprints import CraftPackageObject, CraftDependencyPackage
 
 
 class CraftBlueprintTest(CraftTestBase.CraftTestBase):
@@ -13,6 +13,9 @@ class CraftBlueprintTest(CraftTestBase.CraftTestBase):
         installable = CraftPackageObject.CraftPackageObject.installables()
         for _p in installable:
             _p.instance
+
+            CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
+
 
 
 class TestAPI(CraftBlueprintTest):

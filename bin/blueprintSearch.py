@@ -67,6 +67,8 @@ def printSearch(search_package, maxDist=2):
         match = None
         package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)
         for package in packages():
+            if not package.package:
+                continue
             packageString =  package.package.path if isPath else package.package.name
             levDist = abs(len(searchPackageLower) - len(packageString))
             if levDist <= maxDist:
