@@ -153,6 +153,7 @@ class CraftPackageObject(object):
                 # create a dummy package to load its children
                 child = root._addNode(None, blueprintRoot)
                 root.children.update(child.children)
+            CraftPackageObject._nodes["/"] = root
         return CraftPackageObject.__rootPackage
 
 
