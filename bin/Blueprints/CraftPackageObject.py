@@ -226,13 +226,12 @@ class CraftPackageObject(object):
         return recipes
 
 
-class BlueprintException(Exception, CraftPackageObject):
+class BlueprintException(Exception):
     def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
-        CraftPackageObject.__init__(self, package)
+
+        self.package = package
         self.exception = exception
 
     def __str__(self):
-        return "%s failed: %s" % (CraftPackageObject.__str__(self), Exception.__str__(self))
-
-
+        return "%s failed: %s" % (self.package, Exception.__str__(self))
