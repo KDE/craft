@@ -51,7 +51,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         testFile = os.path.join(os.environ["TMP"], "CRAFT_LINK_TEST")
         if os.path.lexists(testFile):
             os.remove(testFile)
-        return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} {os.environ['CRAFTROOT']}\\README.md")[0] == 0
+        return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} {__file__}")[0] == 0
 
     @staticmethod
     def toNativePath(path : str) -> str:
