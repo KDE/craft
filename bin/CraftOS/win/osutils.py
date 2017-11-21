@@ -49,7 +49,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def supportsSymlinks():
         testFile = os.path.join(os.environ["TMP"], "CRAFT_LINK_TEST")
-        if os.path.exists(testFile):
+        if os.path.lexists(testFile):
             os.remove(testFile)
         return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} %CRAFTROOT%\\README.md")[0] == 0
 
