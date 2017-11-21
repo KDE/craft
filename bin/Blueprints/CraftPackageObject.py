@@ -234,4 +234,4 @@ class BlueprintException(Exception):
         self.exception = exception
 
     def __str__(self):
-        return f"{self.package.source or self.package} failed: {self}"
+        return f"{self.package.source or self.package} failed: {Exception.__str__(self)}"
