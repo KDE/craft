@@ -186,7 +186,7 @@ class CollectionPackagerBase(PackagerBase):
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
-            entry_target = entry.replace(srcDir, os.path.join(destDir))
+            entry_target = entry.replace(srcDir, destDir)
             utils.copyFile(entry, entry_target, linkOnly=False)
             if OsUtils.isWin():
                 if not strip and entry_target.endswith((".dll", ".exe")):
