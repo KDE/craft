@@ -24,8 +24,11 @@ def toRegExp(fname, targetName) -> re:
         if line.startswith("#") or len(line) == 0:
             continue
         try:
-            tmp = "^%s$" % line
-            regex += "%s|" % tmp
+            #convert to forward path sep
+            line = line.replace(r"\\", "/")
+            tmp = f"^{line}$"
+            print(tmp)
+            regex += f"{tmp}|"
             re.compile(tmp, re.IGNORECASE)  # for debug
             CraftCore.log.debug("%s added to %s as %s" % (line, targetName, tmp))
         except re.error:
@@ -161,14 +164,17 @@ class CollectionPackagerBase(PackagerBase):
             filename that the function whitelist returns as true and
             which do not match blacklist entries
         """
+        directory = OsUtils.toUnixPath(directory)
         if blacklist(directory):
             return
+        if not directory.endswith("/"):
+            directory += "/"
         dirs = [directory]
         while dirs:
             path = dirs.pop()
             for f in os.listdir(path):
                 f = os.path.join(path, f)
-                z = f.replace(directory + os.sep, "")
+                z = f.replace(directory, "")
                 if blacklist(z):
                     continue
                 if os.path.isdir(f):
