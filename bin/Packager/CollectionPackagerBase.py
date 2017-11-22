@@ -181,7 +181,7 @@ class CollectionPackagerBase(PackagerBase):
                 elif os.path.isfile(f) and whitelist(z):
                     yield f
 
-    def copyFiles(self, srcDir, destDir, strip):
+    def copyFiles(self, srcDir, destDir, dontStrip):
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -193,9 +193,13 @@ class CollectionPackagerBase(PackagerBase):
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
             entry_target = entry.replace(srcDir, destDir)
             utils.copyFile(entry, entry_target, linkOnly=False)
-            if OsUtils.isWin():
-                if not strip and entry_target.endswith((".dll", ".exe")):
-                    self.strip(entry_target)
+            if not dontStrip:
+                if OsUtils.isWin():
+                    if entry_target.endswith((".dll", ".exe")):
+                        self.strip(entry_target)
+                elif OsUtils.isUnix():
+                    if not os.path.islink(entry_target) and ".so" in entry_target or os.access(entry_target, os.X_OK):
+                        self.strip(entry_target)
 
     def internalCreatePackage(self):
         """ create a package """

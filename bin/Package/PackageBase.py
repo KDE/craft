@@ -116,22 +116,18 @@ class PackageBase(CraftBase):
 
         return True
 
-    def stripLibs(self, pkgName):
-        """strip debugging informations from shared libraries - mingw only!!! """
-        return self.strip(pkgName + ".dll")
-
     def strip(self, fileName):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
-        if self.subinfo.options.package.disableStriping or not CraftCore.compiler.isMinGW():
-            CraftCore.log.debug("Skiping stipping of " + fileName)
+        if self.subinfo.options.package.disableStriping or not CraftCore.compiler.isGCCLike():
+            CraftCore.log.debug(f"Skiping stipping of {fileName}")
             return True
-        basepath = os.path.join(self.installDir())
-        filepath = os.path.join(basepath, "bin", fileName)
-
-        cmd = "strip -s " + filepath
-        CraftCore.log.debug(cmd)
-        os.system(cmd)
-        return True
+        if os.path.isabs(fileName):
+            filepath = fileName
+        else:
+            CraftCore.log.warning("Please pass an absolute file path to strip")
+            basepath = os.path.join(self.installDir())
+            filepath = os.path.join(basepath, "bin", fileName)
+        return utils.system(["strip", "-s", filepath])
 
     def createImportLibs(self, pkgName):
         """create the import libraries for the other compiler(if ANSI-C libs)"""
