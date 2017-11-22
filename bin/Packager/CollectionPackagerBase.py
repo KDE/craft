@@ -173,7 +173,7 @@ class CollectionPackagerBase(PackagerBase):
             path = dirs.pop()
             for f in os.listdir(path):
                 f = OsUtils.toUnixPath(os.path.join(path, f))
-                z = f.lstrip(directory)
+                z = f.replace(directory, "")
                 if blacklist(z):
                     continue
                 if os.path.isdir(f):
