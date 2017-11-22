@@ -172,8 +172,8 @@ class CollectionPackagerBase(PackagerBase):
         while dirs:
             path = dirs.pop()
             for f in os.listdir(path):
-                f = os.path.join(path, f)
-                z = f.replace(directory, "")
+                f = OsUtils.toUnixPath(os.path.join(path, f))
+                z = f.lstrip(directory)
                 if blacklist(z):
                     continue
                 if os.path.isdir(f):
@@ -186,8 +186,10 @@ class CollectionPackagerBase(PackagerBase):
             Copy the binaries for the Package from srcDir to the imageDir
             directory
         """
-        if not destDir.endswith(os.path.sep):
-            destDir += os.path.sep
+        srcDir = OsUtils.toUnixPath(srcDir)
+        destDir = OsUtils.toUnixPath(destDir)
+        if not destDir.endswith("/"):
+            destDir += "/"
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
