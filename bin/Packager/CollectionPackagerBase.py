@@ -27,7 +27,6 @@ def toRegExp(fname, targetName) -> re:
             #convert to forward path sep
             line = line.replace(r"\\", "/")
             tmp = f"^{line}$"
-            print(tmp)
             regex += f"{tmp}|"
             re.compile(tmp, re.IGNORECASE)  # for debug
             CraftCore.log.debug("%s added to %s as %s" % (line, targetName, tmp))
