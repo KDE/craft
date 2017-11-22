@@ -501,12 +501,12 @@ def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHa
         CraftCore.log.warning("Overriding %s" % dest)
         OsUtils.rm(dest, True)
     # don't link to links
-    if linkOnly and not os.islink(src):
-            try:
-                os.link(src, dest)
-                return True
-            except:
-                CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
+    if linkOnly and not os.path.islink(src):
+        try:
+            os.link(src, dest)
+            return True
+        except:
+            CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
     shutil.copy(src, dest, follow_symlinks=False)
     return True
 
