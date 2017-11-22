@@ -3,7 +3,6 @@
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
 import fileinput
-import shutil
 import types
 
 from Packager.PackagerBase import *
@@ -182,8 +181,10 @@ class CollectionPackagerBase(PackagerBase):
             Copy the binaries for the Package from srcDir to the imageDir
             directory
         """
-        utils.createDir(destDir)
+        if not destDir.endswith(os.path.sep):
+            destDir += os.path.sep
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
+        # TODO: whats the point of unique_names and duplicates?
         uniquebasenames = []
         self.unique_names = []
         duplicates = []
@@ -196,22 +197,12 @@ class CollectionPackagerBase(PackagerBase):
                 self.unique_names.append(entry)
                 uniquebasenames.append(os.path.basename(entry))
 
-        for entry in self.unique_names:
-            entry_target = entry.replace(srcDir, os.path.join(destDir + os.path.sep))
-            if not os.path.exists(os.path.dirname(entry_target)):
-                utils.createDir(os.path.dirname(entry_target))
-            shutil.copy(entry, entry_target)
-            CraftCore.log.debug("Copied %s to %s" % (entry, entry_target))
-            if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
-                self.strip(entry_target)
-        for entry in duplicates:
-            entry_target = entry.replace(srcDir, destDir + os.path.sep)
-            if not os.path.exists(os.path.dirname(entry_target)):
-                utils.createDir(os.path.dirname(entry_target))
-            shutil.copy(entry, entry_target)
-            CraftCore.log.debug("Copied %s to %s" % (entry, entry_target))
-            if not strip and (entry_target.endswith(".dll") or entry_target.endswith(".exe")):
-                self.strip(entry_target)
+        for entry in self.unique_names + duplicates:
+            entry_target = entry.replace(srcDir, os.path.join(destDir))
+            utils.copyFile(entry, entry_target, linkOnly=False)
+            if OsUtils.isWin():
+                if not strip and entry_target.endswith((".dll", ".exe")):
+                    self.strip(entry_target)
 
     def internalCreatePackage(self):
         """ create a package """
