@@ -10,7 +10,7 @@ manifest/.*
 .*\.lib
 .*\.nsis
 .*\.prl
-.*\.dll\.a
+.*\.a
 .*\.def
 include/.*
 lib/cmake/.*
