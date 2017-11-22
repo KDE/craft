@@ -38,10 +38,12 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
 
     @staticmethod
     def toWindowsPath(path : str) -> str:
+        path = os.path.normpath(path)
         return path.replace("/", "\\")
 
     @staticmethod
     def toUnixPath(path : str) -> str:
+        path = os.path.normpath(path)
         return path.replace("\\", "/")
 
     @staticmethod
