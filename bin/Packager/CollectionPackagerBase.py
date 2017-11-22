@@ -184,20 +184,8 @@ class CollectionPackagerBase(PackagerBase):
         if not destDir.endswith(os.path.sep):
             destDir += os.path.sep
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
-        # TODO: whats the point of unique_names and duplicates?
-        uniquebasenames = []
-        self.unique_names = []
-        duplicates = []
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
-            if os.path.basename(entry) in uniquebasenames:
-                CraftCore.log.debug("Found duplicate filename: %s" % os.path.basename(entry))
-                duplicates.append(entry)
-            else:
-                self.unique_names.append(entry)
-                uniquebasenames.append(os.path.basename(entry))
-
-        for entry in self.unique_names + duplicates:
             entry_target = entry.replace(srcDir, os.path.join(destDir))
             utils.copyFile(entry, entry_target, linkOnly=False)
             if OsUtils.isWin():
