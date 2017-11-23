@@ -33,8 +33,8 @@ class PipBuildSystem(BuildSystemBase):
             for app, path in [("pip", os.path.join(pythonPath, "Scripts")),
                               (f"pip{pythonMajorVersion}", pythonPath),
                               ("pip", pythonPath)]:
-            CraftCore.log.debug(f"Looking for {app} in {path}")
-            pipExe = shutil.which(app, path=path)
+                CraftCore.log.debug(f"Looking for {app} in {path}")
+                pipExe = shutil.which(app, path=path)
             if pipExe:
                 break
 
