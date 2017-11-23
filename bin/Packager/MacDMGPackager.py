@@ -29,7 +29,8 @@ class MacDMGPackager( CollectionPackagerBase ):
         targetLibdir = os.path.join(appPath, "Contents/Frameworks/")
         if not os.path.exists(targetLibdir):
             os.makedirs(targetLibdir)
-        utils.mergeTree(os.path.join(archive, "lib"), targetLibdir)
+        if os.path.exists(os.path.join(archive, "lib")):
+            utils.mergeTree(os.path.join(archive, "lib"), targetLibdir)
         if os.path.exists(os.path.join(archive, "share")):
             utils.mergeTree(os.path.join(archive, "share"), os.path.join(appPath, "Contents/Resources/"))
         utils.mergeTree(os.path.join(archive, "bin"), os.path.join(appPath, "Contents/MacOS/"))
