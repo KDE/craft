@@ -12,19 +12,22 @@ class CraftTitleUpdater(object):
         self.timer = None
         self.dynamicMessage = None
 
+    def __str__(self):
+        dynamicPart = ""
+        if self.dynamicMessage:
+            dynamicPart = f" {self.dynamicMessage()}"
+        return f"{self.title}: {self.timer}{dynamicPart}"
+
     def run(self):
         while (self.doUpdateTitle):
-            dynamicPart = ""
-            if self.dynamicMessage:
-                dynamicPart = f" {self.dynamicMessage()}"
-            utils.OsUtils.setConsoleTitle(f"{self.title}: {self.timer}{dynamicPart}")
+            utils.OsUtils.setConsoleTitle(str(self))
             time.sleep(1)
 
     def start(self, message, timer):
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-            return
         self.title = message
         self.timer = timer
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            return
         self.doUpdateTitle = True
         tittleThread = threading.Thread(target=self.run)
         tittleThread.setDaemon(True)
