@@ -30,12 +30,13 @@ class PipBuildSystem(BuildSystemBase):
             args.append(" --allow-all-external")
 
         for pythonMajorVersion, pythonPath in pythons.items():
-            pipExe = shutil.which("pip", path=os.path.join(pythonPath, "Scripts"))
-            if not pipExe:
-                pipExe = shutil.which("pip%s" % pythonMajorVersion,
-                                      path=pythonPath)  # Unix systems may append the major version to the name
-            if not pipExe:
-                pipExe = shutil.which("pip", path=pythonPath)  # Chocolatey installs pip.exe next to python.exe
+            for app, path in [("pip", os.path.join(pythonPath, "Scripts")),
+                              (f"pip{pythonMajorVersion}", pythonPath),
+                              ("pip", pythonPath)]:
+            CraftCore.log.debug(f"Looking for {app} in {path}")
+            pipExe = shutil.which(app, path=path)
+            if pipExe:
+                break
 
             if not pipExe:
                 CraftCore.log.warning(
