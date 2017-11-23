@@ -119,8 +119,13 @@ class PackageBase(CraftBase):
     def strip(self, fileName):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or not CraftCore.compiler.isGCCLike():
-            CraftCore.log.debug(f"Skiping stipping of {fileName}")
+            CraftCore.log.debug(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
             return True
+
+        if OsUtils.isMac():
+            CraftCore.log.debug(f"Skipping stripping of files on macOS -- not implemented")
+            return True
+
         if os.path.isabs(fileName):
             filepath = fileName
         else:
