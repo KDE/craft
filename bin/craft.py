@@ -214,6 +214,9 @@ def run(package, action, args, directTargets):
             if args.probe:
                 CraftCore.log.warning(f"pretending {info}: {info.version}")
             else:
+                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                    CraftCore.debug.debug_line()
+                    CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
                 if action in ["install-deps"]:
                     action = "all"
 
@@ -222,9 +225,6 @@ def run(package, action, args, directTargets):
                     CraftCore.log.error(f"fatal error: package {info} {action} failed")
                     return False
             packages.pop(0)
-            if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                CraftCore.debug.debug_line()
-                CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
 
     CraftCore.debug.new_line()
     return True
