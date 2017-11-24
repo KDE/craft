@@ -40,7 +40,9 @@ class CraftConfig(object):
 
     @staticmethod
     def _craftRoot():
-        return os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", ".."))
+        dir, script = os.path.split(sys.argv[0])
+        location = dir if script == "craft.py" else os.path.dirname(__file__)
+        return os.path.abspath(os.path.join(location, "..", ".."))
 
     def _setAliasesV4(self):
         self.addGroupAlias("Blueprints", "Portage")
