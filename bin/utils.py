@@ -172,6 +172,8 @@ def unpackFile(downloaddir, filename, workdir):
     elif OsUtils.isWin() and CraftCore.cache.findApplication("7za") and (
                 OsUtils.supportsSymlinks() or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
         return un7zip(os.path.join(downloaddir, filename), workdir, ext)
+    elif ext == ".7z":
+        return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
             shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
