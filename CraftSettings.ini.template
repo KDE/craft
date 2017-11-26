@@ -168,7 +168,7 @@ EnableDailyUpdates = True
 PackageSrc = False
 
 ## A url to a Craft cache repository
-RepositoryUrl = https://files.kde.org/craft/unstable/
+RepositoryUrl = https://files.kde.org/craft/master/
 
 ## Enable to fatch packages from a Craft cache repository
 ## See --use-cache and --no-cache in the Craft help.
