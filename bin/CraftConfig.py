@@ -13,6 +13,8 @@ import sys
 from CraftCore import CraftCore
 
 class CraftConfig(object):
+    __RootDir = None
+
     def __init__(self, iniPath=None):
         self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         if iniPath:
@@ -40,9 +42,16 @@ class CraftConfig(object):
 
     @staticmethod
     def _craftRoot():
-        dir, script = os.path.split(sys.argv[0])
-        location = dir if script == "craft.py" else os.path.dirname(__file__)
-        return os.path.abspath(os.path.join(location, "..", ".."))
+        if CraftConfig.__RootDir:
+            return CraftConfig.__RootDir
+        dir = os.path.dirname(sys.argv[0])
+        while dir.count(os.path.sep) > 1 and not os.path.isfile(os.path.join(dir, "craftenv.ps1")):
+            dir = os.path.dirname(dir)
+        if not os.path.join(dir, "craftenv.ps1"):
+            print("Failed to find the craft root", file=sys.stderr)
+            exit(-1)
+        CraftConfig.__RootDir = os.path.abspath(os.path.join(dir, ".."))
+        return CraftConfig.__RootDir
 
     def _setAliasesV4(self):
         self.addGroupAlias("Blueprints", "Portage")
