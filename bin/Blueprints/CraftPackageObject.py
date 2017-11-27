@@ -107,8 +107,8 @@ class CraftPackageObject(object):
             if package.path in CraftPackageObject._nodes:
                 existingNode = CraftPackageObject._nodes[package.path]
                 if not existingNode.isCategory():
-                    raise BlueprintException(
-                        f"Found a recipe clash {existingNode.source} and {blueprintRoot}/{package.path}", existingNode)
+                    CraftCore.log.warning(
+                        f"Blueprint clash detected: Ignoring {blueprintRoot}/{package.path} in favour of {existingNode.source}")
                 existingNode.children.update(package.children)
                 package = existingNode
             else:
