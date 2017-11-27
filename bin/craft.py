@@ -425,7 +425,7 @@ if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
         CraftTitleUpdater.instance = CraftTitleUpdater()
-        if not "CRAFT_NOTITLEUPDATE" in os.environ:
+        if not "CRAFT_NOTITLEUPDATE" in os.environ and not "--ci-mode" in sys.argv:
             CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
             success = main()
