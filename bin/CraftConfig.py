@@ -44,7 +44,7 @@ class CraftConfig(object):
     def _craftRoot():
         if CraftConfig.__RootDir:
             return CraftConfig.__RootDir
-        dir = os.path.dirname(sys.argv[0])
+        dir = os.path.abspath(os.path.dirname(sys.argv[0]))
         while dir.count(os.path.sep) > 1 and not os.path.isfile(os.path.join(dir, "craftenv.ps1")):
             dir = os.path.dirname(dir)
         if not os.path.join(dir, "craftenv.ps1"):
