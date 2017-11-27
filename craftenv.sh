@@ -24,4 +24,28 @@ for line in "${CRAFT_ENV[@]}"; do
   fi
 done
 
-cd "$KDEROOT"
+cs() {
+    dir=$($craftRoot/bin/craft -q --ci-mode --get "sourceDir()" $1)
+    if (($? > 0));then
+        echo $dir
+    else
+        cd "$dir"
+    fi
+}
+
+cb() {
+    dir=$($craftRoot/bin/craft -q --ci-mode --get "buildDir()" $1)
+    if (($? > 0));then
+        echo $dir
+    else
+        cd "$dir"
+    fi
+}
+
+cr() {
+    cd "$KDEROOT"
+}
+
+cr
+
+declare -x -F cs cb cr
