@@ -251,5 +251,12 @@ class CraftBase(object):
         else:
             version = CraftPackageObject.get("libs/qt5/qtbase").version
             version = f"Qt_{version}"
-        return ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, self.buildType()]) for url in
-                CraftCore.settings.getList("Packager", "RepositoryUrl")]
+        buildType = [self.buildType()]
+        if self.buildType() == "RelWithDebInfo":
+            buildType += ["Release"]
+        elif self.buildType() == "Release":
+            buildType += ["RelWithDebInfo"]
+        out = []
+        for bt in buildType:
+            out += ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, bt]) for url in CraftCore.settings.getList("Packager", "RepositoryUrl")]
+        return out
