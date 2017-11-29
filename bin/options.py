@@ -35,28 +35,81 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import CraftPackageObject
 
+import configparser
+import atexit
+
+class UserOptions(object):
+    settings = None
+    path = None
+    _options = None
+
+    def __init__(self, package):
+        if not UserOptions.settings:
+            UserOptions.path = CraftCore.settings.get("Blueprints", "Settings", os.path.join(CraftCore.standardDirs.etcDir(), "BlueprintSettings.ini"))
+            UserOptions.settings = configparser.ConfigParser(allow_no_value=True)
+            if os.path.isfile(UserOptions.path):
+                UserOptions.settings.read(UserOptions.path)
+        self.package = package
+        self.settings = None
+
+    @staticmethod
+    def setOptions(optionsIn):
+        options = {}
+        for o in optionsIn:
+            key, value = o.split("=")
+            if key.startswith("dynamic."):
+                CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini"
+                                      "or don't specify the \"dynamic.\" prefix in the commandline")
+                key = key[len("dynamic."):]
+            options[key] = value
+        UserOptions._options = options
+        
+    @staticmethod
+    @atexit.register
+    def __dump():
+        with open(UserOptions.path, 'wt+') as configfile:
+            UserOptions.settings.write(configfile)
+
+    def __setattr__(self, key, value):
+        if key in ["settings", "package"]:
+            super().__setattr__(key, value)
+            return
+        settings = self.settings
+        if not settings:
+            settings = UserOptions.__init(self)
+        settings[key] = value
+
+    @staticmethod
+    def __init(self):
+        if not UserOptions.settings.has_section(self.package.path):
+            UserOptions.settings.add_section(self.package.path)
+        settings = self.settings = UserOptions.settings[self.package.path]
+        return settings
+
+    def __getattribute__(self, name):
+        if name in ["settings", "package"]:
+            return super().__getattribute__(name)
+        settings = self.settings
+        if name in UserOptions._options:
+            if not settings:
+                settings = UserOptions.__init(self)
+            settings[name] = UserOptions._options[name]
+            return settings[name]
+        if name == "args":
+            return settings["args"] if settings and "arg" in settings else  ""
+        if name == "ignored":
+            return UserOptions.settings._convert_to_boolean(settings["ignore"]) if settings and "ignore" in settings else None
+        if settings and name in settings:
+            return settings[name]
+        if name not in ["version"]:
+            if not settings:
+                settings = UserOptions.__init(self)
+            settings[name] = None
+        return None
 
 class OptionsBase(object):
     def __init__(self):
         pass
-
-
-class OptionsDynamic(OptionsBase):
-    def __init__(self):
-        self._packages = {}
-
-    def __setattr__(self, name, value):
-        if name == "_packages":
-            object.__setattr__(self, name, value)
-        else:
-            self._packages[name] = value
-
-    def __getattr__(self, name):
-        if name in self._packages:
-            return self._packages[name]
-        else:
-            return None
-
 
 ## options for enabling or disabling features of KDE
 ## in the future, a certain set of features make up a 'profile' together
@@ -234,11 +287,9 @@ class OptionsGit(OptionsBase):
 
 ## main option class
 class Options(object):
-    def __init__(self, optionslist=None):
+    def __init__(self, package=None):
         ## options for the dependency generation
         self.features = OptionsFeatures()
-        ## options for package exclusion
-        self.dynamic = OptionsDynamic()
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
@@ -290,50 +341,11 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-        self.__readFromList(optionslist)
+
+        self.dynamic = UserOptions(package)
 
 
     def isActive(self, package):
         if isinstance(package, str):
             package = CraftPackageObject.get(package)
         return not package.isIgnored()
-
-    def __setInstanceAttribute(self, key, value):
-        """set attribute in an instance"""
-        currentObject = self
-        currentKey = None
-        for currentKey in key.split('.'):
-            if currentKey == "options": continue
-
-            if hasattr(currentObject, currentKey):
-                o = getattr(currentObject, currentKey)
-                if not isinstance(o, OptionsBase):
-                    continue
-                else:
-                    currentObject = o
-            else:
-                if isinstance(currentObject, OptionsDynamic):
-                    break
-                CraftCore.log.warning(f"Unsupported option: {key}={value}")
-                exit(1)
-                return False
-
-        value = value.lower() in ['true', '1', 'on']
-
-        setattr(currentObject, currentKey, value)
-        return True
-
-    def __readFromList(self, opts):
-        """collect properties from a list of key=value string"""
-        if opts == None:
-            return False
-        result = False
-        for entry in opts:
-            if entry.find('=') == -1:
-                CraftCore.log.debug('incomplete option %s' % entry)
-                continue
-            (key, value) = entry.split('=', 1)
-            if self.__setInstanceAttribute(key, value):
-                result = True
-                continue
-        return result

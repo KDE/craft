@@ -137,6 +137,9 @@ GitDrive = Q:
 ## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
 Ignores =
 
+# Customer settings
+Settings = ${Variables:CraftRoot}/etc/BlueprintSettings.ini
+
 [BlueprintVersions]
 ## Allow to automatically update certain recipes once a day.
 EnableDailyUpdates = True
