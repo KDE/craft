@@ -14,10 +14,10 @@ from options import *
 class infoclass(object):
     """this module contains the information class"""
 
-    def __init__(self, parent, optionList=[]):
+    def __init__(self, parent):
         ### package options
         self.parent = parent
-        self.options = Options(optionList)
+        self.options = Options(parent.package)
         self.versionInfo = VersionInfo.VersionInfo(self)
         self.targets = {}
         self.archiveNames = {}
@@ -66,12 +66,14 @@ class infoclass(object):
 
     @property
     def defaultTarget(self) -> str:
-        target = None
+        target = self.options.dynamic.version
+        # TODO: legacy behaviour
         if ("BlueprintVersions", self.package.package.path) in CraftCore.settings:
-            target = CraftCore.settings.get("BlueprintVersions", self.package.package.path)
+            return CraftCore.settings.get("BlueprintVersions", self.package.package.path)
         if target in self.targets or target in self.svnTargets:
             return target
         return self._defaultTarget
+
 
     @defaultTarget.setter
     def defaultTarget(self, value):

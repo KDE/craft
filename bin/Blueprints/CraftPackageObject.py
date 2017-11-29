@@ -12,7 +12,6 @@ import utils
 
 
 class CraftPackageObject(object):
-    options = None
     __rootPackage = None
     _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
@@ -160,7 +159,7 @@ class CraftPackageObject(object):
     @property
     def instance(self):
         if not self._instance:
-            CraftCore.log.debug(f"module to import: {self.source}")
+            CraftCore.log.debug(f"module to import: {self.source} {self.path}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace('.', '_')
             loader = importlib.machinery.SourceFileLoader(modulename, self.source)
             try:
@@ -196,7 +195,18 @@ class CraftPackageObject(object):
         return not self.source
 
     def isIgnored(self):
-        return self.path and CraftPackageObject.Ignores.match(self.path)
+        # TODO: how to implement options on a categorary base
+        if not self.path or self.isCategory():
+            return False
+        ignored = self.instance.subinfo.options.dynamic.ignored
+        if not ignored is None:
+            return ignored
+        ignored = self.path and CraftPackageObject.Ignores.match(self.path)
+        if ignored:
+            CraftCore.log.warning("You are using the old Ignore setting, please use the new BluepirntSettings.ini")
+            CraftCore.log.warning(f"[Blueprints]\n"
+                                  f"Ignores={self.path}")
+        return ignored
 
     @property
     def version(self):

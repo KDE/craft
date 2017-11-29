@@ -59,7 +59,7 @@ class CraftBase(object):
 
         mod = sys.modules[self.__module__]
         self.package = mod.CRAFT_CURRENT_MODULE  # ugly workaround we need to replace the constructor
-        self.subinfo = mod.subinfo(self, CraftPackageObject.options)
+        self.subinfo = mod.subinfo(self)
 
         self.buildSystemType = None
 

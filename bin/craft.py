@@ -23,6 +23,7 @@ from Blueprints.CraftPackageObject import *
 from Blueprints.CraftVersion import CraftVersion
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
+from options import UserOptions
 
 if not "KDEROOT" in os.environ:
     helper = CraftSetupHelper.SetupHelper()
@@ -369,7 +370,7 @@ def main():
         # we are in cache creation mode, ensure to create a 7z image and not an installer
         CraftCore.settings.set("Packager", "PackageType", "SevenZipPackager")
 
-    CraftPackageObject.options = args.options
+    UserOptions.setOptions(args.options)
     if args.search:
         for package in args.packageNames:
             blueprintSearch.printSearch(package)
