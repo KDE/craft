@@ -34,15 +34,17 @@ class CraftPackageObject(object):
 
     @property
     def parentPath(self):
+        if self.path == "/":
+            return None
         if not self.path:
             return []
         split = self.path.rsplit("/", 1)
-        return split[1] if len(split)>1 else "/"
+        return split[0] if len(split)>1 else "/"
 
     @property
     def parent(self):
         if not self.path:
-            return "/"
+            return CraftPackageObject._nodes["/"]
         return CraftPackageObject._nodes[self.parentPath]
 
     @staticmethod
@@ -195,12 +197,14 @@ class CraftPackageObject(object):
         return not self.source
 
     def isIgnored(self):
-        # TODO: how to implement options on a categorary base
-        if not self.path or self.isCategory():
+        import options
+        if not self.path:
             return False
-        ignored = self.instance.subinfo.options.dynamic.ignored
-        if not ignored is None:
-            return ignored
+        opt = options.UserOptions.get(self)
+        if opt:
+            ignored = opt.ignored
+            if not ignored is None:
+                return ignored
         ignored = self.path and CraftPackageObject.Ignores.match(self.path)
         if ignored:
             CraftCore.log.warning("You are using the old Ignore setting, please use the new BluepirntSettings.ini")
