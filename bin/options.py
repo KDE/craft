@@ -39,18 +39,41 @@ import configparser
 import atexit
 
 class UserOptions(object):
-    settings = None
+    _settings = None
     path = None
     _options = None
 
-    def __init__(self, package):
-        if not UserOptions.settings:
+    reserved = ["version", "ignored"]
+
+
+    @staticmethod
+    def instance():
+        if not UserOptions._settings:
             UserOptions.path = CraftCore.settings.get("Blueprints", "Settings", os.path.join(CraftCore.standardDirs.etcDir(), "BlueprintSettings.ini"))
-            UserOptions.settings = configparser.ConfigParser(allow_no_value=True)
+            UserOptions._settings = configparser.ConfigParser(allow_no_value=True)
             if os.path.isfile(UserOptions.path):
-                UserOptions.settings.read(UserOptions.path)
+                UserOptions.instance().read(UserOptions.path)
+            if not UserOptions.instance().has_section("/"):
+                UserOptions.instance().add_section("/")
+                settings = UserOptions.instance()["/"]
+                opt = Options(package=None)
+                UserOptions._init_vars(settings, opt)
+        return UserOptions._settings
+
+    @staticmethod
+    def _init_vars(settings, opt, prefix="") -> None:
+        # TODO: what do we wan't to have in here
+        for var in vars(opt):
+            attr = getattr(opt, var)
+            if isinstance(attr, (str, int, type(None))):
+                settings[f"{prefix}{var}"] = str(attr)
+            else:
+                UserOptions._init_vars(settings, attr, prefix=f"{var}.")
+
+    def __init__(self, package):
+        settings = UserOptions.instance()
         self.package = package
-        self.settings = None
+        self.settings = settings[package.path] if settings.has_section(package.path) else None
 
     @staticmethod
     def setOptions(optionsIn):
@@ -63,12 +86,13 @@ class UserOptions(object):
                 key = key[len("dynamic."):]
             options[key] = value
         UserOptions._options = options
-        
+
     @staticmethod
     @atexit.register
     def __dump():
-        with open(UserOptions.path, 'wt+') as configfile:
-            UserOptions.settings.write(configfile)
+        if UserOptions._settings:
+            with open(UserOptions.path, 'wt+') as configfile:
+                UserOptions.instance().write(configfile)
 
     def __setattr__(self, key, value):
         if key in ["settings", "package"]:
@@ -81,9 +105,9 @@ class UserOptions(object):
 
     @staticmethod
     def __init(self):
-        if not UserOptions.settings.has_section(self.package.path):
-            UserOptions.settings.add_section(self.package.path)
-        settings = self.settings = UserOptions.settings[self.package.path]
+        if not UserOptions.instance().has_section(self.package.path):
+            UserOptions.instance().add_section(self.package.path)
+        settings = self.settings = UserOptions.instance()[self.package.path]
         return settings
 
     def __getattribute__(self, name):
@@ -95,13 +119,20 @@ class UserOptions(object):
                 settings = UserOptions.__init(self)
             settings[name] = UserOptions._options[name]
             return settings[name]
-        if name == "args":
-            return settings["args"] if settings and "arg" in settings else  ""
-        if name == "ignored":
-            return UserOptions.settings._convert_to_boolean(settings["ignore"]) if settings and "ignore" in settings else None
         if settings and name in settings:
+            if name == "ignored":
+                return UserOptions.instance()._convert_to_boolean(settings["ignored"])
             return settings[name]
-        if name not in ["version"]:
+
+        parent = self.package.parent
+        while parent:
+            out = getattr(UserOptions(parent), name)
+            if not out is None:
+                return out
+            parent = parent.parent
+        if name == "args":
+            return ""
+        if name not in UserOptions.reserved:
             if not settings:
                 settings = UserOptions.__init(self)
             settings[name] = None
@@ -342,7 +373,7 @@ class Options(object):
         self.__verbose = False
         self.__errors = False
 
-        self.dynamic = UserOptions(package)
+        self.dynamic = UserOptions(package) if package else None
 
 
     def isActive(self, package):

@@ -34,16 +34,20 @@ class CraftPackageObject(object):
 
     @property
     def parentPath(self):
-        if not self.path:
-            return []
+        if not self.path or self.path == "/":
+            return None
         split = self.path.rsplit("/", 1)
-        return split[1] if len(split)>1 else "/"
+        return split[0] if len(split)>1 else "/"
 
     @property
     def parent(self):
         if not self.path:
-            return "/"
-        return CraftPackageObject._nodes[self.parentPath]
+            return CraftPackageObject._nodes["/"]
+        pp = self.parentPath
+        if pp:
+            return CraftPackageObject._nodes[pp]
+        else:
+            return None
 
     @staticmethod
     def get(path):
@@ -195,10 +199,10 @@ class CraftPackageObject(object):
         return not self.source
 
     def isIgnored(self):
-        # TODO: how to implement options on a categorary base
-        if not self.path or self.isCategory():
+        import options
+        if not self.path:
             return False
-        ignored = self.instance.subinfo.options.dynamic.ignored
+        ignored = options.UserOptions(self).ignored
         if not ignored is None:
             return ignored
         ignored = self.path and CraftPackageObject.Ignores.match(self.path)
