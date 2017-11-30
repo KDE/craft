@@ -43,6 +43,8 @@ class UserOptions(object):
     path = None
     _options = None
 
+    reserved = ["version", "ignored"]
+
 
     @staticmethod
     def instance():
@@ -67,13 +69,6 @@ class UserOptions(object):
                 settings[f"{prefix}{var}"] = str(attr)
             else:
                 UserOptions._init_vars(settings, attr, prefix=f"{var}.")
-
-
-    @staticmethod
-    def get(package : CraftPackageObject):
-        settings = UserOptions.instance()
-        return UserOptions(package) if settings.has_section(package.path) else None
-
 
     def __init__(self, package):
         settings = UserOptions.instance()
@@ -124,21 +119,20 @@ class UserOptions(object):
                 settings = UserOptions.__init(self)
             settings[name] = UserOptions._options[name]
             return settings[name]
-        if name == "args":
-            return settings["args"] if settings and "arg" in settings else  ""
-        if name == "ignored":
-            return UserOptions.instance()._convert_to_boolean(settings["ignored"]) if settings and "ignored" in settings else None
         if settings and name in settings:
+            if name == "ignored":
+                return UserOptions.instance()._convert_to_boolean(settings["ignored"])
             return settings[name]
 
         parent = self.package.parent
-        if parent:
-            opt = UserOptions.get(self.package.parent)
-            if opt:
-                out = getattr(opt, name)
-                if not out is None:
-                    return out
-        if name not in ["version"]:
+        while parent:
+            out = getattr(UserOptions(parent), name)
+            if not out is None:
+                return out
+            parent = parent.parent
+        if name == "args":
+            return ""
+        if name not in UserOptions.reserved:
             if not settings:
                 settings = UserOptions.__init(self)
             settings[name] = None

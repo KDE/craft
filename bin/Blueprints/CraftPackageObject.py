@@ -34,10 +34,8 @@ class CraftPackageObject(object):
 
     @property
     def parentPath(self):
-        if self.path == "/":
+        if not self.path or self.path == "/":
             return None
-        if not self.path:
-            return []
         split = self.path.rsplit("/", 1)
         return split[0] if len(split)>1 else "/"
 
@@ -45,7 +43,11 @@ class CraftPackageObject(object):
     def parent(self):
         if not self.path:
             return CraftPackageObject._nodes["/"]
-        return CraftPackageObject._nodes[self.parentPath]
+        pp = self.parentPath
+        if pp:
+            return CraftPackageObject._nodes[pp]
+        else:
+            return None
 
     @staticmethod
     def get(path):
@@ -200,11 +202,9 @@ class CraftPackageObject(object):
         import options
         if not self.path:
             return False
-        opt = options.UserOptions.get(self)
-        if opt:
-            ignored = opt.ignored
-            if not ignored is None:
-                return ignored
+        ignored = options.UserOptions(self).ignored
+        if not ignored is None:
+            return ignored
         ignored = self.path and CraftPackageObject.Ignores.match(self.path)
         if ignored:
             CraftCore.log.warning("You are using the old Ignore setting, please use the new BluepirntSettings.ini")
