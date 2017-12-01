@@ -42,7 +42,7 @@ import copy
 class UserOptions(object):
     _settings = None
     path = None
-    _commandlineOptions = None
+    _commandlineOptions = {}
     _options = None
 
     coreCategory = "#Core"
@@ -81,10 +81,13 @@ class UserOptions(object):
         # TODO: what do we wan't to have in here
         for var in vars(opt):
             attr = getattr(opt, var)
-            if isinstance(attr, (str, int, type(None))):
+            if isinstance(attr, (bool, str, int, type(None))):
                 key = f"{prefix}{var}"
                 if key not in settings:
-                    settings[key] = str(attr)
+                    if not attr is None:
+                        settings[key] = str(attr)
+                    else:
+                        settings[key] = None
                 else:
                     val = settings[key]
                     if isinstance(attr, bool):
