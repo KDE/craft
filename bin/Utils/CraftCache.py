@@ -8,6 +8,7 @@ import subprocess
 import time
 import urllib.error
 import urllib.request
+import sys
 
 from CraftCore import CraftCore, AutoImport
 import CraftDebug
@@ -17,6 +18,7 @@ from CraftOS.unix.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 class CraftCache(object):
+    RE_TYPE = re.Pattern if sys.version_info >= (3,7) else re._pattern_type
     _version = 8
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
@@ -131,7 +133,7 @@ class CraftCache(object):
             pattern = re.compile(r"(\d+\.\d+(?:\.\d+)?)")
         if not versionCommand:
             versionCommand = "--version"
-        if not isinstance(pattern, re._pattern_type):
+        if not isinstance(pattern, CraftCache.RE_TYPE):
             raise Exception("getVersion can only handle a compiled regular expression as pattern")
         _, output = self.getCommandOutput(app, versionCommand)
         if not output:
