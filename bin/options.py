@@ -42,7 +42,7 @@ import copy
 class UserOptions(object):
     _settings = None
     path = None
-    _commandlineOptions = None
+    _commandlineOptions = {}
     _options = None
 
     coreCategory = "#Core"
