@@ -151,6 +151,7 @@ You can add your own defines into self.defines as well.
                 CraftCore.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
             script = script.replace(f"@{{{match}}}", self.defines[match])
 
+        os.makedirs(self.workDir(), exist_ok=True)
         outFile = os.path.join(self.workDir(), f"{self.package.name}.nsi")
         with open(outFile, "wt+") as f:
             f.write(script)
