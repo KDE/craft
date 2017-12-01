@@ -37,11 +37,15 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 
 import configparser
 import atexit
+import copy
 
 class UserOptions(object):
     _settings = None
     path = None
+    _commandlineOptions = None
     _options = None
+
+    coreCategory = "#Core"
 
     reserved = ["version", "ignored"]
     _header = """\
@@ -65,11 +69,11 @@ class UserOptions(object):
             UserOptions._settings = configparser.ConfigParser(allow_no_value=True)
             if os.path.isfile(UserOptions.path):
                 UserOptions.instance().read(UserOptions.path)
-            if not UserOptions.instance().has_section("/"):
-                UserOptions.instance().add_section("/")
-                settings = UserOptions.instance()["/"]
-                opt = Options(package=None)
-                UserOptions._init_vars(settings, opt)
+            if not UserOptions.instance().has_section(UserOptions.coreCategory):
+                UserOptions.instance().add_section(UserOptions.coreCategory)
+            UserOptions._options = Options(package=None)
+            settings = UserOptions.instance()[UserOptions.coreCategory]
+            UserOptions._init_vars(settings, UserOptions._options)
         return UserOptions._settings
 
     @staticmethod
@@ -78,7 +82,14 @@ class UserOptions(object):
         for var in vars(opt):
             attr = getattr(opt, var)
             if isinstance(attr, (str, int, type(None))):
-                settings[f"{prefix}{var}"] = str(attr)
+                key = f"{prefix}{var}"
+                if key not in settings:
+                    settings[key] = str(attr)
+                else:
+                    val = settings[key]
+                    if isinstance(attr, bool):
+                        val = UserOptions._settings._convert_to_boolean(val)
+                    setattr(opt, var, val)
             else:
                 UserOptions._init_vars(settings, attr, prefix=f"{var}.")
 
@@ -97,7 +108,7 @@ class UserOptions(object):
                                       "or don't specify the \"dynamic.\" prefix in the commandline")
                 key = key[len("dynamic."):]
             options[key] = value
-        UserOptions._options = options
+        UserOptions._commandlineOptions = options
 
     @staticmethod
     @atexit.register
@@ -117,19 +128,23 @@ class UserOptions(object):
         settings[key] = value
 
     @staticmethod
-    def __init(self):
+    def __init(self, key=None):
         if not UserOptions.instance().has_section(self.package.path):
             UserOptions.instance().add_section(self.package.path)
         settings = self.settings = UserOptions.instance()[self.package.path]
+        if key:
+            settings[key] = None
         return settings
 
     def __getattribute__(self, name):
         if name in ["settings", "package"]:
             return super().__getattribute__(name)
         settings = self.settings
-        if name in UserOptions._options:
+        if name in UserOptions._commandlineOptions:
+            if name not in UserOptions.reserved:
+                UserOptions.__init(self, name)
             # those values are temporary and must not be saved
-            return settings[name]
+            return UserOptions._commandlineOptions[name]
         if settings and name in settings:
             if name == "ignored":
                 return UserOptions.instance()._convert_to_boolean(settings["ignored"])
@@ -146,10 +161,8 @@ class UserOptions(object):
         if name == "args":
             return ""
         if name not in UserOptions.reserved:
-            if not settings:
-                settings = UserOptions.__init(self)
             #this blueprint has special options, make them public
-            settings[name] = None
+            settings = UserOptions.__init(self, name)
         return None
 
 class OptionsBase(object):
@@ -333,6 +346,13 @@ class OptionsGit(OptionsBase):
 ## main option class
 class Options(object):
     def __init__(self, package=None):
+        if package:
+            #init
+            UserOptions.instance()
+            self.__dict__ = copy.deepcopy(UserOptions._options.__dict__)
+            self.dynamic = UserOptions(package)
+            return
+
         ## options for the dependency generation
         self.features = OptionsFeatures()
         ## options of the fetch action
@@ -386,8 +406,6 @@ class Options(object):
         #### end of user configurable part
         self.__verbose = False
         self.__errors = False
-
-        self.dynamic = UserOptions(package) if package else None
 
 
     def isActive(self, package):
