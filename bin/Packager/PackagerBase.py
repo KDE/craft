@@ -11,6 +11,8 @@ from CraftBase import *
 from Utils import CraftHash
 from Utils.CraftManifest import *
 
+from CraftDebug import deprecated
+
 
 class PackagerBase(CraftBase):
     """ provides a generic interface for packagers and implements basic package creating stuff """
@@ -29,22 +31,14 @@ class PackagerBase(CraftBase):
     def archiveDir(self):
         return os.path.join(self.buildRoot(), "archive")
 
+    @deprecated("self.version")
     def getPackageVersion(self):
         """ return version information for the currently used package"""
-        if self.subinfo.options.package.version != None:
-            pkgVersion = self.subinfo.options.package.version
-        elif self.subinfo.hasSvnTarget():
-            pkgVersion = self.sourceVersion()
-        else:
-            pkgVersion = self.subinfo.buildTarget
-
-        pkgNotesVersion = pkgVersion
-        return [pkgVersion, pkgNotesVersion]
+        return [self.version, self.version]
 
     # """ create a package """
     def createPackage(self):
         utils.abstract()
-
 
     def _generateManifest(self, destDir, archiveName, manifestLocation=None):
         if not manifestLocation:
@@ -54,7 +48,7 @@ class PackagerBase(CraftBase):
 
         manifest = CraftManifest.load(manifestLocation)
         entry = manifest.get(str(self))
-        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.buildTarget)
+        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
 
         manifest.dump(manifestLocation)
 

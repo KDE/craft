@@ -40,7 +40,7 @@ class CraftManifestEntry(object):
 
     def addFile(self, fileName : str, checksum : str, version : str="") -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum, version)
-        self.files[fileName] = f
+        self.files.insert(0, f)
         return f
 
     @property

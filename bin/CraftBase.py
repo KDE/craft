@@ -177,7 +177,10 @@ class CraftBase(object):
         if CraftCore.settings.getboolean("BlueprintVersions", "EnableDailyUpdates", True)\
                 and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
             return str(datetime.date.today()).replace("-", ".")
-        return self.subinfo.buildTarget
+        ver = self.subinfo.buildTarget
+        if self.subinfo.buildTarget in self.subinfo.patchLevel:
+            ver += f"-{self.subinfo.patchLevel[self.subinfo.buildTarget]}"
+        return ver
 
     @property
     def rootdir(self):
@@ -227,7 +230,7 @@ class CraftBase(object):
                 else:
                     version = "latest"
             else:
-                version = self.getPackageVersion()[0]
+                version = self.version
             if includeTimeStamp:
                 version += f"-{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
         if fileType:

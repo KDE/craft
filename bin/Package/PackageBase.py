@@ -186,14 +186,15 @@ class PackageBase(CraftBase):
             fileEntry = manifest.get(str(self)).files
             files = []
             for f in fileEntry:
-                if f.version == self.buildTarget:
+                if f.version == self.version:
                     files.append(f)
             latest = None
             if files:
                 latest = files[0]
             elif fileEntry:
+                # legacy remove at some point
                 latest = fileEntry[0] if fileEntry else None
-                if not self.buildTarget in latest.fileName:
+                if not self.version in latest.fileName:
                     continue
             if not latest:
                 continue

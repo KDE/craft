@@ -36,6 +36,8 @@ class infoclass(object):
         ## \todo prelimary
         self.svnTargets = {}
 
+        self.patchLevel = {}
+
         # runtimeDependencies and buildDependencies are not different when looking
         # at the build process itself, they will only make a difference when getting
         # output of the dependencies
