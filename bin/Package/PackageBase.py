@@ -180,27 +180,34 @@ class PackageBase(CraftBase):
         if self.subinfo.options.package.disableBinaryCache:
             return False
 
-        archiveName = self.binaryArchiveName(includePackagePath=True)
-        archvieFolder, localArchiveName = self.binaryArchiveName(includePackagePath=True).rsplit("/", 1)
-        downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
-
-        if not os.path.exists(downloadFolder):
-            os.makedirs(downloadFolder)
-
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
-            CraftCore.log.debug(f"Trying to restore {archiveName} from cache: {url}.")
+            CraftCore.log.debug(f"Trying to restore {self} from cache: {url}.")
             manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
-
-            fileEntry = manifest.get(str(self)).files.get(archiveName, None)
-            if not fileEntry:
+            fileEntry = manifest.get(str(self)).files
+            files = []
+            for f in fileEntry:
+                if f.version == self.buildTarget:
+                    files.append(f)
+            latest = None
+            if files:
+                latest = files[0]
+            elif fileEntry:
+                latest = fileEntry[0] if fileEntry else None
+                if not self.buildTarget in latest.fileName:
+                    continue
+            if not latest:
                 continue
+            archvieFolder, localArchiveName = latest.fileName.rsplit("/", 1)
+            downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
+            if not os.path.exists(downloadFolder):
+                os.makedirs(downloadFolder)
 
             if url != self.cacheLocation():
-                if not os.path.exists(os.path.join(downloadFolder, localArchiveName)):
-                    if not utils.getFile(f"{url}/{archiveName}", downloadFolder, localArchiveName):
+                if not os.path.exists(os.path.join(downloadFolder, latest.fileName)):
+                    if not utils.getFile(f"{url}/{latest.fileName}", downloadFolder, localArchiveName):
                         return False
             return CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
-                                               digests=fileEntry.checksum,
+                                               digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
                    self.cleanImage() \
                    and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir()) \

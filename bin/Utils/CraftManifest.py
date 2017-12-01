@@ -8,45 +8,48 @@ from CraftCore import CraftCore
 import utils
 
 class CraftManifestEntryFile(object):
-    def __init__(self, fileName : str, checksum : str) -> None:
+    def __init__(self, fileName : str, checksum : str, version : str="") -> None:
         self.fileName = fileName
         self.checksum = checksum
         self.date = datetime.datetime.utcnow()
+        self.version = version
 
     @staticmethod
     def fromJson(data : dict):
         out = CraftManifestEntryFile(data["fileName"], data["checksum"])
         out.date = CraftManifest._parseTimeStamp(data["date"])
+        out.version = data.get("version", "")
         return out
 
     def toJson(self) -> dict:
-        return {"fileName":self.fileName, "checksum":self.checksum, "date":str(self.date)}
+        return {"fileName":self.fileName, "checksum":self.checksum, "date":self.date.strftime(CraftManifest._TIME_FORMAT), "version":self.version}
 
 class CraftManifestEntry(object):
     def __init__(self, name : str) -> None:
         self.name = name
-        self.files = collections.OrderedDict()
+        self.files = []
 
     @staticmethod
     def fromJson(data : dict):
         entry = CraftManifestEntry(data["name"])
-        files = sorted([CraftManifestEntryFile.fromJson(fileData) for fileData in data["files"]], key=lambda x:x.date)
-        entry.files = collections.OrderedDict([(x.fileName, x) for x in files])
+        entry.files = sorted([CraftManifestEntryFile.fromJson(fileData) for fileData in data["files"]], key=lambda x:x.date, reverse=True)
         return entry
 
     def toJson(self) -> dict:
-        return {"name":self.name, "files":[x.toJson() for x in self.files.values()]}
+        return {"name":self.name, "files":[x.toJson() for x in self.files]}
 
-    def addFile(self, fileName : str, checksum : str) -> CraftManifestEntryFile:
-        f = CraftManifestEntryFile(fileName, checksum)
+    def addFile(self, fileName : str, checksum : str, version : str="") -> CraftManifestEntryFile:
+        f = CraftManifestEntryFile(fileName, checksum, version)
         self.files[fileName] = f
         return f
 
     @property
     def latest(self) -> CraftManifestEntryFile:
-        return list(self.files.values())[-1]
+        return self.files[0] if self.files else None
 
 class CraftManifest(object):
+    _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+
     def __init__(self):
         self.date = datetime.datetime.utcnow()
         self.packages = {str(CraftCore.compiler) : {}}
@@ -124,4 +127,4 @@ class CraftManifest(object):
 
     @staticmethod
     def _parseTimeStamp(time : str) -> datetime.datetime:
-        return datetime.datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f")
+        return datetime.datetime.strptime(time, CraftManifest._TIME_FORMAT)

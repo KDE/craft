@@ -54,7 +54,7 @@ class PackagerBase(CraftBase):
 
         manifest = CraftManifest.load(manifestLocation)
         entry = manifest.get(str(self))
-        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256))
+        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.buildTarget)
 
         manifest.dump(manifestLocation)
 

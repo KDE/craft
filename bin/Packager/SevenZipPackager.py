@@ -56,9 +56,9 @@ class SevenZipPackager(PackagerBase):
         else:
             dstpath = self.packageDestinationDir()
 
-        self._compress(self.binaryArchiveName(includePackagePath=cacheMode), self.imageDir(), dstpath)
+        self._compress(self.binaryArchiveName(includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath)
         if not self.subinfo.options.package.packSources:
             return True
         if CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            self._compress(self.binaryArchiveName("-src", includePackagePath=cacheMode), self.sourceDir(), dstpath)
+            self._compress(self.binaryArchiveName("-src", includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
         return True

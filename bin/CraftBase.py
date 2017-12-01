@@ -18,7 +18,6 @@ from Blueprints import CraftPackageObject
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils.CraftShortPath import CraftShortPath
 
-
 class InitGuard(object):
     _initialized = {}
     _verbose = False
@@ -213,7 +212,7 @@ class CraftBase(object):
         return False
 
     def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
-                          includeRevision=False, includePackagePath=False) -> str:
+                          includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
         if not pkgSuffix:
             pkgSuffix = ""
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
@@ -229,6 +228,8 @@ class CraftBase(object):
                     version = "latest"
             else:
                 version = self.getPackageVersion()[0]
+            if includeTimeStamp:
+                version += f"-{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
         if fileType:
             fileType = f".{fileType}"
         else:
