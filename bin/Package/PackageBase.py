@@ -194,7 +194,7 @@ class PackageBase(CraftBase):
             elif fileEntry:
                 # legacy remove at some point
                 latest = fileEntry[0] if fileEntry else None
-                if not self.version in latest.fileName:
+                if not latest or self.version not in latest.fileName and "-latest-" not in latest.fileName:
                     continue
             if not latest:
                 continue
@@ -205,14 +205,18 @@ class PackageBase(CraftBase):
 
             if url != self.cacheLocation():
                 if not os.path.exists(os.path.join(downloadFolder, latest.fileName)):
-                    if not utils.getFile(f"{url}/{latest.fileName}", downloadFolder, localArchiveName):
+                    fUrl = f"{url}/{latest.fileName}"
+                    if not utils.getFile(fUrl, downloadFolder, localArchiveName):
+                        CraftCore.log.warning(f"Failed to fetch {fUrl}")
                         return False
-            return CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
+            if not CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
                                                digests=latest.checksum,
-                                               digestAlgorithm=CraftHash.HashAlgorithm.SHA256) and \
-                   self.cleanImage() \
-                   and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir()) \
-                   and self.qmerge()
+                                               digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
+                CraftCore.log.warning(f"Digest did not match, {localArchiveName} might be corrupted")
+                return False
+            return (self.cleanImage()
+                   and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
+                   and self.qmerge())
         return False
 
     @staticmethod
