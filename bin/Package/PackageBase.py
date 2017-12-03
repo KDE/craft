@@ -212,7 +212,7 @@ class PackageBase(CraftBase):
             if not CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
                                                digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
-                CraftCore.log.warning(f"Digest did not match, {localArchiveName} might be corrupted")
+                CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
                 return False
             return (self.cleanImage()
                    and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
