@@ -651,8 +651,7 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    cmd = 'patch -d "%s" -p%s -i "%s"' % (sourceDir, patchLevel, f)
-    CraftCore.log.debug("applying %s" % cmd)
+    cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
     result = system(cmd)
     if not result:
         CraftCore.log.warning("applying %s failed!" % f)
