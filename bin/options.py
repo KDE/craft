@@ -43,6 +43,7 @@ class UserOptions(object):
     _settings = None
     path = None
     _commandlineOptions = {}
+    _packageOptions = {}
     _options = None
 
     coreCategory = "#Core"
@@ -94,7 +95,7 @@ class UserOptions(object):
                         val = UserOptions._settings._convert_to_boolean(val)
                     setattr(opt, var, val)
             else:
-                UserOptions._init_vars(settings, attr, prefix=f"{var}.")
+                UserOptions._init_vars(settings, attr, prefix=f"{prefix}{var}.")
 
     def __init__(self, package):
         settings = UserOptions.instance()
@@ -104,14 +105,22 @@ class UserOptions(object):
     @staticmethod
     def setOptions(optionsIn):
         options = {}
+        packageOptions = {}
         for o in optionsIn:
             key, value = o.split("=", 1)
-            if key.startswith("dynamic."):
-                CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini"
-                                      "or don't specify the \"dynamic.\" prefix in the commandline")
-                key = key[len("dynamic."):]
+            if "." in key:
+                package, key = key.split(".", 1)
+                if package.startswith("dynamic"):
+                    CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini"
+                                          "or don't specify the \"dynamic.\" prefix in the commandline")
+                else:
+                    if package not in packageOptions:
+                        packageOptions[package] = {}
+                    packageOptions[package][key] = value
+                    continue
             options[key] = value
         UserOptions._commandlineOptions = options
+        UserOptions._packageOptions = packageOptions
 
     @staticmethod
     @atexit.register
@@ -143,11 +152,19 @@ class UserOptions(object):
         if name in ["settings", "package"]:
             return super().__getattribute__(name)
         settings = self.settings
+        packagePath = self.package.path
+        if name not in UserOptions.reserved:
+            # this blueprint has special options, make them public
+            settings = UserOptions.__init(self, name)
+
         if name in UserOptions._commandlineOptions:
-            if name not in UserOptions.reserved:
-                UserOptions.__init(self, name)
             # those values are temporary and must not be saved
             return UserOptions._commandlineOptions[name]
+
+        if packagePath in UserOptions._packageOptions and name in UserOptions._packageOptions[packagePath]:
+            # those values are temporary and must not be saved
+            return UserOptions._packageOptions[packagePath][name]
+
         if settings and name in settings:
             if name == "ignored":
                 return UserOptions.instance()._convert_to_boolean(settings["ignored"])
@@ -163,9 +180,6 @@ class UserOptions(object):
         # no value found
         if name == "args":
             return ""
-        if name not in UserOptions.reserved:
-            #this blueprint has special options, make them public
-            settings = UserOptions.__init(self, name)
         return None
 
 class OptionsBase(object):

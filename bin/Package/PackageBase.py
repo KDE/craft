@@ -215,8 +215,8 @@ class PackageBase(CraftBase):
                 CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
                 return False
             return (self.cleanImage()
-                   and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
-                   and self.qmerge())
+                    and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
+                    and self.qmerge())
         return False
 
     @staticmethod
