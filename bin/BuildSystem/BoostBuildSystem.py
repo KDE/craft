@@ -4,7 +4,7 @@
 # Hannah von Reth <vonreth@kde.org>
 
 """@package provides boost build system"""
-
+from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
@@ -60,7 +60,7 @@ class BoostBuildSystem(BuildSystemBase):
             options += "gcc"
         elif CraftCore.compiler.isMSVC():
             platform = str(CraftCore.compiler.getMsvcPlatformToolset())
-            if CraftCore.compiler.isMSVC2017():
+            if CraftVersion(self.buildTarget) < CraftVersion("1_65_1") and CraftCore.compiler.isMSVC2017():
                 options += f"msvc-{platform[:2]}.0"
             else:
                 options += f"msvc-{platform[:2]}.{platform[2:]}"
