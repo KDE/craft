@@ -244,8 +244,10 @@ class CraftBase(object):
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject.get("libs/qt5/qtbase").version
-            version = f"Qt_{version}"
+            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
+            if not qtbase:
+                return None
+            version = f"Qt_{qtbase.version}"
         cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         return os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType())
 
@@ -253,8 +255,10 @@ class CraftBase(object):
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
         else:
-            version = CraftPackageObject.get("libs/qt5/qtbase").version
-            version = f"Qt_{version}"
+            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
+            if not qtbase:
+                return []
+            version = f"Qt_{qtbase.version}"
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]
