@@ -10,14 +10,14 @@ import InstallDB
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
         CraftCore.debug.setVerbose(1)
+        blueprintsDir = CraftCore.standardDirs.blueprintRoot()
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         oldSettings = CraftCore.settings
         CraftCore.settings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs()
         CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
-        CraftCore.settings.set("Blueprints", "Locations", oldSettings.get("Blueprints", "Locations"))
-        CraftCore.settings.set("Blueprints", "BlueprintRoot", oldSettings.get("Blueprints", "BlueprintRoot"))
+        CraftCore.settings.set("Blueprints", "BlueprintRoot", blueprintsDir)
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
         if hasattr(CraftCore, "installdb"):
             del CraftCore.installdb
