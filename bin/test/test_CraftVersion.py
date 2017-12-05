@@ -14,6 +14,8 @@ class TestCraftVersion(CraftTestBase.CraftTestBase):
                            (CraftVersion("v1.0.2j"), CraftVersion("1.0.2k")),
                            (CraftVersion("5.8.1"), CraftVersion("master")),
                            (CraftVersion("5.8.1"), CraftVersion("dev")),
+                           (CraftVersion("1_59_1"), CraftVersion("1_65_1")),
+                           (CraftVersion("1_59"), CraftVersion("1_65_1")),
                            (CraftVersion("Applications/16.12"), CraftVersion("Applications/16.13"))]:
             self.assertEquals(small, small)
             self.assertEquals(big, big)
