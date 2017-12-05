@@ -110,15 +110,18 @@ class UserOptions(object):
             key, value = o.split("=", 1)
             if "." in key:
                 package, key = key.split(".", 1)
-                if package.startswith("dynamic"):
+                if package == "dynamic":
                     CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini"
                                           "or don't specify the \"dynamic.\" prefix in the commandline")
+                    options[key] = value
                 else:
-                    if package not in packageOptions:
-                        packageOptions[package] = {}
-                    packageOptions[package][key] = value
-                    continue
-            options[key] = value
+                    # make sure it is a blueprint related setting
+                    if CraftPackageObject.get(package):
+                        if package not in packageOptions:
+                            packageOptions[package] = {}
+                        packageOptions[package][key] = value
+                    else:
+                        options[f"{package}.{key}"] = value
         UserOptions._commandlineOptions = options
         UserOptions._packageOptions = packageOptions
 
