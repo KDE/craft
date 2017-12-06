@@ -74,7 +74,7 @@ class GitSource(VersionSystemSourceBase):
             # in case this is a tag, print out the tag version
             return branch
 
-    def __git(self, command, args=None, **kwargs):
+    def __git(self, command, args=None, logCommand=False, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
         parts = ["git", command]
@@ -84,7 +84,7 @@ class GitSource(VersionSystemSourceBase):
             else:
                 kwargs["displayProgress"] = True
         else:
-            kwargs["logCommand"] = False
+            kwargs["logCommand"] = logCommand
         if args:
             parts += args
         if not kwargs.get("cwd"):
@@ -162,8 +162,8 @@ class GitSource(VersionSystemSourceBase):
         CraftCore.debug.trace('GitSource ')
         if fileName:
             patchfile = os.path.join(self.packageDir(), fileName)
-            return self.__git('apply', ['--whitespace=fix',
-                              '-p', str(patchdepth), patchfile])
+            return self.__git('apply', ['--ignore-space-change',
+                              '-p', str(patchdepth), patchfile], logCommand=True)
         return True
 
     def createPatch(self):
