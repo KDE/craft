@@ -68,6 +68,7 @@ class UserOptions(object):
         if not UserOptions._settings:
             UserOptions.path = CraftCore.settings.get("Blueprints", "Settings", os.path.join(CraftCore.standardDirs.etcDir(), "BlueprintSettings.ini"))
             UserOptions._settings = configparser.ConfigParser(allow_no_value=True)
+            UserOptions._settings.optionxform = str
             if os.path.isfile(UserOptions.path):
                 UserOptions.instance().read(UserOptions.path)
             if not UserOptions.instance().has_section(UserOptions.coreCategory):
