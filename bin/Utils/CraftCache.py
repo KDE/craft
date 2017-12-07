@@ -104,9 +104,13 @@ class CraftCache(object):
             return (-1, None)
         if testName not in self._outputCache:
             CraftCore.log.debug(f"\"{app}\" {command}")
-            code, output = subprocess.getstatusoutput(f"\"{app}\" {command}")
-            CraftCore.log.debug(f"{testName} Result: ExitedCode: {code} Output: {output}")
-            self._outputCache[testName] = (code, output)
+            # TODO: port away from shell=True
+            completeProcess = subprocess.run(f"\"{app}\" {command}",
+                                             shell=True,
+                                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                             universal_newlines=True, errors=None)
+            CraftCore.log.debug(f"{testName} Result: ExitedCode: {completeProcess.returncode} Output: {completeProcess.stdout}")
+            self._outputCache[testName] = (completeProcess.returncode, completeProcess.stdout)
         return self._outputCache[testName]
 
     # TODO: rename, cleanup
