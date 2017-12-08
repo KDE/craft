@@ -439,11 +439,6 @@ class Options(object):
 
         self.useShadowBuild = True
 
-        #### end of user configurable part
-        self.__verbose = False
-        self.__errors = False
-
-
     def isActive(self, package):
         if isinstance(package, str):
             package = CraftPackageObject.get(package)
