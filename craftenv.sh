@@ -11,7 +11,7 @@ if [[ -z "$craftRoot" ]];then
 fi
 
 if [[ ! -d "$craftRoot" ]]; then
-    craftRoot=$(dirname $craftRoot)
+    craftRoot=$(dirname $(realpath -s "$craftRoot"))
 fi
 
 export craftRoot
