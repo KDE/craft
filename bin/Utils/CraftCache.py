@@ -108,7 +108,7 @@ class CraftCache(object):
             completeProcess = subprocess.run(f"\"{app}\" {command}",
                                              shell=True,
                                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                             universal_newlines=True, errors=None)
+                                             universal_newlines=True, errors="backslashreplace")
             CraftCore.log.debug(f"{testName} Result: ExitedCode: {completeProcess.returncode} Output: {completeProcess.stdout}")
             self._outputCache[testName] = (completeProcess.returncode, completeProcess.stdout)
         return self._outputCache[testName]
