@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import os
 import platform
 import re
@@ -205,24 +206,33 @@ def getABI():
 
 def getIgnores():
     if CraftBootstrap.isWin():
-        return ""
+        return None
 
-    ignores = "gnuwin32/.*;dev-util/.*;binary/.*;kdesupport/kdewin"
+    settings = configparser.ConfigParts()
+    def addIgnore(ignore):
+        if ignore:
+            settings.add_category(ignore)
+            settings[ignore]["ignore"] = True
+
+    addIgnore("gnuwin32")
+    addIgnore("dev-util")
+    addIgnore("binary")
+    addIgnore("kdesupport/kdewin")
+
     print(f"On your OS we blacklist the following packages.\n"
           f"  {ignores}")
     print("On Unix systems we recommend to get third party libraries from your distributions package manager.")
-    ignores += CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs category?",
-                                              [("Yes", ";win32libs/.*"), ("No", "")])
-    print(
-        "Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development packages provided by the distribution.")
-    ignores += CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
-                                              [("Yes", ";libs/qt5/.*"), ("No", "")],
-                                              default="No")
-    print(f"Your blacklist.\n"
-          f"Ignores: {ignores}")
+    addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs branch?",
+                                              [("Yes", "win32libs"), ("No", None)]))
+    print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development "
+          "packages provided by the distribution.")
+    addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
+                                              [("Yes", "libs/qt5"), ("No", None)],
+                                              default="No"))
 
-    return ignores
 
+
+    return settings
 
 def setUp(args):
     if not args.dry_run and not os.path.exists(args.prefix):
@@ -243,6 +253,9 @@ def setUp(args):
         shortPath = CraftBootstrap.promptShortPath()
 
     ignores = getIgnores()
+    if ignores:
+        with open(os.path.join(args.prefix, "etc", "BlueprintSettings.ini"), "wt+") as blueprintSettings:
+            ignores.write(blueprintSettings)
 
     if not args.dry_run:
         CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
