@@ -125,7 +125,7 @@ class CraftBootstrap(object):
 
     def writeSettings(self):
         if not os.path.isdir(os.path.join(self.craftRoot, "etc")):
-            os.makedirs(os.path.join(self.craftRoot, "etc"))
+            os.makedirs(os.path.join(self.craftRoot, "etc"), exist_ok=True)
         if not self.dryRun:
             with open(os.path.join(self.craftRoot, "etc", "CraftSettings.ini"), "wt+") as out:
                 out.write("\n".join(self.settings))
@@ -208,11 +208,13 @@ def getIgnores():
     if CraftBootstrap.isWin():
         return None
 
+    ignores = []
     settings = configparser.ConfigParser()
     def addIgnore(ignore):
         if ignore:
-            settings.add_category(ignore)
-            settings[ignore]["ignore"] = True
+            ignores.append(ignore)
+            settings.add_section(ignore)
+            settings[ignore]["ignored"] = "True"
 
     addIgnore("gnuwin32")
     addIgnore("dev-util")
@@ -223,14 +225,15 @@ def getIgnores():
           f"  {ignores}")
     print("On Unix systems we recommend to get third party libraries from your distributions package manager.")
     addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs branch?",
-                                              [("Yes", "win32libs"), ("No", None)]))
+                                             [("Yes", "win32libs"), ("No", None)]))
     print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development "
           "packages provided by the distribution.")
     addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
-                                              [("Yes", "libs/qt5"), ("No", None)],
-                                              default="No"))
+                                             [("Yes", "libs/qt5"), ("No", None)],
+                                             default="No"))
 
-
+    print(f"Your ignore list.\n"
+          f"Ignores: {ignores}")
 
     return settings
 
@@ -254,6 +257,7 @@ def setUp(args):
 
     ignores = getIgnores()
     if ignores:
+        os.makedirs(os.path.join(args.prefix, "etc"), exist_ok=True)
         with open(os.path.join(args.prefix, "etc", "BlueprintSettings.ini"), "wt+") as blueprintSettings:
             ignores.write(blueprintSettings)
 
