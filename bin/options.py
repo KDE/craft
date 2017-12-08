@@ -55,11 +55,24 @@ class UserOptions(object):
 # Common settings available for all blueprints are:
 #     ignored: [True|False]
 #     version: some version
+#     args: arguments passed to the configure step
 #
 # Example:
-#     [lib/qt5]
-#     version=5.9
-#     ignored=False
+##     [libs]
+##     ignored = True
+##
+##     [lib/qt5]
+##     version = 5.9.3
+##     ignored = False
+##     withMySQL = True
+##
+##     [kde/pim/akonadi]
+##     args = -DAKONADI_BUILD_QSQLITE=On
+##
+#
+# Settings are inherited, so you can set them for a whole sub branch or a single blueprint.
+# While blueprint from [libs] are all ignored blueprint from [libs/qt5] are not.
+# 
 """
 
 
