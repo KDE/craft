@@ -80,8 +80,9 @@ class UserOptions(object):
 
     @staticmethod
     def _init_vars(settings, opt, prefix="") -> None:
-        # TODO: what do we wan't to have in here
         for var in vars(opt):
+            if var.startswith("_"):
+                continue
             attr = getattr(opt, var)
             if isinstance(attr, (bool, str, int, type(None))):
                 key = f"{prefix}{var}"
