@@ -208,7 +208,7 @@ def getIgnores():
     if CraftBootstrap.isWin():
         return None
 
-    settings = configparser.ConfigParts()
+    settings = configparser.ConfigParser()
     def addIgnore(ignore):
         if ignore:
             settings.add_category(ignore)
