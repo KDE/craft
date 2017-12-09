@@ -131,29 +131,12 @@ GitDrive = Q:
 ## You can specify additional external locations in ; seperated list
 #Locations = C:\blueprints
 
-## This adds the possibility to disable cretin blueprints
-## Whether a blueprint is active can be determined with options.isActive
-## "if self.subinfo.options.isActive("binary/mysql"):"
-## Ignores = dev-util/git;dev-util/msys;kdesupport/kdewin;win32libs/boost/boost-python
-Ignores =
-
 # Customer settings
 Settings = ${Variables:CraftRoot}/etc/BlueprintSettings.ini
 
 [BlueprintVersions]
 ## Allow to automatically update certain recipes once a day.
 EnableDailyUpdates = True
-
-## Override the default version for a package.
-## For a normal package add category/package, like win32libs/libpng and set the Version
-## For meta packages like Qt5 you can directly set the version for the whole package
-#libs/craft = master
-#Qt5 = 5.2.1
-#KF5 = 5.2.0
-#KDE = 4.89.0
-#Boost = 1_55_0
-#win32libs/libpng = 1.2.43
-#binary/vlc = 3.0.0-git
 
 [Packager]
 ## The archive type for packages.
