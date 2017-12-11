@@ -73,7 +73,7 @@ class UserOptions(object):
 #
 # Settings are inherited, so you can set them for a whole sub branch or a single blueprint.
 # While blueprint from [libs] are all ignored blueprint from [libs/qt5] are not.
-# 
+#
 """
 
 
@@ -127,8 +127,7 @@ class UserOptions(object):
             if "." in key:
                 package, key = key.split(".", 1)
                 if package == "dynamic":
-                    CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini"
-                                          "or don't specify the \"dynamic.\" prefix in the commandline")
+                    CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini")
                     options[key] = value
                 else:
                     # make sure it is a blueprint related setting
