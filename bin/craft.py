@@ -368,7 +368,6 @@ def main():
         helper.printBanner()
 
     if args.run:
-        CraftSetupHelper.SetupHelper().printBanner()
         return utils.system(args.run)
 
     if CraftCore.settings.getboolean("Packager", "CreateCache"):
