@@ -338,6 +338,7 @@ def main():
     actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a recipe")
+    actionHandler.addActionWithArg("run", nargs="+", help="Run an application in the Craft environment")
 
     # other actions
 
@@ -365,6 +366,10 @@ def main():
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
+
+    if args.run:
+        CraftSetupHelper.SetupHelper().printBanner()
+        return utils.system(args.run)
 
     if CraftCore.settings.getboolean("Packager", "CreateCache"):
         # we are in cache creation mode, ensure to create a 7z image and not an installer
