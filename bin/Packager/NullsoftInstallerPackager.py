@@ -129,7 +129,7 @@ You can add your own defines into self.defines as well.
             if CraftCore.compiler.isMSVC2015():
                 _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
             elif CraftCore.compiler.isMSVC2017():
-                for name in [f"vcredist_{arch}.exe", f"vcredist.{arch}.exe"]:
+                for name in [f"vcredist_{arch}.exe", f"vc_redist.{arch}.exe"]:
                     _file = os.path.join(os.environ["VCTOOLSREDISTDIR"], name)
                     if os.path.isfile(_file):
                         break
