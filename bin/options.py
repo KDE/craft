@@ -162,14 +162,14 @@ class UserOptions(object):
         settings = self.settings
         if not settings:
             settings = UserOptions.__init(self)
-        settings[key] = value
+        settings[key] = str(value)
 
     @staticmethod
     def __init(self, key=None):
         if not UserOptions.instance().has_section(self.package.path):
             UserOptions.instance().add_section(self.package.path)
         settings = self.settings = UserOptions.instance()[self.package.path]
-        if key:
+        if key and key not in settings:
             settings[key] = None
         return settings
 
