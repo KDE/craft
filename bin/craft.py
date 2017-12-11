@@ -415,7 +415,7 @@ def main():
                     package.children.update(child.children)
                 else:
                     if tempArgs.target:
-                        CraftCore.settings.set("BlueprintVersions", child.path, args.target)
+                        UserOptions.addPackageOption(child, "version", args.target)
                     package.children[child.name] = child
             if not run(package, action, tempArgs, package.children.values()):
                 return False

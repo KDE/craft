@@ -127,7 +127,7 @@ class UserOptions(object):
             if "." in key:
                 package, key = key.split(".", 1)
                 if package == "dynamic":
-                    CraftCore.log.warning("Detected a deprecated setting, use the BlueprintsSettings.ini")
+                    CraftCore.log.warning(f"Detected a deprecated setting \"{package}.{key} = {value}\", use the BlueprintsSettings.ini")
                     options[key] = value
                 else:
                     # make sure it is a blueprint related setting
@@ -139,6 +139,13 @@ class UserOptions(object):
                         options[f"{package}.{key}"] = value
         UserOptions._commandlineOptions = options
         UserOptions._packageOptions = packageOptions
+
+
+    @staticmethod
+    def addPackageOption(package : CraftPackageObject, key : str, value : str) -> None:
+        if package.path not in UserOptions._packageOptions:
+            UserOptions._packageOptions[package.path] = {}
+        UserOptions._packageOptions[package.path][key] = value
 
     @staticmethod
     @atexit.register
