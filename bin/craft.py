@@ -25,13 +25,6 @@ from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
 
-if not "KDEROOT" in os.environ:
-    helper = CraftSetupHelper.SetupHelper()
-    helper.subst()
-    helper.setupEnvironment()
-    helper.printBanner()
-
-
 def migrate():
     portageDir = os.path.join(CraftStandardDirs.etcDir(), "portage")
     if os.path.isdir(portageDir):
@@ -366,6 +359,13 @@ def main():
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
+
+
+    if not "KDEROOT" in os.environ:
+        helper = CraftSetupHelper.SetupHelper()
+        helper.subst()
+        helper.setupEnvironment()
+        helper.printBanner()
 
     if args.run:
         CraftSetupHelper.SetupHelper().printBanner()
