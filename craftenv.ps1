@@ -9,8 +9,6 @@ cls
 
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
-$CRAFT_ARGUMENTS = $args
-
 &{
 [version]$minPythonVersion = 3.6
 
@@ -48,7 +46,6 @@ if(test-path -path $env:CraftRoot\..\etc\kdesettings.ini)
     mv $env:CraftRoot\..\etc\kdesettings.ini $env:CraftRoot\..\etc\CraftSettings.ini
 }
 
-
 if(test-path -path $env:CraftRoot\..\etc\CraftSettings.ini)
 {
     $settings = readINI $env:CraftRoot\..\etc\CraftSettings.ini
@@ -58,37 +55,12 @@ else
     Write-Error("$env:CraftRoot\..\etc\CraftSettings.ini Does not exist")
     break
 }
-if( $CRAFT_ARGUMENTS[0] -eq "--get")
-{
-    Write-Host($settings[$CRAFT_ARGUMENTS[1]][$CRAFT_ARGUMENTS[2]])
-    break
-}
-
-
-function prependPATH([string] $path)
-{
-    $env:PATH="$path{0}$env:PATH" -f [IO.Path]::PathSeparator
-}
-
 
 if( -Not $env:CRAFT_PYTHON)
 {
-    prependPATH $settings["Paths"]["Python"]
     $env:CRAFT_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
 }
-
-(& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
-foreach {
-  if ($_ -match "=") {
-    $v = $_.split("=")
-    set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-    #Write-Host("$v[0]=$v[1]")
-  }
 }
-
-cd "$env:KDEROOT"
-}
-
 
 function Global:craft()
 {
@@ -117,12 +89,22 @@ function Global:cs([string] $package)
 
 function Global:cr()
 {
-    cd $env:KDEROOT
+    cd $env:CraftRoot
 }
 
 
 if($args.Length -ne 0)
 {
     craft --run $args
+} else {
+    (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
+    foreach {
+        if ($_ -match "=") {
+            $v = $_.split("=")
+            set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+            #Write-Host("$v[0]=$v[1]")
+        }
+    }
+    cd $env:CraftRoot/..
 }
 
