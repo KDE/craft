@@ -38,9 +38,9 @@ from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
 import configparser
 import atexit
 import copy
+import json
 
 class UserOptions(object):
-    __cachedOptions = {}
     __member = {"settings", "package", "registerOption"}
     __reserved = {"version", "ignored"}
 
@@ -80,6 +80,7 @@ class UserOptions(object):
 """
 
         def __init__(self):
+            self.cachedOptions = {}
             self.commandlineOptions = {}
             self.packageOptions = {}
             self.options = {}
@@ -143,6 +144,9 @@ class UserOptions(object):
                 with open(instance.path, 'wt+') as configfile:
                     print(instance.__header, file=configfile)
                     instance.settings.write(configfile)
+                with open(instance.path + ".dump", 'wt+') as configfile:
+                    json.dump(instance.cachedOptions, configfile, indent=2, sort_keys=True)
+
 
     @staticmethod
     def instance():
@@ -206,15 +210,15 @@ class UserOptions(object):
     def __getattribute__(self, name):
         if name in UserOptions.__member:
             return super().__getattribute__(name)
+        _instance = UserOptions.instance()
         packagePath = self.package.path
 
-        if packagePath not in UserOptions.__cachedOptions:
-            UserOptions.__cachedOptions[packagePath] = {}
-        cache = UserOptions.__cachedOptions[packagePath]
+        if packagePath not in _instance.cachedOptions:
+            _instance.cachedOptions[packagePath] = {}
+        cache = _instance.cachedOptions[packagePath]
         if name in cache:
             return cache[name]
 
-        _instance = UserOptions.instance()
         settings = self.settings
         out = None
 
@@ -230,11 +234,11 @@ class UserOptions(object):
             else:
                 out = settings[name]
 
-        if not out:
+        if out is None:
             parent = self.package.parent
             while parent:
                 out = getattr(UserOptions(parent), name)
-                if out:
+                if out is not None:
                     break
                 parent = parent.parent
 
