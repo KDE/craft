@@ -45,9 +45,10 @@ class UserOptions(object):
     _commandlineOptions = {}
     _packageOptions = {}
     _options = {}
+    _registeredOptions = {}
 
 
-    __member = ["settings", "package"]
+    __member = {"settings", "package", "registerOption"}
     __coreCategory = "#Core"
     __reserved = ["version", "ignored"]
     __header = """\
@@ -165,12 +166,12 @@ class UserOptions(object):
         settings[key] = str(value)
 
     @staticmethod
-    def __init(self, key=None):
+    def __init(self, key=None, default=None):
         if not UserOptions.instance().has_section(self.package.path):
             UserOptions.instance().add_section(self.package.path)
         settings = self.settings = UserOptions.instance()[self.package.path]
         if key and key not in settings:
-            settings[key] = None
+            settings[key] = default
         return settings
 
     def __getattribute__(self, name):
@@ -178,34 +179,54 @@ class UserOptions(object):
             return super().__getattribute__(name)
         settings = self.settings
         packagePath = self.package.path
+
+        _type = type(UserOptions._registeredOptions[packagePath].get(name)
+                    if packagePath in UserOptions._registeredOptions else None)
+        def convert(x):
+            out = x
+            if _type is bool:
+                out = UserOptions.instance()._convert_to_boolean(x)
+            elif _type is not type(None):
+                out = _type(x)
+            return out
+
         if name not in UserOptions.__reserved:
             # this blueprint has special options, make them public
             settings = UserOptions.__init(self, name)
 
         if name in UserOptions._commandlineOptions:
             # those values are temporary and must not be saved
-            return UserOptions._commandlineOptions[name]
+            return convert(UserOptions._commandlineOptions[name])
 
         if packagePath in UserOptions._packageOptions and name in UserOptions._packageOptions[packagePath]:
             # those values are temporary and must not be saved
-            return UserOptions._packageOptions[packagePath][name]
+            return convert(UserOptions._packageOptions[packagePath][name])
 
         if settings and name in settings:
             if name == "ignored":
                 return UserOptions.instance()._convert_to_boolean(settings["ignored"])
-            return settings[name]
+            return convert(settings[name])
 
         parent = self.package.parent
         while parent:
             out = getattr(UserOptions(parent), name)
-            if not out is None:
-                return out
+            if out:
+                return convert(out)
             parent = parent.parent
 
         # no value found
         if name == "args":
             return ""
         return None
+
+    def registerOption(self, key : str, default) -> None:
+        package = self.package
+        if package.path not in UserOptions._registeredOptions:
+            UserOptions._registeredOptions[package.path] = {}
+        UserOptions._registeredOptions[package.path][key] = default
+        UserOptions.__init(self, key, default)
+
+
 
 class OptionsBase(object):
     def __init__(self):
