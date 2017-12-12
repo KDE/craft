@@ -203,13 +203,16 @@ class CraftPackageObject(object):
         if not self.path:
             return False
         ignored = options.UserOptions(self).ignored
-        if not ignored is None:
+        if ignored is not None:
             return ignored
         ignored = self.path and CraftPackageObject.Ignores.match(self.path)
         if ignored:
-            CraftCore.log.warning("You are using the old Ignore setting, please use the new BluepirntSettings.ini")
-            CraftCore.log.warning(f"[Blueprints]\n"
-                                  f"Ignores={self.path}")
+            CraftCore.log.warning(f"You are using the deprecated Ignore setting:\n"
+                                  f"[Blueprints]\n"
+                                  f"Ignores={self.path}\n\n"
+                                  f"Please use BluepirntSettings.ini\n"
+                                  f"[{self.path}]\n"
+                                  f"ignored = True")
         return ignored
 
     @property
