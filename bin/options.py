@@ -207,6 +207,7 @@ class UserOptions(object):
                 return UserOptions.instance()._convert_to_boolean(settings["ignored"])
             return convert(settings[name])
 
+        # TODO: add caching to prevent going up the tree for each call
         parent = self.package.parent
         while parent:
             out = getattr(UserOptions(parent), name)
