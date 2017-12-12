@@ -29,9 +29,6 @@ class CraftConfig(object):
         self._groupAlias = {}
         self._readSettings()
 
-        if self.version < 3:
-            self._setAliasesV2()
-
         if self.version < 4:
             self._setAliasesV3()
 
@@ -67,16 +64,6 @@ class CraftConfig(object):
         self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
         self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
         self.addAlias("ShortPath", "Enabled", "ShortPath", "EMERGE_USE_SHORT_PATH")
-
-    def _setAliasesV2(self):
-        self.addAlias("Compile", "MakeProgram", "General", "EMERGE_MAKE_PROGRAM")
-        self.addAlias("Compile", "BuildTests", "General", "EMERGE_BUILDTESTS")
-        self.addAlias("Compile", "BuildType", "General", "EMERGE_BUILDTYPE")
-        self.addAlias("Blueprints", "Ignores", "Blueprints", "PACKAGE_IGNORES")
-        self.addAlias("Package", "UseCache", "ContinuousIntegration", "UseCache")
-        self.addAlias("Package", "CreateCache", "ContinuousIntegration", "UseCache")
-        self.addAlias("Package", "CacheDir", "ContinuousIntegration", "CacheDir")
-        self.addAlias("Package", "RepositoryUrl", "ContinuousIntegration", "RepositoryUrl")
 
     def _warnDeprecated(self, deprecatedSection, deprecatedKey, section, key):
         if not (deprecatedSection, deprecatedKey) in self._warned:
