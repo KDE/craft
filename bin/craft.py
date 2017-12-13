@@ -320,9 +320,12 @@ def main():
                         dest="ciMode", help="Enables the ci mode")
 
     actionHandler = ActionHandler(parser)
-    for x in sorted(["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
-                     "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"]):
-        actionHandler.addAction(x)
+    for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
+                     "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
+        if isinstance(x, tuple):
+            actionHandler.addAction(x[0], **x[1])
+        else:
+            actionHandler.addAction(x)
 
     # read-only actions
     actionHandler.addAction("print-installed",
