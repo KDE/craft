@@ -499,9 +499,9 @@ def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHa
     destDir = os.path.dirname(dest)
     if not os.path.exists(destDir):
         os.makedirs(destDir)
-    if os.path.exists(dest):
+    if os.path.lexists(dest):
         CraftCore.log.warning("Overriding %s" % dest)
-        if os.path.samefile(src, dest):
+        if not os.path.islink(dest) and os.path.samefile(src, dest):
             CraftCore.log.error("Can't copy a file into itself")
             return False
         OsUtils.rm(dest, True)
