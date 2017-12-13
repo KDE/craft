@@ -264,7 +264,7 @@ class ActionHandler:
 
 def main():
     parser = argparse.ArgumentParser(prog="Craft",
-                                     description="Craft is an open source meta build system and package manager."
+                                     description="Craft is an open source meta build system and package manager."
                                                  "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
                                      epilog="For more information visit https://community.kde.org/Craft.\n"
                                             "Send feedback to <kde-windows@kde.org>.")
