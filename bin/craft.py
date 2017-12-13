@@ -26,23 +26,28 @@ from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
 
 def migrate():
-    portageDir = os.path.join(CraftStandardDirs.etcDir(), "portage")
+    portageDir = os.path.join(CraftCore.standardDirs.etcDir(), "portage")
     if os.path.isdir(portageDir):
         del CraftCore.installdb
-        utils.moveEntries(portageDir, CraftStandardDirs.etcBlueprintDir())
+        utils.moveEntries(portageDir, CraftCore.standardDirs.etcBlueprintDir())
         utils.rmtree(portageDir)
         CraftCore.installdb =InstallDB.InstallDB()
     CraftCore.installdb.migrateDatabase()
 
 
 def destroyCraftRoot():
+    settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
+    dirsToKeep = [CraftCore.standardDirs.downloadDir(),
+                  os.path.normpath(os.path.join(CraftCore.standardDirs.craftBin(), "..")),
+                  os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
+                  CraftCore.standardDirs.blueprintRoot()]
     del CraftCore.installdb
-    root = CraftStandardDirs.craftRoot()
+    root = CraftCore.standardDirs.craftRoot()
     for entry in os.listdir(root):
         path = os.path.join(root, entry)
-        if os.path.exists(CraftStandardDirs.etcDir()) and os.path.samefile(path, CraftStandardDirs.etcDir()):
+        if os.path.exists(CraftCore.standardDirs.etcDir()) and os.path.samefile(path, CraftCore.standardDirs.etcDir()):
             for entry in os.listdir(path):
-                if entry not in ["kdesettings.ini", "CraftSettings.ini"]:
+                if entry not in settingsFiles:
                     etcPath = os.path.join(path, entry)
                     if os.path.isdir(etcPath):
                         if utils.OsUtils.isLink(etcPath):
@@ -52,13 +57,7 @@ def destroyCraftRoot():
                         utils.OsUtils.rmDir(etcPath, True)
                     else:
                         utils.OsUtils.rm(etcPath, True)
-        elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in [CraftStandardDirs.downloadDir(),
-                                                                               os.path.normpath(os.path.join(
-                                                                                       CraftStandardDirs.craftBin(),
-                                                                                       "..")),
-                                                                               os.path.join(
-                                                                                   CraftStandardDirs.craftRoot(),
-                                                                                   "python")]):
+        elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
             if utils.OsUtils.isLink(path):
                 print("Skipping symlink %s" % path)
                 continue
@@ -391,7 +390,7 @@ def main():
         CraftCore.log.debug("packageName: %s" % tempArgs.packageNames)
         CraftCore.log.debug("buildType: %s" % tempArgs.buildType)
         CraftCore.log.debug("verbose: %d" % CraftCore.debug.verbose())
-        CraftCore.log.debug("Craft: %s" % CraftStandardDirs.craftRoot())
+        CraftCore.log.debug("Craft: %s" % CraftCore.standardDirs.craftRoot())
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
@@ -431,7 +430,7 @@ if __name__ == '__main__':
     with CraftTimer.Timer("Craft", 0) as timer:
         CraftTitleUpdater.instance = CraftTitleUpdater()
         if not "CRAFT_NOTITLEUPDATE" in os.environ and not "--ci-mode" in sys.argv:
-            CraftTitleUpdater.instance.start(f"({CraftStandardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
+            CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
             success = main()
         except KeyboardInterrupt:
