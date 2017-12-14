@@ -158,10 +158,14 @@ class UserOptions(object):
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
-            for k, v in settings[package.path].items():
-                if hasattr(self, k):
-                    v = self._convert(getattr(self, k), v)
-                setattr(self, k, v)
+            section = settings[package.path]
+            self.version = section.get("version", None)
+            self.ignored = self._convert(bool, section.get("ignored", None))
+            self.args = section.get("args", "")
+
+            keys = set(section.keys()) - set(vars(self).keys())
+            for k in keys:
+                setattr(self, k, section[k])
 
     @staticmethod
     def get(package):
@@ -180,7 +184,7 @@ class UserOptions(object):
         """
         if not valA:
             return None
-        _type = type(valA)
+        _type = valA if callable(valA) else type(valA)
         if _type is bool:
             return UserOptions.instance().toBool(valB)
         return _type(valB)
