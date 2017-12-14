@@ -159,7 +159,20 @@ class UserOptions(object):
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
             for k, v in settings[package.path].items():
+                if hasattr(self, k):
+                    v = self._convert(getattr(self, k), v)
                 setattr(self, k, v)
+
+    @staticmethod
+    def get(package):
+        _instance = UserOptions.instance()
+        packagePath = package.path
+        if packagePath in _instance.cachedOptions:
+            option = _instance.cachedOptions[packagePath]
+        else:
+            option = UserOptions(package)
+            _instance.cachedOptions[packagePath] = option
+        return option
 
     def _convert(self, valA, valB):
         """
@@ -243,22 +256,17 @@ class UserOptions(object):
             out = _instance.commandlineOptions[name]
             CraftCore.log.warning(f"Deprecated use of options without package, please specify the package for the option {name}:\n"
                                   f"{_packagePath}.{name}={out}")
-        elif member:
+        elif member is not None:
             # value is not overwritten by comand line options
             return member
         else:
             parent = _package.parent
             if parent:
-                parentPath = parent.path
-                if parentPath in _instance.cachedOptions:
-                    option = _instance.cachedOptions[parentPath]
-                else:
-                    option = UserOptions(parent)
-                    _instance.cachedOptions[parentPath] = option
-                out = getattr(option, name)
+                out = getattr(UserOptions.get(parent), name)
 
         # skip lookup in command line options and parent objects the enxt time
         _cache[name] = out
+        #print(_packagePath, name, type(out), out)
         return out
 
 class OptionsBase(object):
@@ -444,11 +452,7 @@ class Options(object):
     def __init__(self, package=None):
         if package:
             self.__dict__ = copy.deepcopy(UserOptions.instance().options.__dict__)
-            if package.path in UserOptions.instance().cachedOptions:
-                self.dynamic = UserOptions.instance().cachedOptions[package.path]
-            else:
-                self.dynamic = UserOptions(package)
-                UserOptions.instance().cachedOptions[package.path] = self.dynamic
+            self.dynamic = UserOptions.get(package)
             self.configure.args = self.dynamic.args
             return
 

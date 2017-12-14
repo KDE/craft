@@ -208,7 +208,7 @@ class CraftPackageObject(object):
         import options
         if not self.path:
             return False
-        ignored = options.UserOptions(self).ignored
+        ignored = options.UserOptions.get(self).ignored
         if ignored is not None:
             return ignored
         ignored = self.path and CraftPackageObject.Ignores.match(self.path)
