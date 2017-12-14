@@ -407,7 +407,6 @@ def main():
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         else:
             if not args.packageNames and not args.list_file:
-                CraftSetupHelper.SetupHelper().printBanner()
                 return True
 
             package = CraftPackageObject(None)

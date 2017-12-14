@@ -38,12 +38,8 @@ from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
 import configparser
 import atexit
 import copy
-import json
 
 class UserOptions(object):
-    __member = {"settings", "package", "registerOption"}
-    __reserved = {"version", "ignored"}
-
     class UserOptionsSingleton(object):
         _instance = None
 
@@ -103,12 +99,12 @@ class UserOptions(object):
 
 
         def initPackage(self, option):
-            path = option.package.path
+            path = option._package.path
             settings = option.settings
             if not settings:
                 if not self.settings.has_section(path):
                     self.settings.add_section(path)
-                option.settings = settings = self.settings[path]
+                settings = self.settings[path]
             return settings
 
         def toBool(self, x : str) -> bool:
@@ -144,8 +140,6 @@ class UserOptions(object):
                 with open(instance.path, 'wt+') as configfile:
                     print(instance.__header, file=configfile)
                     instance.settings.write(configfile)
-                with open(instance.path + ".dump", 'wt+') as configfile:
-                    json.dump(instance.cachedOptions, configfile, indent=2, sort_keys=True)
 
 
     @staticmethod
@@ -156,9 +150,27 @@ class UserOptions(object):
 
 
     def __init__(self, package):
+        self._cachedFromParent = {}
+        self._package = package
+        self.version = None
+        self.ignored = None
+        self.args = ""
+
         settings = UserOptions.instance().settings
-        self.package = package
-        self.settings = settings[package.path] if settings.has_section(package.path) else None
+        if settings.has_section(package.path):
+            for k, v in settings[package.path].items():
+                setattr(self, k, v)
+
+    def _convert(self, valA, valB):
+        """
+        Converts valB to type(valA)
+        """
+        if not valA:
+            return None
+        _type = type(valA)
+        if _type is bool:
+            return UserOptions.instance().toBool(valB)
+        return _type(valB)
 
     @staticmethod
     def setOptions(optionsIn):
@@ -191,76 +203,62 @@ class UserOptions(object):
 
     def registerOption(self, key : str, default) -> None:
         _instance = UserOptions.instance()
-        package = self.package
+        package = self._package
         if package.path not in _instance.registeredOptions:
             _instance.registeredOptions[package.path] = {}
         _instance.registeredOptions[package.path][key] = default
         settings = _instance.initPackage(self)
         if key and key not in settings:
             settings[key] = str(default)
+        if not hasattr(self, key):
+            setattr(self, key, default)
+        else:
+            # convert type
+            setattr(self, key, self._convert(default, getattr(self, key)))
 
-    def __setattr__(self, key, value):
-        if key in UserOptions.__member:
-            super().__setattr__(key, value)
-            return
-        raise BlueprintException(f"Don't set self.subinfo.options.dynamic.{name} = {value}\n"
-                                 f"please call self.subinfo.options.dynamic.registerOption({key}, {value}) instead",
-                                 self.package)
 
     def __getattribute__(self, name):
-        if name in UserOptions.__member:
+        if name.startswith("_"):
             return super().__getattribute__(name)
-        _instance = UserOptions.instance()
-        packagePath = self.package.path
+        try:
+            member = super().__getattribute__(name)
+        except AttributeError:
+            member = None
+        if member and callable(member):
+            return member
 
-        if packagePath not in _instance.cachedOptions:
-            _instance.cachedOptions[packagePath] = {}
-        cache = _instance.cachedOptions[packagePath]
-        if name in cache:
-            return cache[name]
+        #check cache
+        _cache = super().__getattribute__("_cachedFromParent")
+        if name in _cache:
+            return _cache[name]
 
-        settings = self.settings
         out = None
-
-        if name in _instance.commandlineOptions:
-            # those values are temporary and must not be saved
+        _instance = UserOptions.instance()
+        _package = super().__getattribute__("_package")
+        _packagePath = _package.path
+        if _packagePath in _instance.packageOptions and name in _instance.packageOptions[_packagePath]:
+            out = _instance.packageOptions[_packagePath][name]
+        elif name in _instance.commandlineOptions:
+            # legacy option, removee soon
             out = _instance.commandlineOptions[name]
-        elif packagePath in _instance.packageOptions and name in _instance.packageOptions[packagePath]:
-            # those values are temporary and must not be saved
-            out = _instance.packageOptions[packagePath][name]
-        elif settings and name in settings:
-            if name == "ignored":
-                out = _instance.toBool(settings["ignored"])
-            else:
-                out = settings[name]
+            CraftCore.log.warning(f"Deprecated use of options without package, please specify the package for the option {name}:\n"
+                                  f"{_packagePath}.{name}={out}")
+        elif member:
+            # value is not overwritten by comand line options
+            return member
+        else:
+            parent = _package.parent
+            if parent:
+                parentPath = parent.path
+                if parentPath in _instance.cachedOptions:
+                    option = _instance.cachedOptions[parentPath]
+                else:
+                    option = UserOptions(parent)
+                    _instance.cachedOptions[parentPath] = option
+                out = getattr(option, name)
 
-        if out is None:
-            parent = self.package.parent
-            while parent:
-                out = getattr(UserOptions(parent), name)
-                if out is not None:
-                    break
-                parent = parent.parent
-
-        # no value found
-        if not out:
-            if name == "args":
-                out = ""
-
-        _type = None
-        if packagePath in _instance.registeredOptions and name in _instance.registeredOptions[packagePath]:
-            _type = type(_instance.registeredOptions[packagePath][name])
-
-        def convert(x):
-            out = x
-            if _type is bool:
-                out = _instance.toBool(x)
-            elif _type:
-                out = _type(x)
-            return out
-        out = convert(out)
-
-        cache[name] = out
+        # skip lookup in command line options and parent objects the enxt time
+        _cache[name] = out
         return out
 
 class OptionsBase(object):
@@ -446,7 +444,12 @@ class Options(object):
     def __init__(self, package=None):
         if package:
             self.__dict__ = copy.deepcopy(UserOptions.instance().options.__dict__)
-            self.dynamic = UserOptions(package)
+            if package.path in UserOptions.instance().cachedOptions:
+                self.dynamic = UserOptions.instance().cachedOptions[package.path]
+            else:
+                self.dynamic = UserOptions(package)
+                UserOptions.instance().cachedOptions[package.path] = self.dynamic
+            self.configure.args = self.dynamic.args
             return
 
         ## options for the dependency generation
