@@ -15,8 +15,12 @@ class CraftPackageObject(object):
     __rootPackage = None
     _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
-    IgnoredDirectories = ["__pycache__"]
+    IgnoredDirectories = {"__pycache__"}
     Ignores = re.compile("a^")
+
+    @staticmethod
+    def _isDirIgnored(d):
+        return d.startswith(".") or d in CraftPackageObject.IgnoredDirectories
 
     def __init__(self, other=None):
         if isinstance(other, CraftPackageObject):
@@ -82,7 +86,7 @@ class CraftPackageObject(object):
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
             if os.path.isdir(fPath):
-                if not f.startswith(".") and f not in CraftPackageObject.IgnoredDirectories:
+                if not CraftPackageObject._isDirIgnored(f):
                     hasChildren = True
                     child = self._addNode(fPath, blueprintRoot)
                     if child:
@@ -135,6 +139,8 @@ class CraftPackageObject(object):
                 rootDirs.add(utils.normalisePath(path))
         if os.path.isdir(CraftStandardDirs.blueprintRoot()):
             for f in os.listdir(CraftStandardDirs.blueprintRoot()):
+                if CraftPackageObject._isDirIgnored(f):
+                    continue
                 rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
         CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
         return list(rootDirs)
