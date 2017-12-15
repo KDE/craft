@@ -410,18 +410,21 @@ def main():
                 return True
 
             package = CraftPackageObject(None)
-            for packageName in packageNames:
-                child = CraftPackageObject.get(packageName)
+            def resolveChildren(child):
                 if not child:
                     blueprintSearch.printSearch(packageName)
                     return False
+                for c in child.children.values():
+                    if c.isCategory():
+                        resolveChildren(c)
+                    else:
+                        if tempArgs.target:
+                            UserOptions.addPackageOption(c, "version", args.target)
+                        package.children[c.name] = c
 
-                if child.isCategory():
-                    package.children.update(child.children)
-                else:
-                    if tempArgs.target:
-                        UserOptions.addPackageOption(child, "version", args.target)
-                    package.children[child.name] = child
+            for packageName in packageNames:
+                child = CraftPackageObject.get(packageName)
+                resolveChildren(child)
             if not run(package, action, tempArgs, package.children.values()):
                 return False
     return True
