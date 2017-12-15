@@ -36,11 +36,17 @@ class SetupHelper(object):
     def __init__(self, args=None):
         self.args = args
 
-    def _getOutput(self, command):
+    def _getOutput(self, command, shell=False):
         CraftCore.log.debug(f"SetupHelper._getOutput: {command}")
-        status, output = subprocess.getstatusoutput(command)
-        CraftCore.log.debug(f"SetupHelper._getOutput: return {status} {output}")
-        return status, output
+        p = subprocess.run(command,
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT,
+                           shell=shell,
+                           universal_newlines=True,
+                           errors="backslashreplace")
+        out = p.stdout.strip()
+        CraftCore.log.debug(f"SetupHelper._getOutput: return {p.returncode} {out}")
+        return p.returncode, out
 
     def run(self):
         parser = argparse.ArgumentParser()
@@ -98,7 +104,9 @@ class SetupHelper(object):
         def _subst(path, drive):
             if not os.path.exists(path):
                 os.makedirs(path)
-            self._getOutput("subst {drive} {path}".format(drive=CraftCore.settings.get("ShortPath", drive),path=path))
+            self._getOutput(["subst",
+                             CraftCore.settings.get("ShortPath", drive),
+                             path])
 
         if CraftCore.settings.getboolean("ShortPath", "Enabled", False):
             with TemporaryUseShortpath(False):
@@ -155,9 +163,12 @@ class SetupHelper(object):
             architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
             version = CraftCore.compiler.getInternalVersion()
             vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-            path = subprocess.getoutput(f"\"{vswhere}\""
-                    f" -version \"[{version},{version+1})\" -property installationPath -nologo -latest"
-                    +(" -legacy" if version < 15 else " -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"))
+            command = [vswhere, "-version", f"[{version},{version+1})", "-property", "installationPath", "-nologo", "-latest"]
+            if version < 15:
+                command.append("-legacy")
+            else:
+                command += ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
+            _, path = self._getOutput(command)
             arg = architectures[CraftCore.compiler.architecture] + ("_cross" if not CraftCore.compiler.isNative() else "")
             path = os.path.join(path, "VC")
             if version >= 15:
@@ -167,21 +178,19 @@ class SetupHelper(object):
                 log(f"Failed to setup msvc compiler.\n"
                     f"{path} does not exist.")
                 exit(1)
-            command = f"\"{path}\" {arg}"
-            status, result = subprocess.getstatusoutput(f"{command} > NUL && set")
-            CraftCore.log.debug(result)
+            status, result = self._getOutput(f"\"{path}\" {arg} > NUL && set", shell=True)
             if status != 0:
                 log(f"Failed to setup msvc compiler.\n"
-                    f"Command: {command} ")
+                    f"Command: {result} ")
                 exit(1)
             return self.stringToEnv(result)
 
         elif CraftCore.compiler.isIntel():
             architectures = {"x86": "ia32", "x64": "intel64"}
             programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
-            status, result = subprocess.getstatusoutput(
+            status, result = self._getOutput(
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
-                    programFiles, architectures[CraftCore.compiler.architecture]))
+                    programFiles, architectures[CraftCore.compiler.architecture]), shell=True)
             if status != 0:
                 log("Failed to setup intel compiler")
                 exit(1)
