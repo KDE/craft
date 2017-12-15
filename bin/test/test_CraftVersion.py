@@ -16,7 +16,11 @@ class TestCraftVersion(CraftTestBase.CraftTestBase):
                            (CraftVersion("5.8.1"), CraftVersion("dev")),
                            (CraftVersion("1_59_1"), CraftVersion("1_65_1")),
                            (CraftVersion("1_59"), CraftVersion("1_65_1")),
+                           (CraftVersion("master-2017.12.14"), CraftVersion("master-2017.12.15")),
+                           (CraftVersion("2017.12-2017.12.14"), CraftVersion("2017.12-2017.12.15")),
                            (CraftVersion("Applications/16.12"), CraftVersion("Applications/16.13"))]:
+            if CraftCore.debug.verbose() > 2:
+                print(f"{small.version} {big.version}")
             self.assertEquals(small, small)
             self.assertEquals(big, big)
             self.assertLess(small, big)
