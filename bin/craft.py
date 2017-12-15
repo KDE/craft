@@ -414,13 +414,14 @@ def main():
                 if not child:
                     blueprintSearch.printSearch(packageName)
                     return False
-                for c in child.children.values():
-                    if c.isCategory():
+
+                if child.isCategory():
+                    for c in child.children.values():
                         resolveChildren(c)
-                    else:
-                        if tempArgs.target:
-                            UserOptions.addPackageOption(c, "version", args.target)
-                        package.children[c.name] = c
+                else:
+                    if tempArgs.target:
+                        UserOptions.addPackageOption(child, "version", args.target)
+                    package.children[child.name] = child
 
             for packageName in packageNames:
                 child = CraftPackageObject.get(packageName)
