@@ -89,7 +89,7 @@ function Global:cs([string] $package)
 
 function Global:cr()
 {
-    cd $env:CraftRoot
+    cd $env:CraftRoot/..
 }
 
 
@@ -105,6 +105,6 @@ if($args.Length -ne 0)
             #Write-Host("$v[0]=$v[1]")
         }
     }
-    cd $env:CraftRoot/..
+    cr
 }
 
