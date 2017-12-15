@@ -9,7 +9,7 @@ import InstallDB
 
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
-        CraftCore.debug.setVerbose(1)
+        CraftCore.debug.setVerbose(int(os.getenv("CRAFT_TEST_VERBOSITY")))
         blueprintsDir = CraftCore.standardDirs.blueprintRoot()
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))

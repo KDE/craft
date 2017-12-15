@@ -57,7 +57,7 @@ def main():
     opts, rest = parser.parse_args()
 
     CraftCore.debug.setVerbose(opts.verbosity)
-    os.environ["EMERGE_TEST_VERBOSITY"] = str(opts.verbosity)
+    os.environ["CRAFT_TEST_VERBOSITY"] = str(opts.verbosity)
 
     loader = unittest.TestLoader()
     if not opts.target:
