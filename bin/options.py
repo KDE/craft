@@ -182,9 +182,11 @@ class UserOptions(object):
         """
         Converts valB to type(valA)
         """
-        if not valA:
-            return None
+        if valA is None:
+            return valB
         _type = valA if callable(valA) else type(valA)
+        if _type == type(valB):
+            return valB
         if _type is bool:
             return UserOptions.instance().toBool(valB)
         return _type(valB)
@@ -201,11 +203,14 @@ class UserOptions(object):
                     CraftCore.log.warning(f"Detected a deprecated setting \"{package}.{key} = {value}\", use the BlueprintsSettings.ini")
                     options[key] = value
                 else:
-                    # make sure it is a blueprint related setting
-                    if CraftPackageObject.get(package):
-                        if package not in packageOptions:
-                            packageOptions[package] = {}
-                        packageOptions[package][key] = value
+                    if "/" in package:
+                        # make sure it is a blueprint related setting
+                        if CraftPackageObject.get(package):
+                            if package not in packageOptions:
+                                 packageOptions[package] = {}
+                            packageOptions[package][key] = value
+                        else:
+                            raise BlueprintException(f"Package {package} not found, failed to set option {key} = {value}", None, packageName=package)
                     else:
                         options[f"{package}.{key}"] = value
         UserOptions.instance().commandlineOptions = options
@@ -231,7 +236,10 @@ class UserOptions(object):
             setattr(self, key, default)
         else:
             # convert type
-            setattr(self, key, self._convert(default, getattr(self, key)))
+            old = getattr(self, key)
+            new = self._convert(default, old)
+            #print(key, type(old), type(new))
+            setattr(self, key, new)
 
 
     def __getattribute__(self, name):
@@ -254,7 +262,9 @@ class UserOptions(object):
         _package = super().__getattribute__("_package")
         _packagePath = _package.path
         if _packagePath in _instance.packageOptions and name in _instance.packageOptions[_packagePath]:
-            out = _instance.packageOptions[_packagePath][name]
+            if _packagePath not in _instance.registeredOptions or name not in _instance.registeredOptions[_packagePath]:
+                 raise BlueprintException(f"Package {_package} has no registered option {key}", _package)
+            out = self._convert(_instance.registeredOptions[_packagePath][name], _instance.packageOptions[_packagePath][name])
         elif name in _instance.commandlineOptions:
             # legacy option, removee soon
             out = _instance.commandlineOptions[name]

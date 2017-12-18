@@ -251,11 +251,15 @@ class CraftPackageObject(object):
 
 
 class BlueprintException(Exception):
-    def __init__(self, message, package, exception=None):
+    def __init__(self, message, package, exception=None, packageName=None):
         Exception.__init__(self, message)
 
         self.package = package
         self.exception = exception
+        self.packageName = packageName
 
     def __str__(self):
-        return f"{self.package.source or self.package} failed: {Exception.__str__(self)}"
+        if self.package:
+            return f"{self.package.source or self.package} failed: {Exception.__str__(self)}"
+        else:
+            return str(self.exception)
