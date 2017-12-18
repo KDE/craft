@@ -46,4 +46,4 @@ class GitPackage(BinaryPackageBase):
 
 class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="git", version="2.10.0", classA=GitPackage)
+        VirtualIfSufficientVersion.__init__(self, app="git", version="2.13.0", classA=GitPackage)
