@@ -55,6 +55,9 @@ class infoclass(object):
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
         self.buildTarget = ""
+
+        self.registerOptions()
+
         self.setTargets()
         self.setBuildTarget()
         self.setBuildOptions()
@@ -88,6 +91,12 @@ class infoclass(object):
     @defaultTarget.setter
     def defaultTarget(self, value):
         self._defaultTarget = value
+
+    def registerOptions(self):
+        """calls to self.options.dynamic.registerOption
+        #self.options.dynamic.registerOption("fullKDevelop", False)
+        """
+        pass
 
     def setDependencies(self):
         """default method for setting dependencies, override to set individual targets"""
