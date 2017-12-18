@@ -411,9 +411,6 @@ def main():
 
             package = CraftPackageObject(None)
             def resolveChildren(child):
-                if not child:
-                    raise BlueprintException(None, None, packageName = packageName)
-
                 if child.isCategory():
                     for c in child.children.values():
                         resolveChildren(c)
@@ -424,6 +421,8 @@ def main():
 
             for packageName in packageNames:
                 child = CraftPackageObject.get(packageName)
+                if not child:
+                    raise BlueprintNotFoundException(packageName)
                 resolveChildren(child)
             if not run(package, action, tempArgs, package.children.values()):
                 return False
@@ -440,17 +439,15 @@ if __name__ == '__main__':
             success = main()
         except KeyboardInterrupt:
             pass
-        except BlueprintException as e:
-            if not e.package:
-                if hasattr(e, "msg"):
-                    CraftCore.log.error(e.message)
+        except BlueprintNotFoundException as e:
+                CraftCore.log.error(e)
                 blueprintSearch.printSearch(e.packageName)
+        except BlueprintException as e:
+            if 0 <= CraftCore.debug.verbose() < 2:
+                CraftCore.log.error(e)
+                CraftCore.log.debug(e, exc_info=e.exception or e)
             else:
-                if 0 <= CraftCore.debug.verbose() < 2:
-                    CraftCore.log.error(e)
-                    CraftCore.log.debug(e, exc_info=e.exception or e)
-                else:
-                    CraftCore.log.error(e, exc_info=e.exception or e)
+                CraftCore.log.error(e, exc_info=e.exception or e)
         except Exception as e:
             CraftCore.log.error(e, exc_info=e)
         finally:

@@ -33,7 +33,7 @@
 import utils
 from CraftConfig import *
 from CraftCore import CraftCore
-from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
+from Blueprints.CraftPackageObject import *
 
 import configparser
 import atexit
@@ -152,20 +152,21 @@ class UserOptions(object):
     def __init__(self, package):
         self._cachedFromParent = {}
         self._package = package
-        self.version = None
-        self.ignored = None
-        self.args = ""
+
+        _register  = self.registerOption
+        _convert = self._convert
+
+        _register("version", "", permanent=False)
+        _register("ignored", False, permanent=False)
+        _register("args", "", permanent=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
-            section = settings[package.path]
-            self.version = section.get("version", None)
-            self.ignored = self._convert(bool, section.get("ignored", None))
-            self.args = section.get("args", "")
-
-            keys = set(section.keys()) - set(vars(self).keys())
-            for k in keys:
-                setattr(self, k, section[k])
+            _registered = UserOptions.instance().registeredOptions[package.path]
+            for k, v in settings[package.path].items():
+                if k in _registered:
+                    v = _convert(_registered[k], v)
+                setattr(self, k, v)
 
     @staticmethod
     def get(package):
@@ -210,7 +211,7 @@ class UserOptions(object):
                                  packageOptions[package] = {}
                             packageOptions[package][key] = value
                         else:
-                            raise BlueprintException(f"Package {package} not found, failed to set option {key} = {value}", None, packageName=package)
+                            raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
                     else:
                         options[f"{package}.{key}"] = value
         UserOptions.instance().commandlineOptions = options
@@ -223,15 +224,16 @@ class UserOptions(object):
             UserOptions.instance().packageOptions[package.path] = {}
         UserOptions.instance().packageOptions[package.path][key] = value
 
-    def registerOption(self, key : str, default) -> None:
+    def registerOption(self, key : str, default, permanent=True) -> None:
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
             _instance.registeredOptions[package.path] = {}
         _instance.registeredOptions[package.path][key] = default
-        settings = _instance.initPackage(self)
-        if key and key not in settings:
-            settings[key] = str(default)
+        if permanent:
+            settings = _instance.initPackage(self)
+            if key and key not in settings:
+                settings[key] = str(default)
         if not hasattr(self, key):
             setattr(self, key, default)
         else:
@@ -263,7 +265,7 @@ class UserOptions(object):
         _packagePath = _package.path
         if _packagePath in _instance.packageOptions and name in _instance.packageOptions[_packagePath]:
             if _packagePath not in _instance.registeredOptions or name not in _instance.registeredOptions[_packagePath]:
-                 raise BlueprintException(f"Package {_package} has no registered option {key}", _package)
+                 raise BlueprintException(f"Package {_package} has no registered option {name}", _package)
             out = self._convert(_instance.registeredOptions[_packagePath][name], _instance.packageOptions[_packagePath][name])
         elif name in _instance.commandlineOptions:
             # legacy option, removee soon
