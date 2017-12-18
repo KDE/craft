@@ -156,9 +156,9 @@ class UserOptions(object):
         _register  = self.registerOption
         _convert = self._convert
 
-        _register("version", "", permanent=False)
-        _register("ignored", False, permanent=False)
-        _register("args", "", permanent=False)
+        _register("version", str, permanent=False)
+        _register("ignored", bool, permanent=False)
+        _register("args", str, permanent=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
@@ -234,14 +234,17 @@ class UserOptions(object):
             settings = _instance.initPackage(self)
             if key and key not in settings:
                 settings[key] = str(default)
-        if not hasattr(self, key):
-            setattr(self, key, default)
-        else:
-            # convert type
-            old = getattr(self, key)
-            new = self._convert(default, old)
-            #print(key, type(old), type(new))
-            setattr(self, key, new)
+
+        # don't try to save types
+        if not callable(default):
+            if not hasattr(self, key):
+                setattr(self, key, default)
+            else:
+                # convert type
+                old = getattr(self, key)
+                new = self._convert(default, old)
+                #print(key, type(old), old, type(new), new)
+                setattr(self, key, new)
 
 
     def __getattribute__(self, name):
