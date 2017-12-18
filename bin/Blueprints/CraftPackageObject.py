@@ -251,15 +251,24 @@ class CraftPackageObject(object):
 
 
 class BlueprintException(Exception):
-    def __init__(self, message, package, exception=None, packageName=None):
+    def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
 
         self.package = package
         self.exception = exception
-        self.packageName = packageName
 
     def __str__(self):
-        if self.package:
-            return f"{self.package.source or self.package} failed: {Exception.__str__(self)}"
+        return f"{self.package.source or self.package} failed: {Exception.__str__(self)}"
+
+
+class BlueprintNotFoundException(Exception):
+    def __init__(self, packageName, message=None):
+        Exception.__init__(self)
+        self.packageName = packageName
+        self.message = message
+
+    def __str__(self):
+        if self.message:
+            return self.message
         else:
-            return str(self.exception)
+            return f"Failed to find {self.packageName}: {Exception.__str__(self)}"

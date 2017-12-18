@@ -33,7 +33,7 @@
 import utils
 from CraftConfig import *
 from CraftCore import CraftCore
-from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
+from Blueprints.CraftPackageObject import *
 
 import configparser
 import atexit
@@ -210,7 +210,7 @@ class UserOptions(object):
                                  packageOptions[package] = {}
                             packageOptions[package][key] = value
                         else:
-                            raise BlueprintException(f"Package {package} not found, failed to set option {key} = {value}", None, packageName=package)
+                            raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
                     else:
                         options[f"{package}.{key}"] = value
         UserOptions.instance().commandlineOptions = options
