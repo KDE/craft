@@ -221,7 +221,7 @@ class CraftPackageObject(object):
             CraftCore.log.warning(f"You are using the deprecated Ignore setting:\n"
                                   f"[Blueprints]\n"
                                   f"Ignores={self.path}\n\n"
-                                  f"Please use BluepirntSettings.ini\n"
+                                  f"Please use BlueprintSettings.ini\n"
                                   f"[{self.path}]\n"
                                   f"ignored = True")
         return ignored
