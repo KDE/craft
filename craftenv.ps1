@@ -67,9 +67,14 @@ function Global:craft()
     return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
-function Global:cb([string] $package)
+function Global:cb([string] $package, [string] $target="")
 {
-    $dir = craft -q --get "buildDir()" $package | Out-String
+    $command = @()
+    if ($target) {
+        $command += @("--target", $target)
+    }
+    $command += @("-q", "--get", "buildDir()", $package)
+    $dir = craft @command | Out-String
     if($LASTEXITCODE) {
         Write-Host $dir
     } else {
@@ -77,9 +82,14 @@ function Global:cb([string] $package)
     }
 }
 
-function Global:cs([string] $package)
+function Global:cs([string] $package, [string] $target="")
 {
-    $dir = craft -q --get "sourceDir()" $package | Out-String
+    $command = @()
+    if ($target) {
+        $command += @("--target", $target)
+    }
+    $command += @("-q", "--get", "sourceDir()", $package)
+    $dir = craft @command | Out-String
     if($LASTEXITCODE) {
         Write-Host $dir
     } else {
