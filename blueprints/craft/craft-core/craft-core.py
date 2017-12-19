@@ -41,4 +41,4 @@ class Package(SourceOnlyPackageBase):
 
     def unittest(self):
         test = os.path.join(self.sourceDir(), "bin", "test", "runtests.py")
-        return utils.system(["python3", test])
+        return utils.system([sys.executable, test])
