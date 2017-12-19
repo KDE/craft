@@ -13,6 +13,7 @@ import utils
 
 class CraftPackageObject(object):
     __rootPackage = None
+    __rootDirectories = []
     _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__"}
@@ -133,18 +134,23 @@ class CraftPackageObject(object):
     @staticmethod
     def rootDirectories():
         # this function should return all currently set blueprint directories
-        rootDirs = {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
-        if ("Blueprints", "Locations") in CraftCore.settings:
-            for path in CraftCore.settings.getList("Blueprints", "Locations"):
-                rootDirs.add(utils.normalisePath(path))
-        if os.path.isdir(CraftStandardDirs.blueprintRoot()):
-            for f in os.listdir(CraftStandardDirs.blueprintRoot()):
-                if CraftPackageObject._isDirIgnored(f):
-                    continue
-                rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
-        CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
-        return list(rootDirs)
+        if not CraftPackageObject.__rootDirectories:
+            rootDirs = {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
+            if ("Blueprints", "Locations") in CraftCore.settings:
+                for path in CraftCore.settings.getList("Blueprints", "Locations"):
+                    rootDirs.add(utils.normalisePath(path))
+            if os.path.isdir(CraftStandardDirs.blueprintRoot()):
+                for f in os.listdir(CraftStandardDirs.blueprintRoot()):
+                    if CraftPackageObject._isDirIgnored(f):
+                        continue
+                    rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
+            CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
+            CraftPackageObject.__rootDirectories = list(rootDirs)
+        return CraftPackageObject.__rootDirectories
 
+    @staticmethod
+    def bootstrapping() -> bool:
+        return len(CraftPackageObject.rootDirectories()) == 1
 
     @staticmethod
     def root():
@@ -164,7 +170,6 @@ class CraftPackageObject(object):
                 root.children.update(child.children)
             CraftPackageObject._nodes["/"] = root
         return CraftPackageObject.__rootPackage
-
 
     @property
     def instance(self):

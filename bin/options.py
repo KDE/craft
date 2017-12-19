@@ -210,7 +210,8 @@ class UserOptions(object):
                             if package not in packageOptions:
                                  packageOptions[package] = {}
                             packageOptions[package][key] = value
-                        else:
+                        elif not CraftPackageObject.bootstrapping():
+                            # in case we are bootstrapping Craft, we might not know that package yet
                             raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
                     else:
                         options[f"{package}.{key}"] = value
