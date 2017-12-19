@@ -6,7 +6,7 @@ from options import *
 import configparser
 
 
-class TestCraftVersion(CraftTestBase.CraftTestBase):
+class TestUserOptions(CraftTestBase.CraftTestBase):
     def _prepare(self, options):
         path = UserOptions.instance().path
         del UserOptions.UserOptionsSingleton._instance
