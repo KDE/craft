@@ -38,3 +38,7 @@ class Package(SourceOnlyPackageBase):
 
     def checkoutDir(self, index=0):
         return os.path.join(CraftStandardDirs.craftRoot(), "craft")
+
+    def unittest(self):
+        test = os.path.join(self.sourceDir(), "bin", "test", "runtests.py")
+        return utils.system(["python3", test])
