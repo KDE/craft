@@ -44,8 +44,8 @@ class infoclass(object):
         self.runtimeDependencies = {}
         self.buildDependencies = {}
 
-        # a long and a short description for the package
         self.description = ""
+        # tag words describing the package
         self.tags = ""
         # a url to the projects webpage
         self.webpage = ""

@@ -8,6 +8,7 @@ from Utils import CraftTimer
 class SeachPackage(object):
     def __init__(self, package):
         self.path = package.path
+        self.name = package.name
         self.webpage = package.subinfo.webpage
         self.description = package.subinfo.description
         self.tags = package.subinfo.tags
@@ -67,35 +68,33 @@ def printSearch(search_package, maxDist=2):
         similar = []
         match = None
         package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)
-        for package in packages():
-            if not package.package:
-                continue
-            packageString =  package.package.path if isPath else package.package.name
+        for searchPackage in packages():
+            packageString =  searchPackage.path if isPath else searchPackage.name
             levDist = abs(len(searchPackageLower) - len(packageString))
             if levDist <= maxDist:
                 levDist = utils.levenshtein(searchPackageLower, packageString.lower())
             if levDist == 0:
-                match = (levDist, package)
+                match = (levDist, searchPackage)
                 break
-            elif package_re.match(package.package.path):
-                similar.append((levDist - maxDist, package))
+            elif package_re.match(searchPackage.path):
+                similar.append((levDist - maxDist, searchPackage))
             elif len(packageString) > maxDist and levDist <= maxDist:
-                similar.append((levDist, package))
+                similar.append((levDist, searchPackage))
             else:
-                if package_re.match(package.description) or \
-                        package_re.match(package.tags):
-                    similar.append((100, package))
+                if package_re.match(searchPackage.description) or \
+                        package_re.match(searchPackage.tags):
+                    similar.append((100, searchPackage))
 
         if match == None:
             if len(similar) > 0:
-                print("Craft was unable to find %s, similar packages are:" % search_package)
+                CraftCore.log.info(f"Craft was unable to find {search_package}, similar packages are:")
                 similar.sort(key=lambda x: x[0])
             else:
-                print("Craft was unable to find %s" % search_package)
+                CraftCore.log.info(f"Craft was unable to find {search_package}")
         else:
-            print("Package %s found:" % search_package)
+            CraftCore.log.info(f"Package {search_package} found:")
             similar = [match]
 
-        for levDist, package in similar:
-            CraftCore.log.debug((package, levDist))
-            print(package)
+        for levDist, searchPackage in similar:
+            CraftCore.log.debug((vars(searchPackage), levDist))
+            CraftCore.log.info(searchPackage)
