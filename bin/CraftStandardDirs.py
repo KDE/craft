@@ -12,10 +12,10 @@ class CraftStandardDirs(object):
     _SUBST = None
     _allowShortpaths = True
 
-    def __init__(self):
+    def __init__(self, craftRoot=None):
         self._useShortPath = False
-        self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(CraftCore.settings._craftRoot()),
-                                        lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "RootDrive", x)))
+        self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(craftRoot or CraftCore.settings._craftRoot()),
+                                                      lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "RootDrive", x)))
         self._downloadDir = CraftShortPath(CraftCore.settings.get("Paths", "DOWNLOADDIR", os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
                                         lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "DownloadDrive", x)))
         self._gitDir = CraftShortPath(CraftCore.settings.get("Paths", "KDEGITDIR", os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),

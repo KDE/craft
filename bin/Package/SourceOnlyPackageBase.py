@@ -25,9 +25,6 @@ class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerB
     def uninstall(self):
         return True
 
-    def runTests(self):
-        return True
-
     def make(self):
         return True
 

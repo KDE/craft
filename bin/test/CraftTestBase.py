@@ -15,7 +15,8 @@ class CraftTestBase(unittest.TestCase):
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         oldSettings = CraftCore.settings
         CraftCore.settings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
-        CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs()
+
+        CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs(self.kdeRoot.name)
         CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
         CraftCore.settings.set("Blueprints", "BlueprintRoot", blueprintsDir)
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
