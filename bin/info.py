@@ -7,7 +7,7 @@
 # the definition
 
 import VersionInfo
-from Utils import CraftHash
+from Utils import CraftHash, CraftManifest
 from options import *
 
 
@@ -224,3 +224,20 @@ class infoclass(object):
                 out = (out, CraftHash.HashAlgorithm.getAlgorithmFromFile(out[0]))
             return out
         return None
+
+    def addCachedAutotoolsBuild(self, url, packageName):
+        package = CraftPackageObject.get(packageName)
+        if not package:
+            CraftCore.log.warning(f"Failed to find {packageName}")
+            return
+        if url.endswith("/"):
+            url = url[:-1]
+        manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+        if not packageName in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
+            CraftCore.log.warning(f"Failed to find {packageName} on {url}")
+            return
+        data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
+        self.targets[data.version] = f"{url}/{data.fileName}"
+        self.targetDigests[data.version] = (data.checksum, CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = data.version
+        self.description = package.subinfo.description
