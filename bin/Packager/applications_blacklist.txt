@@ -12,6 +12,10 @@ manifest/.*
 .*\.prl
 .*\.a
 .*\.def
+.*\.h
+.*\.hpp
+.*\.c
+.*\.cpp
 include/.*
 lib/cmake/.*
 share/ECM/.*
