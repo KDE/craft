@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/shimgen"] = "default"
         self.buildDependencies["gnuwin32/patch"] = "default"
         self.buildDependencies["craft/craft-blueprints-kde"] = "default"
+        self.buildDependencies["craft/craft-core"] = "default"
 
 
 from Package.VirtualPackageBase import *
