@@ -5,6 +5,8 @@
 from Source.SourceBase import *
 from Utils import CraftHash
 
+from CraftCore import CraftCore
+
 
 class ArchiveSource(SourceBase):
     """ file download source"""
@@ -12,6 +14,7 @@ class ArchiveSource(SourceBase):
     def __init__(self):
         CraftCore.log.debug("ArchiveSource.__init__ called")
         SourceBase.__init__(self)
+        self.__downloadDir = os.path.abspath(os.path.join(CraftCore.standardDirs.downloadDir(), "archives", self.package.path))
 
     def localFileNames(self):
         if self.subinfo.archiveName() == [""]:
@@ -38,7 +41,7 @@ class ArchiveSource(SourceBase):
 
         """check if all files for the current target are available"""
         for filename in filenames:
-            path = os.path.join(CraftStandardDirs.downloadDir(), filename)
+            path = os.path.join(self.__downloadDir, filename)
 
             # check file
             if not isFileValid(path):
@@ -71,7 +74,7 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("files and digests available, no need to download files")
                 return True
 
-            result = utils.getFiles(self.subinfo.target(), CraftStandardDirs.downloadDir(),
+            result = utils.getFiles(self.subinfo.target(), self.__downloadDir,
                                     filenames=self.subinfo.archiveName())
             if not result:
                 CraftCore.log.debug("failed to download files")
@@ -79,16 +82,16 @@ class ArchiveSource(SourceBase):
             if result and self.subinfo.hasTargetDigestUrls():
                 if type(self.subinfo.targetDigestUrl()) == tuple:
                     url, alg = self.subinfo.targetDigestUrl()
-                    return utils.getFiles(url, CraftStandardDirs.downloadDir(),
+                    return utils.getFiles(url, self.__downloadDir,
                                           filenames=self.subinfo.archiveName()[0]
                                                     + CraftHash.HashAlgorithm.fileEndings().get(alg))
                 else:
-                    return utils.getFiles(self.subinfo.targetDigestUrl(), CraftStandardDirs.downloadDir(), filenames='')
+                    return utils.getFiles(self.subinfo.targetDigestUrl(), self.__downloadDir, filenames='')
             else:
                 CraftCore.log.debug("no digestUrls present")
                 return True
         else:
-            return utils.getFiles("", CraftStandardDirs.downloadDir())
+            return utils.getFiles("", self.__downloadDir)
 
     def checkDigest(self):
         CraftCore.log.debug("ArchiveSource.checkDigest called")
@@ -96,18 +99,18 @@ class ArchiveSource(SourceBase):
 
         if self.subinfo.hasTargetDigestUrls():
             CraftCore.log.debug("check digests urls")
-            if not CraftHash.checkFilesDigests(CraftStandardDirs.downloadDir(), filenames):
+            if not CraftHash.checkFilesDigests(self.__downloadDir, filenames):
                 CraftCore.log.error("invalid digest file")
                 return False
         elif self.subinfo.hasTargetDigests():
             CraftCore.log.debug("check digests")
             digests, algorithm = self.subinfo.targetDigest()
-            if not CraftHash.checkFilesDigests(CraftStandardDirs.downloadDir(), filenames, digests, algorithm):
+            if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
                 CraftCore.log.error("invalid digest file")
                 return False
         else:
             CraftCore.log.debug("print source file digests")
-            CraftHash.printFilesDigests(CraftStandardDirs.downloadDir(), filenames, self.subinfo.buildTarget,
+            CraftHash.printFilesDigests(self.__downloadDir, filenames, self.subinfo.buildTarget,
                                         algorithm=CraftHash.HashAlgorithm.SHA256)
         return True
 
@@ -126,7 +129,7 @@ class ArchiveSource(SourceBase):
         binEndings = (".exe", ".bat", ".msi")
         for filename in filenames:
             if filename.endswith(binEndings):
-                filePath = os.path.abspath(os.path.join(CraftStandardDirs.downloadDir(), filename))
+                filePath = os.path.abspath(os.path.join(self.__downloadDir, filename))
                 if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext(filename)
                     if ext == ".exe":
@@ -136,7 +139,7 @@ class ArchiveSource(SourceBase):
                 if not utils.copyFile(filePath, os.path.join(self.workDir(), filename)):
                     return False
             else:
-                if not utils.unpackFile(CraftStandardDirs.downloadDir(), filename, self.workDir()):
+                if not utils.unpackFile(self.__downloadDir, filename, self.workDir()):
                     return False
 
         ret = self.applyPatches()
@@ -183,7 +186,7 @@ class ArchiveSource(SourceBase):
         # unpack all packages
         for filename in filenames:
             CraftCore.log.debug("unpacking this file: %s" % filename)
-            if (not utils.unpackFile(CraftStandardDirs.downloadDir(), filename, unpackDir)):
+            if (not utils.unpackFile(self.__downloadDir, filename, unpackDir)):
                 return False
 
         packagelist = os.listdir(tmpdir)
