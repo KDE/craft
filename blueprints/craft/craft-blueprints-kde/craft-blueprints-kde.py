@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["dev-util/git"] = "default"
         self.buildDependencies["dev-util/7zip"] = "default"
+        # make sure core is updated first
+        self.buildDependencies["craft/craft-core"] = "default"
 
 
 from Package.SourceOnlyPackageBase import *
