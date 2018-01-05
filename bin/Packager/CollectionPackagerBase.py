@@ -154,6 +154,7 @@ class CollectionPackagerBase(PackagerBase):
         """ return False if file is not blacklisted, and True if it is blacklisted """
         for pattern in self.blacklist:
             if pattern.search(filename):
+                CraftCore.log.debug(f"{filename} is blacklisted: {pattern.pattern}")
                 return True
         return False
 
