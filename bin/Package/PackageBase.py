@@ -198,8 +198,8 @@ class PackageBase(CraftBase):
                     continue
             if not latest:
                 continue
-            archvieFolder, localArchiveName = latest.fileName.rsplit("/", 1)
-            downloadFolder = os.path.join(self.cacheLocation(), archvieFolder)
+            _, localArchiveName = latest.fileName.rsplit("/", 1)
+            downloadFolder = os.path.join(CraftCore.standardDirs.downloadDir(), "cache", self.package.path)
             if not os.path.exists(downloadFolder):
                 os.makedirs(downloadFolder)
 
