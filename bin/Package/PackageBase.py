@@ -199,7 +199,7 @@ class PackageBase(CraftBase):
             if not latest:
                 continue
             _, localArchiveName = latest.fileName.rsplit("/", 1)
-            downloadFolder = os.path.join(CraftCore.standardDirs.downloadDir(), "cache", self.package.path)
+            downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
             if not os.path.exists(downloadFolder):
                 os.makedirs(downloadFolder)
 
