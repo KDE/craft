@@ -83,7 +83,11 @@ def packageIsOutdated(package):
     for pack in installed:
         version = pack.getVersion()
         if not version: continue
-        return CraftVersion(package.version) > CraftVersion(version)
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            # automatically downgreade in ci mode
+            return package.version != version
+        else:
+            return CraftVersion(package.version) > CraftVersion(version)
 
 def doExec(package, action, continueFlag=False):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
