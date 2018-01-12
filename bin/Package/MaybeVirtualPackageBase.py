@@ -16,8 +16,10 @@ class MaybeVirtualPackageBase(object):
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
     def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
         app = CraftCore.cache.findApplication(app)
-        appVersion = (app and not app.startswith(CraftCore.standardDirs.craftRoot())) and CraftCore.cache.getVersion(app, pattern, versionCommand)
-        newer = appVersion and appVersion >= CraftVersion(version)
+        newer = False
+        if app and not app.startswith(CraftCore.standardDirs.craftRoot()):
+            appVersion = CraftCore.cache.getVersion(app, pattern, versionCommand)
+            newer = appVersion and appVersion >= CraftVersion(version)
         self.skipCondition = not newer or not CraftCore.settings.getboolean("CraftDebug", "AllowToSkipPackages", True)
         self.checkVersion = version
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
