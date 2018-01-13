@@ -32,12 +32,7 @@ class BashShell(object):
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
             cflags = ""
             ldflags = ""
-            if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
-                ldflags = ""
-                cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
-                if CraftCore.compiler.getMsvcPlatformToolset() > 120:
-                    cflags += " -FS"
-            else:
+            if not CraftCore.compiler.isMSVC():
                 ldflags = f"-L{mergeroot}/lib "
                 cflags = f"-I{mergeroot}/include "
 
@@ -55,26 +50,33 @@ class BashShell(object):
                 elif CraftCore.compiler.isMSVC():
                     self._environment["MSYSTEM"] = f"CYGWIN{CraftCore.compiler.bits}_CRAFT"
 
-                if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
-                    if False:
-                        cl = "clang-cl"
-                    else:
-                        cl = "cl"
+                if CraftCore.compiler.isMSVC():
                     self._environment["LIB"] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
                     self._environment["INCLUDE"] = f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot()}\\include"
-                    self._environment["LD"] = "link -NOLOGO"
-                    self._environment["CC"] = "%s -nologo" % cl
-                    self._environment["CXX"] = self._environment["CC"]
-                    self._environment["CPP"] = "%s -nologo -EP" % cl
-                    self._environment["CXXCPP"] = self._environment["CPP"]
-                    self._environment["NM"] = "dumpbin -symbols"
-                    self._environment["AR"] = "lib"
-                    self._environment["WINDRES"] = "rc"
-                    # self.environment[ "RC","rc-windres"
-                    self._environment["STRIP"] = ":"
-                    self._environment["RANLIB"] = ":"
-                    self._environment["F77"] = "no"
-                    self._environment["FC"] = "no"
+
+                    if self.useMSVCCompatEnv:
+                        if False:
+                            cl = "clang-cl"
+                        else:
+                            cl = "cl"
+                        self._environment["LD"] = "link -NOLOGO"
+                        self._environment["CC"] = "%s -nologo" % cl
+                        self._environment["CXX"] = self._environment["CC"]
+                        self._environment["CPP"] = "%s -nologo -EP" % cl
+                        self._environment["CXXCPP"] = self._environment["CPP"]
+                        self._environment["NM"] = "dumpbin -symbols"
+                        self._environment["AR"] = "lib"
+                        self._environment["WINDRES"] = "rc"
+                        # self.environment[ "RC","rc-windres"
+                        self._environment["STRIP"] = ":"
+                        self._environment["RANLIB"] = ":"
+                        self._environment["F77"] = "no"
+                        self._environment["FC"] = "no"
+
+                        ldflags = ""
+                        cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
+                        if CraftCore.compiler.getMsvcPlatformToolset() > 120:
+                            cflags += " -FS"
 
             self._environment["PKG_CONFIG_PATH"] = self.toNativePath(
                 os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
