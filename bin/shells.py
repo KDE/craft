@@ -12,6 +12,17 @@ from options import *
 class BashShell(object):
     def __init__(self):
         self._environment = None
+        self._useMSVCCompatEnv = False
+
+
+    @property
+    def useMSVCCompatEnv(self):
+        return self._useMSVCCompatEnv
+
+    @useMSVCCompatEnv.setter
+    def useMSVCCompatEnv(self, b):
+        self._useMSVCCompatEnv = b
+        self._environment = {}
 
     @property
     def environment(self):
@@ -19,7 +30,9 @@ class BashShell(object):
             self._environment = {}
 
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
-            if CraftCore.compiler.isMSVC():
+            cflags = ""
+            ldflags = ""
+            if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
                 ldflags = ""
                 cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
                 if CraftCore.compiler.getMsvcPlatformToolset() > 120:
@@ -42,7 +55,7 @@ class BashShell(object):
                 elif CraftCore.compiler.isMSVC():
                     self._environment["MSYSTEM"] = f"CYGWIN{CraftCore.compiler.bits}_CRAFT"
 
-                if CraftCore.compiler.isMSVC():
+                if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
                     if False:
                         cl = "clang-cl"
                     else:
@@ -99,7 +112,7 @@ class BashShell(object):
         for k, v in self.environment.items():
             export += "%s='%s' " % (k, v)
             env[k] = v
-        command = "%s --login -c \"export %s &&cd %s && %s %s\"" % \
+        command = "%s --login -c \"export %s && cd %s && %s %s\"" % \
                   (self._findBash(), export, self.toNativePath(path), self.toNativePath(cmd), args)
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
