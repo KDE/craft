@@ -51,7 +51,7 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         path = OsUtilsBase.toUnixPath(path)
         drive, path = os.path.splitdrive(path)
         if drive:
-            return f"/{drive[0].lower()}/{path}"
+            return f"/{drive[0].lower()}{path}"
         return path
 
     @staticmethod
