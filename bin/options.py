@@ -157,6 +157,7 @@ class UserOptions(object):
         _convert = self._convert
 
         _register("version", str, permanent=False)
+        _register("patchLevel", int, permanent=False)
         _register("ignored", bool, permanent=False)
         _register("args", str, permanent=False)
 

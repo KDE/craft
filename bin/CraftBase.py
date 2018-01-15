@@ -178,6 +178,8 @@ class CraftBase(object):
         if CraftCore.settings.getboolean("BlueprintVersions", "EnableDailyUpdates", True)\
                 and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
             ver += "-" + str(datetime.date.today()).replace("-", ".")
+        elif self.subinfo.options.dynamic.patchLevel:
+            ver += f"-{self.subinfo.options.dynamic.patchLevel}"
         elif self.subinfo.buildTarget in self.subinfo.patchLevel:
             ver += f"-{self.subinfo.patchLevel[self.subinfo.buildTarget]}"
         return ver
