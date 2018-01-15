@@ -139,7 +139,7 @@ def wgetFile(url, destdir, filename=''):
     command += [url]
     CraftCore.log.debug("wgetfile called")
 
-    if CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
+    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
         command += ["-q", "--show-progress"]
         CraftCore.log.info(f"wget {url}")
         return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
