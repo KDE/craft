@@ -92,8 +92,8 @@ class BashShell(object):
 
     @staticmethod
     def toNativePath(path):
-        if OsDetection.isWin():
-            return utils.toMSysPath(path)
+        if OsUtils.isWin():
+            return OsUtils.toMSysPath(path)
         else:
             return path
 
@@ -111,10 +111,12 @@ class BashShell(object):
         export = ""
         env = os.environ.copy()
         for k, v in self.environment.items():
-            export += "%s='%s' " % (k, v)
+            export += f"{k}='{v}' "
             env[k] = v
-        command = "%s --login -c \"export %s && cd %s && %s %s\"" % \
-                  (self._findBash(), export, self.toNativePath(path), self.toNativePath(cmd), args)
+        if CraftCore.debug.verbose() >= 1:
+            # log msys env
+            export += "&& export && which gcc && "
+        command = f"{self._findBash()} --login -c \"{export} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
         return utils.system(command, stdout=out, stderr=err, env=env, displayProgress=displayProgress)
