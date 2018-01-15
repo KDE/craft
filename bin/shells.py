@@ -115,7 +115,7 @@ class BashShell(object):
             env[k] = v
         if CraftCore.debug.verbose() >= 1:
             # log msys env
-            export += "&& export && which gcc && "
+            export += "&& export && which gcc "
         command = f"{self._findBash()} --login -c \"{export} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
