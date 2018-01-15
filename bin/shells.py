@@ -42,9 +42,13 @@ class BashShell(object):
                     cflags += " -O0 -g3 "
 
             if OsDetection.isWin():
-                path = ""
+                path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+                if CraftCore.compiler.isMinGW():
+                    gcc = shutil.which("gcc")
+                    if gcc:
+                        path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
                 for p in os.environ["PATH"].split(";"):
-                    path += f"{self.toNativePath(p)}:"
+                    path += f":{self.toNativePath(p)}"
                 self._environment["PATH"] = path
                 if "make" in self._environment:
                     del self._environment["make"]
@@ -112,13 +116,10 @@ class BashShell(object):
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
         export = ""
         for k, v in self.environment.items():
-            if k != "PATH":
-                export += f"{k}='{v}' "
-            else:
-                export += f"PATH='{v}':$PATH "
+            export += f"{k}='{v}' "
         if CraftCore.debug.verbose() >= 1:
             # log msys env
-            export += "&& export && which gcc "
+            export += "&& export "
         command = f"{self._findBash()} --login -c \"{export} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
