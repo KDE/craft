@@ -42,7 +42,10 @@ class BashShell(object):
                     cflags += " -O0 -g3 "
 
             if OsDetection.isWin():
-                self._environment["MSYS2_PATH_TYPE"] = "inherit"  # inherit the windows path
+                path = ""
+                for p in os.environ["PATH"].split(";"):
+                    path += f"{self.toNativePath(p)}:"
+                self._environment["PATH"] = path
                 if "make" in self._environment:
                     del self._environment["make"]
                 if CraftCore.compiler.isMinGW():
@@ -107,19 +110,19 @@ class BashShell(object):
         return bash
 
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
-
         export = ""
-        env = os.environ.copy()
         for k, v in self.environment.items():
-            export += f"{k}='{v}' "
-            env[k] = v
+            if k != "PATH":
+                export += f"{k}='{v}' "
+            else:
+                export += f"PATH='{v}':$PATH "
         if CraftCore.debug.verbose() >= 1:
             # log msys env
             export += "&& export && which gcc "
         command = f"{self._findBash()} --login -c \"{export} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
-        return utils.system(command, stdout=out, stderr=err, env=env, displayProgress=displayProgress)
+        return utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress)
 
     def login(self):
         self.environment["CHERE_INVOKING"] = "1"
