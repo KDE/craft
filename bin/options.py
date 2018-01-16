@@ -201,6 +201,7 @@ class UserOptions(object):
         packageOptions = {}
         for o in optionsIn:
             key, value = o.split("=", 1)
+            key, value = key.strip(), value.strip()
             if "." in key:
                 package, key = key.split(".", 1)
                 if package == "dynamic":
