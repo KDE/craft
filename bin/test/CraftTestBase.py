@@ -18,8 +18,10 @@ class CraftTestBase(unittest.TestCase):
 
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs(self.kdeRoot.name)
         CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
+        os.makedirs(CraftCore.standardDirs.etcDir())
         CraftCore.settings.set("Blueprints", "BlueprintRoot", blueprintsDir)
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
+        CraftCore.settings.set("Blueprints", "Settings", os.path.join(self.kdeRoot.name, "BlueprintSettings.ini"))
         if hasattr(CraftCore, "installdb"):
             del CraftCore.installdb
         CraftCore.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))

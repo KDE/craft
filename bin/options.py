@@ -137,9 +137,12 @@ class UserOptions(object):
         def __dump():
             instance = UserOptions.UserOptionsSingleton._instance
             if instance:
-                with open(instance.path, 'wt+') as configfile:
-                    print(instance.__header, file=configfile)
-                    instance.settings.write(configfile)
+                try:
+                    with open(instance.path, 'wt+') as configfile:
+                        print(instance.__header, file=configfile)
+                        instance.settings.write(configfile)
+                except:
+                    CraftCore.log.debug(f"Failed so save {instance.path}")
 
 
     @staticmethod
