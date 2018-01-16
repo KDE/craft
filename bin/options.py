@@ -137,9 +137,12 @@ class UserOptions(object):
         def __dump():
             instance = UserOptions.UserOptionsSingleton._instance
             if instance:
-                with open(instance.path, 'wt+') as configfile:
-                    print(instance.__header, file=configfile)
-                    instance.settings.write(configfile)
+                try:
+                    with open(instance.path, 'wt+') as configfile:
+                        print(instance.__header, file=configfile)
+                        instance.settings.write(configfile)
+                except:
+                    CraftCore.log.debug(f"Failed so save {instance.path}")
 
 
     @staticmethod
@@ -199,6 +202,7 @@ class UserOptions(object):
         packageOptions = {}
         for o in optionsIn:
             key, value = o.split("=", 1)
+            key, value = key.strip(), value.strip()
             if "." in key:
                 package, key = key.split(".", 1)
                 if package == "dynamic":
