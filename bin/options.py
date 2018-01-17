@@ -161,7 +161,7 @@ class UserOptions(object):
 
         _register("version", str, permanent=False)
         _register("ignored", bool, permanent=False)
-        _register("args", str, permanent=False)
+        _register("args", "", permanent=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
@@ -287,6 +287,14 @@ class UserOptions(object):
             parent = _package.parent
             if parent:
                 out = getattr(UserOptions.get(parent), name)
+
+        if not out:
+            # name is a registered option and not a type but a default value
+            if _packagePath in _instance.registeredOptions and name in _instance.registeredOptions[_packagePath]:
+                default = _instance.registeredOptions[_packagePath][name]
+                if not callable(default):
+                    out = default
+
 
         # skip lookup in command line options and parent objects the enxt time
         _cache[name] = out
