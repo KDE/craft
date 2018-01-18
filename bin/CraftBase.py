@@ -242,7 +242,11 @@ class CraftBase(object):
         name = self.package.name if not includePackagePath else self.package.path
         return f"{name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
 
-    def cacheLocation(self, baseDir=os.path.join(CraftStandardDirs.downloadDir(), "binary") ) -> str:
+    def cacheLocation(self, baseDir=None) -> str:
+        if not baseDir:
+            cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
+        else:
+            cacheDir = baseDir
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
             version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
         else:
@@ -250,7 +254,6 @@ class CraftBase(object):
             if not qtbase:
                 return None
             version = f"Qt_{qtbase.version}"
-        cacheDir = CraftCore.settings.get("Packager", "CacheDir", baseDir)
         return os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
