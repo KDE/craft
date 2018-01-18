@@ -101,7 +101,7 @@ def getFile(url, destdir, filename='') -> bool:
         powershell = CraftCore.cache.findApplication("powershell")
         filename = os.path.join(destdir, filename)
         return system([powershell, "-NoProfile", "-Command",
-                       f"(new-object net.webclient).DownloadFile('{url}', '{filename}')"])
+                       "Invoke-WebRequest", "-Uri", url, "-OutFile", filename])
     else:
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
