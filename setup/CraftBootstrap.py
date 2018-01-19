@@ -249,7 +249,7 @@ def setUp(args):
     print("Welcome to the Craft setup wizard!")
 
     abi = getABI()
-    if CraftBootstrap.isWin():
+    if not args.no_short_path and CraftBootstrap.isWin():
         print("Windows has problems with too long commands.")
         print("For that reason we mount Craft directories to drive letters.")
         print("It just maps the folder to a drive letter you will assign.")
@@ -278,9 +278,12 @@ def setUp(args):
 
     if CraftBootstrap.isWin():
         boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
-        boot.setSettignsValue("ShortPath", "Enabled", "True")
-        for key, value in shortPath.items():
-            boot.setSettignsValue("ShortPath", key, value)
+        if not args.no_short_path:
+            boot.setSettignsValue("ShortPath", "Enabled", "True")
+            for key, value in shortPath.items():
+                boot.setSettignsValue("ShortPath", key, value)
+        else:
+            boot.setSettignsValue("ShortPath", "Enabled", "False")
     else:
         boot.setSettignsValue("ShortPath", "Enabled", "False")
         boot.setSettignsValue("Compile", "MakeProgram", "make")
@@ -311,6 +314,7 @@ if __name__ == "__main__":
     parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
     parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
+    parser.add_argument("--no-short-path", action="store_true", default="False", help="Skip short path setup")
     parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()
