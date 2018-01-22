@@ -4,9 +4,6 @@ import info
 
 
 class subinfo(info.infoclass):
-    def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = "default"
-
     def setTargets(self):
         for ver in ["1.0"]:
             self.targets[ver] = f"https://files.kde.org/craft/3rdparty/shimgenerator/shimgenerator.KDECraft-{ver}.7z"
@@ -17,6 +14,9 @@ class subinfo(info.infoclass):
             ['3e8c2181f7816a1917188b690493271b1ff6bc07a281de1ff1ce8f1a0818042f'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1.0"
 
+    def setDependencies(self):
+        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["gnuwin32/wget"] = "default"
 
 from Package.BinaryPackageBase import *
 
