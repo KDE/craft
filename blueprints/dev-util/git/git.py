@@ -37,7 +37,7 @@ class GitPackage(BinaryPackageBase):
         if not BinaryPackageBase.qmerge(self):
             return False
         gitDir = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "git")
-        utils.system([os.path.join(gitDir, "git-bash.exe"), "--no-needs-console", "--hide", "--no-cd", "--command", "post-install.bat"], cwd=gitDir)
+        utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
         return True
 
 
