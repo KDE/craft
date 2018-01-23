@@ -133,6 +133,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
 
     def copyToMsvcImportLib(self):
+        if not OsDetection.isWin():
+            return True
         reDlla = re.compile(r"\.dll\.a$")
         reLib = re.compile(r"^lib")
         for f in glob.glob(f"{self.installDir()}/lib/*.dll.a"):
