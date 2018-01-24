@@ -3,12 +3,13 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.8.0", "3.8.1", "3.9.1"]:
-            self.targets[ver] = f"https://www.cmake.org/files/v{ver[:3]}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
+        for ver in ["3.8.0", "3.8.1", "3.9.1", "3.10.2"]:
+            majorMinorStr = '.'.join(ver.split('.')[0:2])
+            self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
             self.targetInstSrc[ver] = f"cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
             self.targetDigestUrls[ver] = (
-            "https://cmake.org/files/v%s/cmake-%s-SHA-256.txt" % (ver[:3], ver), CraftHash.HashAlgorithm.SHA256)
+            "https://cmake.org/files/v%s/cmake-%s-SHA-256.txt" % (majorMinorStr, ver), CraftHash.HashAlgorithm.SHA256)
 
         nightlyUrl = "https://cmake.org/files/dev/"
         for ver in CraftCore.cache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0",
