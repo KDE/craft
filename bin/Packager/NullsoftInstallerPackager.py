@@ -107,7 +107,8 @@ You can add your own defines into self.defines as well.
         self.nsisExe = os.path.join(nsisPath, "makensis")
         return True
 
-    def getVCRuntimeLibrariesLocation(self):
+    @staticmethod
+    def getVCRuntimeLibrariesLocation():
         """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
         if "VCToolsRedistDir" in os.environ:
             return os.environ["VCToolsRedistDir"]
@@ -116,7 +117,8 @@ You can add your own defines into self.defines as well.
             _path = os.path.join(os.path.dirname(shutil.which("cl.exe")), "..", "..", "redist")
         return _path
 
-    def getVCRedistLocation(self):
+    @staticmethod
+    def getVCRedistLocation():
         if not CraftCore.compiler.isMSVC():
             return "none"
         _file = None
@@ -127,7 +129,7 @@ You can add your own defines into self.defines as well.
 
             # TODO: This needs to be made more fail-safe: the version numbers can change with any VS upgrade...
             if CraftCore.compiler.isMSVC2015():
-                _file = os.path.join(self.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
+                _file = os.path.join(NullsoftInstallerPackager.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
             elif CraftCore.compiler.isMSVC2017():
                 for name in [f"vcredist_{arch}.exe", f"vc_redist.{arch}.exe"]:
                     _file = os.path.join(os.environ["VCTOOLSREDISTDIR"], name)
