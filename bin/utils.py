@@ -561,7 +561,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
 
 
 def mergeTree(srcdir, destdir):
-    """ copy directory from @p srcdir to @p destdir
+    """ moves directory from @p srcdir to @p destdir
 
     If a directory in @p destdir exists, just write into it
     """
