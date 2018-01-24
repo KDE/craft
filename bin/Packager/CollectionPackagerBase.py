@@ -228,7 +228,7 @@ class CollectionPackagerBase(PackagerBase):
                 if os.path.isdir(path):
                     utils.mergeTree(path, binPath)
 
-        return True
+        return self.preArchive()
 
     def preArchive(self):
         return True

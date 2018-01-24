@@ -9,6 +9,7 @@ from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
 from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
+from Packager.MultiCollectionPackager import *
 
 
 class TypePackager(PackagerBase):

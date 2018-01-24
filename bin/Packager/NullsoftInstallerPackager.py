@@ -198,7 +198,6 @@ You can add your own defines into self.defines as well.
         CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
         self.internalCreatePackage()
-        self.preArchive()
         self.generateNSISInstaller()
         destDir, archiveName = os.path.split(self.defines["setupname"])
         self._generateManifest(destDir, archiveName)

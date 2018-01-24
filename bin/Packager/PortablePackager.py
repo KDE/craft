@@ -18,7 +18,7 @@ Packager for portal 7zip archives
     def createPortablePackage(self):
         """create portable 7z package with digest files located in the manifest subdir"""
         if not "setupname" in self.defines or not self.defines["setupname"]:
-            self.defines["setupname"] = self.binaryArchiveName(includeRevision=True)
+            self.defines["setupname"] = os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True))
         if not "srcdir" in self.defines or not self.defines["srcdir"]:
             self.defines["srcdir"] = self.archiveDir()
 
@@ -31,5 +31,5 @@ Packager for portal 7zip archives
         self.internalCreatePackage()
 
         self.createPortablePackage()
-        CraftHash.createDigestFiles(os.path.join(self.packageDestinationDir(), self.defines["setupname"]))
+        CraftHash.createDigestFiles(self.defines["setupname"])
         return True

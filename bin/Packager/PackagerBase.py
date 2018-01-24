@@ -46,9 +46,11 @@ class PackagerBase(CraftBase):
         manifestLocation = os.path.join(manifestLocation, "manifest.json")
         archiveFile = os.path.join(destDir, archiveName)
 
+        name = archiveName if not os.path.isabs(archiveName) else os.path.relpath(archiveName, destDir)
+
         manifest = CraftManifest.load(manifestLocation)
         entry = manifest.get(str(self))
-        entry.addFile(archiveName, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
+        entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
 
         manifest.dump(manifestLocation)
 
