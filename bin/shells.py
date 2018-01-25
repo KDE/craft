@@ -7,11 +7,12 @@
 from CraftStandardDirs import CraftStandardDirs
 from CraftOS.OsDetection import OsDetection
 from options import *
+import tempfile
 
 
 class BashShell(object):
     def __init__(self):
-        self._environment = None
+        self._environment = {}
         self._useMSVCCompatEnv = False
 
 
@@ -26,8 +27,7 @@ class BashShell(object):
 
     @property
     def environment(self):
-        if self._environment is None:
-            self._environment = {}
+        if not self._environment:
 
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
             cflags = ""
@@ -66,9 +66,9 @@ class BashShell(object):
                     else:
                         cl = "cl"
                     self._environment["LD"] = "link -NOLOGO"
-                    self._environment["CC"] = "%s -nologo" % cl
+                    self._environment["CC"] = f"{cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
-                    self._environment["CPP"] = "%s -nologo -EP" % cl
+                    self._environment["CPP"] = f"{cl} -nologo -EP"
                     self._environment["CXXCPP"] = self._environment["CPP"]
                     self._environment["NM"] = "dumpbin -symbols"
                     self._environment["AR"] = "lib"
@@ -113,22 +113,39 @@ class BashShell(object):
             CraftCore.log.critical("Failed to detect bash")
         return bash
 
-    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
-        export = ""
+    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False, envDir=None):
+        tmpDir = None
+        if not envDir:
+            tmpDir = tempfile.TemporaryDirectory()
+            envDir = tmpDir.name
+
+        export = []
         for k, v in self.environment.items():
-            export += f"{k}='{v}' "
+            export.append(f"export {k}='{v}'\n")
         if CraftCore.debug.verbose() >= 1:
             # log msys env
-            export += "&& export "
-        command = f"{self._findBash()} --login -c \"{export} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
+            export.append("printenv\n")
+            CraftCore.log.debug(export)
+
+        envPath = os.path.join(envDir, f"craft_environment_{os.path.basename(cmd)}.sh")
+        with open(envPath, "wt+") as env:
+            env.writelines(export)
+        msysEnv = self.toNativePath(envPath)
+        command = f"{self._findBash()} --login -c \"source {msysEnv} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
-        return utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress)
+
+        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress, env=self.environment)
+        if tmpDir:
+            tmpDir.cleanup()
+        return out
 
     def login(self):
+        if CraftCore.compiler.isMSVC():
+            self.useMSVCCompatEnv = True
         self.environment["CHERE_INVOKING"] = "1"
-        command = "bash --login -i"
-        return self.execute(".", command, displayProgress=True)
+        self.environment["MSYS2_PATH_TYPE"] = "inherit"
+        return self.execute(".", "bash",  "--norc --login -i", displayProgress=True)
 
 def main():
     shell = BashShell()
