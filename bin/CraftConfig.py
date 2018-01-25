@@ -82,7 +82,7 @@ class CraftConfig(object):
         if not "Variables" in self._config.sections():
             self._config.add_section("Variables")
         for key, value in {
-            "CraftRoot": os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
+            "CraftRoot": CraftConfig._craftRoot(),
             "CraftDir": os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         }.items():
             if not key in self._config["Variables"]:
