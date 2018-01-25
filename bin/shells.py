@@ -135,7 +135,7 @@ class BashShell(object):
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
 
-        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress, env=self.environment)
+        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress)
         if tmpDir:
             tmpDir.cleanup()
         return out
