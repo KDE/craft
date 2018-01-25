@@ -24,7 +24,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             envDir = self.sourceDir()
         else:
             envDir = self.buildDir()
-        return self.shell.execute(path, cmd, envDir=envDir)
+        return self.shell.execute(path, cmd, args, envDir=envDir)
 
     @property
     def makeProgram(self):
