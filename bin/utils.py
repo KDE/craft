@@ -128,6 +128,9 @@ def wgetFile(url, destdir, filename=''):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     wget = CraftCore.cache.findApplication("wget")
     command = [wget, "-c", "-t", "10"]
+    cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
+    if os.path.exists(cert):
+        command += ["--ca-certificate", cert]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirect",  "50"]
     if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
