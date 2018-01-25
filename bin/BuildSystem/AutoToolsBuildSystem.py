@@ -18,6 +18,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
+
+    def _execute(self, path, cmd, args):
+        if not self.subinfo.options.useShadowBuild:
+            envDir = self.sourceDir()
+        else:
+            envDir = self.buildDir()
+        return self.shell.execute(path, cmd, envDir=envDir)
+
     @property
     def makeProgram(self):
         return "make"
@@ -41,20 +49,19 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         configure = os.path.join(self.sourceDir(), self.subinfo.options.configure.projectFile or "configure")
         self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + self.shell.environment["CFLAGS"]
-        self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment[
-            "CXXFLAGS"]
+        self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment["CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
         if CraftCore.compiler.isMSVC() or self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
-                self.shell.execute(self.sourceDir(), autogen, envDir=self.buildDir())
+                self._execute(self.sourceDir(), autogen)
             else:
-                self.shell.execute(self.sourceDir(), "autoreconf -f -i", envDir=self.buildDir())
+                self._execute(self.sourceDir(), "autoreconf", "-f -i")
 
         if not self.subinfo.options.useShadowBuild:
-            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self), envDir=self.buildDir())
+            ret = self._execute(self.sourceDir(), configure, self.configureOptions(self))
         else:
-            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self), envDir=self.buildDir())
+            ret = self._execute(self.buildDir(), configure, self.configureOptions(self))
         return ret
 
     def make(self, dummyBuildType=None):
@@ -69,14 +76,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
-            if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean", envDir=self.buildDir()):
+            if not self._execute(self.sourceDir(), self.makeProgram, "clean"):
                 print("while Make'ing. cmd: %s clean" % self.makeProgram)
                 return False
-            if not self.shell.execute(self.sourceDir(), command, args, envDir=self.buildDir()):
+            if not self._execute(self.sourceDir(), command, args):
                 print("while Make'ing. cmd: %s" % command)
                 return False
         else:
-            if not self.shell.execute(self.buildDir(), command, args, envDir=self.buildDir()):
+            if not self._execute(self.buildDir(), command, args):
                 print("while Make'ing. cmd: %s" % command)
                 return False
         return True
@@ -100,15 +107,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.make.makeOptions:
             args += " %s" % self.subinfo.options.make.makeOptions
         if not self.subinfo.options.useShadowBuild:
-            if not self.shell.execute(self.sourceDir(), command, args, envDir=self.buildDir()):
+            if not self._execute(self.sourceDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
         else:
-            if not self.shell.execute(self.buildDir(), command, args, envDir=self.buildDir()):
+            if not self._execute(self.buildDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
         if os.path.exists(os.path.join(self.imageDir(), "lib")):
-            return self.shell.execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la", envDir=self.buildDir())
+            return self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la")
         else:
             return True
 
