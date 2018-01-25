@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["core/cacert"] = "default"
 
 
 from Package.BinaryPackageBase import *
