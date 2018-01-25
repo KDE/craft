@@ -199,6 +199,9 @@ You can add your own defines into self.defines as well.
 
         CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
+        if CraftCore.compiler.isMSVC():
+            # we use the redist installer
+            self.ignoredPackages.append("libs/runtime")
         self.internalCreatePackage()
         self.generateNSISInstaller()
         destDir, archiveName = os.path.split(self.defines["setupname"])
