@@ -12,6 +12,7 @@
 
 import argparse
 import collections
+import tempfile
 
 import CraftSetupHelper
 import InstallDB
@@ -151,7 +152,43 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                      f"{package} after {timer}", buildAction)
         return success
 
+def resolvePackage(packageNames : list, version : str=None):
+    package = CraftPackageObject(None)
+    def resolveChildren(child):
+        if child.isCategory():
+            for c in child.children.values():
+                resolveChildren(c)
+        else:
+            if version:
+                UserOptions.addPackageOption(child, "version", version)
+            package.children[child.name] = child
 
+    for packageName in packageNames:
+        child = CraftPackageObject.get(packageName)
+        if not child:
+            raise BlueprintNotFoundException(packageName)
+        resolveChildren(child)
+    return package
+
+# TODO: drop args when run is refactored, move out
+def addBlueprintsRepository(url : str, args):
+    templateDir = os.path.join(CraftCore.standardDirs.craftBin(), "..", "internal_blueprints" )
+    with tempfile.TemporaryDirectory() as tmp:
+        iniPath = os.path.join(tmp, "version.ini")
+        parser = configparser.ConfigParser()
+        parser.read(iniPath)
+        parser.add_section("General")
+        parser["General"]["branches"] = "master"
+        parser["General"]["defaulttarget"] = "master"
+        parser["General"]["gitUrl"] = url
+        with open(iniPath, "wt+") as out:
+            parser.write(out)
+        CraftCore.settings.set("Blueprints", "Locations", templateDir)
+        CraftCore.settings.set("InternalTemp", "add-bluprints-template.ini", iniPath)
+        package = resolvePackage(["add-bluprints-template"])
+        return run(package, "fetch", args, package.children.values())
+
+# TODO: don't pass args, move to seperate file
 def run(package, action, args, directTargets):
     if package.isIgnored():
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
@@ -323,6 +360,8 @@ def main():
                         default=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
                         dest="ciMode", help="Enables the ci mode")
 
+    parser.add_argument("--add-blueprint-repository", action="store", help="Installs a blueprint repository", metavar="URL")
+
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
                      "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
@@ -376,6 +415,9 @@ def main():
     if args.run:
         return utils.system(args.run)
 
+    if args.add_blueprint_repository:
+        return addBlueprintsRepository(args.add_blueprint_repository, args)
+
     if CraftCore.settings.getboolean("Packager", "CreateCache"):
         # we are in cache creation mode, ensure to create a 7z image and not an installer
         CraftCore.settings.set("Packager", "PackageType", "SevenZipPackager")
@@ -403,31 +445,16 @@ def main():
         if tempArgs.list_file:
             if not packageNames:
                 packageNames = []
-            packageNames += readListFile(args.list_file)
+            packageNames += readListFile(tempArgs.list_file)
 
         if action == "print-installed":
             InstallDB.printInstalled()
         elif action == "search-file":
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         else:
-            if not args.packageNames and not args.list_file:
+            if not tempArgs.packageNames and not tempArgs.list_file:
                 return True
-
-            package = CraftPackageObject(None)
-            def resolveChildren(child):
-                if child.isCategory():
-                    for c in child.children.values():
-                        resolveChildren(c)
-                else:
-                    if tempArgs.target:
-                        UserOptions.addPackageOption(child, "version", args.target)
-                    package.children[child.name] = child
-
-            for packageName in packageNames:
-                child = CraftPackageObject.get(packageName)
-                if not child:
-                    raise BlueprintNotFoundException(packageName)
-                resolveChildren(child)
+            package = resolvePackage(packageNames, version=tempArgs.target)
             if not run(package, action, tempArgs, package.children.values()):
                 return False
     return True
