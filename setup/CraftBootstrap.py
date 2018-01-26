@@ -293,7 +293,7 @@ def setUp(args):
     cmd = []
     if args.verbose:
         cmd.append("-vvv")
-    cmd += ["--no-cache", "craft"]
+    cmd += ["craft"]
     run(args, cmd)
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
