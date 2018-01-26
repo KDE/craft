@@ -4,80 +4,92 @@
 # Hannah von Reth <vonreth [AT] kde [DOT] org>
 import re
 
+from Blueprints.CraftPackageObject import *
 from CraftConfig import *
 from CraftCore import CraftCore
 
 
 class VersionInfo(object):
-    variablePatern = re.compile("\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
+    variablePatern = re.compile(r"\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
     _VERSION_INFOS = {}
-    _VERSION_INFOS_HINTS = {}
 
-    def __init__(self, parent):
+    class VersionInfoData(object):
+        def __init__(self):
+            self.tags = []
+            self.branches = []
+            self.tarballs = []
+            self.info = {}
+
+
+    def __init__(self, parent, fileName=None):
         self.subinfo = parent
-        self.__defaulVersions = None
-        self._fileName = None
+
+        self._fileName = fileName
+        self._data = None
+        self.__include = None
 
     @property
-    def _defaulVersions(self):
-        if self.__defaulVersions is None:
-            name = self.subinfo.parent.package.source
-            if name in VersionInfo._VERSION_INFOS_HINTS:
-                if VersionInfo._VERSION_INFOS_HINTS[name] == None:
-                    return None
-                else:
-                    # utils.debug("Using cached version info for %s in %s" % (name, _VERSION_INFOS_HINTS[ name ]))
-                    return VersionInfo._VERSION_INFOS[VersionInfo._VERSION_INFOS_HINTS[name]]
-            root = os.path.dirname(name)
-
-            if self._fileName is None:
-                possibleInis = [os.path.join(root, "version.ini"), os.path.join(root, "..", "version.ini"),
-                                os.path.join(root, "..", "..", "version.ini")]
+    def data(self):
+        if not self._data:
+            package = self.subinfo.package.package
+            if not self._fileName:
+                filePath = OsUtils.toUnixPath(os.path.dirname(package.source))
+                while True:
+                    if filePath in CraftPackageObject.rootDirectories():
+                        break
+                    ini = OsUtils.toUnixPath(os.path.join(filePath, "version.ini"))
+                    if os.path.exists(ini):
+                        self._fileName = ini
+                        break
+                    filePath = os.path.dirname(filePath)
+            if not self._fileName:
+                self._data = VersionInfo.VersionInfoData()
             else:
-                possibleInis = [self._fileName]
-
-            for iniPath in possibleInis:
-                iniPath = os.path.abspath(iniPath)
-                if iniPath in VersionInfo._VERSION_INFOS.keys():
-                    VersionInfo._VERSION_INFOS_HINTS[name] = iniPath
-                    CraftCore.log.debug("Found a version info for %s in cache" % name)
-                    return VersionInfo._VERSION_INFOS[iniPath]
-                elif os.path.exists(iniPath):
+                if self._fileName in VersionInfo._VERSION_INFOS:
+                    self._data = VersionInfo._VERSION_INFOS[self._fileName]
+                else:
+                    self._data = VersionInfo.VersionInfoData()
+                    VersionInfo._VERSION_INFOS[self._fileName] = self._data
                     config = configparser.ConfigParser()
-                    config.read(iniPath)
-                    VersionInfo._VERSION_INFOS[iniPath] = config
-                    VersionInfo._VERSION_INFOS_HINTS[name] = iniPath
-                    CraftCore.log.debug("Found a version info for %s in %s" % (name, iniPath))
-                    return config
-            VersionInfo._VERSION_INFOS_HINTS[name] = None
-        return self.__defaulVersions
+                    config.read(self._fileName)
+                    self._data.info = config["General"]
+                    for k in ["tags", "branches", "tarballs"]:
+                        if k in self._data.info:
+                            setattr(self._data, k, CraftCore.settings._parseList(self._data.info[k]))
 
-    def _getVersionInfo(self, key, default=None):
-        if self._defaulVersions.has_section("General") and key in self._defaulVersions["General"]:
-            return self._defaulVersions["General"][key]
-        return default
+                    CraftCore.log.debug(f"Found a version info for {self.subinfo.package} in {self._fileName}")
+        return self._data
+
+    @property
+    def _include(self):
+        if not self.__include:
+            if "include" in self.data.info:
+                includePath = self.data.info["include"]
+                if not os.path.isabs(includePath):
+                    includePath = os.path.join(os.path.dirname(self._fileName), includePath)
+                self.__include = VersionInfo(self.subinfo, OsUtils.toUnixPath(includePath))
+        return self.__include
 
     def tags(self):
-        out = self._getVersionInfo("tags")
-        return out.split(";") if out else {}
+        if self._include:
+            return self.data.tags + self._include.tags()
+        return self.data.tags
 
     def branches(self):
-        out = self._getVersionInfo("branches")
-        return out.split(";") if out else {}
+        if self._include:
+            return self.data.branches + self._include.branches()
+        return self.data.branches
 
     def tarballs(self):
-        out = self._getVersionInfo("tarballs")
-        return out.split(";") if out else {}
+        if self._include:
+            return self.data.tarballs + self._include.tarballs()
+        return self.data.tarballs
 
     def defaultTarget(self):
-        if ("BlueprintVersions", self.packageName()) in CraftCore.settings:
-            return CraftCore.settings.get("BlueprintVersions", self.packageName())
-        name = self._getVersionInfo("name", "")
-        if ("BlueprintVersions", name) in CraftCore.settings:
-            return CraftCore.settings.get("BlueprintVersions", name)
-        return self._getVersionInfo("defaulttarget")
+        return self.data.info.get("defaulttarget", None)
 
-    def _replaceVar(self, text, ver, name):
+    @staticmethod
+    def _replaceVar(text, ver, name):
         replaces = {"VERSION": ver, "PACKAGE_NAME": name}
 
         split_ver = ver.split(".")
@@ -90,11 +102,6 @@ class VersionInfo(object):
             for match in VersionInfo.variablePatern.findall(text):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
-
-    def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
-                                 gitUrl=None):
-        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.package.source), fileName))
-        self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
     def setDefaultValues(self, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                          gitUrl=None, packageName=None, patchLevel=None):
@@ -110,18 +117,21 @@ class VersionInfo(object):
             ${VERSION_PATCH_LEVEL} : The the third part of ${VERSION}
 
         """
+        if self._include:
+            self._include.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl, packageName, patchLevel)
+
         if packageName is None:
             packageName = self.subinfo.package.package.name
         if tarballUrl is None:
-            tarballUrl = self._getVersionInfo("tarballUrl", None)
+            tarballUrl = self.data.info.get("tarballUrl", None)
         if tarballDigestUrl is None:
-            tarballDigestUrl = self._getVersionInfo("tarballDigestUrl", None)
+            tarballDigestUrl = self.data.info.get("tarballDigestUrl", None)
         if tarballInstallSrc is None:
-            tarballInstallSrc = self._getVersionInfo("tarballInstallSrc", None)
+            tarballInstallSrc = self.data.info.get("tarballInstallSrc", None)
         if gitUrl is None:
-            gitUrl = self._getVersionInfo("gitUrl", None)
-        if not tarballUrl is None:
-            for ver in self.tarballs():
+            gitUrl = self.data.info.get("gitUrl", None)
+        if tarballUrl is not None:
+            for ver in self.data.tarballs:
                 target = f"{ver}-{patchLevel}" if patchLevel else ver
                 self.subinfo.targets[target] = self._replaceVar(tarballUrl, ver, packageName)
                 if not tarballDigestUrl is None:
@@ -130,15 +140,17 @@ class VersionInfo(object):
                     self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, ver, packageName)
 
         if not gitUrl is None:
-            for ver in self.branches():
+            for ver in self.data.branches:
                 target = f"{ver}-{patchLevel}" if patchLevel else ver
                 self.subinfo.svnTargets[ver] = "%s|%s|" % (self._replaceVar(gitUrl, ver, packageName), ver)
 
-            for ver in self.tags():
+            for ver in self.data.tags:
                 target = f"{ver}-{patchLevel}" if patchLevel else ver
                 self.subinfo.svnTargets[target] = "%s||%s" % (self._replaceVar(gitUrl, ver, packageName), ver)
 
-        self.subinfo.defaultTarget = f"{self.defaultTarget( ) }-{patchLevel}" if patchLevel else self.defaultTarget()
+        defaultTarget = self.defaultTarget()
+        if defaultTarget:
+            self.subinfo.defaultTarget = f"{defaultTarget}-{patchLevel}" if patchLevel else defaultTarget
 
     def packageName(self):
         return self.subinfo.package.package.path

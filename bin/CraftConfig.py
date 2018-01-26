@@ -132,9 +132,12 @@ class CraftConfig(object):
         print("in your CraftSettings.ini")
         exit(1)
 
+    @staticmethod
+    def _parseList(s : str):
+        return [v.strip() for v in s.split(";") if v]
+
     def getList(self, group, key, default=None):
-        val = self.get(group, key, default).split(";")
-        return [v.strip() for v in val if v]
+        return CraftConfig._parseList(self.get(group, key, default))
 
     def getSection(self, group):
         if self._config.has_section(group):
