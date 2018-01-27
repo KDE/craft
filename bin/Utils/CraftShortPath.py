@@ -46,9 +46,9 @@ class CraftShortPath(object):
         if len(longPath) < len(path):
             CraftCore.debug.log.info(f"Using junctions for {longPath} wouldn't save characters returning original path")
             return longPath
+        if not os.path.isdir(longPath):
+            os.makedirs(longPath)
         if not os.path.isdir(path):
-            if not os.path.isdir(longPath):
-                os.makedirs(longPath)
             # note: mklink is a CMD command => needs shell
             if not utils.system(["mklink", "/J", path, longPath], shell=True):
                 CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
