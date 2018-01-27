@@ -511,7 +511,11 @@ class Options(object):
         self.dailyUpdate = False
 
         ## has an issue with a too long path
-        self.needsShortPath = False
+        #enable by default for the ci
+        # only applies for windows and if
+        # [ShortPath]
+        # EnableJunctions  = True
+        self.needsShortPath = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
 
         ## this option controls if the build type is used when creating build and install directories.
         # The following example shows the difference:
