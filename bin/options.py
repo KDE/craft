@@ -171,7 +171,6 @@ class UserOptions(object):
                 if k in _registered:
                     v = _convert(_registered[k], v)
                 setattr(self, k, v)
-
     @staticmethod
     def get(package):
         _instance = UserOptions.instance()
@@ -265,7 +264,7 @@ class UserOptions(object):
 
         #check cache
         _cache = super().__getattribute__("_cachedFromParent")
-        if name in _cache:
+        if not member and name in _cache:
             return _cache[name]
 
         out = None
