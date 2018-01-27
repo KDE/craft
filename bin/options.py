@@ -100,11 +100,9 @@ class UserOptions(object):
 
         def initPackage(self, option):
             path = option._package.path
-            settings = option.settings
-            if not settings:
-                if not self.settings.has_section(path):
-                    self.settings.add_section(path)
-                settings = self.settings[path]
+            if not self.settings.has_section(path):
+                self.settings.add_section(path)
+            settings = self.settings[path]
             return settings
 
         def toBool(self, x : str) -> bool:
