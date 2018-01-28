@@ -490,8 +490,8 @@ def createSymlink(source, linkName):
 
 def createDir(path):
     """Recursive directory creation function. Makes all intermediate-level directories needed to contain the leaf directory"""
-    if not os.path.exists(path):
-        CraftCore.log.debug("creating directory %s " % (path))
+    if not os.path.lexists(path):
+        CraftCore.log.debug(f"creating directory {path}")
         os.makedirs(path)
     return True
 

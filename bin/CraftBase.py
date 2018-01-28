@@ -190,10 +190,7 @@ class CraftBase(object):
 
     def enterBuildDir(self):
         CraftCore.debug.trace("CraftBase.enterBuildDir called")
-
-        if (not os.path.exists(self.buildDir())):
-            os.makedirs(self.buildDir())
-            CraftCore.log.debug("creating: %s" % self.buildDir())
+        utils.createDir(self.buildDir())
 
         os.chdir(self.buildDir())
         CraftCore.log.debug("entering: %s" % self.buildDir())
