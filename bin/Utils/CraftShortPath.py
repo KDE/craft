@@ -29,6 +29,7 @@ class CraftShortPath(object):
         if not self._shortPath:
             self._shortPath = self._createShortPathLambda(self.longPath)
             CraftShortPath._shortPaths[self.longPath] = self._shortPath
+        os.makedirs(self._shortPath, exist_ok=True)
         CraftCore.debug.log.debug(f"Mapped \n"
                             f"{self.longPath} to\n"
                             f"{self._shortPath}, gained {len(self.longPath) - len(self._shortPath)}")
