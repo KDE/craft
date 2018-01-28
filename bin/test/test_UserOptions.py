@@ -37,6 +37,8 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
 
         o = UserOptions.get(package)
 
+        self.assertEqual(UserOptions.instance().settings["#Core"]["needsShortPath"], "False")
+
         self.assertEqual(type(o.customeOptionInt), str)
         self.assertEqual(o.customeOptionInt, "5")
         o.registerOption("customeOptionInt", 42)
