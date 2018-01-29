@@ -239,11 +239,10 @@ class InstallDB(object):
         cursor = self.connection.cursor()
         if self.isInstalled(package, version) and not ignoreInstalled:
             raise Exception(f'package {package}-{version} already installed')
-
-        params = [None, None, package.path, version, revision, cacheVersion]
-        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
-        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
-        cursor.execute(cmd, tuple(params))
+        params = (None, package.path, version, revision, cacheVersion)
+        cmd = '''INSERT INTO packageList (packageId, packagePath, version, revision, cacheVersion) VALUES (?, ?, ?, ?, ?)'''
+        InstallDB.log(f"executing sqlcmd {cmd!r} with parameters: {params}")
+        cursor.execute(cmd, params)
         return InstallPackage(cursor, self.getLastId())
 
     def getInstalledPackages(self, package):
