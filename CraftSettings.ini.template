@@ -202,5 +202,14 @@ Version = 5.9
 ## If you are using mingw please make sure you have installed the mingw using the Qt installer.
 Compiler = mingw482_32
 
+[ContinuousIntegration]
+## Changes the verbosity of some sub processes.
+## Installed versions must match.
+## Don't write to stderr
+Enabled = False
+
+## Delete the build folder after the install
+ClearBuildFolder = False
+
 [Version]
 ConfigVersion = 4

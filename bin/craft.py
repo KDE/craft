@@ -113,8 +113,9 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "compile")
             success = success and doExec(package, "cleanimage")
             success = success and doExec(package, "install")
-            if buildAction == "all":
-                success = success and doExec(package, "qmerge")
+            if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
+                success = success and doExec(package, "cleanbuild")
+            success = success and doExec(package, "qmerge")
             if CraftCore.settings.getboolean("Packager", "CreateCache"):
                 if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly"):
                     nameRe = re.compile(".*\/.*")
