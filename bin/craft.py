@@ -25,15 +25,7 @@ from Blueprints.CraftVersion import CraftVersion
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
-
-def migrate():
-    portageDir = os.path.join(CraftCore.standardDirs.etcDir(), "portage")
-    if os.path.isdir(portageDir):
-        del CraftCore.installdb
-        utils.moveEntries(portageDir, CraftCore.standardDirs.etcBlueprintDir())
-        utils.rmtree(portageDir)
-        CraftCore.installdb =InstallDB.InstallDB()
-    CraftCore.installdb.migrateDatabase()
+import CraftBase
 
 
 def destroyCraftRoot():
@@ -88,6 +80,10 @@ def packageIsOutdated(package):
             # automatically downgreade in ci mode
             return package.version != version
         else:
+            cacheVersion = pack.getCacheVersion()
+            if cacheVersion and cacheVersion != CraftBase.CraftBase.cacheVersion():
+                # can only happen for packages installed from cache
+                return True
             return CraftVersion(package.version) > CraftVersion(version)
 
 def doExec(package, action, continueFlag=False):
@@ -388,8 +384,6 @@ def main():
     if args.doDestroyCraftRoot:
         destroyCraftRoot()
         return True
-
-    migrate()
 
     if args.stayQuiet:
         CraftCore.debug.setVerbose(-1)

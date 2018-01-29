@@ -239,28 +239,33 @@ class CraftBase(object):
         name = self.package.name if not includePackagePath else self.package.path
         return f"{name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
 
+
+    @staticmethod
+    def cacheVersion():
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
+            version = CraftCore.settings.get("QtSDK", "Version")
+            return f"QtSDK_{version}"
+        else:
+            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
+            if not qtbase:
+                return None
+            return f"Qt_{qtbase.version}"
+
     def cacheLocation(self, baseDir=None) -> str:
         if not baseDir:
             cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
         else:
             cacheDir = baseDir
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
-        else:
-            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
-            if not qtbase:
-                return None
-            version = f"Qt_{qtbase.version}"
+
+        version = self.cacheVersion()
+        if not version:
+            return None
         return os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType())
 
     def cacheRepositoryUrls(self) -> [str]:
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
-            version = "QtSDK_%s" % CraftCore.settings.get("QtSDK", "Version")
-        else:
-            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
-            if not qtbase:
-                return []
-            version = f"Qt_{qtbase.version}"
+        version = self.cacheVersion()
+        if not version:
+            return None
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]

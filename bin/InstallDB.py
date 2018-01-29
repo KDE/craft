@@ -104,12 +104,18 @@ class InstallPackage(object):
         self.cursor.execute("SELECT version FROM packageList WHERE packageId == ?", (self.packageId,))
         return self.cursor.fetchall()[0][0]
 
+    def getCacheVersion(self):
+        self.cursor.execute("SELECT cacheVersion FROM packageList WHERE packageId == ?", (self.packageId,))
+        return self.cursor.fetchall()[0][0]
+
+
 
 class InstallDB(object):
     """ a database object which provides the methods for adding and removing a package and
         checking its installation status.
         In case the database doesn't exist if the constructor is called, a new database is constructed
     """
+    SCHEMA_VERSION = 1
 
     def __init__(self, filename=None):
         if filename == None:
@@ -228,14 +234,14 @@ class InstallDB(object):
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
 
-    def addInstalled(self, package, version, ignoreInstalled=False, revision=""):
+    def addInstalled(self, package, version, ignoreInstalled=False, revision="", cacheVersion=None):
         """ adds an installed package """
         cursor = self.connection.cursor()
         if self.isInstalled(package, version) and not ignoreInstalled:
             raise Exception(f'package {package}-{version} already installed')
 
-        params = [None, None, package.path, version, revision]
-        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?)'''
+        params = [None, None, package.path, version, revision, cacheVersion]
+        cmd = '''INSERT INTO packageList VALUES (?, ?, ?, ?, ?, ?)'''
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
         cursor.execute(cmd, tuple(params))
         return InstallPackage(cursor, self.getLastId())
@@ -256,34 +262,26 @@ class InstallDB(object):
 
                 # first, create the required tables
                 cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                   prefix TEXT, packagePath TEXT, version TEXT, revision TEXT)''')
+                                   prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)''')
                 cursor.execute('''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
                                    packageId INTEGER, filename TEXT, fileHash TEXT)''')
+                cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
                 self.connection.commit()
             else:
                 self.connection = sqlite3.connect(self.dbfilename)
+                self.__migrateDatabase()
 
 
-    def migrateDatabase(self):
+    def __migrateDatabase(self):
         cursor = self.connection.cursor()
-        cursor.execute('''PRAGMA table_info('packageList')''')
-        info = cursor.fetchall()
-        if OsUtils.isWin():
-            installCommand = "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/KDE/craft/master/setup/install_craft.ps1'))"
-        else:
-            installCommand = "wget https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py -O setup.py && python3.6 setup.py --prefix ~/kde"
+        cursor.execute('''PRAGMA user_version;''')
+        version = cursor.fetchall()[0][0]
+        # TODO: drop prefix from packageList (will break compat)
+        print(version)
+        if version < 1:
+            cursor.execute('''ALTER TABLE packageList ADD COLUMN cacheVersion TEXT;''')
+        cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
 
-        if "packagePath" != info[2][1]:
-            print("Craft database and folder structure changed.\n"
-                  "Craft now uses full paths for dependencies and package names.\n"
-                  "Instead of building 'libs/qtbase' you know 'build libs/qt5/qtbase'"
-                  ", direct recipe invocation like 'qtbase' works as before.\n"
-                  "As a result of this change you need to start with a clean build.\n"
-                  "To do so either call 'craft --destroy-craft-root' which will delete "
-                  "everything besides craft and the download folder, "
-                  "or manually remove everything manually and start fresh by calling:\n"
-                  + installCommand)
-            exit(1)
 
 def printInstalled():
     """get all the packages that are already installed"""
