@@ -19,7 +19,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
 
-    def _execute(self, path, cmd, args):
+    def _execute(self, path, cmd, args=""):
         if not self.subinfo.options.useShadowBuild:
             envDir = self.sourceDir()
         else:
