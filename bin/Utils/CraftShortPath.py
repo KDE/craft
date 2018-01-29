@@ -11,7 +11,7 @@ class CraftShortPath(object):
     _shortPaths = {}
 
     def __init__(self, path, createShortPath=None) -> None:
-        self.longPath = path
+        self._longPath = path
         self._shortPath = None
         if not createShortPath:
             self._createShortPathLambda = CraftShortPath._createShortPath
@@ -20,6 +20,10 @@ class CraftShortPath(object):
 
     def path(self, condition):
         return self.shortPath if condition else self.longPath
+
+    @property
+    def longPath(self) -> str:
+        return self._longPath() if callable(self._longPath) else self._longPath
 
     @property
     def shortPath(self) -> str:

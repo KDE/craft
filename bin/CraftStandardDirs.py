@@ -16,11 +16,14 @@ class CraftStandardDirs(object):
         self._useShortPath = False
         self._craftRoot = CraftShortPath(CraftStandardDirs._deSubstPath(craftRoot or CraftCore.settings._craftRoot()),
                                                       lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "RootDrive", x)))
-        self._downloadDir = CraftShortPath(CraftCore.settings.get("Paths", "DOWNLOADDIR", os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
+        self._downloadDir = CraftShortPath(CraftCore.settings.get("Paths", "DOWNLOADDIR",
+                                                                  lambda : os.path.join( self._craftRoot.path(self.isShortPathEnabled()), "download")),
                                         lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "DownloadDrive", x)))
-        self._gitDir = CraftShortPath(CraftCore.settings.get("Paths", "KDEGITDIR", os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
+        self._gitDir = CraftShortPath(CraftCore.settings.get("Paths", "KDEGITDIR",
+                                                             lambda : os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
                                         lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "GitDrive", x)))
-        self._junctionDir = CraftShortPath(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
+        self._junctionDir = CraftShortPath(CraftCore.settings.get("ShortPath", "JunctionDir",
+                                                                  lambda : os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
                                         lambda x: CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "JunctionDrive", x)))
 
     @staticmethod
