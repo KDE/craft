@@ -277,7 +277,6 @@ class InstallDB(object):
         cursor.execute('''PRAGMA user_version;''')
         version = cursor.fetchall()[0][0]
         # TODO: drop prefix from packageList (will break compat)
-        print(version)
         if version < 1:
             cursor.execute('''ALTER TABLE packageList ADD COLUMN cacheVersion TEXT;''')
         cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
