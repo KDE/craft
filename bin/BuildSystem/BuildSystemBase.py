@@ -139,7 +139,8 @@ class BuildSystemBase(CraftBase):
         badPrefix = os.path.join(self.installDir(), stripPath(CraftStandardDirs.craftRoot()))
 
         if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
-            utils.mergeTree(badPrefix, self.installDir())
+            if not utils.mergeTree(badPrefix, self.installDir()):
+                return False
 
         if CraftCore.settings.getboolean("QtSDK", "Enabled", False):
             qtDir = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
@@ -147,6 +148,8 @@ class BuildSystemBase(CraftBase):
                                  CraftCore.settings.get("QtSDK", "Compiler"))
             path = os.path.join(self.installDir(), stripPath(qtDir))
             if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
-                utils.mergeTree(path, self.installDir())
+                if not utils.mergeTree(path, self.installDir()):
+                    return False
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
+        return True
