@@ -569,7 +569,11 @@ def mergeTree(srcdir, destdir):
     If a directory in @p destdir exists, just write into it
     """
 
-    os.makedirs(destdir, exist_ok=True)
+    try:
+        os.makedirs(destdir, exist_ok=True)
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
 
     CraftCore.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
     if os.path.samefile(srcdir, destdir):
@@ -582,14 +586,17 @@ def mergeTree(srcdir, destdir):
         dest = os.path.join(destdir, i)
         if os.path.exists(dest):
             if os.path.isdir(dest):
-                mergeTree(src, dest)
+                if not mergeTree(src, dest):
+                    return False
                 continue
             else:
-                rmtree(dest)
-        moveDir(src, destdir)
+                if not rmtree(dest):
+                    return False
+        if not moveDir(src, destdir):
+            return False
 
     # Cleanup (only removing empty folders)
-    rmtree(srcdir)
+    return rmtree(srcdir)
 
 
 def moveDir(srcdir, destdir):
@@ -606,13 +613,22 @@ def moveDir(srcdir, destdir):
 def rmtree(directory):
     """ recursively delete directory """
     CraftCore.log.debug("rmtree called. directory: %s" % (directory))
-    shutil.rmtree(directory, True)  # ignore errors
+    try:
+        shutil.rmtree(directory, True)  # ignore errors
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
+    return True
 
 
 def moveFile(src, dest):
     """move file from src to dest"""
     CraftCore.log.debug("move file from %s to %s" % (src, dest))
-    shutil.move(src, dest)
+    try:
+        shutil.move(src, dest)
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
     return True
 
 
@@ -621,7 +637,11 @@ def deleteFile(fileName):
     if not os.path.exists(fileName):
         return False
     CraftCore.log.debug("delete file %s " % (fileName))
-    os.remove(fileName)
+    try:
+        os.remove(fileName)
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
     return True
 
 
