@@ -175,22 +175,6 @@ class InstallDB(object):
         cursor.close()
         return bool(installedPackage)
 
-    def getInstalled(self, package=None):
-        """ returns a list of the installed packages, which can be restricted by adding
-            package.
-        """
-        cmd = '''SELECT packagePath, version, prefix FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package})
-        cmd += stmt
-        cmd += ''';'''
-        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
-
-        cursor = self.connection.cursor()
-        cursor.execute(cmd, tuple(params))
-        values = cursor.fetchall()
-        cursor.close()
-        return values
-
     def getDistinctInstalled(self, package=None):
         """ returns a list of the installed packages, which can be restricted by adding
             package.
