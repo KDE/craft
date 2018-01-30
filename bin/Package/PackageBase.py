@@ -30,7 +30,7 @@ class PackageBase(CraftBase):
         CraftCore.log.debug("PackageBase.__init__ called")
         CraftBase.__init__(self)
 
-    def qmerge(self, cacheVersion=None):
+    def qmerge(self):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
@@ -60,7 +60,7 @@ class PackageBase(CraftBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
-        package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision, cacheVersion=cacheVersion)
+        package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision)
         fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
         package.addFiles(fileList)
         package.install()
@@ -214,9 +214,13 @@ class PackageBase(CraftBase):
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
                 CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
                 return False
-            return (self.cleanImage()
+            if not (self.cleanImage()
                     and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
-                    and self.qmerge(cacheVersion=self.cacheVersion()))
+                    and self.qmerge()):
+                return False
+            packagees = CraftCore.installdb.getInstalledPackages(self.package)
+            packagees[0].setCacheVersion(self.cacheVersion())
+            return True
         return False
 
     @staticmethod

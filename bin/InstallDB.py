@@ -109,6 +109,9 @@ class InstallPackage(object):
         return self.cursor.fetchall()[0][0]
 
 
+    def setCacheVersion(self, cacheVersion):
+        self.cursor.execute("UPDATE packageList SET cacheVersion = ? WHERE packageId == ?", (cacheVersion, self.packageId))
+
 
 class InstallDB(object):
     """ a database object which provides the methods for adding and removing a package and
@@ -232,7 +235,12 @@ class InstallDB(object):
     def getInstalledPackages(self, package):
         """ return an installed package """
         cursor = self.connection.cursor()
-        return [InstallPackage(cursor, pId) for pId in self.getPackageIds(package)]
+        out = [InstallPackage(cursor, pId) for pId in self.getPackageIds(package)]
+        # TODO: we always just have 1 package installed so don't return a list
+        if len(out) > 1:
+            CraftCore.log.error(f"Database corruption: Found multiple packages for {package}")
+        return out
+
 
     def _prepareDatabase(self):
         """ prepare a new database and add the required table layout """
