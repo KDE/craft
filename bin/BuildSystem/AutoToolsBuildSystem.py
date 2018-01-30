@@ -99,8 +99,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         args = "install"
 
         if self.subinfo.options.install.useDestDir == True:
-            args += " DESTDIR=%s" % self.shell.toNativePath(self.installDir())
+            args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
             if OsUtils.isWin():
+                # TODO: try to use self._fixInstallPrefix() instead
                 args += " prefix="
 
         if self.subinfo.options.make.ignoreErrors:
