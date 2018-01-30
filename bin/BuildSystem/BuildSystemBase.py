@@ -129,14 +129,14 @@ class BuildSystemBase(CraftBase):
     def clangOptions(self):
         return ""
 
-    def _fixInstallPrefix(self):
+    def _fixInstallPrefix(self, prefix=CraftStandardDirs.craftRoot()):
         CraftCore.log.debug(f"Begin: fixInstallPrefix {self}")
         def stripPath(path):
             rootPath = os.path.splitdrive(path)[1]
-            if rootPath.startswith(os.path.sep):
+            if rootPath.startswith(os.path.sep) or rootPath.startswith("/"):
                 rootPath = rootPath[1:]
             return rootPath
-        badPrefix = os.path.join(self.installDir(), stripPath(CraftStandardDirs.craftRoot()))
+        badPrefix = os.path.join(self.installDir(), stripPath(prefix))
 
         if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             if not utils.mergeTree(badPrefix, self.installDir()):
