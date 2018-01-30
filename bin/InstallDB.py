@@ -278,7 +278,7 @@ def printInstalled():
     installed = CraftCore.installdb.getDistinctInstalled()
     width = 40
     def printLine(first, second):
-        CraftCore.log.info(f"{first:{width}}: {second}")
+        CraftCore.debug.printOut(f"{first:{width}}: {second}")
 
     printLine("Package", "Version")
     printLine("=" * width, "=" * 10)
@@ -290,4 +290,4 @@ def printPackagesForFileSearch(filename):
     packages = CraftCore.installdb.getPackagesForFileSearch(filename)
     for pId, filename in packages:
         path , version = pId.getPackageInfo()
-        CraftCore.log.info(f"{path}: {filename}")
+        CraftCore.debug.printOut(f"{path}: {filename}")

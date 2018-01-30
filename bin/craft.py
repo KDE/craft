@@ -202,8 +202,7 @@ def run(package, action, args, directTargets):
                     value = attr()
                 else:
                     value = attr
-                CraftCore.log.debug(value)
-                print(value)
+                CraftCore.debug.printOut(value)
                 return True
             else:
                CraftCore.log.debug(f"{p} has no member {key}")

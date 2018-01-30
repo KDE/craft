@@ -88,6 +88,16 @@ class CraftDebug(object):
         else:
             self.log.debug(msg)
 
+    def printOut(self, msg, file=sys.stdout):
+        """ Should only be used to report independent of the verbosity level
+            for example to print the installed files etc
+        """
+        if self.verbose() < 2:
+            print(msg, file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+            self.log.debug(msg)
+        else:
+            self.log.debug(msg)
+
     def logEnv(self, env=None):
         if CraftCore.settings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:
