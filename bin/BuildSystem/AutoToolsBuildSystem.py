@@ -118,9 +118,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
         if os.path.exists(os.path.join(self.imageDir(), "lib")):
-            return self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la")
-        else:
-            return True
+            if not self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la"):
+                return False
+
+        return self._fixInstallPrefix()
 
     def runTest(self):
         """running unittests"""
