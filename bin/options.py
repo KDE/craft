@@ -417,8 +417,6 @@ class OptionsInstall(OptionsBase):
         ## use either make tool for installing or
         # run cmake directly for installing
         self.useMakeToolForInstall = True
-        ## add DESTDIR=xxx support for autotools build system
-        self.useDestDir = True
 
 
 ## options for the merge action

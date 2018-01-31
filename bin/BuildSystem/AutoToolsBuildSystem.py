@@ -18,14 +18,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
-
-    def _prefix(self):
-        if self.subinfo.options.install.useDestDir == False:
-            return self.shell.toNativePath(self.imageDir())
-        else:
-            return self.shell.toNativePath(self.mergeDestinationDir())
-
-
     def _execute(self, path, cmd, args=""):
         if not self.subinfo.options.useShadowBuild:
             envDir = self.sourceDir()
@@ -105,8 +97,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         command = self.makeProgram
         args = "install"
 
-        if self.subinfo.options.install.useDestDir == True:
-            args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
+        args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
 
@@ -124,7 +115,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la"):
                 return False
 
-        return self._fixInstallPrefix(self._prefix())
+        return self._fixInstallPrefix(self.shell.toNativePath(self.mergeDestinationDir()))
 
     def runTest(self):
         """running unittests"""
@@ -134,7 +125,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         if self.subinfo.options.configure.noDefaultOptions == False:
-            options += f" --prefix={self._prefix()} "
+            options += f" --prefix={self.shell.toNativePath(self.mergeDestinationDir())} "
         options += self.platform
 
         return options;
