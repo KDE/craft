@@ -130,7 +130,7 @@ class BuildSystemBase(CraftBase):
         return ""
 
     def _fixInstallPrefix(self, prefix=CraftStandardDirs.craftRoot()):
-        CraftCore.log.debug(f"Begin: fixInstallPrefix {self}")
+        CraftCore.log.debug(f"Begin: fixInstallPrefix {self}: {prefix}")
         def stripPath(path):
             rootPath = os.path.splitdrive(path)[1]
             if rootPath.startswith(os.path.sep) or rootPath.startswith("/"):
@@ -150,6 +150,9 @@ class BuildSystemBase(CraftBase):
             if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
                 if not utils.mergeTree(path, self.installDir()):
                     return False
+
+        oldPrefix = OsUtils.toUnixPath(stripPath(prefix)).split("/", 1)[0]
+        utils.rmtree(os.path.join(self.installDir(), oldPrefix))
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
