@@ -103,6 +103,12 @@ class VersionInfo(object):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
 
+    def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
+                                 gitUrl=None):
+        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.package.source), fileName))
+        self._data = None
+        self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
+
     def setDefaultValues(self, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                          gitUrl=None, packageName=None, patchLevel=None):
         """
