@@ -17,7 +17,7 @@ from Package.SourceOnlyPackageBase import *
 
 
 class Package(SourceOnlyPackageBase):
-    NameRegex = re.compile(r".*\/(.+?(?=[\||\:]))")
+    NameRegex = re.compile(r".*\/(.+?(?=[\||\:|\.]))")
 
     def __init__(self):
         SourceOnlyPackageBase.__init__(self)
