@@ -66,14 +66,13 @@ class CollectionPackagerBase(PackagerBase):
         self._whitelist = []
         self._blacklist = []
         self.scriptname = None
-        self.deployQt = True
 
     @property
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
                 CraftCore.log.debug("reading whitelist: %s" % entry)
-                if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
+                if callable(entry):
                     for line in entry():
                         self._whitelist.append(line)
                 else:
@@ -85,7 +84,7 @@ class CollectionPackagerBase(PackagerBase):
         if not self._blacklist:
             for entry in self.blacklist_file:
                 CraftCore.log.debug("reading blacklist: %s" % entry)
-                if isinstance(entry, types.FunctionType) or isinstance(entry, types.MethodType):
+                if callable(entry):
                     if entry == PackagerLists.runtimeBlacklist:
                         CraftCore.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
                         self.read_blacklist(entry())
@@ -123,9 +122,8 @@ class CollectionPackagerBase(PackagerBase):
             # this loop collects the files from all image directories
             CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
 
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", False) and self.deployQt and CraftCore.settings.getboolean("QtSDK",
-                                                                                                              "PackageQtSDK",
-                                                                                                              True):
+        if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
+            CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
             imageDirs.append((os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
                                            CraftCore.settings.get("QtSDK", "Compiler")), False))
 
