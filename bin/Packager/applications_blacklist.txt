@@ -101,3 +101,5 @@ bin/rcc.*
 bin/uic.*
 bin/xmlpatterns.*
 bin/xmlpatternsvalidator.*
+bin/qvkgen.*
+bin/windeployqt.*
