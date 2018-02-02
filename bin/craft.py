@@ -91,6 +91,9 @@ def doExec(package, action, continueFlag=False):
         CraftCore.debug.step("Action: %s for %s" % (action, package))
         ret = package.instance.execute(action)
         if not ret:
+            if action == "fetch-binary":
+                CraftCore.debug.step(f"{package} not found in cache")
+                return False
             CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
         return ret or continueFlag
 
