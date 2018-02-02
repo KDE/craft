@@ -14,12 +14,17 @@ $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Defini
 
 function findPython([string] $name)
 {
-    $py = (Get-Command $name -ErrorAction SilentlyContinue)
-    if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
-        $env:CRAFT_PYTHON=$py.Source
+    if ($PSVersionTable.Platform -eq "Unix" -and $env:CRAFT_PYTHON -eq $null) {
+        $env:CRAFT_PYTHON = $name
+    } else {
+        $py = (Get-Command $name -ErrorAction SilentlyContinue)
+        if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+            $env:CRAFT_PYTHON=$py.Source
+        }
     }
 }
 
+findPython("python3.6")
 findPython("python3")
 findPython("python")
 
