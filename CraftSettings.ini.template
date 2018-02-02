@@ -145,9 +145,12 @@ EnableDailyUpdates = True
 7ZipArchiveType = 7z
 
 ## If set this will override the default package type.
-## Possible values are: SevenZipPackager,  MSIFragmentPackager,
-##                      NullsoftInstallerPackager,
-##                      CreateArchivePackager
+## Possible values are:
+### SevenZipPackager: An image of the files installed by the package
+### MSIFragmentPackager
+### NullsoftInstallerPackager: A nsis based installer including all dependencies
+### CreateArchivePackager: An image including all dependencies
+### MultiCollectionPackager: NullsoftInstallerPackager + CreateArchivePackager
 #PackageType = SevenZipPackager
 
 ## Package the Source files too.
