@@ -249,7 +249,8 @@ class CraftBase(object):
             qtbase = CraftPackageObject.get("libs/qt5/qtbase")
             if not qtbase:
                 return None
-            return f"Qt_{qtbase.version}"
+            # don 't use version as we dont want to use the patch level
+            return f"Qt_{qtbase.subinfo.defaultTarget}"
 
     def cacheLocation(self, baseDir=None) -> str:
         if not baseDir:
