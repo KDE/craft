@@ -23,7 +23,7 @@ class BuildSystemBase(CraftBase):
         self.buildSystemType = typeName
 
     @property
-    def makeProgram(self):
+    def makeProgram(self) -> str:
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False):
                 return "ninja"
@@ -36,7 +36,7 @@ class BuildSystemBase(CraftBase):
 
         if OsUtils.isWin():
             if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
-                return "nmake /NOLOGO"
+                return "nmake"
             elif CraftCore.compiler.isMinGW():
                 return "mingw32-make"
             else:
