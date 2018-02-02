@@ -146,7 +146,7 @@ EnableDailyUpdates = True
 
 ## If set this will override the default package type.
 ## Possible values are: SevenZipPackager,  MSIFragmentPackager,
-##                      InnoSetupPackager, NullsoftInstallerPackager,
+##                      NullsoftInstallerPackager,
 ##                      CreateArchivePackager
 #PackageType = SevenZipPackager
 
