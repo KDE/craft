@@ -23,7 +23,7 @@ class CraftStandardDirs(object):
                                                              lambda : os.path.join(self._downloadDir.path(self.isShortPathEnabled()), "git")),
                                         lambda x : CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "GitDrive", x)))
         self._junctionDir = CraftShortPath(CraftCore.settings.get("ShortPath", "JunctionDir",
-                                                                  lambda : os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "shortPath")),
+                                                                  lambda : os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "_")),
                                         lambda x: CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "JunctionDrive", x)))
 
     @staticmethod
