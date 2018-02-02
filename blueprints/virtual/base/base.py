@@ -28,6 +28,11 @@ class subinfo(info.infoclass):
         self.buildDependencies["craft/craft-blueprints-kde"] = "default"
         self.buildDependencies["craft/craft-core"] = "default"
 
+        # needed by CollectionPackagerBase
+        if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
+            CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
+            self.buildDependencies["dev-util/dependencies"] = "default"
+
 
 class Package(VirtualPackageBase):
     def __init__(self):
