@@ -9,6 +9,7 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Blueprints import CraftPackageObject
+from CraftDebug import deprecated
 ## @todo complete a release and binary merge dir below rootdir
 # 1.  enable build type related otDmerge install settings
 # 2a. use different install databases for debug and release
@@ -202,6 +203,7 @@ class CraftBase(object):
         os.chdir(self.sourceDir())
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
+    @deprecated("utils.system")
     def system(self, command, errorMessage="", debuglevel=1, **kw):
         """convencience function for running system commands.
         This method prints a debug message and then runs a system command.
