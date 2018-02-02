@@ -1,5 +1,6 @@
 import os
 import zlib
+import subprocess
 
 from CraftCore import CraftCore
 import CraftConfig
@@ -56,7 +57,7 @@ class CraftShortPath(object):
         os.makedirs(longPath, exist_ok=True)
         if not os.path.isdir(path):
             # note: mklink is a CMD command => needs shell
-            if not utils.system(["mklink", "/J", path, longPath], shell=True):
+            if not utils.system(["mklink", "/J", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False):
                 CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
                 return longPath
         else:
