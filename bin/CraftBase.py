@@ -266,7 +266,7 @@ class CraftBase(object):
     def cacheRepositoryUrls(self) -> [str]:
         version = self.cacheVersion()
         if not version:
-            return None
+            return []
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]
