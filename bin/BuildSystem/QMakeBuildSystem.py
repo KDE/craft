@@ -70,7 +70,7 @@ class QMakeBuildSystem(BuildSystemBase):
             proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
         command = "%s -makefile %s %s" % (CraftCore.cache.findApplication("qmake"), proFile, self.configureOptions(configureDefines))
 
-        return self.system(command, "configure")
+        return utils.system(command)
 
     def make(self, options=""):
         """implements the make step for Qt projects"""
@@ -80,7 +80,7 @@ class QMakeBuildSystem(BuildSystemBase):
             self.enterBuildDir()
         command = ' '.join([self.makeProgram, self.makeOptions(options)])
 
-        return self.system(command, "make")
+        return utils.system(command)
 
     def install(self, options=None):
         """implements the make step for Qt projects"""
@@ -96,7 +96,7 @@ class QMakeBuildSystem(BuildSystemBase):
         else:
             command = f"{self.makeProgram} install"
 
-        return self.system(command)
+        return utils.system(command)
 
     def runTest(self):
         """running qmake based unittests"""

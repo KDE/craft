@@ -197,18 +197,6 @@ class CraftBase(object):
         os.chdir(self.sourceDir())
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
-    @deprecated("utils.system")
-    def system(self, command, errorMessage="", debuglevel=1, **kw):
-        """convencience function for running system commands.
-        This method prints a debug message and then runs a system command.
-        If the system command returns with errors the method prints an error
-        message and exits if @ref self.subinfo.options.exitOnErrors  is true"""
-
-        if utils.system(command, **kw):
-            return True
-        CraftCore.log.critical(f"Craft encountered an error: {errorMessage} cmd: {command}")
-        return False
-
     def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
         if not pkgSuffix:

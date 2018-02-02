@@ -220,7 +220,7 @@ class ArchiveSource(SourceBase):
                                                                            str(datetime.date.today()).replace('-', '')))
             cmd = "diff -Nrub -x *~ -x *\.rej -x *\.orig -x*\.o %s.orig %s > %s || echo 0" % (
             directory, directory, patchName)
-            if not self.system(cmd):
+            if not utils.system(cmd):
                 return False
 
         CraftCore.log.debug("patch created at %s" % patchName)

@@ -89,7 +89,7 @@ class GitSource(VersionSystemSourceBase):
             parts += args
         if not kwargs.get("cwd"):
             kwargs["cwd"] = self.checkoutDir()
-        return self.system(parts, **kwargs)
+        return utils.system(parts, **kwargs)
 
     def fetch(self):
         CraftCore.debug.trace('GitSource fetch')

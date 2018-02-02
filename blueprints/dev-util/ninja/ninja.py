@@ -36,8 +36,7 @@ class Package(CMakePackageBase):
         command = "python3 configure.py --bootstrap"
         if CraftCore.compiler.isMinGW():
             command += " --platform=mingw"
-        print(command)
-        return self.system(command, "make")
+        return utils.system(command)
 
     def install(self):
         utils.copyFile(os.path.join(self.sourceDir(), "ninja.exe"), os.path.join(self.installDir(), "bin", "ninja.exe"))
