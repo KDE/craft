@@ -4,7 +4,6 @@
 
 from Source.ArchiveSource import ArchiveSource
 from Source.GitSource import GitSource
-from Source.HgSource import HgSource
 
 from Source.SourceBase import *
 from Source.SvnSource import SvnSource
@@ -23,8 +22,6 @@ class MultiSource(SourceBase):
             sourceType = utils.getVCSType(url)
             if sourceType == "svn":
                 self.source = SvnSource
-            elif sourceType == "hg":
-                self.source = HgSource
             elif sourceType == "git":
                 self.source = GitSource
         elif self.subinfo.hasTarget():
