@@ -805,6 +805,9 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     if not OsUtils.isWin():
         return True
     app = CraftCore.cache.findApplication("shimgen")
+    if not app:
+        CraftCore.log.error(f"Failed to detect shimgen, please install dev-util/shimgen")
+        return False
     if not useAbsolutePath and os.path.isabs(target):
         srcPath = shim
         if srcPath.endswith(".exe"):
@@ -817,7 +820,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
         command += ["--command", args]
     if guiApp:
         command += ["--gui"]
-    return app and system(command, stdout=subprocess.DEVNULL)
+    return system(command, stdout=subprocess.DEVNULL)
 
 
 def replaceSymlinksWithCopys(path):
