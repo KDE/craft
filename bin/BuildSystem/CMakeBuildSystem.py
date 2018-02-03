@@ -138,7 +138,7 @@ class CMakeBuildSystem(BuildSystemBase):
         with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
             fc.write(command)
 
-        return self.system(command, "configure", 0)
+        return utils.system(command)
 
     def make(self):
         """implements the make step for cmake projects"""
@@ -156,12 +156,12 @@ class CMakeBuildSystem(BuildSystemBase):
                 CraftCore.log.critical("has to be implemented");
         elif self.subinfo.options.cmake.useCTest:
             # first make clean
-            self.system(self.makeProgram + " clean", "make clean")
+            utils.system([self.makeProgram, "clean"])
             command = "ctest -M " + "Nightly" + " -T Start -T Update -T Configure -T Build -T Submit"
         else:
             command = ' '.join([self.makeProgram, self.makeOptions()])
 
-        return self.system(command, "make")
+        return utils.system(command)
 
     def install(self):
         """install the target"""
@@ -180,7 +180,7 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
-        if not self.system(command, "install", env=env):
+        if not utils.system(command, env=env):
             return False
 
         if self.subinfo.options.install.useMakeToolForInstall and not (
@@ -193,7 +193,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        return self.system("ctest --output-on-failure")
+        return utils.system(["ctest", "--output-on-failure"])
 
     def ccacheOptions(self):
         out = " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ "
