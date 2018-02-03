@@ -105,8 +105,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DKDE_INSTALL_BUNDLEDIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
                        self.mergeDestinationDir().replace("\\", "/")
 
-        if not self.buildTests:
-            options += " -DBUILD_TESTING=OFF "
+        options += " -DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF")
 
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
