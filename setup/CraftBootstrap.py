@@ -161,7 +161,10 @@ class CraftBootstrap(object):
 
 
 def run(args, command):
-    script = os.path.join(args.prefix, f"craft-{args.branch}", "bin", "craft.py")
+    root = os.path.join(args.prefix, "craft")
+    if not os.path.isdir(root):
+        root = os.path.join(args.prefix, f"craft-{args.branch}")
+    script = os.path.join(root, "bin", "craft.py")
     command = [sys.executable, script] + command
     commandStr = " ".join(command)
     print(f"Execute: {commandStr}")
@@ -255,6 +258,13 @@ def setUp(args):
         print("It just maps the folder to a drive letter you will assign.")
         shortPath = CraftBootstrap.promptShortPath()
 
+    installShortCut = False
+    if CraftBootstrap.isWin():
+        installShortCut = CraftBootstrap.promptForChoice("Do you want to install a StartMenu entry",
+                                                         [("Yes", True), ("No", False)],
+                                                         default="Yes")
+
+
     ignores = getIgnores()
     if ignores:
         os.makedirs(os.path.join(args.prefix, "etc"), exist_ok=True)
@@ -297,6 +307,8 @@ def setUp(args):
     run(args, cmd)
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
+    if installShortCut:
+        run(args, ["craft-startmenu-entry"])
     print("Setup complete")
     print()
     print("Please run the following command to get started:")
