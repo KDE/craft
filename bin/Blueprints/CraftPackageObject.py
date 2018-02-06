@@ -109,7 +109,11 @@ class CraftPackageObject(object):
 
         if path != blueprintRoot:
             if not package.source and not package.children:
-                CraftCore.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
+                if os.listdir(path) == ["__pycache__"]:
+                    # the recipe was removed
+                    utils.rmtree(path)
+                else:
+                    CraftCore.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
                                        f"You might wan't to run \"git clean -xdf\" in that directry.")
                 return None
             if package.path in CraftPackageObject._nodes:
