@@ -53,6 +53,10 @@ class SevenZipPackager(PackagerBase):
             if self.subinfo.options.package.disableBinaryCache:
                 return True
             dstpath = self.cacheLocation()
+            if not dstpath:
+                # no valid cache prefix could be computed
+                # TODO: strip Qt from the prefix
+                return True
         else:
             dstpath = self.packageDestinationDir()
 
