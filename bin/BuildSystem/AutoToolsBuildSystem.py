@@ -115,7 +115,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la"):
                 return False
 
-        return self._fixInstallPrefix(self.shell.toNativePath(self.mergeDestinationDir()))
+        return self._fixInstallPrefix(self.shell.toNativePath(CraftCore.standardDirs.craftRoot()))
 
     def runTest(self):
         """running unittests"""
@@ -125,7 +125,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         if self.subinfo.options.configure.noDefaultOptions == False:
-            options += f" --prefix={self.shell.toNativePath(self.mergeDestinationDir())} "
+            options += f" --prefix={self.shell.toNativePath(CraftCore.standardDirs.craftRoot())} "
         options += self.platform
 
         return options;

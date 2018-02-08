@@ -135,11 +135,6 @@ class CraftBase(object):
             installDir = self.imageDir()
         return installDir
 
-    def mergeDestinationDir(self):
-        """return absolute path to the merge destination directory of the currently active package.
-        """
-        return CraftStandardDirs.craftRoot()
-
     def packageDestinationDir(self, withBuildType=True):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""

@@ -37,19 +37,17 @@ class PackageBase(CraftBase):
         if self.package.isInstalled:
             self.unmerge()
 
-        CraftCore.log.debug("qmerge package to %s" % self.mergeDestinationDir())
-
         copiedFiles = []  # will be populated by the next call
-        utils.copyDir(self.imageDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
+        utils.copyDir(self.imageDir(), CraftCore.standardDirs.craftRoot(), copiedFiles=copiedFiles)
 
         # run post-install scripts
         if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-install-%s-%s.cmd" % (self.package, pkgtype)
-                script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
+                script = os.path.join(CraftCore.standardDirs.craftRoot(), "manifest", scriptName)
                 if os.path.exists(script):
                     CraftCore.log.debug("run post install script '%s'" % script)
-                    cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
+                    cmd = "cd /D %s && %s" % (CraftCore.standardDirs.craftRoot(), script)
                     if not utils.system(cmd):
                         CraftCore.log.warning("%s failed!" % cmd)
                 else:
@@ -61,7 +59,7 @@ class PackageBase(CraftBase):
 
         revision = self.sourceRevision()
         package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision)
-        fileList = self.getFileListFromDirectory(self.mergeDestinationDir(), copiedFiles)
+        fileList = self.getFileListFromDirectory(CraftCore.standardDirs.craftRoot(), copiedFiles)
         package.addFiles(fileList)
         package.install()
 
@@ -70,27 +68,21 @@ class PackageBase(CraftBase):
     def unmerge(self):
         """unmergeing the files from the filesystem"""
         CraftCore.log.debug("Packagebase unmerge called")
-
-        ## \todo mergeDestinationDir() reads the real used merge dir from the
-        ## package definition, which fails if this is changed
-        ## a better solution will be to save the merge sub dir into
-        ## /etc/blueprints/installed and to read from it on unmerge
-        CraftCore.log.debug("unmerge package from %s" % self.mergeDestinationDir())
         packageList = CraftCore.installdb.getInstalledPackages(self.package)
 
         for package in packageList:
             fileList = package.getFilesWithHashes()
-            self.unmergeFileList(self.mergeDestinationDir(), fileList)
+            self.unmergeFileList(CraftCore.standardDirs.craftRoot(), fileList)
             package.uninstall()
 
         # run post-uninstall scripts
         if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
             for pkgtype in ['bin', 'lib', 'doc', 'src']:
                 scriptName = "post-uninstall-%s-%s.cmd" % (self.package, pkgtype)
-                script = os.path.join(self.mergeDestinationDir(), "manifest", scriptName)
+                script = os.path.join(CraftCore.standardDirs.craftRoot(), "manifest", scriptName)
                 if os.path.exists(script):
                     CraftCore.log.debug("run post uninstall script '%s'" % script)
-                    cmd = "cd /D %s && %s" % (self.mergeDestinationDir(), script)
+                    cmd = "cd /D %s && %s" % (CraftCore.standardDirs.craftRoot(), script)
                     if not utils.system(cmd):
                         CraftCore.log.warning("%s failed!" % cmd)
                 else:

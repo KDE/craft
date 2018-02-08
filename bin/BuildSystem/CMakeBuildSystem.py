@@ -81,11 +81,7 @@ class CMakeBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
 
-        ## \todo why is it required to replace \\ by / ?
-        options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace("\\", "/")
-
-        options += " -DCMAKE_PREFIX_PATH=\"%s\"" % \
-                   self.mergeDestinationDir().replace("\\", "/")
+        options += f" -DCMAKE_INSTALL_PREFIX=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\""
 
         if (not self.buildType() == None):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
@@ -102,8 +98,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
 
         if OsUtils.isMac():
-            options += " -DKDE_INSTALL_BUNDLEDIR=\"%s/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON" % \
-                       self.mergeDestinationDir().replace("\\", "/")
+            options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\"/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
 
         options += " -DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF")
 
@@ -113,9 +108,6 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " " + self.subinfo.options.configure.staticArgs + " "
         if self.subinfo.options.configure.onlyBuildTargets:
             options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets)
-        if self.subinfo.options.cmake.useCTest:
-            options += " -DCMAKE_PROGRAM_PATH=\"%s\" " % \
-                       (os.path.join(self.mergeDestinationDir(), "dev-utils", "svn", "bin").replace("\\", "/"))
         if CraftCore.compiler.isIntel():
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
