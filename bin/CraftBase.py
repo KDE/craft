@@ -135,18 +135,6 @@ class CraftBase(object):
             installDir = self.imageDir()
         return installDir
 
-    @deprecated("self.imageDir()")
-    def mergeSourceDir(self):
-        """return absolute path to the merge source directory of the currently active package.
-        This path may point to a subdir of imageDir() in case @ref info.targetInstallPath for a
-        specific target or @ref self.subinfo.options.merge.sourcePath is used
-        """
-        if not self.subinfo.options.merge.sourcePath == None:
-            directory = os.path.join(self.imageDir(), self.subinfo.options.merge.sourcePath)
-        else:
-            directory = self.imageDir()
-        return directory
-
     def mergeDestinationDir(self):
         """return absolute path to the merge destination directory of the currently active package.
         """

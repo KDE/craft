@@ -40,7 +40,7 @@ class PackageBase(CraftBase):
         CraftCore.log.debug("qmerge package to %s" % self.mergeDestinationDir())
 
         copiedFiles = []  # will be populated by the next call
-        utils.copyDir(self.mergeSourceDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
+        utils.copyDir(self.imageDir(), self.mergeDestinationDir(), copiedFiles=copiedFiles)
 
         # run post-install scripts
         if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
