@@ -3,32 +3,6 @@
 # (c) copyright 2009-2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
 #
-# properties from classes in this package could be set
-#
-# - by package scripts,
-# - by setting the 'Options' environment variable or
-# - by command line
-#
-# for example:
-#
-# in blueprints/subdir/package/file.py
-#   ...
-#   self.subinfo.options.cmake.openIDE=1
-#
-# or
-#
-# craft "--options=cmake.openIDE=1" --make kdewin-installer
-#
-# or
-#
-# set Options=cmake.openIDE=1
-# craft --make kdewin-installer
-#
-# The parser in this package is able to set all attributes
-#
-# for example:
-#
-#  craft "--options=unpack.unpackIntoBuildDir=1 useBuildType=1" --make <package>
 #
 import utils
 from CraftConfig import *
@@ -344,9 +318,6 @@ class OptionsFetch(OptionsBase):
 ## options for the unpack action
 class OptionsUnpack(OptionsBase):
     def __init__(self):
-        ## By default archives are unpackaged into the workdir.
-        #  Use this option to unpack archives into recent build directory
-        self.unpackIntoBuildDir = False
         #  Use this option to run 3rd party installers
         self.runInstaller = False
 

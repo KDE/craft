@@ -29,10 +29,7 @@ class SourceBase(CraftBase):
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
         controls parts of the name of the generated path. """
 
-        if self.subinfo.options.unpack.unpackIntoBuildDir:
-            sourcedir = self.buildDir()
-        else:
-            sourcedir = self.workDir()
+        sourcedir = self.workDir()
 
         if self.subinfo.targetSourceSuffix() != None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())

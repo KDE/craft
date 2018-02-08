@@ -117,9 +117,7 @@ class CraftBase(object):
     def buildDir(self):
         CraftCore.log.debug("CraftBase.buildDir() called")
         builddir = os.path.join(self.workDir(), self.workDirPattern())
-        if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
-            builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
-        CraftCore.log.debug("package builddir is: %s" % builddir)
+        CraftCore.log.debug(f"package builddir is: {builddir}")
         return builddir
 
     def imageDir(self):
