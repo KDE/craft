@@ -109,7 +109,7 @@ class CraftPackageObject(object):
 
         if path != blueprintRoot:
             if not package.source and not package.children:
-                if os.listdir(path) == ["__pycache__"]:
+                if os.listdir(path) in [["__pycache__"], []]:
                     # the recipe was removed
                     utils.rmtree(path)
                 else:
