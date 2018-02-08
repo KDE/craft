@@ -111,7 +111,8 @@ class CraftBase(object):
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        return os.path.join(self.buildRoot(), "work")
+        work = os.path.join(self.buildRoot(), "work")
+        return CraftShortPath(work).path(self.subinfo.options.needsShortPath)
 
     def buildDir(self):
         CraftCore.log.debug("CraftBase.buildDir() called")
@@ -119,7 +120,7 @@ class CraftBase(object):
         if self.subinfo.options.unpack.unpackIntoBuildDir and self.subinfo.hasTargetSourcePath():
             builddir = os.path.join(builddir, self.subinfo.targetSourcePath())
         CraftCore.log.debug("package builddir is: %s" % builddir)
-        return CraftShortPath(builddir).path(self.subinfo.options.needsShortPath)
+        return builddir
 
     def imageDir(self):
         """return absolute path to the install root directory of the currently active package
