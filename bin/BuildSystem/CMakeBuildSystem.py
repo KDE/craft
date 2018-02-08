@@ -145,10 +145,6 @@ class CMakeBuildSystem(BuildSystemBase):
                 self.__slnFileName(), self.buildType())
             elif CraftCore.compiler.isMSVC2010():
                 CraftCore.log.critical("has to be implemented");
-        elif self.subinfo.options.cmake.useCTest:
-            # first make clean
-            utils.system([self.makeProgram, "clean"])
-            command = "ctest -M " + "Nightly" + " -T Start -T Update -T Configure -T Build -T Submit"
         else:
             command = ' '.join([self.makeProgram, self.makeOptions()])
 
