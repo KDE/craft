@@ -389,14 +389,6 @@ class OptionsInstall(OptionsBase):
         # run cmake directly for installing
         self.useMakeToolForInstall = True
 
-
-## options for the merge action
-class OptionsMerge(OptionsBase):
-    def __init__(self):
-        ## subdir based on installDir() used as merge source directory
-        self.sourcePath = None
-
-
 ## options for the package action
 class OptionsPackage(OptionsBase):
     def __init__(self):
@@ -469,8 +461,6 @@ class Options(object):
         self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
-        ## options of the merge action
-        self.merge = OptionsMerge()
         ## options of the cmake buildSystem
         self.cmake = OptionsCMake()
         ## options of the git module
