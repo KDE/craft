@@ -79,7 +79,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
-        options = BuildSystemBase.configureOptions(self)
+        options = "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF")
+        options += BuildSystemBase.configureOptions(self)
 
         options += f" -DCMAKE_INSTALL_PREFIX=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\""
 
@@ -99,8 +100,6 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if OsUtils.isMac():
             options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\"/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
-
-        options += " -DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF")
 
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
