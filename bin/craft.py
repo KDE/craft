@@ -121,9 +121,8 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             success = success and doExec(package, "qmerge")
             if CraftCore.settings.getboolean("Packager", "CreateCache"):
                 if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly"):
-                    nameRe = re.compile(".*\/.*")
                     for target in directTargets:
-                        if not nameRe.match(target):
+                        if "/" not in target.path:
                             CraftCore.log.error("Error:\n"
                                                  "[Packager]\n"
                                                  "CacheDirectTargetsOnly = True\n"
@@ -132,7 +131,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                     if package in directTargets:
                         success = success and doExec(package, "package")
                     else:
-                        CraftCore.log.info("skip packaging of non direct targets")
+                        CraftCore.log.info("Skip packaging of a dependency")
                 else:
                     success = success and doExec(package, "package")
             success = success or continueFlag
