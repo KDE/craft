@@ -78,18 +78,18 @@ class CraftConfig(object):
             print("Could not find config: %s" % self.iniPath, file=sys.stderr)
             return
 
+        craftDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         # read defaults
-        self._config.read(os.path.join(os.path.dirname(__file__), "..", "etc", "CraftCoreSettings.ini"))
+        self._config.read(craftDir, "etc", "CraftCoreSettings.ini"))
         #####
-        self._config.read(self.iniPath)
         if not "Variables" in self._config.sections():
             self._config.add_section("Variables")
         for key, value in {
             "CraftRoot": CraftConfig._craftRoot(),
-            "CraftDir": os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        }.items():
-            if not key in self._config["Variables"]:
-                self._config["Variables"][key] = value
+            "CraftDir": craftDir }.items():
+            self._config["Variables"][key] = value
+        # read user settings
+        self._config.read(self.iniPath)
 
     def __contains__(self, key):
         return self.__contains_no_alias(key) or \
