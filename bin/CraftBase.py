@@ -213,11 +213,7 @@ class CraftBase(object):
             version = CraftCore.settings.get("QtSDK", "Version")
             return f"QtSDK_{version}"
         else:
-            qtbase = CraftPackageObject.get("libs/qt5/qtbase")
-            if not qtbase:
-                return None
-            # don 't use version as we dont want to use the patch level
-            return f"Qt_{qtbase.subinfo.defaultTarget}"
+            return CraftCore.settings.get("Packager", "CacheVersion")
 
     def cacheLocation(self, baseDir=None) -> str:
         if not baseDir:

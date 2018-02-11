@@ -78,9 +78,8 @@ class CraftConfig(object):
             print("Could not find config: %s" % self.iniPath, file=sys.stderr)
             return
 
-        # set defaults
-        self._config.add_section("Packager")
-        self._config["Packager"]["RepositoryUrl"] = "https://files.kde.org/craft/master/"
+        # read defaults
+        self._config.read(os.path.join(os.path.dirname(__file__), "..", "etc", "CraftCoreSettings.ini"))
         #####
         self._config.read(self.iniPath)
         if not "Variables" in self._config.sections():
