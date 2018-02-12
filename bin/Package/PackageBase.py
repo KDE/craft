@@ -63,6 +63,10 @@ class PackageBase(CraftBase):
         package.addFiles(fileList)
         package.install()
 
+        if (CraftCore.settings.getboolean("Packager", "CreateCache") or
+            CraftCore.settings.getboolean("Packager", "UseCache")):
+            package.setCacheVersion(self.cacheVersion())
+
         return True
 
     def unmerge(self):
@@ -210,8 +214,6 @@ class PackageBase(CraftBase):
                     and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
                     and self.qmerge()):
                 return False
-            packagees = CraftCore.installdb.getInstalledPackages(self.package)
-            packagees[0].setCacheVersion(self.cacheVersion())
             return True
         return False
 
