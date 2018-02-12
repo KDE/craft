@@ -4,9 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
-        self.targets[CraftCore.compiler.getVersion()] = ""
+        self.targets[str(CraftCore.compiler.getVersion())] = ""
         self.description = "The compiler runtime package"
-        self.defaultTarget = CraftCore.compiler.getVersion()
+        self.defaultTarget = str(CraftCore.compiler.getVersion())
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
