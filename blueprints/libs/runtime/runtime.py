@@ -4,9 +4,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
-        self.targets['master'] = ""
+        self.targets[CraftCore.compiler.getVersion()] = ""
         self.description = "The compiler runtime package"
-        self.defaultTarget = 'master'
+        self.defaultTarget = CraftCore.compiler.getVersion()
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
@@ -20,8 +20,7 @@ from Package.BinaryPackageBase import *
 class PackageWin(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.package.disableBinaryCache = True
-        self.subinfo.options.package.version = CraftCore.compiler.getVersion()
+        self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
 
     def fetch(self):
         return True
