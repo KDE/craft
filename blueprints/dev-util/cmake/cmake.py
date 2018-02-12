@@ -8,16 +8,14 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
             self.targetInstSrc[ver] = f"cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
-            self.targetDigestUrls[ver] = (
-            "https://cmake.org/files/v%s/cmake-%s-SHA-256.txt" % (majorMinorStr, ver), CraftHash.HashAlgorithm.SHA256)
+            self.targetDigestUrls[ver] = (f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-SHA-256.txt", CraftHash.HashAlgorithm.SHA256)
 
-        nightlyUrl = "https://cmake.org/files/dev/"
-        for ver in CraftCore.cache.getNightlyVersionsFromUrl(nightlyUrl + "?C=M;O=D;F=0",
-                                                              "\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}" + re.escape(
-                                                                      "-win32-x86")):
-            self.targets[ver] = f"{nightlyUrl}/cmake-{ver}.zip"
-            self.targetInstSrc[ver] = f"cmake-{ver}"
-            self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
+        if self.options.dynamic.checkForNightlies:
+            for ver in CraftCore.cache.getNightlyVersionsFromUrl("https://cmake.org/files/dev/?C=M;O=D;F=0",
+                                                                f"\d.\d.\d\d\d\d\d\d\d\d-[0-9A-Za-z]{5,8}{re.escape('-win32-x86')}"):
+                self.targets[ver] = f"{nightlyUrl}/cmake-{ver}.zip"
+                self.targetInstSrc[ver] = f"cmake-{ver}"
+                self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
 
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
@@ -27,6 +25,9 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = "default"
         self.buildDependencies["gnuwin32/patch"] = "default"
+
+    def registerOptions(self):
+        self.options.dynamic.registerOption("checkForNightlies", False)
 
 
 from Package.BinaryPackageBase import *
