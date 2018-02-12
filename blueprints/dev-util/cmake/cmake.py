@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
 
-        self.defaultTarget = "3.9.1"
+        self.defaultTarget = "3.10.2"
 
     def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = "default"
