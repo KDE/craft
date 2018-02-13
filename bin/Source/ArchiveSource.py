@@ -203,25 +203,37 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
                 if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, packagelist[0])):
                     return False
-            if patches[-1][0]:
+            # we cant use the same name if we have more than one file to diff
+            if len(packagelist) == 1 and patches[-1][0]:
                 patchName = os.path.join(self.buildRoot(), patches[-1][0])
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
             # if the source or dest directory already exists, remove the occurance instead
-            if os.path.exists(os.path.join(destdir, directory + ".orig")):
-                shutil.rmtree(os.path.join(destdir, directory + ".orig"))
-            shutil.move(os.path.join(tmpdir, directory), os.path.join(destdir, directory + ".orig"))
+            dest = os.path.join(destdir, f"{directory}.orig")
+            if os.path.isdir(dest):
+                utils.rmtree(dest)
+                utils.moveDir(os.path.join(tmpdir, directory), dest)
+            else:
+                utils.deleteFile(dest)
+                utils.moveFile(os.path.join(tmpdir, directory), dest)
 
         os.chdir(destdir)
+
         for directory in packagelist:
             if not patchName:
-                patchName = os.path.join(self.buildRoot(), "%s-%s.diff" % (directory, \
-                                                                           str(datetime.date.today()).replace('-', '')))
-            cmd = "diff -Nrub -x *~ -x *\.rej -x *\.orig -x*\.o %s.orig %s > %s || echo 0" % (
-            directory, directory, patchName)
-            if not utils.system(cmd):
-                return False
+                date = str(datetime.date.today()).replace("-", "")
+                _patchName = os.path.join(self.buildRoot(), f"{directory}-{date}.diff")
+            else:
+                _patchName = patchName
+
+            with open(_patchName, "wb") as out:
+                # TODO: actually we should not accept code 2
+                if not utils.system(["diff", "-Nrub",
+                                     "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x*\\.o", "-x", "*\\.pyc",
+                                     f"{directory}.orig", directory],
+                                    stdout=out, acceptableExitCodes=[0,1,2]):
+                    return False
 
         CraftCore.log.debug("patch created at %s" % patchName)
         # remove all directories that are not needed any more after making the patch
