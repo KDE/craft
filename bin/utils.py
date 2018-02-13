@@ -218,13 +218,13 @@ def un7zip(fileName, destdir, flag=None):
     return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
 
 
-def system(cmd, displayProgress=False, logCommand=True, **kw):
+def system(cmd, displayProgress=False, logCommand=True, acceptableExitCodes=None, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
-    return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, **kw)
+    return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, acceptableExitCodes=acceptableExitCodes, **kw)
 
 
-def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, **kw):
+def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -303,10 +303,15 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
                 CraftCore.log.debug("{app}: {out}".format(app=app, out=line.rstrip()))
 
     proc.communicate()
-    result = proc.wait() == 0
-    if not result:
+    proc.wait()
+
+    if acceptableExitCodes is None:
+        ok = proc.returncode == 0
+    else:
+        ok = proc.returncode in acceptableExitCodes
+    if not ok:
         CraftCore.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
-    return result
+    return ok
 
 
 def moveEntries(srcdir, destdir):
