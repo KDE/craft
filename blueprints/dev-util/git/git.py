@@ -6,13 +6,13 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        ver = "2.16.0"
-        build = "2"
+        ver = "2.16.1"
+        build = "4"
         self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}.{build}-{CraftCore.compiler.bits}-bit.7z.exe"
         self.archiveNames[ver] = f"PortableGit-{ver}-{CraftCore.compiler.bits}-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
-        #self.targetDigests[ver] = (["8b1973bde82718684945c7373266976c70be55022ac554847a8a201c941952af"], CraftHash.HashAlgorithm.SHA256)
-        self.targetDigestsX64[ver] = (['967f65c6e014e543109e9bca1a7cffbe192eae82c349ea1639eefdfe087e44e8'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests[ver] = (["5d3e89163cb8b88484d906f8ba53604279e3d7b8c170e39d89116aa5c7274f26"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigestsX64[ver] = (['a2191f676d77f8b8ba88501b8d373dc5418845c52dca86313ec449881af14cbd'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = ver
 
     def setDependencies(self):
