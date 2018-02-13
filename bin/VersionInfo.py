@@ -137,26 +137,29 @@ class VersionInfo(object):
         if gitUrl is None:
             gitUrl = self.data.info.get("gitUrl", None)
         if tarballUrl is not None:
-            for ver in self.data.tarballs:
-                target = f"{ver}-{patchLevel}" if patchLevel else ver
-                self.subinfo.targets[target] = self._replaceVar(tarballUrl, ver, packageName)
+            for target in self.data.tarballs:
+                self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
+                if patchLevel:
+                    self.subinfo.patchLevel[target] = patchLevel
                 if not tarballDigestUrl is None:
-                    self.subinfo.targetDigestUrls[target] = self._replaceVar(tarballDigestUrl, ver, packageName)
+                    self.subinfo.targetDigestUrls[target] = self._replaceVar(tarballDigestUrl, target, packageName)
                 if not tarballInstallSrc is None:
-                    self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, ver, packageName)
+                    self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, target, packageName)
 
         if not gitUrl is None:
-            for ver in self.data.branches:
-                target = f"{ver}-{patchLevel}" if patchLevel else ver
-                self.subinfo.svnTargets[ver] = "%s|%s|" % (self._replaceVar(gitUrl, ver, packageName), ver)
+            for target in self.data.branches:
+                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}|{target}|"
+                if patchLevel:
+                    self.subinfo.patchLevel[target] = patchLevel
 
-            for ver in self.data.tags:
-                target = f"{ver}-{patchLevel}" if patchLevel else ver
-                self.subinfo.svnTargets[target] = "%s||%s" % (self._replaceVar(gitUrl, ver, packageName), ver)
+            for target in self.data.tags:
+                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
+                if patchLevel:
+                    self.subinfo.patchLevel[target] = patchLevel
 
         defaultTarget = self.defaultTarget()
         if defaultTarget:
-            self.subinfo.defaultTarget = f"{defaultTarget}-{patchLevel}" if patchLevel else defaultTarget
+            self.subinfo.defaultTarget = defaultTarget
 
     def packageName(self):
         return self.subinfo.package.package.path
