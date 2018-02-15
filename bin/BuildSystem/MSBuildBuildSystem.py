@@ -5,13 +5,14 @@ class MSBuildBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "msbuild")
         self.msbuildTargets = ["Rebuild"]
+        self.buildTypes = {"Release" : "Release", "RelWithDebInfo" : "Release", "Debug" : "Debug" }
 
     def configure(self, defines=""):
         return True
 
     def make(self):
         self.enterSourceDir()
-        buildType = "Debug" if self.buildType() == "Debug" else "Release"
+        buildType =self.buildTypes[self.buildType()]
         defines = self.subinfo.options.configure.args or ""
         for target in self.msbuildTargets:
             if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
