@@ -203,8 +203,8 @@ class CraftBase(object):
             fileType = f".{fileType}"
         else:
             fileType = ""
-        name = self.package.name if not includePackagePath else self.package.path
-        return f"{name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
+        prefix = "" if not includePackagePath else f"{self.package.path}/"
+        return f"{prefix}{self.package.name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
 
 
     @staticmethod
