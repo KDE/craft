@@ -277,34 +277,6 @@ class OptionsBase(object):
     def __init__(self):
         pass
 
-## options for enabling or disabling features of KDE
-## in the future, a certain set of features make up a 'profile' together
-class OptionsFeatures(OptionsBase):
-    def __init__(self):
-        class PhononBackend(OptionsBase):
-            def __init__(self):
-                ## options for the phonon backend
-                self.vlc = True
-                self.ds9 = False
-
-        self.phononBackend = PhononBackend()
-
-        ## option whether to build nepomuk
-        self.nepomuk = True
-
-        ## enable python support in several packages.
-        self.pythonSupport = False
-
-        ## stick to the gcc 4.4.7 version
-        self.legacyGCC = False
-
-        ## enable or disable the dependency to plasma
-        self.fullplasma = False
-
-        ## enable plugins of kdevelop
-        self.fullkdevelop = False
-
-
 ## options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):
@@ -445,8 +417,6 @@ class Options(object):
             self.configure.args = self.dynamic.args
             return
 
-        ## options for the dependency generation
-        self.features = OptionsFeatures()
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
