@@ -129,11 +129,13 @@ class SetupHelper(object):
         if CraftStandardDirs.isShortPathEnabled():
             with TemporaryUseShortpath(False):
                 printRow("Craft Root", CraftStandardDirs.craftRoot())
-        printRow("Craft", CraftStandardDirs.craftRoot())
+            printRow("Craft", CraftStandardDirs.craftRoot())
+            printRow("Svn directory", CraftStandardDirs.svnDir())
+            printRow("Git directory", CraftStandardDirs.gitDir())
+        else:
+            printRow("Craft", CraftStandardDirs.craftRoot())
         printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", CraftCore.compiler)
-        printRow("Svn directory", CraftStandardDirs.svnDir())
-        printRow("Git directory", CraftStandardDirs.gitDir())
         printRow("Download directory", CraftStandardDirs.downloadDir())
 
     def addEnvVar(self, key, val):
