@@ -351,15 +351,6 @@ class OptionsMake(OptionsBase):
         self.makeOptions = None
         self.supportsMultijob = True
 
-
-## options for the install action
-class OptionsInstall(OptionsBase):
-    def __init__(self):
-        ## use either make tool for installing or
-        # run cmake directly for installing
-        # TODO: find usage
-        self.useMakeToolForInstall = True
-
 ## options for the package action
 class OptionsPackage(OptionsBase):
     def __init__(self):
@@ -415,8 +406,6 @@ class Options(object):
         self.configure = OptionsConfigure()
         ## options of the configure action
         self.make = OptionsMake()
-        ## options of the install action
-        self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
         ## options of the git module

@@ -117,13 +117,8 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         env = os.environ
-        if self.subinfo.options.install.useMakeToolForInstall:
-            env["DESTDIR"] = self.installDir()
-            command = f"{self.makeProgram} install"
-        else:
-            command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
-
-        if not utils.system(command, env=env):
+        env["DESTDIR"] = self.installDir()
+        if not utils.system(f"{self.makeProgram} install", env=env):
             return False
 
         if self.subinfo.options.install.useMakeToolForInstall:
