@@ -474,23 +474,6 @@ class Options(object):
         # EnableJunctions  = True
         self.needsShortPath = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
 
-        ## this option controls if the build type is used when creating build and install directories.
-        # The following example shows the difference:
-        # \code
-        #                True                                False
-        # work/msvc2008-RelWithDebInfo-svnHEAD     work/msvc2008-svnHEAD
-        # image-msvc2008-RelWithDebInfo-svnHEAD    image-msvc2008-svnHEAD
-        # \endcode
-        #
-        self.useBuildType = True
-
-        ## skip the related package from debug builds
-        self.disableDebugBuild = False
-        ## skip the related package from release builds
-        self.disableReleaseBuild = False
-        ## exit if system command returns errors
-        self.exitOnErrors = True
-
         ## there is a special option available already
         self.buildTools = False
         self.buildStatic = CraftCore.settings.getboolean("Compile", "Static")

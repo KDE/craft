@@ -165,12 +165,6 @@ class PackageBase(CraftBase):
         CraftCore.log.debug("PackageBase.execute called. args: %s" % sys.argv)
         command, _ = self.getAction(cmd)
 
-        # TODO: remove that code
-        if self.subinfo.options.disableReleaseBuild and self.buildType() == "Release" \
-                or self.subinfo.options.disableDebugBuild and self.buildType() == "Debug":
-            print("target ignored for this build type")
-            return False
-
         return self.runAction(command)
 
     def fetchBinary(self) -> bool:

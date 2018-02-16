@@ -81,22 +81,12 @@ class CraftBase(object):
         directory = ""
         if self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE:
             directory += "ide-"
-        if self.subinfo.options.useBuildType == False:
-            directory += "%s" % (self.buildTarget)
-        elif (self.buildType() == None):
-            directory += "%s-%s" % ("default", self.buildTarget)
-        else:
-            directory += "%s-%s" % (self.buildType(), self.buildTarget)
+        directory += f"{self.buildType()}-{self.buildTarget}"
         return directory
 
     def imageDirPattern(self):
         """return base directory name for package related image directory"""
-        directory = "image"
-
-        if self.subinfo.options.useBuildType == True:
-            directory += '-' + self.buildType()
-        directory += '-' + self.buildTarget
-        return directory
+        return f"image-{self.buildType()}-{self.buildTarget}"
 
     def sourceDir(self, dummyIndex=0):
         utils.abstract()
