@@ -194,24 +194,25 @@ class PackageBase(CraftBase):
                     continue
             if not latest:
                 continue
-            _, localArchiveName = latest.fileName.rsplit("/", 1)
             downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
-            if not os.path.exists(downloadFolder):
-                os.makedirs(downloadFolder)
+            localArchiveAbsPath = OsUtils.toNativePath(os.path.join(downloadFolder, latest.fileName))
+            localArchivePath, localArchiveName = os.path.split(localArchiveAbsPath)
+
 
             if url != self.cacheLocation():
-                if not os.path.exists(os.path.join(downloadFolder, latest.fileName)):
+                if not os.path.exists(localArchiveAbsPath):
+                    os.makedirs(localArchivePath, exist_ok=True)
                     fUrl = f"{url}/{latest.fileName}"
-                    if not utils.getFile(fUrl, downloadFolder, localArchiveName):
+                    if not utils.getFile(fUrl, localArchivePath, localArchiveName):
                         CraftCore.log.warning(f"Failed to fetch {fUrl}")
                         return False
-            if not CraftHash.checkFilesDigests(downloadFolder, [localArchiveName],
+            if not CraftHash.checkFilesDigests(localArchivePath, [localArchiveName],
                                                digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
                 CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
                 return False
             if not (self.cleanImage()
-                    and utils.unpackFile(downloadFolder, localArchiveName, self.imageDir())
+                    and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
                     and self.qmerge()):
                 return False
             return True
