@@ -349,8 +349,6 @@ class OptionsMake(OptionsBase):
         self.ignoreErrors = None
         ## options for the make tool
         self.makeOptions = None
-        ## define the basename of the .sln file in case cmake.useIDE = True
-        self.slnBaseName = None
         self.supportsMultijob = True
 
 
@@ -359,6 +357,7 @@ class OptionsInstall(OptionsBase):
     def __init__(self):
         ## use either make tool for installing or
         # run cmake directly for installing
+        # TODO: find usage
         self.useMakeToolForInstall = True
 
 ## options for the package action
@@ -393,15 +392,6 @@ class OptionsPackage(OptionsBase):
         ## wheter to move the plugins to bin
         self.movePluginsToBin = utils.OsUtils.isWin()
 
-
-class OptionsCMake(OptionsBase):
-    def __init__(self):
-        ## use IDE for msvc2008 projects
-        self.useIDE = False
-        ## use IDE for configuring msvc2008 projects, open IDE in make action instead of running command line orientated make
-        self.openIDE = False
-
-
 class OptionsGit(OptionsBase):
     def __init__(self):
         ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
@@ -429,8 +419,6 @@ class Options(object):
         self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
-        ## options of the cmake buildSystem
-        self.cmake = OptionsCMake()
         ## options of the git module
         self.git = OptionsGit()
 

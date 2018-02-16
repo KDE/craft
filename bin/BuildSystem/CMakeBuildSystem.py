@@ -22,16 +22,8 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC() and not (
-                self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE) or CraftCore.compiler.isIntel():
+            if CraftCore.compiler.isMSVC() and not CraftCore.compiler.isIntel():
                 return "NMake Makefiles"
-            else:
-                if CraftCore.compiler.isMSVC2017():
-                    return "Visual Studio 15 2017" + (" Win64" if CraftCore.compiler.isX64() else "")
-                elif CraftCore.compiler.isMSVC2015():
-                    return "Visual Studio 14 2015" + (" Win64" if CraftCore.compiler.isX64() else "")
-                elif CraftCore.compiler.isMSVC2010():
-                    return "Visual Studio 10"
             if CraftCore.compiler.isMinGW():
                 return "MinGW Makefiles"
         elif OsUtils.isUnix():
@@ -55,27 +47,6 @@ class CMakeBuildSystem(BuildSystemBase):
                         defines += " -DBUILD_%s=OFF" % subdir
         # print defines
         return defines
-
-    def __slnFileName(self):
-        """ return solution file name """
-        slnname = "%s.sln" % self.package
-        if os.path.exists(os.path.join(self.buildDir(), slnname)):
-            return slnname
-        topLevelCMakeList = os.path.join(self.configureSourceDir(), "CMakeLists.txt")
-        if os.path.exists(topLevelCMakeList):
-            with open(topLevelCMakeList, 'r') as f:
-                lines = f.read().splitlines()
-            for line in lines:
-                if line.find("project(") > -1:
-                    a = line.split("(")
-                    a = a[1].split(")")
-                    slnname = "%s.sln" % a[0].strip()
-        if os.path.exists(os.path.join(self.buildDir(), slnname)):
-            return slnname
-        slnname = "%s.sln" % self.subinfo.options.make.slnBaseName
-        if os.path.exists(os.path.join(self.buildDir(), slnname)):
-            return slnname
-        return "NO_NAME_FOUND"
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
@@ -135,18 +106,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        if self.subinfo.options.cmake.openIDE:
-            if CraftCore.compiler.isMSVC2010():
-                command = "start vcexpress %s" % self.__slnFileName()
-        elif self.subinfo.options.cmake.useIDE:
-            if CraftCore.compiler.isMSVC2015():
-                command = "msbuild /maxcpucount %s /t:ALL_BUILD /p:Configuration=\"%s\"" % (
-                self.__slnFileName(), self.buildType())
-            elif CraftCore.compiler.isMSVC2010():
-                CraftCore.log.critical("has to be implemented");
-        else:
-            command = ' '.join([self.makeProgram, self.makeOptions()])
-
+        command = ' '.join([self.makeProgram, self.makeOptions()])
         return utils.system(command)
 
     def install(self):
@@ -158,19 +118,15 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         if self.subinfo.options.install.useMakeToolForInstall:
-            if CraftCore.compiler.isMSVC2015() and (self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
-                command = "msbuild INSTALL.vcxproj /p:Configuration=\"%s\"" % self.buildType()
-            else:
-                env["DESTDIR"] = self.installDir()
-                command = f"{self.makeProgram} install"
+            env["DESTDIR"] = self.installDir()
+            command = f"{self.makeProgram} install"
         else:
             command = "cmake -DCMAKE_INSTALL_PREFIX=%s -P cmake_install.cmake" % self.installDir()
 
         if not utils.system(command, env=env):
             return False
 
-        if self.subinfo.options.install.useMakeToolForInstall and not (
-            self.subinfo.options.cmake.useIDE or self.subinfo.options.cmake.openIDE):
+        if self.subinfo.options.install.useMakeToolForInstall:
             self._fixInstallPrefix()
         return True
 
