@@ -7,6 +7,7 @@ class VirtualPackageBase(SourceOnlyPackageBase):
     def __init__(self):
         CraftCore.log.debug("VirtualPackageBase.__init__ called")
         SourceOnlyPackageBase.__init__(self)
+        self.subinfo.options.package.disableBinaryCache = True
 
     # from SourceBase:
     def fetch(self):
