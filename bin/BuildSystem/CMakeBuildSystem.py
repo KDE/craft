@@ -118,12 +118,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         env["DESTDIR"] = self.installDir()
-        if not utils.system(f"{self.makeProgram} install", env=env):
-            return False
-
-        if self.subinfo.options.install.useMakeToolForInstall:
-            self._fixInstallPrefix()
-        return True
+        return (utils.system(f"{self.makeProgram} install", env=env) and
+                self._fixInstallPrefix())
 
     def unittest(self):
         """running cmake based unittests"""
