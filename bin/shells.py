@@ -143,9 +143,11 @@ class BashShell(object):
     def login(self):
         if CraftCore.compiler.isMSVC():
             self.useMSVCCompatEnv = True
-        self.environment["CHERE_INVOKING"] = "1"
-        self.environment["MSYS2_PATH_TYPE"] = "inherit"
-        return self.execute(".", "bash",  "--norc --login -i", displayProgress=True)
+        env = {"CHERE_INVOKING" : "1",
+               "MSYS2_PATH_TYPE" : "inherit"}
+        with utils.ScopedEnv(env):
+            self.environment.update(env)
+            return self.execute(".", "bash",  "--norc --login -i", displayProgress=True)
 
 def main():
     shell = BashShell()
