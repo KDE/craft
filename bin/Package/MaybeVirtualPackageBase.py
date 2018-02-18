@@ -11,6 +11,8 @@ class MaybeVirtualPackageBase(object):
             self.baseClass = classB
         self.__class__.__bases__ = (self.baseClass,)
         self.__class__.__bases__[0].__init__(self)
+        self.subinfo.options.package.disableBinaryCache = True
+
 
 
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
