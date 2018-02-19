@@ -79,7 +79,8 @@ class BuildSystemBase(CraftBase):
         if self.subinfo.options.make.makeOptions:
             defines += f" {self.subinfo.options.make.makeOptions}"
         if self.makeProgram in ["make", "gmake", "mingw32-make"]:
-            defines += f" -j{ multiprocessing.cpu_count()}"
+            if self.subinfo.options.make.supportsMultijob:
+                defines += f" -j{multiprocessing.cpu_count()}"
         if CraftCore.debug.verbose() > 0:
             if self.makeProgram == "ninja":
                 defines += " -v "
