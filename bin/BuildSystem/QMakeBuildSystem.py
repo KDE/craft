@@ -18,7 +18,7 @@ class QMakeBuildSystem(BuildSystemBase):
     @property
     def qtVer(self):
         if not self._qtVer:
-            self._qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").version)
+            self._qtVer = CraftVersion(CraftPackageObject.get("libs/qt5/qtbase").subinfo.buildTarget)
         return self._qtVer
 
     @property
