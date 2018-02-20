@@ -30,5 +30,11 @@ Packager for portal 7zip archives
 
         self.internalCreatePackage()
         self.createPortablePackage()
-        CraftHash.createDigestFiles(self.defines["setupname"])
+
+        absSetupPath = self.defines["setupname"]
+        if not os.path.isabs(absSetupPath):
+            absSetupPath = os.path.join(self.packageDestinationDir(), absSetupPath)
+
+        CraftHash.createDigestFiles(absSetupPath)
+
         return True
