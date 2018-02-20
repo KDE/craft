@@ -33,8 +33,8 @@ class BashShell(object):
             cflags = ""
             ldflags = ""
             if not CraftCore.compiler.isMSVC():
-                ldflags = f"-L{mergeroot}/lib "
-                cflags = f"-I{mergeroot}/include "
+                ldflags = f" -L{mergeroot}/lib "
+                cflags = f" -I{mergeroot}/include "
 
                 if self.buildType == "RelWithDebInfo":
                     cflags += " -O2 -g "

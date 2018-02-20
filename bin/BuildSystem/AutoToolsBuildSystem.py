@@ -50,7 +50,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + self.shell.environment["CFLAGS"]
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment["CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
-        if CraftCore.compiler.isMSVC() or self.subinfo.options.configure.bootstrap:
+        if self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
                 self._execute(self.sourceDir(), autogen)
