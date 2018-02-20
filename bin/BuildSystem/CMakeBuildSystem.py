@@ -70,7 +70,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
 
         if OsUtils.isMac():
-            options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\"/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
+            options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
 
         if self.subinfo.options.buildTools:
             options += " " + self.subinfo.options.configure.toolsDefine + " "
