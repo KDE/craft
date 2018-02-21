@@ -39,4 +39,8 @@ class Package(SourceOnlyPackageBase):
         return True
 
     def checkoutDir(self, index=0):
-        return os.path.join(CraftStandardDirs.blueprintRoot(), "craft-kde")
+        # check for legacy dir
+        checkoutDir = os.path.join(CraftStandardDirs.blueprintRoot(), "craft-kde")
+        if not os.path.exists(checkoutDir):
+            checkoutDir = os.path.join(CraftStandardDirs.blueprintRoot(), self.package.name)
+        return checkoutDir
