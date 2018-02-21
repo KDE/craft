@@ -31,31 +31,33 @@ import CraftBase
 def destroyCraftRoot():
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
     dirsToKeep = [CraftCore.standardDirs.downloadDir(),
-                  os.path.normpath(os.path.join(CraftCore.standardDirs.craftBin(), "..")),
+                  os.path.join(CraftCore.standardDirs.craftBin(), ".."),
                   os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
                   CraftCore.standardDirs.blueprintRoot()]
+    # dirs with possible interesting sub dirs
+    maybeKeepDir = {CraftCore.standardDirs.etcDir(),
+                    os.path.join(CraftCore.standardDirs.etcDir(), "blueprints")# might contain blueprintRoot
+                    }
+    def deleteEntry(path):
+        if utils.OsUtils.isLink(path):
+            CraftCore.log.debug(f"Skipping symlink {path}")
+            return
+        if os.path.isdir(path):
+            if any(os.path.exists(x) and os.path.samefile(path, x) for x in maybeKeepDir):
+                CraftCore.log.debug(f"Path {path} in maybeKeepDir")
+                for entry in os.listdir(path):
+                    deleteEntry(os.path.join(path, entry))
+            elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
+                CraftCore.log.debug(f"Path {path} in dirsToKeep")
+                utils.cleanDirectory(path)
+                utils.OsUtils.rmDir(path, True)
+        else:
+            if os.path.basename(path) not in settingsFiles:
+                utils.OsUtils.rm(path, True)
+
     del CraftCore.installdb
-    root = CraftCore.standardDirs.craftRoot()
-    for entry in os.listdir(root):
-        path = os.path.join(root, entry)
-        if os.path.exists(CraftCore.standardDirs.etcDir()) and os.path.samefile(path, CraftCore.standardDirs.etcDir()):
-            for entry in os.listdir(path):
-                if entry not in settingsFiles:
-                    etcPath = os.path.join(path, entry)
-                    if os.path.isdir(etcPath):
-                        if utils.OsUtils.isLink(etcPath):
-                            print("Skipping symlink %s" % etcPath)
-                            continue
-                        utils.cleanDirectory(etcPath)
-                        utils.OsUtils.rmDir(etcPath, True)
-                    else:
-                        utils.OsUtils.rm(etcPath, True)
-        elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
-            if utils.OsUtils.isLink(path):
-                print("Skipping symlink %s" % path)
-                continue
-            utils.cleanDirectory(path)
-            utils.OsUtils.rmDir(path, True)
+    for entry in os.listdir(CraftCore.standardDirs.craftRoot()):
+        deleteEntry(os.path.join(root, entry))
 
 
 def readListFile(listFile):
