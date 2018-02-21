@@ -49,8 +49,9 @@ def destroyCraftRoot():
                 CraftCore.log.debug(f"Path {path} in maybeKeepDir")
                 for entry in os.listdir(path):
                     deleteEntry(os.path.join(path, entry))
-            elif not any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
+            elif any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
                 CraftCore.log.debug(f"Path {path} in dirsToKeep")
+            else:
                 utils.cleanDirectory(path)
                 utils.OsUtils.rmDir(path, True)
         else:
