@@ -35,9 +35,11 @@ def destroyCraftRoot():
                   os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
                   CraftCore.standardDirs.blueprintRoot()]
     # dirs with possible interesting sub dirs
-    maybeKeepDir = {CraftCore.standardDirs.etcDir(),
-                    os.path.join(CraftCore.standardDirs.etcDir(), "blueprints")# might contain blueprintRoot
-                    }
+    maybeKeepDir = {
+        CraftCore.standardDirs.craftRoot(),
+        CraftCore.standardDirs.etcDir(),
+        os.path.join(CraftCore.standardDirs.etcDir(), "blueprints")# might contain blueprintRoot
+        }
     def deleteEntry(path):
         if utils.OsUtils.isLink(path):
             CraftCore.log.debug(f"Skipping symlink {path}")
@@ -56,8 +58,7 @@ def destroyCraftRoot():
                 utils.OsUtils.rm(path, True)
 
     del CraftCore.installdb
-    for entry in os.listdir(CraftCore.standardDirs.craftRoot()):
-        deleteEntry(os.path.join(root, entry))
+    deleteEntry(CraftCore.standardDirs.craftRoot())
 
 
 def readListFile(listFile):
