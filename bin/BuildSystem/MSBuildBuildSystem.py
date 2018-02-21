@@ -13,12 +13,15 @@ class MSBuildBuildSystem(BuildSystemBase):
     def make(self):
         self.enterSourceDir()
         buildType =self.buildTypes[self.buildType()]
-        defines = self.subinfo.options.configure.args or ""
+        platform = "/p:Platform=win32" if CraftCore.compiler.isX86() else ""
         for target in self.msbuildTargets:
             if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
                                 f" /p:Configuration={buildType}"
-                                f" /tv:{CraftCore.compiler.getInternalVersion()}.0 /property:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
-                                f" {defines}"):
+                                f" /tv:{CraftCore.compiler.getInternalVersion()}.0"
+                                f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
+                                f" /p:WindowsTargetPlatformVersion={os.environ['WINDOWSSDKVERSION']}"
+                                f"{platform}"
+                                f" {self.subinfo.options.configure.args}"):
                 return False
         return True
 
