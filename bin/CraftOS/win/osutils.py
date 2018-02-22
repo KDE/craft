@@ -56,3 +56,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def toNativePath(path : str) -> str:
         return OsUtils.toWindowsPath(path)
+
+    @staticmethod
+    def enableAnsiColors():
+        # tell Windows 10 that we do ansi
+        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+        CraftOS.OsUtilsBase.OsUtilsBase.enableAnsiColors()
+

@@ -58,3 +58,7 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     def toNativePath(path : str) -> str:
         """Return a native path"""
         pass
+
+    @staticmethod
+    def enableAnsiColors():
+        os.environ["CLICOLOR_FORCE"] = "1"

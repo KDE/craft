@@ -396,6 +396,9 @@ def main():
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
+    if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+        OsUtils.enableAnsiColors()
+
     CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
