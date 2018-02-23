@@ -2,6 +2,7 @@ from enum import unique, Enum
 
 from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
+from Blueprints.CraftVersion import CraftVersion
 
 
 @unique
@@ -23,8 +24,7 @@ class CraftDependencyPackage(CraftPackageObject):
     def __init__(self, path):
         CraftPackageObject.__init__(self, path)
         self._depenendencyType = None
-        self.runtimeChildren = []
-        self.dependencies = []
+        self.dependencies = [] # tuple (name, required version)
         self.state = CraftDependencyPackage.State.Unvisited
 
 
@@ -44,25 +44,28 @@ class CraftDependencyPackage(CraftPackageObject):
         if not self.isCategory():
             subinfo = self.subinfo
             if self.depenendencyType in [DependencyType.Both, DependencyType.Runtime]:
-                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.keys()))
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.items()))
             if self.depenendencyType in [DependencyType.Both, DependencyType.Buildtime]:
-                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.keys()))
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.items()))
         else:
-            self.dependencies.extend(self.__readDependenciesForChildren(self.children.values()))
+            self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children]))
 
     def __readDependenciesForChildren(self, deps):
         children = []
         if deps:
-            for line in deps:
-                if line not in CraftDependencyPackage._packageCache:
-                    package = CraftPackageObject.get(line)
+            for packaheName, requiredVersion in deps:
+                if packaheName not in CraftDependencyPackage._packageCache:
+                    package = CraftPackageObject.get(packaheName)
                     if not package:
-                        raise BlueprintException(f"Failed to resolve {line} as a dependency of {self}", self)
+                        raise BlueprintException(f"Failed to resolve {packaheName} as a dependency of {self}", self)
+                    if requiredVersion and requiredVersion != "default" and CraftVersion(package.version) < CraftVersion(requiredVersion):
+                        raise BlueprintException(f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed", self)
+
                     p = CraftDependencyPackage(package)
-                    CraftCore.log.debug(f"adding package {line}")
-                    CraftDependencyPackage._packageCache[line] = p
+                    CraftCore.log.debug(f"adding package {packaheName}")
+                    CraftDependencyPackage._packageCache[packaheName] = p
                 else:
-                    p = CraftDependencyPackage._packageCache[line]
+                    p = CraftDependencyPackage._packageCache[packaheName]
                 p.depenendencyType = self.depenendencyType
                 children.append(p)
         return children
