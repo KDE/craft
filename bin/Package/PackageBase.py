@@ -189,7 +189,11 @@ class PackageBase(CraftBase):
                     continue
             if not latest:
                 continue
-            downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
+
+            if url != self.cacheLocation():
+                downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
+            else:
+                downloadFolder = self.cacheLocation()
             localArchiveAbsPath = OsUtils.toNativePath(os.path.join(downloadFolder, latest.fileName))
             localArchivePath, localArchiveName = os.path.split(localArchiveAbsPath)
 
