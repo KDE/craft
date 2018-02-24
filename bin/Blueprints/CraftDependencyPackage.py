@@ -48,7 +48,7 @@ class CraftDependencyPackage(CraftPackageObject):
             if self.depenendencyType in [DependencyType.Both, DependencyType.Buildtime]:
                 self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.items()))
         else:
-            self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children]))
+            self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children.values()]))
 
     def __readDependenciesForChildren(self, deps):
         children = []
