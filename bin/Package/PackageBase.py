@@ -180,15 +180,10 @@ class PackageBase(CraftBase):
                 if f.version == self.version:
                     files.append(f)
             latest = None
-            if files:
-                latest = files[0]
-            elif fileEntry:
-                # legacy remove at some point
-                latest = fileEntry[0] if fileEntry else None
-                if not latest or self.version not in latest.fileName and "-latest-" not in latest.fileName:
-                    continue
-            if not latest:
+            if not files:
+                CraftCore.log.debug(f"Could not find {self}={self.version} in {url}")
                 continue
+            latest = files[0]
 
             if url != self.cacheLocation():
                 downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
