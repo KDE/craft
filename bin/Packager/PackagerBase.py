@@ -40,7 +40,7 @@ class PackagerBase(CraftBase):
     def createPackage(self):
         utils.abstract()
 
-    def _generateManifest(self, destDir, archiveName, manifestLocation=None):
+    def _generateManifest(self, destDir, archiveName, manifestLocation=None, manifestUrls=None):
         if not manifestLocation:
             manifestLocation = destDir
         manifestLocation = os.path.join(manifestLocation, "manifest.json")
@@ -48,7 +48,7 @@ class PackagerBase(CraftBase):
 
         name = archiveName if not os.path.isabs(archiveName) else os.path.relpath(archiveName, destDir)
 
-        manifest = CraftManifest.load(manifestLocation)
+        manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
         entry = manifest.get(str(self))
         entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
 

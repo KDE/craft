@@ -88,6 +88,12 @@ class CraftManifest(object):
                 manifest.packages[compiler][p.name] = p
         return manifest
 
+    def update(self, other):
+        for compiler in other.packages.keys():
+            if not compiler in self.packages:
+                self.packages[compiler] = {}
+            self.packages[compiler].update(other.packages[compiler])
+
     def toJson(self) -> dict:
         out = {"date":str(self.date), "packages":{}, "version": CraftManifest.version()}
         for compiler, packages in self.packages.items():
@@ -107,12 +113,19 @@ class CraftManifest(object):
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
 
     @staticmethod
-    def load(manifestFileName : str):
-        if ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(manifestFileName):
-            url = CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl")
-            if not url.endswith("/"):
-                url += "/"
-            utils.getFile(f"{url}manifest.json", os.path.dirname(manifestFileName))
+    def load(manifestFileName : str, urls : [str]=None):
+        """
+        Load a manifest.
+        If a url is provided a manifest is fetch from that the url and merged with a local manifest.
+        TODO: thats a horrible idea
+        """
+        old = None
+        if not urls and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(manifestFileName):
+            urls = [CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl").rstrip("/")]
+        if urls:
+            old = CraftManifest()
+            for url in urls:
+                old.update(CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")))
 
         if os.path.isfile(manifestFileName):
             try:
@@ -122,6 +135,9 @@ class CraftManifest(object):
                 return CraftManifest()
         else:
             return CraftManifest()
+        if old:
+            old.update(CraftManifest.fromJson(cache))
+            return old
 
         return CraftManifest.fromJson(cache)
 
