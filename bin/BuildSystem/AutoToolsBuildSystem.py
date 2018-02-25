@@ -55,7 +55,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if os.path.exists(autogen):
                 self._execute(self.sourceDir(), autogen)
             else:
-                self._execute(self.sourceDir(), "autoreconf", "-f -i")
+                self._execute(self.sourceDir(), "autoreconf", "-vfi")
 
         if not self.subinfo.options.useShadowBuild:
             ret = self._execute(self.sourceDir(), configure, self.configureOptions(self))
