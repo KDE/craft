@@ -127,18 +127,19 @@ class CraftManifest(object):
             for url in urls:
                 old.update(CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")))
 
+        cache = None
         if os.path.isfile(manifestFileName):
             try:
                 with open(manifestFileName, "rt+") as cacheFile:
                     cache = json.load(cacheFile)
             except:
-                return CraftManifest()
-        else:
-            return CraftManifest()
+                pass
         if old:
-            old.update(CraftManifest.fromJson(cache))
+            if cache:
+                old.update(CraftManifest.fromJson(cache))
             return old
-
+        if not cache:
+            return CraftManifest()
         return CraftManifest.fromJson(cache)
 
     @staticmethod
