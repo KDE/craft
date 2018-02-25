@@ -200,6 +200,9 @@ class PackageBase(CraftBase):
                     if not utils.getFile(fUrl, localArchivePath, localArchiveName):
                         CraftCore.log.warning(f"Failed to fetch {fUrl}")
                         return False
+            elif not os.path.isfile(localArchiveAbsPath):
+                continue
+
             if not CraftHash.checkFilesDigests(localArchivePath, [localArchiveName],
                                                digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
