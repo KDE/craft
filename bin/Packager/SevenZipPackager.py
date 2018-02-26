@@ -44,8 +44,6 @@ class SevenZipPackager(PackagerBase):
             self._generateManifest(destDir, archiveName)
             CraftHash.createDigestFiles(archive)
         else:
-            # TODO: this only works if we only have one repo in self.cacheRepositoryUrls()
-            # think of something more general...
             self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
                                    manifestUrls=self.cacheRepositoryUrls() if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False) else None)
 

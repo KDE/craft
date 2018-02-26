@@ -117,7 +117,7 @@ class CraftManifest(object):
         """
         Load a manifest.
         If a url is provided a manifest is fetch from that the url and merged with a local manifest.
-        TODO: thats a horrible idea
+        TODO: in that case we are merging all repositories so we should also merge the cache files
         """
         old = None
         if not urls and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(manifestFileName):
@@ -134,6 +134,12 @@ class CraftManifest(object):
                     cache = json.load(cacheFile)
             except:
                 pass
+            finally:
+                if cache:
+                    date = CraftManifest._parseTimeStamp(cache["date"])
+                else:
+                    date = datetime.datetime.utcnow()
+                utils.copyFile(manifestFileName, manifestFileName + date.strftime("%Y%m%dT%H%M%S"))
         if old:
             if cache:
                 old.update(CraftManifest.fromJson(cache))
