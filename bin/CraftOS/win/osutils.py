@@ -61,5 +61,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def enableAnsiColors():
         # tell Windows 10 that we do ansi
         ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+        os.environ["TERM"] = "win10"#random value
         CraftOS.OsUtilsBase.OsUtilsBase.enableAnsiColors()
 
