@@ -109,6 +109,18 @@ class CraftManifest(object):
         return self.packages[compiler][package]
 
     def dump(self, cacheFilePath):
+        if os.path.isfile(cacheFilePath):
+            try:
+                with open(cacheFilePath, "rt+") as cacheFile:
+                    cache = json.load(cacheFile)
+            except:
+                pass
+            finally:
+                if cache:
+                    date = CraftManifest._parseTimeStamp(cache["date"])
+                else:
+                    date = datetime.datetime.utcnow()
+                utils.copyFile(cacheFilePath, cacheFilePath + date.strftime("%Y%m%dT%H%M%S"), linkOnly=False)
         with open(cacheFilePath, "wt+") as cacheFile:
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
 
@@ -134,12 +146,6 @@ class CraftManifest(object):
                     cache = json.load(cacheFile)
             except:
                 pass
-            finally:
-                if cache:
-                    date = CraftManifest._parseTimeStamp(cache["date"])
-                else:
-                    date = datetime.datetime.utcnow()
-                utils.copyFile(manifestFileName, manifestFileName + date.strftime("%Y%m%dT%H%M%S"))
         if old:
             if cache:
                 old.update(CraftManifest.fromJson(cache))
