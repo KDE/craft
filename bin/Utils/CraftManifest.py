@@ -95,7 +95,7 @@ class CraftManifest(object):
             self.packages[compiler].update(other.packages[compiler])
 
     def toJson(self) -> dict:
-        out = {"date":str(self.date), "packages":{}, "version": CraftManifest.version()}
+        out = {"date":str(datetime.datetime.utcnow()), "packages":{}, "version": CraftManifest.version()}
         for compiler, packages in self.packages.items():
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
