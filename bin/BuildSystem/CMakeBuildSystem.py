@@ -118,7 +118,10 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         env["DESTDIR"] = self.installDir()
-        return (utils.system(f"{self.makeProgram} install", env=env) and
+        command = [self.makeProgram, "install"]
+        if self.subinfo.optsions.install.args:
+            command += [self.subinfo.optsions.install.args]
+        return (utils.system(command.join(" "), env=env) and
                 self._fixInstallPrefix())
 
     def unittest(self):

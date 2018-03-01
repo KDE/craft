@@ -8,6 +8,7 @@ import utils
 from CraftConfig import *
 from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import *
+from CraftDebug import deprecated
 
 import configparser
 import atexit
@@ -348,8 +349,23 @@ class OptionsMake(OptionsBase):
         ## ignore make error
         self.ignoreErrors = None
         ## options for the make tool
-        self.makeOptions = None
+        self.args = ""
         self.supportsMultijob = True
+        
+    @property
+    @deprecated("options.args")
+    def makeOptions(self):
+        return self.args
+    
+    @makeOptions.setter
+    @deprecated("options.args")
+    def makeOptions(self, x):
+        self.args = x
+        
+class OptionsInstall(OptionsBase):
+    def __init__(self):
+        ## options passed to make install etc
+        self.args = ""
 
 ## options for the package action
 class OptionsPackage(OptionsBase):
@@ -404,8 +420,8 @@ class Options(object):
         self.unpack = OptionsUnpack()
         ## options of the configure action
         self.configure = OptionsConfigure()
-        ## options of the configure action
         self.make = OptionsMake()
+        self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
         ## options of the git module
