@@ -26,7 +26,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         else:
             self.enterBuildDir()
 
-        return utils.system([self.makeProgram, self.makeOptions()])
+        return utils.system(" ".join([self.makeProgram, self.makeOptions()]))
 
     def install(self):
         """install the target"""
