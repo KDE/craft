@@ -121,7 +121,7 @@ class CMakeBuildSystem(BuildSystemBase):
         command = [self.makeProgram, "install"]
         if self.subinfo.options.install.args:
             command += [self.subinfo.options.install.args]
-        return (utils.system(command.join(" "), env=env) and
+        return (utils.system(" ".join(command), env=env) and
                 self._fixInstallPrefix())
 
     def unittest(self):
