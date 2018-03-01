@@ -353,12 +353,12 @@ class OptionsMake(OptionsBase):
         self.supportsMultijob = True
         
     @property
-    @deprecated("options.args")
+    @deprecated("options.make.args")
     def makeOptions(self):
         return self.args
     
     @makeOptions.setter
-    @deprecated("options.args")
+    @deprecated("options.make.args")
     def makeOptions(self, x):
         self.args = x
         
