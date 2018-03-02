@@ -95,11 +95,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         command = self.makeProgram
-        args = "install"
+        args = self.subinfo.options.install.args
 
         args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
-        if self.subinfo.options.install.args:
-            args += f" {self.subinfo.options.install.args}"
         if self.subinfo.options.make.ignoreErrors:
             args += " -i"
 

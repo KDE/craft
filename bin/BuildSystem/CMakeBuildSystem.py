@@ -118,9 +118,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         env["DESTDIR"] = self.installDir()
-        command = [self.makeProgram, "install"]
-        if self.subinfo.options.install.args:
-            command += [self.subinfo.options.install.args]
+        command = [self.makeProgram, self.subinfo.options.install.args]
         return (utils.system(" ".join(command), env=env) and
                 self._fixInstallPrefix())
 

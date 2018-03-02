@@ -364,8 +364,8 @@ class OptionsMake(OptionsBase):
         
 class OptionsInstall(OptionsBase):
     def __init__(self):
-        ## options passed to make install etc
-        self.args = ""
+        ## options passed to make on install
+        self.args = "install"
 
 ## options for the package action
 class OptionsPackage(OptionsBase):
