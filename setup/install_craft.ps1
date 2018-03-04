@@ -1,7 +1,7 @@
 param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
-    [alias("branch")][string]$Script:branch="2017.12"
+    [alias("branch")][string]$Script:branch="2018.03"
     )
 
 
