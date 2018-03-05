@@ -30,8 +30,9 @@ class BashShell(object):
         if not self._environment:
 
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
-            cflags = ""
-            ldflags = ""
+
+            ldflags = f" -L{mergeroot}/lib "
+            cflags = f" -I{mergeroot}/include "
             if CraftCore.compiler.isMSVC():
                 # based on Windows-MSVC.cmake
                 if self.buildType == "Release":
@@ -43,9 +44,6 @@ class BashShell(object):
                     cflags += " -MDd -Zi -Ob0 -Od "
                     ldflags += " -debug -pdbtype:sept "
             else:
-                ldflags = f" -L{mergeroot}/lib "
-                cflags = f" -I{mergeroot}/include "
-
                 if self.buildType == "RelWithDebInfo":
                     cflags += " -O2 -g "
                 elif self.buildType == "Debug":
