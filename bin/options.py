@@ -327,9 +327,6 @@ class OptionsConfigure(OptionsBase):
         # tool is required (supported currently by QMakeBuildSystem only)
         self.tool = False
 
-        # do not add --prefix on msys
-        self.noDefaultOptions = False
-
         # cflags currently only used for autotools
         self.cflags = ""
 
