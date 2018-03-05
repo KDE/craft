@@ -124,8 +124,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def configureOptions(self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
-        if self.subinfo.options.configure.noDefaultOptions == False:
-            options += f" --prefix={self.shell.toNativePath(CraftCore.standardDirs.craftRoot())} "
+        prefix = self.shell.toNativePath(CraftCore.standardDirs.craftRoot())
+        options += f" --prefix='{prefix}' "
+        if OsDetection.isWin():
+            options += f" --datarootdir='{prefix}/bin/data' "
         options += self.platform
 
         return options;
