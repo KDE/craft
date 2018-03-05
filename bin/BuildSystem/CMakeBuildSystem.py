@@ -129,7 +129,12 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        return utils.system(["ctest", "--output-on-failure"])
+        command = ["ctest", "--output-on-failure", "--timeout", "300"]
+        if CraftCore.debug.verbose() == 1:
+            command += ["-V"]
+        elif CraftCore.debug.verbose() > 1:
+            command += ["-VV"]
+        return utils.system(command)
 
     def ccacheOptions(self):
         out = " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ "
