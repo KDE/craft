@@ -7,6 +7,8 @@
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
+from Utils.PostInstallRoutines import *
+
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -143,3 +145,5 @@ class CMakeBuildSystem(BuildSystemBase):
             return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
                    " -DCMAKE_C_COMPILER=/usr/bin/clang"
 
+    def postInstall(self):
+        return PostInstallRoutines.updateSharedMimeInfo(self)

@@ -123,6 +123,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
             if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
                 success = success and doExec(package, "cleanbuild")
             success = success and doExec(package, "qmerge")
+            success = success and doExec(package, "post-install")
             if CraftCore.settings.getboolean("Packager", "CreateCache"):
                 if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly"):
                     for target in directTargets:
@@ -139,16 +140,11 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                 else:
                     success = success and doExec(package, "package")
             success = success or continueFlag
-        elif buildAction in ["fetch", "fetch-binary", "unpack", "configure", "compile", "make",
-                             "test", "package", "unmerge", "createpatch", "print-files" ]:
-            success = doExec(package, buildAction, continueFlag)
         elif buildAction == "install":
             success = doExec(package, "cleanimage")
             success = success and doExec(package, "install", continueFlag)
-        elif buildAction == "qmerge":
-            success = success and doExec(package, "qmerge")
         else:
-            success = CraftCore.log.error("could not understand this buildAction: %s" % buildAction)
+            success = success and doExec(package, buildAction, continueFlag)
 
         timer.stop()
         utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}",
@@ -366,7 +362,7 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
-                     "install", "install-deps", "qmerge", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
+                     "install", "install-deps", "qmerge", "post-install", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:

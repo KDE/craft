@@ -40,21 +40,6 @@ class PackageBase(CraftBase):
         copiedFiles = []  # will be populated by the next call
         utils.copyDir(self.imageDir(), CraftCore.standardDirs.craftRoot(), copiedFiles=copiedFiles)
 
-        # run post-install scripts
-        if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
-            for pkgtype in ['bin', 'lib', 'doc', 'src']:
-                scriptName = "post-install-%s-%s.cmd" % (self.package, pkgtype)
-                script = os.path.join(CraftCore.standardDirs.craftRoot(), "manifest", scriptName)
-                if os.path.exists(script):
-                    CraftCore.log.debug("run post install script '%s'" % script)
-                    cmd = "cd /D %s && %s" % (CraftCore.standardDirs.craftRoot(), script)
-                    if not utils.system(cmd):
-                        CraftCore.log.warning("%s failed!" % cmd)
-                else:
-                    CraftCore.log.debug("post install script '%s' not found" % script)
-        else:
-            CraftCore.log.debug("running of post install scripts disabled!")
-
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
@@ -78,19 +63,6 @@ class PackageBase(CraftBase):
             fileList = package.getFilesWithHashes()
             self.unmergeFileList(CraftCore.standardDirs.craftRoot(), fileList)
             package.uninstall()
-
-        # run post-uninstall scripts
-        if not CraftCore.settings.getboolean("General", "EMERGE_NO_POST_INSTALL", False):
-            for pkgtype in ['bin', 'lib', 'doc', 'src']:
-                scriptName = "post-uninstall-%s-%s.cmd" % (self.package, pkgtype)
-                script = os.path.join(CraftCore.standardDirs.craftRoot(), "manifest", scriptName)
-                if os.path.exists(script):
-                    CraftCore.log.debug("run post uninstall script '%s'" % script)
-                    cmd = "cd /D %s && %s" % (CraftCore.standardDirs.craftRoot(), script)
-                    if not utils.system(cmd):
-                        CraftCore.log.warning("%s failed!" % cmd)
-                else:
-                    CraftCore.log.debug("post uninstall script '%s' not found" % script)
         else:
             CraftCore.log.debug("running of post uninstall scripts disabled!")
 
@@ -265,6 +237,7 @@ class PackageBase(CraftBase):
                      "install": "install",
                      "test": "unittest",
                      "qmerge": "qmerge",
+                     "post-install": "postInstall",
                      "unmerge": "unmerge",
                      "package": "createPackage",
                      "createpatch": "createPatch",

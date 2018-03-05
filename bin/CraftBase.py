@@ -226,3 +226,6 @@ class CraftBase(object):
         for bt in buildType:
             out += ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, bt]) for url in CraftCore.settings.getList("Packager", "RepositoryUrl")]
         return out
+
+    def postInstall(self):
+        return True
