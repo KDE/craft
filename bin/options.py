@@ -30,6 +30,8 @@ class UserOptions(object):
 # Common settings available for all blueprints are:
 #     ignored: [True|False]
 #     version: some version
+#     patchLevel: int
+#     buildTests: [True|False]
 #     args: arguments passed to the configure step
 #
 # Example:
@@ -132,10 +134,11 @@ class UserOptions(object):
         _register  = self.registerOption
         _convert = self._convert
 
-        _register("version", str, permanent=False)
-        _register("patchLevel", int, permanent=False)
-        _register("ignored", bool, permanent=False)
-        _register("args", "", permanent=False)
+        _register("version",    str,    permanent=False)
+        _register("patchLevel", int,    permanent=False)
+        _register("ignored",    bool,   permanent=False)
+        _register("buildTests", bool,   permanent=False)
+        _register("args",        "",    permanent=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
