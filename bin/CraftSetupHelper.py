@@ -32,7 +32,7 @@ if sys.version_info[0:3] < MIN_PY_VERSION:
 
 
 class SetupHelper(object):
-    CraftVersion = "2018.03"
+    CraftVersion = "master"
     def __init__(self, args=None):
         self.args = args
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
