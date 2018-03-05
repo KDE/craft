@@ -115,7 +115,7 @@ if($args.Length -ne 0)
     (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
     foreach {
         if ($_ -match "=") {
-            $v = $_.split("=")
+            $v = $_.split("=", 2)
             set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
             #Write-Host("$v[0]=$v[1]")
         }
