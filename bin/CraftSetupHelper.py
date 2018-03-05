@@ -32,7 +32,7 @@ if sys.version_info[0:3] < MIN_PY_VERSION:
 
 
 class SetupHelper(object):
-    CraftVersion = "master"
+    CraftVersion = "2018.03"
     def __init__(self, args=None):
         self.args = args
 
