@@ -204,6 +204,52 @@ class SetupHelper(object):
             self.addEnvVar("XDG_CACHE_HOME",
                            os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
 
+    def _setupUnix(self):
+        self.prependPath("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
+                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
+        if OsUtils.isMac():
+            self.prependPath("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
+
+    def _setupWin(self):
+        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
+
+        if not "HOME" in os.environ:
+            self.addEnvVar("HOME", os.getenv("USERPROFILE"))
+
+
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+            self.prependPath("PATH",
+                             os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
+                                          CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
+
+        if CraftCore.compiler.isMinGW():
+            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+                if CraftCore.compiler.isX86():
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
+                else:
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
+            else:
+                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
+                compilerMap = {"mingw53_32": "mingw530_32"}
+                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
+                                                      compilerMap.get(compilerName, compilerName), "bin"))
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+            self.prependPath("PATH",
+                             os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
+                                          CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
+
+        if CraftCore.compiler.isMinGW():
+            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+                if CraftCore.compiler.isX86():
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
+                else:
+                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
+            else:
+                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
+                compilerMap = {"mingw53_32": "mingw530_32"}
+                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
+                                                      compilerMap.get(compilerName, compilerName), "bin"))
+
     def setupEnvironment(self):
         for var, value in CraftCore.settings.getSection("Environment"):  # set and overide existing values
             self.addEnvVar(var, value)
@@ -218,12 +264,10 @@ class SetupHelper(object):
                            CraftCore.settings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
                                                                                  "build", "CCACHE")))
 
-        if self.version < 2:
-            self.addEnvVar("GIT_SSH", "plink")
-            self.addEnvVar("SVN_SSH", "plink")
-
-        if not "HOME" in os.environ:
-            self.addEnvVar("HOME", os.getenv("USERPROFILE"))
+        if OsUtils.isWin():
+            self._setupWin()
+        else:
+            self.setXDG()
 
         self.prependPath("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
@@ -243,35 +287,9 @@ class SetupHelper(object):
                                               ])
         self.prependPath("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
 
-        if OsUtils.isUnix():
-            self.prependPath("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
-                                                 os.path.join(CraftStandardDirs.craftRoot(), "lib",
-                                                              "x86_64-linux-gnu")])
-        if OsUtils.isMac():
-            self.prependPath("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
-
         self.setXDG()
 
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath("PATH",
-                             os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
-                                          CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
-
-        if CraftCore.compiler.isMinGW():
-            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if CraftCore.compiler.isX86():
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
-                else:
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
-            else:
-                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
-                compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
-                                                      compilerMap.get(compilerName, compilerName), "bin"))
-
-        if OsUtils.isUnix():
-            self.prependPath("PATH", CraftStandardDirs.craftBin())
-        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
+        self.prependPath("PATH", CraftStandardDirs.craftBin())
 
         # make sure thate craftroot bin is the first to look for dlls etc
         self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "bin"))
