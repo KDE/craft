@@ -61,5 +61,4 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
 
     @staticmethod
     def enableAnsiColors():
-        os.environ["CLICOLOR_FORCE"] = "1"
-        os.environ["CLICOLOR"] = "1"
+        pass

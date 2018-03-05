@@ -35,6 +35,9 @@ class SetupHelper(object):
     CraftVersion = "master"
     def __init__(self, args=None):
         self.args = args
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+            OsUtils.enableAnsiColors()
+
 
     def _getOutput(self, command, shell=False):
         CraftCore.log.debug(f"SetupHelper._getOutput: {command}")
@@ -140,15 +143,16 @@ class SetupHelper(object):
 
     def addEnvVar(self, key, val):
         os.environ[key] = val
-        os.environ[key] = val
 
-    def prependPath(self, key, var):
+    def prependEnvVar(self, key : str, var : str, sep : str=os.path.pathsep) -> None:
         if not type(var) == list:
             var = [var]
         if key in os.environ:
-            env = var + os.environ[key].split(os.path.pathsep)
+            env = var + os.environ[key].split(sep)
             var = list(collections.OrderedDict.fromkeys(env))
-        os.environ[key] = os.path.pathsep.join(var)
+        val = sep.join(var)
+        CraftCore.log.debug(f"Setting {key}={val}")
+        os.environ[key] = val
 
     def stringToEnv(self, string):
         for line in string.split("\n"):
@@ -194,9 +198,9 @@ class SetupHelper(object):
             return self.stringToEnv(result)
 
     def setXDG(self):
-        self.prependPath("XDG_DATA_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "share")])
+        self.prependEnvVar("XDG_DATA_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "share")])
         if OsUtils.isUnix():
-            self.prependPath("XDG_CONFIG_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "etc", "xdg")])
+            self.prependEnvVar("XDG_CONFIG_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "etc", "xdg")])
             self.addEnvVar("XDG_DATA_HOME",
                            os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".local5", "share"))
             self.addEnvVar("XDG_CONFIG_HOME",
@@ -205,55 +209,55 @@ class SetupHelper(object):
                            os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
 
     def _setupUnix(self):
-        self.prependPath("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
+        self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
         if OsUtils.isMac():
-            self.prependPath("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
+            self.prependEnvVar("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
     def _setupWin(self):
-        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
+        self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
 
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
 
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath("PATH",
+            self.prependEnvVar("PATH",
                              os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
                                           CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
 
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
                 if CraftCore.compiler.isX86():
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
+                    self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
                 else:
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
+                    self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
             else:
                 compilerName = CraftCore.settings.get("QtSDK", "Compiler")
                 compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
+                self.prependEnvVar("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
                                                       compilerMap.get(compilerName, compilerName), "bin"))
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependPath("PATH",
+            self.prependEnvVar("PATH",
                              os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
                                           CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
 
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
                 if CraftCore.compiler.isX86():
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
+                    self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw", "bin"))
                 else:
-                    self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
+                    self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "mingw64", "bin"))
             else:
                 compilerName = CraftCore.settings.get("QtSDK", "Compiler")
                 compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependPath("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
+                self.prependEnvVar("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
     def setupEnvironment(self):
         for var, value in CraftCore.settings.getSection("Environment"):  # set and overide existing values
             self.addEnvVar(var, value)
-        self.prependPath("PATH", os.path.dirname(sys.executable))
+        self.prependEnvVar("PATH", os.path.dirname(sys.executable))
         self.getEnv()
         self.checkForEvilApplication()
 
@@ -269,9 +273,9 @@ class SetupHelper(object):
         else:
             self.setXDG()
 
-        self.prependPath("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
+        self.prependEnvVar("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
-        self.prependPath("QT_PLUGIN_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "plugins"),
+        self.prependEnvVar("QT_PLUGIN_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "plugins"),
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugins"),
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib64", "plugins"),
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
@@ -279,23 +283,31 @@ class SetupHelper(object):
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugin")
                                             ])
 
-        self.prependPath("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "qml"),
+        self.prependEnvVar("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "qml"),
                                               os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
                                               os.path.join(CraftStandardDirs.craftRoot(), "lib64", "qml"),
                                               os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
                                                            "qml")
                                               ])
-        self.prependPath("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
+        self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
 
         self.setXDG()
 
-        self.prependPath("PATH", CraftStandardDirs.craftBin())
+        self.prependEnvVar("PATH", CraftStandardDirs.craftBin())
 
         # make sure thate craftroot bin is the first to look for dlls etc
-        self.prependPath("PATH", os.path.join(CraftStandardDirs.craftRoot(), "bin"))
+        self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "bin"))
 
         # add python site packages to pythonpath
-        self.prependPath("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
+        self.prependEnvVar("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
+
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+            self.addEnvVar("CLICOLOR_FORCE", "1")
+            self.addEnvVar("CLICOLOR", "1")
+            if CraftCore.compiler.isGCCLike():
+                self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
+                self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
+
 
     def printEnv(self):
         self.setupEnvironment()

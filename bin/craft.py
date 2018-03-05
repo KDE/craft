@@ -396,13 +396,6 @@ def main():
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
-    if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-        OsUtils.enableAnsiColors()
-        if CraftCore.compiler.isGCCLike():
-            utils.putenv("CFLAGS", f"{os.environ.get('CFLAGS','')} -fdiagnostics-color=always")
-            utils.putenv("CXXFLAGS", f"{os.environ.get('CXXFLAGS','')} -fdiagnostics-color=always")
-
-
     CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
