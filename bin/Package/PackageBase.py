@@ -182,7 +182,8 @@ class PackageBase(CraftBase):
                 return False
             if not (self.cleanImage()
                     and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
-                    and self.qmerge()):
+                    and self.qmerge()
+                    and self.postInstall()):
                 return False
             return True
         return False
