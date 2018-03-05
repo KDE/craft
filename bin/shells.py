@@ -32,7 +32,17 @@ class BashShell(object):
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
             cflags = ""
             ldflags = ""
-            if not CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.isMSVC():
+                # based on Windows-MSVC.cmake
+                if self.buildType == "Release":
+                    cflags += " -MD -O2 -Ob2 -DNDEBUG "
+                elif self.buildType == "RelWithDebInfo":
+                    cflags += " -MD -Zi -O2 -Ob1 -DNDEBUG "
+                    ldflags += " -debug "
+                elif self.buildType == "Debug":
+                    cflags += " -MDd -Zi -Ob0 -Od "
+                    ldflags += " -debug -pdbtype:sept "
+            else:
                 ldflags = f" -L{mergeroot}/lib "
                 cflags = f" -I{mergeroot}/include "
 
@@ -79,8 +89,8 @@ class BashShell(object):
                     self._environment["F77"] = "no"
                     self._environment["FC"] = "no"
 
-                    ldflags = ""
-                    cflags = " -O2 -MD -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
+                    ldflags += ""
+                    cflags += " -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
