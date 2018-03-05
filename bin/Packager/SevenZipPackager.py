@@ -44,8 +44,12 @@ class SevenZipPackager(PackagerBase):
             self._generateManifest(destDir, archiveName)
             CraftHash.createDigestFiles(archive)
         else:
+            if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
+                manifestUrls = [self.cacheRepositoryUrls()[0]]
+            else:
+                manifestUrls = None
             self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
-                                   manifestUrls=self.cacheRepositoryUrls() if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False) else None)
+                                   manifestUrls=manifestUrls)
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
