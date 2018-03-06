@@ -733,28 +733,8 @@ def embedManifest(executable, manifest):
         CraftCore.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
     CraftCore.log.debug("embedding ressource manifest %s into %s" % \
                          (manifest, executable))
-    mtExe = None
-    mtExe = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "mt.exe")
-
-    if (not os.path.isfile(mtExe)):
-        # If there is no free manifest tool installed on the system
-        # try to fallback on the manifest tool provided by visual studio
-        sdkdir = regQuery("HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows",
-                          "CurrentInstallFolder")
-        if not sdkdir:
-            CraftCore.log.debug("embedManifest could not find the Registry Key"
-                                 " for the Windows SDK")
-        else:
-            mtExe = r'%s' % os.path.join(sdkdir, "Bin", "mt.exe")
-            if not os.path.isfile(os.path.normpath(mtExe)):
-                CraftCore.log.debug("embedManifest could not find a mt.exe in\n\t %s" % \
-                                     os.path.dirname(mtExe))
-    if os.path.isfile(mtExe):
-        return system([mtExe, "-nologo", "-manifest", manifest,
-                       "-outputresource:%s;1" % executable])
-    else:
-        return system(["mt", "-nologo", "-manifest", manifest,
-                       "-outputresource:%s;1" % executable])
+    return system(["mt", "-nologo", "-manifest", manifest,
+                    f"-outputresource:{executable};1"])
 
 
 def getscriptname():
