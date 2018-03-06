@@ -14,6 +14,9 @@ $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Defini
 
 function findPython([string] $name)
 {
+    if ($env:CRAFT_PYTHON) {
+        return
+    }
     if ($PSVersionTable.Platform -eq "Unix" -and $env:CRAFT_PYTHON -eq $null) {
         $env:CRAFT_PYTHON = $name
     } else {
@@ -24,6 +27,10 @@ function findPython([string] $name)
     }
 }
 
+$py = (Get-Command py -ErrorAction SilentlyContinue).Name
+if ($py) {
+    findPython(&$py -3 -c "import sys; print(sys.executable)")
+}
 findPython("python3.6")
 findPython("python3")
 findPython("python")
