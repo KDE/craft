@@ -342,6 +342,9 @@ class OptionsConfigure(OptionsBase):
         # the project file, this is either a .pro for qmake or a sln for msbuild
         self.projectFile = None
 
+        # whether to not pass --datarootdir configure
+        self.noDataRootDir = False
+
 
 ## options for the make action
 class OptionsMake(OptionsBase):

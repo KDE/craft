@@ -126,7 +126,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(CraftCore.standardDirs.craftRoot())
         options += f" --prefix='{prefix}' "
-        if OsDetection.isWin():
+        if OsDetection.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += f" --datarootdir='{prefix}/bin/data' "
         options += self.platform
 
