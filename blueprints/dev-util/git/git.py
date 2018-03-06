@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.archiveNames[ver] = f"PortableGit-{ver}-{CraftCore.compiler.bits}-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
         self.targetDigests[ver] = (["dda9c9eacdec5bb1369351b48d84c7ba947c85cf5f6285e369eebc89075f8bb7"], CraftHash.HashAlgorithm.SHA256)
-        self.targetDigestsX64[ver] = (['f51853689ad8a9e30759fb263a31bcd59753b3a97272b0e76a4210528a8631a1'],, CraftHash.HashAlgorithm.SHA256)
+        self.targetDigestsX64[ver] = (['f51853689ad8a9e30759fb263a31bcd59753b3a97272b0e76a4210528a8631a1'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = ver
 
     def setDependencies(self):
