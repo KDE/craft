@@ -301,10 +301,26 @@ class SetupHelper(object):
         # add python site packages to pythonpath
         self.prependEnvVar("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
 
+
+        if CraftCore.compiler.isClang():
+            if OsUtils.isUnix():
+                self.addEnvVar("CC", "/usr/bin/clang")
+                self.addEnvVar("CXX", "/usr/bin/clang++")
+            else:
+                if CraftCore.compiler.isMSVC():
+                    self.addEnvVar("CC", "clang-cl")
+                    self.addEnvVar("CXX", "clang-cl")
+                else:
+                    self.addEnvVar("CC", "clang")
+                    self.addEnvVar("CXX", "clang")
+
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
-            if CraftCore.compiler.isGCCLike():
+            if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
+                self.prependEnvVar("CFLAGS", "-fcolor-diagnostics", sep=" ")
+                self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics", sep=" ")
+            elif CraftCore.compiler.isGCCLike():
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
 
