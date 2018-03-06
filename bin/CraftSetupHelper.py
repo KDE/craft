@@ -308,6 +308,9 @@ class SetupHelper(object):
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
 
+            if OsUtils.isWin():
+                os.environ["TERM"] = "xterm" # pretend to be a common smart terminal
+
 
     def printEnv(self):
         self.setupEnvironment()
