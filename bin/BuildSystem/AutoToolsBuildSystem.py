@@ -135,7 +135,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def ccacheOptions(self):
         return " CC='ccache gcc' CXX='ccache g++' "
 
-
     def copyToMsvcImportLib(self):
         if not OsDetection.isWin():
             return True

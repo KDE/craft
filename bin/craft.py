@@ -216,10 +216,9 @@ def run(package, action, args, directTargets):
             return False
         key, value = args.set.split("=", 1)
         for p in directTargets:
-            info = p.subinfo
-            CraftCore.log.info(f"Setting: [{p}]{key}={value}")
-            if not info.options.dynamic.setOption(key, value):
+            if not p.subinfo.options.dynamic.setOption(key, value):
                 return False
+            CraftCore.log.info(f"[{p}]\n{key}={getattr(p.subinfo.options.dynamic, key)}")
         return True
     elif action not in ["all", "install-deps"]:
         for info in package.children.values():

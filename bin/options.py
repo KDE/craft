@@ -162,14 +162,20 @@ class UserOptions(object):
         """
         Converts valB to type(valA)
         """
-        if valA is None:
-            return valB
-        _type = valA if callable(valA) else type(valA)
-        if _type == type(valB):
-            return valB
-        if _type is bool:
-            return UserOptions.instance().toBool(valB)
-        return _type(valB)
+        try:
+            if valA is None:
+                return valB
+            _type = valA if callable(valA) else type(valA)
+            if _type == type(valB):
+                return valB
+            if _type is bool:
+                return UserOptions.instance().toBool(valB)
+            return _type(valB)
+        except Exception as e:
+            CraftCore.log.error(f"Can't convert {valB} to {_type.__name__}")
+            raise e
+
+
 
     @staticmethod
     def setOptions(optionsIn):
@@ -209,17 +215,29 @@ class UserOptions(object):
     def setOption(self, key, value) -> bool:
         _instance = UserOptions.instance()
         package = self._package
-        if package.path not in _instance.registeredOptions or key not in _instance.registeredOptions[package.path]:
+        if package.path not in _instance.registeredOptions:# actually that can only happen if package is invalid
+            CraftCore.log.error(f"{package} has no options")
+            return False
+        if key not in _instance.registeredOptions[package.path]:
             CraftCore.log.error(f"{package} unknown option {key}")
+            CraftCore.log.error(f"Valid options are")
+            for opt, default in _instance.registeredOptions[package.path].items():
+                default = default if callable(default) else type(default)
+                CraftCore.log.error(f"\t{default.__name__} : {opt}")
             return False
         self.registerOption(key, value, permanent=True)
         return True
 
-    def registerOption(self, key : str, default, permanent=True) -> None:
+    def registerOption(self, key : str, default, permanent=True) -> bool:
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
             _instance.registeredOptions[package.path] = {}
+        if key in _instance.registeredOptions[package.path]:
+            try:
+                default = self._convert(_instance.registeredOptions[package.path][key], default)
+            except:
+                return False
         _instance.registeredOptions[package.path][key] = default
         if permanent:
             settings = _instance.initPackage(self)
@@ -233,9 +251,13 @@ class UserOptions(object):
             else:
                 # convert type
                 old = getattr(self, key)
-                new = self._convert(default, old)
+                try:
+                    new = self._convert(default, old)
+                except:
+                    raise BlueprintException(f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}", self._package)
                 #print(key, type(old), old, type(new), new)
                 setattr(self, key, new)
+        return True
 
     def __getattribute__(self, name):
         if name.startswith("_"):

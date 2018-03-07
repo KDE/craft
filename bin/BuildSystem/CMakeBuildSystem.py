@@ -145,7 +145,6 @@ class CMakeBuildSystem(BuildSystemBase):
         if CraftCore.compiler.isMSVC():
             return " -DCMAKE_CXX_COMPILER=clang-cl" \
                    " -DCMAKE_C_COMPILER=clang-cl"
-            return out
         else:
             return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
                    " -DCMAKE_C_COMPILER=/usr/bin/clang"
