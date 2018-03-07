@@ -210,6 +210,17 @@ def run(package, action, args, directTargets):
                CraftCore.log.debug(f"{p} has no member {key}")
                print(f"{p} has no member {key}", file=sys.stderr)
                return False
+    elif action == "set":
+        if "=" not in args.set:
+            CraftCore.log.error(f"Invalid option {args.set}")
+            return False
+        key, value = args.set.split("=", 1)
+        for p in directTargets:
+            info = p.subinfo
+            CraftCore.log.info(f"Setting: [{p}]{key}={value}")
+            if not info.options.dynamic.setOption(key, value):
+                return False
+        return True
     elif action not in ["all", "install-deps"]:
         for info in package.children.values():
            # not all commands should be executed on the deps if we are a virtual packages
@@ -373,7 +384,8 @@ def main():
                             help="This will show a list of all packages that are installed currently.")
     actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
-    actionHandler.addActionWithArg("get", help="Get any value from a recipe")
+    actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
+    actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
     actionHandler.addActionWithArg("run", nargs="+", help="Run an application in the Craft environment")
 
     # other actions

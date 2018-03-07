@@ -205,6 +205,16 @@ class UserOptions(object):
             UserOptions.instance().packageOptions[package.path] = {}
         UserOptions.instance().packageOptions[package.path][key] = value
 
+
+    def setOption(self, key, value) -> bool:
+        _instance = UserOptions.instance()
+        package = self._package
+        if package.path not in _instance.registeredOptions or key not in _instance.registeredOptions[package.path]:
+            CraftCore.log.error(f"{package} unknown option {key}")
+            return False
+        self.registerOption(key, value, permanent=True)
+        return True
+
     def registerOption(self, key : str, default, permanent=True) -> None:
         _instance = UserOptions.instance()
         package = self._package
@@ -226,7 +236,6 @@ class UserOptions(object):
                 new = self._convert(default, old)
                 #print(key, type(old), old, type(new), new)
                 setattr(self, key, new)
-
 
     def __getattribute__(self, name):
         if name.startswith("_"):
