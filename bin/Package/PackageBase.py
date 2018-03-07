@@ -219,7 +219,7 @@ class PackageBase(CraftBase):
                 else:
                     CraftCore.log.warning(
                         f"We can't remove {fullPath} as its hash has changed,"
-                        f" that usually implies that the fiel was modified or replaced")
+                        f" that usually implies that the file was modified or replaced")
             elif not os.path.isdir(fullPath):
                 CraftCore.log.warning("file %s does not exist" % fullPath)
 
