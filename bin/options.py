@@ -225,7 +225,10 @@ class UserOptions(object):
                 default = default if callable(default) else type(default)
                 CraftCore.log.error(f"\t{default.__name__} : {opt}")
             return False
-        self.registerOption(key, value, permanent=True)
+        value = self._convert(_instance.registeredOptions[package.path][key], value)
+        settings = _instance.initPackage(self)
+        settings[key] = str(value)
+        setattr(self, key, value)
         return True
 
     def registerOption(self, key : str, default, permanent=True) -> bool:

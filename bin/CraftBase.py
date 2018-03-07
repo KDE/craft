@@ -67,7 +67,7 @@ class CraftBase(object):
 
     @property
     def buildTests(self):
-        if self.subinfo.options.dynamic.buildTests:
+        if self.subinfo.options.dynamic.buildTests is not None:
             return self.subinfo.options.dynamic.buildTests
         # TODO: remove deprecated "Compile", "BuildTests" and provide a default for buildTests
         if ("Compile", "BuildTests") in CraftCore.settings:
