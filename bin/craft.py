@@ -195,21 +195,23 @@ def run(package, action, args, directTargets):
 
     if action == "get":
         key = args.get.replace("()", "")
-        isMethode = args.get.endswith("()")
+        subs = key.split(".")
         for p in directTargets:
             instance = p.instance
-            if hasattr(instance, key.replace("()", "")):
-                attr = getattr(instance, key)
-                if isMethode:
-                    value = attr()
+            path = []
+            for sub in subs:
+                path += [sub]
+                if hasattr(instance, sub):
+                    attr = getattr(instance, sub)
+                    if callable(attr):
+                        instance = attr()
+                    else:
+                        instance = attr
                 else:
-                    value = attr
-                CraftCore.debug.printOut(value)
-                return True
-            else:
-               CraftCore.log.debug(f"{p} has no member {key}")
-               print(f"{p} has no member {key}", file=sys.stderr)
-               return False
+                    CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
+                    return False
+            CraftCore.debug.printOut(instance)
+            return True
     elif action == "set":
         if "=" not in args.set:
             CraftCore.log.error(f"Invalid option {args.set}")
