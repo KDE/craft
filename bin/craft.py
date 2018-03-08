@@ -27,85 +27,18 @@
 
 import argparse
 import collections
-import tempfile
 import sys
 
+import CraftCommands
 import CraftSetupHelper
 import InstallDB
 import blueprintSearch
-import utils
-from Blueprints.CraftDependencyPackage import CraftDependencyPackage
 from Blueprints.CraftPackageObject import *
-from Blueprints.CraftVersion import CraftVersion
+from CraftCore import CraftCore
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
-import CraftBase
-from CraftCore import CraftCore
-import CraftCommands
 
-
-def destroyCraftRoot():
-    settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
-    dirsToKeep = [CraftCore.standardDirs.downloadDir(),
-                  os.path.join(CraftCore.standardDirs.craftBin(), ".."),
-                  os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
-                  CraftCore.standardDirs.blueprintRoot()]
-    # dirs with possible interesting sub dirs
-    maybeKeepDir = [
-        CraftCore.standardDirs.craftRoot(),
-        CraftCore.standardDirs.etcDir(),
-        os.path.join(CraftCore.standardDirs.etcDir(), "blueprints")# might contain blueprintRoot
-        ]
-    def deleteEntry(path):
-        if utils.OsUtils.isLink(path):
-            CraftCore.log.debug(f"Skipping symlink {path}")
-            return
-        if os.path.isdir(path):
-            if any(os.path.exists(x) and os.path.samefile(path, x) for x in maybeKeepDir):
-                CraftCore.log.debug(f"Path {path} in maybeKeepDir")
-                for entry in os.listdir(path):
-                    deleteEntry(os.path.join(path, entry))
-            elif any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
-                CraftCore.log.debug(f"Path {path} in dirsToKeep")
-            else:
-                utils.cleanDirectory(path)
-                utils.OsUtils.rmDir(path, True)
-        else:
-            if os.path.basename(path) not in settingsFiles:
-                utils.OsUtils.rm(path, True)
-
-    del CraftCore.installdb
-    deleteEntry(CraftCore.standardDirs.craftRoot())
-
-
-def readListFile(listFile):
-    packageNames = []
-    parser = configparser.ConfigParser(allow_no_value=True)
-    parser.read(listFile)
-    for sections in parser.keys():
-        for packageName in parser[sections]:
-            CraftCore.settings.set("BlueprintVersions", packageName, parser.get(sections, packageName))
-            packageNames.append(packageName)
-    return packageNames
-
-
-def packageIsOutdated(package):
-    installed = CraftCore.installdb.getInstalledPackages(package)
-    if not installed:
-        return True
-    for pack in installed:
-        version = pack.getVersion()
-        if not version: continue
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-            # automatically downgreade in ci mode
-            return package.version != version
-        else:
-            cacheVersion = pack.getCacheVersion()
-            if cacheVersion and cacheVersion != CraftBase.CraftBase.cacheVersion():
-                # can only happen for packages installed from cache
-                return True
-            return CraftVersion(package.version) > CraftVersion(version)
 
 def doExec(package, action, continueFlag=False):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
@@ -167,101 +100,6 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}",
                      f"{package} after {timer}", buildAction)
         return success
-
-# TODO: drop args when run is refactored, move out
-def addBlueprintsRepository(url : str, args):
-    templateDir = os.path.join(CraftCore.standardDirs.craftBin(), "..", "internal_blueprints" )
-    with tempfile.TemporaryDirectory() as tmp:
-        iniPath = os.path.join(tmp, "version.ini")
-        parser = configparser.ConfigParser()
-        parser.read(iniPath)
-        parser.add_section("General")
-        parser["General"]["branches"] = "master"
-        parser["General"]["defaulttarget"] = "master"
-        parser["General"]["gitUrl"] = url
-        with open(iniPath, "wt+") as out:
-            parser.write(out)
-        CraftCore.settings.set("Blueprints", "Locations", templateDir)
-        CraftCore.settings.set("InternalTemp", "add-bluprints-template.ini", iniPath)
-        package = CraftCommands.resolvePackage(["add-bluprints-template"])
-        return run(package, "fetch", args, package.children.values())
-
-# TODO: don't pass args, move to seperate file
-def run(package, action, args, directTargets):
-    if package.isIgnored():
-        CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
-        return True
-
-    if action == "get":
-        key = args.get.replace("()", "")
-        subs = key.split(".")
-        for p in directTargets:
-            instance = p.instance
-            path = []
-            for sub in subs:
-                path += [sub]
-                if hasattr(instance, sub):
-                    attr = getattr(instance, sub)
-                    if callable(attr):
-                        instance = attr()
-                    else:
-                        instance = attr
-                else:
-                    CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
-                    return False
-            CraftCore.debug.printOut(instance)
-            return True
-    elif action not in ["all", "install-deps"]:
-        for info in package.children.values():
-           # not all commands should be executed on the deps if we are a virtual packages
-            # if a buildAction is given, then do not try to build dependencies
-            # and do the action although the package might already be installed.
-            # This is still a bit problematic since packageName might not be a valid
-            # package
-            # for list files, we also want to handle fetching & packaging per package
-            if not handlePackage(info, action, args.doContinue,
-                                 directTargets=directTargets):
-                return False
-
-    else:
-        depPackage = CraftDependencyPackage(package)
-        depList = depPackage.getDependencies()
-
-        packages = []
-        for item in depList:
-            if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
-                packages.append(item)
-                CraftCore.log.debug(f"dependency: {item}")
-        if not packages:
-            CraftCore.log.debug("<none>")
-
-        if action == "install-deps":
-            # we don't intend to build the package itself
-            for x in directTargets:
-                packages.remove(x)
-
-        CraftTitleUpdater.usePackageProgressTitle(packages)
-        while packages:
-            info = packages[0]
-            # in case we only want to see which packages are still to be build, simply return the package name
-            if args.probe:
-                CraftCore.log.warning(f"pretending {info}: {info.version}")
-            else:
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                    CraftCore.debug.debug_line()
-                    CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
-                if action in ["install-deps"]:
-                    action = "all"
-
-                if not handlePackage(info, action, args.doContinue,
-                                     directTargets=directTargets):
-                    CraftCore.log.error(f"fatal error: package {info} {action} failed")
-                    return False
-            packages.pop(0)
-
-    CraftCore.debug.new_line()
-    return True
-
 
 class ActionHandler:
     class StoreTrueAction(argparse._StoreTrueAction):
@@ -386,8 +224,7 @@ def main():
     args = parser.parse_args()
 
     if args.doDestroyCraftRoot:
-        destroyCraftRoot()
-        return True
+        return CraftCommands.destroyCraftRoot()
 
     if args.stayQuiet:
         CraftCore.debug.setVerbose(-1)
@@ -414,7 +251,7 @@ def main():
         return utils.system(args.run)
 
     if args.add_blueprint_repository:
-        return addBlueprintsRepository(args.add_blueprint_repository, args)
+        return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository, args)
 
     if CraftCore.settings.getboolean("Packager", "CreateCache"):
         # we are in cache creation mode, ensure to create a 7z image and not an installer
@@ -443,7 +280,7 @@ def main():
         if tempArgs.list_file:
             if not packageNames:
                 packageNames = []
-            packageNames += readListFile(tempArgs.list_file)
+            packageNames += CraftCommands.readListFile(tempArgs.list_file)
 
         if action == "print-installed":
             InstallDB.printInstalled()
@@ -455,7 +292,7 @@ def main():
             if not tempArgs.packageNames and not tempArgs.list_file:
                 return True
             package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
-            if not run(package, action, tempArgs, package.children.values()):
+            if not CraftCommands.run(package, action, tempArgs, package.children.values()):
                 return False
     return True
 
