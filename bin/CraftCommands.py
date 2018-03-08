@@ -53,7 +53,7 @@ def resolvePackage(packageNames : [str], version : str=None) -> [CraftPackageObj
 
 def setOption(packageNames : [str], option : str) -> bool:
     if "=" not in option:
-        CraftCore.log.error(f"Invalid option {args.set}")
+        CraftCore.log.error(f"Invalid option {option}")
         return False
     key, value = option.split("=", 1)
     for name in packageNames:
