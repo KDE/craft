@@ -226,7 +226,7 @@ def main():
         elif action == "set":
             CraftCommands.setOption(packageNames, args.set)
         else:
-            if not tempArgs.packageNames and not tempArgs.list_file:
+            if not packageNames:
                 return True
             package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
             if not CraftCommands.run(package, action, tempArgs):
