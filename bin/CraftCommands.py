@@ -66,7 +66,7 @@ def handlePackage(package, buildAction, directTargets):
             if CraftCore.settings.getboolean("Packager", "CreateCache"):
                 onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
                 if not onlyDirect or (onlyDirect and package in directTargets):
-                    actions += [package]
+                    actions += ["package"]
         else:
             actions = [buildAction]
         for action in actions:
