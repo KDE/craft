@@ -39,68 +39,6 @@ from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
 
-
-def doExec(package, action, continueFlag=False):
-    with CraftTimer.Timer("%s for %s" % (action, package), 1):
-        CraftCore.debug.step("Action: %s for %s" % (action, package))
-        ret = package.instance.execute(action)
-        if not ret:
-            if action == "fetch-binary":
-                CraftCore.debug.step(f"{package} not found in cache")
-                return False
-            CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
-        return ret or continueFlag
-
-
-def handlePackage(package, buildAction, continueFlag, directTargets):
-    with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
-        CraftCore.debug.debug_line()
-        CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
-
-        success = True
-
-        if buildAction == "all":
-            if CraftCore.settings.getboolean("Packager", "UseCache", "False") \
-                    and not package.isVirtualPackage():
-                if doExec(package, "fetch-binary"):
-                    return True
-            success = success and doExec(package, "fetch", continueFlag)
-
-            success = success and doExec(package, "unpack", continueFlag)
-            success = success and doExec(package, "compile")
-            success = success and doExec(package, "cleanimage")
-            success = success and doExec(package, "install")
-            if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
-                success = success and doExec(package, "cleanbuild")
-            success = success and doExec(package, "qmerge")
-            success = success and doExec(package, "post-install")
-            if CraftCore.settings.getboolean("Packager", "CreateCache"):
-                if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly"):
-                    for target in directTargets:
-                        if "/" not in target.path:
-                            CraftCore.log.error("Error:\n"
-                                                 "[Packager]\n"
-                                                 "CacheDirectTargetsOnly = True\n"
-                                                 "Only works with fully specified packages 'category/package'")
-                            return False
-                    if package in directTargets:
-                        success = success and doExec(package, "package")
-                    else:
-                        CraftCore.log.info("Skip packaging of a dependency")
-                else:
-                    success = success and doExec(package, "package")
-            success = success or continueFlag
-        elif buildAction == "install":
-            success = doExec(package, "cleanimage")
-            success = success and doExec(package, "install", continueFlag)
-        else:
-            success = success and doExec(package, buildAction, continueFlag)
-
-        timer.stop()
-        utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}",
-                     f"{package} after {timer}", buildAction)
-        return success
-
 class ActionHandler:
     class StoreTrueAction(argparse._StoreTrueAction):
         def __call__(self, parser, namespace, values, option_string=None):
@@ -292,7 +230,7 @@ def main():
             if not tempArgs.packageNames and not tempArgs.list_file:
                 return True
             package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
-            if not CraftCommands.run(package, action, tempArgs, package.children.values()):
+            if not CraftCommands.run(package, action, tempArgs):
                 return False
     return True
 

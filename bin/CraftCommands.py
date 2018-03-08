@@ -28,9 +28,52 @@ import CraftBase
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage
 from Blueprints.CraftVersion import CraftVersion
 from Utils.CraftTitleUpdater import CraftTitleUpdater
-from craft import handlePackage
+from Utils import CraftTimer
 from options import *
 
+
+
+def doExec(package, action, continueFlag=False):
+    with CraftTimer.Timer("%s for %s" % (action, package), 1):
+        CraftCore.debug.step("Action: %s for %s" % (action, package))
+        ret = package.instance.execute(action)
+        if not ret:
+            if action == "fetch-binary":
+                CraftCore.debug.step(f"{package} not found in cache")
+                return False
+            CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
+        return ret or continueFlag
+
+
+def handlePackage(package, buildAction, continueFlag, directTargets):
+    with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
+        success = True
+        actions = []
+        timer.hook = lambda : utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}", f"{package} after {timer}", buildAction)
+        CraftCore.debug.debug_line()
+        CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
+
+
+        if buildAction == "all":
+            if CraftCore.settings.getboolean("Packager", "UseCache", "False"):
+                if doExec(package, "fetch-binary"):
+                    return True
+            actions = ["fetch", "unpack", "compile", "cleanimage", "install"]
+
+            if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
+                actions += ["cleanbuild"]
+            actions += ["qmerge", "post-install"]
+            if CraftCore.settings.getboolean("Packager", "CreateCache"):
+                onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
+                if not onlyDirect or (onlyDirect and package in directTargets):
+                    actions += [package]
+        else:
+            actions = [buildAction]
+        for action in actions:
+            success = doExec(package, action, continueFlag)
+            if not success:
+                return False
+        return True
 
 def resolvePackage(packageNames : [str], version : str=None) -> [CraftPackageObject]:
     package = CraftPackageObject(None)
@@ -147,43 +190,36 @@ def packageIsOutdated(package):
             return CraftVersion(package.version) > CraftVersion(version)
 
 
-def run(package, action, args, directTargets):
+def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
+    key = command.replace("()", "")
+    subs = key.split(".")
+    for p in directTargets:
+        instance = p.instance
+        path = []
+        for sub in subs:
+            path += [sub]
+            if hasattr(instance, sub):
+                attr = getattr(instance, sub)
+                if callable(attr):
+                    instance = attr()
+                else:
+                    instance = attr
+            else:
+                CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
+                return False
+        CraftCore.debug.printOut(instance)
+        return True
+
+def run(package : [CraftPackageObject], action : str, args) -> bool:
     if package.isIgnored():
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True
+    directTargets = package.children.values()
 
     if action == "get":
-        key = args.get.replace("()", "")
-        subs = key.split(".")
-        for p in directTargets:
-            instance = p.instance
-            path = []
-            for sub in subs:
-                path += [sub]
-                if hasattr(instance, sub):
-                    attr = getattr(instance, sub)
-                    if callable(attr):
-                        instance = attr()
-                    else:
-                        instance = attr
-                else:
-                    CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
-                    return False
-            CraftCore.debug.printOut(instance)
-            return True
-    elif action not in ["all", "install-deps"]:
-        for info in package.children.values():
-           # not all commands should be executed on the deps if we are a virtual packages
-            # if a buildAction is given, then do not try to build dependencies
-            # and do the action although the package might already be installed.
-            # This is still a bit problematic since packageName might not be a valid
-            # package
-            # for list files, we also want to handle fetching & packaging per package
-            if not handlePackage(info, action, args.doContinue,
-                                 directTargets=directTargets):
-                return False
-
-    else:
+        return invoke(args.get, directTargets)
+    elif action in ["all", "install-deps"]:
+        # work on the dependencies
         depPackage = CraftDependencyPackage(package)
         depList = depPackage.getDependencies()
 
@@ -218,6 +254,11 @@ def run(package, action, args, directTargets):
                     CraftCore.log.error(f"fatal error: package {info} {action} failed")
                     return False
             packages.pop(0)
+    else:
+        for info in directTargets:
+            if not handlePackage(info, action, args.doContinue,
+                                directTargets=directTargets):
+                return False
 
     CraftCore.debug.new_line()
     return True

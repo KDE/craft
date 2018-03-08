@@ -10,6 +10,8 @@ class Timer(object):
         self.__startTime = None
         self.__stopTime = None
         self._verbosity = verbosity
+        self.hook = None
+
 
     def __enter__(self):
         self.__startTime = datetime.datetime.now()
@@ -42,3 +44,5 @@ class Timer(object):
     def stop(self):
         if not self.__startTime:
             self.__stopTime = datetime.datetime.now()
+        if self.hook:
+            self.hook()
