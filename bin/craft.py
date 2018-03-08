@@ -1,24 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# this will craft some programs...
-
-# copyright:
-# Holger Schroeder <holger [AT] holgis [DOT] net>
-# Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
-# Hannah von Reth <vonreth [AT] kde [DOT] org>
-
-# The minimum python version for craft please edit here
-# if you add code that changes this requirement
+# Copyright Holger Schroeder <holger [AT] holgis [DOT] net>
+# Copyright Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
+# Copyright Hannah von Reth <vonreth@kde.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
 
 import argparse
 import collections
 import tempfile
+import sys
 
 import CraftSetupHelper
 import InstallDB
 import blueprintSearch
 import utils
-from CraftConfig import *
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage
 from Blueprints.CraftPackageObject import *
 from Blueprints.CraftVersion import CraftVersion
@@ -26,6 +41,8 @@ from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
 import CraftBase
+from CraftCore import CraftCore
+import CraftCommands
 
 
 def destroyCraftRoot():
@@ -151,24 +168,6 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
                      f"{package} after {timer}", buildAction)
         return success
 
-def resolvePackage(packageNames : list, version : str=None):
-    package = CraftPackageObject(None)
-    def resolveChildren(child):
-        if child.isCategory():
-            for c in child.children.values():
-                resolveChildren(c)
-        else:
-            if version:
-                UserOptions.addPackageOption(child, "version", version)
-            package.children[child.name] = child
-
-    for packageName in packageNames:
-        child = CraftPackageObject.get(packageName)
-        if not child:
-            raise BlueprintNotFoundException(packageName)
-        resolveChildren(child)
-    return package
-
 # TODO: drop args when run is refactored, move out
 def addBlueprintsRepository(url : str, args):
     templateDir = os.path.join(CraftCore.standardDirs.craftBin(), "..", "internal_blueprints" )
@@ -184,7 +183,7 @@ def addBlueprintsRepository(url : str, args):
             parser.write(out)
         CraftCore.settings.set("Blueprints", "Locations", templateDir)
         CraftCore.settings.set("InternalTemp", "add-bluprints-template.ini", iniPath)
-        package = resolvePackage(["add-bluprints-template"])
+        package = CraftCommands.resolvePackage(["add-bluprints-template"])
         return run(package, "fetch", args, package.children.values())
 
 # TODO: don't pass args, move to seperate file
@@ -212,16 +211,6 @@ def run(package, action, args, directTargets):
                     return False
             CraftCore.debug.printOut(instance)
             return True
-    elif action == "set":
-        if "=" not in args.set:
-            CraftCore.log.error(f"Invalid option {args.set}")
-            return False
-        key, value = args.set.split("=", 1)
-        for p in directTargets:
-            if not p.subinfo.options.dynamic.setOption(key, value):
-                return False
-            CraftCore.log.info(f"[{p}]\n{key}={getattr(p.subinfo.options.dynamic, key)}")
-        return True
     elif action not in ["all", "install-deps"]:
         for info in package.children.values():
            # not all commands should be executed on the deps if we are a virtual packages
@@ -460,10 +449,12 @@ def main():
             InstallDB.printInstalled()
         elif action == "search-file":
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
+        elif action == "set":
+            CraftCommands.setOption(packageNames, args.set)
         else:
             if not tempArgs.packageNames and not tempArgs.list_file:
                 return True
-            package = resolvePackage(packageNames, version=tempArgs.target)
+            package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
             if not run(package, action, tempArgs, package.children.values()):
                 return False
     return True
