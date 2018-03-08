@@ -62,7 +62,8 @@ class TestAPI(CraftHashTest):
 
     def test_createDigestFiles(self):
         # TODO: check file content
-        CraftHash.createDigestFiles(self.tmpFile)
-        for algorithms in CraftHash.HashAlgorithm.__members__.values():
-            self.assertEquals(os.path.exists(self.tmpFile + algorithms.fileEnding()), True)
+        algorithms = CraftHash.HashAlgorithm.__members__.values()
+        CraftHash.createDigestFiles(self.tmpFile, algorithms=algorithms)
+        for algorithm in algorithms:
+            self.assertEquals(os.path.exists(self.tmpFile + algorithm.fileEnding()), True)
 
