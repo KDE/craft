@@ -33,7 +33,7 @@ from options import *
 
 
 
-def doExec(package, action, continueFlag=False):
+def doExec(package, action):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
         CraftCore.debug.step("Action: %s for %s" % (action, package))
         ret = package.instance.execute(action)
@@ -42,10 +42,10 @@ def doExec(package, action, continueFlag=False):
                 CraftCore.debug.step(f"{package} not found in cache")
                 return False
             CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
-        return ret or continueFlag
+        return ret
 
 
-def handlePackage(package, buildAction, continueFlag, directTargets):
+def handlePackage(package, buildAction, directTargets):
     with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
         success = True
         actions = []
@@ -70,7 +70,7 @@ def handlePackage(package, buildAction, continueFlag, directTargets):
         else:
             actions = [buildAction]
         for action in actions:
-            success = doExec(package, action, continueFlag)
+            success = doExec(package, action)
             if not success:
                 return False
         return True
@@ -249,15 +249,13 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                 if action in ["install-deps"]:
                     action = "all"
 
-                if not handlePackage(info, action, args.doContinue,
-                                     directTargets=directTargets):
+                if not handlePackage(info, action, directTargets=directTargets):
                     CraftCore.log.error(f"fatal error: package {info} {action} failed")
                     return False
             packages.pop(0)
     else:
         for info in directTargets:
-            if not handlePackage(info, action, args.doContinue,
-                                directTargets=directTargets):
+            if not handlePackage(info, action, directTargets=directTargets):
                 return False
 
     CraftCore.debug.new_line()

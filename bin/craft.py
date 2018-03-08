@@ -95,7 +95,6 @@ def main():
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
                         help="quiet: there should be no output - The verbose level should be 0")
-    parser.add_argument("-c", "--continue", action="store_true", dest="doContinue")
     parser.add_argument("--create-cache", action="store_true", dest="createCache",
                         default=CraftCore.settings.getboolean("Packager", "CreateCache", "False"),
                         help="Create a binary cache, the setting is overwritten by --no-cache")
