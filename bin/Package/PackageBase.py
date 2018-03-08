@@ -68,14 +68,6 @@ class PackageBase(CraftBase):
 
         return True
 
-    def cleanImage(self) -> bool:
-        """cleanup before install to imagedir"""
-        if (os.path.exists(self.imageDir())):
-            CraftCore.log.debug("cleaning image dir: %s" % self.imageDir())
-            utils.cleanDirectory(self.imageDir())
-            os.rmdir(self.imageDir())
-        return True
-
     def cleanBuild(self) -> bool:
         """cleanup currently used build dir"""
         if os.path.exists(self.buildDir()):

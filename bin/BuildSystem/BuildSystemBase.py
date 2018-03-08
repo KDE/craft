@@ -94,31 +94,8 @@ class BuildSystemBase(CraftBase):
     def make(self):
         return True
 
-    def install(self):
-
-        # create post (un)install scripts
-        if OsUtils.isWin():
-            scriptExt = ".cmd"
-        elif OsUtils.isUnix():
-            scriptExt = ".sh"
-        for pkgtype in ['bin', 'lib', 'doc', 'src', 'dbg']:
-            script = os.path.join(self.packageDir(), "post-install-%s.%s") % (pkgtype, scriptExt)
-            scriptName = "post-install-%s-%s.%s" % (self.package, pkgtype, scriptExt)
-            # are there any cases there installDir should be honored ?
-            destscript = os.path.join(self.imageDir(), "manifest", scriptName)
-            if not os.path.exists(os.path.join(self.imageDir(), "manifest")):
-                utils.createDir(os.path.join(self.imageDir(), "manifest"))
-            if os.path.exists(script):
-                utils.copyFile(script, destscript)
-            script = os.path.join(self.packageDir(), "post-uninstall-%s.%s") % (pkgtype, scriptExt)
-            scriptName = "post-uninstall-%s-%s.%s" % (self.package, pkgtype, scriptExt)
-            # are there any cases there installDir should be honored ?
-            destscript = os.path.join(self.imageDir(), "manifest", scriptName)
-            if not os.path.exists(os.path.join(self.imageDir(), "manifest")):
-                utils.createDir(os.path.join(self.imageDir(), "manifest"))
-            if os.path.exists(script):
-                utils.copyFile(script, destscript)
-        return True
+    def install(self) -> bool:
+        return self.cleanImage()
 
     def unittest(self):
         """running unittests"""
