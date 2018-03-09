@@ -124,7 +124,7 @@ def addBlueprintsRepository(url : str, args) -> bool:
         CraftCore.settings.set("Blueprints", "Locations", templateDir)
         CraftCore.settings.set("InternalTemp", "add-bluprints-template.ini", iniPath)
         package = resolvePackage(["add-bluprints-template"])
-        return run(package, "fetch", args, package.children.values())
+        return run(package, "fetch", args)
 
 def destroyCraftRoot() -> bool:
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
