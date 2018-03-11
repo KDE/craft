@@ -14,7 +14,6 @@ import utils
 class CraftPackageObject(object):
     __rootPackage = None
     __rootDirectories = []
-    _nodes = {}#all nodes
     _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__"}
     Ignores = re.compile("a^")
@@ -23,64 +22,76 @@ class CraftPackageObject(object):
     def _isDirIgnored(d):
         return d.startswith(".") or d in CraftPackageObject.IgnoredDirectories
 
-    def __init__(self, other=None):
+    def __init__(self, other=None, parent=None):
         if isinstance(other, CraftPackageObject):
             self.__dict__ = other.__dict__
             return
-        if other:
+        if other and not parent:
             raise Exception("Calling CraftPackageObject(str) directly is not supported,"
                             " use CraftPackageObject.get(str) instead.")
 
-        self.path = None
+        self.parent = parent
+        self.name = other
         self.children = {}
         self.source = None
         self._version = None
         self._instance = None
+        self.__path = None
 
     @property
-    def parentPath(self):
-        if not self.path or self.path == "/":
-            return None
-        split = self.path.rsplit("/", 1)
-        return split[0] if len(split)>1 else "/"
-
-    @property
-    def parent(self):
-        if not self.path:
-            return CraftPackageObject._nodes["/"]
-        pp = self.parentPath
-        if pp:
-            return CraftPackageObject._nodes[pp]
-        else:
-            return None
+    def path(self):
+        if self.name == "/":
+            return "/"
+        if not self.__path:
+            components = []
+            package = self
+            while package:
+                if not package.name:
+                    break
+                components.append(package.name)
+                package = package.parent
+            if components:
+                components.pop(-1)
+                components.reverse()
+                self.__path = "/".join(components)
+        return self.__path
 
     @staticmethod
     def get(path):
         if isinstance(path, CraftPackageObject):
             return path
-        CraftPackageObject.root()
+        root = CraftPackageObject.root()
         package = None
-        if path not in CraftPackageObject._nodes:
-            if path in CraftPackageObject._recipes:
-                packages = CraftPackageObject._recipes[path]
-                if len(packages) > 1:
-                    CraftCore.log.info(f"Found multiple recipes for {path}")
-                    for p in packages:
-                        CraftCore.log.info(p)
-                    CraftCore.log.info(f"Please use the full path to the recipe.")
-                    exit(1)
-                package = packages[0]
+        if path in CraftPackageObject._recipes:
+            packages = CraftPackageObject._recipes[path]
+            if len(packages) > 1:
+                CraftCore.log.info(f"Found multiple recipes for {path}")
+                for p in packages:
+                    CraftCore.log.info(p)
+                CraftCore.log.info(f"Please use the full path to the recipe.")
+                exit(1)
+            package = packages[0]
         else:
-            package = CraftPackageObject._nodes[path]
+            components = path.split("/")
+            package = root
+            for part in components:
+                package = package.children.get(part, None)
+                if not package:
+                    return None
         return package
 
-    def _addNode(self, path, blueprintRoot):
-        package = CraftPackageObject()
+    @staticmethod
+    def _addNode(path, parent, blueprintRoot):
         if path:
             path = utils.normalisePath(path)
-            package.path = path[len(blueprintRoot) + 1:]
+            name = path.rsplit("/", 1)[-1]
+            if name in parent.children:
+                package = parent.children[name]
+            else:
+                package = CraftPackageObject(name, parent)
         elif blueprintRoot:
             path = blueprintRoot
+            package = parent
         else:
             return None
 
@@ -89,23 +100,28 @@ class CraftPackageObject(object):
             if os.path.isdir(fPath):
                 if not CraftPackageObject._isDirIgnored(f):
                     hasChildren = True
-                    child = self._addNode(fPath, blueprintRoot)
+                    child = CraftPackageObject._addNode(fPath, package, blueprintRoot)
                     if child:
-                        package.children[child.name] = child
+                        if f in package.children:
+                            existingNode = package.children[f]
+                            if not existingNode.isCategory():
+                                CraftCore.log.warning(
+                                    f"Blueprint clash detected: Ignoring {child.source} in favour of {existingNode.source}")
+                                continue
+                            else:
+                                #merge with existing node
+                                existingNode.children.update(child.children)
+                                continue
+                        package.children[f] = child
             elif f.endswith(".py"):
                 if package.source:
                     raise BlueprintException(f"Multiple py files in one directory: {package.source} and {f}", package)
                 if f[:-3] != package.name:
                     raise BlueprintException(f"Recipes must match the name of the directory: {fPath}", package)
-                recipe = os.path.splitext(f)[0]
-                if recipe not in CraftPackageObject._recipes:
-                    CraftPackageObject._recipes[recipe] = []
-                CraftPackageObject._recipes[recipe].append(package)
                 package.source = fPath
         if package.children:
             if package.source:
                 raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
-
 
         if path != blueprintRoot:
             if not package.source and not package.children:
@@ -116,24 +132,7 @@ class CraftPackageObject(object):
                     CraftCore.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
                                        f"You might wan't to run \"git clean -xdf\" in that directry.")
                 return None
-            if package.path in CraftPackageObject._nodes:
-                existingNode = CraftPackageObject._nodes[package.path]
-                if not existingNode.isCategory():
-                    CraftCore.log.warning(
-                        f"Blueprint clash detected: Ignoring {blueprintRoot}/{package.path} in favour of {existingNode.source}")
-                existingNode.children.update(package.children)
-                package = existingNode
-            else:
-                CraftCore.log.debug(f"Adding package {package} from {blueprintRoot}")
-                CraftPackageObject._nodes[package.path] = package
         return package
-
-    @property
-    def name(self):
-        if not self.path:
-            return "[]"
-        split = self.path.rsplit("/", 1)
-        return split[0] if len(split) == 1 else split[1]
 
     @staticmethod
     def rootDirectories():
@@ -157,22 +156,33 @@ class CraftPackageObject(object):
         return len(CraftPackageObject.rootDirectories()) == 1
 
     @staticmethod
+    def __regiserNodes(package):
+            for child in package.children.values():
+                # hash children for direct acces
+                CraftCore.log.debug(f"Adding package {child.source}")
+                if not child.isCategory():
+                    if child.name not in CraftPackageObject._recipes:
+                        CraftPackageObject._recipes[child.name] = []
+                    CraftPackageObject._recipes[child.name].append(child)
+                CraftPackageObject.__regiserNodes(child)
+
+    @staticmethod
     def root():
         if not CraftPackageObject.__rootPackage:
             if ("Blueprints", "Ignores") in CraftCore.settings:
                 CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in CraftCore.settings.get("Blueprints", "Ignores").split(";")]))
 
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
-            root.path = "/"
+            root.name = "/"
             for blueprintRoot in CraftPackageObject.rootDirectories():
                 if not os.path.isdir(blueprintRoot):
                     CraftCore.log.warning(f"{blueprintRoot} does not exist")
                     continue
                 blueprintRoot = utils.normalisePath(os.path.abspath(blueprintRoot))
                 # create a dummy package to load its children
-                child = root._addNode(None, blueprintRoot)
+                child = CraftPackageObject._addNode(None, root, blueprintRoot)
                 root.children.update(child.children)
-            CraftPackageObject._nodes["/"] = root
+            CraftPackageObject.__regiserNodes(root)
         return CraftPackageObject.__rootPackage
 
     @property
