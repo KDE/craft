@@ -136,7 +136,7 @@ class CraftConfig(object):
         exit(1)
 
     @staticmethod
-    def _parseList(s : str):
+    def _parseList(s : str) -> [str]:
         return [v.strip() for v in s.split(";") if v]
 
     def getList(self, group, key, default=None):

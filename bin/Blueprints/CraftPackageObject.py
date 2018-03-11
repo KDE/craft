@@ -3,6 +3,7 @@ import copy
 import importlib
 import os
 import re
+import configparser
 
 import CraftConfig
 from CraftStandardDirs import CraftStandardDirs
@@ -10,6 +11,22 @@ from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 import utils
 
+class CategoryPackageObject(object):
+    def __init__(self, localPath : str):
+        self.localPath = localPath
+        self.desctiption = ""
+        self.platforms = {}
+
+        ini = os.path.join(self.localPath, "info.ini")
+        if os.path.exists(ini):
+            info = configparser.ConfigParser()
+            info.read(ini)
+            self.desctiption = info["General"].get("description", "")
+            self.platforms = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
+
+    @property
+    def isActive(self) -> bool:
+        return not self.platforms or CraftCore.compiler.platform in self.platforms
 
 class CraftPackageObject(object):
     __rootPackage = None
@@ -122,6 +139,11 @@ class CraftPackageObject(object):
         if package.children:
             if package.source:
                 raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
+            else:
+                catInfo = CategoryPackageObject(path)
+                if not catInfo.isActive:
+                    CraftCore.log.debug(f"Skipping {package.path}, it's not supported on {CraftCore.compiler.platform}")
+                    return None
 
         if path != blueprintRoot:
             if not package.source and not package.children:
