@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.buildDependencies["dev-util/git"] = "default"
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/git"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
 
 
 from Package.SourceOnlyPackageBase import *

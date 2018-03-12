@@ -38,9 +38,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
 
     def setDependencies(self):
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["gnuwin32/wget"] = "default"
-        self.buildDependencies["dev-util/shimgen"] = "default"
+        self.buildDependencies["dev-utils/shimgen"] = "default"
 
 
 from Package.BinaryPackageBase import *

@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["dev-util/python3"] = "default"
+        self.buildDependencies["dev-utils/python3"] = "default"
 
 
 class Package(CMakePackageBase):

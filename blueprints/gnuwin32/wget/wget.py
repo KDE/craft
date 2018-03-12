@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.18"
 
     def setDependencies(self):
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["core/cacert"] = "default"
 
 
