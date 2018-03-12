@@ -228,8 +228,7 @@ class infoclass(object):
     def addCachedAutotoolsBuild(self, url, packageName):
         package = CraftPackageObject.get(packageName)
         if not package:
-            CraftCore.log.warning(f"Failed to find {packageName}")
-            return
+            CraftCore.log.debug(f"Failed to find {packageName}")
         if url.endswith("/"):
             url = url[:-1]
         json = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
@@ -243,4 +242,5 @@ class infoclass(object):
         self.targets[data.version] = f"{url}/{data.fileName}"
         self.targetDigests[data.version] = (data.checksum, CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = data.version
-        self.description = package.subinfo.description
+        if package:
+            self.description = package.subinfo.description
