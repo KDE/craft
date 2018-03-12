@@ -87,12 +87,15 @@ def getFile(url, destdir, filename='') -> bool:
         CraftCore.log.error("fetch: no url given")
         return False
 
-    if CraftCore.cache.findApplication("wget"):
-        return wgetFile(url, destdir, filename)
-
     if not filename:
         _, _, path, _, _, _ = urllib.parse.urlparse(url)
         filename = os.path.basename(path)
+
+    if CraftCore.cache.findApplication("curl"):
+        return curlFile(url, destdir, filename)
+
+    if CraftCore.cache.findApplication("wget"):
+        return wgetFile(url, destdir, filename)
 
     if os.path.exists(os.path.join(destdir, filename)):
         return True
@@ -122,6 +125,34 @@ def getFile(url, destdir, filename='') -> bool:
         sys.stdout.write("\n")
         sys.stdout.flush()
     return True
+
+
+def curlFile(url, destdir, filename=''):
+    """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
+    curl = CraftCore.cache.findApplication("curl")
+    command = [curl, "-C", "-", "--retry", "10", "-L"]
+    cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
+    if os.path.exists(cert):
+        command += ["--cacert", cert]
+    # the default of 20 might not be enough for sourceforge ...
+    command += ["--max-redirs",  "50"]
+    if not CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
+        command += ["--ftp-pasv"]
+    if not filename:
+        #command += ["-O"]
+        # Curl can't download to a custom directory on its own
+        return False
+    else:
+        command += ["-o", os.path.join(destdir, filename)]
+    command += [url]
+    CraftCore.log.debug("curlfile called")
+
+    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
+        command += ["--progress-bar"]
+        CraftCore.log.info(f"curl {url}")
+        return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+    else:
+        return system(command)
 
 
 def wgetFile(url, destdir, filename=''):
