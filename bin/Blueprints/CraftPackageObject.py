@@ -106,7 +106,7 @@ class CraftPackageObject(object):
             if len(packages) > 1:
                 CraftCore.log.info(f"Found multiple recipes for {path}")
                 for p in packages:
-                    CraftCore.log.info(p)
+                    CraftCore.log.info(f"{p}: {p.source}")
                 CraftCore.log.info(f"Please use the full path to the recipe.")
                 exit(1)
             package = packages[0]
@@ -206,22 +206,26 @@ class CraftPackageObject(object):
         for child in list(package.children.values()):
             # hash leaves for direct acces
             if not child.isCategory():
-                CraftCore.log.debug(f"Adding package {child.source}")
-                if child.name not in CraftPackageObject._recipes:
-                    CraftPackageObject._recipes[child.name] = []
-                CraftPackageObject._recipes[child.name].append(child)
+                if not (not child.categoryInfo.isActive and child.categoryInfo.pathOverride):
+                    CraftCore.log.debug(f"Adding package {child.source}")
+                    if child.name not in CraftPackageObject._recipes:
+                        CraftPackageObject._recipes[child.name] = []
+                    CraftPackageObject._recipes[child.name].append(child)
             else:
-                if child.categoryInfo and child.categoryInfo.pathOverride:
+                if child.categoryInfo.pathOverride:
                     # override path
                     existingNode = CraftPackageObject.get(child.categoryInfo.pathOverride)
                     if not existingNode:
                         raise BlueprintNotFoundException(child.categoryInfo.pathOverride)
                     for node in child.children.values():
                         # reparent the packages
+                        if node.name in existingNode.children:
+                            if not node.categoryInfo.isActive:
+                                # don't reparent as we would override the actual package
+                                continue
                         node.parent = existingNode
                     del child.parent.children[child.name]
                     existingNode.children.update(child.children)
-                    CraftPackageObject.__regiserNodes(existingNode)# reeval
             CraftPackageObject.__regiserNodes(child)
 
     @staticmethod
