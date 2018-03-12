@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.0"
 
     def setDependencies(self):
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["gnuwin32/wget"] = "default"
 
 from Package.BinaryPackageBase import *

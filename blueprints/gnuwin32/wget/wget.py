@@ -9,14 +9,14 @@ class subinfo(info.infoclass):
         for ver in ["1.18", "1.19.2", "1.19.4"]:
             fName = fileNames[ver]
             self.targets[ver] = f"http://downloads.sourceforge.net/sourceforge/tumagcc/{fName}"
-            self.targetInstallPath[ver] = "dev-utils"
+            self.targetInstallPath[ver] = "dev-utilss"
         self.targetDigests['1.18'] = (['19d4ae30ae35f212e95edb6f18dddab19e1c97e119c36c4231b741e7293f9b3c'], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests['1.19.2'] = (['0791cce5bf665edcc295cbdc58c4b30568f052a485f88672691abf92a7e80dac'], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests['1.19.4'] = (['8f927eaba0011aca50b92327a24143b47278bdb724a662e999ddb171b84b2420'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1.18"
 
     def setDependencies(self):
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["core/cacert"] = "default"
 
 
