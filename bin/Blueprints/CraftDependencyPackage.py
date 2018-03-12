@@ -7,9 +7,9 @@ from Blueprints.CraftVersion import CraftVersion
 
 @unique
 class DependencyType(Enum):
-    Runtime = "runtime"
-    Buildtime = "buildtime"
-    Both = "both"
+    Runtime = 0
+    Buildtime = 1
+    Both = 2
 
 
 class CraftDependencyPackage(CraftPackageObject):
