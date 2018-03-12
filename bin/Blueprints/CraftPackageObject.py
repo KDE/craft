@@ -89,16 +89,19 @@ class CraftPackageObject(object):
                 exit(1)
             package = packages[0]
         else:
-            components = path.split("/")
-            package = root
-            for part in components:
-                package = package.children.get(part, None)
-                if not package:
-                    return None
+            if path == "/":
+                return root
+            else:
+                components = path.split("/")
+                package = root
+                for part in components:
+                    package = package.children.get(part, None)
+                    if not package:
+                        return None
         return package
 
     @staticmethod
-    def _addNode(path, parent, blueprintRoot):
+    def _expandChildren(path, parent, blueprintRoot):
         if path:
             path = utils.normalisePath(path)
             name = path.rsplit("/", 1)[-1]
@@ -117,7 +120,7 @@ class CraftPackageObject(object):
             if os.path.isdir(fPath):
                 if not CraftPackageObject._isDirIgnored(f):
                     hasChildren = True
-                    child = CraftPackageObject._addNode(fPath, package, blueprintRoot)
+                    child = CraftPackageObject._expandChildren(fPath, package, blueprintRoot)
                     if child:
                         if f in package.children:
                             existingNode = package.children[f]
@@ -180,9 +183,9 @@ class CraftPackageObject(object):
     @staticmethod
     def __regiserNodes(package):
             for child in package.children.values():
-                # hash children for direct acces
-                CraftCore.log.debug(f"Adding package {child.source}")
+                # hash leaves for direct acces
                 if not child.isCategory():
+                    CraftCore.log.debug(f"Adding package {child.source}")
                     if child.name not in CraftPackageObject._recipes:
                         CraftPackageObject._recipes[child.name] = []
                     CraftPackageObject._recipes[child.name].append(child)
@@ -202,7 +205,7 @@ class CraftPackageObject(object):
                     continue
                 blueprintRoot = utils.normalisePath(os.path.abspath(blueprintRoot))
                 # create a dummy package to load its children
-                child = CraftPackageObject._addNode(None, root, blueprintRoot)
+                child = CraftPackageObject._expandChildren(None, root, blueprintRoot)
                 root.children.update(child.children)
             CraftPackageObject.__regiserNodes(root)
         return CraftPackageObject.__rootPackage
