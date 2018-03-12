@@ -16,6 +16,7 @@ class CategoryPackageObject(object):
         self.localPath = localPath
         self.desctiption = ""
         self.platforms = {}
+        self.compiler = {}
 
         ini = os.path.join(self.localPath, "info.ini")
         if os.path.exists(ini):
@@ -23,10 +24,17 @@ class CategoryPackageObject(object):
             info.read(ini)
             self.desctiption = info["General"].get("description", "")
             self.platforms = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
+            self.compiler = set(CraftCore.settings._parseList(info["General"].get("compiler", "")))
 
     @property
     def isActive(self) -> bool:
-        return not self.platforms or CraftCore.compiler.platform in self.platforms
+        if self.platforms and CraftCore.compiler.platform not in self.platforms:
+            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform}")
+            return False
+        if self.compiler and CraftCore.compiler.compiler not in self.compiler:
+            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler}")
+            return False
+        return True
 
 class CraftPackageObject(object):
     __rootPackage = None
@@ -51,6 +59,7 @@ class CraftPackageObject(object):
         self.name = other
         self.children = {}
         self.source = None
+        self.categoryInfo = None
         self._version = None
         self._instance = None
         self.__path = None
@@ -143,9 +152,9 @@ class CraftPackageObject(object):
             if package.source:
                 raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
             else:
-                catInfo = CategoryPackageObject(path)
-                if not catInfo.isActive:
-                    CraftCore.log.debug(f"Skipping {package.path}, it's not supported on {CraftCore.compiler.platform}")
+                if not package.categoryInfo:
+                    package.categoryInfo = CategoryPackageObject(path)
+                if not package.categoryInfo.isActive:
                     return None
 
         if path != blueprintRoot:
