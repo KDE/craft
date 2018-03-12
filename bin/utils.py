@@ -130,16 +130,13 @@ def getFile(url, destdir, filename='') -> bool:
 def curlFile(url, destdir, filename=''):
     """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
     curl = CraftCore.cache.findApplication("curl")
-    command = [curl, "-C", "-", "--retry", "10", "-L"]
+    command = [curl, "-C", "-", "--retry", "10", "-L", "--ftp-ssl"]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--cacert", cert]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirs",  "50"]
-    if not CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
-        command += ["--ftp-pasv"]
     if not filename:
-        #command += ["-O"]
         # Curl can't download to a custom directory on its own
         return False
     else:
@@ -152,6 +149,8 @@ def curlFile(url, destdir, filename=''):
         CraftCore.log.info(f"curl {url}")
         return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     else:
+        if CraftCore.debug.verbose() > 0:
+            command += ["-v"]
         return system(command)
 
 
