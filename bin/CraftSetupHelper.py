@@ -215,8 +215,6 @@ class SetupHelper(object):
             self.prependEnvVar("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
     def _setupWin(self):
-        self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
-
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
@@ -297,6 +295,7 @@ class SetupHelper(object):
 
         # make sure thate craftroot bin is the first to look for dlls etc
         self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "bin"))
+        self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
 
         # add python site packages to pythonpath
         self.prependEnvVar("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
