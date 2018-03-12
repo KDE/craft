@@ -11,10 +11,7 @@ class CraftBlueprintTest(CraftTestBase.CraftTestBase):
 
         importlib.reload(CraftPackageObject)  # clear cache
         installable = CraftPackageObject.CraftPackageObject.installables()
-        for _p in installable:
-            _p.instance
-
-            CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
+        CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
 
 
 
