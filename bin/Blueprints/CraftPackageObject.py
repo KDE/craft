@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 import copy
+import configparser
 import importlib
 import os
 import re
-import configparser
 
-import CraftConfig
-from CraftStandardDirs import CraftStandardDirs
-from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
 import utils
+from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
+from CraftOS.osutils import OsUtils
+
 
 class CategoryPackageObject(object):
     def __init__(self, localPath : str):
@@ -17,6 +17,7 @@ class CategoryPackageObject(object):
         self.desctiption = ""
         self.platforms = {}
         self.compiler = {}
+        self.pathOverride = None
 
         ini = os.path.join(self.localPath, "info.ini")
         if os.path.exists(ini):
@@ -25,6 +26,7 @@ class CategoryPackageObject(object):
             self.desctiption = info["General"].get("description", "")
             self.platforms = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
             self.compiler = set(CraftCore.settings._parseList(info["General"].get("compiler", "")))
+            self.pathOverride = info["General"].get("pathOverride", None)
 
     @property
     def isActive(self) -> bool:
@@ -62,6 +64,15 @@ class CraftPackageObject(object):
         self.categoryInfo = None
         self._version = None
         self._instance = None
+        self.__path = None
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, parent):
+        self._parent = parent
         self.__path = None
 
     @property
@@ -191,14 +202,27 @@ class CraftPackageObject(object):
 
     @staticmethod
     def __regiserNodes(package):
-            for child in package.children.values():
-                # hash leaves for direct acces
-                if not child.isCategory():
-                    CraftCore.log.debug(f"Adding package {child.source}")
-                    if child.name not in CraftPackageObject._recipes:
-                        CraftPackageObject._recipes[child.name] = []
-                    CraftPackageObject._recipes[child.name].append(child)
-                CraftPackageObject.__regiserNodes(child)
+        # danger, we detach here
+        for child in list(package.children.values()):
+            # hash leaves for direct acces
+            if not child.isCategory():
+                CraftCore.log.debug(f"Adding package {child.source}")
+                if child.name not in CraftPackageObject._recipes:
+                    CraftPackageObject._recipes[child.name] = []
+                CraftPackageObject._recipes[child.name].append(child)
+            else:
+                if child.categoryInfo and child.categoryInfo.pathOverride:
+                    # override path
+                    existingNode = CraftPackageObject.get(child.categoryInfo.pathOverride)
+                    if not existingNode:
+                        raise BlueprintNotFoundException(child.categoryInfo.pathOverride)
+                    for node in child.children.values():
+                        # reparent the packages
+                        node.parent = existingNode
+                    del child.parent.children[child.name]
+                    existingNode.children.update(child.children)
+                    CraftPackageObject.__regiserNodes(existingNode)# reeval
+            CraftPackageObject.__regiserNodes(child)
 
     @staticmethod
     def root():
