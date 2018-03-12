@@ -18,9 +18,11 @@ class CategoryPackageObject(object):
         self.platforms = {}
         self.compiler = {}
         self.pathOverride = None
+        self.valid = False
 
         ini = os.path.join(self.localPath, "info.ini")
         if os.path.exists(ini):
+            self.valid = True
             info = configparser.ConfigParser()
             info.read(ini)
             self.desctiption = info["General"].get("description", "")
@@ -133,13 +135,17 @@ class CraftPackageObject(object):
             path = blueprintRoot
             package = parent
         else:
-            return None
+            raise Exception("Unreachable")
+
+        if not package.categoryInfo:
+            package.categoryInfo = CategoryPackageObject(path)
+            if not package.categoryInfo.valid and package.parent:
+                package.categoryInfo = package.parent.categoryInfo
 
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
             if os.path.isdir(fPath):
                 if not CraftPackageObject._isDirIgnored(f):
-                    hasChildren = True
                     child = CraftPackageObject._expandChildren(fPath, package, blueprintRoot)
                     if child:
                         if f in package.children:
@@ -151,22 +157,16 @@ class CraftPackageObject(object):
                             else:
                                 #merge with existing node
                                 existingNode.children.update(child.children)
-                                continue
-                        package.children[f] = child
+                        else:
+                            package.children[f] = child
             elif f.endswith(".py"):
                 if package.source:
                     raise BlueprintException(f"Multiple py files in one directory: {package.source} and {f}", package)
                 if f[:-3] != package.name:
                     raise BlueprintException(f"Recipes must match the name of the directory: {fPath}", package)
                 package.source = fPath
-        if package.children:
-            if package.source:
-                raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
-            else:
-                if not package.categoryInfo:
-                    package.categoryInfo = CategoryPackageObject(path)
-                if not package.categoryInfo.isActive:
-                    return None
+        if package.children and package.source:
+            raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
 
         if path != blueprintRoot:
             if not package.source and not package.children:
@@ -282,6 +282,8 @@ class CraftPackageObject(object):
         return not self.source
 
     def isIgnored(self):
+        if self.categoryInfo and not self.categoryInfo.isActive:
+            return True
         import options
         if not self.path:
             return False
