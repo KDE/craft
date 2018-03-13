@@ -41,6 +41,7 @@ class CraftCompiler(object):
         self._platform, self._abi, self._compiler = split
 
         self._architecture = "x86" if self._abi.endswith("32") else "x64"
+        self._gnuArchitecture = "x86" if self._abi.endswith("32") else "x86_64"
 
         if not self._platform in CraftCompiler.__supportedPlatforms:
             raise Exception("Unsupported platform: " + self._platform)
@@ -67,6 +68,10 @@ class CraftCompiler(object):
     @property
     def architecture(self):
         return self._architecture
+
+    @property
+    def gnuArchitecture(self):
+        return self._gnuArchitecture
 
     @property
     def bits(self):
