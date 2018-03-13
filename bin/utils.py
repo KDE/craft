@@ -592,7 +592,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                             continue
 
                         # re-create exact same symlink, but this time in the destdir
-                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles != None:
+                        if createSymlink(linkTo, newLinkName) and copiedFiles != None:
                             copiedFiles.append(newLinkName)
 
     return True
