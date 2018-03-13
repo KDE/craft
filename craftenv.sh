@@ -11,7 +11,7 @@ if [[ -z "$craftRoot" ]];then
 fi
 
 if [[ ! -d "$craftRoot" ]]; then
-    craftRoot=$(python3.6 -c "import os; import sys; print(os.path.dirname(os.path.abspath(sys.argv[1])));" "$craftRoot"))
+    craftRoot=$(python3.6 -c "import os; import sys; print(os.path.dirname(os.path.abspath(sys.argv[1])));" "$craftRoot")
 fi
 
 export craftRoot
