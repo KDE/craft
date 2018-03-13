@@ -517,10 +517,20 @@ def cleanPackageName(basename, packagename):
     return os.path.basename(basename).replace(packagename + "-", "").replace(".py", "")
 
 
-def createSymlink(source, linkName):
+def createSymlink(source, linkName, useAbsolutePath=False):
+    if not useAbsolutePath and os.path.isabs(linkName):
+        srcPath = linkName
+        srcPath = os.path.dirname(srcPath)
+        source = os.path.relpath(source, srcPath)
+    if not os.path.exists(os.path.dirname(linkName)):
+        os.makedirs(os.path.dirname(linkName))
     CraftCore.log.debug(f"creating symlink: {linkName} -> {source}")
-    os.symlink(source, linkName)
-    return True
+    try:
+        os.symlink(source, linkName)
+        return True
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
 
 
 def createDir(path):
