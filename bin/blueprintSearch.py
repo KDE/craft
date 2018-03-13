@@ -20,7 +20,13 @@ class SeachPackage(object):
     @property
     def package(self):
         # we can't cache the whole instance
-        return CraftPackageObject.get(self.path)
+        out = CraftPackageObject.get(self.path)
+        if not out:
+            CraftCore.log.error("Cache corrupted")
+            CraftCore.cache.clear()
+            exit(1)
+        return out
+
 
     def __str__(self):
         installed = CraftCore.installdb.getInstalledPackages(self.package)

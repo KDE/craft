@@ -9,20 +9,20 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["gnuwin32/wget"] = "default"
-        self.buildDependencies["dev-util/7zip"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["gnuwin32/patch"] = "default"
         self.buildDependencies["gnuwin32/sed"] = "default"
-        self.buildDependencies["dev-util/cmake"] = "default"
-        self.buildDependencies["dev-util/git"] = "default"
+        self.buildDependencies["dev-utils/cmake"] = "default"
+        self.buildDependencies["dev-utils/git"] = "default"
 
         if CraftCore.compiler.isMinGW():
-            self.buildDependencies["dev-util/mingw-w64"] = "default"
+            self.buildDependencies["dev-utils/mingw-w64"] = "default"
         if CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
-            self.buildDependencies["dev-util/jom"] = "default"
+            self.buildDependencies["dev-utils/jom"] = "default"
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
-            self.buildDependencies["dev-util/ninja"] = "default"
+            self.buildDependencies["dev-utils/ninja"] = "default"
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
-            self.buildDependencies["dev-util/ccache"] = "default"
+            self.buildDependencies["dev-utils/ccache"] = "default"
 
         self.runtimeDependencies["libs/runtime"] = "default"
         self.buildDependencies["craft/craft-blueprints-kde"] = "default"
@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         # needed by CollectionPackagerBase
         if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
             CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
-            self.buildDependencies["dev-util/dependencies"] = "default"
+            self.buildDependencies["dev-utils/dependencies"] = "default"
 
 
 class Package(VirtualPackageBase):
