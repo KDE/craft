@@ -72,12 +72,12 @@ class BuildSystemBase(CraftBase):
             defines += " %s" % self.clangOptions()
         return defines
 
-    def makeOptions(self, defines=""):
+    def makeOptions(self, args):
         """return options for make command line"""
+        defines = ""
         if self.subinfo.options.make.ignoreErrors:
             defines += " -i"
-        if self.subinfo.options.make.makeOptions:
-            defines += f" {self.subinfo.options.make.makeOptions}"
+        defines += f" {args}"
         if self.makeProgram in {"make", "gmake", "mingw32-make"}:
             if self.subinfo.options.make.supportsMultijob:
                 defines += f" -j{multiprocessing.cpu_count()}"

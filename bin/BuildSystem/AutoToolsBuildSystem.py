@@ -71,7 +71,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         command = self.makeProgram
-        args = self.makeOptions()
+        args = self.makeOptions(self.subinfo.options.make.args)
 
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
@@ -95,14 +95,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         command = self.makeProgram
-        args = self.subinfo.options.install.args
+        args = self.makeOptions(self.subinfo.options.install.args)
 
         args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
-        if self.subinfo.options.make.ignoreErrors:
-            args += " -i"
-
-        if self.subinfo.options.make.makeOptions:
-            args += " %s" % self.subinfo.options.make.makeOptions
         if not self.subinfo.options.useShadowBuild:
             if not self._execute(self.sourceDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))

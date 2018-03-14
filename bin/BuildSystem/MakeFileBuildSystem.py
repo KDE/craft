@@ -26,7 +26,7 @@ class MakeFileBuildSystem(BuildSystemBase):
         else:
             self.enterBuildDir()
 
-        return utils.system(" ".join([self.makeProgram, self.makeOptions()]))
+        return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
 
     def install(self):
         """install the target"""
@@ -37,7 +37,7 @@ class MakeFileBuildSystem(BuildSystemBase):
             self.enterSourceDir()
         else:
             self.enterBuildDir()
-        return utils.system([self.makeProgram, "install", f"DESTDIR={self.installDir()}"])
+        return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.install.args), f"DESTDIR={self.installDir()}"]))
 
     def unittest(self):
         """running make tests"""

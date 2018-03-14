@@ -72,13 +72,13 @@ class QMakeBuildSystem(BuildSystemBase):
 
         return utils.system(command)
 
-    def make(self, options=""):
+    def make(self):
         """implements the make step for Qt projects"""
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
             self.enterBuildDir()
-        command = ' '.join([self.makeProgram, self.makeOptions(options)])
+        command = ' '.join([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)])
 
         return utils.system(command)
 

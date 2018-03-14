@@ -111,7 +111,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        command = ' '.join([self.makeProgram, self.makeOptions()])
+        command = ' '.join([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)])
         return utils.system(command)
 
     def install(self):
@@ -123,7 +123,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         env = os.environ
         env["DESTDIR"] = self.installDir()
-        command = [self.makeProgram, self.subinfo.options.install.args]
+        command = [self.makeProgram, self.makeOptions(self.subinfo.options.install.args)]
         return (utils.system(" ".join(command), env=env) and
                 self._fixInstallPrefix())
 
