@@ -44,8 +44,10 @@ class BashShell(object):
                     cflags += " -MDd -Zi -Ob0 -Od "
                     ldflags += " -debug -pdbtype:sept "
             else:
+                if self.buildType == "Release":
+                    cflags += " -O3 -DNDEBUG "
                 if self.buildType == "RelWithDebInfo":
-                    cflags += " -O2 -g "
+                    cflags += " -O2 -g -DNDEBUG "
                 elif self.buildType == "Debug":
                     cflags += " -O0 -g3 "
 
