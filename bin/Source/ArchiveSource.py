@@ -228,6 +228,7 @@ class ArchiveSource(SourceBase):
                 _patchName = patchName
 
             with open(_patchName, "wb") as out:
+                CraftCore.log.info(f"Creating patch {_patchName}")
                 # TODO: actually we should not accept code 2
                 if not utils.system(["diff", "-Nrub",
                                      "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x*\\.o", "-x", "*\\.pyc",

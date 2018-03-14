@@ -53,6 +53,7 @@ class CraftManifest(object):
     def __init__(self):
         self.date = datetime.datetime.utcnow()
         self.packages = {str(CraftCore.compiler) : {}}
+        self.origin = None
 
     @staticmethod
     def version() -> int:
@@ -81,6 +82,7 @@ class CraftManifest(object):
 
         manifest = CraftManifest()
         manifest.date = CraftManifest._parseTimeStamp(data["date"])
+        manifest.origin = data.get("origin", None)
         for compiler in data["packages"]:
             manifest.packages[compiler] = {}
             for package in data["packages"][compiler]:
@@ -95,7 +97,7 @@ class CraftManifest(object):
             self.packages[compiler].update(other.packages[compiler])
 
     def toJson(self) -> dict:
-        out = {"date":str(datetime.datetime.utcnow()), "packages":{}, "version": CraftManifest.version()}
+        out = {"date": str(self.date), "origin": self.origin, "packages":{}, "version": CraftManifest.version()}
         for compiler, packages in self.packages.items():
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
@@ -108,19 +110,11 @@ class CraftManifest(object):
             self.packages[compiler][package] = CraftManifestEntry(package)
         return self.packages[compiler][package]
 
-    def dump(self, cacheFilePath):
-        if os.path.isfile(cacheFilePath):
-            try:
-                with open(cacheFilePath, "rt+") as cacheFile:
-                    cache = json.load(cacheFile)
-            except:
-                pass
-            finally:
-                if cache:
-                    date = CraftManifest._parseTimeStamp(cache["date"])
-                else:
-                    date = datetime.datetime.utcnow()
-                utils.copyFile(cacheFilePath, cacheFilePath + date.strftime("%Y%m%dT%H%M%S"), linkOnly=False)
+    def dump(self, cacheFilePath, includeTime=False):
+        if includeTime:
+            name, ext = os.path.splitext(cacheFilePath)
+            cacheFilePath = f"{name}-{self.date.strftime('%Y%m%dT%H%M%S')}{ext}"
+        self.date = datetime.datetime.utcnow()
         with open(cacheFilePath, "wt+") as cacheFile:
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
 
@@ -137,22 +131,28 @@ class CraftManifest(object):
         if urls:
             old = CraftManifest()
             for url in urls:
-                old.update(CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")))
+                new = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+                if new:
+                    new.origin = url
+                    new.dump(manifestFileName, includeTime=True)
+                    old.update(new)
 
         cache = None
         if os.path.isfile(manifestFileName):
             try:
                 with open(manifestFileName, "rt+") as cacheFile:
-                    cache = json.load(cacheFile)
-            except:
+                    cache = CraftManifest.fromJson(json.load(cacheFile))
+                cache.dump(manifestFileName, includeTime=True)
+            except Exception as e:
+                CraftCore.log.warning(f"Failed to load {cacheFile}, {e}")
                 pass
         if old:
             if cache:
-                old.update(CraftManifest.fromJson(cache))
+                old.update(cache)
             return old
         if not cache:
             return CraftManifest()
-        return CraftManifest.fromJson(cache)
+        return cache
 
     @staticmethod
     def _parseTimeStamp(time : str) -> datetime.datetime:
