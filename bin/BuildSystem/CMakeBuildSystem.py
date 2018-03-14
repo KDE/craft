@@ -70,6 +70,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if OsUtils.isWin():
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
+            # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
+            # msvc crt...
+            options += " -DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON"
 
         if OsUtils.isMac():
             options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
