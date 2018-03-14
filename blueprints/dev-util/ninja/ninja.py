@@ -39,8 +39,5 @@ class Package(CMakePackageBase):
         return utils.system(command)
 
     def install(self):
-        binaryExe = '.exe'
-        if OsUtils.isMac():
-            binaryExe = ''
-        utils.copyFile(os.path.join(self.sourceDir(), f"ninja{binaryExe}"), os.path.join(self.installDir(), "bin", f"ninja{binaryExe}"))
+        utils.copyFile(os.path.join(self.sourceDir(), f"ninja{CraftCore.compiler.executableSuffix}"), os.path.join(self.installDir(), "bin", f"ninja{CraftCore.compiler.executableSuffix}"))
         return True

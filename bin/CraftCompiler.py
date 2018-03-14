@@ -1,7 +1,27 @@
 # -*- coding: utf-8 -*-
-# this package contains functions to check the current compiler
-# copyright:
-# Hannah von Reth <vonreth@kde.org>
+# Copyright Hannah von Reth <vonreth@kde.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
 import re
 
 import utils
@@ -41,7 +61,6 @@ class CraftCompiler(object):
         self._platform, self._abi, self._compiler = split
 
         self._architecture = "x86" if self._abi.endswith("32") else "x64"
-        self._gnuArchitecture = "x86" if self._abi.endswith("32") else "x86_64"
 
         if not self._platform in CraftCompiler.__supportedPlatforms:
             raise Exception("Unsupported platform: " + self._platform)
@@ -71,7 +90,7 @@ class CraftCompiler(object):
 
     @property
     def gnuArchitecture(self):
-        return self._gnuArchitecture
+        return "x86" if self.isX86() else "x86_64"
 
     @property
     def bits(self):
@@ -89,6 +108,26 @@ class CraftCompiler(object):
             else:
                 result = "i686-w64-mingw32"
         return result
+
+    @property
+    def isWindows(self):
+        return self.platform == "windows"
+
+    @property
+    def isMacOS(self):
+        return self.platform == "macos"
+
+    @property
+    def isLinux(self):
+        return self.platform == "linux"
+
+    @property
+    def isFreeBSD(self):
+        return self.platform == "freebsd"
+
+    @property
+    def executableSuffix(self):
+        return ".exe" if self.isWindows else ""
 
     def isNative(self):
         # TODO: any reason to keep that?
