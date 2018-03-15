@@ -903,3 +903,25 @@ def normalisePath(path):
     if OsUtils.isWin():
         return path.replace("\\", "/")
     return path
+
+
+def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
+    configPatter = re.compile(r"@{([^{}]+)}")
+    with open(inFile, "rt+") as f:
+        script = f.read()
+    matches = configPatter.findall(script)
+    if not matches:
+        CraftCore.log.debug("Nothing to configure")
+        return False
+
+    print(variables)
+    for match in matches:
+        if not match in variables:
+            CraftCore.log.error(f"Failed to configure {inFile}: @{match} is not in variables")
+            return False
+        script = script.replace(f"@{{{match}}}", variables[match])
+
+    os.makedirs(os.path.dirname(outFile), exist_ok=True)
+    with open(outFile, "wt+") as f:
+        f.write(script)
+    return True

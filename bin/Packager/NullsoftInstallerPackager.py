@@ -1,7 +1,28 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
+# Copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
+# Copyright Hannah von Reth <vonreth@kde.org>
 #
-# copyright (c) 2010 Patrick Spendrin <ps_ml@gmx.de>
-# copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
 #
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
 
 import os
 
@@ -38,7 +59,7 @@ executable:     executable is defined empty by default, but it is used to add a 
                 start menu.
 You can add your own defines into self.defines as well.
 """
-    configPatter = re.compile(r"@{([^{}]+)}")
+
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -142,24 +163,6 @@ You can add your own defines into self.defines as well.
                     "Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
-    def _configureScript(self):
-        with open(self.scriptname, "rt+") as f:
-            script = f.read()
-        matches = NullsoftInstallerPackager.configPatter.findall(script)
-        if not matches:
-            return self.scriptname
-
-        for match in matches:
-            if not match in self.defines:
-                CraftCore.log.error(f"Failed to configure {self.scriptname}: @{match} is not in self.defines")
-            script = script.replace(f"@{{{match}}}", self.defines[match])
-
-        os.makedirs(self.workDir(), exist_ok=True)
-        outFile = os.path.join(self.workDir(), f"{self.package.name}.nsi")
-        with open(outFile, "wt+") as f:
-            f.write(script)
-        return outFile
-
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
 
@@ -181,8 +184,9 @@ You can add your own defines into self.defines as well.
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
         defines = []
-        scriptName = self._configureScript()
-        if scriptName == self.scriptname:
+        scriptName = utils.configureFile(self.scriptname, os.path.join(self.workDir(), f"{self.package.name}.nsi"), defines)
+        if not scriptName:
+            scriptName = self.scriptname
             # this script uses the old behaviour, using defines
             for key, value in self.defines.items():
                 if value is not None:
