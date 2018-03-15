@@ -55,7 +55,9 @@ class CMakeBuildSystem(BuildSystemBase):
         options = "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF")
         options += BuildSystemBase.configureOptions(self)
 
-        options += f" -DCMAKE_INSTALL_PREFIX=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}\""
+        craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
+        options += f" -DCMAKE_INSTALL_PREFIX=\"{craftRoot}\""
+        options += f" -DCMAKE_PREFIX_PATH=\"{craftRoot}\""
 
         if (not self.buildType() == None):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
