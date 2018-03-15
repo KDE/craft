@@ -155,4 +155,6 @@ class CMakeBuildSystem(BuildSystemBase):
                    " -DCMAKE_C_COMPILER=/usr/bin/clang"
 
     def postQmerge(self):
+        if not super().postQmerge():
+            return False
         return PostInstallRoutines.updateSharedMimeInfo(self)
