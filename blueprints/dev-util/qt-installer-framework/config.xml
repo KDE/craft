@@ -1,0 +1,15 @@
+<Installer>
+<Name>@{NAME}</Name>
+<Version>@{VERSION}</Version>
+<Title>@{TITLE}</Title>
+<Publisher>@{PUBLISHER}</Publisher>
+<TargetDir>@{TARGET_DIR}</TargetDir>
+<StartMenuDir>@{START_MENU_DIR}</StartMenuDir>
+<RemoteRepositories>
+    <Repository>
+        <Url>@{REPO_URL}</Url>
+        <DisplayName>@{REPO_NAME}</DisplayName>
+        <Enabled>@{REPO_ENABLED}</Enabled>
+    </Repository>
+</RemoteRepositories>"""
+</Installer>

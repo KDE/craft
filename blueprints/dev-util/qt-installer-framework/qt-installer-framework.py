@@ -42,6 +42,18 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = "default"
 
+    def registerOptions(self):
+        self.options.dynamic.registerOption("name", "Craft Installer")
+        self.options.dynamic.registerOption("title", "Craft Installer")
+        self.options.dynamic.registerOption("version", "0.1")
+        self.options.dynamic.registerOption("publisher", "KDE Craft")
+        self.options.dynamic.registerOption("targetDir", "@RootDir@\\Craft")
+        self.options.dynamic.registerOption("startMenuDir", "Craft")
+        self.options.dynamic.registerOption("offlineInstaller", False)
+        self.options.dynamic.registerOption("installerName", "CraftInstaller")
+        self.options.dynamic.registerOption("repositoryURL", "")
+        self.options.dynamic.registerOption("repositoryName", "CraftRepository")
+
 
 from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
@@ -51,3 +63,34 @@ class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
+
+    def createPackage(self):
+        # TODO: don't run this in package but in a different ways....
+        qtifDir = os.path.join(self.packageDestinationDir(), "qtif", )
+
+        vars = {"NAME" : self.subinfo.options.dynamic.name,
+                "VERSION" : self.subinfo.options.dynamic.version,
+                "PUBLISHER" : self.subinfo.options.dynamic.publisher,
+                "TARGET_DIR" : self.subinfo.options.dynamic.targetDir,
+                "START_MENU_DIR" : self.subinfo.options.dynamic.startMenuDir,
+                "TITLE" : self.subinfo.options.dynamic.title,
+
+                "REPO_ENABLED" : "0" if self.subinfo.options.dynamic.offlineInstaller else "1",
+                "REPO_URL" : self.subinfo.options.dynamic.repositoryURL if self.subinfo.options.dynamic.repositoryURL else f"file:///{OsUtils.toUnixPath(qtifDir)}/repo",
+                "REPO_NAME" : self.subinfo.options.dynamic.repositoryName,
+                }
+        if not utils.configureFile(os.path.join(self.packageDir(), "config.xml"), os.path.join(qtifDir, "config.xml"), vars):
+            return False
+        if not utils.system(["binarycreator", "-n" if not self.subinfo.options.dynamic.offlineInstaller else "-f",
+                             "-c", os.path.join(qtifDir, "config.xml"),
+                             "-p", os.path.join(qtifDir, "image"),
+                             os.path.join(qtifDir, self.subinfo.options.dynamic.installerName + CraftCore.compiler.executableSuffix)]):
+            return False
+        if not self.subinfo.options.dynamic.offlineInstaller:
+            repoDir = os.path.join(qtifDir, "repo")
+            command = ["repogen", "--packages", os.path.join(qtifDir, "image")]
+            if os.path.isdir(repoDir):
+                command += ["--update"]
+            command += [repoDir]
+            return utils.system(command)
+        return True

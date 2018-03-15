@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <Version>@{VERSION}</Version>
+    <Description>@{DESCRIPTION}</Description>
+    <ReleaseDate>@{DATE}</ReleaseDate>
+    <Script>installscript.qs</Script>
+    <DisplayName>@{NAME}</DisplayName>
+    <Dependencies>@{DEPENDENCIES}</Dependencies>
+    <UserInterfaces></UserInterfaces>
+    <Replaces></Replaces>
+    <SortingPriority>0</SortingPriority>
+    <RequiresAdminRights>False</RequiresAdminRights>
+    <ForcedInstallation>False</ForcedInstallation>
+</Package>
