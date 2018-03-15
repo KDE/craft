@@ -25,7 +25,7 @@
 import tempfile
 
 import CraftBase
-from Blueprints.CraftDependencyPackage import CraftDependencyPackage
+from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftVersion import CraftVersion
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils import CraftTimer
@@ -218,16 +218,27 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 
     if action == "get":
         return invoke(args.get, directTargets)
-    elif action in ["all", "install-deps"]:
+    elif args.resolve_deps or action in ["all", "install-deps"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
-        depList = depPackage.getDependencies()
+        if args.resolve_deps:
+            if not args.resolve_deps.capitalize() in DependencyType.__members__:
+                CraftCore.log.error(f"Invalid dependency type {args.resolve_deps}, valid types are {DependencyType.__members__}")
+                return False
+            depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
+            print(depType)
+        else:
+            depType = DependencyType.Both
+        depList = depPackage.getDependencies(depType=depType)
 
         packages = []
-        for item in depList:
-            if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
-                packages.append(item)
-                CraftCore.log.debug(f"dependency: {item}")
+        if not args.resolve_deps:
+            for item in depList:
+                if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
+                    packages.append(item)
+                    CraftCore.log.debug(f"dependency: {item}")
+        else:
+            packages = depList
         if not packages:
             CraftCore.log.debug("<none>")
 
