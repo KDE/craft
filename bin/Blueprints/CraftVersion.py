@@ -35,10 +35,9 @@ class CraftVersion(Version):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
             CraftCore.log.warn(
-                "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr,
-                stack_info=True)
+                "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
             return StrictVersion("0.0.0")
-        loose = LooseVersion(v)
+        loose = LooseVersion(v.replace("-","."))
         out = []
         for entry in loose.version:
             if type(entry) is str:
@@ -53,6 +52,9 @@ class CraftVersion(Version):
             else:
                 out.append(str(entry))
 
+
+        if len(out) < 3:
+            out += ["0"]*(3-len(out))
         vstring = ".".join(out[0: min(len(out), 3)])
         if len(out) > 3:
             vstring += "".join(out[3:])
