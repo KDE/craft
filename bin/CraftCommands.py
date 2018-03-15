@@ -58,11 +58,11 @@ def handlePackage(package, buildAction, directTargets):
             if CraftCore.settings.getboolean("Packager", "UseCache", "False"):
                 if doExec(package, "fetch-binary"):
                     return True
-            actions = ["fetch", "unpack", "compile", "cleanimage", "install"]
+            actions = ["fetch", "unpack", "compile", "cleanimage", "install", "post-install"]
 
             if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
                 actions += ["cleanbuild"]
-            actions += ["qmerge", "post-install"]
+            actions += ["qmerge", "post-qmerge"]
             if CraftCore.settings.getboolean("Packager", "CreateCache"):
                 onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
                 if not onlyDirect or (onlyDirect and package in directTargets):

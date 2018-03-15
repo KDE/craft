@@ -138,7 +138,7 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
-                     "install", "install-deps", "qmerge", "post-install", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
+                     "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:

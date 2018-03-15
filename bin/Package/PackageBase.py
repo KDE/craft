@@ -174,8 +174,9 @@ class PackageBase(CraftBase):
                 return False
             if not (self.cleanImage()
                     and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
+                    and self.postInstall()
                     and self.qmerge()
-                    and self.postInstall()):
+                    and self.postQmerge()):
                 return False
             return True
         return False
@@ -228,9 +229,10 @@ class PackageBase(CraftBase):
                      "configure": "configure",
                      "make": "make",
                      "install": "install",
+                     "post-install": "postInstall",
                      "test": "unittest",
                      "qmerge": "qmerge",
-                     "post-install": "postInstall",
+                     "post-qmerge": "postQmerge",
                      "unmerge": "unmerge",
                      "package": "createPackage",
                      "createpatch": "createPatch",

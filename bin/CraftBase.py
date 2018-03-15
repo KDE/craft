@@ -234,6 +234,9 @@ class CraftBase(object):
     def postInstall(self):
         return True
 
+    def postQmerge(self):
+        return True
+
     def cleanImage(self) -> bool:
         """cleanup before install to imagedir"""
         if (os.path.exists(self.imageDir())):
