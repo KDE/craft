@@ -135,3 +135,16 @@ class BuildSystemBase(CraftBase):
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
+
+    def postInstall(self):
+        if not super().postInstall():
+            return False
+        # a post install routine to fix the prefix (make things relocatable)
+        pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
+        if os.path.exists(pkgconfigPath):
+            for pcFile in os.listdir(pkgconfigPath):
+                if pcFile.endswith(".pc"):
+                    path = os.path.join(pkgconfigPath, pcFile)
+                    if not utils.system(["sed", "-i", "-e", f"s@^prefix=.*@prefix={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}@g", path]):
+                        return False
+        return True
