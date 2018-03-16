@@ -137,14 +137,7 @@ You can add your own defines into self.defines as well.
         return _file
 
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
-        if icon:
-            icon = f" {icon}"
-        if parameter:
-            parameter = f""" "{parameter}" """
-        if description:
-            description = f""" "{description}" """
-
-        return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}"{icon}{parameter}{description}\n"""
+        return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
