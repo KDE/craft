@@ -5,6 +5,7 @@
 """ \package BuildSystemBase"""
 import multiprocessing
 import os
+import re
 
 from CraftBase import *
 from CraftOS.osutils import OsUtils
@@ -141,10 +142,21 @@ class BuildSystemBase(CraftBase):
             return False
         # a post install routine to fix the prefix (make things relocatable)
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
+        prefix_re = re.compile("^prefix=(.*)$", re.MULTILINE)
+        newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         if os.path.exists(pkgconfigPath):
             for pcFile in os.listdir(pkgconfigPath):
                 if pcFile.endswith(".pc"):
                     path = os.path.join(pkgconfigPath, pcFile)
-                    if not utils.system(["sed", "-i", "-e", f"s@^prefix=.*@prefix={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}@g", path]):
+                    with open(path, "rt+") as f:
+                        config = f.read()
+                    prefix = prefix_re.findall(config)
+                    if len(prefix) != 1:
+                        CraftCore.log.error(f"Failed to patch {path}")
                         return False
+                    prefix = prefix[0]
+                    CraftCore.log.info(f"Patching {path}, replacing {prefix} with {newPrefix}")
+                    config = config.replace(prefix, newPrefix)
+                    with open(path, "wt+") as f:
+                        f.write(config)
         return True
