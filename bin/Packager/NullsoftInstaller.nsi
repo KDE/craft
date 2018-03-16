@@ -54,6 +54,7 @@ CRCCheck on
 SilentInstall normal
 
 InstallDir "@{defaultinstdir}\@{productname}"
+; InstallDirRegKey must use HKLM
 InstallDirRegKey HKLM "${regkey}" "Install_Dir"
 
 Var /global ExistingInstallation
@@ -65,6 +66,7 @@ Function .onInit
   Abort
   ${EndIf}
 !endif
+InstallDirRegKey must use HKLM
 ReadRegStr $R0 HKLM "${regkey}" "Install_Dir"
 ${IfNot} $R0 == ""
   StrCpy $ExistingInstallation $R0
@@ -82,14 +84,14 @@ Section
 ${IfNot} $ExistingInstallation == ""
   ExecWait '"$ExistingInstallation\${uninstaller}" /S _?=$ExistingInstallation'
 ${EndIf}
-  WriteRegStr HKLM "${regkey}" "Install_Dir" "$INSTDIR"
+  WriteRegStr @{HKLM} "${regkey}" "Install_Dir" "$INSTDIR"
   ; write uninstall strings
-  WriteRegStr HKLM "${uninstkey}" "DisplayName" "@{productname}"
-  WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
-  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\@{iconname}"
-  WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "@{website}"
-  WriteRegStr HKLM "${uninstkey}" "Publisher" "@{company}"
-  WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "@{version}"
+  WriteRegStr @{HKLM} "${uninstkey}" "DisplayName" "@{productname}"
+  WriteRegStr @{HKLM} "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
+  WriteRegStr @{HKLM} "${uninstkey}" "DisplayIcon" "$INSTDIR\@{iconname}"
+  WriteRegStr @{HKLM} "${uninstkey}" "URLInfoAbout" "@{website}"
+  WriteRegStr @{HKLM} "${uninstkey}" "Publisher" "@{company}"
+  WriteRegStr @{HKLM} "${uninstkey}" "DisplayVersion" "@{version}"
 
   @{registy_hook}
 
@@ -135,8 +137,8 @@ SetShellVarContext all
 ; TODO: we need something independent of a tier3....
 ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
 
-DeleteRegKey HKLM "${uninstkey}"
-DeleteRegKey HKLM "${regkey}"
+DeleteRegKey @{HKLM} "${uninstkey}"
+DeleteRegKey @{HKLM} "${regkey}"
 
 Delete "${startmenu}\@{productname}.lnk"
 Delete "${startmenu}\Uninstall.lnk"

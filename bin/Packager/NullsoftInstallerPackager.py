@@ -58,30 +58,31 @@ executable:     executable is defined empty by default, but it is used to add a 
 You can add your own defines into self.defines as well.
 """
 
-
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
         self.nsisExe = None
         self._isInstalled = False
 
-    def _setDefaults(self):
-        self.defines.setdefault("architecture", CraftCore.compiler.architecture)
-        self.defines.setdefault("company", "KDE")
-        self.defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
-        self.defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
-        self.defines.setdefault("license", "")
-        self.defines.setdefault("productname", self.package.name.capitalize())
-        self.defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
-        self.defines.setdefault("srcdir", self.archiveDir())
-        self.defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
-        self.defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
-        self.defines.setdefault("registy_hook", "")
+    def _setDefaults(self, defines):
+        defiens = dict(defines)
+        defines.setdefault("architecture", CraftCore.compiler.architecture)
+        defines.setdefault("company", "KDE")
+        defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
+        defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
+        defines.setdefault("license", "")
+        defines.setdefault("productname", self.package.name.capitalize())
+        defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
+        defines.setdefault("srcdir", self.archiveDir())
+        defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
+        defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
+        defines.setdefault("registy_hook", "")
         # runtime distributable files
-        self.defines.setdefault("vcredist", self.getVCRedistLocation())
+        defines.setdefault("vcredist", self.getVCRedistLocation())
 
         if not self.scriptname:
             self.scriptname = os.path.join(os.path.dirname(__file__), "NullsoftInstaller.nsi")
+        return defines
 
     def isNsisInstalled(self):
         if not self._isInstalled:
@@ -142,44 +143,48 @@ You can add your own defines into self.defines as well.
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
 
-        self._setDefaults()
-        self.defines["installerIcon"] = f"""!define MUI_ICON "{self.defines["icon"]}" """
-        self.defines["iconname"] = os.path.basename(self.defines["icon"])
-        if not self.defines["license"] == "":
-            self.defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{self.defines["license"]}" """
+        defines = self._setDefaults(self.defines)
+        defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
+        defines["iconname"] = os.path.basename(defines["icon"])
+        if not defines["license"] == "":
+            defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{defines["license"]}" """
+
+        defines["HKLM"] = "HKLM32" if CraftCore.compiler.isX86() else "HKLM64"
+        defines["HKCR"] = "HKCR32" if CraftCore.compiler.isX86() else "HKCR64"
+        defines["HKCU"] = "HKCU32" if CraftCore.compiler.isX86() else "HKCU64"
 
 
         shortcuts = []
-        if "executable" in self.defines:
-            shortcuts.append(self._createShortcut(self.defines["productname"], self.defines["executable"]))
-            del self.defines["executable"]
+        if "executable" in defines:
+            shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
+            del defines["executable"]
 
         for short in self.shortcuts:
             shortcuts.append(self._createShortcut(**short))
 
 
-        self.defines["shortcuts"] = "".join(shortcuts)
+        defines["shortcuts"] = "".join(shortcuts)
 
         # make absolute path for output file
-        if not os.path.isabs(self.defines["setupname"]):
+        if not os.path.isabs(defines["setupname"]):
             dstpath = self.packageDestinationDir()
-            self.defines["setupname"] = os.path.join(dstpath, self.defines["setupname"])
+            defines["setupname"] = os.path.join(dstpath, defines["setupname"])
 
         CraftCore.debug.new_line()
-        CraftCore.log.debug("generating installer %s" % self.defines["setupname"])
+        CraftCore.log.debug("generating installer %s" % defines["setupname"])
 
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
-        defines = []
+        cmdDefines = []
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
-        if not utils.configureFile(self.scriptname, configuredScrip, self.defines):
+        if not utils.configureFile(self.scriptname, configuredScrip, defines):
             configuredScrip = self.scriptname
             # this script uses the old behaviour, using defines
-            for key, value in self.defines.items():
+            for key, value in defines.items():
                 if value is not None:
-                    defines.append(f"/D{key}={value}")
+                    cmdDefines.append(f"/D{key}={value}")
 
-        if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [configuredScrip],
+        if not utils.systemWithoutShell([self.nsisExe, verboseString] + cmdDefines + [configuredScrip],
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
 
