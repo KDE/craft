@@ -26,11 +26,9 @@
 
 import os
 
-if os.name == 'nt':
-    from winreg import *  # pylint: disable=F0401
-
 from Utils import CraftHash
 from Packager.CollectionPackagerBase import *
+from Blueprints.CraftVersion import CraftVersion
 
 
 class NullsoftInstallerPackager(CollectionPackagerBase):
@@ -98,33 +96,10 @@ You can add your own defines into self.defines as well.
 
     def __isInstalled(self):
         """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
-
         self.nsisExe = CraftCore.cache.findApplication("makensis")
-        if self.nsisExe:
-            return True
-        if not utils.OsUtils.isWin():
+        if not self.nsisExe:
             return False
-        try:
-            key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS\Unicode', 0, KEY_READ)
-            _, nsisPath, _ = EnumValue(key, 0)  # ????
-        except WindowsError:
-            try:
-                key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\NSIS', 0, KEY_READ)
-                nsisPath, _ = QueryValueEx(key, "")
-            except WindowsError:
-                try:
-                    key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS\Unicode', 0, KEY_READ)
-                    _, nsisPath, _ = EnumValue(key, 0)  # ????
-                except WindowsError:
-                    try:
-                        key = OpenKey(HKEY_LOCAL_MACHINE, r'SOFTWARE\Wow6432Node\NSIS', 0, KEY_READ)
-                        nsisPath, _ = QueryValueEx(key, "")
-                    except WindowsError:
-                        return False
-
-        CloseKey(key)
-        self.nsisExe = os.path.join(nsisPath, "makensis")
-        return True
+        return CraftCore.cache.getVersion(path, versionCommand="/VERSION") >= CraftVersion("3.03")
 
     @staticmethod
     def getVCRuntimeLibrariesLocation():
