@@ -122,8 +122,6 @@ SetOutPath "$INSTDIR"
     File /a /oname=vcredist.exe "@{vcredist}"
     ExecWait '"$INSTDIR\vcredist.exe" /passive /norestart'
 !endif
-ExecWait '"$INSTDIR\bin\update-mime-database.exe" "$INSTDIR\share\mime"'
-ExecWait '"$INSTDIR\bin\kbuildsycoca5.exe" "--noincremental"'
 Delete "$INSTDIR\vcredist.exe"
 SectionEnd
 
@@ -134,8 +132,8 @@ UninstallText "This will uninstall @{productname}."
 
 Section "Uninstall"
 SetShellVarContext all
+; TODO: we need something independent of a tier3....
 ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
-ExecWait '"taskkill" "/F" "/IM" "dbus-daemon.exe"'
 
 DeleteRegKey HKLM "${uninstkey}"
 DeleteRegKey HKLM "${regkey}"
