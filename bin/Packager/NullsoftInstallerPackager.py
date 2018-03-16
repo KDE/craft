@@ -100,7 +100,7 @@ You can add your own defines into self.defines as well.
         self.nsisExe = CraftCore.cache.findApplication("makensis")
         if not self.nsisExe:
             return False
-        return CraftCore.cache.getVersion(path, versionCommand="/VERSION") >= CraftVersion("3.03")
+        return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
     @staticmethod
     def getVCRuntimeLibrariesLocation():
@@ -161,8 +161,6 @@ You can add your own defines into self.defines as well.
 
         for short in self.shortcuts:
             shortcuts.append(self._createShortcut(**short))
-
-
         defines["shortcuts"] = "".join(shortcuts)
 
         # make absolute path for output file
