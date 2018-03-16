@@ -37,7 +37,7 @@ class CraftVersion(Version):
             CraftCore.log.warn(
                 "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
             return StrictVersion("0.0.0")
-        loose = LooseVersion(v.replace("-","."))
+        loose = LooseVersion(re.sub("-|_", ".", v))
         out = []
         for entry in loose.version:
             if type(entry) is str:
