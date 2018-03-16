@@ -66,7 +66,7 @@ Function .onInit
   Abort
   ${EndIf}
 !endif
-InstallDirRegKey must use HKLM
+;InstallDirRegKey must use HKLM
 ReadRegStr $R0 HKLM "${regkey}" "Install_Dir"
 ${IfNot} $R0 == ""
   StrCpy $ExistingInstallation $R0
