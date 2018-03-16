@@ -906,6 +906,7 @@ def normalisePath(path):
 
 
 def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
+    CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
     configPatter = re.compile(r"@{([^{}]+)}")
     with open(inFile, "rt+") as f:
         script = f.read()
@@ -914,12 +915,11 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         CraftCore.log.debug("Nothing to configure")
         return False
 
-    print(variables)
     for match in matches:
-        if not match in variables:
-            CraftCore.log.error(f"Failed to configure {inFile}: @{match} is not in variables")
-            return False
-        script = script.replace(f"@{{{match}}}", variables[match])
+        val = variables.get(match, None)
+        if val is None:
+            raise Exception(f"Failed to configure {inFile}: @{match} is not in variables")
+        script = script.replace(f"@{{{match}}}", val)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
     with open(outFile, "wt+") as f:

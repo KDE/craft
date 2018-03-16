@@ -29,7 +29,7 @@ OutFile "@{setupname}"
 !include "x64.nsh"
 
 ;!define MUI_ICON
-@{icon}
+@{installerIcon}
 ;!define MUI_ICON
 
 !insertmacro MUI_PAGE_WELCOME
@@ -42,8 +42,6 @@ OutFile "@{setupname}"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
-;!define MUI_FINISHPAGE_RUN_TEXT "Run @{productname}"
-;!define MUI_FINISHPAGE_RUN "$INSTDIR\@{executable}"
 !define MUI_FINISHPAGE_LINK "Visit project homepage"
 !define MUI_FINISHPAGE_LINK_LOCATION "@{website}"
 !insertmacro MUI_PAGE_FINISH
@@ -88,10 +86,12 @@ ${EndIf}
   ; write uninstall strings
   WriteRegStr HKLM "${uninstkey}" "DisplayName" "@{productname}"
   WriteRegStr HKLM "${uninstkey}" "UninstallString" '"$INSTDIR\${uninstaller}"'
-  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\@{executable}"
+  WriteRegStr HKLM "${uninstkey}" "DisplayIcon" "$INSTDIR\@{iconname}"
   WriteRegStr HKLM "${uninstkey}" "URLInfoAbout" "@{website}"
   WriteRegStr HKLM "${uninstkey}" "Publisher" "@{company}"
   WriteRegStr HKLM "${uninstkey}" "DisplayVersion" "@{version}"
+
+  @{registy_hook}
 
   SetOutPath $INSTDIR
 
@@ -99,7 +99,8 @@ ${EndIf}
 ; package all files, recursively, preserving attributes
 ; assume files are in the correct places
 
-File /a /r /x "*.nsi" /x "@{setupname}" "@{srcdir}\*.*"
+File /a /r "@{srcdir}\*.*"
+File /a "@{icon}"
 
 WriteUninstaller "${uninstaller}"
 
@@ -110,9 +111,8 @@ Section
 SetShellVarContext all
 CreateDirectory "${startmenu}"
 SetOutPath $INSTDIR ; for working directory
-CreateShortCut "${startmenu}\@{productname}.lnk" "$INSTDIR\@{executable}"
+@{shortcuts}
 CreateShortCut "${startmenu}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-@{extrashortcuts}
 SectionEnd
 
 ;post install

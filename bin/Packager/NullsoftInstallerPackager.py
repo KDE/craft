@@ -71,16 +71,14 @@ You can add your own defines into self.defines as well.
         self.defines.setdefault("architecture", CraftCore.compiler.architecture)
         self.defines.setdefault("company", "KDE")
         self.defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
-        self.defines.setdefault("executable", "")
         self.defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
         self.defines.setdefault("license", "")
         self.defines.setdefault("productname", self.package.name.capitalize())
         self.defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         self.defines.setdefault("srcdir", self.archiveDir())
-        self.defines.setdefault("extrashortcuts", "")
-        self.defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.getPackageVersion()[0])
-        self.defines.setdefault("website",
-                                self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
+        self.defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
+        self.defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
+        self.defines.setdefault("registy_hook", "")
         # runtime distributable files
         self.defines.setdefault("vcredist", self.getVCRedistLocation())
 
@@ -163,15 +161,36 @@ You can add your own defines into self.defines as well.
                     "Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
         return _file
 
+    def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
+        if icon:
+            icon = f" {icon}"
+        if parameter:
+            parameter = f""" "{parameter}" """
+        if description:
+            description = f""" "{description}" """
+
+        return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}"{icon}{parameter}{description}\n"""
+
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
 
         self._setDefaults()
-
-        if not self.defines["icon"] == "":
-            self.defines["icon"] = f"""!define MUI_ICON "{self.defines["icon"]}" """
+        self.defines["installerIcon"] = f"""!define MUI_ICON "{self.defines["icon"]}" """
+        self.defines["iconname"] = os.path.basename(self.defines["icon"])
         if not self.defines["license"] == "":
             self.defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{self.defines["license"]}" """
+
+
+        shortcuts = []
+        if "executable" in self.defines:
+            shortcuts.append(self._createShortcut(self.defines["productname"], self.defines["executable"]))
+            del self.defines["executable"]
+
+        for short in self.shortcuts:
+            shortcuts.append(self._createShortcut(**short))
+
+
+        self.defines["shortcuts"] = "".join(shortcuts)
 
         # make absolute path for output file
         if not os.path.isabs(self.defines["setupname"]):
@@ -184,15 +203,15 @@ You can add your own defines into self.defines as well.
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
         defines = []
-        scriptName = utils.configureFile(self.scriptname, os.path.join(self.workDir(), f"{self.package.name}.nsi"), defines)
-        if not scriptName:
-            scriptName = self.scriptname
+        configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
+        if not utils.configureFile(self.scriptname, configuredScrip, self.defines):
+            configuredScrip = self.scriptname
             # this script uses the old behaviour, using defines
             for key, value in self.defines.items():
                 if value is not None:
                     defines.append(f"/D{key}={value}")
 
-        if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [scriptName],
+        if not utils.systemWithoutShell([self.nsisExe, verboseString] + defines + [configuredScrip],
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
 

@@ -31,11 +31,6 @@ class PackagerBase(CraftBase):
     def archiveDir(self):
         return os.path.join(self.buildRoot(), "archive")
 
-    @deprecated("self.version")
-    def getPackageVersion(self):
-        """ return version information for the currently used package"""
-        return [self.version, self.version]
-
     # """ create a package """
     def createPackage(self):
         utils.abstract()
@@ -53,4 +48,12 @@ class PackagerBase(CraftBase):
         entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
 
         manifest.dump(manifestLocation)
+
+    @property
+    def shortcuts(self) -> []:
+        """ Return a list of shortcuts we want installe"""
+        out = []
+        if "shortcuts" in self.defines:
+            out  += self.defines["shortcuts"]
+        return out
 
