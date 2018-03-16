@@ -915,11 +915,13 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         CraftCore.log.debug("Nothing to configure")
         return False
 
-    for match in matches:
-        val = variables.get(match, None)
-        if val is None:
-            raise Exception(f"Failed to configure {inFile}: @{match} is not in variables")
-        script = script.replace(f"@{{{match}}}", val)
+    while matches:
+        for match in matches:
+            val = variables.get(match, None)
+            if val is None:
+                raise Exception(f"Failed to configure {inFile}: @{match} is not in variables")
+            script = script.replace(f"@{{{match}}}", val)
+        matches = configPatter.findall(script)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
     with open(outFile, "wt+") as f:
