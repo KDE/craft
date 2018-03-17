@@ -15,7 +15,6 @@ class BashShell(object):
         self._environment = {}
         self._useMSVCCompatEnv = False
 
-
     @property
     def useMSVCCompatEnv(self):
         return self._useMSVCCompatEnv
@@ -115,8 +114,11 @@ class BashShell(object):
             return path
 
     def _findBash(self):
-        msysdir = CraftStandardDirs.msysDir()
-        bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "bin"))
+        if OsUtils.isWin():
+            msysdir = CraftStandardDirs.msysDir()
+            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "bin"))
+        else:
+            bash = CraftCore.cache.findApplication("bash")
         if not bash:
             bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         if not bash:
