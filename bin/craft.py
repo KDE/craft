@@ -186,7 +186,7 @@ def main():
     helper.printBanner()
 
     if args.run:
-        return utils.system(args.run)
+        return utils.system(args.run, shell=True)
 
     if args.add_blueprint_repository:
         return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository, args)
