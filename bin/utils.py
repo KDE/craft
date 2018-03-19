@@ -517,7 +517,7 @@ def cleanPackageName(basename, packagename):
     return os.path.basename(basename).replace(packagename + "-", "").replace(".py", "")
 
 
-def createSymlink(source, linkName, useAbsolutePath=False):
+def createSymlink(source, linkName, useAbsolutePath=False, targetIsDirectory=False):
     if not useAbsolutePath and os.path.isabs(linkName):
         srcPath = linkName
         srcPath = os.path.dirname(srcPath)
@@ -526,7 +526,7 @@ def createSymlink(source, linkName, useAbsolutePath=False):
         os.makedirs(os.path.dirname(linkName))
     CraftCore.log.debug(f"creating symlink: {linkName} -> {source}")
     try:
-        os.symlink(source, linkName)
+        os.symlink(source, linkName, targetIsDirectory)
         return True
     except Exception as e:
         CraftCore.log.warning(e)
@@ -573,38 +573,25 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
     if (not destdir.endswith(os.path.sep)):
         destdir += os.path.sep
 
-    for root, dirNames, files in os.walk(srcdir):
-        # do not copy files under .svn directories, because they are write-protected
-        # and the they cannot easily be deleted...
-        if (root.find(".svn") == -1):
+    try:
+        for root, dirNames, files in os.walk(srcdir):
             tmpdir = root.replace(srcdir, destdir)
-            if not os.path.exists(tmpdir):
-                os.makedirs(tmpdir)
+            for dirName in dirNames:
+                if os.path.islink(os.path.join(root, dirName)):
+                    # copy the symlinks without resolving them
+                    shutil.copy(os.path.join(root, dirName), os.path.join(tmpdir, dirName), follow_symlinks=False)
+                else:
+                    os.makedirs(os.path.join(tmpdir, dirName), exist_ok=True)
+
             for fileName in files:
                 # symlinks to files are included in `files`
-                if copyFile(os.path.join(root, fileName), os.path.join(tmpdir, fileName),
-                            linkOnly=linkOnly) and copiedFiles != None:
-                    copiedFiles.append(os.path.join(tmpdir, fileName))
-
-            if OsUtils.isUnix():
-                for dirName in dirNames:
-                    # symlinks to directories are included in `dirNames` -- we only want to copy the symlinks
-                    srcPath = os.path.join(root, dirName)
-                    if os.path.islink(srcPath):
-                        linkTo = os.readlink(srcPath)
-                        if os.path.isabs(linkTo):
-                            CraftCore.log.warning(
-                                f"Not copying symlink targeting an absolute path -- not supported: {srcPath}")
-                            continue
-
-                        newLinkName = os.path.join(tmpdir, dirName)
-                        if os.path.exists(newLinkName):
-                            continue
-
-                        # re-create exact same symlink, but this time in the destdir
-                        if createSymlink(os.path.join(tmpdir, linkTo), newLinkName) and copiedFiles != None:
-                            copiedFiles.append(newLinkName)
-
+                if not copyFile(os.path.join(root, fileName), os.path.join(tmpdir, fileName),linkOnly=linkOnly):
+                    return False
+                    if copiedFiles is not None:
+                        copiedFiles.append(os.path.join(tmpdir, fileName))
+    except Exception as e:
+        CraftCore.log.error(e)
+        return False
     return True
 
 

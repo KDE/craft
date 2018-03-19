@@ -189,7 +189,7 @@ class PackageBase(CraftBase):
         algorithm = CraftHash.HashAlgorithm.SHA256
         for filePath in filePaths:
             relativeFilePath = os.path.relpath(filePath, imagedir)
-            if OsUtils.isUnix() and os.path.islink(filePath):
+            if os.path.islink(filePath):
                 digest = ""
             else:
                 digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
