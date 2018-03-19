@@ -59,7 +59,7 @@ class ArchiveSource(SourceBase):
                     return False
         return True
 
-    def fetch(self, dummyRepopath=None):
+    def fetch(self):
         """fetch normal tarballs"""
         CraftCore.log.debug("ArchiveSource.fetch called")
 
