@@ -15,6 +15,10 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-util/cmake"] = "default"
         self.buildDependencies["dev-util/git"] = "default"
 
+        if CraftCore.compiler.isMacOS:
+            self.buildDependencies["dev-util/macdylibbundler"] = "default"
+
+
         if CraftCore.compiler.isMinGW():
             self.buildDependencies["dev-util/mingw-w64"] = "default"
         if CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
