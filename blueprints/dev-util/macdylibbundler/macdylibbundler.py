@@ -16,3 +16,12 @@ class Package(MakeFilePackageBase):
     def __init__(self, **args):
         MakeFilePackageBase.__init__(self)
         self.subinfo.options.useShadowBuild = False
+
+    def fetch(self):
+        if isinstance(self.source, GitSource):
+            utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
+        return super().fetch(self)
+
+    def install():
+        os.makedirs(os.path.join(self.installDir(), "bin") , exist_ok=True)
+        return super().install()
