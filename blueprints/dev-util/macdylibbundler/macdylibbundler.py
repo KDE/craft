@@ -23,5 +23,4 @@ class Package(MakeFilePackageBase):
         return super().fetch(self)
 
     def install():
-        os.makedirs(os.path.join(self.installDir(), "bin") , exist_ok=True)
-        return super().install()
+        return utils.copyFile(os.path.join(self.sourceDir(), "dylibbundler"), os.path.join(self.installDir(), "bin", "dylibbundler"), linkOnly=False)
