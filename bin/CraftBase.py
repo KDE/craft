@@ -231,7 +231,13 @@ class CraftBase(object):
             out += ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, bt]) for url in CraftCore.settings.getList("Packager", "RepositoryUrl")]
         return out
 
+    def internalPostInstall(self):
+        return True
+
     def postInstall(self):
+        return True
+
+    def internalPostQmerge(self):
         return True
 
     def postQmerge(self):

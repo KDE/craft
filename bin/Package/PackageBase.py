@@ -174,8 +174,10 @@ class PackageBase(CraftBase):
                 return False
             if not (self.cleanImage()
                     and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
+                    and self.internalPostInstall()
                     and self.postInstall()
                     and self.qmerge()
+                    and self.internalPostQmerge()
                     and self.postQmerge()):
                 return False
             return True
@@ -231,10 +233,10 @@ class PackageBase(CraftBase):
                      "compile": "compile",
                      "configure": "configure",
                      "make": "make",
-                     "install": "install",
+                     "install": ["install", "internalPostInstall"],
                      "post-install": "postInstall",
                      "test": "unittest",
-                     "qmerge": "qmerge",
+                     "qmerge": ["qmerge", "internalPostQmerge"],
                      "post-qmerge": "postQmerge",
                      "unmerge": "unmerge",
                      "package": "createPackage",
@@ -244,7 +246,11 @@ class PackageBase(CraftBase):
                      "fetch-binary": "fetchBinary"}
         if command in functions:
             try:
-                ok = getattr(self, functions[command])()
+                steps = functions[command]
+                if not isinstance(steps, list):
+                    steps = [steps]
+                for step in steps:
+                    ok = getattr(self, step)()
             except AttributeError as e:
                 raise BlueprintException(str(e), self.package, e)
 
