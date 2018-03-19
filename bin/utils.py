@@ -30,25 +30,6 @@ def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
-
-def getCallerFilename():
-    """ returns the file name of the """
-    filename = None
-    try:
-        frame = inspect.currentframe()
-        count = 2
-        while count > 0 and frame:
-            frame = frame.f_back
-            # python 3.3 includes unnecessary importlib frames, skip them
-            if frame and frame.f_code.co_filename != '<frozen importlib._bootstrap>':
-                count -= 1
-    finally:
-        if frame:
-            filename = frame.f_code.co_filename
-            del frame
-    return filename
-
-
 ### fetch functions
 
 def getFiles(urls, destdir, suffix='', filenames=''):
@@ -343,19 +324,6 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         CraftCore.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
     return ok
 
-
-def moveEntries(srcdir, destdir):
-    for entry in os.listdir(srcdir):
-        src = os.path.join(srcdir, entry)
-        dest = os.path.join(destdir, entry)
-        CraftCore.log.debug("move: %s -> %s" % (src, dest))
-        if (os.path.isfile(dest)):
-            os.remove(dest)
-        if (os.path.isdir(dest)):
-            continue
-        os.rename(src, dest)
-
-
 def cleanDirectory(directory):
     CraftCore.log.debug("clean directory %s" % directory)
     if (os.path.exists(directory)):
@@ -508,14 +476,6 @@ def createImportLibs(dll_name, basepath):
     if os.path.exists(exppath):
         os.remove(exppath)
     return True
-
-@deprecated("OsUtils.toMSysPath")
-def toMSysPath(path):
-    return OsUtils.toMSysPath(path)
-
-def cleanPackageName(basename, packagename):
-    return os.path.basename(basename).replace(packagename + "-", "").replace(".py", "")
-
 
 def createSymlink(source, linkName, useAbsolutePath=False, targetIsDirectory=False):
     if not useAbsolutePath and os.path.isabs(linkName):
@@ -676,23 +636,6 @@ def deleteFile(fileName):
         return False
     return True
 
-
-def findFiles(directory, pattern=None, fileNames=None):
-    """find files recursivly"""
-    if fileNames == None:
-        fileNames = []
-        pattern = pattern.lower()
-    for entry in os.listdir(directory):
-        if entry.find(".svn") > -1 or entry.find(".bak") > -1:
-            continue
-        fileName = os.path.join(directory, entry)
-        if os.path.isdir(fileName):
-            findFiles(fileName, pattern, fileNames)
-        elif os.path.isfile(fileName) and pattern == None or entry.lower().find(pattern) > -1:
-            fileNames.append(fileName)
-    return fileNames
-
-
 def putenv(name, value):
     """set environment variable"""
     CraftCore.log.debug("set environment variable -- set %s=%s" % (name, value))
@@ -712,42 +655,6 @@ def applyPatch(sourceDir, f, patchLevel='0'):
         CraftCore.log.warning("applying %s failed!" % f)
     return result
 
-
-def getWinVer():
-    '''
-        Returns the Windows Version of the system returns "0" if the Version
-        can not be determined
-    '''
-    try:
-        result = str(subprocess.Popen("cmd /C ver", stdout=subprocess.PIPE).communicate()[0], "windows-1252")
-    except OSError:
-        CraftCore.log.debug("Windows Version can not be determined")
-        return "0"
-    version = re.search(r"\d+\.\d+\.\d+", result)
-    if (version):
-        return version.group(0)
-    CraftCore.log.debug("Windows Version can not be determined")
-    return "0"
-
-
-def regQuery(key, value):
-    '''
-    Query the registry key <key> for value <value> and return
-    the result.
-    '''
-    query = 'reg query "%s" /v "%s"' % (key, value)
-    CraftCore.log.debug("Executing registry query %s " % query)
-    result = subprocess.Popen(query,
-                              stdout=subprocess.PIPE).communicate()[0]
-    # Output of this command is either an error to stderr
-    # or the key with the value in the next line
-    reValue = re.compile(r"(\s*%s\s*REG_\w+\s*)(.*)" % value)
-    match = reValue.search(str(result, 'windows-1252'))
-    if match and match.group(2):
-        return match.group(2).rstrip()
-    return False
-
-
 def embedManifest(executable, manifest):
     '''
        Embed a manifest to an executable using either the free
@@ -762,26 +669,6 @@ def embedManifest(executable, manifest):
                          (manifest, executable))
     return system(["mt", "-nologo", "-manifest", manifest,
                     f"-outputresource:{executable};1"])
-
-
-def getscriptname():
-    if __name__ == '__main__':
-        return sys.argv[0]
-    else:
-        return __name__
-
-
-def prependPath(*parts):
-    """put path in front of the PATH environment variable, if it is not there yet.
-    The last part must be a non empty string, otherwise we do nothing"""
-    if parts[-1]:
-        fullPath = os.path.join(*parts)
-        old = os.getenv("PATH").split(';')
-        if old[0] != fullPath:
-            CraftCore.log.debug("adding %s to system path" % fullPath)
-            old.insert(0, fullPath)
-            putenv("PATH", os.path.pathsep.join(old))
-
 
 def notify(title, message, alertClass=None):
     CraftCore.debug.step(f"{title}: {message}")
