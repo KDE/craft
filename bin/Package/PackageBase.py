@@ -201,8 +201,9 @@ class PackageBase(CraftBase):
         for filename, filehash in fileList:
             fullPath = os.path.join(rootdir, os.path.normcase(filename))
             if os.path.isfile(fullPath) or os.path.islink(fullPath):
-                algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
-                currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
+                if filehash:
+                    algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
+                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
                 if not filehash or currentHash == filehash:
                     OsUtils.rm(fullPath, True)
                 else:
