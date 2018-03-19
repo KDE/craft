@@ -20,7 +20,7 @@ class Package(MakeFilePackageBase):
     def fetch(self):
         if isinstance(self.source, GitSource):
             utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
-        return super().fetch(self)
+        return super().fetch()
 
     def install():
         return utils.copyFile(os.path.join(self.sourceDir(), "dylibbundler"), os.path.join(self.installDir(), "bin", "dylibbundler"), linkOnly=False)
