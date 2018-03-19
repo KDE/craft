@@ -171,7 +171,7 @@ class GitSource(VersionSystemSourceBase):
         The patch file is named autocreated.patch"""
         CraftCore.debug.trace('GitSource createPatch')
         patchFileName = os.path.join(self.packageDir(), "%s-%s.patch" % \
-                                     (self.package, str(datetime.date.today()).replace('-', '')))
+                                     (self.package.name, str(datetime.date.today()).replace('-', '')))
         CraftCore.log.debug("git diff %s" % patchFileName)
         with open(patchFileName, 'wt+') as patchFile:
             return self.__git('diff', stdout=patchFile)
