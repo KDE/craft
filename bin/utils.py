@@ -539,9 +539,13 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
             for dirName in dirNames:
                 if os.path.islink(os.path.join(root, dirName)):
                     # copy the symlinks without resolving them
-                    copyFile(os.path.join(root, dirName), os.path.join(tmpdir, dirName), linkOnly=False)
+                    if not copyFile(os.path.join(root, dirName), os.path.join(tmpdir, dirName), linkOnly=False):
+                        return False
+                    if copiedFiles is not None:
+                        copiedFiles.append(os.path.join(tmpdir, dirName))
                 else:
-                    createDir(os.path.join(tmpdir, dirName))
+                    if not createDir(os.path.join(tmpdir, dirName)):
+                        return False
 
             for fileName in files:
                 # symlinks to files are included in `files`
