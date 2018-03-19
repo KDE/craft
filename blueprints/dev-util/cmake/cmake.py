@@ -43,9 +43,7 @@ class CMakePackage(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
-    def install(self):
-        if not BinaryPackageBase.install(self):
-            return False
+    def postInstall(self):
         binaryExe = '.exe'
         binaryPath = os.path.join(self.imageDir(), "dev-utils", "cmake", "bin")
         if OsUtils.isMac():
