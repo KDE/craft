@@ -510,7 +510,7 @@ def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHa
     if os.path.lexists(dest):
         CraftCore.log.warning("Overriding %s" % dest)
         if not os.path.islink(dest) and os.path.samefile(src, dest):
-            CraftCore.log.error("Can't copy a file into itself")
+            CraftCore.log.error(f"Can't copy a file into itself {src}=={dest}")
             return False
         OsUtils.rm(dest, True)
     # don't link to links
@@ -539,16 +539,16 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
             for dirName in dirNames:
                 if os.path.islink(os.path.join(root, dirName)):
                     # copy the symlinks without resolving them
-                    shutil.copy(os.path.join(root, dirName), os.path.join(tmpdir, dirName), follow_symlinks=False)
+                    copyFile(os.path.join(root, dirName), os.path.join(tmpdir, dirName), linkOnly=False)
                 else:
-                    os.makedirs(os.path.join(tmpdir, dirName), exist_ok=True)
+                    createDir(os.path.join(tmpdir, dirName))
 
             for fileName in files:
                 # symlinks to files are included in `files`
                 if not copyFile(os.path.join(root, fileName), os.path.join(tmpdir, fileName),linkOnly=linkOnly):
                     return False
-                    if copiedFiles is not None:
-                        copiedFiles.append(os.path.join(tmpdir, fileName))
+                if copiedFiles is not None:
+                    copiedFiles.append(os.path.join(tmpdir, fileName))
     except Exception as e:
         CraftCore.log.error(e)
         return False

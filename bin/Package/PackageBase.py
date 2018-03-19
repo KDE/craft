@@ -38,7 +38,8 @@ class PackageBase(CraftBase):
             self.unmerge()
 
         copiedFiles = []  # will be populated by the next call
-        utils.copyDir(self.imageDir(), CraftCore.standardDirs.craftRoot(), copiedFiles=copiedFiles)
+        if not utils.copyDir(self.imageDir(), CraftCore.standardDirs.craftRoot(), copiedFiles=copiedFiles):
+            return False
 
         # add package to installed database -> is this not the task of the manifest files ?
 
@@ -58,14 +59,10 @@ class PackageBase(CraftBase):
         """unmergeing the files from the filesystem"""
         CraftCore.log.debug("Packagebase unmerge called")
         packageList = CraftCore.installdb.getInstalledPackages(self.package)
-
         for package in packageList:
             fileList = package.getFilesWithHashes()
             self.unmergeFileList(CraftCore.standardDirs.craftRoot(), fileList)
             package.uninstall()
-        else:
-            CraftCore.log.debug("running of post uninstall scripts disabled!")
-
         return True
 
     def cleanBuild(self) -> bool:
