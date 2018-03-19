@@ -200,20 +200,17 @@ class PackageBase(CraftBase):
         """ delete files in the fileList if has matches """
         for filename, filehash in fileList:
             fullPath = os.path.join(rootdir, os.path.normcase(filename))
-            if os.path.isfile(fullPath):
+            if os.path.isfile(fullPath) or os.path.islink(fullPath):
                 algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
-                if not algorithm:
-                    currentHash = CraftHash.digestFile(fullPath, CraftHash.HashAlgorithm.MD5)
-                else:
-                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
-                if currentHash == filehash or filehash == "":
+                currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
+                if not filehash or currentHash == filehash:
                     OsUtils.rm(fullPath, True)
                 else:
                     CraftCore.log.warning(
                         f"We can't remove {fullPath} as its hash has changed,"
                         f" that usually implies that the file was modified or replaced")
             elif not os.path.isdir(fullPath) and os.path.lexists(fullPath):
-                # remove broken symlink
+                CraftCore.log.debug(f"Remove a dead symlink {fullPath}")
                 OsUtils.rm(fullPath, True)
             elif not os.path.isdir(fullPath):
                 CraftCore.log.warning("file %s does not exist" % fullPath)
