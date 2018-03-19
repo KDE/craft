@@ -48,7 +48,7 @@ def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     blockSize = 65536
     hash = getattr(hashlib, algorithm.name.lower())()
     if os.path.islink(filepath):
-        hash.update(os.readlink(filepath))
+        hash.update(os.readlink(filepath).encode("utf-8"))
     else:
         with open(filepath, "rb") as hashFile:
             buffer = hashFile.read(blockSize)
