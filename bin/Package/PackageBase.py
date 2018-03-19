@@ -188,10 +188,7 @@ class PackageBase(CraftBase):
         algorithm = CraftHash.HashAlgorithm.SHA256
         for filePath in filePaths:
             relativeFilePath = os.path.relpath(filePath, imagedir)
-            if os.path.islink(filePath):
-                digest = ""
-            else:
-                digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
+            digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
             ret.append((relativeFilePath, digest))
         return ret
 

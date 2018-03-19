@@ -46,13 +46,16 @@ def digestString(string : str, algorithm=HashAlgorithm.SHA256)-> str:
 def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     """ digests a file """
     blockSize = 65536
-    with open(filepath, "rb") as hashFile:
-        hash = getattr(hashlib, algorithm.name.lower())()
-        buffer = hashFile.read(blockSize)
-        while len(buffer) > 0:
-            hash.update(buffer)
+    hash = getattr(hashlib, algorithm.name.lower())()
+    if os.path.islink(filepath):
+        hash.update(os.readlink(filepath))
+    else:
+        with open(filepath, "rb") as hashFile:
             buffer = hashFile.read(blockSize)
-        return hash.hexdigest()
+            while len(buffer) > 0:
+                hash.update(buffer)
+                buffer = hashFile.read(blockSize)
+    return hash.hexdigest()
 
 
 def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=HashAlgorithm.SHA1):
