@@ -22,5 +22,5 @@ class Package(MakeFilePackageBase):
             utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
         return super().fetch()
 
-    def install():
+    def install(self):
         return utils.copyFile(os.path.join(self.sourceDir(), "dylibbundler"), os.path.join(self.installDir(), "bin", "dylibbundler"), linkOnly=False)
