@@ -38,7 +38,16 @@ class TypePackager(PackagerBase):
 The packager used can be decided at runtime
 """
 
-    def __init__(self, defaultType=eval(CraftCore.settings.get("Packager", "PackageType", "NullsoftInstallerPackager"))):
+    def __init__(self, defaultType=CraftCore.settings.get("Packager", "PackageType", "")):
+        if not defaultType:
+            if CraftCore.compiler.isWindows:
+                defaultType = NullsoftInstallerPackager
+            elif CraftCore.compiler.isMacOS:
+                defaultType = MacDMGPackager
+            else:
+                defaultType = SevenZipPackager
+        elif isinstance(defaultType, str):
+            defaultType = eval(defaultType)
         CraftCore.log.debug("TypePackager __init__ %s" % defaultType)
         self.__packager = None
         self.changePackager(defaultType)
