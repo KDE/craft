@@ -50,19 +50,13 @@ class GitPackage(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
-    def install(self):
-        if not BinaryPackageBase.install(self):
-            return False
-        utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
-                         os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"))
-        return True
+    def postInstall(self):
+        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
+                                os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"))
 
-    def qmerge(self):
-        if not BinaryPackageBase.qmerge(self):
-            return False
+    def postQmerge(self):
         gitDir = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "git")
-        utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
-        return True
+        return utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
 
 
 class Package(VirtualIfSufficientVersion):
