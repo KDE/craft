@@ -15,7 +15,7 @@ class PipPackageBase(PackageBase, SourceBase, PipBuildSystem, PackagerBase):
         PackagerBase.__init__(self)
 
     # from SourceBase:
-    def fetch(self, dummyRepoSource=None):
+    def fetch(self):
         return True
 
     def unpack(self):

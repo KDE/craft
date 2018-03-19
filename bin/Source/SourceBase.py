@@ -11,7 +11,7 @@ class SourceBase(CraftBase):
         CraftCore.debug.trace("SourceBase.__init__ called")
         CraftBase.__init__(self)
 
-    def fetch(self, dummyRepoSource=None):
+    def fetch(self):
         """fetch the source from a remote host and save it into a local destination"""
         utils.abstract()
 

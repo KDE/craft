@@ -47,7 +47,7 @@ class SvnSource(VersionSystemSourceBase):
             return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
         return True
 
-    def fetch(self, repopath=None):
+    def fetch(self):
         """ checkout or update an existing repository path """
         CraftCore.debug.trace("SvnSource.fetch")
         if self.noFetch:
@@ -55,10 +55,7 @@ class SvnSource(VersionSystemSourceBase):
             return True
 
         for i in range(self.repositoryUrlCount()):
-            if repopath:
-                url = repopath
-            else:
-                url = self.repositoryUrl(i)
+            url = self.repositoryUrl(i)
             self.__tryCheckoutFromRoot(url, self.checkoutDir(i), self.repositoryUrlOptions(i) != 'norecursive')
         return True
 
