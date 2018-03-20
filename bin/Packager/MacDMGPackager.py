@@ -57,14 +57,16 @@ class MacDMGPackager( CollectionPackagerBase ):
             CraftCore.log.warning("Failed to run dylibbundler")
 
         # that should not be needed with self build qt
-        qtbase = CraftPackageObject.get("libs/q5/qtbase")
+        qtbase = CraftPackageObject.get("libs/qt5/qtbase")
         if not qtbase or qtbase.isIgnored():
-            if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
+            if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-verbose=2"], env=env):
                 CraftCore.log.warning("Failed to run macdeployqt!")
 
-        dmgSrc = appPath.replace(".app", ".dmg")
-        dmgDest = os.path.join(self.packageDestinationDir(), os.path.basename(dmgSrc))
-        utils.copyFile(dmgSrc, dmgDest, linkOnly=False)
+        name = self.binaryArchiveName(fileType="", includeRevision=True)
+        dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
+        if not utils.system(["create-dmg", "-volname", name, dmgDest, appPath]):
+            return False
+
         CraftHash.createDigestFiles(dmgDest)
 
         return True
