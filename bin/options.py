@@ -237,10 +237,8 @@ class UserOptions(object):
         if package.path not in _instance.registeredOptions:
             _instance.registeredOptions[package.path] = {}
         if key in _instance.registeredOptions[package.path]:
-            try:
-                default = self._convert(_instance.registeredOptions[package.path][key], default)
-            except:
-                return False
+            raise BlueprintException(f"Failed to register option:\n[{package}]\n{key}={default}\nThe setting {key} is already registered.", package)
+            return False
         _instance.registeredOptions[package.path][key] = default
         if permanent:
             settings = _instance.initPackage(self)
