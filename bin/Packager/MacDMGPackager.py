@@ -38,7 +38,12 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         env = os.environ
         env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
-        if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
+        if not utils.systemWithoutShell(["dylibbundler",
+                                         "--overwrite-files",
+                                         "--bundle-deps",
+                                         "--install-path", "@executable_path/../Frameworks",
+                                         "--dest-dir", targetLibdir,
+                                         "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
             CraftCore.log.warning("Failed to run dylibbundler")
 
         # that should not be needed with self build qt
