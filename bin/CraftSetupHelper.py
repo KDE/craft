@@ -253,8 +253,9 @@ class SetupHelper(object):
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
     def setupEnvironment(self):
-        for var, value in CraftCore.settings.getSection("Environment"):  # set and overide existing values
-            self.addEnvVar(var, value)
+        for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
+            # the ini is case insensitive so sections are lowercase....
+            self.addEnvVar(var.upper(), value)
         self.prependEnvVar("PATH", os.path.dirname(sys.executable))
         self.getEnv()
         self.checkForEvilApplication()
