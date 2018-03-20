@@ -42,7 +42,7 @@ class MacDMGPackager( CollectionPackagerBase ):
             CraftCore.log.warning("Failed to run dylibbundler")
 
         # that should not be needed with self build qt
-        qtbase = CraftPackageObject("libs/q5/qtbase")
+        qtbase = CraftPackageObject.get("libs/q5/qtbase")
         if not qtbase or qtbase.isIgnored():
             if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
                 CraftCore.log.warning("Failed to run macdeployqt!")
