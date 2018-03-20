@@ -1,4 +1,5 @@
 from Packager.CollectionPackagerBase import *
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils import CraftHash
 
 class MacDMGPackager( CollectionPackagerBase ):
@@ -40,8 +41,11 @@ class MacDMGPackager( CollectionPackagerBase ):
         if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
             CraftCore.log.warning("Failed to run dylibbundler")
 
-        if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
-            CraftCore.log.warning("Failed to run macdeployqt!")
+        # that should not be needed with self build qt
+        qtbase = CraftPackageObject("libs/q5/qtbase")
+        if not qtbase or qtbase.isIgnored():
+            if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
+                CraftCore.log.warning("Failed to run macdeployqt!")
 
         dmgSrc = appPath.replace(".app", ".dmg")
         dmgDest = os.path.join(self.packageDestinationDir(), os.path.basename(dmgSrc))
