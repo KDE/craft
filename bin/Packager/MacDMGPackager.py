@@ -56,11 +56,8 @@ class MacDMGPackager( CollectionPackagerBase ):
                                          "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
             return False
 
-        # that should not be needed with self build qt
-        qtbase = CraftPackageObject.get("libs/qt5/qtbase")
-        if not qtbase or qtbase.isIgnored():
-            if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=2"], env=env):
-                return False
+        if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"], env=env):
+            return False
 
         name = self.binaryArchiveName(fileType="", includeRevision=True)
         dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
