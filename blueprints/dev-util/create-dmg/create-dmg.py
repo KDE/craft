@@ -23,5 +23,5 @@ class Package(BinaryPackageBase):
         return True
 
     def postInstall(self):
-        return utils.createSymlink(os.path.join(self.imageDir(), "dev-utils", "create-dmg", "create-dmg"),
-                                   os.path.join(self.imageDir(), "dev-utils", "bin", "create-dmg"))
+        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "create-dmg"),
+                                os.path.join(self.imageDir(), "dev-utils", "create-dmg", "create-dmg"))

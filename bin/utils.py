@@ -705,7 +705,20 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
+    if not os.path.exists(os.path.dirname(shim)):
+        os.makedirs(os.path.dirname(shim))
     if not OsUtils.isWin():
+        shim,_ = os.path.splitext(shim)
+        target,_ = os.path.splitext(target)
+        if not useAbsolutePath:
+            target = os.path.relpath(target, os.path.dirname(shim))
+        command = (f"#!/bin/bash\n"
+                   "parent_path=$(dirname \"${BASH_SOURCE[0]}\")\n"
+                  f"${{parent_path}}/{target} {args or ''} $@\n")
+        CraftCore.log.debug(f"Creating {shim}: {command}")
+        with open(shim, "wt+") as bash:
+            bash.write(command)
+        system(["chmod", "+x", shim])
         return True
     app = CraftCore.cache.findApplication("shimgen")
     if not app:
@@ -716,8 +729,6 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
         if srcPath.endswith(".exe"):
             srcPath = os.path.dirname(srcPath)
         target = os.path.relpath(target, srcPath)
-    if not os.path.exists(os.path.dirname(shim)):
-        os.makedirs(os.path.dirname(shim))
     command = [app, "--output", shim, "--path", target]
     if args:
         command += ["--command", args]

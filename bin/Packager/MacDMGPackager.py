@@ -64,7 +64,7 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         name = self.binaryArchiveName(fileType="", includeRevision=True)
         dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
-        if not utils.system(["create-dmg", "-volname", name, dmgDest, appPath]):
+        if not utils.system(["create-dmg", "--volname", name, dmgDest, appPath]):
             return False
 
         CraftHash.createDigestFiles(dmgDest)
