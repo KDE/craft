@@ -2,6 +2,8 @@ from Packager.CollectionPackagerBase import *
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils import CraftHash
 
+import glob
+
 class MacDMGPackager( CollectionPackagerBase ):
 
     @InitGuard.init_once
@@ -24,7 +26,14 @@ class MacDMGPackager( CollectionPackagerBase ):
 
 
         archive = self.archiveDir()
-        appPath = os.path.join(archive, self.defines['apppath'], f"{self.defines['appname']}.app")
+        appPath = self.defines['apppath']
+        if not appPath:
+            apps = glob.glob(os.path.join(archive, f"**/{self.defines['appname']}.app"), recursive=True)
+            if len(apps) != 1:
+                CraftCore.log.error(f"Failed to detect *.app for {self}, please provide self.defines['apppath']")
+                return False
+            appPath = apps[0]
+        appPath = os.path.join(archive, appPath)
         if os.path.exists(os.path.join(archive, "lib/plugins")):
             utils.mergeTree(os.path.join(archive, "lib/plugins"), os.path.join(appPath, "Contents/PlugIns/"))
         targetLibdir = os.path.join(appPath, "Contents/Frameworks/")
