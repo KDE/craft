@@ -48,19 +48,19 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         env = os.environ
         env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
-        if not utils.systemWithoutShell(["dylibbundler",
+        if not utils.system(["dylibbundler",
                                          "--overwrite-files",
                                          "--bundle-deps",
                                          "--install-path", "@executable_path/../Frameworks",
                                          "--dest-dir", targetLibdir,
                                          "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
-            CraftCore.log.warning("Failed to run dylibbundler")
+            return False
 
         # that should not be needed with self build qt
         qtbase = CraftPackageObject.get("libs/qt5/qtbase")
         if not qtbase or qtbase.isIgnored():
-            if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-verbose=2"], env=env):
-                CraftCore.log.warning("Failed to run macdeployqt!")
+            if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=2"], env=env):
+                return False
 
         name = self.binaryArchiveName(fileType="", includeRevision=True)
         dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
