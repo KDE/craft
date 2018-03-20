@@ -64,6 +64,8 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         name = self.binaryArchiveName(fileType="", includeRevision=True)
         dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
+        if os.path.exists(dmgDest):
+            utils.deleteFile(dmgDest)
         if not utils.system(["create-dmg", "--volname", name, dmgDest, appPath]):
             return False
 
