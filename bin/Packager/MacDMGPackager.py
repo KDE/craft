@@ -34,6 +34,7 @@ class MacDMGPackager( CollectionPackagerBase ):
                 return False
             appPath = apps[0]
         appPath = os.path.join(archive, appPath)
+        CraftCore.log.info(f"Packaging {appPath}")
         if os.path.exists(os.path.join(archive, "lib/plugins")):
             utils.mergeTree(os.path.join(archive, "lib/plugins"), os.path.join(appPath, "Contents/PlugIns/"))
         targetLibdir = os.path.join(appPath, "Contents/Frameworks/")
