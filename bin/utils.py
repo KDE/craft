@@ -117,8 +117,7 @@ def curlFile(url, destdir, filename=''):
         command += ["--cacert", cert]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirs",  "50"]
-    else:
-        command += ["-o", os.path.join(destdir, filename)]
+    command += ["-o", os.path.join(destdir, filename)]
     command += [url]
     CraftCore.log.debug("curlfile called")
 
