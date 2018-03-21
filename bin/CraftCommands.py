@@ -101,6 +101,8 @@ def setOption(packageNames : [str], option : str) -> bool:
     key, value = option.split("=", 1)
     for name in packageNames:
         package = CraftPackageObject.get(name)
+        # create instance to make sure options are registered
+        package.instance
         if not package:
             raise BlueprintNotFoundException(name)
         options = UserOptions.get(package)
