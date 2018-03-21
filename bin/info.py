@@ -43,6 +43,7 @@ class infoclass(object):
         # output of the dependencies
         self.runtimeDependencies = {}
         self.buildDependencies = {}
+        self.packagingDependencies = {}
 
         self.description = ""
         # tag words describing the package

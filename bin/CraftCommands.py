@@ -231,7 +231,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
             depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
             print(depType)
         else:
-            depType = DependencyType.Both
+            depType = DependencyType.All
         depList = depPackage.getDependencies(depType=depType)
 
         packages = []

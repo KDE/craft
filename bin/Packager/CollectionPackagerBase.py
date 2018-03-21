@@ -117,7 +117,7 @@ class CollectionPackagerBase(PackagerBase):
     def __getImageDirectories(self):
         """ return the image directories where the files are stored """
         imageDirs = []
-        depList = CraftDependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime,
+        depList = CraftDependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime|DependencyType.Packaging,
                                                                        ignoredPackages=self.ignoredPackages)
 
         for x in depList:
