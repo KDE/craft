@@ -342,9 +342,6 @@ class OptionsConfigure(OptionsBase):
         # directory for the configure tool, which could be enabled by this option. The value of
         # this option is added to sourceDir() and the result is used as source root directory.
         self.configurePath = None
-        # add build target to be included into build. This feature is cmake only and requires the
-        # usage of the 'macro_optional_add_subdirectory' macro. The value is a string.
-        self.onlyBuildTargets = None
 
         # add the cmake defines that are needed to build tests here
         self.testDefine = None

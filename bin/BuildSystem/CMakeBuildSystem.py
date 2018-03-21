@@ -33,23 +33,6 @@ class CMakeBuildSystem(BuildSystemBase):
         else:
             CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
 
-    def __onlyBuildDefines(self, buildOnlyTargets):
-        """This method returns a list of cmake defines to exclude targets from build"""
-        defines = ""
-        topLevelCMakeList = os.path.join(self.sourceDir(), "CMakeLists.txt")
-        if os.path.exists(topLevelCMakeList):
-            with open(topLevelCMakeList, 'r') as f:
-                lines = f.read().splitlines()
-            for line in lines:
-                if line.find("macro_optional_add_subdirectory") > -1:
-                    a = line.split("(")
-                    a = a[1].split(")")
-                    subdir = a[0].strip()
-                    if not subdir in buildOnlyTargets:
-                        defines += " -DBUILD_%s=OFF" % subdir
-        # print defines
-        return defines
-
     def configureOptions(self, defines=""):
         """returns default configure options"""
         options = "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF")
@@ -83,8 +66,6 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " " + self.subinfo.options.configure.toolsDefine + " "
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
             options += " " + self.subinfo.options.configure.staticArgs + " "
-        if self.subinfo.options.configure.onlyBuildTargets:
-            options += self.__onlyBuildDefines(self.subinfo.options.configure.onlyBuildTargets)
         if CraftCore.compiler.isIntel():
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
