@@ -72,11 +72,11 @@ def getFile(url, destdir, filename='') -> bool:
         _, _, path, _, _, _ = urllib.parse.urlparse(url)
         filename = os.path.basename(path)
 
-    if CraftCore.cache.findApplication("curl"):
-        return curlFile(url, destdir, filename)
-
     if CraftCore.cache.findApplication("wget"):
         return wgetFile(url, destdir, filename)
+
+    if CraftCore.cache.findApplication("curl"):
+        return curlFile(url, destdir, filename)
 
     if os.path.exists(os.path.join(destdir, filename)):
         return True
@@ -117,9 +117,6 @@ def curlFile(url, destdir, filename=''):
         command += ["--cacert", cert]
     # the default of 20 might not be enough for sourceforge ...
     command += ["--max-redirs",  "50"]
-    if not filename:
-        # Curl can't download to a custom directory on its own
-        return False
     else:
         command += ["-o", os.path.join(destdir, filename)]
     command += [url]
