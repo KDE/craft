@@ -92,7 +92,7 @@ class CraftDependencyPackage(CraftPackageObject):
                     and (not ignoredPackages or p.path not in ignoredPackages):
                 depList.extend(p.__getDependencies(depenendencyType & ~DependencyType.Packaging, ignoredPackages))
                 if depenendencyType & DependencyType.Packaging:
-                    depList.extend(p.__getDependencies(DependencyType.Packaging, ignoredPackages))
+                    depList.extend(p.__getDependencies(depenendencyType, ignoredPackages))
 
         if self.state != CraftDependencyPackage.State.Visited:
             self.state = CraftDependencyPackage.State.Visited
