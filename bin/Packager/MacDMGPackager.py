@@ -46,26 +46,25 @@ class MacDMGPackager( CollectionPackagerBase ):
             utils.mergeTree(os.path.join(archive, "share"), os.path.join(appPath, "Contents/Resources/"))
         utils.mergeTree(os.path.join(archive, "bin"), os.path.join(appPath, "Contents/MacOS/"))
 
-        env = os.environ
-        env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
-        if not utils.system(["dylibbundler",
-                                         "--overwrite-files",
-                                         "--bundle-deps",
-                                         "--install-path", "@executable_path/../Frameworks",
-                                         "--dest-dir", targetLibdir,
-                                         "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
-            return False
+        with utils.ScopedEnv({'DYLD_LIBRARY_PATH'] : os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
+            if not utils.system(["dylibbundler",
+                                            "--overwrite-files",
+                                            "--bundle-deps",
+                                            "--install-path", "@executable_path/../Frameworks",
+                                            "--dest-dir", targetLibdir,
+                                            "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"]):
+                return False
 
-        if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"], env=env):
-            return False
+            if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"]):
+                return False
 
-        name = self.binaryArchiveName(fileType="", includeRevision=True)
-        dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
-        if os.path.exists(dmgDest):
-            utils.deleteFile(dmgDest)
-        if not utils.system(["create-dmg", "--volname", name, dmgDest, appPath]):
-            return False
+            name = self.binaryArchiveName(fileType="", includeRevision=True)
+            dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
+            if os.path.exists(dmgDest):
+                utils.deleteFile(dmgDest)
+            if not utils.system(["create-dmg", "--volname", name, dmgDest, appPath]):
+                return False
 
-        CraftHash.createDigestFiles(dmgDest)
+            CraftHash.createDigestFiles(dmgDest)
 
-        return True
+            return True

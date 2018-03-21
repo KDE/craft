@@ -104,11 +104,11 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        env = os.environ
-        env["DESTDIR"] = self.installDir()
-        command = [self.makeProgram, self.makeOptions(self.subinfo.options.install.args)]
-        return (utils.system(" ".join(command), env=env) and
-                self._fixInstallPrefix())
+
+        with utils.ScopedEnv({"DESTDIR" : self.installDir()}):
+            command = [self.makeProgram, self.makeOptions(self.subinfo.options.install.args)]
+            return (utils.system(" ".join(command)) and
+                    self._fixInstallPrefix())
 
     def unittest(self):
         """running cmake based unittests"""
