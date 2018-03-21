@@ -230,6 +230,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                 return False
             depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
             print(depType)
+        elif action == "install-deps":
+            depType = DependencyType.Both
         else:
             depType = DependencyType.All
         depList = depPackage.getDependencies(depType=depType)
