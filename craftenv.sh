@@ -1,5 +1,3 @@
-set -e
-
 craftRoot="${BASH_SOURCE[0]}"
 if [[ -z "$craftRoot" ]];then
     craftRoot="$0"
