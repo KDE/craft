@@ -36,8 +36,12 @@ function export_lines() {
 }
 export_lines "$CRAFT_ENV"
 
+craft() {
+    python3.6 "$craftRoot/bin/craft.py" $@
+}
+
 cs() {
-    dir=$($craftRoot/bin/craft -q --ci-mode --get "sourceDir()" $1)
+    dir=$(craft -q --ci-mode --get "sourceDir()" $1)
     if (($? > 0));then
         echo $dir
     else
@@ -46,7 +50,7 @@ cs() {
 }
 
 cb() {
-    dir=$($craftRoot/bin/craft -q --ci-mode --get "buildDir()" $1)
+    dir=$(craft -q --ci-mode --get "buildDir()" $1)
     if (($? > 0));then
         echo $dir
     else
