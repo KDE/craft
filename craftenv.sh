@@ -1,3 +1,5 @@
+set -e
+
 craftRoot="${BASH_SOURCE[0]}"
 if [[ -z "$craftRoot" ]];then
     craftRoot="$0"
@@ -17,12 +19,21 @@ fi
 export craftRoot
 
 CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup))
-
-for line in "${CRAFT_ENV[@]}"; do
-  if [[ "$line"  =~ "=" ]] && [[ $line != _=* ]];then
-    export $line || true
-  fi
-done
+# Split the CraftSetupHelper.py output by newlines instead of any whitespace
+# to also handled environment variables containing spaces (e.g. $PS1)
+# See https://stackoverflow.com/q/24628076/894271
+function export_lines() {
+    local IFS=$'\n'
+    local lines=($1)
+    local i
+    for (( i=0; i<${#lines[@]}; i++ )) ; do
+        local line=${lines[$i]}
+        if [[ "$line"  =~ "=" ]] && [[ $line != _=* ]] ; then
+            export "$line" || true
+        fi
+    done
+}
+export_lines "$CRAFT_ENV"
 
 cs() {
     dir=$($craftRoot/bin/craft -q --ci-mode --get "sourceDir()" $1)
