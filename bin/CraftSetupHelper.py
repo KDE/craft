@@ -299,7 +299,7 @@ class SetupHelper(object):
         self.prependEnvVar("PATH", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin"))
 
         # add python site packages to pythonpath
-        self.prependEnvVar("PythonPath", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
+        self.prependEnvVar("PYTHONPATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "site-packages"))
 
 
         if CraftCore.compiler.isClang():
