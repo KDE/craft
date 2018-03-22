@@ -17,6 +17,9 @@ if [[ ! -d "$craftRoot" ]]; then
 fi
 
 export craftRoot
+if [ -n "$PS1" ]; then
+    export PS1="CRAFT: $PS1"
+fi
 
 CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup))
 # Split the CraftSetupHelper.py output by newlines instead of any whitespace
