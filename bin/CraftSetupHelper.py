@@ -331,6 +331,8 @@ class SetupHelper(object):
     def printEnv(self):
         self.setupEnvironment()
         for key, val in os.environ.items():
+            if key.startswith("BASH_FUNC_"):
+                continue
             CraftCore.log.info(f"{key}={val}")
 
     @property
