@@ -19,7 +19,7 @@ if [ -n "$PS1" ]; then
     export PS1="CRAFT: $PS1"
 fi
 
-CRAFT_ENV=($(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup))
+CRAFT_ENV=$(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup)
 # Split the CraftSetupHelper.py output by newlines instead of any whitespace
 # to also handled environment variables containing spaces (e.g. $PS1)
 # See https://stackoverflow.com/q/24628076/894271
