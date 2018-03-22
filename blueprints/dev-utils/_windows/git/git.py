@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = "default"
-        self.buildDependencies["gnuwin32/wget"] = "default"
+        self.buildDependencies["dev-utils/wget"] = "default"
         self.buildDependencies["dev-utils/shimgen"] = "default"
 
 

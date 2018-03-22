@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies(self):
-        self.buildDependencies["gnuwin32/wget"] = "default"
+        self.buildDependencies["dev-utils/wget"] = "default"
         self.buildDependencies["dev-utils/7zip"] = "default"
-        self.buildDependencies["gnuwin32/patch"] = "default"
-        self.buildDependencies["gnuwin32/sed"] = "default"
+        self.buildDependencies["dev-utils/patch"] = "default"
+        self.buildDependencies["dev-utils/sed"] = "default"
         self.buildDependencies["dev-utils/cmake"] = "default"
         self.buildDependencies["dev-utils/git"] = "default"
 

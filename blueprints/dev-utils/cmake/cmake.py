@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = "default"
-        self.buildDependencies["gnuwin32/patch"] = "default"
+        self.buildDependencies["dev-utils/patch"] = "default"
 
     def registerOptions(self):
         self.options.dynamic.registerOption("checkForNightlies", False)
