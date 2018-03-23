@@ -43,6 +43,8 @@ class CategoryPackageObject(object):
 class CraftPackageObject(object):
     __rootPackage = None
     __rootDirectories = []
+    # list of all leaves, unaffected by overrides etc
+    _allLeaves = {}
     _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__"}
     Ignores = re.compile("a^")
@@ -165,6 +167,7 @@ class CraftPackageObject(object):
                 if f[:-3] != package.name:
                     raise BlueprintException(f"Recipes must match the name of the directory: {fPath}", package)
                 package.source = fPath
+                CraftPackageObject._allLeaves[package.path] = package
         if package.children and package.source:
             raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
 
@@ -224,7 +227,7 @@ class CraftPackageObject(object):
                                 # don't reparent as we would override the actual package
                                 continue
                         node.parent = existingNode
-                    del child.parent.children[child.name]
+                    child.parent.children.pop(child.name)
                     existingNode.children.update(child.children)
             CraftPackageObject.__regiserNodes(child)
 
