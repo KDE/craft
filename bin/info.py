@@ -226,26 +226,29 @@ class infoclass(object):
             return out
         return None
 
-    def addCachedAutotoolsBuild(self, url, packageName):
+    def addCachedAutotoolsBuild(self, packageName):
         if not CraftCore.compiler.isMSVC():
             return
+        self.versionInfo.setDefaultValues()
         package = CraftPackageObject._allLeaves.get(packageName, None)
         if not package:
             CraftCore.log.warning(f"Failed to find {packageName}")
             return False
         packageName = package.path
-        if url.endswith("/"):
-            url = url[:-1]
-        json = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
-        if not json:
-            raise BlueprintException("Failed to load manifest", package)
-        manifest = CraftManifest.CraftManifest.fromJson(json)
-        if not packageName in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
-            CraftCore.log.warning(f"Failed to find {packageName} on {url}")
-            return
-        data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
-        self.targets[data.version] = f"{url}/{data.fileName}"
-        self.targetDigests[data.version] = (data.checksum, CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = data.version
+
         if package:
             self.description = package.subinfo.description
+
+        for key, url in self.targets.items():
+            if url.endswith("/"):
+                url = url[:-1]
+            json = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
+            if not json:
+                raise BlueprintException("Failed to load manifest", package)
+            manifest = CraftManifest.CraftManifest.fromJson(json)
+            if not packageName in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
+                CraftCore.log.warning(f"Failed to find {packageName} on {url}")
+                return
+            data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
+            self.targets[key] = f"{url}/{data.fileName}"
+            self.targetDigests[key] = (data.checksum, CraftHash.HashAlgorithm.SHA256)
