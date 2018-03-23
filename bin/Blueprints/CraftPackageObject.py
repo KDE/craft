@@ -220,15 +220,16 @@ class CraftPackageObject(object):
                     existingNode = CraftPackageObject.get(child.categoryInfo.pathOverride)
                     if not existingNode:
                         raise BlueprintNotFoundException(child.categoryInfo.pathOverride)
-                    for node in child.children.values():
+                    for nodeName, node in child.children.items():
                         # reparent the packages
-                        if node.name in existingNode.children:
+                        if nodeName in existingNode.children:
                             if not node.categoryInfo.isActive:
                                 # don't reparent as we would override the actual package
                                 continue
+                            else:
+                                CraftCore.log.debug(f"Overriding {existingNode.children[nodeName].path} with {node.path} ")
                         node.parent = existingNode
-                    child.parent.children.pop(child.name)
-                    existingNode.children.update(child.children)
+                        child.parent.children[nodeName] = node
             CraftPackageObject.__regiserNodes(child)
 
     @staticmethod

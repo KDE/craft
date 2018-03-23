@@ -44,7 +44,7 @@ class CraftDependencyPackage(CraftPackageObject):
             self.__resolveDependencies()
 
     def __resolveDependencies(self):
-        CraftCore.log.debug(f"solving package {self}")
+        CraftCore.log.debug(f"resolving package {self}")
         if not self.isCategory():
             subinfo = self.subinfo
             if self.depenendencyType & DependencyType.Runtime:
