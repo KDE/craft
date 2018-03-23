@@ -16,7 +16,8 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/git"] = "default"
 
         if CraftCore.compiler.isMacOS:
-            self.buildDependencies["dev-util/macdylibbundler"] = "default"
+            self.buildDependencies["dev-utils/macdylibbundler"] = "default"
+            self.buildDependencies["dev-utils/create-dmg"] = "default"
 
 
         if CraftCore.compiler.isMinGW():
