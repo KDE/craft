@@ -103,6 +103,11 @@ class GitSource(VersionSystemSourceBase):
 
         repoString = utils.replaceVCSUrl(repopath)
         [repoUrl, repoBranch, repoTag] = utils.splitVCSUrl(repoString)
+
+        # override the branch
+        if self.subinfo.options.dynamic.branch:
+            repoBranch = self.subinfo.options.dynamic.branch
+
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
