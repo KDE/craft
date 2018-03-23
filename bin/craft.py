@@ -216,6 +216,9 @@ def main():
 
         packageNames = tempArgs.packageNames
         if tempArgs.list_file:
+            if not os.path.exists(tempArgs.list_file):
+                CraftCore.log.error(f"List file {tempArgs.list_file!r} does not exist")
+                return False
             if not packageNames:
                 packageNames = []
             packageNames += CraftCommands.readListFile(tempArgs.list_file)
