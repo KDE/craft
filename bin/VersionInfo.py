@@ -90,7 +90,11 @@ class VersionInfo(object):
 
     @staticmethod
     def _replaceVar(text, ver, name):
-        replaces = {"VERSION": ver, "PACKAGE_NAME": name}
+        replaces = {
+            "VERSION": ver,
+            "PACKAGE_NAME": name,
+            "COMPILER_BITS": CraftCore.compiler.bits,
+            }
 
         split_ver = ver.split(".")
         if len(split_ver) == 3:
