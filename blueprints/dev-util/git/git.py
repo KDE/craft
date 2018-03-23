@@ -55,8 +55,9 @@ class GitPackage(BinaryPackageBase):
                                 os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"))
 
     def postQmerge(self):
-        gitDir = os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "git")
-        return utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
+        gitDir = os.path.join(CraftStandardDirs.craftRoot(), self.subinfo.targetInstallPath[self.buildTarget])
+        utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
+        return True
 
 
 class Package(VirtualIfSufficientVersion):
