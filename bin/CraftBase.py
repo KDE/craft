@@ -98,6 +98,12 @@ class CraftBase(object):
         """ add documentation """
         return os.path.dirname(self.package.source)
 
+    def installPrefix(self):
+        prefix = CraftCore.standardDirs.craftRoot()
+        if self.buildTarget in self.subinfo.targetInstallPath:
+            prefix = os.path.join(prefix, self.subinfo.targetInstallPath[self.buildTarget])
+        return prefix
+
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
         return os.path.realpath(os.path.join(CraftStandardDirs.craftRoot(), "build", self.package.path))

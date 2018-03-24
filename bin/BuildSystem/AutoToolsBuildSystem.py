@@ -110,7 +110,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la"):
                 return False
 
-        return self._fixInstallPrefix(self.shell.toNativePath(CraftCore.standardDirs.craftRoot()))
+        return self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix()))
 
     def runTest(self):
         """running unittests"""
@@ -119,7 +119,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def configureOptions(self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
-        prefix = self.shell.toNativePath(CraftCore.standardDirs.craftRoot())
+        prefix = self.shell.toNativePath(self.installPrefix())
         options += f" --prefix='{prefix}' "
         if OsDetection.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += f" --datarootdir='{prefix}/bin/data' "
