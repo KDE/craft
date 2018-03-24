@@ -16,6 +16,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/git"] = "default"
         self.buildDependencies["dev-utils/autoconf"] = "default"
         self.buildDependencies["dev-utils/automake"] = "default"
+        self.buildDependencies["dev-utils/libtool"] = "default"
 
         if CraftCore.compiler.isMacOS:
             self.buildDependencies["dev-utils/macdylibbundler"] = "default"
