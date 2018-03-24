@@ -9,7 +9,7 @@ class subinfo( info.infoclass ):
             self.targetInstallPath[ver] = "dev-utils"
 
         self.targetDigests["2.69"] = (['64ebcec9f8ac5b2487125a86a7760d2591ac9e1d3dbd59489633f9de62a57684'], CraftHash.HashAlgorithm.SHA256)
-        self.description = " Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
+        self.description = "Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
         self.defaultTarget = "2.69"
 
     def setDependencies( self ):
