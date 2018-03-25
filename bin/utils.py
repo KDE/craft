@@ -179,10 +179,10 @@ def unpackFile(downloaddir, filename, workdir):
     if ext == "":
         CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
-    elif OsUtils.isWin() and CraftCore.cache.findApplication("7za") and (
-                OsUtils.supportsSymlinks() or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
-        return un7zip(os.path.join(downloaddir, filename), workdir, ext)
-    elif ext == ".7z":
+
+    if CraftCore.cache.findApplication("7za") and (
+            OsUtils.isWin() and OsUtils.supportsSymlinks() or
+            not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
         return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
@@ -216,8 +216,7 @@ def un7zip(fileName, destdir, flag=None):
             command = [app, "x", "-si", f"-o{destdir}"]+ type + progressFlags
         else:
             tar = CraftCore.cache.findApplication("tar")
-            command = [tar, "--directory", destdir, "-xvf", "-"]
-            kw = {}
+            command = [tar, "--directory", destdir, "-xf", "-"]
     else:
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
