@@ -59,6 +59,7 @@ class SevenZipPackager(PackagerBase):
 
     def _compress(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
         archive = os.path.join(destDir, archiveName)
+        utils.createDir(os.path.dirname(archive))
         if os.path.isfile(archive):
             utils.deleteFile(archive)
         if OsUtils.isUnix():
