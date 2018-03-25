@@ -28,7 +28,7 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
         return UserOptions.instance()
 
     def test(self):
-        package = CraftPackageObject.get("dev-util/7zip")
+        package = CraftPackageObject.get("dev-utils/7zip")
         # init the package
         package.subinfo.registerOptions()
         instance = self._prepare({
