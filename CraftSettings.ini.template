@@ -139,7 +139,7 @@ EnableDailyUpdates = True
 ## The archive type for packages.
 ## Possible values are: zip, 7z
 ## Todo: rename
-7ZipArchiveType = 7z
+#7ZipArchiveType = 7z
 
 ## If set this will override the default package type.
 ## Possible values are:

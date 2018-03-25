@@ -44,26 +44,30 @@ class SevenZipPackager(PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self)
 
-    def _compress(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
+    def __7z(self, archive, sourceDir):
         app = CraftCore.cache.findApplication("7za")
         kw = {}
         progressFlags = []
         if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             progressFlags = ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
+        cmd = [app, "a", "-r",  archive, os.path.join(sourceDir, "*")] + progressFlags
+        return utils.system(cmd, displayProgress=True, **kw)
+
+    def __xz(self, archive, sourceDir):
+        return utils.system(["tar", "-cJf", archive, "-C", sourceDir, ".",])
+
+    def _compress(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
         archive = os.path.join(destDir, archiveName)
         if os.path.isfile(archive):
             utils.deleteFile(archive)
         if OsUtils.isUnix():
-            tar = CraftCore.cache.findApplication("tar")
-            kw["pipeProcess"] = subprocess.Popen([tar, "-cf", "-", "-C", sourceDir, ".",], stdout=subprocess.PIPE)
-            cmd = [app, "a", "-si",  archive] + progressFlags
+            if not self.__xz(archive, sourceDir):
+                return False
         else:
-            cmd = [app, "a", "-r",  archive, os.path.join(sourceDir, "*")] + progressFlags
+            if not self.__7z(archive, sourceDir):
+                return False
 
-        if not utils.system(cmd, displayProgress=True, **kw):
-            CraftCore.log.critical(f"while packaging. cmd: {cmd}")
-            return False
         if createDigests:
             if not CraftCore.settings.getboolean("Packager", "CreateCache"):
                 self._generateManifest(destDir, archiveName)
@@ -88,9 +92,8 @@ class SevenZipPackager(PackagerBase):
             dstpath = self.packageDestinationDir()
 
 
-        extention = CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
-        if OsUtils.isUnix():
-            extention = f"tar.{extention}"
+        extention = CraftCore.settings.get("Packager", "7ZipArchiveType",
+                                           "7z" if OsUtils.isWin() else "tar.xz")
 
         self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath)
         if not self.subinfo.options.package.packSources:
