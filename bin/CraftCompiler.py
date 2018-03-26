@@ -32,7 +32,6 @@ from CraftDebug import deprecated
 
 
 class CraftCompiler(object):
-    @unique
     class Platforms(IntFlag):
         NoPlatform  = 0
         Windows     = 0x1 << 0
@@ -43,6 +42,13 @@ class CraftCompiler(object):
         Unix        = Linux | MacOS | FreeBSD
         All         = ~0
 
+        # define inverted values to allow usage in info.ini
+        NotLinux     = ~Linux
+        NotMacOS     = ~MacOS
+        NotFreeBSD   = ~FreeBSD
+        NotWindows   = Unix
+        NotUnix      = ~Unix
+
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
@@ -52,12 +58,13 @@ class CraftCompiler(object):
     @unique
     class Compiler(IntFlag):
         NoCompiler  = 0
-        CL        = 0x1 << 0
+        CL          = 0x1 << 0
         GCC         = 0x1 << 1
         CLANG       = 0x1 << 2
 
         GCCLike     = CLANG | GCC
         All         = ~0
+
 
         @classmethod
         def fromString(cls, name):

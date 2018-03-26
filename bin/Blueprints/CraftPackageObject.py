@@ -153,7 +153,7 @@ class CraftPackageObject(object):
         if not package.categoryInfo:
             package.categoryInfo = CategoryPackageObject(path)
             if not package.categoryInfo.valid and package.parent:
-                package.categoryInfo = package.parent.categoryInfo
+                package.categoryInfo = copy.copy(package.parent.categoryInfo)
 
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
