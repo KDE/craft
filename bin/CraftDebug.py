@@ -81,12 +81,12 @@ class CraftDebug(object):
     def log(self):
         return self._log
 
-    def print(self, msg, file=sys.stdout):
+    def print(self, msg, file=sys.stdout, stack_info=False):
         if 0 <= self.verbose() < 2:
             print(msg, file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
-            self.log.debug(msg)
+            self.log.debug(msg, stack_info=stack_info)
         else:
-            self.log.debug(msg)
+            self.log.debug(msg, stack_info=stack_info)
 
     def printOut(self, msg, file=sys.stdout):
         """ Should only be used to report independent of the verbosity level
@@ -172,7 +172,7 @@ def deprecated(replacement=None):
             if not (_info.filename, _info.lineno) in CraftCore.debug.seenDeprecatedFunctions:
                 CraftCore.debug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
                 if CraftCore.settings.getboolean("CraftDebug", "LogDeprecated", False):
-                    CraftCore.debug.print(msg)
+                    CraftCore.debug.print(msg, stack_info=True)
                 else:
                     CraftCore.log.debug(msg, stack_info=True)
             return fun(*args, **kwargs)
