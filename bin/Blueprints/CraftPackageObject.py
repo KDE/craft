@@ -15,8 +15,8 @@ class CategoryPackageObject(object):
     def __init__(self, localPath : str):
         self.localPath = localPath
         self.desctiption = ""
-        self.platforms = {}
-        self.compiler = {}
+        self.platforms = CraftCore.compiler.Platforms.All
+        self.compiler = CraftCore.compiler.Compiler.All
         self.pathOverride = None
         self.valid = False
 
@@ -26,17 +26,28 @@ class CategoryPackageObject(object):
             info = configparser.ConfigParser()
             info.read(ini)
             self.desctiption = info["General"].get("description", "")
-            self.platforms = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
-            self.compiler = set(CraftCore.settings._parseList(info["General"].get("compiler", "")))
+            platform = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
+
+            if platform:
+                self.platforms = CraftCore.compiler.Platforms.NoPlatform
+                for p in platform:
+                    self.platforms |= CraftCore.compiler.Platforms.fromString(p)
+
+            compiler = set(CraftCore.settings._parseList(info["General"].get("compiler", "")))
+
+            if compiler:
+                self.compiler = CraftCore.compiler.Compiler.NoCompiler
+                for c in compiler:
+                    self.compiler |=  CraftCore.compiler.Compiler.fromString(c)
             self.pathOverride = info["General"].get("pathOverride", None)
 
     @property
     def isActive(self) -> bool:
-        if self.platforms and CraftCore.compiler.platform not in self.platforms:
-            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform}")
+        if not CraftCore.compiler.platform & self.platforms:
+            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
             return False
-        if self.compiler and CraftCore.compiler.compiler not in self.compiler:
-            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler}")
+        if not CraftCore.compiler.compiler & self.compiler:
+            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler._compiler!r}, supported compiler {self.compiler!r}")
             return False
         return True
 

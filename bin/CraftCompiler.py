@@ -23,6 +23,7 @@
 # SUCH DAMAGE.
 
 import re
+from enum import unique, IntFlag
 
 import utils
 from CraftConfig import *
@@ -31,7 +32,39 @@ from CraftDebug import deprecated
 
 
 class CraftCompiler(object):
-    __supportedPlatforms = ["windows", "linux", "macos", "freebsd"]
+    @unique
+    class Platforms(IntFlag):
+        NoPlatform  = 0
+        Windows     = 0x1 << 0
+        Linux       = 0x1 << 1
+        MacOS       = 0x1 << 2
+        FreeBSD     = 0x1 << 3
+
+        Unix        = Linux | MacOS | FreeBSD
+        All         = ~0
+
+        @classmethod
+        def fromString(cls, name):
+            if not hasattr(cls, "__sting_map"):
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+            return cls.__sting_map[name.lower()]
+
+    @unique
+    class Compiler(IntFlag):
+        NoCompiler  = 0
+        CL        = 0x1 << 0
+        GCC         = 0x1 << 1
+        CLANG       = 0x1 << 2
+
+        GCCLike     = CLANG | GCC
+        All         = ~0
+
+        @classmethod
+        def fromString(cls, name):
+            if not hasattr(cls, "__sting_map"):
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+            return cls.__sting_map[name.lower()]
+
 
     def __init__(self):
         compiler = CraftCore.settings.get("General", "KDECOMPILER", "")
@@ -58,22 +91,22 @@ class CraftCompiler(object):
         if len(split) != 3:
             raise Exception("Invalid compiler: " + CraftCore.settings.get("General", "ABI"))
 
-        self._platform, self._abi, self._compiler = split
+        platform, self._abi, compiler = split
+
+        self._compiler = CraftCompiler.Compiler.fromString(compiler)
+        self._platform = CraftCompiler.Platforms.fromString(platform)
 
         self._architecture = "x86" if self._abi.endswith("32") else "x64"
-
-        if not self._platform in CraftCompiler.__supportedPlatforms:
-            raise Exception("Unsupported platform: " + self._platform)
 
     def __str__(self):
         return "-".join(self.signature)
 
     @property
     def signature(self):
-        return self.platform, self.abi, self.compiler
+        return self.platform.name.lower(), self.abi, self.compiler.name.lower()
 
     @property
-    def platform(self):
+    def platform(self) -> Platforms:
         return self._platform
 
     @property
@@ -81,7 +114,7 @@ class CraftCompiler(object):
         return self._abi
 
     @property
-    def compiler(self):
+    def compiler(self) -> Compiler:
         return self._compiler
 
     @property
@@ -110,20 +143,24 @@ class CraftCompiler(object):
         return result
 
     @property
-    def isWindows(self):
-        return self.platform == "windows"
+    def isWindows(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.Windows
 
     @property
-    def isMacOS(self):
-        return self.platform == "macos"
+    def isMacOS(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.MacOS
 
     @property
-    def isLinux(self):
-        return self.platform == "linux"
+    def isLinux(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.Linux
 
     @property
-    def isFreeBSD(self):
-        return self.platform == "freebsd"
+    def isFreeBSD(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.FreeBSD
+
+    @property
+    def isUnix(self) -> bool:
+        return bool(self.platform & CraftCompiler.Platforms.Unix)
 
     @property
     def executableSuffix(self):
@@ -139,17 +176,17 @@ class CraftCompiler(object):
     def isX86(self):
         return self.architecture == "x86"
 
-    def isGCC(self):
-        return self.compiler == "gcc"
+    def isGCC(self) -> bool:
+        return self.compiler == CraftCompiler.Compiler.GCC
 
-    def isClang(self):
-        return self.compiler == "clang"
+    def isClang(self) -> bool:
+        return self.compiler == CraftCompiler.Compiler.GCC
 
-    def isGCCLike(self):
-        return self.isGCC() or self.isClang()
+    def isGCCLike(self) -> bool:
+        return bool(self.compiler & CraftCompiler.Compiler.GCCLike)
 
-    def isCl(self):
-        return self.compiler == "cl"
+    def isCl(self) -> bool:
+        return self.compiler == CraftCompiler.Compiler.CL
 
     def isMinGW(self):
         return self.abi.startswith("mingw")
@@ -198,7 +235,7 @@ class CraftCompiler(object):
 
     def getVersion(self):
         if self.isGCCLike():
-            return self.getGCCLikeVersion(self.compiler)
+            return self.getGCCLikeVersion(self.compiler.name)
         elif self.isMSVC():
             return self.getInternalVersion()
         else:
