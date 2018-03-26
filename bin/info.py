@@ -9,6 +9,7 @@
 import VersionInfo
 from Utils import CraftHash, CraftManifest
 from options import *
+from CraftDebug import deprecated
 
 
 class infoclass(object):
@@ -67,14 +68,15 @@ class infoclass(object):
         self.setDependencies()
 
     @property
-    def package(self) -> str:
+    @deprecated("self.parent")
+    def package(self) -> CraftPackageObject:
         return self.parent
 
     @property
     def defaultTarget(self) -> str:
         target = self.options.dynamic.version
         # TODO: legacy behaviour
-        if ("BlueprintVersions", self.package.package.path) in CraftCore.settings:
+        if ("BlueprintVersions", self.parent.package.path) in CraftCore.settings:
             target = CraftCore.settings.get("BlueprintVersions", self.package.package.path)
             CraftCore.log.warning(f"You are using the depreaced:\n"
                                   f"[BlueprintVersions]\n"
