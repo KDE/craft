@@ -218,17 +218,6 @@ def getIgnores():
             ignores.append(ignore)
             settings.add_section(ignore)
             settings[ignore]["ignored"] = "True"
-
-    addIgnore("gnuwin32")
-    addIgnore("dev-util")
-    addIgnore("binary")
-    addIgnore("kdesupport/kdewin")
-
-    print(f"On your OS we blacklist the following packages.\n"
-          f"  {ignores}")
-    print("On Unix systems we recommend to get third party libraries from your distributions package manager.")
-    addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist the win32libs branch?",
-                                             [("Yes", "win32libs"), ("No", None)]))
     print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development "
           "packages provided by the distribution.")
     addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
