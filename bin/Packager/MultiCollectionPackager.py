@@ -20,11 +20,11 @@ class MultiCollectionPackager(PortablePackager, NullsoftInstallerPackager):
 
         # redist is directly included by libs/runtime
         self.defines["vcredist"] = "none"
-        self.generateNSISInstaller()
-        destDir, archiveName = os.path.split(self.defines["setupname"])
+        setupname = self.generateNSISInstaller()
+        destDir, archiveName = os.path.split(setupname)
         self._generateManifest(destDir, archiveName)
-        CraftHash.createDigestFiles(self.defines["setupname"])
+        CraftHash.createDigestFiles(setupname)
 
         setupname = self.createPortablePackage()
-        CraftHash.createDigestFiles(self.defines["setupname"])
+        CraftHash.createDigestFiles(setupname)
         return True
