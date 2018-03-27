@@ -126,7 +126,7 @@ class CraftManifest(object):
         TODO: in that case we are merging all repositories so we should also merge the cache files
         """
         old = None
-        if not urls and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings and not os.path.isfile(manifestFileName):
+        if not urls and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings:
             urls = [CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl").rstrip("/")]
         if urls:
             old = CraftManifest()
