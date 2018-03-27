@@ -187,7 +187,7 @@ class CraftCompiler(object):
         return self.compiler == CraftCompiler.Compiler.GCC
 
     def isClang(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.GCC
+        return self.compiler == CraftCompiler.Compiler.CLANG
 
     def isGCCLike(self) -> bool:
         return bool(self.compiler & CraftCompiler.Compiler.GCCLike)
