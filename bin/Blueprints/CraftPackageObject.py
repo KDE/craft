@@ -92,20 +92,15 @@ class CraftPackageObject(object):
 
     @property
     def path(self):
-        if self.name == "/":
-            return "/"
         if not self.__path:
-            components = []
-            package = self
-            while package:
-                if not package.name:
-                    break
-                components.append(package.name)
-                package = package.parent
-            if components:
-                components.pop(-1)
-                components.reverse()
-                self.__path = "/".join(components)
+            if not self.name:
+                return None
+            if self.name == "/":
+                self.__path = self.name
+            elif self.parent.path == "/":
+                self.__path = self.name
+            else:
+                self.__path = "/".join([self.parent.path, self.name])
         return self.__path
 
     @staticmethod
