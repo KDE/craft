@@ -25,7 +25,6 @@ class MultiCollectionPackager(PortablePackager, NullsoftInstallerPackager):
         self._generateManifest(destDir, archiveName)
         CraftHash.createDigestFiles(self.defines["setupname"])
 
-        del self.defines["setupname"]
-        self.createPortablePackage()
+        setupname = self.createPortablePackage()
         CraftHash.createDigestFiles(self.defines["setupname"])
         return True

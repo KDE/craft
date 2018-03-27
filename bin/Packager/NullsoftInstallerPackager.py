@@ -185,6 +185,7 @@ You can add your own defines into self.defines as well.
         if not utils.systemWithoutShell([self.nsisExe, verboseString] + cmdDefines + [configuredScrip],
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
+        return defines["setupname"]
 
     def createPackage(self):
         """ create a package """
@@ -197,8 +198,8 @@ You can add your own defines into self.defines as well.
             # we use the redist installer
             self.ignoredPackages.append("libs/runtime")
         self.internalCreatePackage()
-        self.generateNSISInstaller()
-        destDir, archiveName = os.path.split(self.defines["setupname"])
+        setupname = self.generateNSISInstaller()
+        destDir, archiveName = os.path.split(setupname)
         self._generateManifest(destDir, archiveName)
-        CraftHash.createDigestFiles(self.defines["setupname"])
+        CraftHash.createDigestFiles(setupname)
         return True
