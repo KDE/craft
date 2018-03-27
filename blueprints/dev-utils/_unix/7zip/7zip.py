@@ -23,5 +23,12 @@ class Package(MakeFilePackageBase):
         MakeFilePackageBase.__init__(self)
         self.subinfo.options.useShadowBuild = False
 
+    def configure(self):
+        if CraftCore.compiler.isMacOS:
+            makefile = os.path.join(self.sourceDir(), "makefile.machine")
+            utils.deleteFile(makefile)
+            return utils.copyFile(os.path.join(self.sourceDir(), "makefile.macosx_llvm_64bits"), makefile)
+        return True
+
     def install(self):
         return utils.copyFile(os.path.join(self.sourceDir(), "bin", "7za"), os.path.join(self.installDir(), "bin", "7za"), linkOnly=False)
