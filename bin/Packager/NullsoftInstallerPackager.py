@@ -65,7 +65,7 @@ You can add your own defines into self.defines as well.
         self._isInstalled = False
 
     def _setDefaults(self, defines):
-        defiens = dict(defines)
+        defines = dict(defines)
         defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE")
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
