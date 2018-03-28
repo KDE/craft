@@ -34,6 +34,7 @@ bin/data/xml/.*
 
 # other documentation (we prefer the online documentation atm)
 bin/data/doc/.*
+share/doc/.*
 
 # cmake stuff
 share/apps/cmake/.*
