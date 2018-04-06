@@ -26,8 +26,8 @@ class CraftVersion(Version):
         if not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
         if self.isBranch or other.isBranch:
-            return 0 if (self.versionstr == other.versionstr or (self.isBranch and other.isBranch)) \
-                else 1 if self.isBranch and not other.isBranch else -1
+            return (0 if self.versionstr == other.versionstr
+                    else -1 if self.isBranch and not other.isBranch else 1)
         return 0 if self.version == other.version else -1 if self.version < other.version else 1
 
     @property
