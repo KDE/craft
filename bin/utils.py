@@ -758,8 +758,11 @@ def replaceSymlinksWithCopys(path):
                     CraftCore.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
                     continue
                 if toReplace != path:
-                    deleteFile(path)
-                    copyFile(toReplace, path)
+                    os.unlink(path)
+                    if os.path.isdir(toReplace):
+                        copyDir(toReplace, path)
+                    else:
+                        copyFile(toReplace, path)
     return True
 
 
