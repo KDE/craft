@@ -31,7 +31,7 @@ class VersionInfo(object):
     @property
     def data(self):
         if not self._data:
-            package = self.subinfo.package.package
+            package = self.subinfo.parent.package
             if not self._fileName:
                 filePath = OsUtils.toUnixPath(os.path.dirname(package.source))
                 while True:
@@ -57,7 +57,7 @@ class VersionInfo(object):
                         if k in self._data.info:
                             setattr(self._data, k, CraftCore.settings._parseList(self._data.info[k]))
 
-                    CraftCore.log.debug(f"Found a version info for {self.subinfo.package} in {self._fileName}")
+                    CraftCore.log.debug(f"Found a version info for {self.subinfo.parent} in {self._fileName}")
         return self._data
 
     @property
@@ -131,7 +131,7 @@ class VersionInfo(object):
             self._include.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl, packageName, patchLevel)
 
         if packageName is None:
-            packageName = self.subinfo.package.package.name
+            packageName = self.subinfo.parent.package.name
         if tarballUrl is None:
             tarballUrl = self.data.info.get("tarballUrl", None)
         if tarballDigestUrl is None:
@@ -166,4 +166,4 @@ class VersionInfo(object):
             self.subinfo.defaultTarget = defaultTarget
 
     def packageName(self):
-        return self.subinfo.package.package.path
+        return self.subinfo.parent.package.path

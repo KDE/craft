@@ -77,17 +77,17 @@ class infoclass(object):
         target = self.options.dynamic.version
         # TODO: legacy behaviour
         if ("BlueprintVersions", self.parent.package.path) in CraftCore.settings:
-            target = CraftCore.settings.get("BlueprintVersions", self.package.package.path)
+            target = CraftCore.settings.get("BlueprintVersions", self.parent.package.path)
             CraftCore.log.warning(f"You are using the depreaced:\n"
                                   f"[BlueprintVersions]\n"
-                                  f"{self.package.package.path} = {target}\n\n"
+                                  f"{self.parent.package.path} = {target}\n\n"
                                   f"Please use CraftOptions.ini\n"
-                                  f"[{self.package.package.path}]\n"
+                                  f"[{self.parent.package.path}]\n"
                                   f"version = {target}")
         if target in self.targets or target in self.svnTargets:
             return target
         if target:
-            CraftCore.log.warning(f"You defined an invalid target for {self.package.package.path}")
+            CraftCore.log.warning(f"You defined an invalid target for {self.parent.package.path}")
         return self._defaultTarget
 
 
