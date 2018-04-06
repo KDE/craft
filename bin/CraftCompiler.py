@@ -298,5 +298,6 @@ if __name__ == '__main__':
     print("Compiler Name: %s" % CraftCore.compiler.getCompilerName())
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
     if CraftCore.compiler.isGCCLike():
-        print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler))
-        print("Compiler Target: %s" % CraftCore.compiler._getGCCTarget())
+        print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
+        if CraftCore.compiler.isGCC():
+            print("Compiler Target: %s" % CraftCore.compiler._getGCCTarget())
