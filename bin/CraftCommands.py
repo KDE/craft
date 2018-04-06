@@ -182,16 +182,11 @@ def packageIsOutdated(package):
     for pack in installed:
         version = pack.getVersion()
         if not version: continue
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-            # automatically downgreade in ci mode
-            return package.version != version
-        else:
-            cacheVersion = pack.getCacheVersion()
-            if cacheVersion and cacheVersion != CraftBase.CraftBase.cacheVersion():
-                # can only happen for packages installed from cache
-                return True
-            return CraftVersion(package.version) > CraftVersion(version)
-
+        cacheVersion = pack.getCacheVersion()
+        if cacheVersion and cacheVersion != CraftBase.CraftBase.cacheVersion():
+            # can only happen for packages installed from cache
+            return True
+        return package.version != version
 
 def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
     key = command.replace("()", "")
