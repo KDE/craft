@@ -14,6 +14,7 @@ class subinfo( info.infoclass ):
 
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["dev-utils/m4"] = "default"
 
 from Package.AutoToolsPackageBase import *
 
