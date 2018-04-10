@@ -287,8 +287,9 @@ class CollectionPackagerBase(PackagerBase):
 
         if CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
             files = []
-            for pattern in ["**/*.dll", "**/*.exe"]:
-                files.extend(glob.glob(os.path.join(archiveDir, pattern), recursive=True))
+            if CraftCore.compiler.isWindows:
+                for pattern in ["**/*.dll", "**/*.exe"]:
+                    files.extend(glob.glob(os.path.join(archiveDir, pattern), recursive=True))
             if not utils.sign(files):
                 return False
         return True
