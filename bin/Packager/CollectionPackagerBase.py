@@ -143,12 +143,10 @@ class CollectionPackagerBase(PackagerBase):
                                                                        ignoredPackages=self.ignoredPackages)
 
         for x in depList:
-            if isinstance(x, SourceOnlyPackageBase):
+            _package = x.instance
+            if isinstance(_package, SourceOnlyPackageBase):
                 CraftCore.log.debug(f"Ignoring package it is source only: {x}")
                 continue
-
-            _package = x.instance
-
             imageDirs.append((x.instance.imageDir(), x.subinfo.options.package.disableStriping))
             # this loop collects the files from all image directories
             CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
