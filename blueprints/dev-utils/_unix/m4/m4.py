@@ -12,9 +12,6 @@ class subinfo( info.infoclass ):
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
         self.defaultTarget = "1.4.18"
 
-    def setDependencies( self ):
-        self.runtimeDependencies["virtual/base"] = "default"
-
 from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase ):

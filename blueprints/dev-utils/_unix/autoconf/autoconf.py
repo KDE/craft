@@ -13,8 +13,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = "2.69"
 
     def setDependencies( self ):
-        self.runtimeDependencies["virtual/base"] = "default"
-        self.runtimeDependencies["dev-utils/m4"] = "default"
+        self.buildDependencies["dev-utils/m4"] = "default"
 
 from Package.AutoToolsPackageBase import *
 
