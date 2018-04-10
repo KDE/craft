@@ -844,6 +844,4 @@ def sign(fileName):
             sign.signTool = signTool
 
     subjectName = CraftCore.settings.get("CodeSigning", "SubjectName")
-    if os.path.isdir(fileName):
-        fileName = os.path.join(fileName, "*")
     return system([sign.signTool, "sign", "/v", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a", fileName])

@@ -232,6 +232,8 @@ class CollectionPackagerBase(PackagerBase):
                 elif OsUtils.isUnix():
                     if not os.path.islink(entry_target) and ".so" in entry_target or os.access(entry_target, os.X_OK):
                         self.strip(entry_target)
+            if not utils.sign(entry_target):
+                return False
         return True
 
     def internalCreatePackage(self) -> bool:
@@ -244,7 +246,7 @@ class CollectionPackagerBase(PackagerBase):
         for directory, strip in self.__getImageDirectories():
             imageDir = archiveDir
             if os.path.exists(directory):
-                if not (self.copyFiles(directory, imageDir, strip) and utils.sign(directory)):
+                if not self.copyFiles(directory, imageDir, strip):
                     return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
