@@ -4,6 +4,7 @@
 #
 import fileinput
 import types
+import glob
 
 from Packager.PackagerBase import *
 from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
@@ -232,8 +233,6 @@ class CollectionPackagerBase(PackagerBase):
                 elif OsUtils.isUnix():
                     if not os.path.islink(entry_target) and ".so" in entry_target or os.access(entry_target, os.X_OK):
                         self.strip(entry_target)
-            if not utils.sign(entry_target):
-                return False
         return True
 
     def internalCreatePackage(self) -> bool:
@@ -263,7 +262,16 @@ class CollectionPackagerBase(PackagerBase):
                     if not utils.mergeTree(path, binPath):
                         return False
 
-        return self.preArchive()
+        if not self.preArchive():
+            return False
+
+        if CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+            files = []
+            for pattern in ["**/*.dll", "**/*.exe"]:
+                files.extend(glob.glob(os.path.join(archiveDir, pattern), recursive=True))
+            if not utils.sign(" ".join(files)):
+                return False
+        return True
 
     def preArchive(self):
         return True

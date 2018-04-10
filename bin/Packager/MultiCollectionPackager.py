@@ -16,7 +16,8 @@ class MultiCollectionPackager(PortablePackager, NullsoftInstallerPackager):
 
         if not self.isNsisInstalled():
             return False
-        self.internalCreatePackage()
+        if not self.internalCreatePackage():
+            return False
 
         # redist is directly included by libs/runtime
         self.defines["vcredist"] = "none"
