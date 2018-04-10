@@ -17,6 +17,7 @@ import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
+import json
 
 import Notifier.NotificationLoader
 from CraftConfig import *
@@ -25,6 +26,7 @@ from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 import Utils.CraftCache
 from CraftDebug import deprecated
+from CraftSetupHelper import SetupHelper
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -821,3 +823,27 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     with open(outFile, "wt+") as f:
         f.write(script)
     return True
+
+
+def sign(fileName):
+    if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+        return True
+    if not CraftCore.compiler.isWindows:
+        CraftCore.log.warning("Code signing is currently only supported on Windows")
+        return True
+
+    if not hasattr(sign, "signTool"):
+        signTool = CraftCore.cache.findApplication("signtool")
+        if not signTool:
+            env = SetupHelper.getMSVCEnv()
+            signTool = CraftCore.cache.findApplication("signtool", env["PATH"])
+        if not signTool:
+            CraftCore.log.warning("Code signing requires a VisualStudio installation")
+            return False
+        else:
+            sign.signTool = signTool
+
+    subjectName = CraftCore.settings.get("CodeSigning", "SubjectName")
+    if os.path.isdir(fileName):
+        fileName = os.path.join(fileName, "*")
+    return system([sign.signTool, "sign", "/v", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a", fileName])

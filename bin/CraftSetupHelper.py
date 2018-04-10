@@ -6,6 +6,7 @@
 import argparse
 import collections
 import subprocess
+import copy
 
 from CraftConfig import *
 from CraftCore import CraftCore
@@ -39,7 +40,8 @@ class SetupHelper(object):
             OsUtils.enableAnsiColors()
 
 
-    def _getOutput(self, command, shell=False):
+    @staticmethod
+    def _getOutput(command, shell=False):
         CraftCore.log.debug(f"SetupHelper._getOutput: {command}")
         p = subprocess.run(command,
                            stdout=subprocess.PIPE,
@@ -107,7 +109,7 @@ class SetupHelper(object):
         def _subst(path, drive):
             if not os.path.exists(path):
                 os.makedirs(path)
-            self._getOutput(["subst",
+            SetupHelper._getOutput(["subst",
                              CraftCore.settings.get("ShortPath", drive),
                              path])
 
@@ -154,48 +156,57 @@ class SetupHelper(object):
         CraftCore.log.debug(f"Setting {key}={val}")
         os.environ[key] = val
 
-    def stringToEnv(self, string):
+    @staticmethod
+    def stringToEnv(string : str):
+        env = copy.deepcopy(os.environ)
         for line in string.split("\n"):
             key, value = line.strip().split("=", 1)
-            os.environ[key] = value
+            env[key] = value
+        return env
 
-    def getEnv(self):
-        if CraftCore.compiler.isMSVC():
-            architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
-            version = CraftCore.compiler.getInternalVersion()
-            vswhere = os.path.join(CraftStandardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-            command = [vswhere, "-version", f"[{version},{version+1})", "-property", "installationPath", "-nologo", "-latest"]
+    @staticmethod
+    def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
+        architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
+        vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
+        command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
+        if version:
+            command += ["-version", f"[{version},{version+1})"]
             if version < 15:
                 command.append("-legacy")
             else:
                 command += ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
-            _, path = self._getOutput(command)
-            arg = architectures[CraftCore.compiler.architecture] + ("_cross" if not CraftCore.compiler.isNative() else "")
-            path = os.path.join(path, "VC")
-            if version >= 15:
-                path = os.path.join(path, "Auxiliary", "Build")
-            path = os.path.join(path, "vcvarsall.bat")
-            if not os.path.isfile(path):
-                log(f"Failed to setup msvc compiler.\n"
-                    f"{path} does not exist.")
-                exit(1)
-            status, result = self._getOutput(f"\"{path}\" {arg} > NUL && set", shell=True)
-            if status != 0:
-                log(f"Failed to setup msvc compiler.\n"
-                    f"Command: {result} ")
-                exit(1)
-            return self.stringToEnv(result)
+        _, path = SetupHelper._getOutput(command)
+        arg = architectures[architecture] + ("_cross" if not native else "")
+        path = os.path.join(path, "VC")
+        if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
+            path = os.path.join(path, "Auxiliary", "Build")
+        path = os.path.join(path, "vcvarsall.bat")
+        if not os.path.isfile(path):
+            log(f"Failed to setup msvc compiler.\n"
+                f"{path} does not exist.")
+            exit(1)
+        status, result = SetupHelper._getOutput(f"\"{path}\" {arg} > NUL && set", shell=True)
+        if status != 0:
+            log(f"Failed to setup msvc compiler.\n"
+                f"Command: {result} ")
+            exit(1)
+        return SetupHelper.stringToEnv(result)
 
+    def getEnv(self):
+        if CraftCore.compiler.isMSVC():
+            return SetupHelper.getMSVCEnv(CraftCore.compiler.getInternalVersion(),
+                                                                  CraftCore.compiler.architecture,
+                                                                  CraftCore.compiler.isNative())
         elif CraftCore.compiler.isIntel():
             architectures = {"x86": "ia32", "x64": "intel64"}
             programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
-            status, result = self._getOutput(
+            status, result = SetupHelper._getOutput(
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
                     programFiles, architectures[CraftCore.compiler.architecture]), shell=True)
             if status != 0:
                 log("Failed to setup intel compiler")
                 exit(1)
-            return self.stringToEnv(result)
+            return SetupHelper.stringToEnv(result)
 
     def setXDG(self):
         self.prependEnvVar("XDG_DATA_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "share")])
@@ -257,7 +268,7 @@ class SetupHelper(object):
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
         self.prependEnvVar("PATH", os.path.dirname(sys.executable))
-        self.getEnv()
+        os.environ = self.getEnv()
         self.checkForEvilApplication()
 
         self.addEnvVar("KDEROOT", CraftStandardDirs.craftRoot())

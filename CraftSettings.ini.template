@@ -212,5 +212,10 @@ Enabled = False
 ## Delete the build folder after the install
 ClearBuildFolder = False
 
+[CodeSigning]
+Enabled = False
+SubjectName = K Desktop Environment e.V.
+
+
 [Version]
 ConfigVersion = 4

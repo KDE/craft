@@ -92,11 +92,11 @@ class CraftCache(object):
             CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
             self._appCache[app] = appLocation
         else:
-            CraftCore.log.debug(f"Craft was unable to locate: {app}")
+            CraftCore.log.debug(f"Craft was unable to locate: {app}, in {path}")
             return None
         return appLocation
 
-    def getCommandOutput(self, app:str, command:str, testName:str=None) -> (int, bool):
+    def getCommandOutput(self, app:str, command:str, testName:str=None) -> (int, str):
         if not testName:
             testName = f"\"{app}\" {command}"
         app = self.findApplication(app)

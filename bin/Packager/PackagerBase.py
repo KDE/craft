@@ -57,3 +57,4 @@ class PackagerBase(CraftBase):
             out  += self.defines["shortcuts"]
         return out
 
+

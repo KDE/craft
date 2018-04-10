@@ -199,6 +199,7 @@ You can add your own defines into self.defines as well.
             self.ignoredPackages.append("libs/runtime")
         self.internalCreatePackage()
         setupname = self.generateNSISInstaller()
+        utils.sign(setupname)
         destDir, archiveName = os.path.split(setupname)
         self._generateManifest(destDir, archiveName)
         CraftHash.createDigestFiles(setupname)

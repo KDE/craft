@@ -243,6 +243,7 @@ class CollectionPackagerBase(PackagerBase):
             imageDir = archiveDir
             if os.path.exists(directory):
                 self.copyFiles(directory, imageDir, strip)
+                utils.sign(directory)
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
 
