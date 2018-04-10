@@ -269,7 +269,7 @@ class CollectionPackagerBase(PackagerBase):
             files = []
             for pattern in ["**/*.dll", "**/*.exe"]:
                 files.extend(glob.glob(os.path.join(archiveDir, pattern), recursive=True))
-            if not utils.sign(" ".join(files)):
+            if not utils.sign(files):
                 return False
         return True
 

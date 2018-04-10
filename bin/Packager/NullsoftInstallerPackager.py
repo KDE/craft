@@ -186,7 +186,7 @@ You can add your own defines into self.defines as well.
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
             return None
-        if not utils.sign(defines["setupname"]):
+        if not utils.sign([defines["setupname"]]):
             return None
         return defines["setupname"]
 

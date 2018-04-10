@@ -825,7 +825,7 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     return True
 
 
-def sign(fileName):
+def sign(fileNames : [str]):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.isWindows:
@@ -844,4 +844,4 @@ def sign(fileName):
             sign.signTool = signTool
 
     subjectName = CraftCore.settings.get("CodeSigning", "SubjectName")
-    return system([sign.signTool, "sign", "/v", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a", fileName])
+    return system([sign.signTool, "sign", "/v", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"] + fileNames)
