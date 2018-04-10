@@ -29,6 +29,7 @@ import glob
 from Packager.PackagerBase import *
 from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Blueprints.CraftPackageObject import *
+from Package.SourceOnlyPackageBase import *
 
 
 def toRegExp(fname, targetName) -> re:
@@ -142,8 +143,8 @@ class CollectionPackagerBase(PackagerBase):
                                                                        ignoredPackages=self.ignoredPackages)
 
         for x in depList:
-            if x.isVirtualPackage():
-                CraftCore.log.debug(f"Ignoring package b/c it is virtual: {x}")
+            if isinstance(x, SourceOnlyPackageBase):
+                CraftCore.log.debug(f"Ignoring package it is source only: {x}")
                 continue
 
             _package = x.instance

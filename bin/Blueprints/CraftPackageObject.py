@@ -283,15 +283,6 @@ class CraftPackageObject(object):
     def subinfo(self):
         return self.instance.subinfo
 
-
-    def isVirtualPackage(self):
-        """ check if that package is of VirtualPackageBase """
-        if self.isCategory():
-            return False
-        for baseClassObject in self.instance.__class__.__bases__:
-            if baseClassObject.__name__ == 'VirtualPackageBase': return True
-        return False
-
     def isCategory(self):
         return not self.source
 

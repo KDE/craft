@@ -1,20 +1,29 @@
 from Package.SourceOnlyPackageBase import *
 
-
-class VirtualPackageBase(SourceOnlyPackageBase):
-    """provides a base class for virtual packages"""
-
+# a special package providing source components for another module.
+# see clang
+class SourceComponentPackageBase(SourceOnlyPackageBase):
     def __init__(self):
-        CraftCore.log.debug("VirtualPackageBase.__init__ called")
+        CraftCore.log.debug("SourceComponentPackageBase.__init__ called")
         SourceOnlyPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
 
-    # from SourceBase:
-    def fetch(self):
-        return True
+    def fetch(self, noop=True):
+        if noop:
+            return True
+        return MultiSource.fetch(self)
 
-    def unpack(self):
-        return True
+    def unpack(self, noop=True):
+        if noop:
+            return True
+        return MultiSource.unpack(self)
+
+
+class VirtualPackageBase(SourceComponentPackageBase):
+    """provides a base class for virtual packages"""
+    def __init__(self):
+        CraftCore.log.debug("VirtualPackageBase.__init__ called")
+        SourceComponentPackageBase.__init__(self)
 
     def createPatch(self):
         return True
@@ -36,3 +45,4 @@ class VirtualPackageBase(SourceOnlyPackageBase):
 
     def sourceRevision(self):
         return ""
+
