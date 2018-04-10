@@ -207,6 +207,7 @@ class SetupHelper(object):
                 log("Failed to setup intel compiler")
                 exit(1)
             return SetupHelper.stringToEnv(result)
+        return os.environ
 
     def setXDG(self):
         self.prependEnvVar("XDG_DATA_DIRS", [os.path.join(CraftStandardDirs.craftRoot(), "share")])
