@@ -1,8 +1,28 @@
-#
+# -*- coding: utf-8 -*-
+# Copyright Hannah von Reth <vonreth@kde.org>
 # copyright (c) 2010-2011 Patrick Spendrin <ps_ml@gmx.de>
 # copyright (c) 2010 Andre Heinecke <aheinecke@intevation.de> (code taken from the kdepim-ce-package.py)
 #
-import fileinput
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
 import types
 import glob
 
@@ -17,23 +37,23 @@ def toRegExp(fname, targetName) -> re:
 
     if not os.path.isfile(fname):
         CraftCore.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
-    regex = "("
-    for line in fileinput.input(fname):
-        # Cleanup white spaces / line endings
-        line = line.splitlines()
-        line = line[0].rstrip()
-        if line.startswith("#") or len(line) == 0:
-            continue
-        try:
-            #convert to forward path sep
-            line = line.replace(r"\\", "/")
-            tmp = f"^{line}$"
-            regex += f"{tmp}|"
-            re.compile(tmp, re.IGNORECASE)  # for debug
-            CraftCore.log.debug("%s added to %s as %s" % (line, targetName, tmp))
-        except re.error:
-            CraftCore.log.critical("%s is not a valid regexp" % tmp)
-    return re.compile("%s)" % regex[:-2], re.IGNORECASE)
+    regex = []
+    with open(fname, "rt+") as f:
+        for line in f:
+            # Cleanup white spaces / line endings
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            try:
+                #convert to forward path sep
+                line = line.replace(r"\\", "/")
+                tmp = f"^{line}$"
+                re.compile(tmp)  # for debug
+                regex.append(tmp)
+                CraftCore.log.debug(f"{line} added to {targetName} as {tmp}")
+            except re.error:
+                CraftCore.log.critical(f"{tmp} is not a valid regexp")
+    return re.compile(f"({'|'.join(regex)})", re.IGNORECASE)
 
 
 class PackagerLists(object):
