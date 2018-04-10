@@ -197,9 +197,11 @@ You can add your own defines into self.defines as well.
         if CraftCore.compiler.isMSVC():
             # we use the redist installer
             self.ignoredPackages.append("libs/runtime")
-        self.internalCreatePackage()
+        if not self.internalCreatePackage():
+            return False
         setupname = self.generateNSISInstaller()
-        utils.sign(setupname)
+        if not utils.sign(setupname):
+            return False
         destDir, archiveName = os.path.split(setupname)
         self._generateManifest(destDir, archiveName)
         CraftHash.createDigestFiles(setupname)

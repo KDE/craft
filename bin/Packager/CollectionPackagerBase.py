@@ -210,7 +210,7 @@ class CollectionPackagerBase(PackagerBase):
                     if self._filterQtBuildType(f):
                         yield f
 
-    def copyFiles(self, srcDir, destDir, dontStrip):
+    def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -223,7 +223,8 @@ class CollectionPackagerBase(PackagerBase):
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
             entry_target = OsUtils.toNativePath(entry.replace(srcDir, destDir))
-            utils.copyFile(entry, entry_target, linkOnly=False)
+            if not utils.copyFile(entry, entry_target, linkOnly=False):
+                return False
             if not dontStrip:
                 if OsUtils.isWin():
                     if entry_target.endswith((".dll", ".exe")):
@@ -231,8 +232,9 @@ class CollectionPackagerBase(PackagerBase):
                 elif OsUtils.isUnix():
                     if not os.path.islink(entry_target) and ".so" in entry_target or os.access(entry_target, os.X_OK):
                         self.strip(entry_target)
+        return True
 
-    def internalCreatePackage(self):
+    def internalCreatePackage(self) -> bool:
         """ create a package """
 
         archiveDir = self.archiveDir()
@@ -242,20 +244,22 @@ class CollectionPackagerBase(PackagerBase):
         for directory, strip in self.__getImageDirectories():
             imageDir = archiveDir
             if os.path.exists(directory):
-                self.copyFiles(directory, imageDir, strip)
-                utils.sign(directory)
+                if not (self.copyFiles(directory, imageDir, strip) and utils.sign(directory)):
+                    return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
+                return False
 
-        if not os.path.exists(archiveDir):
-            os.makedirs(archiveDir)
+        if not utils.createDir(archiveDir):
+            return False
 
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target sytsem
             binPath = os.path.join(archiveDir, "bin")
             for path in [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]:
                 if os.path.isdir(path):
-                    utils.mergeTree(path, binPath)
+                    if not utils.mergeTree(path, binPath):
+                        return False
 
         return self.preArchive()
 
