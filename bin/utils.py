@@ -844,7 +844,9 @@ def sign(fileNames : [str]) -> bool:
     command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
     if CraftCore.debug.verbose() > 0:
         command += ["/v"]
+    else:
+        command += ["/q"]
     for fileName in fileNames:
-        if not system(command + [fileName]):
+        if not system(command + [fileName], logCommand=False):
             return False
     return True
