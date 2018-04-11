@@ -825,23 +825,26 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     return True
 
 
-def sign(fileNames : [str]):
+def sign(fileNames : [str]) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.isWindows:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
 
-    if not hasattr(sign, "signTool"):
-        signTool = CraftCore.cache.findApplication("signtool")
-        if not signTool:
-            env = SetupHelper.getMSVCEnv()
-            signTool = CraftCore.cache.findApplication("signtool", env["PATH"])
-        if not signTool:
-            CraftCore.log.warning("Code signing requires a VisualStudio installation")
-            return False
-        else:
-            sign.signTool = signTool
+    signTool = CraftCore.cache.findApplication("signtool")
+    if not signTool:
+        env = SetupHelper.getMSVCEnv()
+        signTool = CraftCore.cache.findApplication("signtool", env["PATH"])
+    if not signTool:
+        CraftCore.log.warning("Code signing requires a VisualStudio installation")
+        return False
 
     subjectName = CraftCore.settings.get("CodeSigning", "SubjectName")
-    return system([sign.signTool, "sign", "/v", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"] + fileNames)
+    command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
+    if CraftCore.debug.verbose() > 0:
+        command += ["/v"]
+    for fileName in fileNames:
+        if not system(command + [fileName]):
+            return False
+    return True
