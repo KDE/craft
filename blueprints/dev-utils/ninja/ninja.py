@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import sys
+
 import info
 from Package.CMakePackageBase import *
 
@@ -19,10 +21,6 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "1.8.2"
 
-    def setDependencies(self):
-        self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["dev-utils/python3"] = "default"
-
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
@@ -33,9 +31,9 @@ class Package(CMakePackageBase):
 
     def make(self):
         self.enterSourceDir()
-        command = "python3 configure.py --bootstrap"
+        command = [sys.executable, "configure.py", "--bootstrap"]
         if CraftCore.compiler.isMinGW():
-            command += " --platform=mingw"
+            command += ["--platform=mingw"]
         return utils.system(command)
 
     def install(self):

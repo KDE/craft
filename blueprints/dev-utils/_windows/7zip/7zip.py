@@ -19,6 +19,11 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "1801"
 
+
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/ninja"] = "default"
+
+
 from Package.BinaryPackageBase import *
 
 
