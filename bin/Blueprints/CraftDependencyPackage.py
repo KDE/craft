@@ -68,9 +68,9 @@ class CraftDependencyPackage(CraftPackageObject):
                         raise BlueprintException(f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed", self)
 
                     p = CraftDependencyPackage(package)
+                    p.depenendencyType = self.depenendencyType
                     CraftCore.log.debug(f"adding package {packaheName}")
                     CraftDependencyPackage._packageCache[(packaheName, self.depenendencyType)] = p
-                    p.depenendencyType = self.depenendencyType
                 else:
                     p = CraftDependencyPackage._packageCache[(packaheName, self.depenendencyType)]
                 children.append(p)
