@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/cmake"] = "default"
+        self.buildDependencies["dev-utils/ninja"] = "default"
 
 
     def registerOptions(self):
