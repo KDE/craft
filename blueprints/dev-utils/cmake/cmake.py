@@ -28,7 +28,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3.10.3"
 
     def setDependencies(self):
-        self.buildDependencies["virtual/bin-base"] = "default"
         self.buildDependencies["dev-utils/patch"] = "default"
 
     def registerOptions(self):
