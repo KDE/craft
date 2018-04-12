@@ -12,10 +12,12 @@ class subinfo(info.infoclass):
 
         self.targetDigests["16.02"] = (['5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f'], CraftHash.HashAlgorithm.SHA256)
 
-        self.buildDependencies["dev-utils/cmake"] = "default"
         self.description = "p7zip is a quick port of 7z.exe and 7za.exe for Unix."
         self.webpage = "https://sourceforge.net/projects/p7zip/"
         self.defaultTarget = "16.02"
+
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/cmake"] = "default"
 
 from Package.CMakePackageBase import *
 
