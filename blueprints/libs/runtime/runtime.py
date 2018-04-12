@@ -1,12 +1,14 @@
 import info
-
+import glob
 
 class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
-        self.targets[str(CraftCore.compiler.getVersion())] = ""
+        ver = str(CraftCore.compiler.getVersion())
+        self.patchLevel[ver] = 1
+        self.targets[ver] = ""
         self.description = "The compiler runtime package"
-        self.defaultTarget = str(CraftCore.compiler.getVersion())
+        self.defaultTarget = ver
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = "default"
@@ -48,14 +50,14 @@ class PackageWin(BinaryPackageBase):
                 elif CraftCore.compiler.isMSVC2015():
                     redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
                 if redistDir:
-                    srcdir = os.path.join(redistDir, CraftCore.compiler.architecture,
-                                          f"Microsoft.VC{CraftCore.compiler.getMsvcPlatformToolset()}.CRT")
-                    files += os.listdir(srcdir)
+                    files = glob.glob(os.path.join(redistDir, CraftCore.compiler.architecture, "**/*.dll"), recursive=True)
                 else:
                     CraftCore.log.error("Unsupported Compiler")
                     return False
-        for file in files:
-            utils.copyFile(os.path.join(srcdir, file), os.path.join(destdir, file), linkOnly=False)
+        for f in files:
+            if not os.path.isabs(f):
+                f = os.path.join(srcdir, f)
+            utils.copyFile(f, os.path.join(destdir, os.path.basename(f)), linkOnly=False)
         return True
 
 
