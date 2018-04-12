@@ -27,6 +27,11 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "3.10.3"
 
+
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/cmake"] = "default"
+
+
     def registerOptions(self):
         self.options.dynamic.registerOption("checkForNightlies", False)
 
