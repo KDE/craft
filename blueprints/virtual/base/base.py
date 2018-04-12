@@ -9,10 +9,10 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/wget"] = "default"
+        self.buildDependencies["dev-utils/cmake"] = "default"
         self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["dev-utils/patch"] = "default"
         self.buildDependencies["dev-utils/sed"] = "default"
-        self.buildDependencies["dev-utils/cmake"] = "default"
         self.buildDependencies["dev-utils/git"] = "default"
         self.buildDependencies["dev-utils/automake"] = "default"
         self.buildDependencies["dev-utils/libtool"] = "default"
