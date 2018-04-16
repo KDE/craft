@@ -36,8 +36,11 @@ class MacDMGPackager( CollectionPackagerBase ):
         appPath = os.path.join(archive, appPath)
         CraftCore.log.info(f"Packaging {appPath}")
 
+        targetLibdir = os.path.join(appPath, "Contents", "Frameworks")
+        utils.createDir(targetLibdir)
+
         for src, dest in [(os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
-                          (os.path.join(archive, "lib"), os.path.join(appPath, "Contents", "Frameworks")),
+                          (os.path.join(archive, "lib"), targetLibdir),
                           (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources")),
                           (os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]:
             if os.path.exists(src):
