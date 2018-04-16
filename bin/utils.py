@@ -616,7 +616,7 @@ def moveDir(srcdir, destdir):
     """ move directory from srcdir to destdir """
     CraftCore.log.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
     try:
-        shutil.move(srcdir, destdir)
+        shutil.move(srcdir, destdir, copy_function=lambda x : shutil.copy2(**x, follow_symlinks=False))
     except Exception as e:
         CraftCore.log.warning(e)
         return False
