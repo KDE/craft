@@ -586,6 +586,19 @@ def mergeTree(srcdir, destdir):
         dest = os.path.join(destdir, i)
         if os.path.exists(dest):
             if os.path.isdir(dest):
+                if not os.path.islink(src) or os.path.islink(dest):
+                    if os.path.samefile(src, dest):
+                        CraftCore.log.info(f"mergeTree: skipping moving of {src} to  {dest} as a symlink with the same destination already exists")
+                        continue
+                    else:
+                        CraftCore.log.critical(f"mergeTree failed: {src} and {dest} are both symlinks but point to different folders")
+                        return False
+                    if os.path.islink(src) and not os.path.islink(dest):
+                        CraftCore.log.critical(f"mergeTree failed: how to merge symlink {src} into {dest}")
+                        return False
+                    if not os.path.islink(src) and os.path.islink(dest):
+                        CraftCore.log.critical(f"mergeTree failed: how to merge folder {src} into symlink {dest}")
+                        return False
                 if not mergeTree(src, dest):
                     return False
                 continue
