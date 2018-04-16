@@ -57,7 +57,6 @@ class UserOptions(object):
 
         def __init__(self):
             self.cachedOptions = {}
-            self.commandlineOptions = {}
             self.packageOptions = {}
             self.options = {}
             self.registeredOptions = {}
@@ -190,22 +189,14 @@ class UserOptions(object):
             key, value = key.strip(), value.strip()
             if "." in key:
                 package, key = key.split(".", 1)
-                if package == "dynamic":
-                    CraftCore.log.warning(f"Detected a deprecated setting \"{package}.{key} = {value}\", use the BlueprintsSettings.ini")
-                    options[key] = value
-                else:
-                    if "/" in package:
-                        # make sure it is a blueprint related setting
-                        if CraftPackageObject.get(package):
-                            if package not in packageOptions:
-                                 packageOptions[package] = {}
-                            packageOptions[package][key] = value
-                        elif not CraftPackageObject.bootstrapping():
-                            # in case we are bootstrapping Craft, we might not know that package yet
-                            raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
-                    else:
-                        options[f"{package}.{key}"] = value
-        UserOptions.instance().commandlineOptions = options
+                if CraftPackageObject.get(package):
+                    if package not in packageOptions:
+                         packageOptions[package] = {}
+                    CraftCore.log.debug(f"setOptions: [{package}]{key} = {value}")
+                    packageOptions[package][key] = value
+                elif not CraftPackageObject.bootstrapping():
+                    # in case we are bootstrapping Craft, we might not know that package yet
+                    raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
         UserOptions.instance().packageOptions = packageOptions
 
 
@@ -287,11 +278,6 @@ class UserOptions(object):
             if _packagePath not in _instance.registeredOptions or name not in _instance.registeredOptions[_packagePath]:
                  raise BlueprintException(f"Package {_package} has no registered option {name}", _package)
             out = self._convert(_instance.registeredOptions[_packagePath][name], _instance.packageOptions[_packagePath][name])
-        elif name in _instance.commandlineOptions:
-            # legacy option, removee soon
-            out = _instance.commandlineOptions[name]
-            CraftCore.log.warning(f"Deprecated use of options without package, please specify the package for the option {name}:\n"
-                                  f"{_packagePath}.{name}={out}")
         elif member is not None:
             # value is not overwritten by comand line options
             return member
@@ -387,17 +373,17 @@ class OptionsMake(OptionsBase):
         ## options for the make tool
         self.args = ""
         self.supportsMultijob = True
-        
+
     @property
     @deprecated("options.make.args")
     def makeOptions(self):
         return self.args
-    
+
     @makeOptions.setter
     @deprecated("options.make.args")
     def makeOptions(self, x):
         self.args = x
-        
+
 class OptionsInstall(OptionsBase):
     def __init__(self):
         ## options passed to make on install
