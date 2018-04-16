@@ -621,7 +621,7 @@ def moveFile(src, dest):
     """move file from src to dest"""
     CraftCore.log.debug("move file from %s to %s" % (src, dest))
     try:
-        shutil.move(srcdir, destdir, copy_function=lambda x : shutil.copy2(**x, follow_symlinks=False))
+        shutil.move(src, dest, copy_function=lambda x : shutil.copy2(**x, follow_symlinks=False))
     except Exception as e:
         CraftCore.log.warning(e)
         return False
