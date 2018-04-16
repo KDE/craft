@@ -569,10 +569,7 @@ def mergeTree(srcdir, destdir):
     If a directory in @p destdir exists, just write into it
     """
 
-    try:
-        os.makedirs(destdir, exist_ok=True)
-    except Exception as e:
-        CraftCore.log.warning(e)
+    if not createDir(destdir):
         return False
 
     CraftCore.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
