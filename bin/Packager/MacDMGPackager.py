@@ -36,18 +36,13 @@ class MacDMGPackager( CollectionPackagerBase ):
         appPath = os.path.join(archive, appPath)
         CraftCore.log.info(f"Packaging {appPath}")
 
-        def maybeMergeTree(src, dest):
-            if os.path.exists(src):
-                if not utils.mergeTree(src, dest):
-                    return False
-            return True
-
         for src, dest in [(os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
                           (os.path.join(archive, "lib"), os.path.join(appPath, "Contents", "Frameworks")),
                           (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources")),
                           (os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]:
-            if not maybeMergeTree(src, dest):
-                return False
+            if os.path.exists(src):
+                if not utils.mergeTree(src, dest):
+                    return False
 
         with utils.ScopedEnv({'DYLD_FALLBACK_LIBRARY_PATH' : os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
             if not utils.system(["dylibbundler",
