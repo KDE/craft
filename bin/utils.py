@@ -524,7 +524,7 @@ def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHa
             return True
         except:
             CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
-    shutil.copy(src, dest, follow_symlinks=False)
+    shutil.copy2(src, dest, follow_symlinks=False)
     return True
 
 
