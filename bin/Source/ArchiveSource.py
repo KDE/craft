@@ -213,7 +213,7 @@ class ArchiveSource(SourceBase):
             dest = os.path.join(destdir, f"{directory}.orig")
             if os.path.isdir(dest):
                 utils.rmtree(dest)
-                utils.moveDir(os.path.join(tmpdir, directory), dest)
+                utils.moveFile(os.path.join(tmpdir, directory), dest)
             else:
                 utils.deleteFile(dest)
                 utils.moveFile(os.path.join(tmpdir, directory), dest)

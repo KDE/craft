@@ -605,23 +605,27 @@ def mergeTree(srcdir, destdir):
             else:
                 if not rmtree(dest):
                     return False
-        if not moveDir(src, destdir):
+        if not moveFile(src, destdir):
             return False
 
     # Cleanup (only removing empty folders)
     return rmtree(srcdir)
 
 
+@deprecated("moveFile")
 def moveDir(srcdir, destdir):
     """ move directory from srcdir to destdir """
-    CraftCore.log.debug("moveDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
+    return moveFile(srcdir, destdir)
+
+def moveFile(src, dest):
+    """move file from src to dest"""
+    CraftCore.log.debug("move file from %s to %s" % (src, dest))
     try:
         shutil.move(srcdir, destdir, copy_function=lambda x : shutil.copy2(**x, follow_symlinks=False))
     except Exception as e:
         CraftCore.log.warning(e)
         return False
     return True
-
 
 def rmtree(directory):
     """ recursively delete directory """
@@ -632,18 +636,6 @@ def rmtree(directory):
         CraftCore.log.warning(e)
         return False
     return True
-
-
-def moveFile(src, dest):
-    """move file from src to dest"""
-    CraftCore.log.debug("move file from %s to %s" % (src, dest))
-    try:
-        shutil.move(src, dest)
-    except Exception as e:
-        CraftCore.log.warning(e)
-        return False
-    return True
-
 
 def deleteFile(fileName):
     """delete file """
