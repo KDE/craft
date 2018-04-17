@@ -58,7 +58,7 @@ class MacDMGPackager( CollectionPackagerBase ):
                                             "--bundle-deps",
                                             "--install-path", "@executable_path/../Frameworks",
                                             "--dest-dir", targetLibdir,
-                                            "--fix-file", os.path.join(appPath, "Contents", "MacOS", self.defines['appname']]):
+                                            "--fix-file", os.path.join(appPath, "Contents", "MacOS", self.defines['appname'])]):
                 return False
 
             if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"]):
