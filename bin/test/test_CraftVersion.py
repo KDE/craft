@@ -31,7 +31,7 @@ class TestCraftVersion(CraftTestBase.CraftTestBase):
             self.assertEquals(a.version, b.version)
 
     def test_compareBranch(self):
-        self.assertEquals(CraftVersion("master"), CraftVersion("dev"))
+        self.assertNotEquals(CraftVersion("master"), CraftVersion("dev"))
 
     def test_strict(self):
         self.assertEquals(CraftVersion("5.8.1").strictVersion, StrictVersion("5.8.1"))
