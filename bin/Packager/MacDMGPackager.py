@@ -25,7 +25,7 @@ class MacDMGPackager( CollectionPackagerBase ):
         self._setDefaults()
 
 
-        archive = self.archiveDir()
+        archive = os.path.normpath(self.archiveDir())
         appPath = self.defines['apppath']
         if not appPath:
             apps = glob.glob(os.path.join(archive, f"**/{self.defines['appname']}.app"), recursive=True)
@@ -34,15 +34,20 @@ class MacDMGPackager( CollectionPackagerBase ):
                 return False
             appPath = apps[0]
         appPath = os.path.join(archive, appPath)
+        appPath = os.path.normpath(appPath)
         CraftCore.log.info(f"Packaging {appPath}")
 
         targetLibdir = os.path.join(appPath, "Contents", "Frameworks")
         utils.createDir(targetLibdir)
 
-        for src, dest in [(os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
+        moveTargets = [(os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
                           (os.path.join(archive, "lib"), targetLibdir),
-                          (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources")),
-                          (os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]:
+                          (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources"))]
+
+        if not appPath.startswith(archive):
+            moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
+
+        for src, dest in moveTargets:
             if os.path.exists(src):
                 if not utils.mergeTree(src, dest):
                     return False
@@ -53,7 +58,7 @@ class MacDMGPackager( CollectionPackagerBase ):
                                             "--bundle-deps",
                                             "--install-path", "@executable_path/../Frameworks",
                                             "--dest-dir", targetLibdir,
-                                            "--fix-file", f"{appPath}/Contents/MacOS/{self.defines['appname']}"]):
+                                            "--fix-file", os.path.join(appPath, "Contents", "MacOS", self.defines['appname']]):
                 return False
 
             if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"]):
