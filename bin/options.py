@@ -192,8 +192,12 @@ class UserOptions(object):
                 if CraftPackageObject.get(package):
                     if package not in packageOptions:
                          packageOptions[package] = {}
-                    CraftCore.log.debug(f"setOptions: [{package}]{key} = {value}")
+                    CraftCore.log.info(f"setOptions: [{package}]{key} = {value}")
                     packageOptions[package][key] = value
+                elif (package, key) in CraftCore.settings:
+                    # TODO: move out of options.py
+                    CraftCore.log.info(f"setOptions: [{package}]{key} = {value}")
+                    CraftCore.settings.set(package, key, value)
                 elif not CraftPackageObject.bootstrapping():
                     # in case we are bootstrapping Craft, we might not know that package yet
                     raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
