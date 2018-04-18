@@ -76,7 +76,7 @@ class QtIFPackager(SevenZipPackager):
 
 
         data = {"VERSION" : str(CraftVersion(self.version).strictVersion),
-                "NAME" : self.package.name,
+                "NAME" : self.subinfo.displayName if self.subinfo.displayName else self.package.name,
                 "DESCRIPTION" : cgi.escape(f"{self.package.name} {self.version}<br>{self.subinfo.description}" + (f"<br>{self.subinfo.webpage}" if self.subinfo.webpage else "")),
                 "DATE" : self._date,
                 "DEPENDENCIES" : ", ".join(deps)}

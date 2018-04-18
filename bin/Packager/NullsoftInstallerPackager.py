@@ -71,7 +71,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
         defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
         defines.setdefault("license", "")
-        defines.setdefault("productname", self.package.name.capitalize())
+        defines.setdefault("productname", self.subinfo.displayName if self.subinfo.displayName else self.package.name.capitalize())
         defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         defines.setdefault("srcdir", self.archiveDir())
         defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)

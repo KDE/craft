@@ -46,6 +46,7 @@ class infoclass(object):
         self.buildDependencies = {}
         self.packagingDependencies = {}
 
+        self.displayName = ""
         self.description = ""
         # tag words describing the package
         self.tags = ""
