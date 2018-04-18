@@ -8,6 +8,9 @@ Component.prototype.isDefault = function()
 }
 Component.prototype.createOperations = function()
 {
+    if (installer.value("os") === "win") {
+        @{SHORTCUTS}
+    }
     try {
         component.createOperations();
     } catch(e) {

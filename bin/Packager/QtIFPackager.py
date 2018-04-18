@@ -43,6 +43,10 @@ class QtIFPackager(SevenZipPackager):
         if self.__sdkMode:
             win = "win32" if CraftCore.compiler.isX86() else "win64"
             self.__depPrefix = f"qt.qt5.{CraftCore.settings.get('QtSDK', 'Version').replace('.', '')}.{win}_{CraftCore.settings.get('QtSDK', 'Compiler')}.kde"
+            self.__imagePrefix = os.path.join(CraftCore.settings.get("QtSDK", "Version"), CraftCore.settings.get("QtSDK", "Compiler"))
+        else:
+            self.__imagePrefix = ""
+
     @property
     def _date(self):
         return datetime.datetime.utcnow().strftime("%Y-%m-%d")
@@ -54,11 +58,25 @@ class QtIFPackager(SevenZipPackager):
                 path = f"{self.__depPrefix}.{package.name}"
             return path.replace("/", ".").replace("-", "_")
 
+    def _shortCuts(self):
+        out = []
+        def shortCut(name, target, icon="", parameter="", description=""):
+            target = OsUtils.toUnixPath(os.path.join(self.__imagePrefix, target))
+            name = OsUtils.toUnixPath(name)
+            return f'component.addOperation( "CreateShortcut", "@TargetDir@/{target}","@StartMenuDir@/{name}.lnk");'
+
+        if "executable" in self.defines:
+            out += [shortCut(self.subinfo.displayName, self.defines["executable"])]
+
+        for short in self.shortcuts:
+            out += [shortCut(**short)]
+        return "\n".join(out)
+
     def _addPackage(self) -> bool:
         if self.__sdkMode:
-            imagePrefix = os.path.join(CraftCore.settings.get("QtSDK", "Version"), CraftCore.settings.get("QtSDK", "Compiler"))
+            # adept the prefix
             utils.cleanDirectory(self.archiveDir())
-            utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), imagePrefix))
+            utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix))
 
         dstpath = os.path.join(self.__packageDir, "image", self.qtifyFy(self.package))
         if not self._compress("data.7z", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False):
@@ -83,9 +101,8 @@ class QtIFPackager(SevenZipPackager):
         if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
             return False
 
-        #data = {}
-        #if not utils.configureFile(os.path.join(resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), data):
-        if not utils.copyFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), linkOnly=False):
+        data = {"SHORTCUTS" : self._shortCuts()}
+        if not utils.configureFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), data):
             return False
         return True
 
@@ -100,11 +117,7 @@ class QtIFPackager(SevenZipPackager):
         dstpath = os.path.join(self.__packageDir, "image", (self.__depPrefix if self.__sdkMode else "kde"))
         if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
             return False
-        return utils.copyFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), linkOnly=False)
-
-
-
-
+        return utils.configureFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), {"SHORTCUTS":""})
 
 
     def createPackage(self):

@@ -826,7 +826,7 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         for match in matches:
             val = variables.get(match, None)
             if val is None:
-                raise Exception(f"Failed to configure {inFile}: @{match} is not in variables")
+                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables")
             script = script.replace(f"@{{{match}}}", val)
         matches = configPatter.findall(script)
 
