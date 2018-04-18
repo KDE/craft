@@ -40,9 +40,11 @@ class MacDMGPackager( CollectionPackagerBase ):
         targetLibdir = os.path.join(appPath, "Contents", "Frameworks")
         utils.createDir(targetLibdir)
 
-        moveTargets = [(os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
-                          (os.path.join(archive, "lib"), targetLibdir),
-                          (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources"))]
+        moveTargets = [
+            (os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
+            (os.path.join(archive, "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
+            (os.path.join(archive, "lib"), targetLibdir),
+            (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources"))]
 
         if not appPath.startswith(archive):
             moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
