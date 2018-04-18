@@ -8,6 +8,7 @@ this file contains some helper functions for craft
 # Patrick Spendrin <ps_ml [AT] gmx [DOT] de>
 # Ralf Habacker <ralf.habacker [AT] freenet [DOT] de>
 
+import glob
 import inspect
 import io
 import os
@@ -562,6 +563,14 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
         return False
     return True
 
+def globCopyDir(srcDir : str, destDir : str, pattern : [str], linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)) -> bool:
+    files = []
+    for p in pattern:
+        files.extend(glob.glob(os.path.join(srcDir, p), recursive=True))
+    for f in files:
+        if not copyFile(f, os.path.join(destDir ,os.path.relpath(f, srcDir)), linkOnly=linkOnly):
+            return False
+    return True
 
 def mergeTree(srcdir, destdir):
     """ moves directory from @p srcdir to @p destdir
