@@ -40,6 +40,7 @@ class SeachPackage(object):
         latestVersion = self.package.version
         return f"""\
 {self.package}
+    Name: {self.package.subinfo.displayName}
     BlueprintPath: {self.package.source}
     Homepage: {self.webpage}
     Description: {self.description}
