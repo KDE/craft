@@ -17,8 +17,6 @@ class BoostBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "boost")
         self.subinfo.options.package.packSources = False
-        # the bjam build system won't work with that setup
-        self.subinfo.options.needsShortPath = False
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
