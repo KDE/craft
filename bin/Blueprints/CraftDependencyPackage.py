@@ -13,7 +13,10 @@ class DependencyType(IntFlag):
     # TODO: rename as we now have more build types
     Both        = Runtime | Buildtime
     Packaging   = 0x1 << 3
-    All         = ~0
+    Categories  = 0x1 << 4
+
+    # TODO: maybe All is not the best name, anyway including categories in a normal scenario makes no sense
+    All         = ~0 & ~Categories
 
 
 class CraftDependencyPackage(CraftPackageObject):
@@ -56,7 +59,7 @@ class CraftDependencyPackage(CraftPackageObject):
         else:
             self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children.values()]))
 
-    def __readDependenciesForChildren(self, deps):
+    def __readDependenciesForChildren(self, deps : [(str, str)]) -> []:
         children = []
         if deps:
             for packaheName, requiredVersion in deps:
@@ -96,7 +99,7 @@ class CraftDependencyPackage(CraftPackageObject):
 
         if self.state != CraftDependencyPackage.State.Visited:
             self.state = CraftDependencyPackage.State.Visited
-            if not self.isCategory():
+            if not self.isCategory() or depenendencyType & DependencyType.Categories:
                 depList.append(self)
         return list(OrderedDict.fromkeys(depList))
 

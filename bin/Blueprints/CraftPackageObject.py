@@ -14,7 +14,8 @@ from CraftOS.osutils import OsUtils
 class CategoryPackageObject(object):
     def __init__(self, localPath : str):
         self.localPath = localPath
-        self.desctiption = ""
+        self.description = ""
+        self.webpage = ""
         self.platforms = CraftCore.compiler.Platforms.All
         self.compiler = CraftCore.compiler.Compiler.All
         self.pathOverride = None
@@ -25,21 +26,23 @@ class CategoryPackageObject(object):
             self.valid = True
             info = configparser.ConfigParser()
             info.read(ini)
-            self.desctiption = info["General"].get("description", "")
-            platform = set(CraftCore.settings._parseList(info["General"].get("platforms", "")))
+            general = info["General"]
+            self.description = general.get("description", "")
+            self.webpage = general.get("webpage", "")
+            platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
 
             if platform:
                 self.platforms = CraftCore.compiler.Platforms.NoPlatform
                 for p in platform:
                     self.platforms |= CraftCore.compiler.Platforms.fromString(p)
 
-            compiler = set(CraftCore.settings._parseList(info["General"].get("compiler", "")))
+            compiler = set(CraftCore.settings._parseList(general.get("compiler", "")))
 
             if compiler:
                 self.compiler = CraftCore.compiler.Compiler.NoCompiler
                 for c in compiler:
                     self.compiler |=  CraftCore.compiler.Compiler.fromString(c)
-            self.pathOverride = info["General"].get("pathOverride", None)
+            self.pathOverride = general.get("pathOverride", None)
 
     @property
     def isActive(self) -> bool:

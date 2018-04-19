@@ -1,6 +1,7 @@
 import InstallDB
 import utils
 from Blueprints.CraftPackageObject import *
+from Blueprints.CraftDependencyPackage import *
 from Blueprints.CraftVersion import CraftVersion
 from Utils import CraftTimer
 
@@ -9,13 +10,24 @@ class SeachPackage(object):
     def __init__(self, package):
         self.path = package.path
         self.name = package.name
-        self.webpage = package.subinfo.webpage
-        self.description = package.subinfo.description
-        self.tags = package.subinfo.tags
+        self.displayName = self.name
+        self.webpage = None
+        self.description = ""
+        self.tags = ""
+        self.availableVersions = None
+        if not package.isCategory():
+            self.displayName = package.subinfo.displayName
+            self.webpage = package.subinfo.webpage
+            self.description = package.subinfo.description
+            self.tags = package.subinfo.tags
 
-        versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
-        versions.sort(key=lambda x: CraftVersion(x))
-        self.availableVersions = ", ".join(versions)
+            versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
+            versions.sort(key=lambda x: CraftVersion(x))
+            self.availableVersions = ", ".join(versions)
+        else:
+            self.description = package.categoryInfo.description
+            self.webpage = package.categoryInfo.webpage
+
 
     @property
     def package(self):
@@ -40,7 +52,7 @@ class SeachPackage(object):
         latestVersion = self.package.version
         return f"""\
 {self.package}
-    Name: {self.package.subinfo.displayName}
+    Name: {self.displayName}
     BlueprintPath: {self.package.source}
     Homepage: {self.webpage}
     Description: {self.description}
@@ -57,8 +69,10 @@ def packages():
     if not CraftCore.cache.availablePackages:
         CraftCore.cache.availablePackages = []
         CraftCore.log.info("Updating search cache:")
-        total = len(CraftPackageObject.installables())
-        for p in CraftPackageObject.installables():
+        root = CraftDependencyPackage(CraftPackageObject.root())
+        packages = root.getDependencies(DependencyType.All | DependencyType.Categories)
+        total = len(packages)
+        for p in packages:
             package = SeachPackage(p)
             CraftCore.cache.availablePackages.append(package)
             percent = int(len(CraftCore.cache.availablePackages) / total * 100)
