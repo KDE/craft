@@ -18,7 +18,7 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
         if self.qtVer >= CraftVersion("5.9.3") or self.qtVer == CraftVersion("5.9") or CraftCore.settings.getboolean("QtSDK", "Enabled", False):
             if os.path.splitdrive(imageDir)[0] == os.path.splitdrive(self.buildDir())[0]:
                 imageDir = os.path.splitdrive(imageDir)[1]
-        options += f" INSTALL_ROOT={imageDir} install"
+        options += f" INSTALL_ROOT={imageDir} " + self.makeOptions(self.subinfo.options.install.args)
         if not QMakeBuildSystem.install(self, options):
             return False
 

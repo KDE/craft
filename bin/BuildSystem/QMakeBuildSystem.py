@@ -84,19 +84,15 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def install(self, options=None):
         """implements the make step for Qt projects"""
+        if not options:
+            options = self.makeOptions(self.subinfo.options.install.args)
         if not BuildSystemBase.install(self):
             return False
-
         if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
+            cwd = self.sourceDir()
         else:
-            self.enterBuildDir()
-        if options != None:
-            command = f"{self.makeProgram} {options}"
-        else:
-            command = f"{self.makeProgram} install"
-
-        return utils.system(command)
+            cwd = self.buildDir()
+        return utils.system(f"{self.makeProgram} {options}", cwd=cwd)
 
     def runTest(self):
         """running qmake based unittests"""
