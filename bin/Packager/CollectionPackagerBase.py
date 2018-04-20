@@ -225,8 +225,11 @@ class CollectionPackagerBase(PackagerBase):
                 z = f.replace(directory, "")
                 if blacklist(z):
                     continue
-                if os.path.isdir(f):
+                if os.path.isdir(f) and not os.path.islink(f):
                     dirs.append(f)
+                elif os.path.isdir(f) and os.path.islink(f):
+                    if whitelist(z):
+                        yield f
                 elif os.path.isfile(f) and whitelist(z):
                     if self._filterQtBuildType(f):
                         yield f
