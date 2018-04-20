@@ -47,7 +47,7 @@ class SeachPackage(object):
         return f"""\
 {self.package}
     Name: {self.displayName}
-    BlueprintPath: {self.package.source}
+    BlueprintPath: {self.package.source or self.package.filePath}
     Homepage: {self.webpage}
     Description: {self.description}
     Tags: {self.tags}
