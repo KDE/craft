@@ -10,7 +10,7 @@ class CraftBlueprintTest(CraftTestBase.CraftTestBase):
         CraftConfig.CraftCore.settings.set("General", "ABI", compiler)
 
         importlib.reload(CraftPackageObject)  # clear cache
-        installable = CraftPackageObject.CraftPackageObject.installables()
+        installable = CraftPackageObject.CraftPackageObject.root.allChildren()
         CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
 
 

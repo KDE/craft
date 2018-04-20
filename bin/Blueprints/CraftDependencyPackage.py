@@ -13,10 +13,8 @@ class DependencyType(IntFlag):
     # TODO: rename as we now have more build types
     Both        = Runtime | Buildtime
     Packaging   = 0x1 << 3
-    Categories  = 0x1 << 4
 
-    # TODO: maybe All is not the best name, anyway including categories in a normal scenario makes no sense
-    All         = ~0 & ~Categories
+    All         = ~0
 
 
 class CraftDependencyPackage(CraftPackageObject):
@@ -99,7 +97,7 @@ class CraftDependencyPackage(CraftPackageObject):
 
         if self.state != CraftDependencyPackage.State.Visited:
             self.state = CraftDependencyPackage.State.Visited
-            if not self.isCategory() or depenendencyType & DependencyType.Categories:
+            if not self.isCategory():
                 depList.append(self)
         return list(OrderedDict.fromkeys(depList))
 

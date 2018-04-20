@@ -63,8 +63,7 @@ def packages():
     if not CraftCore.cache.availablePackages:
         CraftCore.cache.availablePackages = []
         CraftCore.log.info("Updating search cache:")
-        root = CraftDependencyPackage(CraftPackageObject.root())
-        packages = root.getDependencies(DependencyType.All | DependencyType.Categories)
+        packages = CraftPackageObject.root().allChildren()
         total = len(packages)
         for p in packages:
             package = SeachPackage(p)
@@ -100,7 +99,7 @@ def printSearch(search_package, maxDist=2):
                         package_re.match(searchPackage.tags):
                     similar.append((100, searchPackage))
 
-        if match == None:
+        if match is None:
             if len(similar) > 0:
                 CraftCore.log.info(f"Craft was unable to find {search_package}, similar packages are:")
                 similar.sort(key=lambda x: x[0])

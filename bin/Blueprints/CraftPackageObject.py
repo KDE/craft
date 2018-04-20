@@ -265,7 +265,8 @@ class CraftPackageObject(object):
                                 # don't reparent as we would override the actual package
                                 continue
                             else:
-                                CraftCore.log.debug(f"Overriding {existingNode.children[nodeName].path} with {node.path} ")
+                                old = existingNode.children[nodeName]
+                                CraftCore.log.debug(f"Overriding {old.path}({old.filePath}) with {node.path}")
                         node.parent = existingNode
                         child.parent.children[nodeName] = node
             CraftPackageObject.__regiserNodes(child)
@@ -356,13 +357,11 @@ class CraftPackageObject(object):
     def __hash__(self):
         return self.path.__hash__()
 
-    @staticmethod
-    def installables():
-        #ensure that everything is loaded
-        CraftPackageObject.root()
+    def allChildren(self):
         recipes = []
-        for p in CraftPackageObject._recipes.values():
-            recipes.extend(p)
+        for p in self.children.values():
+            recipes.append(p)
+            recipes.extend(p.allChildren())
         return recipes
 
 
