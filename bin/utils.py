@@ -607,12 +607,12 @@ def mergeTree(srcdir, destdir):
                         return False
                 if not mergeTree(src, dest):
                     return False
-                continue
             else:
-                if not rmtree(dest):
+                if not deleteFile(dest):
                     return False
-        if not moveFile(src, destdir):
-            return False
+        else:
+            if not moveFile(src, destdir):
+                return False
 
     # Cleanup (only removing empty folders)
     return rmtree(srcdir)
