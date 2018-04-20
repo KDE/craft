@@ -25,6 +25,7 @@
 import datetime
 import cgi
 
+from Blueprints.MetaInfo import MetaInfo
 from Packager.SevenZipPackager import *
 
 from Utils import CraftHash

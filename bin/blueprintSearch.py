@@ -3,6 +3,7 @@ import utils
 from Blueprints.CraftPackageObject import *
 from Blueprints.CraftDependencyPackage import *
 from Blueprints.CraftVersion import CraftVersion
+from Blueprints.MetaInfo import MetaInfo
 from Utils import CraftTimer
 
 
@@ -10,23 +11,16 @@ class SeachPackage(object):
     def __init__(self, package):
         self.path = package.path
         self.name = package.name
-        self.displayName = self.name
-        self.webpage = None
-        self.description = ""
-        self.tags = ""
-        self.availableVersions = None
-        if not package.isCategory():
-            self.displayName = package.subinfo.displayName
-            self.webpage = package.subinfo.webpage
-            self.description = package.subinfo.description
-            self.tags = package.subinfo.tags
 
-            versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
-            versions.sort(key=lambda x: CraftVersion(x))
-            self.availableVersions = ", ".join(versions)
-        else:
-            self.description = package.categoryInfo.description
-            self.webpage = package.categoryInfo.webpage
+        info = MetaInfo(package)
+        self.displayName = info.displayName
+        self.webpage = info.webpage
+        self.description = info.description
+        self.tags = info.tags
+
+        versions = info.versions
+        versions.sort(key=lambda x: CraftVersion(x))
+        self.availableVersions = ", ".join(versions)
 
 
     @property

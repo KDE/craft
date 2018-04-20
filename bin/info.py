@@ -19,7 +19,7 @@ class infoclass(object):
         ### package options
         self.parent = parent
         self.options = Options(parent.package)
-        self.versionInfo = VersionInfo.VersionInfo(self)
+        self.versionInfo = VersionInfo.VersionInfo(subinfo=self)
         self.targets = {}
         self.archiveNames = {}
         # Specifiy that the fetched source should be placed into a

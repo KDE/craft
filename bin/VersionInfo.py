@@ -1,7 +1,27 @@
 # -*- coding: utf-8 -*-
-# this package contains functions to easily set versions for packages like qt5 or kde
-# copyright:
-# Hannah von Reth <vonreth [AT] kde [DOT] org>
+# Copyright Hannah von Reth <vonreth@kde.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
 import re
 
 from Blueprints.CraftPackageObject import *
@@ -21,8 +41,14 @@ class VersionInfo(object):
             self.info = {}
 
 
-    def __init__(self, parent, fileName=None):
-        self.subinfo = parent
+    def __init__(self, subinfo=None, fileName=None, package=None):
+        self.subinfo = subinfo
+        if package:
+            self.package = package
+        elif subinfo:
+            self.package = subinfo.parent.package
+        else:
+            raise Exception()
 
         self._fileName = fileName
         self._data = None
@@ -31,9 +57,8 @@ class VersionInfo(object):
     @property
     def data(self):
         if not self._data:
-            package = self.subinfo.parent.package
             if not self._fileName:
-                filePath = OsUtils.toUnixPath(os.path.dirname(package.source))
+                filePath = OsUtils.toUnixPath(self.package.filePath)
                 while True:
                     if filePath in CraftPackageObject.rootDirectories():
                         break
@@ -57,7 +82,7 @@ class VersionInfo(object):
                         if k in self._data.info:
                             setattr(self._data, k, CraftCore.settings._parseList(self._data.info[k]))
 
-                    CraftCore.log.debug(f"Found a version info for {self.subinfo.parent} in {self._fileName}")
+                    CraftCore.log.debug(f"Found a version info for {self.package} in {self._fileName}")
         return self._data
 
     @property
@@ -67,7 +92,7 @@ class VersionInfo(object):
                 includePath = self.data.info["include"]
                 if not os.path.isabs(includePath):
                     includePath = os.path.join(os.path.dirname(self._fileName), includePath)
-                self.__include = VersionInfo(self.subinfo, OsUtils.toUnixPath(includePath))
+                self.__include = VersionInfo(subinfo=self.subinfo, package=self.package, fileName=OsUtils.toUnixPath(includePath))
         return self.__include
 
     def tags(self):
@@ -109,7 +134,7 @@ class VersionInfo(object):
 
     def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                                  gitUrl=None):
-        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.subinfo.parent.package.source), fileName))
+        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
         self._data = None
         self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
@@ -166,4 +191,4 @@ class VersionInfo(object):
             self.subinfo.defaultTarget = defaultTarget
 
     def packageName(self):
-        return self.subinfo.parent.package.path
+        return self.package.path
