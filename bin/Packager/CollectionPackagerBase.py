@@ -206,6 +206,26 @@ class CollectionPackagerBase(PackagerBase):
             return out
         return True
 
+    def isDebugSymbolFile(self, fileName):
+        _, ext = os.path.splitext(fileName)
+        if ext in {".pdb"}:
+            return True
+        return False
+
+    def isBinary(self, fileName):
+        if os.path.islink(fileName):
+            return False
+        _, ext = os.path.splitext(fileName)
+        if CraftCore.compiler.isWindows:
+            if ext in {".dll", ".exe"}:
+                return True
+        else:
+            if ext in {".so", ".dylib"} or os.access(entry_target, os.X_OK):
+                return True
+        return False
+
+
+
     def traverse(self, directory, whitelist=lambda f: True, blacklist=lambda g: False):
         """
             Traverse through a directory tree and return every
@@ -234,7 +254,7 @@ class CollectionPackagerBase(PackagerBase):
                     if self._filterQtBuildType(f):
                         yield f
 
-    def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
+    def copyFiles(self, srcDir, destDir, dontStrip, symbolFiles : [str]=None) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -245,37 +265,51 @@ class CollectionPackagerBase(PackagerBase):
             destDir += "/"
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
+        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
+
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
             entry_target = OsUtils.toNativePath(entry.replace(srcDir, destDir))
             if not utils.copyFile(entry, entry_target, linkOnly=False):
                 return False
-            if not dontStrip:
-                if OsUtils.isWin():
-                    if entry_target.endswith((".dll", ".exe")):
-                        self.strip(entry_target)
-                elif OsUtils.isUnix():
-                    if not os.path.islink(entry_target) and ".so" in entry_target or os.access(entry_target, os.X_OK):
-                        self.strip(entry_target)
+            if self.isBinary(entry_target):
+                if dontStrip:
+                    self.strip(entry_target)
+                if doSign:
+                    utils.sign(files)
+            elif symbolFiles is not None and self.isDebugSymbolFile(entry_target):
+                symbolFiles.append(entry_target)
         return True
 
-    def internalCreatePackage(self) -> bool:
+    def internalCreatePackage(self, packageSymbolFile=False) -> bool:
         """ create a package """
 
         archiveDir = self.archiveDir()
 
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
+
+        if packageSymbolFile:
+            symbolFiles = []
+        else:
+            self.blacklist.append(re.compile(r".*\.pdb"))
+            symbolFiles = None
+
         for directory, strip in self.__getImageDirectories():
-            imageDir = archiveDir
             if os.path.exists(directory):
-                if not self.copyFiles(directory, imageDir, strip):
+                if not self.copyFiles(directory, archiveDir, strip, symbolFiles=symbolFiles):
                     return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
                 return False
 
-        if not utils.createDir(archiveDir):
-            return False
+        if symbolFiles:
+            dbgDir = f"{archiveDir}-dbg"
+            utils.cleanDirectory(dbgDir)
+
+            for f in symbolFiles:
+                dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
+                utils.createDir(os.path.dirname(dest))
+                utils.moveFile(f, dest)
 
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target sytsem
@@ -287,14 +321,6 @@ class CollectionPackagerBase(PackagerBase):
 
         if not self.preArchive():
             return False
-
-        if CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
-            files = []
-            if CraftCore.compiler.isWindows:
-                for pattern in ["**/*.dll", "**/*.exe"]:
-                    files.extend(glob.glob(os.path.join(archiveDir, pattern), recursive=True))
-            if not utils.sign(files):
-                return False
         return True
 
     def preArchive(self):
