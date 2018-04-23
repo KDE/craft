@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         """ """
         self.svnTargets['master'] = "https://github.com/martine/ninja.git"
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+            self.patchToApply["master"] = [("0001-Add-c-flag-to-force-color-output.patch", 1)]
+
         for ver in ["1.6.0", "1.7.1", "1.7.2", "1.8.2"]:
             self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"ninja-{ver}.tar.gz"

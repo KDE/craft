@@ -82,10 +82,13 @@ class BuildSystemBase(CraftBase):
         if self.makeProgram in {"make", "gmake", "mingw32-make"}:
             if self.subinfo.options.make.supportsMultijob:
                 defines += f" -j{multiprocessing.cpu_count()}"
-        if CraftCore.debug.verbose() > 0:
-            if self.makeProgram == "ninja":
+        if self.makeProgram == "ninja":
+            if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+                defines += " -c "
+            if CraftCore.debug.verbose() > 0:
                 defines += " -v "
-            else:
+        else:
+            if CraftCore.debug.verbose() > 0:
                 defines += " VERBOSE=1 V=1"
         return defines
 

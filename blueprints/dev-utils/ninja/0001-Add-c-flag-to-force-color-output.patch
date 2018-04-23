@@ -1,0 +1,85 @@
+From 1b5192e67afd7ba65a35f5f852d81410ab5e3b06 Mon Sep 17 00:00:00 2001
+From: Alexander Timin <altimin@chromium.org>
+Date: Wed, 12 Apr 2017 14:11:48 +0100
+Subject: [PATCH] Add -c flag to force color output.
+
+---
+ src/build.cc | 3 +--
+ src/build.h  | 5 ++++-
+ src/ninja.cc | 8 ++++++--
+ 3 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/src/build.cc b/src/build.cc
+index 61ef0e8..4854f64 100644
+--- a/src/build.cc
++++ b/src/build.cc
+@@ -154,9 +154,8 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
+     // (Launching subprocesses in pseudo ttys doesn't work because there are
+     // only a few hundred available on some systems, and ninja can launch
+     // thousands of parallel compile commands.)
+-    // TODO: There should be a flag to disable escape code stripping.
+     string final_output;
+-    if (!printer_.is_smart_terminal())
++    if (!printer_.is_smart_terminal() && !config_.force_color_output)
+       final_output = StripAnsiEscapeCodes(output);
+     else
+       final_output = output;
+diff --git a/src/build.h b/src/build.h
+index 43786f1..e518172 100644
+--- a/src/build.h
++++ b/src/build.h
+@@ -125,7 +125,8 @@ struct CommandRunner {
+ /// Options (e.g. verbosity, parallelism) passed to a build.
+ struct BuildConfig {
+   BuildConfig() : verbosity(NORMAL), dry_run(false), parallelism(1),
+-                  failures_allowed(1), max_load_average(-0.0f) {}
++                  failures_allowed(1), max_load_average(-0.0f),
++                  force_color_output(false) {}
+ 
+   enum Verbosity {
+     NORMAL,
+@@ -139,6 +140,8 @@ struct BuildConfig {
+   /// The maximum load average we must not exceed. A negative value
+   /// means that we do not have any limit.
+   double max_load_average;
++  // Do not strip color marks even when writing to a non-terminal.
++  bool force_color_output;
+ };
+ 
+ /// Builder wraps the build process: starting commands, updating status.
+diff --git a/src/ninja.cc b/src/ninja.cc
+index 30f89c2..ee0d707 100644
+--- a/src/ninja.cc
++++ b/src/ninja.cc
+@@ -215,7 +215,8 @@ void Usage(const BuildConfig& config) {
+ "  -d MODE  enable debugging (use '-d list' to list modes)\n"
+ "  -t TOOL  run a subtool (use '-t list' to list subtools)\n"
+ "    terminates toplevel options; further flags are passed to the tool\n"
+-"  -w FLAG  adjust warnings (use '-w list' to list warnings)\n",
++"  -w FLAG  adjust warnings (use '-w list' to list warnings)\n"
++"  -c       force using color output\n",
+           kNinjaVersion, config.parallelism);
+ }
+ 
+@@ -1047,7 +1048,7 @@ int ReadFlags(int* argc, char*** argv,
+ 
+   int opt;
+   while (!options->tool &&
+-         (opt = getopt_long(*argc, *argv, "d:f:j:k:l:nt:vw:C:h", kLongOptions,
++         (opt = getopt_long(*argc, *argv, "d:f:j:k:l:nt:vw:C:ch", kLongOptions,
+                             NULL)) != -1) {
+     switch (opt) {
+       case 'd':
+@@ -1103,6 +1104,9 @@ int ReadFlags(int* argc, char*** argv,
+       case 'C':
+         options->working_dir = optarg;
+         break;
++      case 'c':
++        config->force_color_output = true;
++        break;
+       case OPT_VERSION:
+         printf("%s\n", kNinjaVersion);
+         return 0;
+-- 
+2.16.2.windows.1
+
