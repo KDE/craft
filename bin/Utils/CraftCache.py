@@ -22,7 +22,7 @@ class CraftCache(object):
     _version = 9
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
-    class NonPersitenCache(object):
+    class NonPersistentCache(object):
         def __init__(self):
             self.applicationLocations = {}
 
@@ -39,12 +39,16 @@ class CraftCache(object):
         self.availablePackages = None
 
         # non persistent cache
-        self._nonPersitantCache = CraftCache.NonPersitenCache()
+        self._nonPersistentCache = CraftCache.NonPersistentCache()
 
     def __getstate__(self):
         state = dict(self.__dict__)
-        del state["_nonPersitantCache"]
+        del state["_nonPersistentCache"]
         return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self._nonPersistentCache = CraftCache.NonPersistentCache()
 
     @staticmethod
     def _loadInstance():
@@ -53,8 +57,8 @@ class CraftCache(object):
             with open(CraftCache._cacheFile(), "rb") as f:
                 try:
                     data = pickle.load(f)
-                except:
-                    CraftCore.log.warning("Cache corrupted")
+                except Exception as e:
+                    CraftCore.log.warning(f"Cache corrupted: {e}")
                     return utilsCache
 
             if data.version != CraftCache._version or (
@@ -62,7 +66,6 @@ class CraftCache(object):
                 CraftCore.log.debug("Clear cache")
             else:
                 utilsCache = data
-                utilsCache._nonPersitantCache = CraftCache.NonPersitenCache()
         return utilsCache
 
     @staticmethod
@@ -89,8 +92,8 @@ class CraftCache(object):
         CraftCore.cache = CraftCache()
 
     def findApplication(self, app, path=None) -> str:
-        if app in self._nonPersitantCache.applicationLocations:
-            appLocation = self._nonPersitantCache.applicationLocations[app]
+        if app in self._nonPersistentCache.applicationLocations:
+            appLocation = self._nonPersistentCache.applicationLocations[app]
             if os.path.exists(appLocation):
                 return appLocation
             else:
@@ -103,7 +106,7 @@ class CraftCache(object):
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
             CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
-            self._nonPersitantCache.applicationLocations[app] = appLocation
+            self._nonPersistentCache.applicationLocations[app] = appLocation
         else:
             CraftCore.log.debug(f"Craft was unable to locate: {app}, in {path}")
             return None
@@ -205,8 +208,10 @@ class CraftCache(object):
                     if not vers:
                         print(data)
                         raise Exception("Pattern %s does not match." % pattern)
-                    self._nightlyVersions[url] = list(set(vers))
-                    return self._nightlyVersions[url]
+                    out = list(set(vers))
+                    self._nightlyVersions[url] = out
+                    CraftCore.log.debug(f"Found nightlies for {url}: {out}")
+                    return out
             except Exception as e:
                 CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])
