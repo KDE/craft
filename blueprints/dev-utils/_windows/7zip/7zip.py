@@ -28,7 +28,6 @@ class SevenZipPackage(BinaryPackageBase):
         self.subinfo.options.package.disableBinaryCache = True
 
     def install(self):
-        CraftCore.cache.clear()
         if CraftCore.compiler.isX64():
             return utils.copyFile(os.path.join(self.sourceDir(), "x64", "7za.exe"),
                                   os.path.join(self.installDir(), "7za.exe"), linkOnly=False)

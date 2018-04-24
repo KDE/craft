@@ -24,7 +24,6 @@ class Package(BinaryPackageBase):
                                     "\tPYTHON27\n"
                                     "Points to a valid Python installation.")
             return False
-        CraftCore.cache.clear()
         return utils.createShim(os.path.join(self.installDir(), "bin", "python2.exe"),
                                 os.path.join(CraftCore.settings.get("Paths", "PYTHON27"), "python.exe"),
                                 useAbsolutePath=True)

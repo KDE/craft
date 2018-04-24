@@ -18,7 +18,6 @@ class Package(BinaryPackageBase):
     def install(self):
         if not BinaryPackageBase.install(self):
             return False
-        CraftCore.cache.clear()
         return (utils.createShim(os.path.join(self.installDir(), "bin", "python3.exe"),
                                 sys.executable,
                                 useAbsolutePath=True) and

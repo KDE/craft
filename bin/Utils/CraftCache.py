@@ -19,20 +19,32 @@ from CraftStandardDirs import CraftStandardDirs
 
 class CraftCache(object):
     RE_TYPE = re.Pattern if sys.version_info >= (3,7) else re._pattern_type
-    _version = 8
+    _version = 9
     _cacheLifetime = (60 * 60 * 24) * 1  # days
+
+    class NonPersitenCache(object):
+        def __init__(self):
+            self.applicationLocations = {}
 
     def __init__(self):
         self.version = CraftCache._version
-        self._appCache = {}
+        self.cacheCreationTime = time.time()
+
         self._outputCache = {}
         self._helpCache = {}
         self._versionCache = {}
         self._nightlyVersions = {}
-        self.cacheCreationTime = time.time()
+        self._jsonCache = {}
         # defined in blueprintSearch
         self.availablePackages = None
-        self._jsonCache = {}
+
+        # non persistent cache
+        self._nonPersitantCache = CraftCache.NonPersitenCache()
+
+    def __getstate__(self):
+        state = dict(self.__dict__)
+        del state["_nonPersitantCache"]
+        return state
 
     @staticmethod
     def _loadInstance():
@@ -50,6 +62,7 @@ class CraftCache(object):
                 CraftCore.log.debug("Clear cache")
             else:
                 utilsCache = data
+                utilsCache._nonPersitantCache = CraftCache.NonPersitenCache()
         return utilsCache
 
     @staticmethod
@@ -76,8 +89,8 @@ class CraftCache(object):
         CraftCore.cache = CraftCache()
 
     def findApplication(self, app, path=None) -> str:
-        if app in self._appCache:
-            appLocation = self._appCache[app]
+        if app in self._nonPersitantCache.applicationLocations:
+            appLocation = self._nonPersitantCache.applicationLocations[app]
             if os.path.exists(appLocation):
                 return appLocation
             else:
@@ -90,7 +103,7 @@ class CraftCache(object):
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
             CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
-            self._appCache[app] = appLocation
+            self._nonPersitantCache.applicationLocations[app] = appLocation
         else:
             CraftCore.log.debug(f"Craft was unable to locate: {app}, in {path}")
             return None
