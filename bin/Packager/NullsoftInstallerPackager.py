@@ -89,9 +89,9 @@ You can add your own defines into self.defines as well.
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
                 CraftCore.log.critical("could not find installed nsis package, "
-                                        "you can install it using craft nsis or"
+                                        "you can install it using craft nsis or "
                                         "download and install it from "
-                                        "http://sourceforge.net/projects/nsis/")
+                                        "https://sourceforge.net/projects/nsis/")
                 return False
         return True
 
