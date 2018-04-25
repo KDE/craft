@@ -34,6 +34,11 @@ class AutoImport(object):
         # TODO: find out why how self was replaced ....
         return self.__str__()
 
+class State(object):
+    def __init__(self):
+        # targets directly passed to craft
+        self.directTargets = []
+
 
 class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")
@@ -43,6 +48,9 @@ class CraftCore(object):
     cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")
     compiler = AutoImport("compiler", "CraftCompiler")
     installdb = AutoImport("installdb", "InstallDB")
+
+    # information about the current internal state of Craft
+    state = State()
 
     @classmethod
     def registerObjectAlias(cls, name : str, source : str, obj : str) -> None:

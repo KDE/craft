@@ -217,6 +217,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True
     directTargets = package.children.values()
+    CraftCore.state.directTargets = directTargets
 
     if action == "get":
         return invoke(args.get, directTargets)
