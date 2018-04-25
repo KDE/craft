@@ -41,7 +41,7 @@ class BoostBuildSystem(BuildSystemBase):
                         " runtime-link=shared")
         else:
             options += (" link=static"
-                        " runtime-link=static")
+                        " runtime-link=shared")
         if CraftCore.compiler.isX64():
             options += " address-model=64 architecture=x86"
         else:
