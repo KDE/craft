@@ -141,6 +141,7 @@ class UserOptions(object):
         _register("patchLevel", int,    permanent=False)
         _register("ignored",    bool,   permanent=False)
         _register("buildTests", bool,   permanent=False)
+        _register("buildStatic",bool,   permanent=False)
         _register("args",       "",     permanent=False)
 
         settings = UserOptions.instance().settings
@@ -465,9 +466,11 @@ class Options(object):
 
         ## there is a special option available already
         self.buildTools = False
-        self.buildStatic = CraftCore.settings.getboolean("Compile", "Static")
-
         self.useShadowBuild = True
+
+    @property
+    def buildStatic(self):
+        return self.dynamic.buildStatic
 
     def isActive(self, package):
         if isinstance(package, str):
