@@ -172,7 +172,9 @@ def readListFile(listFile):
     parser.read(listFile)
     for sections in parser.keys():
         for packageName in parser[sections]:
-            CraftCore.settings.set("BlueprintVersions", packageName, parser.get(sections, packageName))
+            version = parser.get(sections, packageName)
+            if version:
+              UserOptions.setOptions([f"{packageName}.version={version}"])
             packageNames.append(packageName)
     return packageNames
 

@@ -151,8 +151,7 @@ class UserOptions(object):
 
     @staticmethod
     def setOptions(optionsIn):
-        options = {}
-        packageOptions = {}
+        packageOptions = UserOptions.instance().packageOptions
         for o in optionsIn:
             key, value = o.split("=", 1)
             key, value = key.strip(), value.strip()
@@ -170,7 +169,6 @@ class UserOptions(object):
                 elif not CraftPackageObject.bootstrapping():
                     # in case we are bootstrapping Craft, we might not know that package yet
                     raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
-        UserOptions.instance().packageOptions = packageOptions
 
 
     @staticmethod
