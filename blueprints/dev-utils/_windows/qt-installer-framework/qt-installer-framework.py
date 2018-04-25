@@ -47,7 +47,7 @@ class subinfo(info.infoclass):
         self.options.dynamic.registerOption("title", "Craft Installer")
         self.options.dynamic.registerOption("installerVersion", "0.1")
         self.options.dynamic.registerOption("publisher", "KDE Craft")
-        self.options.dynamic.registerOption("targetDir", "@RootDir@\\Craft")
+        self.options.dynamic.registerOption("targetDir", r"@RootDir@\Craft")
         self.options.dynamic.registerOption("startMenuDir", "Craft")
         self.options.dynamic.registerOption("offlineInstaller", False)
         self.options.dynamic.registerOption("installerName", "CraftInstaller")
@@ -66,7 +66,7 @@ class Package(BinaryPackageBase):
 
     def createPackage(self):
         # TODO: don't run this in package but in a different ways....
-        qtifDir = os.path.join(self.packageDestinationDir(), "qtif", )
+        qtifDir = os.path.join(self.packageDestinationDir(), "qtif" )
 
         vars = {"NAME" : self.subinfo.options.dynamic.name,
                 "VERSION" : self.subinfo.options.dynamic.installerVersion,

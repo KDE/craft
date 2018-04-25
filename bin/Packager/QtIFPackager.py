@@ -26,6 +26,7 @@ import datetime
 import cgi
 
 from Blueprints.MetaInfo import MetaInfo
+from Blueprints.CraftDependencyPackage import *
 from Packager.SevenZipPackager import *
 
 from Utils import CraftHash
@@ -34,36 +35,42 @@ from Package.VirtualPackageBase import VirtualPackageBase
 from CraftOS.osutils import OsUtils
 
 class QtIFPackager(SevenZipPackager):
+  # Generate packages that can be used by the qt installer framework
+  # to generate a repo or offline installer call "craft --package qt-installer-framework"
+  # To manage the packaged dependencies using [Packager]CacheDirectTargetsOnly = True and the use
+  # of a package.list is recommended.
+  # TODO: the root package is currently hardcoded in __rootPackage
 
     @InitGuard.init_once
     def __init__(self):
-        SevenZipPackager.__init__(self)
         self.__resources = os.path.join(os.path.dirname(__file__), "QtIF")
+        SevenZipPackager.__init__(self)
         self.__packageDir = os.path.join(self.packageDestinationDir(), "qtif")
         self.__sdkMode = OsUtils.isWin() and CraftCore.settings.getboolean("QtSDK", "Enabled", False)
         if self.__sdkMode:
             win = "win32" if CraftCore.compiler.isX86() else "win64"
-            self.__depPrefix = f"qt.qt5.{CraftCore.settings.get('QtSDK', 'Version').replace('.', '')}.{win}_{CraftCore.settings.get('QtSDK', 'Compiler')}.kde"
             self.__imagePrefix = os.path.join(CraftCore.settings.get("QtSDK", "Version"), CraftCore.settings.get("QtSDK", "Compiler"))
+            self.__depPrefix = f"{self.__rootPackage}.{CraftCore.settings.get('QtSDK', 'Version').replace('.', '')}.{win}_{CraftCore.settings.get('QtSDK', 'Compiler')}"
         else:
+            self.__depPrefix = self.__rootPackage
             self.__imagePrefix = ""
 
     @property
-    def _date(self):
-        return datetime.datetime.utcnow().strftime("%Y-%m-%d")
+    def __rootPackage(self):
+        #TODO: allow to specify the root node
+        return "kdab"
 
-    def qtifyFy(self, package):
-            if not self.__sdkMode:
-                path = f"kde.{package.path}"
-            else:
-                path = f"{self.__depPrefix}.{package.name}"
-            return path.replace("/", ".").replace("-", "_")
+    def __qtiFy(self, package):
+        path = f"{self.__depPrefix}.{package.path}"
+        return path.replace("/", ".").replace("-", "_")
 
     def _shortCuts(self):
         out = []
         def shortCut(name, target, icon="", parameter="", description=""):
             target = OsUtils.toUnixPath(os.path.join(self.__imagePrefix, target))
             name = OsUtils.toUnixPath(name)
+            if self.__sdkMode:
+                name = f"{name} for Qt {CraftCore.settings.get('QtSDK', 'Version')} {CraftCore.settings.get('QtSDK', 'Compiler')}"
             return f'component.addOperation( "CreateShortcut", "@TargetDir@/{target}","@StartMenuDir@/{name}.lnk");'
 
         if "executable" in self.defines:
@@ -73,32 +80,13 @@ class QtIFPackager(SevenZipPackager):
             out += [shortCut(**short)]
         return "\n".join(out)
 
-    def _addPackage(self) -> bool:
-        if self.__sdkMode:
-            # adept the prefix
-            utils.cleanDirectory(self.archiveDir())
-            utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix))
+    def __createMeta(self, dstpath : str, name : str, version : str, description : str, webpage : str, deps : str=""):
 
-        dstpath = os.path.join(self.__packageDir, "image", self.qtifyFy(self.package))
-        if not self._compress("data.7z", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False):
-            return False
-
-        deps = []
-        for x in self.subinfo.runtimeDependencies.keys():
-            # TODO:
-            # this filter not installed packages but also packages that are virtual on this platform
-            package = CraftPackageObject.get(x)
-            if isinstance(package.instance, VirtualPackageBase):
-                continue
-            if os.path.exists(package.instance.imageDir()):
-                deps += [self.qtifyFy(package)]
-
-
-        data = {"VERSION" : str(CraftVersion(self.version).strictVersion),
-                "NAME" : self.subinfo.displayName,
-                "DESCRIPTION" : cgi.escape(f"{self.package.name} {self.version}<br>{self.subinfo.description}" + (f"<br>{self.subinfo.webpage}" if self.subinfo.webpage else "")),
-                "DATE" : self._date,
-                "DEPENDENCIES" : ", ".join(deps)}
+        data = {"VERSION" : str(CraftVersion(version).strictVersion),
+                "NAME" : name,
+                "DESCRIPTION" : cgi.escape(f"{name} {version}<br>{description}" + (f"<br>{webpage}" if webpage else "")),
+                "DATE" : datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+                "DEPENDENCIES" : deps}
         if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
             return False
 
@@ -108,22 +96,50 @@ class QtIFPackager(SevenZipPackager):
         return True
 
 
-    def __initKDEPrefix(self):
+    def __resolveDeps(self):
+        deps = []
+        for package in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
+            if isinstance(package.instance, VirtualPackageBase):
+                continue
+            if package == self.package:
+              continue
+            # in case we don't want to provide a full installer
+            if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly") and package not in CraftCore.state.directTargets:
+              continue
+            deps += [self.__qtiFy(package)]
+        return deps
 
-        data = {"VERSION" : "0.0",
-                "NAME" : "KDE",
-                "DESCRIPTION" : cgi.escape(f"KDE<br>The KDE Community is a free software community dedicated to creating an open and user-friendly computing experience, offering an advanced graphical desktop, a wide variety of applications for communication, work, education and entertainment and a platform to easily build new applications upon. We have a strong focus on finding innovative solutions to old and new problems, creating a vibrant atmosphere open for experimentation.<br>https://www.kde.org/"),
-                "DATE" : self._date,
-                "DEPENDENCIES" : ""}
-        dstpath = os.path.join(self.__packageDir, "image", (self.__depPrefix if self.__sdkMode else "kde"))
-        if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
-            return False
-        return utils.configureFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), {"SHORTCUTS":""})
 
+    def _addPackage(self) -> bool:
+        dstpath = os.path.join(self.__packageDir, "image", self.__qtiFy(self.package))
+        if not os.path.exists(dstpath):
+            if self.__sdkMode:
+                # adept the prefix
+                utils.cleanDirectory(self.archiveDir())
+                utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix))
+
+            if not self._compress("data.7z", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False):
+                return False
+
+        info = MetaInfo(self.package)
+        return self.__createMeta(dstpath ,info.displayName, self.version, info.description, info.webpage, ", ".join(self.__resolveDeps()))
+
+
+    def __initPrefix(self):
+        dest = os.path.join(self.__packageDir, "image", self.__depPrefix)
+        if not os.path.exists(dest):
+            p = CraftPackageObject.get(self.__rootPackage)
+            info = MetaInfo(p)
+
+            displayName = info.displayName
+            if self.__sdkMode:
+                displayName = f"{displayName} for Qt {CraftCore.settings.get('QtSDK', 'Version')} {CraftCore.settings.get('QtSDK', 'Compiler')}"
+            return self.__createMeta(dest, displayName, "0.0", info.description, info.webpage)
+        return True
 
     def createPackage(self):
-        if not self.__initKDEPrefix():
-            return False
+        if not self.__initPrefix():
+          return False
         return self._addPackage()
 
 
