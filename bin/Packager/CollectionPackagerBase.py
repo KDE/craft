@@ -47,14 +47,14 @@ def toRegExp(fname, targetName) -> re:
             if not line or line.startswith("#"):
                 continue
             try:
-                #convert to forward path sep
-                line = line.replace(r"\\", "/")
+                # accept forward and backward slashes
+                line = line.replace("/", r"[/\\]")
                 tmp = f"^{line}$"
                 re.compile(tmp)  # for debug
                 regex.append(tmp)
                 CraftCore.log.debug(f"{line} added to {targetName} as {tmp}")
-            except re.error:
-                CraftCore.log.critical(f"{tmp} is not a valid regexp")
+            except re.error as e:
+                raise Exception(f"{tmp} is not a valid regular expression: {e}")
     return re.compile(f"({'|'.join(regex)})", re.IGNORECASE)
 
 
@@ -161,13 +161,19 @@ class CollectionPackagerBase(PackagerBase):
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
-        self._whitelist.append(toRegExp(fname, "whitelist"))
+        try:
+          self._whitelist.append(toRegExp(fname, "whitelist"))
+        except Exception as e:
+          raise BlueprintException(str(e), self.package)
 
     def read_blacklist(self, fname):
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
-        self._blacklist.append(toRegExp(fname, "blacklist"))
+        try:
+          self._blacklist.append(toRegExp(fname, "blacklist"))
+        except Exception as e:
+          raise BlueprintException(str(e), self.package)
 
     def whitelisted(self, pathname):
         """ return True if pathname is included in the pattern, and False if not """
@@ -232,17 +238,15 @@ class CollectionPackagerBase(PackagerBase):
             filename that the function whitelist returns as true and
             which do not match blacklist entries
         """
-        directory = OsUtils.toUnixPath(directory)
+        directory = directory
         if blacklist(directory):
             return
-        if not directory.endswith("/"):
-            directory += "/"
         dirs = [directory]
         while dirs:
             path = dirs.pop()
             for f in os.listdir(path):
-                f = OsUtils.toUnixPath(os.path.join(path, f))
-                z = f.replace(directory, "")
+                f = os.path.join(path, f)
+                z = os.path.relpath(f, directory)
                 if blacklist(z):
                     continue
                 if os.path.isdir(f) and not os.path.islink(f):
@@ -259,16 +263,12 @@ class CollectionPackagerBase(PackagerBase):
             Copy the binaries for the Package from srcDir to the imageDir
             directory
         """
-        srcDir = OsUtils.toUnixPath(srcDir)
-        destDir = OsUtils.toUnixPath(destDir)
-        if not destDir.endswith("/"):
-            destDir += "/"
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
 
         for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
-            entry_target = OsUtils.toNativePath(entry.replace(srcDir, destDir))
+            entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
             if not utils.copyFile(entry, entry_target, linkOnly=False):
                 return False
             if self.isBinary(entry_target):
