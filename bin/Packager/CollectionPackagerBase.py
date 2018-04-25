@@ -67,7 +67,7 @@ class PackagerLists(object):
 
     @staticmethod
     def defaultWhitelist():
-        return [re.compile(".*")]
+        return [re.compile("^$")]
 
     @staticmethod
     def defaultBlacklist():
@@ -179,6 +179,7 @@ class CollectionPackagerBase(PackagerBase):
         """ return True if pathname is included in the pattern, and False if not """
         for pattern in self.whitelist:
             if pattern.search(pathname):
+                CraftCore.log.debug(f"{pathname} is whitelisted: {pattern.pattern}")
                 return True
         return False
 
@@ -247,14 +248,13 @@ class CollectionPackagerBase(PackagerBase):
             for f in os.listdir(path):
                 f = os.path.join(path, f)
                 z = os.path.relpath(f, directory)
-                if blacklist(z):
+                if blacklist(z) and not whitelist(z):
                     continue
                 if os.path.isdir(f) and not os.path.islink(f):
                     dirs.append(f)
                 elif os.path.isdir(f) and os.path.islink(f):
-                    if whitelist(z):
-                        yield f
-                elif os.path.isfile(f) and whitelist(z):
+                    yield f
+                elif os.path.isfile(f):
                     if self._filterQtBuildType(f):
                         yield f
 
