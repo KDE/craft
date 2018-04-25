@@ -275,7 +275,7 @@ class CollectionPackagerBase(PackagerBase):
                 if dontStrip:
                     self.strip(entry_target)
                 if doSign:
-                    utils.sign(files)
+                    utils.sign(entry_target)
             elif symbolFiles is not None and self.isDebugSymbolFile(entry_target):
                 symbolFiles.append(entry_target)
         return True
