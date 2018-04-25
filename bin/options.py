@@ -30,6 +30,7 @@ class UserOptions(object):
 #     branch: str
 #     patchLevel: int
 #     buildTests: [True|False]
+#     buildStatic: [True|False]
 #     # arguments passed to the configure step
 #     args: str
 #
@@ -294,11 +295,11 @@ class OptionsUnpack(OptionsBase):
 
 ## options for the configure action
 class OptionsConfigure(OptionsBase):
-    def __init__(self):
+    def __init__(self, dynamic):
         ## with this option additional arguments could be added to the configure commmand line
-        self.args = None
+        self.args = dynamic.args
         ## with this option additional arguments could be added to the configure commmand line (for static builds)
-        self.staticArgs = None
+        self.staticArgs = ""
         ## set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of
@@ -381,8 +382,6 @@ class OptionsPackage(OptionsBase):
         # currently supported by SevenZipPackager
         self.withArchitecture = False
         ## add file digests to the package located in the manifest sub dir
-        # currently supported by SevenZipPackager
-        self.withDigests = True
         ##disable stripping of binary files
         # needed for mysql, striping make the library unusable
         self.disableStriping = False
@@ -390,32 +389,23 @@ class OptionsPackage(OptionsBase):
         ##disable the binary cache for this package
         self.disableBinaryCache = False
 
-        ## wheter to move the plugins to bin
+        ## whether to move the plugins to bin
         self.movePluginsToBin = utils.OsUtils.isWin()
-
-class OptionsGit(OptionsBase):
-    def __init__(self):
-        ## enable support for applying patches in 'format-patch' style with 'git am' (experimental support)
-        self.enableFormattedPatch = False
-
 
 ## main option class
 class Options(object):
     def __init__(self, package=None):
-        self.dynamic = UserOptions.get(package) if package else UserOptions()
+        self.dynamic = UserOptions.get(package)
         ## options of the fetch action
         self.fetch = OptionsFetch()
         ## options of the unpack action
         self.unpack = OptionsUnpack()
         ## options of the configure action
-        self.configure = OptionsConfigure()
+        self.configure = OptionsConfigure(self.dynamic)
         self.make = OptionsMake()
         self.install = OptionsInstall()
         ## options of the package action
         self.package = OptionsPackage()
-        ## options of the git module
-        self.git = OptionsGit()
-
         ## add the date to the target
         self.dailyUpdate = False
 
