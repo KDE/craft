@@ -181,6 +181,9 @@ class CraftPackageObject(object):
             package.categoryInfo = CategoryPackageObject(path)
             if not package.categoryInfo.valid and package.parent:
                 package.categoryInfo = copy.copy(package.parent.categoryInfo)
+                if not package.categoryInfo.valid:
+                    package.categoryInfo = CategoryPackageObject(blueprintRoot)
+
 
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
