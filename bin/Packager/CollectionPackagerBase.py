@@ -197,7 +197,7 @@ class CollectionPackagerBase(PackagerBase):
         if self.__qtSdkDir not in filename:
             return True
 
-        if filename.endswith(".dll") or filename.endswith(".exe"):
+        if self.isBinary(filename):
             if not CraftCore.cache.findApplication("clrphtester"):
                 raise BlueprintException("Deploying a QtSdk depends on dev-util/dependencies", CraftPackageObject.get("dev-util/dependencies"))
             _, imports = CraftCore.cache.getCommandOutput("clrphtester", f"-imports {filename}")
@@ -226,7 +226,7 @@ class CollectionPackagerBase(PackagerBase):
             if ext in {".dll", ".exe"}:
                 return True
         else:
-            if ext in {".so", ".dylib"} or os.access(entry_target, os.X_OK):
+            if ext in {".so", ".dylib"} or os.access(fileName, os.X_OK):
                 return True
         return False
 
