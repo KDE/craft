@@ -233,30 +233,29 @@ class CollectionPackagerBase(PackagerBase):
 
 
 
-    def traverse(self, directory, whitelist=lambda f: True, blacklist=lambda g: False):
+    def traverse(self, root, whitelist=lambda f: True, blacklist=lambda g: False):
         """
             Traverse through a directory tree and return every
             filename that the function whitelist returns as true and
             which do not match blacklist entries
         """
-        directory = directory
-        if blacklist(directory):
+        if blacklist(root) and not whitelist(root):
             return
-        dirs = [directory]
+        dirs = [root]
         while dirs:
             path = dirs.pop()
-            for f in os.listdir(path):
-                f = os.path.join(path, f)
-                z = os.path.relpath(f, directory)
-                if blacklist(z) and not whitelist(z):
+            for filePath in os.listdir(path):
+                filePath = os.path.join(path, filePath)
+                relFilePath = os.path.relpath(filePath, root)
+                if blacklist(relFilePath) and not whitelist(relFilePath):
                     continue
-                if os.path.isdir(f) and not os.path.islink(f):
-                    dirs.append(f)
-                elif os.path.isdir(f) and os.path.islink(f):
-                    yield f
-                elif os.path.isfile(f):
-                    if self._filterQtBuildType(f):
-                        yield f
+                if os.path.isdir(filePath) and not os.path.islink(filePath):
+                    dirs.append(filePath)
+                elif os.path.isdir(filePath) and os.path.islink(filePath):
+                    yield filePath
+                elif os.path.isfile(filePath):
+                    if self._filterQtBuildType(filePath):
+                        yield filePath
 
     def copyFiles(self, srcDir, destDir, dontStrip, symbolFiles : [str]=None) -> bool:
         """
