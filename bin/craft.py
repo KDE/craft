@@ -153,6 +153,7 @@ def main():
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
     actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
     actionHandler.addActionWithArg("run", nargs="+", help="Run an application in the Craft environment")
+    actionHandler.addAction("clean-unused", help="Clean unused files of all packages")
 
     # other actions
 
@@ -229,6 +230,8 @@ def main():
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         elif action == "set":
             CraftCommands.setOption(packageNames, args.set)
+        elif action == "clean-unused":
+            CraftCommands.cleanBuildFiles(cleanArchives=True, cleanImages=True, cleanInstalledImages=False, cleanBuildDir=True, packages=blueprintSearch.packages())
         else:
             if not packageNames:
                 return True

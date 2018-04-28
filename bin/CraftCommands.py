@@ -27,10 +27,12 @@ import tempfile
 import CraftBase
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftVersion import CraftVersion
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils import CraftTimer
 from options import *
-
+import glob
+import utils
 
 
 def doExec(package, action):
@@ -276,3 +278,41 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 
     CraftCore.debug.new_line()
     return True
+
+def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
+    def cleanDir(dir):
+        CraftCore.debug.printOut(f"Cleaning: {dir}")
+        utils.cleanDirectory(dir)
+        os.rmdir(dir)
+
+    for p in packages:
+        package = CraftPackageObject.get(p.path)
+        if not package or package.isCategory():
+            continue
+        CraftCore.log.debug(f"Checking package for unused files: {p.path}")
+        instance = package.instance
+        version = instance.version
+
+        if version:
+            imageGlob = instance.imageDir().replace(version, "*")
+            builddirGlob = instance.buildDir().replace(version, "*")
+        else:
+            imageGlob = instance.imageDir()
+            builddirGlob = instance.buildDir()
+
+        # image directories
+        if cleanImages:
+            for dir in glob.glob(imageGlob):
+                if package.isInstalled and not cleanInstalledImages:
+                    if dir == instance.imageDir():
+                        continue
+                cleanDir(dir)
+
+        # archive directory
+        if cleanArchives and os.path.exists(instance.archiveDir()):
+            cleanDir(instance.archiveDir())
+
+        # build directory
+        if cleanBuildDir:
+            for dir in glob.glob(builddirGlob):
+                cleanDir(dir)
