@@ -152,24 +152,26 @@ class UserOptions(object):
     @staticmethod
     def setOptions(optionsIn):
         packageOptions = UserOptions.instance().packageOptions
+        sectionRe = re.compile(r"\[([^\[\]]+)\](.*)")
         for o in optionsIn:
             key, value = o.split("=", 1)
             key, value = key.strip(), value.strip()
-            if "." in key:
+            match = sectionRe.findall(key)
+            if match:
+                # TODO: move out of options.py
+                section, key = match[0]
+                CraftCore.log.info(f"setOptions: [{section}]{key} = {value}")
+                CraftCore.settings.set(section, key, value)
+            else:
                 package, key = key.split(".", 1)
                 if CraftPackageObject.get(package):
                     if package not in packageOptions:
                          packageOptions[package] = {}
                     CraftCore.log.info(f"setOptions: [{package}]{key} = {value}")
                     packageOptions[package][key] = value
-                elif (package, key) in CraftCore.settings:
-                    # TODO: move out of options.py
-                    CraftCore.log.info(f"setOptions: [{package}]{key} = {value}")
-                    CraftCore.settings.set(package, key, value)
                 elif not CraftPackageObject.bootstrapping():
                     # in case we are bootstrapping Craft, we might not know that package yet
                     raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
-
 
     @staticmethod
     def addPackageOption(package : CraftPackageObject, key : str, value : str) -> None:
