@@ -31,6 +31,8 @@ Packager for portal 7zip archives
           return False
 
         absSetupPath = self.createPortablePackage()
+        if not absSetupPath:
+          return False
 
         if not os.path.isabs(absSetupPath):
             absSetupPath = os.path.join(self.packageDestinationDir(), absSetupPath)
