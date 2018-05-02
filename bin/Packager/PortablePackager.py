@@ -15,18 +15,21 @@ Packager for portal 7zip archives
         SevenZipPackager.__init__(self)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
-    def createPortablePackage(self):
+    def createPortablePackage(self) -> str:
         """create portable 7z package with digest files located in the manifest subdir"""
         setupname = self.defines.get("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True)))
         srcdir = self.defines.get("srcdir", self.archiveDir())
 
-        self._compress(setupname, srcdir, self.packageDestinationDir())
+        if not self._compress(setupname, srcdir, self.packageDestinationDir()):
+          return None
         return setupname
 
     def createPackage(self):
         """ create a package """
 
-        self.internalCreatePackage()
+        if not self.internalCreatePackage():
+          return False
+
         absSetupPath = self.createPortablePackage()
 
         if not os.path.isabs(absSetupPath):
