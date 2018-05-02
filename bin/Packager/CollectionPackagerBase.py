@@ -199,9 +199,9 @@ class CollectionPackagerBase(PackagerBase):
             return True
 
         if self.isBinary(filename):
-            if not CraftCore.cache.findApplication("clrphtester"):
+            if not CraftCore.cache.findApplication("dependencies"):
                 raise BlueprintException("Deploying a QtSdk depends on dev-util/dependencies", CraftPackageObject.get("dev-util/dependencies"))
-            _, imports = CraftCore.cache.getCommandOutput("clrphtester", f"-imports {filename}")
+            _, imports = CraftCore.cache.getCommandOutput("dependencies", f"-imports {filename}")
             rt = CollectionPackagerBase.reMsvcDebugRt.findall(imports)
             out = False
             if self.buildType() == "Debug":
