@@ -24,6 +24,9 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "1.8.2"
 
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/mingw-w64"] = "default"
+
 
 class Package(CMakePackageBase):
     def __init__(self, **args):

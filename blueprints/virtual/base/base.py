@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = '0.2'
 
     def setDependencies(self):
+        self.buildDependencies["core/cacert"] = "default"
         self.buildDependencies["dev-utils/wget"] = "default"
         self.buildDependencies["dev-utils/cmake"] = "default"
         self.buildDependencies["dev-utils/7zip"] = "default"
@@ -31,14 +32,14 @@ class subinfo(info.infoclass):
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.buildDependencies["dev-utils/ccache"] = "default"
 
-        self.runtimeDependencies["libs/runtime"] = "default"
-        self.buildDependencies["craft/craft-blueprints-kde"] = "default"
-        self.buildDependencies["craft/craft-core"] = "default"
-
         # needed by CollectionPackagerBase
         if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
             CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
             self.buildDependencies["dev-utils/dependencies"] = "default"
+
+        self.buildDependencies["craft/craft-blueprints-kde"] = "default"
+        self.buildDependencies["craft/craft-core"] = "default"
+        self.packagingDependencies["libs/runtime"] = "default"
 
 
 class Package(VirtualPackageBase):

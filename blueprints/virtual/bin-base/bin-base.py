@@ -5,15 +5,10 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.targets['0.2'] = ""
         self.defaultTarget = '0.2'
+        self.description = "deprecated: use virtual/base instead"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/wget"] = "default"
-        self.buildDependencies["dev-utils/7zip"] = "default"
-        self.buildDependencies["dev-utils/shimgen"] = "default"
-        self.buildDependencies["dev-utils/patch"] = "default"
-        self.buildDependencies["craft/craft-blueprints-kde"] = "default"
-        self.buildDependencies["craft/craft-core"] = "default"
-
+        self.runtimeDependencies["virtual/base"] = "default"
 
 from Package.VirtualPackageBase import *
 
