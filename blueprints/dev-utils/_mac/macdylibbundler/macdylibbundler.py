@@ -18,7 +18,7 @@ class Package(MakeFilePackageBase):
         self.subinfo.options.useShadowBuild = False
 
     def fetch(self):
-        if isinstance(self.source, GitSource):
+        if isinstance(self, GitSource):
             utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
         return super().fetch()
 
