@@ -19,7 +19,8 @@ class MacDMGPackager( CollectionPackagerBase ):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
-        self.internalCreatePackage()
+        if not self.internalCreatePackage():
+          return False
         self.preArchive()
 
         self._setDefaults()
