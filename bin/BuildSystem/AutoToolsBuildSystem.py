@@ -106,8 +106,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not self._execute(self.buildDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
-        if os.path.exists(os.path.join(self.imageDir(), "lib")):
-            if not self._execute(os.path.join(self.imageDir(), "lib"), "rm", " -Rf *.la"):
+
+
+        # la files aren't relocatable and until now we lived good without them
+        laFiles = glob.glob(os.path.join(self.imageDir(), "**/*.la"), recursive=True)
+        for laFile in laFiles:
+            if not utils.deleteFile(laFile):
                 return False
 
         return self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix()))
