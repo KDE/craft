@@ -145,7 +145,7 @@ class BuildSystemBase(CraftBase):
             return False
         # a post install routine to fix the prefix (make things relocatable)
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
-        prefix_re = re.compile("^prefix=(.*)$", re.MULTILINE)
+        prefix_re = re.compile("^prefix\s?=\s?(.*)$", re.MULTILINE)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         if os.path.exists(pkgconfigPath):
             for pcFile in os.listdir(pkgconfigPath):
@@ -155,7 +155,7 @@ class BuildSystemBase(CraftBase):
                         config = f.read()
                     prefix = prefix_re.findall(config)
                     if len(prefix) != 1:
-                        CraftCore.log.error(f"Failed to patch {path}")
+                        CraftCore.log.error(f"Failed to patch {path} {prefix}")
                         return False
                     prefix = prefix[0]
                     CraftCore.log.info(f"Patching {path}, replacing {prefix} with {newPrefix}")
