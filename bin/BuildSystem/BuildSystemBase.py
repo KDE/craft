@@ -140,9 +140,9 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-    def internlPostInstall(self):
-        if not super().internlPostInstall():
-            return Fasle
+    def internalPostInstall(self):
+        if not super().internalPostInstall():
+            return False
         # a post install routine to fix the prefix (make things relocatable)
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
         prefix_re = re.compile("^prefix=(.*)$", re.MULTILINE)
