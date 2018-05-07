@@ -206,29 +206,6 @@ def getABI():
 
     return f"{platform}-{abi}-{compiler}"
 
-
-def getIgnores():
-    if CraftBootstrap.isWin():
-        return None
-
-    ignores = []
-    settings = configparser.ConfigParser()
-    def addIgnore(ignore):
-        if ignore:
-            ignores.append(ignore)
-            settings.add_section(ignore)
-            settings[ignore]["ignored"] = "True"
-    print("Craft can provide you with the whole Qt5 SDK, but you can also use Qt5 development "
-          "packages provided by the distribution.")
-    addIgnore(CraftBootstrap.promptForChoice("Do you want to blacklist Qt5?",
-                                             [("Yes", "libs/qt5"), ("No", None)],
-                                             default="No"))
-
-    print(f"Your ignore list.\n"
-          f"Ignores: {ignores}")
-
-    return settings
-
 def setUp(args):
     if not args.dry_run and not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
@@ -252,14 +229,6 @@ def setUp(args):
         installShortCut = CraftBootstrap.promptForChoice("Do you want to install a StartMenu entry",
                                                          [("Yes", True), ("No", False)],
                                                          default="Yes")
-
-
-    ignores = getIgnores()
-    if ignores:
-        os.makedirs(os.path.join(args.prefix, "etc"), exist_ok=True)
-        with open(os.path.join(args.prefix, "etc", "BlueprintSettings.ini"), "wt+") as blueprintSettings:
-            ignores.write(blueprintSettings)
-
     if not args.dry_run:
         CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
                                     os.path.join(args.prefix, "download"),
