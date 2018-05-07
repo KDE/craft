@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
 
         self.buildDependencies["craft/craft-blueprints-kde"] = "default"
         self.buildDependencies["craft/craft-core"] = "default"
-        self.packagingDependencies["libs/runtime"] = "default"
+        self.buildDependencies["libs/runtime"] = "default"
 
 
 class Package(VirtualPackageBase):
