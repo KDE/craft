@@ -246,4 +246,4 @@ class PackageBase(CraftBase):
         else:
             CraftCore.log.error("command %s not understood" % command)
             return False
-        return False
+        return True
