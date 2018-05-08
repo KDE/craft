@@ -86,8 +86,8 @@ class UserOptions(object):
                     with open(instance.path, 'wt+') as configfile:
                         print(instance.__header, file=configfile)
                         instance.settings.write(configfile)
-                except:
-                    CraftCore.log.debug(f"Failed so save {instance.path}")
+                except Exception as e:
+                    CraftCore.log.warning(f"Failed so save {instance.path}: {e}")
 
 
     @staticmethod
@@ -167,7 +167,7 @@ class UserOptions(object):
                 if CraftPackageObject.get(package):
                     if package not in packageOptions:
                          packageOptions[package] = {}
-                    CraftCore.log.info(f"setOptions: [{package}]{key} = {value}")
+                    CraftCore.log.info(f"setOptions: BlueprintSettings.ini [{package}]{key} = {value}")
                     packageOptions[package][key] = value
                 elif not CraftPackageObject.bootstrapping():
                     # in case we are bootstrapping Craft, we might not know that package yet

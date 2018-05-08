@@ -54,8 +54,7 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
     def testOptions(self):
         UserOptions.setOptions(["qt-apps/gammaray.gammarayProbeOnly = True", "qt-apps/gammaray.disableGammarayBuildCliInjector = True"])
         package = CraftPackageObject.get("qt-apps/gammaray")
-        # init the package
-        package.instance
+        package.subinfo.registerOptions()
         option = UserOptions.get(package)
         self.assertEqual(option.gammarayProbeOnly, True)
         self.assertEqual(option.disableGammarayBuildCliInjector, True)
