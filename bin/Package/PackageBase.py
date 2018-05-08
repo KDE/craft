@@ -214,10 +214,6 @@ class PackageBase(CraftBase):
                 CraftCore.log.warning("file %s does not exist" % fullPath)
 
     def runAction(self, command):
-        """ \todo TODO: rename the internal functions into the form cmdFetch, cmdCheckDigest etc
-        then we get by without this dict:
-            ok = getattr(self, 'cmd' + command.capitalize()()
-        next we could """
         functions = {"fetch": "fetch",
                      "cleanimage": "cleanImage",
                      "cleanbuild": "cleanBuild",
@@ -242,11 +238,12 @@ class PackageBase(CraftBase):
                 if not isinstance(steps, list):
                     steps = [steps]
                 for step in steps:
-                    ok = getattr(self, step)()
+                    if not getattr(self, step)():
+                        return False
             except AttributeError as e:
                 raise BlueprintException(str(e), self.package, e)
 
         else:
-            ok = CraftCore.log.error("command %s not understood" % command)
-
-        return ok
+            CraftCore.log.error("command %s not understood" % command)
+            return False
+        return False
