@@ -73,7 +73,7 @@ class MSBuildBuildSystem(BuildSystemBase):
         for root in buildDirs:
             if not globCopy(root, os.path.join(self.imageDir(), "lib"), ["**/*.pdb", "**/*.lib"]):
                 return False
-            if not globCopy(root, os.path.join(self.imageDir(), "bin"), ["**/*.pdb", "**/*.bin", "**/*.dll"]):
+            if not globCopy(root, os.path.join(self.imageDir(), "bin"), ["**/*.pdb", "**/*.exe", "**/*.dll"]):
                 return False
             if installHeaders:
                 if not globCopy(root, os.path.join(self.imageDir(), "include"), ["**/*.h", "**/*.hpp"]):
