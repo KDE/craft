@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = "default"
         self.buildDependencies["dev-utils/wget"] = "default"
+        self.buildDependencies["dev-utils/shimgen"] = "default"
         self.buildDependencies["dev-utils/cmake"] = "default"
         self.buildDependencies["dev-utils/7zip"] = "default"
         self.buildDependencies["dev-utils/patch"] = "default"

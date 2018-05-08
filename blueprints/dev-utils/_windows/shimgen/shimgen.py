@@ -14,10 +14,6 @@ class subinfo(info.infoclass):
             ['3e8c2181f7816a1917188b690493271b1ff6bc07a281de1ff1ce8f1a0818042f'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "1.0"
 
-    def setDependencies(self):
-        self.buildDependencies["dev-utils/7zip"] = "default"
-        self.buildDependencies["dev-utils/wget"] = "default"
-
 from Package.BinaryPackageBase import *
 
 
