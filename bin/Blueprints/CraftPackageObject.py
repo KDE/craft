@@ -180,7 +180,8 @@ class CraftPackageObject(object):
         if not package.categoryInfo:
             package.categoryInfo = CategoryPackageObject(path)
             if not package.categoryInfo.valid and package.parent:
-                package.categoryInfo = package.parent.categoryInfo
+                # we actually need a copy
+                package.categoryInfo = copy.copy(package.parent.categoryInfo)
                 if not package.categoryInfo.valid:
                     package.categoryInfo = CategoryPackageObject(blueprintRoot)
 
