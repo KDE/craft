@@ -145,6 +145,7 @@ def main():
         else:
             actionHandler.addAction(x)
 
+    actionHandler.addAction("update", help="Update all installed packages")
     # read-only actions
     actionHandler.addAction("print-installed",
                             help="This will show a list of all packages that are installed currently.")
@@ -232,6 +233,8 @@ def main():
             CraftCommands.setOption(packageNames, args.set)
         elif action == "clean-unused":
             CraftCommands.cleanBuildFiles(cleanArchives=True, cleanImages=True, cleanInstalledImages=False, cleanBuildDir=True, packages=blueprintSearch.packages())
+        elif action == "update":
+            return CraftCommands.updateInstalled(tempArgs)
         else:
             if not packageNames:
                 return True

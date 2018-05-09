@@ -316,3 +316,11 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if cleanBuildDir:
             for dir in glob.glob(builddirGlob):
                 cleanDir(dir)
+
+def updateInstalled(args) -> bool:
+    package = CraftPackageObject(None)
+    for packageName, _ in CraftCore.installdb.getDistinctInstalled():
+        p = CraftPackageObject.get(packageName)
+        if p:
+            package.children[p.name] = p
+    return run(package, "all", args)
