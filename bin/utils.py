@@ -14,6 +14,7 @@ import io
 import os
 import re
 import shlex
+import stat
 import subprocess
 import urllib.error
 import urllib.parse
@@ -720,36 +721,31 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
-    if not os.path.exists(os.path.dirname(shim)):
-        os.makedirs(os.path.dirname(shim))
+    if not useAbsolutePath and os.path.isabs(target):
+        target = os.path.relpath(target, os.path.dirname(shim))
+
+    createDir(os.path.dirname(shim))
     if not OsUtils.isWin():
-        shim,_ = os.path.splitext(shim)
-        target,_ = os.path.splitext(target)
-        if not useAbsolutePath:
-            target = os.path.relpath(target, os.path.dirname(shim))
         command = (f"#!/bin/bash\n"
                    "parent_path=$(dirname \"${BASH_SOURCE[0]}\")\n"
                   f"${{parent_path}}/{target} {args or ''} $@\n")
-        CraftCore.log.debug(f"Creating {shim}: {command}")
+        CraftCore.log.info(f"Creating {shim}")
+        CraftCore.log.debug(command)
         with open(shim, "wt+") as bash:
             bash.write(command)
-        system(["chmod", "+x", shim])
+        os.chmod(shim, os.stat(shim).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         return True
-    app = CraftCore.cache.findApplication("shimgen")
-    if not app:
-        CraftCore.log.error(f"Failed to detect shimgen, please install dev-util/shimgen")
-        return False
-    if not useAbsolutePath and os.path.isabs(target):
-        srcPath = shim
-        if srcPath.endswith(".exe"):
-            srcPath = os.path.dirname(srcPath)
-        target = os.path.relpath(target, srcPath)
-    command = [app, "--output", shim, "--path", target]
-    if args:
-        command += ["--command", args]
-    if guiApp:
-        command += ["--gui"]
-    return system(command, stdout=subprocess.DEVNULL)
+    else:
+        app = CraftCore.cache.findApplication("shimgen")
+        if not app:
+            CraftCore.log.error(f"Failed to detect shimgen, please install dev-util/shimgen")
+            return False
+        command = [app, "--output", shim, "--path", target]
+        if args:
+            command += ["--command", args]
+        if guiApp:
+            command += ["--gui"]
+        return system(command, stdout=subprocess.DEVNULL)
 
 
 def replaceSymlinksWithCopys(path):
