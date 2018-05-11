@@ -213,6 +213,12 @@ class PackageBase(CraftBase):
             elif not os.path.isdir(fullPath):
                 CraftCore.log.warning("file %s does not exist" % fullPath)
 
+            containingDir = os.path.dirname(fullPath)
+            if os.path.exists(containingDir) and not os.listdir(containingDir):
+                CraftCore.log.info(f"Delete empty dir {containingDir}")
+                utils.rmtree(containingDir)
+
+
     def runAction(self, command):
         functions = {"fetch": "fetch",
                      "cleanimage": "cleanImage",
