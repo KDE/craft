@@ -728,7 +728,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     if not OsUtils.isWin():
         command = (f"#!/bin/bash\n"
                    "parent_path=$(dirname \"${BASH_SOURCE[0]}\")\n"
-                  f"${{parent_path}}/{target} {args or ''} $@\n")
+                  f"${{parent_path}}/{target} {args or ''} \"$@\"\n")
         CraftCore.log.info(f"Creating {shim}")
         CraftCore.log.debug(command)
         with open(shim, "wt+") as bash:
