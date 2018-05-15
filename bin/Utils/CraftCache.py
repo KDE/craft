@@ -164,6 +164,7 @@ class CraftCache(object):
             return None
         appVersion = CraftVersion(match.group(1))
         self._versionCache[app] = appVersion
+        CraftCore.log.debug(f"getVersion: {app}[{appVersion}]")
         return appVersion
 
     def cacheJsonFromUrl(self, url, timeout=10) -> object:
