@@ -23,7 +23,9 @@ class CraftVersion(Version):
         return "CraftVersion ('%s')" % self.versionstr
 
     def _cmp(self, other):
-        if not isinstance(other, CraftVersion):
+        if isinstance(other, str):
+            other = CraftVersion(other)
+        elif not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
         if self.isBranch or other.isBranch:
             return (0 if self.versionstr == other.versionstr
