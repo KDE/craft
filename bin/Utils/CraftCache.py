@@ -144,11 +144,11 @@ class CraftCache(object):
         return self._helpCache[(app, command)]
 
     def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
-        if app in self._versionCache:
-            return self._versionCache[app]
         app = self.findApplication(app)
         if not app:
             return None
+        if app in self._versionCache:
+            return self._versionCache[app]
         if not pattern:
             pattern = re.compile(r"(\d+\.\d+(?:\.\d+)?)")
         if not versionCommand:
@@ -157,11 +157,11 @@ class CraftCache(object):
             raise Exception("getVersion can only handle a compiled regular expression as pattern")
         _, output = self.getCommandOutput(app, versionCommand)
         if not output:
-            return False
+            return None
         match = pattern.search(output)
         if not match:
             CraftCore.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
-            return False
+            return None
         appVersion = CraftVersion(match.group(1))
         self._versionCache[app] = appVersion
         return appVersion
