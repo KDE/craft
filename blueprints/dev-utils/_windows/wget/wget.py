@@ -31,3 +31,6 @@ class Package(BinaryPackageBase):
         utils.copyFile(os.path.join(self.sourceDir(), "wget.exe"),
                        os.path.join(self.installDir(), "bin", "wget.exe"))
         return True
+
+    def postQmerge(self):
+        CraftCore.cache.clear()

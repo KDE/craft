@@ -36,6 +36,9 @@ class SevenZipPackage(BinaryPackageBase):
             return utils.copyFile(os.path.join(self.sourceDir(), "7za.exe"), os.path.join(self.installDir(), "7za.exe"),
                                   linkOnly=False)
 
+    def postQmerge(self):
+        CraftCore.cache.clear()
+
 
 class Package(VirtualIfSufficientVersion):
     def __init__(self):
