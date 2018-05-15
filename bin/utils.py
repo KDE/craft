@@ -87,7 +87,7 @@ def getFile(url, destdir, filename='') -> bool:
     if os.path.exists(os.path.join(destdir, filename)):
         return True
 
-    powershell = CraftCore.cache.findApplication("pwsh") or CraftCore.cache.findApplication("powershell")
+    powershell = CraftCore.cache.findApplication("powershell")
     if powershell:
         filename = os.path.join(destdir, filename)
         return system([powershell, "-NoProfile", "-Command",
