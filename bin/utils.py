@@ -91,7 +91,7 @@ def getFile(url, destdir, filename='') -> bool:
     if powershell:
         filename = os.path.join(destdir, filename)
         return system([powershell, "-NoProfile", "-Command",
-                       f"{{(new-object net.webclient).DownloadFile('{url}', '{filename}')}}"])
+                       f"&{{(new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")}}"])
     else:
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
