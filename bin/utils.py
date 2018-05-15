@@ -90,7 +90,7 @@ def getFile(url, destdir, filename='') -> bool:
     powershell = CraftCore.cache.findApplication("powershell")
     if powershell:
         filename = os.path.join(destdir, filename)
-        return system([powershell, "-NoProfile", "-Command",
+        return system([powershell, "-NoProfile", "-Command", "-ExecutionPolicy", "ByPass"
                        f"&{{(new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")}}"])
     else:
         def dlProgress(count, blockSize, totalSize):
