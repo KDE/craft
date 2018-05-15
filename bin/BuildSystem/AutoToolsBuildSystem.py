@@ -89,6 +89,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def install(self):
         """Using *make install"""
+        self.cleanImage()
         if not self.subinfo.options.useShadowBuild:
             self.enterSourceDir()
         else:
