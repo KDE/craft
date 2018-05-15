@@ -140,10 +140,28 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
+
+
+    def patchInstallPrefix(self, files : [str], oldPath : str=None, newPath : str=CraftCore.standardDirs.craftRoot()) -> bool:
+        if not oldPath:
+            oldPath = self.subinfo.buildPrefix
+        for fileName in files:
+            if not os.path.exists(fileName):
+                CraftCore.log.warning(f"File {fileName} not found.")
+                return False
+            with open(fileName, "rt+") as f:
+                content = f.read()
+            CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
+            content = content.replace(oldPath, newPath)
+            with open(fileName, "wt+") as f:
+                f.write(content)
+        return True
+
     def internalPostInstall(self):
         if not super().internalPostInstall():
             return False
         # a post install routine to fix the prefix (make things relocatable)
+        # TODO: use patchInstallPrefix after 5.10.1-2 cache was released
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
         prefix_re = re.compile("^prefix\s?=\s?(.*)$", re.MULTILINE)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
