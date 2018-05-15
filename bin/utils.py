@@ -76,11 +76,13 @@ def getFile(url, destdir, filename='') -> bool:
         _, _, path, _, _, _ = urllib.parse.urlparse(url)
         filename = os.path.basename(path)
 
-    if CraftCore.cache.findApplication("wget"):
-        return wgetFile(url, destdir, filename)
+    # curl and wget basically only work when we have a cert store on windows
+    if CraftCore.compiler.isWindows and os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
+        if CraftCore.cache.findApplication("wget"):
+            return wgetFile(url, destdir, filename)
 
-    if CraftCore.cache.findApplication("curl"):
-        return curlFile(url, destdir, filename)
+        if CraftCore.cache.findApplication("curl"):
+            return curlFile(url, destdir, filename)
 
     if os.path.exists(os.path.join(destdir, filename)):
         return True
