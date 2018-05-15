@@ -13,16 +13,22 @@ class CraftManifestEntryFile(object):
         self.checksum = checksum
         self.date = datetime.datetime.utcnow()
         self.version = version
+        self.buildPrefix = CraftCore.standardDirs.craftRoot()
 
     @staticmethod
     def fromJson(data : dict):
         out = CraftManifestEntryFile(data["fileName"], data["checksum"])
         out.date = CraftManifest._parseTimeStamp(data["date"])
         out.version = data.get("version", "")
+        out.buildPrefix = data.get("buildPrefix", None)
         return out
 
     def toJson(self) -> dict:
-        return {"fileName":self.fileName, "checksum":self.checksum, "date":self.date.strftime(CraftManifest._TIME_FORMAT), "version":self.version}
+        return {"fileName"      : self.fileName,
+                "checksum"      : self.checksum,
+                "date"          : self.date.strftime(CraftManifest._TIME_FORMAT),
+                "version"       : self.version,
+                "buildPrefix"   : self.buildPrefix}
 
 class CraftManifestEntry(object):
     def __init__(self, name : str) -> None:

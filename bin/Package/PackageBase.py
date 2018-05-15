@@ -169,6 +169,7 @@ class PackageBase(CraftBase):
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
                 CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
                 return False
+            self.subinfo.buildPrefix = latest.buildPrefix
             if not (self.cleanImage()
                     and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
                     and self.internalPostInstall()
