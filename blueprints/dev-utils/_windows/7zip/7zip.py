@@ -38,6 +38,7 @@ class SevenZipPackage(BinaryPackageBase):
 
     def postQmerge(self):
         CraftCore.cache.clear()
+        return True
 
 
 class Package(VirtualIfSufficientVersion):

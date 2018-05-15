@@ -34,3 +34,4 @@ class Package(BinaryPackageBase):
 
     def postQmerge(self):
         CraftCore.cache.clear()
+        return True
