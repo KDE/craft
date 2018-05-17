@@ -77,7 +77,8 @@ def getFile(url, destdir, filename='') -> bool:
         filename = os.path.basename(path)
 
     # curl and wget basically only work when we have a cert store on windows
-    if CraftCore.compiler.isWindows and os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
+    # macos has the same issue, so we use wget or curl there too
+    if ( CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS ) and os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
         if CraftCore.cache.findApplication("wget"):
             return wgetFile(url, destdir, filename)
 
