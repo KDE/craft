@@ -177,6 +177,11 @@ class SetupHelper(object):
                 command += ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
         _, path = SetupHelper._getOutput(command)
         arg = architectures[architecture] + ("_cross" if not native else "")
+
+        # msvc2015: we require the windows 8.1 kit for the correct tools (rc.exe, mt.exe)
+        if version == 14:
+            arg = f"{arg} 8.1"
+
         path = os.path.join(path, "VC")
         if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
             path = os.path.join(path, "Auxiliary", "Build")
