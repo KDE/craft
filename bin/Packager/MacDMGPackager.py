@@ -21,7 +21,6 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         if not self.internalCreatePackage():
           return False
-        self.preArchive()
 
         self._setDefaults()
 
