@@ -47,11 +47,16 @@ class MSBuildBuildSystem(BuildSystemBase):
             sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
         else:
             sdkVer = ""
+        toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
+        if os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
+            toolsVersion = f" /toolsversion:{toolsVersion}"
+        else:
+            toolsVersion = ""
         for target in self.msbuildTargets:
             if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
                                 f" /p:Configuration={buildType}"
-                                #f" /tv:{CraftCore.compiler.getInternalVersion()}.0"
                                 f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
+                                f"{toolsVersion}"
                                 f"{sdkVer}"
                                 f"{platform}"
                                 f" {self.subinfo.options.configure.args}"):
