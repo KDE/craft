@@ -165,8 +165,9 @@ class SetupHelper(object):
         return env
 
     @staticmethod
-    def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
-        architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
+    def _callVCVER(version : int, args : []=None) -> str:
+        if not args:
+            args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
         command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
         if version:
@@ -174,13 +175,23 @@ class SetupHelper(object):
             if version < 15:
                 command.append("-legacy")
             else:
-                command += ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
-        _, path = SetupHelper._getOutput(command)
-        arg = architectures[architecture] + ("_cross" if not native else "")
+                if not args:
+                    args = ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
+        return SetupHelper._getOutput(command + args)[1]
 
-        # msvc2015: we require the windows 8.1 kit for the correct tools (rc.exe, mt.exe)
+    @staticmethod
+    def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
+        architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
+        args = architectures[architecture] + ("_cross" if not native else "")
+
+        path = ""
         if version == 14:
-            arg = f"{arg} 8.1"
+            # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
+            path = SetupHelper._callVCVER(15, args=["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.140"])
+            if path:
+                args += " -vcvars_ver=14.0"
+        if not path:
+            path = SetupHelper._callVCVER(version)
 
         path = os.path.join(path, "VC")
         if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
@@ -190,7 +201,7 @@ class SetupHelper(object):
             log(f"Failed to setup msvc compiler.\n"
                 f"{path} does not exist.")
             exit(1)
-        status, result = SetupHelper._getOutput(f"\"{path}\" {arg} > NUL && set", shell=True)
+        status, result = SetupHelper._getOutput(f"\"{path}\" {args} > NUL && set", shell=True)
         if status != 0:
             log(f"Failed to setup msvc compiler.\n"
                 f"Command: {result} ")
