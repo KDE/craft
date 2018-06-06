@@ -20,6 +20,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import json
+import tempfile
 
 import Notifier.NotificationLoader
 from CraftConfig import *
@@ -672,8 +673,15 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
-    result = system(cmd)
+    with open(f, "rt+") as p:
+        patchContent = p.read()
+
+    with tempfile.TemporaryDirectory("wt+") as tmp:
+        tmpPatch = os.path.join(tmp, os.path.basename(f))
+        with open(tmpPatch, "wt+") as p:
+            p.write(patchContent)
+        cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", tmpPatch]
+        result = system(cmd)
     if not result:
         CraftCore.log.warning("applying %s failed!" % f)
     return result

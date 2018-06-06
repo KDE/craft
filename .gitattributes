@@ -1,5 +1,3 @@
 *.cmd text eol=crlf
 *.bat text eol=crlf
-*.diff text eol=crlf
-*.patch text eol=crlf
 *.py text eol=nl
