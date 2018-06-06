@@ -30,7 +30,7 @@ class MacDMGPackager( CollectionPackagerBase ):
         if not appPath:
             apps = glob.glob(os.path.join(archive, f"**/{self.defines['appname']}.app"), recursive=True)
             if len(apps) != 1:
-                CraftCore.log.error(f"Failed to detect *.app for {self}, please provide self.defines['apppath']")
+                CraftCore.log.error(f"Failed to detect {self.defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
                 return False
             appPath = apps[0]
         appPath = os.path.join(archive, appPath)
