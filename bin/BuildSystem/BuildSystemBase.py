@@ -161,9 +161,7 @@ class BuildSystemBase(CraftBase):
         if not super().internalPostInstall():
             return False
         # a post install routine to fix the prefix (make things relocatable)
-        # TODO: use patchInstallPrefix after 5.10.1-2 cache was released
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
-        prefix_re = re.compile("^prefix\s?=\s?(.*)$", re.MULTILINE)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         if os.path.exists(pkgconfigPath):
             for pcFile in os.listdir(pkgconfigPath):
@@ -171,13 +169,8 @@ class BuildSystemBase(CraftBase):
                     path = os.path.join(pkgconfigPath, pcFile)
                     with open(path, "rt+") as f:
                         config = f.read()
-                    prefix = prefix_re.findall(config)
-                    if len(prefix) != 1:
-                        CraftCore.log.error(f"Failed to patch {path} {prefix}")
-                        return False
-                    prefix = prefix[0]
-                    CraftCore.log.info(f"Patching {path}, replacing {prefix} with {newPrefix}")
-                    config = config.replace(prefix, newPrefix)
+                    CraftCore.log.info(f"Patching {path}, replacing {self.subinfo.buildPrefix} with {newPrefix}")
+                    config = config.replace(self.subinfo.buildPrefix, newPrefix)
                     with open(path, "wt+") as f:
                         f.write(config)
         return True
