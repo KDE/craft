@@ -1,6 +1,30 @@
-#
+# -*- coding: utf-8 -*-
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
+# Copyright Hannah von Reth <vonreth@kde.org>
 #
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+import tempfile
+import io
 
 from Source.SourceBase import *
 from Utils import CraftHash
@@ -155,8 +179,7 @@ class ArchiveSource(SourceBase):
     def createPatch(self):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
 
-        diffExe = os.path.join(self.rootdir, "dev-utils", "bin", "diff.exe")
-        if not os.path.exists(diffExe):
+        if not os.path.exists(CraftCore.cache.findApplication("diff")):
             CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
 
         # get the file paths of the tarballs
@@ -172,79 +195,40 @@ class ArchiveSource(SourceBase):
         CraftCore.log.debug("unpacking files into work root %s" % destdir)
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
-        tmpdir = os.path.join(destdir, "tmp")
-        unpackDir = tmpdir
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # unpack all packages
+            for filename in filenames:
+                CraftCore.log.debug("unpacking this file: %s" % filename)
+                if (not utils.unpackFile(self.__downloadDir, filename, tmpdir)):
+                    return False
 
-        utils.cleanDirectory(unpackDir)
-
-        if (not os.path.exists(unpackDir)):
-            os.mkdir(unpackDir)
-
-            if (not os.path.exists(unpackDir)):
-                os.mkdir(unpackDir)
-
-        # unpack all packages
-        for filename in filenames:
-            CraftCore.log.debug("unpacking this file: %s" % filename)
-            if (not utils.unpackFile(self.__downloadDir, filename, unpackDir)):
-                return False
-
-        packagelist = os.listdir(tmpdir)
-
-        # apply all patches only ommitting the last one, this makes it possible to always work on the latest patch
-        # for future work, it might be interesting to switch patches on and off at will, this probably needs an
-        # own patch management though
-        patchName = None
-        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
                 patches = [patches]
-            for fileName, patchdepth in patches[:-1]:
+            for fileName, patchdepth in patches:
                 CraftCore.log.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
-                if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, packagelist[0])):
+                if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, os.path.relpath(self.sourceDir(), self.workDir()))):
                     return False
-            # we cant use the same name if we have more than one file to diff
-            if len(packagelist) == 1 and patches[-1][0]:
-                patchName = os.path.join(self.buildRoot(), patches[-1][0])
 
-        # move the packages up and rename them to be different from the original source directory
-        for directory in packagelist:
-            # if the source or dest directory already exists, remove the occurance instead
-            dest = os.path.join(destdir, f"{directory}.orig")
-            if os.path.isdir(dest):
-                utils.rmtree(dest)
-                utils.moveFile(os.path.join(tmpdir, directory), dest)
-            else:
-                utils.deleteFile(dest)
-                utils.moveFile(os.path.join(tmpdir, directory), dest)
+            date = str(datetime.date.today()).replace("-", "")
+            _patchName = os.path.join(self.packageDir(), f"{self.package.name}-{self.buildTarget}-{date}.diff")
 
-        os.chdir(destdir)
-
-        for directory in packagelist:
-            if not patchName:
-                date = str(datetime.date.today()).replace("-", "")
-                _patchName = os.path.join(self.buildRoot(), f"{directory}-{date}.diff")
-            else:
-                _patchName = patchName
-
-            with open(_patchName, "wb") as out:
-                CraftCore.log.info(f"Creating patch {_patchName}")
+            with io.BytesIO() as out:
                 # TODO: actually we should not accept code 2
                 if not utils.system(["diff", "-Nrub",
-                                     "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x*\\.o", "-x", "*\\.pyc",
-                                     f"{directory}.orig", directory],
-                                    stdout=out, acceptableExitCodes=[0,1,2]):
+                                        "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x", "*\\.o", "-x", "*\\.pyc",
+                                        "-x", f"{os.path.basename(self.buildDir())}*",#ignore the build dir
+                                        tmpdir, self.workDir()],
+                                    stdout=out, acceptableExitCodes=[0,1,2], cwd=destdir):
                     return False
+                patchContent = out.getvalue()
+            # make the patch a -p2 patch
+            patchContent = patchContent.replace(tmpdir.encode(), b"a")
+            patchContent = patchContent.replace(self.workDir().encode(), b"b")
+            with open(_patchName, "wb") as out:
+                out.write(patchContent)
 
-        CraftCore.log.debug("patch created at %s" % patchName)
-        # remove all directories that are not needed any more after making the patch
-        # disabled for now
-        # for directory in packagelist:
-        #    shutil.rmtree( directory + ".orig" )
-
-        # remove the temporary directory, it should be empty after all directories have been moved up
-        os.rmdir(tmpdir)
-
+            CraftCore.log.info(f"Patch created ('{_patchName}', 2)")
         return True
 
     def sourceVersion(self):
