@@ -676,7 +676,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
     with open(f, "rt+") as p:
         patchContent = p.read()
 
-    with tempfile.TemporaryDirectory("wt+") as tmp:
+    with tempfile.TemporaryDirectory() as tmp:
         tmpPatch = os.path.join(tmp, os.path.basename(f))
         with open(tmpPatch, "wt+") as p:
             p.write(patchContent)
