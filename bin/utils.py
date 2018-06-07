@@ -673,12 +673,12 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    with open(f, "rt+") as p:
+    with open(f, "rt", encoding="utf-8") as p:
         patchContent = p.read()
 
     with tempfile.TemporaryDirectory() as tmp:
         tmpPatch = os.path.join(tmp, os.path.basename(f))
-        with open(tmpPatch, "wt+") as p:
+        with open(tmpPatch, "wt", encoding="utf-8") as p:
             p.write(patchContent)
         cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", tmpPatch]
         result = system(cmd)
