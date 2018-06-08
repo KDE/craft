@@ -57,7 +57,7 @@ class BoostBuildSystem(BuildSystemBase):
             options += "clang"
             if CraftCore.compiler.isGCC():
                 options += " threadapi=pthread"
-        elif CraftCore.compiler.isMinGW():
+        elif CraftCore.compiler.isGCC():
             options += "gcc"
         elif CraftCore.compiler.isMSVC():
             platform = str(CraftCore.compiler.getMsvcPlatformToolset())
@@ -91,26 +91,30 @@ class BoostBuildSystem(BuildSystemBase):
         cmd += self.configureOptions(self.subinfo.options.configure.args)
         return utils.system(cmd)
 
+
     def install(self):
         """install the target"""
-        if OsUtils.isUnix():
-            if not os.path.exists(self.installDir()):
-                os.makedirs(self.installDir())
-            utils.copyDir(self.buildDir(), self.installDir())
-            return BuildSystemBase.install(self)
-        else:
-            if not BuildSystemBase.install(self):
-                return False
+        if not BuildSystemBase.install(self):
+            return False
 
-            for root, dirs, files in os.walk(self.buildDir()):
-                for f in files:
-                    if f.endswith(".dll"):
-                        utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "lib", f))
-                        utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "bin", f))
-                    elif f.endswith(".a") or f.endswith(".lib"):
-                        utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "lib", f))
+        reLib = re.compile("(^.*\.lib$|^.*\.a$|^.*\.so.*$)")
 
-            return True
+        for root, dirs, files in os.walk(self.buildDir()):
+            for f in files:
+                if f.endswith(".dll"):
+                    utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "lib", f))
+                    utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "bin", f))
+                elif reLib.search(f):
+                    utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "lib", f))
+                    if CraftCore.compiler.isUnix and not f.endswith(".a"):
+                      name, ext = os.path.splitext(f)
+                      while not ext == ".so":
+                        utils.createSymlink(os.path.join(root, f), os.path.join(self.imageDir(), "lib", name))
+                        name, ext = os.path.splitext(name)
+
+        return True
+
+
 
     def unittest(self):
         return True
