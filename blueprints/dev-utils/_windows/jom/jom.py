@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             self.targetDigestUrls[ver] = (
                 ["http://download.qt.io/official_releases/jom/md5sums.txt"], CraftHash.HashAlgorithm.MD5)
             self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
-        self.defaultTarget = '1_0_16'
+        self.defaultTarget = '1_1_2'
 
 
 from Package.BinaryPackageBase import *
