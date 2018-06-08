@@ -673,17 +673,18 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    with open(f, "rt", encoding="utf-8") as p:
-        patchContent = p.read()
-
     with tempfile.TemporaryDirectory() as tmp:
+        # rewrite the patch, the gnu patch on Windows is only capable
+        # to read \r\n patches
         tmpPatch = os.path.join(tmp, os.path.basename(f))
+        with open(f, "rt", encoding="utf-8") as p:
+            patchContent = p.read()
         with open(tmpPatch, "wt", encoding="utf-8") as p:
             p.write(patchContent)
         cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", tmpPatch]
         result = system(cmd)
     if not result:
-        CraftCore.log.warning("applying %s failed!" % f)
+        CraftCore.log.warning("applying {f} failed!")
     return result
 
 def embedManifest(executable, manifest):
