@@ -10,10 +10,10 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         # The order is important
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["dev-utils/wget"] = None
-        self.buildDependencies["dev-utils/git"] = None
         if CraftCore.compiler.isWindows:
             self.buildDependencies["dev-utils/7zip"] = None
+            self.buildDependencies["dev-utils/wget"] = None
+            self.buildDependencies["dev-utils/git"] = None
             self.buildDependencies["dev-utils/shimgen"] = None
             self.buildDependencies["dev-utils/cmake"] = None
         else:
