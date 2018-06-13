@@ -63,7 +63,7 @@ class UserOptions(object):
             self.settings.optionxform = str
 
             if os.path.isfile(self.path):
-                self.settings.read(self.path)
+                self.settings.read(self.path, encoding="utf-8")
 
         def initPackage(self, option):
             path = option._package.path
@@ -83,7 +83,7 @@ class UserOptions(object):
             instance = UserOptions.UserOptionsSingleton._instance
             if instance:
                 try:
-                    with open(instance.path, 'wt+') as configfile:
+                    with open(instance.path, "wt", encoding="utf-8") as configfile:
                         print(instance.__header, file=configfile)
                         instance.settings.write(configfile)
                 except Exception as e:
