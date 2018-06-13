@@ -80,7 +80,7 @@ class CraftConfig(object):
 
         craftDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         # read defaults
-        self._config.read(os.path.join(craftDir, "etc", "CraftCoreSettings.ini", encoding="utf-8"))
+        self._config.read(os.path.join(craftDir, "etc", "CraftCoreSettings.ini"), encoding="utf-8")
         #####
         if not "Variables" in self._config.sections():
             self._config.add_section("Variables")
