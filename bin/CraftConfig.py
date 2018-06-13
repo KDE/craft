@@ -89,7 +89,7 @@ class CraftConfig(object):
             "CraftDir": craftDir }.items():
             self._config["Variables"][key] = value
         # read user settings
-        self._config.read(self.iniPath)
+        self._config.read(self.iniPath, encoding="utf-8")
 
     def __contains__(self, key):
         return self.__contains_no_alias(key) or \
