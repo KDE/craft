@@ -181,6 +181,7 @@ class ArchiveSource(SourceBase):
 
         if not os.path.exists(CraftCore.cache.findApplication("diff")):
             CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
+            return False
 
         # get the file paths of the tarballs
         filenames = self.localFileNames()
@@ -196,9 +197,11 @@ class ArchiveSource(SourceBase):
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
         with tempfile.TemporaryDirectory() as tmpdir:
+            _patchName = f"{self.package.name}-{self.buildTarget}-{str(datetime.date.today()).replace('-', '')}.diff"
+
             # unpack all packages
             for filename in filenames:
-                CraftCore.log.debug("unpacking this file: %s" % filename)
+                CraftCore.log.debug(f"unpacking this file: {filename}")
                 if (not utils.unpackFile(self.__downloadDir, filename, tmpdir)):
                     return False
 
@@ -206,29 +209,30 @@ class ArchiveSource(SourceBase):
             if not isinstance(patches, list):
                 patches = [patches]
             for fileName, patchdepth in patches:
-                CraftCore.log.debug("applying patch %s with patchlevel: %s" % (fileName, patchdepth))
+                if os.path.basename(fileName) == _patchName:
+                    CraftCore.log.info(f"skipping patch {fileName} with patchlevel: {patchdepth}")
+                    continue
+                CraftCore.log.info(f"applying patch {fileName} with patchlevel: {patchdepth}")
                 if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, os.path.relpath(self.sourceDir(), self.workDir()))):
                     return False
 
-            date = str(datetime.date.today()).replace("-", "")
-            _patchName = os.path.join(self.packageDir(), f"{self.package.name}-{self.buildTarget}-{date}.diff")
-
+            srcSubDir = os.path.relpath(self.sourceDir(), self.workDir())
+            tmpSourceDir = os.path.join(tmpdir, srcSubDir)
             with io.BytesIO() as out:
                 # TODO: actually we should not accept code 2
                 if not utils.system(["diff", "-Nrub",
                                         "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x", "*\\.o", "-x", "*\\.pyc",
-                                        "-x", f"{os.path.basename(self.buildDir())}*",#ignore the build dir
-                                        tmpdir, self.workDir()],
+                                        tmpSourceDir, self.sourceDir()],
                                     stdout=out, acceptableExitCodes=[0,1,2], cwd=destdir):
                     return False
                 patchContent = out.getvalue()
-            # make the patch a -p2 patch
-            patchContent = patchContent.replace(tmpdir.encode(), b"a")
-            patchContent = patchContent.replace(self.workDir().encode(), b"b")
-            with open(_patchName, "wb") as out:
+            # make the patch a -p1 patch
+            patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
+            patchContent = patchContent.replace(self.sourceDir().encode(), srcSubDir.encode())
+            with open(os.path.join(self.packageDir(), _patchName), "wb") as out:
                 out.write(patchContent)
 
-            CraftCore.log.info(f"Patch created ('{_patchName}', 2)")
+            CraftCore.log.info(f"Patch created (\"{_patchName}\", 1)")
         return True
 
     def sourceVersion(self):
