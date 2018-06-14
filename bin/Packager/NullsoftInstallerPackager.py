@@ -101,16 +101,6 @@ You can add your own defines into self.defines as well.
             return False
         return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
-    @staticmethod
-    def getVCRuntimeLibrariesLocation():
-        """ Note: For MSVC, only: Return base directory for VC runtime distributable libraries """
-        if "VCToolsRedistDir" in os.environ:
-            return os.environ["VCToolsRedistDir"]
-        _path = os.path.join(os.path.dirname(shutil.which("cl.exe")), "..", "redist")
-        if not os.path.exists(_path):
-            _path = os.path.join(os.path.dirname(shutil.which("cl.exe")), "..", "..", "redist")
-        return _path
-
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
         return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
