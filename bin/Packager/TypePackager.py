@@ -36,32 +36,28 @@ class TypePackager(PackagerBase):
     """packager that is used in place of different other packagers
 The packager used can be decided at runtime
 """
-
-    def __init__(self, defaultType=CraftCore.settings.get("Packager", "PackageType", "")):
-        if defaultType == "MultiCollectionPackager":
-            defaultType = NullsoftInstallerPackager
-            CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
-        if not defaultType:
-            if CraftCore.compiler.isWindows:
-                defaultType = NullsoftInstallerPackager
-            elif CraftCore.compiler.isMacOS:
-                defaultType = MacDMGPackager
-            else:
-                defaultType = SevenZipPackager
-        elif isinstance(defaultType, str):
-            defaultType = eval(defaultType)
-        CraftCore.log.debug("TypePackager __init__ %s" % defaultType)
+    def __init__(self):
+        CraftCore.log.debug("TypePackager __init__")
         self.__packager = None
-        self.changePackager(defaultType)
+        self.changePackager(None)
 
     def changePackager(self, packager=None):
-        if not packager == None and ("Packager", "PackageType") in CraftCore.settings:
-            CraftCore.log.debug(
-                "Packager setting %s overriten by with %s" % (packager, CraftCore.settings.get("Packager", "PackageType")))
-            packager = eval(CraftCore.settings.get("Packager", "PackageType"))
+        if not packager:
+            packager = CraftCore.settings.get("Packager", "PackageType", "")
 
-        if packager == None:
-            return
+        if not packager:
+            if CraftCore.compiler.isWindows:
+                packager = NullsoftInstallerPackager
+            elif CraftCore.compiler.isMacOS:
+                packager = MacDMGPackager
+            else:
+                packager = SevenZipPackager
+
+        if isinstance(packager, str):
+            if packager == "MultiCollectionPackager":
+                packager = "NullsoftInstallerPackager"
+                CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
+            packager = eval(packager)
 
         if self.__packager:
             bases = list(self.__class__.__bases__)
