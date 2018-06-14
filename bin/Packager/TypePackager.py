@@ -39,7 +39,10 @@ The packager used can be decided at runtime
 
     def __init__(self, defaultType=CraftCore.settings.get("Packager", "PackageType", "")):
         if not defaultType:
-            if CraftCore.compiler.isWindows:
+            if defaultType == "MultiCollectionPackager":
+                defaultType = NullsoftInstallerPackager
+                CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
+            elif CraftCore.compiler.isWindows:
                 defaultType = NullsoftInstallerPackager
             elif CraftCore.compiler.isMacOS:
                 defaultType = MacDMGPackager
