@@ -42,7 +42,7 @@ The packager used can be decided at runtime
             defaultType = NullsoftInstallerPackager
             CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
         if not defaultType:
-            elif CraftCore.compiler.isWindows:
+            if CraftCore.compiler.isWindows:
                 defaultType = NullsoftInstallerPackager
             elif CraftCore.compiler.isMacOS:
                 defaultType = MacDMGPackager
