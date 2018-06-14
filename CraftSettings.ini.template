@@ -147,7 +147,6 @@ EnableDailyUpdates = True
 ### MSIFragmentPackager
 ### NullsoftInstallerPackager: A nsis based installer including all dependencies
 ### CreateArchivePackager: An image including all dependencies
-### MultiCollectionPackager: NullsoftInstallerPackager + CreateArchivePackager
 #PackageType = SevenZipPackager
 
 ## Package the Source files too.
