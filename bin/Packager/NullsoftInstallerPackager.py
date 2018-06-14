@@ -104,6 +104,15 @@ You can add your own defines into self.defines as well.
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
         return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
+    def folderSize(self, path):
+        total = 0
+        for entry in os.scandir(path):
+            if entry.is_file():
+                total += entry.stat().st_size
+            elif entry.is_dir():
+                total += self.folderSize(entry.path)
+        return total
+
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
 
@@ -111,6 +120,8 @@ You can add your own defines into self.defines as well.
         defines["dataPath"] = self.setupName
         defines["dataName"] = os.path.basename(self.setupName)
         defines["7za"] = CraftCore.cache.findApplication("7za")
+        # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
+        defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(self.setupName)) / 1000))
 
         defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
         defines["iconname"] = os.path.basename(defines["icon"])

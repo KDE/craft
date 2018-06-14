@@ -126,6 +126,7 @@ nsExec::ExecToLog '"$INSTDIR\7za.exe" x -r -y "$INSTDIR\@{dataName}" -o"$INSTDIR
 Delete "$INSTDIR\7za.exe"
 Delete "$INSTDIR\@{dataName}"
 
+AddSize @{installSize}
 
 WriteUninstaller "${uninstaller}"
 
