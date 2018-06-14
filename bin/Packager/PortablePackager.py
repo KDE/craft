@@ -14,15 +14,18 @@ Packager for portal 7zip archives
     def __init__(self, whitelists=None, blacklists=None):
         SevenZipPackager.__init__(self)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
+        self.setupName = None
 
-    def createPortablePackage(self) -> str:
+    def createPortablePackage(self) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
-        setupname = self.defines.get("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True)))
+        self.setupName = self.defines.get("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True)))
+
+        if not os.path.isabs(self.setupName):
+            absSetupPath = os.path.join(self.packageDestinationDir(), self.setupName)
+
         srcdir = self.defines.get("srcdir", self.archiveDir())
 
-        if not self._compress(setupname, srcdir, self.packageDestinationDir()):
-          return None
-        return setupname
+        return self._compress(self.setupName, srcdir, self.packageDestinationDir())
 
     def createPackage(self):
         """ create a package """
@@ -30,13 +33,9 @@ Packager for portal 7zip archives
         if not self.internalCreatePackage():
           return False
 
-        absSetupPath = self.createPortablePackage()
-        if not absSetupPath:
+        if not self.createPortablePackage():
           return False
 
-        if not os.path.isabs(absSetupPath):
-            absSetupPath = os.path.join(self.packageDestinationDir(), absSetupPath)
-
-        CraftHash.createDigestFiles(absSetupPath)
+        CraftHash.createDigestFiles(self.setupName)
 
         return True

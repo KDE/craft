@@ -38,8 +38,6 @@ XPStyle on
 ShowInstDetails hide
 ShowUninstDetails hide
 
-SetCompressor /SOLID lzma
-
 Name "@{productname}"
 Caption "@{productname} @{version}"
 
@@ -121,8 +119,13 @@ ${EndIf}
 ; package all files, recursively, preserving attributes
 ; assume files are in the correct places
 
-File /a /r "@{srcdir}\*.*"
+File /a "@{dataPath}"
+File /a "@{7za}"
 File /a "@{icon}"
+nsExec::ExecToLog '"$INSTDIR\7za.exe" x -r -y "$INSTDIR\@{dataName}" -o"$INSTDIR"'
+Delete "$INSTDIR\7za.exe"
+Delete "$INSTDIR\@{dataName}"
+
 
 WriteUninstaller "${uninstaller}"
 
@@ -137,15 +140,6 @@ SetOutPath $INSTDIR ; for working directory
 CreateShortCut "${startmenu}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 SectionEnd
 
-;post install
-Section
-SetOutPath "$INSTDIR"
-!if "@{vcredist}" != "none"
-    File /a /oname=vcredist.exe "@{vcredist}"
-    ExecWait '"$INSTDIR\vcredist.exe" /passive /norestart'
-!endif
-Delete "$INSTDIR\vcredist.exe"
-SectionEnd
 
 ; Uninstaller
 ; All section names prefixed by "Un" will be in the uninstaller
@@ -155,7 +149,7 @@ UninstallText "This will uninstall @{productname}."
 Section "Uninstall"
 SetShellVarContext all
 ; TODO: we need something independent of a tier3....
-ExecWait '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
+nsExec::ExecToLog '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
 
 DeleteRegKey @{HKLM} "${uninstkey}"
 DeleteRegKey @{HKLM} "${regkey}"

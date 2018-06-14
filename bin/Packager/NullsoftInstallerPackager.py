@@ -28,10 +28,11 @@ import os
 
 from Utils import CraftHash
 from Packager.CollectionPackagerBase import *
+from Packager.PortablePackager import *
 from Blueprints.CraftVersion import CraftVersion
 
 
-class NullsoftInstallerPackager(CollectionPackagerBase):
+class NullsoftInstallerPackager(PortablePackager):
     """
 Packager for Nullsoft scriptable install system
 
@@ -60,7 +61,7 @@ You can add your own defines into self.defines as well.
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+        PortablePackager.__init__(self, whitelists, blacklists)
         self.nsisExe = None
         self._isInstalled = False
 
@@ -77,8 +78,6 @@ You can add your own defines into self.defines as well.
         defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
         defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         defines.setdefault("registy_hook", "")
-        # runtime distributable files
-        defines.setdefault("vcredist", self.getVCRedistLocation())
 
         if not self.scriptname:
             self.scriptname = os.path.join(os.path.dirname(__file__), "NullsoftInstaller.nsi")
@@ -112,31 +111,6 @@ You can add your own defines into self.defines as well.
             _path = os.path.join(os.path.dirname(shutil.which("cl.exe")), "..", "..", "redist")
         return _path
 
-    @staticmethod
-    def getVCRedistLocation():
-        if not CraftCore.compiler.isMSVC():
-            return "none"
-        _file = None
-        if CraftCore.compiler.isMSVC():
-            arch = "x86"
-            if CraftCore.compiler.isX64():
-                arch = "x64"
-
-            # TODO: This needs to be made more fail-safe: the version numbers can change with any VS upgrade...
-            if CraftCore.compiler.isMSVC2015():
-                _file = os.path.join(NullsoftInstallerPackager.getVCRuntimeLibrariesLocation(), "1033", f"vcredist_{arch}.exe")
-            elif CraftCore.compiler.isMSVC2017():
-                for name in [f"vcredist_{arch}.exe", f"vc_redist.{arch}.exe"]:
-                    _file = os.path.join(os.environ["VCTOOLSREDISTDIR"], name)
-                    if os.path.isfile(_file):
-                        break
-
-            if not os.path.isfile(_file):
-                CraftCore.debug.new_line()
-                CraftCore.log.critical(
-                    "Assuming we can't find a c++ redistributable because the user hasn't got one. Must be fixed manually.")
-        return _file
-
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
         return  f"""CreateShortCut "${{startmenu}}\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
@@ -144,6 +118,10 @@ You can add your own defines into self.defines as well.
         """ runs makensis to generate the installer itself """
 
         defines = self._setDefaults(self.defines)
+        defines["dataPath"] = self.setupName
+        defines["dataName"] = os.path.basename(self.setupName)
+        defines["7za"] = CraftCore.cache.findApplication("7za")
+
         defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
         defines["iconname"] = os.path.basename(defines["icon"])
         if not defines["license"] == "":
@@ -167,9 +145,10 @@ You can add your own defines into self.defines as well.
         if not os.path.isabs(defines["setupname"]):
             dstpath = self.packageDestinationDir()
             defines["setupname"] = os.path.join(dstpath, defines["setupname"])
+        self.setupName = defines["setupname"]
 
         CraftCore.debug.new_line()
-        CraftCore.log.debug("generating installer %s" % defines["setupname"])
+        CraftCore.log.debug(f"generating installer {self.setupName}")
 
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
@@ -185,10 +164,8 @@ You can add your own defines into self.defines as well.
         if not utils.systemWithoutShell([self.nsisExe, verboseString] + cmdDefines + [configuredScrip],
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
-            return None
-        if not utils.sign([defines["setupname"]]):
-            return None
-        return defines["setupname"]
+            return False
+        return utils.sign([self.setupName])
 
     def createPackage(self):
         """ create a package """
@@ -197,15 +174,12 @@ You can add your own defines into self.defines as well.
 
         CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
-        if CraftCore.compiler.isMSVC():
-            # we use the redist installer
-            self.ignoredPackages.append("libs/runtime")
-        if not self.internalCreatePackage():
+        if not super().createPackage():
             return False
-        setupname = self.generateNSISInstaller()
-        if not setupname:
+        if not self.generateNSISInstaller():
             return False
-        destDir, archiveName = os.path.split(setupname)
+
+        destDir, archiveName = os.path.split(self.setupName)
         self._generateManifest(destDir, archiveName)
-        CraftHash.createDigestFiles(setupname)
+        CraftHash.createDigestFiles(self.setupName)
         return True
