@@ -70,6 +70,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE")
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
+        defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.isX64() else "")
         defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
         defines.setdefault("license", "")
         defines.setdefault("productname", self.subinfo.displayName)
@@ -127,11 +128,6 @@ You can add your own defines into self.defines as well.
         defines["iconname"] = os.path.basename(defines["icon"])
         if not defines["license"] == "":
             defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{defines["license"]}" """
-
-        defines["HKLM"] = "HKLM32" if CraftCore.compiler.isX86() else "HKLM64"
-        defines["HKCR"] = "HKCR32" if CraftCore.compiler.isX86() else "HKCR64"
-        defines["HKCU"] = "HKCU32" if CraftCore.compiler.isX86() else "HKCU64"
-
 
         shortcuts = []
         if "executable" in defines:
