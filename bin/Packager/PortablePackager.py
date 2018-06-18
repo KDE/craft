@@ -16,26 +16,31 @@ Packager for portal 7zip archives
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
         self.setupName = None
 
-    def createPortablePackage(self) -> bool:
+    def createPortablePackage(self, packageSymbols) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
         self.setupName = self.defines.get("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True)))
 
-        if not os.path.isabs(self.setupName):
-            absSetupPath = os.path.join(self.packageDestinationDir(), self.setupName)
+        srcDir = self.defines.get("srcdir", self.archiveDir())
 
-        srcdir = self.defines.get("srcdir", self.archiveDir())
+        if not self._compress(self.setupName, srcDir, self.packageDestinationDir()):
+            return False
+        CraftHash.createDigestFiles(self.setupName)
 
-        return self._compress(self.setupName, srcdir, self.packageDestinationDir())
+        if packageSymbols:
+            dbgDir = f"{srcDir}-dbg"
+            if os.path.exists(dbgDir):
+                dbgName = "{0}-dbg{1}".format(*os.path.splitext(self.setupName))
+                if not self._compress(dbgName, dbgDir, self.packageDestinationDir()):
+                    return False
+                CraftHash.createDigestFiles(dbgName)
+        return True
 
     def createPackage(self):
         """ create a package """
 
-        if not self.internalCreatePackage():
-          return False
+        packageSymbols = CraftCore.settings.get("Packager", "PackageDebugSymbols", False)
 
-        if not self.createPortablePackage():
-          return False
+        if not self.internalCreatePackage(seperateSymbolFiles=packageSymbols):
+            return False
 
-        CraftHash.createDigestFiles(self.setupName)
-
-        return True
+        return self.createPortablePackage(packageSymbols)

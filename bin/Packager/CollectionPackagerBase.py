@@ -279,7 +279,7 @@ class CollectionPackagerBase(PackagerBase):
                 symbolFiles.append(entry_target)
         return True
 
-    def internalCreatePackage(self, packageSymbolFile=False) -> bool:
+    def internalCreatePackage(self, seperateSymbolFiles=False) -> bool:
         """ create a package """
 
         archiveDir = self.archiveDir()
@@ -287,7 +287,10 @@ class CollectionPackagerBase(PackagerBase):
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
 
-        if packageSymbolFile:
+        if seperateSymbolFiles:
+            if not CraftCore.compiler.isMSVC():
+                CraftCore.log.warning("Currently packaging symbol files is only supported with msvc")
+                return False
             symbolFiles = []
         else:
             self.blacklist.append(re.compile(r".*\.pdb"))
