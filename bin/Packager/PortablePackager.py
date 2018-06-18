@@ -38,7 +38,7 @@ Packager for portal 7zip archives
     def createPackage(self):
         """ create a package """
 
-        packageSymbols = CraftCore.settings.get("Packager", "PackageDebugSymbols", False)
+        packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
 
         if not self.internalCreatePackage(seperateSymbolFiles=packageSymbols):
             return False
