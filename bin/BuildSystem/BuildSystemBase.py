@@ -163,14 +163,16 @@ class BuildSystemBase(CraftBase):
         # a post install routine to fix the prefix (make things relocatable)
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-        if os.path.exists(pkgconfigPath):
-            for pcFile in os.listdir(pkgconfigPath):
-                if pcFile.endswith(".pc"):
-                    path = os.path.join(pkgconfigPath, pcFile)
-                    with open(path, "rt+") as f:
-                        config = f.read()
-                    CraftCore.log.info(f"Patching {path}, replacing {self.subinfo.buildPrefix} with {newPrefix}")
-                    config = config.replace(self.subinfo.buildPrefix, newPrefix)
-                    with open(path, "wt+") as f:
-                        f.write(config)
+        oldPrefixes = [self.subinfo.buildPrefix, OsUtils.toUnixPath(self.subinfo.buildPrefix)]
+        for oldPrefix in oldPrefixes:
+            if os.path.exists(pkgconfigPath):
+                for pcFile in os.listdir(pkgconfigPath):
+                    if pcFile.endswith(".pc"):
+                        path = os.path.join(pkgconfigPath, pcFile)
+                        with open(path, "rt") as f:
+                            config = f.read()
+                        CraftCore.log.info(f"Patching {path}, replacing {oldPrefix} with {newPrefix}")
+                        config = config.replace(oldPrefix, newPrefix)
+                        with open(path, "wt") as f:
+                            f.write(config)
         return True
