@@ -142,18 +142,22 @@ class BuildSystemBase(CraftBase):
 
 
 
-    def patchInstallPrefix(self, files : [str], oldPath : str=None, newPath : str=CraftCore.standardDirs.craftRoot()) -> bool:
-        if not oldPath:
-            oldPath = self.subinfo.buildPrefix
+    def patchInstallPrefix(self, files : [str], oldPaths : [str]=None, newPath : str=CraftCore.standardDirs.craftRoot()) -> bool:
+        if isinstance(oldPaths, str):
+            oldPaths = [oldPaths]
+        elif not oldPaths:
+            oldPaths = [self.subinfo.buildPrefix]
         for fileName in files:
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
                 return False
-            with open(fileName, "rt+") as f:
+            with open(fileName, "rt") as f:
                 content = f.read()
-            CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-            content = content.replace(oldPath, newPath)
-            with open(fileName, "wt+") as f:
+            for oldPath in oldPaths:
+                if oldPath in content:
+                    CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
+                    content = content.replace(oldPath, newPath)
+            with open(fileName, "wt") as f:
                 f.write(content)
         return True
 
@@ -163,16 +167,14 @@ class BuildSystemBase(CraftBase):
         # a post install routine to fix the prefix (make things relocatable)
         pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-        oldPrefixes = [self.subinfo.buildPrefix, OsUtils.toUnixPath(self.subinfo.buildPrefix)]
-        for oldPrefix in oldPrefixes:
-            if os.path.exists(pkgconfigPath):
-                for pcFile in os.listdir(pkgconfigPath):
-                    if pcFile.endswith(".pc"):
-                        path = os.path.join(pkgconfigPath, pcFile)
-                        with open(path, "rt") as f:
-                            config = f.read()
-                        CraftCore.log.info(f"Patching {path}, replacing {oldPrefix} with {newPrefix}")
-                        config = config.replace(oldPrefix, newPrefix)
-                        with open(path, "wt") as f:
-                            f.write(config)
+        oldPrefixes = [self.subinfo.buildPrefix]
+        if CraftCore.compiler.isWindows:
+            oldPrefixes += [OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
+
+        if os.path.exists(pkgconfigPath):
+            for pcFile in os.listdir(pkgconfigPath):
+                if pcFile.endswith(".pc"):
+                    path = os.path.join(pkgconfigPath, pcFile)
+                    if not self.patchInstallPrefix([path], oldPrefixes, newPrefix):
+                        return False
         return True
