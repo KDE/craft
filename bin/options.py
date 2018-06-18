@@ -169,8 +169,7 @@ class UserOptions(object):
                          packageOptions[package] = {}
                     CraftCore.log.info(f"setOptions: BlueprintSettings.ini [{package}]{key} = {value}")
                     packageOptions[package][key] = value
-                elif not CraftPackageObject.bootstrapping():
-                    # in case we are bootstrapping Craft, we might not know that package yet
+                else:
                     raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
 
     @staticmethod

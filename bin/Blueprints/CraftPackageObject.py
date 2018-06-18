@@ -242,10 +242,6 @@ class CraftPackageObject(object):
         return CraftPackageObject.__rootDirectories
 
     @staticmethod
-    def bootstrapping() -> bool:
-        return len(CraftPackageObject.rootDirectories()) == 1
-
-    @staticmethod
     def __regiserNodes(package):
         # danger, we detach here
         for child in list(package.children.values()):
