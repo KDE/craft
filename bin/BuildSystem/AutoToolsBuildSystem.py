@@ -18,13 +18,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
 
-    def _execute(self, path, cmd, args=""):
-        if not self.subinfo.options.useShadowBuild:
-            envDir = self.sourceDir()
-        else:
-            envDir = self.buildDir()
-        return self.shell.execute(path, cmd, args, envDir=envDir)
-
     @property
     def makeProgram(self):
         return "make"
@@ -53,14 +46,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.configure.bootstrap:
             autogen = os.path.join(self.sourceDir(), "autogen.sh")
             if os.path.exists(autogen):
-                self._execute(self.sourceDir(), autogen)
+                self.shell.execute(self.sourceDir(), autogen)
             else:
-                self._execute(self.sourceDir(), "autoreconf", "-vfi")
+                self.shell.execute(self.sourceDir(), "autoreconf", "-vfi")
 
         if not self.subinfo.options.useShadowBuild:
-            ret = self._execute(self.sourceDir(), configure, self.configureOptions(self))
+            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
         else:
-            ret = self._execute(self.buildDir(), configure, self.configureOptions(self))
+            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
         return ret
 
     def make(self, dummyBuildType=None):
@@ -75,14 +68,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
-            if not self._execute(self.sourceDir(), self.makeProgram, "clean"):
+            if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean"):
                 print("while Make'ing. cmd: %s clean" % self.makeProgram)
                 return False
-            if not self._execute(self.sourceDir(), command, args):
+            if not self.shell.execute(self.sourceDir(), command, args):
                 print("while Make'ing. cmd: %s" % command)
                 return False
         else:
-            if not self._execute(self.buildDir(), command, args):
+            if not self.shell.execute(self.buildDir(), command, args):
                 print("while Make'ing. cmd: %s" % command)
                 return False
         return True
@@ -100,11 +93,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
         if not self.subinfo.options.useShadowBuild:
-            if not self._execute(self.sourceDir(), command, args):
+            if not self.shell.execute(self.sourceDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
         else:
-            if not self._execute(self.buildDir(), command, args):
+            if not self.shell.execute(self.buildDir(), command, args):
                 print("while installing. cmd: %s %s" % (command, args))
                 return False
 

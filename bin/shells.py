@@ -7,7 +7,6 @@
 from CraftStandardDirs import CraftStandardDirs
 from CraftOS.OsDetection import OsDetection
 from options import *
-import tempfile
 
 
 class BashShell(object):
@@ -61,6 +60,7 @@ class BashShell(object):
                 self._environment["PATH"] = path
                 if "make" in self._environment:
                     del self._environment["make"]
+                # MSYSTEM is used by uname
                 if CraftCore.compiler.isMinGW():
                     self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
                 elif CraftCore.compiler.isMSVC():
@@ -125,41 +125,21 @@ class BashShell(object):
             CraftCore.log.critical("Failed to detect bash")
         return bash
 
-    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False, envDir=None):
-        tmpDir = None
-        if not envDir:
-            tmpDir = tempfile.TemporaryDirectory()
-            envDir = tmpDir.name
-
-        export = []
-        for k, v in self.environment.items():
-            export.append(f"export {k}='{v}'\n")
-        if CraftCore.debug.verbose() >= 1:
-            # log msys env
-            export.append("printenv\n")
-            CraftCore.log.debug(export)
-
-        envPath = os.path.join(envDir, f"craft_environment_{os.path.basename(cmd)}.sh")
-        with open(envPath, "wt+") as env:
-            env.writelines(export)
-        msysEnv = self.toNativePath(envPath)
-        command = f"{self._findBash()} --login -c \"source {msysEnv} && cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
+    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
+        command = f"{self._findBash()} -c \"cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
 
-        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress)
-        if tmpDir:
-            tmpDir.cleanup()
+        env = copy.deepcopy(os.environ)
+        env.update(self.environment)
+
+        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress, env=env)
         return out
 
     def login(self):
         if CraftCore.compiler.isMSVC():
             self.useMSVCCompatEnv = True
-        env = {"CHERE_INVOKING" : "1",
-               "MSYS2_PATH_TYPE" : "inherit"}
-        with utils.ScopedEnv(env):
-            self.environment.update(env)
-            return self.execute(".", "bash",  "--norc --login -i", displayProgress=True)
+        return self.execute(os.curdir, "bash",  "-i", displayProgress=True)
 
 def main():
     shell = BashShell()
