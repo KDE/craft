@@ -2,6 +2,7 @@ import tempfile
 import ctypes
 import os
 import platform
+import subprocess
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -62,3 +63,12 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         # tell Windows 10 that we do ansi
         ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
 
+
+    @staticmethod
+    def killProcess(name : str="*", prefix : str=None) -> bool:
+        if not prefix:
+            prefix = CraftCore.standardDirs.craftRoot()
+        out = subprocess.run(f"powershell -NoProfile -ExecutionPolicy ByPass -Command \"& {{" +
+                             f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} | Stop-Process}}\"", shell=True, stderr=subprocess.STDOUT)
+        CraftCore.log.debug(f"killProcess {out.args}: {out.stdout} {out.returncode}")
+        return out.returncode == 0

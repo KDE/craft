@@ -46,3 +46,8 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def toNativePath(path : str) -> str:
         return OsUtils.toUnixPath(path)
+
+    @staticmethod
+    def killProcess(name : str="*", prefix : str=None) -> bool:
+        CraftCore.log.warning("killProcess is not implemented")
+        return True
