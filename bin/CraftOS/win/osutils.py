@@ -68,7 +68,11 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def killProcess(name : str="*", prefix : str=None) -> bool:
         if not prefix:
             prefix = CraftCore.standardDirs.craftRoot()
-        out = subprocess.run(f"powershell -NoProfile -ExecutionPolicy ByPass -Command \"& {{" +
+        powershell = CraftCore.cache.findApplication("powershell")
+        if not powershell:
+            CraftCore.log.warning("Failed to detect powershell")
+            return False
+        out = subprocess.run(f"{powershell} -NoProfile -ExecutionPolicy ByPass -Command \"& {{" +
                              f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} | Stop-Process}}\"", shell=True, stderr=subprocess.STDOUT)
         CraftCore.log.debug(f"killProcess {out.args}: {out.stdout} {out.returncode}")
         return out.returncode == 0
