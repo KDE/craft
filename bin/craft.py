@@ -125,9 +125,6 @@ def main():
                         help="This will override the build of the default target.")
     parser.add_argument("--search", action="store_true",
                         help="This will search for a package or a description matching or similar to the search term.")
-    parser.add_argument("--log-dir", action="store",
-                        default=CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/")),
-                        help="This will log the build output to a logfile in LOG_DIR for each package. Logging information is appended to existing logs.")
     parser.add_argument("--src-dir", action="store", dest="srcDir",
                         help="This will override the source dir and enable the offline mode")
 
@@ -174,7 +171,6 @@ def main():
     CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
-    CraftCore.settings.set("CraftDebug", "LogDir", args.log_dir)
     CraftCore.settings.set("Packager", "CreateCache", not args.noCache and args.createCache)
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
