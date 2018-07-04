@@ -271,7 +271,7 @@ class CollectionPackagerBase(PackagerBase):
             if not utils.copyFile(entry, entry_target, linkOnly=False):
                 return False
             if self.isBinary(entry_target):
-                if not dontStrip:
+                if CraftCore.compiler.isGCCLike() and not dontStrip:
                     self.strip(entry_target)
                 if doSign:
                     utils.sign([entry_target])
