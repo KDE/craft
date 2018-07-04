@@ -216,7 +216,7 @@ class PackageBase(CraftBase):
 
             containingDir = os.path.dirname(fullPath)
             if os.path.exists(containingDir) and not os.listdir(containingDir):
-                CraftCore.log.info(f"Delete empty dir {containingDir}")
+                CraftCore.log.debug(f"Delete empty dir {containingDir}")
                 utils.rmtree(containingDir)
 
 
