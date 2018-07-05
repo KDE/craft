@@ -179,7 +179,7 @@ class ArchiveSource(SourceBase):
     def createPatch(self):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
 
-        if not os.path.exists(CraftCore.cache.findApplication("diff")):
+        if not CraftCore.cache.findApplication("diff"):
             CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
             return False
 
