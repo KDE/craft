@@ -7,6 +7,7 @@ import argparse
 import collections
 import subprocess
 import copy
+import platform
 
 from CraftConfig import *
 from CraftCore import CraftCore
@@ -29,6 +30,10 @@ if sys.version_info[0:3] < MIN_PY_VERSION:
     log("Error: Python too old!")
     log("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION)
     log("Please install it and adapt your CraftSettings.ini")
+    exit(1)
+
+if not platform.machine().endswith("64"):
+    log(f"Craft requires a 64bit operating system. Your are using: {platform.machine()}")
     exit(1)
 
 
