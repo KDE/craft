@@ -191,7 +191,7 @@ class CraftBase(object):
         else:
             if self.subinfo.hasSvnTarget():
                 if includeRevision:
-                    version = self.sourceRevision()
+                    version = self.sourceRevision().replace("/", "_")
                 else:
                     version = "latest"
             else:
