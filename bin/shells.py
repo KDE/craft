@@ -130,7 +130,7 @@ class BashShell(object):
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
 
-        env = copy.deepcopy(os.environ)
+        env = dict(os.environ)
         env.update(self.environment)
 
         out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress, env=env)
