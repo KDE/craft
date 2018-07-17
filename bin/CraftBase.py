@@ -191,13 +191,14 @@ class CraftBase(object):
         else:
             if self.subinfo.hasSvnTarget():
                 if includeRevision:
-                    version = self.sourceRevision().replace("/", "_")
+                    version = self.sourceRevision()
                 else:
                     version = "latest"
             else:
                 version = self.version
             if includeTimeStamp:
                 version += f"-{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
+        version = version.replace("/", "_")
         if fileType:
             fileType = f".{fileType}"
         else:
