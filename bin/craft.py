@@ -160,9 +160,6 @@ def main():
 
     args = parser.parse_args()
 
-    if args.doDestroyCraftRoot:
-        return CraftCommands.destroyCraftRoot()
-
     if args.stayQuiet:
         CraftCore.debug.setVerbose(-1)
     elif args.verbose:
@@ -182,6 +179,10 @@ def main():
         helper.subst()
         helper.setupEnvironment()
     helper.printBanner()
+
+
+    if args.doDestroyCraftRoot:
+        return CraftCommands.destroyCraftRoot()
 
     if args.run:
         return utils.system(args.run, shell=True)
