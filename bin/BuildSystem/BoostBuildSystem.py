@@ -23,14 +23,8 @@ class BoostBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
 
-        if OsUtils.isWin():
-            options += " -j" + os.getenv("NUMBER_OF_PROCESSORS")
-            options += " --build-dir=" + self.buildDir()
-        else:
-            # TODO: real value
-            options += " install --prefix=%s" % self.buildDir()
-            options += " -j10"
-
+        options += f" -j{multiprocessing.cpu_count()}"
+        options += " --build-dir=" + self.buildDir()
         options += (" --build-type=minimal"
                     #                " --debug-configuration"
                     " threading=multi"
