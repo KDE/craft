@@ -43,12 +43,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + self.shell.environment["CFLAGS"]
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + self.shell.environment["CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + self.shell.environment["LDFLAGS"]
-        if self.subinfo.options.configure.bootstrap:
-            autogen = os.path.join(self.sourceDir(), "autogen.sh")
-            if os.path.exists(autogen):
-                self.shell.execute(self.sourceDir(), autogen)
-            else:
-                self.shell.execute(self.sourceDir(), "autoreconf", "-vfi")
+
+        autogen = os.path.join(self.sourceDir(), "autogen.sh")
+        if self.subinfo.options.configure.bootstrap and os.path.exists(autogen):
+            self.shell.execute(self.sourceDir(), autogen)
+        if self.subinfo.options.configure.autoreconf:
+            self.shell.execute(self.sourceDir(), "autoreconf", "-vfi")
 
         if not self.subinfo.options.useShadowBuild:
             ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))

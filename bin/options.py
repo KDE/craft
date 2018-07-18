@@ -311,6 +311,9 @@ class OptionsConfigure(OptionsBase):
         ## run autogen in autotools
         self.bootstrap = False
 
+        ## run "autoreconf -vfi" in autotools
+        self.autoreconf = True
+
         # do not use default include path
         self.noDefaultInclude = False
 
