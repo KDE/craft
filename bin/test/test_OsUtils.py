@@ -1,15 +1,12 @@
-import subprocess
 import os
-import sys
-import signal
+import subprocess
 import tempfile
 import unittest
 
 import CraftTestBase
 import utils
-
-from CraftOS.osutils import OsUtils
 from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 
 
 class OsUtilsTest(CraftTestBase.CraftTestBase):
@@ -30,8 +27,8 @@ class OsUtilsTest(CraftTestBase.CraftTestBase):
                 cmd = CraftCore.cache.findApplication("cmd")
                 self.assertEqual(utils.copyFile(cmd, test1, linkOnly=False), True)
                 self.assertEqual(utils.copyFile(cmd, test2, linkOnly=False), True)
-                process = subprocess.Popen([test1,"/K"], startupinfo=subprocess.CREATE_NEW_PROCESS_GROUP)
-                process2 = subprocess.Popen([test2,"/K"], startupinfo=subprocess.CREATE_NEW_PROCESS_GROUP)
+                process = subprocess.Popen([test1,"/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                process2 = subprocess.Popen([test2,"/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
                 try:
                     self.assertEqual(process.poll(), None)
                     self.assertEqual(process2.poll(), None)
