@@ -26,6 +26,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import configparser
 import glob
 import inspect
 import io
@@ -33,21 +34,18 @@ import os
 import re
 import shlex
 import stat
+import shutil
+import sys
 import subprocess
-import urllib.error
-import urllib.parse
-import urllib.request
-import json
 import tempfile
 
 import Notifier.NotificationLoader
-from CraftConfig import *
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
-from CraftStandardDirs import CraftStandardDirs
-import Utils.CraftCache
 from CraftDebug import deprecated
+from CraftOS.osutils import OsUtils
 from CraftSetupHelper import SetupHelper
+from CraftStandardDirs import CraftStandardDirs
+
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -55,141 +53,15 @@ def abstract():
 
 ### fetch functions
 
+@deprecated("Utils.GetFiles.getFile")
 def getFiles(urls, destdir, suffix='', filenames=''):
-    """download files from 'url' into 'destdir'"""
-    CraftCore.log.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix))
-    # make sure distfiles dir exists
-    if (not os.path.exists(destdir)):
-        os.makedirs(destdir)
+    from Utils import GetFiles
+    return GetFiles.getFiles(urls, destdir, suffix=suffix, filenames=filenames)
 
-    if type(urls) == list:
-        urlList = urls
-    else:
-        urlList = urls.split()
-
-    if filenames == '':
-        filenames = [os.path.basename(x) for x in urlList]
-
-    if type(filenames) == list:
-        filenameList = filenames
-    else:
-        filenameList = filenames.split()
-
-    dlist = list(zip(urlList, filenameList))
-
-    for url, filename in dlist:
-        if (not getFile(url + suffix, destdir, filename)):
-            return False
-
-    return True
-
-
+@deprecated("Utils.GetFiles.getFile")
 def getFile(url, destdir, filename='') -> bool:
-    """download file from 'url' into 'destdir'"""
-    CraftCore.log.debug("getFile called. url: %s" % url)
-    if url == "":
-        CraftCore.log.error("fetch: no url given")
-        return False
-
-    pUrl = urllib.parse.urlparse(url)
-    if not filename:
-        filename = os.path.basename(pUrl.path)
-
-    if pUrl.scheme == "s3":
-      s3File(url, destdir, filename)
-
-    # curl and wget basically only work when we have a cert store on windows
-    if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
-        if CraftCore.cache.findApplication("wget"):
-            return wgetFile(url, destdir, filename)
-
-        if CraftCore.cache.findApplication("curl"):
-            return curlFile(url, destdir, filename)
-
-    if os.path.exists(os.path.join(destdir, filename)):
-        return True
-
-    powershell = CraftCore.cache.findApplication("powershell")
-    if powershell:
-        filename = os.path.join(destdir, filename)
-        return system([powershell, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command",
-                       f"(new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")"])
-    else:
-        def dlProgress(count, blockSize, totalSize):
-            if totalSize != -1:
-                percent = int(count * blockSize * 100 / totalSize)
-                printProgress(percent)
-            else:
-                sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-                sys.stdout.flush()
-
-        try:
-            urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
-                                       reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
-        except Exception as e:
-            CraftCore.log.warning(e)
-            return False
-
-    if CraftCore.debug.verbose() >= 0:
-        sys.stdout.write("\n")
-        sys.stdout.flush()
-    return True
-
-
-def curlFile(url, destdir, filename=''):
-    """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
-    curl = CraftCore.cache.findApplication("curl")
-    command = [curl, "-C", "-", "--retry", "10", "-L", "--ftp-ssl"]
-    cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
-    if os.path.exists(cert):
-        command += ["--cacert", cert]
-    # the default of 20 might not be enough for sourceforge ...
-    command += ["--max-redirs",  "50"]
-    command += ["-o", os.path.join(destdir, filename)]
-    command += [url]
-    CraftCore.log.debug("curlfile called")
-
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
-        command += ["--progress-bar"]
-        CraftCore.log.info(f"curl {url}")
-        return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
-    else:
-        if CraftCore.debug.verbose() > 0:
-            command += ["-v"]
-        return system(command)
-
-
-def wgetFile(url, destdir, filename=''):
-    """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    wget = CraftCore.cache.findApplication("wget")
-    command = [wget, "-c", "-t", "10"]
-    cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
-    if os.path.exists(cert):
-        command += ["--ca-certificate", cert]
-    # the default of 20 might not be enough for sourceforge ...
-    command += ["--max-redirect",  "50"]
-    if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
-        command += ["--no-passive-ftp"]
-    if not filename:
-        command += ["-P", destdir]
-    else:
-        command += ["-O", os.path.join(destdir, filename)]
-    command += [url]
-    CraftCore.log.debug("wgetfile called")
-
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
-        command += ["-q", "--show-progress"]
-        CraftCore.log.info(f"wget {url}")
-        return system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
-    else:
-        return system(command)
-
-def s3File(url, destdir, filename):
-    aws = CraftCore.cache.findApplication("aws")
-    if not aws:
-        CraftCore.log.critical("aws not found, please install awscli. \"pip install awscli\" ")
-        return False
-    return system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
+    from Utils import GetFiles
+    return GetFiles.getFile(url, destdir, filename=filename)
 
 ### unpack functions
 
