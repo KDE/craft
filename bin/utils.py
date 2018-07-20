@@ -91,9 +91,12 @@ def getFile(url, destdir, filename='') -> bool:
         CraftCore.log.error("fetch: no url given")
         return False
 
+    pUrl = urllib.parse.urlparse(url)
     if not filename:
-        _, _, path, _, _, _ = urllib.parse.urlparse(url)
-        filename = os.path.basename(path)
+        filename = os.path.basename(pUrl.path)
+
+    if pUrl.scheme == "s3":
+      s3File(url, destdir, filename)
 
     # curl and wget basically only work when we have a cert store on windows
     if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
@@ -181,6 +184,12 @@ def wgetFile(url, destdir, filename=''):
     else:
         return system(command)
 
+def s3File(url, destdir, filename):
+    aws = CraftCore.cache.findApplication("aws")
+    if not aws:
+        CraftCore.log.critical("aws not found, please install awscli. \"pip install awscli\" ")
+        return False
+    return system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
 
 ### unpack functions
 
