@@ -19,6 +19,20 @@ class BoostBuildSystem(BuildSystemBase):
         self.subinfo.options.package.packSources = False
         self.subinfo.options.needsShortPath = True
 
+    def craftUserConfig(self):
+        craftUserConfigPath = os.path.join(CraftStandardDirs.craftRoot(), "etc", "craft-boost-config.jam")
+        if not os.path.exists(craftUserConfigPath):
+            config = ""
+            if CraftCore.compiler.isMacOS:
+                config += "using clang : : /usr/bin/clang++ ;"
+            if config:
+                with open(craftUserConfigPath, "wt", encoding="UTF-8") as f:
+                    f.write(config + "\n")
+
+        if os.path.exists(craftUserConfigPath):
+            return f" --user-config={craftUserConfigPath}"
+        return ""
+
     def configureOptions(self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
@@ -65,9 +79,7 @@ class BoostBuildSystem(BuildSystemBase):
             options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % (
             {"vs2008": "9_0", "vs2010": "10_0", "vs2012": "11_0"}[os.getenv("INTEL_VSSHELL")])
             options += " -sINTEL_VERSION=%s" % os.getenv("PRODUCT_NAME")[-2:]
-        craftUserConfig = os.path.join(CraftStandardDirs.craftRoot(), "etc", "craft-boost-config.jam")
-        if os.path.exists(craftUserConfig):
-            options += " --user-config=" + os.path.join(craftUserConfig)
+        options += self.craftUserConfig()
         return options
 
     def configure(self, defines=""):
@@ -75,10 +87,10 @@ class BoostBuildSystem(BuildSystemBase):
 
     def make(self):
         """implements the make step for cmake projects"""
-        self.boost = CraftPackageObject.get('libs/boost/boost-headers').instance
-        self.subinfo.targetInstSrc[self.subinfo.buildTarget] = os.path.join(self.boost.sourceDir(), "libs",
-                                                                            self.subinfo.targetInstSrc[
-                                                                                self.subinfo.buildTarget], "build")
+        boost = CraftPackageObject.get('libs/boost/boost-headers').instance
+        self.subinfo.targetInstSrc[self.subinfo.buildTarget] = os.path.join(boost.sourceDir(), "libs",
+                                                                            self.subinfo.targetInstSrc[self.subinfo.buildTarget],
+                                                                            "build")
 
         self.enterSourceDir()
         cmd = "bjam"
