@@ -213,12 +213,6 @@ class CollectionPackagerBase(PackagerBase):
             return out
         return True
 
-    def isDebugSymbolFile(self, fileName):
-        _, ext = os.path.splitext(fileName)
-        if ext in {".pdb"}:
-            return True
-        return False
-
     def isBinary(self, fileName):
         if os.path.islink(fileName):
             return False
@@ -230,8 +224,6 @@ class CollectionPackagerBase(PackagerBase):
             if ext in {".so", ".dylib"} or os.access(fileName, os.X_OK):
                 return True
         return False
-
-
 
     def traverse(self, root, whitelist=lambda f: True, blacklist=lambda g: False):
         """
@@ -257,7 +249,7 @@ class CollectionPackagerBase(PackagerBase):
                     if self._filterQtBuildType(filePath):
                         yield filePath
 
-    def copyFiles(self, srcDir, destDir, dontStrip, symbolFiles : [str]=None) -> bool:
+    def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -275,8 +267,6 @@ class CollectionPackagerBase(PackagerBase):
                     self.strip(entry_target)
                 if doSign:
                     utils.sign([entry_target])
-            elif symbolFiles is not None and self.isDebugSymbolFile(entry_target):
-                symbolFiles.append(entry_target)
         return True
 
     def internalCreatePackage(self, seperateSymbolFiles=False) -> bool:
@@ -291,27 +281,15 @@ class CollectionPackagerBase(PackagerBase):
             if not CraftCore.compiler.isMSVC():
                 CraftCore.log.warning("Currently packaging symbol files is only supported with msvc")
                 return False
-            symbolFiles = []
         else:
             self.blacklist.append(re.compile(r".*\.pdb"))
-            symbolFiles = None
-
         for directory, strip in self.__getImageDirectories():
             if os.path.exists(directory):
-                if not self.copyFiles(directory, archiveDir, strip, symbolFiles=symbolFiles):
+                if not self.copyFiles(directory, archiveDir, strip):
                     return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
                 return False
-
-        if symbolFiles:
-            dbgDir = f"{archiveDir}-dbg"
-            utils.cleanDirectory(dbgDir)
-
-            for f in symbolFiles:
-                dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
-                utils.createDir(os.path.dirname(dest))
-                utils.moveFile(f, dest)
 
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target sytsem
@@ -323,6 +301,16 @@ class CollectionPackagerBase(PackagerBase):
 
         if not self.preArchive():
             return False
+
+
+        if seperateSymbolFiles:
+            dbgDir = f"{archiveDir}-dbg"
+            utils.cleanDirectory(dbgDir)
+
+            for f in glob.glob(f"{archiveDir}/**/*.pdb", recursive=True):
+                dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
+                utils.createDir(os.path.dirname(dest))
+                utils.moveFile(f, dest)
         return True
 
     def preArchive(self):
