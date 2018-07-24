@@ -1,7 +1,26 @@
 # -*- coding: utf-8 -*-
-# Helper script for substitution of paths, independent of cmd or powershell
-# copyright:
-# Hannah von Reth <vonreth [AT] kde [DOT] org>
+# Copyright Hannah von Reth <vonreth@kde.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
 
 import argparse
 import collections
@@ -19,22 +38,22 @@ from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
 MIN_PY_VERSION = (3, 6, 0)
 
 
-def log(msg):
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+def log(msg, critical=False):
+    if critical or not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         CraftCore.debug.print(msg, sys.stderr)
     else:
         CraftCore.log.debug(msg)
+    if critical:
+      exit(1)
 
 
 if sys.version_info[0:3] < MIN_PY_VERSION:
-    log("Error: Python too old!")
-    log("Craft needs at least Python Version %s.%s.%s" % MIN_PY_VERSION)
-    log("Please install it and adapt your CraftSettings.ini")
-    exit(1)
+    log("Error: Python too old!\n"
+        "Craft needs at least Python Version %s.%s.%s\n"
+        "Please install it and adapt your CraftSettings.ini" % MIN_PY_VERSION, critical=True)
 
 if not platform.machine().endswith("64"):
-    log(f"Craft requires a 64bit operating system. Your are using: {platform.machine()}")
-    exit(1)
+    log(f"Craft requires a 64bit operating system. Your are using: {platform.machine()}", critical=True)
 
 
 class SetupHelper(object):
@@ -204,13 +223,11 @@ class SetupHelper(object):
         path = os.path.join(path, "vcvarsall.bat")
         if not os.path.isfile(path):
             log(f"Failed to setup msvc compiler.\n"
-                f"{path} does not exist.")
-            exit(1)
+                f"{path} does not exist.", critical=True)
         status, result = SetupHelper._getOutput(f"\"{path}\" {args} > NUL && set", shell=True)
         if status != 0:
             log(f"Failed to setup msvc compiler.\n"
-                f"Command: {result} ")
-            exit(1)
+                f"Command: {result} ", critical=True)
         return SetupHelper.stringToEnv(result)
 
     def getEnv(self):
@@ -225,8 +242,7 @@ class SetupHelper(object):
                 "\"%s\\Intel\\Composer XE\\bin\\compilervars.bat\" %s > NUL && set" % (
                     programFiles, architectures[CraftCore.compiler.architecture]), shell=True)
             if status != 0:
-                log("Failed to setup intel compiler")
-                exit(1)
+                log("Failed to setup intel compiler", critical=True)
             return SetupHelper.stringToEnv(result)
         return os.environ
 
@@ -253,9 +269,12 @@ class SetupHelper(object):
 
 
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            self.prependEnvVar("PATH",
-                             os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
-                                          CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
+            sdkPath = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
+                                   CraftCore.settings.get("QtSDK", "Version"),
+                                   CraftCore.settings.get("QtSDK", "Compiler"), "bin")
+            if not os.path.exists(sdkPath):
+                log(f"Please ensure that you have installed the Qt SDK in {sdkPath}", critical=True)
+            self.prependEnvVar("PATH", sdkPath)
 
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
