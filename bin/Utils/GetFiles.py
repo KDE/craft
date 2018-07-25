@@ -75,7 +75,7 @@ def getFile(url, destdir, filename='') -> bool:
         filename = os.path.basename(pUrl.path)
 
     if pUrl.scheme == "s3":
-      s3File(url, destdir, filename)
+      return s3File(url, destdir, filename)
 
     # curl and wget basically only work when we have a cert store on windows
     if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):

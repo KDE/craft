@@ -5,17 +5,18 @@ import pickle
 import re
 import shutil
 import subprocess
+import tempfile
 import time
 import urllib.error
 import urllib.request
 import sys
 
 from CraftCore import CraftCore, AutoImport
-import CraftDebug
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftOS.unix.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
+from Utils import GetFiles
 
 class CraftCache(object):
     RE_TYPE = re.Pattern if sys.version_info >= (3,7) else re._pattern_type
@@ -171,23 +172,15 @@ class CraftCache(object):
         CraftCore.log.debug(f"Fetch Json: {url}")
         if not url in self._jsonCache:
             if os.path.isfile(url):
-                with open(url, "rt+") as jsonFile:
+                with open(url, "rt", encoding="UTF-8") as jsonFile:
                     # don't cache local manifest
                     return json.loads(jsonFile.read())
             else:
-                try:
-                    with urllib.request.urlopen(url, timeout=timeout) as fh:
-                        jsonContent = str(fh.read(), "UTF-8")
-                        CraftCore.log.debug(f"Fetched json: {url}")
-                        CraftCore.log.debug(jsonContent)
-                        self._jsonCache[url] = json.loads(jsonContent)
-                except urllib.error.HTTPError as e:
-                    CraftCore.log.debug(f"Failed to download {url}: {e}")
-                    if e.code == 404:
-                        # don't retry it
-                        self._jsonCache[url] = {}
-                except Exception as e:
-                    CraftCore.log.debug(f"Failed to download {url}: {e}")
+                with tempfile.TemporaryDirectory() as tmp:
+                    if not GetFiles.getFile(url, tmp, "manifest.json"):
+                        return {}
+                    with open(os.path.join(tmp, "manifest.json"), "rt", encoding="UTF-8") as jsonFile:
+                        self._jsonCache[url] = json.loads(jsonFile.read())
         return self._jsonCache.get(url, {})
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:

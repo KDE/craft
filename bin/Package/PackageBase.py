@@ -134,7 +134,15 @@ class PackageBase(CraftBase):
 
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {self} from cache: {url}.")
-            manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+            if url == self.cacheLocation():
+                fileUrl = f"{url}/manifest.json"
+                if os.path.exists(fileUrl):
+                    with open(fileUrl, "rt", enncoding="UTF-8") as f:
+                        manifest = CraftManifest.fromJson(json.load(f))
+                else:
+                  continue
+            else:
+                manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
             fileEntry = manifest.get(str(self)).files
             files = []
             for f in fileEntry:
