@@ -137,7 +137,7 @@ class PackageBase(CraftBase):
             if url == self.cacheLocation():
                 fileUrl = f"{url}/manifest.json"
                 if os.path.exists(fileUrl):
-                    with open(fileUrl, "rt", enncoding="UTF-8") as f:
+                    with open(fileUrl, "rt", encoding="UTF-8") as f:
                         manifest = CraftManifest.fromJson(json.load(f))
                 else:
                   continue
