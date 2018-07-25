@@ -8,6 +8,7 @@ from Blueprints.CraftPackageObject import *
 from Utils import CraftHash
 from Utils.CraftManifest import CraftManifest
 
+import json
 
 class PackageBase(CraftBase):
     """
