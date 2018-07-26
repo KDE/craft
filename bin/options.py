@@ -315,7 +315,7 @@ class OptionsConfigure(OptionsBase):
         self.autoreconf = True
 
         ## optional arguments for autoreconf
-        self.autoreconfExtraArgs = ""
+        self.autoreconfArgs = "-vfi"
 
         # do not use default include path
         self.noDefaultInclude = False

@@ -48,10 +48,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.subinfo.options.configure.bootstrap and os.path.exists(autogen):
             self.shell.execute(self.sourceDir(), autogen)
         if self.subinfo.options.configure.autoreconf:
-            autoreconfArgs = "-vfi"
-            if len(self.subinfo.options.configure.autoreconfExtraArgs) > 0:
-                autoreconfArgs = autoreconfArgs + " " + self.subinfo.options.configure.autoreconfExtraArgs
-            self.shell.execute(self.sourceDir(), "autoreconf", autoreconfArgs)
+            self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs)
 
         if not self.subinfo.options.useShadowBuild:
             ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
