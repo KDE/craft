@@ -314,6 +314,9 @@ class OptionsConfigure(OptionsBase):
         ## run "autoreconf -vfi" in autotools
         self.autoreconf = True
 
+        ## optional arguments for autoreconf
+        self.autoreconfExtraArgs = ""
+
         # do not use default include path
         self.noDefaultInclude = False
 
