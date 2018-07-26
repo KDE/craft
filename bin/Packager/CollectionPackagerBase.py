@@ -239,10 +239,11 @@ class CollectionPackagerBase(PackagerBase):
             for filePath in os.listdir(path):
                 filePath = os.path.join(path, filePath)
                 relFilePath = os.path.relpath(filePath, root)
-                if blacklist(relFilePath) and not whitelist(relFilePath):
-                    continue
                 if os.path.isdir(filePath) and not os.path.islink(filePath):
                     dirs.append(filePath)
+                    continue
+                if blacklist(relFilePath) and not whitelist(relFilePath):
+                    continue
                 elif os.path.isdir(filePath) and os.path.islink(filePath):
                     yield filePath
                 elif os.path.isfile(filePath):
