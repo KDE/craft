@@ -118,7 +118,7 @@ def getFile(url, destdir, filename='') -> bool:
 def curlFile(url, destdir, filename=''):
     """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
     curl = CraftCore.cache.findApplication("curl")
-    command = [curl, "-C", "-", "--retry", "10", "-L", "--ftp-ssl"]
+    command = [curl, "-C", "-", "--retry", "10", "-L", "--ftp-ssl", "--fail"]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--cacert", cert]
