@@ -10,6 +10,7 @@
     * ```craft --add-blueprint-repository https://github.com/owncloud/craft-blueprints-owncloud.git```
     * ```craft owncloud-client```
 * [Quasel IRC](https://github.com/quassel/quassel)
+    * ```craft --add-blueprint-repository https://github.com/quassel/craft-blueprints-quassel.git```
     * ```craft quassel```
 * [KDAB GammaRay](https://github.com/KDAB/GammaRay)
     * ```craft gammaray```
