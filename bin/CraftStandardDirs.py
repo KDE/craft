@@ -7,6 +7,20 @@ import CraftConfig
 from CraftOS.OsDetection import OsDetection
 from Utils.CraftShortPath import CraftShortPath
 
+class Location(object):
+    """
+    Something like http://doc.qt.io/qt-5/qstandardpaths.html
+    """
+    def __init__(self, standardDirs):
+      self._standardDirs = standardDirs
+
+    @property
+    def data(self):
+      if CraftCore.compiler.isWindows:
+          return os.path.join(self._standardDirs.craftRoot(), "bin", "data")
+      else:
+          return os.path.join(self._standardDirs.craftRoot(), "share")
+
 
 class CraftStandardDirs(object):
     _SUBST = None
@@ -25,6 +39,8 @@ class CraftStandardDirs(object):
         self._junctionDir = CraftShortPath(CraftCore.settings.get("ShortPath", "JunctionDir",
                                                                   lambda : os.path.join(self._craftRoot.path(self.isShortPathEnabled()), "build", "_")),
                                         lambda x: CraftStandardDirs._nomalizePath(CraftCore.settings.get("ShortPath", "JunctionDrive", x)))
+
+        self.locations = Location(self)
 
     @staticmethod
     def _deSubstPath(path):
