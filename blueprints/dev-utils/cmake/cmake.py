@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.8.0", "3.8.1", "3.9.1", "3.10.2", "3.10.3", "3.11.0", "3.11.1", "3.11.3"]:
+        for ver in ["3.8.0", "3.8.1", "3.9.1", "3.10.2", "3.10.3", "3.11.0", "3.11.1", "3.11.3", "3.12.0"]:
             majorMinorStr = '.'.join(ver.split('.')[0:2])
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-Darwin-{CraftCore.compiler.gnuArchitecture}.tar.gz"
                 self.targetInstSrc[ver] = f"cmake-{ver}-Darwin-{CraftCore.compiler.gnuArchitecture}"
             elif CraftCore.compiler.isLinux:
-                self.targets[ver] = f"https://cmake.org/files/v3.11/cmake-{ver}-Linux-x86_64.tar.gz"
+                self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-Linux-x86_64.tar.gz"
                 self.targetInstSrc[ver] = f"cmake-{ver}-Linux-x86_64"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "cmake")
             self.targetDigestUrls[ver] = (f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-SHA-256.txt", CraftHash.HashAlgorithm.SHA256)
@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
 
-        self.defaultTarget = "3.11.3"
+        self.defaultTarget = "3.12.0"
 
 
     def setDependencies(self):
