@@ -61,6 +61,9 @@ class CMakePackage(BinaryPackageBase):
                     return False
         return True
 
+    def postQmerge(self):
+        CraftCore.cache.clear()
+        return True
 
 class Package(VirtualIfSufficientVersion):
     def __init__(self):
