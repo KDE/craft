@@ -59,6 +59,8 @@ OutFile "@{setupname}"
 !include "LogicLib.nsh"
 !include "x64.nsh"
 
+@{nsis_include}
+
 ;!define MUI_ICON
 @{installerIcon}
 ;!define MUI_ICON

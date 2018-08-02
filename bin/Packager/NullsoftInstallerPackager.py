@@ -75,7 +75,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("license", "")
         defines.setdefault("productname", self.subinfo.displayName)
         defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
-        defines.setdefault("srcdir", self.archiveDir())
+        defines.setdefault("srcdir", self.archiveDir())# deprecated
         defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
         defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         defines.setdefault("registy_hook", "")
@@ -149,6 +149,7 @@ You can add your own defines into self.defines as well.
 
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
+        defines["nsis_include"] = f"!addincludedir {os.path.dirname(self.scriptname)}"
         cmdDefines = []
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
         if not utils.configureFile(self.scriptname, configuredScrip, defines):
