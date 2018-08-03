@@ -30,10 +30,14 @@ class CraftConfig(object):
         self._readSettings()
 
         if self.version < 4:
-            self._setAliasesV3()
+            print("Your configuration is outdated and no longer supported, please reinstall Craft.", file=sys.stderr)
+            exit(-1)
 
         if self.version < 5:
             self._setAliasesV4()
+
+        if self.version < 6:
+            self._setAliasesV5()
 
         self._warned = set()
 
@@ -50,20 +54,13 @@ class CraftConfig(object):
         CraftConfig.__RootDir = os.path.abspath(os.path.join(dir, ".."))
         return CraftConfig.__RootDir
 
+    def _setAliasesV5(self):
+        self.addAlias("Packager", "Destination", "General", "EMERGE_PKGDSTDIR")
+
     def _setAliasesV4(self):
         self.addGroupAlias("Blueprints", "Portage")
         self.addGroupAlias("BlueprintVersions", "PortageVersions")
         self.addAlias("Blueprints", "Locations", "General", "Portages")
-
-    def _setAliasesV3(self):
-        self.addAlias("General", "Options", "General", "EMERGE_OPTIONS")
-        self.addAlias("General", "Notify", "General", "EMERGE_USE_NOTIFY")
-        self.addAlias("General", "Portages", "General", "EMERGE_PORTAGE_ROOT")
-        self.addAlias("CraftDebug", "LogDir", "General", "EMERGE_LOG_DIR")
-        self.addAlias("ShortPath", "GitDrive", "ShortPath", "EMERGE_GIT_DRIVE")
-        self.addAlias("ShortPath", "RootDrive", "ShortPath", "EMERGE_ROOT_DRIVE")
-        self.addAlias("ShortPath", "DownloadDrive", "ShortPath", "EMERGE_DOWNLOAD_DRIVE")
-        self.addAlias("ShortPath", "Enabled", "ShortPath", "EMERGE_USE_SHORT_PATH")
 
     def _warnDeprecated(self, deprecatedSection, deprecatedKey, section, key):
         if not (deprecatedSection, deprecatedKey) in self._warned:

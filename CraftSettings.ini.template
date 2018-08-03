@@ -136,6 +136,9 @@ Settings = ${Variables:CraftRoot}/etc/BlueprintSettings.ini
 EnableDailyUpdates = True
 
 [Packager]
+## The location where generated installers are placed
+#Destination = ${Variables:CraftRoot}/tmp
+
 ## The archive type for packages.
 ## Possible values are: zip, 7z
 ## Todo: rename
@@ -222,4 +225,4 @@ SubjectName = K Desktop Environment e.V.
 
 
 [Version]
-ConfigVersion = 4
+ConfigVersion = 5

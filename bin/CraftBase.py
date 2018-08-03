@@ -139,7 +139,7 @@ class CraftBase(object):
         Default is to optionally append build type subdirectory"""
 
         CraftCore.log.debug("CraftBase.packageDestinationDir called")
-        dstpath = CraftCore.settings.get("General", "EMERGE_PKGDSTDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
+        dstpath = CraftCore.settings.get("Packager", "Destination", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
 
         if not os.path.exists(dstpath):
             utils.createDir(dstpath)
