@@ -322,7 +322,7 @@ class SetupHelper(object):
         if OsUtils.isWin():
             self._setupWin()
         else:
-            self.setXDG()
+            self._setupUnix()
 
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
