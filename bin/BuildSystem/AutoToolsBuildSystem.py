@@ -47,7 +47,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         autogen = os.path.join(self.sourceDir(), "autogen.sh")
         if self.subinfo.options.configure.bootstrap and os.path.exists(autogen):
             self.shell.execute(self.sourceDir(), autogen)
-        if self.subinfo.options.configure.autoreconf:
+        elif self.subinfo.options.configure.autoreconf:
             self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + f" -I{self.shell.toNativePath(CraftCore.standardDirs.locations.data)}/aclocal")
 
         if not self.subinfo.options.useShadowBuild:
