@@ -85,7 +85,7 @@ function Global:cb([string] $package, [string] $target="")
     if ($target) {
         $command += @("--target", $target)
     }
-    $command += @("-q", "--get", "buildDir()", $package)
+    $command += @("-q", "--ci-mode", "--get", "buildDir()", $package)
     $dir = craft @command | Out-String
     if($LASTEXITCODE) {
         Write-Host $dir
@@ -100,7 +100,7 @@ function Global:cs([string] $package, [string] $target="")
     if ($target) {
         $command += @("--target", $target)
     }
-    $command += @("-q", "--get", "sourceDir()", $package)
+    $command += @("-q", "--ci-mode", "--get", "sourceDir()", $package)
     $dir = craft @command | Out-String
     if($LASTEXITCODE) {
         Write-Host $dir
