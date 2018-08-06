@@ -50,7 +50,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         elif self.subinfo.options.configure.autoreconf:
             includes = []
             for i in [CraftCore.standardDirs.locations.data, f"{CraftCore.standardDirs.craftRoot()}/dev-utils/cmake/share"]:
-                includes += [f" -B{self.shell.toNativePath(i)}/aclocal"]
+                includes += [f" -B'{self.shell.toNativePath(i)}/aclocal'"]
             self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + "".join(includes))
 
         if not self.subinfo.options.useShadowBuild:
