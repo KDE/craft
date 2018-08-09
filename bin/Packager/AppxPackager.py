@@ -58,9 +58,12 @@ class AppxPackager(CollectionPackagerBase):
 
     def createPackage(self):
         defines = self._setDefaults(self.defines)
+        archive = defines["setupname"]
+        if os.path.isfile(archive):
+            utils.deleteFile(archive)
         return (self.internalCreatePackage() and
                 utils.copyFile(os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"),
-                       os.path.join(self.archiveDir(), "craftyBENDER.png")) and
+                               os.path.join(self.archiveDir(), "craftyBENDER.png")) and
                 utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
                 utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]]) and
                 utils.sign([defines["setupname"]]))
