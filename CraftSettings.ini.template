@@ -94,13 +94,13 @@ KDE_L10N_AUTO_TRANSLATIONS = OFF
 
 [ShortPath]
 ## substitute pathes by drives
-## This option is needed to avoid path limit problems in case of long base pathes
+## This option is needed to avoid path limit problems in case of long base paths
 ## and compiling big packages like qt
 ## If you disable it do _not_ use any paths longer than 6 letters in the
 ## directory settings
 Enabled = True
 
-## each drive could be commented out to skip substution
+## each drive could be commented out to skip substitution
 RootDrive = R:
 GitDrive = Q:
 #DownloadDrive = T:
@@ -125,7 +125,7 @@ GitDrive = Q:
 #BlueprintRoot = ${Variables:CraftRoot}/etc/blueprints/locations
 
 ## The locations of the recipes
-## You can specify additional external locations in ; seperated list
+## You can specify additional external locations in ; separated list
 #Locations = C:\blueprints
 
 # Customer settings
@@ -176,7 +176,7 @@ UseCache = True
 ## Default is Verbose = 0
 #Verbose = 1
 
-# Log environment, prints the current state of the environment befor an application is run
+# Log environment, prints the current state of the environment before an application is run
 LogEnvironment = True
 
 ## Prints time spend on various craft tasks
@@ -205,7 +205,7 @@ Enabled = False
 Path = D:\Qt
 ## The version of Qt.
 Version = 5.9
-## The compiler version, if you are not sure what to use, have a look into the derectory set in QtSDK/Path.
+## The compiler version, if you are not sure what to use, have a look into the directory set in QtSDK/Path.
 ## The compiler must be of the same type as General/KDECOMPILER.
 ## If you are using mingw please make sure you have installed the mingw using the Qt installer.
 Compiler = mingw482_32
@@ -221,8 +221,11 @@ ClearBuildFolder = False
 
 [CodeSigning]
 Enabled = False
-SubjectName = K Desktop Environment e.V.
+CommonName = K Desktop Environment e.V.
+Organization = K Desktop Environment e.V.
+Locality = Berlin
+Country = DE
 
 
 [Version]
-ConfigVersion = 5
+ConfigVersion = 6

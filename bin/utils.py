@@ -758,7 +758,7 @@ def sign(fileNames : [str]) -> bool:
         CraftCore.log.warning("Code signing requires a VisualStudio installation")
         return False
 
-    subjectName = CraftCore.settings.get("CodeSigning", "SubjectName")
+    subjectName = CraftCore.settings.get("CodeSigning", "CommonName")
     command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
     if CraftCore.debug.verbose() > 0:
         command += ["/v"]

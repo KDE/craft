@@ -39,6 +39,9 @@ class CraftConfig(object):
         if self.version < 6:
             self._setAliasesV5()
 
+        if self.version < 7:
+            self._setAliasesV6()
+
         self._warned = set()
 
     @staticmethod
@@ -53,6 +56,9 @@ class CraftConfig(object):
             exit(-1)
         CraftConfig.__RootDir = os.path.abspath(os.path.join(dir, ".."))
         return CraftConfig.__RootDir
+
+    def _setAliasesV6(self):
+        self.addAlias("CodeSigning", "CommonName", "CodeSigning", "SubjectName")
 
     def _setAliasesV5(self):
         self.addAlias("Packager", "Destination", "General", "EMERGE_PKGDSTDIR")

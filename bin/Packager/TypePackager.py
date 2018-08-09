@@ -30,6 +30,7 @@ from Packager.NullsoftInstallerPackager import *
 from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
 from Packager.QtIFPackager import *
+from Packager.AppxPackager import *
 
 
 class TypePackager(PackagerBase):
