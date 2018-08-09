@@ -47,6 +47,10 @@ class ArchiveSource(SourceBase):
             return self.subinfo.archiveName()
         return [self.subinfo.archiveName()]
 
+
+    def localFilePath(self):
+        return [os.path.join(self.__downloadDir, f) for f in self.localFileNamesBase()]
+
     def localFileNamesBase(self):
         """ collect local filenames """
         CraftCore.log.debug("ArchiveSource.localFileNamesBase called")
