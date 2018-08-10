@@ -36,19 +36,29 @@ class AppxPackager(CollectionPackagerBase):
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
-    def _setDefaults(self, defines):
+    @staticmethod
+    def _appendToPublisherString(publisher : [str], field : str, key : str ) -> None:
+        data = CraftCore.settings.get("CodeSigning", key)
+        if data:
+            publisher += [f"{field}={data}" ]
+
+    def _setDefaults(self, defines : dict) -> dict:
         defines = dict(defines)
         defines.setdefault("company", "KDE")
         defines.setdefault("name", self.package.name)
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("description", self.subinfo.description)
         defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
-        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
+        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
-        defines.setdefault("publisher", f"CN={CraftCore.settings.get('CodeSigning', 'CommonName')}, "
-                                        f"O={CraftCore.settings.get('CodeSigning', 'Organization')}, "
-                                        f"L={CraftCore.settings.get('CodeSigning', 'Locality')}, "
-                                        f"C={CraftCore.settings.get('CodeSigning', 'Country')}")
+
+        publisher = []
+        self._appendToPublisherString(publisher, "CN", "CommonName")
+        self._appendToPublisherString(publisher, "O", "Organization")
+        self._appendToPublisherString(publisher, "L", "Locality")
+        self._appendToPublisherString(publisher, "C", "Country")
+        defines.setdefault("publisher", ", ".join(publisher))
+
         version = str(CraftVersion(self.version).strictVersion)
         if version.count(".") < 4:
             version = f"{version}.0"
@@ -59,11 +69,12 @@ class AppxPackager(CollectionPackagerBase):
     def createPackage(self):
         defines = self._setDefaults(self.defines)
         archive = defines["setupname"]
+        icon = defines["icon_png"]
+        defines["icon_png"] = os.path.basename(icon)
         if os.path.isfile(archive):
             utils.deleteFile(archive)
         return (self.internalCreatePackage() and
-                utils.copyFile(os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"),
-                               os.path.join(self.archiveDir(), "craftyBENDER.png")) and
+                utils.copyFile(icon, os.path.join(self.archiveDir(), defines["icon_png"])) and
                 utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
                 utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]]) and
                 utils.sign([defines["setupname"]]))

@@ -6,7 +6,7 @@
   <Properties>
     <DisplayName>Kate</DisplayName>
     <PublisherDisplayName>KDE</PublisherDisplayName>
-    <Logo>craftyBENDER.png</Logo>
+    <Logo>@{icon_png}</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
@@ -19,8 +19,8 @@
   </Resources>
   <Applications>
     <Application Id="@{name}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
-     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="craftyBENDER.png" Square44x44Logo="craftyBENDER.png" Description="@{description}">
-        <uap:DefaultTile Wide310x150Logo="craftyBENDER.png" />
+     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png}" Description="@{description}">
+<!--        <uap:DefaultTile Wide310x150Logo="@{icon_png}" /> -->
       </uap:VisualElements>
     </Application>
   </Applications>
