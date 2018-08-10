@@ -44,30 +44,10 @@ class SevenZipPackager(PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self)
 
-    def __7z(self, archive, sourceDir):
-        app = CraftCore.cache.findApplication("7za")
-        kw = {}
-        progressFlags = []
-        if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
-            progressFlags = ["-bso2", "-bsp1"]
-            kw["stderr"] = subprocess.PIPE
-        cmd = [app, "a", "-r",  archive, os.path.join(sourceDir, "*")] + progressFlags
-        return utils.system(cmd, displayProgress=True, **kw)
-
-    def __xz(self, archive, sourceDir):
-        return utils.system(["tar", "-cJf", archive, "-C", sourceDir, ".",])
-
     def _compress(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
         archive = os.path.join(destDir, archiveName)
-        utils.createDir(os.path.dirname(archive))
-        if os.path.isfile(archive):
-            utils.deleteFile(archive)
-        if OsUtils.isUnix():
-            if not self.__xz(archive, sourceDir):
-                return False
-        else:
-            if not self.__7z(archive, sourceDir):
-                return False
+        if not utils.compress(archive, sourceDir):
+            return False
 
         if createDigests:
             if not CraftCore.settings.getboolean("Packager", "CreateCache"):
@@ -96,9 +76,8 @@ class SevenZipPackager(PackagerBase):
         extention = CraftCore.settings.get("Packager", "7ZipArchiveType",
                                            "7z" if OsUtils.isWin() else "tar.xz")
 
-        self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath)
-        if not self.subinfo.options.package.packSources:
-            return True
-        if CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            self._compress(self.binaryArchiveName("-src", fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
+        if not self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
+            return False
+        if not self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
+            return self._compress(self.binaryArchiveName("-src", fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
         return True

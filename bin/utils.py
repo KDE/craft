@@ -137,6 +137,37 @@ def un7zip(fileName, destdir, flag=None):
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
 
+def compress(archive : str, source : str) -> bool:
+    def __7z(archive, source):
+        app = CraftCore.cache.findApplication("7za")
+        kw = {}
+        progressFlags = []
+        if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
+            progressFlags = ["-bso2", "-bsp1"]
+            kw["stderr"] = subprocess.PIPE
+        command = [app, "a", "-r",  archive] + progressFlags
+        if os.path.isfile(source):
+            command += [source]
+        else:
+            command += [os.path.join(source, "*")]
+        return system(command, displayProgress=True, **kw)
+
+    def __xz(archive, source):
+        command = ["tar", "-cJf", archive, "-C"]
+        if os.path.isfile(source):
+            command += [source]
+        else:
+            command += [source, "."]
+        return system(command)
+
+    createDir(os.path.dirname(archive))
+    if os.path.isfile(archive):
+        deleteFile(archive)
+    if OsUtils.isUnix():
+        return __xz(archive, source)
+    else:
+        return __7z(archive, source)
+
 
 def system(cmd, displayProgress=False, logCommand=True, acceptableExitCodes=None, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
