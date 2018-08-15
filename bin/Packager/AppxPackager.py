@@ -69,8 +69,8 @@ class AppxPackager(CollectionPackagerBase):
         self._appendToPublisherString(publisher, "CN", "CommonName")
         self._appendToPublisherString(publisher, "O", "Organization")
         self._appendToPublisherString(publisher, "L", "Locality")
-        self._appendToPublisherString(publisher, "C", "Country")
         self._appendToPublisherString(publisher, "S", "State")
+        self._appendToPublisherString(publisher, "C", "Country")
         defines.setdefault("publisher", ", ".join(publisher))
 
         return defines
