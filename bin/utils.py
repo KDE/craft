@@ -753,7 +753,7 @@ def normalisePath(path):
 def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
     configPatter = re.compile(r"@{([^{}]+)}")
-    with open(inFile, "rt+") as f:
+    with open(inFile, "rt+", encoding="UTF-8") as f:
         script = f.read()
     matches = configPatter.findall(script)
     if not matches:
@@ -769,7 +769,7 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         matches = configPatter.findall(script)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
-    with open(outFile, "wt+") as f:
+    with open(outFile, "wt+", encoding="UTF-8") as f:
         f.write(script)
     return True
 
