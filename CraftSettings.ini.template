@@ -225,6 +225,7 @@ CommonName = K Desktop Environment e.V.
 Organization = K Desktop Environment e.V.
 Locality = Berlin
 Country = DE
+State =
 
 
 [Version]

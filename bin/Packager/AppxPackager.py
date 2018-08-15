@@ -38,12 +38,20 @@ class AppxPackager(CollectionPackagerBase):
 
     @staticmethod
     def _appendToPublisherString(publisher : [str], field : str, key : str ) -> None:
-        data = CraftCore.settings.get("CodeSigning", key)
+        data = CraftCore.settings.get("CodeSigning", key, "")
         if data:
             publisher += [f"{field}={data}" ]
 
     def _setDefaults(self, defines : dict) -> dict:
         defines = dict(defines)
+        if "version" not in defines:
+            version = str(CraftVersion(self.version).strictVersion)
+            # we require a version of the format 1.2.3.4
+            count = version.count(".")
+            if count < 4:
+                version = f"{version}{'.0' * (3-count)}"
+            defines.setdefault("version", version)
+
         defines.setdefault("company", "KDE")
         defines.setdefault("name", self.package.path.replace("/", "."))
         defines.setdefault("id", defines["name"].replace("-", "."))
@@ -62,15 +70,9 @@ class AppxPackager(CollectionPackagerBase):
         self._appendToPublisherString(publisher, "O", "Organization")
         self._appendToPublisherString(publisher, "L", "Locality")
         self._appendToPublisherString(publisher, "C", "Country")
+        self._appendToPublisherString(publisher, "S", "State")
         defines.setdefault("publisher", ", ".join(publisher))
 
-        if "version" not in defines:
-            version = str(CraftVersion(self.version).strictVersion)
-            # we require a version of the format 1.2.3.4
-            count = version.count(".")
-            if count < 4:
-                version = f"{version}{'.0' * (3-count)}"
-            defines.setdefault("version", version)
         return defines
 
 
