@@ -48,9 +48,12 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("name", self.package.name)
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("description", self.subinfo.description)
-        defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
         defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
+
+        # compat with nsis
+        if "shortcuts" in self.defines:
+            defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
 
         publisher = []
         self._appendToPublisherString(publisher, "CN", "CommonName")
@@ -60,14 +63,20 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("publisher", ", ".join(publisher))
 
         version = str(CraftVersion(self.version).strictVersion)
-        if version.count(".") < 4:
-            version = f"{version}.0"
+        # we require a version of the format 1.2.3.4
+        count = version.count(".")
+        if count < 4:
+            version = f"{version}{'.0' * (3-count)}"
         defines.setdefault("version", version)
         return defines
 
 
     def createPackage(self):
         defines = self._setDefaults(self.defines)
+        if not "executable" in defines:
+            CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
+                                """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]""")
+            return False
         archive = defines["setupname"]
         icon = defines["icon_png"]
         defines["icon_png"] = os.path.basename(icon)
