@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="@{company}.@{name}"
+  <Identity Name="@{name}"
             Version="@{version}"
             Publisher="@{publisher}" />
   <Properties>
-    <DisplayName>Kate</DisplayName>
-    <PublisherDisplayName>KDE</PublisherDisplayName>
+    <DisplayName>@{display_name}</DisplayName>
+    <PublisherDisplayName>@{company}</PublisherDisplayName>
     <Logo>@{icon_png}</Logo>
   </Properties>
   <Dependencies>
@@ -18,8 +18,8 @@
     <Resource Language="en-US" />
   </Resources>
   <Applications>
-    <Application Id="@{name}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
-     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png}" Description="@{description}">
+    <Application Id="@{id}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
+     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png_44}" Description="@{description}">
 <!--        <uap:DefaultTile Wide310x150Logo="@{icon_png}" /> -->
       </uap:VisualElements>
     </Application>

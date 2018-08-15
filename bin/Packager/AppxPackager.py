@@ -45,10 +45,12 @@ class AppxPackager(CollectionPackagerBase):
     def _setDefaults(self, defines : dict) -> dict:
         defines = dict(defines)
         defines.setdefault("company", "KDE")
-        defines.setdefault("name", self.package.name)
+        defines.setdefault("name", self.package.path.replace("/", "."))
+        defines.setdefault("id", defines["name"].replace("-", "."))
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("description", self.subinfo.description)
         defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
+        defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
 
         # compat with nsis
@@ -62,28 +64,41 @@ class AppxPackager(CollectionPackagerBase):
         self._appendToPublisherString(publisher, "C", "Country")
         defines.setdefault("publisher", ", ".join(publisher))
 
-        version = str(CraftVersion(self.version).strictVersion)
-        # we require a version of the format 1.2.3.4
-        count = version.count(".")
-        if count < 4:
-            version = f"{version}{'.0' * (3-count)}"
-        defines.setdefault("version", version)
+        if "version" not in defines:
+            version = str(CraftVersion(self.version).strictVersion)
+            # we require a version of the format 1.2.3.4
+            count = version.count(".")
+            if count < 4:
+                version = f"{version}{'.0' * (3-count)}"
+            defines.setdefault("version", version)
         return defines
 
 
     def createPackage(self):
         defines = self._setDefaults(self.defines)
+        archive = defines["setupname"]
+
+        if os.path.isfile(archive):
+            utils.deleteFile(archive)
+
         if not "executable" in defines:
             CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
                                 """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]""")
             return False
-        archive = defines["setupname"]
+
+        if not self.internalCreatePackage():
+            return False
+
         icon = defines["icon_png"]
+        icon_44 = defines["icon_png_44"]
         defines["icon_png"] = os.path.basename(icon)
-        if os.path.isfile(archive):
-            utils.deleteFile(archive)
-        return (self.internalCreatePackage() and
-                utils.copyFile(icon, os.path.join(self.archiveDir(), defines["icon_png"])) and
-                utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
+        defines["icon_png_44"] = os.path.basename(icon_44)
+
+        if not utils.copyFile(icon, os.path.join(self.archiveDir(), defines["icon_png"])):
+            return False
+        if icon != icon_44:
+            if not utils.copyFile(icon_44, os.path.join(self.archiveDir(), defines["icon_png_44"])):
+                return False
+        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
                 utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]]) and
                 utils.sign([defines["setupname"]]))
