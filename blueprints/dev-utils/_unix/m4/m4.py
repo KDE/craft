@@ -19,3 +19,6 @@ class Package( AutoToolsPackageBase ):
         AutoToolsPackageBase.__init__( self )
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
+        if CraftCore.compiler.isLinux and CraftCore.compiler.isClang():
+             self.subinfo.options.configure.cflags += " --rtlib=compiler-rt"
+             self.subinfo.options.configure.cxxflags += " --rtlib=compiler-rt"
