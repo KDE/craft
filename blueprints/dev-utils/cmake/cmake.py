@@ -43,7 +43,7 @@ from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
 
 
-class CMakePackage(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
@@ -64,7 +64,3 @@ class CMakePackage(BinaryPackageBase):
     def postQmerge(self):
         CraftCore.cache.clear()
         return True
-
-class Package(VirtualIfSufficientVersion):
-    def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="cmake", version="3.9.0", classA=CMakePackage)
