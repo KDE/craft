@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.targetConfigurePath[ver] = "CPP/7zip/CMAKE"
             self.targetInstallPath[ver] = "dev-utils"
 
+        self.patchToApply["16.02"] = [("7zip-16.02-20180816.diff", 1)]
         self.targetDigests["16.02"] = (['5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f'], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "p7zip is a quick port of 7z.exe and 7za.exe for Unix."
@@ -17,7 +18,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "16.02"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/cmake"] = "default"
+        self.buildDependencies["dev-utils/cmake"] = None
 
 from Package.CMakePackageBase import *
 
