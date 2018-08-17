@@ -186,18 +186,23 @@ class CraftBase(object):
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
-        if CraftCore.settings.get("ContinuousIntegration", "SourceDir", "") and "APPVEYOR_BUILD_VERSION" in os.environ:
-            version = os.environ["APPVEYOR_BUILD_VERSION"]
-        else:
-            if self.subinfo.hasSvnTarget():
-                if includeRevision:
-                    version = self.sourceRevision()
-                else:
-                    version = "latest"
+        buildVersion = ""
+        if "APPVEYOR_BUILD_VERSION" in os.environ:
+            buildVersion = os.environ["APPVEYOR_BUILD_VERSION"]
+        elif "BUILD_NUMBER" in os.environ:
+            buildVersion = os.environ["BUILD_NUMBER"]
+
+        version = []
+        if self.subinfo.hasSvnTarget():
+            if includeRevision:
+                version += [self.sourceRevision(), buildVersion]
             else:
-                version = self.version
+                version += [buildVersion] if buildVersion else ["latest"]
+        else:
+            version = [self.version, buildVersion]
             if includeTimeStamp:
-                version += f"-{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
+                version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
+        version = "-".join(filter(None, version))
         version = version.replace("/", "_")
         if fileType:
             fileType = f".{fileType}"
