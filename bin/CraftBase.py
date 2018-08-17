@@ -179,6 +179,14 @@ class CraftBase(object):
         os.chdir(self.sourceDir())
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
+    def buildNumber(self):
+        if "APPVEYOR_BUILD_VERSION" in os.environ:
+            return os.environ["APPVEYOR_BUILD_VERSION"]
+        elif "BUILD_NUMBER" in os.environ:
+            return os.environ["BUILD_NUMBER"]
+        return ""
+
+
     def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
         if not pkgSuffix:
@@ -186,11 +194,7 @@ class CraftBase(object):
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
 
-        buildVersion = ""
-        if "APPVEYOR_BUILD_VERSION" in os.environ:
-            buildVersion = os.environ["APPVEYOR_BUILD_VERSION"]
-        elif "BUILD_NUMBER" in os.environ:
-            buildVersion = os.environ["BUILD_NUMBER"]
+        buildVersion = self.buildNumber()
 
         version = []
         if self.subinfo.hasSvnTarget():

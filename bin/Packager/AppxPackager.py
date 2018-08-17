@@ -79,6 +79,9 @@ class AppxPackager(CollectionPackagerBase):
             version = str(CraftVersion(self.version).strictVersion)
             # we require a version of the format 1.2.3.4
             count = version.count(".")
+            if count < 5 and self.buildNumber():
+                count += 1
+                version = f"{version}.{self.buildNumber()}"
             if count < 4:
                 version = f"{version}{'.0' * (3-count)}"
             defines.setdefault("version", version)
