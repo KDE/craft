@@ -136,7 +136,8 @@ class infoclass(object):
     def archiveName(self) -> [str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
-            return self.archiveNames[self.buildTarget]
+            name = self.archiveNames[self.buildTarget]
+            return name if isinstance(name, list) else [name]
         if type(self.targets[self.buildTarget]) == list:
             return [os.path.split(x)[-1] for x in self.targets[self.buildTarget]]
         else:
