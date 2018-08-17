@@ -51,18 +51,6 @@ def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
     raise NotImplementedError(caller + ' must be implemented in subclass')
 
-### fetch functions
-
-@deprecated("Utils.GetFiles.getFile")
-def getFiles(urls, destdir, suffix='', filenames=''):
-    from Utils import GetFiles
-    return GetFiles.getFiles(urls, destdir, suffix=suffix, filenames=filenames)
-
-@deprecated("Utils.GetFiles.getFile")
-def getFile(url, destdir, filename='') -> bool:
-    from Utils import GetFiles
-    return GetFiles.getFile(url, destdir, filename=filename)
-
 ### unpack functions
 
 def unpackFiles(downloaddir, filenames, workdir):

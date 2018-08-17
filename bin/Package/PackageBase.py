@@ -5,7 +5,7 @@ from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
 from Blueprints.CraftPackageObject import *
-from Utils import CraftHash
+from Utils import CraftHash, GetFiles
 from Utils.CraftManifest import CraftManifest
 
 import json
@@ -167,7 +167,7 @@ class PackageBase(CraftBase):
                 if not os.path.exists(localArchiveAbsPath):
                     os.makedirs(localArchivePath, exist_ok=True)
                     fUrl = f"{url}/{latest.fileName}"
-                    if not utils.getFile(fUrl, localArchivePath, localArchiveName):
+                    if not GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
                         CraftCore.log.warning(f"Failed to fetch {fUrl}")
                         return False
             elif not os.path.isfile(localArchiveAbsPath):

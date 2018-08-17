@@ -34,35 +34,6 @@ import urllib
 import subprocess
 import sys
 
-
-@deprecated("Utils.GetFiles.getFile")
-def getFiles(urls, destdir, suffix='', filenames=''):
-    """download files from 'url' into 'destdir'"""
-    CraftCore.log.debug("getfiles called. urls: %s, filenames: %s, suffix: %s" % (urls, filenames, suffix))
-    # make sure distfiles dir exists
-    if (not os.path.exists(destdir)):
-        os.makedirs(destdir)
-
-    if type(urls) == list:
-        urlList = urls
-    else:
-        urlList = urls.split()
-
-    if filenames == '':
-        filenames = [os.path.basename(x) for x in urlList]
-
-    if type(filenames) == list:
-        filenameList = filenames
-    else:
-        filenameList = filenames.split()
-
-    dlist = list(zip(urlList, filenameList))
-
-    for url, filename in dlist:
-        if (not getFile(url + suffix, destdir, filename)):
-            return False
-    return True
-
 def getFile(url, destdir, filename='') -> bool:
     """download file from 'url' into 'destdir'"""
     CraftCore.log.debug("getFile called. url: %s" % url)
@@ -73,6 +44,8 @@ def getFile(url, destdir, filename='') -> bool:
     pUrl = urllib.parse.urlparse(url)
     if not filename:
         filename = os.path.basename(pUrl.path)
+
+    utils.createDir(destdir)
 
     if pUrl.scheme == "s3":
       return s3File(url, destdir, filename)

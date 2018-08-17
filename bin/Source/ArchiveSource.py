@@ -27,7 +27,7 @@ import tempfile
 import io
 
 from Source.SourceBase import *
-from Utils import CraftHash
+from Utils import CraftHash, GetFiles
 
 from CraftCore import CraftCore
 
@@ -102,24 +102,25 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("files and digests available, no need to download files")
                 return True
 
-            result = utils.getFiles(self.subinfo.target(), self.__downloadDir,
-                                    filenames=self.subinfo.archiveName())
-            if not result:
-                CraftCore.log.debug("failed to download files")
-                return False
-            if result and self.subinfo.hasTargetDigestUrls():
-                if type(self.subinfo.targetDigestUrl()) == tuple:
-                    url, alg = self.subinfo.targetDigestUrl()
-                    return utils.getFiles(url, self.__downloadDir,
-                                          filenames=self.subinfo.archiveName()[0]
-                                                    + CraftHash.HashAlgorithm.fileEndings().get(alg))
+            if self.subinfo.target():
+                # compat for scripts that provide multiple files
+                files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
+                for url, fileName in files:
+                    if not GetFiles.getFile(self.subinfo.target(), self.__downloadDir, self.subinfo.archiveName()[0]):
+                        CraftCore.log.debug("failed to download files")
+                        return False
+
+                if self.subinfo.hasTargetDigestUrls():
+                    if isinstance(self.subinfo.targetDigestUrl(), tuple):
+                        url, alg = self.subinfo.targetDigestUrl()
+                        return GetFiles.getFile(url[0], self.__downloadDir, self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
+                    else:
+                        for url in self.subinfo.targetDigestUrl():
+                            if not GetFiles.getFile(self.subinfo.targetDigestUrl(), self.__downloadDir):
+                                return False
                 else:
-                    return utils.getFiles(self.subinfo.targetDigestUrl(), self.__downloadDir, filenames='')
-            else:
-                CraftCore.log.debug("no digestUrls present")
-                return True
-        else:
-            return utils.getFiles("", self.__downloadDir)
+                  CraftCore.log.debug("no digestUrls present")
+        return True
 
     def checkDigest(self):
         CraftCore.log.debug("ArchiveSource.checkDigest called")
