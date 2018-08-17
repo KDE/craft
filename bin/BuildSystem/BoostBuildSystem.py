@@ -115,7 +115,7 @@ class BoostBuildSystem(BuildSystemBase):
                     if CraftCore.compiler.isUnix and not f.endswith(".a"):
                       name, ext = os.path.splitext(f)
                       while not ext == ".so":
-                        utils.createSymlink(os.path.join(root, f), os.path.join(self.imageDir(), "lib", name))
+                        utils.createSymlink(os.path.join(self.imageDir(), "lib", os.path.basename(f)), os.path.join(self.imageDir(), "lib", name))
                         name, ext = os.path.splitext(name)
 
         return True
