@@ -23,6 +23,8 @@
 # SUCH DAMAGE.
 
 import os
+import mimetypes
+
 
 from Utils import CraftHash
 from Packager.CollectionPackagerBase import *
@@ -31,6 +33,15 @@ from Blueprints.CraftVersion import CraftVersion
 
 
 class AppxPackager(CollectionPackagerBase):
+    Extensions = f"""<Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="@{{name}}">
+            <uap:SupportedFileTypes>
+              @{{file_types}}
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>"""
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -41,6 +52,26 @@ class AppxPackager(CollectionPackagerBase):
         data = CraftCore.settings.get("CodeSigning", key, "")
         if data:
             publisher += [f"{field}={data}" ]
+
+    @staticmethod
+    def _setupFileTypes(defines):
+        if "mimetypes" in defines:
+            defines.setdefault("file_types", set())
+            mimetypes.init()
+            for t in defines["mimetypes"]:
+                types = set(mimetypes.guess_all_extensions(t))
+                #remove reserved associations
+                types -= {".bat", ".com", ".exe"}
+                defines["file_types"] += types
+            del defines["mimetypes"]
+
+        if "file_types" in defines:
+            defines["file_types"] = "\n".join([f"""<uap:FileType>{t}</uap:FileType>""" for t in set(defines["file_types"])])
+            defines.setdefault("extensions", AppxPackager.Extensions)
+        else:
+            defines.setdefault("file_types", "")
+            defines.setdefault("extensions", "")
+
 
     def _setDefaults(self, defines : dict) -> dict:
         defines = dict(defines)
@@ -61,6 +92,7 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
 
+        self._setupFileTypes(defines)
         # compat with nsis
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])

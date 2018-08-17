@@ -22,6 +22,7 @@
      <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png_44}" Description="@{description}">
 <!--        <uap:DefaultTile Wide310x150Logo="@{icon_png}" /> -->
       </uap:VisualElements>
+      @{extensions}
     </Application>
   </Applications>
 </Package>
