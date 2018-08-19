@@ -226,10 +226,12 @@ class infoclass(object):
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]
-            if type(out) == str:
+            if isinstance(out, str):
                 out = [out]
-            if not type(out) == tuple:
+            if not isinstance(out, tuple):
                 out = (out, CraftHash.HashAlgorithm.getAlgorithmFromFile(out[0]))
+            elif not isinstance(out[0], list):
+                out = ([out[0]], out[1])
             return out
         return None
 

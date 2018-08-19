@@ -106,7 +106,7 @@ class ArchiveSource(SourceBase):
                 # compat for scripts that provide multiple files
                 files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
                 for url, fileName in files:
-                    if not GetFiles.getFile(self.subinfo.target(), self.__downloadDir, self.subinfo.archiveName()[0]):
+                    if not GetFiles.getFile(url, self.__downloadDir, fileName):
                         CraftCore.log.debug("failed to download files")
                         return False
 
@@ -116,7 +116,7 @@ class ArchiveSource(SourceBase):
                         return GetFiles.getFile(url[0], self.__downloadDir, self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
                     else:
                         for url in self.subinfo.targetDigestUrl():
-                            if not GetFiles.getFile(self.subinfo.targetDigestUrl(), self.__downloadDir):
+                            if not GetFiles.getFile(url, self.__downloadDir):
                                 return False
                 else:
                   CraftCore.log.debug("no digestUrls present")
