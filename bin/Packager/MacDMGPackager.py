@@ -49,10 +49,9 @@ class MacDMGPackager( CollectionPackagerBase ):
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         if not self.internalCreatePackage():
-          return False
+            return False
 
         self._setDefaults()
-
 
         archive = os.path.normpath(self.archiveDir())
         appPath = self.defines['apppath']
@@ -87,6 +86,29 @@ class MacDMGPackager( CollectionPackagerBase ):
             CraftCore.log.info("Checking for absolute library paths...")
             binaryDir = os.path.join(appPath, "Contents", "MacOS")
             mainBinary = os.path.join(binaryDir, self.defines['appname'])
+            # Fix up the library dependencies of all plugins:
+            for dirpath, dirs, files in os.walk(os.path.join(appPath, "Contents", "PlugIns")):
+                for filename in files:
+                    if filename.endswith(".so") or filename.endswith(".dylib"):
+                        # handle the case of Qt plugins which reference themselves for some reason.
+                        # This can't be handled by dylibbundler -> fix it before calling it.
+                        # TODO: just do everything in python here instead of dylibbundler.
+                        fullLibPath = os.path.join(dirpath, filename)
+                        for dep in self._getLibraryDeps(os.path.join(dirpath, filename)):
+                            if dep.split()[0] == filename:
+                                if not utils.system(["install_name_tool", "-change", filename,
+                                                     "@executable_path/" + os.path.relpath(fullLibPath, binaryDir),
+                                                     fullLibPath]):
+                                    CraftCore.log.info("Could not fix libpath in library that references itself: %s", fullLibPath)
+                                    return False
+                        CraftCore.log.info("Fixing library dependencies for plugin %s", filename)
+                        # Note: Would be nice not to use --overwrite-files here to avoid having to
+                        # reedit all the deps again... But I don't think that's safe...
+                        if not utils.system(["dylibbundler", "--install-path", "@executable_path/../Frameworks",
+                                             "--dest-dir", targetLibdir, "--fix-file", fullLibPath]):
+                            return False
+                # FIXME: bundle up all the files referenced by plugins but not the main binary!
+
             if not utils.system(["dylibbundler",
                                             "--overwrite-files",
                                             "--bundle-deps",
