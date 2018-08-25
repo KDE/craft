@@ -1,8 +1,11 @@
 from Packager.CollectionPackagerBase import *
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils import CraftHash
+import io
+import subprocess
 
 import glob
+
 
 class MacDMGPackager( CollectionPackagerBase ):
 
@@ -14,6 +17,32 @@ class MacDMGPackager( CollectionPackagerBase ):
         # TODO: Fix defaults
         self.defines.setdefault("apppath", "")
         self.defines.setdefault("appname", self.package.name.lower())
+
+    @staticmethod
+    def _getLibraryDeps(fullPath):
+        lines = io.StringIO(subprocess.check_output(["otool", "-L", fullPath]).decode("utf-8"))
+        deps = []
+        for line in lines:
+            if line.startswith("\t"):
+                deps.append(line.strip())
+        return deps
+
+    def areLibraryDepsOkay(self, fullPath, relativePath):
+        CraftCore.log.debug("Checking library dependencies of %s", fullPath)
+        found_bad_lib = False
+        for dep in self._getLibraryDeps(fullPath):
+            # @rpath and @executable_path is fine
+            if dep.startswith("@rpath") or dep.startswith("@executable_path"):
+                continue
+            # Also allow /System/Library/Frameworks/ and /usr/lib:
+            if dep.startswith("/usr/lib/") or dep.startswith("/System/Library/Frameworks/"):
+                continue
+            if dep.startswith(CraftStandardDirs.craftRoot()):
+                CraftCore.log.error("ERROR: %s references absolute library path from craftroot: %s", relativePath, dep)
+            elif dep.startswith("/"):
+                CraftCore.log.error("ERROR: %s references absolute library path: %s", relativePath, dep)
+            found_bad_lib = True
+        return not found_bad_lib
 
     def createPackage(self):
         """ create a package """
@@ -54,13 +83,32 @@ class MacDMGPackager( CollectionPackagerBase ):
                 if not utils.mergeTree(src, dest):
                     return False
 
-        with utils.ScopedEnv({'DYLD_FALLBACK_LIBRARY_PATH' : os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
+        with utils.ScopedEnv({'DYLD_FALLBACK_LIBRARY_PATH': targetLibdir + ":" + os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
+            CraftCore.log.info("Checking for absolute library paths...")
+            binaryDir = os.path.join(appPath, "Contents", "MacOS")
+            mainBinary = os.path.join(binaryDir, self.defines['appname'])
             if not utils.system(["dylibbundler",
                                             "--overwrite-files",
                                             "--bundle-deps",
                                             "--install-path", "@executable_path/../Frameworks",
                                             "--dest-dir", targetLibdir,
-                                            "--fix-file", os.path.join(appPath, "Contents", "MacOS", self.defines['appname'])]):
+                                            "--fix-file", mainBinary]):
+                return False
+
+            # Finally sanity check that we don't depend on absolute paths from the builder
+            CraftCore.log.info("Checking for absolute library paths in package...")
+            found_bad_dylib = False
+            if not self.areLibraryDepsOkay(mainBinary, self.defines['appname']):
+                # Don't return false here so that we log all the bad libraries before failing:
+                found_bad_dylib = True
+            for dirpath, dirnames, filenames in os.walk(os.path.join(appPath, "Contents", "PlugIns")):
+                for filename in filenames:
+                    # TODO: check for Mach-O file magic instead of filtering by name:
+                    fullpath = os.path.join(dirpath, filename)
+                    if not self.areLibraryDepsOkay(fullpath, os.path.relpath(fullpath, appPath)):
+                        found_bad_dylib = True
+                    break
+            if found_bad_dylib:
                 return False
 
             if not utils.system(["macdeployqt", appPath,  "-always-overwrite", "-verbose=1"]):
