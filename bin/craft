@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python3.6 $craftRoot/bin/craft.py $@
+${CRAFT_PYTHON_BIN:-python3.6} $craftRoot/bin/craft.py $@

@@ -10,8 +10,29 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
+if command -v python3.6 >/dev/null; then
+    CRAFT_PYTHON_BIN=$(command -v python3.6)
+else
+    # could not find python 3.6, try python3
+    if ! command -v python3 >/dev/null; then
+        echo "Failed to python Python 3.6+"
+        exit 1
+    fi
+    # check if python3 is at least version 3.6:
+    python_version=$(python3 --version)
+    # sort and use . as separator and then check if the --version output is sorted later
+    # Note: this is just a sanity check. craft.py should check sys.version
+    comparison=$(printf '%s\nPython 3.6.0\n' "$python_version" | sort -t.)
+    if [ "$(echo "${comparison}" | head -n1)" != "Python 3.6.0" ]; then
+        echo "Found Python3 version ${python_version} is too old. Need at least 3.6"
+        exit 1
+    fi
+    CRAFT_PYTHON_BIN=$(command -v python3)
+fi
+export CRAFT_PYTHON_BIN
+
 if [[ ! -d "$craftRoot" ]]; then
-    craftRoot=$(python3.6 -c "import os; import sys; print(os.path.dirname(os.path.abspath(sys.argv[1])));" "$craftRoot")
+    craftRoot=$(${CRAFT_PYTHON_BIN} -c "import os; import sys; print(os.path.dirname(os.path.abspath(sys.argv[1])));" "$craftRoot")
 fi
 
 export craftRoot
@@ -19,7 +40,7 @@ if [ -n "$PS1" ]; then
     export PS1="CRAFT: $PS1"
 fi
 
-CRAFT_ENV=$(python3.6 "$craftRoot/bin/CraftSetupHelper.py" --setup)
+CRAFT_ENV=$(${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup)
 # Split the CraftSetupHelper.py output by newlines instead of any whitespace
 # to also handled environment variables containing spaces (e.g. $PS1)
 # See https://stackoverflow.com/q/24628076/894271
@@ -37,7 +58,7 @@ function export_lines() {
 export_lines "$CRAFT_ENV"
 
 craft() {
-    python3.6 "$craftRoot/bin/craft.py" $@
+    ${CRAFT_PYTHON_BIN} "$craftRoot/bin/craft.py" $@
 }
 
 cs() {
