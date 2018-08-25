@@ -42,7 +42,7 @@ class State(object):
 
 class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")
-    log = None
+    log = None  # type: logging.Logger
     standardDirs = AutoImport("standardDirs", "CraftStandardDirs")
     settings = AutoImport("settings", "CraftConfig")
     cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")
