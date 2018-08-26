@@ -197,11 +197,11 @@ class CraftBase(object):
         buildVersion = self.buildNumber()
 
         version = []
-        if self.subinfo.hasSvnTarget():
+        if not buildVersion and self.subinfo.hasSvnTarget():
             if includeRevision:
                 version += [self.sourceRevision(), buildVersion]
             else:
-                version += [buildVersion] if buildVersion else ["latest"]
+                version += ["latest"]
         else:
             version = [self.version, buildVersion]
             if includeTimeStamp:
