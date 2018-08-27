@@ -23,12 +23,13 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class SevenZipPackage(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
 
     def install(self):
+        # wee need to keep the x86 exe around as we distribute it in the nsis installers
         if CraftCore.compiler.isX64():
             return utils.copyFile(os.path.join(self.sourceDir(), "x64", "7za.exe"),
                                   os.path.join(self.installDir(), "7za.exe"), linkOnly=False)
@@ -39,9 +40,3 @@ class SevenZipPackage(BinaryPackageBase):
     def postQmerge(self):
         CraftCore.cache.clear()
         return True
-
-
-class Package(VirtualIfSufficientVersion):
-    def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="7za", version="16.04", versionCommand="-version",
-                                            classA=SevenZipPackage)
