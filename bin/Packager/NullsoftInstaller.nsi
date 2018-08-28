@@ -80,6 +80,11 @@ Var StartMenuFolder
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
+!define MUI_COMPONENTSPAGE_NODESC
+;!insertmacro MUI_PAGE_COMPONENTS
+@{sections_page}
+;!insertmacro MUI_PAGE_COMPONENTS
+
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES

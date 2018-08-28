@@ -79,6 +79,8 @@ You can add your own defines into self.defines as well.
         defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
         defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         defines.setdefault("registy_hook", "")
+        defines.setdefault("sections", "")
+        defines.setdefault("sections_page", "")
 
         if not self.scriptname:
             self.scriptname = os.path.join(os.path.dirname(__file__), "NullsoftInstaller.nsi")
@@ -137,6 +139,10 @@ You can add your own defines into self.defines as well.
         for short in self.shortcuts:
             shortcuts.append(self._createShortcut(**short))
         defines["shortcuts"] = "".join(shortcuts)
+
+
+        if defines.get("sections", None):
+            defines["sections_page"] = "!insertmacro MUI_PAGE_COMPONENTS"
 
         # make absolute path for output file
         if not os.path.isabs(defines["setupname"]):
