@@ -204,7 +204,7 @@ Enabled = False
 ## The path to the Qt sdk.
 Path = D:\Qt
 ## The version of Qt.
-Version = 5.9
+Version = 5.11.1
 ## The compiler version, if you are not sure what to use, have a look into the directory set in QtSDK/Path.
 ## The compiler must be of the same type as General/KDECOMPILER.
 ## If you are using mingw please make sure you have installed the mingw using the Qt installer.
