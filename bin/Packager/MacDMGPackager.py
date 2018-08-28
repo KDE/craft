@@ -68,12 +68,14 @@ class MacDMGPackager( CollectionPackagerBase ):
             # Fix up the library dependencies of files in Contents/Frameworks/
             CraftCore.log.info("Bundling library dependencies...")
             dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks")
+            CraftCore.log.info("Bundling plugin dependencies...")
+            dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns")
 
             if not utils.system(["macdeployqt", appPath, "-always-overwrite", "-verbose=1"]):
                 return False
 
             # macdeployqt adds some more plugins so we fix the plugins after calling macdeployqt
-            CraftCore.log.info("Bundling plugin dependencies...")
+            CraftCore.log.info("Fixing plugin dependencies after macdeployqt...")
             dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns")
 
             # Finally sanity check that we don't depend on absolute paths from the builder
@@ -261,10 +263,15 @@ class MacDylibBundler(object):
                     return False
             elif "/" not in path and path.startswith("lib"):
                 # library reference without absolute path -> try to find the library
-                guessedPath = Path(CraftStandardDirs.craftRoot(), "lib", path)
-                if not guessedPath.exists():
-                    CraftCore.log.error("%s: Could not find library dependency '%s' in craftroot", fileToFix, path)
-                    return False
+                # First check if it exists in Contents/Frameworks already
+                guessedPath = Path(self.appPath, "Frameworks", path)
+                if guessedPath.exists():
+                    CraftCore.log.info("%s: relative library dependency is alreayd bundled: %s", fileToFix, guessedPath)
+                else:
+                    guessedPath = Path(CraftStandardDirs.craftRoot(), "lib", path)
+                    if not guessedPath.exists():
+                        CraftCore.log.error("%s: Could not find library dependency '%s' in craftroot", fileToFix, path)
+                        return False
                 CraftCore.log.debug("%s: Found relative library reference %s in '%s'", fileToFix, path, guessedPath)
                 if not self._addLibToAppImage(guessedPath):
                     CraftCore.log.error("%s: Failed to add library dependency '%s' into bundle", fileToFix,
