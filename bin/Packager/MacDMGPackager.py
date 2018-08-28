@@ -98,7 +98,11 @@ class MacDMGPackager( CollectionPackagerBase ):
             dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
             if os.path.exists(dmgDest):
                 utils.deleteFile(dmgDest)
-            if not utils.system(["create-dmg", "--volname", name, dmgDest, appPath]):
+            appName = self.defines['appname'] + ".app"
+            if not utils.system(["create-dmg", "--volname", name,
+                                 # Add a drop link to /Applications:
+                                 "--icon", appName, "140", "150", "--app-drop-link", "350", "150",
+                                 dmgDest, appPath]):
                 return False
 
             CraftHash.createDigestFiles(dmgDest)
