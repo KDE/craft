@@ -111,6 +111,7 @@ class CraftPackageObject(object):
         self._version = None
         self._instance = None
         self.__path = None
+        self.__blueprintRoot = None
 
     @property
     def parent(self):
@@ -176,15 +177,17 @@ class CraftPackageObject(object):
             package = parent
         else:
             raise Exception("Unreachable")
+        package.__blueprintRoot = blueprintRoot
 
         if not package.categoryInfo:
             package.categoryInfo = CategoryPackageObject(path)
             if not package.categoryInfo.valid and package.parent:
-                # we actually need a copy
-                package.categoryInfo = copy.copy(package.parent.categoryInfo)
-                if not package.categoryInfo.valid:
-                    package.categoryInfo = CategoryPackageObject(blueprintRoot)
-
+                print(package.path, package.parent.__blueprintRoot, package.__blueprintRoot)
+                if package.parent.__blueprintRoot == package.__blueprintRoot:
+                    # we actually need a copy
+                    package.categoryInfo = copy.copy(package.parent.categoryInfo)
+                    if not package.categoryInfo.valid:
+                        package.categoryInfo = CategoryPackageObject(blueprintRoot)
 
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
