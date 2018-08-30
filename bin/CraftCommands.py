@@ -211,8 +211,9 @@ def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
             else:
                 CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
                 return False
+        CraftCore.log.debug(f"--get {command} on {p} -> {instance}")
         CraftCore.debug.printOut(instance)
-        return True
+    return True
 
 def run(package : [CraftPackageObject], action : str, args) -> bool:
     if package.isIgnored():
