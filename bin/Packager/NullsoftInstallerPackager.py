@@ -156,6 +156,7 @@ You can add your own defines into self.defines as well.
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
         defines.setdefault("nsis_include", f"!addincludedir {os.path.dirname(self.scriptname)}")
+        defines["nsis_include_internal"] = f"!addincludedir {os.path.join(os.path.dirname(__file__), 'Nsis')}"
         cmdDefines = []
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
         if not utils.configureFile(self.scriptname, configuredScrip, defines):

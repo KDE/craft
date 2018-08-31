@@ -59,6 +59,8 @@ Var StartMenuFolder
 ;!define MULTIUSER_USE_PROGRAMFILES64
 @{multiuser_use_programfiles64}
 ;!define MULTIUSER_USE_PROGRAMFILES64
+
+@{nsis_include_internal}
 @{nsis_include}
 
 !include "MultiUser.nsh"
