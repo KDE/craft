@@ -59,12 +59,14 @@ Var StartMenuFolder
 ;!define MULTIUSER_USE_PROGRAMFILES64
 @{multiuser_use_programfiles64}
 ;!define MULTIUSER_USE_PROGRAMFILES64
+@{nsis_include}
+
 !include "MultiUser.nsh"
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
+!include "process.nsh"
 
-@{nsis_include}
 
 ;!define MUI_ICON
 @{installerIcon}
@@ -120,6 +122,7 @@ AutoCloseWindow false
 
 ; beginning (invisible) section
 Section
+  !insertmacro EndProcessWithDialog
   ExecWait '"$MultiUser.InstDir\${uninstaller}" /S _?=$MultiUser.InstDir'
   WriteRegStr SHCTX "${regkey}" "Install_Dir" "$INSTDIR"
   WriteRegStr SHCTX "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}" "$MultiUser.InstallMode"
@@ -174,8 +177,8 @@ UninstallText "This will uninstall @{productname}."
 
 Section "Uninstall"
 SetShellVarContext all
-; TODO: we need something independent of a tier3....
-nsExec::ExecToLog '"$INSTDIR\bin\kdeinit5.exe" "--shutdown"'
+
+!insertmacro EndProcessWithDialog
 
 ${If} $MultiUser.InstallMode == "CurrentUser"
     SetShellVarContext current

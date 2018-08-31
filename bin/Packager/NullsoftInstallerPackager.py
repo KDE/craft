@@ -83,7 +83,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("sections_page", "")
 
         if not self.scriptname:
-            self.scriptname = os.path.join(os.path.dirname(__file__), "NullsoftInstaller.nsi")
+            self.scriptname = os.path.join(os.path.dirname(__file__), "Nsis", "NullsoftInstaller.nsi")
         return defines
 
     def isNsisInstalled(self):
