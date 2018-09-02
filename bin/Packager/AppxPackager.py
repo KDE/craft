@@ -105,7 +105,7 @@ class AppxPackager(CollectionPackagerBase):
         for propertyName, define, required in [ ("Square150x150Logo", "icon_png", True),
                                                 ("Square44x44Logo", "icon_png_44", True),
                                                 ("Wide310x150Logo", "icon_png_310x150", False),
-                                                ("Wide310x310Logo", "icon_png_310x310", False),
+                                                ("Square310x310Logo", "icon_png_310x310", False),
                                                 ]:
             if define not in defines:
                 if required:
