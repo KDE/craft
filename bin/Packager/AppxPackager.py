@@ -80,6 +80,8 @@ class AppxPackager(CollectionPackagerBase):
                 version = f"{version}{'.0' * (3-count)}"
             defines.setdefault("version", version)
 
+
+        defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE e.V.")
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))

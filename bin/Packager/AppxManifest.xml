@@ -5,15 +5,15 @@
          xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
   <Identity Name="@{name}"
             Version="@{version}"
-            Publisher="@{publisher}" />
+            Publisher="@{publisher}"
+            ProcessorArchitecture="@{architecture}"/>
   <Properties>
     <DisplayName>@{display_name}</DisplayName>
     <PublisherDisplayName>@{company}</PublisherDisplayName>
     <Logo>@{icon_png}</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.23810.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+    <TargetDeviceFamily  Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
