@@ -741,7 +741,7 @@ def normalisePath(path):
 def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
     configPatter = re.compile(r"@{([^{}]+)}")
-    with open(inFile, "rt+", encoding="UTF-8") as f:
+    with open(inFile, "rt", encoding="UTF-8") as f:
         script = f.read()
     matches = configPatter.findall(script)
     if not matches:
@@ -752,12 +752,18 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         for match in matches:
             val = variables.get(match, None)
             if val is None:
-                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables")
+                linenUmber = 0
+                for line in script.split("\n"):
+                    if match in line:
+                      break
+                    linenUmber += 1
+                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables\n"
+                                f"{linenUmber}:{line}")
             script = script.replace(f"@{{{match}}}", val)
         matches = configPatter.findall(script)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
-    with open(outFile, "wt+", encoding="UTF-8") as f:
+    with open(outFile, "wt", encoding="UTF-8") as f:
         f.write(script)
     return True
 
