@@ -35,7 +35,7 @@ from Blueprints.CraftVersion import CraftVersion
 class AppxPackager(CollectionPackagerBase):
     Extensions = f"""<Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="@{{name}}">
+          <uap:FileTypeAssociation Name="@{{craft_id}}">
             <uap:SupportedFileTypes>
               @{{file_types}}
             </uap:SupportedFileTypes>
@@ -46,12 +46,6 @@ class AppxPackager(CollectionPackagerBase):
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
-
-    @staticmethod
-    def _appendToPublisherString(publisher : [str], field : str, key : str ) -> None:
-        data = CraftCore.settings.get("CodeSigning", key, "")
-        if data:
-            publisher += [f"{field}={data}" ]
 
     @staticmethod
     def _setupFileTypes(defines):
@@ -86,10 +80,10 @@ class AppxPackager(CollectionPackagerBase):
                 version = f"{version}{'.0' * (3-count)}"
             defines.setdefault("version", version)
 
-        defines.setdefault("company", "KDE")
-        defines.setdefault("name", self.package.path.replace("/", "."))
-        defines.setdefault("id", defines["name"].replace("-", "."))
+        defines.setdefault("company", "KDE e.V.")
         defines.setdefault("display_name", self.subinfo.displayName)
+        defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
+        defines.setdefault("craft_id", self.package.path.replace("/", "."))
         defines.setdefault("description", self.subinfo.description)
         defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
         defines.setdefault("icon_png_44", defines["icon_png"])
@@ -100,16 +94,20 @@ class AppxPackager(CollectionPackagerBase):
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
 
-        publisher = []
-        self._appendToPublisherString(publisher, "CN", "CommonName")
-        self._appendToPublisherString(publisher, "O", "Organization")
-        self._appendToPublisherString(publisher, "L", "Locality")
-        self._appendToPublisherString(publisher, "S", "State")
-        self._appendToPublisherString(publisher, "C", "Country")
-        defines.setdefault("publisher", ", ".join(publisher))
-
+        defines.setdefault("publisher", CraftCore.settings.get("Packager", "AppxPublisherId"))
         return defines
 
+    def __prepareIcons(self, defines):
+        utils.createDir(os.path.join(self.archiveDir(), "Assets"))
+        for d in ["icon_png", "icon_png_44"]:
+            icon = defines[d]
+            defines[d] = os.path.join("Assets", os.path.basename(icon))
+            name, ext = os.path.splitext(icon)
+            names = glob.glob(f"{name}*{ext}")
+            for n in names:
+                if not utils.copyFile(n, os.path.join(self.archiveDir(), "Assets", os.path.basename(n))):
+                    return False
+        return True
 
     def createPackage(self):
         defines = self._setDefaults(self.defines)
@@ -126,16 +124,9 @@ class AppxPackager(CollectionPackagerBase):
         if not self.internalCreatePackage():
             return False
 
-        icon = defines["icon_png"]
-        icon_44 = defines["icon_png_44"]
-        defines["icon_png"] = os.path.basename(icon)
-        defines["icon_png_44"] = os.path.basename(icon_44)
-
-        if not utils.copyFile(icon, os.path.join(self.archiveDir(), defines["icon_png"])):
+        if not self.__prepareIcons(defines):
             return False
-        if icon != icon_44:
-            if not utils.copyFile(icon_44, os.path.join(self.archiveDir(), defines["icon_png_44"])):
-                return False
+
         return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
                 utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]]) and
                 utils.sign([defines["setupname"]]))

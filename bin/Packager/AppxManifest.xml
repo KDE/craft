@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
   <Identity Name="@{name}"
             Version="@{version}"
             Publisher="@{publisher}" />
@@ -10,15 +13,21 @@
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
+    <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.23810.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
   <Resources>
-    <Resource Language="en-US" />
+    <Resource Language="en-us" />
+    <Resource uap:Scale="100" />
+    <Resource uap:Scale="125" />
+    <Resource uap:Scale="150" />
+    <Resource uap:Scale="200" />
+    <Resource uap:Scale="400" />
   </Resources>
   <Applications>
-    <Application Id="@{id}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="@{name}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
      <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png_44}" Description="@{description}">
 <!--        <uap:DefaultTile Wide310x150Logo="@{icon_png}" /> -->
       </uap:VisualElements>
