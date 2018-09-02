@@ -130,5 +130,6 @@ class AppxPackager(CollectionPackagerBase):
             return False
 
         return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
-                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]]) and
-                utils.sign([defines["setupname"]]))
+                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]])
+                #and utils.sign([defines["setupname"]])
+                )
