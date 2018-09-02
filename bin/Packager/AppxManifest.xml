@@ -10,7 +10,7 @@
   <Properties>
     <DisplayName>@{display_name}</DisplayName>
     <PublisherDisplayName>@{company}</PublisherDisplayName>
-    <Logo>@{icon_png}</Logo>
+    <Logo>@{logo}</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily  Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
@@ -20,16 +20,16 @@
   </Capabilities>
   <Resources>
     <Resource Language="en-us" />
-    <Resource uap:Scale="100" />
+<!--    <Resource uap:Scale="100" />
     <Resource uap:Scale="125" />
     <Resource uap:Scale="150" />
     <Resource uap:Scale="200" />
-    <Resource uap:Scale="400" />
+    <Resource uap:Scale="400" />-->
   </Resources>
   <Applications>
     <Application Id="@{name}" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
-     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" Square150x150Logo="@{icon_png}" Square44x44Logo="@{icon_png_44}" Description="@{description}">
-<!--        <uap:DefaultTile Wide310x150Logo="@{icon_png}" /> -->
+     <uap:VisualElements BackgroundColor="transparent" DisplayName="@{display_name}" @{icon_png} @{icon_png_44} Description="@{description}">
+       <uap:DefaultTile @{icon_png_310x150} @{icon_png_310x310} />
       </uap:VisualElements>
       @{extensions}
     </Application>

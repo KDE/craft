@@ -114,9 +114,22 @@ class AppxPackager(CollectionPackagerBase):
 
     def __prepareIcons(self, defines):
         utils.createDir(os.path.join(self.archiveDir(), "Assets"))
-        for d in ["icon_png", "icon_png_44"]:
-            icon = defines[d]
-            defines[d] = os.path.join("Assets", os.path.basename(icon))
+        defines["logo"] = os.path.join('Assets', os.path.basename(defines["icon_png"]))
+        for propertyName, define, required in [ ("Square150x150Logo", "icon_png", True),
+                                                ("Square44x44Logo", "icon_png_44", True),
+                                                ("Wide310x150Logo", "icon_png_310x150", False),
+                                                ("Wide310x310Logo", "icon_png_310x310", False),
+                                                ]:
+            if define not in defines:
+                if required:
+                    CraftCore.log.info(f"Please add defines[\"{define}]\"")
+                    return False
+                else:
+                  defines[define] = ""
+                  continue
+
+            icon = defines[define]
+            defines[define] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
             name, ext = os.path.splitext(icon)
             names = glob.glob(f"{name}*{ext}")
             for n in names:
