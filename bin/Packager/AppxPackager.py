@@ -48,12 +48,6 @@ class AppxPackager(CollectionPackagerBase):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
     @staticmethod
-    def _appendToPublisherString(publisher : [str], field : str, key : str ) -> None:
-        data = CraftCore.settings.get("CodeSigning", key, "")
-        if data:
-            publisher += [f"{field}={data}" ]
-
-    @staticmethod
     def _setupFileTypes(defines):
         if "mimetypes" in defines:
             defines.setdefault("file_types", set())
@@ -102,14 +96,7 @@ class AppxPackager(CollectionPackagerBase):
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
 
-        publisher = []
-        self._appendToPublisherString(publisher, "CN", "CommonName")
-        self._appendToPublisherString(publisher, "O", "Organization")
-        self._appendToPublisherString(publisher, "L", "Locality")
-        self._appendToPublisherString(publisher, "S", "State")
-        self._appendToPublisherString(publisher, "C", "Country")
-        defines.setdefault("publisher", ", ".join(publisher))
-
+        defines.setdefault("publisher", CraftCore.settings.get("Packager", "AppxPublisherId"))
         return defines
 
     def __prepareIcons(self, defines):
@@ -155,7 +142,7 @@ class AppxPackager(CollectionPackagerBase):
         if not self.__prepareIcons(defines):
             return False
 
-        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines)
-                and utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]])
-                and utils.sign([defines["setupname"]])
+        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
+                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]])
+                #and utils.sign([defines["setupname"]])
                 )
