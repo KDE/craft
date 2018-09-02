@@ -48,6 +48,12 @@ class AppxPackager(CollectionPackagerBase):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
     @staticmethod
+    def _appendToPublisherString(publisher : [str], field : str, key : str ) -> None:
+        data = CraftCore.settings.get("CodeSigning", key, "")
+        if data:
+            publisher += [f"{field}={data}" ]
+
+    @staticmethod
     def _setupFileTypes(defines):
         if "mimetypes" in defines:
             defines.setdefault("file_types", set())
