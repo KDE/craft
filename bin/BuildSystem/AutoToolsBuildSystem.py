@@ -55,8 +55,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     includes += [f" -I'{aclocalDir}'"]
 
             args = "".join(includes)
-            if CraftCore.compiler.isUnix:
-                self.shell.environment["ACLOCAL"] = f"aclocal --system-acdir='{CraftCore.standardDirs.craftRoot()}/dev-utils'"
             self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + args)
 
         if not self.subinfo.options.useShadowBuild:
