@@ -10,6 +10,7 @@ import time
 import urllib.error
 import urllib.request
 import sys
+from pathlib import Path
 
 from CraftCore import CraftCore, AutoImport
 
@@ -106,8 +107,9 @@ class CraftCache(object):
                 # prettify command
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
-            CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
-            self._nonPersistentCache.applicationLocations[app] = appLocation
+            if Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents:
+                CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
+                self._nonPersistentCache.applicationLocations[app] = appLocation
         else:
             CraftCore.log.debug(f"Craft was unable to locate: {app}, in {path}")
             return None
