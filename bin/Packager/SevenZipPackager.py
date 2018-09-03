@@ -73,8 +73,7 @@ class SevenZipPackager(PackagerBase):
             dstpath = self.packageDestinationDir()
 
 
-        extention = CraftCore.settings.get("Packager", "7ZipArchiveType",
-                                           "7z" if OsUtils.isWin() else "tar.xz")
+        extention = CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
 
         if not self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False

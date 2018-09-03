@@ -133,7 +133,12 @@ def compress(archive : str, source : str) -> bool:
         if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             progressFlags = ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
-        command = [app, "a", "-r",  archive] + progressFlags
+        if CraftCore.compiler.isUnix:
+            tar = CraftCore.cache.findApplication("tar")
+            kw["pipeProcess"] = subprocess.Popen([tar, "-cf", "-", "-C", source, ".",], stdout=subprocess.PIPE)
+            command  = [app, "a", "-si",  archive] + progressFlags
+        else:
+          command = [app, "a", "-r",  archive] + progressFlags
         if os.path.isfile(source):
             command += [source]
         else:
@@ -151,7 +156,7 @@ def compress(archive : str, source : str) -> bool:
     createDir(os.path.dirname(archive))
     if os.path.isfile(archive):
         deleteFile(archive)
-    if OsUtils.isUnix():
+    if False:
         return __xz(archive, source)
     else:
         return __7z(archive, source)
