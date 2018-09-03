@@ -126,6 +126,10 @@ class BashShell(object):
         return bash
 
     def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
+        # try to locate the command
+        tmp = CraftCore.cache.findApplication(cmd)
+        if tmp:
+            cmd = tmp
         command = f"{self._findBash()} -c \"cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
         CraftCore.debug.step("bash execute: %s" % command)
         CraftCore.log.debug("bash environment: %s" % self.environment)
