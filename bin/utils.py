@@ -156,7 +156,7 @@ def compress(archive : str, source : str) -> bool:
     createDir(os.path.dirname(archive))
     if os.path.isfile(archive):
         deleteFile(archive)
-    if False:
+    if CraftCore.compiler.isUnix and archive.endswith(".tar.xz"):
         return __xz(archive, source)
     else:
         return __7z(archive, source)

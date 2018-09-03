@@ -74,6 +74,8 @@ class SevenZipPackager(PackagerBase):
 
 
         extention = CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
+        if CraftCore.compiler.isUnix and not CraftCore.cache.findApplication("7za"):
+            extention = "tar.xz"
 
         if not self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False
