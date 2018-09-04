@@ -7,6 +7,7 @@
 from CraftStandardDirs import CraftStandardDirs
 from CraftOS.OsDetection import OsDetection
 from options import *
+import subprocess
 
 
 class BashShell(object):
@@ -31,6 +32,16 @@ class BashShell(object):
 
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
+
+            if CraftCore.compiler.isMacOS:
+                # Only look for includes/libraries in the XCode SDK on MacOS to avoid errors with
+                # libraries installed by homebrew (causes errors e.g. with iconv since headers will be
+                # found in /usr/local/include first but libraries are searched for in /usr/lib before
+                # /usr/local/lib. See https://langui.sh/2015/07/24/osx-clang-include-lib-search-paths/
+                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
+                cflags = f" -isysroot {sdkPath} " + cflags
+                ldflags = f" -isysroot {sdkPath} " + ldflags
+
             if CraftCore.compiler.isMSVC():
                 # based on Windows-MSVC.cmake
                 if self.buildType == "Release":
