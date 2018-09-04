@@ -34,7 +34,7 @@ import urllib
 import subprocess
 import sys
 
-def getFile(url, destdir, filename='') -> bool:
+def getFile(url, destdir, filename='', quiet=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)) -> bool:
     """download file from 'url' into 'destdir'"""
     CraftCore.log.debug("getFile called. url: %s" % url)
     if url == "":
@@ -53,10 +53,10 @@ def getFile(url, destdir, filename='') -> bool:
     # curl and wget basically only work when we have a cert store on windows
     if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
         if CraftCore.cache.findApplication("wget"):
-            return wgetFile(url, destdir, filename)
+            return wgetFile(url, destdir, filename, quiet)
 
         if CraftCore.cache.findApplication("curl"):
-            return curlFile(url, destdir, filename)
+            return curlFile(url, destdir, filename, quiet)
 
     if os.path.exists(os.path.join(destdir, filename)):
         return True
@@ -88,7 +88,7 @@ def getFile(url, destdir, filename='') -> bool:
     return True
 
 
-def curlFile(url, destdir, filename=''):
+def curlFile(url, destdir, filename, quiet):
     """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
     curl = CraftCore.cache.findApplication("curl")
     command = [curl, "-C", "-", "--retry", "10", "-L", "--ftp-ssl", "--fail"]
@@ -101,7 +101,10 @@ def curlFile(url, destdir, filename=''):
     command += [url]
     CraftCore.log.debug("curlfile called")
 
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
+    if quiet:
+        command += ["--silent"]
+        return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+    elif CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
         command += ["--progress-bar"]
         CraftCore.log.info(f"curl {url}")
         return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
@@ -111,7 +114,7 @@ def curlFile(url, destdir, filename=''):
         return utils.system(command)
 
 
-def wgetFile(url, destdir, filename=''):
+def wgetFile(url, destdir, filename, quiet):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     wget = CraftCore.cache.findApplication("wget")
     command = [wget, "-c", "-t", "10"]
@@ -129,7 +132,10 @@ def wgetFile(url, destdir, filename=''):
     command += [url]
     CraftCore.log.debug("wgetfile called")
 
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) and CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
+    if quiet:
+        command += ["-q"]
+        return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+    elif CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
         command += ["-q", "--show-progress"]
         CraftCore.log.info(f"wget {url}")
         return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)

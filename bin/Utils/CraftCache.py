@@ -179,7 +179,7 @@ class CraftCache(object):
                     return json.loads(jsonFile.read())
             else:
                 with tempfile.TemporaryDirectory() as tmp:
-                    if not GetFiles.getFile(url, tmp, "manifest.json"):
+                    if not GetFiles.getFile(url, tmp, "manifest.json", quiet=True):
                         # TODO: provide the error code and only cache 404...
                         self._jsonCache[url] = {}
                         return {}
