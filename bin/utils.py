@@ -89,6 +89,7 @@ def unpackFile(downloaddir, filename, workdir):
 
 
 def un7zip(fileName, destdir, flag=None):
+    createDir(destdir)
     kw = {}
     progressFlags = []
     type = []
