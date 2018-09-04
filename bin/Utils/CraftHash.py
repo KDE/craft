@@ -77,7 +77,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                     if not os.path.exists(digestFileName):
                         continue
                 currentHash = digestFile(pathName, digestAlgorithm)
-                with open(digestFileName, "rt+") as f:
+                with open(digestFileName, "rt", encoding="UTF-8") as f:
                     data = f.read()
                 if not re.findall(currentHash, data):
                     CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (
@@ -99,7 +99,7 @@ def createDigestFiles(path, algorithms=None):
         algorithms = [HashAlgorithm.SHA256]
     for algorithm in algorithms:
         digets = digestFile(path, algorithm)
-        with open(path + algorithm.fileEnding(), "wt+") as f:
+        with open(path + algorithm.fileEnding(), "wt", encoding="UTF-8") as f:
             f.write("%s\n" % digets)
 
 
