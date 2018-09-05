@@ -68,6 +68,10 @@ class CMakeBuildSystem(BuildSystemBase):
             options += " " + self.subinfo.options.configure.toolsDefine + " "
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
             options += " " + self.subinfo.options.configure.staticArgs + " "
+        if CraftCore.compiler.isMSVC():
+                options += " -DCMAKE_VS_PLATFORM_TOOLSET={0}".format(CraftCore.compiler.getMsvcPlatformToolset())
+                if "WINDOWSSDKVERSION" in os.environ:
+                    options += " -DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
         if CraftCore.compiler.isIntel():
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
