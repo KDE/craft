@@ -26,7 +26,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/libtool"] = None
 
         if CraftCore.compiler.isMacOS:
-            self.buildDependencies["dev-utils/macdylibbundler"] = None
             self.buildDependencies["dev-utils/create-dmg"] = None
 
 
