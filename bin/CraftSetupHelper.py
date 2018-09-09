@@ -182,7 +182,7 @@ class SetupHelper(object):
 
     @staticmethod
     def stringToEnv(string : str):
-        env = copy.deepcopy(os.environ)
+        env = os.environ.copy()
         for line in string.split("\n"):
             key, value = line.strip().split("=", 1)
             env[key] = value
