@@ -185,6 +185,8 @@ class SetupHelper(object):
         env = os.environ.copy()
         for line in string.split("\n"):
             key, value = line.strip().split("=", 1)
+            if key == 'Path':
+                key = 'PATH'
             env[key] = value
         return env
 
