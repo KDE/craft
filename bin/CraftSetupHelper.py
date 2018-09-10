@@ -182,7 +182,7 @@ class SetupHelper(object):
 
     @staticmethod
     def stringToEnv(string : str):
-        env = os.environ.copy()
+        env = copy.deepcopy(os.environ)
         for line in string.split("\n"):
             key, value = line.strip().split("=", 1)
             if key == 'Path':
