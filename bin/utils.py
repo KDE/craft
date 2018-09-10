@@ -218,7 +218,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         CraftCore.log.debug(f"executing command: {cmd!r}")
     CraftCore.log.debug(f"CWD: {cwd!r}")
     CraftCore.log.debug(f"displayProgress={displayProgress}")
-    if CraftCore.compiler.isMacOS:
+    if CraftCore.compiler.macUseSDK:
         environment["MACOSX_DEPLOYMENT_TARGET"] = CraftCore.compiler.macOSDeploymentTarget
     CraftCore.debug.logEnv(environment)
     if pipeProcess:

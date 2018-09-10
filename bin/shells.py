@@ -38,12 +38,18 @@ class BashShell(object):
                 # libraries installed by homebrew (causes errors e.g. with iconv since headers will be
                 # found in /usr/local/include first but libraries are searched for in /usr/lib before
                 # /usr/local/lib. See https://langui.sh/2015/07/24/osx-clang-include-lib-search-paths/
-                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
-                deploymentFlag = "-mmacosx-version-min=" + CraftCore.compiler.macOSDeploymentTarget
-                cflags = f" -isysroot {sdkPath} {deploymentFlag}" + cflags
-                # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
-                ldflags = f" -isysroot {sdkPath} {deploymentFlag} -Wl,-no_weak_imports" + ldflags
-                # Note: MACOSX_DEPLOYMENT_TARGET is set in utils.system() so doesn't need to be set here
+                if CraftCore.compiler.macUseSDK:
+                    sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
+                    deploymentFlag = "-mmacosx-version-min=" + CraftCore.compiler.macOSDeploymentTarget
+                    cflags = f" -isysroot {sdkPath} {deploymentFlag}" + cflags
+                    # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
+                    ldflags = f" -isysroot {sdkPath} {deploymentFlag} -Wl,-no_weak_imports" + ldflags
+                    # Note: MACOSX_DEPLOYMENT_TARGET is set in utils.system() so doesn't need to be set here
+                else:
+                    # Ensure that /usr/include comes before /usr/local/include in the header search path to avoid
+                    # pulling in headers from /usr/local/include (e.g. installed by homebrew) that will cause
+                    # linker errors later.
+                    cflags = " -isystem /usr/include " + cflags
 
             if CraftCore.compiler.isMSVC():
                 # based on Windows-MSVC.cmake
