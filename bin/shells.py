@@ -39,8 +39,11 @@ class BashShell(object):
                 # found in /usr/local/include first but libraries are searched for in /usr/lib before
                 # /usr/local/lib. See https://langui.sh/2015/07/24/osx-clang-include-lib-search-paths/
                 sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
-                cflags = f" -isysroot {sdkPath} " + cflags
-                ldflags = f" -isysroot {sdkPath} " + ldflags
+                deploymentFlag = "-mmacosx-version-min=" + CraftCore.compiler.macOSDeploymentTarget
+                cflags = f" -isysroot {sdkPath} {deploymentFlag}" + cflags
+                # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
+                ldflags = f" -isysroot {sdkPath} {deploymentFlag} -Wl,-no_weak_imports" + ldflags
+                # Note: MACOSX_DEPLOYMENT_TARGET is set in utils.system() so doesn't need to be set here
 
             if CraftCore.compiler.isMSVC():
                 # based on Windows-MSVC.cmake

@@ -60,6 +60,8 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if OsUtils.isMac():
             options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
+            # Ensure that we don't depend on SDK features only present on newer systems
+            options += " -DCMAKE_OSX_DEPLOYMENT_TARGET=" + CraftCore.compiler.macOSDeploymentTarget
 
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
             options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"

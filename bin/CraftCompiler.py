@@ -150,6 +150,11 @@ class CraftCompiler(object):
         return result
 
     @property
+    def macOSDeploymentTarget(self) -> str:
+        assert self.isMacOS
+        return "10.11"
+
+    @property
     def isWindows(self) -> bool:
         return self.platform == CraftCompiler.Platforms.Windows
 
