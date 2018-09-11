@@ -77,6 +77,8 @@ class MacDMGPackager( CollectionPackagerBase ):
             # macdeployqt adds some more plugins so we fix the plugins after calling macdeployqt
             CraftCore.log.info("Fixing plugin dependencies after macdeployqt...")
             dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns")
+            CraftCore.log.info("Fixing library dependencies after macdeployqt...")
+            dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks")
 
             # Finally sanity check that we don't depend on absolute paths from the builder
             CraftCore.log.info("Checking for absolute library paths in package...")
