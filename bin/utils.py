@@ -220,6 +220,11 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     CraftCore.log.debug(f"displayProgress={displayProgress}")
     if CraftCore.compiler.isMacOS and CraftCore.compiler.macUseSDK:
         environment["MACOSX_DEPLOYMENT_TARGET"] = CraftCore.compiler.macOSDeploymentTarget
+
+    # If CLICOLOR is set on MacOS/FreeBSD it will cause ls to emit coloured output. This
+    # breaks various autoconf scripts that will then claim ls -t doesn't work.
+    if "CLICOLOR" in environment:
+        del environment["CLICOLOR"]
     CraftCore.debug.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
