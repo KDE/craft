@@ -317,6 +317,10 @@ class OptionsConfigure(OptionsBase):
         ## optional arguments for autoreconf
         self.autoreconfArgs = "-vfi"
 
+        ## Whether to add the default -I flags when running autoreconf
+        ## This is needed since some packages fail if we pass -I to autoreconf
+        self.useDefaultAutoreconfIncludes = True
+
         # do not use default include path
         self.noDefaultInclude = False
 
