@@ -319,6 +319,7 @@ class MacDylibBundler(object):
                     if not self.bundleLibraryDependencies(fullpath):
                         CraftCore.log.info("Failed to bundle dependencies for '%s'", os.path.join(dirpath, filename))
                         return False
+        return True
 
     def areLibraryDepsOkay(self, fullPath: Path):
         CraftCore.log.debug("Checking library dependencies of %s", fullPath)
