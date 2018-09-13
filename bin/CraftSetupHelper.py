@@ -182,13 +182,12 @@ class SetupHelper(object):
 
     @staticmethod
     def stringToEnv(string : str):
-        env = copy.deepcopy(os.environ)
         for line in string.split("\n"):
             key, value = line.strip().split("=", 1)
             if key == 'Path':
                 key = 'PATH'
-            env[key] = value
-        return env
+            os.environ[key] = value
+        return os.environ
 
     @staticmethod
     def _callVCVER(version : int, args : []=None) -> str:
