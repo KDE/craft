@@ -223,9 +223,8 @@ class MacDylibBundler(object):
         return lines[1].strip()
 
     @classmethod
-    def _fixupLibraryId(cls, fileToFix: Path, libraryId=None):
-        if libraryId is None:
-            libraryId = cls._getLibraryNameId(fileToFix)
+    def _fixupLibraryId(cls, fileToFix: Path):
+        libraryId = cls._getLibraryNameId(fileToFix)
         if libraryId and os.path.isabs(libraryId):
             CraftCore.log.debug("Fixing library id name for %s", libraryId)
             with makeWritable(fileToFix):
@@ -241,9 +240,10 @@ class MacDylibBundler(object):
             CraftCore.log.error("More than one hard link to library %s found! "
                                 "This might modify another accidentally.", fileToFix)
         CraftCore.log.info("Fixing library dependencies for %s", fileToFix)
-        libraryId = self._getLibraryNameId(fileToFix)
-        if libraryId and not self._fixupLibraryId(fileToFix, libraryId):
+        if not self._fixupLibraryId(fileToFix):
             return False
+        # Ensure we have the current library ID since we need to skip it in the otool -L output
+        libraryId = self._getLibraryNameId(fileToFix)
 
         for dep in self._getLibraryDeps(fileToFix):
             path = dep.split()[0]
