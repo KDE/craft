@@ -269,15 +269,6 @@ class SetupHelper(object):
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
-
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            sdkPath = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
-                                   CraftCore.settings.get("QtSDK", "Version"),
-                                   CraftCore.settings.get("QtSDK", "Compiler"), "bin")
-            if not os.path.exists(sdkPath):
-                log(f"Please ensure that you have installed the Qt SDK in {sdkPath}", critical=True)
-            self.prependEnvVar("PATH", sdkPath)
-
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
                 if CraftCore.compiler.isX86():
@@ -320,6 +311,14 @@ class SetupHelper(object):
             self.addEnvVar("CCACHE_DIR",
                            CraftCore.settings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
                                                                                  "build", "CCACHE")))
+
+        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+            sdkPath = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
+                                   CraftCore.settings.get("QtSDK", "Version"),
+                                   CraftCore.settings.get("QtSDK", "Compiler"), "bin")
+            if not os.path.exists(sdkPath):
+                log(f"Please ensure that you have installed the Qt SDK in {sdkPath}", critical=True)
+            self.prependEnvVar("PATH", sdkPath)
 
         if OsUtils.isWin():
             self._setupWin()
