@@ -2,6 +2,16 @@ import importlib
 import logging
 import sys
 
+# Add imports that cause a cyclic dependency in a not taken branch to make code completion work
+if False:
+    from .CraftCompiler import CraftCompiler
+    from .CraftDebug import CraftDebug
+    from .CraftStandardDirs import CraftStandardDirs
+    from .CraftConfig import CraftConfig
+    from .Utils.CraftCache import CraftCache
+    from .InstallDB import InstallDB
+
+
 # TODO: a more optimal solution would be to initialize all singletons in a
 # __init__.py but that would require massive refactoring as everything in bin/
 # is not part of a module wich could use such a __init__.py
@@ -39,15 +49,14 @@ class State(object):
         # targets directly passed to craft
         self.directTargets = []
 
-
 class CraftCore(object):
-    debug = AutoImport("debug", "CraftDebug")
+    debug = AutoImport("debug", "CraftDebug")  # type: CraftDebug
     log = None  # type: logging.Logger
-    standardDirs = AutoImport("standardDirs", "CraftStandardDirs")
-    settings = AutoImport("settings", "CraftConfig")
-    cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")
-    compiler = AutoImport("compiler", "CraftCompiler")
-    installdb = AutoImport("installdb", "InstallDB")
+    standardDirs = AutoImport("standardDirs", "CraftStandardDirs")  # type: CraftStandardDirs
+    settings = AutoImport("settings", "CraftConfig")  # type: CraftConfig
+    cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")  # type: CraftCache
+    compiler = AutoImport("compiler", "CraftCompiler")  # type: CraftCompiler
+    installdb = AutoImport("installdb", "InstallDB")  # type: InstallDB
 
     # information about the current internal state of Craft
     state = State()
