@@ -67,18 +67,24 @@ class MacDMGPackager( CollectionPackagerBase ):
 
             # Fix up the library dependencies of files in Contents/Frameworks/
             CraftCore.log.info("Bundling library dependencies...")
-            dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks")
+            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks"):
+                return False
             CraftCore.log.info("Bundling plugin dependencies...")
-            dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns")
+            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns"):
+                return False
 
             if not utils.system(["macdeployqt", appPath, "-always-overwrite", "-verbose=1"]):
                 return False
 
             # macdeployqt adds some more plugins so we fix the plugins after calling macdeployqt
+            dylibbundler.checkedLibs = set()  # ensure we check all libs again (but
+            # we should not need to make any changes)
             CraftCore.log.info("Fixing plugin dependencies after macdeployqt...")
-            dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns")
+            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns"):
+                return False
             CraftCore.log.info("Fixing library dependencies after macdeployqt...")
-            dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks")
+            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks"):
+                return False
 
             # Finally sanity check that we don't depend on absolute paths from the builder
             CraftCore.log.info("Checking for absolute library paths in package...")
