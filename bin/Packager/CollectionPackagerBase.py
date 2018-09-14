@@ -234,19 +234,19 @@ class CollectionPackagerBase(PackagerBase):
         dirs = [root]
         while dirs:
             path = dirs.pop()
-            for filePath in os.listdir(path):
-                filePath = os.path.join(path, filePath)
-                relFilePath = os.path.relpath(filePath, root)
-                if os.path.isdir(filePath) and not os.path.islink(filePath):
-                    dirs.append(filePath)
-                    continue
-                if blacklist(relFilePath) and not whitelist(relFilePath):
-                    continue
-                elif os.path.isdir(filePath) and os.path.islink(filePath):
-                    yield filePath
-                elif os.path.isfile(filePath):
-                    if self._filterQtBuildType(filePath):
-                        yield filePath
+            with os.scandir(path) as scan:
+                for filePath in scan:
+                    relFilePath = os.path.relpath(filePath.path, root)
+                    if filePath.is_dir(follow_symlinks=False) and not filePath.is_symlink():
+                        dirs.append(filePath.path)
+                        continue
+                    if blacklist(relFilePath) and not whitelist(relFilePath):
+                        continue
+                    elif filePath.is_dir(follow_symlinks=False) and filePath.is_symlink():
+                        yield filePath.path
+                    elif filePath.is_file(follow_symlinks=False):
+                        if self._filterQtBuildType(filePath):
+                            yield filePath.path
 
     def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
         """
