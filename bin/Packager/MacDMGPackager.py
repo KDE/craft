@@ -76,6 +76,16 @@ class MacDMGPackager( CollectionPackagerBase ):
             if not utils.system(["macdeployqt", appPath, "-always-overwrite", "-verbose=1"]):
                 return False
 
+            # macdeployqt might just have added some explicitly blacklisted files
+            blackList = Path(self.packageDir(), "mac_blacklist.txt")
+            if blackList.exists():
+                blackList = [self.read_blacklist(str(blackList))]
+                # use it as whitelist as we want only matches, ignore all others
+                matches = self.traverse(appPath, whitelist=lambda x:self.blacklisted(x, blackList), blacklist=lambda x:True)
+                for f in matches:
+                    CraftCore.log.info(f"Remove blacklisted file: {f}")
+                    utils.deleteFile(f)
+
             # macdeployqt adds some more plugins so we fix the plugins after calling macdeployqt
             dylibbundler.checkedLibs = set()  # ensure we check all libs again (but
             # we should not need to make any changes)

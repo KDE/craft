@@ -108,7 +108,7 @@ class CollectionPackagerBase(PackagerBase):
                     for line in entry():
                         self._whitelist.append(line)
                 else:
-                    self.read_whitelist(entry)
+                    self._whitelist.append(self.read_whitelist(entry))
         return self._whitelist
 
     @property
@@ -119,13 +119,13 @@ class CollectionPackagerBase(PackagerBase):
                 if callable(entry):
                     if entry == PackagerLists.runtimeBlacklist:
                         CraftCore.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
-                        self.read_blacklist(entry())
+                        self._blacklist.append(self.read_blacklist(entry()))
                         continue
 
                     for line in entry():
                         self._blacklist.append(line)
                 else:
-                    self.read_blacklist(entry)
+                    self._blacklist.append(self.read_blacklist(entry))
         return self._blacklist
 
     def __imageDirPattern(self, package, buildTarget):
@@ -157,37 +157,37 @@ class CollectionPackagerBase(PackagerBase):
 
         return imageDirs
 
-    def read_whitelist(self, fname):
+    def read_whitelist(self, fname : str) -> re:
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
         try:
-          self._whitelist.append(toRegExp(fname, "whitelist"))
+          return toRegExp(fname, "whitelist")
         except Exception as e:
           raise BlueprintException(str(e), self.package)
 
-    def read_blacklist(self, fname):
+    def read_blacklist(self, fname : str) -> re:
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
         try:
-          self._blacklist.append(toRegExp(fname, "blacklist"))
+          return toRegExp(fname, "blacklist")
         except Exception as e:
           raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, pathname):
+    def whitelisted(self, pathname : str, whiteList : [re]=None) -> bool:
         """ return True if pathname is included in the pattern, and False if not """
-        for pattern in self.whitelist:
-            if pattern.search(pathname):
-                CraftCore.log.debug(f"{pathname} is whitelisted: {pattern.pattern}")
-                return True
-        return False
+        if whiteList is None:
+            whiteList = self.whitelist
+        return self.blacklisted(pathname, blackList=whiteList, message="whitelisted")
 
-    def blacklisted(self, filename):
+    def blacklisted(self, filename : str, blackList : [re]=None, message : str="blacklisted") -> bool:
         """ return False if file is not blacklisted, and True if it is blacklisted """
-        for pattern in self.blacklist:
+        if blackList is None:
+            blackList = self.blacklist
+        for pattern in blackList:
             if pattern.search(filename):
-                CraftCore.log.debug(f"{filename} is blacklisted: {pattern.pattern}")
+                CraftCore.log.debug(f"{filename} is {message}: {pattern.pattern}")
                 return True
         return False
 
@@ -231,8 +231,6 @@ class CollectionPackagerBase(PackagerBase):
             filename that the function whitelist returns as true and
             which do not match blacklist entries
         """
-        if blacklist(root) and not whitelist(root):
-            return
         dirs = [root]
         while dirs:
             path = dirs.pop()
