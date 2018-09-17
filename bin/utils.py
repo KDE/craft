@@ -137,10 +137,13 @@ def compress(archive : str, source : str) -> bool:
         if CraftCore.compiler.isUnix:
             tar = CraftCore.cache.findApplication("tar")
             kw["pipeProcess"] = subprocess.Popen([tar, "-cf", "-", "-C", source, ".",], stdout=subprocess.PIPE)
-            command  = [app, "a", "-si",  archive] + progressFlags
+            command = [app, "a", "-si",  archive] + progressFlags
         else:
           command = [app, "a", "-r",  archive] + progressFlags
-        if os.path.isfile(source):
+
+        if isinstance(source, list):
+            command += source
+        elif os.path.isfile(source):
             command += [source]
         else:
             command += [os.path.join(source, "*")]
