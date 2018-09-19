@@ -824,7 +824,10 @@ def getLibraryDeps(path):
         # based on https://github.com/qt/qttools/blob/5.11/src/macdeployqt/shared/shared.cpp
         infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), "+
                             "current version (\\d+\\.\\d+\\.\\d+)\\)$")
-        lines = subprocess.check_output(["otool", "-L", path], universal_newlines=True)
+        try:
+            lines = subprocess.check_output(["otool", "-L", path], universal_newlines=True)
+        except:
+            return []
         lines = lines.split("\n")
         lines.pop(0)# name of the library
         for line in lines:
