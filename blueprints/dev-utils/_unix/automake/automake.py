@@ -24,3 +24,11 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 
+    def postInstall(self):
+        return self.patchInstallPrefix([os.path.join(self.installDir(), "bin", "aclocal"),
+                                        os.path.join(self.installDir(), "bin", "aclocal-1.16"),
+                                        os.path.join(self.installDir(), "bin", "automake"),
+                                        os.path.join(self.installDir(), "bin", "automake-1.16")],
+                                       self.subinfo.buildPrefix,
+                                       CraftCore.standardDirs.craftRoot())
+
