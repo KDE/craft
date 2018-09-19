@@ -75,7 +75,7 @@ class SevenZipPackager(PackagerBase):
 
         extention = CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
         if extention == "7z" and CraftCore.compiler.isUnix:
-            if not CraftCore.cache.findApplication("7za"):
+            if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
                 extention = "tar.xz"
             else:
                 extention = "tar.7z"
