@@ -151,13 +151,14 @@ class BuildSystemBase(CraftBase):
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
                 return False
-            with open(fileName, "rt") as f:
+            with open(fileName, "rb") as f:
                 content = f.read()
             for oldPath in oldPaths:
+                oldPath = oldPath.encode()
                 if oldPath in content:
                     CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                    content = content.replace(oldPath, newPath)
-            with open(fileName, "wt") as f:
+                    content = content.replace(oldPath, newPath.encode())
+            with open(fileName, "wb") as f:
                 f.write(content)
         return True
 
