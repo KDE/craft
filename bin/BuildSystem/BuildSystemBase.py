@@ -6,6 +6,7 @@
 import multiprocessing
 import os
 import re
+import subprocess
 
 from CraftBase import *
 from CraftOS.osutils import OsUtils
@@ -111,6 +112,23 @@ class BuildSystemBase(CraftBase):
     def clangOptions(self):
         return ""
 
+
+    def _fixRpath(self, prefix : str, path : str) -> bool:
+        with os.scandir(path) as scan:
+            for f in scan:
+                if f.is_symlink():
+                    continue
+                elif f.is_dir():
+                    if not self._fixRpath(prefix, f.path):
+                        return False
+                elif utils.isBinary(f.path):
+                    for dep in utils.getLibraryDeps(f.path):
+                        if dep.startswith(prefix):
+                            newPrefix = f"@loader_path/{os.path.relpath(self.imageDir(), os.path.dirname(f.path))}/{os.path.relpath(dep, prefix)}"
+                            if not utils.system(["install_name_tool", "-change", dep, newPrefix, f.path]):
+                                return False
+        return True
+
     def _fixInstallPrefix(self, prefix=CraftStandardDirs.craftRoot()):
         CraftCore.log.debug(f"Begin: fixInstallPrefix {self}: {prefix}")
         def stripPath(path):
@@ -136,6 +154,10 @@ class BuildSystemBase(CraftBase):
         if stripPath(prefix):
             oldPrefix = OsUtils.toUnixPath(stripPath(prefix)).split("/", 1)[0]
             utils.rmtree(os.path.join(self.installDir(), oldPrefix))
+
+        if CraftCore.compiler.isMacOS:
+            if not self._fixRpath(prefix, self.installDir()):
+                return False
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True

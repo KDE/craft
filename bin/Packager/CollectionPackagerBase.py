@@ -198,7 +198,7 @@ class CollectionPackagerBase(PackagerBase):
         if self.__qtSdkDir not in filename:
             return True
 
-        if self.isBinary(filename):
+        if utils.isBinary(filename):
             if not CraftCore.cache.findApplication("dependencies"):
                 raise BlueprintException("Deploying a QtSdk depends on dev-util/dependencies", CraftPackageObject.get("dev-util/dependencies"))
             _, imports = CraftCore.cache.getCommandOutput("dependencies", f"-imports {filename}")
@@ -212,18 +212,6 @@ class CollectionPackagerBase(PackagerBase):
                 CraftCore.log.debug(f"Skipp {filename} as it has the wrong build type: {rt}")
             return out
         return True
-
-    def isBinary(self, fileName):
-        if os.path.islink(fileName):
-            return False
-        _, ext = os.path.splitext(fileName)
-        if CraftCore.compiler.isWindows:
-            if ext in {".dll", ".exe"}:
-                return True
-        else:
-            if ext in {".so", ".dylib"} or os.access(fileName, os.X_OK):
-                return True
-        return False
 
     def traverse(self, root, whitelist=lambda f: True, blacklist=lambda g: False):
         """
@@ -261,7 +249,7 @@ class CollectionPackagerBase(PackagerBase):
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
             if not utils.copyFile(entry, entry_target, linkOnly=False):
                 return False
-            if self.isBinary(entry_target):
+            if utils.isBinary(entry_target):
                 if CraftCore.compiler.isGCCLike() and not dontStrip:
                     self.strip(entry_target)
                 if doSign:

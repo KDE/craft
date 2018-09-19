@@ -190,8 +190,7 @@ class MacDylibBundler(object):
 
         if not self._fixupLibraryId(targetPath):
             return False
-        for dep in self._getLibraryDeps(targetPath):
-            path = dep.split()[0]
+        for path in utils.getLibraryDeps(str(targetPath)):
             # check there aren't any references to the original location:
             if path == str(libPath):
                 CraftCore.log.error("%s: failed to fix reference to original location for '%s'", targetPath, path)
@@ -206,15 +205,6 @@ class MacDylibBundler(object):
             return False
         self.checkedLibs.add(targetPath)
         return True
-
-    @staticmethod
-    def _getLibraryDeps(fullPath):
-        lines = io.StringIO(subprocess.check_output(["otool", "-L", str(fullPath)]).decode("utf-8"))
-        deps = []
-        for line in lines:
-            if line.startswith("\t"):
-                deps.append(line.strip())
-        return deps
 
     @staticmethod
     def _updateLibraryReference(fileToFix: Path, oldRef: str, newRef: str = None) -> bool:
@@ -261,8 +251,7 @@ class MacDylibBundler(object):
         # Ensure we have the current library ID since we need to skip it in the otool -L output
         libraryId = self._getLibraryNameId(fileToFix)
 
-        for dep in self._getLibraryDeps(fileToFix):
-            path = dep.split()[0]
+        for path in utils.getLibraryDeps(str(fileToFix)):
             if path == libraryId:
                 # The first line of the otool output is (usually?) the library itself:
                 # $ otool -L PlugIns/printsupport/libcocoaprintersupport.dylib:
@@ -336,9 +325,8 @@ class MacDylibBundler(object):
         found_bad_lib = False
         libraryId = self._getLibraryNameId(fullPath)
         relativePath = os.path.relpath(str(fullPath), self.appPath)
-        for dep in self._getLibraryDeps(fullPath):
-            path = dep.split()[0]
-            if path == libraryId and not os.path.isabs(libraryId):
+        for dep in utils.getLibraryDeps(str(fullPath)):
+            if dep == libraryId and not os.path.isabs(libraryId):
                 continue  # non-absolute library id is fine
             # @rpath and @executable_path is fine
             if dep.startswith("@rpath") or dep.startswith("@executable_path"):

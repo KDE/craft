@@ -804,3 +804,33 @@ def sign(fileNames : [str]) -> bool:
         if not system(command + [fileName], logCommand=False):
             return False
     return True
+
+def isBinary(fileName : str) -> bool:
+    if os.path.islink(fileName):
+        return False
+    _, ext = os.path.splitext(fileName)
+    if CraftCore.compiler.isWindows:
+        if ext in {".dll", ".exe"}:
+            return True
+    else:
+        if ext in {".so", ".dylib"} or os.access(fileName, os.X_OK):
+            return True
+    return False
+
+
+def getLibraryDeps(path):
+    deps = []
+    if CraftCore.compiler.isMacOS:
+        # based on https://github.com/qt/qttools/blob/5.11/src/macdeployqt/shared/shared.cpp
+        infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), "+
+                            "current version (\\d+\\.\\d+\\.\\d+)\\)$")
+        lines = subprocess.check_output(["otool", "-L", path], universal_newlines=True)
+        lines = lines.split("\n")
+        lines.pop(0)# name of the library
+        for line in lines:
+            if not line:
+                continue
+            match = infoRe.match(line)
+            if match:
+                deps.append(match[1])
+    return deps
