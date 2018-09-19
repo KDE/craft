@@ -145,7 +145,7 @@ EnableDailyUpdates = True
 #7ZipArchiveType = 7z
 
 # id assigned to you by the Windows Store
-AppxPublisherId = CN=98B52D9A-DF7C-493E-BADC-37004A92EFC8
+#AppxPublisherId = CN=98B52D9A-DF7C-493E-BADC-37004A92EFC8
 
 ## If set this will override the default package type.
 ## Possible values are:

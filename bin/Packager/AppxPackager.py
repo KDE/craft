@@ -93,7 +93,6 @@ class AppxPackager(CollectionPackagerBase):
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
 
-        defines.setdefault("publisher", CraftCore.settings.get("Packager", "AppxPublisherId"))
         return defines
 
     def __prepareIcons(self, defines):
@@ -114,19 +113,41 @@ class AppxPackager(CollectionPackagerBase):
 
             icon = defines[define]
             defines[define] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
-            name, ext = os.path.splitext(icon)
-            names = glob.glob(f"{name}*{ext}")
+            names = glob.glob("{0}*{1}".format(*os.path.splitext(icon)))
+            if not names:
+                CraftCore.log.error(f"Failed to find {icon}")
+                return False
             for n in names:
                 if not utils.copyFile(n, os.path.join(self.archiveDir(), "Assets", os.path.basename(n))):
                     return False
         return True
 
-    def createPackage(self):
-        defines = self._setDefaults(self.defines)
+    def __createAppX(self, defines) -> bool:
         archive = defines["setupname"]
-
         if os.path.isfile(archive):
             utils.deleteFile(archive)
+        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
+                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive]))
+
+    def __createSideloadAppX(self, defines) -> bool:
+        def appendToPublisherString(publisher: [str], field: str, key: str) -> None:
+            data = CraftCore.settings.get("CodeSigning", key, "")
+            if data:
+                publisher += [f"{field}={data}"]
+
+        publisher = []
+        appendToPublisherString(publisher, "CN", "CommonName")
+        appendToPublisherString(publisher, "O", "Organization")
+        appendToPublisherString(publisher, "L", "Locality")
+        appendToPublisherString(publisher, "S", "State")
+        appendToPublisherString(publisher, "C", "Country")
+        defines["publisher"] = ", ".join(publisher)
+        setupName = "{0}-sideload{1}".format(*os.path.splitext(defines["setupname"]))
+        defines["setupname"] = setupName
+        return self.__createAppX(defines) and utils.sign([setupName])
+
+    def createPackage(self):
+        defines = self._setDefaults(self.defines)
 
         if not "executable" in defines:
             CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
@@ -139,7 +160,11 @@ class AppxPackager(CollectionPackagerBase):
         if not self.__prepareIcons(defines):
             return False
 
-        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
-                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", defines["setupname"]])
-                #and utils.sign([defines["setupname"]])
-                )
+        publisher = CraftCore.settings.get("Packager", "AppxPublisherId", "")
+        if publisher:
+            defines.setdefault("publisher", publisher)
+            if not self.__createAppX(defines):
+                return False
+
+        return self.__createSideloadAppX(defines)
+
