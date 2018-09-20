@@ -30,6 +30,5 @@ class Package(BinaryPackageBase):
                                         useAbsolutePath=True)
         else:
             return utils.createShim(os.path.join(self.installDir(), "bin", "python2"),
-                                    CraftCore.cache.findApplication("python2.7"),
-                                    useAbsolutePath=True)
+                                    CraftCore.cache.findApplication("python2.7"))
 
