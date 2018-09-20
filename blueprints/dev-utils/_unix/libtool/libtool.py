@@ -23,3 +23,10 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 
+
+    def postInstall(self):
+        return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/libtool",
+                                                                                   " dev-utils/bin/libtoolize"]],
+                                       self.subinfo.buildPrefix,
+                                       CraftCore.standardDirs.craftRoot())
+
