@@ -26,7 +26,7 @@ class Package( AutoToolsPackageBase ):
 
     def postInstall(self):
         return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/libtool",
-                                                                                   " dev-utils/bin/libtoolize"]],
+                                                                                   "dev-utils/bin/libtoolize"]],
                                        self.subinfo.buildPrefix,
                                        CraftCore.standardDirs.craftRoot())
 
