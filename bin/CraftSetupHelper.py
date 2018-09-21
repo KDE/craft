@@ -259,11 +259,11 @@ class SetupHelper(object):
                            os.path.join(CraftStandardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
 
     def _setupUnix(self):
-        self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
-                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
-        # Setting DYLD_LIBRARY_PATH often causes issues, so let's disable this for now
-        #if OsUtils.isMac():
-        #    self.prependEnvVar("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
+        if CraftCore.compiler.isLinux:
+            self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
+                                                   os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
+        elif CraftCore.compiler.isMacOS:
+            self.prependEnvVar("DYLD_FRAMEWORK_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
     def _setupWin(self):
         if not "HOME" in os.environ:
