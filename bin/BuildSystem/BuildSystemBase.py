@@ -3,6 +3,7 @@
 #
 
 """ \package BuildSystemBase"""
+import glob
 import multiprocessing
 import os
 import re
@@ -199,5 +200,13 @@ class BuildSystemBase(CraftBase):
                 if pcFile.endswith(".pc"):
                     path = os.path.join(pkgconfigPath, pcFile)
                     if not self.patchInstallPrefix([path], oldPrefixes, newPrefix):
+                        return False
+        if CraftCore.compiler.isMacOS:
+            files = glob.glob(os.path.join(self.installDir(), "lib", "*.dylib"), recursive=True)
+            for f in files:
+                oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True)
+                newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
+                if newId != oldId:
+                    if not utils.system(["install_name_tool", "-id", newId, f]):
                         return False
         return True
