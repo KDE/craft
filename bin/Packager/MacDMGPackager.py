@@ -271,6 +271,9 @@ class MacDylibBundler(object):
                 # TODO: run otool -l and verify that we pick the right file?
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
+            elif path.startswith("@loader_path/"):
+                if not self._updateLibraryReference(fileToFix, path):
+                    return False
             elif path.startswith("/"):
                 if not path.startswith(CraftStandardDirs.craftRoot()):
                     # TODO: should this be an error?
