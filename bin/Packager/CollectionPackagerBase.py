@@ -225,14 +225,14 @@ class CollectionPackagerBase(PackagerBase):
             with os.scandir(path) as scan:
                 for filePath in scan:
                     relFilePath = os.path.relpath(filePath.path, root)
-                    if filePath.is_dir(follow_symlinks=False) and not filePath.is_symlink():
+                    if filePath.is_dir(follow_symlinks=False):
                         dirs.append(filePath.path)
                         continue
                     if blacklist(relFilePath) and not whitelist(relFilePath):
                         continue
-                    elif filePath.is_dir(follow_symlinks=False) and filePath.is_symlink():
+                    elif filePath.is_dir():
                         yield filePath.path
-                    elif filePath.is_file(follow_symlinks=False):
+                    elif filePath.is_file():
                         if self._filterQtBuildType(filePath):
                             yield filePath.path
 
