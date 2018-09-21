@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
 
-        self.defaultTarget = "3.12.0"
+        self.defaultTarget = "3.12.2"
 
 
     def setDependencies(self):
