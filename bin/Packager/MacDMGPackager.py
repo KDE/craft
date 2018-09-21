@@ -317,7 +317,10 @@ class MacDylibBundler(object):
                 fullpath = Path(dirpath, filename)
                 if fullpath.is_symlink():
                     continue  # No need to update symlinks since we will process the target eventually.
-                if filename.endswith(".so") or filename.endswith(".dylib") or ".so." in filename:
+                if (filename.endswith(".so")
+                        or filename.endswith(".dylib")
+                        or ".so." in filename
+                        or f"{fullpath.name}.framework" in str(fullpath)):
                     if not self.bundleLibraryDependencies(fullpath):
                         CraftCore.log.info("Failed to bundle dependencies for '%s'", os.path.join(dirpath, filename))
                         return False
