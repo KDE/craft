@@ -1,0 +1,121 @@
+From 143da7f3304533b48cb11bc8d4d6e2cadfd230e2 Mon Sep 17 00:00:00 2001
+From: Dominik Schmidt <dev@dominik-schmidt.de>
+Date: Sat, 22 Sep 2018 10:54:04 +0200
+Subject: [PATCH] Add CMake script to build dump_syms
+
+---
+ CMakeLists.txt | 102 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 00000000..18fadd15
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,102 @@
++cmake_minimum_required(VERSION 3.12)
++
++add_definitions(-DNO_STABS_SUPPORT)
++
++if(APPLE)
++add_executable(dump_syms
++    src/tools/mac/dump_syms/dump_syms_tool.cc
++    src/common/mac/macho_walker.cc
++    src/common/mac/arch_utilities.cc
++    src/common/mac/macho_id.cc
++    src/common/mac/file_id.cc
++    src/common/mac/macho_utilities.cc
++    src/common/mac/dump_syms.cc
++    src/common/mac/macho_reader.cc
++
++	src/common/test_assembler.cc
++    src/common/module.cc
++    src/common/md5.cc
++    src/common/language.cc
++    src/common/dwarf_line_to_module.cc
++    src/common/path_helper.cc
++    src/common/dwarf_cfi_to_module.cc
++    src/common/dwarf_cu_to_module.cc
++    src/common/dwarf/functioninfo.cc
++    src/common/dwarf/bytereader.cc
++    src/common/dwarf/elf_reader.cc
++    src/common/dwarf/dwarf2reader.cc
++    src/common/dwarf/cfi_assembler.cc
++    src/common/dwarf/dwarf2diehandler.cc
++)
++elseif(WIN32)
++    if(MINGW)
++        add_executable(dump_syms
++            src/tools/windows/dump_syms_dwarf/dump_syms.cc
++
++			src/common/pecoff/dump_symbols.cc
++            src/common/dwarf_cfi_to_module.cc
++            src/common/module.cc
++            src/common/pecoff/pecoffutils.cc
++            src/common/pecoff/pecoff_file_id.cc
++            src/common/stabs_to_module.cc
++            src/common/dwarf_cu_to_module.cc
++            src/common/language.cc
++            src/common/dwarf/dwarf2diehandler.cc
++            src/common/dwarf_line_to_module.cc
++            src/common/dwarf/dwarf2reader.cc
++            src/common/dwarf/bytereader.cc
++            src/common/pecoff/pecoff_file_id.cc
++        )
++
++        target_link_libraries(dump_syms
++            stdc++
++        )
++    elseif(MSVC)
++        add_executable(dump_syms
++			src/tools/windows/dump_syms/dump_syms.cc
++
++			src/common/windows/dia_util.cc
++			src/common/windows/guid_string.cc
++			src/common/windows/omap.cc
++			src/common/windows/pdb_source_line_writer.cc
++			src/common/windows/string_utils.cc
++        )
++
++		target_include_directories(dump_syms PRIVATE
++			"$ENV{VSINSTALLDIR}/DIA SDK/include"
++		)
++
++		target_link_libraries(dump_syms PRIVATE
++			"$ENV{VSINSTALLDIR}/DIA SDK/lib/diaguids.lib"
++			imagehlp
++		)
++    endif()
++elseif("${CMAKE_SYSTEM}" MATCHES "Linux")
++    add_executable(dump_syms
++        src/tools/linux/dump_syms/dump_syms.cc
++
++		src/common/module.cc
++        src/common/language.cc
++        src/common/dwarf_line_to_module.cc
++        src/common/path_helper.cc
++        src/common/dwarf_cfi_to_module.cc
++        src/common/dwarf_cu_to_module.cc
++        src/common/dwarf/bytereader.cc
++        src/common/dwarf/dwarf2reader.cc
++        src/common/dwarf/dwarf2diehandler.cc
++        src/common/linux/crc32.cc
++        src/common/linux/dump_symbols.cc
++        src/common/linux/elf_core_dump.cc
++        src/common/linux/elf_symbols_to_module.cc
++        src/common/linux/elfutils.cc
++        src/common/linux/file_id.cc
++        src/common/linux/linux_libc_support.cc
++        src/common/linux/memory_mapped_file.cc
++    )
++
++    target_link_libraries(dump_syms pthread dl)
++endif()
++
++target_include_directories(dump_syms PRIVATE "src")
++
++install(TARGETS dump_syms RUNTIME DESTINATION bin)
+-- 
+2.18.0
+
