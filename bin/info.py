@@ -71,6 +71,11 @@ class infoclass(object):
         # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
         self.setDependencies()
 
+        # Where to put this? How to make sure it's not required before it could be built?
+        # Should we set this before setDependencies() and disable it in all of its dependencies? :-\
+        if CraftCore.settings.getboolean("SymbolDumping", "Enabled", True) and not "dev-utils/breakpad-tools" in self.buildDependencies: # TODO: default to False
+            self.buildDependencies["dev-utils/breakpad-tools"] = "default"
+
     @property
     @deprecated("self.parent")
     def package(self) -> CraftPackageObject:

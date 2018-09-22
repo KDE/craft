@@ -231,6 +231,9 @@ Locality = Berlin
 Country = DE
 State =
 
+# Use dump_syms from breakpad-tools to dump debug symbols at post-install step
+[SymbolDumping]
+Enabled = False
 
 [Version]
 ConfigVersion = 6

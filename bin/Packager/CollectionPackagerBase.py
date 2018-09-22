@@ -26,6 +26,8 @@
 
 import types
 import glob
+import io
+import re
 
 from Packager.PackagerBase import *
 from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
@@ -98,6 +100,10 @@ class CollectionPackagerBase(PackagerBase):
         self.__qtSdkDir = OsUtils.toNativePath(os.path.join(CraftCore.settings.get("QtSDK", "Path"),
                                                             CraftCore.settings.get("QtSDK", "Version"),
                                                             CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
+
+    @property
+    def isSymbolDumpingEnabled(self):
+        return CraftCore.settings.getboolean("SymbolDumping", "Enabled", False)
 
     @property
     def whitelist(self):
@@ -232,6 +238,50 @@ class CollectionPackagerBase(PackagerBase):
                     utils.sign([entry_target])
         return True
 
+    def symbolsDir(self):
+        """return absolute path to the symbol directory in imageDir
+        """
+        return os.path.join(self.imageDir(), 'symbols')
+
+    def internalPostInstall(self):
+        if not super().internalPostInstall():
+            return False
+
+        if self._doDumpSymbols:
+            for entry in self.traverse(self.imageDir(), self.whitelisted, self.blacklisted):
+                if self.isBinary(entry):
+                    self._dumpSymbols(entry)
+
+        return True
+
+    # Loosely based on https://chromium.googlesource.com/chromium/chromium/+/34599b0bf7a14ab21a04483c46ecd9b5eaf86704/components/breakpad/tools/generate_breakpad_symbols.py#92
+    def _dumpSymbols(self, binaryFile):
+        CraftCore.log.debug('%s: dump symbols' % binaryFile)
+
+        with io.BytesIO() as out:
+            utils.system(['dump_syms', binaryFile], stdout=out)
+
+            outBytes = out.getvalue()
+            firstLine = str(outBytes.splitlines()[0], 'utf-8')
+            CraftCore.log.debug('Module line: %s' % firstLine)
+            regex = "^MODULE [^ ]+ [^ ]+ ([0-9aA-fF]+) (.*)"
+            CraftCore.log.debug('regex: %s' % regex)
+            moduleLine = re.match(regex, firstLine)
+            CraftCore.log.debug('regex: %s' % moduleLine)
+            outputPath = os.path.join(self.symbolsDir(), moduleLine.group(2),
+                                 moduleLine.group(1))
+
+            if (not os.path.exists(outputPath)):
+                os.makedirs(outputPath, exist_ok=True)
+
+            symbolFileBasename = moduleLine.group(2).replace(".pdb", "")
+            symbolFile = os.path.join(outputPath, "%s.sym" % symbolFileBasename)
+
+            with open(symbolFile, 'wb') as outputFile:
+                outputFile.write(outBytes)
+
+            CraftCore.log.debug('%s: written symbol dump to: %s' % (binaryFile, symbolFile))
+
     def internalCreatePackage(self, seperateSymbolFiles=False) -> bool:
         """ create a package """
 
@@ -246,6 +296,12 @@ class CollectionPackagerBase(PackagerBase):
                 return False
         else:
             self.blacklist.append(re.compile(r".*\.pdb"))
+
+        if self.isSymbolDumpingEnabled:
+            sep = '\\%s' % os.sep
+            regex = r"symbols%s.*" % sep
+            self.whitelist.append(re.compile(regex))
+
         for directory, strip in self.__getImageDirectories():
             if os.path.exists(directory):
                 if not self.copyFiles(directory, archiveDir, strip):
