@@ -209,6 +209,6 @@ class BuildSystemBase(CraftBase):
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
-                        if not utils.system(["install_name_tool", "-change", newDep, f]):
+                        if not utils.system(["install_name_tool", "-change", dep, newDep, f]):
                             return False
         return True
