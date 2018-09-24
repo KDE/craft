@@ -861,3 +861,4 @@ def filterDirectoryContent(root, whitelist=lambda f: True, blacklist=lambda g: F
                     yield filePath.path
                 else:
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
+                    raise Exception(f"Unhandled case: {filePath}")

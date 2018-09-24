@@ -182,22 +182,26 @@ class BuildSystemBase(CraftBase):
                         return False
 
         if CraftCore.compiler.isMacOS and os.path.isdir(self.installDir()):
-            files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: x.is_symlink())
+            files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: True)
             for f in files:
+                if os.path.islink(f):
+                    continue
                 if f.endswith(".dylib"):
                     # fix dylib id
                     oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True)
                     newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
                     if newId != oldId:
-                        if not utils.system(["install_name_tool", "-id", newId, f], logCommand=False):
+                        if not utils.system(["install_name_tool", "-id", newId, f]):
                             return False
                 else:
                     # add rpath
-                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f], logCommand=False)
+                    if not utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f]):
+                        return False
 
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newPrefix = dep.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
-                        utils.system(["install_name_tool", "-change", dep, newPrefix, f], logCommand=False)
+                        if not utils.system(["install_name_tool", "-change", dep, newPrefix, f]):
+                            return False
         return True
