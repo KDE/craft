@@ -67,7 +67,7 @@ function TestAndFetchPython()
         if(($Script:python -split "\r\n").Length -eq 1)
         {
             Try {
-                (& "$Script:python" "--version" ) -match "\d.\d.\d" | Out-Null
+                (& "$Script:python" "--version" 2>&1) -match "\d.\d.\d" | Out-Null
                 $Script:pythonVersion = $Matches[0]
                 if([version]$Script:pythonVersion -ge $minPythonVersion)
                 {
