@@ -181,7 +181,7 @@ class BuildSystemBase(CraftBase):
                     if not self.patchInstallPrefix([path], oldPrefixes, newPrefix):
                         return False
 
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.isMacOS and os.path.isdir(self.installDir()):
             files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: x.is_symlink())
             for f in files:
                 if f.endswith(".dylib"):
