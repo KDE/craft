@@ -181,7 +181,9 @@ class BuildSystemBase(CraftBase):
                     if not self.patchInstallPrefix([path], oldPrefixes, newPrefix):
                         return False
 
-        if CraftCore.compiler.isMacOS and os.path.isdir(self.installDir()):
+        if (CraftCore.compiler.isMacOS
+                and self.subinfo.buildPrefix != newPrefix
+                and os.path.isdir(self.installDir())):
             files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: True)
             for f in files:
                 if os.path.islink(f):
@@ -194,7 +196,7 @@ class BuildSystemBase(CraftBase):
                     # the second the id, if we only get one line, there is no id to fix
                     if len(oldId) == 2:
                         oldId = oldId[1].strip()
-                        newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
+                        newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
                         if newId != oldId:
                             if not utils.system(["install_name_tool", "-id", newId, f]):
                                 return False
@@ -206,7 +208,7 @@ class BuildSystemBase(CraftBase):
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
-                        newPrefix = dep.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
-                        if not utils.system(["install_name_tool", "-change", dep, newPrefix, f]):
+                        newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
+                        if not utils.system(["install_name_tool", "-change", newDep, f]):
                             return False
         return True
