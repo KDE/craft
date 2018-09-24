@@ -189,15 +189,15 @@ class BuildSystemBase(CraftBase):
                     oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True)
                     newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
                     if newId != oldId:
-                        if not utils.system(["install_name_tool", "-id", newId, f]):
+                        if not utils.system(["install_name_tool", "-id", newId, f], logCommand=False):
                             return False
                 else:
                     # add rpath
-                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f])
+                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f], logCommand=False)
 
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newPrefix = dep.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
-                        utils.system(["install_name_tool", "-change", dep, newPrefix, f])
+                        utils.system(["install_name_tool", "-change", dep, newPrefix, f], logCommand=False)
         return True
