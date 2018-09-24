@@ -195,8 +195,8 @@ class BuildSystemBase(CraftBase):
                             return False
                 else:
                     # add rpath
-                    if not utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f]):
-                        return False
+                    # TODO: only call add rpath if its not set yet, calling it twice causes an error
+                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f])
 
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
