@@ -4,6 +4,7 @@
 
 """ \package BuildSystemBase"""
 import glob
+import io
 import multiprocessing
 import os
 import re
@@ -191,7 +192,9 @@ class BuildSystemBase(CraftBase):
                 _, ext = os.path.splitext(f)
                 if ext in {".dylib", ".so"}:
                     # fix dylib id
-                    oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True).split("\n")
+                    with io.StringIO() as log:
+                        utils.system(["otool", "-D", f], stdout=log)
+                        oldId = log.getvalue().strip().split("\n")
                     # the first line is the file name
                     # the second the id, if we only get one line, there is no id to fix
                     if len(oldId) == 2:

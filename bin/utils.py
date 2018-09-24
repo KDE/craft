@@ -240,6 +240,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
                 pass
+            elif isinstance(stdout, io.StringIO):
+                stdout.write(line.decode("UTF-8"))
             else:
                 stdout.write(line)
 
@@ -836,15 +838,12 @@ def getLibraryDeps(path):
         # based on https://github.com/qt/qttools/blob/5.11/src/macdeployqt/shared/shared.cpp
         infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), "+
                             "current version (\\d+\\.\\d+\\.\\d+)\\)$")
-        try:
-            lines = subprocess.check_output(["otool", "-L", path], universal_newlines=True)
-        except:
-            return []
-        lines = lines.split("\n")
+        with io.StringIO() as log:
+            if not system(["otool", "-L", path], stdout=log):
+                return []
+            lines = log.getvalue().strip().split("\n")
         lines.pop(0)# name of the library
         for line in lines:
-            if not line:
-                continue
             match = infoRe.match(line)
             if match:
                 deps.append(match[1])
