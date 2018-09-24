@@ -837,3 +837,27 @@ def getLibraryDeps(path):
             if match:
                 deps.append(match[1])
     return deps
+
+
+def filterDirectoryContent(root, whitelist=lambda f: True, blacklist=lambda g: False):
+    """
+        Traverse through a directory tree and return every
+        filename that the function whitelist returns as true and
+        which do not match blacklist entries
+    """
+    dirs = [root]
+    while dirs:
+        path = dirs.pop()
+        with os.scandir(path) as scan:
+            for filePath in scan:
+                if filePath.is_dir(follow_symlinks=False):
+                    dirs.append(filePath.path)
+                    continue
+                if blacklist(filePath) and not whitelist(filePath):
+                    continue
+                elif filePath.is_dir():
+                    yield filePath.path
+                elif filePath.is_file():
+                    yield filePath.path
+                else:
+                    CraftCore.log.warning(f"Unhandled case: {filePath}")

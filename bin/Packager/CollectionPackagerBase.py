@@ -175,19 +175,20 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
           raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, pathname : str, whiteList : [re]=None) -> bool:
+    def whitelisted(self, filename : os.DirEntry, whiteList : [re]=None) -> bool:
         """ return True if pathname is included in the pattern, and False if not """
         if whiteList is None:
             whiteList = self.whitelist
-        return self.blacklisted(pathname, blackList=whiteList, message="whitelisted")
+        return self.blacklisted(filename, blackList=whiteList, message="whitelisted")
 
-    def blacklisted(self, filename : str, blackList : [re]=None, message : str="blacklisted") -> bool:
+    def blacklisted(self, filename : os.DirEntry, blackList : [re]=None, message : str="blacklisted") -> bool:
         """ return False if file is not blacklisted, and True if it is blacklisted """
         if blackList is None:
             blackList = self.blacklist
+        relFilePath = os.path.relpath(filename.path, self.installDir())
         for pattern in blackList:
-            if pattern.search(filename):
-                CraftCore.log.debug(f"{filename} is {message}: {pattern.pattern}")
+            if pattern.search(relFilePath):
+                CraftCore.log.debug(f"{relFilePath} is {message}: {pattern.pattern}")
                 return True
         return False
 
@@ -213,29 +214,6 @@ class CollectionPackagerBase(PackagerBase):
             return out
         return True
 
-    def traverse(self, root, whitelist=lambda f: True, blacklist=lambda g: False):
-        """
-            Traverse through a directory tree and return every
-            filename that the function whitelist returns as true and
-            which do not match blacklist entries
-        """
-        dirs = [root]
-        while dirs:
-            path = dirs.pop()
-            with os.scandir(path) as scan:
-                for filePath in scan:
-                    relFilePath = os.path.relpath(filePath.path, root)
-                    if filePath.is_dir(follow_symlinks=False):
-                        dirs.append(filePath.path)
-                        continue
-                    if blacklist(relFilePath) and not whitelist(relFilePath):
-                        continue
-                    elif filePath.is_dir():
-                        yield filePath.path
-                    elif filePath.is_file():
-                        if self._filterQtBuildType(filePath):
-                            yield filePath.path
-
     def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
@@ -245,7 +223,9 @@ class CollectionPackagerBase(PackagerBase):
 
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
 
-        for entry in self.traverse(srcDir, self.whitelisted, self.blacklisted):
+        for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted):
+            if not self._filterQtBuildType(entry):
+                continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
             if not utils.copyFile(entry, entry_target, linkOnly=False):
                 return False

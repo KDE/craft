@@ -81,7 +81,7 @@ class MacDMGPackager( CollectionPackagerBase ):
             if blackList.exists():
                 blackList = [self.read_blacklist(str(blackList))]
                 # use it as whitelist as we want only matches, ignore all others
-                matches = self.traverse(appPath, whitelist=lambda x:self.blacklisted(x, blackList), blacklist=lambda x:True)
+                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x:self.blacklisted(x.path, blackList), blacklist=lambda x:True)
                 for f in matches:
                     CraftCore.log.info(f"Remove blacklisted file: {f}")
                     utils.deleteFile(f)
@@ -272,6 +272,7 @@ class MacDylibBundler(object):
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
             elif path.startswith("@loader_path/"):
+                # TODO: we don't set @loader_path anymore so lets remove this after the next cache rebuild. 24.09.2018
                 if not self._updateLibraryReference(fileToFix, path):
                     return False
             elif path.startswith("/"):
