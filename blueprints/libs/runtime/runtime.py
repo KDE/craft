@@ -2,6 +2,9 @@ import info
 import glob
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
+
     def setTargets(self):
         # not used  yet only for reference
         ver = str(CraftCore.compiler.getVersion())
