@@ -186,13 +186,18 @@ class BuildSystemBase(CraftBase):
             for f in files:
                 if os.path.islink(f):
                     continue
-                if f.endswith(".dylib"):
+                _, ext = os.path.splitext(f)
+                if ext in {".dylib", ".so"}:
                     # fix dylib id
-                    oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True)
-                    newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
-                    if newId != oldId:
-                        if not utils.system(["install_name_tool", "-id", newId, f]):
-                            return False
+                    oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True).split("\n")
+                    # the first line is the file name
+                    # the second the id, if we only get one line, there is no id to fix
+                    if len(oldId) == 2:
+                        oldId = oldId[1].strip()
+                        newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
+                        if newId != oldId:
+                            if not utils.system(["install_name_tool", "-id", newId, f]):
+                                return False
                 else:
                     # add rpath
                     # TODO: only call add rpath if its not set yet, calling it twice causes an error
