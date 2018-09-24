@@ -193,13 +193,11 @@ class BuildSystemBase(CraftBase):
                             return False
                 else:
                     # add rpath
-                    if not utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f]):
-                        return False
+                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f])
 
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newPrefix = dep.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
-                        if not utils.system(["install_name_tool", "-change", dep, newPrefix, f]):
-                            return False
+                        utils.system(["install_name_tool", "-change", dep, newPrefix, f])
         return True
