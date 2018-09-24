@@ -184,18 +184,22 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isMacOS:
             files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: x.is_symlink())
             for f in files:
-                # fix dylib id
                 if f.endswith(".dylib"):
+                    # fix dylib id
                     oldId = subprocess.check_output(["otool", "-D", f], universal_newlines=True)
                     newId = oldId.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
                     if newId != oldId:
                         if not utils.system(["install_name_tool", "-id", newId, f]):
                             return False
+                else:
+                    # add rpath
+                    if not utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f.path]):
+                        return False
+
                 # fix dependencies
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newPrefix = dep.replace(self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
                         if not utils.system(["install_name_tool", "-change", dep, newPrefix, f.path]):
                             return False
-
         return True

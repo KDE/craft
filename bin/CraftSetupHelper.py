@@ -262,8 +262,6 @@ class SetupHelper(object):
         if CraftCore.compiler.isLinux:
             self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                                    os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
-        elif CraftCore.compiler.isMacOS:
-            self.prependEnvVar("DYLD_FRAMEWORK_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
     def _setupWin(self):
         if not "HOME" in os.environ:
