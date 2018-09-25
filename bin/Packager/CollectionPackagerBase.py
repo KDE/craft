@@ -221,6 +221,7 @@ class CollectionPackagerBase(PackagerBase):
         """
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
+        # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
 
         for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted):
