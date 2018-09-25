@@ -875,6 +875,69 @@ def sign(fileNames : [str]) -> bool:
             return False
     return True
 
+def signMacApp(appPath : str):
+    if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+        return True
+
+    unlockMacKeychain()
+
+    developerIdApplication = CraftCore.settings.get("CodeSigning", "MacDeveloperIdApplication")
+
+    # Recursively sign app
+    if not system(["codesign", "-s", developerIdApplication, "--force", "--preserve-metadata=entitlements", "--verbose=4", "--deep", appPath]):
+        return False
+
+    ## Verify signature
+    if not system(["codesign", "-dv", appPath]):
+        return False
+
+    if not system(["codesign", "--verify", "-v", appPath]):
+        return False
+
+    if not system(["spctl", "-a", "-t", "exec", "-vv", appPath]):
+        return False
+
+    ## Validate that the key used for signing the binary matches the expected TeamIdentifier
+    ## needed to pass the SocketApi through the sandbox
+    #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
+            #return False
+
+    return True
+
+def signMacPackage(packagePath : str):
+    if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+        return True
+
+
+    unlockMacKeychain()
+
+    if packagePath.endswith(".dmg"):
+        # sign dmg
+        developerIdApplication = CraftCore.settings.get("CodeSigning", "MacDeveloperIdApplication")
+        if not system(["codesign", "--force", "--sign", developerIdApplication, packagePath]):
+            return False
+
+        # verify dmg signature
+        if not system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath]):
+            return False
+    else:
+        # sign pkg
+        developerIdInstaller = CraftCore.settings.get("CodeSigning", "MacDeveloperIdInstaller")
+        packagePathTmp = "%s.sign" % packagePath
+        if not system(["productsign", "--sign", developerIdInstaller, packagePath, packagePathTmp]):
+            return False
+
+        os.rename(packagePathTmp, packagePath)
+
+    return True
+
+def unlockMacKeychain():
+    password = CraftCore.settings.get("CodeSigning", "MacKeychainPassword")
+    if not system("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k \"%s\" ~/Library/Keychains/login.keychain" % password, stdout=subprocess.DEVNULL, logCommand=False):
+        CraftCore.log.error("Cannot unlock keychain.")
+        return False
+
+
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     fileName = Path(fileName)

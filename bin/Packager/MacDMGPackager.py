@@ -20,6 +20,9 @@ class MacDMGPackager( CollectionPackagerBase ):
         defines["setupname"] = f"{defines['setupname']}.dmg"
         return defines
 
+    def packageSubType(self):
+        return CraftCore.settings.get("Packager", "PackageSubType", default="dmg")
+
     def createPackage(self):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
@@ -129,17 +132,47 @@ class MacDMGPackager( CollectionPackagerBase ):
                 CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
                 return False
 
-            dmgDest = defines["setupname"]
-            if os.path.exists(dmgDest):
-                utils.deleteFile(dmgDest)
-            appName = defines['appname'] + ".app"
-            if not utils.system(["create-dmg", "--volname", os.path.basename(dmgDest),
-                                 # Add a drop link to /Applications:
-                                 "--icon", appName, "140", "150", "--app-drop-link", "350", "150",
-                                 dmgDest, appPath]):
+            if self.packageSubType() == "dmg":
+                packageExt = "dmg"
+            else:
+                packageExt = "pkg"
+            name = self.binaryArchiveName(fileType="", includeRevision=True)
+            packageDest = os.path.join(self.packageDestinationDir(), f"{name}.{packageExt}")
+            if os.path.exists(packageDest):
+                utils.deleteFile(packageDest)
+
+            appName = self.defines['appname'] + ".app"
+
+            if not utils.signMacApp(appPath):
                 return False
 
-            CraftHash.createDigestFiles(dmgDest)
+            if self.packageSubType() == "dmg":
+                if not utils.system(["create-dmg", "--volname", name,
+                        # Add a drop link to /Applications:
+                        "--icon", appName, "140", "150", "--app-drop-link", "350", "150",
+                        packageDest, appPath]):
+                    return False
+            else:
+                if not 'pkgproj' in self.defines:
+                    CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
+                    return False
+
+                pkgprojPath = self.defines['pkgproj']
+                installerPath = os.path.join(self.packageDestinationDir(), "%s.pkg" % name)
+
+                # set output file basename
+                packagesutil = CraftCore.cache.findApplication("packagesutil")
+                if not utils.system([packagesutil, '--file', pkgprojPath, 'set', 'project', 'name', name]):
+                    return False
+
+                packagesbuild = CraftCore.cache.findApplication("packagesbuild")
+                if not utils.system([packagesbuild, '--reference-folder', os.path.join(self.archiveDir(), 'bin'), '--build-folder', self.packageDestinationDir(), pkgprojPath]):
+                    return False
+
+            if not utils.signMacPackage(packageDest):
+                return False
+
+            CraftHash.createDigestFiles(packageDest)
 
             return True
 
