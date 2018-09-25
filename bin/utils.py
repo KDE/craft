@@ -810,13 +810,12 @@ def sign(fileNames : [str]) -> bool:
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
-    if os.path.islink(fileName):
+    if os.path.islink(fileName) or os.path.isdir(fileName):
         return False
     _, ext = os.path.splitext(fileName)
     if CraftCore.compiler.isWindows:
         if ext in {".dll", ".exe"}:
             return True
-
     else:
         if ext in {".so", ".dylib"}:
             return True
