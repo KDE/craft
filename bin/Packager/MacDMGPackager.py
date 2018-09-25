@@ -321,7 +321,7 @@ class MacDylibBundler(object):
                 if (filename.endswith(".so")
                         or filename.endswith(".dylib")
                         or ".so." in filename
-                        or f"{fullpath.name}.framework" in str(fullpath)):
+                        or (f"{fullpath.name}.framework" in str(fullpath) and utils.isBinary(str(fullpath)))):
                     if not self.bundleLibraryDependencies(fullpath):
                         CraftCore.log.info("Failed to bundle dependencies for '%s'", os.path.join(dirpath, filename))
                         return False
