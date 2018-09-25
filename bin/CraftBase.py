@@ -187,13 +187,11 @@ class CraftBase(object):
         return ""
 
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
-                          includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
+    def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
         if not pkgSuffix:
             pkgSuffix = ""
             if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
                 pkgSuffix = self.subinfo.options.package.packageSuffix
-
         buildVersion = self.buildNumber()
 
         version = []
@@ -208,12 +206,20 @@ class CraftBase(object):
                 version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
         version = version.replace("/", "_")
+
+        return f"{self.package.name}-{version}-{CraftCore.compiler}{pkgSuffix}"
+
+    def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
+                          includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
+
+        archiveBaseName = self.binaryArchiveBaseName(pkgSuffix=pkgSuffix, includeRevision=includeRevision, includeTimestamp=includeTimeStamp)
+
         if fileType:
             fileType = f".{fileType}"
         else:
             fileType = ""
         prefix = "" if not includePackagePath else f"{self.package.path}/"
-        return f"{prefix}{self.package.name}-{version}-{CraftCore.compiler}{pkgSuffix}{fileType}"
+        return f"{prefix}{archiveBaseName}{fileType}"
 
 
     @staticmethod
