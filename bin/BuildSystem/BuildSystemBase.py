@@ -183,7 +183,6 @@ class BuildSystemBase(CraftBase):
                         return False
 
         if (CraftCore.compiler.isMacOS
-                and self.subinfo.buildPrefix != newPrefix
                 and os.path.isdir(self.installDir())):
             files = utils.filterDirectoryContent(self.installDir(), lambda x: utils.isBinary(x.path), lambda x: True)
             for f in files:
