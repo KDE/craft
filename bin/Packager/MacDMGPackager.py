@@ -81,7 +81,7 @@ class MacDMGPackager( CollectionPackagerBase ):
             if blackList.exists():
                 blackList = [self.read_blacklist(str(blackList))]
                 # use it as whitelist as we want only matches, ignore all others
-                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x:self.blacklisted(x.path, blackList), blacklist=lambda x:True)
+                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x:self.blacklisted(x, blackList), blacklist=lambda x:True)
                 for f in matches:
                     CraftCore.log.info(f"Remove blacklisted file: {f}")
                     utils.deleteFile(f)
