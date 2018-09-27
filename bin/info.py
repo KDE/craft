@@ -73,7 +73,7 @@ class infoclass(object):
 
         # Where to put this? How to make sure it's not required before it could be built?
         # Should we set this before setDependencies() and disable it in all of its dependencies? :-\
-        if CraftCore.settings.getboolean("Packager", "DebugSymbolDumping", False) and not "dev-utils/breakpad-tools" in self.buildDependencies: # TODO: default to False
+        if CraftCore.settings.getboolean("Packager", "DebugSymbolDumping", False) and not "dev-utils/breakpad-tools" in self.buildDependencies:
             self.buildDependencies["dev-utils/breakpad-tools"] = None
 
     @property

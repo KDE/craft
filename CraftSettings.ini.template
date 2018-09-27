@@ -167,7 +167,6 @@ DebugSymbolDumping = False
 ### If PackageDebugSymbols is set to True, a separate archive with the symbols is created.
 PackageDebugSymbols = False
 
-
 ## A url to a Craft cache repository
 ## Sets a custom repository for the binary cache
 #RepositoryUrl = https://files.kde.org/craft/master/
