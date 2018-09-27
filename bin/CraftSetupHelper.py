@@ -183,6 +183,8 @@ class SetupHelper(object):
     @staticmethod
     def stringToEnv(string : str):
         for line in string.strip().split("\n"):
+            if not line:
+                continue
             kv = line.strip().split("=", 1)
             if len(kv) != 2:
                 raise Exception(f"Failed to parse environment variable: {line}\n{string}")
