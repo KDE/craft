@@ -183,10 +183,13 @@ class SetupHelper(object):
     @staticmethod
     def stringToEnv(string : str):
         for line in string.split("\n"):
-            key, value = line.strip().split("=", 1)
-            if key == 'Path':
-                key = 'PATH'
-            os.environ[key] = value
+            kv = line.strip().split("=", 1)
+            if len(kv) != 2:
+                raise Exception(f"Failed to parse environment variable: {line}")
+            # TODO: why?
+            if kv[0] == "Path":
+                kv[0] = "PATH"
+            os.environ[kv[0]] = kv[1]
         return os.environ
 
     @staticmethod
