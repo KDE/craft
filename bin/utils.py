@@ -923,7 +923,7 @@ def signMacPackage(packagePath : str):
     else:
         # sign pkg
         developerIdInstaller = CraftCore.settings.get("CodeSigning", "MacDeveloperIdInstaller")
-        packagePathTmp = "%s.sign" % packagePath
+        packagePathTmp = f"{packagePath}.sign"
         if not system(["productsign", "--sign", developerIdInstaller, packagePath, packagePathTmp]):
             return False
 
@@ -933,7 +933,7 @@ def signMacPackage(packagePath : str):
 
 def unlockMacKeychain():
     password = CraftCore.settings.get("CodeSigning", "MacKeychainPassword")
-    if not system("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k \"%s\" ~/Library/Keychains/login.keychain" % password, stdout=subprocess.DEVNULL, logCommand=False):
+    if not system(f"security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k \"{password}\" ~/Library/Keychains/login.keychain", stdout=subprocess.DEVNULL, logCommand=False):
         CraftCore.log.error("Cannot unlock keychain.")
         return False
 
