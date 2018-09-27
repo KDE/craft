@@ -102,8 +102,8 @@ class CollectionPackagerBase(PackagerBase):
                                                             CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
 
     @property
-    def isSymbolDumpingEnabled(self):
-        return CraftCore.settings.getboolean("SymbolDumping", "Enabled", False)
+    def isDebugSymbolDumpingEnabled(self):
+        return CraftCore.settings.getboolean("Packager", "DebugSymbolDumping", False)
 
     @property
     def whitelist(self):
@@ -247,10 +247,11 @@ class CollectionPackagerBase(PackagerBase):
         if not super().internalPostInstall():
             return False
 
-        if self._doDumpSymbols:
-            for entry in self.traverse(self.imageDir(), self.whitelisted, self.blacklisted):
-                if self.isBinary(entry):
-                    self._dumpSymbols(entry)
+        if self.isDebugSymbolDumpingEnabled:
+            for root, dirs, files in os.walk(self.imageDir()):
+                for file in files:
+                    if self.isBinary(file):
+                        self._dumpSymbols(file)
 
         return True
 
@@ -271,8 +272,7 @@ class CollectionPackagerBase(PackagerBase):
             outputPath = os.path.join(self.symbolsDir(), moduleLine.group(2),
                                  moduleLine.group(1))
 
-            if (not os.path.exists(outputPath)):
-                os.makedirs(outputPath, exist_ok=True)
+            utils.createDirectory(outputPath)
 
             symbolFileBasename = moduleLine.group(2).replace(".pdb", "")
             symbolFile = os.path.join(outputPath, "%s.sym" % symbolFileBasename)
@@ -297,7 +297,7 @@ class CollectionPackagerBase(PackagerBase):
         else:
             self.blacklist.append(re.compile(r".*\.pdb"))
 
-        if self.isSymbolDumpingEnabled:
+        if self.isDebugSymbolDumpingEnabled:
             sep = '\\%s' % os.sep
             regex = r"symbols%s.*" % sep
             self.whitelist.append(re.compile(regex))

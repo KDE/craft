@@ -13,11 +13,11 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = 'pecoff-dwarf-on-git-20171117-fetch-externals-on-win'
         self.description = "The tools part of the breakpad crash-reporting system."
-        self.webpage = "https://github.com/dschmidt/google-breakpad"
+        self.webpage = "https://github.com/jon-turney/google-breakpad"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/python2"] = "default"
-
+        self.buildDependencies["dev-utils/python2"] = None
+        self.buildDependencies["virtual/base"] = None
 
 class Package(CMakePackageBase):
     def fetch(self):
