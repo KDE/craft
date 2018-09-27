@@ -187,7 +187,7 @@ class SetupHelper(object):
                 continue
             kv = line.strip().split("=", 1)
             if len(kv) != 2:
-                raise Exception(f"Failed to parse environment variable: {line}\n{string}")
+                raise Exception(f"Failed to parse environment variable: {line}\n{string.encode()}")
             # TODO: why?
             if kv[0] == "Path":
                 kv[0] = "PATH"
