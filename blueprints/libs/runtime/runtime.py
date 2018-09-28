@@ -14,9 +14,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = ver
 
     def setDependencies(self):
-        self.buildDependencies["virtual/base"] = "default"
+        self.buildDependencies["virtual/base"] = None
         if CraftCore.compiler.isMinGW():
-            self.buildDependencies["dev-utils/mingw-w64"] = "default"
+            self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
 from Package.BinaryPackageBase import *

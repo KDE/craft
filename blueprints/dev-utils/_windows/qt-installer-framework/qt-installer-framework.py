@@ -40,7 +40,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3.0.2"
 
     def setDependencies(self):
-        self.buildDependencies["virtual/bin-base"] = "default"
+        self.buildDependencies["virtual/bin-base"] = None
 
     def registerOptions(self):
         self.options.dynamic.registerOption("name", "Craft Installer")

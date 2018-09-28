@@ -12,8 +12,8 @@ class subinfo( info.infoclass ):
         self.defaultTarget = "1.47.6"
 
     def setDependencies( self ):
-        self.runtimeDependencies["virtual/base"] = "default"
-        self.buildDependencies["dev-utils/autoconf"] = "default"
+        self.runtimeDependencies["virtual/base"] = None
+        self.buildDependencies["dev-utils/autoconf"] = None
 
 from Package.AutoToolsPackageBase import *
 

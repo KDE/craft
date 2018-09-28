@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         # make sure core is up to date first
-        self.buildDependencies["craft/craft-core"] = "default"
+        self.buildDependencies["craft/craft-core"] = None
 
 
 from Package.BlueprintRepositoryPackageBase import *

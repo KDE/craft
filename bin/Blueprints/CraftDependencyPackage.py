@@ -65,7 +65,7 @@ class CraftDependencyPackage(CraftPackageObject):
                     package = CraftPackageObject.get(packaheName)
                     if not package:
                         raise BlueprintException(f"Failed to resolve {packaheName} as a dependency of {self}", self)
-                    if requiredVersion and requiredVersion != "default" and CraftVersion(package.version) < CraftVersion(requiredVersion):
+                    if requiredVersion and requiredVersion != None and CraftVersion(package.version) < CraftVersion(requiredVersion):
                         raise BlueprintException(f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed", self)
 
                     p = CraftDependencyPackage(package)

@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
 
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/ninja"] = "default"
+        self.buildDependencies["dev-utils/ninja"] = None
 
 
     def registerOptions(self):

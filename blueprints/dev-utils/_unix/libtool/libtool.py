@@ -13,7 +13,7 @@ class subinfo( info.infoclass ):
         self.defaultTarget = "2.4.6"
 
     def setDependencies( self ):
-        self.buildDependencies["dev-utils/automake"] = "default"
+        self.buildDependencies["dev-utils/automake"] = None
 
 from Package.AutoToolsPackageBase import *
 

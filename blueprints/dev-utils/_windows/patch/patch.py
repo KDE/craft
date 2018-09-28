@@ -10,8 +10,8 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         if CraftCore.compiler.isMinGW():
-            self.runtimeDependencies["dev-utils/uactools"] = "default"
-        self.runtimeDependencies["virtual/bin-base"] = "default"
+            self.runtimeDependencies["dev-utils/uactools"] = None
+        self.runtimeDependencies["virtual/bin-base"] = None
 
 
 from Package.BinaryPackageBase import *

@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "7.3.0-0"
 
     def setDependencies(self):
-        self.runtimeDependencies["dev-utils/7zip"] = "default"
+        self.runtimeDependencies["dev-utils/7zip"] = None
 
 
 from Package.BinaryPackageBase import *

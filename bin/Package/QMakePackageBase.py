@@ -16,3 +16,9 @@ class QMakePackageBase(PackageBase, MultiSource, QMakeBuildSystem, TypePackager)
         MultiSource.__init__(self)
         QMakeBuildSystem.__init__(self)
         TypePackager.__init__(self)
+
+    def internalPostInstall(self):
+        if not super().internalPostInstall():
+            return False
+
+        return True

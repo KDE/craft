@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.description = "deprecated: use virtual/base instead"
 
     def setDependencies(self):
-        self.runtimeDependencies["virtual/base"] = "default"
+        self.runtimeDependencies["virtual/base"] = None
 
 from Package.VirtualPackageBase import *
 

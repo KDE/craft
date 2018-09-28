@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.buildDependencies["craft/craft-core"] = "default"
+        self.buildDependencies["craft/craft-core"] = None
 
 
 from Package.BlueprintRepositoryPackageBase import *

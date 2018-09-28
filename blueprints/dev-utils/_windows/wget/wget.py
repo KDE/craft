@@ -16,8 +16,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.18"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/7zip"] = "default"
-        self.buildDependencies["core/cacert"] = "default"
+        self.buildDependencies["dev-utils/7zip"] = None
+        self.buildDependencies["core/cacert"] = None
 
 
 from Package.BinaryPackageBase import *
