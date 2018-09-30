@@ -36,9 +36,9 @@ class MultiSource(SourceBase):
         CraftCore.debug.trace("MultiSource fetch")
         return self.__sourceClass.fetch(self)
 
-    def checkDigest(self):
+    def checkDigest(self, downloadRetries=3):
         CraftCore.debug.trace("MultiSource checkDigest")
-        return self.__sourceClass.checkDigest(self)
+        return self.__sourceClass.checkDigest(self, downloadRetries)
 
     def unpack(self):
         CraftCore.debug.trace("MultiSource unpack")

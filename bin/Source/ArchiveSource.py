@@ -27,7 +27,7 @@ import tempfile
 import io
 
 from Source.SourceBase import *
-from Utils import CraftHash, GetFiles
+from Utils import CraftHash, GetFiles, CraftChoicePrompt
 
 from CraftCore import CraftCore
 
@@ -122,7 +122,7 @@ class ArchiveSource(SourceBase):
                   CraftCore.log.debug("no digestUrls present")
         return True
 
-    def checkDigest(self):
+    def checkDigest(self, downloadRetriesLeft=3):
         CraftCore.log.debug("ArchiveSource.checkDigest called")
         filenames = self.localFileNames()
 
@@ -130,12 +130,39 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("check digests urls")
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames):
                 CraftCore.log.error("invalid digest file")
+                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                    redownload = downloadRetriesLeft > 0
+                else:
+                    redownload = CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them ?",
+                                                         [("Yes", True), ("No", False)],
+                                                         default="Yes")
+                if redownload:
+                    for filename in filenames:
+                        CraftCore.log.info(f"Deleting downloaded file: {filename}")
+                        utils.deleteFile(os.path.join(self.__downloadDir, filename))
+                        for digestAlgorithm, digestFileEnding in CraftHash.HashAlgorithm.fileEndings().items():
+                            digestFileName = filename + digestFileEnding
+                            if os.path.exists(os.path.join(self.__downloadDir, digestFileName)):
+                                CraftCore.log.info(f"Deleting downloaded file: {digestFileName}")
+                                utils.deleteFile(os.path.join(self.__downloadDir, digestFileName))
+                    return self.fetch() and self.checkDigest(downloadRetriesLeft - 1)
                 return False
         elif self.subinfo.hasTargetDigests():
             CraftCore.log.debug("check digests")
             digests, algorithm = self.subinfo.targetDigest()
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
                 CraftCore.log.error("invalid digest file")
+                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                    redownload = downloadRetriesLeft > 0
+                else:
+                    redownload = CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them ?",
+                                                         [("Yes", True), ("No", False)],
+                                                         default="Yes")
+                if (redownload):
+                    for filename in filenames:
+                        CraftCore.log.info(f"Deleting downloaded file: {filename}")
+                        utils.deleteFile(os.path.join(self.__downloadDir, filename))
+                    return self.fetch() and self.checkDigest(downloadRetriesLeft - 1)
                 return False
         else:
             CraftCore.log.debug("print source file digests")
@@ -152,7 +179,7 @@ class ArchiveSource(SourceBase):
         # TODO: this might delete generated patches
         utils.cleanDirectory(self.workDir())
 
-        if not self.checkDigest():
+        if not self.checkDigest(3):
             return False
 
         binEndings = (".exe", ".bat", ".msi")

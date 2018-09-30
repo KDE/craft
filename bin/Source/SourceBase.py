@@ -15,7 +15,7 @@ class SourceBase(CraftBase):
         """fetch the source from a remote host and save it into a local destination"""
         utils.abstract()
 
-    def checkDigest(self):
+    def checkDigest(self, downloadRetries=3):
         """check source digest of the package."""
         return True
 
