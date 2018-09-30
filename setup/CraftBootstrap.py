@@ -10,7 +10,7 @@ import urllib.parse
 import urllib.request
 
 if not platform.machine().endswith("64"):
-    print(f"Craft requires a 64bit operating system. Your are using: {platform.machine()}")
+    print(f"Craft requires a 64bit operating system. You are using: {platform.machine()}")
     exit(1)
 
 class CraftBootstrap(object):
