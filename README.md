@@ -9,7 +9,7 @@
 * [ownCloud](https://github.com/owncloud/client)
     * ```craft --add-blueprint-repository https://github.com/owncloud/craft-blueprints-owncloud.git```
     * ```craft owncloud-client```
-* [Quasel IRC](https://github.com/quassel/quassel)
+* [Quassel IRC](https://github.com/quassel/quassel)
     * ```craft --add-blueprint-repository https://github.com/quassel/craft-blueprints-quassel.git```
     * ```craft quassel```
 * [KDAB GammaRay](https://github.com/KDAB/GammaRay)
@@ -17,7 +17,7 @@
 
 ## Getting in Touch
 
-[IRC :#kde-windows](http://webchat.freenode.net?channels=%23kde-windows)
+[IRC: #kde-windows](http://webchat.freenode.net?channels=%23kde-windows)
 
 [Report Bugs](https://phabricator.kde.org/project/profile/61/)
 

@@ -164,10 +164,10 @@ SectionEnd
 Section
 SetShellVarContext all
 !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-CreateDirectory "$SMPROGRAMS\$StartMenuFolde"
+CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 SetOutPath $INSTDIR ; for working directory
 @{shortcuts}
-CreateShortCut "$SMPROGRAMS\$StartMenuFolde\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
