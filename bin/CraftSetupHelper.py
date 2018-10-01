@@ -205,13 +205,13 @@ class SetupHelper(object):
                 command.append("-legacy")
             else:
                 if not args:
-                    args = ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
+                    args = ["-products", "*"]
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
     def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
         architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
-        args = architectures[architecture] + ("_cross" if not native else "")
+        args = architectures[architecture + ("_cross" if not native and not architecture == "x86" else "")]
 
         path = ""
         if version == 14:
