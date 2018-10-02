@@ -101,17 +101,16 @@ def curlFile(url, destdir, filename, quiet):
     command += [url]
     CraftCore.log.debug("curlfile called")
 
-    if quiet:
-        command += ["--silent"]
-        return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
-    elif CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
-        command += ["--progress-bar"]
-        CraftCore.log.info(f"curl {url}")
-        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
-    else:
-        if CraftCore.debug.verbose() > 0:
-            command += ["-v"]
-        return utils.system(command)
+    if CraftCore.debug.verbose() < 1:
+        if quiet:
+            command += ["--silent"]
+            return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
+            command += ["--progress-bar"]
+            CraftCore.log.info(f"curl {url}")
+            return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+    command += ["-v"]
+    return utils.system(command)
 
 
 def wgetFile(url, destdir, filename, quiet):
@@ -132,15 +131,15 @@ def wgetFile(url, destdir, filename, quiet):
     command += [url]
     CraftCore.log.debug("wgetfile called")
 
-    if quiet:
-        command += ["-q"]
-        return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
-    elif CraftCore.debug.verbose() < 1 and CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
-        command += ["-q", "--show-progress"]
-        CraftCore.log.info(f"wget {url}")
-        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
-    else:
-        return utils.system(command)
+    if CraftCore.debug.verbose() < 1:
+        if quiet:
+            command += ["-q"]
+            return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+        elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
+            command += ["-q", "--show-progress"]
+            CraftCore.log.info(f"wget {url}")
+            return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+    return utils.system(command)
 
 def s3File(url, destdir, filename):
     aws = CraftCore.cache.findApplication("aws")
