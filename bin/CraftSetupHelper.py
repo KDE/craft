@@ -106,9 +106,7 @@ class SetupHelper(object):
     def checkForEvilApplication(self):
         blackList = []
         if OsUtils.isWin():
-            blackList += ["sh"]
-        if CraftCore.compiler.isMSVC():
-            blackList += ["gcc", "g++"]
+            blackList += ["sh", "gcc", "g++", "cpp"]
         for app in blackList:
             location = shutil.which(app)
             if location:
