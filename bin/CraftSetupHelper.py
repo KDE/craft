@@ -344,6 +344,7 @@ class SetupHelper(object):
                                                            "qml")
                                               ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
+        self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
 
         self.setXDG()
 
