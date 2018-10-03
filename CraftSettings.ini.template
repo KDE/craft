@@ -20,10 +20,11 @@ ABI = windows-msvc2015_64-cl
 ## This option can be used to enable a notification backend.
 ## As soon as the buildprocess of a project has finished a notification will be displayed.
 ## Possible Backends:
-## Snore https://commits.kde.org/snorenotify. Snore supports multiple backends.
-## Just 'craft snorenotify'
-## To configure snorenotify for craft call 'snoresettings --appName snoresend'
-#Notify = Snore
+## Snore: https://commits.kde.org/snorenotify. Snore supports multiple backends.
+##      Just 'craft snorenotify'
+##      To configure snorenotify for craft call 'snoresettings --appName snoresend'
+## SnoreToast: simple command line util for Windows notifications
+Notify = SnoreToast
 
 ## Speed up the merging of packages by using hard links
 UseHardlinks = True
