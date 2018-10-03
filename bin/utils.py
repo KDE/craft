@@ -633,8 +633,9 @@ def embedManifest(executable, manifest):
     return system(["mt", "-nologo", "-manifest", manifest,
                     f"-outputresource:{executable};1"])
 
-def notify(title, message, alertClass=None):
-    CraftCore.debug.step(f"{title}: {message}")
+def notify(title, message, alertClass=None, log=True):
+    if log:
+        CraftCore.debug.step(f"{title}: {message}")
     backends = CraftCore.settings.get("General", "Notify", "")
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return

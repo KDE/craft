@@ -17,7 +17,9 @@ class Snore(NotificationInterface):
             snore = CraftCore.cache.findApplication("snoresend")
             if not snore:
                 return
-            command = [snore, "-t", title, "-m", message, "-i", self.icon, "-a", "Craft", "-c", alertClass, "--silent"]
+            command = [snore, "-t", title, "-m", message, "-i", self.icon, "-a", "Craft", "--silent"]
+            if alertClass:
+                command += ["-c", alertClass]
             if OsUtils.isWin():
                 command += ["--bring-window-to-front", str(ctypes.windll.kernel32.GetConsoleWindow())]
             CraftCore.log.debug(command)
