@@ -203,7 +203,7 @@ class SetupHelper(object):
                 command.append("-legacy")
             else:
                 if not args:
-                    args = ["-products", "*"]
+                    args = ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
