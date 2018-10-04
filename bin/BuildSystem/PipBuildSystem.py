@@ -8,7 +8,6 @@ class PipBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "pip")
         self.python2 = True
         self.python3 = True
-        self.allowExternal = False
 
     def configure(self):
         return True
@@ -26,8 +25,6 @@ class PipBuildSystem(BuildSystemBase):
             pythons[3] = CraftCore.settings.get("Paths", "PYTHON")
 
         args = []
-        if self.allowExternal:
-            args.append(" --allow-all-external")
 
         for pythonMajorVersion, pythonPath in pythons.items():
             for app, path in [("pip", os.path.join(pythonPath, "Scripts")),
