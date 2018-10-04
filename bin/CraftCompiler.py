@@ -186,6 +186,7 @@ class CraftCompiler(object):
 
     def isNative(self):
         # TODO: any reason to keep that?
+        # tahts actually curretly only for msvc express
         return CraftCore.settings.getboolean("General", "Native", True)
 
     def isX64(self):

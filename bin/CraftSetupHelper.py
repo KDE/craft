@@ -192,7 +192,7 @@ class SetupHelper(object):
         return os.environ
 
     @staticmethod
-    def _callVCVER(version : int, args : []=None) -> str:
+    def _callVCVER(version : int, args : []=None, native : bool=True) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
@@ -203,22 +203,28 @@ class SetupHelper(object):
                 command.append("-legacy")
             else:
                 if not args:
-                    args = ["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
+                    args = ["-products", "*"]
+                    if native:
+                        # this fails with express versions
+                        args += ["-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"]
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
     def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
-        architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
-        args = architectures[architecture + ("_cross" if not native and not architecture == "x86" else "")]
+        if native:
+            architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
+        else:
+            architectures = {"x86": "x86", "x64": "x86_amd64"}
 
+        args = architectures[architecture]
         path = ""
         if version == 14:
             # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
-            path = SetupHelper._callVCVER(15, args=["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.140"])
+            path = SetupHelper._callVCVER(15, args=["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.140"], native=native)
             if path:
                 args += " -vcvars_ver=14.0"
         if not path:
-            path = SetupHelper._callVCVER(version)
+            path = SetupHelper._callVCVER(version, native=native)
 
         path = os.path.join(path, "VC")
         if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
