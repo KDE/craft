@@ -101,12 +101,14 @@ class QMakeBuildSystem(BuildSystemBase):
     def configureOptions(self, defines=""):
         """returns default configure options"""
         defines += BuildSystemBase.configureOptions(self, defines)
+
+        buildReleaseAndDebug = CraftPackageObject.get("libs/qt5/qtbase").subinfo.options.dynamic.buildReleaseAndDebug
         if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
-            defines += ' "CONFIG -= debug"'
+            defines += ' "CONFIG -= debug"' if not buildReleaseAndDebug else ' "CONFIG += debug"'
             defines += ' "CONFIG += release"'
         elif self.buildType() == "Debug":
             defines += ' "CONFIG += debug"'
-            defines += ' "CONFIG -= release"'
+            defines += ' "CONFIG -= release"' if not buildReleaseAndDebug else ' "CONFIG += release"'
 
         return defines
 
