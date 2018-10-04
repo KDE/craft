@@ -850,7 +850,7 @@ def getLibraryDeps(path):
     return deps
 
 
-def filterDirectoryContent(root, whitelist=lambda f: True, blacklist=lambda g: False):
+def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False):
     """
         Traverse through a directory tree and return every
         filename that the function whitelist returns as true and
@@ -864,7 +864,7 @@ def filterDirectoryContent(root, whitelist=lambda f: True, blacklist=lambda g: F
                 if filePath.is_dir(follow_symlinks=False):
                     dirs.append(filePath.path)
                     continue
-                if blacklist(filePath) and not whitelist(filePath):
+                if blacklist(filePath, root=root) and not whitelist(filePath, root=root):
                     continue
                 elif filePath.is_dir():
                     yield filePath.path

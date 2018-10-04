@@ -175,17 +175,17 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
           raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, filename : os.DirEntry, whiteList : [re]=None) -> bool:
+    def whitelisted(self, filename : os.DirEntry, root : str, whiteList : [re]=None) -> bool:
         """ return True if pathname is included in the pattern, and False if not """
         if whiteList is None:
             whiteList = self.whitelist
-        return self.blacklisted(filename, blackList=whiteList, message="whitelisted")
+        return self.blacklisted(filename, root=root, blackList=whiteList, message="whitelisted")
 
-    def blacklisted(self, filename : os.DirEntry, blackList : [re]=None, message : str="blacklisted") -> bool:
+    def blacklisted(self, filename : os.DirEntry, root : str, blackList : [re]=None, message : str="blacklisted") -> bool:
         """ return False if file is not blacklisted, and True if it is blacklisted """
         if blackList is None:
             blackList = self.blacklist
-        relFilePath = os.path.relpath(filename.path, self.installDir())
+        relFilePath = os.path.relpath(filename.path, root)
         for pattern in blackList:
             if pattern.search(relFilePath):
                 CraftCore.log.debug(f"{relFilePath} is {message}: {pattern.pattern}")
