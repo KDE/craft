@@ -149,10 +149,9 @@ class ArchiveSource(SourceBase):
             digests, algorithm = self.subinfo.targetDigest()
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
                 CraftCore.log.error("invalid digest file")
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                    redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
-                                                                                               [("Yes", True), ("No", False)],
-                                                                                               default="Yes")
+                redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
+                                                                                       [("Yes", True), ("No", False)],
+                                                                                       default="Yes")
                 if redownload:
                     for filename in filenames:
                         CraftCore.log.info(f"Deleting downloaded file: {filename}")
