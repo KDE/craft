@@ -105,7 +105,7 @@ You can add your own defines into self.defines as well.
         return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
-        return  f"""CreateShortCut "$SMPROGRAMS\$StartMenuFolde\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
+        return  f"""CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
     def folderSize(self, path):
         total = 0
