@@ -130,12 +130,9 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("check digests urls")
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames):
                 CraftCore.log.error("invalid digest file")
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                    redownload = downloadRetriesLeft > 0
-                else:
-                    redownload = CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them ?",
-                                                         [("Yes", True), ("No", False)],
-                                                         default="Yes")
+                redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
+                                                                                           [("Yes", True), ("No", False)],
+                                                                                           default="Yes")
                 if redownload:
                     for filename in filenames:
                         CraftCore.log.info(f"Deleting downloaded file: {filename}")
@@ -153,12 +150,10 @@ class ArchiveSource(SourceBase):
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
                 CraftCore.log.error("invalid digest file")
                 if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                    redownload = downloadRetriesLeft > 0
-                else:
-                    redownload = CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them ?",
-                                                         [("Yes", True), ("No", False)],
-                                                         default="Yes")
-                if (redownload):
+                    redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
+                                                                                               [("Yes", True), ("No", False)],
+                                                                                               default="Yes")
+                if redownload:
                     for filename in filenames:
                         CraftCore.log.info(f"Deleting downloaded file: {filename}")
                         utils.deleteFile(os.path.join(self.__downloadDir, filename))

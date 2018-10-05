@@ -5,7 +5,7 @@ from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
 from Blueprints.CraftPackageObject import *
-from Utils import CraftHash, GetFiles
+from Utils import CraftHash, GetFiles, CraftChoicePrompt
 from Utils.CraftManifest import CraftManifest
 
 import json
@@ -129,7 +129,7 @@ class PackageBase(CraftBase):
 
         return self.runAction(command)
 
-    def fetchBinary(self) -> bool:
+    def fetchBinary(self, downloadRetriesLeft=3) -> bool:
         if self.subinfo.options.package.disableBinaryCache:
             return False
 
@@ -141,7 +141,7 @@ class PackageBase(CraftBase):
                     with open(fileUrl, "rt", encoding="UTF-8") as f:
                         manifest = CraftManifest.fromJson(json.load(f))
                 else:
-                  continue
+                    continue
             else:
                 manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
             fileEntry = manifest.get(str(self)).files
@@ -177,6 +177,10 @@ class PackageBase(CraftBase):
                                                digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
                 CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
+                if downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
+                                                     [("Yes", True), ("No", False)],
+                                                     default="Yes"):
+                    return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(downloadRetriesLeft=downloadRetriesLeft-1)
                 return False
             self.subinfo.buildPrefix = latest.buildPrefix
             if not (self.cleanImage()

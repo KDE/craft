@@ -37,7 +37,7 @@ import utils
 from CraftCore import CraftCore
 
 def promptForChoice(title: str, choices : [], default : str=None):
-    simpleMode = not isinstance(choices[0], tuple )
+    simpleMode = not isinstance(choices[0], tuple)
     if simpleMode:
         choices = OrderedDict.fromkeys(choices)
     else:
@@ -49,6 +49,11 @@ def promptForChoice(title: str, choices : [], default : str=None):
     promp = f"{', '.join(selections)} (Default is {default}): "
 
     utils.notify("Craft needs your attention", promp, log=False)
+
+    if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        CraftCore.log.info(f"[ContinuousIntegration]Enabled = True: returning default: {default}")
+        return default if simpleMode else choices[default]
+
     CraftCore.debug.new_line()
     while (True):
         CraftCore.log.info(title)
@@ -59,11 +64,16 @@ def promptForChoice(title: str, choices : [], default : str=None):
         except:
             choiceInt = -1
         if choice == "":
-            return default if simpleMode else choices[default]
+            out = default if simpleMode else choices[default]
+            break
         elif choiceInt > 0 and choiceInt < len(choices):
-            return list(choices.items())[choiceInt][0 if simpleMode else 1]
+            out = list(choices.items())[choiceInt][0 if simpleMode else 1]
+            break
         elif choice in choices:
-            return choice if simpleMode else choices[choice]
+            out = choice if simpleMode else choices[choice]
+            break
+    CraftCore.log.debug(f"Returning: {out}")
+    return out
 
 
 if __name__ == "__main__":
