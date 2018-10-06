@@ -350,6 +350,9 @@ class SetupHelper(object):
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
 
+        if not OsUtils.isWin():
+             self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDIrs.craftRoot(), "share", "bison")
+
         self.setXDG()
 
         self.prependEnvVar("PATH", CraftStandardDirs.craftBin())
