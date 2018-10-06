@@ -351,7 +351,7 @@ class SetupHelper(object):
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
 
         if not OsUtils.isWin():
-            self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDIrs.craftRoot(), "share", "bison")
+            self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDIrs.craftRoot(), "share", "bison"))
 
         self.setXDG()
 
