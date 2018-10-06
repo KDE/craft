@@ -352,6 +352,7 @@ class SetupHelper(object):
 
         if not OsUtils.isWin():
             self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDirs.craftRoot(), "share", "bison"))
+            self.prependEnvVar("M4", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "m4"))
 
         self.setXDG()
 
