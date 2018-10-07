@@ -157,9 +157,6 @@ WriteUninstaller "${uninstaller}"
 
 SectionEnd
 
-;  allow to define additional sections
-@{sections}
-
 ; create shortcuts
 Section
 SetShellVarContext all
@@ -170,6 +167,9 @@ SetOutPath $INSTDIR ; for working directory
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
+
+;  allow to define additional sections
+@{sections}
 
 
 ; Uninstaller
