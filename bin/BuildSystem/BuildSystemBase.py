@@ -78,22 +78,23 @@ class BuildSystemBase(CraftBase):
 
     def makeOptions(self, args):
         """return options for make command line"""
-        defines = ""
+        defines = []
         if self.subinfo.options.make.ignoreErrors:
-            defines += " -i"
-        defines += f" {args}"
+            defines.append("-i")
+        if args:
+            defines.append(args)
         if self.makeProgram in {"make", "gmake", "mingw32-make"}:
             if self.subinfo.options.make.supportsMultijob:
-                defines += f" -j{multiprocessing.cpu_count()}"
+                defines.append(f"-j{multiprocessing.cpu_count()}")
         if self.makeProgram == "ninja":
             if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-                defines += " -c "
+                defines.append("-c")
             if CraftCore.debug.verbose() > 0:
-                defines += " -v "
+                defines.append("-v")
         else:
             if CraftCore.debug.verbose() > 0:
-                defines += " VERBOSE=1 V=1"
-        return defines
+                defines += ["VERBOSE=1", "V=1"]
+        return " ".join(defines)
 
     def configure(self):
         return True
