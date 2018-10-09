@@ -850,6 +850,15 @@ def getLibraryDeps(path):
     return deps
 
 
+def regexFileFilter(filename : os.DirEntry, root : str, pattern : [re]=None) -> bool:
+    """ return False if file does not match pattern"""
+    relFilePath = os.path.relpath(filename.path, root)
+    for pattern in pattern:
+        if pattern.search(relFilePath):
+            CraftCore.log.debug(f"regExDirFilter: {relFilePath} matches: {pattern.pattern}")
+            return True
+    return False
+
 def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False):
     """
         Traverse through a directory tree and return every

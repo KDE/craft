@@ -170,18 +170,17 @@ class BuildSystemBase(CraftBase):
         if not super().internalPostInstall():
             return False
         # a post install routine to fix the prefix (make things relocatable)
-        pkgconfigPath = os.path.join(self.imageDir(), "lib", "pkgconfig")
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         oldPrefixes = [self.subinfo.buildPrefix]
         if CraftCore.compiler.isWindows:
             oldPrefixes += [OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        if os.path.exists(pkgconfigPath):
-            for pcFile in os.listdir(pkgconfigPath):
-                if pcFile.endswith(".pc"):
-                    path = os.path.join(pkgconfigPath, pcFile)
-                    if not self.patchInstallPrefix([path], oldPrefixes, newPrefix):
-                        return False
+        pattern = [re.compile("^.*(pc|pri|cmake)$")]
+        files = utils.filterDirectoryContent(self.installDir(), whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
+                                             blacklist=lambda x, root: True)
+
+        if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
+            return False
 
         if (CraftCore.compiler.isMacOS
                 and os.path.isdir(self.installDir())):

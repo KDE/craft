@@ -185,12 +185,8 @@ class CollectionPackagerBase(PackagerBase):
         """ return False if file is not blacklisted, and True if it is blacklisted """
         if blackList is None:
             blackList = self.blacklist
-        relFilePath = os.path.relpath(filename.path, root)
-        for pattern in blackList:
-            if pattern.search(relFilePath):
-                CraftCore.log.debug(f"{relFilePath} is {message}: {pattern.pattern}")
-                return True
-        return False
+        CraftCore.log.debug(f"Start filtering: {message}")
+        return utils.regexFileFilter(filename, root, blackList)
 
     def _filterQtBuildType(self, filename):
         if not self.__deployQtSdk:

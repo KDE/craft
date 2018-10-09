@@ -79,9 +79,9 @@ class MacDMGPackager( CollectionPackagerBase ):
             # macdeployqt might just have added some explicitly blacklisted files
             blackList = Path(self.packageDir(), "mac_blacklist.txt")
             if blackList.exists():
-                blackList = [self.read_blacklist(str(blackList))]
+                pattern = [self.read_blacklist(str(blackList))]
                 # use it as whitelist as we want only matches, ignore all others
-                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x, root:self.blacklisted(x, blackList), blacklist=lambda x, root:True)
+                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern), blacklist=lambda x, root:True)
                 for f in matches:
                     CraftCore.log.info(f"Remove blacklisted file: {f}")
                     utils.deleteFile(f)
