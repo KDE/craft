@@ -53,7 +53,8 @@ class CraftBase(object):
         CraftCore.log.debug("CraftBase.__init__ called")
 
         mod = sys.modules[self.__module__]
-        self.package = mod.CRAFT_CURRENT_MODULE  # ugly workaround we need to replace the constructor
+        # ugly workaround we need to replace the constructor
+        self.package = mod.CRAFT_CURRENT_MODULE  # type: CraftPackageObject
         self.subinfo = mod.subinfo(self)
 
         self.buildSystemType = None
