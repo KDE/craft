@@ -865,6 +865,8 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
         filename that the function whitelist returns as true and
         which do not match blacklist entries
     """
+    if not os.path.exists(root):
+        return
     dirs = [root]
     while dirs:
         path = dirs.pop()
