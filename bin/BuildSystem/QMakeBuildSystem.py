@@ -20,10 +20,6 @@ class QMakeBuildSystem(BuildSystemBase):
         return CraftPackageObject.get("libs/qt5/qtbase").instance
 
     @property
-    def __buildQtDoc(self):
-        return self.__qtBase.subinfo.options.dynamic.buildDoc and self.package.path.startswith("libs/qt5")
-
-    @property
     def qtVer(self):
         if not self._qtVer:
             self._qtVer = CraftVersion(self.__qtBase.subinfo.buildTarget)
@@ -88,10 +84,6 @@ class QMakeBuildSystem(BuildSystemBase):
             self.enterBuildDir()
 
         options = self.makeOptions(self.subinfo.options.make.args)
-        if self.__buildQtDoc:
-            if not options:
-                options = "all"
-            options += " docs"
         command = ' '.join([self.makeProgram, options])
         return utils.system(command)
 
@@ -99,10 +91,6 @@ class QMakeBuildSystem(BuildSystemBase):
         """implements the make step for Qt projects"""
         if not options:
             options = self.makeOptions(self.subinfo.options.install.args)
-        if self.__buildQtDoc:
-            if not options:
-                options = "install"
-            options += " install_qch_docs"
         if not BuildSystemBase.install(self):
             return False
         if not self.subinfo.options.useShadowBuild:
