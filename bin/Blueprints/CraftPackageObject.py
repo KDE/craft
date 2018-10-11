@@ -359,6 +359,9 @@ class CraftPackageObject(object):
     def __hash__(self):
         return self.path.__hash__()
 
+    def __repr__(self):
+        return f"CraftPackageObject({self.path})"
+
     def allChildren(self):
         recipes = []
         for p in self.children.values():

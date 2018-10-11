@@ -504,7 +504,7 @@ def globCopyDir(srcDir : str, destDir : str, pattern : [str], linkOnly=CraftCore
     for p in pattern:
         files.extend(glob.glob(os.path.join(srcDir, p), recursive=True))
     for f in files:
-        if not copyFile(f, os.path.join(destDir ,os.path.relpath(f, srcDir)), linkOnly=linkOnly):
+        if not copyFile(f, os.path.join(destDir, os.path.relpath(f, srcDir)), linkOnly=linkOnly):
             return False
     return True
 
