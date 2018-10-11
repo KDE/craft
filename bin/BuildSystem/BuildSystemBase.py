@@ -156,13 +156,16 @@ class BuildSystemBase(CraftBase):
                 return False
             with open(fileName, "rb") as f:
                 content = f.read()
+            dirty = False
             for oldPath in oldPaths:
-                oldPath = oldPath.encode()
-                if oldPath in content:
+                oldPathBinary = oldPath.encode()
+                if oldPath != newPath and oldPathBinary in content:
+                    dirty = True
                     CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                    content = content.replace(oldPath, newPath.encode())
-            with open(fileName, "wb") as f:
-                f.write(content)
+                    content = content.replace(oldPathBinary, newPath.encode())
+            if dirty:
+                with open(fileName, "wb") as f:
+                    f.write(content)
         return True
 
     def internalPostInstall(self):
@@ -175,7 +178,8 @@ class BuildSystemBase(CraftBase):
             oldPrefixes += [OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
         pattern = [re.compile("^.*(pc|pri|cmake)$")]
-        files = utils.filterDirectoryContent(self.installDir(), whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
+        files = utils.filterDirectoryContent(self.installDir(),
+                                             whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
                                              blacklist=lambda x, root: True)
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
