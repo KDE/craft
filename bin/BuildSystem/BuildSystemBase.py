@@ -81,8 +81,6 @@ class BuildSystemBase(CraftBase):
         defines = []
         if self.subinfo.options.make.ignoreErrors:
             defines.append("-i")
-        if args:
-            defines.append(args)
         if self.makeProgram == "ninja":
             if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
                 defines.append("-c")
@@ -93,6 +91,8 @@ class BuildSystemBase(CraftBase):
                 defines.append(f"-j{multiprocessing.cpu_count()}")
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
+        if args:
+            defines.append(args)
         return " ".join(defines)
 
     def configure(self):
