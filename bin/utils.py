@@ -27,6 +27,7 @@
 # SUCH DAMAGE.
 
 import configparser
+import contextlib
 import glob
 import inspect
 import io
@@ -38,6 +39,7 @@ import shutil
 import sys
 import subprocess
 import tempfile
+from pathlib import Path
 
 import Notifier.NotificationLoader
 from CraftCore import CraftCore
@@ -884,3 +886,18 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                 else:
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")
+
+@contextlib.contextmanager
+def makeWritable(targetPath: Path):
+    if isinstance(targetPath, str):
+        targetPath = Path(targetPath)
+    originalMode = targetPath.stat().st_mode
+    wasReadable = bool(originalMode & stat.S_IWUSR)
+    try:
+        # ensure it is writable
+        if not wasReadable:
+            targetPath.chmod(originalMode | stat.S_IWUSR)
+        yield targetPath
+    finally:
+        if not wasReadable:
+            targetPath.chmod(originalMode)

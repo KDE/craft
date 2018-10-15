@@ -127,18 +127,6 @@ class MacDMGPackager( CollectionPackagerBase ):
 
             return True
 
-
-@contextlib.contextmanager
-def makeWritable(targetPath: Path):
-    originalMode = targetPath.stat().st_mode
-    try:
-        # ensure it is writable
-        targetPath.chmod(originalMode | stat.S_IWUSR)
-        yield targetPath
-    finally:
-        targetPath.chmod(originalMode)
-
-
 class MacDylibBundler(object):
     """ Bundle all .dylib files that are not provided by the system with the .app """
     def __init__(self, appPath: str):
@@ -210,7 +198,7 @@ class MacDylibBundler(object):
     def _updateLibraryReference(fileToFix: Path, oldRef: str, newRef: str = None) -> bool:
         if newRef is None:
             newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
-        with makeWritable(fileToFix):
+        with utils.makeWritable(fileToFix):
             if not utils.system(["install_name_tool", "-change", oldRef, newRef, str(fileToFix)], logCommand=False):
                 CraftCore.log.error("%s: failed to update library dependency path from '%s' to '%s'",
                                     fileToFix, oldRef, newRef)
@@ -233,7 +221,7 @@ class MacDylibBundler(object):
         libraryId = cls._getLibraryNameId(fileToFix)
         if libraryId and os.path.isabs(libraryId):
             CraftCore.log.debug("Fixing library id name for %s", libraryId)
-            with makeWritable(fileToFix):
+            with utils.makeWritable(fileToFix):
                 if not utils.system(["install_name_tool", "-id", os.path.basename(libraryId), str(fileToFix)],
                                     logCommand=False):
                     CraftCore.log.error("%s: failed to fix absolute library id name for", fileToFix)

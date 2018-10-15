@@ -164,8 +164,9 @@ class BuildSystemBase(CraftBase):
                     CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
                     content = content.replace(oldPathBinary, newPath.encode())
             if dirty:
-                with open(fileName, "wb") as f:
-                    f.write(content)
+                with utils.makeWritable(fileName):
+                    with open(fileName, "wb") as f:
+                        f.write(content)
         return True
 
     def internalPostInstall(self):
@@ -177,7 +178,7 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isWindows:
             oldPrefixes += [OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        pattern = [re.compile("^.*(pc|pri|cmake)$")]
+        pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|ini|pl)$")]
         files = utils.filterDirectoryContent(self.installDir(),
                                              whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
                                              blacklist=lambda x, root: True)
