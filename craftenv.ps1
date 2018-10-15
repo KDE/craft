@@ -14,7 +14,7 @@ $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Defini
 
 function findPython([string] $name)
 {
-    if ($env:CRAFT_PYTHON) {
+    if ($env:CRAFT_PYTHON -and (Test-Path -path $env:CRAFT_PYTHON)) {
         return
     }
     if ($PSVersionTable.Platform -eq "Unix" -and $env:CRAFT_PYTHON -eq $null) {
@@ -26,14 +26,6 @@ function findPython([string] $name)
         }
     }
 }
-
-$py = (Get-Command py -ErrorAction SilentlyContinue).Name
-if ($py) {
-    findPython(&$py -3 -c "import sys; print(sys.executable)")
-}
-findPython("python3.6")
-findPython("python3")
-findPython("python")
 
 function readINI([string] $fileName)
 {
@@ -68,10 +60,22 @@ else
     break
 }
 
-if( -Not $env:CRAFT_PYTHON)
+if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"]["Python"]))
 {
-    $env:CRAFT_PYTHON=[IO.PATH]::COMBINE($settings["Paths"]["Python"], "python")
+    # prefer the python from the settings
+    $env:PATH = "{0}{1}$env:PATH" -f $settings["Paths"]["Python"], [IO.Path]::PathSeparator
 }
+else
+{
+    $py = (Get-Command py -ErrorAction SilentlyContinue).Name
+    if ($py) {
+        findPython(&$py -3 -c "import sys; print(sys.executable)")
+    }
+}
+
+findPython("python3.6")
+findPython("python3")
+findPython("python")
 }
 
 function Global:craft()
