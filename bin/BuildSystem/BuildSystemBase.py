@@ -176,7 +176,7 @@ class BuildSystemBase(CraftBase):
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         oldPrefixes = [self.subinfo.buildPrefix]
         if CraftCore.compiler.isWindows:
-            oldPrefixes += [OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
+            oldPrefixes += [self.subinfo.buildPrefix.replace("\\", "\\\\") ,OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
         pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|ini|pl)$")]
         files = utils.filterDirectoryContent(self.installDir(),
