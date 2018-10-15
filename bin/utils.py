@@ -892,12 +892,12 @@ def makeWritable(targetPath: Path):
     if isinstance(targetPath, str):
         targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
-    wasReadable = bool(originalMode & stat.S_IWUSR)
+    wasWritable = bool(originalMode & stat.S_IWUSR)
     try:
         # ensure it is writable
-        if not wasReadable:
+        if not wasWritable:
             targetPath.chmod(originalMode | stat.S_IWUSR)
         yield targetPath
     finally:
-        if not wasReadable:
+        if not wasWritable:
             targetPath.chmod(originalMode)
