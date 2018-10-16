@@ -145,12 +145,19 @@ class BuildSystemBase(CraftBase):
 
 
 
+    # TODO: port oldPath to regexp to match path with \ and /
     def patchInstallPrefix(self, files : [str], oldPaths : [str]=None, newPath : str=CraftCore.standardDirs.craftRoot()) -> bool:
         if isinstance(oldPaths, str):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
         for fileName in files:
+            _, ext = os.path.splitext(fileName)
+            if ext in {".bat"}:
+                newPath = OsUtils.toNativePath(newPath)
+            else:
+                newPath = OsUtils.toUnixPath(newPath)
+
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
                 return False
