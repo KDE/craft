@@ -18,9 +18,4 @@ class Package(BinaryPackageBase):
     def install(self):
         if not BinaryPackageBase.install(self):
             return False
-        return (utils.createShim(os.path.join(self.installDir(), "bin", "python3.exe"),
-                                sys.executable,
-                                useAbsolutePath=True) and
-                utils.createShim(os.path.join(self.installDir(), "bin", "python.exe"),
-                                sys.executable,
-                                useAbsolutePath=True))
+        return utils.createShim(os.path.join(self.installDir(), "bin", "python3.exe"), sys.executable, useAbsolutePath=True)
