@@ -66,7 +66,7 @@ def promptForChoice(title: str, choices : [], default : str=None):
         if choice == "":
             out = default if simpleMode else choices[default]
             break
-        elif choiceInt > 0 and choiceInt < len(choices):
+        elif choiceInt >= 0 and choiceInt < len(choices):
             out = list(choices.items())[choiceInt][0 if simpleMode else 1]
             break
         elif choice in choices:
