@@ -58,7 +58,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 if CraftCore.compiler.isClang():
                     compilerPart = "clang"
                 else:
-                    compilerPart = "g++"
+                    compilerPart = f"g++-{CraftCore.compiler.bits}"
                 self._platform = osPart + "-" + compilerPart
         return self._platform
 
