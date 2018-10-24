@@ -378,8 +378,13 @@ class SetupHelper(object):
                     self.addEnvVar("CC", "clang")
                     self.addEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            self.addEnvVar("CC", "gcc")
-            self.addEnvVar("CXX", "g++")
+            if not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+                self.addEnvVar("CC", "gcc -m32")
+                self.addEnvVar("CXX", "g++ -m32")
+                self.addEnvVar("AS", "gcc -c -m32")
+            else:
+                self.addEnvVar("CC", "gcc")
+                self.addEnvVar("CXX", "g++")
 
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
             self.addEnvVar("CLICOLOR_FORCE", "1")

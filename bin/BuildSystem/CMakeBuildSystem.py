@@ -42,13 +42,11 @@ class CMakeBuildSystem(BuildSystemBase):
         options += f" -DCMAKE_INSTALL_PREFIX=\"{craftRoot}\""
         options += f" -DCMAKE_PREFIX_PATH=\"{craftRoot}\""
 
-        if (not self.buildType() == None):
+        if self.buildType() is not None:
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
 
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
-            options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin",
-                                                                   "toolchains",
-                                                                   "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
+        #if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
+        #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
             options += " -DKDE_L10N_AUTO_TRANSLATIONS=ON"
