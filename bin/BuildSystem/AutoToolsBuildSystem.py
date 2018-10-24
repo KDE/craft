@@ -10,8 +10,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
-        if not OsUtils.isWin():
-            self.platform = ""# hope for auto detection
+        self.platform = ""# hope for auto detection
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+            self.platform = "--host=i686-pc-linux-gnu "
         else:
             if CraftCore.compiler.isX86():
                 self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
