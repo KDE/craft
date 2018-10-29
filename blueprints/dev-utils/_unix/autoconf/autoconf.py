@@ -24,6 +24,12 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 
     def postInstall(self):
+        for f in ["dev-utils/share/autoconf/autoconf/autoconf.m4f",
+                  "dev-utils/share/autoconf/autotest/autotest.m4f",
+                  "dev-utils/share/autoconf/m4sugar/m4sh.m4f",
+                  "dev-utils/share/autoconf/m4sugar/m4sugar.m4f"]:
+            if not utils.deleteFile(f):
+                return False
         return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/autoconf",
                                                                                    "dev-utils/bin/autoheader",
                                                                                    "dev-utils/bin/autom4te",
@@ -31,11 +37,7 @@ class Package( AutoToolsPackageBase ):
                                                                                    "dev-utils/bin/autoscan",
                                                                                    "dev-utils/bin/autoupdate",
                                                                                    "dev-utils/bin/ifnames",
-                                                                                   "dev-utils/share/autoconf/autoconf/autoconf.m4f",
-                                                                                   "dev-utils/share/autoconf/autom4te.cfg",
-                                                                                   "dev-utils/share/autoconf/autotest/autotest.m4f",
-                                                                                   "dev-utils/share/autoconf/m4sugar/m4sh.m4f",
-                                                                                   "dev-utils/share/autoconf/m4sugar/m4sugar.m4f"  ]],
+                                                                                   "dev-utils/share/autoconf/autom4te.cfg"]],
                                        self.subinfo.buildPrefix,
                                        CraftCore.standardDirs.craftRoot())
 
