@@ -13,7 +13,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.platform = ""# hope for auto detection
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
             self.platform = "--host=i686-pc-linux-gnu "
-        else:
+        elif CraftCore.compiler.isWindows:
             if CraftCore.compiler.isX86():
                 self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
             else:
