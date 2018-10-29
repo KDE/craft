@@ -151,13 +151,10 @@ class BuildSystemBase(CraftBase):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
+        newPathWin = OsUtils.toNativePath(newPath)
+        newPathUnix = OsUtils.toUnixPath(newPath)
+        newPath = newPathUnix
         for fileName in files:
-            _, ext = os.path.splitext(fileName)
-            if ext in {".bat"}:
-                newPath = OsUtils.toNativePath(newPath)
-            else:
-                newPath = OsUtils.toUnixPath(newPath)
-
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
                 return False
@@ -165,6 +162,17 @@ class BuildSystemBase(CraftBase):
                 content = f.read()
             dirty = False
             for oldPath in oldPaths:
+                assert os.path.isabs(oldPath)
+                if CraftCore.compiler.isWindows:
+                    _, ext = os.path.splitext(fileName)
+                    # keep unix path sep or use unix path sep for specific type
+                    # prl and pri files might use \\\\ as sep which can be replaced by a / but not by a single \\
+                    if oldPath[2] == "/" or ext in {".prl", ".pri"}:
+                        newPath = newPathUnix
+                    else:
+                        # keep windows sep
+                        newPath = newPathWin
+
                 oldPathBinary = oldPath.encode()
                 if oldPath != newPath and oldPathBinary in content:
                     dirty = True
@@ -185,7 +193,7 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isWindows:
             oldPrefixes += [self.subinfo.buildPrefix.replace("\\", "\\\\") ,OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|ini|pl)$")]
+        pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|cmd|ini|pl)$")]
         files = utils.filterDirectoryContent(self.installDir(),
                                              whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
                                              blacklist=lambda x, root: True)
