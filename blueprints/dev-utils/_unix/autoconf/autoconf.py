@@ -28,7 +28,7 @@ class Package( AutoToolsPackageBase ):
                   "dev-utils/share/autoconf/autotest/autotest.m4f",
                   "dev-utils/share/autoconf/m4sugar/m4sh.m4f",
                   "dev-utils/share/autoconf/m4sugar/m4sugar.m4f"]:
-            if not utils.deleteFile(f):
+            if not utils.deleteFile(os.path.join(self.imageDir(), f)):
                 return False
         return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/autoconf",
                                                                                    "dev-utils/bin/autoheader",
