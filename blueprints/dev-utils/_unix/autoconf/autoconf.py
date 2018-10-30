@@ -24,20 +24,22 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 
     def postInstall(self):
-        for f in ["dev-utils/share/autoconf/autoconf/autoconf.m4f",
+        frozen = ["dev-utils/share/autoconf/autoconf/autoconf.m4f",
                   "dev-utils/share/autoconf/autotest/autotest.m4f",
                   "dev-utils/share/autoconf/m4sugar/m4sh.m4f",
-                  "dev-utils/share/autoconf/m4sugar/m4sugar.m4f"]:
-            if not utils.deleteFile(os.path.join(self.imageDir(), f)):
-                return False
-        return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/autoconf",
-                                                                                   "dev-utils/bin/autoheader",
-                                                                                   "dev-utils/bin/autom4te",
-                                                                                   "dev-utils/bin/autoreconf",
-                                                                                   "dev-utils/bin/autoscan",
-                                                                                   "dev-utils/bin/autoupdate",
-                                                                                   "dev-utils/bin/ifnames",
-                                                                                   "dev-utils/share/autoconf/autom4te.cfg"]],
-                                       self.subinfo.buildPrefix,
-                                       CraftCore.standardDirs.craftRoot())
+                  "dev-utils/share/autoconf/m4sugar/m4sugar.m4f"]
+        for f in frozen:
+            fileName = os.path.join(self.imageDir(), f)
+            if os.path.exists(fileName):
+                if not utils.deleteFile(fileName):
+                    return False
+        hardCoded = [os.path.join(self.imageDir(), x) for x in ["dev-utils/bin/autoconf",
+                                                                "dev-utils/bin/autoheader",
+                                                                "dev-utils/bin/autom4te",
+                                                                "dev-utils/bin/autoreconf",
+                                                                "dev-utils/bin/autoscan",
+                                                                "dev-utils/bin/autoupdate",
+                                                                "dev-utils/bin/ifnames",
+                                                                "dev-utils/share/autoconf/autom4te.cfg"]]
+        return self.patchInstallPrefix(hardCoded, self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())
 
