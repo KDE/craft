@@ -100,15 +100,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
         command = self.makeProgram
         args = self.makeOptions(self.subinfo.options.install.args)
 
-        args += f" DESTDIR={self.shell.toNativePath(self.installDir())}"
-        if not self.subinfo.options.useShadowBuild:
-            if not self.shell.execute(self.sourceDir(), command, args):
-                print("while installing. cmd: %s %s" % (command, args))
-                return False
-        else:
-            if not self.shell.execute(self.buildDir(), command, args):
-                print("while installing. cmd: %s %s" % (command, args))
-                return False
+        destDir = self.shell.toNativePath(self.installDir())
+        args += f" DESTDIR={destDir}"
+        with utils.ScopedEnv({"DESTDIR" : destDir}):
+            if not self.subinfo.options.useShadowBuild:
+                if not self.shell.execute(self.sourceDir(), command, args):
+                    print("while installing. cmd: %s %s" % (command, args))
+                    return False
+            else:
+                if not self.shell.execute(self.buildDir(), command, args):
+                    print("while installing. cmd: %s %s" % (command, args))
+                    return False
 
 
         # la files aren't relocatable and until now we lived good without them
