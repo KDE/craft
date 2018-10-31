@@ -409,6 +409,9 @@ class SetupHelper(object):
                 continue
             if key.startswith("BASH_FUNC_"):
                 continue
+            # weird protected env vars
+            if key in {"PROFILEREAD"}:
+                continue
             CraftCore.log.info(f"{key}={val}")
 
     @property
