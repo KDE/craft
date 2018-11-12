@@ -126,6 +126,7 @@ AutoCloseWindow false
 Section
   !insertmacro EndProcessWithDialog
   ExecWait '"$MultiUser.InstDir\${uninstaller}" /S _?=$MultiUser.InstDir'
+  @{preInstallHook}
   WriteRegStr SHCTX "${regkey}" "Install_Dir" "$INSTDIR"
   WriteRegStr SHCTX "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}" "$MultiUser.InstallMode"
   ; write uninstall strings

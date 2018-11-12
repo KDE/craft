@@ -81,6 +81,8 @@ You can add your own defines into self.defines as well.
         defines.setdefault("registy_hook", "")
         defines.setdefault("sections", "")
         defines.setdefault("sections_page", "")
+        defines.setdefault("preInstallHook", "")
+
 
         if not self.scriptname:
             self.scriptname = os.path.join(os.path.dirname(__file__), "Nsis", "NullsoftInstaller.nsi")
