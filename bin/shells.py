@@ -117,9 +117,9 @@ class BashShell(object):
                 os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
 
 
-            self._environment["CFLAGS"] = cflags
-            self._environment["CXXFLAGS"] = cflags
-            self._environment["LDFLAGS"] = ldflags
+            self._environment["CFLAGS"] = os.environ.get("CFLAGS", "") + cflags
+            self._environment["CXXFLAGS"] = os.environ.get("CXXFLAGS", "") + cflags
+            self._environment["LDFLAGS"] = os.environ.get("LDFLAGS", "") + ldflags
         return self._environment
 
     @property

@@ -268,7 +268,7 @@ class SetupHelper(object):
 
     def _setupUnix(self):
         if CraftCore.compiler.isLinux:
-            self.prependEnvVar("LDFLAGS", "-Wl,-rpath,\\$ORIGIN/../lib")
+            self.prependEnvVar("LDFLAGS", "-Wl,-rpath,\\$ORIGIN/../lib", sep=" ")
             self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                                    os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
 
