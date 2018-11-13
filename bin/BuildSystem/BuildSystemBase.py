@@ -82,8 +82,6 @@ class BuildSystemBase(CraftBase):
         if self.subinfo.options.make.ignoreErrors:
             defines.append("-i")
         if self.makeProgram == "ninja":
-            if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-                defines.append("-c")
             if CraftCore.debug.verbose() > 0:
                 defines.append("-v")
         else:
