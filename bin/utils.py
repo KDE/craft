@@ -672,13 +672,16 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
 
     createDir(os.path.dirname(shim))
     if not OsUtils.isWin():
-        command = (f"#!/bin/bash\n"
-                   "parent_path=$(dirname \"${BASH_SOURCE[0]}\")\n"
-                  f"${{parent_path}}/{target} {args or ''} \"$@\"\n")
+        command = [f"#!/bin/bash"]
+        if not useAbsolutePath:
+            command += ["parent_path=$(dirname \"${BASH_SOURCE[0]}\")",
+                        f"${{parent_path}}/{target} {args or ''} \"$@\""]
+        else:
+            command += [f"{target} {args or ''} \"$@\""]
         CraftCore.log.info(f"Creating {shim}")
         CraftCore.log.debug(command)
         with open(shim, "wt+") as bash:
-            bash.write(command)
+            bash.write("\n".join(command))
         os.chmod(shim, os.stat(shim).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         return True
     else:
