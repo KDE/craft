@@ -68,6 +68,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def killProcess(name : str="*", prefix : str=None) -> bool:
         if not prefix:
             prefix = CraftCore.standardDirs.craftRoot()
+        powershell = None
         if platform.architecture()[0] == "32bit":
             # try to find the x64 powershell to be able to kill x64 processes too
             powershell = CraftCore.cache.findApplication("powershell", os.path.join(os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0" ))
