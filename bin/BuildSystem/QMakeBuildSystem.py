@@ -22,7 +22,7 @@ class QMakeBuildSystem(BuildSystemBase):
     @property
     def qtVer(self):
         if not self._qtVer:
-            self._qtVer = CraftVersion(self.__qtBase.subinfo.buildTarget)
+            self._qtVer = CraftVersion(self.__qtBase.subinfo.buildTarget if self.__qtBase.subinfo.buildTarget != "dev" else "5.9999")
         return self._qtVer
 
     @property
