@@ -391,8 +391,8 @@ class SetupHelper(object):
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
             if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
-                self.prependEnvVar("CFLAGS", "-fcolor-diagnostics", sep=" ")
-                self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics", sep=" ")
+                self.prependEnvVar("CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
+                self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
             elif CraftCore.compiler.isGCCLike():
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
