@@ -109,7 +109,10 @@ class BashShell(object):
                     self._environment["FC"] = "no"
 
                     ldflags += ""
-                    cflags += " -GR -W3 -EHsc -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"  # dynamic and exceptions enabled
+                    cflags += (" -GR -W3 -EHsc"# dynamic and exceptions enabled
+                               " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"
+                               " -wd4005"# don't warn on redefine
+                               )
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
