@@ -3,7 +3,7 @@
 """
     provides shells
 """
-
+from Blueprints.CraftVersion import CraftVersion
 from CraftStandardDirs import CraftStandardDirs
 from CraftOS.OsDetection import OsDetection
 from options import *
@@ -87,15 +87,20 @@ class BashShell(object):
                     self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
-                    self._environment["LIB"] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
-                    self._environment["INCLUDE"] = f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot()}\\include"
 
+                    automake = []
+                    for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
+                        if d.name.startswith("automake"):
+                            automake += [(d.name.rsplit("-")[1], os.path.realpath(d.path))]
+                    automake.sort(key=lambda x: CraftVersion(x[0]))
+                    latestAutomake = automake[-1][1]
                     if False:
                         cl = "clang-cl"
                     else:
                         cl = "cl"
-                    self._environment["LD"] = "link -NOLOGO"
-                    self._environment["CC"] = f"{cl} -nologo"
+                    clWrapper = self.toNativePath(os.path.join(latestAutomake, "compile"))
+                    self._environment["LD"] = "link -nologo"
+                    self._environment["CC"] = f"{clWrapper} {cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
                     self._environment["CPP"] = f"{cl} -nologo -EP"
                     self._environment["CXXCPP"] = self._environment["CPP"]
@@ -107,10 +112,10 @@ class BashShell(object):
                     self._environment["F77"] = "no"
                     self._environment["FC"] = "no"
 
-                    ldflags += ""
-                    cflags += (" -GR -W3 -EHsc"# dynamic and exceptions enabled
+                    cflags += (" -GR -W3 -EHsc"  # dynamic and exceptions enabled
                                " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"
-                               " -wd4005"# don't warn on redefine
+                               " -wd4005"  # don't warn on redefine
+                               " -wd4996"  # The POSIX name for this item is deprecated.
                                )
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
