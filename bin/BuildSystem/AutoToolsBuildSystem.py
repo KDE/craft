@@ -93,9 +93,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         return self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix()))
 
-    def runTest(self):
+    def unittest(self):
         """running unittests"""
-        return True
+        return self.shell.execute(self.buildDir(), self.makeProgram, "check")
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
