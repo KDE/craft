@@ -115,6 +115,8 @@ class CraftBase(object):
         return CraftShortPath(work).path(self.subinfo.options.needsShortPath)
 
     def buildDir(self):
+        if not self.subinfo.options.useShadowBuild:
+            return self.sourceDir()
         CraftCore.log.debug("CraftBase.buildDir() called")
         builddir = os.path.join(self.workDir(), self.workDirPattern())
         CraftCore.log.debug(f"package builddir is: {builddir}")

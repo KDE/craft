@@ -21,10 +21,7 @@ class MakeFileBuildSystem(BuildSystemBase):
 
     def make(self):
         """implements the make step for Makefile projects"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
 
@@ -33,17 +30,10 @@ class MakeFileBuildSystem(BuildSystemBase):
         if not BuildSystemBase.install(self):
             return False
 
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
         return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.install.args), f"DESTDIR={self.installDir()}"]))
 
     def unittest(self):
         """running make tests"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
-
+        self.enterBuildDir()
         return utils.system([self.makeProgram, "test"])

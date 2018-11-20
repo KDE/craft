@@ -64,10 +64,7 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def configure(self, configureDefines=""):
         """inplements configure step for Qt projects"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
@@ -78,10 +75,7 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def make(self):
         """implements the make step for Qt projects"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         options = self.makeOptions(self.subinfo.options.make.args)
         command = ' '.join([self.makeProgram, options])
@@ -93,11 +87,7 @@ class QMakeBuildSystem(BuildSystemBase):
             options = self.makeOptions(self.subinfo.options.install.args)
         if not BuildSystemBase.install(self):
             return False
-        if not self.subinfo.options.useShadowBuild:
-            cwd = self.sourceDir()
-        else:
-            cwd = self.buildDir()
-        return utils.system(f"{self.makeProgram} {options}", cwd=cwd)
+        return utils.system(f"{self.makeProgram} {options}", cwd=self.buildDir())
 
     def runTest(self):
         """running qmake based unittests"""

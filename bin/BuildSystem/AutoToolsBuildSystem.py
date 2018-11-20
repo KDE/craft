@@ -35,10 +35,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def configure(self):
         """configure the target"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         configure = os.path.join(self.sourceDir(), self.subinfo.options.configure.projectFile or "configure")
         self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + self.shell.environment["CFLAGS"]
@@ -59,43 +56,26 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 includesArgs = "".join(includes)
             self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + includesArgs)
 
-        if not self.subinfo.options.useShadowBuild:
-            ret = self.shell.execute(self.sourceDir(), configure, self.configureOptions(self))
-        else:
-            ret = self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
-        return ret
+        return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
+
 
     def make(self, dummyBuildType=None):
         """Using the *make program"""
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         command = self.makeProgram
         args = self.makeOptions(self.subinfo.options.make.args)
 
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
-            if not self.shell.execute(self.sourceDir(), self.makeProgram, "clean"):
-                print("while Make'ing. cmd: %s clean" % self.makeProgram)
+            if not self.shell.execute(self.buildDir(), self.makeProgram, "clean"):
                 return False
-            if not self.shell.execute(self.sourceDir(), command, args):
-                print("while Make'ing. cmd: %s" % command)
-                return False
-        else:
-            if not self.shell.execute(self.buildDir(), command, args):
-                print("while Make'ing. cmd: %s" % command)
-                return False
-        return True
+        return self.shell.execute(self.buildDir(), command, args)
 
     def install(self):
         """Using *make install"""
         self.cleanImage()
-        if not self.subinfo.options.useShadowBuild:
-            self.enterSourceDir()
-        else:
-            self.enterBuildDir()
+        self.enterBuildDir()
 
         command = self.makeProgram
         args = self.makeOptions(self.subinfo.options.install.args)
@@ -103,15 +83,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         destDir = self.shell.toNativePath(self.installDir())
         args += f" DESTDIR={destDir}"
         with utils.ScopedEnv({"DESTDIR" : destDir}):
-            if not self.subinfo.options.useShadowBuild:
-                if not self.shell.execute(self.sourceDir(), command, args):
-                    print("while installing. cmd: %s %s" % (command, args))
-                    return False
-            else:
-                if not self.shell.execute(self.buildDir(), command, args):
-                    print("while installing. cmd: %s %s" % (command, args))
-                    return False
-
+            return self.shell.execute(self.buildDir(), command, args)
 
         # la files aren't relocatable and until now we lived good without them
         laFiles = glob.glob(os.path.join(self.imageDir(), "**/*.la"), recursive=True)
