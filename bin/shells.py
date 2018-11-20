@@ -100,7 +100,6 @@ class BashShell(object):
                     self._environment["CPP"] = f"{cl} -nologo -EP"
                     self._environment["CXXCPP"] = self._environment["CPP"]
                     self._environment["NM"] = "dumpbin -symbols"
-                    self._environment["AR"] = "lib"
                     self._environment["WINDRES"] = "rc"
                     # self.environment[ "RC","rc-windres"
                     self._environment["STRIP"] = ":"
