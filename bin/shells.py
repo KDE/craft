@@ -105,8 +105,8 @@ class BashShell(object):
                     self._environment["CPP"] = f"{cl} -nologo -EP"
                     self._environment["CXXCPP"] = self._environment["CPP"]
                     self._environment["NM"] = "dumpbin -symbols"
-                    self._environment["WINDRES"] = "rc"
-                    # self.environment[ "RC","rc-windres"
+                    self._environment["RC"] = f"windres -O COFF --target={'pe-i386' if CraftCore.compiler.isX86() else 'pe-x86-64'} --preprocessor='cl -nologo -EP -DRC_INVOKED -DWINAPI_FAMILY=0'"
+
                     self._environment["STRIP"] = ":"
                     self._environment["RANLIB"] = ":"
                     self._environment["F77"] = "no"
