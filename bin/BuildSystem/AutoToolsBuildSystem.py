@@ -83,7 +83,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         destDir = self.shell.toNativePath(self.installDir())
         args += f" DESTDIR={destDir}"
         with utils.ScopedEnv({"DESTDIR" : destDir}):
-            return self.shell.execute(self.buildDir(), command, args)
+            if not self.shell.execute(self.buildDir(), command, args):
+                return False
 
         # la files aren't relocatable and until now we lived good without them
         laFiles = glob.glob(os.path.join(self.imageDir(), "**/*.la"), recursive=True)
