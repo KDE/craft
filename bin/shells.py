@@ -84,7 +84,7 @@ class BashShell(object):
                 if CraftCore.compiler.isMinGW():
                     self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
                 elif CraftCore.compiler.isMSVC():
-                    self._environment["MSYSTEM"] = f"CYGWIN{CraftCore.compiler.bits}_CRAFT"
+                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
                     self._environment["LIB"] = f"{os.environ['LIB']};{CraftStandardDirs.craftRoot()}\\lib"
