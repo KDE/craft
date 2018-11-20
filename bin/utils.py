@@ -617,7 +617,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
         cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", tmpPatch]
         result = system(cmd)
     if not result:
-        CraftCore.log.warning("applying {f} failed!")
+        CraftCore.log.warning(f"applying {f} failed!")
     return result
 
 def embedManifest(executable, manifest):
