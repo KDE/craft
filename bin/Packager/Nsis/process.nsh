@@ -39,6 +39,8 @@ Var ProcessList
 
 
 !macro EndProcessWithDialog
+IfFileExists $INSTDIR retry_kil
+Goto end_kill
 retry_kil:
     !insertmacro ListProcess "$INSTDIR"
     ${If} $ProcessList != ""
@@ -48,4 +50,5 @@ retry_kil:
         abort_kill:
             Quit
     ${EndIf}
+end_kill:
 !macroend
