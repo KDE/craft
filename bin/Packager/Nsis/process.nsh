@@ -39,14 +39,14 @@ Var ProcessList
 
 
 !macro EndProcessWithDialog
-IfFileExists $INSTDIR retry_kil
+IfFileExists $INSTDIR retry_kill
 Goto end_kill
-retry_kil:
+retry_kill:
     !insertmacro ListProcess "$INSTDIR"
     ${If} $ProcessList != ""
-        MessageBox MB_YESNOCANCEL "You have $\n$ProcessList running in $INSTDIR.$\n Select $\"Yes$\" to kill the process(es), $\"No$\" to retry or $\"Cancel$\" to quit." /SD IDYES IDNO retry_kil IDCANCEL abort_kill
+        MessageBox MB_YESNOCANCEL "You have $\n$ProcessList running in $INSTDIR.$\n Select $\"Yes$\" to kill the process(es), $\"No$\" to retry or $\"Cancel$\" to quit." /SD IDYES IDNO retry_kill IDCANCEL abort_kill
         !insertmacro StopProcess "$INSTDIR"
-        Goto retry_kil
+        Goto retry_kill
         abort_kill:
             Quit
     ${EndIf}
