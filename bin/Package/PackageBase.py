@@ -68,10 +68,11 @@ class PackageBase(CraftBase):
 
     def cleanBuild(self) -> bool:
         """cleanup currently used build dir"""
+        if not self.subinfo.options.useShadowBuild:
+            return True
         if os.path.exists(self.buildDir()):
             utils.cleanDirectory(self.buildDir())
             CraftCore.log.debug("cleaning build dir: %s" % self.buildDir())
-
         return True
 
     def strip(self, fileName):
