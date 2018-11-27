@@ -240,18 +240,17 @@ class BuildSystemBase(CraftBase):
 
             regexp = re.compile('{.*} (.*)')
             for f in files:
-                expectedPdb = os.path.splitext(f)[0] + '.pdb'
-                if not os.path.exists(expectedPdb):
+                if not os.path.exists(os.path.splitext(f)[0] + '.pdb'):
                     peparserOutput = CraftCore.cache.getCommandOutput(f"peparser", f"--pdb {f}")[1].strip()
                     pdbs = regexp.findall(peparserOutput)
+
+                    if not os.path.basename(f) == "icudt58.dll":
+                        assert len(pdbs) > 0, f'No pdb file available: {f}'
+
                     for pdb in pdbs:
                         pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
 
-                        # If expectedPdb != pdbDestination, it means that name of dll and pdb are different
-                        # and we might run into issues locating the corresponding files
-                        assert expectedPdb == pdbDestination
-
-                        CraftCore.log.info(f'Install pdb: {pdbDestination}')
+                        CraftCore.log.info(f'Install pdb: {pdbDestination} for {os.path.basename(f)}')
                         utils.copyFile(pdb, pdbDestination, linkOnly=False)
 
         return True
