@@ -4,6 +4,7 @@
 # Packager base
 
 import io
+import re
 
 from CraftBase import *
 
@@ -50,7 +51,7 @@ class PackagerBase(CraftBase):
         if self.isDebugSymbolDumpingEnabled:
             for root, dirs, files in os.walk(self.imageDir()):
                 for file in files:
-                    if self.isBinary(file):
+                    if utils.isBinary(file):
                         self._dumpSymbols(file)
 
         return True
@@ -72,7 +73,7 @@ class PackagerBase(CraftBase):
             outputPath = os.path.join(self.symbolsDir(), moduleLine.group(2),
                                  moduleLine.group(1))
 
-            utils.createDirectory(outputPath)
+            utils.createDir(outputPath)
 
             symbolFileBasename = moduleLine.group(2).replace(".pdb", "")
             symbolFile = os.path.join(outputPath, "%s.sym" % symbolFileBasename)
