@@ -239,12 +239,13 @@ class BuildSystemBase(CraftBase):
                                                  lambda x, root: True)
 
             regexp = re.compile('{.*} (.*)')
+            exclude = re.compile(r'icudt[0-9]*.dll')
             for f in files:
                 if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
                     peparserOutput = CraftCore.cache.getCommandOutput("peparser", f"--pdb {f}")[1].strip()
                     pdbs = regexp.findall(peparserOutput)
 
-                    if not os.path.basename(f) == "icudt58.dll":
+                    if not exclude.match(os.path.basename(f)):
                         assert len(pdbs) > 0, f"No pdb file available: {f}"
 
                     for pdb in pdbs:
