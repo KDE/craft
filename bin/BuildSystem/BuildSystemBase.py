@@ -234,7 +234,7 @@ class BuildSystemBase(CraftBase):
                             return False
 
         # Install pdb files on MSVC if they are not found next to the dll
-        if CraftCore.compiler.isMSVC and (self.buildType() == "RelWithDebInfo" or self.buildType() == "Debug"):
+        if CraftCore.compiler.isMSVC and (self.buildType() == "RelWithDebInfo" or self.buildType() == "Debug") and  CraftCore.cache.findApplication("peparser"):
             files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path),
                                                  lambda x, root: True)
 
