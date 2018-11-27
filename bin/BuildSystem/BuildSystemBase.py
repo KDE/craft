@@ -232,4 +232,26 @@ class BuildSystemBase(CraftBase):
                         newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
                         if not utils.system(["install_name_tool", "-change", dep, newDep, f]):
                             return False
+
+        # Install pdb files on MSVC if they are not found next to the dll
+        if CraftCore.compiler.isMSVC and (self.buildType() == "RelWithDebInfo" or self.buildType() == "Debug"):
+            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path),
+                                                 lambda x, root: True)
+
+            regexp = re.compile('{.*} (.*)')
+            for f in files:
+                expectedPdb = os.path.splitext(f)[0] + '.pdb'
+                if not os.path.exists(expectedPdb):
+                    peparserOutput = CraftCore.cache.getCommandOutput(f"peparser", f"--pdb {f}")[1].strip()
+                    pdbs = regexp.findall(peparserOutput)
+                    for pdb in pdbs:
+                        pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
+
+                        # If expectedPdb != pdbDestination, it means that name of dll and pdb are different
+                        # and we might run into issues locating the corresponding files
+                        assert expectedPdb == pdbDestination
+
+                        CraftCore.log.info(f'Install pdb: {pdbDestination}')
+                        utils.copyFile(pdb, pdbDestination, linkOnly=False)
+
         return True
