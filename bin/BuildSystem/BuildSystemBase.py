@@ -245,8 +245,8 @@ class BuildSystemBase(CraftBase):
                     peparserOutput = CraftCore.cache.getCommandOutput("peparser", f"--pdb {f}")[1].strip()
                     pdbs = regexp.findall(peparserOutput)
 
-                    if not exclude.match(os.path.basename(f)):
-                        assert len(pdbs) > 0, f"No pdb file available: {f}"
+                    if not pdbs and not exclude.match(os.path.basename(f)):
+                        CraftCore.log.warning(f"No pdb file available: {f}")
 
                     for pdb in pdbs:
                         pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
