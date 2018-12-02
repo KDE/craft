@@ -4,11 +4,6 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["3.8.0", "3.8.1", "3.9.1", "3.10.2", "3.10.3", "3.11.0", "3.11.1", "3.11.3", "3.12.0", "3.12.2", "3.13.0"]:
-            # The 3.13.0 binaries are broken and contain unresolved symbols, so skip it for now
-            # This only affects macOS
-            if CraftCore.compiler.isMacOS and ver == "3.13.0":
-                continue
-
             majorMinorStr = '.'.join(ver.split('.')[0:2])
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
@@ -34,7 +29,10 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.cmake.org/"
 
         self.defaultTarget = "3.13.0"
-
+        # The 3.13.0 binaries are broken and contain unresolved symbols, so skip it for now
+        # This only affects macOS
+        if CraftCore.compiler.isMacOS:
+            self.defaultTarget = "3.12.2"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/ninja"] = None
