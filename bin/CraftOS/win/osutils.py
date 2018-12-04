@@ -27,7 +27,16 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         CraftCore.log.debug("deleting directory %s" % path)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
-        return ctypes.windll.kernel32.RemoveDirectoryW(path) != 0
+        with os.scandir(path) as scan:
+            for f in scan:
+                if f.is_dir():
+                    if not OsUtils.rmDir(f.path, force):
+                        return False
+                else:
+                    if not OsUtils.rm(f.path, force):
+                        return False
+        os. rmdir(path)
+        return True
 
     @staticmethod
     def isLink(path):
@@ -40,6 +49,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def removeReadOnlyAttribute(path):
+        CraftCore.log.debug(f"Remove readonly flag of {path}")
         attributes = OsUtils.getFileAttributes(path)
         return ctypes.windll.kernel32.SetFileAttributesW(path,
                                                          attributes & ~ FileAttributes.FILE_ATTRIBUTE_READONLY) != 0
