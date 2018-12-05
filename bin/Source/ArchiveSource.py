@@ -121,7 +121,7 @@ class ArchiveSource(SourceBase):
                 else:
                   CraftCore.log.debug("no digestUrls present")
             if downloadRetriesLeft and not self.__checkFilesPresent(filenames):
-                return self.fetch(downloadRetriesLeft=downloadRetriesLeft - 1)
+                return ArchiveSource.fetch(self, downloadRetriesLeft=downloadRetriesLeft - 1)
         return True
 
     def checkDigest(self, downloadRetriesLeft=3):
