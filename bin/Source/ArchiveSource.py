@@ -87,7 +87,7 @@ class ArchiveSource(SourceBase):
                     return False
         return True
 
-    def fetch(self):
+    def fetch(self, downloadRetriesLeft=3):
         """fetch normal tarballs"""
         CraftCore.log.debug("ArchiveSource.fetch called")
 
@@ -120,6 +120,8 @@ class ArchiveSource(SourceBase):
                                 return False
                 else:
                   CraftCore.log.debug("no digestUrls present")
+            if downloadRetriesLeft and not self.__checkFilesPresent(filenames):
+                return self.fetch(downloadRetriesLeft=downloadRetriesLeft - 1)
         return True
 
     def checkDigest(self, downloadRetriesLeft=3):
