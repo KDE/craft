@@ -17,6 +17,10 @@ class MultiSource(SourceBase):
         CraftCore.debug.trace("MultiSource __init__")
 
         self.__sourceClass = None
+        if not self.subinfo.hasSvnTarget() and not self.subinfo.hasTarget():
+            if "master" in self.subinfo.svnTargets:
+                self.subinfo.svnTargets[self.buildTarget] = "{0}|{1}".format(self.subinfo.svnTargets["master"], self.buildTarget)
+
         if self.subinfo.hasSvnTarget():
             url = self.subinfo.svnTarget()
             sourceType = utils.getVCSType(url)

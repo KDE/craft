@@ -88,10 +88,14 @@ class infoclass(object):
                                   f"Please use CraftOptions.ini\n"
                                   f"[{self.parent.package.path}]\n"
                                   f"version = {target}")
-        if target in self.targets or target in self.svnTargets:
-            return target
         if target:
-            CraftCore.log.warning(f"You defined an invalid target for {self.parent.package.path}")
+            if target in self.targets or target in self.svnTargets:
+                return target
+            elif "master" in self.svnTargets:
+                CraftCore.log.warning(f"You defined an invalid target for {self.parent.package.path}, assume a branch name")
+                return target
+            else:
+                CraftCore.log.warning(f"You defined an invalid target for {self.parent.package.path}")
         return self._defaultTarget
 
 

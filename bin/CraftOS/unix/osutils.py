@@ -23,7 +23,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         try:
             shutil.rmtree(path)
             return True
-        except OSError:
+        except (OSError, PermissionError):
             return OsUtils.rm(path, force)
         return False
 

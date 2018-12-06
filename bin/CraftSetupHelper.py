@@ -212,7 +212,7 @@ class SetupHelper(object):
     @staticmethod
     def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
         if native:
-            architectures = {"x86": "x86", "x64": "amd64", "x64_cross": "x86_amd64"}
+            architectures = {"x86": "amd64_x86", "x64": "amd64"}
         else:
             architectures = {"x86": "x86", "x64": "x86_amd64"}
 

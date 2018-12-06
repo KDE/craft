@@ -31,7 +31,9 @@ class MakeFileBuildSystem(BuildSystemBase):
             return False
 
         self.enterBuildDir()
-        return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.install.args), f"DESTDIR={self.installDir()}"]))
+        destDir = self.installDir()
+        with utils.ScopedEnv({"DESTDIR" : destDir}):
+            return utils.system(" ".join([self.makeProgram, self.makeOptions(self.subinfo.options.install.args), f"DESTDIR={destDir}"]))
 
     def unittest(self):
         """running make tests"""

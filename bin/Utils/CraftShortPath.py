@@ -11,7 +11,7 @@ class CraftShortPath(object):
     _useShortpaths = OsUtils.isWin() and CraftCore.settings.getboolean("ShortPath", "EnableJunctions", False)
     _shortPaths = {}
 
-    def __init__(self, path, createShortPath=None) -> None:
+    def __init__(self, path, createShortPath=None, keepName=False) -> None:
         self._longPath = path
         self._shortPath = None
         if not createShortPath:
