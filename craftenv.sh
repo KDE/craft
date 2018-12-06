@@ -10,7 +10,9 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
-if command -v python3.6 >/dev/null; then
+if command -v python3.7 >/dev/null; then
+    CRAFT_PYTHON_BIN=$(command -v python3.7)
+elif command -v python3.6 >/dev/null; then
     CRAFT_PYTHON_BIN=$(command -v python3.6)
 else
     # could not find python 3.6, try python3

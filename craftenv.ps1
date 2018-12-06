@@ -73,6 +73,7 @@ else
     }
 }
 
+findPython("python3.7")
 findPython("python3.6")
 findPython("python3")
 findPython("python")
