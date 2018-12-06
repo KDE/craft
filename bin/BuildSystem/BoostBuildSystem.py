@@ -17,7 +17,6 @@ class BoostBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "boost")
         self.subinfo.options.package.packSources = False
-        self.subinfo.options.needsShortPath = True
 
     def craftUserConfig(self):
         craftUserConfigPath = os.path.join(CraftStandardDirs.craftRoot(), "etc", "craft-boost-config.jam")

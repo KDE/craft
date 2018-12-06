@@ -418,13 +418,6 @@ class Options(object):
         ## add the date to the target
         self.dailyUpdate = False
 
-        ## has an issue with a too long path
-        #enable by default for the ci
-        # only applies for windows and if
-        # [ShortPath]
-        # EnableJunctions  = True
-        self.needsShortPath = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-
         ## there is a special option available already
         self.buildTools = False
         self.useShadowBuild = True
