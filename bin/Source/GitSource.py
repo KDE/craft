@@ -202,7 +202,8 @@ class GitSource(VersionSystemSourceBase):
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
 
         CraftCore.log.debug("using sourcedir: %s" % sourcedir)
-        return sourcedir
+        parent, child = os.path.split(sourcedir)
+        return os.path.join(CraftShortPath(parent).shortPath, child)
 
     def getUrls(self):
         """print the url where to clone from and the branch/tag/hash"""
