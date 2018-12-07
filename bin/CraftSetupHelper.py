@@ -271,6 +271,8 @@ class SetupHelper(object):
             self.prependEnvVar("LDFLAGS", "-Wl,-rpath,'$ORIGIN/../lib'", sep=" ")
             self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                                    os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
+        self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDirs.craftRoot(), "share", "bison"))
+        self.prependEnvVar("M4", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "m4"))
 
     def _setupWin(self):
         if not "HOME" in os.environ:
@@ -350,10 +352,6 @@ class SetupHelper(object):
                                               ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
-
-        if not OsUtils.isWin():
-            self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftStandardDirs.craftRoot(), "share", "bison"))
-            self.prependEnvVar("M4", os.path.join(CraftStandardDirs.craftRoot(), "dev-utils", "bin", "m4"))
 
         self.setXDG()
 
