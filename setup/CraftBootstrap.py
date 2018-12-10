@@ -20,10 +20,10 @@ class CraftBootstrap(object):
         self.dryRun = dryRun
 
         if not dryRun:
-            with open(os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt+") as ini:
+            with open(os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt", encoding="UTF-8") as ini:
                 self.settings = ini.read().splitlines()
         else:
-            with open(dryRun, "rt+") as ini:
+            with open(dryRun, "rt", encoding="UTF-8") as ini:
                 self.settings = ini.read().splitlines()
 
 
@@ -91,24 +91,6 @@ class CraftBootstrap(object):
                     return choices[choiceInt][1]
                 else:
                     return choices[choiceInt]
-
-    @staticmethod
-    def promptShortPath():
-        drivePatern = re.compile("^[A-Z](:|:\\\\)?$", re.IGNORECASE)
-
-        def promptDriveLetter(purpose, default):
-            while (True):
-                print(f"Enter drive for {purpose}")
-                drive = input(f"[Possibilities A-Z] (Default is {default}):")
-                if drive == "":
-                    return default
-                if drivePatern.match(drive):
-                    if len(drive) == 1:
-                        return drive + ":"
-                    return drive[:2]
-
-        return {"RootDrive": promptDriveLetter("the build root", "R:"),
-                "GitDrive": promptDriveLetter("the location where the git checkouts are located", "Q:")}
 
     def setSettignsValue(self, section, key, value):
         reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
@@ -221,11 +203,6 @@ def setUp(args):
     print("Welcome to the Craft setup wizard!")
 
     abi = getABI()
-    if not args.no_short_path and CraftBootstrap.isWin():
-        print("Windows has problems with too long commands.")
-        print("For that reason we mount Craft directories to drive letters.")
-        print("It just maps the folder to a drive letter you will assign.")
-        shortPath = CraftBootstrap.promptShortPath()
 
     installShortCut = False
     if CraftBootstrap.isWin():
@@ -249,14 +226,7 @@ def setUp(args):
 
     if CraftBootstrap.isWin():
         boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
-        if not args.no_short_path:
-            boot.setSettignsValue("ShortPath", "Enabled", "True")
-            for key, value in shortPath.items():
-                boot.setSettignsValue("ShortPath", key, value)
-        else:
-            boot.setSettignsValue("ShortPath", "Enabled", "False")
     else:
-        boot.setSettignsValue("ShortPath", "Enabled", "False")
         boot.setSettignsValue("Compile", "MakeProgram", "make")
 
     boot.writeSettings()
@@ -287,7 +257,6 @@ if __name__ == "__main__":
     parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
     parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
-    parser.add_argument("--no-short-path", action="store_true", default="False", help="Skip short path setup")
     parser.add_argument("--version", action="version", version="%(prog)s master")
 
     args = parser.parse_args()
