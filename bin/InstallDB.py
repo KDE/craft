@@ -3,7 +3,7 @@ import sqlite3
 from CraftConfig import *
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
+from CraftStandardDirs import CraftStandardDirs
 
 
 class InstallPackage(object):
@@ -122,8 +122,7 @@ class InstallDB(object):
 
     def __init__(self, filename=None):
         if filename == None:
-            with TemporaryUseShortpath(False):
-                filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), 'install.db')
+            filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), 'install.db')
 
         self.dbfilename = filename
         self._prepareDatabase()
@@ -244,23 +243,22 @@ class InstallDB(object):
 
     def _prepareDatabase(self):
         """ prepare a new database and add the required table layout """
-        with TemporaryUseShortpath(False):
-            if not os.path.exists(self.dbfilename):
-                if not os.path.exists(CraftStandardDirs.etcBlueprintDir()):
-                    os.makedirs(CraftStandardDirs.etcBlueprintDir())
-                self.connection = sqlite3.connect(self.dbfilename)
-                cursor = self.connection.cursor()
+        if not os.path.exists(self.dbfilename):
+            if not os.path.exists(CraftStandardDirs.etcBlueprintDir()):
+                os.makedirs(CraftStandardDirs.etcBlueprintDir())
+            self.connection = sqlite3.connect(self.dbfilename)
+            cursor = self.connection.cursor()
 
-                # first, create the required tables
-                cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                   prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)''')
-                cursor.execute('''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                   packageId INTEGER, filename TEXT, fileHash TEXT)''')
-                cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
-                self.connection.commit()
-            else:
-                self.connection = sqlite3.connect(self.dbfilename)
-                self.__migrateDatabase()
+            # first, create the required tables
+            cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)''')
+            cursor.execute('''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               packageId INTEGER, filename TEXT, fileHash TEXT)''')
+            cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
+            self.connection.commit()
+        else:
+            self.connection = sqlite3.connect(self.dbfilename)
+            self.__migrateDatabase()
 
 
     def __migrateDatabase(self):

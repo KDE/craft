@@ -94,23 +94,6 @@ MakeProgram = jom
 KDE_L10N_AUTO_TRANSLATIONS = OFF
 
 [ShortPath]
-## substitute pathes by drives
-## This option is needed to avoid path limit problems in case of long base paths
-## and compiling big packages like qt
-## If you disable it do _not_ use any paths longer than 6 letters in the
-## directory settings
-Enabled = True
-
-## each drive could be commented out to skip substitution
-RootDrive = R:
-GitDrive = Q:
-#DownloadDrive = T:
-
-
-## Experimental!!!
-## Use Junctions to work around long paths.
-#EnableJunctions = True
-
 ## The directory where the junctions are created.
 #JunctionDir=
 

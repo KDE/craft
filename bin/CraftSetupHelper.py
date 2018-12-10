@@ -30,10 +30,11 @@ import platform
 
 from CraftConfig import *
 from CraftCore import CraftCore
+from CraftDebug import CraftDebug
 from CraftOS.osutils import OsUtils
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
-from CraftStandardDirs import CraftStandardDirs, TemporaryUseShortpath
+from CraftStandardDirs import CraftStandardDirs
 
 MIN_PY_VERSION = (3, 6, 0)
 
@@ -79,7 +80,6 @@ class SetupHelper(object):
 
     def run(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("--subst", action="store_true")
         parser.add_argument("--get", action="store_true")
         parser.add_argument("--print-banner", action="store_true")
         parser.add_argument("--getenv", action="store_true")
@@ -87,9 +87,7 @@ class SetupHelper(object):
         parser.add_argument("rest", nargs=argparse.REMAINDER)
         args = parser.parse_args()
 
-        if args.subst:
-            self.subst()
-        elif args.get:
+        if args.get:
             default = ""
             if len(args.rest) == 3:
                 default = args.rest[2]
@@ -99,7 +97,6 @@ class SetupHelper(object):
         elif args.getenv:
             self.printEnv()
         elif args.setup:
-            self.subst()
             self.printEnv()
             self.printBanner()
 
@@ -125,42 +122,10 @@ class SetupHelper(object):
                     del path[location]
                     self.addEnvVar("Path", os.path.pathsep.join(path))
 
-    def subst(self):
-        if not OsUtils.isWin():
-            return
-        def _subst(path, drive):
-            if not os.path.exists(path):
-                os.makedirs(path)
-            SetupHelper._getOutput(["subst",
-                             CraftCore.settings.get("ShortPath", drive),
-                             path])
-
-        if CraftCore.settings.getboolean("ShortPath", "Enabled", False):
-            with TemporaryUseShortpath(False):
-                if ("ShortPath", "RootDrive") in CraftCore.settings:
-                    _subst(CraftStandardDirs.craftRoot(), "RootDrive")
-                if ("ShortPath", "DownloadDrive") in CraftCore.settings:
-                    _subst(CraftStandardDirs.downloadDir(), "DownloadDrive")
-                if ("ShortPath", "GitDrive") in CraftCore.settings:
-                    _subst(CraftStandardDirs.gitDir(), "GitDrive")
-
-        if CraftCore.settings.getboolean("ShortPath", "EnableJunctions", False):
-            with TemporaryUseShortpath(False):
-                if ("ShortPath", "JunctionDrive") in CraftCore.settings:
-                    _subst(CraftCore.standardDirs._junctionDir.longPath, "JunctionDrive")
-
     def printBanner(self):
         def printRow(name, value):
             log(f"{name:20}: {value}")
-
-        if CraftStandardDirs.isShortPathEnabled():
-            with TemporaryUseShortpath(False):
-                printRow("Craft Root", CraftStandardDirs.craftRoot())
-            printRow("Craft", CraftStandardDirs.craftRoot())
-            printRow("Svn directory", CraftStandardDirs.svnDir())
-            printRow("Git directory", CraftStandardDirs.gitDir())
-        else:
-            printRow("Craft", CraftStandardDirs.craftRoot())
+        printRow("Craft", CraftStandardDirs.craftRoot())
         printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftStandardDirs.downloadDir())
