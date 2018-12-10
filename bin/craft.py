@@ -176,7 +176,6 @@ def main():
 
     helper = CraftSetupHelper.SetupHelper()
     if not "KDEROOT" in os.environ:
-        helper.subst()
         helper.setupEnvironment()
     helper.printBanner()
 
