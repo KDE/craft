@@ -8,7 +8,7 @@ import CraftDebug
 from CraftOS.osutils import OsUtils
 
 class CraftShortPath(object):
-    _useShortpaths = OsUtils.isWin() and CraftCore.settings.getboolean("ShortPath", "EnableJunctions", False)
+    _useShortpaths = OsUtils.isWin()
     _shortPaths = {}
 
     def __init__(self, path, createShortPath=None) -> None:
