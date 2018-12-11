@@ -25,6 +25,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["dev-utils/7zip"] = None
+        self.runtimeDependencies["dev-utils/wget"] = None
 
 
 from Package.BinaryPackageBase import *
