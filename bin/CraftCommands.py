@@ -43,7 +43,7 @@ def doExec(package, action):
             if action == "fetch-binary":
                 CraftCore.debug.step(f"{package} not found in cache")
                 return False
-            CraftCore.log.warning("Action: %s for %s FAILED" % (action, package))
+            CraftCore.log.warning(f"Action: {action} for {package}:{package.version} FAILED")
         return ret
 
 
