@@ -193,7 +193,7 @@ class UserOptions(object):
                 CraftCore.log.error(f"\t{default.__name__} : {opt}")
             return False
         settings = _instance.initPackage(self)
-        if value == "":
+        if value == "" and key in settings:
             del settings[key]
             delattr(self, key)
         else:
