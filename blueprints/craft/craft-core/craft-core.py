@@ -3,36 +3,19 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["2017.12", "master"]:
+        for ver in ["2018.12", "master"]:
             self.svnTargets[ver] = f"git://anongit.kde.org/craft|{ver}|"
-        self.defaultTarget = "master"
+        self.defaultTarget = "2018.12"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
 
-from Package.SourceOnlyPackageBase import *
+from Package.BlueprintRepositoryPackageBase import *
 
 
-class Package(SourceOnlyPackageBase):
+class Package(BlueprintRepositoryPackageBase):
     def __init__(self):
-        SourceOnlyPackageBase.__init__(self)
-        self.subinfo.options.package.disableBinaryCache = True
-        self.subinfo.options.dailyUpdate = True
-
-    def unpack(self):
-        return True
-
-    def install(self):
-        return True
-
-    def qmerge(self):
-        if not SourceOnlyPackageBase.qmerge(self):
-            return False
-        CraftCore.cache.clear()
-        return True
-
-    def createPackage(self):
-        return True
+        BlueprintRepositoryPackageBase.__init__(self)
 
     def checkoutDir(self, index=0):
         return os.path.join(CraftStandardDirs.craftRoot(), "craft")
