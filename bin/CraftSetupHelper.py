@@ -190,6 +190,8 @@ class SetupHelper(object):
                 args += " -vcvars_ver=14.0"
         if not path:
             path = SetupHelper._callVCVER(version, native=native)
+        if not path:
+            log("Please ensure that you have installed the C++ component", critical=True)
 
         path = os.path.join(path, "VC")
         if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
