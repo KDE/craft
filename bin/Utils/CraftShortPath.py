@@ -49,7 +49,7 @@ class CraftShortPath(object):
             return longPath
         if not os.path.isdir(CraftCore.standardDirs.junctionsDir()):
             os.makedirs(CraftCore.standardDirs.junctionsDir())
-        path = OsUtils.toNativePath(os.path.join(CraftCore.standardDirs.junctionsDir(), str(zlib.crc32(bytes(longPath, "UTF-8")))))
+        path = OsUtils.toNativePath(os.path.join(CraftCore.standardDirs.junctionsDir(), hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]))
         if len(longPath) < len(path):
             CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
             CraftCore.debug.log.debug(f"{longPath}\n"
