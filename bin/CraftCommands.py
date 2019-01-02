@@ -195,7 +195,13 @@ def packageIsOutdated(package):
         return package.version != version
 
 def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
-    key = command.replace("()", "")
+    args = {}
+    key = command
+    argsPattern = re.compile(r"(.+)\((.*)\)")
+    argsMatch = argsPattern.findall(command)
+    if argsMatch:
+        key = argsMatch[0][0]
+        args = eval(f"dict({','.join(argsMatch[0][1:])})")
     subs = key.split(".")
     for p in directTargets:
         instance = p.instance
@@ -205,7 +211,7 @@ def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
             if hasattr(instance, sub):
                 attr = getattr(instance, sub)
                 if callable(attr):
-                    instance = attr()
+                    instance = attr(**args)
                 else:
                     instance = attr
             else:
