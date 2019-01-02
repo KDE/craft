@@ -143,11 +143,9 @@ class BashShell(object):
     def _findBash(self):
         if OsUtils.isWin():
             msysdir = CraftStandardDirs.msysDir()
-            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "bin"))
+            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         else:
             bash = CraftCore.cache.findApplication("bash")
-        if not bash:
-            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         if not bash:
             CraftCore.log.critical("Failed to detect bash")
         return bash
@@ -170,7 +168,7 @@ class BashShell(object):
     def login(self):
         if CraftCore.compiler.isMSVC():
             self.useMSVCCompatEnv = True
-        return self.execute(os.curdir, "bash",  "-i", displayProgress=True)
+        return self.execute(os.curdir, self._findBash(),  "-i", displayProgress=True)
 
 def main():
     shell = BashShell()
