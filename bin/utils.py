@@ -667,24 +667,17 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
-    if not useAbsolutePath and os.path.isabs(target):
-        target = os.path.relpath(target, os.path.dirname(shim))
-
     createDir(os.path.dirname(shim))
     if not OsUtils.isWin():
-        command = [f"#!/bin/bash"]
-        if not useAbsolutePath:
-            command += ["parent_path=$(dirname \"${BASH_SOURCE[0]}\")",
-                        f"${{parent_path}}/{target} {args or ''} \"$@\""]
-        else:
-            command += [f"{target} {args or ''} \"$@\""]
-        CraftCore.log.info(f"Creating {shim}")
-        CraftCore.log.debug(command)
-        with open(shim, "wt+") as bash:
-            bash.write("\n".join(command))
-        os.chmod(shim, os.stat(shim).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        if os.path.exists(shim):
+            deleteFile(shim)
+        createSymlink(target, shim, useAbsolutePath)
         return True
     else:
+        # We can't be sure we can create symlinks on Windows
+        # Also a symlinked application is executed in the location of the symlink so the PATH would be wrong
+        if not useAbsolutePath and os.path.isabs(target):
+            target = os.path.relpath(target, os.path.dirname(shim))
         app = CraftCore.cache.findApplication("shimgen")
         if not app:
             CraftCore.log.error(f"Failed to detect shimgen, please install dev-util/shimgen")
