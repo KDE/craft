@@ -28,11 +28,7 @@ class subinfo(info.infoclass):
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
 
-        self.defaultTarget = "3.13.0"
-        # The 3.13.0 binaries are broken and contain unresolved symbols, so skip it for now
-        # This only affects macOS
-        if CraftCore.compiler.isMacOS:
-            self.defaultTarget = "3.12.2"
+        self.defaultTarget = "3.13.2"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/ninja"] = None
