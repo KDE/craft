@@ -155,7 +155,7 @@ class BashShell(object):
         if tmp:
             cmd = tmp
         if CraftCore.compiler.isWindows:
-            command = f"{self._findBash()} -c {self.toNativePath(cmd)} {args}"
+            command = f"{self._findBash()} -c \"{self.toNativePath(cmd)} {args}\""
         else:
             command = f"{self.toNativePath(cmd)} {args}"
 
