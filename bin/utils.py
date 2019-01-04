@@ -193,7 +193,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if not "shell" in kw:
             # use shell, arg0 might end up with "/usr/bin/svn" => needs shell so it can be executed
             kw["shell"] = True
-        arg0 = shlex.split(cmd, posix=False)[0]
+        arg0 = shlex.split(cmd, posix=not CraftCore.compiler.isWindows)[0]
 
     matchQuoted = re.match("^\"(.*)\"$", arg0)
     if matchQuoted:
