@@ -27,7 +27,6 @@ class BashShell(object):
     @property
     def environment(self):
         if not self._environment:
-
             mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
 
             ldflags = f" -L{mergeroot}/lib "
@@ -150,20 +149,20 @@ class BashShell(object):
             CraftCore.log.critical("Failed to detect bash")
         return bash
 
-    def execute(self, path, cmd, args="", out=sys.stdout, err=sys.stderr, displayProgress=False):
+    def execute(self, path, cmd, args="", **kwargs):
         # try to locate the command
         tmp = CraftCore.cache.findApplication(cmd)
         if tmp:
             cmd = tmp
-        command = f"{self._findBash()} -c \"cd {self.toNativePath(path)} && {self.toNativePath(cmd)} {args}\""
-        CraftCore.debug.step("bash execute: %s" % command)
-        CraftCore.log.debug("bash environment: %s" % self.environment)
+        if CraftCore.compiler.isWindows:
+            command = f"{self._findBash()} -c {self.toNativePath(cmd)} {args}"
+        else:
+            command = f"{self.toNativePath(cmd)} {args}"
 
-        env = dict(os.environ)
+        env = dict(kwargs.get("env", os.environ))
         env.update(self.environment)
 
-        out = utils.system(command, stdout=out, stderr=err, displayProgress=displayProgress, env=env)
-        return out
+        return utils.system(command, cwd=path, env=env, **kwargs)
 
     def login(self):
         if CraftCore.compiler.isMSVC():
