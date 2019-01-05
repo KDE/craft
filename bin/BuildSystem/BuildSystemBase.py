@@ -244,6 +244,9 @@ class BuildSystemBase(CraftBase):
                     if not pdb:
                         CraftCore.log.warning(f"Could not find a PDB for {f}")
                         continue
+                    if not os.path.exists(pdb):
+                        CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
+                        continue
                     pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
 
                     CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
