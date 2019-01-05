@@ -234,24 +234,19 @@ class BuildSystemBase(CraftBase):
                             return False
 
         # Install pdb files on MSVC if they are not found next to the dll
-        if CraftCore.compiler.isMSVC and (self.buildType() == "RelWithDebInfo" or self.buildType() == "Debug") and  CraftCore.cache.findApplication("peparser"):
+        # skip if we are a release build or from cache
+        if CraftCore.compiler.isMSVC and self.subinfo.buildPrefix == CraftCore.standardDirs.craftRoot() and self.buildType() in {"RelWithDebInfo", "Debug"}:
             files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path),
                                                  lambda x, root: True)
-
-            regexp = re.compile('{.*} (.*)')
-            exclude = re.compile(r'icudt[0-9]*.dll')
             for f in files:
                 if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
-                    peparserOutput = CraftCore.cache.getCommandOutput("peparser", f"--pdb {f}")[1].strip()
-                    pdbs = regexp.findall(peparserOutput)
+                    pdb = utils.getPDBForBinary(f)
+                    if not pdb:
+                        CraftCore.log.warning(f"Could not find a PDB for {f}")
+                        continue
+                    pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
 
-                    if not exclude.match(os.path.basename(f)):
-                        assert len(pdbs) > 0, f"No pdb file available: {f}"
-
-                    for pdb in pdbs:
-                        pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
-
-                        CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
-                        utils.copyFile(pdb, pdbDestination, linkOnly=False)
+                    CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                    utils.copyFile(pdb, pdbDestination, linkOnly=False)
 
         return True

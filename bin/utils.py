@@ -897,3 +897,11 @@ def makeWritable(targetPath: Path):
     finally:
         if not wasWritable:
             targetPath.chmod(originalMode)
+
+def getPDBForBinary(path :str) -> str:
+    with open(path, "rb") as f:
+        data = f.read()
+    pdb = data.rfind(b".pdb")
+    if pdb:
+        return data[data.rfind(0x00, 0, pdb) + 1:pdb + 4].decode("utf-8")
+    return ""
