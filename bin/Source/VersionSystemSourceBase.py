@@ -48,7 +48,7 @@ class VersionSystemSourceBase(SourceBase):
         self.enterBuildDir()
 
         CraftCore.log.debug("cleaning %s" % self.buildDir())
-        utils.cleanDirectory(self.buildDir())
+        self.cleanBuild()
         ret = self.applyPatches()
         if CraftCore.settings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
             return ret
