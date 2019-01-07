@@ -235,7 +235,7 @@ class BuildSystemBase(CraftBase):
 
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
-        if CraftCore.compiler.isMSVC() and self.subinfo.buildPrefix == CraftCore.standardDirs.craftRoot() and self.buildType() in {"RelWithDebInfo", "Debug"}:
+        if not self.subinfo.isCachedBuild and CraftCore.compiler.isMSVC() and self.buildType() in {"RelWithDebInfo", "Debug"}:
             files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path),
                                                  lambda x, root: True)
             for f in files:

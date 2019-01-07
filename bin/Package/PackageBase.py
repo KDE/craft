@@ -175,6 +175,7 @@ class PackageBase(CraftBase):
                     return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(downloadRetriesLeft=downloadRetriesLeft-1)
                 return False
             self.subinfo.buildPrefix = latest.buildPrefix
+            self.subinfo.isCachedBuild = True
             if not (self.cleanImage()
                     and utils.unpackFile(localArchivePath, localArchiveName, self.imageDir())
                     and self.internalPostInstall()
