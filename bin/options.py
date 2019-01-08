@@ -202,12 +202,15 @@ class UserOptions(object):
             setattr(self, key, value)
         return True
 
-    def registerOption(self, key : str, default, permanent=True) -> bool:
+    def registerOption(self, key : str, default, permanent=True, overwrite=False) -> bool:
+        if not permanent and overwrite:
+            CraftCore.log.error("An override must be permanent")
+            return False
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
             _instance.registeredOptions[package.path] = {}
-        if key in _instance.registeredOptions[package.path]:
+        if not overwrite and key in _instance.registeredOptions[package.path]:
             raise BlueprintException(f"Failed to register option:\n[{package}]\n{key}={default}\nThe setting {key} is already registered.", package)
             return False
         _instance.registeredOptions[package.path][key] = default
