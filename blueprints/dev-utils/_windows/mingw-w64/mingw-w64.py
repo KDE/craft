@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
         self.targetDigests["8.1.0-0"] = (['d3a3b8136347a705c879f43d4cfab00e117eb003'], CraftHash.HashAlgorithm.SHA1)
         self.targetDigests["7.3.0-0"] = (['c1f80f43dd0fb625ee925b4fd01974140871fe09bb771d0684b306ba58ed47f3'], CraftHash.HashAlgorithm.SHA256)
 
-        self.defaultTarget = "7.3.0-0"
+        self.defaultTarget = "8.1.0-0"
 
     def setDependencies(self):
         self.runtimeDependencies["dev-utils/7zip"] = None
