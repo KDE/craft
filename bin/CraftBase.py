@@ -77,7 +77,7 @@ class CraftBase(object):
 
     def buildType(self):
         """return currently selected build type"""
-        return CraftCore.settings.get("Compile", "BuildType")
+        return self.subinfo.options.dynamic.buildType
 
     def buildArchitecture(self):
         """return the target CPU architecture"""

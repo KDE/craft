@@ -29,6 +29,7 @@ class UserOptions(object):
 #     # use the same url as defined for the target but checks out a different branch
 #     branch: str
 #     patchLevel: int
+#     buildType: [Release|RelWithDebInfo|Debug] The default is defined by CraftSettings.ini [Compile]BuildType
 #     buildTests: [True|False]
 #     buildStatic: [True|False]
 #     # arguments passed to the configure step
@@ -110,6 +111,8 @@ class UserOptions(object):
         _register("ignored",    bool,   permanent=False)
         _register("buildTests", bool,   permanent=False)
         _register("buildStatic",bool,   permanent=False)
+
+        _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False)
         _register("args",       "",     permanent=False)
 
         settings = UserOptions.instance().settings
