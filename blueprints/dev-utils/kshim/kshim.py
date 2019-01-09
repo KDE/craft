@@ -24,12 +24,12 @@ class Package(CMakePackageBase):
 
     def make(self):
         if not self._botstrap:
-            return super().configure()
+            return super().make()
         else:
             return utils.system([sys.executable, os.path.join(self.sourceDir(), "bootstrap.py")], cwd=self.buildDir())
 
     def install(self):
         if not self._botstrap:
-            return super().configure()
+            return super().install()
         else:
             return  utils.copyFile(os.path.join(self.buildDir(), f"kshimgen{CraftCore.compiler.executableSuffix}"), os.path.join(self.installDir(), "bin", f"kshimgen{CraftCore.compiler.executableSuffix}"))
