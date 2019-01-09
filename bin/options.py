@@ -222,7 +222,6 @@ class UserOptions(object):
             settings = _instance.initPackage(self)
             if key and key not in settings:
                 settings[key] = str(default)
-
         # don't try to save types
         if not callable(default):
             if not hasattr(self, key):
@@ -230,14 +229,11 @@ class UserOptions(object):
             else:
                 # convert type
                 old = getattr(self, key)
-                if old is not None and callable(default):
-                    try:
-                        # convert the value read from the stting to the type of the now registed
-                        new = self._convert(default, old)
-                    except:
-                        raise BlueprintException(f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}", self._package)
-                else:
-                    new = default
+                try:
+                    # convert the value read from the stting to the type of the now registed
+                    new = self._convert(type(default), old)
+                except:
+                    raise BlueprintException(f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}", self._package)
                 #print(key, type(old), old, type(new), new)
                 setattr(self, key, new)
         return True
