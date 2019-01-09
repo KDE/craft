@@ -18,3 +18,7 @@ class Package(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
 
+    def fetch(self):
+        with utils.ScopedEnv({"SSL_CERT_FILE" : None, "REQUESTS_CA_BUNDLE": None}):
+            return super().fetch()
+
