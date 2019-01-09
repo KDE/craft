@@ -230,8 +230,7 @@ class UserOptions(object):
                 # convert type
                 old = getattr(self, key)
                 try:
-                    # convert the value read from the stting to the type of the now registed
-                    new = self._convert(type(default), old)
+                    new = self._convert(old, default)
                 except:
                     raise BlueprintException(f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}", self._package)
                 #print(key, type(old), old, type(new), new)
