@@ -122,6 +122,7 @@ class UserOptions(object):
                 if k in _registered:
                     v = _convert(_registered[k], v)
                 setattr(self, k, v)
+
     @staticmethod
     def get(package):
         _instance = UserOptions.instance()
@@ -149,8 +150,6 @@ class UserOptions(object):
         except Exception as e:
             CraftCore.log.error(f"Can't convert {valB} to {_type.__name__}")
             raise e
-
-
 
     @staticmethod
     def setOptions(optionsIn):
@@ -234,6 +233,21 @@ class UserOptions(object):
                 setattr(self, key, new)
         return True
 
+    def setDefault(self, key : str, default) -> bool:
+        _instance = UserOptions.instance()
+        package = self._package
+        if key not in _instance.registeredOptions[package.path]:
+            raise BlueprintException(f"Failed to set default for unregistered option: [{package}]{key}.", package)
+            return False
+
+        settings = _instance.initPackage(self)
+        _instance.registeredOptions[package.path][key] = default
+        if key not in settings:
+            settings[key] = str(default)
+            setattr(self, key, default)
+        return True
+
+
     def __getattribute__(self, name):
         if name.startswith("_"):
             return super().__getattribute__(name)
@@ -245,13 +259,13 @@ class UserOptions(object):
             return member
 
         #check cache
-        _cache = super().__getattribute__("_cachedFromParent")
+        _cache = self._cachedFromParent
         if not member and name in _cache:
             return _cache[name]
 
         out = None
         _instance = UserOptions.instance()
-        _package = super().__getattribute__("_package")
+        _package = self._package
         _packagePath = _package.path
         if _packagePath in _instance.packageOptions and name in _instance.packageOptions[_packagePath]:
             if _packagePath not in _instance.registeredOptions or name not in _instance.registeredOptions[_packagePath]:
