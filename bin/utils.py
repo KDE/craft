@@ -667,27 +667,19 @@ def levenshtein(s1, s2):
 
 
 def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
+    if not useAbsolutePath and os.path.isabs(target):
+        target = os.path.relpath(target, os.path.dirname(shim))
     createDir(os.path.dirname(shim))
-    if not OsUtils.isWin():
-        if os.path.exists(shim):
-            deleteFile(shim)
-        createSymlink(target, shim, useAbsolutePath)
-        return True
+
+    if os.path.exists(shim):
+        deleteFile(shim)
+    if not args:
+        args = []
+    elif isinstance(args, str):
+        CraftCore.log.error("Please pass args as [str]")
+        return system(f"kshimgen --create {shim} {target} {args}")
     else:
-        # We can't be sure we can create symlinks on Windows
-        # Also a symlinked application is executed in the location of the symlink so the PATH would be wrong
-        if not useAbsolutePath and os.path.isabs(target):
-            target = os.path.relpath(target, os.path.dirname(shim))
-        app = CraftCore.cache.findApplication("shimgen")
-        if not app:
-            CraftCore.log.error(f"Failed to detect shimgen, please install dev-util/shimgen")
-            return False
-        command = [app, "--output", shim, "--path", target]
-        if args:
-            command += ["--command", args]
-        if guiApp:
-            command += ["--gui"]
-        return system(command, stdout=subprocess.DEVNULL)
+        return system(["kshimgen", "--create", shim, target] + args)
 
 
 def replaceSymlinksWithCopys(path):

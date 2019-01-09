@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = None
         self.buildDependencies["dev-utils/wget"] = None
-        self.buildDependencies["dev-utils/shimgen"] = None
+        self.buildDependencies["dev-utils/kshim"] = None
 
 
 from Package.BinaryPackageBase import *
