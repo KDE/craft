@@ -13,7 +13,8 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
-        self._botstrap = False
+        self.subinfo.options.fetch.checkoutSubmodules = True
+        self._botstrap = True
 
     def configure(self):
         self._botstrap = not CraftCore.cache.findApplication("cmake")
