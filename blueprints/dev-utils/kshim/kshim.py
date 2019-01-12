@@ -18,7 +18,8 @@ class Package(CMakePackageBase):
         self._botstrap = True
 
     def configure(self):
-        self._botstrap = CraftCore.cache.getVersion("cmake") < "3.8"
+        cmakeVer = CraftCore.cache.getVersion("cmake")
+        self._botstrap = not cmakeVer or cmakeVer  < "3.8"
         if not self._botstrap:
             return super().configure()
         else:
