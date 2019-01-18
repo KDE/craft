@@ -52,7 +52,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
                "PERL_MM_OPT": None,
                "PERL_LOCAL_LIB_ROOT": None}
         with utils.ScopedEnv(env):
-            if 1:
+            if 1 and CraftCore.compiler.isWindows:
                 #ugly hack to make destdir work, it probably breaks some scripts
                 makeFile = os.path.join(self.buildDir(), "Makefile")
                 with open(makeFile, "rt") as make:
