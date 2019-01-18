@@ -191,7 +191,7 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isWindows:
             oldPrefixes += [self.subinfo.buildPrefix.replace("\\", "\\\\") ,OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|cmd|ini|pl)$")]
+        pattern = [re.compile("^.*(pc|pri|prl|cmake|bat|cmd|ini|pl|pm)$")]
         files = utils.filterDirectoryContent(self.installDir(),
                                              whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
                                              blacklist=lambda x, root: True)
