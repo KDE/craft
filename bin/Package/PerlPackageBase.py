@@ -24,11 +24,11 @@
 
 from BuildSystem.PerlBuildSystem import *
 from Package.PackageBase import *
-from Packager.PackagerBase import *
+from Packager.TypePackager import *
 from Source.MultiSource import *
 
 
-class PerlPackageBase(PackageBase, MultiSource, PerlBuildSystem, PackagerBase):
+class PerlPackageBase(PackageBase, MultiSource, PerlBuildSystem, TypePackager):
     """provides a base class for cpan packages"""
     # TODO: follow https://wiki.archlinux.org/index.php/Perl_package_guidelines
     # instead of calling cpan
@@ -38,5 +38,5 @@ class PerlPackageBase(PackageBase, MultiSource, PerlBuildSystem, PackagerBase):
         PackageBase.__init__(self)
         MultiSource.__init__(self)
         PerlBuildSystem.__init__(self)
-        PackagerBase.__init__(self)
+        TypePackager.__init__(self)
 

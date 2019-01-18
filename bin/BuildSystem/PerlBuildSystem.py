@@ -32,26 +32,6 @@ class PerlBuildSystem(MakeFileBuildSystem):
 
     def configure(self):
         return True
-    #
-    # def make(self):
-    #     perlHome = os.path.join(CraftCore.standardDirs.etcDir(), "perl_home")
-    #     env = {"HOME": perlHome, "USERPROFILE": perlHome, "HOMEPATH": perlHome}
-    #     if CraftCore.compiler.isMSVC():
-    #         root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-    #         env.update({"INCLUDE": f"{os.environ['INCLUDE']};{root}/include",
-    #                     "LIB": f"{os.environ['LIB']};{root}/lib"})
-    #
-    #     with utils.ScopedEnv(env):
-    #         perl = CraftCore.cache.findApplication("perl")
-    #         if not os.path.exists(perlHome):
-    #             if CraftCore.compiler.isWindows:
-    #                 if not utils.system([f"cmd", "/C", f"echo yes | {perl} -MCPAN -e mkmyconfig"], shell=True):
-    #                     return False
-    #             else:
-    #                 if not utils.system([f"yes | {perl} -MCPAN -e mkmyconfig"], shell=True):
-    #                     return False
-    #         return utils.system([perl, "-MCPAN", "-e", f"CPAN::Shell->notest('force', 'install', '{self.subinfo.svnTarget()}')"])
-
 
     def make(self):
         self.enterBuildDir()
