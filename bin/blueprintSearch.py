@@ -51,6 +51,7 @@ class SeachPackage(object):
     Homepage: {self.webpage}
     Description: {self.description}
     Tags: {self.tags}
+    Options: {self.package.subinfo.options.dynamic}
     Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}

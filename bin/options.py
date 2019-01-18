@@ -123,6 +123,18 @@ class UserOptions(object):
                     v = _convert(_registered[k], v)
                 setattr(self, k, v)
 
+    def __str__(self):
+        out = []
+        for k, v in UserOptions.instance().registeredOptions[self._package.path].items():
+            atr = getattr(self, k)
+            if atr is None:
+                if callable(v):
+                    atr = f"({v.__name__})"
+                else:
+                    atr = v
+            out.append((k, atr))
+        return ", ".join([f"{x}={y}" for x, y in sorted(out)])
+
     @staticmethod
     def get(package):
         _instance = UserOptions.instance()
