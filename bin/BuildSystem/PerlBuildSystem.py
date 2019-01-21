@@ -31,7 +31,14 @@ class PerlBuildSystem(MakeFileBuildSystem):
         self.subinfo.options.useShadowBuild = False
 
     def configure(self):
-        return True
+        self.enterBuildDir()
+        env = {"PERL5LIB": None,
+               "PERL_MM_OPT": None,
+               "PERL_LOCAL_LIB_ROOT": None,
+               "PERL_MM_USE_DEFAULT": "1",
+               "PERL_AUTOINSTALL": "--skipdeps"}
+        with utils.ScopedEnv(env):
+            return utils.system(" ".join(["perl", "Makefile.PL", self.subinfo.options.configure.args]))
 
     def make(self):
         self.enterBuildDir()
@@ -45,7 +52,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
             env.update({"INCLUDE": f"{os.environ['INCLUDE']};{root}/include",
                         "LIB": f"{os.environ['LIB']};{root}/lib"})
         with utils.ScopedEnv(env):
-            return utils.system(["perl", "Makefile.PL"]) and utils.system([self.makeProgram])
+            return utils.system([self.makeProgram])
 
     def install(self):
         env = {"PERL5LIB": None,
