@@ -5,6 +5,7 @@ from Blueprints.CraftDependencyPackage import *
 from Blueprints.CraftVersion import CraftVersion
 from Blueprints.MetaInfo import MetaInfo
 from Utils import CraftTimer
+from options import UserOptions
 
 
 class SeachPackage(object):
@@ -51,7 +52,7 @@ class SeachPackage(object):
     Homepage: {self.webpage}
     Description: {self.description}
     Tags: {self.tags}
-    Options: {self.package.subinfo.options.dynamic}
+    Options: {UserOptions.get(self.package)}
     Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}
