@@ -67,4 +67,4 @@ class PerlBuildSystem(MakeFileBuildSystem):
                 with open(makeFile, "wt") as make:
                     txt = txt.replace(CraftCore.standardDirs.craftRoot(), CraftCore.standardDirs.craftRoot()[2:])
                     make.write(txt)
-            return super().install()
+            return super().install() and self._fixInstallPrefix()
