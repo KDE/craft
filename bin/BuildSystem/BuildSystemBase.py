@@ -29,7 +29,7 @@ class BuildSystemBase(CraftBase):
     @property
     def makeProgram(self) -> str:
         if self.subinfo.options.make.supportsMultijob:
-            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False):
+            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
                 return "ninja"
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 CraftCore.log.debug("set custom make program: %s" % CraftCore.settings.get("Compile", "MakeProgram", ""))
