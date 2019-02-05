@@ -86,11 +86,12 @@ class BuildSystemBase(CraftBase):
         defines = []
         if self.subinfo.options.make.ignoreErrors:
             defines.append("-i")
-        if self.makeProgram == "ninja":
+        makeProgram = self.makeProgram
+        if makeProgram == "ninja":
             if CraftCore.debug.verbose() > 0:
                 defines.append("-v")
         else:
-            if self.subinfo.options.make.supportsMultijob:
+            if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
                 defines.append(f"-j{multiprocessing.cpu_count()}")
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
