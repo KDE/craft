@@ -32,8 +32,13 @@ class BuildSystemBase(CraftBase):
             if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
                 return "ninja"
             if ("Compile", "MakeProgram") in CraftCore.settings:
-                CraftCore.log.debug("set custom make program: %s" % CraftCore.settings.get("Compile", "MakeProgram", ""))
-                return CraftCore.settings.get("Compile", "MakeProgram", "")
+                makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
+                CraftCore.log.debug(f"set custom make program: {makeProgram}")
+                makeProgram = CraftCore.cache.findApplication(makeProgram)
+                if makeProgram:
+                    return makeProgram
+                else:
+                    CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
