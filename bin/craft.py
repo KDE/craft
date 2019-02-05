@@ -91,7 +91,7 @@ def main():
                         help="Build all packages from the ini file provided")
     parser.add_argument("--options", action="append",
                         default=CraftCore.settings.getList("General", "Options", ""),
-                        help="Set craft property from string <OPTIONS>. An example for is \"cmake.openIDE=1\" see options.py for more informations.")
+                        help="Set craft property from string <OPTIONS>. An example for is extragear/kdevelop.version=5.3 or [Compile]MakeProgram=jom.")
     parser.add_argument("-q", "--stayquiet", action="store_true",
                         dest="stayQuiet",
                         help="quiet: there should be no output - The verbose level should be 0")
