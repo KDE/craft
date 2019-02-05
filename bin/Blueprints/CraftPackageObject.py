@@ -70,6 +70,7 @@ class CategoryPackageObject(object):
                 for c in compiler:
                     self.compiler |=  CraftCore.compiler.Compiler.fromString(c)
             self.pathOverride = general.get("pathOverride", None)
+            self.forceOverride = general.get("forceOverride", False)
 
     @property
     def isActive(self) -> bool:
@@ -263,11 +264,11 @@ class CraftPackageObject(object):
                     for nodeName, node in child.children.items():
                         # reparent the packages
                         if nodeName in existingNode.children:
-                            if not node.categoryInfo.isActive:
+                            if not node.categoryInfo.isActive and not node.categoryInfo.forceOverride:
                                 # don't reparent as we would override the actual package
                                 continue
                             else:
-                                old = existingNode.children[nodeName]
+                                old = existingNode.children.pop(nodeName)
                                 CraftCore.log.debug(f"Overriding {old.path}({old.filePath}) with {node.path}")
                         node.parent = existingNode
                         child.parent.children[nodeName] = node
