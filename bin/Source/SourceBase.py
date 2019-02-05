@@ -35,7 +35,8 @@ class SourceBase(CraftBase):
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         if self.subinfo.hasTargetSourcePath():
-            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+            sourcedir = CraftShortPath(os.path.join(sourcedir, self.subinfo.targetSourcePath())).path(len(self.subinfo.targetSourcePath()) > 20)
+
         CraftCore.log.debug("using sourcedir: " + sourcedir)
         return sourcedir
 
