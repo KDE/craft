@@ -4,6 +4,8 @@ from enum import unique, Enum, IntFlag
 from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
+from Package import VirtualPackageBase
+from info import DependencyRequirementType
 
 
 @unique
@@ -65,6 +67,16 @@ class CraftDependencyPackage(CraftPackageObject):
                     package = CraftPackageObject.get(packaheName)
                     if not package:
                         raise BlueprintException(f"Failed to resolve {packaheName} as a dependency of {self}", self)
+                    if isinstance(requiredVersion, tuple):
+                        requiredVersion, type = requiredVersion
+                        if type == DependencyRequirementType.Required:
+                            if not bool(package.categoryInfo.compiler & CraftCore.compiler.compiler):
+                                raise BlueprintException(f"{self} requries {package}, but it is not supported on {CraftCore.compiler.compiler}",self)
+                            if not bool(package.categoryInfo.platforms & CraftCore.compiler.platform):
+                                raise BlueprintException(f"{self} requries {package}, but it is not supported on {CraftCore.compiler.platform}",self)
+                            if package.isIgnored() or isinstance(package.instance, VirtualPackageBase.VirtualPackageBase):
+                                raise BlueprintException(f"{self} requries {package}, but it is ignored",self)
+
                     if requiredVersion and requiredVersion != None and CraftVersion(package.version) < CraftVersion(requiredVersion):
                         raise BlueprintException(f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed", self)
 

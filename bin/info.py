@@ -5,12 +5,18 @@
 # the current work here is to access members only
 # by methods to be able to separate the access from
 # the definition
+from enum import Enum, unique
 
 import VersionInfo
 from Utils import CraftHash, CraftManifest
 from options import *
 from CraftDebug import deprecated
 
+
+@unique
+class DependencyRequirementType(Enum):
+    Optional = 0
+    Required = 1
 
 class infoclass(object):
     """this module contains the information class"""
