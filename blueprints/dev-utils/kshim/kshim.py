@@ -5,7 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
-        self.patchLevel["master"] = 5
+        self.patchLevel["master"] = 6
         self.defaultTarget = 'master'
 
     def setDependencies(self):
