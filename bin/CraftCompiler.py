@@ -107,7 +107,7 @@ class CraftCompiler(object):
 
         self._MSVCToolset = None
         if self.isMSVC():
-            self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset")
+            self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", None)
 
     def __str__(self):
         return "-".join(self.signature)
