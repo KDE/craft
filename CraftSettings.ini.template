@@ -16,6 +16,10 @@ ABI = windows-msvc2015_64-cl
 ## This option should be set to False if you use the msvc 201X Express Edition 64bit compiler
 ## in all other cases, simply keep this option commented out
 #Native=False
+## This option specifies which MSVC toolset to use. Leave this commented out for MSVC to pick
+## the newest available toolset.
+## This is an expert option, do not touch it unless you know exactly what it means.
+#MSVCToolset=14.16
 
 ## This option can be used to enable a notification backend.
 ## As soon as the buildprocess of a project has finished a notification will be displayed.

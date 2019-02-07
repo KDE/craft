@@ -105,6 +105,10 @@ class CraftCompiler(object):
 
         self._architecture = "x86" if self._abi.endswith("32") else "x64"
 
+        self._MSVCToolset = None
+        if self.isMSVC():
+            self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset")
+
     def __str__(self):
         return "-".join(self.signature)
 
@@ -127,6 +131,10 @@ class CraftCompiler(object):
     @property
     def architecture(self):
         return self._architecture
+
+    @property
+    def msvcToolset(self):
+        return self._MSVCToolset
 
     @property
     def gnuArchitecture(self):

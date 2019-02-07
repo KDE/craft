@@ -175,7 +175,7 @@ class SetupHelper(object):
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
-    def getMSVCEnv(version=None, architecture="x86", native=True) -> str:
+    def getMSVCEnv(version=None, architecture="x86", toolset=None, native=True) -> str:
         if native:
             architectures = {"x86": "amd64_x86", "x64": "amd64"}
         else:
@@ -186,8 +186,12 @@ class SetupHelper(object):
         if version == 14:
             # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
             path = SetupHelper._callVCVER(15, args=["-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.140"], native=native)
-            if path:
-                args += " -vcvars_ver=14.0"
+            if path and not toolset:
+                toolset = "14.0"
+
+        if toolset:
+            args += f" -vcvars_ver={toolset}"
+
         if not path:
             path = SetupHelper._callVCVER(version, native=native)
         if not path:
@@ -210,6 +214,7 @@ class SetupHelper(object):
         if CraftCore.compiler.isMSVC():
             return SetupHelper.getMSVCEnv(CraftCore.compiler.getInternalVersion(),
                                                                   CraftCore.compiler.architecture,
+                                                                  CraftCore.compiler.msvcToolset,
                                                                   CraftCore.compiler.isNative())
         elif CraftCore.compiler.isIntel():
             architectures = {"x86": "ia32", "x64": "intel64"}
