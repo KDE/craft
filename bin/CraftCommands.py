@@ -252,7 +252,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                     packages.append(item)
                     CraftCore.log.debug(f"dependency: {item}")
                 elif item in directTargets:
-                    CraftCore.log.info(f"{item} is up to date, nothing to do")
+                    CraftCore.debug.step(f"{item} is up to date, nothing to do")
         else:
             packages = depList
         if not packages:
