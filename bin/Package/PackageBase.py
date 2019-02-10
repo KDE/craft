@@ -66,7 +66,7 @@ class PackageBase(CraftBase):
             package.uninstall()
         return True
 
-    def strip(self, fileName):
+    def strip(self, fileName, symbolDest=None):
         """strip debugging informations from shared libraries and executables - mingw only!!! """
         if self.subinfo.options.package.disableStriping or CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
             CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
@@ -82,7 +82,13 @@ class PackageBase(CraftBase):
             CraftCore.log.warning("Please pass an absolute file path to strip")
             basepath = os.path.join(self.installDir())
             filepath = os.path.join(basepath, "bin", fileName)
-        return utils.system(["strip", "-s", filepath])
+        if not symbolDest:
+            return utils.system(["strip", "-s", filepath])
+        else:
+            symFile = os.path.join(symbolDest, f"{os.path.basename(filepath)}.sym")
+            return (utils.system(["objcopy", "--only-keep-debug", filepath, symFile]) and
+                    utils.system(["strip", "--strip-debug", "--strip-unneeded", filepath]) and
+                    utils.system(["objcopy", "--add-gnu-debuglink", symFile, filepath]))
 
     def createImportLibs(self, pkgName):
         """create the import libraries for the other compiler(if ANSI-C libs)"""

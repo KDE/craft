@@ -210,7 +210,7 @@ class CollectionPackagerBase(PackagerBase):
             return out
         return True
 
-    def copyFiles(self, srcDir, destDir, dontStrip) -> bool:
+    def copyFiles(self, srcDir, destDir, dontStrip, symbolDest) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
             directory
@@ -227,7 +227,7 @@ class CollectionPackagerBase(PackagerBase):
                 return False
             if utils.isBinary(entry_target):
                 if CraftCore.compiler.isGCCLike() and not dontStrip:
-                    self.strip(entry_target)
+                    self.strip(entry_target, symbolDest=symbolDest)
                 if doSign:
                     utils.sign([entry_target])
         return True
@@ -240,15 +240,15 @@ class CollectionPackagerBase(PackagerBase):
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
 
-        if seperateSymbolFiles:
-            if not CraftCore.compiler.isMSVC():
-                CraftCore.log.warning("Currently packaging symbol files is only supported with msvc")
-                return False
-        else:
+        if not seperateSymbolFiles:
             self.blacklist.append(re.compile(r".*\.pdb"))
+            dbgDir = None
+        else:
+            dbgDir = f"{archiveDir}-dbg"
+            utils.cleanDirectory(dbgDir)
         for directory, strip in self.__getImageDirectories():
             if os.path.exists(directory):
-                if not self.copyFiles(directory, archiveDir, strip):
+                if not self.copyFiles(directory, archiveDir, strip, symbolDest=dbgDir):
                     return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
@@ -266,10 +266,7 @@ class CollectionPackagerBase(PackagerBase):
             return False
 
 
-        if seperateSymbolFiles:
-            dbgDir = f"{archiveDir}-dbg"
-            utils.cleanDirectory(dbgDir)
-
+        if seperateSymbolFiles and CraftCore.compiler.isMSVC():
             for f in glob.glob(f"{archiveDir}/**/*.pdb", recursive=True):
                 dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
                 utils.createDir(os.path.dirname(dest))
