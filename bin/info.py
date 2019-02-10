@@ -242,7 +242,7 @@ class infoclass(object):
             return out
         return None
 
-    def addCachedAutotoolsBuild(self, packageName):
+    def addCachedAutotoolsBuild(self, packageName, targetInstallPath=None):
         if not CraftCore.compiler.isMSVC():
             return
         self.versionInfo.setDefaultValues()
@@ -267,4 +267,6 @@ class infoclass(object):
                 return
             data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
             self.targets[key] = f"{url}/{data.fileName}"
-            self.targetDigests[key] = (data.checksum, CraftHash.HashAlgorithm.SHA256)
+            self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
+            if targetInstallPath:
+                self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
