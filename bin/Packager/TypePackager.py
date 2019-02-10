@@ -31,6 +31,7 @@ from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
 from Packager.QtIFPackager import *
 from Packager.AppxPackager import *
+from Packager.AppImagePackager import AppImagePackager
 
 
 class TypePackager(PackagerBase):
