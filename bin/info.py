@@ -248,8 +248,7 @@ class infoclass(object):
         self.versionInfo.setDefaultValues()
         package = CraftPackageObject._allLeaves.get(packageName, None)
         if not package:
-            CraftCore.log.warning(f"Failed to find {packageName}")
-            return False
+            raise BlueprintException(f"Failed to find {packageName}", package)
         packageName = package.path
 
         if package:
@@ -262,9 +261,8 @@ class infoclass(object):
             if not json:
                 raise BlueprintException("Failed to load manifest", package)
             manifest = CraftManifest.CraftManifest.fromJson(json)
-            if not packageName in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
-                CraftCore.log.warning(f"Failed to find {packageName} on {url}")
-                return
+            if packageName not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
+                raise BlueprintException(f"Failed to find {packageName} on {url}", package)
             data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
             self.targets[key] = f"{url}/{data.fileName}"
             self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
