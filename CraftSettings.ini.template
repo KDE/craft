@@ -149,7 +149,7 @@ PackageSrc = False
 ## Whether to package debug symbols
 ### by default debug symbols are stripped/removed from the package
 ### If PackageDebugSymbols is set to True, a separate archive with the symbols is created.
-PackageDebugSymbols = False
+PackageDebugSymbols = True
 
 ## A url to a Craft cache repository
 ## Sets a custom repository for the binary cache
