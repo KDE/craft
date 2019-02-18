@@ -24,7 +24,9 @@ class MacDMGPackager( CollectionPackagerBase ):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
-        if not self.internalCreatePackage():
+
+        packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+        if not self.internalCreatePackage(seperateSymbolFiles=packageSymbols):
             return False
 
         self._setDefaults()
