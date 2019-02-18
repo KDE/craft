@@ -34,6 +34,8 @@ class subinfo(info.infoclass):
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
         self.targetDigests[ver] = (["4f0c60a1d0ac23637d600531da34b48700fcaee7ecd79d36e2f5369dc8fcaef6"], CraftHash.HashAlgorithm.SHA256)
+
+        self.patchLevel["2.20.0"] = 1
         self.defaultTarget = ver
 
     def setDependencies(self):

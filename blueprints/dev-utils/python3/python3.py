@@ -5,7 +5,7 @@ from Package.BinaryPackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.targets["3"] = ""
-        self.patchLevel["3"] = 2
+        self.patchLevel["3"] = 3
         self.targetInstallPath["3"] = "dev-utils"
         self.defaultTarget = "3"
 

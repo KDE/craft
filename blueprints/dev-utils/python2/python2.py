@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.targets["2"] = ""
         self.defaultTarget = "2"
         self.targetInstallPath["2"] = "dev-utils"
-        self.patchLevel["2"] = 1
+        self.patchLevel["2"] = 2
 
 
 class Package(BinaryPackageBase):
