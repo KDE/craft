@@ -279,6 +279,12 @@ class SetupHelper(object):
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
     def setupEnvironment(self):
+        PKG_CONFIG_PATH = None
+        try:
+            PKG_CONFIG_PATH = self._getOutput("pkg-config --variable pc_path pkg-config", shell=True)[1]
+        except:
+            pass
+
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
@@ -308,7 +314,10 @@ class SetupHelper(object):
         else:
             self._setupUnix()
 
-        self.prependEnvVar("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
+        PKG_CONFIG_PATH_NEW = os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig")
+        if PKG_CONFIG_PATH:
+            PKG_CONFIG_PATH_NEW += os.path.pathsep + PKG_CONFIG_PATH
+        self.prependEnvVar("PKG_CONFIG_PATH", PKG_CONFIG_PATH_NEW)
 
         self.prependEnvVar("QT_PLUGIN_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "plugins"),
                                             os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugins"),
