@@ -94,8 +94,6 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
-        defines += BuildSystemBase.configureOptions(self, defines)
-
         buildReleaseAndDebug = self.__qtBase.subinfo.options.dynamic.buildReleaseAndDebug
         if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
             defines += ' "CONFIG -= debug"' if not buildReleaseAndDebug else ' "CONFIG += debug"'
@@ -104,6 +102,7 @@ class QMakeBuildSystem(BuildSystemBase):
             defines += ' "CONFIG += debug"'
             defines += ' "CONFIG -= release"' if not buildReleaseAndDebug else ' "CONFIG += release"'
 
+        defines += BuildSystemBase.configureOptions(self, defines)
         return defines
 
     def ccacheOptions(self):
