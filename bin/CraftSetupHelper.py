@@ -32,12 +32,13 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from CraftDebug import CraftDebug
 from CraftOS.osutils import OsUtils
-# The minimum python version for craft please edit here
-# if you add code that changes this requirement
 from CraftStandardDirs import CraftStandardDirs
 
-MIN_PY_VERSION = (3, 6, 0)
+from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
+# The minimum python version for craft please edit here
+# if you add code that changes this requirement
+MIN_PY_VERSION = (3, 6, 0)
 
 def log(msg, critical=False):
     if critical or not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
@@ -279,12 +280,7 @@ class SetupHelper(object):
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
     def setupEnvironment(self):
-        PKG_CONFIG_PATH = None
-        try:
-            PKG_CONFIG_PATH = self._getOutput("pkg-config --variable pc_path pkg-config", shell=True)[1]
-        except:
-            pass
-
+        originaleEnv = CaseInsensitiveDict(os.environ)
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
@@ -299,7 +295,7 @@ class SetupHelper(object):
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.addEnvVar("CCACHE_DIR",
                            CraftCore.settings.get("Paths", "CCACHE_DIR", os.path.join(CraftStandardDirs.craftRoot(),
-                                                                                 "build", "CCACHE")))
+                                                                                      "build", "CCACHE")))
 
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
             sdkPath = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
@@ -314,25 +310,32 @@ class SetupHelper(object):
         else:
             self._setupUnix()
 
-        PKG_CONFIG_PATH_NEW = os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig")
-        if PKG_CONFIG_PATH:
-            PKG_CONFIG_PATH_NEW += os.path.pathsep + PKG_CONFIG_PATH
-        self.prependEnvVar("PKG_CONFIG_PATH", PKG_CONFIG_PATH_NEW)
+
+        PKG_CONFIG_PATH = collections.OrderedDict.fromkeys([os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig")])
+        if "PKG_CONFIG_PATH" in originaleEnv:
+            PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(originaleEnv[PKG_CONFIG_PATH].split(os.path.pathsep)))
+        else:
+            pkgCOnfig = shutil.which("pkg-config", path=originaleEnv["PATH"])
+            if pkgCOnfig:
+                out = self._getOutput("pkg-config --variable pc_path pkg-config", shell=True)
+                if out[0] == 0:
+                    PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep)))
+        self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH.keys()))
 
         self.prependEnvVar("QT_PLUGIN_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "plugins"),
-                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugins"),
-                                            os.path.join(CraftStandardDirs.craftRoot(), "lib64", "plugins"),
-                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
-                                                         "plugins"),
-                                            os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugin")
-                                            ])
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugins"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib64", "plugins"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
+                                                           "plugins"),
+                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "plugin")
+                                              ])
 
         self.prependEnvVar("QML2_IMPORT_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "qml"),
-                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
-                                              os.path.join(CraftStandardDirs.craftRoot(), "lib64", "qml"),
-                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
-                                                           "qml")
-                                              ])
+                                                os.path.join(CraftStandardDirs.craftRoot(), "lib", "qml"),
+                                                os.path.join(CraftStandardDirs.craftRoot(), "lib64", "qml"),
+                                                os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
+                                                             "qml")
+                                                ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
 
