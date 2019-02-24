@@ -65,7 +65,7 @@ def getFile(url, destdir, filename='', quiet=CraftCore.settings.getboolean("Cont
     if powershell:
         filename = os.path.join(destdir, filename)
         return utils.system([powershell, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command",
-                       f"(new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")"])
+                       f"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")"])
     else:
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
