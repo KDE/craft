@@ -313,7 +313,7 @@ class SetupHelper(object):
 
         PKG_CONFIG_PATH = collections.OrderedDict.fromkeys([os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig")])
         if "PKG_CONFIG_PATH" in originaleEnv:
-            PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(originaleEnv[PKG_CONFIG_PATH].split(os.path.pathsep)))
+            PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(originaleEnv["PKG_CONFIG_PATH"].split(os.path.pathsep)))
         else:
             pkgCOnfig = shutil.which("pkg-config", path=originaleEnv["PATH"])
             if pkgCOnfig:
