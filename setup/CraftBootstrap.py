@@ -240,6 +240,10 @@ def setUp(args):
         shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
     if installShortCut:
         run(args, ["craft-startmenu-entry"])
+
+    # install toast notifications
+    run(args, ["dev-utils/snoretoast"])
+
     print("Setup complete")
     print()
     print("Please run the following command to get started:")

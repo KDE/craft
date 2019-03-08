@@ -16,8 +16,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/git"] = None
             self.buildDependencies["dev-utils/kshim"] = None
             self.buildDependencies["dev-utils/cmake"] = None
-            if CraftCore.settings.get("General", "Notify", "") == "SnoreToast":
-                self.buildDependencies["dev-utils/snoretoast"] = None
         else:
             self.buildDependencies["dev-utils/cmake"] = None
             self.buildDependencies["dev-utils/7zip"] = None
