@@ -147,15 +147,12 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-
-
     # TODO: port oldPath to regexp to match path with \ and /
-    def patchInstallPrefix(self, files : [str], oldPaths : [str]=None, newPath : str=CraftCore.standardDirs.craftRoot()) -> bool:
+    def patchInstallPrefix(self, files: [str], oldPaths: [str] = None, newPath: str = CraftCore.standardDirs.craftRoot()) -> bool:
         if isinstance(oldPaths, str):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
-        newPathWin = OsUtils.toNativePath(newPath)
         newPathUnix = OsUtils.toUnixPath(newPath)
         newPath = newPathUnix
         for fileName in files:
@@ -168,15 +165,18 @@ class BuildSystemBase(CraftBase):
             for oldPath in oldPaths:
                 assert os.path.isabs(oldPath)
                 if CraftCore.compiler.isWindows:
-                    _, ext = os.path.splitext(fileName)
-                    # keep unix path sep or use unix path sep for specific type
-                    # prl and pri files might use \\\\ as sep which can be replaced by a / but not by a single \\
-                    if oldPath[2] == "/" or ext in {".prl", ".pri"}:
+                    sep = oldPath[2]
+                    if sep == "/":
                         newPath = newPathUnix
                     else:
+                        count = 1
+                        for c in oldPath[3:]:
+                            if c != sep:
+                                break
+                            count += 1
+                        sep *= count
                         # keep windows sep
-                        newPath = newPathWin
-
+                        newPath = newPathUnix.replace("/", sep)
                 oldPathBinary = oldPath.encode()
                 if oldPath != newPath and oldPathBinary in content:
                     dirty = True
