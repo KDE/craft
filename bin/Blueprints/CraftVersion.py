@@ -32,6 +32,14 @@ class CraftVersion(Version):
                     else -1 if self.isBranch and not other.isBranch else 1)
         return 0 if self.version == other.version else -1 if self.version < other.version else 1
 
+
+    # allow to use % for a comparison of major versions
+    def __mod__(self, other):
+        if isinstance(other, str):
+            other = CraftVersion(other)
+        s = min(len(self.versionstr), len(other.versionstr))
+        return CraftVersion(self.versionstr[0:s]) == CraftVersion(other.versionstr[0:s])
+
     @property
     def strictVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
