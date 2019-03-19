@@ -49,9 +49,15 @@ class PackageWin(BinaryPackageBase):
         elif CraftCore.compiler.isMSVC():
             if self.buildType() != "Debug":
                 if CraftCore.compiler.isMSVC2017():
-                    redistDir = os.environ["VCTOOLSREDISTDIR"]
+                    if "VCTOOLSREDISTDIR" in os.environ:
+                        redistDir = os.environ["VCTOOLSREDISTDIR"]
+                    else:
+                        CraftCore.log.error("Could not find Mycrosoft Visual Studio 2017.\nVCTOOLSREDISTDIR does not exist, and should point to '*\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\xx.xx.xxxxx'.")
                 elif CraftCore.compiler.isMSVC2015():
-                    redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
+                    if "VCINSTALLDIR" in os.environ:
+                        redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
+                    else:
+                        CraftCore.log.error("Could not find Mycrosoft Visual Studio 2015.\nVCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'.")
                 if redistDir:
                     files = glob.glob(os.path.join(redistDir, CraftCore.compiler.architecture, "**/*.dll"), recursive=True)
                 else:
