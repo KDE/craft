@@ -268,6 +268,16 @@ class SetupHelper(object):
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
 
+    def _setupMac(self):
+        #self.prependEnvVar("DYLD_LIBRARY_PATH", ["/usr/lib", os.path.join(CraftCore.standardDirs.craftRoot(), "lib")])
+        self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
+        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
+        dbusInstalled = CraftCore.installdb.isInstalled("libs/dbus")
+        if dbusInstalled:
+            serviceAgent = os.path.join(CraftCore.standardDirs.craftRoot(), "Library", "LaunchAgents", "org.freedesktop.dbus-session.plist")
+            if os.path.exists(serviceAgent):
+                SetupHelper._getOutput(["launchctl", "load", "-Fw", serviceAgent])
+
     def _setupWin(self):
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
@@ -327,6 +337,8 @@ class SetupHelper(object):
 
         if OsUtils.isWin():
             self._setupWin()
+        elif OsUtils.isMac():
+            self._setupMac()
         else:
             self._setupUnix()
 
