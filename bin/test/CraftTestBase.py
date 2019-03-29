@@ -17,7 +17,6 @@ class CraftTestBase(unittest.TestCase):
         CraftCore.settings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
 
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs(self.kdeRoot.name)
-        CraftStandardDirs.CraftStandardDirs.allowShortpaths(False)
         os.makedirs(CraftCore.standardDirs.etcDir())
         CraftCore.settings.set("Blueprints", "BlueprintRoot", blueprintsDir)
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
