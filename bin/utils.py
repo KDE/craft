@@ -77,9 +77,13 @@ def unpackFile(downloaddir, filename, workdir):
         return True
 
     sevenZVersion = CraftCore.cache.getVersion("7za", versionCommand="-version")
+    supportsSymlink = not OsUtils.isWin() or OsUtils.supportsSymlinks()
+    if not supportsSymlink:
+        CraftCore.warning("Please enable Windows 10 development mode to enable support for symlinks.\n"
+                          "This will enable faster extractions.\n"
+                          "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
     if sevenZVersion and sevenZVersion >= "16" and (
-            not OsUtils.isWin() or OsUtils.supportsSymlinks() or
-            not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
+            supportsSymlink or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
         return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
