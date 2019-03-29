@@ -42,6 +42,7 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
+from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
@@ -76,14 +77,13 @@ def unpackFile(downloaddir, filename, workdir):
         CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
 
-    sevenZVersion = CraftCore.cache.getVersion("7za", versionCommand="-version")
+    sevenZVersion = CraftCore.cache.getVersion("7za", versionCommand="-version") or CraftVersion("0")
     supportsSymlink = not OsUtils.isWin() or OsUtils.supportsSymlinks()
     if not supportsSymlink:
         CraftCore.warning("Please enable Windows 10 development mode to enable support for symlinks.\n"
                           "This will enable faster extractions.\n"
                           "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
-    if sevenZVersion and sevenZVersion >= "16" and (
-            supportsSymlink or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
+    if supportsSymlink and sevenZVersion >= "16" or not re.match("(.*\.tar.*$|.*\.tgz$)", filename):
         return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
