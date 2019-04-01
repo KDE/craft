@@ -77,14 +77,14 @@ def unpackFile(downloaddir, filename, workdir):
         CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
 
-    sevenZVersion = CraftCore.cache.getVersion("7za", versionCommand="-version") or CraftVersion("0")
-    supportsSymlink = not OsUtils.isWin() or OsUtils.supportsSymlinks()
-    if not supportsSymlink:
+    if OsUtils.isWin() and not OsUtils.supportsSymlinks():
         CraftCore.log.warning("Please enable Windows 10 development mode to enable support for symlinks.\n"
                               "This will enable faster extractions.\n"
                               "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
-    if supportsSymlink and sevenZVersion >= "16" or not re.match("(.*\.tar.*$|.*\.tgz$)", filename):
-        return un7zip(os.path.join(downloaddir, filename), workdir, ext)
+    if CraftCore.cache.findApplication("7za"):
+        if ((OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
+                or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
+            return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     else:
         try:
             shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
