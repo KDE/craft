@@ -206,9 +206,9 @@ class CraftBase(object):
             else:
                 version += ["latest"]
         else:
-            version = [self.version, buildVersion]
-            if includeTimeStamp:
-                version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
+            version += [self.version, buildVersion]
+        if includeTimeStamp:
+            version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
         version = version.replace("/", "_")
         if fileType:
