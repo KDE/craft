@@ -108,8 +108,6 @@ class CraftDebug(object):
     def trace(self, message):
         self.log.debug("craft trace: %s" % message)
 
-CraftCore.registerObjectAlias("log", "debug", "log")
-
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
 

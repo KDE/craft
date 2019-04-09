@@ -3,8 +3,6 @@ import zlib
 import subprocess
 
 from CraftCore import CraftCore
-import CraftConfig
-import CraftDebug
 from CraftOS.osutils import OsUtils
 
 class CraftShortPath(object):

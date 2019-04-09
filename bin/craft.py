@@ -174,10 +174,7 @@ def main():
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
 
-    helper = CraftSetupHelper.SetupHelper()
-    if not "KDEROOT" in os.environ:
-        helper.setupEnvironment()
-    helper.printBanner()
+    CraftSetupHelper.SetupHelper.printBanner()
 
 
     if args.doDestroyCraftRoot:
