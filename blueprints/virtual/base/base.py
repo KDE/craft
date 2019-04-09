@@ -40,12 +40,15 @@ class subinfo(info.infoclass):
 
         # needed by CollectionPackagerBase
         if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
-            CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
+                CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
             self.buildDependencies["dev-utils/dependencies"] = None
 
         self.buildDependencies["craft/craft-blueprints-kde"] = None
         self.buildDependencies["craft/craft-core"] = None
         self.runtimeDependencies["libs/runtime"] = None
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+            self.buildDependencies["python-modules/coloredlogs"] = None
+
 
 
 class Package(VirtualPackageBase):

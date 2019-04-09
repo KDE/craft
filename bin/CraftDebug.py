@@ -9,37 +9,46 @@ import sys
 
 
 from CraftCore import CraftCore
-import CraftConfig
+
+try:
+    import coloredlogs
+    _SUPPORTS_COLORED_LOGS = True
+except:
+    _SUPPORTS_COLORED_LOGS = False
 
 
 class CraftDebug(object):
     def __init__(self):
         self.seenDeprecatedFunctions = set()
-        self._handler = logging.StreamHandler(sys.stdout)
 
         self._log = logging.getLogger("craft")
         self._log.setLevel(logging.DEBUG)
-        self._log.addHandler(self._handler)
-        self._handler.setLevel(logging.INFO)
 
         logDir = CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
         if not os.path.exists(logDir):
             os.makedirs(logDir)
 
-        cleanNameRe = re.compile(r":?\\+|/+|:|;")
-        logfileName = os.path.join(logDir, "log-%s.txt" % cleanNameRe.sub("_", CraftCore.settings._craftRoot()))
-
         try:
-            fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at+", maxBytes=10000000,
+            logfileName = os.path.join(logDir, "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_", CraftCore.settings._craftRoot()))
+            fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at", maxBytes=10000000,
                                                                backupCount=20)
             fileHandler.doRollover()
             fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
             self._log.addHandler(fileHandler)
-            fileHandler.setLevel(logging.DEBUG)
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.",
                   file=sys.stderr)
+        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor"):
+            coloredlogs.install(logger=self._log, fmt="%(message)s", stream=sys.stdout)
+            self._handler = self._log.handlers[-1]
+        else:
+            self._handler = logging.StreamHandler(sys.stdout)
+            self._log.addHandler(self._handler)
+
+        self._handler.setLevel(logging.INFO)
+        fileHandler.setLevel(logging.DEBUG)
+
         self.log.debug("#" * self.lineWidth)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
         self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
@@ -183,3 +192,5 @@ def deprecated(replacement=None):
 if __name__ == "__main__":
     CraftCore.log.debug("debug: foo")
     CraftCore.log.info("info: foo")
+    CraftCore.log.warning("warning: foo")
+    CraftCore.log.critical("critical: foo")

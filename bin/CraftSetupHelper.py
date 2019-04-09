@@ -376,8 +376,10 @@ class SetupHelper(object):
                 self.addEnvVar("CXX", "g++")
 
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+            # different non standard env switches
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
+            self.addEnvVar("ANSICON", "1")
             if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
                 self.prependEnvVar("CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
