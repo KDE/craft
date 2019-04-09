@@ -84,13 +84,13 @@ function Global:craft()
     return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
 }
 
-function Global:cb([string] $package, [string] $target="")
+function Global:craftCd([string] $package, [string]$property, [string] $target="")
 {
     $command = @()
     if ($target) {
         $command += @("--target", $target)
     }
-    $command += @("-q", "--ci-mode", "--get", "buildDir()", $package)
+    $command += @("-q", "--ci-mode", "--get", $property, $package)
     $dir = craft @command | Out-String
     if($LASTEXITCODE) {
         Write-Host $dir
@@ -99,19 +99,20 @@ function Global:cb([string] $package, [string] $target="")
     }
 }
 
+
+function Global:cb([string] $package, [string] $target="")
+{
+    craftCd $package "buildDir()" $package $target
+}
+
 function Global:cs([string] $package, [string] $target="")
 {
-    $command = @()
-    if ($target) {
-        $command += @("--target", $target)
-    }
-    $command += @("-q", "--ci-mode", "--get", "sourceDir()", $package)
-    $dir = craft @command | Out-String
-    if($LASTEXITCODE) {
-        Write-Host $dir
-    } else {
-        cd "$dir".Trim()
-    }
+    craftCd $package "sourceDir()" $package $target
+}
+
+function Global:ci([string] $package, [string] $target="")
+{
+    craftCd $package "imageDir()" $package $target
 }
 
 function Global:cr()
