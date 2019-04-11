@@ -48,7 +48,11 @@ class CraftConfig(object):
     def _craftRoot():
         if CraftConfig.__RootDir:
             return CraftConfig.__RootDir
-        dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+        # try to locate the full path even if the craft dir is a symlink
+        if "craftRoot" in os.environ:
+            dir = os.environ["craftRoot"]
+        else:
+            dir = os.path.abspath(os.path.dirname(sys.argv[0]))
         while dir.count(os.path.sep) > 1 and not os.path.isfile(os.path.join(dir, "craftenv.ps1")):
             dir = os.path.dirname(dir)
         if not os.path.join(dir, "craftenv.ps1"):
