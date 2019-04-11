@@ -3,11 +3,16 @@
 """
     provides shells
 """
-from Blueprints.CraftVersion import CraftVersion
-from CraftStandardDirs import CraftStandardDirs
-from CraftOS.OsDetection import OsDetection
-from options import *
 import subprocess
+import sys
+
+from CraftCore import CraftCore
+from Blueprints.CraftVersion import CraftVersion
+from CraftOS.osutils import OsUtils
+import utils
+
+import os
+import shutil
 
 
 class BashShell(object):
@@ -27,7 +32,7 @@ class BashShell(object):
     @property
     def environment(self):
         if not self._environment:
-            mergeroot = self.toNativePath(CraftStandardDirs.craftRoot())
+            mergeroot = self.toNativePath(CraftCore.standardDirs.craftRoot())
 
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
@@ -68,7 +73,7 @@ class BashShell(object):
                 elif self.buildType == "Debug":
                     cflags += " -O0 -g3 "
 
-            if OsDetection.isWin():
+            if OsUtils.isWin():
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.isMinGW():
                     gcc = shutil.which("gcc")
@@ -120,7 +125,7 @@ class BashShell(object):
                         cflags += " -FS"
 
             self._environment["PKG_CONFIG_PATH"] = self.toNativePath(
-                os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))
+                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "pkgconfig"))
 
 
             self._environment["CFLAGS"] = os.environ.get("CFLAGS", "").replace("$", "$$") + cflags
@@ -141,7 +146,7 @@ class BashShell(object):
 
     def _findBash(self):
         if OsUtils.isWin():
-            msysdir = CraftStandardDirs.msysDir()
+            msysdir = CraftCore.standardDirs.msysDir()
             bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
         else:
             bash = CraftCore.cache.findApplication("bash")
@@ -161,8 +166,7 @@ class BashShell(object):
 
         env = dict(kwargs.get("env", os.environ))
         env.update(self.environment)
-
-        return utils.system(command, cwd=path, env=env, **kwargs)
+        return utils.system(command, cwd=path, env=env,**kwargs)
 
     def login(self):
         if CraftCore.compiler.isMSVC():

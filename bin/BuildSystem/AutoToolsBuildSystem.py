@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
-from BuildSystem.BuildSystemBase import *
-from shells import *
+
+from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
+from shells import BashShell
+import utils
+
+import os
 import glob
 import re
 
@@ -103,7 +109,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(self.installPrefix())
         options += f" --prefix='{prefix}' "
-        if OsDetection.isWin() and not self.subinfo.options.configure.noDataRootDir:
+        if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += f" --datarootdir='{self.shell.toNativePath(CraftCore.standardDirs.locations.data)}' "
         options += self.platform
 
@@ -113,7 +119,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         return " CC='ccache gcc' CXX='ccache g++' "
 
     def copyToMsvcImportLib(self):
-        if not OsDetection.isWin():
+        if not OsUtils.isWin():
             return True
         reDlla = re.compile(r"\.dll\.a$")
         reLib = re.compile(r"^lib")
