@@ -177,5 +177,14 @@ def main():
     shell = BashShell()
     shell.login()
 
+def testColor():
+    shell = BashShell()
+    shell.execute(CraftCore.standardDirs.craftRoot(), os.path.join(CraftCore.standardDirs.craftBin(), "data", "ansi_color.sh"))
+
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "color":
+            testColor()
+    else:
+        main()
