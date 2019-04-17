@@ -102,17 +102,17 @@ function Global:craftCd([string] $package, [string]$property, [string] $target="
 
 function Global:cb([string] $package, [string] $target="")
 {
-    craftCd $package "buildDir()" $package $target
+    craftCd $package "buildDir()" $target
 }
 
 function Global:cs([string] $package, [string] $target="")
 {
-    craftCd $package "sourceDir()" $package $target
+    craftCd $package "sourceDir()" $target
 }
 
 function Global:ci([string] $package, [string] $target="")
 {
-    craftCd $package "imageDir()" $package $target
+    craftCd $package "imageDir()" $target
 }
 
 function Global:cr()
