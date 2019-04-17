@@ -51,8 +51,10 @@ class CraftDependencyPackage(CraftPackageObject):
         if not self.isCategory():
             subinfo = self.subinfo
             if self.depenendencyType & DependencyType.Runtime:
+                self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.categoryInfo.runtimeDependencies]))
                 self.dependencies.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.items()))
             if self.depenendencyType & DependencyType.Buildtime:
+                self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.categoryInfo.buildDependencies]))
                 self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.items()))
             if self.depenendencyType & DependencyType.Packaging:
                 self.dependencies.extend(self.__readDependenciesForChildren(subinfo.packagingDependencies.items()))

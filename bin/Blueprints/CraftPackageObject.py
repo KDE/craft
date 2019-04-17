@@ -46,6 +46,9 @@ class CategoryPackageObject(object):
         self.pathOverride = None
         self.valid = False
 
+        self.runtimeDependencies = []
+        self.buildDependencies = []
+
         ini = os.path.join(self.localPath, "info.ini")
         if os.path.exists(ini):
             self.valid = True
@@ -56,6 +59,8 @@ class CategoryPackageObject(object):
             self.description = general.get("description", "")
             self.tags = general.get("tags", "")
             self.webpage = general.get("webpage", "")
+            self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
+            self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
             platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
 
             if platform:
