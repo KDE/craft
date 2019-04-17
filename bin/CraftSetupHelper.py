@@ -163,11 +163,13 @@ class SetupHelper(object):
         return os.environ
 
     @staticmethod
-    def _callVCVER(version : int, args : []=None, native : bool=True) -> str:
+    def _callVCVER(version : int, args : []=None, native : bool=True, Prerelease : bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
         command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
+        if Prerelease:
+            command += ["-prerelease"]
         if version:
             command += ["-version", f"[{version},{version+1})"]
             if version < 15:
@@ -200,8 +202,12 @@ class SetupHelper(object):
 
         if not path:
             path = SetupHelper._callVCVER(version, native=native)
+            if not path:
+                path = SetupHelper._callVCVER(version, native=native, Prerelease=True)
+                if path:
+                    log("Found MSVS only in a prerelease version. I will use that.")
         if not path:
-            log("Please ensure that you have installed the C++ component", critical=True)
+            log("Unable to locate Visual Studio.  Please install it with the C++ component. Aborting.", critical=True)
 
         path = os.path.join(path, "VC")
         if not os.path.exists(os.path.join(path, "vcvarsall.bat")):
@@ -347,7 +353,7 @@ class SetupHelper(object):
 
         self.prependEnvVar("PATH", CraftCore.standardDirs.craftBin())
 
-        # make sure thate craftroot bin is the first to look for dlls etc
+        # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin"))
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin"))
 

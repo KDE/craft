@@ -48,20 +48,22 @@ class PackageWin(BinaryPackageBase):
                 srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
             if self.buildType() != "Debug":
-                if CraftCore.compiler.isMSVC2017():
+                if CraftCore.compiler.isMSVC2019() or CraftCore.compiler.isMSVC2017():
+                    if CraftCore.compiler.isMSVC2019:
+                        flavor="2019"
+                    else:
+                        flavor="2017"
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
                     else:
-                        CraftCore.log.error("Could not find Mycrosoft Visual Studio 2017.\n"
-                                            "VCTOOLSREDISTDIR does not exist, and should point to "
-                                            r"'*\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\xx.xx.xxxxx'.")
+                        CraftCore.log.error((r"Could not find Microsoft Visual Studio {0}.\n" +
+                                             r"VCTOOLSREDISTDIR does not exist, and likely should point to '*\Microsoft Visual Studio\{0}\Community\VC\Redist\MSVC\xx.xx.xxxxx'.").format(flavor))
                 elif CraftCore.compiler.isMSVC2015():
                     if "VCINSTALLDIR" in os.environ:
                         redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
                     else:
-                        CraftCore.log.error("Could not find Mycrosoft Visual Studio 2015.\n"
-                                            "VCINSTALLDIR does not exist, and should point to "
-                                            r"'*\Microsoft Visual Studio\2015\Community\VC\'.")
+                        CraftCore.log.error("Could not find Microsoft Visual Studio 2015.\n" +
+                                            r"VCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'.")
                 if redistDir:
                     files = glob.glob(os.path.join(redistDir, CraftCore.compiler.architecture, "**/*.dll"), recursive=True)
                 else:

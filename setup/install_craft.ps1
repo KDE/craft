@@ -1,12 +1,14 @@
 param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
-    [alias("branch")][string]$Script:branch="master"
+    [alias("branch")][string]$Script:branch="master",
+    [alias("localdev")][string]$Script:localdev=$null
     )
-
+    
 [Net.ServicePointManager]::SecurityProtocol = "SystemDefault, tls12, tls11"
 [version]$minPythonVersion = 3.6
 $Script:PythonInstallDir = "C:\python36"
+
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
     $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.6/python-3.6.6-amd64.exe"
@@ -132,12 +134,20 @@ if (!$Script:python) {
     TestAndFetchPython
 }
 &{
+if ($Script:localdev) {
+Copy-Item "$Script:localdev\Setup\CraftBootstrap.py" -Dest "$Script:installRoot\download\CraftBootstrap.py"
+Write-Host "Copied local CraftBootstrap.py"
+} else {
 $url = "https://raw.githubusercontent.com/KDE/craft/$Script:branch/setup/CraftBootstrap.py"
 Write-Host "Downloading:" $url
 (new-object net.webclient).DownloadFile("$url", "$Script:installRoot\download\CraftBootstrap.py")
 
 Start-Sleep -s 10
+}
 [string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--prefix", "$Script:installRoot", "--branch", "$Script:branch")
+if ($Script:localdev) {
+   [string[]]$command += @("--localDev", $Script:localdev)
+}
 Write-Host "$Script:python" $command
 & "$Script:python" $command
 cd $Script:installRoot

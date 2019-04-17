@@ -172,7 +172,8 @@ def getABI():
         abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                        [("Mingw-w64", ("mingw", "gcc")),
                                                         ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
-                                                        ("Microsoft Visual Studio 2017", ("msvc2017", "cl"))],
+                                                        ("Microsoft Visual Studio 2017", ("msvc2017", "cl")),
+                                                        ("Microsoft Visual Studio 2019", ("msvc2019", "cl"))],
                                                        "Microsoft Visual Studio 2017")
         abi += f"_{getArchitecture()}"
 
@@ -210,10 +211,15 @@ def setUp(args):
                                                          [("Yes", True), ("No", False)],
                                                          default="Yes")
     if not args.dry_run:
-        CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
-                                    os.path.join(args.prefix, "download"),
-                                    f"craft-{args.branch}.zip")
-        shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
+        if args.localDev:
+            shutil.copytree(args.localDev, os.path.join(args.prefix, f"craft-{args.branch}"),
+                            ignore=shutil.ignore_patterns(".git"))
+            print("Getting code from local {}".format(args.localDev))
+        else:
+            CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
+                                        os.path.join(args.prefix, "download"),
+                                        f"craft-{args.branch}.zip")
+            shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
 
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
@@ -262,6 +268,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
     parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
     parser.add_argument("--version", action="version", version="%(prog)s master")
+    parser.add_argument("--localDev", action="store", help="Path to a local directory to use instead of fetching from github")
 
     args = parser.parse_args()
     if args.root:
