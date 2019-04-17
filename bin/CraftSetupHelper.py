@@ -163,12 +163,12 @@ class SetupHelper(object):
         return os.environ
 
     @staticmethod
-    def _callVCVER(version : int, args : []=None, native : bool=True, Prerelease : bool = False) -> str:
+    def _callVCVER(version : int, args : []=None, native : bool=True, prerelease : bool=False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
         command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
-        if Prerelease:
+        if prerelease:
             command += ["-prerelease"]
         if version:
             command += ["-version", f"[{version},{version+1})"]
@@ -203,7 +203,7 @@ class SetupHelper(object):
         if not path:
             path = SetupHelper._callVCVER(version, native=native)
             if not path:
-                path = SetupHelper._callVCVER(version, native=native, Prerelease=True)
+                path = SetupHelper._callVCVER(version, native=native, prerelease=True)
                 if path:
                     log("Found MSVS only in a prerelease version. I will use that.")
         if not path:

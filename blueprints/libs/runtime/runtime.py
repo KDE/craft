@@ -48,11 +48,13 @@ class PackageWin(BinaryPackageBase):
                 srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
             if self.buildType() != "Debug":
-                if CraftCore.compiler.isMSVC2019() or CraftCore.compiler.isMSVC2017():
-                    if CraftCore.compiler.isMSVC2019:
+                if CraftCore.compiler.getInternalVersion() >= 15:
+                    if CraftCore.compiler.isMSVC2019():
                         flavor="2019"
-                    else:
+                    elif CraftCore.compiler.isMSVC2017():
                         flavor="2017"
+                    else:
+                        raise Exception("Unknown compiler")
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
                     else:

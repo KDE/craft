@@ -173,8 +173,8 @@ def getABI():
                                                        [("Mingw-w64", ("mingw", "gcc")),
                                                         ("Microsoft Visual Studio 2015", ("msvc2015", "cl")),
                                                         ("Microsoft Visual Studio 2017", ("msvc2017", "cl")),
-                                                        ("Microsoft Visual Studio 2019", ("msvc2019", "cl"))],
-                                                       "Microsoft Visual Studio 2017")
+                                                     #   ("Microsoft Visual Studio 2019", ("msvc2019", "cl"))
+                                                        ], "Microsoft Visual Studio 2017")
         abi += f"_{getArchitecture()}"
 
     elif CraftBootstrap.isUnix():
