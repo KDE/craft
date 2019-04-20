@@ -200,7 +200,7 @@ class SetupHelper(object):
             else:
                 component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
-            for v in [15, 16]:
+            for v in [16, 15]:
                 path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component], native=native)
                 if path:
                     if not toolset:
