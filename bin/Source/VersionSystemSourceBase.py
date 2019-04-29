@@ -124,6 +124,8 @@ class VersionSystemSourceBase(SourceBase):
 
     def sourceRevision(self):
         CraftCore.debug.trace("VersionSystemSourceBase sourceRevision")
+        if self.subinfo.isCachedBuild:
+            return None
         if not os.path.exists(self.sourceDir()):
             # as we are using the cahce we don't have the git clone present
             return "latest"
