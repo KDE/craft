@@ -69,7 +69,11 @@ class BoostBuildSystem(BuildSystemBase):
         elif CraftCore.compiler.isMSVC():
             platform = str(CraftCore.compiler.getMsvcPlatformToolset())
             if CraftVersion(self.buildTarget) < CraftVersion("1_65_1") and CraftCore.compiler.isMSVC2017():
+                # pretend to be 2015
                 options += f"msvc-{platform[:2]}.0"
+            elif CraftVersion(self.buildTarget) < CraftVersion("1.70.0") and CraftCore.compiler.isMSVC2019():
+                # pretend to be 2017
+                options += f"msvc-{platform[:2]}.1"
             else:
                 options += f"msvc-{platform[:2]}.{platform[2:]}"
         elif CraftCore.compiler.isIntel():
