@@ -38,6 +38,7 @@ class MSBuildBuildSystem(BuildSystemBase):
 
     def make(self):
         self.enterSourceDir()
+        msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
         buildType =self.buildTypes[self.buildType()]
         if CraftCore.compiler.isX86():
             platform = " /p:Platform=win32"
@@ -48,7 +49,9 @@ class MSBuildBuildSystem(BuildSystemBase):
         else:
             sdkVer = ""
         toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
-        if os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
+        if toolsVersion == "15.0" and msbuildVersion >= "16":
+            toolsVersion = f" /toolsversion:Current"
+        elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
             toolsVersion = f" /toolsversion:{toolsVersion}"
         else:
             toolsVersion = ""
