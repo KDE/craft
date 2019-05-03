@@ -166,7 +166,7 @@ def getABI():
                                                         ("Microsoft Visual Studio 2017", ("msvc2017", "cl")),
                                                         ("Microsoft Visual Studio 2019 (Experimental)", ("msvc2019", "cl")),
                                                         ], "Microsoft Visual Studio 2017")
-        abi += f"_x64"
+        abi += f"_64"
 
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
@@ -179,7 +179,7 @@ def getABI():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                       ["gcc", "clang"])
-        abi = "x64"
+        abi = "64"
 
     return f"{platform}-{abi}-{compiler}"
 
