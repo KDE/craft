@@ -157,15 +157,6 @@ def run(args, command):
         if not subprocess.run(command).returncode == 0:
             exit(1)
 
-
-def getArchitecture():
-    if CraftBootstrap.isWin():
-        return CraftBootstrap.promptForChoice("Select architecture", [("x86", "32"),
-                                                                      ("x64", "64")], "x64")
-    else:
-        return 64 if sys.maxsize > 2**32 else 32
-
-
 def getABI():
     if CraftBootstrap.isWin():
         platform = "windows"
@@ -175,7 +166,7 @@ def getABI():
                                                         ("Microsoft Visual Studio 2017", ("msvc2017", "cl")),
                                                      #   ("Microsoft Visual Studio 2019", ("msvc2019", "cl"))
                                                         ], "Microsoft Visual Studio 2017")
-        abi += f"_{getArchitecture()}"
+        abi += f"_x64"
 
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
@@ -188,7 +179,7 @@ def getABI():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                       ["gcc", "clang"])
-        abi = getArchitecture()
+        abi = "x64"
 
     return f"{platform}-{abi}-{compiler}"
 
