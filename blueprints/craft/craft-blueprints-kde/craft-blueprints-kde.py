@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["2018.12", "master"]:
+        for ver in ["2018.12", "2019.04", "master"]:
             self.svnTargets[ver] = f"[git]git://anongit.kde.org/craft-blueprints-kde|{ver}|"
         self.defaultTarget = "master"
 
