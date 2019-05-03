@@ -74,14 +74,16 @@ class BashShell(object):
                     cflags += " -O0 -g3 "
 
             if OsUtils.isWin():
+                def convertPath(path : str):
+                    return ":".join([self.toNativePath(p) for p in path.split(os.path.pathsep)])
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.isMinGW():
                     gcc = shutil.which("gcc")
                     if gcc:
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
-                for p in os.environ["PATH"].split(";"):
-                    path += f":{self.toNativePath(p)}"
-                self._environment["PATH"] = path
+                self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
+                self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
+
                 if "make" in self._environment:
                     del self._environment["make"]
                 # MSYSTEM is used by uname
@@ -124,8 +126,6 @@ class BashShell(object):
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
-            self._environment["PKG_CONFIG_PATH"] = self.toNativePath(
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "pkgconfig"))
 
 
             self._environment["CFLAGS"] = os.environ.get("CFLAGS", "").replace("$", "$$") + cflags
