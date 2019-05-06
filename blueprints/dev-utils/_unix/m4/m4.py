@@ -12,6 +12,9 @@ class subinfo( info.infoclass ):
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
         self.defaultTarget = "1.4.18"
 
+        self.patchToApply["1.4.18"] = [("m4-1.4.18-20190506.diff", 1)]
+        self.patchLevel["1.4.18"] = 1
+
 from Package.AutoToolsPackageBase import *
 
 class Package( AutoToolsPackageBase ):
