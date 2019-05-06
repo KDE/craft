@@ -192,7 +192,7 @@ class SetupHelper(object):
         args = architectures[architecture]
         path = ""
         # we prefer newer compiler that provide legacy toolchains
-        if version < 16:
+        if version and version < 16:
             # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
             component = "Microsoft.VisualStudio.Component.VC."
             if version == 14:
