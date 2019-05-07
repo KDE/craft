@@ -92,6 +92,7 @@ def unpackFile(downloaddir, filename, workdir):
     except Exception as e:
         CraftCore.log.error(f"Failed to unpack {filename}", exc_info=e)
         return False
+    return True
 
 
 def un7zip(fileName, destdir, flag=None):
