@@ -132,7 +132,7 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopys(destdir)
+    return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopies(destdir)
 
 def compress(archive : str, source : str) -> bool:
     def __7z(archive, source):
@@ -695,7 +695,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     return system(["kshimgen", "--create", shim, target , "--"] + args)
 
 
-def replaceSymlinksWithCopys(path, replaceDirs=False):
+def replaceSymlinksWithCopies(path, replaceDirs=False):
     def resolveLink(path):
         old = path
         while os.path.islink(path):
@@ -729,7 +729,7 @@ def replaceSymlinksWithCopys(path, replaceDirs=False):
                     else:
                         ok = copyFile(toReplace, path)
     for d in dirsToResolve:
-        if not replaceSymlinksWithCopys(d, replaceDirs=True):
+        if not replaceSymlinksWithCopies(d, replaceDirs=True):
             return False
     return True
 
