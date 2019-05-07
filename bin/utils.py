@@ -695,9 +695,8 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     return system(["kshimgen", "--create", shim, target , "--"] + args)
 
 
-def replaceSymlinksWithCopies(path, replaceDirs=False):
+def replaceSymlinksWithCopies(path, _replaceDirs=False):
     def resolveLink(path):
-        old = path
         while os.path.islink(path):
             toReplace = os.readlink(path)
             if not os.path.isabs(toReplace):
@@ -720,16 +719,17 @@ def replaceSymlinksWithCopies(path, replaceDirs=False):
                     CraftCore.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
                     continue
                 if toReplace != path:
-                    os.unlink(path)
                     if os.path.isdir(toReplace):
-                        if not replaceDirs:
+                        if not _replaceDirs:
                             dirsToResolve.append(path)
                         else:
+                            os.unlink(path)
                             ok = copyDir(toReplace, path)
                     else:
+                        os.unlink(path)
                         ok = copyFile(toReplace, path)
     for d in dirsToResolve:
-        if not replaceSymlinksWithCopies(d, replaceDirs=True):
+        if not replaceSymlinksWithCopies(os.path.dirname(d), _replaceDirs=True):
             return False
     return True
 
