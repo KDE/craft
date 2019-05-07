@@ -505,7 +505,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                 if copiedFiles is not None:
                     copiedFiles.append(os.path.join(tmpdir, fileName))
     except Exception as e:
-        CraftCore.log.error(e)
+        CraftCore.log.error(e, exc_info=e)
         return False
     return True
 
@@ -695,8 +695,9 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     return system(["kshimgen", "--create", shim, target , "--"] + args)
 
 
-def replaceSymlinksWithCopys(path):
+def replaceSymlinksWithCopys(path, replaceDirs=False):
     def resolveLink(path):
+        old = path
         while os.path.islink(path):
             toReplace = os.readlink(path)
             if not os.path.isabs(toReplace):
@@ -705,8 +706,13 @@ def replaceSymlinksWithCopys(path):
                 path = toReplace
         return path
 
+    # symlinks to dirs are resolved after we resolved the files
+    dirsToResolve = []
+    ok = True
     for root, _, files in os.walk(path):
         for svg in files:
+            if not ok:
+                return False
             path = os.path.join(root, svg)
             if os.path.islink(path):
                 toReplace = resolveLink(path)
@@ -716,9 +722,15 @@ def replaceSymlinksWithCopys(path):
                 if toReplace != path:
                     os.unlink(path)
                     if os.path.isdir(toReplace):
-                        copyDir(toReplace, path)
+                        if not replaceDirs:
+                            dirsToResolve.append(path)
+                        else:
+                            ok = copyDir(toReplace, path)
                     else:
-                        copyFile(toReplace, path)
+                        ok = copyFile(toReplace, path)
+    for d in dirsToResolve:
+        if not replaceSymlinksWithCopys(d, replaceDirs=True):
+            return False
     return True
 
 
