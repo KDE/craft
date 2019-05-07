@@ -122,7 +122,7 @@ You can add your own defines into self.defines as well.
         defines = self._setDefaults(self.defines)
         defines["dataPath"] = self.setupName
         defines["dataName"] = os.path.basename(self.setupName)
-        defines["7za"] = CraftCore.cache.findApplication("7za")
+        defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.isX64() else CraftCore.cache.findApplication("7za_32")
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
         defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(self.setupName)) / 1000))
 
