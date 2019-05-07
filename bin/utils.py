@@ -82,16 +82,16 @@ def unpackFile(downloaddir, filename, workdir):
                               "This will enable faster extractions.\n"
                               "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
     if CraftCore.cache.findApplication("7za"):
-        if ((OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
+        tar = CraftCore.cache.findApplication("tar")
+        if (tar
+                or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
                 or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
             return un7zip(os.path.join(downloaddir, filename), workdir, ext)
-    else:
-        try:
-            shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
-        except Exception as e:
-            CraftCore.log.error(f"Failed to unpack {filename}", exc_info=e)
-            return False
-    return True
+    try:
+        shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
+    except Exception as e:
+        CraftCore.log.error(f"Failed to unpack {filename}", exc_info=e)
+        return False
 
 
 def un7zip(fileName, destdir, flag=None):
@@ -118,13 +118,13 @@ def un7zip(fileName, destdir, flag=None):
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
         kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout = subprocess.PIPE)
-        if OsUtils.isWin():
+        tar = CraftCore.cache.findApplication("tar")
+        if OsUtils.isWin() and not tar:
             resolveSymlinks = True
             if progressFlags:
                 progressFlags = ["-bsp0"]
             command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
         else:
-            tar = CraftCore.cache.findApplication("tar")
             command = [tar, "--directory", destdir, "-xf", "-"]
     else:
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
