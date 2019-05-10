@@ -164,8 +164,9 @@ class BashShell(object):
         else:
             command = f"{self.toNativePath(cmd)} {args}"
 
-        env = dict(kwargs.get("env", os.environ))
+        env = dict(os.environ)
         env.update(self.environment)
+        env.update(kwargs.get("env", {}))
         return utils.system(command, cwd=path, env=env,**kwargs)
 
     def login(self):
