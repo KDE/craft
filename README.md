@@ -17,8 +17,7 @@
 
 ## Getting in Touch
 
-[IRC: #kde-windows](http://webchat.freenode.net?channels=%23kde-windows)
-
+[IRC: #kde-craft](http://webchat.freenode.net?channels=%23kde-craft)
 [Report Bugs](https://phabricator.kde.org/project/profile/61/)
 
 Mailing list: kde-windows@kde.org
