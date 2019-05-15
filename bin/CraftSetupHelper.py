@@ -269,7 +269,8 @@ class SetupHelper(object):
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
 
     def _setupMac(self):
-        #self.prependEnvVar("DYLD_LIBRARY_PATH", ["/usr/lib", os.path.join(CraftCore.standardDirs.craftRoot(), "lib")])
+        #self.prependEnvVar("DYLD_LIBRARY_PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib"))
+        self.prependEnvVar("LDFLAGS", "-Wl,-rpath,@loader_path/../lib", sep=" ")
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
         dbusInstalled = CraftCore.installdb.isInstalled("libs/dbus")

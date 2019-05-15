@@ -222,7 +222,7 @@ class BuildSystemBase(CraftBase):
                     if len(oldId) == 2:
                         oldId = oldId[1].strip()
                         newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
-                        # TODO: meh, maybe there is a better way
+                        # TODO: Id's with a rpath don't work
                         newId = newId.replace("@rpath", os.path.join(newPrefix, "lib"))
                         if newId != oldId:
                             if not utils.system(["install_name_tool", "-id", newId, f]):
