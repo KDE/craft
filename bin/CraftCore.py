@@ -16,6 +16,8 @@ if False:
 # TODO: a more optimal solution would be to initialize all singletons in a
 # __init__.py but that would require massive refactoring as everything in bin/
 # is not part of a module which could use such a __init__.py
+# TODO: remove once we require python 3.7
+## "Circular imports involving absolute imports with binding a submodule to a name are now supported. (Contributed by Serhiy Storchaka in bpo-30024.)"
 class AutoImport(object):
     def __init__(self, name : str, module : str, className : str=None, function=None, member : str=None) -> None:
         self.name = name
