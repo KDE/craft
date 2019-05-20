@@ -5,6 +5,7 @@ import datetime
 import functools
 import sys
 
+import info
 import utils
 from CraftConfig import *
 from CraftCore import CraftCore
@@ -55,7 +56,7 @@ class CraftBase(object):
         mod = sys.modules[self.__module__]
         # ugly workaround we need to replace the constructor
         self.package = mod.CRAFT_CURRENT_MODULE  # type: CraftPackageObject
-        self.subinfo = mod.subinfo(self)
+        self.subinfo = mod.subinfo(self) # type: info.infoclass
 
         self.buildSystemType = None
 
