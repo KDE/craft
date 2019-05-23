@@ -3,6 +3,7 @@
 """
     provides shells
 """
+import platform
 import subprocess
 import sys
 
@@ -13,7 +14,6 @@ import utils
 
 import os
 import shutil
-
 
 class BashShell(object):
     def __init__(self):
@@ -173,6 +173,23 @@ class BashShell(object):
         if CraftCore.compiler.isMSVC():
             self.useMSVCCompatEnv = True
         return self.execute(os.curdir, self._findBash(),  "-i", displayProgress=True)
+
+class Powershell(object):
+    def __init__(self):
+        self.pwsh = CraftCore.cache.findApplication("pws")
+        if not self.pwsh:
+            if platform.architecture()[0] == "32bit":
+                self.pwsh = CraftCore.cache.findApplication("powershell", os.path.join(os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0" ))
+            if not self.pwsh:
+                self.pwsh = CraftCore.cache.findApplication("powershell")
+        if not self.pwsh:
+            CraftCore.log.warning("Failed to detect powershell")
+
+    def quote(self, s : str) -> str:
+        return f"'{s}'"
+
+    def execute(self, args :[str]) -> bool:
+        return utils.system([self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args)
 
 def main():
     shell = BashShell()
