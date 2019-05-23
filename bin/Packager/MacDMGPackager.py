@@ -27,15 +27,7 @@ class MacDMGPackager( CollectionPackagerBase ):
         defines = self.setDefaults(self.defines)
 
         archive = os.path.normpath(self.archiveDir())
-        appPath = defines['apppath']
-        if not appPath:
-            apps = glob.glob(os.path.join(archive, f"**/{defines['appname']}.app"), recursive=True)
-            if len(apps) != 1:
-                CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
-                return False
-            appPath = apps[0]
-        appPath = os.path.join(archive, appPath)
-        appPath = os.path.normpath(appPath)
+        appPath = self.getMacAppPath(defines)
         CraftCore.log.info(f"Packaging {appPath}")
 
         targetLibdir = os.path.join(appPath, "Contents", "Frameworks")
