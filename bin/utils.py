@@ -192,6 +192,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
     # if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
+        # allow to pass other types, like ints or Path
+        cmd = [str(x) for x in cmd]
         arg0 = cmd[0]
         if not "shell" in kw:
             kw["shell"] = False
@@ -922,3 +924,19 @@ def getPDBForBinary(path :str) -> str:
     if pdb:
         return data[data.rfind(0x00, 0, pdb) + 1:pdb + 4].decode("utf-8")
     return ""
+
+
+def installShortcut(name : str, path : str, workingDir : str, icon : str, desciption : str):
+    if not CraftCore.compiler.isWindows:
+        return True
+    from shells import Powershell
+    pwsh = Powershell()
+    shortcutPath = Path(os.environ["APPDATA"]) / f"Microsoft/Windows/Start Menu/Programs/Craft/{name}.lnk"
+    shortcutPath.parent.mkdir(parents=True, exist_ok=True)
+
+    return pwsh.execute([os.path.join(CraftCore.standardDirs.craftBin(), "install-lnk.ps1"),
+                         "-Path", pwsh.quote(path),
+                  "-WorkingDirectory", pwsh.quote(workingDir),
+                  "-Name", pwsh.quote(shortcutPath),
+                  "-Icon", pwsh.quote(icon),
+                  "-Description", pwsh.quote(desciption)])

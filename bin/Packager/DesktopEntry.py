@@ -21,7 +21,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
+from pathlib import Path
 
 from Packager.PackagerBase import *
 
@@ -30,19 +30,14 @@ from shells import Powershell
 class DesktopEntry(PackagerBase):
     def createPackage(self):
         for shortcut in  self.defines["shortcuts"]:
-            shim = os.path.join(CraftCore.standardDirs.craftRoot(), "wrapper", shortcut["name"])
-            if not utils.createShim(shim,
-                             sys.executable, [os.path.join(CraftCore.standardDirs.craftBin(), "craft.py"), "--run", os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"])]):
+            shim = Path(CraftCore.standardDirs.craftRoot()) / "wrapper" / shortcut["name"]
+            target = Path(CraftCore.standardDirs.craftRoot()) / shortcut["target"]
+            if not utils.createShim(shim, sys.executable, [os.path.join(CraftCore.standardDirs.craftBin(), "craft.py"), "--run", target]):
                 return False
             if CraftCore.compiler.isWindows:
-                pwsh = Powershell()
-                shortcutPath = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Craft",
-                             f"{shortcut['name']} {os.path.basename(CraftCore.standardDirs.craftRoot())}.lnk")
-
-                pwsh.execute([os.path.join(CraftCore.standardDirs.craftBin(), "install-lnk.ps1"),
-                      "-Path", pwsh.quote(shim),
-                      "-WorkingDirectory", pwsh.quote(CraftCore.standardDirs.craftRoot()),
-                      "-Name", pwsh.quote(shortcutPath),
-                      "-Icon", pwsh.quote(os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"])),
-                      "-Description", pwsh.quote(shortcut.get("desciption", ""))])
+                craftName = Path(CraftCore.standardDirs.craftRoot()).name
+                if not utils.installShortcut(f"{craftName}/{shortcut['name']} {craftName}", shim, target.parent,
+                                             os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
+                                             shortcut.get("desciption", f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}")):
+                    return False
         return True
