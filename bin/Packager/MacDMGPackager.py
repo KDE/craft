@@ -25,9 +25,8 @@ class MacDMGPackager( CollectionPackagerBase ):
             return False
 
         defines = self.setDefaults(self.defines)
-
-        archive = os.path.normpath(self.archiveDir())
         appPath = self.getMacAppPath(defines)
+        archive = os.path.normpath(self.archiveDir())
         CraftCore.log.info(f"Packaging {appPath}")
 
         targetLibdir = os.path.join(appPath, "Contents", "Frameworks")

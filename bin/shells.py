@@ -176,7 +176,7 @@ class BashShell(object):
 
 class Powershell(object):
     def __init__(self):
-        self.pwsh = CraftCore.cache.findApplication("pws")
+        self.pwsh = CraftCore.cache.findApplication("pwsh")
         if not self.pwsh:
             if platform.architecture()[0] == "32bit":
                 self.pwsh = CraftCore.cache.findApplication("powershell", os.path.join(os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0" ))
