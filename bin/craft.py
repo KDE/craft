@@ -62,9 +62,11 @@ class ActionHandler:
         self.parser = parser
         self.actions = {}
 
-    def _addAction(self, actionName, help=None, **kwargs):
+    def _addAction(self, actionName, help="", **kwargs):
+        if help is not argparse.SUPPRESS:
+            help = f"[Action] {help}"
         arg = self.parser.add_argument("--%s" % actionName,
-                                       help="[Action] %s" % (help if help else ""), **kwargs)
+                                       help=help, **kwargs)
         self.actions[arg.dest] = actionName
 
     def addAction(self, actionName, **kwargs):
@@ -136,7 +138,8 @@ def main():
 
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
-                     "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch"], key=lambda x: x[0] if isinstance(x, tuple) else x):
+                     "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch",
+                     ("install-to-desktop", {"help":argparse.SUPPRESS})], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:

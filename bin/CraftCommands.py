@@ -230,6 +230,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 
     if action == "get":
         return invoke(args.get, directTargets)
+    if action == "install-to-desktop":
+        return installToDektop(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
@@ -333,3 +335,11 @@ def updateInstalled(args) -> bool:
         if p:
             package.children[p.name] = p
     return run(package, "all", args)
+
+def installToDektop(packages):
+    CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
+    for p in packages:
+        if not p.instance.createPackage():
+            return False
+    return True
+
