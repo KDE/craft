@@ -102,7 +102,7 @@ class CollectionPackagerBase(PackagerBase):
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = dict(defines)
         defines.setdefault("architecture", CraftCore.compiler.architecture)
-        defines.setdefault("company", "KDE")
+        defines.setdefault("company", "KDE e.V.")
         defines.setdefault("productname", self.subinfo.displayName)
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("description", self.subinfo.description)
