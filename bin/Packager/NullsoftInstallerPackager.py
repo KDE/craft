@@ -65,19 +65,12 @@ You can add your own defines into self.defines as well.
         self.nsisExe = None
         self._isInstalled = False
 
-    def _setDefaults(self, defines):
-        defines = dict(defines)
-        defines.setdefault("architecture", CraftCore.compiler.architecture)
-        defines.setdefault("company", "KDE")
+    def setDefaults(self, defines) -> {}:
+        defines = super().setDefaults(defines)
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
         defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.isX64() else "")
-        defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
-        defines.setdefault("license", "")
-        defines.setdefault("productname", self.subinfo.displayName)
         defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         defines.setdefault("srcdir", self.archiveDir())# deprecated
-        defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
-        defines.setdefault("website", self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
         defines.setdefault("registy_hook", "")
         defines.setdefault("sections", "")
         defines.setdefault("sections_page", "")
@@ -119,7 +112,7 @@ You can add your own defines into self.defines as well.
     def generateNSISInstaller(self):
         """ runs makensis to generate the installer itself """
 
-        defines = self._setDefaults(self.defines)
+        defines = self.setDefaults(self.defines)
         defines["dataPath"] = self.setupName
         defines["dataName"] = os.path.basename(self.setupName)
         defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.isX64() else CraftCore.cache.findApplication("7za_32")

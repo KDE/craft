@@ -67,8 +67,8 @@ class AppxPackager(CollectionPackagerBase):
             defines.setdefault("extensions", "")
 
 
-    def _setDefaults(self, defines : dict) -> dict:
-        defines = dict(defines)
+    def setDefaults(self, defines : dict) -> dict:
+        defines = super().setDefaults(defines)
         if "version" not in defines:
             version = str(CraftVersion(self.version).strictVersion)
             # we require a version of the format 1.2.3.4
@@ -77,16 +77,9 @@ class AppxPackager(CollectionPackagerBase):
                 version = f"{version}{'.0' * (3-count)}"
             defines.setdefault("version", version)
 
-
-        defines.setdefault("architecture", CraftCore.compiler.architecture)
-        defines.setdefault("company", "KDE e.V.")
-        defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
-        defines.setdefault("craft_id", self.package.path.replace("/", "."))
-        defines.setdefault("description", self.subinfo.description)
-        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
-        defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
+        defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
         # compat with nsis
@@ -147,7 +140,7 @@ class AppxPackager(CollectionPackagerBase):
         return self.__createAppX(defines) and utils.sign([setupName])
 
     def createPackage(self):
-        defines = self._setDefaults(self.defines)
+        defines = self.setDefaults(self.defines)
 
         if not "executable" in defines:
             CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"

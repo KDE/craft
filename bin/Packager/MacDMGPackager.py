@@ -15,11 +15,6 @@ class MacDMGPackager( CollectionPackagerBase ):
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
-    def _setDefaults(self):
-        # TODO: Fix defaults
-        self.defines.setdefault("apppath", "")
-        self.defines.setdefault("appname", self.package.name.lower())
-
     def createPackage(self):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
@@ -29,14 +24,14 @@ class MacDMGPackager( CollectionPackagerBase ):
         if not self.internalCreatePackage(seperateSymbolFiles=packageSymbols):
             return False
 
-        self._setDefaults()
+        defines = self.setDefaults(self.defines)
 
         archive = os.path.normpath(self.archiveDir())
-        appPath = self.defines['apppath']
+        appPath = defines['apppath']
         if not appPath:
-            apps = glob.glob(os.path.join(archive, f"**/{self.defines['appname']}.app"), recursive=True)
+            apps = glob.glob(os.path.join(archive, f"**/{defines['appname']}.app"), recursive=True)
             if len(apps) != 1:
-                CraftCore.log.error(f"Failed to detect {self.defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
+                CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
                 return False
             appPath = apps[0]
         appPath = os.path.join(archive, appPath)
@@ -63,7 +58,7 @@ class MacDMGPackager( CollectionPackagerBase ):
         dylibbundler = MacDylibBundler(appPath)
         with utils.ScopedEnv({'DYLD_FALLBACK_LIBRARY_PATH': targetLibdir + ":" + os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
             CraftCore.log.info("Bundling main binary dependencies...")
-            mainBinary = Path(appPath, "Contents", "MacOS", self.defines['appname'])
+            mainBinary = Path(appPath, "Contents", "MacOS", defines['appname'])
             if not dylibbundler.bundleLibraryDependencies(mainBinary):
                 return False
 
@@ -118,7 +113,7 @@ class MacDMGPackager( CollectionPackagerBase ):
             dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
             if os.path.exists(dmgDest):
                 utils.deleteFile(dmgDest)
-            appName = self.defines['appname'] + ".app"
+            appName = defines['appname'] + ".app"
             if not utils.system(["create-dmg", "--volname", name,
                                  # Add a drop link to /Applications:
                                  "--icon", appName, "140", "150", "--app-drop-link", "350", "150",
