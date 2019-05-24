@@ -185,13 +185,22 @@ def main():
     if args.doDestroyCraftRoot:
         return CraftCommands.destroyCraftRoot()
 
+    # macOS: Depending how you started / forwarded your command, macOS would append
+    # a process identifier to the craft arguments in the form of a -psnXXX parameter.
+    # This parameter is a process identifier and rely to the craft command, not to the
+    # command to run by craft, let remove it.
     if args.run:
-        return utils.system(args.run, shell=True)
+        run = list(filter(lambda entry: not entry.startswith("-psn"), args.run))
+        useShell = True
+        if CraftCore.compiler.isMacOS:
+            useShell = not '.app' in run[1] if run[0].endswith("open") else not '.app' in run[0]
+        return utils.system(run, shell=useShell)
     elif args.run_detached:
+        run_detached = list(filter(lambda entry: not entry.startswith("-psn"), args.run_detached))
         kwargs = {}
         if CraftCore.compiler.isWindows:
             kwargs["creationflags"] = subprocess.DETACHED_PROCESS
-        return subprocess.Popen(args.run_detached, **kwargs)
+        return subprocess.Popen(run_detached, **kwargs)
 
     if args.add_blueprint_repository:
         return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository, args)

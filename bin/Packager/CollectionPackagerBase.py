@@ -99,39 +99,6 @@ class CollectionPackagerBase(PackagerBase):
                                                             CraftCore.settings.get("QtSDK", "Version"),
                                                             CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
 
-    def setDefaults(self, defines: {str:str}) -> {str:str}:
-        defines = dict(defines)
-        defines.setdefault("architecture", CraftCore.compiler.architecture)
-        defines.setdefault("company", "KDE e.V.")
-        defines.setdefault("productname", self.subinfo.displayName)
-        defines.setdefault("display_name", self.subinfo.displayName)
-        defines.setdefault("description", self.subinfo.description)
-        defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
-        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
-        defines.setdefault("icon_png_44", defines["icon_png"])
-        defines.setdefault("license", "")
-        defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
-        defines.setdefault("website",
-                           self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
-
-        # mac
-        defines.setdefault("apppath", "")
-        defines.setdefault("appname", self.package.name.lower())
-        return defines
-
-
-    def getMacAppPath(self, defines):
-        archive = os.path.normpath(self.archiveDir())
-        appPath = defines['apppath']
-        if not appPath:
-            apps = glob.glob(os.path.join(archive, f"**/{defines['appname']}.app"), recursive=True)
-            if len(apps) != 1:
-                CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
-                return False
-            appPath = apps[0]
-        appPath = os.path.join(archive, appPath)
-        return os.path.normpath(appPath)
-
     @property
     def whitelist(self):
         if not self._whitelist:

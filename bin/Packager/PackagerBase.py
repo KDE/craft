@@ -5,6 +5,7 @@
 
 import datetime
 import json
+import glob
 
 from CraftBase import *
 
@@ -24,6 +25,37 @@ class PackagerBase(CraftBase):
         self.blacklist_file = []
         self.defines = {}
         self.ignoredPackages = []
+
+    def setDefaults(self, defines: {str:str}) -> {str:str}:
+        defines = dict(defines)
+        defines.setdefault("architecture", CraftCore.compiler.architecture)
+        defines.setdefault("company", "KDE e.V.")
+        defines.setdefault("productname", self.subinfo.displayName)
+        defines.setdefault("display_name", self.subinfo.displayName)
+        defines.setdefault("description", self.subinfo.description)
+        defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
+        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
+        defines.setdefault("icon_png_44", defines["icon_png"])
+        defines.setdefault("license", "")
+        defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
+        defines.setdefault("website",
+                           self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
+
+        # mac
+        defines.setdefault("apppath", "")
+        defines.setdefault("appname", self.package.name.lower())
+        return defines
+
+    def getMacAppPath(self, defines):
+        appPath = defines['apppath']
+        if not appPath:
+            image = os.path.normpath(self.imageDir())
+            apps = glob.glob(os.path.join(image, f"**/{defines['appname']}.app"), recursive=True)
+            if len(apps) != 1:
+                CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
+                return False
+            appPath = os.path.relpath(apps[0], image)
+        return os.path.normpath(appPath)
 
     def preArchive(self):
         utils.abstract()
