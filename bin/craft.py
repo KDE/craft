@@ -153,7 +153,7 @@ def main():
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
     actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
-    actionHandler.addActionWithArg("run", nargs="+", help="Run an application in the Craft environment")
+    actionHandler.addActionWithArg("run", nargs=argparse.REMAINDER, help="Run an application in the Craft environment")
     actionHandler.addAction("clean-unused", help="Clean unused files of all packages")
 
     # other actions
