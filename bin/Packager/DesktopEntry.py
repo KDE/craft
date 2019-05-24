@@ -32,7 +32,7 @@ class DesktopEntry(PackagerBase):
         for shortcut in  self.defines["shortcuts"]:
             shim = Path(CraftCore.standardDirs.craftRoot()) / "wrapper" / shortcut["name"]
             target = Path(CraftCore.standardDirs.craftRoot()) / shortcut["target"]
-            if not utils.createShim(shim, sys.executable, [os.path.join(CraftCore.standardDirs.craftBin(), "craft.py"), "--run", target]):
+            if not utils.createShim(shim, sys.executable, [os.path.join(CraftCore.standardDirs.craftBin(), "craft.py"), "--run-detached", target]):
                 return False
             if CraftCore.compiler.isWindows:
                 craftName = Path(CraftCore.standardDirs.craftRoot()).name

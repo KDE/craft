@@ -27,6 +27,7 @@
 
 import argparse
 import collections
+import subprocess
 import sys
 
 import CraftCommands
@@ -154,6 +155,7 @@ def main():
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
     actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
     actionHandler.addActionWithArg("run", nargs=argparse.REMAINDER, help="Run an application in the Craft environment")
+    actionHandler.addActionWithArg("run-detached", nargs=argparse.REMAINDER, help="Run an application in the Craft environment and detach")
     actionHandler.addAction("clean-unused", help="Clean unused files of all packages")
 
     # other actions
@@ -185,6 +187,11 @@ def main():
 
     if args.run:
         return utils.system(args.run, shell=True)
+    elif args.run_detached:
+        kwargs = {}
+        if CraftCore.compiler.isWindows:
+            kwargs["creationflags"] = subprocess.DETACHED_PROCESS
+        return subprocess.Popen(args.run_detached, **kwargs)
 
     if args.add_blueprint_repository:
         return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository, args)
