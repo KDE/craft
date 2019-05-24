@@ -33,10 +33,7 @@ class DesktopEntry(PackagerBase):
     def createPackage(self):
         defines = self.setDefaults(self.defines)
         if CraftCore.compiler.isMacOS:
-            if 'executable' in defines:
-                target = defines["executable"]
-            else:
-                target = self.getMacAppPath(defines)
+            target = (os.path.relpath(self.getMacAppPath(defines, self.imageDir()), self.imageDir()))
             targetBundle = os.path.join(CraftCore.standardDirs.craftRoot(), target)
             targetPlist = os.path.join(targetBundle, "Contents/Info.plist")
             with io.StringIO() as binaryLog:
