@@ -219,7 +219,7 @@ class BuildSystemBase(CraftBase):
             target = Path(os.readlink(sym))
             if target.is_absolute():
                 sym = Path(sym)
-                target = Path(self.installDir()) / target.relative_to(CraftCore.standardDirs.craftRoot())
+                target = Path(self.imageDir()) / target.relative_to(CraftCore.standardDirs.craftRoot())
                 sym.unlink()
                 # we can't use relative_to here
                 sym.symlink_to(os.path.relpath(target, sym.parent))
