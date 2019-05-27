@@ -244,7 +244,7 @@ class BuildSystemBase(CraftBase):
 
         if (CraftCore.compiler.isMacOS
                 and os.path.isdir(self.installDir())):
-            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: x.is_symlink())
+            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True)
             for f in files:
                 if os.path.islink(f):
                     continue
