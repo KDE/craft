@@ -226,7 +226,7 @@ class BuildSystemBase(CraftBase):
                             if not utils.system(["install_name_tool", "-id", newId, f]):
                                 return False
                 # replace the old prefix or add it if missing
-                if not utils.system(["install_name_tool", "-rpath", self.subinfo.buildPrefix, os.path.join(newPrefix, "lib"), f]):
+                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), os.path.join(newPrefix, "lib"), f]):
                     utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f])
 
                 # fix dependencies
