@@ -876,7 +876,7 @@ def regexFileFilter(filename : os.DirEntry, root : str, pattern : [re]=None) -> 
             return True
     return False
 
-def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False):
+def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBadSymlinks=False):
     """
         Traverse through a directory tree and return every
         filename that the function whitelist returns as true and
@@ -889,7 +889,7 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
         path = dirs.pop()
         with os.scandir(path) as scan:
             for filePath in scan:
-                if filePath.is_symlink():
+                if not allowBadSymlinks and filePath.is_symlink():
                     if Path(root) not in Path(filePath.path).resolve().parents:
                         CraftCore.log.debug(f"filterDirectoryContent: skipping {filePath.path}, it is not located under {root}")
                         continue
@@ -903,8 +903,11 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                 elif filePath.is_file():
                     yield filePath.path
                 elif filePath.is_symlink():
-                    CraftCore.log.warning(f"{filePath.path} is an invalid link ({os.readlink(filePath.path)})")
-                    continue
+                    if not allowBadSymlinks:
+                        CraftCore.log.warning(f"{filePath.path} is an invalid link ({os.readlink(filePath.path)})")
+                        continue
+                    else:
+                        yield filePath.path
                 else:
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")

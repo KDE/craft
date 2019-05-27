@@ -31,6 +31,7 @@ import multiprocessing
 import os
 import re
 import subprocess
+from pathlib import Path
 
 from CraftBase import *
 from CraftOS.osutils import OsUtils
@@ -213,6 +214,17 @@ class BuildSystemBase(CraftBase):
     def internalPostInstall(self):
         if not super().internalPostInstall():
             return False
+        # fix absolute symlinks
+        for sym in utils.filterDirectoryContent(self.installDir(), lambda x, root: x.is_symlink(), lambda x, root: True, allowBadSymlinks=True):
+            target = Path(os.readlink(sym))
+            if target.is_absolute():
+                sym = Path(sym)
+                target = Path(self.installDir()) / target.relative_to(CraftCore.standardDirs.craftRoot())
+                sym.unlink()
+                # we can't use relative_to here
+                sym.symlink_to(os.path.relpath(target, sym.parent))
+
+
         # a post install routine to fix the prefix (make things relocatable)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         oldPrefixes = [self.subinfo.buildPrefix]
@@ -229,7 +241,7 @@ class BuildSystemBase(CraftBase):
 
         if (CraftCore.compiler.isMacOS
                 and os.path.isdir(self.installDir())):
-            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True)
+            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: x.is_symlink())
             for f in files:
                 if os.path.islink(f):
                     continue
@@ -279,5 +291,4 @@ class BuildSystemBase(CraftBase):
 
                     CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
                     utils.copyFile(pdb, pdbDestination, linkOnly=False)
-
         return True
