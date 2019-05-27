@@ -889,6 +889,10 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
         path = dirs.pop()
         with os.scandir(path) as scan:
             for filePath in scan:
+                if filePath.is_symlink():
+                    if Path(root) not in Path(filePath.path).resolve().parents:
+                        CraftCore.log.debug(f"filterDirectoryContent: skipping {filePath.path}, it is not located under {root}")
+                        continue
                 if filePath.is_dir(follow_symlinks=False):
                     dirs.append(filePath.path)
                     continue
@@ -898,6 +902,9 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                     yield filePath.path
                 elif filePath.is_file():
                     yield filePath.path
+                elif filePath.is_symlink():
+                    CraftCore.log.warning(f"{filePath.path} is an invalid link ({os.readlink(filePath.path)})")
+                    continue
                 else:
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")
