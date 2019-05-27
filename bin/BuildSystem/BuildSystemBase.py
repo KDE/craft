@@ -201,10 +201,13 @@ class BuildSystemBase(CraftBase):
                         # keep windows sep
                         newPath = newPathUnix.replace("/", sep)
                 oldPathBinary = oldPath.encode()
-                if oldPath != newPath and oldPathBinary in content:
-                    dirty = True
-                    CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                    content = content.replace(oldPathBinary, newPath.encode())
+                if oldPath != newPath:
+                    if oldPathBinary in content:
+                        dirty = True
+                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
+                        content = content.replace(oldPathBinary, newPath.encode())
+                else:
+                    CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
             if dirty:
                 with utils.makeWritable(fileName):
                     with open(fileName, "wb") as f:
