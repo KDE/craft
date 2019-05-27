@@ -233,8 +233,9 @@ class BuildSystemBase(CraftBase):
                 for dep in utils.getLibraryDeps(f):
                     if dep.startswith(self.subinfo.buildPrefix):
                         newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
-                        if not utils.system(["install_name_tool", "-change", dep, newDep, f]):
-                            return False
+                        if newDep != dep:
+                            if not utils.system(["install_name_tool", "-change", dep, newDep, f]):
+                                return False
 
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
