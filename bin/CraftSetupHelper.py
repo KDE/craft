@@ -373,7 +373,8 @@ class SetupHelper(object):
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
 
-        self.setXDG()
+        if CraftCore.settings.getboolean("General", "UseSandboxConfig", True):
+            self.setXDG()
 
         self.prependEnvVar("PATH", CraftCore.standardDirs.craftBin())
 
