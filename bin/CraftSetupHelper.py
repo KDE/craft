@@ -196,7 +196,7 @@ class SetupHelper(object):
             # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
             component = "Microsoft.VisualStudio.Component.VC."
             if version == 14:
-                component += CraftCore.compiler.getMsvcPlatformToolset()
+                component += str(CraftCore.compiler.getMsvcPlatformToolset())
             else:
                 component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
