@@ -24,17 +24,23 @@ class CraftDebug(object):
         self._log = logging.getLogger("craft")
         self._log.setLevel(logging.DEBUG)
 
-        logDir = CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
-        if not os.path.exists(logDir):
-            os.makedirs(logDir)
-
+        fileHandler = None
         try:
-            logfileName = os.path.join(logDir, "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_", CraftCore.settings._craftRoot()))
-            fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at", maxBytes=10000000,
+            if "CRAFT_LOG_FILE" not in os.environ:
+                logDir = CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
+                if not os.path.exists(logDir):
+                    os.makedirs(logDir)
+                logfileName = os.path.join(logDir, "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_",
+                                                                                                  CraftCore.settings._craftRoot()))
+            else:
+                logfileName = os.environ["CRAFT_LOG_FILE"]
+
+            if logfileName != "0":
+                fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at", maxBytes=10000000,
                                                                backupCount=20)
-            fileHandler.doRollover()
-            fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
-            self._log.addHandler(fileHandler)
+                fileHandler.doRollover()
+                fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+                self._log.addHandler(fileHandler)
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.",
@@ -47,11 +53,11 @@ class CraftDebug(object):
             self._log.addHandler(self._handler)
 
         self._handler.setLevel(logging.INFO)
-        fileHandler.setLevel(logging.DEBUG)
+        if fileHandler:
+            fileHandler.setLevel(logging.DEBUG)
 
         self.log.debug("#" * self.lineWidth)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
-        self.log.debug("Log is saved to: %s" % fileHandler.baseFilename)
         self.logEnv()
         self.setVerbose(0)
 
