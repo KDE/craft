@@ -69,13 +69,12 @@ class AppxPackager(CollectionPackagerBase):
 
     def setDefaults(self, defines : dict) -> dict:
         defines = super().setDefaults(defines)
-        if "version" not in defines:
-            version = str(CraftVersion(self.version).strictVersion)
-            # we require a version of the format 1.2.3.4
-            count = version.count(".")
-            if count < 4:
-                version = f"{version}{'.0' * (3-count)}"
-            defines.setdefault("version", version)
+        version = str(CraftVersion(self.version).strictVersion)
+        # we require a version of the format 1.2.3.4
+        count = version.count(".")
+        if count < 4:
+            version = f"{version}{'.0' * (3-count)}"
+        defines.setdefault("version", version)
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
         defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(fileType="appx", includeRevision=True)))
