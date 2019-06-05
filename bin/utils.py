@@ -865,7 +865,7 @@ def getLibraryDeps(path):
         infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), "+
                             "current version (\\d+\\.\\d+\\.\\d+)\\)$")
         with io.StringIO() as log:
-            if not system(["otool", "-L", path], stdout=log):
+            if not system(["otool", "-L", path], stdout=log, logCommand=False):
                 return []
             lines = log.getvalue().strip().split("\n")
         lines.pop(0)# name of the library
