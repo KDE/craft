@@ -473,7 +473,11 @@ def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHa
             return True
         except:
             CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
-    shutil.copy2(src, dest, follow_symlinks=False)
+    try:
+        shutil.copy2(src, dest, follow_symlinks=False)
+    except Exception as e:
+        CraftCore.log.error(f"Failed to copy file:\n{src} to\n{dest}", exc_info=e)
+        return False
     return True
 
 
@@ -507,7 +511,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                 if copiedFiles is not None:
                     copiedFiles.append(os.path.join(tmpdir, fileName))
     except Exception as e:
-        CraftCore.log.error(e, exc_info=e)
+        CraftCore.log.error(f"Failed to copy dir:\n{srcdir} to\n{destdir}", exc_info=e)
         return False
     return True
 
@@ -730,7 +734,12 @@ def replaceSymlinksWithCopies(path, _replaceDirs=False):
                     else:
                         os.unlink(path)
                         ok = copyFile(toReplace, path)
-    for d in dirsToResolve:
+    while dirsToResolve:
+        d = dirsToResolve.pop()
+        if not os.path.exists(resolveLink(d)):
+            CraftCore.log.warning(f"Delay replacement of {d}")
+            dirsToResolve.append(d)
+            continue
         if not replaceSymlinksWithCopies(os.path.dirname(d), _replaceDirs=True):
             return False
     return True
