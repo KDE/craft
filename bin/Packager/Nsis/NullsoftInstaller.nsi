@@ -197,3 +197,5 @@ RMDir /r "$INSTDIR"
 
 SectionEnd
 
+;  allow to define additional Un.sections
+@{un_sections}

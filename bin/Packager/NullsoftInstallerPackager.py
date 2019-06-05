@@ -73,6 +73,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("srcdir", self.archiveDir())# deprecated
         defines.setdefault("registy_hook", "")
         defines.setdefault("sections", "")
+        defines.setdefault("un_sections", "")
         defines.setdefault("sections_page", "")
         defines.setdefault("preInstallHook", "")
 
