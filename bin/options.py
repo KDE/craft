@@ -27,9 +27,10 @@ class UserOptions(object):
 #     ignored: [True|False]
 #     version: some version
 #     # use the same url as defined for the target but checks out a different branch
-#     branch: str
+#     branch: str                                   A branch
+#     revision: str                                 A revision or tag, overrides branch
 #     patchLevel: int
-#     buildType: [Release|RelWithDebInfo|Debug] The default is defined by CraftSettings.ini [Compile]BuildType
+#     buildType: [Release|RelWithDebInfo|Debug]     The default is defined by CraftSettings.ini [Compile]BuildType
 #     buildTests: [True|False]
 #     buildStatic: [True|False]
 #     # arguments passed to the configure step
@@ -107,6 +108,7 @@ class UserOptions(object):
 
         _register("version",    str,    permanent=False)
         _register("branch",     str,    permanent=False)
+        _register("revision",   str,    permanent=False)
         _register("patchLevel", int,    permanent=False)
         _register("ignored",    bool,   permanent=False)
         _register("buildTests", bool,   permanent=False)

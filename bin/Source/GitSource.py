@@ -104,9 +104,18 @@ class GitSource(VersionSystemSourceBase):
         repoString = utils.replaceVCSUrl(repopath)
         [repoUrl, repoBranch, repoTag] = utils.splitVCSUrl(repoString)
 
+        # override tag
+        if self.subinfo.options.dynamic.revision:
+            repoTag = self.subinfo.options.dynamic.revision
+            repoBranch = ""
+
         # override the branch
         if self.subinfo.options.dynamic.branch:
             repoBranch = self.subinfo.options.dynamic.branch
+
+        if repoTag and repoBranch:
+            CraftCore.log.error(f"Your not allowed to specify a branch and a tag: branch -> {repoBranch},  tag -> {repoTag}")
+            return False
 
         if not repoBranch and not repoTag:
             repoBranch = "master"
