@@ -247,19 +247,14 @@ class MacDylibBundler(object):
                 # TODO: run otool -l and verify that we pick the right file?
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
-            elif path.startswith("@loader_path/"):
-                # TODO: we don't set @loader_path anymore so lets remove this after the next cache rebuild. 24.09.2018
-                if not self._updateLibraryReference(fileToFix, path):
-                    return False
             elif path.startswith("/"):
                 if not path.startswith(CraftStandardDirs.craftRoot()):
-                    # TODO: should this be an error?
-                    CraftCore.log.warning("%s: reference to absolute library path outside craftroot: %s",
+                    CraftCore.log.error("%s: reference to absolute library path outside craftroot: %s",
                                           fileToFix, path)
-                    # return False
+                    return False
                 # file installed by craft -> bundle it into the .app if it doesn't exist yet
                 if not self._addLibToAppImage(Path(path)):
-                    CraftCore.log.error("%s: Failed to add library dependency '%s' into bundle", fileToFix, path)
+                    CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{path}' into bundle")
                     return False
                 if not self._updateLibraryReference(fileToFix, path):
                     return False
