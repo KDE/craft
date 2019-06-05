@@ -1,10 +1,31 @@
-#
+# -*- coding: utf-8 -*-
+# Copyright Hannah von Reth <vonreth@kde.org>
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 # copyright (c) 2009 Patrick Spendrin <ps_ml@gmx.de>
 #
-# git support
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
 
-import tempfile
+# git support
+import io
 
 from Source.VersionSystemSourceBase import *
 
@@ -21,39 +42,24 @@ class GitSource(VersionSystemSourceBase):
         VersionSystemSourceBase.__init__(self)
 
     def __getCurrentBranch(self):
-        branch = None
         if os.path.exists(self.checkoutDir()):
-            tmpFile = tempfile.TemporaryFile()
-            self.__git("branch", ["-a"], stdout=tmpFile)
-            # TODO: check return value for success
-            tmpFile.seek(0)
-            for line in tmpFile:
-                line = str(line, "UTF-8")
-                if line.startswith("*"):
-                    branch = line[2:].rstrip()
-                    break
-        return branch
+            with io.StringIO() as tmp:
+                self.__git("rev-parse", ["--abbrev-ref", "HEAD"], stdout=tmp)
+                return tmp.getvalue().strip()
+        return None
 
     def __isLocalBranch(self, branch):
         if os.path.exists(self.checkoutDir()):
-            tmpFile = tempfile.TemporaryFile()
-            self.__git("branch", stdout=tmpFile)
-            # TODO: check return value for success
-            tmpFile.seek(0)
-            for line in tmpFile:
-                if str(line[2:].rstrip(), "UTF-8") == branch.rstrip():
-                    return True
+            with io.StringIO() as tmp:
+                self.__git("for-each-ref", ["--format=%(refname:short)", "refs/heads/*"], stdout=tmp)
+                return branch in tmp.getvalue().strip().split("\n")
         return False
 
     def __isTag(self, _tag):
         if os.path.exists(self.checkoutDir()):
-            tmpFile = tempfile.TemporaryFile()
-            self.__git("tag", stdout=tmpFile)
-            # TODO: check return value for success
-            tmpFile.seek(0)
-            for line in tmpFile:
-                if str(line.rstrip(), "UTF-8") == _tag:
-                    return True
+            with io.StringIO() as tmp:
+                self.__git("tag", stdout=tmp)
+                return _tag in tmp.getvalue().strip().split("\n")
         return False
 
     def __getCurrentRevision(self):
@@ -63,13 +69,9 @@ class GitSource(VersionSystemSourceBase):
         branch = self.__getCurrentBranch()
         if not self.__isTag(branch):
             # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
-            with tempfile.TemporaryFile() as tmpFile:
-                self.__git("show", ["--abbrev-commit"], stdout=tmpFile)
-                tmpFile.seek(os.SEEK_SET)
-                # read the temporary file and grab the first line
-                # print the revision - everything else should be quiet now
-                line = tmpFile.readline()
-                return "%s-%s" % (branch, str(line, "UTF-8").replace("commit ", "").strip())
+            with io.StringIO() as tmp:
+                self.__git("rev-parse", ["--short", "HEAD"], stdout=tmp)
+                return f"{branch}-{tmp.getvalue().strip()}"
         else:
             # in case this is a tag, print out the tag version
             return branch
