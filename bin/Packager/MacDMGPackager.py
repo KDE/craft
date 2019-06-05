@@ -276,6 +276,8 @@ class MacDylibBundler(object):
                     return False
                 if not self._updateLibraryReference(fileToFix, path):
                     return False
+            elif path.startswith("@loader_path/"):
+                CraftCore.log.debug(f"{fileToFix}: Accept '{path}' into.")
             else:
                 CraftCore.log.error("%s: don't know how to handle otool -L output: '%s'", fileToFix, path)
                 return False
