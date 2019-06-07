@@ -192,8 +192,7 @@ class BuildSystemBase(CraftBase):
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
                 oldPathPat = f"({oldPathPat})"
                 oldPathPat = re.compile(oldPathPat.encode())
-                for match in oldPathPat.findall(content):
-                    print(match)
+                for match in set(oldPathPat.findall(content)):
                     dirty = True
                     oldPath = match[0]
                     newPath = newPathUnix.replace(b"/", match[1])
