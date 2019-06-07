@@ -59,6 +59,17 @@ executable:     executable is defined empty by default, but it is used to add a 
 You can add your own defines into self.defines as well.
 """
 
+    SHORTCUT_SECTION = \
+"""
+    Section
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+    SetOutPath $INSTDIR ; for working directory
+    {shortcuts}
+    !insertmacro MUI_STARTMENU_WRITE_END
+    SectionEnd
+"""
+
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         PortablePackager.__init__(self, whitelists, blacklists)
@@ -130,9 +141,10 @@ You can add your own defines into self.defines as well.
             shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
             del defines["executable"]
 
-        for short in self.shortcuts:
+        for short in defines["shortcuts"]:
             shortcuts.append(self._createShortcut(**short))
-        defines["shortcuts"] = "".join(shortcuts)
+        if shortcuts:
+            defines["shortcuts"] = NullsoftInstallerPackager.SHORTCUT_SECTION.format(shortcuts = "".join(shortcuts))
 
 
         if defines.get("sections", None):

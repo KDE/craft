@@ -28,6 +28,7 @@ class PackagerBase(CraftBase):
 
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = dict(defines)
+        defines.setdefault("shortcuts", "")
         defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE e.V.")
         defines.setdefault("productname", self.subinfo.displayName)
@@ -81,13 +82,3 @@ class PackagerBase(CraftBase):
         entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version)
 
         manifest.dump(manifestLocation)
-
-    @property
-    def shortcuts(self) -> []:
-        """ Return a list of shortcuts we want installe"""
-        out = []
-        if "shortcuts" in self.defines:
-            out  += self.defines["shortcuts"]
-        return out
-
-

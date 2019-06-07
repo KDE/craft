@@ -64,7 +64,7 @@ class QtIFPackager(SevenZipPackager):
         path = f"{self.__depPrefix}.{package.path}"
         return path.replace("/", ".").replace("-", "_")
 
-    def _shortCuts(self):
+    def _shortCuts(self, defines):
         out = []
         def shortCut(name, target, icon="", parameter="", description=""):
             target = OsUtils.toUnixPath(os.path.join(self.__imagePrefix, target))
@@ -73,14 +73,14 @@ class QtIFPackager(SevenZipPackager):
                 name = f"{name} for Qt {CraftCore.settings.get('QtSDK', 'Version')} {CraftCore.settings.get('QtSDK', 'Compiler')}"
             return f'component.addOperation( "CreateShortcut", "@TargetDir@/{target}","@StartMenuDir@/{name}.lnk");'
 
-        if "executable" in self.defines:
-            out += [shortCut(self.subinfo.displayName, self.defines["executable"])]
+        if "executable" in defines:
+            out += [shortCut(self.subinfo.displayName, defines["executable"])]
 
-        for short in self.shortcuts:
+        for short in defines["shortcuts"]:
             out += [shortCut(**short)]
         return "\n".join(out)
 
-    def __createMeta(self, dstpath : str, name : str, version : str, description : str, webpage : str, deps : str=""):
+    def __createMeta(self, defines, *,  dstpath : str, name : str, version : str, description : str, webpage : str, deps : str=""):
 
         data = {"VERSION" : str(CraftVersion(version).strictVersion),
                 "NAME" : name,
@@ -90,7 +90,7 @@ class QtIFPackager(SevenZipPackager):
         if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
             return False
 
-        data = {"SHORTCUTS" : self._shortCuts()}
+        data = {"SHORTCUTS" : self._shortCuts(defines=defines)}
         if not utils.configureFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), data):
             return False
         return True
@@ -110,7 +110,7 @@ class QtIFPackager(SevenZipPackager):
         return deps
 
 
-    def _addPackage(self) -> bool:
+    def _addPackage(self, defines) -> bool:
         dstpath = os.path.join(self.__packageDir, "image", self.__qtiFy(self.package))
         if not os.path.exists(dstpath):
             if self.__sdkMode:
@@ -122,10 +122,10 @@ class QtIFPackager(SevenZipPackager):
                 return False
 
         info = MetaInfo(self.package)
-        return self.__createMeta(dstpath ,info.displayName, self.version, info.description, info.webpage, ", ".join(self.__resolveDeps()))
+        return self.__createMeta(defines, dstpath=dstpath , name=info.displayName, version=self.version, description=info.description, webpage=info.webpage, deps=", ".join(self.__resolveDeps()))
 
 
-    def __initPrefix(self):
+    def __initPrefix(self, defines):
         dest = os.path.join(self.__packageDir, "image", self.__depPrefix)
         if not os.path.exists(dest):
             p = CraftPackageObject.get(self.__rootPackage)
@@ -134,12 +134,13 @@ class QtIFPackager(SevenZipPackager):
             displayName = info.displayName
             if self.__sdkMode:
                 displayName = f"{displayName} for Qt {CraftCore.settings.get('QtSDK', 'Version')} {CraftCore.settings.get('QtSDK', 'Compiler')}"
-            return self.__createMeta(dest, displayName, "0.0", info.description, info.webpage)
+            return self.__createMeta(defines, dstpath=dest, name=displayName, version="0.0", description=info.description, webpage=info.webpage)
         return True
 
     def createPackage(self):
-        if not self.__initPrefix():
+        defines = self.setDefaults(self.defines)
+        if not self.__initPrefix(defines):
           return False
-        return self._addPackage()
+        return self._addPackage(defines)
 
 
