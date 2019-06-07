@@ -161,7 +161,6 @@ SectionEnd
 
 ; create shortcuts
 Section
-SetShellVarContext all
 !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 SetOutPath $INSTDIR ; for working directory
@@ -180,13 +179,7 @@ SectionEnd
 UninstallText "This will uninstall @{productname}."
 
 Section "Uninstall"
-SetShellVarContext all
-
 !insertmacro EndProcessWithDialog
-
-${If} $MultiUser.InstallMode == "CurrentUser"
-    SetShellVarContext current
-${EndIf}
 
 DeleteRegKey SHCTX "${uninstkey}"
 DeleteRegKey SHCTX "${regkey}"
