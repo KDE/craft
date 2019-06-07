@@ -170,14 +170,12 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-    # TODO: port oldPath to regexp to match path with \ and /
     def patchInstallPrefix(self, files: [str], oldPaths: [str] = None, newPath: str = CraftCore.standardDirs.craftRoot()) -> bool:
         if isinstance(oldPaths, str):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
-        newPathUnix = OsUtils.toUnixPath(newPath)
-        newPath = newPathUnix
+        newPathUnix = OsUtils.toUnixPath(newPath).encode()
         for fileName in files:
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
@@ -187,27 +185,23 @@ class BuildSystemBase(CraftBase):
             dirty = False
             for oldPath in oldPaths:
                 assert os.path.isabs(oldPath)
-                if CraftCore.compiler.isWindows:
-                    sep = oldPath[2]
-                    if sep == "/":
-                        newPath = newPathUnix
-                    else:
-                        count = 1
-                        for c in oldPath[3:]:
-                            if c != sep:
-                                break
-                            count += 1
-                        sep *= count
-                        # keep windows sep
-                        newPath = newPathUnix.replace("/", sep)
-                oldPathBinary = oldPath.encode()
-                if oldPath != newPath:
-                    if oldPathBinary in content:
-                        dirty = True
+                oldPathPat = OsUtils.toUnixPath(oldPath)
+                # allow front and back slashes
+                oldPathPat = oldPathPat.replace("/", r"[/\\]+")
+                # capture firs seperator
+                oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
+                oldPathPat = f"({oldPathPat})"
+                oldPathPat = re.compile(oldPathPat.encode())
+                for match in oldPathPat.findall(content):
+                    print(match)
+                    dirty = True
+                    oldPath = match[0]
+                    newPath = newPathUnix.replace(b"/", match[1])
+                    if oldPath != newPath:
                         CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                        content = content.replace(oldPathBinary, newPath.encode())
-                else:
-                    CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
+                        content = content.replace(oldPath, newPath)
+                    else:
+                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
             if dirty:
                 with utils.makeWritable(fileName):
                     with open(fileName, "wb") as f:
@@ -232,11 +226,11 @@ class BuildSystemBase(CraftBase):
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         oldPrefixes = [self.subinfo.buildPrefix]
         if CraftCore.compiler.isWindows:
-            oldPrefixes += [self.subinfo.buildPrefix.replace("\\", "\\\\") ,OsUtils.toUnixPath(self.subinfo.buildPrefix), OsUtils.toMSysPath(self.subinfo.buildPrefix)]
+            oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        pattern = [re.compile("^.*(service|pc|pri|prl|cmake|conf|sh|bat|cmd|ini|pl|pm)$")]
+        extensions = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm"}
         files = utils.filterDirectoryContent(self.installDir(),
-                                             whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern),
+                                             whitelist=lambda x, root: Path(x).suffix in extensions,
                                              blacklist=lambda x, root: True)
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
