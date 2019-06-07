@@ -55,16 +55,13 @@ class MSBuildBuildSystem(BuildSystemBase):
             toolsVersion = f" /toolsversion:{toolsVersion}"
         else:
             toolsVersion = ""
-        for target in self.msbuildTargets:
-            if not utils.system(f"msbuild /m /t:{target} \"{self.subinfo.options.configure.projectFile}\""
-                                f" /p:Configuration={buildType}"
-                                f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
-                                f"{toolsVersion}"
-                                f"{sdkVer}"
-                                f"{platform}"
-                                f" {self.subinfo.options.configure.args}"):
-                return False
-        return True
+        return utils.system(f"msbuild /m /t:{';'.join(self.msbuildTargets)} \"{self.subinfo.options.configure.projectFile}\""
+                            f" /p:Configuration={buildType}"
+                            f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
+                            f"{toolsVersion}"
+                            f"{sdkVer}"
+                            f"{platform}"
+                            f" {self.subinfo.options.configure.args}")
 
     def install(self, buildDirs=None, installHeaders=True):
         if not buildDirs:
