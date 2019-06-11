@@ -21,7 +21,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
+import subprocess
 import tempfile
 
 import CraftBase
@@ -329,12 +329,23 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
                 cleanDir(dir)
 
 def updateInstalled(args) -> bool:
-    package = CraftPackageObject(None)
-    for packageName, _ in CraftCore.installdb.getDistinctInstalled():
-        p = CraftPackageObject.get(packageName)
-        if p:
-            package.children[p.name] = p
-    return run(package, "all", args)
+    ENV_KEY = "CRAFT_CORE_UPDATED"
+    if ENV_KEY not in os.environ:
+        os.environ[ENV_KEY] = "1"
+        # update the core
+        if not run(CraftPackageObject.get("craft"), "all", args):
+            return False
+        # close the log file and the db
+        del CraftCore.debug
+        del CraftCore.installdb
+        exit(subprocess.call([sys.executable] + sys.argv))
+    else:
+        package = CraftPackageObject(None)
+        for packageName, _ in CraftCore.installdb.getDistinctInstalled():
+            p = CraftPackageObject.get(packageName)
+            if p:
+                package.children[p.name] = p
+        return run(package, "all", args)
 
 def installToDektop(packages):
     CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
