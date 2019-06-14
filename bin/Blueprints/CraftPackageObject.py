@@ -45,6 +45,7 @@ class CategoryPackageObject(object):
         self.compiler = CraftCore.compiler.Compiler.All
         self.pathOverride = None
         self.valid = False
+        self.patchLevel = 0
 
         self.runtimeDependencies = []
         self.buildDependencies = []
@@ -59,6 +60,7 @@ class CategoryPackageObject(object):
             self.description = general.get("description", "")
             self.tags = general.get("tags", "")
             self.webpage = general.get("webpage", "")
+            self.patchLevel = int(general.get("patchLevel", "0"))
             self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
             self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
             platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
@@ -113,7 +115,7 @@ class CraftPackageObject(object):
         self.filePath = ""
         self.children = {}
         self.source = None
-        self.categoryInfo = None
+        self.categoryInfo = None # type:CategoryPackageObject
         self._version = None
         self._instance = None
         self.__path = None
