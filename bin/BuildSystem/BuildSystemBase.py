@@ -39,7 +39,7 @@ from CraftOS.osutils import OsUtils
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    debug = True
+    PatchableFile = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm"}
 
     def __init__(self, typeName=""):
         """constructor"""
@@ -227,9 +227,8 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isWindows:
             oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        extensions = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm"}
         files = utils.filterDirectoryContent(self.installDir(),
-                                             whitelist=lambda x, root: Path(x).suffix in extensions,
+                                             whitelist=lambda x, root: Path(x).suffix in BuildSystemBase.PatchableFile,
                                              blacklist=lambda x, root: True)
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
