@@ -43,6 +43,11 @@ class BoostBuildSystem(BuildSystemBase):
                     " threading=multi"
                     )
 
+        options += f" include=\"{CraftCore.standardDirs.craftRoot()}/include\" "
+        options += f" library-path=\"{CraftCore.standardDirs.craftRoot()}/lib\" "
+        if CraftCore.debug.verbose() >= 1:
+            options += " --dx13"
+
         if not self.subinfo.options.buildStatic:
             options += (" link=shared"
                         " runtime-link=shared")
