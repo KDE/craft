@@ -336,9 +336,10 @@ def updateInstalled(args) -> bool:
         if not run(CraftPackageObject.get("craft"), "all", args):
             return False
         # close the log file and the db
-        del CraftCore.debug
+        CraftTitleUpdater.instance.stop()
+        CraftCore.debug._fileHandler.close()
         del CraftCore.installdb
-        exit(subprocess.call([sys.executable] + sys.argv))
+        return subprocess.call([sys.executable] + sys.argv) == 0
     else:
         package = CraftPackageObject(None)
         for packageName, _ in CraftCore.installdb.getDistinctInstalled():
