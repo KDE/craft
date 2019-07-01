@@ -240,8 +240,6 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         stdout = kw.get('stdout', sys.stdout)
         kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
-        if CraftCore.compiler.isWindows and kw["shell"] and CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-            kw["creationflags"] = subprocess.CREATE_NEW_CONSOLE
         proc = subprocess.Popen(cmd, **kw)
         if pipeProcess:
             pipeProcess.stdout.close()
