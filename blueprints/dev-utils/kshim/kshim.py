@@ -7,7 +7,6 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
         for ver in ["0.1.0"]:
             self.svnTargets[ver] = f"https://invent.kde.org/vonreth/kshim.git||v{ver}"
-        self.patchLevel["master"] = 11
         self.defaultTarget = '0.1.0'
 
     def setDependencies(self):
@@ -18,6 +17,8 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         if self.buildTarget == "0.1.0":
             self.subinfo.options.fetch.checkoutSubmodules = True
+        elif self.buildTarget == "master":
+            self.subinfo.options.package.disableBinaryCache = True
         self.__botstrap = None
 
     @property
