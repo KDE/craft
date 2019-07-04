@@ -5,8 +5,10 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
-        self.patchLevel["master"] = 10
-        self.defaultTarget = 'master'
+        for ver in ["0.1.0"]:
+            self.svnTargets[ver] = f"https://invent.kde.org/vonreth/kshim.git||v{ver}"
+        self.patchLevel["master"] = 11
+        self.defaultTarget = '0.1.0'
 
     def setDependencies(self):
         self.runtimeDependencies["dev-utils/mingw-w64"] = None
@@ -14,7 +16,8 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
-        self.subinfo.options.fetch.checkoutSubmodules = True
+        if self.buildTarget == "0.1.0":
+            self.subinfo.options.fetch.checkoutSubmodules = True
         self.__botstrap = None
 
     @property
