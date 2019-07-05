@@ -6,7 +6,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
         for ver in ["0.1.0"]:
-            self.svnTargets[ver] = f"https://invent.kde.org/vonreth/kshim.git||v{ver}"
+            self.targets[ver] = f"https://files.kde.org/craft/sources/libs/kshimgn/kshimgen-v{ver}.tar.xz"
+            self.targetInstSrc[ver] = f"kshimgen-v{ver}"
+        self.targetDigests["0.1.0"] = (['1a46c599ca54e112fd37c39a60e5b97b6b20997e2114fe3cd422274c75ebcd22'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = '0.1.0'
 
     def setDependencies(self):
@@ -15,11 +17,12 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
-        if self.buildTarget == "0.1.0":
-            self.subinfo.options.fetch.checkoutSubmodules = True
-        elif self.buildTarget == "master":
+        if self.buildTarget == "master":
             self.subinfo.options.package.disableBinaryCache = True
-        self.__botstrap = None
+            # can't be bootstrapped
+            self.__botstrap = False
+        else:
+            self.__botstrap = None
 
     @property
     def _botstrap(self):
