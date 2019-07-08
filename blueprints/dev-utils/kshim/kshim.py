@@ -41,6 +41,7 @@ class Package(CMakePackageBase):
         if not self._botstrap:
             return super().make()
         else:
+            utils.createDir(self.buildDir())
             return utils.system([sys.executable, os.path.join(self.sourceDir(), "bootstrap.py")], cwd=self.buildDir())
 
     def install(self):
