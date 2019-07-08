@@ -14,22 +14,22 @@ Packager for portal 7zip archives
     def __init__(self, whitelists=None, blacklists=None):
         SevenZipPackager.__init__(self)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
-        self.setupName = None
 
     def createPortablePackage(self, packageSymbols) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
-        self.setupName = self.defines.get("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True)))
+        defines = self.setDefaults(self.defines)
+        defines["setupname"] = str(Path(defines["setupname"]).with_suffix("." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")))
 
-        srcDir = self.defines.get("srcdir", self.archiveDir())
+        srcDir = defines.get("srcdir", self.archiveDir())
 
-        if not self._compress(self.setupName, srcDir, self.packageDestinationDir()):
+        if not self._compress(defines["setupname"], srcDir, self.packageDestinationDir()):
             return False
-        CraftHash.createDigestFiles(self.setupName)
+        CraftHash.createDigestFiles(defines["setupname"])
 
         if packageSymbols:
             dbgDir = f"{srcDir}-dbg"
             if os.path.exists(dbgDir):
-                dbgName = "{0}-dbg{1}".format(*os.path.splitext(self.setupName))
+                dbgName = "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"]))
                 if not self._compress(dbgName, dbgDir, self.packageDestinationDir()):
                     return False
                 CraftHash.createDigestFiles(dbgName)

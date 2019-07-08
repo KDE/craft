@@ -80,7 +80,6 @@ You can add your own defines into self.defines as well.
         defines = super().setDefaults(defines)
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
         defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.isX64() else "")
-        defines.setdefault("setupname", self.binaryArchiveName(fileType="exe", includeRevision=True))
         defines.setdefault("srcdir", self.archiveDir())# deprecated
         defines.setdefault("registy_hook", "")
         defines.setdefault("sections", "")
@@ -121,15 +120,14 @@ You can add your own defines into self.defines as well.
                 total += self.folderSize(entry.path)
         return total
 
-    def generateNSISInstaller(self):
+    def generateNSISInstaller(self, defines):
         """ runs makensis to generate the installer itself """
-
-        defines = self.setDefaults(self.defines)
-        defines["dataPath"] = self.setupName
-        defines["dataName"] = os.path.basename(self.setupName)
+        defines["dataPath"] = str(Path(defines["setupname"]).with_suffix( "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")))
+        defines["dataName"] = os.path.basename(defines["dataPath"])
+        defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".exe"))
         defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.isX64() else CraftCore.cache.findApplication("7za_32")
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
-        defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(self.setupName)) / 1000))
+        defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(defines["dataPath"])) / 1000))
 
         defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
         defines["iconname"] = os.path.basename(defines["icon"])
@@ -150,14 +148,22 @@ You can add your own defines into self.defines as well.
         if defines.get("sections", None):
             defines["sections_page"] = "!insertmacro MUI_PAGE_COMPONENTS"
 
-        # make absolute path for output file
-        if not os.path.isabs(defines["setupname"]):
-            dstpath = self.packageDestinationDir()
-            defines["setupname"] = os.path.join(dstpath, defines["setupname"])
-        self.setupName = defines["setupname"]
+        uninstallDirs = set()
+        uninstallFiles = ["\\uninstall.exe", f"\\{defines['iconname']}"]
+        prefixLength = len(self.archiveDir())
+        for f in utils.filterDirectoryContent(self.archiveDir()):
+            f = Path(f[prefixLength:])
+            uninstallFiles.append(f)
+            d = f.parent
+            while d not in uninstallDirs:
+                uninstallDirs.add(d)
+                d = d.parent
+
+        defines["uninstallFiles"] = "\n".join([f"Delete $INSTDIR{f}" for f in uninstallFiles])
+        defines["uninstallDirs"] = "\n".join([f"RMDir $INSTDIR{x}" for x in sorted(uninstallDirs, reverse=True)])
 
         CraftCore.debug.new_line()
-        CraftCore.log.debug(f"generating installer {self.setupName}")
+        CraftCore.log.debug(f"generating installer {defines['setupname']}")
 
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
@@ -176,7 +182,7 @@ You can add your own defines into self.defines as well.
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
             return False
-        return utils.sign([self.setupName])
+        return utils.sign([defines["setupname"]])
 
     def createPackage(self):
         """ create a package """
@@ -185,12 +191,14 @@ You can add your own defines into self.defines as well.
 
         CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
+        defines = self.setDefaults(self.defines)
+
         if not super().createPackage():
             return False
-        if not self.generateNSISInstaller():
+        if not self.generateNSISInstaller(defines):
             return False
 
-        destDir, archiveName = os.path.split(self.setupName)
+        destDir, archiveName = os.path.split(defines["setupname"])
         self._generateManifest(destDir, archiveName)
-        CraftHash.createDigestFiles(self.setupName)
+        CraftHash.createDigestFiles(defines["setupname"])
         return True

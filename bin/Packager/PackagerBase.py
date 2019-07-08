@@ -28,6 +28,7 @@ class PackagerBase(CraftBase):
 
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = dict(defines)
+        defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True, fileType="")))
         defines.setdefault("shortcuts", "")
         defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE e.V.")
