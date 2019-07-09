@@ -130,7 +130,6 @@ class PackageBase(CraftBase):
     def fetchBinary(self, downloadRetriesLeft=3) -> bool:
         if self.subinfo.options.package.disableBinaryCache:
             return False
-
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {self} from cache: {url}.")
             if url == self.cacheLocation():
@@ -147,11 +146,14 @@ class PackageBase(CraftBase):
             for f in fileEntry:
                 if f.version == self.version:
                     files.append(f)
-            latest = None
             if not files:
                 CraftCore.log.debug(f"Could not find {self}={self.version} in {url}")
                 continue
             latest = files[0]
+
+            if latest.configHash and latest.configHash != self.subinfo.options.dynamic.configHash():
+                CraftCore.log.warning("Failed to restore package, configuration missmatch")
+                return False
 
             if url != self.cacheLocation():
                 downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))

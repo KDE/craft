@@ -3,9 +3,7 @@ import datetime
 import json
 import os
 
-
 from CraftCore import CraftCore
-import utils
 
 class CraftManifestEntryFile(object):
     def __init__(self, fileName : str, checksum : str, version : str="") -> None:
@@ -14,6 +12,7 @@ class CraftManifestEntryFile(object):
         self.date = datetime.datetime.utcnow()
         self.version = version
         self.buildPrefix = CraftCore.standardDirs.craftRoot()
+        self.configHash = None
 
     @staticmethod
     def fromJson(data : dict):
@@ -21,14 +20,18 @@ class CraftManifestEntryFile(object):
         out.date = CraftManifest._parseTimeStamp(data["date"])
         out.version = data.get("version", "")
         out.buildPrefix = data.get("buildPrefix", None)
+        out.configHash = data.get("configHash", None)
         return out
 
     def toJson(self) -> dict:
-        return {"fileName"      : self.fileName,
-                "checksum"      : self.checksum,
-                "date"          : self.date.strftime(CraftManifest._TIME_FORMAT),
-                "version"       : self.version,
-                "buildPrefix"   : self.buildPrefix}
+        return {
+            "fileName"      : self.fileName,
+            "checksum"      : self.checksum,
+            "date"          : self.date.strftime(CraftManifest._TIME_FORMAT),
+            "version"       : self.version,
+            "buildPrefix"   : self.buildPrefix,
+            "configHash"    : self.configHash
+        }
 
 class CraftManifestEntry(object):
     def __init__(self, name : str) -> None:
@@ -44,8 +47,9 @@ class CraftManifestEntry(object):
     def toJson(self) -> dict:
         return {"name":self.name, "files":[x.toJson() for x in self.files]}
 
-    def addFile(self, fileName : str, checksum : str, version : str="") -> CraftManifestEntryFile:
+    def addFile(self, fileName : str, checksum : str, version : str="", config=None) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum, version)
+        f.configHash = config.configHash()
         self.files.insert(0, f)
         return f
 
