@@ -159,8 +159,8 @@ You can add your own defines into self.defines as well.
                 uninstallDirs.add(d)
                 d = d.parent
 
-        defines["uninstallFiles"] = "\n".join([f"Delete $INSTDIR{f}" for f in uninstallFiles])
-        defines["uninstallDirs"] = "\n".join([f"RMDir $INSTDIR{x}" for x in sorted(uninstallDirs, reverse=True)])
+        defines["uninstallFiles"] = "\n".join([f"Delete \"$INSTDIR{f}\"" for f in uninstallFiles])
+        defines["uninstallDirs"] = "\n".join([f"RMDir \"$INSTDIR{x}\"" for x in sorted(uninstallDirs, reverse=True)])
 
         CraftCore.debug.new_line()
         CraftCore.log.debug(f"generating installer {defines['setupname']}")
