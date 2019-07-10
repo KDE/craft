@@ -957,3 +957,25 @@ def installShortcut(name : str, path : str, workingDir : str, icon : str, descip
                   "-Name", pwsh.quote(shortcutPath),
                   "-Icon", pwsh.quote(icon),
                   "-Description", pwsh.quote(desciption)])
+
+
+def strip(fileName, symbolDest=None):
+    """strip debugging informations from shared libraries and executables - mingw only!!! """
+    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
+        CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
+        return True
+
+    if OsUtils.isMac():
+        CraftCore.log.debug(f"Skipping stripping of files on macOS -- not implemented")
+        return True
+
+    if not symbolDest:
+        return system(["strip", "-s", fileName])
+    else:
+        symFile = Path(symbolDest) /f"{os.path.basename(fileName)}.sym"
+        if symFile.exists():
+            return True
+        return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
+                system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
+                system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
+    return True

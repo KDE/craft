@@ -234,10 +234,10 @@ class BuildSystemBase(CraftBase):
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
             return False
 
+        binaryFiles = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True)
         if (CraftCore.compiler.isMacOS
                 and os.path.isdir(self.installDir())):
-            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True)
-            for f in files:
+            for f in binaryFiles:
                 if os.path.islink(f):
                     continue
                 # replace the old prefix or add it if missing
@@ -271,9 +271,7 @@ class BuildSystemBase(CraftBase):
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
         if not self.subinfo.isCachedBuild and CraftCore.compiler.isMSVC() and self.buildType() in {"RelWithDebInfo", "Debug"}:
-            files = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path),
-                                                 lambda x, root: True)
-            for f in files:
+            for f in binaryFiles:
                 if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
                     pdb = utils.getPDBForBinary(f)
                     if not pdb:
@@ -286,4 +284,8 @@ class BuildSystemBase(CraftBase):
 
                     CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
                     utils.copyFile(pdb, pdbDestination, linkOnly=False)
+        else:
+            if not self.subinfo.options.package.disableStriping:
+                for f in binaryFiles:
+                    utils.strip(f, os.path.dirname(f))
         return True
