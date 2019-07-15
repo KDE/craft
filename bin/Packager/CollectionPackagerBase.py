@@ -218,6 +218,10 @@ class CollectionPackagerBase(PackagerBase):
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
+        if doSign and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+            # files from the cache are already signed
+            doSign = os.path.samefile(srcDir, self.imageDir())
+
 
         for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted):
             if not self._filterQtBuildType(entry):

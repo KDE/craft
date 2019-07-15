@@ -211,6 +211,7 @@ Enabled = False
 ClearBuildFolder = False
 
 [CodeSigning]
+SignCache = False
 Enabled = False
 CommonName = K Desktop Environment e.V.
 Organization = K Desktop Environment e.V.
