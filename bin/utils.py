@@ -805,6 +805,27 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         f.write(script)
     return True
 
+def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
+    # the actual limit is hard to get in python so lets just use a working random size
+    SIZE = 1024 * 4
+    out = []
+    commandSize = sum(map(len, command))
+    if commandSize >= SIZE:
+        CraftCore.log.error("Failed to compute command, command too long")
+        return []
+    currentSize = commandSize
+    tmp = list(command)
+    for a in args:
+        le = len(a)
+        if currentSize + le >= SIZE:
+            out.append(tmp)
+            tmp = list(command)
+            currentSize = commandSize
+        tmp.append(a)
+        currentSize += le
+    out.append(tmp)
+    return out
+
 
 def sign(fileNames : [str]) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
@@ -827,8 +848,8 @@ def sign(fileNames : [str]) -> bool:
         command += ["/v"]
     else:
         command += ["/q"]
-    for fileName in fileNames:
-        if not system(command + [fileName], logCommand=False):
+    for args in limitCommandLineLength(command, fileNames):
+        if not system(args, logCommand=False):
             return False
     return True
 

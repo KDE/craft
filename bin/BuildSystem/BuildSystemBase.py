@@ -292,7 +292,6 @@ class BuildSystemBase(CraftBase):
 
         # sign the binaries if we can
         if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-            for f in binaryFiles:
-                if not utils.sign(f):
-                    return False
+            if not utils.sign(binaryFiles):
+                return False
         return True
