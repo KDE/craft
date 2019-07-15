@@ -234,7 +234,7 @@ class BuildSystemBase(CraftBase):
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
             return False
 
-        binaryFiles = utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True)
+        binaryFiles = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True))
         if (CraftCore.compiler.isMacOS
                 and os.path.isdir(self.installDir())):
             for f in binaryFiles:
