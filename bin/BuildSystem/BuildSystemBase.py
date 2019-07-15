@@ -270,23 +270,28 @@ class BuildSystemBase(CraftBase):
 
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
-        if not self.subinfo.isCachedBuild and CraftCore.compiler.isMSVC() and self.buildType() in {"RelWithDebInfo", "Debug"}:
-            for f in binaryFiles:
-                if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
-                    pdb = utils.getPDBForBinary(f)
-                    if not pdb:
-                        CraftCore.log.warning(f"Could not find a PDB for {f}")
-                        continue
-                    if not os.path.exists(pdb):
-                        CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
-                        continue
-                    pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
+        if not self.subinfo.isCachedBuild:
+            if self.buildType() in {"RelWithDebInfo", "Debug"}:
+                if CraftCore.compiler.isMSVC():
+                    for f in binaryFiles:
+                        if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
+                            pdb = utils.getPDBForBinary(f)
+                            if not pdb:
+                                CraftCore.log.warning(f"Could not find a PDB for {f}")
+                                continue
+                            if not os.path.exists(pdb):
+                                CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
+                                continue
+                            pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
 
-                    CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
-                    utils.copyFile(pdb, pdbDestination, linkOnly=False)
-        else:
-            #mingw
-            if not self.subinfo.options.package.disableStriping:
-                for f in binaryFiles:
-                    utils.strip(f, os.path.dirname(f))
+                            CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                            utils.copyFile(pdb, pdbDestination, linkOnly=False)
+                else:
+                    if not self.subinfo.options.package.disableStriping:
+                        for f in binaryFiles:
+                            utils.strip(f, os.path.dirname(f))
+
+            # sign the binaries if we can
+            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+                utils.sign(binaryFiles)
         return True

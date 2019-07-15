@@ -80,11 +80,6 @@ class SevenZipPackager(PackagerBase):
             else:
                 extention = "tar.7z"
 
-        if cacheMode:
-            # sign the binaries if we can
-            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-                utils.sign(utils.filterDirectoryContent(self.imageDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True))
-
         if not self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False
         if not self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
