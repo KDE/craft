@@ -824,7 +824,7 @@ def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
         tmp.append(a)
         currentSize += le
     if tmp:
-        out.append(tmp)
+        out.append(command + tmp)
     return out
 
 
