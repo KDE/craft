@@ -850,7 +850,7 @@ def sign(fileNames : [str]) -> bool:
     else:
         command += ["/q"]
     for args in limitCommandLineLength(command, fileNames):
-        if not system(args, logCommand=False):
+        if not system(args):
             return False
     return True
 
