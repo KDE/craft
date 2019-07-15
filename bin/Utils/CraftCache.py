@@ -93,7 +93,7 @@ class CraftCache(object):
         CraftCore.log.debug("Clear utils cache")
         CraftCore.cache = CraftCache()
 
-    def findApplication(self, app, path=None) -> str:
+    def findApplication(self, app, path=None, forceCache:bool=False) -> str:
         if app in self._nonPersistentCache.applicationLocations:
             appLocation = self._nonPersistentCache.applicationLocations[app]
             if os.path.exists(appLocation):
@@ -112,7 +112,7 @@ class CraftCache(object):
                 # prettify command
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
-            if Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents:
+            if forceCache or Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents:
                 CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
                 self._nonPersistentCache.applicationLocations[app] = appLocation
         else:

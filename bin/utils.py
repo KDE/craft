@@ -813,10 +813,10 @@ def sign(fileNames : [str]) -> bool:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
 
-    signTool = CraftCore.cache.findApplication("signtool")
+    signTool = CraftCore.cache.findApplication("signtool", forceCache=True)
     if not signTool:
         env = SetupHelper.getMSVCEnv()
-        signTool = CraftCore.cache.findApplication("signtool", env["PATH"])
+        signTool = CraftCore.cache.findApplication("signtool", env["PATH"], forceCache=True)
     if not signTool:
         CraftCore.log.warning("Code signing requires a VisualStudio installation")
         return False
