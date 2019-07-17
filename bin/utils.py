@@ -987,17 +987,21 @@ def strip(fileName, symbolDest=None):
         CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
         return True
 
-    if OsUtils.isMac():
-        CraftCore.log.debug(f"Skipping stripping of files on macOS -- not implemented")
+    if CraftCore.compiler.isMacOS:
+        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.dSym"
+    else:
+        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.sym"
+
+    if symFile.exists():
         return True
 
-    if not symbolDest:
-        return system(["strip", "-s", fileName])
+    if CraftCore.compiler.isMacOS:
+        return (system(["dsymutil", fileName, "-o", symFile]) and
+                system(["strip", "-x", "-S", fileName]))
     else:
-        symFile = Path(symbolDest) /f"{os.path.basename(fileName)}.sym"
-        if symFile.exists():
-            return True
-        return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
-                system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
-                system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
-    return True
+        if not symbolDest:
+            return system(["strip", "-s", fileName])
+        else:
+            return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
+                    system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
+                    system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
