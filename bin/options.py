@@ -114,15 +114,17 @@ class UserOptions(object):
         _register  = self.registerOption
         _convert = self._convert
 
-        _register("version",    str,    permanent=False)
+        # cachability is handled by the version comparison
+        _register("version",    str,    permanent=False, compatible=True)
+        _register("patchLevel", int,    permanent=False,  compatible=True)
+
         _register("branch",     str,    permanent=False)
         _register("revision",   str,    permanent=False)
-        _register("patchLevel", int,    permanent=False)
-        _register("ignored",    bool,   permanent=False)
+        _register("ignored",    bool,   permanent=False, compatible=True)
         _register("buildTests", bool,   permanent=False, compatible=True)
         _register("buildStatic",bool,   permanent=False)
 
-        _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False)
+        _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False, compatible=True) # cachability already handled by cache behaviour
         _register("args",       "",     permanent=False)
 
         settings = UserOptions.instance().settings
