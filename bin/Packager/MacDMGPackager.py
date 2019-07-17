@@ -15,6 +15,11 @@ class MacDMGPackager( CollectionPackagerBase ):
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
+    def setDefaults(self, defines: {str:str}) -> {str:str}:
+        defines = super().setDefaults(defines)
+        defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".dmg"))
+        return defines
+
     def createPackage(self):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
@@ -118,12 +123,11 @@ class MacDMGPackager( CollectionPackagerBase ):
                 CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
                 return False
 
-            name = self.binaryArchiveName(fileType="", includeRevision=True)
-            dmgDest = os.path.join(self.packageDestinationDir(), f"{name}.dmg")
+            dmgDest = defines["setupname"]
             if os.path.exists(dmgDest):
                 utils.deleteFile(dmgDest)
             appName = defines['appname'] + ".app"
-            if not utils.system(["create-dmg", "--volname", name,
+            if not utils.system(["create-dmg", "--volname", os.path.basename(dmgDest),
                                  # Add a drop link to /Applications:
                                  "--icon", appName, "140", "150", "--app-drop-link", "350", "150",
                                  dmgDest, appPath]):
