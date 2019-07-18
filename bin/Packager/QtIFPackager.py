@@ -118,7 +118,7 @@ class QtIFPackager(SevenZipPackager):
                 utils.cleanDirectory(self.archiveDir())
                 utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix))
 
-            if not self._compress("data.7z", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False):
+            if not self._createArchive("data", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False, extention=".7z"):
                 return False
 
         info = MetaInfo(self.package)

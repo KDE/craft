@@ -6,6 +6,7 @@
 import datetime
 import json
 import glob
+from pathlib import Path
 
 from CraftBase import *
 
@@ -83,3 +84,29 @@ class PackagerBase(CraftBase):
         entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version, config=self.subinfo.options.dynamic)
 
         manifest.dump(manifestLocation)
+
+    def _createArchive(self, archiveName, sourceDir, destDir, createDigests=True, extention=None) -> bool:
+        if extention is None:
+            extention = "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
+            if extention == ".7z" and CraftCore.compiler.isUnix:
+                if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
+                    extention = ".tar.xz"
+                else:
+                    extention = ".tar.7z"
+
+        archive = str((Path(destDir) / archiveName).with_suffix(extention))
+        if not utils.compress(archive, sourceDir):
+            return False
+
+        if createDigests:
+            if not CraftCore.settings.getboolean("Packager", "CreateCache"):
+                self._generateManifest(destDir, archiveName)
+                CraftHash.createDigestFiles(archive)
+            else:
+                if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
+                    manifestUrls = [self.cacheRepositoryUrls()[0]]
+                else:
+                    manifestUrls = None
+                self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
+                                       manifestUrls=manifestUrls)
+        return True

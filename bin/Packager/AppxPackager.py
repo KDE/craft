@@ -146,7 +146,7 @@ class AppxPackager(CollectionPackagerBase):
                                 """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]""")
             return False
 
-        if not self.internalCreatePackage():
+        if not self.internalCreatePackage(defines, False):
             return False
 
         if not self.__prepareIcons(defines):

@@ -24,12 +24,10 @@ class MacDMGPackager( CollectionPackagerBase ):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
-
-        packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
-        if not self.internalCreatePackage(seperateSymbolFiles=packageSymbols):
+        defines = self.setDefaults(self.defines)
+        if not self.internalCreatePackage(defines, True):
             return False
 
-        defines = self.setDefaults(self.defines)
         appPath = self.getMacAppPath(defines)
         archive = os.path.normpath(self.archiveDir())
         CraftCore.log.info(f"Packaging {appPath}")
@@ -59,8 +57,8 @@ class MacDMGPackager( CollectionPackagerBase ):
                 return False
 
             binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents", "MacOS"),
-                whitelist=lambda x, root: utils.isBinary(os.path.join(root, x)) and x.name != defines["appname"],
-                blacklist=lambda x, root: x.name == defines["appname"]))
+                                                         whitelist=lambda x, root: utils.isBinary(os.path.join(root, x)) and x.name != defines["appname"],
+                                                         blacklist=lambda x, root: x.name == defines["appname"]))
 
             for binary in binaries:
                 CraftCore.log.info(f"Bundling dependencies for {binary}...")

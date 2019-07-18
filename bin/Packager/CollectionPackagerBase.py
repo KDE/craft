@@ -236,20 +236,32 @@ class CollectionPackagerBase(PackagerBase):
             utils.sign(filesToSign)
         return True
 
-    def internalCreatePackage(self, seperateSymbolFiles=False) -> bool:
+    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False) -> bool:
         """ create a package """
 
+        seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
         archiveDir = self.archiveDir()
 
-        CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
-        utils.cleanDirectory(archiveDir)
+        if CraftCore.compiler.isMacOS:
+            symbolPattern = r".*\.dSym/.*"
+        elif CraftCore.compiler.isMSVC():
+            symbolPattern = r".*\.pdb"
+        else:
+            symbolPattern = r".*\.sym"
+        symbolPattern = re.compile(symbolPattern)
 
         if not seperateSymbolFiles:
-            self.blacklist.append(re.compile(r".*\.pdb|.*\.sym"))
+            self.blacklist.append(symbolPattern)
             dbgDir = None
         else:
             dbgDir = f"{archiveDir}-dbg"
+
+
+        CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
+        utils.cleanDirectory(archiveDir)
+        if seperateSymbolFiles:
             utils.cleanDirectory(dbgDir)
+
         for directory, strip in self.__getImageDirectories():
             if os.path.exists(directory):
                 if not self.copyFiles(directory, archiveDir):
@@ -270,13 +282,19 @@ class CollectionPackagerBase(PackagerBase):
             return False
 
         if seperateSymbolFiles:
-            pat = f"{archiveDir}/**/*.sym"
-            if CraftCore.compiler.isMSVC():
-                pat = f"{archiveDir}/**/*.pdb"
-            for f in glob.glob(pat, recursive=True):
+            syms = utils.filterDirectoryContent(archiveDir,
+                                                whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
+                                                blacklist=lambda x, root: True)
+            for f in syms:
                 dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
                 utils.createDir(os.path.dirname(dest))
                 utils.moveFile(f, dest)
+
+            if os.path.exists(dbgDir):
+                dbgName = "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"]))
+                if not self._createArchive(dbgName, dbgDir, self.packageDestinationDir()):
+                    return False
+
         return True
 
     def preArchive(self):

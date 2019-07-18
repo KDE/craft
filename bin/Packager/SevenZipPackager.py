@@ -44,24 +44,6 @@ class SevenZipPackager(PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self)
 
-    def _compress(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
-        archive = os.path.join(destDir, archiveName)
-        if not utils.compress(archive, sourceDir):
-            return False
-
-        if createDigests:
-            if not CraftCore.settings.getboolean("Packager", "CreateCache"):
-                self._generateManifest(destDir, archiveName)
-                CraftHash.createDigestFiles(archive)
-            else:
-                if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
-                    manifestUrls = [self.cacheRepositoryUrls()[0]]
-                else:
-                    manifestUrls = None
-                self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
-                                    manifestUrls=manifestUrls)
-        return True
-
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
         cacheMode = CraftCore.settings.getboolean("Packager", "CreateCache", False)
@@ -72,16 +54,8 @@ class SevenZipPackager(PackagerBase):
         else:
             dstpath = self.packageDestinationDir()
 
-
-        extention = CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
-        if extention == "7z" and CraftCore.compiler.isUnix:
-            if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
-                extention = "tar.xz"
-            else:
-                extention = "tar.7z"
-
-        if not self._compress(self.binaryArchiveName(fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
+        if not self._createArchive(self.binaryArchiveName(fileType="", includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False
         if not self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            return self._compress(self.binaryArchiveName("-src", fileType=extention, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
+            return self._createArchive(self.binaryArchiveName("-src", fileType="", includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
         return True
