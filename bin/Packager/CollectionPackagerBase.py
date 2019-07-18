@@ -243,7 +243,7 @@ class CollectionPackagerBase(PackagerBase):
         archiveDir = self.archiveDir()
 
         if CraftCore.compiler.isMacOS:
-            symbolPattern = r".*\.dSym/.*"
+            symbolPattern = r".*\.dSYM/.*"
         elif CraftCore.compiler.isMSVC():
             symbolPattern = r".*\.pdb"
         else:

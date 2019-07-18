@@ -905,7 +905,7 @@ def regexFileFilter(filename : os.DirEntry, root : str, pattern : [re]=None) -> 
             return True
     return False
 
-def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBadSymlinks=False):
+def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBaFdSymlinks=False):
     """
         Traverse through a directory tree and return every
         filename that the function whitelist returns as true and
@@ -988,7 +988,7 @@ def strip(fileName, symbolDest=None):
         return True
 
     if CraftCore.compiler.isMacOS:
-        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.dSym"
+        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.dSYM"
     else:
         symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.sym"
 
