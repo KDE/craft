@@ -999,9 +999,6 @@ def strip(fileName, symbolDest=None):
         return (system(["dsymutil", fileName, "-o", symFile]) and
                 system(["strip", "-x", "-S", fileName]))
     else:
-        if not symbolDest:
-            return system(["strip", "-s", fileName])
-        else:
-            return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
-                    system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
-                    system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
+        return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
+                system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
+                system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
