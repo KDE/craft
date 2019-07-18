@@ -25,7 +25,8 @@ class MacDMGPackager( CollectionPackagerBase ):
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         defines = self.setDefaults(self.defines)
-        if not self.internalCreatePackage(defines, True):
+        # TODO: provide an image with dbg files
+        if not self.internalCreatePackage(defines, False):
             return False
 
         appPath = self.getMacAppPath(defines)
