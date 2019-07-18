@@ -94,14 +94,14 @@ class PackagerBase(CraftBase):
                 else:
                     extention = ".tar.7z"
 
-        archive = str((Path(destDir) / archiveName).with_suffix(extention))
-        if not utils.compress(archive, sourceDir):
+        archiveName = str((Path(destDir) / archiveName).with_suffix(extention))
+        if not utils.compress(archiveName, sourceDir):
             return False
 
         if createDigests:
             if not CraftCore.settings.getboolean("Packager", "CreateCache"):
                 self._generateManifest(destDir, archiveName)
-                CraftHash.createDigestFiles(archive)
+                CraftHash.createDigestFiles(archiveName)
             else:
                 if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
                     manifestUrls = [self.cacheRepositoryUrls()[0]]
