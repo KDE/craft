@@ -75,7 +75,7 @@ class UserOptions(object):
             if os.path.isfile(self.path):
                 self.settings.read(self.path, encoding="utf-8")
 
-        def initPackage(self, option):
+        def initPackage(self, option) -> configparser.SectionProxy:
             path = option._package.path
             if not self.settings.has_section(path):
                 self.settings.add_section(path)
@@ -237,9 +237,12 @@ class UserOptions(object):
                 CraftCore.log.error(f"\t{default.__name__} : {optionKey}")
             return False
         settings = _instance.initPackage(self)
-        if value == "" and key in settings:
-            del settings[key]
-            delattr(self, key)
+        if value == "":
+            if key in settings:
+                del settings[key]
+                delattr(self, key)
+            if not settings.keys():
+                del _instance.settings[self._package.path]
         else:
             value = self._convert(_instance.registeredOptions[package.path][key].value, value)
             settings[key] = str(value)
