@@ -856,15 +856,17 @@ def sign(fileNames : [str]) -> bool:
 
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
+    fileName = Path(fileName)
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
-    if os.path.islink(fileName) or os.path.isdir(fileName):
+    if fileName.is_symlink() or fileName.is_dir():
         return False
-    _, ext = os.path.splitext(fileName)
     if CraftCore.compiler.isWindows:
-        if ext in {".dll", ".exe"}:
+        if fileName.suffix in {".dll", ".exe"}:
             return True
     else:
-        if ext in {".so", ".dylib"}:
+        if CraftCore.compiler.isMacOS and ".dSYM/" in str(fileName):
+            return False
+        if fileName.suffix in {".so", ".dylib"}:
             return True
         elif os.access(fileName, os.X_OK):
             signature = None
@@ -873,8 +875,6 @@ def isBinary(fileName : str) -> bool:
             if signature:
                 with open(fileName, "rb") as f:
                     return f.read(len(signature)) == signature
-            else:
-                return True
     return False
 
 
