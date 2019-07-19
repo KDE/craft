@@ -94,7 +94,7 @@ class PackagerBase(CraftBase):
                 else:
                     extention = ".tar.7z"
 
-        archiveName = str((Path(destDir) / archiveName).with_suffix(extention))
+        archiveName = str((Path(destDir) / archiveName)) + extention
         if not utils.compress(archiveName, sourceDir):
             return False
 
