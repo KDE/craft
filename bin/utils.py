@@ -857,6 +857,7 @@ def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     fileName = Path(fileName)
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
+    ELF = b"\x7F\x45\x4C\x46"
     if fileName.is_symlink() or fileName.is_dir():
         return False
     if CraftCore.compiler.isWindows:
@@ -868,12 +869,14 @@ def isBinary(fileName : str) -> bool:
         if fileName.suffix in {".so", ".dylib"}:
             return True
         elif os.access(fileName, os.X_OK):
-            signature = None
             if CraftCore.compiler.isMacOS:
                 signature = MACH_O_64
-            if signature:
-                with open(fileName, "rb") as f:
-                    return f.read(len(signature)) == signature
+            elif CraftCore.compiler.isLinux:
+                signature = ELF
+            else:
+                raise Exception("Unsupported platform")
+            with open(fileName, "rb") as f:
+                return f.read(len(signature)) == signature
     return False
 
 
