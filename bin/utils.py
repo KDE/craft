@@ -433,8 +433,7 @@ def createSymlink(source, linkName, useAbsolutePath=False, targetIsDirectory=Fal
         srcPath = linkName
         srcPath = os.path.dirname(srcPath)
         source = os.path.relpath(source, srcPath)
-    if not os.path.exists(os.path.dirname(linkName)):
-        os.makedirs(os.path.dirname(linkName))
+    createDir(os.path.dirname(linkName))
     CraftCore.log.debug(f"creating symlink: {linkName} -> {source}")
     try:
         os.symlink(source, linkName, targetIsDirectory)

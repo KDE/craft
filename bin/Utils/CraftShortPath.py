@@ -6,7 +6,6 @@ from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 
 class CraftShortPath(object):
-    _useShortpaths = OsUtils.isWin()
     _shortPaths = {}
 
     def __init__(self, path, createShortPath=None) -> None:
@@ -43,8 +42,6 @@ class CraftShortPath(object):
     def _createShortPath(longPath) -> str:
         import utils
         longPath = OsUtils.toNativePath(longPath)
-        if not CraftShortPath._useShortpaths:
-            return longPath
         if not os.path.isdir(CraftCore.standardDirs.junctionsDir()):
             os.makedirs(CraftCore.standardDirs.junctionsDir())
         path = OsUtils.toNativePath(os.path.join(CraftCore.standardDirs.junctionsDir(), hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]))
@@ -55,8 +52,13 @@ class CraftShortPath(object):
             return longPath
         os.makedirs(longPath, exist_ok=True)
         if not os.path.isdir(path):
-            # note: mklink is a CMD command => needs shell
-            if not utils.system(["mklink", "/J", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False):
+            if OsUtils.isUnix():
+                ok = utils.createSymlink(longPath, path, useAbsolutePath=True, targetIsDirectory=True)
+            else:
+                # note: mklink is a CMD command => needs shell
+                ok = utils.system(["mklink", "/J", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False)
+
+            if not ok:
                 CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
                 return longPath
         else:
