@@ -6,6 +6,7 @@ from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 
 class CraftShortPath(object):
+    _useShortpaths = OsUtils.isWin()
     _shortPaths = {}
 
     def __init__(self, path, createShortPath=None) -> None:
@@ -40,9 +41,11 @@ class CraftShortPath(object):
 
     @staticmethod
     def _createShortPath(longPath) -> str:
+        if not CraftShortPath._useShortpaths:
+            return longPath
         import utils
-        longPath = OsUtils.toNativePath(longPath)
         utils.createDir(CraftCore.standardDirs.junctionsDir())
+        longPath = OsUtils.toNativePath(longPath)
         path = OsUtils.toNativePath(os.path.join(CraftCore.standardDirs.junctionsDir(), hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]))
         if len(longPath) < len(path):
             CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
