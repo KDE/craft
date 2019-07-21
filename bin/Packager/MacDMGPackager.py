@@ -39,12 +39,16 @@ class MacDMGPackager( CollectionPackagerBase ):
         moveTargets = [
             (os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
             (os.path.join(archive, "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
-            (os.path.join(archive, "lib", "libexec", "kf5"), os.path.join(appPath, "Contents", "MacOS")),
             (os.path.join(archive, "lib"), targetLibdir),
             (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources"))]
 
         if not appPath.startswith(archive):
             moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
+
+        if os.path.exists(os.path.join(archive, "lib", "libexec", "kf5", "kioslave")):
+            if not utils.copyFile(os.path.join(archive, "lib", "libexec", "kf5", "kioslave"),
+                os.path.join(appPath, "Contents", "MacOS"), linkOnly=False):
+                return False
 
         for src, dest in moveTargets:
             if os.path.exists(src):
