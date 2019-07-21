@@ -22,7 +22,7 @@ Packager for portal 7zip archives
 
         srcDir = defines.get("srcdir", self.archiveDir())
 
-        return self._createArchive(defines["setupname"], srcDir, self.packageDestinationDir())
+        return self._createArchive(defines["setupname"], srcDir, self.packageDestinationDir(), extention="")
 
     def createPackage(self):
         """ create a package """
