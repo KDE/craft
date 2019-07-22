@@ -103,7 +103,7 @@ class PackageBase(CraftBase):
                 continue
 
             # if we are creating the cache, a rebuild on a failed fetch would be suboptimal
-            createingCache = CraftCore.settings.set("Packager", "CreateCache", False)
+            createingCache = CraftCore.settings.getboolean("Packager", "CreateCache", False)
 
             if url != self.cacheLocation():
                 downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
