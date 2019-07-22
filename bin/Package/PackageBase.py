@@ -1,7 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from pathlib import Path
+from pathlib import Path, PosixPath
 
 from CraftBase import *
 from CraftCompiler import *
@@ -116,7 +116,7 @@ class PackageBase(CraftBase):
             if url != self.cacheLocation():
                 if not os.path.exists(localArchiveAbsPath):
                     os.makedirs(localArchivePath, exist_ok=True)
-                    fUrl = f"{url}/{latest.fileName}"
+                    fUrl = f"{url}/{PosixPath(latest.fileName)}"
                     if not GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
                         msg = f"Failed to fetch {fUrl}"
                         if createingCache:
