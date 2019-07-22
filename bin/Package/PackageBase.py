@@ -99,7 +99,11 @@ class PackageBase(CraftBase):
 
             if latest.configHash and latest.configHash != self.subinfo.options.dynamic.configHash():
                 CraftCore.log.warning("Failed to restore package, configuration missmatch")
-                return False
+                # try next cache
+                continue
+
+            # if we are creating the cache, a rebuild on a failed fetch would be suboptimal
+            createingCache = CraftCore.settings.set("Packager", "CreateCache", False)
 
             if url != self.cacheLocation():
                 downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
@@ -114,7 +118,11 @@ class PackageBase(CraftBase):
                     os.makedirs(localArchivePath, exist_ok=True)
                     fUrl = f"{url}/{latest.fileName}"
                     if not GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
-                        CraftCore.log.warning(f"Failed to fetch {fUrl}")
+                        msg = f"Failed to fetch {fUrl}"
+                        if createingCache:
+                            raise BlueprintException(msg, self)
+                        else:
+                            CraftCore.log.warning(msg)
                         return False
             elif not os.path.isfile(localArchiveAbsPath):
                 continue
@@ -122,11 +130,14 @@ class PackageBase(CraftBase):
             if not CraftHash.checkFilesDigests(localArchivePath, [localArchiveName],
                                                digests=latest.checksum,
                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
-                CraftCore.log.warning(f"Hash did not match, {localArchiveName} might be corrupted")
+                msg = f"Hash did not match, {localArchiveName} might be corrupted"
+                CraftCore.log.warning(msg)
                 if downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
                                                      [("Yes", True), ("No", False)],
                                                      default="Yes"):
                     return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(downloadRetriesLeft=downloadRetriesLeft-1)
+                if createingCache:
+                    raise BlueprintException(msg, self)
                 return False
             self.subinfo.buildPrefix = latest.buildPrefix
             self.subinfo.isCachedBuild = True
