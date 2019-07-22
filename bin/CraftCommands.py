@@ -230,8 +230,10 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 
     if action == "get":
         return invoke(args.get, directTargets)
-    if action == "install-to-desktop":
+    elif action == "install-to-desktop":
         return installToDektop(directTargets)
+    elif action == "print-files":
+        return printFiles(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
@@ -240,7 +242,6 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                 CraftCore.log.error(f"Invalid dependency type {args.resolve_deps}, valid types are {DependencyType.__members__}")
                 return False
             depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
-            print(depType)
         elif action == "install-deps":
             depType = DependencyType.Both
         else:
@@ -355,3 +356,13 @@ def installToDektop(packages):
             return False
     return True
 
+
+def printFiles(packages):
+    for p in packages:
+        packageList = CraftCore.installdb.getInstalledPackages(p)
+        for package in packageList:
+            fileList = package.getFiles()
+            fileList.sort()
+            for file in fileList:
+                CraftCore.log.info(file[0])
+    return True

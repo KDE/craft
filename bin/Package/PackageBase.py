@@ -73,15 +73,6 @@ class PackageBase(CraftBase):
         basepath = os.path.join(self.installDir())
         utils.createImportLibs(pkgName, basepath)
 
-    def printFiles(self):
-        packageList = CraftCore.installdb.getInstalledPackages(self.package)
-        for package in packageList:
-            fileList = package.getFiles()
-            fileList.sort()
-            for file in fileList:
-                print(file[0])
-        return True
-
     def fetchBinary(self, downloadRetriesLeft=3) -> bool:
         if self.subinfo.options.package.disableBinaryCache:
             return False
@@ -205,7 +196,6 @@ class PackageBase(CraftBase):
                      "unmerge": "unmerge",
                      "package": "createPackage",
                      "createpatch": "createPatch",
-                     "print-files": "printFiles",
                      "checkdigest": "checkDigest",
                      "fetch-binary": "fetchBinary"}
         if command in functions:
