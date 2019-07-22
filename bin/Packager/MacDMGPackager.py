@@ -64,7 +64,7 @@ class MacDMGPackager( CollectionPackagerBase ):
 
             binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents", "MacOS"),
                                                          whitelist=lambda x, root: utils.isBinary(os.path.join(root, x)) and x.name != defines["appname"],
-                                                         blacklist=lambda x, root: x.name == defines["appname"]))
+                                                         blacklist=lambda x, root: True))
 
             for binary in binaries:
                 CraftCore.log.info(f"Bundling dependencies for {binary}...")
