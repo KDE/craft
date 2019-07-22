@@ -14,6 +14,10 @@ class CraftManifestEntryFile(object):
         self.buildPrefix = CraftCore.standardDirs.craftRoot()
         self.configHash = None
 
+        if CraftCore.compiler.isWindows:
+            self.fileName = self.fileName.replace("\\", "/")
+
+
     @staticmethod
     def fromJson(data : dict):
         out = CraftManifestEntryFile(data["fileName"], data["checksum"])
