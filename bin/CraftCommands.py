@@ -38,7 +38,7 @@ import utils
 def doExec(package, action):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
         CraftCore.debug.step("Action: %s for %s" % (action, package))
-        ret = package.instance.execute(action)
+        ret = package.instance.runAction(action)
         if not ret:
             if action == "fetch-binary":
                 CraftCore.debug.step(f"{package} not found in cache")

@@ -82,29 +82,6 @@ class PackageBase(CraftBase):
                 print(file[0])
         return True
 
-    def getAction(self, cmd=None):
-        if not cmd:
-            command = sys.argv[1]
-            options = None
-            #            print sys.argv
-            if (len(sys.argv) > 2):
-                options = sys.argv[2:]
-        else:
-            command = cmd
-            options = None
-        # \todo options are not passed through by craft.py fix it
-        return [command, options]
-
-    def execute(self, cmd=None):
-        """called to run the derived class
-        this will be executed from the package if the package is started on its own
-        it shouldn't be called if the package is imported as a python module"""
-
-        CraftCore.log.debug("PackageBase.execute called. args: %s" % sys.argv)
-        command, _ = self.getAction(cmd)
-
-        return self.runAction(command)
-
     def fetchBinary(self, downloadRetriesLeft=3) -> bool:
         if self.subinfo.options.package.disableBinaryCache:
             return False
