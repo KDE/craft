@@ -272,7 +272,11 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     else:
         ok = proc.returncode in acceptableExitCodes
     if not ok:
-        CraftCore.log.debug(f"Command {cmd} failed with exit code {proc.returncode}")
+        msg = f"Command {cmd} failed with exit code {proc.returncode}"
+        if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            CraftCore.log.debug(msg)
+        else:
+            CraftCore.log.info(msg)
     return ok
 
 def cleanDirectory(directory):

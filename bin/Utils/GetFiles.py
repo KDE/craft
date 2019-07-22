@@ -29,6 +29,7 @@ from CraftCore import CraftCore
 from CraftDebug import deprecated
 import utils
 
+import io
 import os
 import urllib
 import subprocess
@@ -104,8 +105,13 @@ def curlFile(url, destdir, filename, quiet):
 
     if CraftCore.debug.verbose() < 1:
         if quiet:
-            command += ["--silent"]
-            return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+            ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+            with io.StringIO() as tmp:
+                if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
+                    if ciMode:
+                        CraftCore.log.warning(tmp.getvalue())
+                    return False
+            return True
         elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
             command += ["--progress-bar"]
             CraftCore.log.info(f"curl {url}")
@@ -130,12 +136,16 @@ def wgetFile(url, destdir, filename, quiet):
     else:
         command += ["-O", os.path.join(destdir, filename)]
     command += [url]
-    CraftCore.log.debug("wgetfile called")
 
     if CraftCore.debug.verbose() < 1:
         if quiet:
-            command += ["-q"]
-            return utils.system(command, logCommand=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False))
+            ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+            with io.StringIO() as tmp:
+                if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
+                    if ciMode:
+                        CraftCore.log.warning(tmp.getvalue())
+                    return False
+            return True
         elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
             command += ["-q", "--show-progress"]
             CraftCore.log.info(f"wget {url}")
