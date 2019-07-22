@@ -120,7 +120,7 @@ class PackageBase(CraftBase):
                     if not GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
                         msg = f"Failed to fetch {fUrl}"
                         if createingCache:
-                            raise BlueprintException(msg, self)
+                            raise BlueprintException(msg, self.package)
                         else:
                             CraftCore.log.warning(msg)
                         return False
@@ -137,7 +137,7 @@ class PackageBase(CraftBase):
                                                      default="Yes"):
                     return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(downloadRetriesLeft=downloadRetriesLeft-1)
                 if createingCache:
-                    raise BlueprintException(msg, self)
+                    raise BlueprintException(msg, self.package)
                 return False
             self.subinfo.buildPrefix = latest.buildPrefix
             self.subinfo.isCachedBuild = True
