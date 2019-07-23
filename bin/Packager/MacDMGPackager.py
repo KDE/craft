@@ -82,6 +82,9 @@ class MacDMGPackager( CollectionPackagerBase ):
             macdeployqt_multiple_executables_command = ["macdeployqt", appPath, "-always-overwrite", "-verbose=1"]
             for binary in binaries:
                 macdeployqt_multiple_executables_command.append(f"-executable={binary}")
+            if "qmldirs" in self.defines.keys() and isinstance(self.defines["qmldirs"], list):
+                for qmldir in self.defines["qmldirs"]:
+                    macdeployqt_multiple_executables_command.append(f"-qmldir={qmldir}")
             if not utils.system(macdeployqt_multiple_executables_command):
                 return False
 
