@@ -17,7 +17,7 @@ class MacDMGPackager( CollectionPackagerBase ):
 
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = super().setDefaults(defines)
-        defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".dmg"))
+        defines["setupname"] = f"{defines['setupname']}.dmg"
         return defines
 
     def createPackage(self):

@@ -54,8 +54,8 @@ class SevenZipPackager(PackagerBase):
         else:
             dstpath = self.packageDestinationDir()
 
-        if not self._createArchive(self.binaryArchiveName(fileType="", includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
+        if not self._createArchive(self.binaryArchiveName(fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False
         if not self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            return self._createArchive(self.binaryArchiveName("-src", fileType="", includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
+            return self._createArchive(self.binaryArchiveName("-src", fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
         return True

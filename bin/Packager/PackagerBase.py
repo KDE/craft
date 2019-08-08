@@ -85,16 +85,18 @@ class PackagerBase(CraftBase):
 
         manifest.dump(manifestLocation)
 
-    def _createArchive(self, archiveName, sourceDir, destDir, createDigests=True, extention=None) -> bool:
-        if extention is None:
-            extention = "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
-            if extention == ".7z" and CraftCore.compiler.isUnix:
-                if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
-                    extention = ".tar.xz"
-                else:
-                    extention = ".tar.7z"
+    @property
+    def archiveExtension(self):
+        extension = "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
+        if extension == ".7z" and CraftCore.compiler.isUnix:
+            if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
+                extension = ".tar.xz"
+            else:
+                extension = ".tar.7z"
+        return extension
 
-        archiveName = str((Path(destDir) / archiveName)) + extention
+    def _createArchive(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
+        archiveName = str((Path(destDir) / archiveName))
         if not utils.compress(archiveName, sourceDir):
             return False
 

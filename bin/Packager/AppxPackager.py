@@ -77,7 +77,7 @@ class AppxPackager(CollectionPackagerBase):
         defines["version"] = version
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
-        defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".appx"))
+        defines["setupname"] = f"{defines['setupname']}.appx"
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
