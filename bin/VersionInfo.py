@@ -132,6 +132,9 @@ class VersionInfo(object):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
 
+    def format(self, s : str, ver : str):
+        return VersionInfo._replaceVar(s, ver, self.package.name)
+
     def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                                  gitUrl=None):
         self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
