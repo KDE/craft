@@ -189,6 +189,3 @@ class VersionInfo(object):
         defaultTarget = self.defaultTarget()
         if defaultTarget:
             self.subinfo.defaultTarget = defaultTarget
-
-    def packageName(self):
-        return self.package.path
