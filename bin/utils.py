@@ -848,6 +848,9 @@ def sign(fileNames : [str]) -> bool:
 
     subjectName = CraftCore.settings.get("CodeSigning", "CommonName")
     command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
+    certFile = CraftCore.settings.get("CodeSigning", "Certificate", "")
+    if certFile:
+        command += ["/f", certFile]
     if True or CraftCore.debug.verbose() > 0:
         command += ["/v"]
     else:
