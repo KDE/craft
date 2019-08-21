@@ -800,7 +800,7 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
                     linenUmber += 1
                 raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables\n"
                                 f"{linenUmber}:{line}")
-            script = script.replace(f"@{{{match}}}", val)
+            script = script.replace(f"@{{{match}}}", str(val))
         matches = configPatter.findall(script)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
