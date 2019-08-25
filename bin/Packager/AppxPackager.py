@@ -33,15 +33,31 @@ from Blueprints.CraftVersion import CraftVersion
 
 
 class AppxPackager(CollectionPackagerBase):
-    Extensions = f"""<Extensions>
+    Extensions = f"""
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="@{{craft_id}}">
             <uap:SupportedFileTypes>
               @{{file_types}}
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
-        </uap:Extension>
-      </Extensions>"""
+        </uap:Extension>"""
+
+    # https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/send-local-toast-desktop
+    # TODO: get the correct CLSID from snoretoast
+    SnoreToast = f"""
+        <!--Register COM CLSID LocalServer32 registry key-->
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="bin\snoretoast.exe" DisplayName="SnoreToast activator">
+              <com:Class Id="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" DisplayName="Toast activator"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+
+        <!--Specify which CLSID to activate when toast clicked-->
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" /> 
+        </desktop:Extension>"""
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -67,6 +83,7 @@ class AppxPackager(CollectionPackagerBase):
             defines.setdefault("extensions", "")
 
 
+
     def setDefaults(self, defines : dict) -> dict:
         defines = super().setDefaults(defines)
         version = str(CraftVersion(defines.get("version", self.version)).strictVersion)
@@ -81,6 +98,14 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
+
+        if (Path(self.archiveDir()) /"bin/snoretoast.exe").exists():
+            defines["extensions"] += AppxPackager.SnoreToast
+
+        extensions = defines["extensions"]
+        if extensions:
+            defines["extensions"] = f"<Extensions>{extensions}</Extensions>"
+
         # compat with nsis
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
