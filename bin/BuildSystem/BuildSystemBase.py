@@ -57,8 +57,7 @@ class BuildSystemBase(CraftBase):
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
                 CraftCore.log.debug(f"set custom make program: {makeProgram}")
-                makeProgram = CraftCore.cache.findApplication(makeProgram)
-                if makeProgram:
+                if CraftCore.cache.findApplication(makeProgram):
                     return makeProgram
                 else:
                     CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
@@ -114,10 +113,13 @@ class BuildSystemBase(CraftBase):
             if CraftCore.debug.verbose() > 0:
                 defines.append("-v")
         else:
-            if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
-                defines.append(f"-j{multiprocessing.cpu_count()}")
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
+
+        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake" :
+            if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
+                defines += ["-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
+
         if args:
             defines.append(args)
         return " ".join(defines)

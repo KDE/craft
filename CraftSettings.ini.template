@@ -93,6 +93,11 @@ UseNinja = True
 ## change the value to the path of the executable you want to use instead.
 MakeProgram = jom
 
+## Number of build jobs
+## The default is number of cores or determined by the build tool
+#Jobs = 2
+
+
 [CMake]
 ## Fetch the translations for KDE projects when build from git
 KDE_L10N_AUTO_TRANSLATIONS = OFF
