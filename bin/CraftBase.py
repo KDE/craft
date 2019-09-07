@@ -217,7 +217,8 @@ class CraftBase(object):
         version = "-".join(filter(None, version))
         version = version.replace("/", "_")
         if fileType:
-            fileType = f".{fileType}"
+            if not fileType.startswith("."):
+                fileType = f".{fileType}"
         else:
             fileType = ""
         prefix = "" if not includePackagePath else f"{self.package.path}/"
