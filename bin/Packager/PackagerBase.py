@@ -101,14 +101,14 @@ class PackagerBase(CraftBase):
             return False
 
         if createDigests:
-            if not CraftCore.settings.getboolean("Packager", "CreateCache"):
-                self._generateManifest(destDir, archiveName)
-                CraftHash.createDigestFiles(archiveName)
-            else:
+            if CraftCore.settings.getboolean("Packager", "CreateCache") and CraftCore.settings.get("Packager", "PackageType") == "SevenZipPackager":
                 if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
                     manifestUrls = [self.cacheRepositoryUrls()[0]]
                 else:
                     manifestUrls = None
                 self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
                                        manifestUrls=manifestUrls)
+            else:
+                self._generateManifest(destDir, archiveName)
+                CraftHash.createDigestFiles(archiveName)
         return True
