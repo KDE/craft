@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/ninja"] = None
-        self.buildDependencies["dev-utils/kshim"] = None
+        self.buildDependencies["dev-utils/kshimgen"] = None
 
 
     def registerOptions(self):
