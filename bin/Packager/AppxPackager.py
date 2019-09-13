@@ -66,13 +66,15 @@ class AppxPackager(CollectionPackagerBase):
     @staticmethod
     def _setupFileTypes(defines):
         if "mimetypes" in defines:
-            defines.setdefault("file_types", set())
+            defines["file_types"] = set(defines.get("file_types", set()))
             mimetypes.init()
             for t in defines["mimetypes"]:
                 types = set(mimetypes.guess_all_extensions(t))
-                #remove reserved associations
-                types -= {".bat", ".com", ".exe"}
-                defines["file_types"] += types
+                if not types:
+                    raise Exception(f"Unsupported mime type {t}")
+                defines["file_types"].update(types)
+            # remove reserved associations (packaging woud fail)
+            defines["file_types"] -= {".bat", ".com", ".exe"}
             del defines["mimetypes"]
 
         if "file_types" in defines:
