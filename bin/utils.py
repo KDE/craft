@@ -136,18 +136,21 @@ def un7zip(fileName, destdir, flag=None):
 
 def compress(archive : str, source : str) -> bool:
     def __7z(archive, source):
+        archive = Path(archive)
         app = CraftCore.cache.findApplication("7za")
         kw = {}
-        progressFlags = []
+        flags = []
+        if archive.suffix in {".appxsym", ".appxupload"}:
+            flags.append("-tzip")
         if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
-            progressFlags = ["-bso2", "-bsp1"]
+            flags += ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
         if CraftCore.compiler.isUnix:
             tar = CraftCore.cache.findApplication("tar")
             kw["pipeProcess"] = subprocess.Popen([tar, "-cf", "-", "-C", source, ".",], stdout=subprocess.PIPE)
-            command = [app, "a", "-si",  archive] + progressFlags
+            command = [app, "a", "-si",  archive] + flags
         else:
-          command = [app, "a", "-r",  archive] + progressFlags
+          command = [app, "a", "-r",  archive] + flags
 
         if isinstance(source, list):
             command += source

@@ -236,7 +236,7 @@ class CollectionPackagerBase(PackagerBase):
             utils.sign(filesToSign)
         return True
 
-    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False) -> bool:
+    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False, dbgArchiveName=None) -> bool:
         """ create a package """
 
         seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
@@ -291,8 +291,10 @@ class CollectionPackagerBase(PackagerBase):
                 utils.moveFile(f, dest)
 
             if os.path.exists(dbgDir):
-                dbgName = "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"]))
-                if not self._createArchive(dbgName, dbgDir, self.packageDestinationDir()):
+                dbgName = Path(dbgArchiveName or "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
+                if dbgName.exists():
+                    dbgName.unlink()
+                if not self._createArchive(dbgName, dbgDir, self.packageDestinationDir(), createDigests=not dbgArchiveName):
                     return False
 
         return True

@@ -66,7 +66,7 @@ class Package(BinaryPackageBase):
 
     def createPackage(self):
         # TODO: don't run this in package but in a different ways....
-        qtifDir = os.path.join(self.packageDestinationDir(), "qtif" )
+        qtifDir = os.path.join(self.packageDestinationDir(), "qtif")
 
         vars = {"NAME" : self.subinfo.options.dynamic.name,
                 "VERSION" : self.subinfo.options.dynamic.installerVersion,

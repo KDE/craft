@@ -96,7 +96,9 @@ class AppxPackager(CollectionPackagerBase):
         defines["version"] = version
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
-        defines["setupname"] = f"{defines['setupname']}.appx"
+
+        utils.createDir(self.artifactsDir())
+        defines["setupname"] = self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx")
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
@@ -161,8 +163,8 @@ class AppxPackager(CollectionPackagerBase):
         appendToPublisherString(publisher, "S", "State")
         appendToPublisherString(publisher, "C", "Country")
         defines["publisher"] = ", ".join(publisher)
-        setupName = "{0}-sideload{1}".format(*os.path.splitext(defines["setupname"]))
-        defines["setupname"] = setupName
+        setupName = os.path.join(self.packageDestinationDir(), "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))))
+        defines["setupname"] =  setupName
         return self.__createAppX(defines) and utils.sign([setupName])
 
     def createPackage(self):
@@ -172,18 +174,22 @@ class AppxPackager(CollectionPackagerBase):
             CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
                                 """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]""")
             return False
-
-        if not self.internalCreatePackage(defines, False):
+        publisherId = CraftCore.settings.get("Packager", "AppxPublisherId", "")
+        createStorePackage = bool(publisherId)
+        if not self.internalCreatePackage(defines, seperateSymbolFiles=createStorePackage, dbgArchiveName=Path(defines["setupname"]).with_suffix(".appxsym")):
             return False
 
         if not self.__prepareIcons(defines):
             return False
 
-        publisher = CraftCore.settings.get("Packager", "AppxPublisherId", "")
-        if publisher:
-            defines.setdefault("publisher", publisher)
+        if createStorePackage:
+            defines.setdefault("publisher", publisherId)
             if not self.__createAppX(defines):
                 return False
+            appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
+            if appxUpload.exists():
+                appxUpload.unlink()
+            utils.compress(appxUpload, self.artifactsDir())
 
         return self.__createSideloadAppX(defines)
 

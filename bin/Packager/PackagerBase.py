@@ -67,6 +67,9 @@ class PackagerBase(CraftBase):
     def archiveDir(self):
         return os.path.join(self.buildRoot(), "archive")
 
+    def artifactsDir(self) -> Path:
+        return Path(self.buildRoot()) / "artifacts"
+
     # """ create a package """
     def createPackage(self):
         utils.abstract()

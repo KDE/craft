@@ -138,7 +138,7 @@ class CraftBase(object):
             installDir = self.imageDir()
         return installDir
 
-    def packageDestinationDir(self, withBuildType=True):
+    def packageDestinationDir(self):
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 

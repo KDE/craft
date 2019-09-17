@@ -22,7 +22,8 @@ Packager for portal 7zip archives
 
     def createPortablePackage(self, defines) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
-        return self._createArchive(defines["setupname"], defines.get("srcdir", self.archiveDir()), self.packageDestinationDir())
+        return self._createArchive(defines["setupname"], defines.get("srcdir", self.archiveDir()),
+                                   self.packageDestinationDir())
 
     def createPackage(self):
         """ create a package """
