@@ -236,7 +236,7 @@ class CollectionPackagerBase(PackagerBase):
             utils.sign(filesToSign)
         return True
 
-    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False, dbgArchiveName=None) -> bool:
+    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False, packageSymbols=True) -> bool:
         """ create a package """
 
         seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
@@ -252,15 +252,12 @@ class CollectionPackagerBase(PackagerBase):
 
         if not seperateSymbolFiles:
             self.blacklist.append(symbolPattern)
-            dbgDir = None
-        else:
-            dbgDir = f"{archiveDir}-dbg"
 
 
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
         if seperateSymbolFiles:
-            utils.cleanDirectory(dbgDir)
+            utils.cleanDirectory(self.archiveDebugDir())
 
         for directory, strip in self.__getImageDirectories():
             if os.path.exists(directory):
@@ -285,16 +282,17 @@ class CollectionPackagerBase(PackagerBase):
             syms = utils.filterDirectoryContent(archiveDir,
                                                 whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
                                                 blacklist=lambda x, root: True)
+            utils.cleanDirectory(self.archiveDebugDir())
             for f in syms:
-                dest = os.path.join(dbgDir, os.path.relpath(f, archiveDir))
+                dest = os.path.join(self.archiveDebugDir(), os.path.relpath(f, archiveDir))
                 utils.createDir(os.path.dirname(dest))
                 utils.moveFile(f, dest)
 
-            if os.path.exists(dbgDir):
-                dbgName = Path(dbgArchiveName or "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
+            if  packageSymbols and os.path.exists(self.archiveDebugDir()):
+                dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
                 if dbgName.exists():
                     dbgName.unlink()
-                if not self._createArchive(dbgName, dbgDir, self.packageDestinationDir(), createDigests=not dbgArchiveName):
+                if not self._createArchive(dbgName, self.archiveDebugDir(), self.packageDestinationDir()):
                     return False
 
         return True
