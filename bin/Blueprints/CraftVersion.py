@@ -41,12 +41,12 @@ class CraftVersion(Version):
         return CraftVersion(self.versionstr[0:s]) == CraftVersion(other.versionstr[0:s])
 
     @property
-    def strictVersion(self):
+    def normalizedVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftCore.log.warn(
+            CraftCore.log.warning(
                 "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
-            return StrictVersion("0.0.0")
+            return CraftVersion("0")
         loose = LooseVersion(re.sub("-|_", ".", v))
         out = []
         for entry in loose.version:
@@ -61,8 +61,11 @@ class CraftVersion(Version):
                     out.append(val)
             else:
                 out.append(str(entry))
+        return CraftVersion(".".join(out))
 
-
+    @property
+    def strictVersion(self):
+        out = not self.normalizedVersion.split(".")
         if len(out) < 3:
             out += ["0"]*(3-len(out))
         vstring = ".".join(out[0: min(len(out), 3)])

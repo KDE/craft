@@ -88,7 +88,7 @@ class AppxPackager(CollectionPackagerBase):
 
     def setDefaults(self, defines : dict) -> dict:
         defines = super().setDefaults(defines)
-        version = str(CraftVersion(defines.get("version", self.version)).strictVersion)
+        version = str(CraftVersion(defines.get("version", self.version)).normalizedVersion)
         # we require a version of the format 1.2.3.4
         count = version.count(".")
         if count < 4:
