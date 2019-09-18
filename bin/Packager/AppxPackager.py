@@ -42,6 +42,11 @@ class AppxPackager(CollectionPackagerBase):
           </uap:FileTypeAssociation>
         </uap:Extension>"""
 
+    StartUp = r"""
+        <desktop:Extension Category="windows.startupTask" Executable="@{startup_task}" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="@{craft_id}" Enabled="true" DisplayName="@{display_name}" />
+        </desktop:Extension>"""
+
     # https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/send-local-toast-desktop
     # TODO: get the correct CLSID from snoretoast
     SnoreToast = f"""
@@ -56,7 +61,7 @@ class AppxPackager(CollectionPackagerBase):
 
         <!--Specify which CLSID to activate when toast clicked-->
         <desktop:Extension Category="windows.toastNotificationActivation">
-          <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" /> 
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" />
         </desktop:Extension>"""
 
     @InitGuard.init_once
@@ -105,6 +110,8 @@ class AppxPackager(CollectionPackagerBase):
 
         if (Path(self.archiveDir()) /"bin/snoretoast.exe").exists():
             defines["extensions"] += AppxPackager.SnoreToast
+        if "startup_task" in defines:
+            defines["extensions"] += AppxPackager.StartUp
 
         extensions = defines["extensions"]
         if extensions:
