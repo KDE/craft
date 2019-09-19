@@ -83,6 +83,8 @@ class AppxPackager(CollectionPackagerBase):
             del defines["mimetypes"]
 
         if "file_types" in defines:
+            CraftCore.log.info("The package will support the following file types:")
+            CraftCore.log.info(defines["file_types"])
             defines["file_types"] = "\n".join([f"""<uap:FileType>{t}</uap:FileType>""" for t in set(defines["file_types"])])
             defines.setdefault("extensions", AppxPackager.Extensions)
         else:
