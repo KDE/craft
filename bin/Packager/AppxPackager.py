@@ -100,7 +100,7 @@ class AppxPackager(CollectionPackagerBase):
         count = version.count(".")
         if count < 4:
             version = f"{version}{'.0' * (3-count)}"
-        defines["version"] = version
+        defines["version"] = version + self.buildNumber()
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
 
