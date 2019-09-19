@@ -33,11 +33,11 @@ from Blueprints.CraftVersion import CraftVersion
 
 
 class AppxPackager(CollectionPackagerBase):
-    Extensions = f"""
+    Extensions = r"""
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="@{{craft_id}}">
+          <uap:FileTypeAssociation Name="@{craft_id}">
             <uap:SupportedFileTypes>
-              @{{file_types}}
+              @{file_types}
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
         </uap:Extension>"""
@@ -49,7 +49,7 @@ class AppxPackager(CollectionPackagerBase):
 
     # https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/send-local-toast-desktop
     # TODO: get the correct CLSID from snoretoast
-    SnoreToast = f"""
+    SnoreToast = r"""
         <!--Register COM CLSID LocalServer32 registry key-->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
