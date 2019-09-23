@@ -291,16 +291,26 @@ class CollectionPackagerBase(PackagerBase):
                 if sym.exists():
                     dest = Path(self.archiveDebugDir()) / os.path.relpath(sym, archiveDir)
                     CraftCore.log.info(f"Move symbols: {sym} {dest}")
-                    if not (utils.createDir(dest.parent) and utils.moveFile(sym, dest)):
+                    if not utils.createDir(dest.parent):
                         return False
+                    if CraftCore.compiler.isMacOS:
+                        if not utils.moveDir(sym, dest):
+                            return False
+                    else:
+                        if not utils.moveFile(sym, dest):
+                            return False
 
             CraftCore.log.info("Remove unused symbols")
             for sym in utils.filterDirectoryContent(archiveDir,
                                                     whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
                                                     blacklist=lambda x, root: True):
                 CraftCore.log.info(f"Delete symbols: {sym}")
-                if not utils.deleteFile(sym):
-                    return False
+                if CraftCore.compiler.isMacOS:
+                    if not utils.rmtree(sym):
+                        return False
+                else:
+                    if not utils.deleteFile(sym):
+                        return False
 
             if packageSymbols and os.path.exists(self.archiveDebugDir()):
                 dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
