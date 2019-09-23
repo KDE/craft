@@ -197,6 +197,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     if isinstance(cmd, list):
         # allow to pass other types, like ints or Path
         cmd = [str(x) for x in cmd]
+        if pipeProcess:
+            pipeProcess.args = [str(x) for x in pipeProcess.args]
         arg0 = cmd[0]
         if not "shell" in kw:
             kw["shell"] = False
