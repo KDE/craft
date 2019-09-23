@@ -65,7 +65,7 @@ class CraftVersion(Version):
 
     @property
     def strictVersion(self):
-        out = not self.normalizedVersion.split(".")
+        out = self.normalizedVersion.versionstr.split(".")
         if len(out) < 3:
             out += ["0"]*(3-len(out))
         vstring = ".".join(out[0: min(len(out), 3)])
