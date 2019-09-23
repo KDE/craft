@@ -243,11 +243,14 @@ class CollectionPackagerBase(PackagerBase):
         archiveDir = self.archiveDir()
 
         if CraftCore.compiler.isMacOS:
-            symbolPattern = r".*\.dSYM/.*"
-        elif CraftCore.compiler.isMSVC():
-            symbolPattern = r".*\.pdb"
+            symbolSuffix = ".dSYM"
+            symbolPattern = r".*\{0}/.*".format(symbolSuffix)
         else:
-            symbolPattern = r".*\.sym"
+            if CraftCore.compiler.isMSVC():
+                symbolSuffix = ".pdb"
+            else:
+                symbolSuffix = ".sym"
+            symbolPattern = r".*\{0}".format(symbolSuffix)
         symbolPattern = re.compile(symbolPattern)
 
         if not seperateSymbolFiles:
@@ -279,16 +282,27 @@ class CollectionPackagerBase(PackagerBase):
             return False
 
         if seperateSymbolFiles:
-            syms = utils.filterDirectoryContent(archiveDir,
-                                                whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
-                                                blacklist=lambda x, root: True)
+            CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
             utils.cleanDirectory(self.archiveDebugDir())
-            for f in syms:
-                dest = os.path.join(self.archiveDebugDir(), os.path.relpath(f, archiveDir))
-                utils.createDir(os.path.dirname(dest))
-                utils.moveFile(f, dest)
+            for sym in utils.filterDirectoryContent(archiveDir,
+                                                    whitelist=lambda x, root: utils.isBinary(x.path),
+                                                    blacklist=lambda x, root: True):
+                sym = Path(sym).with_suffix(symbolSuffix)
+                if sym.exists():
+                    dest = Path(self.archiveDebugDir()) / os.path.relpath(sym, archiveDir)
+                    CraftCore.log.info(f"Move symbols: {sym} {dest}")
+                    if not (utils.createDir(dest.parent) and utils.moveFile(sym, dest)):
+                        return False
 
-            if  packageSymbols and os.path.exists(self.archiveDebugDir()):
+            CraftCore.log.info("Remove unused symbols")
+            for sym in utils.filterDirectoryContent(archiveDir,
+                                                    whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
+                                                    blacklist=lambda x, root: True):
+                CraftCore.log.info(f"Delete symbols: {sym}")
+                if not utils.deleteFile(sym):
+                    return False
+
+            if packageSymbols and os.path.exists(self.archiveDebugDir()):
                 dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
                 if dbgName.exists():
                     dbgName.unlink()
