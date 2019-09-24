@@ -97,7 +97,6 @@ class AppxPackager(CollectionPackagerBase):
         defines = super().setDefaults(defines)
         version = str(CraftVersion(defines.get("version", self.version)).normalizedVersion)
         # we require a version of the format 1.2.3.4
-        count = version.count(".")
         ver = version.split(".")
         while len(ver) < 4:
             ver.append("0")
