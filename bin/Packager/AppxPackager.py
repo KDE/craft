@@ -97,12 +97,9 @@ class AppxPackager(CollectionPackagerBase):
         defines = super().setDefaults(defines)
         version = str(CraftVersion(defines.get("version", self.version)).normalizedVersion)
         # we require a version of the format 1.2.3.4
-        ver = version.split(".")
-        while len(ver) < 4:
-            ver.append("0")
-        if self.buildNumber():
-            ver[3] = self.buildNumber()
-        version = ".".join(ver)
+        count = version.count(".")
+        if count < 4:
+            version = f"{version}{'.0' * (3-count)}"
         defines["version"] = version
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
