@@ -95,12 +95,13 @@ class AppxPackager(CollectionPackagerBase):
 
     def setDefaults(self, defines : dict) -> dict:
         defines = super().setDefaults(defines)
-        version = str(CraftVersion(defines.get("version", self.version)).normalizedVersion)
+        version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
-        count = version.count(".")
-        if count < 4:
-            version = f"{version}{'.0' * (3-count)}"
-        defines["version"] = version
+        version += [0] * (4-len(version))
+        version[2] *= 1000
+        if self.buildNumber():
+            version[2] += int(self.buildNumber()) % 1000
+        defines["version"] = ".".join([str(x) for x in version])
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
 
