@@ -135,6 +135,7 @@ Section
   WriteRegStr SHCTX "${uninstkey}" "URLInfoAbout" "@{website}"
   WriteRegStr SHCTX "${uninstkey}" "Publisher" "@{company}"
   WriteRegStr SHCTX "${uninstkey}" "DisplayVersion" "@{version}"
+  WriteRegDWORD SHCTX "${uninstkey}" "EstimatedSize" "@{estimated_size}"
 
   @{registy_hook}
 

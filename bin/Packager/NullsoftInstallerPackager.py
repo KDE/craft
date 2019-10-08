@@ -109,7 +109,7 @@ You can add your own defines into self.defines as well.
         return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
     def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
-        return  f"""CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
+        return f"""CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
     def folderSize(self, path):
         total = 0
@@ -128,6 +128,7 @@ You can add your own defines into self.defines as well.
         defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.isX64() else CraftCore.cache.findApplication("7za_32")
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
         defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(defines["dataPath"])) / 1000))
+        defines["estimated_size"] = str(int(int(os.path.getsize(defines["dataPath"])) / 1000))
 
         defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
         defines["iconname"] = os.path.basename(defines["icon"])
