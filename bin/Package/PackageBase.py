@@ -222,7 +222,6 @@ class PackageBase(CraftBase):
                         return False
             except AttributeError as e:
                 raise BlueprintException(str(e), self.package, e)
-
         else:
             CraftCore.log.error("command %s not understood" % command)
             return False

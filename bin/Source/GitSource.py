@@ -68,7 +68,6 @@ class GitSource(VersionSystemSourceBase):
         # run the command
         branch = self.__getCurrentBranch()
         if not self.__isTag(branch):
-            # open a temporary file - do not use generic tmpfile because this doesn't give a good file object with python
             with io.StringIO() as tmp:
                 self.__git("rev-parse", ["--short", "HEAD"], stdout=tmp)
                 return f"{branch}-{tmp.getvalue().strip()}"
