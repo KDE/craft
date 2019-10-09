@@ -267,8 +267,8 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         except BlueprintNotFoundException as e:
-                CraftCore.log.error(e)
-                blueprintSearch.printSearch(e.packageName)
+            CraftCore.log.error(e)
+            blueprintSearch.printSearch(e.packageName)
         except BlueprintException as e:
             if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or CraftCore.debug.verbose() >= 2:
                 CraftCore.log.error(e, exc_info=e.exception or e)
