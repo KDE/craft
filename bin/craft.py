@@ -173,14 +173,12 @@ def main():
     CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
-    CraftCore.settings.set("Packager", "CreateCache", not args.noCache and args.createCache)
+    CraftCore.settings.set("Packager", "CreateCache", not args.noCache and args.createCache and not args.srcDir)
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
-
     CraftSetupHelper.SetupHelper.printBanner()
-
 
     if args.doDestroyCraftRoot:
         return CraftCommands.destroyCraftRoot()
