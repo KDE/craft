@@ -16,3 +16,19 @@ class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackage
         BinaryBuildSystem.__init__(self)
         MultiSource.__init__(self)
         TypePackager.__init__(self)
+
+    def install(self):
+        if not BinaryBuildSystem.install(self):
+            return False
+        if CraftCore.compiler.isMSVC():
+            reDlla = re.compile(r"\.dll\.a$")
+            reLib = re.compile(r"^lib")
+            for f in glob.glob(f"{self.installDir()}/lib/*.dll.a"):
+                path, name = os.path.split(f)
+                name = re.sub(reDlla, ".lib", name)
+                name = re.sub(reLib, "", name)
+                dest = Path(path) / name
+                if not dest.exists():
+                    if not utils.copyFile(f, dest, linkOnly=False):
+                        return False
+        return True

@@ -117,16 +117,3 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def ccacheOptions(self):
         return " CC='ccache gcc' CXX='ccache g++' "
-
-    def copyToMsvcImportLib(self):
-        if not OsUtils.isWin():
-            return True
-        reDlla = re.compile(r"\.dll\.a$")
-        reLib = re.compile(r"^lib")
-        for f in glob.glob(f"{self.installDir()}/lib/*.dll.a"):
-            path, name = os.path.split(f)
-            name = re.sub(reDlla, ".lib", name)
-            name = re.sub(reLib, "", name)
-            if not utils.copyFile(f, os.path.join(path, name), linkOnly=False):
-                return False
-        return True
