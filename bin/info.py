@@ -80,7 +80,8 @@ class infoclass(object):
 
     @property
     @deprecated("self.parent")
-    def package(self) -> CraftPackageObject:
+    def package(self):
+        # -> PackageBase
         return self.parent
 
     @property
