@@ -250,7 +250,7 @@ class CollectionPackagerBase(PackagerBase):
                 symbolSuffix = ".pdb"
             else:
                 symbolSuffix = ".sym"
-            symbolPattern = r".*\{0}".format(symbolSuffix)
+            symbolPattern = r".*\{0}$".format(symbolSuffix)
         symbolPattern = re.compile(symbolPattern)
 
         if not seperateSymbolFiles:
@@ -301,8 +301,18 @@ class CollectionPackagerBase(PackagerBase):
                             return False
 
             CraftCore.log.info("Remove unused symbols")
+
+            def symFilter(x : os.DirEntry, root):
+                if CraftCore.compiler.isMacOS:
+                    if x.is_file():
+                        return False
+                else:
+                    if x.is_dir():
+                        return False
+                return utils.regexFileFilter(x, root, [symbolPattern])
+
             for sym in utils.filterDirectoryContent(archiveDir,
-                                                    whitelist=lambda x, root: utils.regexFileFilter(x, root, [symbolPattern]),
+                                                    whitelist=symFilter,
                                                     blacklist=lambda x, root: True):
                 CraftCore.log.info(f"Delete symbols: {sym}")
                 if CraftCore.compiler.isMacOS:
