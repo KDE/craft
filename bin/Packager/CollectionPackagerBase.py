@@ -256,7 +256,6 @@ class CollectionPackagerBase(PackagerBase):
         if not seperateSymbolFiles:
             self.blacklist.append(symbolPattern)
 
-
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
         if seperateSymbolFiles:
@@ -283,7 +282,6 @@ class CollectionPackagerBase(PackagerBase):
 
         if seperateSymbolFiles:
             CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
-            utils.cleanDirectory(self.archiveDebugDir())
             for sym in utils.filterDirectoryContent(archiveDir,
                                                     whitelist=lambda x, root: utils.isBinary(x.path),
                                                     blacklist=lambda x, root: True):
@@ -322,7 +320,7 @@ class CollectionPackagerBase(PackagerBase):
                     if not utils.deleteFile(sym):
                         return False
 
-            if packageSymbols and os.path.exists(self.archiveDebugDir()):
+            if packageSymbols and os.listdir(self.archiveDebugDir()):
                 dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
                 if dbgName.exists():
                     dbgName.unlink()
