@@ -97,13 +97,14 @@ def unpackFile(downloaddir, filename, workdir):
 
 
 def un7zip(fileName, destdir, flag=None):
+    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     createDir(destdir)
     kw = {}
     progressFlags = []
     type = []
     resolveSymlinks = False
     app = CraftCore.cache.findApplication("7za")
-    if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
+    if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2",  "-bsp1"]
         kw["stderr"] = subprocess.PIPE
 
@@ -114,7 +115,7 @@ def un7zip(fileName, destdir, flag=None):
         type = ["-t7z"]
     if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
         if progressFlags:
-            if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            if ciMode:
                 progressFlags = []
             else:
                 # print progress to stderr
@@ -135,6 +136,7 @@ def un7zip(fileName, destdir, flag=None):
     return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopies(destdir)
 
 def compress(archive : str, source : str) -> bool:
+    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     def __7z(archive, source):
         archive = Path(archive)
         app = CraftCore.cache.findApplication("7za")
@@ -142,7 +144,7 @@ def compress(archive : str, source : str) -> bool:
         flags = []
         if archive.suffix in {".appxsym", ".appxupload"}:
             flags.append("-tzip")
-        if CraftCore.cache.checkCommandOutputFor(app, "-bs"):
+        if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             flags += ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
         if CraftCore.compiler.isUnix:
