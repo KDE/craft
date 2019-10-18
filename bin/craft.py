@@ -81,7 +81,7 @@ class ActionHandler:
         return [self.actions[x] for x in args.ordered_args.keys()] if hasattr(args, "ordered_args") else [defaultAction]
 
 
-def main():
+def main(timer):
     parser = argparse.ArgumentParser(prog="Craft",
                                      description="Craft is an open source meta build system and package manager."
                                                  "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
@@ -178,6 +178,9 @@ def main():
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
+    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]),
+                                         timer)
     CraftSetupHelper.SetupHelper.printBanner()
 
     if args.doDestroyCraftRoot:
@@ -258,10 +261,8 @@ if __name__ == '__main__':
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
         CraftTitleUpdater.instance = CraftTitleUpdater()
-        if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-            CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
         try:
-            success = main()
+            success = main(timer)
         except KeyboardInterrupt:
             pass
         except BlueprintNotFoundException as e:
@@ -279,3 +280,4 @@ if __name__ == '__main__':
             CraftTitleUpdater.instance.stop()
     if not success:
         exit(1)
+
