@@ -19,6 +19,9 @@ include/.*
 lib/cmake/.*
 share/ECM/.*
 
+# blacklist mime info, so qt uses builtin version
+.*/freedesktop.org.xml
+
 # multiple docs
 bin/data/man/.*
 doc/.*
