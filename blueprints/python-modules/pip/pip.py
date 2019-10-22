@@ -12,21 +12,19 @@ class subinfo(info.infoclass):
         self.targets["master"] = f"https://bootstrap.pypa.io/get-pip.py"
         self.defaultTarget = "master"
 
-    def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = None
+from Package.PipPackageBase import *
 
-
-from Package.BinaryPackageBase import *
-
-
-class PPackage(BinaryPackageBase):
+class PPackage(PipPackageBase):
     def __init__(self):
-        BinaryPackageBase.__init__(self)
+        PipPackageBase.__init__(self)
 
-    def unpack(self):
-        get_pip = self.localFilePathe()[0]
-        return (utils.system([sys.executable, get_pip])
-                and utils.deleteFile(get_pip))
+    def make(self):
+        get_pip = self.localFilePath()[0]
+        for ver, python in self._pythons:
+            if not utils.system([python, get_pip, "--user"]):
+                return False
+        return utils.deleteFile(get_pip)
+
 
 class PipPackage(PipPackageBase):
     def __init__(self, **args):
@@ -37,5 +35,5 @@ class Package(MaybeVirtualPackageBase):
     def __init__(self):
         root = Path(CraftCore.standardDirs.craftRoot())
         py = Path(sys.executable)
-        MaybeVirtualPackageBase.__init__(self, condition=root in py.parents, classA=PPackage, classB=PipPackage)
+        MaybeVirtualPackageBase.__init__(self, condition=CraftCore.compiler.isMacOS or root in py.parents, classA=PPackage, classB=PipPackage)
 

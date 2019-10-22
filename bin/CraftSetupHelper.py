@@ -385,6 +385,10 @@ class SetupHelper(object):
         # add python site packages to pythonpath
         self.prependEnvVar("PYTHONPATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "site-packages"))
 
+        # prepend our venv python
+        self.prependEnvVar("PATH", [os.path.join(CraftCore.standardDirs.etcDir(), "venv", "3", "Scripts")])
+
+
 
         if CraftCore.compiler.isClang():
             if OsUtils.isUnix():

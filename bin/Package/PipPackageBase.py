@@ -10,7 +10,7 @@ class PipPackageBase(PackageBase, PipBuildSystem, PackagerBase):
     def __init__(self):
         CraftCore.log.debug("PipPackageBase.__init__ called")
         PackageBase.__init__(self)
-        if self.subinfo.svnTarget():
+        if self.subinfo.svnTarget() or self.subinfo.hasTarget():
             self.__class__.__bases__ += (MultiSource,)
             MultiSource.__init__(self)
         else:
@@ -19,10 +19,15 @@ class PipPackageBase(PackageBase, PipBuildSystem, PackagerBase):
         PipBuildSystem.__init__(self)
         PackagerBase.__init__(self)
 
-
     # from PackagerBase
     def createPackage(self):
         return True
 
     def preArchive(self):
         return True
+
+    def make(self):
+        return PipBuildSystem.make(self)
+
+    def install(self):
+        return PipBuildSystem.install(self)
