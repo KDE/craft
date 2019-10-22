@@ -9,6 +9,9 @@ class subinfo(info.infoclass):
         self.targetInstallPath["3"] = "dev-utils"
         self.defaultTarget = "3"
 
+    def setDependencies(self):
+        self.runtimeDependencies["python-modules/pip"] = None
+        self.runtimeDependencies["python-modules/virtualenv"] = None
 
 class Package(BinaryPackageBase):
     def __init__(self):
@@ -18,4 +21,6 @@ class Package(BinaryPackageBase):
     def install(self):
         if not BinaryPackageBase.install(self):
             return False
-        return utils.createShim(os.path.join(self.installDir(), "bin", f"python3{CraftCore.compiler.executableSuffix}"), sys.executable, useAbsolutePath=True)
+        return utils.createShim(os.path.join(self.installDir(), "bin", f"python3{CraftCore.compiler.executableSuffix}"),
+                                Path(CraftCore.standardDirs.etcDir()) / f"venv/3/Scripts/python{CraftCore.compiler.executableSuffix}",
+                                useAbsolutePath=True)

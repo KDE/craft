@@ -12,12 +12,7 @@ class subinfo(info.infoclass):
         self.targets["master"] = f"https://bootstrap.pypa.io/get-pip.py"
         self.defaultTarget = "master"
 
-    def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = None
-
-
 from Package.BinaryPackageBase import *
-
 
 class PPackage(BinaryPackageBase):
     def __init__(self):

@@ -19,10 +19,15 @@ class PipPackageBase(PackageBase, PipBuildSystem, PackagerBase):
         PipBuildSystem.__init__(self)
         PackagerBase.__init__(self)
 
-
     # from PackagerBase
     def createPackage(self):
         return True
 
     def preArchive(self):
         return True
+
+    def make(self):
+        return PipBuildSystem.make(self)
+
+    def install(self):
+        return PipBuildSystem.install(self)
