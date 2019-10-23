@@ -21,7 +21,7 @@ class CraftTitleUpdater(object):
     def run(self):
         while (self.doUpdateTitle):
             utils.OsUtils.setConsoleTitle(str(self))
-            time.sleep(1)
+            time.sleep(30)
 
     def start(self, message, timer):
         self.title = message
