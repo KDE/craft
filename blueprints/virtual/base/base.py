@@ -35,8 +35,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-utils/ninja"] = None
-        if CraftCore.settings.getboolean("Compile", "UseCCache", False):
-            self.buildDependencies["dev-utils/ccache"] = None
 
         # needed by CollectionPackagerBase
         if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
