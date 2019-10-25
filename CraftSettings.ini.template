@@ -175,6 +175,8 @@ UseCache = True
 # Log environment, prints the current state of the environment before an application is run
 LogEnvironment = True
 
+PrintPutEnv = False
+
 ## Prints time spend on various craft tasks
 MeasureTime = False
 

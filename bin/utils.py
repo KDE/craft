@@ -617,12 +617,17 @@ def deleteFile(fileName):
 
 def putenv(name, value):
     """set environment variable"""
-    CraftCore.log.debug("set environment variable -- set %s=%s" % (name, value))
-    if not value:
+    if value is None:
+        msg = f"unset environment variable -- unset {name}"
         if name in os.environ:
             del os.environ[name]
     else:
+        msg = f"set environment variable -- set {name}={value}"
         os.environ[name] = value
+    if CraftCore.settings.getboolean("CraftDebug", "PrintPutEnv", False):
+        CraftCore.log.info(msg)
+    else:
+        CraftCore.log.debug(msg)
     return True
 
 
