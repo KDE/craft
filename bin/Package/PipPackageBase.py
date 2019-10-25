@@ -4,20 +4,31 @@ from Packager.PackagerBase import *
 from Package.VirtualPackageBase import *
 from Source.MultiSource import *
 
-class PipPackageBase(PackageBase, PipBuildSystem, PackagerBase):
+class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
     """provides a base class for pip packages"""
 
     def __init__(self):
         CraftCore.log.debug("PipPackageBase.__init__ called")
         PackageBase.__init__(self)
-        if self.subinfo.svnTarget() or self.subinfo.hasTarget():
-            self.__class__.__bases__ += (MultiSource,)
-            MultiSource.__init__(self)
-        else:
-            self.__class__.__bases__ += (VirtualPackageBase,)
-            VirtualPackageBase.__init__(self)
+        MultiSource.__init__(self)
         PipBuildSystem.__init__(self)
         PackagerBase.__init__(self)
+
+    def fetch(self):
+        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+            return super().fetch()
+        return True
+
+
+    def unpack(self):
+        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+            return super().unpack()
+        return True
+
+    def sourceRevision(self):
+        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+            return super().sourceRevision()
+        return True
 
     # from PackagerBase
     def createPackage(self):
