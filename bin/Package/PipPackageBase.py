@@ -15,18 +15,18 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
         PackagerBase.__init__(self)
 
     def fetch(self):
-        if self.__sourceClass:
-            return self.__sourceClass.fetch()
+        if self._sourceClass:
+            return self._sourceClass.fetch(self)
         return True
 
     def unpack(self):
-        if self.__sourceClass:
-            return self.__sourceClass.unpack()
+        if self._sourceClass:
+            return self._sourceClass.unpack(self)
         return True
 
     def sourceRevision(self):
-        if self.__sourceClass:
-            return self.__sourceClass.sourceRevision()
+        if self._sourceClass:
+            return self._sourceClass.sourceRevision(self)
         return ""
 
     # from PackagerBase
