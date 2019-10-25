@@ -86,10 +86,6 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines))
         CraftCore.debug.step(command)
-
-        with open(os.path.join(self.buildDir(), "cmake-command.bat"), "w") as fc:
-            fc.write(command)
-
         return utils.system(command)
 
     def make(self):
