@@ -15,18 +15,18 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
         PackagerBase.__init__(self)
 
     def fetch(self):
-        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             return super().fetch()
         return True
 
 
     def unpack(self):
-        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             return super().unpack()
         return True
 
     def sourceRevision(self):
-        if self.subinfo.hasTarget() and self.subinfo.hasSvnTarget():
+        if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             return super().sourceRevision()
         return True
 
