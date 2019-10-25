@@ -1,39 +1,33 @@
-import info
-from Package.MaybeVirtualPackageBase import *
+import subprocess
 
-from pathlib import Path
-import sys
+import info
+import utils
 
 from Package.PipPackageBase import PipPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.targets["master"] = f"https://bootstrap.pypa.io/get-pip.py"
-        self.defaultTarget = "master"
+        for ver in ["3.4"]:
+            self.targets[ver] = f"https://bootstrap.pypa.io/3.4/get-pip.py"
+            self.targetDigests[ver] = (['b86f36cc4345ae87bfd4f10ef6b2dbfa7a872fbff70608a1e43944d283fd0eee'], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "3.4"
 
-from Package.PipPackageBase import *
-
-class PPackage(PipPackageBase):
+class Package(PipPackageBase):
     def __init__(self):
         PipPackageBase.__init__(self)
+
+    def unpack(self):
+        return True
 
     def make(self):
         get_pip = self.localFilePath()[0]
         for ver, python in self._pythons:
+            hasPip = utils.system([python, "-m", "pip"], stdout=subprocess.DEVNULL)
+            if hasPip:
+                continue
             if not utils.system([python, get_pip, "--user"]):
                 return False
-        return utils.deleteFile(get_pip)
-
-
-class PipPackage(PipPackageBase):
-    def __init__(self, **args):
-        PipPackageBase.__init__(self)
-
-
-class Package(MaybeVirtualPackageBase):
-    def __init__(self):
-        root = Path(CraftCore.standardDirs.craftRoot())
-        py = Path(sys.executable)
-        MaybeVirtualPackageBase.__init__(self, condition=CraftCore.compiler.isMacOS or root in py.parents, classA=PPackage, classB=PipPackage)
+        return True
 

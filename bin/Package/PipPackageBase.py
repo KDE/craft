@@ -25,9 +25,3 @@ class PipPackageBase(PackageBase, PipBuildSystem, PackagerBase):
 
     def preArchive(self):
         return True
-
-    def make(self):
-        return PipBuildSystem.make(self)
-
-    def install(self):
-        return PipBuildSystem.install(self)
