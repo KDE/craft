@@ -97,6 +97,7 @@ class AppxPackager(CollectionPackagerBase):
         defines = super().setDefaults(defines)
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
+        # part 4 must be 0 for the store
         version += [0] * (4-len(version))
         version[1] = version[1] * 100 + version[2]
         if self.buildNumber():
