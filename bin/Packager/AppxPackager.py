@@ -98,9 +98,11 @@ class AppxPackager(CollectionPackagerBase):
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
         version += [0] * (4-len(version))
-        version[2] *= 1000
+        version[1] = version[1] * 100 + version[2]
         if self.buildNumber():
-            version[2] += int(self.buildNumber()) % 1000
+            version[2] = self.buildNumber()
+        else:
+            version[2] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
