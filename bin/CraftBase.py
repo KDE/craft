@@ -108,7 +108,7 @@ class CraftBase(object):
 
     def buildRoot(self):
         """return absolute path to the root directory of the currently active package"""
-        return os.path.join(CraftStandardDirs.craftRoot(), "build", self.package.path)
+        return os.path.normpath(os.path.join(CraftStandardDirs.craftRoot(), "build", self.package.path))
 
     def workDir(self):
         """return absolute path to the 'work' subdirectory of the currently active package"""
