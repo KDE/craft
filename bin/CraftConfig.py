@@ -13,7 +13,7 @@ import sys
 from CraftCore import CraftCore
 
 class CraftConfig(object):
-    __RootDir = None
+    __CraftBin = None
 
     def __init__(self, iniPath=None):
         self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
@@ -45,21 +45,26 @@ class CraftConfig(object):
         self._warned = set()
 
     @staticmethod
-    def _craftRoot():
-        if CraftConfig.__RootDir:
-            return CraftConfig.__RootDir
+    def _craftBin():
+        if CraftConfig.__CraftBin:
+            return CraftConfig.__CraftBin
         # try to locate the full path even if the craft dir is a symlink
         if "craftRoot" in os.environ:
             dir = os.environ["craftRoot"]
         else:
             dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+        # TODO: was there a reason to look for craaftenv.ps1 and not just for craft.py
         while dir.count(os.path.sep) > 1 and not os.path.isfile(os.path.join(dir, "craftenv.ps1")):
             dir = os.path.dirname(dir)
         if not os.path.join(dir, "craftenv.ps1"):
             print("Failed to find the craft root", file=sys.stderr)
             exit(-1)
-        CraftConfig.__RootDir = os.path.abspath(os.path.join(dir, ".."))
-        return CraftConfig.__RootDir
+        CraftConfig.__CraftBin = os.path.join(dir, "bin")
+        return CraftConfig.__CraftBin
+
+    @staticmethod
+    def _craftRoot():
+        return os.path.abspath(os.path.join(CraftConfig._craftBin(), "..", ".."))
 
     def _setAliasesV6(self):
         self.addAlias("CodeSigning", "CommonName", "CodeSigning", "SubjectName")

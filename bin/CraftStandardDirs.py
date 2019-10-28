@@ -65,7 +65,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftBin():
-        return os.path.dirname(__file__)
+        return CraftCore.settings._craftBin()
 
     @staticmethod
     def craftRepositoryDir():
