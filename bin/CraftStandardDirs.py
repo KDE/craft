@@ -50,10 +50,9 @@ class CraftStandardDirs(object):
     def gitDir():
         return CraftCore.standardDirs._gitDir
 
-
     @staticmethod
     def tmpDir():
-        return CraftCore.settings.get("Paths", "TMPDIR",os.path.join(CraftStandardDirs.craftRoot(),"tmp"))
+        return CraftCore.settings.get("Paths", "TMPDIR", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
 
     @staticmethod
     def craftRoot():

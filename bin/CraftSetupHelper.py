@@ -382,8 +382,8 @@ class SetupHelper(object):
         self.prependEnvVar("PYTHONPATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "site-packages"))
 
         # prepend our venv python
-        self.prependEnvVar("PATH", [os.path.join(CraftCore.standardDirs.etcDir(), f"virtualenv", "3","Scripts" if CraftCore.compiler.isWindows else "bin"),
-                                    os.path.join(CraftCore.standardDirs.etcDir(), f"virtualenv", "2","Scripts" if CraftCore.compiler.isWindows else "bin")])
+        self.prependEnvVar("PATH", [os.path.join(CraftCore.standardDirs.etcDir(), f"virtualenv", "3", "Scripts" if CraftCore.compiler.isWindows else "bin"),
+                                    os.path.join(CraftCore.standardDirs.etcDir(), f"virtualenv", "2", "Scripts" if CraftCore.compiler.isWindows else "bin")])
 
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin"))
