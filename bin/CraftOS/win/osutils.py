@@ -24,7 +24,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def rmDir(path, force=False):
-        CraftCore.log.debug("deleting directory %s" % path)
+        CraftCore.log.info(f"deleting directory {path}")
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         with os.scandir(path) as scan:
