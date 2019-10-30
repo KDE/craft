@@ -23,16 +23,10 @@ class Package( AutoToolsPackageBase ):
         AutoToolsPackageBase.__init__( self )
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
-        if CraftCore.compiler.isMacOS:
-            self.subinfo.options.configure.args += " --program-prefix=g"
-
 
     def postInstall(self):
-        tool = "libtool"
-        if CraftCore.compiler.isMacOS:
-            tool = f"g{tool}"
-        return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in [f"dev-utils/bin/{tool}",
-                                                                                   f"dev-utils/bin/{tool}ize"]],
+        return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in [f"dev-utils/bin/libtool",
+                                                                                   f"dev-utils/bin/libtoolize"]],
                                        self.subinfo.buildPrefix,
                                        CraftCore.standardDirs.craftRoot())
 
