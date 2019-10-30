@@ -289,13 +289,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 def cleanDirectory(directory):
     CraftCore.log.debug("clean directory %s" % directory)
     if (os.path.exists(directory)):
-        for root, dirs, files in os.walk(directory, topdown=False):
-            for name in files:
-                if not OsUtils.rm(os.path.join(root, name), True):
-                    CraftCore.log.critical("couldn't delete file %s\n ( %s )" % (name, os.path.join(root, name)))
-            for name in dirs:
-                if not OsUtils.rmDir(os.path.join(root, name), True):
-                    CraftCore.log.critical("couldn't delete directory %s\n( %s )" % (name, os.path.join(root, name)))
+        return OsUtils.rmDir(directory, True)
     else:
         os.makedirs(directory)
 
