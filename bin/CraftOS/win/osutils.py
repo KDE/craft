@@ -29,7 +29,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
             OsUtils.removeReadOnlyAttribute(path)
         with os.scandir(path) as scan:
             for f in scan:
-                print(f)
                 if OsUtils.isLink(f.path):
                     os.unlink(f.path)
                 elif f.is_dir():
@@ -38,7 +37,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
                 else:
                     if not OsUtils.rm(f.path, force):
                         return False
-        os.rmdir(path)
+        try:
+            os.rmdir(path)
+        except:
+            return False
         return True
 
     @staticmethod

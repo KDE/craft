@@ -288,10 +288,16 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
 def cleanDirectory(directory):
     CraftCore.log.debug("clean directory %s" % directory)
-    if (os.path.exists(directory)):
-        return OsUtils.rmDir(directory, True)
+    if os.path.exists(directory):
+        try:
+            pwd = os.getcwd()
+            # ensure the directoy is not locked
+            os.chdir(CraftCore.standardDirs.craftRoot())
+            return OsUtils.rmDir(directory, True) and createDir(directory)
+        finally:
+            os.chdir(pwd)
     else:
-        os.makedirs(directory)
+        return createDir(directory)
 
 
 def getVCSType(url):
