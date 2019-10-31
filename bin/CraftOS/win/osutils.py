@@ -20,11 +20,11 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         CraftCore.log.debug("deleting file %s" % path)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
-        return ctypes.windll.kernel32.DeleteFileW(path) != 0
+        return ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
 
     @staticmethod
     def rmDir(path, force=False):
-        CraftCore.log.info(f"deleting directory {path}")
+        CraftCore.log.debug(f"deleting directory {path}")
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         with os.scandir(path) as scan:
@@ -46,17 +46,17 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def isLink(path):
         return os.path.islink(path) \
-               | OsUtils.getFileAttributes(path) & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT  # Detect a Junction
+               | OsUtils.getFileAttributes(str(path)) & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT  # Detect a Junction
 
     @staticmethod
     def getFileAttributes(path):
-        return ctypes.windll.kernel32.GetFileAttributesW(path)
+        return ctypes.windll.kernel32.GetFileAttributesW(str(path))
 
     @staticmethod
     def removeReadOnlyAttribute(path):
         CraftCore.log.debug(f"Remove readonly flag of {path}")
         attributes = OsUtils.getFileAttributes(path)
-        return ctypes.windll.kernel32.SetFileAttributesW(path,
+        return ctypes.windll.kernel32.SetFileAttributesW(str(path),
                                                          attributes & ~ FileAttributes.FILE_ATTRIBUTE_READONLY) != 0
 
     @staticmethod
