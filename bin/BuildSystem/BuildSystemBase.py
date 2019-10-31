@@ -291,7 +291,7 @@ class BuildSystemBase(CraftBase):
                 else:
                     if not self.subinfo.options.package.disableStriping:
                         for f in binaryFiles:
-                            utils.strip(f, os.path.dirname(f))
+                            utils.strip(f)
 
             # sign the binaries if we can
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):

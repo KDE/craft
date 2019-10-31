@@ -1002,16 +1002,22 @@ def installShortcut(name : str, path : str, workingDir : str, icon : str, descip
                   "-Description", pwsh.quote(desciption)])
 
 
-def strip(fileName, symbolDest=None):
+def strip(fileName):
     """strip debugging informations from shared libraries and executables - mingw only!!! """
     if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
         CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
         return True
 
+    fileName = Path(fileName)
     if CraftCore.compiler.isMacOS:
-        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.dSYM"
+        frameworkDir = list(filter(lambda x: x.name.endswith(".framework"), fileName.parents))
+        if frameworkDir:
+            assert(len(frameworkDir) == 1)
+            symFile = Path(f"{frameworkDir[0]}.dSYM")
+        else:
+            symFile = Path(f"{fileName}.dSYM")
     else:
-        symFile = Path(symbolDest) / f"{os.path.basename(fileName)}.sym"
+        symFile = Path(f"{fileName}.sym")
 
     if symFile.exists():
         return True
