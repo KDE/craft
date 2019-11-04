@@ -289,13 +289,16 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 def cleanDirectory(directory):
     CraftCore.log.debug("clean directory %s" % directory)
     if os.path.exists(directory):
-        try:
-            pwd = os.getcwd()
-            # ensure the directoy is not locked
-            os.chdir(CraftCore.standardDirs.craftRoot())
-            return OsUtils.rmDir(directory, True) and createDir(directory)
-        finally:
-            os.chdir(pwd)
+        # don't delete containg directrory as it might be a symlink and replacing it with a folder
+        # breaks the behaviour
+        with os.scandir(directory) as scan:
+            for f in scan:
+                if f.is_dir():
+                    if not OsUtils.rmDir(f.path, force=True):
+                        return False
+                else:
+                    if not OsUtils.rm(f.path, force=True):
+                        return False
     else:
         return createDir(directory)
 

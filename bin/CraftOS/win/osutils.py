@@ -18,6 +18,12 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def rm(path, force=False):
         CraftCore.log.debug("deleting file %s" % path)
+        if OsUtils.isLink(path):
+            try:
+                os.remove(path)
+            except:
+                return False
+            return True
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         return ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
@@ -25,13 +31,13 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def rmDir(path, force=False):
         CraftCore.log.debug(f"deleting directory {path}")
+        if OsUtils.isLink(path):
+            return OsUtils.rm(path, force)
         if force:
             OsUtils.removeReadOnlyAttribute(path)
         with os.scandir(path) as scan:
             for f in scan:
-                if OsUtils.isLink(f.path):
-                    os.unlink(f.path)
-                elif f.is_dir():
+                if not OsUtils.isLink(f.path) or f.is_dir():
                     if not OsUtils.rmDir(f.path, force):
                         return False
                 else:
