@@ -30,6 +30,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def rmDir(path, force=False):
+        path = os.path.normpath(path)
         CraftCore.log.debug(f"deleting directory {path}")
         if OsUtils.isLink(path):
             return OsUtils.rm(path, force)
@@ -37,7 +38,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
             OsUtils.removeReadOnlyAttribute(path)
         with os.scandir(path) as scan:
             for f in scan:
-                if not OsUtils.isLink(f.path) or f.is_dir():
+                if f.is_dir() and not OsUtils.isLink(f.path):
                     if not OsUtils.rmDir(f.path, force):
                         return False
                 else:
