@@ -126,14 +126,6 @@ class CMakeBuildSystem(BuildSystemBase):
         out += " -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1=gcc "
         return out
 
-    def clangOptions(self):
-        if CraftCore.compiler.isMSVC():
-            return " -DCMAKE_CXX_COMPILER=clang-cl" \
-                   " -DCMAKE_C_COMPILER=clang-cl"
-        else:
-            return " -DCMAKE_CXX_COMPILER=/usr/bin/clang++" \
-                   " -DCMAKE_C_COMPILER=/usr/bin/clang"
-
     def internalPostQmerge(self):
         if not super().internalPostQmerge():
             return False
