@@ -9,6 +9,7 @@ from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils.PostInstallRoutines import *
 
+import os
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -122,8 +123,8 @@ class CMakeBuildSystem(BuildSystemBase):
         return utils.system(command)
 
     def ccacheOptions(self):
-        out = " -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1=g++ "
-        out += " -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1=gcc "
+        out = f" -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1={os.environ['CXX']}"
+        out += f" -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1={os.environ['CC']} "
         return out
 
     def internalPostQmerge(self):
