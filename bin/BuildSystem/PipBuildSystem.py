@@ -15,6 +15,8 @@ class PipBuildSystem(BuildSystemBase):
             return "python2"
         python2 = CraftCore.cache.findApplication("python2.7")
         if CraftCore.compiler.isWindows:
+                if os.path.exists("C:/python27/python.exe"):
+                    python2 = "C:/python27/python.exe"
                 if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
                     python2 = CraftCore.cache.findApplication("python", CraftCore.settings.get("Paths", "PYTHON27"))
         if not python2:
