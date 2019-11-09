@@ -999,7 +999,7 @@ def installShortcut(name : str, path : str, workingDir : str, icon : str, descip
 
     return pwsh.execute([os.path.join(CraftCore.standardDirs.craftBin(), "install-lnk.ps1"),
                          "-Path", pwsh.quote(path),
-                  "-WorkingDirectory", pwsh.quote(workingDir),
+                  "-WorkingDirectory", pwsh.quote(OsUtils.toNativePath(workingDir)),
                   "-Name", pwsh.quote(shortcutPath),
                   "-Icon", pwsh.quote(icon),
                   "-Description", pwsh.quote(desciption)])
