@@ -194,7 +194,24 @@ class PackageBase(CraftBase):
                 utils.rmtree(containingDir)
 
 
+    def _update(self):
+        from Source.GitSource import GitSource
+        if not self.fetch():
+            return False
+        if isinstance(self, GitSource):
+            revision = self.sourceRevision()
+            installed = CraftCore.installdb.getInstalledPackages(self.package)[0]
+            if revision == installed.getRevision():
+                return True
+        # TODO: handle the internal steps more sane
+        return (self.compile() and
+                self.install() and self.internalPostInstall() and self.postInstall()
+                and self.qmerge() and self.postQmerge())
+
+
+
     def runAction(self, command):
+        # TODO: handle the internal steps more sane
         functions = {"fetch": "fetch",
                      "cleanimage": "cleanImage",
                      "cleanbuild": "cleanBuild",
@@ -211,7 +228,8 @@ class PackageBase(CraftBase):
                      "package": "createPackage",
                      "createpatch": "createPatch",
                      "checkdigest": "checkDigest",
-                     "fetch-binary": "fetchBinary"}
+                     "fetch-binary": "fetchBinary",
+                     "update": "_update"}
         if command in functions:
             try:
                 steps = functions[command]

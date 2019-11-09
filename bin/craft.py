@@ -140,13 +140,13 @@ def main(timer):
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
                      "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch",
-                     ("install-to-desktop", {"help":argparse.SUPPRESS})], key=lambda x: x[0] if isinstance(x, tuple) else x):
+                     ("install-to-desktop", {"help":argparse.SUPPRESS}), "update"], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:
             actionHandler.addAction(x)
 
-    actionHandler.addAction("update", help="Update all installed packages")
+    actionHandler.addAction("upgrade", help="Update all installed packages")
     # read-only actions
     actionHandler.addAction("print-installed",
                             help="This will show a list of all packages that are installed currently.")
@@ -246,8 +246,8 @@ def main(timer):
             CraftCommands.setOption(packageNames, args.set)
         elif action == "clean-unused":
             CraftCommands.cleanBuildFiles(cleanArchives=True, cleanImages=True, cleanInstalledImages=False, cleanBuildDir=True, packages=blueprintSearch.packages())
-        elif action == "update":
-            return CraftCommands.updateInstalled(tempArgs)
+        elif action == "upgrade":
+            return CraftCommands.upgrade(tempArgs)
         else:
             if not packageNames:
                 return True

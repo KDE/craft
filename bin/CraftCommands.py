@@ -47,6 +47,7 @@ def doExec(package, action):
         return ret
 
 
+# in general it would be nice to handle this with inheritance, but actually we don't wan't a blueprint to be able to change the behaviour of "all"...
 def handlePackage(package, buildAction, directTargets):
     with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
         success = True
@@ -55,20 +56,21 @@ def handlePackage(package, buildAction, directTargets):
         CraftCore.debug.debug_line()
         CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
 
-
-        if buildAction == "all":
+        if buildAction in ["all", "update"]:
             if CraftCore.settings.getboolean("Packager", "UseCache", "False"):
                 if doExec(package, "fetch-binary"):
                     return True
-            actions = ["fetch", "unpack", "compile", "cleanimage", "install", "post-install"]
-
-            if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
-                actions += ["cleanbuild"]
-            actions += ["qmerge", "post-qmerge"]
-            if CraftCore.settings.getboolean("Packager", "CreateCache"):
-                onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
-                if not onlyDirect or (onlyDirect and package in directTargets):
-                    actions += ["package"]
+            if buildAction == "all":
+                actions = ["fetch", "unpack", "compile", "cleanimage", "install", "post-install"]
+                if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
+                    actions += ["cleanbuild"]
+                actions += ["qmerge", "post-qmerge"]
+                if CraftCore.settings.getboolean("Packager", "CreateCache"):
+                    onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
+                    if not onlyDirect or (onlyDirect and package in directTargets):
+                        actions += ["package"]
+            elif buildAction == "update":
+                actions = ["update"]
         else:
             actions = [buildAction]
         for action in actions:
@@ -234,7 +236,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         return installToDektop(directTargets)
     elif action == "print-files":
         return printFiles(directTargets)
-    elif args.resolve_deps or action in ["all", "install-deps"]:
+    elif args.resolve_deps or action in ["all", "install-deps", "update"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
         if args.resolve_deps:
@@ -251,7 +253,10 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         packages = []
         if not args.resolve_deps:
             for item in depList:
-                if (args.ignoreInstalled and item in directTargets) or packageIsOutdated(item):
+                if not item.name:
+                    continue # are we a real package
+                if ((item in directTargets and (args.ignoreInstalled or (action == "update" and item.subinfo.hasSvnTarget())))
+                     or packageIsOutdated(item)):
                     packages.append(item)
                     CraftCore.log.debug(f"dependency: {item}")
                 elif item in directTargets:
@@ -279,6 +284,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                 else:
                     CraftTitleUpdater.instance.updateTitle()
                 if action in ["install-deps"]:
+                    action = "all"
+                elif action == "update" and not info.isInstalled:
                     action = "all"
 
                 if not handlePackage(info, action, directTargets=directTargets):
@@ -331,7 +338,7 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
             for dir in glob.glob(builddirGlob):
                 cleanDir(dir)
 
-def updateInstalled(args) -> bool:
+def upgrade(args) -> bool:
     ENV_KEY = "CRAFT_CORE_UPDATED"
     if ENV_KEY not in os.environ:
         os.environ[ENV_KEY] = "1"
@@ -349,7 +356,7 @@ def updateInstalled(args) -> bool:
             p = CraftPackageObject.get(packageName)
             if p:
                 package.children[p.name] = p
-        return run(package, "all", args)
+        return run(package, "update", args)
 
 def installToDektop(packages):
     CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
