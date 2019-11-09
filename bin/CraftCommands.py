@@ -276,6 +276,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                 if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
                     CraftCore.debug.debug_line()
                     CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
+                else:
+                    CraftTitleUpdater.instance.updateTitle()
                 if action in ["install-deps"]:
                     action = "all"
 
