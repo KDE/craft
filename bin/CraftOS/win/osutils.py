@@ -26,7 +26,16 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
             return True
         if force:
             OsUtils.removeReadOnlyAttribute(path)
-        return ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
+        ret =  ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
+        if not ret:
+            msg = f"Deleting {path} failed error: "
+            error = ctypes.windll.kernel32.GetLastError()
+            if error == 5:
+                msg += "ERROR_ACCESS_DENIED"
+            else:
+                msg += error
+            CraftCore.log.error(msg)
+        return ret
 
     @staticmethod
     def rmDir(path, force=False):
