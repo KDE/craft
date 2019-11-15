@@ -14,6 +14,7 @@ from Blueprints import CraftPackageObject
 from CraftDebug import deprecated
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils.CraftShortPath import CraftShortPath
+from CraftOS.osutils import OsUtils
 
 class InitGuard(object):
     _initialized = {}
@@ -272,8 +273,7 @@ class CraftBase(object):
         """cleanup before install to imagedir"""
         if (os.path.exists(self.imageDir())):
             CraftCore.log.debug("cleaning image dir: %s" % self.imageDir())
-            utils.cleanDirectory(self.imageDir())
-            os.rmdir(self.imageDir())
+            return OsUtils.rmDir(self.imageDir())
         return True
 
     def cleanBuild(self) -> bool:
