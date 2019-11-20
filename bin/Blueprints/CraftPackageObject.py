@@ -320,7 +320,12 @@ class CraftPackageObject(object):
 
     @property
     def isInstalled(self) -> bool:
-        return len(CraftCore.installdb.getInstalledPackages(self)) == 1
+        # using the version here might cause a recursion...
+        return CraftCore.installdb.isInstalled(self)
+
+    @property
+    def isLatestVersionInstalled(self) -> bool:
+        return CraftCore.installdb.isInstalled(self, self.version)
 
     @property
     def subinfo(self):

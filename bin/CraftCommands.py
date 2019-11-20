@@ -285,7 +285,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
                     CraftTitleUpdater.instance.updateTitle()
                 if action in ["install-deps"]:
                     action = "all"
-                elif action == "update" and not info.isInstalled:
+                elif action == "update" and not info.isLatestVersionInstalled:
                     action = "all"
 
                 if not handlePackage(info, action, directTargets=directTargets):
