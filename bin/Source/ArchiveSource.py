@@ -257,10 +257,11 @@ class ArchiveSource(SourceBase):
             # make the patch a -p1 patch
             patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
             patchContent = patchContent.replace(self.sourceDir().encode(), srcSubDir.encode())
-            with open(os.path.join(self.packageDir(), _patchName), "wb") as out:
+            patchPath = os.path.join(self.packageDir(), _patchName)
+            with open(patchPath, "wb") as out:
                 out.write(patchContent)
 
-            CraftCore.log.info(f"Patch created (\"{_patchName}\", 1)")
+            CraftCore.log.info(f"Patch created {patchPath} (\"{_patchName}\", 1)")
         return True
 
     def sourceVersion(self):
