@@ -116,4 +116,4 @@ class AutoToolsBuildSystem(BuildSystemBase):
         return options;
 
     def ccacheOptions(self):
-        return " CC='ccache gcc' CXX='ccache g++' "
+        return f" CC='ccache {os.environ['CC']}' CXX='ccache {os.environ['CXX']}' "
