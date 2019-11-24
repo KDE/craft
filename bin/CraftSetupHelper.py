@@ -390,6 +390,10 @@ class SetupHelper(object):
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin"))
 
 
+        if not "LC_ALL" in os.environ:
+            self.addEnvVar("LC_ALL", "en_US.UTF-8")
+        if not "LC_CTYPE" in os.environ:
+            self.addEnvVar("LC_CTYPE", "en_US.UTF-8")
 
 
         if CraftCore.compiler.isClang():
