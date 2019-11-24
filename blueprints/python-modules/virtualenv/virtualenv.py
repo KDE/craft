@@ -10,7 +10,8 @@ class subinfo(info.infoclass):
         self.defaultTarget = 'master'
 
     def setDependencies(self):
-        self.runtimeDependencies["python-modules/pip"] = None
+        # install a system whide pip
+        self.runtimeDependencies["python-modules/pip-system"] = None
 
 class Package(PipPackageBase):
     def __init__(self, **args):
@@ -19,6 +20,10 @@ class Package(PipPackageBase):
     def postInstall(self):
         for ver, python in self._pythons:
             if not self.venvDir(ver).exists():
-                if not utils.system([python, "-m", "venv" if ver == "3" else "virtualenv", self.venvDir(ver)]):
-                    return False
+                if ver == "2":
+                    if not utils.system([python, "-m", "virtualenv", self.venvDir(ver)]):
+                        return False
+                else:
+                    if not utils.system([python, "-m", "venv", "--without-pip", self.venvDir(ver)]):
+                        return False
         return True

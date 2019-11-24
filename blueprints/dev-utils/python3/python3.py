@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3"
 
     def setDependencies(self):
+        self.buildDependencies["dev-utils/kshimgen"] = None
         self.runtimeDependencies["python-modules/pip"] = None
         self.runtimeDependencies["python-modules/virtualenv"] = None
 

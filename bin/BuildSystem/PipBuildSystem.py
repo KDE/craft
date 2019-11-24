@@ -9,6 +9,8 @@ class PipBuildSystem(BuildSystemBase):
         self.python2 = True
         self.python3 = True
 
+        self.pipPackageName = self.package.name
+
 
     def _getPython2(self):
         if CraftPackageObject.get("dev-utils/python2").isInstalled:
@@ -60,7 +62,7 @@ class PipBuildSystem(BuildSystemBase):
             if self.subinfo.svnTarget():
                 command += ["-e", self.sourceDir()]
             else:
-                command += [self.package.name]
+                command += [self.pipPackageName]
             ok = ok and utils.system(command)
         return ok
 

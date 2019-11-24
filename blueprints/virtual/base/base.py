@@ -20,7 +20,9 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/cmake"] = None
             self.buildDependencies["dev-utils/7zip"] = None
 
+        self.buildDependencies["python-modules/pip-system"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
+        self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["dev-utils/python3"] = None
 
         self.buildDependencies["dev-utils/patch"] = None

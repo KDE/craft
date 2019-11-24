@@ -16,13 +16,11 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["dev-utils/python2"] = None
-        self.buildDependencies["dev-utils/python3"] = None
-        self.buildDependencies["python-modules/virtualenv"] = None
 
 class Package(PipPackageBase):
     def __init__(self):
         PipPackageBase.__init__(self)
+        self.pipPackageName = "pip"
 
     def unpack(self):
         return True
@@ -30,7 +28,10 @@ class Package(PipPackageBase):
     def make(self):
         get_pip = self.localFilePath()[0]
         for ver, python in self._pythons:
-            if not utils.system([python, get_pip]):
+            hasPip = utils.system([python, "-m", "pip"], stdout=subprocess.DEVNULL)
+            if hasPip:
+                continue
+            if not utils.system([python, get_pip, "--user"]):
                 return False
         return True
 
