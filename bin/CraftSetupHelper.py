@@ -151,6 +151,7 @@ class SetupHelper(object):
 
     @staticmethod
     def stringToEnv(string : str):
+        env = CaseInsensitiveDict(os.environ)
         for line in string.strip().split("\n"):
             kv = line.strip().split("=", 1)
             if len(kv) != 2:
@@ -159,8 +160,8 @@ class SetupHelper(object):
             # TODO: why?
             if kv[0] == "Path":
                 kv[0] = "PATH"
-            os.environ[kv[0]] = kv[1]
-        return os.environ
+            env[kv[0]] = kv[1]
+        return env
 
     @staticmethod
     def _callVCVER(version : int, args : []=None, native : bool=True, prerelease : bool=False) -> str:
@@ -318,7 +319,7 @@ class SetupHelper(object):
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
         self.prependEnvVar("PATH", os.path.dirname(sys.executable))
-        os.environ = self.getEnv()
+        os.environ.update(self.getEnv())
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
         self.addEnvVar("SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
