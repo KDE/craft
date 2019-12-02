@@ -177,7 +177,7 @@ class BuildSystemBase(CraftBase):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
-        newPathUnix = (OsUtils.toUnixPath(newPath) + "/").encode() if newPath else b""
+        newPathUnix = OsUtils.toUnixPath(newPath).encode()
         for fileName in files:
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
@@ -187,7 +187,7 @@ class BuildSystemBase(CraftBase):
             dirty = False
             for oldPath in oldPaths:
                 assert os.path.isabs(oldPath)
-                oldPathPat = OsUtils.toUnixPath(oldPath) + "/"
+                oldPathPat = OsUtils.toUnixPath(oldPath)
                 # allow front and back slashes
                 oldPathPat = oldPathPat.replace("/", r"[/\\]+")
                 # capture firs seperator
