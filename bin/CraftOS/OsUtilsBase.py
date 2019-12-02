@@ -38,16 +38,22 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
 
     @staticmethod
     def toWindowsPath(path : str) -> str:
+        if not path:
+            return path
         path = os.path.normpath(path)
         return path.replace("/", "\\")
 
     @staticmethod
     def toUnixPath(path : str) -> str:
+        if not path:
+            return path
         path = os.path.normpath(path)
         return path.replace("\\", "/")
 
     @staticmethod
     def toMSysPath(path):
+        if not path:
+            return path
         path = OsUtilsBase.toUnixPath(path)
         drive, path = os.path.splitdrive(path)
         if drive:
