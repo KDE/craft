@@ -172,12 +172,14 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-    def patchInstallPrefix(self, files: [str], oldPaths: [str] = None, newPath: str = CraftCore.standardDirs.craftRoot()) -> bool:
-        if isinstance(oldPaths, str):
+    def patchInstallPrefix(self, files: [str], oldPaths: [Path] = None, newPath: Path = Path(CraftCore.standardDirs.craftRoot())) -> bool:
+        if not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
-        newPathUnix = OsUtils.toUnixPath(newPath).encode()
+
+        oldPaths = [Path(x).as_posix() for x in oldPaths]
+        newValue = Path(newPath).as_posix().encode()
         for fileName in files:
             if not os.path.exists(fileName):
                 CraftCore.log.warning(f"File {fileName} not found.")
@@ -187,9 +189,8 @@ class BuildSystemBase(CraftBase):
             dirty = False
             for oldPath in oldPaths:
                 assert os.path.isabs(oldPath)
-                oldPathPat = OsUtils.toUnixPath(oldPath)
                 # allow front and back slashes
-                oldPathPat = oldPathPat.replace("/", r"[/\\]+")
+                oldPathPat = oldPath.replace("/", r"[/\\]+")
                 # capture firs seperator
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
                 oldPathPat = f"({oldPathPat})"
@@ -197,7 +198,7 @@ class BuildSystemBase(CraftBase):
                 for match in set(oldPathPat.findall(content)):
                     dirty = True
                     oldPath = match[0]
-                    newPath = newPathUnix.replace(b"/", match[1])
+                    newPath = newValue.replace(b"/", match[1])
                     if oldPath != newPath:
                         CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
                         content = content.replace(oldPath, newPath)
