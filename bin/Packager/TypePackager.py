@@ -24,7 +24,8 @@
 # SUCH DAMAGE.
 
 from Packager.CreateArchivePackager import *
-from Packager.MacDMGPackager import *
+from Packager.MacDMGPackager import MacDMGPackager
+from Packager.MacPkgPackager import MacPkgPackager
 from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
 from Packager.PortablePackager import *

@@ -221,7 +221,7 @@ class CraftBase(object):
     def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
 
-        archiveBaseName = self.binaryArchiveBaseName(pkgSuffix=pkgSuffix, includeRevision=includeRevision, includeTimestamp=includeTimeStamp)
+        archiveBaseName = self.binaryArchiveBaseName(pkgSuffix, includeRevision, includeTimeStamp)
 
         if fileType:
             if not fileType.startswith("."):
