@@ -27,7 +27,8 @@ class Package(MakeFilePackageBase):
 
     def fetch(self):
         if isinstance(self, GitSource):
-            utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
+            if os.path.exists(self.sourceDir()):
+                utils.system(["git", "clean", "-xdf"], cwd=self.sourceDir())
         return super().fetch()
 
     def make(self):
