@@ -33,21 +33,21 @@ class MacPkgPackager( MacBasePackager ):
             CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
             return False
         # TODO: provide an image with dbg files
-        if not self.internalCreatePackage(defines):
-            return False
+        #if not self.internalCreatePackage(defines):
+         #   return False
 
-        packageDest = defines["setupname"]
-        if os.path.exists(packageDest):
+        packageDest = Path(defines["setupname"])
+        if packageDest.exists():
             utils.deleteFile(packageDest)
 
         pkgprojPath = defines["pkgproj"]
         # set output file basename
         packagesutil = CraftCore.cache.findApplication("packagesutil")
-        if not utils.system([packagesutil, '--file', pkgprojPath, 'set', 'project', 'name', defines["display_name"]]):
+        if not utils.system([packagesutil, '--file', pkgprojPath, 'set', 'project', 'name', packageDest.stem]):
             return False
 
         packagesbuild = CraftCore.cache.findApplication("packagesbuild")
-        if not utils.system([packagesbuild, '--reference-folder', os.path.join(self.archiveDir(), 'bin'), '--build-folder', self.packageDestinationDir(), pkgprojPath]):
+        if not utils.system([packagesbuild, "-v", '--reference-folder', os.path.dirname(self.getMacAppPath(defines)), '--build-folder', packageDest.parent, pkgprojPath]):
             return False
 
         if not utils.signMacPackage(packageDest):

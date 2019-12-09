@@ -104,7 +104,7 @@ def createDigestFiles(path, algorithms=None):
         algorithms = [HashAlgorithm.SHA256]
     for algorithm in algorithms:
         digets = digestFile(path, algorithm)
-        with open(path + algorithm.fileEnding(), "wt", encoding="UTF-8") as f:
+        with open(str(path) + algorithm.fileEnding(), "wt", encoding="UTF-8") as f:
             f.write("%s\n" % digets)
 
 
