@@ -496,31 +496,31 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
     """ copy directory from srcdir to destdir """
     CraftCore.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
-    if (not srcdir.endswith(os.path.sep)):
-        srcdir += os.path.sep
-    if (not destdir.endswith(os.path.sep)):
-        destdir += os.path.sep
+    srcdir = Path(srcdir)
+    destdir = Path(destdir)
+    if not destdir.exists():
+        createDir(destdir)
 
     try:
-        for root, dirNames, files in os.walk(srcdir):
-            tmpdir = root.replace(srcdir, destdir)
-            for dirName in dirNames:
-                if os.path.islink(os.path.join(root, dirName)):
+        with os.scandir(srcdir) as scan:
+            for entry in scan:
+                dest = destdir / Path(entry.path).parent.relative_to(srcdir) / entry.name
+                if entry.is_dir():
+                    if entry.is_symlink():
                     # copy the symlinks without resolving them
-                    if not copyFile(os.path.join(root, dirName), os.path.join(tmpdir, dirName), linkOnly=False):
+                        if not copyFile(entry.path, dest, linkOnly=False):
+                            return False
+                        if copiedFiles is not None:
+                            copiedFiles.append(str(dest))
+                    else:
+                        if not copyDir(entry.path, dest, copiedFiles=copiedFiles):
+                            return False
+                else:
+                    # symlinks to files are included in `files`
+                    if not copyFile(entry.path, dest,linkOnly=linkOnly):
                         return False
                     if copiedFiles is not None:
-                        copiedFiles.append(os.path.join(tmpdir, dirName))
-                else:
-                    if not createDir(os.path.join(tmpdir, dirName)):
-                        return False
-
-            for fileName in files:
-                # symlinks to files are included in `files`
-                if not copyFile(os.path.join(root, fileName), os.path.join(tmpdir, fileName),linkOnly=linkOnly):
-                    return False
-                if copiedFiles is not None:
-                    copiedFiles.append(os.path.join(tmpdir, fileName))
+                        copiedFiles.append(str(dest))
     except Exception as e:
         CraftCore.log.error(f"Failed to copy dir:\n{srcdir} to\n{destdir}", exc_info=e)
         return False
