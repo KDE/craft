@@ -133,7 +133,7 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    return system(command, displayProgress=True, **kw) and not resolveSymlinks or replaceSymlinksWithCopies(destdir)
+    return system(command, displayProgress=True, **kw) and (not resolveSymlinks or replaceSymlinksWithCopies(destdir))
 
 def compress(archive : str, source : str) -> bool:
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
