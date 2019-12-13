@@ -252,8 +252,7 @@ class infoclass(object):
             raise BlueprintException(f"Failed to find {packageName}", package)
         packageName = package.path
 
-        if package:
-            self.description = package.subinfo.description
+        self.description = package.subinfo.description
 
         for key, url in list(self.targets.items()):
             if url.endswith("/"):
@@ -271,3 +270,29 @@ class infoclass(object):
             self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
             if targetInstallPath:
                 self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
+
+
+    def addCachedBuild(self, url, packageName = None, packagePath=None, targetInstallPath=None):
+        if not CraftCore.compiler.isMSVC():
+            return
+        if packageName:
+            package = CraftPackageObject._allLeaves.get(packageName, None)
+            if not package:
+                raise BlueprintException(f"Failed to find {packageName}", package)
+            packagePath = package.path
+            self.description = package.subinfo.description
+        elif not packagePath:
+            packagePath = self.parent.package.path
+
+
+        if url.endswith("/"):
+                url = url[:-1]
+        #self.targes[package.defaultTarget] = url
+        #self.defaultTarget = package.defaultTarget
+        manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+        latest = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packagePath].latest
+        self.targets[latest.version] = f"{url}/{latest.fileName}"
+        self.targetDigests[latest.version] = ([latest.checksum], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = latest.version
+        if targetInstallPath:
+                self.targetInstallPath[latest.version] = os.path.join(targetInstallPath, self.parent.package.name)
