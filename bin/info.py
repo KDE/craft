@@ -273,8 +273,6 @@ class infoclass(object):
 
 
     def addCachedBuild(self, url, packageName = None, packagePath=None, targetInstallPath=None):
-        if not CraftCore.compiler.isMSVC():
-            return
         if packageName:
             package = CraftPackageObject._allLeaves.get(packageName, None)
             if not package:
@@ -287,8 +285,6 @@ class infoclass(object):
 
         if url.endswith("/"):
                 url = url[:-1]
-        #self.targes[package.defaultTarget] = url
-        #self.defaultTarget = package.defaultTarget
         manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
         latest = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packagePath].latest
         self.targets[latest.version] = f"{url}/{latest.fileName}"
