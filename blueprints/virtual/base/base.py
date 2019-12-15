@@ -12,7 +12,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["core/cacert"] = None
         if CraftCore.compiler.isWindows:
             self.buildDependencies["dev-utils/7zip"] = None
-            self.buildDependencies["dev-utils/tar"] = None
             self.buildDependencies["dev-utils/wget"] = None
             self.buildDependencies["dev-utils/git"] = None
             self.buildDependencies["dev-utils/kshimgen"] = None

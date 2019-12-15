@@ -121,8 +121,14 @@ def un7zip(fileName, destdir, flag=None):
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
         kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout = subprocess.PIPE)
-        tar = CraftCore.cache.findApplication("tar")
-        command = [tar, "--directory", Path(destdir).as_posix(), "-xf", "-"]
+        if OsUtils.isWin():
+            resolveSymlinks = True
+            if progressFlags:
+                progressFlags = ["-bsp0"]
+            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
+        else:
+            tar = CraftCore.cache.findApplication("tar")
+            command = [tar, "--directory", destdir, "-xf", "-"]
     else:
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
