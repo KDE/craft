@@ -39,7 +39,6 @@ share/doc/.*
 share/apps/cmake/.*
 
 # unrelated
-dev-utils/.*
 share/dbus-1/services/.*
 share/pkgconfig/.*
 
