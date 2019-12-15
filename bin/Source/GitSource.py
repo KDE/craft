@@ -51,7 +51,7 @@ class GitSource(VersionSystemSourceBase):
     def __isLocalBranch(self, branch):
         if os.path.exists(self.checkoutDir()):
             with io.StringIO() as tmp:
-                self.__git("for-each-ref", ["--format=%(refname:short)", "refs/heads/*"], stdout=tmp)
+                self.__git("for-each-ref", ["--format=%(refname:short)", "refs/heads"], stdout=tmp)
                 return branch in tmp.getvalue().strip().split("\n")
         return False
 
