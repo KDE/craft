@@ -4,7 +4,7 @@ from Package.BinaryPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.addCachedBuild("https://files.kde.org/craft/prebuilt/packages/", packagePath="prebuilt/binary/tar", targetInstallPath="dev-utils")
+        self.addCachedBuild("https://files.kde.org/craft/prebuilt/packages/", packagePath="prebuilt/binary/tar")
 
     def setDependencies(self):
         self.buildDependencies["virtual/bin-base"] = None
