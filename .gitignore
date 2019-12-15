@@ -23,3 +23,6 @@ test.outlog
 .kdev5/
 *.kdev4
 *.kdev5
+
+#vscode
+.vscode
