@@ -137,7 +137,7 @@ Section
   WriteRegStr SHCTX "${uninstkey}" "DisplayVersion" "@{version}"
   WriteRegDWORD SHCTX "${uninstkey}" "EstimatedSize" "@{estimated_size}"
 
-  @{registy_hook}
+  @{registry_hook}
 
   SetOutPath $INSTDIR
 
