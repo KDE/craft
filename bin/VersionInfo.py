@@ -135,6 +135,12 @@ class VersionInfo(object):
     def format(self, s : str, ver : str):
         return VersionInfo._replaceVar(s, ver, self.package.name)
 
+    def get(self, key : str,  fallback=configparser._UNSET):
+        platformKey = f"{key}_{CraftCore.compiler.platform.name}"
+        if platformKey in self.data.info:
+            return self.data.info.get(platformKey)
+        return self.data.info.get(key, fallback)
+
     def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
                                  gitUrl=None):
         self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
@@ -161,13 +167,13 @@ class VersionInfo(object):
         if packageName is None:
             packageName = self.subinfo.parent.package.name
         if tarballUrl is None:
-            tarballUrl = self.data.info.get("tarballUrl", None)
+            tarballUrl = self.get("tarballUrl", None)
         if tarballDigestUrl is None:
-            tarballDigestUrl = self.data.info.get("tarballDigestUrl", None)
+            tarballDigestUrl = self.get("tarballDigestUrl", None)
         if tarballInstallSrc is None:
-            tarballInstallSrc = self.data.info.get("tarballInstallSrc", None)
+            tarballInstallSrc = self.get("tarballInstallSrc", None)
         if gitUrl is None:
-            gitUrl = self.data.info.get("gitUrl", None)
+            gitUrl = self.get("gitUrl", None)
         if tarballUrl is not None:
             for target in self.data.tarballs:
                 self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
