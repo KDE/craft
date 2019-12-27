@@ -31,7 +31,10 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/libtool"] = None
 
         if CraftCore.compiler.isMacOS:
-            self.buildDependencies["dev-utils/create-dmg"] = None
+            if CraftCore.settings.get("Packager", "PackageType") == "MacPkgPackager":
+                self.buildDependencies["dev-utils/packagesdev"] = None
+            else:
+                self.buildDependencies["dev-utils/create-dmg"] = None
 
 
         if CraftCore.compiler.isMinGW():
