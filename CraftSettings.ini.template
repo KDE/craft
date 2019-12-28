@@ -106,12 +106,6 @@ KDE_L10N_AUTO_TRANSLATIONS = OFF
 ## The directory where the junctions are created.
 #JunctionDir=
 
-## A drive letter where JunctionDir is mounted to.
-## When this variable is defined craft will mount the drive even if [ShortPath]Enabled == False
-#JunctionDrive = Z:
-
-
-
 [Blueprints]
 ## The location where the default blueprints are stored
 ## This is especially useful when using multiple Craft setups
