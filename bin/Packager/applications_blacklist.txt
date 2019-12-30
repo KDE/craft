@@ -55,7 +55,6 @@ share/icons/oxygen/256x256/.*
 # doubled qt dlls
 lib/[^/]*\.dll
 # more qt leftovers
-translations/.*
 phrasebooks/.*
 mkspecs/.*
 
