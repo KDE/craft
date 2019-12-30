@@ -62,6 +62,11 @@ class GitSource(VersionSystemSourceBase):
                 return _tag in tmp.getvalue().strip().split("\n")
         return False
 
+    def __updateSubmodeule(self):
+        if self.subinfo.options.fetch.checkoutSubmodules:
+            return self.__git("submodule", ["update", "--init", "--recursive"])
+        return True
+
     def __getCurrentRevision(self):
         """return the revision returned by git show"""
 
@@ -135,11 +140,9 @@ class GitSource(VersionSystemSourceBase):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
                 if not repoTag:
-                    ret = self.__git("fetch") \
-                          and self.__git("checkout", [repoBranch or "master"]) \
-                          and self.__git("merge")
-                    if self.subinfo.options.fetch.checkoutSubmodules:
-                        ret = ret and self.__git("submodule", ["update", "--init", "--recursive"])
+                    ret = (self.__git("fetch")
+                          and self.__git("checkout", [repoBranch or "master"])
+                          and self.__git("merge"))
             else:
                 args = []
                 # it doesn't exist so clone the repo
@@ -170,7 +173,7 @@ class GitSource(VersionSystemSourceBase):
                     self.__git('fetch', ['--tags'])
 
                     ret = self.__git('checkout', [repoTag])
-        return ret
+        return ret and self.__updateSubmodeule()
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
