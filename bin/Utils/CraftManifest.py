@@ -131,7 +131,10 @@ class CraftManifest(object):
         cacheFilePath = Path(cacheFilePath)
         cacheFilePathTimed = cacheFilePath.parent / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
         self.date = datetime.datetime.utcnow()
-        CraftCore.log.info(f"Updating cache manifest: {cacheFilePath}")
+        if self.origin:
+            CraftCore.log.info(f"Updating cache manifest from: {self.origin} in: {cacheFilePath}")
+        else:
+            CraftCore.log.info(f"Create new cache manifest: {cacheFilePath}")
         with open(cacheFilePath, "wt") as cacheFile:
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
