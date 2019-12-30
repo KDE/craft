@@ -2,8 +2,11 @@ import collections
 import datetime
 import json
 import os
+import shutil
+from pathlib import Path
 
 from CraftCore import CraftCore
+
 
 class CraftManifestEntryFile(object):
     def __init__(self, fileName : str, checksum : str, version : str="") -> None:
@@ -124,13 +127,14 @@ class CraftManifest(object):
             self.packages[compiler][package] = CraftManifestEntry(package)
         return self.packages[compiler][package]
 
-    def dump(self, cacheFilePath, includeTime=False):
-        if includeTime:
-            name, ext = os.path.splitext(cacheFilePath)
-            cacheFilePath = f"{name}-{self.date.strftime('%Y%m%dT%H%M%S')}{ext}"
+    def dump(self, cacheFilePath):
+        cacheFilePath = Path(cacheFilePath)
+        cacheFilePathTimed = cacheFilePath.parent / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
         self.date = datetime.datetime.utcnow()
-        with open(cacheFilePath, "wt+") as cacheFile:
+        CraftCore.log.info(f"Updating cache manifest: {cacheFilePath}")
+        with open(cacheFilePath, "wt") as cacheFile:
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
+        shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
     def load(manifestFileName : str, urls : [str]=None):
@@ -148,15 +152,13 @@ class CraftManifest(object):
                 new = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
                 if new:
                     new.origin = url
-                    new.dump(manifestFileName, includeTime=True)
                     old.update(new)
 
         cache = None
         if os.path.isfile(manifestFileName):
             try:
-                with open(manifestFileName, "rt+") as cacheFile:
+                with open(manifestFileName, "rt") as cacheFile:
                     cache = CraftManifest.fromJson(json.load(cacheFile))
-                cache.dump(manifestFileName, includeTime=True)
             except Exception as e:
                 CraftCore.log.warning(f"Failed to load {cacheFile}, {e}")
                 pass
