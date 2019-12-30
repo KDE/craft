@@ -111,6 +111,7 @@ class PackagerBase(CraftBase):
                 if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
                     manifestUrls = [self.cacheRepositoryUrls()[0]]
                 else:
+                    CraftCore.log.warning(f"Creating new cache, if you want to extend an existing cache, set \"[ContinuousIntegration]UpdateRepository = True\"")
                     manifestUrls = None
                 self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
                                        manifestUrls=manifestUrls)
