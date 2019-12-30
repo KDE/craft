@@ -16,7 +16,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["dev-utils/python2"] = None
         self.buildDependencies["dev-utils/python3"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
 
