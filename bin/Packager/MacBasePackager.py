@@ -37,6 +37,7 @@ class MacBasePackager( CollectionPackagerBase ):
             (os.path.join(archive, "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
             (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources")),
             (os.path.join(archive, "translations"), os.path.join(appPath, "Contents", "Resources", "Translations")),
+            (os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS")),
             (os.path.join(archive, "libexec"), os.path.join(appPath, "Contents", "MacOS")),
             (os.path.join(archive, "lib", "libexec", "kf5"), os.path.join(appPath, "Contents", "MacOS")),
             (os.path.join(archive, "lib", "libexec"), os.path.join(appPath, "Contents", "MacOS")),
