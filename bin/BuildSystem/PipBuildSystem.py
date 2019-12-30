@@ -6,7 +6,7 @@ from BuildSystem.BuildSystemBase import *
 class PipBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "pip")
-        self.python2 = True
+        self.python2 = False
         self.python3 = True
 
         self.pipPackageName = self.package.name
