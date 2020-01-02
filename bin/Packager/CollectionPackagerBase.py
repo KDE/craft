@@ -248,7 +248,7 @@ class CollectionPackagerBase(PackagerBase):
             if not self._filterQtBuildType(entry):
                 continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
-            if os.path.isfile(entry):
+            if os.path.isfile(entry) or os.path.islink(entry):
                 if not utils.copyFile(entry, entry_target, linkOnly=False):
                     return False
                 if utils.isBinary(entry_target):
