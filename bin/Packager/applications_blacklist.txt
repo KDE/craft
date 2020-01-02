@@ -59,6 +59,7 @@ phrasebooks/.*
 mkspecs/.*
 
 # unneeded stuff from bin\
+bin/qml\.app/*
 bin/qt\.conf
 bin/syncqt\.pl
 bin/moc.*
