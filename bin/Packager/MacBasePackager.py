@@ -17,8 +17,6 @@ class MacBasePackager( CollectionPackagerBase ):
 
     def internalCreatePackage(self, defines, seperateSymbolFiles=False, packageSymbols=False):
         """ create a package """
-        if not super().internalCreatePackage():
-            return False
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         # TODO: provide an image with dbg files
