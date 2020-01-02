@@ -58,6 +58,9 @@ lib/[^/]*\.dll
 phrasebooks/.*
 mkspecs/.*
 
+.*\.framework/.*/Headers/.*
+.*\.framework/Headers/.*
+
 # unneeded stuff from bin\
 bin/qml\.app/*
 bin/qt\.conf
