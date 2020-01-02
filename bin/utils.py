@@ -465,12 +465,15 @@ def createDir(path):
     return True
 
 
-def copyFile(src, dest, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)):
+def copyFile(src : Path, dest : Path, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)):
     """ copy file from src to dest"""
     CraftCore.log.debug("copy file from %s to %s" % (src, dest))
-    destDir = os.path.dirname(dest)
-    if not os.path.exists(destDir):
-        os.makedirs(destDir)
+    src = Path(src)
+    dest = Path(dest)
+    if dest.is_dir():
+        dest = dest / src.name
+    else:
+        createDir(dest.parent)
     if os.path.lexists(dest):
         CraftCore.log.warning(f"Overriding {dest}")
         if src == dest:
