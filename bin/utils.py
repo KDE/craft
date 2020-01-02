@@ -1088,18 +1088,23 @@ def strip(fileName):
         return True
 
     fileName = Path(fileName)
+    isBundle = False
     if CraftCore.compiler.isMacOS:
-        frameworkDir = list(filter(lambda x: x.name.endswith(".framework"), fileName.parents))
-        if frameworkDir:
-            assert(len(frameworkDir) == 1)
-            symFile = Path(f"{frameworkDir[0]}.dSYM")
+        bundleDir = list(filter(lambda x: x.name.endswith(".framework") or x.name.endswith(".app"), fileName.parents))
+        if bundleDir:
+            assert(len(bundleDir) == 1)
+            isBundle = True
+            symFile = Path(f"{bundleDir[0]}.dSYM")
         else:
             symFile = Path(f"{fileName}.dSYM")
     else:
         symFile = Path(f"{fileName}.sym")
 
-    if symFile.exists():
+    if not isBundle and symFile.exists():
         return True
+    elif (symFile / "Contents/Resources/DWARF" / fileName.name).exists():
+        return True
+
 
     if CraftCore.compiler.isMacOS:
         return (system(["dsymutil", fileName, "-o", symFile]) and
