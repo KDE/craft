@@ -14,7 +14,6 @@ class CreateArchivePackager(CollectionPackagerBase):
         CraftCore.log.debug("packaging using the CreateArchivePackager")
 
         self.internalCreatePackage()
-        self.preArchive()
 
         CraftCore.log.info(f"Archive created in {self.archiveDir()}")
 
