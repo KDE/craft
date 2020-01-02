@@ -248,11 +248,17 @@ class CollectionPackagerBase(PackagerBase):
             if not self._filterQtBuildType(entry):
                 continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
-            if not utils.copyFile(entry, entry_target, linkOnly=False):
-                return False
-            if utils.isBinary(entry_target):
-                if doSign:
-                    filesToSign.append(entry_target)
+            if os.path.isfile(entry):
+                if not utils.copyFile(entry, entry_target, linkOnly=False):
+                    return False
+                if utils.isBinary(entry_target):
+                    if doSign:
+                        filesToSign.append(entry_target)
+            else:
+                # .app or .dSYM
+                assert CraftCore.compiler.isMacOS
+                if not utils.copyDir(entry, entry_target, linkOnly=False):
+                    return False
         if filesToSign:
             utils.sign(filesToSign)
         return True
@@ -265,14 +271,11 @@ class CollectionPackagerBase(PackagerBase):
 
         if CraftCore.compiler.isMacOS:
             symbolSuffix = ".dSYM"
-            symbolPattern = r".*\{0}/.*".format(symbolSuffix)
+        elif CraftCore.compiler.isMSVC():
+            symbolSuffix = ".pdb"
         else:
-            if CraftCore.compiler.isMSVC():
-                symbolSuffix = ".pdb"
-            else:
-                symbolSuffix = ".sym"
-            symbolPattern = r".*\{0}$".format(symbolSuffix)
-        symbolPattern = re.compile(symbolPattern)
+            symbolSuffix = ".sym"
+        symbolPattern = re.compile(r".*\{0}$".format(symbolSuffix))
 
         if not seperateSymbolFiles:
             self.blacklist.append(symbolPattern)

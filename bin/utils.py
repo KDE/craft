@@ -1005,7 +1005,7 @@ def regexFileFilter(filename : os.DirEntry, root : str, pattern : [re]=None) -> 
             return True
     return False
 
-def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBadSymlinks=False):
+def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBadSymlinks=False, handleAppBundleAsFile=False):
     """
         Traverse through a directory tree and return every
         filename that the function whitelist returns as true and
@@ -1023,8 +1023,10 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                         CraftCore.log.debug(f"filterDirectoryContent: skipping {filePath.path}, it is not located under {root}")
                         continue
                 if filePath.is_dir(follow_symlinks=False):
-                    dirs.append(filePath.path)
-                    continue
+                    # handle .app folders and dsym as files
+                    if not CraftCore.compiler.isMacOS or not filePath.name.endswith(".dSYM"):
+                        dirs.append(filePath.path)
+                        continue
                 if blacklist(filePath, root=root) and not whitelist(filePath, root=root):
                     continue
                 elif filePath.is_dir():
