@@ -24,6 +24,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import inspect
 import types
 import glob
 
@@ -87,7 +88,9 @@ class CollectionPackagerBase(PackagerBase):
         if not self.blacklist_file:
             self.blacklist_file = blacklists
         self._whitelist = []
+        self._whitelist_filters = set()
         self._blacklist = []
+        self._blacklist_filters = set()
         self.scriptname = None
 
         self.__deployQtSdk = (OsUtils.isWin() and
@@ -96,6 +99,17 @@ class CollectionPackagerBase(PackagerBase):
         self.__qtSdkDir = OsUtils.toNativePath(os.path.join(CraftCore.settings.get("QtSDK", "Path"),
                                                             CraftCore.settings.get("QtSDK", "Version"),
                                                             CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
+
+    def addBlacklistFilter(self, x):
+        assert callable(x) and len(inspect.signature(x).parameters) == 2
+        self._blacklist_filters.add(x)
+
+    def addExecutableFilter(self, pattern : str):
+        self.addBlacklistFilter(lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern)]) and utils.isExecuatable(fileName))
+
+    def addWhitelistFilter(self, x):
+        assert callable(x) and len(inspect.signature(x).parameters) == 2
+        self._whitelist_filters.add(x)
 
     @property
     def whitelist(self):
@@ -184,7 +198,15 @@ class CollectionPackagerBase(PackagerBase):
         if blackList is None:
             blackList = self.blacklist
         CraftCore.log.debug(f"Start filtering: {message}")
-        return utils.regexFileFilter(filename, root, blackList)
+        _blacklists = set([lambda filename, root: utils.regexFileFilter(filename, root, blackList)])
+        if message == "blacklisted":
+            _blacklists.update(self._blacklist_filters)
+        elif message == "whitelisted":
+            _blacklists.update(self._whitelist_filters)
+        for b in _blacklists:
+            if b(filename, root):
+                return True
+        return False
 
     def _filterQtBuildType(self, filename):
         if not self.__deployQtSdk:
