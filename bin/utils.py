@@ -941,6 +941,12 @@ def unlockMacKeychain():
         return False
 
 
+def isExecuatable(fileName : Path):
+    fileName = Path(fileName)
+    if CraftCore.compiler.isWindows:
+        return fileName.suffix in os.environ["PATHEXT"]
+    return os.access(fileName, os.X_OK)
+
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     fileName = Path(fileName)
@@ -956,7 +962,7 @@ def isBinary(fileName : str) -> bool:
             return False
         if fileName.suffix in {".so", ".dylib"}:
             return True
-        elif os.access(fileName, os.X_OK):
+        elif isExecuatable(fileName):
             if CraftCore.compiler.isMacOS:
                 signature = MACH_O_64
             elif CraftCore.compiler.isLinux:
