@@ -244,7 +244,7 @@ class CollectionPackagerBase(PackagerBase):
             # files from the cache are already signed
             doSign = os.path.samefile(srcDir, self.imageDir())
 
-        for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted):
+        for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
             if not self._filterQtBuildType(entry):
                 continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))

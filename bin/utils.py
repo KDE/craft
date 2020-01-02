@@ -1024,7 +1024,8 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                         continue
                 if filePath.is_dir(follow_symlinks=False):
                     # handle .app folders and dsym as files
-                    if not CraftCore.compiler.isMacOS or not filePath.name.endswith(".dSYM"):
+                    if not CraftCore.compiler.isMacOS or not (filePath.name.endswith(".dSYM") or
+                        handleAppBundleAsFile and filePath.name.endswith(".app")):
                         dirs.append(filePath.path)
                         continue
                 if blacklist(filePath, root=root) and not whitelist(filePath, root=root):
