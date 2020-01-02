@@ -47,8 +47,6 @@ def toRegExp(fname, targetName) -> re:
             if not line or line.startswith("#"):
                 continue
             try:
-                # accept forward and backward slashes
-                line = line.replace("/", r"[/\\]")
                 tmp = f"^{line}$"
                 re.compile(tmp)  # for debug
                 regex.append(tmp)
