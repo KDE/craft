@@ -546,45 +546,53 @@ def mergeTree(srcdir, destdir):
 
     If a directory in @p destdir exists, just write into it
     """
-
+    srcdir = Path(srcdir)
+    destdir = Path(destdir)
     if not createDir(destdir):
         return False
 
     CraftCore.log.debug(f"mergeTree called. srcdir: {srcdir}, destdir: {destdir}")
-    if os.path.samefile(srcdir, destdir):
+    if srcdir.samefile(destdir):
         CraftCore.log.critical(f"mergeTree called on the same directory srcdir: {srcdir}, destdir: {destdir}")
         return False
 
-    fileList = os.listdir(srcdir)
-    for i in fileList:
-        src = os.path.join(srcdir, i)
-        dest = os.path.join(destdir, i)
-        if os.path.exists(dest):
-            if os.path.isdir(dest):
-                if os.path.islink(dest):
-                    if os.path.samefile(src, dest):
-                        CraftCore.log.info(f"mergeTree: skipping moving of {src} to  {dest} as a symlink with the same destination already exists")
-                        continue
-                    else:
-                        CraftCore.log.critical(f"mergeTree failed: {src} and {dest} are both symlinks but point to different folders")
+    with os.scandir(srcdir) as scan:
+        for src in scan:
+            dest = destdir / src.name
+            if Path(src.path) in dest.parents:
+                CraftCore.log.info(f"mergeTree: skipping moving of {src.path} to {dest}")
+                continue
+            if dest.exists():
+                if dest.is_dir():
+                    if dest.is_symlink():
+                        if dest.samefile(src):
+                            CraftCore.log.info(f"mergeTree: skipping moving of {src.path} to {dest} as a symlink with the same destination already exists")
+                            continue
+                        else:
+                            CraftCore.log.critical(f"mergeTree failed: {src.path} and {dest} are both symlinks but point to different folders")
+                            return False
+                        if src.is_symlink() and not dest.is_symlink():
+                            CraftCore.log.critical(f"mergeTree failed: how to merge symlink {src.path} into {dest}")
+                            return False
+                        if not src.is_symlink() and dest.is_symlink():
+                            CraftCore.log.critical(f"mergeTree failed: how to merge folder {src.path} into symlink {dest}")
+                            return False
+                    if not mergeTree(src.path, dest):
                         return False
-                    if os.path.islink(src) and not os.path.islink(dest):
-                        CraftCore.log.critical(f"mergeTree failed: how to merge symlink {src} into {dest}")
+                else:
+                    if not deleteFile(dest):
                         return False
-                    if not os.path.islink(src) and os.path.islink(dest):
-                        CraftCore.log.critical(f"mergeTree failed: how to merge folder {src} into symlink {dest}")
-                        return False
-                if not mergeTree(src, dest):
-                    return False
             else:
-                if not deleteFile(dest):
+                if not moveFile(src.path, destdir):
                     return False
-        else:
-            if not moveFile(src, destdir):
-                return False
 
-    # Cleanup (only removing empty folders)
-    return rmtree(srcdir)
+    if not os.listdir(srcdir):
+        # Cleanup (only removing empty folders)
+        return rmtree(srcdir)
+    else:
+        # we move a directory in one of its sub directories
+        assert srcdir in destdir.parents
+        return True
 
 
 @deprecated("moveFile")
