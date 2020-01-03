@@ -13,6 +13,8 @@ from CraftCore import CraftCore
 try:
     import coloredlogs
     _SUPPORTS_COLORED_LOGS = True
+    if os.name == "nt":
+        import colorama
 except:
     _SUPPORTS_COLORED_LOGS = False
 
@@ -47,6 +49,8 @@ class CraftDebug(object):
                   file=sys.stderr)
         if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor"):
             coloredlogs.install(logger=self._log, fmt="%(message)s", stream=sys.stdout)
+            if CraftCore.compiler.isWindows:
+                colorama.deinit()
             self._handler = self._log.handlers[-1]
         else:
             self._handler = logging.StreamHandler(sys.stdout)

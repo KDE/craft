@@ -5,10 +5,7 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        if CraftCore.compiler.isWindows:
-            self.svnTargets["master"] = f"https://github.com/TheOneRing/python-coloredlogs.git|winansi"
-        else:
-            self.svnTargets["master"] = ""
+        self.svnTargets["master"] = ""
         self.defaultTarget = "master"
 
     def setDependencies(self):
