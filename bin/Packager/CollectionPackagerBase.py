@@ -132,7 +132,7 @@ class CollectionPackagerBase(PackagerBase):
                 if callable(entry):
                     if entry == PackagerLists.runtimeBlacklist:
                         CraftCore.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
-                        self._blacklist.append(self.read_blacklist(entry()))
+                        self._blacklist += PackagerLists.defaultBlacklist()
                         continue
 
                     for line in entry():
