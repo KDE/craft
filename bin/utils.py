@@ -580,8 +580,9 @@ def mergeTree(srcdir, destdir):
                     if not mergeTree(src.path, dest):
                         return False
                 else:
-                    if not deleteFile(dest):
-                        return False
+                    CraftCore.log.critical(f"mergeTree failed: how to merge folder {src.path} into file {dest}\n"
+                                           f"If this error occured during packaging, consider extending the blacklist.")
+                    return False
             else:
                 if not moveFile(src.path, destdir):
                     return False
