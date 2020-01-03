@@ -62,7 +62,8 @@ class PackagerLists(object):
 
     @staticmethod
     def runtimeBlacklist():
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "applications_blacklist.txt")
+        bls = ["applications_blacklist.txt", f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt"]
+        return filter(lambda x: x.exists(), [(Path(__file__).absolute().parent / "blacklists" / x) for x in bls])
 
     @staticmethod
     def defaultWhitelist():
@@ -70,7 +71,7 @@ class PackagerLists(object):
 
     @staticmethod
     def defaultBlacklist():
-        return [toRegExp(PackagerLists.runtimeBlacklist(), "blacklist")]
+        return [toRegExp(x, x.name) for x in PackagerLists.runtimeBlacklist()]
 
 
 class CollectionPackagerBase(PackagerBase):
