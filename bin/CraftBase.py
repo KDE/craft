@@ -70,12 +70,7 @@ class CraftBase(object):
 
     @property
     def buildTests(self):
-        if self.subinfo.options.dynamic.buildTests is not None:
-            return self.subinfo.options.dynamic.buildTests
-        # TODO: remove deprecated "Compile", "BuildTests" and provide a default for buildTests
-        if ("Compile", "BuildTests") in CraftCore.settings:
-            CraftCore.debug.print(f"[Compile]BuildTests is deprecated please use [{self}]buildTests instead", file=sys.stderr)
-        return CraftCore.settings.getboolean("Compile", "BuildTests", True)
+        return self.subinfo.options.dynamic.buildTests
 
     def buildType(self):
         """return currently selected build type"""

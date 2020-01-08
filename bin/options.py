@@ -121,7 +121,7 @@ class UserOptions(object):
         _register("branch",     str,    permanent=False)
         _register("revision",   str,    permanent=False)
         _register("ignored",    bool,   permanent=False, compatible=True)
-        _register("buildTests", bool,   permanent=False, compatible=True)
+        _register("buildTests", True,   permanent=False, compatible=True)
         _register("buildStatic",bool,   permanent=False)
 
         _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False, compatible=True) # cachability already handled by cache behaviour
