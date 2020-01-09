@@ -15,10 +15,8 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/wget"] = None
             self.buildDependencies["dev-utils/git"] = None
             self.buildDependencies["dev-utils/mingw-w64"] = None
-            self.buildDependencies["dev-utils/kshimgen"] = None
             self.buildDependencies["dev-utils/cmake"] = None
         else:
-            self.buildDependencies["dev-utils/kshimgen"] = None
             self.buildDependencies["dev-utils/cmake"] = None
             self.buildDependencies["dev-utils/7zip"] = None
 

@@ -17,6 +17,14 @@ class subinfo(info.infoclass):
         self.patchLevel["0.2.0"] = 1
         self.defaultTarget = '0.2.0'
 
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/cmake-base"] = None
+
 class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
+
+    def configure(self):
+        path = f"{Path(CraftCore.standardDirs.craftRoot()) / 'dev-utils/cmake-base/bin'}{os.path.pathsep}{os.environ['Path']}"
+        with utils.ScopedEnv({"Path":path}):
+            return super().configure()
