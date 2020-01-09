@@ -106,7 +106,7 @@ class QMakeBuildSystem(BuildSystemBase):
         return defines
 
     def ccacheOptions(self):
-        return ' "QMAKE_CC=ccache gcc" "QMAKE_CXX=ccache g++" "CONFIG -= precompile_header" '
+        return f' "QMAKE_CC=ccache {os.environ["CC"]}" "QMAKE_CXX=ccache {os.environ["CXX"]}" "CONFIG -= precompile_header" '
 
     def clangOptions(self):
         if OsUtils.isUnix():
