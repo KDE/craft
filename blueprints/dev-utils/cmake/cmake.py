@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = "latest"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/cmake-base"] = None
         self.buildDependencies["dev-utils/kshimgen"] = None
 
 
