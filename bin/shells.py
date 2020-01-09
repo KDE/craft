@@ -81,6 +81,8 @@ class BashShell(object):
                     gcc = shutil.which("gcc")
                     if gcc:
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
+                elif CraftCore.compiler.isMSVC():
+                        path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
                 self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
 
