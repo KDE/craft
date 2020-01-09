@@ -30,6 +30,6 @@ class Package(CMakePackageBase):
             cmakePath /=  "CMake.app/Contents/bin"
         else:
             cmakePath /= "bin"
-        path = f"{binaryPath}{os.pathsep}{os.environ['PATH']}"
+        path = f"{cmakePath}{os.pathsep}{os.environ['PATH']}"
         with utils.ScopedEnv({"PATH":path}):
             return super().configure()
