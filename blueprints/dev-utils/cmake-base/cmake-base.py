@@ -32,11 +32,6 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "3.13.2"
 
-    def setDependencies(self):
-        self.buildDependencies["dev-utils/ninja"] = None
-        self.buildDependencies["dev-utils/kshimgen"] = None
-
-
     def registerOptions(self):
         self.options.dynamic.registerOption("checkForNightlies", False)
 
