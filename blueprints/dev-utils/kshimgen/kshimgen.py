@@ -25,6 +25,6 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
     def configure(self):
-        path = f"{Path(CraftCore.standardDirs.craftRoot()) / 'dev-utils/cmake-base/bin'}{os.path.pathsep}{os.environ['Path']}"
+        path = f"{Path(CraftCore.standardDirs.craftRoot()) / 'dev-utils/cmake-base/bin'}{os.pathsep}{os.environ['PATH']}"
         with utils.ScopedEnv({"Path":path}):
             return super().configure()
