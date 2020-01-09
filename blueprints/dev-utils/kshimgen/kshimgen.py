@@ -25,6 +25,11 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
 
     def configure(self):
-        path = f"{Path(CraftCore.standardDirs.craftRoot()) / 'dev-utils/cmake-base/bin'}{os.pathsep}{os.environ['PATH']}"
+        cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
+        if OsUtils.isMac():
+            cmakePath /=  "CMake.app/Contents/bin"
+        else:
+            cmakePath /= "bin"
+        path = f"{binaryPath}{os.pathsep}{os.environ['PATH']}"
         with utils.ScopedEnv({"PATH":path}):
             return super().configure()

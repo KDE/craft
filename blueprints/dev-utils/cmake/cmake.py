@@ -22,12 +22,14 @@ class Package(BinaryPackageBase):
     def install(self):
         if not super().install():
             return False
-        binaryPath = os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "cmake-base", "bin")
+        cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
         if OsUtils.isMac():
-            binaryPath = os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "cmake-base", "CMake.app", "Contents", "bin")
+            cmakePath /=  "CMake.app/Contents/bin"
+        else:
+            cmakePath /= "bin"
 
         for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
-            sourceBinary = os.path.join(binaryPath, f"{name}{CraftCore.compiler.executableSuffix}")
+            sourceBinary = cmakePath / f"{name}{CraftCore.compiler.executableSuffix}"
             targetBinary = os.path.join(self.imageDir(), "dev-utils", "bin", f"{name}{CraftCore.compiler.executableSuffix}")
             if os.path.exists(sourceBinary):
                 if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True):
