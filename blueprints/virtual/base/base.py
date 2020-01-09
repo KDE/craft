@@ -14,9 +14,11 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/7zip"] = None
             self.buildDependencies["dev-utils/wget"] = None
             self.buildDependencies["dev-utils/git"] = None
+            self.buildDependencies["dev-utils/mingw-w64"] = None
             self.buildDependencies["dev-utils/kshimgen"] = None
             self.buildDependencies["dev-utils/cmake"] = None
         else:
+            self.buildDependencies["dev-utils/kshimgen"] = None
             self.buildDependencies["dev-utils/cmake"] = None
             self.buildDependencies["dev-utils/7zip"] = None
 
@@ -34,9 +36,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/packagesdev"] = None
             self.buildDependencies["dev-utils/create-dmg"] = None
 
-
-        if CraftCore.compiler.isMinGW():
-            self.buildDependencies["dev-utils/mingw-w64"] = None
         if CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):

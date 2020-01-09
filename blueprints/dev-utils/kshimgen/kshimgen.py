@@ -1,19 +1,22 @@
 import info
-from Package.BinaryPackageBase import *
+from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.options.dynamic.setDefault("buildType", "Release")
+
     def setTargets(self):
-        sums = {"kshimgen-0.2.0-linux-64.tar.xz":"2325dd6b436d70933fde607b538e9fc594552ddc97877017b5a297e69bbde99b",
-                "kshimgen-0.2.0-macos-64.tar.xz": "6fe02653ccefe1aac652dde7b9546e8a1a34f9ce912b95ed8cbafbe6c6742f52",
-                "kshimgen-0.2.0-windows-32.7z": "e4d25e68bef07c0e31646016a34f6d8bfd0f00568043ac151f44145b4eb4bd4c",
-                "kshimgen-0.2.0-windows-64.7z": "9b3f7f03bb3f885184fd9ce16fc83e976e3f44307c6d98e71aca8bb5f399e8db"}
+        self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
+
         for ver in ["0.2.0"]:
-            fileName = f"kshimgen-{ver}-{CraftCore.compiler.platform.name.lower()}-{CraftCore.compiler.bits}.{'7z' if CraftCore.compiler.isWindows else 'tar.xz'}"
-            self.targets[ver] = f"https://files.kde.org/craft/prebuilt/kshimgen/{fileName}"
-            self.targetDigests[ver] =  ([sums[fileName]], CraftHash.HashAlgorithm.SHA256)
+            self.targets[ver] = f"https://files.kde.org/craft/sources/libs/kshimgn/kshimgen-v{ver}.tar.xz"
+            self.targetInstSrc[ver] = f"kshimgen-v{ver}"
+        self.targetDigests["0.1.0"] = (['1a46c599ca54e112fd37c39a60e5b97b6b20997e2114fe3cd422274c75ebcd22'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["0.2.0"] =  (['b5f93d81d6937edb6608b87e0a87c9b7783aa7488c350683865beac3207d4312'], CraftHash.HashAlgorithm.SHA256)
+        self.patchLevel["0.2.0"] = 1
         self.defaultTarget = '0.2.0'
 
-class Package(BinaryPackageBase):
+class Package(CMakePackageBase):
     def __init__(self, **args):
-        BinaryPackageBase.__init__(self)
+        CMakePackageBase.__init__(self)

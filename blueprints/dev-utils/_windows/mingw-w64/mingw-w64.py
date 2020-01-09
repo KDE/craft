@@ -2,6 +2,10 @@ import info
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        if not CraftCore.compiler.isMinGW:
+            self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NoPlatform
+
     def setTargets(self):
         for ver, rev, rt in [("5.3.0", "0", "4"),
                              ("5.4.0", "0", "5"),
@@ -31,7 +35,7 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class PackageMinGW(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
@@ -41,11 +45,3 @@ class PackageMinGW(BinaryPackageBase):
         if CraftCore.compiler.isX86():
             return utils.moveDir(os.path.join(self.installDir(), "mingw32"), os.path.join(self.installDir(), "mingw"))
         return True
-
-
-from Package.Qt5CorePackageBase import *
-
-
-class Package(Qt5CoreSdkPackageBase):
-    def __init__(self):
-        Qt5CoreSdkPackageBase.__init__(self, condition=CraftCore.compiler.isMinGW(), classA=PackageMinGW)
