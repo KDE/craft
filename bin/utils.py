@@ -48,6 +48,7 @@ from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from CraftSetupHelper import SetupHelper
 from CraftStandardDirs import CraftStandardDirs
+from Utils import CraftChoicePrompt
 
 
 def abstract():
@@ -877,14 +878,19 @@ def sign(fileNames : [str]) -> bool:
     subjectName = CraftCore.settings.get("CodeSigning", "CommonName")
     command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
     certFile = CraftCore.settings.get("CodeSigning", "Certificate", "")
+    certProtected = CraftCore.settings.getboolean("CodeSigning", "Protected", False)
     if certFile:
         command += ["/f", certFile]
+    if certProtected:
+        password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
+        command += ["/p", password]
+        kwargs = {'logCommand' : False}
     if True or CraftCore.debug.verbose() > 0:
         command += ["/v"]
     else:
         command += ["/q"]
     for args in limitCommandLineLength(command, fileNames):
-        if not system(args):
+        if not system(args, **kwargs):
             return False
     return True
 

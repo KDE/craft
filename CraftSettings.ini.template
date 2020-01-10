@@ -219,6 +219,7 @@ ClearBuildFolder = False
 
 [CodeSigning]
 Enabled = False
+Protected = False
 SignCache = ${CodeSigning:Enabled}
 #Certificate = C:\CraftRoot\mycert.pfx
 CommonName = K Desktop Environment e.V.

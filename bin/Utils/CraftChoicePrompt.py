@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
 
 import utils
+import getpass
 
 from CraftCore import CraftCore
 
@@ -75,6 +76,18 @@ def promptForChoice(title: str, choices : [], default : str=None):
     CraftCore.log.debug(f"Returning: {out}")
     return out
 
+def promptForPassword(message: str):
+
+    utils.notify("Craft needs your attention", message, log=False)
+
+    if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", True):
+        CraftCore.log.info(f"[ContinuousIntegration] Enabled = True: failing now.")
+        raise Exception("Password prompts for CI are not supported by Craft.")
+
+    CraftCore.debug.new_line()
+    password = getpass.getpass(prompt=message+": ", stream=None)
+    CraftCore.log.debug(f"The user entered: {password}")
+    return password
 
 if __name__ == "__main__":
     print(promptForChoice("Test1, simple no default", ["Foo", "Bar"]))
