@@ -1104,9 +1104,12 @@ def strip(fileName):
     if CraftCore.compiler.isMacOS:
         bundleDir = list(filter(lambda x: x.name.endswith(".framework") or x.name.endswith(".app"), fileName.parents))
         if bundleDir:
-            assert(len(bundleDir) == 1)
+            suffix = ""
+            # if we are a .app in a .framework we put the smbols in the same location
+            if len(bundleDir) > 1:
+                suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
             isBundle = True
-            symFile = Path(f"{bundleDir[0]}.dSYM")
+            symFile = Path(f"{bundleDir[-1]}{suffix}.dSYM")
         else:
             symFile = Path(f"{fileName}.dSYM")
     else:
