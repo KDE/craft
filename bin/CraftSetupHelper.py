@@ -275,6 +275,7 @@ class SetupHelper(object):
         self.prependEnvVar("LDFLAGS", f"-Wl,-rpath,{os.path.join(CraftCore.standardDirs.craftRoot(), 'lib')}", sep=" ")
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
+        self.addEnvVar("MACOSX_DEPLOYMENT_TARGET", CraftCore.settings.get("General", "MacDeploymentTarget", "10.13"))
         dbusInstalled = CraftCore.installdb.isInstalled("libs/dbus")
         if dbusInstalled:
             serviceAgent = os.path.join(CraftCore.standardDirs.craftRoot(), "Library", "LaunchAgents", "org.freedesktop.dbus-session.plist")

@@ -21,6 +21,12 @@ ABI = windows-msvc2015_64-cl
 ## This is an expert option, do not touch it unless you know exactly what it means.
 #MSVCToolset=14.16
 
+## Set the minimum supported MacOs version, this is also limited by Qt
+## 10.13 https://github.com/qt/qtbase/blob/5.14/mkspecs/common/macx.conf#L8
+## 10.12 https://github.com/qt/qtbase/blob/5.13/mkspecs/common/macx.conf#L8
+## 10.12 https://github.com/qt/qtbase/blob/5.12/mkspecs/common/macx.conf#L8
+#MacDeploymentTarget = 10.13
+
 ## This option can be used to enable a notification backend.
 ## As soon as the buildprocess of a project has finished a notification will be displayed.
 ## Possible Backends:

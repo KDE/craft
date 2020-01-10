@@ -158,17 +158,6 @@ class CraftCompiler(object):
         return result
 
     @property
-    def macOSDeploymentTarget(self) -> str:
-        assert self.macUseSDK
-        return "10.11"
-
-    @property
-    def macUseSDK(self) -> bool:
-        assert self.isMacOS
-        """Whether to compile against the macOS SDK instead of the libraries in /usr (off by default)"""
-        return CraftCore.settings.getboolean("MacSDK", "Enabled", "False")
-
-    @property
     def isWindows(self) -> bool:
         return self.platform == CraftCompiler.Platforms.Windows
 
@@ -324,7 +313,3 @@ if __name__ == '__main__':
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
         if CraftCore.compiler.isGCC():
             print("Compiler Target: %s" % CraftCore.compiler._getGCCTarget())
-    if CraftCore.compiler.isMacOS:
-        print("Using SDK for macOS:", CraftCore.compiler.macUseSDK)
-        if CraftCore.compiler.macUseSDK:
-            print("macOS SDK deployment target:", CraftCore.compiler.macOSDeploymentTarget)
