@@ -186,7 +186,7 @@ def system(cmd, displayProgress=False, logCommand=True, acceptableExitCodes=None
     return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, acceptableExitCodes=acceptableExitCodes, **kw)
 
 
-def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, **kw):
+def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, secretCommand=False, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -227,19 +227,22 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     else:
         app = arg0
 
-    if logCommand:
-        _logCommand = ""
-        if pipeProcess:
-            _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
-        _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
-        CraftCore.debug.print("executing command: {0}".format(_logCommand))
-    if pipeProcess:
-        CraftCore.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
+    if secretCommand:
+        CraftCore.debug.print(f"securely executing command: {app}")
     else:
-        CraftCore.log.debug(f"executing command: {cmd!r}")
-    CraftCore.log.debug(f"CWD: {cwd!r}")
-    CraftCore.log.debug(f"displayProgress={displayProgress}")
-    CraftCore.debug.logEnv(environment)
+        if logCommand:
+            _logCommand = ""
+            if pipeProcess:
+                _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
+            _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
+            CraftCore.debug.print("executing command: {0}".format(_logCommand))
+        if pipeProcess:
+            CraftCore.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
+        else:
+            CraftCore.log.debug(f"executing command: {cmd!r}")
+        CraftCore.log.debug(f"CWD: {cwd!r}")
+        CraftCore.log.debug(f"displayProgress={displayProgress}")
+        CraftCore.debug.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
     if not displayProgress or CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
@@ -278,11 +281,14 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     else:
         ok = proc.returncode in acceptableExitCodes
     if not ok:
-        msg = f"Command {cmd} failed with exit code {proc.returncode}"
-        if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-            CraftCore.log.debug(msg)
+        if not secretCommand:
+            msg = f"Command {cmd} failed with exit code {proc.returncode}"
+            if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                CraftCore.log.debug(msg)
+            else:
+                CraftCore.log.info(msg)
         else:
-            CraftCore.log.info(msg)
+            CraftCore.log.info(f"{app} failed with exit code {proc.returncode}")
     return ok
 
 def cleanDirectory(directory):
@@ -885,7 +891,7 @@ def sign(fileNames : [str]) -> bool:
     if certProtected:
         password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
         command += ["/p", password]
-        kwargs['logCommand'] = False
+        kwargs["secretCommand"] = True
     if True or CraftCore.debug.verbose() > 0:
         command += ["/v"]
     else:
