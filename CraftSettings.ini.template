@@ -97,7 +97,7 @@ UseNinja = True
 
 ## This option can be used to override the default make program
 ## change the value to the path of the executable you want to use instead.
-MakeProgram = jom
+#MakeProgram = jom
 
 ## Number of build jobs
 ## The default is number of cores or determined by the build tool
