@@ -879,12 +879,13 @@ def sign(fileNames : [str]) -> bool:
     command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
     certFile = CraftCore.settings.get("CodeSigning", "Certificate", "")
     certProtected = CraftCore.settings.getboolean("CodeSigning", "Protected", False)
+    kwargs = dict()
     if certFile:
         command += ["/f", certFile]
     if certProtected:
         password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
         command += ["/p", password]
-        kwargs = {'logCommand' : False}
+        kwargs['logCommand'] = False
     if True or CraftCore.debug.verbose() > 0:
         command += ["/v"]
     else:
