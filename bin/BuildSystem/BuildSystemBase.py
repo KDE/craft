@@ -67,7 +67,10 @@ class BuildSystemBase(CraftBase):
 
         if OsUtils.isWin():
             if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
-                return "nmake"
+                if self.subinfo.options.make.supportsMultijob:
+                    return "jom"
+                else:
+                    return "nmake"
             elif CraftCore.compiler.isMinGW():
                 return "mingw32-make"
             else:
