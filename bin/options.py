@@ -324,7 +324,7 @@ class UserOptions(object):
             if parent:
                 out = getattr(UserOptions.get(parent), name)
 
-        if not out:
+        if out is None:
             # name is a registered option and not a type but a default value
             if _packagePath in _instance.registeredOptions and name in _instance.registeredOptions[_packagePath]:
                 default = _instance.registeredOptions[_packagePath][name].value
@@ -334,7 +334,7 @@ class UserOptions(object):
 
         # skip lookup in command line options and parent objects the enxt time
         _cache[name] = out
-        #print(_packagePath, name, type(out), out)
+        #print("added to cache", _packagePath, name, type(out), out)
         return out
 
 class OptionsBase(object):
