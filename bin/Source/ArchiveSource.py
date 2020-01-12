@@ -247,10 +247,12 @@ class ArchiveSource(SourceBase):
             srcSubDir = os.path.relpath(self.sourceDir(), self.workDir())
             tmpSourceDir = os.path.join(tmpdir, srcSubDir)
             with io.BytesIO() as out:
+                ignores = []
+                for x in ["*~", r"*\.rej", r"*\.orig", r"*\.o", r"*\.pyc", "CMakeLists.txt.user"]:
+                    ignores += ["-x", x]
+
                 # TODO: actually we should not accept code 2
-                if not utils.system(["diff", "-Nrub",
-                                        "-x", "*~", "-x", "*\\.rej", "-x", "*\\.orig", "-x", "*\\.o", "-x", "*\\.pyc",
-                                        tmpSourceDir, self.sourceDir()],
+                if not utils.system(["diff", "-Nrub"] + ignores + [tmpSourceDir, self.sourceDir()],
                                     stdout=out, acceptableExitCodes=[0,1,2], cwd=destdir):
                     return False
                 patchContent = out.getvalue()
@@ -261,7 +263,7 @@ class ArchiveSource(SourceBase):
             with open(patchPath, "wb") as out:
                 out.write(patchContent)
 
-            CraftCore.log.info(f"Patch created {patchPath} (\"{_patchName}\", 1)")
+            CraftCore.log.info(f"Patch created {patchPath} self.patchToApply[\"{self.buildTarget}\"] = [(\"{_patchName}\", 1)]")
         return True
 
     def sourceVersion(self):
