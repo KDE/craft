@@ -889,7 +889,7 @@ def sign(fileNames : [str]) -> bool:
     if certFile:
         command += ["/f", certFile]
     if certProtected:
-        password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
+        password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="WINDOWS_CODE_SIGN_CERTIFICATE_PASSWORD")
         command += ["/p", password]
         kwargs["secretCommand"] = True
     if True or CraftCore.debug.verbose() > 0:
@@ -959,7 +959,7 @@ def signMacPackage(packagePath : str):
     return True
 
 def unlockMacKeychain():
-    password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
+    password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="MAC_KEYCHAIN_PASSWORD")
     if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, os.path.expanduser("~/Library/Keychains/login.keychain")], stdout=subprocess.DEVNULL, secretCommand=True):
         CraftCore.log.error("Failed to unlock keychain.")
         return False

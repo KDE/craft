@@ -121,8 +121,11 @@ class CraftDebug(object):
         if CraftCore.settings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:
                 env = os.environ
-            self.log.debug(
-                "Environment: \n" + "\n".join(f"    {key}={value}" for key, value in env.items()))
+            self.log.debug("Environment:")
+            for key, value in env.items():
+                if key.startswith("CRAFT_SECRET_"):
+                    value = "***"
+                self.log.debug(f"\t{key}={value}")
 
     def trace(self, message):
         self.log.debug("craft trace: %s" % message)

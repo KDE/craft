@@ -76,18 +76,20 @@ def promptForChoice(title: str, choices : [], default : str=None):
     CraftCore.log.debug(f"Returning: {out}")
     return out
 
-def promptForPassword(message: str):
-
-    utils.notify("Craft needs your attention", message, log=False)
-
+def promptForPassword(message: str, key: str=None):
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", True):
-        CraftCore.log.info(f"[ContinuousIntegration] Enabled = True: failing now.")
+        if key:
+            key = f"CRAFT_SECRET_{key}"
+            if key in os.environ:
+                return os.environ[key]
+        CraftCore.log.info(f"[ContinuousIntegration] Enabled = True: Please set the environment variable {key}")
         raise Exception("Password prompts for CI are not supported by Craft.")
+    else:
+        utils.notify("Craft needs your attention", message, log=False)
 
-    CraftCore.debug.new_line()
-    password = getpass.getpass(prompt=message+": ", stream=None)
-    CraftCore.log.debug(f"The user entered: {password}")
-    return password
+        CraftCore.debug.new_line()
+        password = getpass.getpass(prompt=message+": ", stream=None)
+        return password
 
 if __name__ == "__main__":
     print(promptForChoice("Test1, simple no default", ["Foo", "Bar"]))
