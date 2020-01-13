@@ -905,9 +905,10 @@ def signMacApp(appPath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
-    unlockMacKeychain()
-
     developerIdApplication = CraftCore.settings.get("CodeSigning", "MacDeveloperIdApplication")
+
+    if not unlockMacKeychain():
+        return False
 
     # Recursively sign app
     if not system(["codesign", "-s", developerIdApplication, "--force", "--preserve-metadata=entitlements", "--verbose=4", "--deep", appPath]):
@@ -934,10 +935,10 @@ def signMacPackage(packagePath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
+    if not unlockMacKeychain():
+        return False
 
-    unlockMacKeychain()
-
-    if packagePath.endswith(".dmg"):
+    if packagePath.name.endswith(".dmg"):
         # sign dmg
         developerIdApplication = CraftCore.settings.get("CodeSigning", "MacDeveloperIdApplication")
         if not system(["codesign", "--force", "--sign", developerIdApplication, packagePath]):
@@ -958,10 +959,11 @@ def signMacPackage(packagePath : str):
     return True
 
 def unlockMacKeychain():
-    password = CraftCore.settings.get("CodeSigning", "MacKeychainPassword")
-    if not system(f"security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k \"{password}\" ~/Library/Keychains/login.keychain", stdout=subprocess.DEVNULL, logCommand=False):
-        CraftCore.log.error("Cannot unlock keychain.")
+    password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate')
+    if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, os.path.expanduser("~/Library/Keychains/login.keychain")], stdout=subprocess.DEVNULL, secretCommand=True):
+        CraftCore.log.error("Failed to unlock keychain.")
         return False
+    return True
 
 
 def isExecuatable(fileName : Path):
