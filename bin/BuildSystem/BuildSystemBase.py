@@ -247,15 +247,15 @@ class BuildSystemBase(CraftBase):
                 if os.path.islink(f):
                     continue
                 # replace the old prefix or add it if missing
-                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), os.path.join(newPrefix, "lib"), f]):
-                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f])
+                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), os.path.join(newPrefix, "lib"), f], logCommand=False):
+                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f], logCommand=False)
 
                 # update prefix
                 if self.subinfo.buildPrefix != newPrefix:
                     if os.path.splitext(f)[1] in {".dylib", ".so"}:
                         # fix dylib id
                         with io.StringIO() as log:
-                            utils.system(["otool", "-D", f], stdout=log)
+                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
                             oldId = log.getvalue().strip().split("\n")
                         # the first line is the file name
                         # the second the id, if we only get one line, there is no id to fix
@@ -263,7 +263,7 @@ class BuildSystemBase(CraftBase):
                             oldId = oldId[1].strip()
                             newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
                             if newId != oldId:
-                                if not utils.system(["install_name_tool", "-id", newId, f]):
+                                if not utils.system(["install_name_tool", "-id", newId, f], logCommand=False):
                                     return False
 
                     # fix dependencies
@@ -271,7 +271,7 @@ class BuildSystemBase(CraftBase):
                         if dep.startswith(self.subinfo.buildPrefix):
                             newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
                             if newDep != dep:
-                                if not utils.system(["install_name_tool", "-change", dep, newDep, f]):
+                                if not utils.system(["install_name_tool", "-change", dep, newDep, f], logCommand=False):
                                     return False
 
         # Install pdb files on MSVC if they are not found next to the dll
