@@ -112,7 +112,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        command = ["ctest", "--output-on-failure", "--timeout", "300"]
+        command = ["ctest", "--output-on-failure", "--timeout", "300", "-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
         if CraftCore.debug.verbose() == 1:
             command += ["-V"]
         elif CraftCore.debug.verbose() > 1:
