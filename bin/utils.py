@@ -907,8 +907,7 @@ def signMacApp(appPath : str):
 
     developerIdApplication = CraftCore.settings.get("CodeSigning", "MacDeveloperIdApplication")
 
-    if not unlockMacKeychain():
-        return False
+    unlockMacKeychain()
 
     # Recursively sign app
     if not system(["codesign", "-s", developerIdApplication, "--force", "--preserve-metadata=entitlements", "--verbose=4", "--deep", appPath]):
@@ -935,8 +934,7 @@ def signMacPackage(packagePath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
-    if not unlockMacKeychain():
-        return False
+    unlockMacKeychain()
 
     if packagePath.name.endswith(".dmg"):
         # sign dmg
