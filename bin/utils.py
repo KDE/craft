@@ -957,7 +957,8 @@ def signMacPackage(packagePath : str):
 
 def unlockMacKeychain():
     password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="MAC_KEYCHAIN_PASSWORD")
-    if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, os.path.expanduser("~/Library/Keychains/login.keychain")], stdout=subprocess.DEVNULL, secretCommand=True):
+    loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
+    if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, loginKeychain], stdout=subprocess.DEVNULL, secretCommand=True):
         CraftCore.log.error("Failed to unlock keychain.")
         return False
     return True
