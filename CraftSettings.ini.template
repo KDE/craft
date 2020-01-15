@@ -218,8 +218,11 @@ Enabled = False
 ClearBuildFolder = False
 
 [CodeSigning]
+## Whether to use code signing
 Enabled = False
+## Enable if your cetificate is password protected or on mac if your keychain need to be unlocked
 Protected = False
+## Already sign the cache, this speeds up packaging on Windows as most deployed binaries won't need signing every time
 SignCache = ${CodeSigning:Enabled}
 #Certificate = C:\CraftRoot\mycert.pfx
 CommonName = K Desktop Environment e.V.
