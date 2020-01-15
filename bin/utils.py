@@ -908,7 +908,9 @@ def signMacApp(appPath : str):
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
     loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
-    unlockMacKeychain(loginKeychain)
+    if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+        if not unlockMacKeychain(loginKeychain):
+            return False
 
     # Recursively sign app
     if not system(["codesign", "--keychain", loginKeychain,"--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--verbose=4", "--deep", appPath]):
@@ -937,7 +939,10 @@ def signMacPackage(packagePath : str):
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
     loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
-    unlockMacKeychain(loginKeychain)
+    if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+        if not unlockMacKeychain(loginKeychain):
+            return False
+
     if packagePath.name.endswith(".dmg"):
         # sign dmg
         if not system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
