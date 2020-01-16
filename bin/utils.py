@@ -923,8 +923,8 @@ def signMacApp(appPath : str):
     if not system(["codesign", "--verify", "-v", appPath]):
         return False
 
-    if not system(["spctl", "-a", "-t", "exec", "-vv", appPath]):
-        return False
+    # TODO: this step might require notarisation
+    system(["spctl", "-a", "-t", "exec", "-vv", appPath])
 
     ## Validate that the key used for signing the binary matches the expected TeamIdentifier
     ## needed to pass the SocketApi through the sandbox
@@ -949,11 +949,9 @@ def signMacPackage(packagePath : str):
         if not system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
             return False
 
-        if False:
-            # TODO: this step would require notarisation
-            # verify dmg signature
-            if not system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath]):
-                return False
+        # TODO: this step would require notarisation
+        # verify dmg signature
+        system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath])
     else:
         # sign pkg
         packagePathTmp = f"{packagePath}.sign"
