@@ -934,6 +934,7 @@ def signMacApp(appPath : str):
     return True
 
 def signMacPackage(packagePath : str):
+    packagePath = Path(packagePath)
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
@@ -948,9 +949,11 @@ def signMacPackage(packagePath : str):
         if not system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
             return False
 
-        # verify dmg signature
-        if not system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath]):
-            return False
+        if False:
+            # TODO: this step would require notarisation
+            # verify dmg signature
+            if not system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath]):
+                return False
     else:
         # sign pkg
         packagePathTmp = f"{packagePath}.sign"
