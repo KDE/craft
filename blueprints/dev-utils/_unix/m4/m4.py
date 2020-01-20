@@ -12,7 +12,9 @@ class subinfo( info.infoclass ):
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
         self.defaultTarget = "1.4.18"
 
-        self.patchToApply["1.4.18"] = [("m4-1.4.18-20190506.diff", 1)]
+        self.patchToApply["1.4.18"] = [("m4-1.4.18-20190506.diff", 1),
+                                       ("m4-1.4.18-glibc-change-work-around.patch", 1) # http://git.openembedded.org/openembedded-core/plain/meta/recipes-devtools/m4/m4/m4-1.4.18-glibc-change-work-around.patch
+                                       ]
         self.patchLevel["1.4.18"] = 1
 
 from Package.AutoToolsPackageBase import *
