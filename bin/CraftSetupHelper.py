@@ -395,7 +395,7 @@ class SetupHelper(object):
 
 
         if CraftCore.compiler.isClang():
-            if OsUtils.isUnix():
+            if OsUtils.isUnix() and CraftCore.settings.get("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
