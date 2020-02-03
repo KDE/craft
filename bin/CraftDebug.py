@@ -122,7 +122,7 @@ class CraftDebug(object):
             if not env:
                 env = os.environ
             self.log.debug("Environment:")
-            for key, value in env.items():
+            for key, value in sorted(env.items()):
                 if key.startswith("CRAFT_SECRET_"):
                     value = "***"
                 self.log.debug(f"\t{key}={value}")
