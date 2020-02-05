@@ -524,7 +524,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                         if copiedFiles is not None:
                             copiedFiles.append(str(dest))
                     else:
-                        if not copyDir(entry.path, dest, copiedFiles=copiedFiles):
+                        if not copyDir(entry.path, dest, copiedFiles=copiedFiles, linkOnly=linkOnly):
                             return False
                 else:
                     # symlinks to files are included in `files`
