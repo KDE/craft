@@ -32,8 +32,7 @@ class MacPkgPackager( MacBasePackager ):
         if not "pkgproj" in defines:
             CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
             return False
-        # TODO: provide an image with dbg files
-        if not self.internalCreatePackage(defines):
+        if not self.internalCreatePackage(defines, seperateSymbolFiles=True, packageSymbols=True):
             return False
 
         packageDest = Path(defines["setupname"])

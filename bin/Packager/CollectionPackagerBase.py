@@ -307,21 +307,25 @@ class CollectionPackagerBase(PackagerBase):
 
         if seperateSymbolFiles:
             CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
-            for sym in utils.filterDirectoryContent(archiveDir,
-                                                    whitelist=lambda x, root: utils.isBinary(x.path),
+            def binaryFilter(x):
+                if CraftCore.compiler.isMacOS:
+                    if Path(x.path).suffix in {".framework", ".app"}:
+                        return True
+                return utils.isBinary(x.path)
+            for sym in utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
+                                                    whitelist=lambda x, root: binaryFilter(x),
                                                     blacklist=lambda x, root: True):
-                sym = Path(sym).with_suffix(symbolSuffix)
+                if CraftCore.compiler.isWindows:
+                    sym = Path(sym).with_suffix(symbolSuffix)
+                else:
+                    sym = Path(sym + symbolSuffix)
                 if sym.exists():
                     dest = Path(self.archiveDebugDir()) / os.path.relpath(sym, archiveDir)
                     CraftCore.log.info(f"Move symbols: {sym} {dest}")
                     if not utils.createDir(dest.parent):
                         return False
-                    if CraftCore.compiler.isMacOS:
-                        if not utils.moveDir(sym, dest):
-                            return False
-                    else:
-                        if not utils.moveFile(sym, dest):
-                            return False
+                    if not utils.moveFile(sym, dest):
+                        return False
 
             CraftCore.log.info("Remove unused symbols")
 
@@ -334,7 +338,7 @@ class CollectionPackagerBase(PackagerBase):
                         return False
                 return utils.regexFileFilter(x, root, [symbolPattern])
 
-            for sym in utils.filterDirectoryContent(archiveDir,
+            for sym in utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
                                                     whitelist=symFilter,
                                                     blacklist=lambda x, root: True):
                 CraftCore.log.info(f"Delete symbols: {sym}")
@@ -347,6 +351,8 @@ class CollectionPackagerBase(PackagerBase):
 
             if packageSymbols and os.listdir(self.archiveDebugDir()):
                 dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
+                if CraftCore.compiler.isMacOS:
+                    dbgName = dbgName.with_suffix(".tar.7z")
                 if dbgName.exists():
                     dbgName.unlink()
                 if not self._createArchive(dbgName, self.archiveDebugDir(), self.packageDestinationDir()):
