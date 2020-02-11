@@ -106,6 +106,7 @@ class CollectionPackagerBase(PackagerBase):
         self._blacklist_filters.add(x)
 
     def addExecutableFilter(self, pattern : str):
+        # TODO: move to parent?
         self.addBlacklistFilter(lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern)]) and utils.isExecuatable(fileName))
 
     def addWhitelistFilter(self, x):

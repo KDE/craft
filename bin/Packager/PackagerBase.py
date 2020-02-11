@@ -119,3 +119,6 @@ class PackagerBase(CraftBase):
                 self._generateManifest(destDir, archiveName)
                 CraftHash.createDigestFiles(archiveName)
         return True
+
+    def addExecutableFilter(self, pattern : str):
+        pass
