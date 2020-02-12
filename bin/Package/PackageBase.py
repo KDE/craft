@@ -121,13 +121,19 @@ class PackageBase(CraftBase):
                     if CraftCore.compiler.isWindows:
                         fileName = fileName.replace("\\", "/")
                     fUrl = f"{url}/{fileName}"
-                    if not GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
+                    # try it up to 3 times
+                    retries = 3
+                    while True:
+                        if GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
+                            break
                         msg = f"Failed to fetch {fUrl}"
-                        if createingCache:
-                            raise BlueprintException(msg, self.package)
-                        else:
-                            CraftCore.log.warning(msg)
-                        return False
+                        retries -= 1
+                        if not retries:
+                            if createingCache:
+                                raise BlueprintException(msg, self.package)
+                            else:
+                                CraftCore.log.warning(msg)
+                            return False
             elif not os.path.isfile(localArchiveAbsPath):
                 continue
 
