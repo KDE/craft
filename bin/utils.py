@@ -994,7 +994,7 @@ def isBinary(fileName : str) -> bool:
         elif isExecuatable(fileName):
             if CraftCore.compiler.isMacOS:
                 signature = MACH_O_64
-            elif CraftCore.compiler.isLinux:
+            elif CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
                 signature = ELF
             else:
                 raise Exception("Unsupported platform")
