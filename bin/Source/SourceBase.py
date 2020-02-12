@@ -36,7 +36,7 @@ class SourceBase(CraftBase):
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
-        CraftCore.log.debug("using sourcedir: " + sourcedir)
+        CraftCore.log.debug(f"using sourcedir: {sourcedir}")
         return sourcedir
 
     def applyPatches(self):
