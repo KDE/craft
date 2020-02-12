@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 import subprocess
 
@@ -28,7 +29,7 @@ class CraftStandardDirs(object):
         self._craftRoot = craftRoot or CraftCore.settings._craftRoot()
         self._downloadDir = CraftCore.settings.get("Paths", "DOWNLOADDIR", os.path.join(self._craftRoot, "download"))
         self._gitDir = CraftCore.settings.get("Paths", "KDEGITDIR", os.path.join( self._downloadDir, "git"))
-        self._junctionDir = CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_"))
+        self._junctionDir = Path(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_"))).absolute()
         self.locations = Location(self)
 
     @staticmethod
@@ -89,5 +90,5 @@ class CraftStandardDirs(object):
                                      os.path.join(CraftStandardDirs.craftRoot(), "msys"))
 
     @staticmethod
-    def junctionsDir():
+    def junctionsDir() -> Path:
         return CraftCore.standardDirs._junctionDir

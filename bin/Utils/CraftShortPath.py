@@ -11,7 +11,7 @@ class CraftShortPath(object):
 
     def __init__(self, path, createShortPath=None) -> None:
         self._longPath = path
-        self._shortPath = None
+        self._shortPath = None # type: Path
         if not createShortPath:
             self._createShortPathLambda = CraftShortPath._createShortPath
         else:
@@ -34,9 +34,6 @@ class CraftShortPath(object):
             CraftShortPath._shortPaths[self.longPath] = self._shortPath
         if self._shortPath != self.longPath:
             os.makedirs(self.longPath, exist_ok=True)
-            CraftCore.debug.log.debug(f"Mapped \n"
-                                f"{self.longPath} to\n"
-                                f"{self._shortPath}, gained {len(self.longPath) - len(self._shortPath)}")
         return self._shortPath
 
     @staticmethod
@@ -46,11 +43,12 @@ class CraftShortPath(object):
         import utils
         utils.createDir(CraftCore.standardDirs.junctionsDir())
         longPath = OsUtils.toNativePath(longPath)
-        path = OsUtils.toNativePath(os.path.join(CraftCore.standardDirs.junctionsDir(), hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]))
-        if len(longPath) < len(path):
+        path = CraftCore.standardDirs.junctionsDir() / hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]
+        delta = len(longPath) - len(str(path))
+        if delta <= 0:
             CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
             CraftCore.debug.log.debug(f"{longPath}\n"
-                                      f"{path}, gain:{len(longPath) - len(path)}")
+                                      f"{path}, gain: {delta}")
             return longPath
         utils.createDir(longPath)
         if not os.path.isdir(path):
@@ -67,4 +65,7 @@ class CraftShortPath(object):
             if not os.path.samefile(path, longPath):
                 CraftCore.debug.log.critical(f"Existing short path {path}, did not match {longPath}")
                 return longPath
+        CraftCore.debug.log.debug(f"Mapped \n"
+                            f"{longPath} to\n"
+                            f"{path}, gained {delta}")
         return path
