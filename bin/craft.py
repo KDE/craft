@@ -140,23 +140,23 @@ def main(timer):
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
                      "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch",
-                     ("install-to-desktop", {"help":argparse.SUPPRESS}), "update"], key=lambda x: x[0] if isinstance(x, tuple) else x):
+                     ("install-to-desktop", {"help":argparse.SUPPRESS}), "update",
+                     ("print-installed", {"help":"This will show a list of all packages that are installed currently."}),
+                     ("upgrade", {"help":"Update all installed packages"}),
+                     ("print-files", {"help":"Print the files installed by the package and exit"}),
+                     ("clean-unused", {"help":"Clean unused files of all packages"})
+                     ], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:
             actionHandler.addAction(x)
 
-    actionHandler.addAction("upgrade", help="Update all installed packages")
     # read-only actions
-    actionHandler.addAction("print-installed",
-                            help="This will show a list of all packages that are installed currently.")
-    actionHandler.addAction("print-files", help="Print the files installed by the package and exit")
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
     actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
     actionHandler.addActionWithArg("run", nargs=argparse.REMAINDER, help="Run an application in the Craft environment")
     actionHandler.addActionWithArg("run-detached", nargs=argparse.REMAINDER, help="Run an application in the Craft environment and detach")
-    actionHandler.addAction("clean-unused", help="Clean unused files of all packages")
 
     # other actions
 
