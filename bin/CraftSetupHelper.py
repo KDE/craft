@@ -28,6 +28,7 @@ import os
 import platform
 import shutil
 import subprocess
+import sqlite3
 import sys
 
 from CraftCore import CraftCore
@@ -276,7 +277,12 @@ class SetupHelper(object):
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
         self.addEnvVar("MACOSX_DEPLOYMENT_TARGET", CraftCore.settings.get("General", "MacDeploymentTarget", "10.13"))
-        dbusInstalled = CraftCore.installdb.isInstalled("libs/dbus")
+        try:
+            dbusInstalled = bool(CraftCore.installdb.isInstalled("libs/dbus"))
+        except sqlite3.OperationalError:
+            # db might be locked
+            dbusInstalled = False
+
         if dbusInstalled:
             serviceAgent = os.path.join(CraftCore.standardDirs.craftRoot(), "Library", "LaunchAgents", "org.freedesktop.dbus-session.plist")
             if os.path.exists(serviceAgent):
