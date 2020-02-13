@@ -193,9 +193,9 @@ def unShelve(shelve):
 
     for p, info in packages.items():
         if info.version:
-            UserOptions.setOptions([f"{p}.version={info.version}"])
+            setOption([p], f"version={info.version}")
         if info.revision:
-            UserOptions.setOptions([f"{p}.revision={info.revision}"])
+            setOption([p], f"revision={info.revision}")
     return packages.keys()
 
 def shelve():
