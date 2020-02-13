@@ -91,7 +91,9 @@ def main(timer):
     parser.add_argument("-p", "--probe", action="store_true",
                         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
     parser.add_argument("--list-file", action="store",
-                        help="Build all packages from the ini file provided")
+                        help=argparse.SUPPRESS, dest="unshelve")
+    parser.add_argument("--unshelve", action="store",
+                        help="Build all packages from the shelve file provided")
     parser.add_argument("--options", action="append",
                         default=CraftCore.settings.getList("General", "Options", ""),
                         help="Set craft property from string <OPTIONS>. An example for is extragear/kdevelop.version=5.3 or [Compile]MakeProgram=jom.")
@@ -144,7 +146,8 @@ def main(timer):
                      ("print-installed", {"help":"This will show a list of all packages that are installed currently."}),
                      ("upgrade", {"help":"Update all installed packages"}),
                      ("print-files", {"help":"Print the files installed by the package and exit"}),
-                     ("clean-unused", {"help":"Clean unused files of all packages"})
+                     ("clean-unused", {"help":"Clean unused files of all packages"}),
+                     ("shelve", {"help":"Generate a an ini with a list of all installed packages and their version"})
                      ], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
@@ -230,16 +233,18 @@ def main(timer):
         CraftCore.log.debug("Craft: %s" % CraftCore.standardDirs.craftRoot())
 
         packageNames = tempArgs.packageNames
-        if tempArgs.list_file:
-            if not os.path.exists(tempArgs.list_file):
-                CraftCore.log.error(f"List file {tempArgs.list_file!r} does not exist")
+        if tempArgs.unshelve:
+            if not os.path.exists(tempArgs.unshelve):
+                CraftCore.log.error(f"List file {tempArgs.unshelve!r} does not exist")
                 return False
             if not packageNames:
                 packageNames = []
-            packageNames += CraftCommands.readListFile(tempArgs.list_file)
+            packageNames += CraftCommands.unShelve(tempArgs.unshelve)
 
         if action == "print-installed":
             InstallDB.printInstalled()
+        if action == "shelve":
+            CraftCommands.shelve()
         elif action == "search-file":
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         elif action == "set":

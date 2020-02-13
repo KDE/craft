@@ -181,7 +181,7 @@ class InstallDB(object):
         """ returns a list of the installed packages, which can be restricted by adding
             package.
         """
-        cmd = '''SELECT DISTINCT packagePath, version FROM packageList'''
+        cmd = '''SELECT DISTINCT packagePath, version, revision FROM packageList'''
         stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package})
         cmd += stmt
         cmd += ''';'''
@@ -281,8 +281,8 @@ def printInstalled():
     printLine("Package", "Version")
     printLine("=" * width, "=" * 10)
     installed = sorted(installed, key=lambda x :x[0])
-    for package, version in installed:
-        printLine(package, version)
+    for package, version, revision in installed:
+        printLine(package, revision or revision)
 
 def printPackagesForFileSearch(filename):
     packages = CraftCore.installdb.getPackagesForFileSearch(filename)

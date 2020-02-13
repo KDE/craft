@@ -33,6 +33,8 @@ from Utils import CraftTimer
 from options import *
 import glob
 import utils
+from pathlib import Path
+from collections import namedtuple
 
 
 def doExec(package, action):
@@ -170,17 +172,58 @@ def destroyCraftRoot() -> bool:
     return True
 
 
-def readListFile(listFile):
+def unShelve(shelve):
     packageNames = []
     parser = configparser.ConfigParser(allow_no_value=True)
-    parser.read(listFile)
-    for sections in parser.keys():
-        for packageName in parser[sections]:
-            version = parser.get(sections, packageName)
-            if version:
-              UserOptions.setOptions([f"{packageName}.version={version}"])
-            packageNames.append(packageName)
-    return packageNames
+    parser.read(shelve, encoding="UTF-8")
+    listVersion = 1
+    if "General" in parser:
+        listVersion = int(parser["General"].get("version", listVersion))
+    Info = namedtuple("Info", "version revision")
+    packages = {} # type: Info
+    if listVersion == 1:
+        for sections in parser.keys():
+            for packageName in parser[sections]:
+                packages[packageName] = Info(parser.get(sections, packageName, None), None)
+    elif listVersion == 2:
+        for p, s in parser.items():
+            if p in {"General", "DEFAULT"}:
+                continue
+            packages[p] = Info(s.get("version", None), s.get("revision", None))
+
+    for p, info in packages.items():
+        if info.version:
+            UserOptions.setOptions([f"{p}.version={info.version}"])
+        if info.revision:
+            UserOptions.setOptions([f"{p}.revision={info.revision}"])
+    return packages.keys()
+
+def shelve():
+    listFile = configparser.ConfigParser(allow_no_value=True)
+    listFile.add_section("General")
+    listFile["General"]["version"] = "2"
+    reDate = re.compile(r"\d\d\d\d\.\d\d\.\d\d")
+    for package, version, revision in CraftCore.installdb.getDistinctInstalled():
+        packageObject = CraftPackageObject.get(package)
+        if not packageObject:
+            CraftCore.log.warning(f"{package} is no longer known to Craft, it will not be added to the list")
+            continue
+        listFile.add_section(package)
+        package = listFile[package]
+        # TODO: clean our database
+        patchLvl = version.split("-", 1)
+        if len(patchLvl) == 2:
+            # have we encoded a date or a patch lvl?
+            clean = packageObject.subinfo.options.dailyUpdate and bool(reDate.match(patchLvl[1]))
+            clean |= patchLvl[0] in packageObject.subinfo.patchLevel and str(packageObject.subinfo.patchLevel[patchLvl[0]] + packageObject.categoryInfo.patchLevel) == patchLvl[1]
+            if clean:
+                version = patchLvl[0]
+        package["version"] = version
+        if revision:
+            # sadly we combine the revision with the branch "master-1234ac"
+            package["revision"] = revision.split("-", 1)[1]
+    with open(Path(CraftCore.standardDirs.craftRoot()) / "craft.shelve", "wt", encoding="UTF-8") as out:
+        listFile.write(out)
 
 
 def packageIsOutdated(package):
@@ -352,7 +395,7 @@ def upgrade(args) -> bool:
         return subprocess.call([sys.executable] + sys.argv) == 0
     else:
         package = CraftPackageObject(None)
-        for packageName, _ in CraftCore.installdb.getDistinctInstalled():
+        for packageName, _, _ in CraftCore.installdb.getDistinctInstalled():
             p = CraftPackageObject.get(packageName)
             if p:
                 package.children[p.name] = p
@@ -375,3 +418,5 @@ def printFiles(packages):
             for file in fileList:
                 CraftCore.log.info(file[0])
     return True
+
+
