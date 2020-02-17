@@ -11,6 +11,7 @@ class CraftTitleUpdater(object):
         self.title = None
         self.timer = None
         self.dynamicMessage = None
+        self.dynamicStopMessage = None
 
     def __str__(self):
         dynamicPart = ""
@@ -24,7 +25,7 @@ class CraftTitleUpdater(object):
     def run(self):
         while (self.doUpdateTitle):
             self.updateTitle()
-            time.sleep(30)
+            time.sleep(10)
 
     def start(self, message, timer):
         self.title = message
@@ -37,6 +38,8 @@ class CraftTitleUpdater(object):
         tittleThread.start()
 
     def stop(self):
+        if self.dynamicStopMessage:
+            CraftCore.log.info(self.dynamicStopMessage())
         self.doUpdateTitle = False
 
 
@@ -49,4 +52,10 @@ class CraftTitleUpdater(object):
                 return ""
             progress = int((1 - len(packages) / initialSize) * 100)
             return f"{progress}% {[x.path for x in packages]}"
+
+        def stopMessage():
+            if not packages:
+                return ""
+            return f"Craft stopped with out completing {[x.path for x in packages]}"
         CraftTitleUpdater.instance.dynamicMessage = title
+        CraftTitleUpdater.instance.dynamicStopMessage = stopMessage
