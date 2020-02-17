@@ -63,8 +63,11 @@ class SetupHelper(object):
     NeedsSetup = "KDEROOT" not in os.environ
     def __init__(self, args=None):
         self.args = args
-        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-            OsUtils.enableAnsiColors()
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+             CraftCore.settings.set("General", "AllowAnsiColor", "False")
+        else:
+            if CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
+                OsUtils.enableAnsiColors()
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
@@ -420,7 +423,7 @@ class SetupHelper(object):
                 self.addEnvVar("CC", "gcc")
                 self.addEnvVar("CXX", "g++")
 
-        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)):
             # different non standard env switches
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")

@@ -39,6 +39,9 @@ Notify = SnoreToast
 ## Speed up the merging of packages by using hard links
 UseHardlinks = True
 
+## Use ANSI colors for the logs and enable tools to use ANSI colors
+AllowAnsiColor = 1
+
 [Variables]
 ## Values here are usually set by craft and can be used for dynamic values
 ## To override the variables, uncomment them

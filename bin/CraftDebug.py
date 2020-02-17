@@ -45,7 +45,7 @@ class CraftDebug(object):
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(f"Right now we don't support running multiple Craft instances with the same configuration.",
                   file=sys.stderr)
-        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor"):
+        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
             coloredlogs.install(logger=self._log, fmt="%(message)s", stream=sys.stdout)
             self._handler = self._log.handlers[-1]
         else:

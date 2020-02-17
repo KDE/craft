@@ -53,8 +53,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["craft/craft-blueprints-kde"] = None
         self.buildDependencies["craft/craft-core"] = None
         self.runtimeDependencies["libs/runtime"] = None
-        if CraftCore.settings.getboolean("General", "AllowAnsiColor", False):
-            self.buildDependencies["python-modules/coloredlogs"] = None
 
 
 

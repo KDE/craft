@@ -144,6 +144,10 @@ class CraftBootstrap(object):
         print()
         return os.path.exists(os.path.join(destdir, filename))
 
+    @staticmethod
+    def enableANSISupport():
+        subprocess.run([sys.executable, "-m", "pip", "install", "--user", "--upgrade", "coloredlogs"])
+
 
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
@@ -195,6 +199,12 @@ def setUp(args):
 
     abi = getABI()
 
+    useANSIColor = CraftBootstrap.promptForChoice("Do you want to enable the support for colored logs",
+                                                [("Yes", True), ("No", False)],
+                                                        default="Yes")
+    if useANSIColor:
+        CraftBootstrap.enableANSISupport()
+
     installShortCut = False
     if CraftBootstrap.isWin():
         installShortCut = CraftBootstrap.promptForChoice("Do you want to install a StartMenu entry",
@@ -214,6 +224,7 @@ def setUp(args):
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
     boot.setSettignsValue("General", "ABI", abi)
+    boot.setSettignsValue("General", "AllowAnsiColor", useANSIColor)
     py = shutil.which("py")
     if py:
         py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
