@@ -112,10 +112,10 @@ class CraftBootstrap(object):
         if not os.path.isdir(os.path.join(self.craftRoot, "etc")):
             os.makedirs(os.path.join(self.craftRoot, "etc"), exist_ok=True)
         if not self.dryRun:
-            with open(os.path.join(self.craftRoot, "etc", "CraftSettings.ini"), "wt+") as out:
+            with open(os.path.join(self.craftRoot, "etc", "CraftSettings.ini"), "wt+", encoding="UTF-8") as out:
                 out.write("\n".join(self.settings))
         else:
-            with open(self.dryRun + ".dry_run", "wt+") as out:
+            with open(self.dryRun + ".dry_run", "wt+", encoding="UTF-8") as out:
                 out.write("\n".join(self.settings))
 
 
