@@ -37,31 +37,35 @@ class MSBuildBuildSystem(BuildSystemBase):
         return True
 
     def make(self):
-        self.enterSourceDir()
-        msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
-        buildType =self.buildTypes[self.buildType()]
-        if CraftCore.compiler.isX86():
-            platform = " /p:Platform=win32"
-        else:
-            platform = ""
-        if "WINDOWSSDKVERSION" in os.environ:
-            sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
-        else:
-            sdkVer = ""
-        toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
-        if toolsVersion == "15.0" and msbuildVersion >= "16":
-            toolsVersion = f" /toolsversion:Current"
-        elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
-            toolsVersion = f" /toolsversion:{toolsVersion}"
-        else:
-            toolsVersion = ""
-        return utils.system(f"msbuild /m /t:{';'.join(self.msbuildTargets)} \"{self.subinfo.options.configure.projectFile}\""
-                            f" /p:Configuration={buildType}"
-                            f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
-                            f"{toolsVersion}"
-                            f"{sdkVer}"
-                            f"{platform}"
-                            f" {self.subinfo.options.configure.args}")
+        env = {
+            "LIB" : f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
+            "INCLUDE" : f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}"}
+        with utils.ScopedEnv(env):
+            self.enterSourceDir()
+            msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
+            buildType =self.buildTypes[self.buildType()]
+            if CraftCore.compiler.isX86():
+                platform = " /p:Platform=win32"
+            else:
+                platform = ""
+            if "WINDOWSSDKVERSION" in os.environ:
+                sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
+            else:
+                sdkVer = ""
+            toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
+            if toolsVersion == "15.0" and msbuildVersion >= "16":
+                toolsVersion = f" /toolsversion:Current"
+            elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
+                toolsVersion = f" /toolsversion:{toolsVersion}"
+            else:
+                toolsVersion = ""
+            return utils.system(f"msbuild /m /t:{';'.join(self.msbuildTargets)} \"{self.subinfo.options.configure.projectFile}\""
+                                f" /p:Configuration={buildType}"
+                                f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
+                                f"{toolsVersion}"
+                                f"{sdkVer}"
+                                f"{platform}"
+                                f" {self.subinfo.options.configure.args}")
 
     def install(self, buildDirs=None, installHeaders=True):
         if not buildDirs:
