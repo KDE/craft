@@ -163,7 +163,7 @@ PackageDebugSymbols = True
 ## Sets a custom repository for the binary cache
 #RepositoryUrl = https://files.kde.org/craft/master/
 
-## Enable to fatch packages from a Craft cache repository
+## Enable to fetch packages from a Craft cache repository
 ## See --use-cache and --no-cache in the Craft help.
 UseCache = True
 
