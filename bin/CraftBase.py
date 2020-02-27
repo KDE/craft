@@ -80,11 +80,6 @@ class CraftBase(object):
         """return the target CPU architecture"""
         CraftCore.compiler.architecture()
 
-    def workDirPattern(self):
-        """return base directory name for package related work directory"""
-
-        return f"{self.buildType()}-{self.buildTarget}"
-
     def imageDirPattern(self):
         """return base directory name for package related image directory"""
         return f"image-{self.buildType()}-{self.buildTarget}"
@@ -115,7 +110,7 @@ class CraftBase(object):
         if not self.subinfo.options.useShadowBuild:
             return self.sourceDir()
         CraftCore.log.debug("CraftBase.buildDir() called")
-        builddir = os.path.join(self.workDir(), self.workDirPattern())
+        builddir = os.path.join(self.workDir(), "build")
         CraftCore.log.debug(f"package builddir is: {builddir}")
         return builddir
 
