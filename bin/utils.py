@@ -304,6 +304,7 @@ def cleanDirectory(directory):
                 else:
                     if not OsUtils.rm(f.path, force=True):
                         return False
+        return True
     else:
         return createDir(directory)
 
