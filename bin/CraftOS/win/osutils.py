@@ -12,6 +12,7 @@ class FileAttributes():
     # https://msdn.microsoft.com/en-us/library/windows/desktop/gg258117(v=vs.85).aspx
     FILE_ATTRIBUTE_READONLY = 0x1
     FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+    FILE_ATTRIBUTE_NORMAL = 0x80
 
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
@@ -21,21 +22,25 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         if OsUtils.isLink(path):
             try:
                 os.remove(path)
+                return True
             except:
                 return False
-            return True
-        if force:
-            OsUtils.removeReadOnlyAttribute(path)
-        ret =  ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
-        if not ret:
-            msg = f"Deleting {path} failed error: "
-            error = ctypes.windll.kernel32.GetLastError()
-            if error == 5:
-                msg += "ERROR_ACCESS_DENIED"
-            else:
-                msg += error
-            CraftCore.log.error(msg)
-        return ret
+        try:
+            os.remove(path)
+        except:
+            if force:
+                OsUtils.setWritable(path)
+            ret = ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
+            if not ret:
+                msg = f"Deleting {path} failed error: "
+                error = ctypes.windll.kernel32.GetLastError()
+                if error == 5:
+                    msg += "ERROR_ACCESS_DENIED"
+                else:
+                    msg += error
+                CraftCore.log.error(msg)
+                return False
+        return True
 
     @staticmethod
     def rmDir(path, force=False):
@@ -44,7 +49,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         if OsUtils.isLink(path):
             return OsUtils.rm(path, force)
         if force:
-            OsUtils.removeReadOnlyAttribute(path)
+            OsUtils.setWritable(path)
         with os.scandir(path) as scan:
             for f in scan:
                 if f.is_dir() and not OsUtils.isLink(f.path):
@@ -74,6 +79,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         attributes = OsUtils.getFileAttributes(path)
         return ctypes.windll.kernel32.SetFileAttributesW(str(path),
                                                          attributes & ~ FileAttributes.FILE_ATTRIBUTE_READONLY) != 0
+
+    @staticmethod
+    def setWritable(path):
+        return ctypes.windll.kernel32.SetFileAttributesW(str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL) != 0
 
     @staticmethod
     def setConsoleTitle(title):
