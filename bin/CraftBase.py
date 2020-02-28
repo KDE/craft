@@ -267,9 +267,8 @@ class CraftBase(object):
 
     def cleanImage(self) -> bool:
         """cleanup before install to imagedir"""
-        if (os.path.exists(self.imageDir())):
-            CraftCore.log.debug("cleaning image dir: %s" % self.imageDir())
-            return OsUtils.rmDir(self.imageDir(), force=True)
+        if os.path.exists(self.imageDir()):
+            return utils.cleanDirectory(self.imageDir())
         return True
 
     def cleanBuild(self) -> bool:
@@ -277,6 +276,5 @@ class CraftBase(object):
         if not self.subinfo.options.useShadowBuild:
             return True
         if os.path.exists(self.buildDir()):
-            utils.cleanDirectory(self.buildDir())
-            CraftCore.log.debug("cleaning build dir: %s" % self.buildDir())
+            return utils.cleanDirectory(self.buildDir())
         return True
