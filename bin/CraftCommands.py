@@ -345,9 +345,10 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 
 def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
     def cleanDir(dir):
-        CraftCore.debug.printOut(f"Cleaning: {dir}")
-        utils.cleanDirectory(dir)
-        os.rmdir(dir)
+        if os.path.isdir(dir):
+            CraftCore.debug.info(f"Cleaning: {dir}")
+            utils.cleanDirectory(dir)
+            utils.rmtree(dir)
 
     for p in packages:
         package = CraftPackageObject.get(p.path)
