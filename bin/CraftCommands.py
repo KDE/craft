@@ -359,10 +359,8 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
 
         if version:
             imageGlob = instance.imageDir().replace(version, "*")
-            builddirGlob = instance.buildDir().replace(version, "*")
         else:
             imageGlob = instance.imageDir()
-            builddirGlob = instance.buildDir()
 
         # image directories
         if cleanImages:
@@ -378,8 +376,7 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
 
         # build directory
         if cleanBuildDir:
-            for dir in glob.glob(builddirGlob):
-                cleanDir(dir)
+            cleanDir(instance.buildDir())
 
 def upgrade(args) -> bool:
     ENV_KEY = "CRAFT_CORE_UPDATED"
