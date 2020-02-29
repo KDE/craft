@@ -174,6 +174,7 @@ class infoclass(object):
         """return relative path appendable to local source path for the recent target"""
         if self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[self.buildTarget]
+        return None
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""

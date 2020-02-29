@@ -67,7 +67,7 @@ def unpackFiles(downloaddir, filenames, workdir):
     return True
 
 
-def unpackFile(downloaddir, filename, workdir):
+def unpackFile(downloaddir, filename, workdir, subDir=None):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     CraftCore.log.debug(f"unpacking this file: {filename}")
     if not filename:
@@ -88,23 +88,26 @@ def unpackFile(downloaddir, filename, workdir):
         if (not OsUtils.isWin()
                 or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
                 or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
-            return un7zip(os.path.join(downloaddir, filename), workdir, ext)
+            return un7zip(os.path.join(downloaddir, filename), workdir, ext, subDir=subDir)
     try:
         shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
+        if subDir:
+            mergeTree(Path(workdir) / subDir, workdir)
     except Exception as e:
         CraftCore.log.error(f"Failed to unpack {filename}", exc_info=e)
         return False
     return True
 
 
-def un7zip(fileName, destdir, flag=None):
+def un7zip(fileName, destdir, flag=None, subDir=None):
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-    createDir(destdir)
+    subDir = [] if not subDir else [subDir]
     kw = {}
     progressFlags = []
     type = []
     resolveSymlinks = False
     app = CraftCore.cache.findApplication("7za")
+    createDir(destdir)
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2",  "-bsp1"]
         kw["stderr"] = subprocess.PIPE
@@ -126,12 +129,14 @@ def un7zip(fileName, destdir, flag=None):
             resolveSymlinks = True
             if progressFlags:
                 progressFlags = ["-bsp0"]
-            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
+            command = [app, "x"] + subDir + ["-si", f"-o{destdir}", "-ttar"] + progressFlags
         else:
             tar = CraftCore.cache.findApplication("tar")
-            command = [tar, "--directory", destdir, "-xf", "-"]
+            if subDir:
+                subDir = ["--strip-components", subDir[0].count("/") + 1]
+            command = [tar, "--directory", destdir, "-xf", "-"] + subDir
     else:
-        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
+        command = [app, "x"] + subDir + ["-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system(command, displayProgress=True, **kw) and (not resolveSymlinks or replaceSymlinksWithCopies(destdir))

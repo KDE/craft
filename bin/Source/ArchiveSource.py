@@ -191,7 +191,7 @@ class ArchiveSource(SourceBase):
                 if not utils.copyFile(filePath, os.path.join(self.workDir(), filename)):
                     return False
             else:
-                if not utils.unpackFile(self.__downloadDir, filename, self.workDir()):
+                if not utils.unpackFile(self.__downloadDir, filename, self.sourceDir(), subDir=self.subinfo.targetSourcePath()):
                     return False
 
         ret = self.applyPatches()
