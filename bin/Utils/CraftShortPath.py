@@ -56,7 +56,7 @@ class CraftShortPath(object):
                 ok = utils.createSymlink(longPath, path, useAbsolutePath=True, targetIsDirectory=True)
             else:
                 # note: mklink is a CMD command => needs shell
-                ok = utils.system(["mklink", "/D", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False)
+                ok = utils.system(["mklink", "/J", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False)
 
             if not ok:
                 CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
