@@ -82,7 +82,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                         data = f.read()
                 except UnicodeDecodeError:
                     with open(digestFileName, "rb") as f:
-                        CraftCore.log.error(f"Failed to decode digests file {digestFileName}: {f.read()}")
+                        CraftCore.log.error(f"Failed to decode digests file {digestFileName}: {f.read(100)}...")
                     return False
                 if not re.findall(currentHash, data):
                     CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (
