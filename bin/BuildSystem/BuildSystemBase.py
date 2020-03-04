@@ -39,7 +39,7 @@ from CraftOS.osutils import OsUtils
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    PatchableFile = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm"}
+    PatchableFile = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm", ".la"}
 
     def __init__(self, typeName=""):
         """constructor"""
