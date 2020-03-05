@@ -24,25 +24,45 @@ class MacBasePackager( CollectionPackagerBase ):
             return False
 
         appPath = self.getMacAppPath(defines)
-        archive = os.path.normpath(self.archiveDir())
+        archive = Path(self.archiveDir())
         CraftCore.log.info(f"Packaging {appPath}")
+
+        CraftCore.log.info("Clean up frameworks")
+        for framework in utils.filterDirectoryContent(archive / "lib", handleAppBundleAsFile=True,
+                                            whitelist=lambda x, root: x.name.endswith(".framework"),
+                                            blacklist=lambda x, root: True):
+            rubbish = []
+            framework = Path(framework)
+            rubbish += glob.glob(str(framework / "*.prl"))
+            rubbish += glob.glob(str(framework / "Headers"))
+            for r in rubbish:
+                r = Path(r)
+                if r.is_symlink():
+                    if framework not in r.parents:
+                        raise Exception(f"Evil symlink detected: {r}")
+                    utils.deleteFile(r)
+                    r = r.resolve()
+                if r.is_dir():
+                    utils.rmtree(r)
+                else:
+                    utils.deleteFile(r)
 
         targetLibdir = os.path.join(appPath, "Contents", "Frameworks")
         utils.createDir(targetLibdir)
 
         moveTargets = [
-            (os.path.join(archive, "lib", "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
-            (os.path.join(archive, "plugins"), os.path.join(appPath, "Contents", "PlugIns")),
-            (os.path.join(archive, "share"), os.path.join(appPath, "Contents", "Resources")),
-            (os.path.join(archive, "translations"), os.path.join(appPath, "Contents", "Resources", "Translations")),
-            (os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS")),
-            (os.path.join(archive, "libexec"), os.path.join(appPath, "Contents", "MacOS")),
-            (os.path.join(archive, "lib", "libexec", "kf5"), os.path.join(appPath, "Contents", "MacOS")),
-            (os.path.join(archive, "lib", "libexec"), os.path.join(appPath, "Contents", "MacOS")),
-            (os.path.join(archive, "lib"), targetLibdir),
+            (archive / "lib/plugins", appPath / "Contents/PlugIns"),
+            (archive / "plugins", appPath / "Contents/PlugIns"),
+            (archive / "share", appPath / "Contents/Resources"),
+            (archive / "translations", appPath / "Contents/Resources/Translations"),
+            (archive / "bin", appPath / "Contents/MacOS"),
+            (archive / "libexec", appPath / "Contents/MacOS"),
+            (archive / "lib/libexec/kf5", appPath / "Contents/MacOS"),
+            (archive / "lib/libexec", appPath / "Contents/MacOS"),
+            (archive / "lib", targetLibdir),
         ]
 
-        if not appPath.startswith(archive):
+        if archive not in appPath.parents:
             moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
 
         for src, dest in moveTargets:
@@ -58,7 +78,7 @@ class MacBasePackager( CollectionPackagerBase ):
                 return False
 
             binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents", "MacOS"),
-                                                         whitelist=lambda x, root: utils.isBinary(os.path.join(root, x)) and x.name != defines["appname"],
+                                                         whitelist=lambda x, root: utils.isBinary(x.path) and x.name != defines["appname"],
                                                          blacklist=lambda x, root: True))
 
             for binary in binaries:

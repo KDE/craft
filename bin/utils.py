@@ -914,14 +914,14 @@ def signMacApp(appPath : str):
             return False
 
     # Recursively sign app
-    if not system(["codesign", "--keychain", loginKeychain,"--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--verbose=4", "--deep", appPath]):
+    if not system(["codesign", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--verbose=99", "--deep", appPath]):
         return False
 
     ## Verify signature
-    if not system(["codesign", "-dv", appPath]):
+    if not system(["codesign", "--display", "--verbose", appPath]):
         return False
 
-    if not system(["codesign", "--verify", "-v", appPath]):
+    if not system(["codesign", "--verify", "--verbose", appPath]):
         return False
 
     # TODO: this step might require notarisation

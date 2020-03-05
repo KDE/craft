@@ -49,8 +49,8 @@ class PackagerBase(CraftBase):
         defines.setdefault("appname", self.package.name.lower())
         return defines
 
-    def getMacAppPath(self, defines, lookupPath = None):
-        lookPath = os.path.normpath(lookupPath if lookupPath else self.archiveDir())
+    def getMacAppPath(self, defines, lookupPath = None) -> Path:
+        lookPath = Path(lookupPath if lookupPath else self.archiveDir())
         appPath = defines['apppath']
         if not appPath:
             apps = glob.glob(os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True)
@@ -58,8 +58,7 @@ class PackagerBase(CraftBase):
                 CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
                 return False
             appPath = apps[0]
-        appPath = os.path.join(lookPath, appPath)
-        return os.path.normpath(appPath)
+        return lookPath / appPath
 
     def preArchive(self):
         utils.abstract()
