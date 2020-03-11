@@ -99,13 +99,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         return OsUtils.toWindowsPath(path)
 
     @staticmethod
-    def enableAnsiColors():
-        # tell Windows 10 that we do ansi
-        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
-        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
-
-
-    @staticmethod
     def killProcess(name : str="*", prefix : str=None) -> bool:
         if not prefix:
             prefix = CraftCore.standardDirs.craftRoot()

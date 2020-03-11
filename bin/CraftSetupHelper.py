@@ -65,9 +65,6 @@ class SetupHelper(object):
         self.args = args
         if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
              CraftCore.settings.set("General", "AllowAnsiColor", "False")
-        else:
-            if CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
-                OsUtils.enableAnsiColors()
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False

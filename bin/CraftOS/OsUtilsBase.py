@@ -66,9 +66,5 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         pass
 
     @staticmethod
-    def enableAnsiColors():
-        pass
-
-    @staticmethod
     def killProcess(name : str="*", prefix : str=None) -> bool:
         pass
