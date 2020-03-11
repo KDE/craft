@@ -49,7 +49,9 @@ def getFile(url, destdir, filename='', quiet=CraftCore.settings.getboolean("Cont
     utils.createDir(destdir)
 
     if pUrl.scheme == "s3":
-      return s3File(url, destdir, filename)
+        return s3File(url, destdir, filename)
+    elif pUrl.scheme == "minio":
+        return minioGet(pUrl.netloc + pUrl.path, destdir, filename)
 
     # curl and wget basically only work when we have a cert store on windows
     if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
@@ -152,9 +154,20 @@ def wgetFile(url, destdir, filename, quiet):
             return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     return utils.system(command)
 
-def s3File(url, destdir, filename):
+def s3File(url : str, destdir : str, filename : str) ->bool:
     aws = CraftCore.cache.findApplication("aws")
     if not aws:
         CraftCore.log.critical("aws not found, please install awscli. \"pip install awscli\" ")
         return False
     return utils.system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
+
+def minioGet(url : str, destdir : str, filename : str) ->bool:
+    minio = None
+    if CraftCore.compiler.isWindows:
+        minio = CraftCore.cache.findApplication("minio")
+    if not minio:
+        minio = CraftCore.cache.findApplication("mc")
+    if not minio:
+        CraftCore.log.critical("minio client not found, please install minio")
+        return False
+    return utils.system([minio, "cp", url, os.path.join(destdir, filename)])
