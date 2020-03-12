@@ -186,10 +186,6 @@ class CraftBase(object):
 
 
     def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
-        if not pkgSuffix:
-            pkgSuffix = ""
-            if hasattr(self.subinfo.options.package, 'packageSuffix') and self.subinfo.options.package.packageSuffix:
-                pkgSuffix = self.subinfo.options.package.packageSuffix
         buildVersion = self.buildNumber()
 
         version = []
@@ -207,7 +203,7 @@ class CraftBase(object):
 
         return f"{self.package.name}-{version}-{CraftCore.compiler}{pkgSuffix}"
 
-    def binaryArchiveName(self, pkgSuffix=None, fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
+    def binaryArchiveName(self, pkgSuffix="", fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
 
         archiveBaseName = self.binaryArchiveBaseName(pkgSuffix, includeRevision, includeTimeStamp)
