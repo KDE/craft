@@ -179,11 +179,10 @@ class CraftBase(object):
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
     def buildNumber(self):
-        if "APPVEYOR_BUILD_VERSION" in os.environ:
-            return os.environ["APPVEYOR_BUILD_VERSION"]
-        elif "BUILD_NUMBER" in os.environ:
-            return os.environ["BUILD_NUMBER"]
-        return ""
+        return (os.environ.get("APPVEYOR_BUILD_VERSION") or
+                os.environ.get("BUILD_NUMBER") or
+                os.environ.get("DRONE_BUILD_NUMBER") or
+                "")
 
 
     def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
