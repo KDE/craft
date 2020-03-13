@@ -247,7 +247,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         kw["stdin"] = pipeProcess.stdout
     if not displayProgress or CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         stdout = kw.get('stdout', sys.stdout)
-        kw['stderr'] = subprocess.STDOUT
+        if stdout == sys.stdout:
+            kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
         proc = subprocess.Popen(cmd, **kw)
         if pipeProcess:
