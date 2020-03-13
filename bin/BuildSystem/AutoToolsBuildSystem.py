@@ -4,7 +4,6 @@
 from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-from CraftOS.OsDetection import OsDetection
 from shells import BashShell
 import utils
 
@@ -28,7 +27,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     @property
     def makeProgram(self):
-        if OsDetection.isWin():
+        if CraftCore.compiler.isWindows():
             return "make"
         else:
             return super().makeProgram
