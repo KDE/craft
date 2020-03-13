@@ -27,7 +27,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     @property
     def makeProgram(self):
-        if CraftCore.compiler.isWindows():
+        if CraftCore.compiler.isWindows:
             return "make"
         else:
             return super().makeProgram
