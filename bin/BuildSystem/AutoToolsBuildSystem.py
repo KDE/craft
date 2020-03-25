@@ -66,7 +66,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 includesArgs = "".join(includes)
             self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + includesArgs)
 
-        return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
+        with utils.ScopedEnv({"CLICOLOR_FORCE": None}):
+            return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
 
 
     def make(self, dummyBuildType=None):
