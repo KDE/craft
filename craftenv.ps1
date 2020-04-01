@@ -81,7 +81,7 @@ findPython("python")
 
 function Global:craft()
 {
-    return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) $args
+    return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) @args
 }
 
 function Global:craftCd([string] $package, [string]$property, [string] $target="")
@@ -123,7 +123,7 @@ function Global:cr()
 
 if($args.Length -ne 0)
 {
-    craft --run $args
+    craft --run @args
 } else {
     (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
     foreach {
