@@ -89,7 +89,7 @@ class UserOptions(object):
 
         @staticmethod
         @atexit.register
-        def __dump():
+        def _save():
             instance = UserOptions.UserOptionsSingleton._instance
             if instance:
                 try:

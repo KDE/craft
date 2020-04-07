@@ -387,6 +387,7 @@ def upgrade(args) -> bool:
         if not run(CraftPackageObject.get("craft"), "all", args):
             return False
         # close the log file and the db
+        UserOptions.instance()._save()
         CraftTitleUpdater.instance.stop()
         CraftCore.debug._fileHandler.close()
         del CraftCore.installdb
