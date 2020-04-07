@@ -99,7 +99,7 @@ class infoclass(object):
         if target in self.targets or target in self.svnTargets:
             return target
         if target:
-            CraftCore.log.warning(f"You defined an invalid target {target} for {self.parent.package.path}")
+            raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}", self.parent.package)
         return self._defaultTarget
 
 
