@@ -67,12 +67,10 @@ class infoclass(object):
         self.svnTargets = {}
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
-        self.buildTarget = ""
 
         self.registerOptions()
 
         self.setTargets()
-        self.setBuildTarget()
         self.setBuildOptions()
 
         # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
@@ -91,21 +89,26 @@ class infoclass(object):
         if ("BlueprintVersions", self.parent.package.path) in CraftCore.settings:
             target = CraftCore.settings.get("BlueprintVersions", self.parent.package.path)
             CraftCore.log.warning(f"You are using the depreaced:\n"
-                                  f"[BlueprintVersions]\n"
-                                  f"{self.parent.package.path} = {target}\n\n"
-                                  f"Please use CraftOptions.ini\n"
-                                  f"[{self.parent.package.path}]\n"
-                                  f"version = {target}")
-        if target in self.targets or target in self.svnTargets:
-            return target
+                                f"[BlueprintVersions]\n"
+                                f"{self.parent.package.path} = {target}\n\n"
+                                f"Please use CraftOptions.ini\n"
+                                f"[{self.parent.package.path}]\n"
+                                f"version = {target}")
         if target:
-            raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}", self.parent.package)
+            if target in self.targets or target in self.svnTargets:
+                return target
+            else:
+                raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}", self.parent.package)
         return self._defaultTarget
 
 
     @defaultTarget.setter
     def defaultTarget(self, value):
         self._defaultTarget = value
+
+    @property
+    def buildTarget(self):
+        return self.defaultTarget
 
     def registerOptions(self):
         """calls to self.options.dynamic.registerOption
@@ -118,14 +121,6 @@ class infoclass(object):
 
     def setTargets(self):
         """default method for setting targets, override to set individual targets"""
-
-    def setBuildTarget(self, buildTarget=None):
-        """setup current build target"""
-        self.buildTarget = self.defaultTarget
-        if not buildTarget == None:
-            self.buildTarget = buildTarget
-        if not self.buildTarget in self.targets and not self.buildTarget in self.svnTargets:
-            self.buildTarget = self.defaultTarget
 
     def setBuildOptions(self):
         """default method for setting build options, override to set individual targets"""
