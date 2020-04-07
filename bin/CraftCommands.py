@@ -110,10 +110,13 @@ def setOption(packageNames : [str], option : str) -> bool:
         if not package:
             raise BlueprintNotFoundException(name)
         # create instance to make sure options are registered
-        if not package.isCategory():
-            package.instance
-        if not package:
-            raise BlueprintNotFoundException(name)
+        # version is a special case, it is build in and a non existing version causes an error during construction
+        # skipping the check allows to replace an invalid version
+        if option == "version":
+            if not package.isCategory():
+                package.instance
+            if not package:
+                raise BlueprintNotFoundException(name)
         options = UserOptions.get(package)
         if not options.setOption(key, value):
             return False
