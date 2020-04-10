@@ -148,6 +148,7 @@ EnableDailyUpdates = True
 ### SevenZipPackager: An image of the files installed by the package
 ### MSIFragmentPackager
 ### NullsoftInstallerPackager: A nsis based installer including all dependencies
+### AppxPackager: Windows UWP style package including all dependencies
 ### CreateArchivePackager: An image including all dependencies
 #PackageType = SevenZipPackager
 
