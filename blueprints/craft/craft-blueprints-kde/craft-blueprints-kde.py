@@ -4,7 +4,8 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2018.12", "2019.04", "master"]:
-            self.svnTargets[ver] = f"[git]git://anongit.kde.org/craft-blueprints-kde|{ver}|"
+            self.svnTargets[ver] = f"https://invent.kde.org/kde/craft-blueprints-kde.git|{ver}|"
+            self.targetUpdatedRepoUrl[ver] = ("git://anongit.kde.org/craft-blueprints-kde", "https://invent.kde.org/kde/craft-blueprints-kde.git")
         self.defaultTarget = "master"
 
     def setDependencies(self):
