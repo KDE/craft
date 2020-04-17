@@ -139,6 +139,13 @@ class GitSource(VersionSystemSourceBase):
                     and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
+                if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl:
+                    oldUrl, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
+                    with io.StringIO() as tmp:
+                        self.__git("remote", ["get-url", "origin"], stdout=tmp)
+                        currentUrl = tmp.getvalue().strip()
+                    if currentUrl == oldUrl:
+                        self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
                     ret = (self.__git("fetch")
                           and self.__git("checkout", [repoBranch or "master"])

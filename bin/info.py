@@ -42,6 +42,7 @@ class infoclass(object):
         self.targetDigestUrls = {}
         ## \todo prelimary
         self.svnTargets = {}
+        self.targetUpdatedRepoUrl = {}
 
         self.patchLevel = {}
 
