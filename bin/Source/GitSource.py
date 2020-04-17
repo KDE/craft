@@ -144,7 +144,7 @@ class GitSource(VersionSystemSourceBase):
                     with io.StringIO() as tmp:
                         self.__git("remote", ["get-url", "origin"], stdout=tmp)
                         currentUrl = tmp.getvalue().strip()
-                    if currentUrl == oldUrl:
+                    if currentUrl.startswith(oldUrl):
                         self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
                     ret = (self.__git("fetch")
