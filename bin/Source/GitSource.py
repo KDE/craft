@@ -145,6 +145,7 @@ class GitSource(VersionSystemSourceBase):
                         self.__git("remote", ["get-url", "origin"], stdout=tmp)
                         currentUrl = tmp.getvalue().strip()
                     if currentUrl.startswith(oldUrl):
+                        CraftCore.log.info(f"Updating remote url from {currentUrl} to {newUrl}")
                         self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
                     ret = (self.__git("fetch")
