@@ -282,7 +282,7 @@ def printInstalled():
     printLine("=" * width, "=" * 10)
     installed = sorted(installed, key=lambda x :x[0])
     for package, version, revision in installed:
-        printLine(package, revision or revision)
+        printLine(package, revision or version)
 
 def printPackagesForFileSearch(filename):
     packages = CraftCore.installdb.getPackagesForFileSearch(filename)
