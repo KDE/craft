@@ -883,13 +883,15 @@ def sign(fileNames : [str]) -> bool:
         CraftCore.log.warning("Code signing requires a VisualStudio installation")
         return False
 
-    subjectName = CraftCore.settings.get("CodeSigning", "CommonName")
-    command = [signTool, "sign", "/n", subjectName, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
+    command = [signTool, "sign", "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256", "/a"]
     certFile = CraftCore.settings.get("CodeSigning", "Certificate", "")
+    subjectName = CraftCore.settings.get("CodeSigning", "CommonName", "")
     certProtected = CraftCore.settings.getboolean("CodeSigning", "Protected", False)
     kwargs = dict()
     if certFile:
         command += ["/f", certFile]
+    if subjectName:
+        command += ["/n", subjectName]
     if certProtected:
         password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="WINDOWS_CODE_SIGN_CERTIFICATE_PASSWORD")
         command += ["/p", password]

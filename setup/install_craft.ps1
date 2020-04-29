@@ -4,7 +4,7 @@ param(
     [alias("branch")][string]$Script:branch="master",
     [alias("localdev")][string]$Script:localdev=$null
     )
-    
+
 [Net.ServicePointManager]::SecurityProtocol = "SystemDefault, tls12, tls11"
 [version]$minPythonVersion = 3.6
 $Script:PythonInstallDir = "C:\python36"
