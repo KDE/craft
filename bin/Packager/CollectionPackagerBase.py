@@ -262,7 +262,8 @@ class CollectionPackagerBase(PackagerBase):
                 if not utils.copyDir(entry, entry_target, linkOnly=False):
                     return False
         if filesToSign:
-            utils.sign(filesToSign)
+            if not utils.sign(filesToSign):
+                return False
         return True
 
     def internalCreatePackage(self, defines=None, seperateSymbolFiles=False, packageSymbols=True) -> bool:
