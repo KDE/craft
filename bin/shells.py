@@ -48,8 +48,12 @@ class BashShell(object):
                 sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
                 deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
+                ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
+
+                # TODO: well that sounded like a good idea, but is broken with recent xcode
+                # when fixed we probably should also set that flag for the rest too?
                 # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
-                ldflags = f" -isysroot {sdkPath} {deploymentFlag} -Wl,-no_weak_imports {ldflags}"
+                #ldflags = f" -Wl,-no_weak_imports {ldflags}"
 
             if CraftCore.compiler.isMSVC():
                 # based on Windows-MSVC.cmake
