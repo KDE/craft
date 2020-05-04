@@ -208,7 +208,7 @@ class BuildSystemBase(CraftBase):
                     else:
                         CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
             if dirty:
-                with utils.makeWritable(fileName):
+                with utils.makeTemporaryWritable(fileName):
                     with open(fileName, "wb") as f:
                         f.write(content)
         return True

@@ -217,7 +217,7 @@ class MacDylibBundler(object):
     def _updateLibraryReference(fileToFix: Path, oldRef: str, newRef: str = None) -> bool:
         if newRef is None:
             newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
-        with utils.makeWritable(fileToFix):
+        with utils.makeTemporaryWritable(fileToFix):
             if not utils.system(["install_name_tool", "-change", oldRef, newRef, str(fileToFix)], logCommand=False):
                 CraftCore.log.error("%s: failed to update library dependency path from '%s' to '%s'",
                                     fileToFix, oldRef, newRef)
@@ -240,7 +240,7 @@ class MacDylibBundler(object):
         libraryId = cls._getLibraryNameId(fileToFix)
         if libraryId and os.path.isabs(libraryId):
             CraftCore.log.debug("Fixing library id name for %s", libraryId)
-            with utils.makeWritable(fileToFix):
+            with utils.makeTemporaryWritable(fileToFix):
                 if not utils.system(["install_name_tool", "-id", os.path.basename(libraryId), str(fileToFix)],
                                     logCommand=False):
                     CraftCore.log.error("%s: failed to fix absolute library id name for", fileToFix)

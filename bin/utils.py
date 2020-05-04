@@ -1080,20 +1080,28 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")
 
-@contextlib.contextmanager
-def makeWritable(targetPath: Path):
-    if isinstance(targetPath, str):
-        targetPath = Path(targetPath)
+def makeWritable(targetPath: Path) -> (bool, int):
+    """ Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
+    targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
-    wasWritable = bool(originalMode & stat.S_IWUSR)
+    if not bool(originalMode & stat.S_IWUSR):
+        newMode = originalMode | stat.S_IWUSR
+        targetPath.chmod(newMode)
+        return (True, newMode)
+    return (False, originalMode)
+
+@contextlib.contextmanager
+def makeTemporaryWritable(targetPath: Path):
+    targetPath = Path(targetPath)
+    wasReadOnly = False
+    mode = 0
     try:
         # ensure it is writable
-        if not wasWritable:
-            targetPath.chmod(originalMode | stat.S_IWUSR)
+        wasReadOnly, mode = makeWritable(targetPath)
         yield targetPath
     finally:
-        if not wasWritable:
-            targetPath.chmod(originalMode)
+        if wasReadOnly:
+            targetPath.chmod(mode & ~stat.S_IWUSR)
 
 def getPDBForBinary(path :str) -> str:
     with open(path, "rb") as f:
