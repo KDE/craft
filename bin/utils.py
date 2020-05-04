@@ -1080,13 +1080,14 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")
 
-def makeWritable(targetPath: Path) -> (bool, int):
+def makeWritable(targetPath: Path, log: bool=True) -> (bool, int):
     """ Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
     targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
     if not bool(originalMode & stat.S_IWUSR):
         newMode = originalMode | stat.S_IWUSR
         targetPath.chmod(newMode)
+        CraftCore.log.info(f"Made {targetPath} writeable")
         return (True, newMode)
     return (False, originalMode)
 
@@ -1097,7 +1098,7 @@ def makeTemporaryWritable(targetPath: Path):
     mode = 0
     try:
         # ensure it is writable
-        wasReadOnly, mode = makeWritable(targetPath)
+        wasReadOnly, mode = makeWritable(targetPath, log=False)
         yield targetPath
     finally:
         if wasReadOnly:
