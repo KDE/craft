@@ -247,8 +247,10 @@ class BuildSystemBase(CraftBase):
                 if os.path.islink(f):
                     continue
                 # replace the old prefix or add it if missing
-                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), os.path.join(newPrefix, "lib"), f], logCommand=False):
-                    utils.system(["install_name_tool", "-add_rpath", os.path.join(newPrefix, "lib"), f], logCommand=False)
+                craft_rpath = os.path.join(newPrefix, "lib")
+                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), craft_rpath, f], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL):
+                    CraftCore.log.info(f"Adding rpath {craft_rpath} to {f}")
+                    utils.system(["install_name_tool", "-add_rpath", craft_rpath, f], logCommand=False)
 
                 # update prefix
                 if self.subinfo.buildPrefix != newPrefix:
