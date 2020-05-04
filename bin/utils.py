@@ -1087,7 +1087,8 @@ def makeWritable(targetPath: Path, log: bool=True) -> (bool, int):
     if not bool(originalMode & stat.S_IWUSR):
         newMode = originalMode | stat.S_IWUSR
         targetPath.chmod(newMode)
-        CraftCore.log.info(f"Made {targetPath} writeable")
+        if log:
+            CraftCore.log.info(f"Made {targetPath} writeable")
         return (True, newMode)
     return (False, originalMode)
 
