@@ -174,6 +174,7 @@ class VersionInfo(object):
             tarballInstallSrc = self.get("tarballInstallSrc", None)
         if gitUrl is None:
             gitUrl = self.get("gitUrl", None)
+        gitUpdatedRepoUrls = CraftCore.settings._parseList(self.get("gitUpdatedRepoUrl", ""))
         if tarballUrl is not None:
             for target in self.data.tarballs:
                 self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
@@ -194,6 +195,13 @@ class VersionInfo(object):
                 self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
+
+            if len(gitUpdatedRepoUrls) == 2:
+                for target in self.data.tags + self.data.branches:
+                    self.subinfo.targetUpdatedRepoUrl[target] = (self._replaceVar(gitUpdatedRepoUrls[0], target, packageName), self._replaceVar(gitUpdatedRepoUrls[1], target, packageName))
+            elif len(gitUpdatedRepoUrls) > 2:
+                raise Exception("gitUpdatedRepoUrls must be a list of the lenght 2")
+
 
         defaultTarget = self.defaultTarget()
         if defaultTarget:
