@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["1.9"]:
+        for ver in ["1.9", "1.10"]:
             self.targets[ver] = f"https://github.com/lucasg/Dependencies/releases/download/v{ver}/Dependencies_x64_Release.zip"
             self.archiveNames[ver] = f"dependencies-{ver}.zip"
             self.targetInstallPath[ver] = "dev-utils/dependencies/"
@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.targetDigests["1.9"] = (['dae97fb67329b61d3d2e2a37a583a14e89bb6e3c0f7fed62e5d8a03cffb6703f'], CraftHash.HashAlgorithm.SHA256)
         self.webpage = "https://github.com/lucasg/Dependencies"
         self.description = "A rewrite of the old legacy software \"depends.exe\" in C# for Windows devs to troubleshoot dll load dependencies issues."
-        self.defaultTarget = "1.9"
+        self.defaultTarget = "1.10"
 
 
 from Package.BinaryPackageBase import *
