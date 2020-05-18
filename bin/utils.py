@@ -186,7 +186,7 @@ def system(cmd, displayProgress=False, logCommand=True, acceptableExitCodes=None
     return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, acceptableExitCodes=acceptableExitCodes, **kw)
 
 
-def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, secretCommand=False, **kw):
+def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, secretCommand=False, secret=None, **kw):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -230,16 +230,23 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     if secretCommand:
         CraftCore.debug.print(f"securely executing command: {app}")
     else:
+        _logCommand = ""
+        _debugCommand = ""
         if logCommand:
-            _logCommand = ""
             if pipeProcess:
                 _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
             _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
-            CraftCore.debug.print("executing command: {0}".format(_logCommand))
         if pipeProcess:
-            CraftCore.log.debug(f"executing command: {pipeProcess.args!r} | {cmd!r}")
+            _debugCommand = f"executing command: {pipeProcess.args!r} | {cmd!r}"
         else:
-            CraftCore.log.debug(f"executing command: {cmd!r}")
+            _debugCommand = f"executing command: {cmd!r}"
+        if secret:
+            for s in secret:
+                _debugCommand.replace(s, "***")
+                _logCommand.replace(s, "***")
+        if logCommand:
+            CraftCore.debug.print(f"executing command: {_logCommand}")
+        CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
         CraftCore.debug.logEnv(environment)
@@ -895,7 +902,7 @@ def sign(fileNames : [str]) -> bool:
     if certProtected:
         password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="WINDOWS_CODE_SIGN_CERTIFICATE_PASSWORD")
         command += ["/p", password]
-        kwargs["secretCommand"] = True
+        kwargs["secret"] = [password]
     if True or CraftCore.debug.verbose() > 0:
         command += ["/v"]
     else:
@@ -968,7 +975,7 @@ def signMacPackage(packagePath : str):
 
 def unlockMacKeychain(loginKeychain : str):
     password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="MAC_KEYCHAIN_PASSWORD")
-    if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, loginKeychain], stdout=subprocess.DEVNULL, secretCommand=True):
+    if not system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
         CraftCore.log.error("Failed to unlock keychain.")
         return False
     return True
