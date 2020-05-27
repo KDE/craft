@@ -140,13 +140,16 @@ class GitSource(VersionSystemSourceBase):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
                 if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl:
-                    oldUrl, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
+                    oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
+                    if isinstance(oldUrls, str):
+                        oldUrls = [oldUrls]
                     with io.StringIO() as tmp:
                         self.__git("remote", ["get-url", "origin"], stdout=tmp)
                         currentUrl = tmp.getvalue().strip()
-                    if currentUrl.startswith(oldUrl):
-                        CraftCore.log.info(f"Updating remote url from {currentUrl} to {newUrl}")
-                        self.__git("remote", ["set-url", "origin", newUrl])
+                    for oldUrl in oldUrls:
+                        if currentUrl.startswith(oldUrl):
+                            CraftCore.log.info(f"Updating remote url from {currentUrl} to {newUrl}")
+                            self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
                     ret = (self.__git("fetch")
                           and self.__git("checkout", [repoBranch or "master"])
