@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.options.dynamic.registerOption("checkForNightlies", False)
 
     def setTargets(self):
-        for ver in ["3.13.0", "3.13.2", "3.16.3", "3.17.0"]:
+        for ver in ["3.13.0", "3.13.2", "3.16.3", "3.17.0", "3.17.2"]:
             majorMinorStr = '.'.join(ver.split('.')[0:2])
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-win{CraftCore.compiler.bits}-{CraftCore.compiler.architecture}.zip"
@@ -34,7 +34,7 @@ class subinfo(info.infoclass):
 
         self.patchLevel["3.13.2"] = 1
 
-        self.defaultTarget = "3.17.0"
+        self.defaultTarget = "3.17.2"
 
 from Package.BinaryPackageBase import *
 from Package.MaybeVirtualPackageBase import *
