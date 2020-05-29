@@ -17,10 +17,10 @@ function findPython([string] $name)
     if ($env:CRAFT_PYTHON -and (Test-Path -path $env:CRAFT_PYTHON)) {
         return
     }
-    if ($PSVersionTable.Platform -eq "Unix" -and $env:CRAFT_PYTHON -eq $null) {
-        $env:CRAFT_PYTHON = $name
+    $py = (Get-Command $name -ErrorAction SilentlyContinue)
+    if ($PSVersionTable.Platform -eq "Unix") {
+        $env:CRAFT_PYTHON = $py.Source
     } else {
-        $py = (Get-Command $name -ErrorAction SilentlyContinue)
         if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
             $env:CRAFT_PYTHON=$py.Source
         }
