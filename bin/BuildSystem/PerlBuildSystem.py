@@ -67,4 +67,14 @@ class PerlBuildSystem(MakeFileBuildSystem):
                 with open(makeFile, "wt") as make:
                     txt = txt.replace(CraftCore.standardDirs.craftRoot(), CraftCore.standardDirs.craftRoot()[2:])
                     make.write(txt)
-            return super().install() and self._fixInstallPrefix()
+            if not (super().install() and self._fixInstallPrefix()):
+                return False
+
+            def makeWriatable(root):
+                with os.scandir(root) as scan:
+                    for f in scan:
+                        utils.makeWritable(f.path)
+                        if f.is_dir():
+                            makeWriatable(f.path)
+            makeWriatable(self.installDir())
+            return True
