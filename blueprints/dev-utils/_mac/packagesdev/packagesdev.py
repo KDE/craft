@@ -2,6 +2,9 @@ import info
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
+
     def setTargets(self):
         self.svnTargets['master'] = "[git]https://github.com/packagesdev/packages.git"
         self.patchToApply["master"] = [("packagesdev-20191209.patch", 1)]
