@@ -47,6 +47,8 @@ class ArchiveSource(SourceBase):
         manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
         name = (Path(self.package.path) / archiveName).as_posix()
         archiveFile = self.__downloadDir / archiveName
+        if not archiveFile.exists():
+            return
         if not digests:
             digests = CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)
 
