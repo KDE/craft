@@ -25,9 +25,11 @@
 
 import tempfile
 import io
+from pathlib import Path
 
 from Source.SourceBase import *
 from Utils import CraftHash, GetFiles, CraftChoicePrompt
+from Utils.CraftManifest import CraftManifest
 
 from CraftCore import CraftCore
 
@@ -38,7 +40,27 @@ class ArchiveSource(SourceBase):
     def __init__(self):
         CraftCore.log.debug("ArchiveSource.__init__ called")
         SourceBase.__init__(self)
-        self.__downloadDir = os.path.abspath(os.path.join(CraftCore.standardDirs.downloadDir(), "archives", self.package.path))
+        self.__archiveDir = Path(CraftCore.standardDirs.downloadDir()) / "archives"
+        self.__downloadDir = self.__archiveDir / self.package.path
+
+    def _generateSrcManifest(self, archiveName : str, digests : str = None, manifestUrls : [str] = None):
+        manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
+        name = (Path(self.package.path) / archiveName).as_posix()
+        archiveFile = self.__downloadDir / archiveName
+        if not digests:
+            digests = CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)
+
+        manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
+        entry = manifest.get(str(self))
+        known = False
+        for f in entry.files:
+            if f.checksum == digests and f.fileName == name:
+                known = True
+                break
+        if not known:
+            entry.addFile(name, digests, version=self.version)
+
+        manifest.dump(manifestLocation)
 
     def localFileNames(self):
         if self.subinfo.archiveName() == [""]:
@@ -127,6 +149,8 @@ class ArchiveSource(SourceBase):
     def checkDigest(self, downloadRetriesLeft=3):
         CraftCore.log.debug("ArchiveSource.checkDigest called")
         filenames = self.localFileNames()
+        digests = []
+        algorithm = None
 
         if self.subinfo.hasTargetDigestUrls():
             CraftCore.log.debug("check digests urls")
@@ -164,6 +188,11 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("print source file digests")
             CraftHash.printFilesDigests(self.__downloadDir, filenames, self.subinfo.buildTarget,
                                         algorithm=CraftHash.HashAlgorithm.SHA256)
+        if algorithm != CraftHash.HashAlgorithm.SHA256:
+            # compute new digests
+            digests = [None] * len(filenames)
+        for f, dig in zip(filenames, digests):
+            self._generateSrcManifest(f, dig)
         return True
 
     def unpack(self):

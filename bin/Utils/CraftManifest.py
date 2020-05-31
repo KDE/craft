@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 from pathlib import Path
+from typing import List
 
 from CraftCore import CraftCore
 
@@ -31,19 +32,23 @@ class CraftManifestEntryFile(object):
         return out
 
     def toJson(self) -> dict:
-        return {
+        data = {
             "fileName"      : self.fileName,
             "checksum"      : self.checksum,
             "date"          : self.date.strftime(CraftManifest._TIME_FORMAT),
-            "version"       : self.version,
-            "buildPrefix"   : self.buildPrefix,
-            "configHash"    : self.configHash
+            "version"       : self.version
         }
+        if self.configHash:
+            data.update({
+                "buildPrefix"   : self.buildPrefix,
+                "configHash"    : self.configHash
+            })
+        return data
 
 class CraftManifestEntry(object):
     def __init__(self, name : str) -> None:
         self.name = name
-        self.files = []
+        self.files = [] # type: List[CraftManifestEntryFile]
 
     @staticmethod
     def fromJson(data : dict):
@@ -52,11 +57,12 @@ class CraftManifestEntry(object):
         return entry
 
     def toJson(self) -> dict:
-        return {"name":self.name, "files":[x.toJson() for x in self.files]}
+        return {"name":self.name, "files": [x.toJson() for x in collections.OrderedDict.fromkeys(self.files)]}
 
     def addFile(self, fileName : str, checksum : str, version : str="", config=None) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum, version)
-        f.configHash = config.configHash()
+        if config:
+           f.configHash = config.configHash()
         self.files.insert(0, f)
         return f
 
