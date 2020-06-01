@@ -136,9 +136,10 @@ class ArchiveSource(SourceBase):
                                                 digests=entry.checksum,
                                                 digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
                                 return False
-                    if self.__checkFilesPresent(filenames):
-                        CraftCore.log.debug("files and digests available, no need to download files")
-                        return True
+                        if self.__checkFilesPresent(filenames):
+                            CraftCore.log.debug("files and digests available, no need to download files")
+                            return True
+                        break
 
                 # compat for scripts that provide multiple files
                 files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
