@@ -113,6 +113,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
             return False
         out = subprocess.run(f"{powershell} -NoProfile -ExecutionPolicy ByPass -Command \"& {{" +
                              f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
-                             f" %{{ Write-Output $_.Path; Stop-Process $_;}} }}\"", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+                             f" %{{ Write-Output $_.Path; Stop-Process -Force $_;}} }}\"", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
         CraftCore.log.info(f"Killing processes {name} in {prefix}: {out.stdout}")
         return out.returncode == 0
