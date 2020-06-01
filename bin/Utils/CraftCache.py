@@ -189,7 +189,9 @@ class CraftCache(object):
                         self._jsonCache[url] = {}
                         return {}
                     with open(os.path.join(tmp, "manifest.json"), "rt", encoding="UTF-8") as jsonFile:
-                        self._jsonCache[url] = json.loads(jsonFile.read())
+                        data = jsonFile.read()
+                        self._jsonCache[url] = json.loads(data)
+                        CraftCore.log.debug(f"cacheJsonFromUrl: {url}\n{data}")
         return self._jsonCache.get(url, {})
 
     def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:
