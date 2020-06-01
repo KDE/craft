@@ -1172,3 +1172,7 @@ def strip(fileName):
         return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
                 system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
                 system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
+
+
+def urljoin(root, path):
+    return "/".join([root.rstrip("/"), path])
