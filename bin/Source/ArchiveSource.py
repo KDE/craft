@@ -26,6 +26,7 @@
 import tempfile
 import io
 from pathlib import Path
+import urllib
 
 from Source.SourceBase import *
 from Utils import CraftHash, GetFiles, CraftChoicePrompt
@@ -124,13 +125,14 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("files and digests available, no need to download files")
                 return True
             if self.subinfo.target():
+
                 for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
-                    manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+                    manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(urllib.parse.urljoin(url, "manifest.json")))
                     files = manifest.get(str(self)).files
                     if files:
                         self.__downloadDir.mkdir(parents=True, exist_ok=True)
                         for entry in files:
-                            if not GetFiles.getFile(f"{url}{entry.fileName}", self.__archiveDir, entry.fileName):
+                            if not GetFiles.getFile(urllib.parse.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
                                 return False
                             if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
                                                 digests=entry.checksum,

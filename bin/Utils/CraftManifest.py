@@ -5,6 +5,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import List
+import urllib
 
 from CraftCore import CraftCore
 
@@ -158,7 +159,7 @@ class CraftManifest(object):
         if urls:
             old = CraftManifest()
             for url in urls:
-                new = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
+                new = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(urllib.parse.urljoin(url, "manifest.json")))
                 if new:
                     new.origin = url
                     old.update(new)
