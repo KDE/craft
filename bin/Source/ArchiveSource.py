@@ -48,7 +48,7 @@ class ArchiveSource(SourceBase):
             return True
         manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
         manifest = CraftManifest.load(manifestLocation, urls=CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"))
-        entry = manifest.get(str(self))
+        entry = manifest.get(str(self), compiler="all")
         entry.files.clear()
 
         for archiveName in archiveNames:
@@ -127,7 +127,7 @@ class ArchiveSource(SourceBase):
 
                 for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
                     manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
-                    files = manifest.get(str(self)).files
+                    files = manifest.get(str(self), compiler="all").files
                     if files:
                         self.__downloadDir.mkdir(parents=True, exist_ok=True)
                         for entry in files:

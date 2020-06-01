@@ -126,8 +126,9 @@ class CraftManifest(object):
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
-    def get(self, package : str) -> CraftManifestEntry:
-        compiler = str(CraftCore.compiler)
+    def get(self, package : str, compiler : str=None) -> CraftManifestEntry:
+        if not compiler:
+            compiler = str(CraftCore.compiler)
         if not compiler in self.packages:
             self.packages[compiler] = {}
         if not package in self.packages[compiler]:
