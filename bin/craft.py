@@ -142,7 +142,9 @@ def main(timer):
     actionHandler = ActionHandler(parser)
     for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
                      "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch",
-                     ("install-to-desktop", {"help":argparse.SUPPRESS}), "update",
+                     ("install-to-desktop", {"help":argparse.SUPPRESS}),
+                     ("create-download-cache", {"help":argparse.SUPPRESS}),
+                     "update",
                      ("print-installed", {"help":"This will show a list of all packages that are installed currently."}),
                      ("upgrade", {"help":"Update all installed packages"}),
                      ("print-files", {"help":"Print the files installed by the package and exit"}),

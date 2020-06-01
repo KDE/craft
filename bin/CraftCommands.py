@@ -277,6 +277,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         return invoke(args.get, directTargets)
     elif action == "install-to-desktop":
         return installToDektop(directTargets)
+    elif action == "create-download-cache":
+        return createArchiveCache(directTargets)
     elif action == "print-files":
         return printFiles(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps", "update"]:
@@ -419,3 +421,11 @@ def printFiles(packages):
     return True
 
 
+def createArchiveCache(packages : CraftPackageObject):
+    from Source.ArchiveSource import ArchiveSource
+    for p in packages:
+        # why do I need to access source class directly?
+        if isinstance(p.instance._sourceClass, ArchiveSource):
+            continue
+        p.instance.fetch()
+        p.instance.checkDigest()
