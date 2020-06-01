@@ -43,9 +43,11 @@ class ArchiveSource(SourceBase):
         self.__archiveDir = Path(CraftCore.standardDirs.downloadDir()) / "archives"
         self.__downloadDir = self.__archiveDir / self.package.path
 
-    def _generateSrcManifest(self, archiveNames):
-        if archiveNames == [""]:
-            return True
+    def generateSrcManifest(self) -> bool:
+        archiveNames = self.localFileNames()
+        if self.subinfo.hasTargetDigestUrls():
+            url, alg = self.subinfo.targetDigestUrl()
+            archiveNames.append(self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
         manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
         manifest = CraftManifest.load(manifestLocation, urls=CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"))
         entry = manifest.get(str(self), compiler="all")
@@ -202,10 +204,7 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("print source file digests")
             CraftHash.printFilesDigests(self.__downloadDir, filenames, self.subinfo.buildTarget,
                                         algorithm=CraftHash.HashAlgorithm.SHA256)
-        if self.subinfo.hasTargetDigestUrls():
-            url, alg = self.subinfo.targetDigestUrl()
-            filenames.append(self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
-        return self._generateSrcManifest(filenames)
+        return True
 
     def unpack(self):
         """unpacking all zipped(gz, zip, bz2) tarballs"""

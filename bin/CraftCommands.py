@@ -427,5 +427,6 @@ def createArchiveCache(packages : CraftPackageObject):
         # why do I need to access source class directly?
         if isinstance(p.instance._sourceClass, ArchiveSource):
             continue
-        p.instance.fetch()
-        p.instance.checkDigest()
+        return (p.instance.fetch() and
+                p.instance.checkDigest() and
+                p.instance.generateSrcManifest())
