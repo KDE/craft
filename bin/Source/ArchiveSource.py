@@ -133,6 +133,8 @@ class ArchiveSource(SourceBase):
                     if files:
                         self.__downloadDir.mkdir(parents=True, exist_ok=True)
                         for entry in files:
+                            if entry.version != self.buildTarget:
+                                continue
                             if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
                                 return False
                             if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
