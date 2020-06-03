@@ -94,12 +94,12 @@ class PackageBase(CraftBase):
                 if f.version == self.version:
                     files.append(f)
             if not files:
-                CraftCore.log.debug(f"Could not find {self}={self.version} in {url}")
+                CraftCore.log.info(f"Could not find {self}={self.version} in {url}")
                 continue
             latest = files[0]
 
             if latest.configHash and latest.configHash != self.subinfo.options.dynamic.configHash():
-                CraftCore.log.warning("Failed to restore package, configuration missmatch")
+                CraftCore.log.info("Failed to restore package, configuration missmatch")
                 # try next cache
                 continue
 
