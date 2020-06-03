@@ -110,13 +110,18 @@ def curlFile(url, destdir, filename, quiet):
 
     if CraftCore.debug.verbose() < 1:
         if quiet:
-            ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
             with io.StringIO() as tmp:
+                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                if ciMode:
+                    command += ["-v"]
                 if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
-                    if ciMode:
-                        CraftCore.log.warning(tmp.getvalue())
+                    CraftCore.log.warning(tmp.getvalue())
                     return False
-            return True
+                if ciMode:
+                    loc = re.findall(r"Host: ([^\s]+)", tmp.getvalue())
+                    if loc:
+                        CraftCore.log.info(f"Downloaded from: {loc[-1]}")
+                return True
         elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
             command += ["--progress-bar"]
             CraftCore.log.info(f"curl {url}")
@@ -144,13 +149,16 @@ def wgetFile(url, destdir, filename, quiet):
 
     if CraftCore.debug.verbose() < 1:
         if quiet:
-            ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
             with io.StringIO() as tmp:
+                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
                 if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
-                    if ciMode:
-                        CraftCore.log.warning(tmp.getvalue())
+                    CraftCore.log.warning(tmp.getvalue())
                     return False
-            return True
+                if ciMode:
+                    loc = re.findall(r"Location: ([^\s]+)", tmp.getvalue())
+                    if loc:
+                        CraftCore.log.info(f"Downloaded from: {loc[-1]}")
+                return True
         elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
             command += ["-q", "--show-progress"]
             CraftCore.log.info(f"wget {url}")
