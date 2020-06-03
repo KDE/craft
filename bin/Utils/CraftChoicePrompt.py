@@ -51,11 +51,12 @@ def promptForChoice(title: str, choices : [], default : str=None):
 
     utils.notify("Craft needs your attention", promp, log=False)
 
+    CraftCore.debug.new_line()
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        CraftCore.log.info(title)
         CraftCore.log.info(f"[ContinuousIntegration]Enabled = True: returning default: {default}")
         return default if simpleMode else choices[default]
 
-    CraftCore.debug.new_line()
     while (True):
         CraftCore.log.info(title)
         choice = input(promp)
