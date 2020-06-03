@@ -69,7 +69,7 @@ class ArchiveSource(SourceBase):
                             lambda downloadRetriesLeft: utils.deleteFile(self.__archiveDir / entry.fileName) and self.__fetchFromArchiveCache(downloadRetriesLeft))
                 if self.__checkFilesPresent(self.localFileNames()):
                     return True
-        return True
+        return False
 
 
     def generateSrcManifest(self) -> bool:
