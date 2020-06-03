@@ -155,7 +155,8 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("files and digests available, no need to download files")
                 return True
             if self.subinfo.target():
-                self.__fetchFromArchiveCache()
+                if self.__fetchFromArchiveCache():
+                    return True
 
                 # compat for scripts that provide multiple files
                 files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
