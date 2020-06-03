@@ -43,6 +43,35 @@ class ArchiveSource(SourceBase):
         self.__archiveDir = Path(CraftCore.standardDirs.downloadDir()) / "archives"
         self.__downloadDir = self.__archiveDir / self.package.path
 
+    def __retry(self, downloadRetriesLeft : int, func, **kw):
+        downloadRetriesLeft -= 1
+        if downloadRetriesLeft >= 0 and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
+                                                                    [("Yes", True), ("No", False)],
+                                                                    default="Yes"):
+            return func(downloadRetriesLeft=downloadRetriesLeft, **kw)
+        return False
+
+    def __fetchFromArchiveCache(self, downloadRetriesLeft : int=3):
+        for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
+            manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
+            files = manifest.get(str(self), compiler="all").files
+            if files:
+                self.__downloadDir.mkdir(parents=True, exist_ok=True)
+                for entry in files:
+                    if entry.version != self.buildTarget:
+                        continue
+                    if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
+                        self.__retry(downloadRetriesLeft, self.__fetchFromArchiveCache)
+                    if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
+                                        digests=entry.checksum,
+                                        digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
+                        return self.__retry(downloadRetriesLeft,
+                            lambda downloadRetriesLeft: utils.deleteFile(self.__archiveDir / entry.fileName) and self.__fetchFromArchiveCache(downloadRetriesLeft))
+                if self.__checkFilesPresent(self.localFileNames()):
+                    return True
+        return True
+
+
     def generateSrcManifest(self) -> bool:
         archiveNames = self.localFileNames()
         if self.subinfo.hasTargetDigestUrls():
@@ -126,25 +155,7 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug("files and digests available, no need to download files")
                 return True
             if self.subinfo.target():
-
-                for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
-                    manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
-                    files = manifest.get(str(self), compiler="all").files
-                    if files:
-                        self.__downloadDir.mkdir(parents=True, exist_ok=True)
-                        for entry in files:
-                            if entry.version != self.buildTarget:
-                                continue
-                            if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
-                                return False
-                            if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
-                                                digests=entry.checksum,
-                                                digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
-                                return False
-                        if self.__checkFilesPresent(filenames):
-                            CraftCore.log.debug("files and digests available, no need to download files")
-                            return True
-                        break
+                self.__fetchFromArchiveCache()
 
                 # compat for scripts that provide multiple files
                 files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
@@ -167,6 +178,18 @@ class ArchiveSource(SourceBase):
                 return ArchiveSource.fetch(self, downloadRetriesLeft=downloadRetriesLeft - 1)
         return True
 
+    def __redownload(self, downloadRetriesLeft : int, filenames):
+        for filename in filenames:
+            CraftCore.log.info(f"Deleting downloaded file: {filename}")
+            utils.deleteFile(self.__downloadDir / filename)
+            if self.subinfo.hasTargetDigestUrls():
+                for digestAlgorithm, digestFileEnding in CraftHash.HashAlgorithm.fileEndings().items():
+                    digestFileName = filename + digestFileEnding
+                    if (self.__downloadDir/ digestFileName).is_file():
+                        CraftCore.log.info(f"Deleting downloaded file: {digestFileName}")
+                        utils.deleteFile(self.__downloadDir / digestFileName)
+        return self.fetch() and self.checkDigest(downloadRetriesLeft)
+
     def checkDigest(self, downloadRetriesLeft=3):
         CraftCore.log.debug("ArchiveSource.checkDigest called")
         filenames = self.localFileNames()
@@ -174,34 +197,13 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("check digests urls")
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames):
                 CraftCore.log.error("invalid digest file")
-                redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
-                                                                                           [("Yes", True), ("No", False)],
-                                                                                           default="Yes")
-                if redownload:
-                    for filename in filenames:
-                        CraftCore.log.info(f"Deleting downloaded file: {filename}")
-                        utils.deleteFile(os.path.join(self.__downloadDir, filename))
-                        for digestAlgorithm, digestFileEnding in CraftHash.HashAlgorithm.fileEndings().items():
-                            digestFileName = filename + digestFileEnding
-                            if os.path.exists(os.path.join(self.__downloadDir, digestFileName)):
-                                CraftCore.log.info(f"Deleting downloaded file: {digestFileName}")
-                                utils.deleteFile(os.path.join(self.__downloadDir, digestFileName))
-                    return self.fetch() and self.checkDigest(downloadRetriesLeft - 1)
-                return False
+                return self.__retry(downloadRetriesLeft, self.__redownload, filenames=filenames)
         elif self.subinfo.hasTargetDigests():
             CraftCore.log.debug("check digests")
             digests, algorithm = self.subinfo.targetDigest()
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
                 CraftCore.log.error("invalid digest file")
-                redownload = downloadRetriesLeft and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
-                                                                                       [("Yes", True), ("No", False)],
-                                                                                       default="Yes")
-                if redownload:
-                    for filename in filenames:
-                        CraftCore.log.info(f"Deleting downloaded file: {filename}")
-                        utils.deleteFile(os.path.join(self.__downloadDir, filename))
-                    return self.fetch() and self.checkDigest(downloadRetriesLeft - 1)
-                return False
+                return self.__retry(downloadRetriesLeft, self.__redownload, filenames=filenames)
         else:
             CraftCore.log.debug("print source file digests")
             CraftHash.printFilesDigests(self.__downloadDir, filenames, self.subinfo.buildTarget,
@@ -242,8 +244,8 @@ class ArchiveSource(SourceBase):
         return True
 
     def getUrls(self):
-        print(self.subinfo.target())
-        print(self.subinfo.targetDigestUrl())
+        CraftCore.debug.printOut(self.subinfo.target())
+        CraftCore.debug.printOut(self.subinfo.targetDigestUrl())
         return True
 
     def createPatch(self):
