@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-         xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
-         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
->
+<Package @{xml_namespaces}>
   <Identity Name="@{name}"
             Version="@{version}"
             Publisher="@{publisher}"
@@ -18,9 +12,7 @@
   <Dependencies>
     <TargetDeviceFamily  Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
   </Dependencies>
-  <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
+  @{capabilities}
   <Resources>
     <Resource Language="en-us" />
 <!--    <Resource uap:Scale="100" />

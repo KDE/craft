@@ -33,6 +33,15 @@ from Blueprints.CraftVersion import CraftVersion
 
 
 class AppxPackager(CollectionPackagerBase):
+    XMLNamespaces = r"""
+    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         @{additional_xmlns}
+    """
     Extensions = r"""
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="@{craft_id}">
@@ -41,6 +50,11 @@ class AppxPackager(CollectionPackagerBase):
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
         </uap:Extension>"""
+
+    Capabilities = r"""
+        <rescap:Capability Name="runFullTrust" />
+        @{additional_capabilities}
+    """
 
     StartUp = r"""
         <desktop:Extension Category="windows.startupTask" Executable="@{startup_task}" EntryPoint="Windows.FullTrustApplication">
@@ -122,6 +136,18 @@ class AppxPackager(CollectionPackagerBase):
         extensions = defines["extensions"]
         if extensions:
             defines["extensions"] = f"<Extensions>{extensions}</Extensions>"
+
+        defines.setdefault("capabilities", AppxPackager.Capabilities)
+        capabilities = defines["capabilities"]
+
+        if capabilities:
+            defines["capabilities"] = f"<Capabilities>{capabilities}</Capabilities>"
+
+        defines.setdefault("xml_namespaces", AppxPackager.XMLNamespaces)
+        xml_namespaces = defines["xml_namespaces"]
+
+        if xml_namespaces:
+            defines["xml_namespaces"] = f"{xml_namespaces}"
 
         # compat with nsis
         if "shortcuts" in self.defines:
