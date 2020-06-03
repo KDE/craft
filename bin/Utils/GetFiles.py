@@ -34,9 +34,12 @@ import os
 import urllib
 import subprocess
 import sys
+import re
 
-def getFile(url, destdir, filename='', quiet=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)) -> bool:
+def getFile(url, destdir, filename='', quiet=None) -> bool:
     """download file from 'url' into 'destdir'"""
+    if quiet is None:
+        quiet = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     CraftCore.log.debug("getFile called. url: %s" % url)
     if url == "":
         CraftCore.log.error("fetch: no url given")
