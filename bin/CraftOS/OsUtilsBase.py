@@ -68,3 +68,28 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     @staticmethod
     def killProcess(name : str="*", prefix : str=None) -> bool:
         pass
+
+
+class LockFileBase(object, metaclass=abc.ABCMeta):
+    def __init__(self, name):
+        self.name = name
+        self._locked = False
+
+    @property
+    def isLocked(self):
+        return self._locked
+
+    @abc.abstractmethod
+    def lock(self):
+        pass
+
+    @abc.abstractmethod
+    def unlock(self):
+        pass
+
+    def __enter__(self):
+        self.lock()
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        self.unlock()

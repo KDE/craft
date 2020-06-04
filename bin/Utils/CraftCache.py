@@ -15,7 +15,7 @@ from pathlib import Path
 from CraftCore import CraftCore, AutoImport
 
 from Blueprints.CraftVersion import CraftVersion
-from CraftOS.unix.osutils import OsUtils
+from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils import GetFiles
 

@@ -1,6 +1,8 @@
+import fcntl
 import os
 import shutil
 import sys
+import time
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -51,3 +53,31 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def killProcess(name : str="*", prefix : str=None) -> bool:
         CraftCore.log.warning("killProcess is not implemented")
         return True
+
+class LockFile(CraftOS.OsUtilsBase.LockFileBase):
+    def __init__(self ,name):
+        super().__init__(name)
+        self.__lockFileName = f"/tmp/craftlock-{self.name}"
+        self.__lockFile = None
+
+
+    def lock(self):
+        while True:
+            try:
+                if not self.__lockFile:
+                    self.__lockFile = open(self.__lockFileName, 'w')
+                fcntl.flock(self.__lockFile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                self._locked = True
+                break
+            except IOError:
+                CraftCore.log.info(f"{self.__lockFileName} is locked waiting")
+                time.sleep(10)
+
+
+    def unlock(self):
+        if self._locked:
+            fcntl.flock(self.__lockFile, fcntl.LOCK_UN)
+            self._locked = False
+        if self.__lockFile:
+            self.__lockFile.close()
+            self.__lockFile = None
