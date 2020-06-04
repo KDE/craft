@@ -242,8 +242,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
             _debugCommand = f"executing command: {cmd!r}"
         if secret:
             for s in secret:
-                _debugCommand.replace(s, "***")
-                _logCommand.replace(s, "***")
+                _debugCommand = _debugCommand.replace(s, "***")
+                _logCommand = _logCommand.replace(s, "***")
         if logCommand:
             CraftCore.debug.print(f"executing command: {_logCommand}")
         CraftCore.log.debug(_debugCommand)
