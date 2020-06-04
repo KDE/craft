@@ -14,7 +14,8 @@ from CraftOS.OsDetection import OsDetection
 
 class OsUtilsTest(CraftTestBase.CraftTestBase):
     def test_rm(self):
-        _, fileName = tempfile.mkstemp()
+        fd, fileName = tempfile.mkstemp()
+        os.close(fd)
         OsUtils.rm(fileName)
 
     def test_rmDir(self):

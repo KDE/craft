@@ -38,7 +38,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
                 if error == 5:
                     msg += "ERROR_ACCESS_DENIED"
                 else:
-                    msg += error
+                    msg += str(error)
                 CraftCore.log.error(msg)
                 return False
         return True
