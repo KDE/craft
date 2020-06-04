@@ -45,7 +45,7 @@ import Notifier.NotificationLoader
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
-from CraftOS.osutils import OsUtils
+from CraftOS.osutils import OsUtils, LockFile
 from CraftSetupHelper import SetupHelper
 from CraftStandardDirs import CraftStandardDirs
 from Utils import CraftChoicePrompt
@@ -917,34 +917,35 @@ def sign(fileNames : [str]) -> bool:
 def signMacApp(appPath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
+    # special case, two independent setups of craft might want to sign at the same time
+    with LockFile("signMacApp"):
+        devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+        loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
-    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-    loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
+        if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+            if not unlockMacKeychain(loginKeychain):
+                return False
 
-    if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
-        if not unlockMacKeychain(loginKeychain):
+        # Recursively sign app
+        if not system(["codesign", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--deep", appPath]):
             return False
 
-    # Recursively sign app
-    if not system(["codesign", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--deep", appPath]):
-        return False
+        ## Verify signature
+        if not system(["codesign", "--display", "--verbose", appPath]):
+            return False
 
-    ## Verify signature
-    if not system(["codesign", "--display", "--verbose", appPath]):
-        return False
+        if not system(["codesign", "--verify", "--verbose", "--strict", appPath]):
+            return False
 
-    if not system(["codesign", "--verify", "--verbose", "--strict", appPath]):
-        return False
+        # TODO: this step might require notarisation
+        system(["spctl", "-a", "-t", "exec", "-vv", appPath])
 
-    # TODO: this step might require notarisation
-    system(["spctl", "-a", "-t", "exec", "-vv", appPath])
+        ## Validate that the key used for signing the binary matches the expected TeamIdentifier
+        ## needed to pass the SocketApi through the sandbox
+        #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
+                #return False
 
-    ## Validate that the key used for signing the binary matches the expected TeamIdentifier
-    ## needed to pass the SocketApi through the sandbox
-    #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
-            #return False
-
-    return True
+        return True
 
 def signMacPackage(packagePath : str):
     packagePath = Path(packagePath)
