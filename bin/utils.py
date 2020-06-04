@@ -917,8 +917,8 @@ def sign(fileNames : [str]) -> bool:
 def signMacApp(appPath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
-    # special case, two independent setups of craft might want to sign at the same time
-    with LockFile("signMacApp"):
+    # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+    with LockFile("keychainLock"):
         devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
         loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
@@ -948,33 +948,37 @@ def signMacApp(appPath : str):
         return True
 
 def signMacPackage(packagePath : str):
-    packagePath = Path(packagePath)
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
-    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-    loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
-    if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
-        if not unlockMacKeychain(loginKeychain):
-            return False
+    # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+    with LockFile("keychainLock"):
+        packagePath = Path(packagePath)
+        devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+        loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
-    if packagePath.name.endswith(".dmg"):
-        # sign dmg
-        if not system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
-            return False
+        if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+            if not unlockMacKeychain(loginKeychain):
+                return False
 
-        # TODO: this step would require notarisation
-        # verify dmg signature
-        system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath])
-    else:
-        # sign pkg
-        packagePathTmp = f"{packagePath}.sign"
-        if not system(["productsign", "--keychain", loginKeychain, "--sign", f"Developer ID Installer: {devID}", packagePath, packagePathTmp]):
-            return False
+        if packagePath.name.endswith(".dmg"):
+            # sign dmg
+            if not system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
+                return False
 
-        os.rename(packagePathTmp, packagePath)
+            # TODO: this step would require notarisation
+            # verify dmg signature
+            system(["spctl", "-a", "-t", "open", "--context", "context:primary-signature", packagePath])
+        else:
+            # sign pkg
+            packagePathTmp = f"{packagePath}.sign"
+            if not system(["productsign", "--keychain", loginKeychain, "--sign", f"Developer ID Installer: {devID}", packagePath, packagePathTmp]):
+                return False
 
-    return True
+            os.rename(packagePathTmp, packagePath)
+
+        return True
+
 
 def unlockMacKeychain(loginKeychain : str):
     password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="MAC_KEYCHAIN_PASSWORD")
