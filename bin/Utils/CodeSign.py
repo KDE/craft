@@ -113,7 +113,7 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                 if not importCert(self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"):
                     return False
             # needed for productsign, codesign works without
-            if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+            if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s", "-k", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
                 CraftCore.log.error("Failed to set key partition list.")
                 return False
         else:
