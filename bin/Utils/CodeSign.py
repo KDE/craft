@@ -97,32 +97,32 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
         return self.certFileApplication or self.certFilesInstaller
 
     def __unlock(self):
-        password = ""
         if self._useCertFile:
             password = secrets.token_urlsafe(16)
             if not utils.system(["security", "create-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
                 return False
+
             def importCert(cert, pwKey):
                 pw  = CraftChoicePrompt.promptForPassword(message=f"Enter the password for your package signing certificate: {Path(cert).name}", key=pwKey)
                 return utils.system(["security", "import", cert, "-k", self.loginKeychain, "-P", pw, "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"], stdout=subprocess.DEVNULL, secret=[password])
+
             if self.certFileApplication:
                 if not importCert(self.certFileApplication, "MAC_CERTIFICATE_APPLICATION_PASSWORD"):
                     return False
             if self.certFilesInstaller:
                 if not importCert(self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"):
                     return False
-        else:
-            if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
-                password = CraftChoicePrompt.promptForPassword(message="Enter the password for your signing keychain", key="MAC_KEYCHAIN_PASSWORD")
-
-        if password:
-            if not utils.system(["security", "unlock-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
-                CraftCore.log.error("Failed to unlock keychain.")
-                return False
-            # needed for productsign codesign works without
+            # needed for productsign, codesign works without
             if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
                 CraftCore.log.error("Failed to set key partition list.")
                 return False
+        else:
+            if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+                password = CraftChoicePrompt.promptForPassword(message="Enter the password for your signing keychain", key="MAC_KEYCHAIN_PASSWORD")
+                if not utils.system(["security", "unlock-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+                    CraftCore.log.error("Failed to unlock keychain.")
+                    return False
+
         return True
 
     def __enter__(self):
