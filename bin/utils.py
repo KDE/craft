@@ -372,7 +372,7 @@ def splitVCSUrl(Url):
 def replaceVCSUrl(Url):
     """ this function should be used to replace the url of a server
         this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
-    configfile = os.path.join(CraftStandardDirs.etcBlueprintDir(), "..", "crafthosts.conf")
+    configfile = os.path.join(CraftCore.standardDirs.etcBlueprintDir(), "..", "crafthosts.conf")
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
