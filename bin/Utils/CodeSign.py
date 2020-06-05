@@ -83,11 +83,11 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
         utils.ScopedEnv.__init__(self, {"HOME": str(_MacSignScope.__REAL_HOME)})
         self.certFileApplication = CraftCore.settings.get("CodeSigning", "MacCertificateApplication", "")
         self.certFilesInstaller = CraftCore.settings.get("CodeSigning", "MacCertificateInstaller", "")
+
+        # FIXME: loginKeychain is misleading - it doesn't need to be login.keychain
         if self._useCertFile:
-            self.__loginKeychainTemp = tempfile.TemporaryDirectory()
-            self.loginKeychain = Path(self.__loginKeychainTemp.name) / "craft.keychain"
+            self.loginKeychain = f"craft-{secrets.token_urlsafe(16)}.keychain"
         else:
-            self.__loginKeychainTemp = None
             self.loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
 
 
@@ -136,7 +136,6 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
     def __exit__(self, exc_type, exc_value, trback):
         if self._useCertFile:
             utils.system(["security", "delete-keychain", self.loginKeychain])
-            self.__loginKeychainTemp.cleanup()
         utils.ScopedEnv.__exit__(self, exc_type, exc_value, trback)
         LockFile.__exit__(self, exc_type, exc_value, trback)
 
