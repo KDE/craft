@@ -238,9 +238,8 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         else:
             _debugCommand = f"executing command: {cmd!r}"
         if secret:
-            for s in secret:
-                _debugCommand = _debugCommand.replace(s, "***")
-                _logCommand = _logCommand.replace(s, "***")
+            _debugCommand = redact(_debugCommand, secret)
+            _logCommand = redact(_logCommand, secret)
         if logCommand:
             CraftCore.debug.print(f"executing command: {_logCommand}")
         CraftCore.log.debug(_debugCommand)
@@ -287,7 +286,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         ok = proc.returncode in acceptableExitCodes
     if not ok:
         if not secretCommand:
-            msg = f"Command {cmd} failed with exit code {proc.returncode}"
+            msg = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
             if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
                 CraftCore.log.debug(msg)
             else:
@@ -1068,3 +1067,19 @@ def strip(fileName):
 
 def urljoin(root, path):
     return "/".join([root.rstrip("/"), path])
+
+def redact(input : str , secrests : {str}):
+    if secrests is None:
+        return input
+    if isinstance(input, str):
+        for s in secrests:
+            input = input.replace(s, "***")
+        return input
+    elif isinstance(input, list):
+        out = []
+        for s in input:
+            if s in secrests:
+                out.append("***")
+            else:
+                out.append(s)
+        return out
