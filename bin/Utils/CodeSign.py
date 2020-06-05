@@ -25,7 +25,6 @@
 import os
 from pathlib import Path
 import subprocess
-import tempfile
 import secrets
 
 from CraftCore import CraftCore
