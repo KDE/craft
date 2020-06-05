@@ -100,6 +100,9 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
             password = secrets.token_urlsafe(16)
             if not utils.system(["security", "create-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
                 return False
+            # FIXME: Retain original list: security list-keychains -d user -s "${KEYCHAIN}" $(security list-keychains -d user | sed s/\"//g)
+            if not utils.system(["security", "list-keychains", "-d", "user", "-s", self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+                return False
 
             def importCert(cert, pwKey):
                 pw  = CraftChoicePrompt.promptForPassword(message=f"Enter the password for certificate: {Path(cert).name}", key=pwKey)
@@ -111,7 +114,6 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
             if self.certFilesInstaller:
                 if not importCert(self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"):
                     return False
-            # needed for productsign, codesign works without
             if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s", "-k", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
                 CraftCore.log.error("Failed to set key partition list.")
                 return False
