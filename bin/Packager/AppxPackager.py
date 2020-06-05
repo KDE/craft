@@ -26,7 +26,7 @@ import os
 import mimetypes
 
 
-from Utils import CraftHash
+from Utils import CraftHash, CodeSign
 from Packager.CollectionPackagerBase import *
 from Packager.PortablePackager import *
 from Blueprints.CraftVersion import CraftVersion
@@ -178,7 +178,7 @@ class AppxPackager(CollectionPackagerBase):
         defines["publisher"] = ", ".join(publisher)
         setupName = os.path.join(self.packageDestinationDir(), "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))))
         defines["setupname"] =  setupName
-        return self.__createAppX(defines) and utils.sign([setupName])
+        return self.__createAppX(defines) and CodeSign.signWindows([setupName])
 
     def createPackage(self):
         defines = self.setDefaults(self.defines)

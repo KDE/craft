@@ -1,6 +1,6 @@
 from Packager.CollectionPackagerBase import *
 from Blueprints.CraftPackageObject import CraftPackageObject
-from Utils import CraftHash
+from Utils import CraftHash, CodeSign
 from pathlib import Path
 import contextlib
 import io
@@ -144,7 +144,7 @@ class MacBasePackager( CollectionPackagerBase ):
             if found_bad_dylib:
                 CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
                 return False
-            return utils.signMacApp(appPath)
+            return CodeSign.signMacApp(appPath)
 
 class MacDylibBundler(object):
     """ Bundle all .dylib files that are not provided by the system with the .app """

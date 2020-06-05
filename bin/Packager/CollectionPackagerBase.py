@@ -32,6 +32,7 @@ from Packager.PackagerBase import *
 from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
 from Blueprints.CraftPackageObject import *
 from Package.SourceOnlyPackageBase import *
+from Utils import CodeSign
 
 
 def toRegExp(fname, targetName) -> re:
@@ -262,7 +263,7 @@ class CollectionPackagerBase(PackagerBase):
                 if not utils.copyDir(entry, entry_target, linkOnly=False):
                     return False
         if filesToSign:
-            if not utils.sign(filesToSign):
+            if not CodeSign.signWindows(filesToSign):
                 return False
         return True
 

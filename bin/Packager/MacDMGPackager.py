@@ -11,7 +11,7 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
-from Utils import CraftHash
+from Utils import CraftHash, CodeSign
 
 
 class MacDMGPackager(MacBasePackager):
@@ -48,7 +48,7 @@ class MacDMGPackager(MacBasePackager):
                                 dmgDest, appPath]):
             return False
 
-        if not utils.signMacPackage(dmgDest):
+        if not CodeSign.signMacPackage(dmgDest):
                 return False
         CraftHash.createDigestFiles(dmgDest)
 

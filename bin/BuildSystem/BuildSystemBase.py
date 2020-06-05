@@ -35,6 +35,7 @@ from pathlib import Path
 
 from CraftBase import *
 from CraftOS.osutils import OsUtils
+from Utils import CodeSign
 
 
 class BuildSystemBase(CraftBase):
@@ -301,6 +302,6 @@ class BuildSystemBase(CraftBase):
 
             # sign the binaries if we can
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-                if not utils.sign(binaryFiles):
+                if not CodeSign.signWindows(binaryFiles):
                     return False
         return True

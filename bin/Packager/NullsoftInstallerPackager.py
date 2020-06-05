@@ -26,7 +26,7 @@
 
 import os
 
-from Utils import CraftHash
+from Utils import CraftHash, CodeSign
 from Packager.CollectionPackagerBase import *
 from Packager.PortablePackager import *
 from Blueprints.CraftVersion import CraftVersion
@@ -183,7 +183,7 @@ You can add your own defines into self.defines as well.
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
             return False
-        return utils.sign([defines["setupname"]])
+        return CodeSign.signWindow([defines["setupname"]])
 
     def createPackage(self):
         """ create a package """

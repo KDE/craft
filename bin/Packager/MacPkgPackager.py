@@ -11,7 +11,7 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
-from Utils import CraftHash
+from Utils import CraftHash, CodeSign
 
 class MacPkgPackager( MacBasePackager ):
 
@@ -49,7 +49,7 @@ class MacPkgPackager( MacBasePackager ):
         if not utils.system([packagesbuild, "-v", '--reference-folder', os.path.dirname(self.getMacAppPath(defines)), '--build-folder', packageDest.parent, pkgprojPath]):
             return False
 
-        if not utils.signMacPackage(packageDest):
+        if not CodeSign.signMacPackage(packageDest):
             return False
 
         CraftHash.createDigestFiles(packageDest)
