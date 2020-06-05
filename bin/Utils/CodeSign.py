@@ -25,11 +25,13 @@
 import os
 from pathlib import Path
 import subprocess
+import tempfile
+import secrets
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils, LockFile
 from CraftSetupHelper import SetupHelper
-from Utils import CraftChoicePrompt
+from Utils import CraftChoicePrompt, CraftCache
 import utils
 
 
@@ -70,20 +72,83 @@ def signWindows(fileNames : [str]) -> bool:
             return False
     return True
 
+class _MacSignScope(LockFile, utils.ScopedEnv):
+    __REAL_HOME = None
+    def __init__(self):
+        LockFile.__init__(self, "keychainLock")
+        # ci setups tend to mess with the env and we need the users real home
+        if not _MacSignScope.__REAL_HOME:
+            user =  subprocess.getoutput("id -un")
+            _MacSignScope.__REAL_HOME = Path("/Users") / user
+        utils.ScopedEnv.__init__(self, {"HOME": str(_MacSignScope.__REAL_HOME)})
+        self.certFileApplication = CraftCore.settings.get("CodeSigning", "MacCertificateApplication", "")
+        self.certFilesInstaller = CraftCore.settings.get("CodeSigning", "MacCertificateInstaller", "")
+        if self._useCertFile:
+            self.__loginKeychainTemp = tempfile.TemporaryDirectory()
+            self.loginKeychain = Path(self.__loginKeychainTemp.name) / "craft.keychain"
+        else:
+            self.__loginKeychainTemp = None
+            self.loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
+
+
+
+    @property
+    def _useCertFile(self):
+        return self.certFileApplication or self.certFilesInstaller
+
+    def __unlock(self):
+        password = ""
+        if self._useCertFile:
+            password = secrets.token_urlsafe(16)
+            if not utils.system(["security", "create-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+                return False
+            def importCert(cert, pwKey):
+                pw  = CraftChoicePrompt.promptForPassword(message=f"Enter the password for your package signing certificate: {Path(cert).name}", key=pwKey)
+                return utils.system(["security", "import", cert, "-k", self.loginKeychain, "-P", pw, "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"], stdout=subprocess.DEVNULL, secret=[password])
+            if self.certFileApplication:
+                if not importCert(self.certFileApplication, "MAC_CERTIFICATE_APPLICATION_PASSWORD"):
+                    return False
+            if self.certFilesInstaller:
+                if not importCert(self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"):
+                    return False
+        else:
+            if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
+                password = CraftChoicePrompt.promptForPassword(message="Enter the password for your signing keychain", key="MAC_KEYCHAIN_PASSWORD")
+
+        if password:
+            if not utils.system(["security", "unlock-keychain", "-p", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+                CraftCore.log.error("Failed to unlock keychain.")
+                return False
+            # needed for productsign codesign works without
+            if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, self.loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
+                CraftCore.log.error("Failed to set key partition list.")
+                return False
+        return True
+
+    def __enter__(self):
+        LockFile.__enter__(self)
+        utils.ScopedEnv.__enter__(self)
+        if not self.__unlock():
+            raise Exception("Failed to setup keychain")
+            return None
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        if self._useCertFile:
+            utils.system(["security", "delete-keychain", self.loginKeychain])
+            self.__loginKeychainTemp.cleanup()
+        utils.ScopedEnv.__exit__(self, exc_type, exc_value, trback)
+        LockFile.__exit__(self, exc_type, exc_value, trback)
+
 def signMacApp(appPath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-    with LockFile("keychainLock"):
+    with _MacSignScope() as scope:
         devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-        loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
-
-        if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
-            if not unlockMacKeychain(loginKeychain):
-                return False
 
         # Recursively sign app
-        if not utils.system(["codesign", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--deep", appPath]):
+        if not utils.system(["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--deep", appPath]):
             return False
 
         ## Verify signature
@@ -108,18 +173,13 @@ def signMacPackage(packagePath : str):
         return True
 
     # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-    with LockFile("keychainLock"):
+    with _MacSignScope() as scope:
         packagePath = Path(packagePath)
         devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-        loginKeychain = CraftCore.settings.get("CodeSigning", "MacKeychainPath", os.path.expanduser("~/Library/Keychains/login.keychain"))
-
-        if CraftCore.settings.getboolean("CodeSigning", "Protected", False):
-            if not unlockMacKeychain(loginKeychain):
-                return False
 
         if packagePath.name.endswith(".dmg"):
             # sign dmg
-            if not utils.system(["codesign", "--force", "--keychain", loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
+            if not utils.system(["codesign", "--force", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
                 return False
 
             # TODO: this step would require notarisation
@@ -128,23 +188,9 @@ def signMacPackage(packagePath : str):
         else:
             # sign pkg
             packagePathTmp = f"{packagePath}.sign"
-            if not utils.system(["productsign", "--keychain", loginKeychain, "--sign", f"Developer ID Installer: {devID}", packagePath, packagePathTmp]):
+            if not utils.system(["productsign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Installer: {devID}", packagePath, packagePathTmp]):
                 return False
 
             utils.moveFile(packagePathTmp, packagePath)
 
         return True
-
-
-def unlockMacKeychain(loginKeychain : str):
-    password = CraftChoicePrompt.promptForPassword(message='Enter the password for your package signing certificate', key="MAC_KEYCHAIN_PASSWORD")
-
-    if not utils.system(["security", "unlock-keychain", "-p", password, loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
-        CraftCore.log.error("Failed to unlock keychain.")
-        return False
-
-    if not utils.system(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s" ,"-k", password, loginKeychain], stdout=subprocess.DEVNULL, secret=[password]):
-        CraftCore.log.error("Failed to set key partition list.")
-        return False
-
-    return True

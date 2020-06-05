@@ -234,6 +234,16 @@ Organization = K Desktop Environment e.V.
 Locality = Berlin
 Country = DE
 State =
+## Mac code signing
+###################
+## Your mac deveoper id asigned with your certificates
+MacDeveloperId = K Desktop Environment e.V. (5433B4KXM8)
+## Specify the certificates directly instead of using a certificate from standard
+## keychain, craft will create a temporary keychain
+## The path to the Application certigicate
+#MacCertificateApplication =
+## The path to the Installer certigicate
+#MacCertificateInstaller =
 
 
 [Version]
