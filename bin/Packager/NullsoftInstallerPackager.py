@@ -183,7 +183,7 @@ You can add your own defines into self.defines as well.
                                         cwd=os.path.abspath(self.packageDir())):
             CraftCore.log.critical("Error in makensis execution")
             return False
-        return CodeSign.signWindow([defines["setupname"]])
+        return CodeSign.signWindows([defines["setupname"]])
 
     def createPackage(self):
         """ create a package """
