@@ -424,8 +424,7 @@ def printFiles(packages):
 def createArchiveCache(packages : CraftPackageObject):
     from Source.ArchiveSource import ArchiveSource
     for p in packages:
-        # why do I need to access source class directly?
-        if isinstance(p.instance._sourceClass, ArchiveSource):
+        if not isinstance(p.instance, ArchiveSource):
             continue
         if not (p.instance.fetch() and
                 p.instance.checkDigest() and
