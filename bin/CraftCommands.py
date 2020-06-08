@@ -278,7 +278,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
     elif action == "install-to-desktop":
         return installToDektop(directTargets)
     elif action == "create-download-cache":
-        return createArchiveCache(directTargets)
+        return createArchiveCache(package)
     elif action == "print-files":
         return printFiles(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps", "update"]:
@@ -423,6 +423,7 @@ def printFiles(packages):
 
 def createArchiveCache(packages : CraftPackageObject):
     from Source.ArchiveSource import ArchiveSource
+    packages = CraftDependencyPackage(packages).getDependencies()
     for p in packages:
         if not isinstance(p.instance, ArchiveSource):
             continue
