@@ -166,9 +166,8 @@ def getABI():
         platform = "windows"
         abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                        [("Mingw-w64", ("mingw", "gcc")),
-                                                        ("Microsoft Visual Studio 2017", ("msvc2017", "cl")),
-                                                        ("Microsoft Visual Studio 2019 (Experimental)", ("msvc2019", "cl")),
-                                                        ], "Microsoft Visual Studio 2017")
+                                                        ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
+                                                        ], "Microsoft Visual Studio 2019")
         abi += f"_64"
 
     elif CraftBootstrap.isUnix():
