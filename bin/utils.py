@@ -788,14 +788,32 @@ def replaceSymlinksWithCopies(path, _replaceDirs=False):
     return True
 
 
-def printProgress(percent):
-    width, _ = shutil.get_terminal_size((80, 20))
-    width -= 20  # margin
-    times = int(width / 100 * percent)
-    sys.stdout.write(
-        "\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=percent))
-    sys.stdout.flush()
+class ProgrssBar(object):
+    def __init__(self, initialProgess=0):
+        self._lastValue = None
+        self._initialProgress = initialProgess
 
+    def print(self, progress : int, force : bool=False):
+        progress = int(progress)
+        if not force and not os.isatty(sys.stdout.fileno()):
+            return
+        if self._lastValue == progress:
+            return
+        self._lastValue = progress
+        width, _ = shutil.get_terminal_size((80, 20))
+        width -= 20  # margin
+        times = int(width / 100 * progress)
+        sys.stdout.write(
+            "\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=progress))
+        sys.stdout.flush()
+
+    def __enter__(self):
+        self.print(self._initialProgress, True)
+        return self
+
+    def __exit__(self, exc_type, exc_value, trback):
+        self.print(100, True)
+        CraftCore.debug.new_line()
 
 class ScopedEnv(object):
     def __init__(self, env):
