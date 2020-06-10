@@ -788,10 +788,12 @@ def replaceSymlinksWithCopies(path, _replaceDirs=False):
     return True
 
 
-class ProgrssBar(object):
+class ProgressBar(object):
     def __init__(self, initialProgess=0):
         self._lastValue = None
         self._initialProgress = initialProgess
+        # don't try experiemtns on old terminals
+        self._legacyMode = not CraftCore.settings.getboolean("General", "AllowAnsiColor")
 
     def print(self, progress : int, force : bool=False):
         progress = int(progress)
@@ -801,10 +803,16 @@ class ProgrssBar(object):
             return
         self._lastValue = progress
         width, _ = shutil.get_terminal_size((80, 20))
-        width -= 20  # margin
-        times = int(width / 100 * progress)
-        sys.stdout.write(
-            "\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=progress))
+        if self._legacyMode:
+            width -= 20  # margin
+            times = int(width / 100 * progress)
+            sys.stdout.write(
+                "\r{percent}% [{progress}{space}]".format(progress="#" * times, space=" " * (width - times), percent=progress))
+        else:
+            width -= 5 # margin
+            times = int(width / 100 * progress)
+            sys.stdout.write("\r{percent}% {progress}{fill}"
+                .format(progress="\u2588" * times, fill = "\u2591" * (width - times), percent=progress))
         sys.stdout.flush()
 
     def __enter__(self):

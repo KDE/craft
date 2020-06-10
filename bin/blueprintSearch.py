@@ -67,7 +67,7 @@ def packages():
         CraftCore.log.info("Updating search cache:")
         packages = CraftPackageObject.root().allChildren()
         total = len(packages)
-        with utils.ProgrssBar() as progress:
+        with utils.ProgressBar() as progress:
             for p in packages:
                 package = SeachPackage(p)
                 CraftCore.cache.availablePackages.append(package)
