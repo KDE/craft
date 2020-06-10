@@ -96,7 +96,6 @@ class CraftPackageObject(object):
     _allLeaves = {}
     _recipes = {}#all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__"}
-    Ignores = re.compile("a^")
 
     @staticmethod
     def _isDirIgnored(d):
@@ -284,9 +283,6 @@ class CraftPackageObject(object):
     @staticmethod
     def root():
         if not CraftPackageObject.__rootPackage:
-            if ("Blueprints", "Ignores") in CraftCore.settings:
-                CraftPackageObject.Ignores = re.compile("|".join([f"^{entry}$" for entry in CraftCore.settings.get("Blueprints", "Ignores").split(";")]))
-
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
             root.name = "/"
             for blueprintRoot in CraftPackageObject.rootDirectories():
@@ -340,18 +336,7 @@ class CraftPackageObject(object):
         import options
         if not self.path:
             return False
-        ignored = options.UserOptions.get(self).ignored
-        if ignored is not None:
-            return ignored
-        ignored = self.path and CraftPackageObject.Ignores.match(self.path)
-        if ignored:
-            CraftCore.log.warning(f"You are using the deprecated Ignore setting:\n"
-                                  f"[Blueprints]\n"
-                                  f"Ignores={self.path}\n\n"
-                                  f"Please use BlueprintSettings.ini\n"
-                                  f"[{self.path}]\n"
-                                  f"ignored = True")
-        return ignored
+        return bool(options.UserOptions.get(self).ignored)
 
     @property
     def version(self):
