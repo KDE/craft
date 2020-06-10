@@ -797,7 +797,7 @@ class ProgressBar(object):
 
     def print(self, progress : int, force : bool=False):
         progress = int(progress)
-        if not force and not os.isatty(sys.stdout.fileno()):
+        if not force and not os.isatty(sys.stderr.fileno()):
             return
         if self._lastValue == progress:
             return
@@ -806,14 +806,14 @@ class ProgressBar(object):
         if self._legacyMode:
             width -= 20  # margin
             times = int(width / 100 * progress)
-            sys.stdout.write(
+            sys.stderr.write(
                 "\r{percent}% [{progress}{space}]".format(progress="#" * times, space=" " * (width - times), percent=progress))
         else:
             width -= 5 # margin
             times = int(width / 100 * progress)
-            sys.stdout.write("\r{percent}% {progress}{fill}"
+            sys.stderr.write("\r{percent}% {progress}{fill}"
                 .format(progress="\u2588" * times, fill = "\u2591" * (width - times), percent=progress))
-        sys.stdout.flush()
+        sys.stderr.flush()
 
     def __enter__(self):
         self.print(self._initialProgress, True)
