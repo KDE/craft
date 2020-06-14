@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["3.4"]:
             self.targets[ver] = f"https://bootstrap.pypa.io/3.4/get-pip.py"
-            self.targetDigests[ver] = (['b86f36cc4345ae87bfd4f10ef6b2dbfa7a872fbff70608a1e43944d283fd0eee'], CraftHash.HashAlgorithm.SHA256)
+            self.targetDigests[ver] = (['564fabc2fbabd9085a71f4a5e43dbf06d5ccea9ab833e260f30ee38e8ce63a69'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "3.4"
 
     def setDependencies(self):
@@ -24,7 +24,7 @@ class Package(PipPackageBase):
         PipPackageBase.__init__(self)
 
     def unpack(self):
-        return True
+        return self.checkDigest()
 
     def make(self):
         get_pip = self.localFilePath()[0]
