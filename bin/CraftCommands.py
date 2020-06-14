@@ -23,6 +23,10 @@
 # SUCH DAMAGE.
 import subprocess
 import tempfile
+import glob
+from pathlib import Path
+from collections import namedtuple
+import urllib
 
 import CraftBase
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
@@ -31,11 +35,8 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils import CraftTimer
 from options import *
-import glob
-import utils
-from pathlib import Path
-from collections import namedtuple
 
+import utils
 
 def doExec(package, action):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
@@ -426,6 +427,16 @@ def createArchiveCache(packages : CraftPackageObject):
     packages = CraftDependencyPackage(packages).getDependencies()
     for p in packages:
         if not isinstance(p.instance, ArchiveSource):
+            continue
+        url = p.subinfo.target()
+        if isinstance(url, list):
+            url = url[0]
+        urlInfo = urllib.parse.urlparse(url)
+        if urlInfo.hostname in {"files.kde.org", "download.kde.org", "download.qt.io"}:
+            CraftCore.log.info(f"Skip mirroring of {url}, host is reliable")
+            continue
+        if p.instance._getFileInfoFromArchiveCache():
+            # already cached
             continue
         if not (p.instance.fetch() and
                 p.instance.checkDigest() and

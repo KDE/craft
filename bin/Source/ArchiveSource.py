@@ -51,24 +51,30 @@ class ArchiveSource(SourceBase):
             return func(downloadRetriesLeft=downloadRetriesLeft, **kw)
         return False
 
-    def __fetchFromArchiveCache(self, downloadRetriesLeft : int=3):
+    def _getFileInfoFromArchiveCache(self) -> []:
+        out = []
         for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
             manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
             files = manifest.get(str(self), compiler="all").files
             if files:
-                self.__downloadDir.mkdir(parents=True, exist_ok=True)
-                for entry in files:
-                    if entry.version != self.buildTarget:
-                        continue
-                    if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
-                        self.__retry(downloadRetriesLeft, self.__fetchFromArchiveCache)
-                    if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
-                                        digests=entry.checksum,
-                                        digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
-                        return self.__retry(downloadRetriesLeft,
-                            lambda downloadRetriesLeft: utils.deleteFile(self.__archiveDir / entry.fileName) and self.__fetchFromArchiveCache(downloadRetriesLeft))
-                if self.__checkFilesPresent(self.localFileNames()):
-                    return True
+                out.append(files)
+        return out
+
+    def __fetchFromArchiveCache(self, downloadRetriesLeft : int=3):
+        for files in self._getFileInfoFromArchiveCache():
+            self.__downloadDir.mkdir(parents=True, exist_ok=True)
+            for entry in files:
+                if entry.version != self.buildTarget:
+                    continue
+                if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
+                    self.__retry(downloadRetriesLeft, self.__fetchFromArchiveCache)
+                if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
+                                    digests=entry.checksum,
+                                    digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
+                    return self.__retry(downloadRetriesLeft,
+                        lambda downloadRetriesLeft: utils.deleteFile(self.__archiveDir / entry.fileName) and self.__fetchFromArchiveCache(downloadRetriesLeft))
+            if self.__checkFilesPresent(self.localFileNames()):
+                return True
         return False
 
 
