@@ -143,7 +143,7 @@ class CraftManifest(object):
             CraftCore.log.info(f"Updating cache manifest from: {self.origin} in: {cacheFilePath}")
         else:
             CraftCore.log.info(f"Create new cache manifest: {cacheFilePath}")
-        cacheFilePath.mkdir(parents=True, exist_ok=True)
+        cacheFilePath.parent.mkdir(parents=True, exist_ok=True)
         with open(cacheFilePath, "wt") as cacheFile:
             json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x:x.toJson())
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
