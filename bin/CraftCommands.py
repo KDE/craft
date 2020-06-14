@@ -424,6 +424,7 @@ def printFiles(packages):
 
 def createArchiveCache(packages : CraftPackageObject):
     from Source.ArchiveSource import ArchiveSource
+    from Package.VirtualPackageBase import SourceComponentPackageBase
     packages = CraftDependencyPackage(packages).getDependencies()
     for p in packages:
         if not isinstance(p.instance, ArchiveSource):
@@ -438,8 +439,13 @@ def createArchiveCache(packages : CraftPackageObject):
         if p.instance._getFileInfoFromArchiveCache():
             # already cached
             continue
-        if not (p.instance.fetch() and
-                p.instance.checkDigest() and
+        if isinstance(p.instance, SourceComponentPackageBase):
+            if not p.instance.fetch(noop=False):
+                return False
+        else:
+            if not p.instance.fetch():
+                return False
+        if not (p.instance.checkDigest() and
                 p.instance.generateSrcManifest()):
             return False
     return True
