@@ -66,8 +66,8 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
         digestList = [digests]
 
     for digests, filename in zip(digestList, filenames):
-        CraftCore.log.debug("checking digest of: %s" % filename)
         pathName = os.path.join(downloaddir, filename)
+        CraftCore.log.debug(f"checking digest of: {pathName}")
         if digests == None:
             for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
                 digestFileName = pathName + digestFileEnding
