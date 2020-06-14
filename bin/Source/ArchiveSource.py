@@ -57,11 +57,11 @@ class ArchiveSource(SourceBase):
             manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
             files = manifest.get(str(self), compiler="all").files
             if files:
-                out.append(files)
+                out.append((url, files))
         return out
 
     def __fetchFromArchiveCache(self, downloadRetriesLeft : int=3):
-        for files in self._getFileInfoFromArchiveCache():
+        for url, files in self._getFileInfoFromArchiveCache():
             self.__downloadDir.mkdir(parents=True, exist_ok=True)
             for entry in files:
                 if entry.version != self.buildTarget:
