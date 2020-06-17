@@ -741,7 +741,10 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     elif isinstance(args, str):
         CraftCore.log.error("Please pass args as [str]")
         return system(f"kshimgen --create {shim} {target} -- {args}")
-    return system(["kshimgen", "--create", shim, target , "--"] + args)
+    command = ["kshimgen", "--create", shim, target]
+    if CraftCore.compiler.isWindows and guiApp:
+        command.append("--gui")
+    return system(command + ["--"] + args)
 
 
 def replaceSymlinksWithCopies(path, _replaceDirs=False):
