@@ -137,6 +137,8 @@ class AppxPackager(CollectionPackagerBase):
         if extensions:
             defines["extensions"] = f"<Extensions>{extensions}</Extensions>"
 
+        defines.setdefault("additional_capabilities", "")
+
         defines.setdefault("capabilities", AppxPackager.Capabilities)
         capabilities = defines["capabilities"]
 
@@ -144,6 +146,7 @@ class AppxPackager(CollectionPackagerBase):
             defines["capabilities"] = f"<Capabilities>{capabilities}</Capabilities>"
 
         defines.setdefault("xml_namespaces", AppxPackager.XMLNamespaces)
+        defines.setdefault("additional_xmlns", "")
         xml_namespaces = defines["xml_namespaces"]
 
         if xml_namespaces:
