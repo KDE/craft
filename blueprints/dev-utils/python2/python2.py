@@ -21,6 +21,9 @@ class Package(BinaryPackageBase):
             return False
         python2 = CraftCore.cache.findApplication("python2.7")
         if CraftCore.compiler.isWindows:
+                exitCode, _python2 = CraftCore.cache.getCommandOutput("py", "-2 -c \"import sys; print(sys.executable)\"")
+                if exitCode == 0:
+                    python2 = _python2.strip()
                 if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
                     python2 = CraftCore.cache.findApplication("python", CraftCore.settings.get("Paths", "PYTHON27"))
         if not python2:
