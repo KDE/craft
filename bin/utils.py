@@ -952,11 +952,11 @@ def getLibraryDeps(path):
     return deps
 
 
-def regexFileFilter(filename : os.DirEntry, root : str, pattern : [re]=None) -> bool:
+def regexFileFilter(filename : os.DirEntry, root : str, patterns : [re]=None) -> bool:
     """ return False if file does not match pattern"""
     # use linux style seperators
     relFilePath = Path(filename.path).relative_to(root).as_posix()
-    for pattern in pattern:
+    for pattern in patterns:
         if pattern.search(relFilePath):
             CraftCore.log.debug(f"regExDirFilter: {relFilePath} matches: {pattern.pattern}")
             return True
