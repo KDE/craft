@@ -56,7 +56,7 @@ class PipBuildSystem(BuildSystemBase):
     def install(self):
         ok = True
         for ver, python in self._pythons:
-            command = [python, "-m", "pip", "install", "--upgrade"]
+            command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed"]
             if not self.venvDir(ver).exists():
                 command += ["--user"]
             if self.subinfo.svnTarget():

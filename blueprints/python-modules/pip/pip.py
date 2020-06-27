@@ -29,7 +29,8 @@ class Package(PipPackageBase):
     def make(self):
         get_pip = self.localFilePath()[0]
         for ver, python in self._pythons:
-            if not utils.system([python, get_pip]):
-                return False
+            if not utils.system([python, "-m", "pip"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL):
+                if not utils.system([python, get_pip]):
+                    return False
         return True
 
