@@ -28,7 +28,8 @@ class Package(PipPackageBase):
     def make(self):
         get_pip = self.localFilePath()[0]
         for ver, python in self._pythons:
-            hasPip = utils.system([python, "-m", "pip"], stdout=subprocess.DEVNULL)
+            # actually call an unsupported argument, if it fails we have pip, if python does not know the module we get a 0
+            hasPip = not utils.system([python, "-m", "pip", "-asdasdad"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             if hasPip:
                 continue
             if not utils.system([python, get_pip, "--user"]):
