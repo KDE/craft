@@ -1,3 +1,4 @@
+import io
 import subprocess
 
 import info
@@ -28,10 +29,11 @@ class Package(PipPackageBase):
     def make(self):
         get_pip = self.localFilePath()[0]
         for ver, python in self._pythons:
-            # actually call an unsupported argument, if it fails we have pip, if python does not know the module we get a 0
-            hasPip = not utils.system([python, "-m", "pip", "-error"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            if hasPip:
-                continue
+            # if its installed we get the help text if not we get an empty string
+            with io.StringIO() as tmp:
+                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
+                if tmp.getvalue():
+                    continue
             if not utils.system([python, get_pip, "--user"]):
                 return False
         return True
