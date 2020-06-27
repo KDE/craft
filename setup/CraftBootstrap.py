@@ -190,7 +190,7 @@ def setUp(args):
     while not args.prefix:
         print("Where to you want us to install Craft")
         prefix = Path("C:/CraftRoot/" if CraftBootstrap.isWin() else "~/CraftRoot") 
-        args.prefix = os.path.expanduser(input(f"Craft install root: [{prefix}]") or prefix)
+        args.prefix = os.path.expanduser(input(f"Craft install root: [{prefix}]: ") or prefix)
 
     if not args.dry_run and not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
