@@ -115,7 +115,8 @@ class ArchiveSource(SourceBase):
         CraftCore.log.debug("ArchiveSource.localFileNamesBase called")
 
         filenames = []
-        for url in self.subinfo.targets.values():
+        urls = self.subinfo.targets[self.buildTarget]
+        for url in urls if isinstance(urls, list) else [urls]:
             filenames.append(os.path.basename(url))
         return filenames
 
