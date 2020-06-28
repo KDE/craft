@@ -33,6 +33,7 @@ from Packager.SevenZipPackager import *
 from Packager.QtIFPackager import *
 from Packager.AppxPackager import *
 from Packager.DesktopEntry import *
+from Packager.AppImagePackager import *
 
 
 class TypePackager(PackagerBase):
