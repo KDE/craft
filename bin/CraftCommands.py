@@ -296,6 +296,13 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
             depType = DependencyType.All
         depList = depPackage.getDependencies(depType=depType)
 
+        for p in directTargets:
+            # print if a direct target is disabled
+            # do it after the dependencies are initialised
+            if p.isIgnored():
+                if not p.categoryInfo.isActive:
+                    CraftCore.log.warning(f"Ignoring: {p} as it is not supported on your platform/compiler")
+
         packages = []
         if not args.resolve_deps:
             for item in depList:
