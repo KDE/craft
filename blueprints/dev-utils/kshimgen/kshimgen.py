@@ -12,14 +12,15 @@ class subinfo(info.infoclass):
         for ver in ["0.2.0"]:
             self.targets[ver] = f"https://files.kde.org/craft/sources/libs/kshimgn/kshimgen-v{ver}.tar.xz"
             self.targetInstSrc[ver] = f"kshimgen-v{ver}"
-        for ver in ["0.3.0"]:
+        for ver in ["0.3.0", "0.4.0"]:
             self.targets[ver] = f"https://invent.kde.org/vonreth/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kshim-v{ver}"
         self.targetDigests["0.1.0"] = (['1a46c599ca54e112fd37c39a60e5b97b6b20997e2114fe3cd422274c75ebcd22'], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.2.0"] =  (['b5f93d81d6937edb6608b87e0a87c9b7783aa7488c350683865beac3207d4312'], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.3.0"] = (['1d5fee6e0cef513cbdef755b1829af2fe78be96eb88fa53a68594bfac0be7b0a'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["0.4.0"] = (['b59bea7b02ba2c37efbdba5706abe48f32fa3ca44b5a5f4e182ba8cdbadf0a32'], CraftHash.HashAlgorithm.SHA256)
         self.patchLevel["0.2.0"] = 1
-        self.defaultTarget = '0.3.0'
+        self.defaultTarget = '0.4.0'
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/cmake-base"] = None
