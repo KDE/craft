@@ -54,6 +54,8 @@ The packager used can be decided at runtime
                 packager = NullsoftInstallerPackager
             elif CraftCore.compiler.isMacOS:
                 packager = MacDMGPackager
+            elif CraftCore.compiler.isLinux:
+                packager = AppImagePackager
             else:
                 packager = SevenZipPackager
 
