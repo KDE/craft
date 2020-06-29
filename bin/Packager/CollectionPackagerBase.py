@@ -283,7 +283,7 @@ class CollectionPackagerBase(PackagerBase):
             # todo unify sym name with Qt
             symbolPattern = re.compile(r".*(\{0}|\.debug)$".format(symbolSuffix))
         else:
-            symbolPattern = re.compile(r".*\{0})$".format(symbolSuffix))
+            symbolPattern = re.compile(r".*\{0}$".format(symbolSuffix))
 
         if not seperateSymbolFiles:
             self.blacklist.append(symbolPattern)
