@@ -222,7 +222,10 @@ def shelve():
         package["version"] = version
         if revision:
             # sadly we combine the revision with the branch "master-1234ac"
-            package["revision"] = revision.split("-", 1)[1]
+            print(revision, package)
+            revParts = revision.split("-", 1)
+            if len(revParts) == 2:
+                package["revision"] = revParts[1]
     with open(Path(CraftCore.standardDirs.craftRoot()) / "craft.shelve", "wt", encoding="UTF-8") as out:
         listFile.write(out)
 
