@@ -2,7 +2,6 @@ import re
 from distutils.version import Version, LooseVersion, StrictVersion
 
 from CraftCore import CraftCore
-import CraftDebug
 
 
 class CraftVersion(Version):

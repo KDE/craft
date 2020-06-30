@@ -17,6 +17,7 @@ class FileAttributes():
 
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
+    InDocker = None
     @staticmethod
     def rm(path, force=False):
         CraftCore.log.debug("deleting file %s" % path)
@@ -108,3 +109,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         CraftCore.log.info(f"Killing processes {name} in {prefix}")
         return shells.Powershell().execute([f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
                              f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"], logCommand=False)
+
+    @staticmethod
+    def detectDocker():
+        if OsUtils.InDocker is None:
+            import shells
+            OsUtils.InDocker = shells.Powershell().execute(["Get-Service", "-Name", "cexecsvc", "-ErrorAction", "SilentlyContinue"], logCommand=False)
+        return OsUtils.InDocker

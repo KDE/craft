@@ -9,6 +9,7 @@ from CraftCore import CraftCore
 
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
+    InDocker = None
     @staticmethod
     def rm(path, force=False):
         CraftCore.log.debug("deleting file %s" % path)
@@ -53,6 +54,13 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def killProcess(name : str="*", prefix : str=None) -> bool:
         CraftCore.log.warning("killProcess is not implemented")
         return True
+
+    @staticmethod
+    def detectDocker() -> bool:
+        if OsUtils.InDocker is None:
+            with open("/proc/self/cgroup", "rt") as f:
+                OsUtils.InDocker = f.readline().split("/",1)[-1] == "docker"
+        return OsUtils.InDocker
 
 class LockFile(CraftOS.OsUtilsBase.LockFileBase):
     def __init__(self ,name):

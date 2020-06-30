@@ -69,6 +69,10 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     def killProcess(name : str="*", prefix : str=None) -> bool:
         pass
 
+    @staticmethod
+    def detectDocker() -> bool:
+        pass
+
 
 class LockFileBase(object, metaclass=abc.ABCMeta):
     def __init__(self, name):
