@@ -22,4 +22,8 @@ class AppImagePackager(CollectionPackagerBase):
             CraftCore.log.error("Failed to find the .desktop file")
             return False
         with utils.ScopedEnv({"ARCH": "x86_64", "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu"}):
-            return utils.system(["linuxdeploy-x86_64.AppImage", "--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]], cwd=self.packageDestinationDir())
+            command = ["linuxdeploy-x86_64.AppImage"]
+            if OsUtils.detectDocker:
+                command.append("--appimage-extract-and-run")
+            command += ["--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]]
+            return utils.system(command, cwd=self.packageDestinationDir())
