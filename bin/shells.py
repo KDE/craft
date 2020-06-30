@@ -190,8 +190,8 @@ class Powershell(object):
     def quote(self, s : str) -> str:
         return f"'{s}'"
 
-    def execute(self, args :[str]) -> bool:
-        return utils.system([self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args)
+    def execute(self, args :[str], **kw) -> bool:
+        return utils.system([self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args, **kw)
 
 def main():
     shell = BashShell()

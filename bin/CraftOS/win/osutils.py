@@ -101,20 +101,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def killProcess(name : str="*", prefix : str=None) -> bool:
-        import utils
+        import shells
         if not prefix:
             prefix = CraftCore.standardDirs.craftRoot()
         prefix = Path(prefix)
-        powershell = None
-        if platform.architecture()[0] == "32bit":
-            # try to find the x64 powershell to be able to kill x64 processes too
-            powershell = CraftCore.cache.findApplication("powershell", os.path.join(os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0" ))
-        if not powershell:
-            powershell = CraftCore.cache.findApplication("powershell")
-        if not powershell:
-            CraftCore.log.warning("Failed to detect powershell")
-            return False
         CraftCore.log.info(f"Killing processes {name} in {prefix}")
-        return utils.system(f"{powershell} -NoProfile -ExecutionPolicy ByPass -Command \"& {{" +
-                             f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
-                             f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}} }}\"", logCommand=False)
+        return shells.Powershell().execute([f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
+                             f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"], logCommand=False)
