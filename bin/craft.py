@@ -92,6 +92,7 @@ def main(timer):
                         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
     parser.add_argument("--list-file", action="store",
                         help=argparse.SUPPRESS, dest="unshelve")
+    parser.add_argument("--shelve",  action="store", help="Generate a an ini with a list of all installed packages and their version")
     parser.add_argument("--unshelve", action="store",
                         help="Build all packages from the shelve file provided")
     parser.add_argument("--options", action="append",
@@ -149,7 +150,6 @@ def main(timer):
                      ("upgrade", {"help":"Update all installed packages"}),
                      ("print-files", {"help":"Print the files installed by the package and exit"}),
                      ("clean-unused", {"help":"Clean unused files of all packages"}),
-                     ("shelve", {"help":"Generate a an ini with a list of all installed packages and their version"})
                      ], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
@@ -209,7 +209,7 @@ def main(timer):
         return subprocess.Popen(run_detached, **kwargs)
 
     if args.add_blueprint_repository:
-        return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository, args)
+        return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository)
 
     if CraftCore.settings.getboolean("Packager", "CreateCache"):
         # we are in cache creation mode, ensure to create a 7z image and not an installer
@@ -239,14 +239,12 @@ def main(timer):
             if not os.path.exists(tempArgs.unshelve):
                 CraftCore.log.error(f"List file {tempArgs.unshelve!r} does not exist")
                 return False
-            if not packageNames:
-                packageNames = []
-            packageNames += CraftCommands.unShelve(tempArgs.unshelve)
+            return CraftCommands.unShelve(tempArgs.unshelve, args)
+        elif tempArgs.shelve:
+            return CraftCommands.shelve(tempArgs.shelve)
 
         if action == "print-installed":
             InstallDB.printInstalled()
-        if action == "shelve":
-            CraftCommands.shelve()
         elif action == "search-file":
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         elif action == "set":

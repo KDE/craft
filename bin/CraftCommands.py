@@ -38,6 +38,19 @@ from options import *
 
 import utils
 
+
+def __recurseCraft(command:[str], args:[str]):
+    # command is the essential action, args might get split into multiple calls
+    # close the log file and the db
+    UserOptions.instance()._save()
+    CraftTitleUpdater.instance.stop()
+    CraftCore.debug._fileHandler.close()
+    del CraftCore.installdb
+    for args in utils.limitCommandLineLength([sys.executable, sys.argv[0]] + command, args):
+        if not subprocess.call(args) == 0:
+            return False
+    return True
+
 def doExec(package, action):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
         CraftCore.debug.step("Action: %s for %s" % (action, package))
@@ -121,7 +134,7 @@ def setOption(packageNames : [str], option : str) -> bool:
         CraftCore.log.info(f"[{package}]\n{key}={getattr(options, key)}")
     return True
 
-def addBlueprintsRepository(url : str, args) -> bool:
+def addBlueprintsRepository(url : str) -> bool:
     templateDir = os.path.join(CraftCore.standardDirs.craftBin(), "..", "internal_blueprints" )
     with tempfile.TemporaryDirectory() as tmp:
         iniPath = os.path.join(tmp, "version.ini")
@@ -131,12 +144,16 @@ def addBlueprintsRepository(url : str, args) -> bool:
         parser["General"]["branches"] = "master"
         parser["General"]["defaulttarget"] = "master"
         parser["General"]["gitUrl"] = url
-        with open(iniPath, "wt+") as out:
+        with open(iniPath, "wt", encoding="UTF-8") as out:
             parser.write(out)
         CraftCore.settings.set("Blueprints", "Locations", templateDir)
         CraftCore.settings.set("InternalTemp", "add-bluprints-template.ini", iniPath)
-        package = resolvePackage(["add-bluprints-template"])
-        return run(package, "fetch", args)
+        pkg = CraftPackageObject.get("add-bluprints-template")
+        if pkg._instance:
+            # reset the pkg to pick up the values
+            del pkg._instance
+            pkg._instance = None
+        return handlePackage(pkg, "fetch", [])
 
 def destroyCraftRoot() -> bool:
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
@@ -173,13 +190,17 @@ def destroyCraftRoot() -> bool:
     return True
 
 
-def unShelve(shelve):
+def unShelve(shelve, args):
     packageNames = []
     parser = configparser.ConfigParser(allow_no_value=True)
     parser.read(shelve, encoding="UTF-8")
     listVersion = 1
+    blueprintRepositories = []
     if "General" in parser:
         listVersion = int(parser["General"].get("version", listVersion))
+        blueprintRepositories = CraftCore.settings._parseList(parser["General"].get("blueprintRepositories", ""))
+    for repo in blueprintRepositories:
+        addBlueprintsRepository(repo)
     Info = namedtuple("Info", "version revision")
     packages = {} # type: Info
     if listVersion == 1:
@@ -192,24 +213,52 @@ def unShelve(shelve):
                 continue
             packages[p] = Info(s.get("version", None), s.get("revision", None))
 
+    settings = UserOptions.instance().settings
     for p, info in packages.items():
-        if info.version:
-            setOption([p], f"version={info.version}")
+        if not settings.has_section(p):
+            settings.add_section(p)
+        settings[p]["version"] = info.version
         if info.revision:
-            setOption([p], f"revision={info.revision}")
-    return packages.keys()
+            settings[p]["revision"] = info.revision
+    return __recurseCraft([], list(packages.keys()))
 
-def shelve():
+def shelve(target : str):
+    target = Path(target)
+    CraftCore.log.info(f"Creating shelve: {target}")
     listFile = configparser.ConfigParser(allow_no_value=True)
-    listFile.add_section("General")
+    updating = target.exists()
+    if updating:
+        listFile.read(target, encoding="UTF-8")
+        oldSections = set(listFile.sections())
+        oldSections.remove("General")
+    if not listFile.has_section("General"):
+        listFile.add_section("General")
     listFile["General"]["version"] = "2"
+    blueprintRepos = []
+    for p in CraftPackageObject.get("craft").children.values():
+        if p.path == "craft/craft-core":
+            continue
+        blueprintRepos.append(p.instance.repositoryUrl())
+    listFile["General"]["blueprintRepositories"] = ";".join(blueprintRepos)
     reDate = re.compile(r"\d\d\d\d\.\d\d\.\d\d")
+
+    def _set(package, key:str, value:str):
+        if updating:
+            old = package.get(key, value)
+            if old != value:
+                CraftCore.log.info(f"Updating {package.name} {key}: {old} -> {value}")
+        package[key] = value
+
+    newPackages = set()
     for package, version, revision in CraftCore.installdb.getDistinctInstalled():
         packageObject = CraftPackageObject.get(package)
         if not packageObject:
             CraftCore.log.warning(f"{package} is no longer known to Craft, it will not be added to the list")
             continue
-        listFile.add_section(package)
+        if not listFile.has_section(package):
+            listFile.add_section(package)
+        if updating:
+            newPackages.add(package)
         package = listFile[package]
         # TODO: clean our database
         patchLvl = version.split("-", 1)
@@ -219,14 +268,20 @@ def shelve():
             clean |= patchLvl[0] in packageObject.subinfo.patchLevel and str(packageObject.subinfo.patchLevel[patchLvl[0]] + packageObject.categoryInfo.patchLevel) == patchLvl[1]
             if clean:
                 version = patchLvl[0]
-        package["version"] = version
+        _set(package, "version",  version)
+        if version != packageObject.subinfo.defaultTarget:
+            CraftCore.debug.printOut(f"For {packageObject} {version} is an update availible: {packageObject.subinfo.defaultTarget}")
         if revision:
             # sadly we combine the revision with the branch "master-1234ac"
-            print(revision, package)
             revParts = revision.split("-", 1)
             if len(revParts) == 2:
-                package["revision"] = revParts[1]
-    with open(Path(CraftCore.standardDirs.craftRoot()) / "craft.shelve", "wt", encoding="UTF-8") as out:
+                _set(package, "revision",  revParts[1])
+    if updating:
+        removed = oldSections - newPackages
+        added = newPackages - oldSections
+        CraftCore.log.info(f"The following packages where removed from {target}: {removed}")
+        CraftCore.log.info(f"The following packages where added to {target}: {added}")
+    with open(target, "wt", encoding="UTF-8") as out:
         listFile.write(out)
 
 
@@ -392,19 +447,16 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if cleanBuildDir:
             cleanDir(instance.buildDir())
 
-def upgrade(args) -> bool:
+def upgrade(args, argv=None) -> bool:
     ENV_KEY = "CRAFT_CORE_UPDATED"
     if ENV_KEY not in os.environ:
+        if argv is None:
+            argv = sys.argv[1:]
         os.environ[ENV_KEY] = "1"
         # update the core
         if not run(CraftPackageObject.get("craft"), "all", args):
             return False
-        # close the log file and the db
-        UserOptions.instance()._save()
-        CraftTitleUpdater.instance.stop()
-        CraftCore.debug._fileHandler.close()
-        del CraftCore.installdb
-        return subprocess.call([sys.executable] + sys.argv) == 0
+        return __recurseCraft([], argv)
     else:
         package = CraftPackageObject(None)
         for packageName, _, _ in CraftCore.installdb.getDistinctInstalled():

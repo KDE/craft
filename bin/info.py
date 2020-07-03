@@ -98,8 +98,8 @@ class infoclass(object):
         if target:
             if target in self.targets or target in self.svnTargets:
                 return target
-            else:
-                raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}", self.parent.package)
+            elif not self.parent.package.isIgnored():
+                raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}, avaialble versions are {list(self.targets.keys()) + list(self.svnTargets.keys())} ", self.parent.package)
         return self._defaultTarget
 
 
