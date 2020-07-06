@@ -281,6 +281,7 @@ def shelve(target : str):
         added = newPackages - oldSections
         CraftCore.log.info(f"The following packages where removed from {target}: {removed}")
         CraftCore.log.info(f"The following packages where added to {target}: {added}")
+    utils.createDir(target.parent)
     with open(target, "wt", encoding="UTF-8") as out:
         listFile.write(out)
 
