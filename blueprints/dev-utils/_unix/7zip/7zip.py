@@ -26,6 +26,7 @@ from Package.CMakePackageBase import *
 class Package(CMakePackageBase):
     def __init__(self):
         CMakePackageBase.__init__(self)
+        self.subinfo.shelveAble = False
 
     def install(self):
         return utils.copyFile(os.path.join(self.buildDir(), "bin", "7za"), os.path.join(self.installDir(), "bin", "7za"), linkOnly=False)

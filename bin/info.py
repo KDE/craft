@@ -26,6 +26,9 @@ class infoclass(object):
         self.parent = parent
         self.options = Options(parent.package)
         self.versionInfo = VersionInfo.VersionInfo(subinfo=self)
+        # whethe we can add this blueprint to a shelve
+        # blueprints that specify different versions for different platforms are not supported
+        self.shelveAble = True
         self.targets = {}
         self.archiveNames = {}
         # Specifiy that the fetched source should be placed into a

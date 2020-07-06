@@ -256,6 +256,8 @@ def shelve(target : str):
         if not packageObject:
             CraftCore.log.warning(f"{package} is no longer known to Craft, it will not be added to the list")
             continue
+        if not packageObject.subinfo.shelveAble:
+            continue
         if not listFile.has_section(package):
             listFile.add_section(package)
         if updating:
