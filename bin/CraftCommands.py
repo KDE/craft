@@ -25,7 +25,7 @@ import subprocess
 import tempfile
 import glob
 from pathlib import Path
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import urllib
 
 import CraftBase
@@ -230,7 +230,8 @@ def shelve(target : str):
     if updating:
         listFile.read(target, encoding="UTF-8")
         oldSections = set(listFile.sections())
-        oldSections.remove("General")
+        if "General" in oldSections:
+            oldSections.remove("General")
     if not listFile.has_section("General"):
         listFile.add_section("General")
     listFile["General"]["version"] = "2"
@@ -282,6 +283,7 @@ def shelve(target : str):
         CraftCore.log.info(f"The following packages where removed from {target}: {removed}")
         CraftCore.log.info(f"The following packages where added to {target}: {added}")
     utils.createDir(target.parent)
+    listFile._sections = OrderedDict(sorted(listFile._sections.items(), key=lambda k: k[0]))
     with open(target, "wt", encoding="UTF-8") as out:
         listFile.write(out)
     return True
