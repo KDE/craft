@@ -220,7 +220,8 @@ def unShelve(shelve, args):
         settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
-    return __recurseCraft([], list(packages.keys()))
+    # bootstrap craft first
+    return __recurseCraft([], ["craft"] + list(packages.keys()))
 
 def shelve(target : str):
     target = Path(target)
