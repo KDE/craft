@@ -284,6 +284,7 @@ def shelve(target : str):
     utils.createDir(target.parent)
     with open(target, "wt", encoding="UTF-8") as out:
         listFile.write(out)
+    return True
 
 
 def packageIsOutdated(package):
