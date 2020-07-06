@@ -237,7 +237,7 @@ def shelve(target : str):
     listFile["General"]["version"] = "2"
     blueprintRepos = []
     for p in CraftPackageObject.get("craft").children.values():
-        if p.path == "craft/craft-core":
+        if p.path in {"craft/craft-core", "craft/craftmaster"}:
             continue
         blueprintRepos.append(p.instance.repositoryUrl())
     listFile["General"]["blueprintRepositories"] = ";".join(blueprintRepos)
