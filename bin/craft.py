@@ -183,9 +183,7 @@ def main(timer):
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
-    if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-        CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]),
-                                         timer)
+    CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
     CraftSetupHelper.SetupHelper.printBanner()
 
     if args.doDestroyCraftRoot:
