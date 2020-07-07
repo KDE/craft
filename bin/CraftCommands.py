@@ -215,9 +215,10 @@ def unShelve(shelve, args):
 
     settings = UserOptions.instance().settings
     for p, info in packages.items():
-        if not settings.has_section(p):
+        if info.version or info.revision and not settings.has_section(p):
             settings.add_section(p)
-        settings[p]["version"] = info.version
+        if info.version:
+            settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
     # bootstrap craft first
