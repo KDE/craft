@@ -215,7 +215,7 @@ def unShelve(shelve, args):
 
     settings = UserOptions.instance().settings
     for p, info in packages.items():
-        if info.version or info.revision and not settings.has_section(p):
+        if (info.version or info.revision) and not settings.has_section(p):
             settings.add_section(p)
         if info.version:
             settings[p]["version"] = info.version
