@@ -126,6 +126,10 @@ class CraftDebug(object):
     def trace(self, message):
         self.log.debug("craft trace: %s" % message)
 
+    def close(self):
+        if self._fileHandler:
+            self._fileHandler.close()
+
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
 

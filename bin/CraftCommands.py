@@ -44,7 +44,7 @@ def __recurseCraft(command:[str], args:[str]):
     # close the log file and the db
     UserOptions.instance()._save()
     CraftTitleUpdater.instance.stop()
-    CraftCore.debug._fileHandler.close()
+    CraftCore.debug.close()
     del CraftCore.installdb
     for args in utils.limitCommandLineLength([sys.executable, sys.argv[0]] + command, args):
         if not subprocess.call(args) == 0:
