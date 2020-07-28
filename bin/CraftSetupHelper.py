@@ -254,13 +254,14 @@ class SetupHelper(object):
     def setXDG(self):
         self.prependEnvVar("XDG_DATA_DIRS", [os.path.join(CraftCore.standardDirs.craftRoot(), "share")])
         if OsUtils.isUnix():
+            user = os.getenv("USER", self._getOutput(["id", "-u", "-n"]))
             self.prependEnvVar("XDG_CONFIG_DIRS", [os.path.join(CraftCore.standardDirs.craftRoot(), "etc", "xdg")])
             self.addEnvVar("XDG_DATA_HOME",
-                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", os.getenv("USER"), ".local5", "share"))
+                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".local5", "share"))
             self.addEnvVar("XDG_CONFIG_HOME",
-                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", os.getenv("USER"), ".config"))
+                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".config"))
             self.addEnvVar("XDG_CACHE_HOME",
-                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", os.getenv("USER"), ".cache"))
+                           os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".cache"))
 
     def _setupUnix(self):
         libraryPaths = [os.path.join(CraftCore.standardDirs.craftRoot(), "lib")]
