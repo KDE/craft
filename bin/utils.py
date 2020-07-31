@@ -729,7 +729,7 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> bool:
+def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env=None) -> bool:
     if not useAbsolutePath and os.path.isabs(target):
         target = os.path.relpath(target, os.path.dirname(shim))
     createDir(os.path.dirname(shim))
@@ -744,6 +744,9 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False) -> 
     command = ["kshimgen", "--create", shim, target]
     if CraftCore.compiler.isWindows and guiApp:
         command.append("--gui")
+    if env:
+        command.append("--env")
+        command += [f"{k}={v}" for k,v in env.items()]
     return system(command + ["--"] + args)
 
 

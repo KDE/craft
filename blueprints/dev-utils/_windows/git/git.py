@@ -52,8 +52,13 @@ class GitPackage(BinaryPackageBase):
         BinaryPackageBase.__init__(self)
 
     def postInstall(self):
+        env = None
+        if CraftCore.compiler.isLinux:
+            env = {"LD_LIBRARY_PATH": ""}
+        elif CraftCore.compiler.isWindows:
+            env = {"TERM": ""}
         return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
-                                os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"))
+                                os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"), env=env)
 
     def postQmerge(self):
         gitDir = os.path.join(CraftStandardDirs.craftRoot(), self.subinfo.targetInstallPath[self.buildTarget])
