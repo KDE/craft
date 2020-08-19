@@ -327,7 +327,7 @@ def getVCSType(url):
     elif url.find("pserver:") >= 0:
         return "cvs"
     else:
-        return ""
+        return "git"
 
 
 def isGitUrl(Url):
@@ -348,9 +348,7 @@ def isSvnUrl(url):
     """ this function returns true, if the Url given as parameter is a svn url """
     if url.startswith("[svn]"):
         return True
-    elif url.find("://") == -1:
-        return True
-    elif url.find("svn:") >= 0 or url.find("https:") >= 0 or url.find("http:") >= 0:
+    elif "svn:" in url:
         return True
     return False
 
