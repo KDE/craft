@@ -78,6 +78,12 @@ class AppxPackager(CollectionPackagerBase):
           <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" />
         </desktop:Extension>"""
 
+    Aliases = r"""<uap3:Extension Category="windows.appExecutionAlias" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="@{alias}" />
+          </uap3:AppExecutionAlias>
+          </uap3:Extension>"""
+
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
@@ -109,6 +115,7 @@ class AppxPackager(CollectionPackagerBase):
 
     def setDefaults(self, defines : dict) -> dict:
         defines = super().setDefaults(defines)
+        defines.setdefault("additional_xmlns", "")
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
         # part 4 must be 0 for the store
@@ -133,6 +140,12 @@ class AppxPackager(CollectionPackagerBase):
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
 
+        if "alias" in defines:
+            if not defines["alias"].endswith(CraftCore.compiler.executableSuffix):
+                defines["alias"] += CraftCore.compiler.executableSuffix
+            defines["extensions"] += AppxPackager.Aliases
+            defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
+
         extensions = defines["extensions"]
         if extensions:
             defines["extensions"] = f"<Extensions>{extensions}</Extensions>"
@@ -146,7 +159,6 @@ class AppxPackager(CollectionPackagerBase):
             defines["capabilities"] = f"<Capabilities>{capabilities}</Capabilities>"
 
         defines.setdefault("xml_namespaces", AppxPackager.XMLNamespaces)
-        defines.setdefault("additional_xmlns", "")
         xml_namespaces = defines["xml_namespaces"]
 
         if xml_namespaces:
@@ -155,7 +167,6 @@ class AppxPackager(CollectionPackagerBase):
         # compat with nsis
         if "shortcuts" in self.defines:
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
-
         return defines
 
     def __prepareIcons(self, defines):
