@@ -40,6 +40,7 @@ class PackagerBase(CraftBase):
         defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
         defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("license", "")
+        defines.setdefault("readme", "")
         defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
         defines.setdefault("website",
                            self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
