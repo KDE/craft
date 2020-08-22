@@ -134,6 +134,8 @@ You can add your own defines into self.defines as well.
         defines["iconname"] = os.path.basename(defines["icon"])
         if not defines["license"] == "":
             defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{defines["license"]}" """
+        if not defines["readme"] == "":
+            defines["readme"] = f"""!insertmacro MUI_FINISHPAGE_SHOWREADME "{defines["readme"]}" """
 
         shortcuts = []
         if "executable" in defines:
