@@ -79,6 +79,10 @@ Var StartMenuFolder
 @{license}
 ;!insertmacro MUI_PAGE_LICENSE
 
+;!insertmacro MUI_FINISHPAGE_SHOWREADME
+@{readme}
+;!insertmacro MUI_FINISHPAGE_SHOWREADME
+
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
