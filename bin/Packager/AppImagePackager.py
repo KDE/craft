@@ -15,6 +15,10 @@ class AppImagePackager(CollectionPackagerBase):
             return False
         if not utils.mergeTree(archiveDir, archiveDir / "usr"):
             return False
+        etc = archiveDir / "usr/etc"
+        if etc.exists():
+            if not utils.moveFile(etc, archiveDir / "etc"):
+                return False
         if not utils.createDir(self.packageDestinationDir()):
             return False
         desktopFiles = glob.glob(f"{archiveDir}/usr/share/applications/*{defines['appname']}.desktop")
