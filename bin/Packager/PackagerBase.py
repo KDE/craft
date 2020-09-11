@@ -57,7 +57,7 @@ class PackagerBase(CraftBase):
             apps = glob.glob(os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True)
             if len(apps) != 1:
                 CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
-                return False
+                return None
             appPath = apps[0]
         return lookPath / appPath
 

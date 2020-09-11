@@ -24,6 +24,8 @@ class MacBasePackager( CollectionPackagerBase ):
             return False
 
         appPath = self.getMacAppPath(defines)
+        if not appPath:
+            return False
         archive = Path(self.archiveDir())
         CraftCore.log.info(f"Packaging {appPath}")
 

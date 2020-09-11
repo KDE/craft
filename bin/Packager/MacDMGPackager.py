@@ -34,6 +34,8 @@ class MacDMGPackager(MacBasePackager):
         if not self.internalCreatePackage(defines):
             return False
         appPath = self.getMacAppPath(defines)
+        if not appPath:
+            return False
         archive = os.path.normpath(self.archiveDir())
 
         CraftCore.log.info(f"Packaging {appPath}")
