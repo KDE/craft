@@ -231,9 +231,11 @@ SignCache = ${CodeSigning:Enabled}
 #Certificate = C:\CraftRoot\mycert.pfx
 CommonName = K Desktop Environment e.V.
 Organization = K Desktop Environment e.V.
+Street = Prinzenstr 85 F
 Locality = Berlin
 Country = DE
-State =
+State = Berlin
+PostalCode = 10969
 ## Mac code signing
 ###################
 ## Your mac deveoper id asigned with your certificates

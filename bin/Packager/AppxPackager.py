@@ -212,8 +212,10 @@ class AppxPackager(CollectionPackagerBase):
         publisher = []
         appendToPublisherString(publisher, "CN", "CommonName")
         appendToPublisherString(publisher, "O", "Organization")
+        appendToPublisherString(publisher, "STREET", "Street")
         appendToPublisherString(publisher, "L", "Locality")
         appendToPublisherString(publisher, "S", "State")
+        appendToPublisherString(publisher, "PostalCode", "PostalCode")
         appendToPublisherString(publisher, "C", "Country")
         defines["publisher"] = ", ".join(publisher)
         setupName = os.path.join(self.packageDestinationDir(), "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))))
