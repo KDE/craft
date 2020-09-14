@@ -32,6 +32,5 @@ class Package(BinaryPackageBase):
                                    "\tPYTHON27\n"
                                    "Points to a valid Python installation.")
             return False
-        return (utils.createShim(os.path.join(self.installDir(), "bin", f"python{CraftCore.compiler.executableSuffix}"), python2, useAbsolutePath=True) and
-                utils.createShim(os.path.join(self.installDir(), "bin", f"python2{CraftCore.compiler.executableSuffix}"), python2, useAbsolutePath=True))
+        return utils.createShim(os.path.join(self.installDir(), "bin", f"python2{CraftCore.compiler.executableSuffix}"), python2, useAbsolutePath=True)
 
