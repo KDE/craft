@@ -7,6 +7,8 @@ import utils
 from Package.PipPackageBase import PipPackageBase
 from Utils import CraftHash
 
+import sys
+
 
 class subinfo(info.infoclass):
     def setTargets(self):
@@ -28,13 +30,11 @@ class Package(PipPackageBase):
 
     def make(self):
         get_pip = self.localFilePath()[0]
-        for ver, python in self._pythons:
-            # if its installed we get the help text if not we get an empty string
-            with io.StringIO() as tmp:
-                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
-                if tmp.getvalue():
-                    continue
-            if not utils.system([python, get_pip, "--user"]):
-                return False
-        return True
+        # if its installed we get the help text if not we get an empty string
+        with io.StringIO() as tmp:
+            utils.system([sys.executable, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
+            if tmp.getvalue():
+                return True
+        if not utils.system([sys.executable, get_pip, "--user"]):
+            return False
 

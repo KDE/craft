@@ -31,7 +31,7 @@ class PipBuildSystem(BuildSystemBase):
 
     def _getPython3(self):
         if CraftPackageObject.get("dev-utils/python3").isInstalled:
-            return "python3"
+            return Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/bin/python3"
         return sys.executable
 
     @property
