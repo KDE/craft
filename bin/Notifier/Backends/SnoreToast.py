@@ -9,7 +9,7 @@ import utils
 
 class SnoreToast(NotificationInterface):
     def __init__(self):
-        NotificationInterface.__init__(self, "Snore")
+        NotificationInterface.__init__(self, "SnoreToast")
         self.icon = os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png")
 
     def notify(self, title, message, alertClass):

@@ -34,10 +34,10 @@ import io
 import os
 import re
 import shlex
-import stat
 import shutil
-import sys
+import stat
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -699,10 +699,19 @@ def embedManifest(executable, manifest):
 def notify(title, message, alertClass=None, log=True):
     if log:
         CraftCore.debug.step(f"{title}: {message}")
-    backends = CraftCore.settings.get("General", "Notify", "")
+    default = ""
+    if CraftCore.compiler.isWindows:
+        default = "SnoreToast"
+    elif CraftCore.compiler.isMacOS:
+        default = "TerminalNotifier"
+    backends = CraftCore.settings.getList("General", "Notify", default)
+    print(backends, "hmm")
+
+    if backends == ["None"]:
+        return
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
         return
-    backends = Notifier.NotificationLoader.load(backends.split(";"))
+    backends = Notifier.NotificationLoader.load(backends)
     for backend in backends.values():
         backend.notify(title, message, alertClass)
 

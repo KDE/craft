@@ -34,7 +34,9 @@ ABI = windows-msvc2015_64-cl
 ##      Just 'craft snorenotify'
 ##      To configure snorenotify for craft call 'snoresettings --appName snoresend'
 ## SnoreToast: simple command line util for Windows notifications
-Notify = SnoreToast
+## TerminalNotifier: simple command line util for MacOS notifications
+## None: Disable notifications
+#Notify = SnoreToast
 
 ## Speed up the merging of packages by using hard links
 UseHardlinks = True
