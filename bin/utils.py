@@ -705,7 +705,6 @@ def notify(title, message, alertClass=None, log=True):
     elif CraftCore.compiler.isMacOS:
         default = "TerminalNotifier"
     backends = CraftCore.settings.getList("General", "Notify", default)
-    print(backends, "hmm")
 
     if backends == ["None"]:
         return
