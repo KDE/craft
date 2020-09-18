@@ -913,7 +913,7 @@ def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
 def isExecuatable(fileName : Path):
     fileName = Path(fileName)
     if CraftCore.compiler.isWindows:
-        return fileName.suffix in os.environ["PATHEXT"]
+        return fileName.suffix.upper() in os.environ["PATHEXT"]
     return os.access(fileName, os.X_OK)
 
 def isBinary(fileName : str) -> bool:
