@@ -422,7 +422,7 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
 def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
     def cleanDir(dir):
         if os.path.isdir(dir):
-            CraftCore.log.info(f"Cleaning: {dir}")
+            CraftCore.log.info(f"Cleaning: {Path(dir).resolve()}")
             utils.cleanDirectory(dir)
             utils.rmtree(dir)
 
