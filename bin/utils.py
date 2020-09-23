@@ -665,7 +665,7 @@ def applyPatch(sourceDir, f, patchLevel='0'):
         with os.scandir(f) as scan:
             for patch in scan:
                 if patch.is_file() and not patch.name.startswith("."):
-                    out = out and applyPatch(sourceDir, os.path.join(f, patch), patchLevel)
+                    out = applyPatch(sourceDir, os.path.join(f, patch), patchLevel) and out
         return out
     with tempfile.TemporaryDirectory() as tmp:
         # rewrite the patch, the gnu patch on Windows is only capable
