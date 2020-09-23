@@ -661,12 +661,12 @@ def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
     if os.path.isdir(f):
         # apply a whole dir of patches
+        out = True
         with os.scandir(f) as scan:
             for patch in scan:
                 if patch.is_file() and not patch.name.startswith("."):
-                    if not applyPatch(sourceDir, os.path.join(f, patch), patchLevel):
-                        return False
-        return True
+                    out = out and applyPatch(sourceDir, os.path.join(f, patch), patchLevel)
+        return out
     with tempfile.TemporaryDirectory() as tmp:
         # rewrite the patch, the gnu patch on Windows is only capable
         # to read \r\n patches
