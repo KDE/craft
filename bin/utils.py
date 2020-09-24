@@ -840,7 +840,7 @@ class ScopedEnv(object):
         self.oldEnv = {}
         for key, value in env.items():
             self.oldEnv[key] = os.environ.get(key, None)
-            putenv(key, str(value))
+            putenv(key, str(value) if value is not None else None)
 
     def reset(self):
         for key, value in self.oldEnv.items():
