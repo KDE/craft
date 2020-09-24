@@ -37,7 +37,7 @@ class BoostBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
 
         options += f" -j{multiprocessing.cpu_count()}"
-        options += " --build-dir=" + self.buildDir()
+        options += f" --build-dir={self.buildDir()}"
         options += (" --build-type=minimal"
                     #                " --debug-configuration"
                     " threading=multi"
