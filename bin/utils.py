@@ -579,12 +579,12 @@ def mergeTree(srcdir, destdir):
                         else:
                             CraftCore.log.critical(f"mergeTree failed: {src.path} and {dest} are both symlinks but point to different folders")
                             return False
-                        if src.is_symlink() and not dest.is_symlink():
-                            CraftCore.log.critical(f"mergeTree failed: how to merge symlink {src.path} into {dest}")
-                            return False
-                        if not src.is_symlink() and dest.is_symlink():
-                            CraftCore.log.critical(f"mergeTree failed: how to merge folder {src.path} into symlink {dest}")
-                            return False
+                    if src.is_symlink() and not dest.is_symlink():
+                        CraftCore.log.critical(f"mergeTree failed: how to merge symlink {src.path} into {dest}")
+                        return False
+                    if not src.is_symlink() and dest.is_symlink():
+                        CraftCore.log.critical(f"mergeTree failed: how to merge folder {src.path} into symlink {dest}")
+                        return False
                     if not mergeTree(src.path, dest):
                         return False
                 else:
