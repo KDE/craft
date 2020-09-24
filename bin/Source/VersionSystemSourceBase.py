@@ -95,21 +95,21 @@ class VersionSystemSourceBase(SourceBase):
             return option
         return None
 
-    def checkoutDir(self, dummyIndex=0):
+    def checkoutDir(self, dummyIndex=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase checkoutDir")
         if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
             return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
-            sourcedir = os.path.join(CraftStandardDirs.gitDir(), self.package.path)
+            sourcedir = Path(CraftStandardDirs.gitDir()) / self.package.path
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
+            sourcedir = Path("%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix()))
 
-        return os.path.abspath(sourcedir)
+        return sourcedir.absolute()
 
-    def sourceDir(self, index=0):
+    def sourceDir(self, index=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase sourceDir")
         if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
             return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
@@ -117,10 +117,10 @@ class VersionSystemSourceBase(SourceBase):
         sourcedir = self.checkoutDir(index)
 
         if self.subinfo.hasTargetSourcePath():
-            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+            sourcedir = sourcedir / self.subinfo.targetSourcePath()
 
         CraftCore.log.debug("using sourcedir: %s" % sourcedir)
-        return os.path.abspath(sourcedir)
+        return sourcedir.absolute()
 
     def sourceRevision(self):
         CraftCore.debug.trace("VersionSystemSourceBase sourceRevision")

@@ -4,6 +4,7 @@
 import datetime
 import functools
 import sys
+from pathlib import Path
 
 import info
 import utils
@@ -84,60 +85,58 @@ class CraftBase(object):
         """return base directory name for package related image directory"""
         return f"image-{self.buildType()}-{self.buildTarget}"
 
-    def sourceDir(self, dummyIndex=0):
+    def sourceDir(self, dummyIndex=0) -> Path:
         utils.abstract()
 
-    def packageDir(self):
+    def packageDir(self) -> Path:
         """ add documentation """
-        return os.path.dirname(self.package.source)
+        return Path(self.package.source).parent
 
-    def installPrefix(self):
-        prefix = CraftCore.standardDirs.craftRoot()
+    def installPrefix(self) -> Path:
+        prefix = Path(CraftCore.standardDirs.craftRoot())
         if self.buildTarget in self.subinfo.targetInstallPath:
-            prefix = os.path.join(prefix, self.subinfo.targetInstallPath[self.buildTarget])
+            prefix = prefix / self.subinfo.targetInstallPath[self.buildTarget]
         return prefix
 
-    def buildRoot(self):
+    def buildRoot(self) -> Path:
         """return absolute path to the root directory of the currently active package"""
-        return os.path.normpath(os.path.join(CraftStandardDirs.craftRoot(), "build", self.package.path))
+        return (Path(CraftStandardDirs.craftRoot()) / "build" / self.package.path).resolve()
 
-    def workDir(self):
+    def workDir(self) -> Path:
         """return absolute path to the 'work' subdirectory of the currently active package"""
         work = os.path.join(self.buildRoot(), "work")
-        return CraftShortPath(work).shortPath
+        return Path(CraftShortPath(work).shortPath)
 
-    def buildDir(self):
+    def buildDir(self) -> Path:
         if not self.subinfo.options.useShadowBuild:
             return self.sourceDir()
         CraftCore.log.debug("CraftBase.buildDir() called")
-        builddir = os.path.join(self.workDir(), "build")
+        builddir = self.workDir() / "build"
         CraftCore.log.debug(f"package builddir is: {builddir}")
         return builddir
 
-    def imageDir(self):
+    def imageDir(self) -> Path:
         """return absolute path to the install root directory of the currently active package
         """
-        return os.path.join(self.buildRoot(), self.imageDirPattern())
+        return self.buildRoot() / self.imageDirPattern()
 
-    def installDir(self):
+    def installDir(self) -> Path:
         """return absolute path to the install directory of the currently active package.
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used
         """
         if self.subinfo.hasInstallPath():
-            installDir = os.path.join(self.imageDir(), self.subinfo.installPath())
+            installDir = self.imageDir() / self.subinfo.installPath()
         else:
             installDir = self.imageDir()
         return installDir
 
-    def packageDestinationDir(self):
+    def packageDestinationDir(self) -> Path:
         """return absolute path to the directory where binary packages are placed into.
         Default is to optionally append build type subdirectory"""
 
         CraftCore.log.debug("CraftBase.packageDestinationDir called")
-        dstpath = CraftCore.settings.get("Packager", "Destination", os.path.join(CraftStandardDirs.craftRoot(), "tmp"))
-
-        if not os.path.exists(dstpath):
-            utils.createDir(dstpath)
+        dstpath = Path(CraftCore.settings.get("Packager", "Destination", os.path.join(CraftStandardDirs.craftRoot(), "tmp")))
+        utils.createDir(dstpath)
         return dstpath
 
     @property

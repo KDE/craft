@@ -23,7 +23,7 @@ class SourceBase(CraftBase):
         """unpack the source into a local destination."""
         utils.abstract()
 
-    def sourceDir(self, dummyIndex=0):
+    def sourceDir(self, dummyIndex=0) -> Path:
         """ return absolute path of the directory where sources are fetched into.
         utils.trace( "SourceBase.sourceDir called", 0 )
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
@@ -32,10 +32,10 @@ class SourceBase(CraftBase):
         sourcedir = self.workDir()
 
         if self.subinfo.targetSourceSuffix() != None:
-            sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
+            sourcedir = Path("%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix()))
 
         if self.subinfo.hasTargetSourcePath():
-            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+            sourcedir = sourcedir / self.subinfo.targetSourcePath()
         CraftCore.log.debug(f"using sourcedir: {sourcedir}")
         return sourcedir
 

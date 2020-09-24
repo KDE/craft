@@ -52,7 +52,7 @@ class MultiSource(SourceBase):
         CraftCore.debug.trace("MultiSource checkoutDir")
         return self._sourceClass.checkoutDir(self, index=index)
 
-    def sourceDir(self):
+    def sourceDir(self) -> Path:
         CraftCore.debug.trace("MultiSource sourceDir")
         return self._sourceClass.sourceDir(self)
 

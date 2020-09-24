@@ -215,7 +215,7 @@ class GitSource(VersionSystemSourceBase):
         CraftCore.debug.trace('GitSource checkoutDir')
         return VersionSystemSourceBase.checkoutDir(self, index)
 
-    def sourceDir(self, index=0):
+    def sourceDir(self, index=0) -> Path:
         CraftCore.debug.trace('GitSource sourceDir')
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
@@ -227,7 +227,7 @@ class GitSource(VersionSystemSourceBase):
 
         CraftCore.log.debug("using sourcedir: %s" % sourcedir)
         parent, child = os.path.split(sourcedir)
-        return os.path.join(CraftShortPath(parent).shortPath, child)
+        return Path(CraftShortPath(parent).shortPath) / child
 
     def getUrls(self):
         """print the url where to clone from and the branch/tag/hash"""
