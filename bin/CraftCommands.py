@@ -435,7 +435,7 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         version = instance.version
 
         if version:
-            imageGlob = instance.imageDir().replace(version, "*")
+            imageGlob = str(instance.imageDir()).replace(version, "*")
         else:
             imageGlob = instance.imageDir()
 
