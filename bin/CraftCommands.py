@@ -437,13 +437,13 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if version:
             imageGlob = str(instance.imageDir()).replace(version, "*")
         else:
-            imageGlob = instance.imageDir()
+            imageGlob = str(instance.imageDir())
 
         # image directories
         if cleanImages:
             for dir in glob.glob(imageGlob):
                 if package.isInstalled and not cleanInstalledImages:
-                    if dir == instance.imageDir():
+                    if Path(dir) == instance.imageDir():
                         continue
                 cleanDir(dir)
 
