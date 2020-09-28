@@ -33,15 +33,15 @@ class PackageBase(CraftBase):
         CraftCore.log.debug("PackageBase.__init__ called")
         CraftBase.__init__(self)
 
-    def qmerge(self):
+    def qmerge(self, dbOnly=False):
         """mergeing the imagedirectory into the filesystem"""
         ## \todo is this the optimal place for creating the post install scripts ?
 
         if self.package.isInstalled:
-            self.unmerge()
+            self.unmerge(dbOnly=dbOnly)
 
         copiedFiles = []  # will be populated by the next call
-        if Path(self.imageDir()).exists():
+        if not dbOnly and Path(self.imageDir()).exists():
             if not utils.copyDir(self.imageDir(), CraftCore.standardDirs.craftRoot(), copiedFiles=copiedFiles):
                 return False
 
@@ -49,8 +49,9 @@ class PackageBase(CraftBase):
 
         revision = self.sourceRevision()
         package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision)
-        fileList = self.getFileListFromDirectory(CraftCore.standardDirs.craftRoot(), copiedFiles)
-        package.addFiles(fileList)
+        if not dbOnly:
+            fileList = self.getFileListFromDirectory(CraftCore.standardDirs.craftRoot(), copiedFiles)
+            package.addFiles(fileList)
         package.install()
 
         if (CraftCore.settings.getboolean("Packager", "CreateCache") or
@@ -59,13 +60,14 @@ class PackageBase(CraftBase):
 
         return True
 
-    def unmerge(self):
+    def unmerge(self, dbOnly=False):
         """unmergeing the files from the filesystem"""
         CraftCore.log.debug("Packagebase unmerge called")
         packageList = CraftCore.installdb.getInstalledPackages(self.package)
         for package in packageList:
-            fileList = package.getFilesWithHashes()
-            self.unmergeFileList(CraftCore.standardDirs.craftRoot(), fileList)
+            if not dbOnly:
+                fileList = package.getFilesWithHashes()
+                self.unmergeFileList(CraftCore.standardDirs.craftRoot(), fileList)
             package.uninstall()
         return True
 
