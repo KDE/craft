@@ -69,11 +69,6 @@ class PackageBase(CraftBase):
             package.uninstall()
         return True
 
-    def createImportLibs(self, pkgName):
-        """create the import libraries for the other compiler(if ANSI-C libs)"""
-        basepath = os.path.join(self.installDir())
-        utils.createImportLibs(pkgName, basepath)
-
     def fetchBinary(self, downloadRetriesLeft=3) -> bool:
         if self.subinfo.options.package.disableBinaryCache:
             return False
