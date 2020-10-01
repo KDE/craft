@@ -11,6 +11,7 @@ from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import *
 from CraftDebug import deprecated
 
+import collections
 import configparser
 import atexit
 import zlib
@@ -21,6 +22,12 @@ class RegisteredOption(object):
         self.value = value
         # whether or not this change breaks binary cache compatibility
         self.compatible = compatible
+
+    def __str__(self):
+        if callable(self.value):
+            return f"({self.value.__name__})"
+        else:
+            return str(self.value)
 
 class UserOptions(object):
     class UserOptionsSingleton(object):
@@ -135,25 +142,26 @@ class UserOptions(object):
                     value = _convert(_registered[key].value, value)
                 setattr(self, key, value)
 
-    def __str__(self):
+
+    def dump(self) -> collections.OrderedDict:
         out = []
         for key, option in UserOptions.instance().registeredOptions[self._package.path].items():
             value = option.value
             atr = getattr(self, key)
             if atr is None:
-                if callable(value):
-                    atr = f"({value.__name__})"
-                else:
-                    atr = value
-            out.append((key, atr))
-        return ", ".join([f"{x}={y}" for x, y in sorted(out)])
+                atr = option
+            out.append((key, str(atr)))
+        return collections.OrderedDict(sorted(out))
+
+    def __str__(self):
+        hm = self.dump()
+        return ", ".join([f"{x}={y}" for x, y in self.dump().items()])
 
     def configHash(self):
         tmp = []
-        for key, option in sorted(UserOptions.instance().registeredOptions[self._package.path].items()):
+        for key, value in self.dump().items():
             # ignore flags that have no influence on the archive
-            if not option.compatible:
-                value = option.value
+            if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
                 atr = getattr(self, key)
                 if atr is not None:
                     if key == "buildType":

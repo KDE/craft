@@ -18,6 +18,7 @@ class CraftManifestEntryFile(object):
         self.version = version
         self.buildPrefix = CraftCore.standardDirs.craftRoot()
         self.configHash = None
+        self.config = None
 
         if CraftCore.compiler.isWindows:
             self.fileName = self.fileName.replace("\\", "/")
@@ -30,6 +31,7 @@ class CraftManifestEntryFile(object):
         out.version = data.get("version", "")
         out.buildPrefix = data.get("buildPrefix", None)
         out.configHash = data.get("configHash", None)
+        out.config = collections.OrderedDict(data.get("config", {}))
         return out
 
     def toJson(self) -> dict:
@@ -42,7 +44,8 @@ class CraftManifestEntryFile(object):
         if self.configHash:
             data.update({
                 "buildPrefix"   : self.buildPrefix,
-                "configHash"    : self.configHash
+                "configHash"    : self.configHash,
+                "config"        : self.config
             })
         return data
 
@@ -64,6 +67,7 @@ class CraftManifestEntry(object):
         f = CraftManifestEntryFile(fileName, checksum, version)
         if config:
            f.configHash = config.configHash()
+           f.config = config.dump()
         self.files.insert(0, f)
         return f
 

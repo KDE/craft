@@ -97,6 +97,10 @@ class PackageBase(CraftBase):
 
             if latest.configHash and latest.configHash != self.subinfo.options.dynamic.configHash():
                 CraftCore.log.info("Failed to restore package, configuration missmatch")
+                CraftCore.debug.debug_line()
+                CraftCore.log.info("Cached config: {}".format(", ".join(f"{k}={v}" for k, v in latest.config.items())))
+                CraftCore.log.info(f"Local config:  {self.subinfo.options.dynamic}")
+                CraftCore.debug.debug_line()
                 # try next cache
                 continue
 
