@@ -69,7 +69,6 @@ class CraftManifestEntry(object):
     def addFile(self, fileName : str, checksum : str, version : str="", config=None) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum, version)
         if config:
-           f.configHash = config.configHash()
            f.config = config.dump()
         self.files.insert(0, f)
         return f
