@@ -154,12 +154,12 @@ class UserOptions(object):
         return collections.OrderedDict(sorted(out))
 
     def __str__(self):
-        hm = self.dump()
         return ", ".join([f"{x}={y}" for x, y in self.dump().items()])
 
-    def configHash(self):
+    # legacy
+    def __configHash(self):
         tmp = []
-        for key, value in self.dump().items():
+        for key, _ in self.dump().items():
             # ignore flags that have no influence on the archive
             if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
                 atr = getattr(self, key)
@@ -171,6 +171,24 @@ class UserOptions(object):
                     tmp.append(bytes(atr, "UTF-8") if isinstance(atr, str) else bytes([atr]))
         return zlib.adler32(b"".join(tmp))
 
+    def compatible(self, other: collections.OrderedDict, hash=None) -> bool:
+        if not other and hash:
+            return self.__configHash() == hash
+        for key, value in self.dump().items():
+            # ignore flags that have no influence on the archive
+            if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
+                if key not in other:
+                    CraftCore.log.info(f"Config is not compatible: {key} is a new option")
+                    return False
+                elif key == "buildType":
+                    # Releaseand and RelWithDebInfo are compatible
+                    if value == "Debug" and other[key] != "Debug":
+                        CraftCore.log.info(f"Config is not compatible: {key} {value} != {other[key]}")
+                        return False
+                elif value != other[key]:
+                    CraftCore.log.info(f"Config is not compatible: {key} {value} != {other[key]}")
+                    return False
+        return True
 
     @staticmethod
     def get(package):

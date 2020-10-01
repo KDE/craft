@@ -17,6 +17,7 @@ class CraftManifestEntryFile(object):
         self.date = datetime.datetime.utcnow()
         self.version = version
         self.buildPrefix = CraftCore.standardDirs.craftRoot()
+        # deprecated use config
         self.configHash = None
         self.config = None
 
@@ -41,12 +42,14 @@ class CraftManifestEntryFile(object):
             "date"          : self.date.strftime(CraftManifest._TIME_FORMAT),
             "version"       : self.version
         }
-        if self.configHash:
+        if self.config or self.configHash:
             data.update({
                 "buildPrefix"   : self.buildPrefix,
-                "configHash"    : self.configHash,
                 "config"        : self.config
             })
+            if self.configHash and not self.config:
+                # only keep if legacy
+                data["configHash"] = self.configHash
         return data
 
 class CraftManifestEntry(object):
