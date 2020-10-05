@@ -193,6 +193,11 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
 
+    # make sure our venv python is used
+    python_venv = Path(CraftCore.standardDirs.etcDir()) / f"virtualenv/3/Scripts/python{CraftCore.compiler.executableSuffix}"
+    if python_venv.exists():
+        environment["VIRTUAL_ENV"] = str(python_venv.parent)
+
     # if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, list):
         # allow to pass other types, like ints or Path
