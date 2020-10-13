@@ -310,7 +310,7 @@ class ArchiveSource(SourceBase):
                 patchContent = out.getvalue()
             # make the patch a -p1 patch
             patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
-            patchContent = patchContent.replace(self.sourceDir().encode(), srcSubDir.encode())
+            patchContent = patchContent.replace(str(self.sourceDir()).encode(), srcSubDir.encode())
             patchPath = os.path.join(self.packageDir(), _patchName)
             with open(patchPath, "wb") as out:
                 out.write(patchContent)
