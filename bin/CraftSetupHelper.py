@@ -340,9 +340,11 @@ class SetupHelper(object):
         self.addEnvVar("REQUESTS_CA_BUNDLE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
 
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
-            self.addEnvVar("CCACHE_DIR",
-                           CraftCore.settings.get("Paths", "CCACHE_DIR", os.path.join(CraftCore.standardDirs.craftRoot(),
-                                                                                      "build", "CCACHE")))
+            # don't override custom settings
+            if not "CCACHE_DIR" in os.environ:
+                self.addEnvVar("CCACHE_DIR",
+                            CraftCore.settings.get("Paths", "CCACHE_DIR",
+                                 os.path.join(CraftCore.standardDirs.craftRoot(), "build", "CCACHE")))
 
         if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
             sdkPath = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
