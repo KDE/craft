@@ -332,7 +332,6 @@ class SetupHelper(object):
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
-        self.prependEnvVar("PATH", os.path.dirname(sys.executable))
         os.environ.update(self.getEnv())
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
