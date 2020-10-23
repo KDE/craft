@@ -139,7 +139,7 @@ class GitSource(VersionSystemSourceBase):
                     and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
-                if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl:
+                if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl and CraftCore.cache.checkCommandOutputFor("git", "get-url", "remote -h"):
                     oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
                     if isinstance(oldUrls, str):
                         oldUrls = [oldUrls]
