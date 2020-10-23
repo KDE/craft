@@ -140,6 +140,10 @@ class SetupHelper(object):
     def addEnvVar(self, key, val):
         os.environ[key] = val
 
+    def addDefaultEnvVar(self, key, val):
+        if not key in os.environ:
+            os.environ[key] = val
+
     def prependEnvVar(self, key : str, var : str, sep : str=os.path.pathsep) -> None:
         if not type(var) == list:
             var = [var]
@@ -339,9 +343,7 @@ class SetupHelper(object):
         self.addEnvVar("REQUESTS_CA_BUNDLE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
 
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
-            # don't override custom settings
-            if not "CCACHE_DIR" in os.environ:
-                self.addEnvVar("CCACHE_DIR",
+            self.addDefaultEnvVar("CCACHE_DIR",
                             CraftCore.settings.get("Paths", "CCACHE_DIR",
                                  os.path.join(CraftCore.standardDirs.craftRoot(), "build", "CCACHE")))
 
@@ -414,19 +416,23 @@ class SetupHelper(object):
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
                 if CraftCore.compiler.isMSVC():
-                    self.addEnvVar("CC", "clang-cl")
-                    self.addEnvVar("CXX", "clang-cl")
+                    self.addDefaultEnvVar("CC", "clang-cl")
+                    self.addDefaultEnvVar("CXX", "clang-cl")
                 else:
-                    self.addEnvVar("CC", "clang")
-                    self.addEnvVar("CXX", "clang")
+                    self.addDefaultEnvVar("CC", "clang")
+                    self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
             if not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")
             else:
-                self.addEnvVar("CC", "gcc")
-                self.addEnvVar("CXX", "g++")
+                self.addDefaultEnvVar("CC", "gcc")
+                self.addDefaultEnvVar("CXX", "g++")
+        elif CraftCore.compiler.isMSVC():
+            self.addDefaultEnvVar("CC", "cl")
+            self.addDefaultEnvVar("CXX", "cl")
+
 
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)):
             # different non standard env switches
