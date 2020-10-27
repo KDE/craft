@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
             self.targetConfigurePath[ver] = "CPP/7zip/CMAKE"
             self.targetInstallPath[ver] = "dev-utils"
 
+        self.svnTargets["dev"] = "https://github.com/szcnick/p7zip.git"
+        self.targetConfigurePath["dev"] = "CPP/7zip/CMAKE"
+
         self.patchToApply["16.02"] = [("7zip-16.02-20180816.diff", 1)]
         self.targetDigests["16.02"] = (['5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f'], CraftHash.HashAlgorithm.SHA256)
 
