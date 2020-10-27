@@ -34,8 +34,6 @@ class subinfo(info.infoclass):
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
         self.targetDigests[ver] = (["e4ddaf8d7ee1ef633c6631747a12624ffb1f076e91e22cad1add322fee6bfedc"], CraftHash.HashAlgorithm.SHA256)
-
-        self.patchLevel["2.20.0"] = 1
         self.defaultTarget = ver
 
     def setDependencies(self):
@@ -68,4 +66,4 @@ class GitPackage(BinaryPackageBase):
 
 class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="git", version="2.20.0", classA=GitPackage)
+        VirtualIfSufficientVersion.__init__(self, app="git", version="2.27.0", classA=GitPackage)
