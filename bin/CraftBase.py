@@ -104,8 +104,7 @@ class CraftBase(object):
 
     def workDir(self) -> Path:
         """return absolute path to the 'work' subdirectory of the currently active package"""
-        work = os.path.join(self.buildRoot(), "work")
-        return Path(CraftShortPath(work).shortPath)
+        return Path(CraftShortPath(self.buildRoot() / "work").shortPath)
 
     def buildDir(self) -> Path:
         if not self.subinfo.options.useShadowBuild:
