@@ -515,7 +515,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
     srcdir = Path(srcdir)
     if not srcdir.exists():
         CraftCore.log.warning(f"copyDir called. srcdir: {srcdir} does not exists")
-        return True
+        return False
     destdir = Path(destdir)
     if not destdir.exists():
         createDir(destdir)
