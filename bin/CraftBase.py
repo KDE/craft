@@ -100,7 +100,7 @@ class CraftBase(object):
 
     def buildRoot(self) -> Path:
         """return absolute path to the root directory of the currently active package"""
-        return (Path(CraftStandardDirs.craftRoot()) / "build" / self.package.path).resolve()
+        return Path(CraftStandardDirs.craftRoot()).resolve() / "build" / self.package.path
 
     def workDir(self) -> Path:
         """return absolute path to the 'work' subdirectory of the currently active package"""
