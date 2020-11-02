@@ -17,6 +17,7 @@ manifest/.*
 .*\.cpp
 include/.*
 lib/cmake/.*
+lib/charset\.alias
 share/ECM/.*
 
 # multiple docs
