@@ -36,6 +36,7 @@ from pathlib import Path
 from CraftBase import *
 from CraftOS.osutils import OsUtils
 from Utils import CodeSign
+from Utils.Arguments import Arguments
 
 
 class BuildSystemBase(CraftBase):
@@ -98,13 +99,14 @@ class BuildSystemBase(CraftBase):
 
     def configureOptions(self, defines=""):
         """return options for configure command line"""
+        defines = Arguments(defines)
         if self.subinfo.options.configure.args != None:
-            defines += " %s" % self.subinfo.options.configure.args
+            defines += self.subinfo.options.configure.args
 
         if self.supportsCCACHE:
-            defines += " %s" % self.ccacheOptions()
+            defines += self.ccacheOptions()
         if CraftCore.compiler.isClang() and self.supportsClang:
-            defines += " %s" % self.clangOptions()
+            defines += self.clangOptions()
         return defines
 
     def makeOptions(self, args):

@@ -10,12 +10,13 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from Blueprints.CraftPackageObject import *
 from CraftDebug import deprecated
+from Utils.Arguments import Arguments
 
 import collections
 import configparser
 import atexit
 import zlib
-from typing import  Dict
+from typing import Dict
 
 class RegisteredOption(object):
     def __init__(self, value, compatible):
@@ -388,7 +389,7 @@ class OptionsUnpack(OptionsBase):
 class OptionsConfigure(OptionsBase):
     def __init__(self, dynamic):
         ## with this option additional arguments could be added to the configure commmand line
-        self.args = dynamic.args
+        self.args = Arguments(dynamic.args)
         ## with this option additional arguments could be added to the configure commmand line (for static builds)
         self.staticArgs = ""
         ## set source subdirectory as source root for the configuration tool.

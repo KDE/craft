@@ -8,6 +8,7 @@ from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils.PostInstallRoutines import *
+from Utils.Arguments import Arguments
 
 import os
 
@@ -36,37 +37,38 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
-        options = "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF")
-        options += BuildSystemBase.configureOptions(self)
-
         craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-        options += f" -DCMAKE_INSTALL_PREFIX=\"{craftRoot}\""
-        options += f" -DCMAKE_PREFIX_PATH=\"{craftRoot}\""
+        options = Arguments([
+                    "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF"), 
+                    BuildSystemBase.configureOptions(self),
+                    f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
+                    f"-DCMAKE_PREFIX_PATH={craftRoot}"
+                ])
 
         if self.buildType() is not None:
-            options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()
+            options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
 
         #if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
         #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
-            options += " -DKDE_L10N_AUTO_TRANSLATIONS=ON"
+            options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
 
         if OsUtils.isWin():
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
-            options += " -DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON"
+            options.append("-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON")
 
         if OsUtils.isMac():
-            options += f" -DKDE_INSTALL_BUNDLEDIR=\"{OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE\" -DAPPLE_SUPPRESS_X11_WARNING=ON"
+            options += [f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE", "-DAPPLE_SUPPRESS_X11_WARNING=ON"]
 
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
-            options += " -DKDE_INSTALL_USE_QT_SYS_PATHS=ON"
+            options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
 
         if self.subinfo.options.buildTools:
-            options += " " + self.subinfo.options.configure.toolsDefine + " "
+            options += self.subinfo.options.configure.toolsDefine
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
-            options += " " + self.subinfo.options.configure.staticArgs + " "
+            options += self.subinfo.options.configure.staticArgs
         if CraftCore.compiler.isIntel():
             # this is needed because otherwise it'll detect the MSVC environment
             options += " -DCMAKE_CXX_COMPILER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
@@ -75,15 +77,14 @@ class CMakeBuildSystem(BuildSystemBase):
                                                                     "icl.exe").replace("\\", "/")
             options += " -DCMAKE_LINKER=\"%s\" " % os.path.join(os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"),
                                                                 "xilink.exe").replace("\\", "/")
-        options += " \"%s\"" % self.configureSourceDir()
+        options += ["-S", self.configureSourceDir()]
         return options
 
     def configure(self, defines=""):
         """implements configure step for cmake projects"""
 
         self.enterBuildDir()
-        command = r"""cmake -G "%s" %s""" % (self.__makeFileGenerator(), self.configureOptions(defines))
-        CraftCore.debug.step(command)
+        command = Arguments.formatCommand(["cmake", "-G",  self.__makeFileGenerator()], self.configureOptions(defines))
         return utils.system(command)
 
     def make(self):
