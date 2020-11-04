@@ -23,7 +23,10 @@ class Arguments(object):
             elif isinstance(other, list):
                 self.__legacyString += " " + subprocess.list2cmdline([str(x) for x in other])
             elif isinstance(other, Arguments):
-                self.__legacyString += " " + subprocess.list2cmdline(other.__args)
+                if other.__legacyString is not None:
+                    self.__legacyString += " " + other.__legacyString
+                else:
+                    self.__legacyString += " " + subprocess.list2cmdline(other.__args)
             else:
                 raise Exception("error unsupported argumen" + other)
         else:
