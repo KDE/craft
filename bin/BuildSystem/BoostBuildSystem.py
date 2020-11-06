@@ -36,57 +36,51 @@ class BoostBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
 
-        options += f" -j{multiprocessing.cpu_count()}"
-        options += f" --build-dir={self.buildDir()}"
-        options += (" --build-type=minimal"
+        options += [f"-j{multiprocessing.cpu_count()}",
+                    f"--build-dir={self.buildDir()}",
+                    "--build-type=minimal",
                     #                " --debug-configuration"
-                    " threading=multi"
-                    )
-
-        options += f" include=\"{CraftCore.standardDirs.craftRoot()}/include\" "
-        options += f" library-path=\"{CraftCore.standardDirs.craftRoot()}/lib\" "
+                    "threading=multi",
+                    f"include=\"{CraftCore.standardDirs.craftRoot()}/include\"",
+                    f"library-path=\"{CraftCore.standardDirs.craftRoot()}/lib\""
+        ]
         if CraftCore.debug.verbose() >= 1:
-            options += " --dx13"
+            options += ["--dx13"]
 
         if not self.subinfo.options.buildStatic:
-            options += (" link=shared"
-                        " runtime-link=shared")
+            options += ["link=shared",
+                        "runtime-link=shared"]
         else:
-            options += (" link=static"
-                        " runtime-link=shared")
+            options += ["link=static",
+                        "runtime-link=shared"]
         if CraftCore.compiler.isX64():
-            options += " address-model=64 architecture=x86"
+            options += ["address-model=64", "architecture=x86"]
         else:
-            options += " address-model=32 architecture=x86"
+            options += ["address-model=32", "architecture=x86"]
 
         if self.buildType() == "Debug":
-            options += " variant=debug"
+            options += ["variant=debug"]
         else:
-            options += " variant=release"
+            options += ["variant=release"]
 
-        options += " toolset="
+        toolset = "toolset="
         if CraftCore.compiler.isClang():
-            options += "clang"
+            toolset += "clang"
             if CraftCore.compiler.isGCC():
-                options += " threadapi=pthread"
+                toolset += " threadapi=pthread"
         elif CraftCore.compiler.isGCC():
-            options += "gcc"
+            toolset += "gcc"
         elif CraftCore.compiler.isMSVC():
             platform = str(CraftCore.compiler.getMsvcPlatformToolset())
             if CraftVersion(self.buildTarget) < CraftVersion("1_65_1") and CraftCore.compiler.isMSVC2017():
                 # pretend to be 2015
-                options += f"msvc-{platform[:2]}.0"
+                toolset += f"msvc-{platform[:2]}.0"
             elif CraftVersion(self.buildTarget) < CraftVersion("1.70.0") and CraftCore.compiler.isMSVC2019():
                 # pretend to be 2017
-                options += f"msvc-{platform[:2]}.1"
+                toolset += f"msvc-{platform[:2]}.1"
             else:
-                options += f"msvc-{platform[:2]}.{platform[2:]}"
-        elif CraftCore.compiler.isIntel():
-            options += "intel"
-            options += " -sINTEL_PATH=\"%s\"" % os.path.join(os.getenv("INTELDIR"), "bin", os.getenv("TARGET_ARCH"))
-            options += " -sINTEL_BASE_MSVC_TOOLSET=vc-%s" % (
-            {"vs2008": "9_0", "vs2010": "10_0", "vs2012": "11_0"}[os.getenv("INTEL_VSSHELL")])
-            options += " -sINTEL_VERSION=%s" % os.getenv("PRODUCT_NAME")[-2:]
+                toolset += f"msvc-{platform[:2]}.{platform[2:]}"
+        options += [toolset]
         options += self.craftUserConfig()
         return options
 
