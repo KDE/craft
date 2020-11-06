@@ -13,7 +13,7 @@ class CraftVersion(Version):
     def __init__(self, version):
         Version.__init__(self, version)
         self.versionstr = version
-        self.isBranch = CraftVersion.isBranch_re.match(self.versionstr)
+        self.isBranch = CraftVersion.isBranch_re.match(self.versionstr) if version else None
 
     def __str__(self):
         return self.versionstr
