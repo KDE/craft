@@ -68,9 +68,7 @@ class QMakeBuildSystem(BuildSystemBase):
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
             proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
-        command = "%s -makefile %s %s" % (CraftCore.cache.findApplication("qmake"), proFile, self.configureOptions(configureDefines))
-
-        return utils.system(command)
+        return utils.system(Arguments.formatCommand(["qmake", "-makefile", proFile], self.configureOptions(configureDefines)))
 
     def make(self):
         """implements the make step for Qt projects"""
@@ -102,8 +100,7 @@ class QMakeBuildSystem(BuildSystemBase):
             defines += ' "CONFIG += debug"'
             defines += ' "CONFIG -= release"' if not buildReleaseAndDebug else ' "CONFIG += release"'
 
-        defines += BuildSystemBase.configureOptions(self, defines)
-        return defines
+        return BuildSystemBase.configureOptions(self, defines)
 
     def ccacheOptions(self):
         return f' "QMAKE_CC=ccache {os.environ["CC"]}" "QMAKE_CXX=ccache {os.environ["CXX"]}" "CONFIG -= precompile_header" '

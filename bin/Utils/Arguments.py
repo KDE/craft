@@ -63,5 +63,5 @@ class Arguments(object):
     @staticmethod
     def formatCommand(command:[str], args):
         if args.__legacyString:
-            return subprocess.list2cmdline(command) + " " + args.__legacyString.strip()
+            return subprocess.list2cmdline([str(x) for x in command]) + " " + args.__legacyString.strip()
         return command + args.__args
