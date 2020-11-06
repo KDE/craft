@@ -101,9 +101,8 @@ class BoostBuildSystem(BuildSystemBase):
                                                                             "build")
 
         self.enterSourceDir()
-        cmd = "bjam"
-        cmd += self.configureOptions(self.subinfo.options.configure.args)
-        return utils.system(cmd)
+        return utils.system(Arguments.formatCommand(["bjam"], self.configureOptions(self.subinfo.options.configure.args)))
+
 
 
     def install(self):
