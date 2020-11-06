@@ -261,12 +261,12 @@ class infoclass(object):
                 url = url[:-1]
             json = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not json:
-                del self.targets[key]
+                raise BlueprintException("Failed to load manifest", package)
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
             if packageName not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
                 del self.targets[key]
-                CraftCore.log.warning(f"Failed to find {packageName} on {url}")
+                CraftCore.log.debug(f"Failed to find {packageName} on {url}")
                 continue
             data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
             self.targets[key] = f"{url}/{data.fileName}"
