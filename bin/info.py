@@ -242,23 +242,27 @@ class infoclass(object):
             return out
         return None
 
-    def addCachedAutotoolsBuild(self, packageName, targetInstallPath=None):
+    def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None):
         if not CraftCore.compiler.isMSVC():
             return
         self.versionInfo.setDefaultValues()
-        package = CraftPackageObject._allLeaves.get(packageName, None)
-        if not package:
-            raise BlueprintException(f"Failed to find {packageName}", package)
-        packageName = package.path
-
-        self.description = package.subinfo.description
+        if packageName:
+            package = CraftPackageObject._allLeaves.get(packageName, None)
+            if not package:
+                raise BlueprintException(f"Failed to find {packageName}", package)
+            packageName = package.path
+            self.description = package.subinfo.description
+        else:
+            package = self.parent.package
+            packageName = self.parent.package.path
 
         for key, url in list(self.targets.items()):
             if url.endswith("/"):
                 url = url[:-1]
             json = CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
             if not json:
-                raise BlueprintException("Failed to load manifest", package)
+                del self.targets[key]
+                continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
             if packageName not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
                 del self.targets[key]
