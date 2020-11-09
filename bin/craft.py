@@ -109,6 +109,9 @@ def main(timer):
                         help="Use a binary cache, the setting is overwritten by --no-cache")
     parser.add_argument("--no-cache", action="store_true", dest="noCache",
                         default=False, help="Don't create or use the binary cache")
+    parser.add_argument("--kill-craft-root", action="store_true", dest="doKillCraftRoot",
+                        default=False,
+                        help="Kill all processes running in the CraftRoot")
     parser.add_argument("--destroy-craft-root", action="store_true", dest="doDestroyCraftRoot",
                         default=False,
                         help="DANGEROUS: Recursively delete everything in the Craft root directory besides the CraftSettings.ini, the download directory and the craft folder itself")
@@ -186,6 +189,8 @@ def main(timer):
     CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
     CraftSetupHelper.SetupHelper.printBanner()
 
+    if args.doKillCraftRoot:
+        OsUtils.killProcess()
     if args.doDestroyCraftRoot:
         return CraftCommands.destroyCraftRoot()
 
