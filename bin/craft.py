@@ -254,14 +254,15 @@ def main(timer):
             CraftCommands.setOption(packageNames, args.set)
         elif action == "clean-unused":
             CraftCommands.cleanBuildFiles(cleanArchives=True, cleanImages=True, cleanInstalledImages=False, cleanBuildDir=True, packages=blueprintSearch.packages())
-        elif action == "upgrade":
-            return CraftCommands.upgrade(tempArgs)
         else:
-            if not packageNames:
-                return True
             package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
-            if not CraftCommands.run(package, action, tempArgs):
-                return False
+            if action == "upgrade":
+                return CraftCommands.upgrade(package, tempArgs)
+            else:
+                if not package.children:
+                    return True
+                if not CraftCommands.run(package, action, tempArgs):
+                    return False
     return True
 
 

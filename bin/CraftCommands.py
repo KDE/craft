@@ -457,23 +457,13 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if cleanBuildDir:
             cleanDir(instance.buildDir())
 
-def upgrade(args, argv=None) -> bool:
-    ENV_KEY = "CRAFT_CORE_UPDATED"
-    if ENV_KEY not in os.environ:
-        if argv is None:
-            argv = sys.argv[1:]
-        os.environ[ENV_KEY] = "1"
-        # update the core
-        if not run(CraftPackageObject.get("craft"), "all", args):
-            return False
-        return __recurseCraft([], argv)
-    else:
-        package = CraftPackageObject(None)
+def upgrade(packages, args) -> bool:
+    if not packages.children:
         for packageName, _, _ in CraftCore.installdb.getDistinctInstalled():
             p = CraftPackageObject.get(packageName)
-            if p:
-                package.children[p.name] = p
-        return run(package, "update", args)
+            if p: # package in the db might have been renamed and has no blueprint anymore
+                packages.children[p.name] = p
+    return __recurseCraft([], ["craft"]) and __recurseCraft(["--update"], list(packages.children.keys()))
 
 def installToDektop(packages):
     CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
