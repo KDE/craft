@@ -458,12 +458,16 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
             cleanDir(instance.buildDir())
 
 def upgrade(packages, args) -> bool:
-    if not packages.children:
-        for packageName, _, _ in CraftCore.installdb.getDistinctInstalled():
-            p = CraftPackageObject.get(packageName)
-            if p: # package in the db might have been renamed and has no blueprint anymore
-                packages.children[p.name] = p
-    return __recurseCraft([], ["craft"]) and __recurseCraft(["--update"], list(packages.children.keys()))
+    packageList = set()
+    for packageName, _, _ in CraftCore.installdb.getDistinctInstalled():
+        p = CraftPackageObject.get(packageName)
+        # package in the db might have been renamed and has no blueprint anymore
+        if p:
+            packageList.add(p)
+    # only packages that are part of the selection
+    if packages.children:
+        packageList = packageList.intersection(set(packages.children.values()))
+    return __recurseCraft([], ["craft"]) and __recurseCraft(["--update"], list(packageList))
 
 def installToDektop(packages):
     CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
