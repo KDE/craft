@@ -242,10 +242,15 @@ class infoclass(object):
             return out
         return None
 
-    def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None):
+    def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None, versionInfo=None):
         if not CraftCore.compiler.isMSVC():
             return
-        self.versionInfo.setDefaultValues()
+        # disable binary cache, always serve the latest from the mingw cache
+        self.options.package.disableBinaryCache = True
+        if not versionInfo:
+            self.versionInfo.setDefaultValues()
+        else:
+            self.versionInfo.setDefaultValuesFromFile(versionInfo)
         if packageName:
             package = CraftPackageObject._allLeaves.get(packageName, None)
             if not package:
