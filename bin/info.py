@@ -271,6 +271,9 @@ class infoclass(object):
             data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
             self.targets[key] = f"{url}/{data.fileName}"
             self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
+            if packageName != self.parent.package:
+                if data.version in package.subinfo.patchLevel:
+                    self.patchLevel[key] = package.subinfo.patchLevel[data.version]
             if targetInstallPath:
                 self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
 
