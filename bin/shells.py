@@ -159,14 +159,13 @@ class BashShell(object):
 
     def execute(self, path, cmd, args="", **kwargs):
         # try to locate the command
-        tmp = CraftCore.cache.findApplication(cmd)
-        if tmp:
-            cmd = tmp
         if CraftCore.compiler.isWindows:
-            command = Arguments([self._findBash(), "-c", self.toNativePath(cmd)]) + args
+            tmp = CraftCore.cache.findApplication(cmd)
+            if tmp:
+                cmd = tmp
+            command = Arguments([self._findBash(), "-c", self.toNativePath(cmd), args])
         else:
-            command = Arguments([self.toNativePath(cmd)]) + args
-
+            command = Arguments([cmd, args])
         env = dict(os.environ)
         env.update(self.environment)
         env.update(kwargs.get("env", {}))
