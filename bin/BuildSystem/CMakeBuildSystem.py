@@ -121,9 +121,8 @@ class CMakeBuildSystem(BuildSystemBase):
         return utils.system(command)
 
     def ccacheOptions(self):
-        out = f" -DCMAKE_CXX_COMPILER=ccache -DCMAKE_CXX_COMPILER_ARG1={os.environ['CXX']}"
-        out += f" -DCMAKE_C_COMPILER=ccache -DCMAKE_C_COMPILER_ARG1={os.environ['CC']} "
-        return out
+        return ["-DCMAKE_CXX_COMPILER=ccache", f"-DCMAKE_CXX_COMPILER_ARG1={os.environ['CXX']}",
+                "-DCMAKE_C_COMPILER=ccache", f"-DCMAKE_C_COMPILER_ARG1={os.environ['CC']}"]
 
     def internalPostQmerge(self):
         if not super().internalPostQmerge():

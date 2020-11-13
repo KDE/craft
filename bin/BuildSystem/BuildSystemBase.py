@@ -100,10 +100,9 @@ class BuildSystemBase(CraftBase):
     def configureOptions(self, defines=""):
         """return options for configure command line"""
         defines = Arguments(defines)
-        if self.subinfo.options.configure.args != None:
-            defines += self.subinfo.options.configure.args
+        defines += self.subinfo.options.configure.args
 
-        if self.supportsCCACHE:
+        if self.supportsCCACHE and CraftCore.cache.findApplication("ccache"):
             defines += self.ccacheOptions()
         if CraftCore.compiler.isClang() and self.supportsClang:
             defines += self.clangOptions()
