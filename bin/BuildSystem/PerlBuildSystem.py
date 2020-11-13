@@ -38,7 +38,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
                "PERL_MM_USE_DEFAULT": "1",
                "PERL_AUTOINSTALL": "--skipdeps"}
         with utils.ScopedEnv(env):
-            return utils.system(" ".join(["perl", "Makefile.PL", self.subinfo.options.configure.args]))
+            return utils.system(Arguments.formatCommand(["perl", "Makefile.PL"], self.subinfo.options.configure.args))
 
     def make(self):
         self.enterBuildDir()
