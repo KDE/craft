@@ -163,7 +163,7 @@ class BashShell(object):
             tmp = CraftCore.cache.findApplication(cmd)
             if tmp:
                 cmd = tmp
-            command = Arguments([self._findBash(), "-c", self.toNativePath(cmd), args])
+            command = Arguments([self._findBash(), "-c"]) + [" ".join(Arguments([self.toNativePath(cmd), args]).get())]
         else:
             command = Arguments([cmd, args])
         env = dict(os.environ)
