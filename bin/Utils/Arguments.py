@@ -46,6 +46,8 @@ class Arguments(object):
             return self
 
     def __add__(self, other):
+        if not other:
+            return self
         if isinstance(other, str):
             self.__setLegacy()
         self.append(other)
