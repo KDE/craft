@@ -56,7 +56,7 @@ class Arguments(object):
     def __str__(self):
         if self.__legacyString is not None:
             return self.__legacyString
-        return subprocess.list2cmdline(self.__args)
+        return subprocess.list2cmdline([str(x) for x in self.__args])
 
     def get(self):
         if self.__legacyString:
