@@ -11,6 +11,7 @@ from CraftCore import CraftCore
 from Blueprints.CraftVersion import CraftVersion
 from CraftOS.osutils import OsUtils
 import utils
+from Utils.Arguments import Arguments
 
 import os
 import shutil
@@ -162,9 +163,9 @@ class BashShell(object):
         if tmp:
             cmd = tmp
         if CraftCore.compiler.isWindows:
-            command = f"{self._findBash()} -c \"{self.toNativePath(cmd)} {args}\""
+            command = Arguments([self._findBash(), "-c", self.toNativePath(cmd)]) + args
         else:
-            command = f"{self.toNativePath(cmd)} {args}"
+            command = Arguments([self.toNativePath(cmd)]) + args
 
         env = dict(os.environ)
         env.update(self.environment)

@@ -12,9 +12,11 @@ class Arguments(object):
 
     def __setLegacy(self):
         if self.__legacyString is None:
-            self.__legacyString = subprocess.list2cmdline(self.__args)
+            self.__legacyString = subprocess.list2cmdline([str(x) for x in self.__args])
 
     def append(self, other):
+        if not other:
+            return self
         if self.__legacyString is not None:
             if isinstance(other, str):
                 if not other.startswith(" "):
@@ -62,12 +64,5 @@ class Arguments(object):
 
     @staticmethod
     def formatCommand(command:[str], args):
-        legacyArg = ""
-        if isinstance(args, Arguments):
-            if args.__legacyString:
-                legacyArg = args.__legacyString
-        if isinstance(args, str):
-            legacyArg = args
-        if legacyArg:
-            return subprocess.list2cmdline([str(x) for x in command]) + " " + legacyArg.strip()
-        return command + args.__args
+        tmp = Arguments(command) + args
+        return tmp.get()

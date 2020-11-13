@@ -170,7 +170,7 @@ class CraftBase(object):
         CraftCore.log.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
-        if (not os.path.exists(self.sourceDir())):
+        if (not self.sourceDir().is_dir()):
             return False
         CraftCore.log.warning("entering the source directory!")
         os.chdir(self.sourceDir())

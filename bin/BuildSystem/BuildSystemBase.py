@@ -110,7 +110,7 @@ class BuildSystemBase(CraftBase):
 
     def makeOptions(self, args):
         """return options for make command line"""
-        defines = []
+        defines = Arguments()
         if self.subinfo.options.make.ignoreErrors:
             defines.append("-i")
         makeProgram = self.makeProgram
@@ -127,7 +127,7 @@ class BuildSystemBase(CraftBase):
 
         if args:
             defines.append(args)
-        return " ".join(defines)
+        return defines
 
     def configure(self):
         return True

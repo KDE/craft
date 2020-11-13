@@ -68,23 +68,18 @@ class QMakeBuildSystem(BuildSystemBase):
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
             proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
-        return utils.system(Arguments.formatCommand(["qmake", "-makefile", proFile], self.configureOptions(configureDefines)))
+        return utils.system(Arguments(["qmake", "-makefile", proFile, self.configureOptions(configureDefines)]))
 
     def make(self):
         """implements the make step for Qt projects"""
         self.enterBuildDir()
-
-        options = self.makeOptions(self.subinfo.options.make.args)
-        command = ' '.join([self.makeProgram, options])
-        return utils.system(command)
+        return utils.system(Arguments([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
 
     def install(self, options=None):
         """implements the make step for Qt projects"""
-        if not options:
-            options = self.makeOptions(self.subinfo.options.install.args)
         if not BuildSystemBase.install(self):
             return False
-        return utils.system(f"{self.makeProgram} {options}", cwd=self.buildDir())
+        return utils.system(Arguments([self.makeProgram, options,self.makeOptions(self.subinfo.options.install.args)]), cwd=self.buildDir())
 
     def runTest(self):
         """running qmake based unittests"""

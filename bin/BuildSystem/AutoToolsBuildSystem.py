@@ -6,6 +6,7 @@ from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell
 import utils
+from Utils.Arguments import Arguments
 
 import os
 import glob
@@ -18,12 +19,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self._shell = BashShell()
         self.platform = ""# hope for auto detection
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
-            self.platform = "--host=i686-pc-linux-gnu "
+            self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
             if CraftCore.compiler.isX86():
-                self.platform = "--host=i686-w64-mingw32 --build=i686-w64-mingw32 --target=i686-w64-mingw32 "
+                self.platform = Arguments(["--host=i686-w64-mingw32", "--build=i686-w64-mingw32", "--target=i686-w64-mingw32"])
             else:
-                self.platform = "--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 "
+                self.platform = Arguments(["--host=x86_64-w64-mingw32", "--build=x86_64-w64-mingw32", "--target=x86_64-w64-mingw32"])
 
     @property
     def makeProgram(self):
@@ -52,19 +53,19 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + " " + self.shell.environment["LDFLAGS"]
         self.shell.environment["MAKE"] = self.makeProgram
 
-        autogen = os.path.join(self.sourceDir(), "autogen.sh")
-        if self.subinfo.options.configure.bootstrap and os.path.exists(autogen):
+        autogen = self.sourceDir() / "autogen.sh"
+        if self.subinfo.options.configure.bootstrap and autogen.exists():
             self.shell.execute(self.sourceDir(), autogen)
         elif self.subinfo.options.configure.autoreconf:
-            includesArgs = ""
+            includesArgs = Arguments()
             if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
                 includes = []
                 for i in [f"{CraftCore.standardDirs.craftRoot()}/dev-utils/cmake/share", CraftCore.standardDirs.locations.data]:
                     aclocalDir = self.shell.toNativePath(i) + "/aclocal"
                     if os.path.isdir(aclocalDir):
-                        includes += [f" -I'{aclocalDir}'"]
-                includesArgs = "".join(includes)
-            self.shell.execute(self.sourceDir(), "autoreconf", self.subinfo.options.configure.autoreconfArgs + includesArgs)
+                        includes += [f"-I'{aclocalDir}'"]
+                includesArgs += includes
+            self.shell.execute(self.sourceDir(), "autoreconf", Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs)
 
         with utils.ScopedEnv({"CLICOLOR_FORCE": None}):
             return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
@@ -92,7 +93,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         args = self.makeOptions(self.subinfo.options.install.args)
 
         destDir = self.shell.toNativePath(self.installDir())
-        args += f" DESTDIR={destDir}"
+        args += [f"DESTDIR={destDir}"]
         with utils.ScopedEnv({"DESTDIR" : destDir}):
             if not self.shell.execute(self.buildDir(), command, args):
                 return False
@@ -113,12 +114,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(self.installPrefix())
-        options += f" --prefix='{prefix}' "
+        options += [f"--prefix='{prefix}'"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
-            options += f" --datarootdir='{self.shell.toNativePath(CraftCore.standardDirs.locations.data)}' "
+            options += [f"--datarootdir='{self.shell.toNativePath(CraftCore.standardDirs.locations.data)}'"]
         options += self.platform
-
-        return options;
+        return options
 
     def ccacheOptions(self):
-        return f" CC='ccache {os.environ['CC']}' CXX='ccache {os.environ['CXX']}' "
+        return [f"CC='ccache {os.environ['CC']}'", f"CXX='ccache {os.environ['CXX']}'"]

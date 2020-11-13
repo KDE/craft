@@ -408,7 +408,7 @@ class OptionsConfigure(OptionsBase):
         self.autoreconf = True
 
         ## optional arguments for autoreconf
-        self.autoreconfArgs = "-vfi"
+        self.autoreconfArgs = Arguments(["-vfi"])
 
         ## Whether to add the default -I flags when running autoreconf
         ## This is needed since some packages fail if we pass -I to autoreconf
@@ -446,7 +446,7 @@ class OptionsMake(OptionsBase):
         ## ignore make error
         self.ignoreErrors = None
         ## options for the make tool
-        self.args = ""
+        self.args = Arguments()
         self.supportsMultijob = True
 
     @property

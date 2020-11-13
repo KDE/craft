@@ -30,7 +30,7 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
     def install(self, options=""):
         """implements the make step for Qt projects"""
         with utils.ScopedEnv(self._qtCoreEnv()):
-            options += f" INSTALL_ROOT={os.path.splitdrive(self.imageDir())[1]} " + self.makeOptions(self.subinfo.options.install.args)
+            options = Arguments([options, f"INSTALL_ROOT={os.path.splitdrive(self.imageDir())[1]}"])
             if not super().install(options):
                 return False
             self._fixInstallPrefix()

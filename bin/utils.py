@@ -46,6 +46,7 @@ from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
+from Utils.Arguments import Arguments
 
 
 def abstract():
@@ -199,6 +200,9 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         environment["VIRTUAL_ENV"] = str(python_venv.parent)
 
     # if the first argument is not an absolute path replace it with the full path to the application
+    if isinstance(cmd, Arguments):
+        cmd = Arguments.get(cmd)
+
     if isinstance(cmd, list):
         # allow to pass other types, like ints or Path
         cmd = [str(x) for x in cmd]
