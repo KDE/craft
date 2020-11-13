@@ -63,7 +63,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 for i in [f"{CraftCore.standardDirs.craftRoot()}/dev-utils/cmake/share", CraftCore.standardDirs.locations.data]:
                     aclocalDir = self.shell.toNativePath(i) + "/aclocal"
                     if os.path.isdir(aclocalDir):
-                        includes += [f"-I'{aclocalDir}'"]
+                        includes += [f"-I{aclocalDir}"]
                 includesArgs += includes
             self.shell.execute(self.sourceDir(), "autoreconf", Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs)
 
