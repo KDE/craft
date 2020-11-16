@@ -1,6 +1,6 @@
 import abc
 import os
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import platform
 
 import sys
@@ -41,22 +41,22 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     def toWindowsPath(path : str) -> Path:
         if not path:
             return None
-        return Path(path)
+        return Path(path).resolve(strict=False)
 
     @staticmethod
-    def toUnixPath(path : str) -> PurePosixPath:
+    def toUnixPath(path : str) -> str:
         if not path:
             return None
-        return PurePosixPath(Path(path).as_posix())
+        return Path(path).resolve(strict=False).as_posix()
 
     @staticmethod
-    def toMSysPath(path) -> PurePosixPath:
+    def toMSysPath(path) -> str:
         if not path:
             return None
         out = OsUtilsBase.toUnixPath(path)
         drive, path = os.path.splitdrive(out)
         if drive:
-            out = PurePosixPath(f"/{drive[0].lower()}{path}")
+            return f"/{drive[0].lower()}{path}"
         return out
 
     @staticmethod
