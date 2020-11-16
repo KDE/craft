@@ -16,7 +16,7 @@ class CraftManifestEntryFile(object):
         self.checksum = checksum
         self.date = datetime.datetime.utcnow()
         self.version = version
-        self.buildPrefix = CraftCore.standardDirs.craftRoot()
+        self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
         self.configHash = None
         self.config = None
