@@ -138,7 +138,7 @@ class SetupHelper(object):
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
 
     def addEnvVar(self, key, val):
-        os.environ[key] = val
+        os.environ[key] = str(val)
 
     def addDefaultEnvVar(self, key, val):
         if not key in os.environ:
@@ -150,7 +150,7 @@ class SetupHelper(object):
         if key in os.environ:
             env = var + os.environ[key].split(sep)
             var = list(collections.OrderedDict.fromkeys(env))
-        val = sep.join(var)
+        val = sep.join([str(x) for x in var])
         CraftCore.log.debug(f"Setting {key}={val}")
         os.environ[key] = val
 
