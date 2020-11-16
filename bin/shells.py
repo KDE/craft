@@ -6,6 +6,7 @@
 import platform
 import subprocess
 import sys
+from pathlib import Path
 
 from CraftCore import CraftCore
 from Blueprints.CraftVersion import CraftVersion
@@ -141,11 +142,11 @@ class BashShell(object):
         return CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo")
 
     @staticmethod
-    def toNativePath(path):
+    def toNativePath(path) -> Path:
         if OsUtils.isWin():
             return OsUtils.toMSysPath(path)
         else:
-            return path
+            return Path(path)
 
     def _findBash(self):
         if OsUtils.isWin():

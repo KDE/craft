@@ -1,5 +1,6 @@
 import abc
 import os
+from pathlib import Path
 import platform
 
 import sys
@@ -37,21 +38,19 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         return True
 
     @staticmethod
-    def toWindowsPath(path : str) -> str:
+    def toWindowsPath(path : str) -> Path:
         if not path:
-            return path
-        path = os.path.normpath(path)
-        return path.replace("/", "\\")
+            return None
+        return Path(path)
 
     @staticmethod
-    def toUnixPath(path : str) -> str:
+    def toUnixPath(path : str) -> Path:
         if not path:
-            return path
-        path = os.path.normpath(path)
-        return path.replace("\\", "/")
+            return None
+        return Path(path).as_posix()
 
     @staticmethod
-    def toMSysPath(path):
+    def toMSysPath(path) -> Path:
         if not path:
             return path
         path = OsUtilsBase.toUnixPath(path)
