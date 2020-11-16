@@ -43,8 +43,8 @@ class CraftShortPath(object):
         import utils
         utils.createDir(CraftCore.standardDirs.junctionsDir())
         longPath = OsUtils.toNativePath(longPath)
-        path = CraftCore.standardDirs.junctionsDir() / hex(zlib.crc32(bytes(longPath, "UTF-8")))[2:]
-        delta = len(longPath) - len(str(path))
+        path = CraftCore.standardDirs.junctionsDir() / hex(zlib.crc32(bytes(str(longPath), "UTF-8")))[2:]
+        delta = len(str(longPath)) - len(str(path))
         if delta <= 0:
             CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
             CraftCore.debug.log.debug(f"{longPath}\n"

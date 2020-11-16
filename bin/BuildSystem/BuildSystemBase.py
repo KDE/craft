@@ -171,7 +171,7 @@ class BuildSystemBase(CraftBase):
                     return False
 
         if stripPath(prefix):
-            oldPrefix = OsUtils.toUnixPath(stripPath(prefix)).split("/", 1)[0]
+            oldPrefix = OsUtils.toUnixPath(stripPath(prefix)).parts[0]
             utils.rmtree(os.path.join(self.installDir(), oldPrefix))
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")

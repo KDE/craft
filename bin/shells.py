@@ -77,7 +77,7 @@ class BashShell(object):
 
             if OsUtils.isWin():
                 def convertPath(path : str):
-                    return ":".join([self.toNativePath(p) for p in path.split(os.path.pathsep)])
+                    return ":".join([str(self.toNativePath(p)) for p in path.split(os.path.pathsep)])
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.isMinGW():
                     gcc = shutil.which("gcc")
