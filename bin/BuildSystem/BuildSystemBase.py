@@ -165,14 +165,15 @@ class BuildSystemBase(CraftBase):
             qtDir = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
                                  CraftCore.settings.get("QtSDK", "Version"),
                                  CraftCore.settings.get("QtSDK", "Compiler"))
-            path = os.path.join(self.installDir(), stripPath(qtDir))
-            if os.path.exists(path) and not os.path.samefile(self.installDir(), path):
+            path = self.installDir() / stripPath(qtDir)
+            if path.exists() and not os.path.samefile(self.installDir(), path):
                 if not utils.mergeTree(path, self.installDir()):
                     return False
 
         if stripPath(prefix):
-            oldPrefix = OsUtils.toUnixPath(stripPath(prefix)).parts[0]
-            utils.rmtree(os.path.join(self.installDir(), oldPrefix))
+            oldPrefix = self.installDir() / Path(stripPath(prefix)).parts[0]
+            if oldPrefix.exists():
+                utils.rmtree(os.path.join(self.installDir(), oldPrefix))
 
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
