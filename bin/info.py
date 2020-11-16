@@ -50,7 +50,7 @@ class infoclass(object):
         self.patchLevel = {}
 
         # the build prefix, may differ for for cached files
-        self.buildPrefix = CraftCore.standardDirs.craftRoot()
+        self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         self.isCachedBuild = False
 
         # runtimeDependencies and buildDependencies are not different when looking
