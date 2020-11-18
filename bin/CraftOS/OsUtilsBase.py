@@ -41,13 +41,13 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     def toWindowsPath(path : str) -> Path:
         if not path:
             return None
-        return Path(path).resolve(strict=False)
+        return Path(path)
 
     @staticmethod
     def toUnixPath(path : str) -> str:
         if not path:
             return None
-        return Path(path).resolve(strict=False).as_posix()
+        return Path(path).as_posix()
 
     @staticmethod
     def toMSysPath(path) -> str:
