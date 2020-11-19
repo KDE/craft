@@ -283,7 +283,7 @@ class MacDylibBundler(object):
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
             elif path.startswith("/"):
-                if not path.startswith(CraftStandardDirs.craftRoot()):
+                if not path.startswith(str(CraftStandardDirs.craftRoot())):
                     CraftCore.log.error("%s: reference to absolute library path outside craftroot: %s",
                                           fileToFix, path)
                     return False
