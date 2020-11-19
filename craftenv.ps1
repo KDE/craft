@@ -122,6 +122,10 @@ function Global:cr()
     cd $env:CraftRoot/..
 }
 
+if (-not $env:CRAFT_PYTHON2) {
+    Write-Error "Failed to detect python"
+    exit(1)
+}
 
 if($args.Length -ne 0)
 {
