@@ -63,14 +63,7 @@ else
 if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"]["Python"]))
 {
     # prefer the python from the settings
-    $env:PATH = "{0}{1}$env:PATH" -f $settings["Paths"]["Python"], [IO.Path]::PathSeparator
-}
-else
-{
-    $py = (Get-Command py -ErrorAction SilentlyContinue).Name
-    if ($py) {
-        findPython(&$py -3 -c "import sys; print(sys.executable)")
-    }
+    findPython("{0}/python" -f $settings["Paths"]["Python"])
 }
 
 findPython("python3.9")
@@ -79,6 +72,7 @@ findPython("python3.7")
 findPython("python3.6")
 findPython("python3")
 findPython("python")
+findPython("py")
 }
 
 function Global:craft()
@@ -122,7 +116,7 @@ function Global:cr()
     cd $env:CraftRoot/..
 }
 
-if (-not $env:CRAFT_PYTHON2) {
+if (-not $env:CRAFT_PYTHON) {
     Write-Error "Failed to detect python"
     exit(1)
 }
