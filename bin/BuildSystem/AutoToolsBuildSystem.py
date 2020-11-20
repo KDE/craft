@@ -60,8 +60,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             includesArgs = Arguments()
             if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
                 includes = []
-                for i in [f"{CraftCore.standardDirs.craftRoot()}/dev-utils/cmake/share", CraftCore.standardDirs.locations.data]:
-                    aclocalDir = self.shell.toNativePath(i) + "/aclocal"
+                for i in [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share", CraftCore.standardDirs.locations.data]:
+                    # we need to use str for toNativePath on windows so assume its a string
+                    aclocalDir = f"{self.shell.toNativePath(i)}/aclocal"
                     if os.path.isdir(aclocalDir):
                         includes += [f"-I{aclocalDir}"]
                 includesArgs += includes
