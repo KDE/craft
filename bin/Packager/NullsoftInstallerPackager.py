@@ -64,7 +64,6 @@ You can add your own defines into self.defines as well.
     Section
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    SetOutPath $INSTDIR ; for working directory
     {shortcuts}
     !insertmacro MUI_STARTMENU_WRITE_END
     SectionEnd
@@ -108,8 +107,11 @@ You can add your own defines into self.defines as well.
             return False
         return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
-    def _createShortcut(self, name, target, icon="", parameter="", description="") -> str:
-        return f"""CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
+    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None) -> str:
+        if workingDirectory is None:
+            workingDirectory = "%USERPROFILE%"
+
+        return f"""SetOutPath "{workingDirectory}"\nCreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
 
     def folderSize(self, path):
         total = 0
