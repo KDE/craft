@@ -676,16 +676,8 @@ def applyPatch(sourceDir, f, patchLevel='0'):
                 if patch.is_file() and not patch.name.startswith("."):
                     out = applyPatch(sourceDir, os.path.join(f, patch), patchLevel) and out
         return out
-    with tempfile.TemporaryDirectory() as tmp:
-        # rewrite the patch, the gnu patch on Windows is only capable
-        # to read \r\n patches
-        tmpPatch = os.path.join(tmp, os.path.basename(f))
-        with open(f, "rt", encoding="utf-8") as p:
-            patchContent = p.read()
-        with open(tmpPatch, "wt", encoding="utf-8") as p:
-            p.write(patchContent)
-        cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", tmpPatch]
-        result = system(cmd)
+    cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
+    result = system(cmd)
     if not result:
         CraftCore.log.warning(f"applying {f} failed!")
     return result
