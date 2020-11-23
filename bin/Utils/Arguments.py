@@ -46,12 +46,13 @@ class Arguments(object):
             return self
 
     def __add__(self, other):
+        out = Arguments(self)
         if not other:
-            return self
+            return out
         if isinstance(other, str):
-            self.__setLegacy()
-        self.append(other)
-        return self
+            out.__setLegacy()
+        out.append(other)
+        return out
 
     def __str__(self):
         if self.__legacyString is not None:
