@@ -54,13 +54,15 @@ class CMakeBuildSystem(BuildSystemBase):
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
             options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
 
-        if OsUtils.isWin():
+        if CraftCore.compiler.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
             options.append("-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON")
-
-        if OsUtils.isMac():
+        elif CraftCore.compiler.isMacOS:
             options += [f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE", "-DAPPLE_SUPPRESS_X11_WARNING=ON"]
+        elif CraftCore.compiler.isLinux:
+            # use the same lib dir on all distributions
+            options += ["-DCMAKE_INSTALL_LIBDIR=lib"]
 
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
