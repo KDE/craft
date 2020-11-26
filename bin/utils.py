@@ -28,6 +28,7 @@
 
 import configparser
 import contextlib
+import ctypes
 import glob
 import inspect
 import io
@@ -191,6 +192,9 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
+    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+    needsAnsiFix = not ciMode and OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
 
@@ -215,7 +219,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if not "shell" in kw:
             # use shell, arg0 might end up with "/usr/bin/svn" => needs shell so it can be executed
             kw["shell"] = True
-        arg0 = shlex.split(cmd, posix=not CraftCore.compiler.isWindows)[0]
+        arg0 = shlex.split(cmd, posix=not OsUtils.isWin())[0]
 
     matchQuoted = re.match("^\"(.*)\"$", arg0)
     if matchQuoted:
@@ -257,17 +261,22 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         CraftCore.debug.logEnv(environment)
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
-    if not displayProgress or CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+    if not displayProgress or ciMode:
         stdout = kw.get('stdout', sys.stdout)
         if stdout == sys.stdout:
             kw['stderr'] = subprocess.STDOUT
         kw['stdout'] = subprocess.PIPE
+
         proc = subprocess.Popen(cmd, **kw)
         if pipeProcess:
             pipeProcess.stdout.close()
         for line in proc.stdout:
             if isinstance(stdout, io.TextIOWrapper):
                 if CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                    if needsAnsiFix:
+                        # a bug in cygwin msys removes the ansi flag, set it again
+                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
                     stdout.buffer.write(line)
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
@@ -296,7 +305,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     if not ok:
         if not secretCommand:
             msg = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
-            if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            if not ciMode:
                 CraftCore.log.debug(msg)
             else:
                 CraftCore.log.info(msg)
