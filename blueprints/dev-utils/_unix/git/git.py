@@ -28,40 +28,27 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        ver = "2.29.1"
-        build = "1"
-        self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
-        self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
-        self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
-        self.targetDigests[ver] = (["e4ddaf8d7ee1ef633c6631747a12624ffb1f076e91e22cad1add322fee6bfedc"], CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = ver
+        self.targets["latest"] = ""
+        self.description = "Craft integration package for git."
+        self.defaultTarget = "latest"
 
     def setDependencies(self):
-        self.buildDependencies["dev-utils/7zip"] = None
-        self.buildDependencies["dev-utils/wget"] = None
         self.buildDependencies["dev-utils/kshimgen"] = None
-
 
 from Package.BinaryPackageBase import *
 
 
-class GitPackage(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
     def postInstall(self):
         env = None
-        if CraftCore.compiler.isWindows:
-            env = {"TERM": ""}
-        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
-                                os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"), env=env)
+        if CraftCore.compiler.isLinux:
+            env = {"LD_LIBRARY_PATH": ""}
+        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git"),
+                                "/usr/bin/git", env=env, useAbsolutePath=True)
 
     def postQmerge(self):
-        gitDir = os.path.join(CraftStandardDirs.craftRoot(), self.subinfo.targetInstallPath[self.buildTarget])
-        utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
+        CraftCore.cache.clear()
         return True
-
-
-class Package(VirtualIfSufficientVersion):
-    def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="git", version="2.27.0", classA=GitPackage)
