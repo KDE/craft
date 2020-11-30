@@ -39,7 +39,7 @@ class CMakeBuildSystem(BuildSystemBase):
         """returns default configure options"""
         craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         options = Arguments([
-                    "-DBUILD_TESTING={testing} ".format(testing="ON" if self.buildTests else "OFF"), 
+                    "-DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF"),
                     BuildSystemBase.configureOptions(self),
                     f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
                     f"-DCMAKE_PREFIX_PATH={craftRoot}"
@@ -86,8 +86,13 @@ class CMakeBuildSystem(BuildSystemBase):
         """implements configure step for cmake projects"""
 
         self.enterBuildDir()
-        command = Arguments.formatCommand(["cmake", "-G",  self.__makeFileGenerator()], self.configureOptions(defines))
-        return utils.system(command)
+        env = {}
+        print(self.supportsCCACHE and CraftCore.cache.findApplication("ccache"), self.supportsCCACHE , CraftCore.cache.findApplication("ccache"))
+        if self.supportsCCACHE and CraftCore.cache.findApplication("ccache"):
+            env["PATH"] = os.pathsep.join([str(CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin"), os.environ["PATH"]])
+        with utils.ScopedEnv(env):
+            command = Arguments.formatCommand(["cmake", "-G",  self.__makeFileGenerator()], self.configureOptions(defines))
+            return utils.system(command)
 
     def make(self):
         """implements the make step for cmake projects"""
@@ -121,10 +126,6 @@ class CMakeBuildSystem(BuildSystemBase):
         elif CraftCore.debug.verbose() > 1:
             command += ["-VV"]
         return utils.system(command)
-
-    def ccacheOptions(self):
-        return ["-DCMAKE_CXX_COMPILER=ccache", f"-DCMAKE_CXX_COMPILER_ARG1={os.environ['CXX']}",
-                "-DCMAKE_C_COMPILER=ccache", f"-DCMAKE_C_COMPILER_ARG1={os.environ['CC']}"]
 
     def internalPostQmerge(self):
         if not super().internalPostQmerge():
