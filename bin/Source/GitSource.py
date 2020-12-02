@@ -83,7 +83,9 @@ class GitSource(VersionSystemSourceBase):
     def __git(self, command, args=None, logCommand=False, **kwargs):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
-        parts = ["git", command]
+        parts = ["git"]
+        if "stdout" not in kwargs and "stderr" not in kwargs and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
+            parts += ["-c", "color.ui=always"]
         if command in ("clone", "checkout", "fetch", "pull", "submodule"):
             if CraftCore.debug.verbose() < 0:
                 parts += ["-q"]
@@ -91,6 +93,7 @@ class GitSource(VersionSystemSourceBase):
                 kwargs["displayProgress"] = True
         else:
             kwargs["logCommand"] = logCommand
+        parts.append(command)
         if args:
             parts += args
         if not kwargs.get("cwd"):

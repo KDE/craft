@@ -193,7 +193,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     logged to allow the display of progress bars."""
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-    needsAnsiFix = not ciMode and OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+    needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
 
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
