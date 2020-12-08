@@ -224,7 +224,7 @@ def unShelve(shelve, args):
         if info.revision:
             settings[p]["revision"] = info.revision
     # bootstrap craft first
-    if not __recurseCraft(["--options", "virtual.ignored=True"], ["craft"]):
+    if not __recurseCraft(["-i", "--options", "virtual.ignored=True"], ["craft"]):
         return False
     if args.probe:
         return True
