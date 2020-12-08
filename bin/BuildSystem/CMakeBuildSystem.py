@@ -38,12 +38,13 @@ class CMakeBuildSystem(BuildSystemBase):
     def configureOptions(self, defines=""):
         """returns default configure options"""
         craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-        options = Arguments([
+        options = Arguments([defines])
+        options += [
                     "-DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF"),
                     BuildSystemBase.configureOptions(self),
                     f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
                     f"-DCMAKE_PREFIX_PATH={craftRoot}"
-                ])
+                ]
 
         if self.buildType() is not None:
             options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
