@@ -36,9 +36,10 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "3.19.1"
 
-from Package.BinaryPackageBase import *
-from Package.MaybeVirtualPackageBase import *
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/7zip"] = None
 
+from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):
     def __init__(self):
