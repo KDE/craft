@@ -319,9 +319,12 @@ class CollectionPackagerBase(PackagerBase):
                     if Path(x.path).suffix in {".framework", ".app"}:
                         return True
                 return utils.isBinary(x.path)
-            for sym in utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
+            # use a final list and don't scan on demand
+            # the moved folders might cause issues otherwise
+            binaries = list(utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
                                                     whitelist=lambda x, root: binaryFilter(x),
-                                                    blacklist=lambda x, root: True):
+                                                    blacklist=lambda x, root: True))
+            for sym in binaries:
                 if CraftCore.compiler.isWindows:
                     sym = Path(sym).with_suffix(symbolSuffix)
                 else:
