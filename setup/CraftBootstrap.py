@@ -188,7 +188,7 @@ def getABI():
 
 def setUp(args):
     while not args.prefix:
-        print("Where to you want us to install Craft")
+        print("Where do you want us to install Craft")
         prefix = Path("C:/CraftRoot/" if CraftBootstrap.isWin() else "~/CraftRoot") 
         args.prefix = os.path.expanduser(input(f"Craft install root: [{prefix}]: ") or prefix)
 
