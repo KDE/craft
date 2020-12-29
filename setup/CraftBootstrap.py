@@ -58,12 +58,16 @@ class CraftBootstrap(object):
         sys.stdout.flush()
 
     @staticmethod
-    def promptForChoice(title, choices, default=None):
+    def promptForChoice(title, choices, default=None, returnDefaultWithoutPrompt=False):
         if not default:
             if isinstance(choices[0], tuple):
                 default, _ = choices[0]
             else:
                 default = choices[0]
+                
+        if returnDefaultWithoutPrompt:
+            return default
+                
         selection = ", ".join(["[{index}] {value}".format(index=index,
                                                           value=value[0] if isinstance(value, tuple) else value)
                                for index, value in enumerate(choices)])
@@ -162,13 +166,13 @@ def run(args, command):
         if not subprocess.run(command).returncode == 0:
             exit(1)
 
-def getABI():
+def getABI(args):
     if CraftBootstrap.isWin():
         platform = "windows"
         abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                        [("Mingw-w64", ("mingw", "gcc")),
                                                         ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
-                                                        ], "Microsoft Visual Studio 2019")
+                                                        ], "Microsoft Visual Studio 2019", returnDefaultWithoutPrompt=args.use_defaults)
         abi += f"_64"
 
     elif CraftBootstrap.isUnix():
@@ -181,7 +185,7 @@ def getABI():
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
-                                                      ["gcc", "clang"])
+                                                      ["gcc", "clang"], returnDefaultWithoutPrompt=args.use_defaults)
         abi = "64"
 
     return f"{platform}-{abi}-{compiler}"
@@ -189,8 +193,8 @@ def getABI():
 def setUp(args):
     while not args.prefix:
         print("Where do you want us to install Craft")
-        prefix = Path("C:/CraftRoot/" if CraftBootstrap.isWin() else "~/CraftRoot") 
-        args.prefix = os.path.expanduser(input(f"Craft install root: [{prefix}]: ") or prefix)
+        prefix = Path("C:/CraftRoot/" if CraftBootstrap.isWin() else "~/CraftRoot")
+        args.prefix = prefix if args.use_defaults else os.path.expanduser(input(f"Craft install root: [{prefix}]: ") or prefix)
 
     if not args.dry_run and not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
@@ -203,11 +207,11 @@ def setUp(args):
 
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
-    abi = getABI()
+    abi = getABI(args)
 
     useANSIColor = CraftBootstrap.promptForChoice("Do you want to enable the support for colored logs",
                                                 [("Yes", True), ("No", False)],
-                                                        default="Yes")
+                                                        default="Yes", returnDefaultWithoutPrompt=args.use_defaults)
     if useANSIColor:
         CraftBootstrap.enableANSISupport()
 
@@ -215,7 +219,7 @@ def setUp(args):
     if CraftBootstrap.isWin():
         installShortCut = CraftBootstrap.promptForChoice("Do you want to install a StartMenu entry",
                                                          [("Yes", True), ("No", False)],
-                                                         default="Yes")
+                                                         default="Yes", returnDefaultWithoutPrompt=args.use_defaults)
     if not args.dry_run:
         if args.localDev:
             shutil.copytree(args.localDev, os.path.join(args.prefix, f"craft-{args.branch}"),
@@ -279,6 +283,7 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
     parser.add_argument("--version", action="version", version="%(prog)s master")
     parser.add_argument("--localDev", action="store", help="Path to a local directory to use instead of fetching from github")
+    parser.add_argument("--use-defaults", action="store_true", help="Use all default options instead of asking")
 
     args = parser.parse_args()
     if args.root:
