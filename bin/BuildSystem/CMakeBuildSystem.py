@@ -88,9 +88,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
         env = {}
-        print(self.supportsCCACHE and CraftCore.cache.findApplication("ccache"), self.supportsCCACHE , CraftCore.cache.findApplication("ccache"))
         if self.supportsCCACHE and CraftCore.cache.findApplication("ccache"):
-            env["PATH"] = os.pathsep.join([str(CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin"), os.environ["PATH"]])
+            env["CXX"] = CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            env["CC"] = CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin" / Path(os.environ["CC"]).name
         with utils.ScopedEnv(env):
             command = Arguments.formatCommand(["cmake", "-G",  self.__makeFileGenerator()], self.configureOptions(defines))
             return utils.system(command)
