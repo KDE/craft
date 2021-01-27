@@ -109,6 +109,7 @@ class BashShell(object):
                     else:
                         cl = "cl"
                     clWrapper = self.toNativePath(os.path.join(latestAutomake, "compile"))
+                    self._environment["AR"] = f"{self.toNativePath(os.path.join(latestAutomake, 'ar-lib'))} lib"
                     self._environment["LD"] = "link -nologo"
                     self._environment["CC"] = f"{clWrapper} {cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
