@@ -124,6 +124,9 @@ def un7zip(fileName, destdir, flag=None):
             if progressFlags:
                 progressFlags = ["-bsp0"]
             command = [sys.executable, "-u", Path(__file__).parent / "untar.py", destdir]
+            # we don't have progress, diesplay error messages
+            if "stderr" in kw:
+                del kw["stderr"]
             kw["stdout"] = subprocess.DEVNULL
         else:
             tar = CraftCore.cache.findApplication("tar")

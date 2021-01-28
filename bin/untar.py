@@ -28,22 +28,27 @@ import sys
 import tarfile
 
 symlinks = []
+CraftRoot = Path(__file__).parent.parent.parent
 
 tar = tarfile.open(fileobj=sys.stdin.buffer, mode="r|")
 
 # as we are working on a stream, we can't seek, delay the resolution util the end
-tar.makelink = lambda tarinfo, targetpath: symlinks.append((tarinfo.linkname, targetpath))
+tar.makelink = lambda tarinfo, targetpath: symlinks.append((tarinfo.linkname, targetpath, 0))
 tar.extractall(sys.argv[1])
 tar.close()
 
-
-
-def hardlink(src : Path, dest : Path):
+def hardlink(src : Path, dest : Path, count : int):
+    if count >= 100:
+        sys.stderr.write(f"\033[0;31mSkip unreasolvable symlink {dest} -> {src}\n\033[0m")
+        return
+    if not CraftRoot in src.parents:
+        sys.stderr.write(f"\033[0;31mSkip forbidden symlink outside of CraftRoot {dest} -> {src}\n\033[0m")
+        return
     if not src.exists():
         # src does not exist yet, delay
-        symlinks.append((src, dest))
+        symlinks.append((src, dest, count + 1))
         return
-    print(f"Resolving link: {src} {dest}")
+    print(f"Resolving link: {dest} -> {src}")
     if src.is_dir():
         dest.mkdir()
         with os.scandir(src) as scan:
@@ -54,13 +59,13 @@ def hardlink(src : Path, dest : Path):
 
 # resolve the links and use hard links
 while symlinks:
-    src, dest = symlinks.pop(0) 
+    src, dest, count = symlinks.pop(0)
     src = Path(src)
     dest = Path(dest)
     if not src.is_absolute():
         src = (dest.parent / src).resolve()
     try:
-        hardlink(src, dest)
+        hardlink(src, dest, count)
     except Exception as e:
         print(src, dest, file=sys.stderr)
         print(e, file=sys.stderr)
