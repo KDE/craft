@@ -53,7 +53,7 @@ def hardlink(src : Path, dest : Path, count : int):
         dest.mkdir()
         with os.scandir(src) as scan:
             for f in scan:
-                hardlink(Path(f.path), dest / f.name)
+                hardlink(Path(f.path), dest / f.name, 0)
     else:
         os.link(src, dest)
 
