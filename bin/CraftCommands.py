@@ -503,7 +503,7 @@ def createArchiveCache(packages : CraftPackageObject):
         if isinstance(url, list):
             url = url[0]
         urlInfo = urllib.parse.urlparse(url)
-        if urlInfo.hostname in {"files.kde.org", "download.kde.org", "download.qt.io"}:
+        if urlInfo.hostname in {"files.kde.org", "download.kde.org"}:
             CraftCore.log.info(f"Skip mirroring of {url}, host is reliable")
             continue
         if p.instance._getFileInfoFromArchiveCache():
