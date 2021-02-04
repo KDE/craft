@@ -56,6 +56,7 @@ class MacBasePackager( CollectionPackagerBase ):
             (archive / "lib/plugins", appPath / "Contents/PlugIns"),
             (archive / "plugins", appPath / "Contents/PlugIns"),
             (archive / "share", appPath / "Contents/Resources"),
+            (archive / "qml", appPath / "Contents/Resources/qml"),
             (archive / "translations", appPath / "Contents/Resources/Translations"),
             (archive / "bin", appPath / "Contents/MacOS"),
             (archive / "libexec", appPath / "Contents/MacOS"),
