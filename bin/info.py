@@ -264,10 +264,10 @@ class infoclass(object):
         for key, url in list(self.targets.items()):
             if url.endswith("/"):
                 url = url[:-1]
-            url = f"{url}/manifest.json"
-            json = CraftCore.cache.cacheJsonFromUrl(url)
+            manifestUrl = f"{url}/manifest.json"
+            json = CraftCore.cache.cacheJsonFromUrl(manifestUrl)
             if not json:
-                CraftCore.log.error(f"Failed to load manifest for {self.package} {url}")
+                CraftCore.log.error(f"Failed to load manifest for {self.package} {manifestUrl}")
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
             if packageName not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
