@@ -12,10 +12,10 @@ import sys
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.4"]:
-            self.targets[ver] = f"https://bootstrap.pypa.io/3.4/get-pip.py"
-            self.targetDigests[ver] = (['564fabc2fbabd9085a71f4a5e43dbf06d5ccea9ab833e260f30ee38e8ce63a69'], CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = "3.4"
+        for ver in ["3.5"]:
+            self.targets[ver] = f"https://bootstrap.pypa.io/3.5/get-pip.py"
+            self.targetDigests[ver] = (['dbd5dae3d1e7f6df844d630cdf65e0f0d98e483c9997daea17c7c9d86f7b38ad'], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "3.5"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
