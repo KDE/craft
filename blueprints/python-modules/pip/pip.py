@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["3.5"]:
             self.targets[ver] = f"https://bootstrap.pypa.io/3.5/get-pip.py"
-            self.targetDigests[ver] = (['dbd5dae3d1e7f6df844d630cdf65e0f0d98e483c9997daea17c7c9d86f7b38ad'], CraftHash.HashAlgorithm.SHA256)
+            self.targetDigests[ver] = (['311afebb7cdd310eb3a3a6bb6fffef53d84493db98c7cebf4008a18d3418c8be'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "3.5"
 
     def setDependencies(self):
