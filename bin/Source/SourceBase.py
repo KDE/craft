@@ -79,9 +79,6 @@ class SourceBase(CraftBase):
         """use this to get number of repository paths"""
         utils.abstract()
 
-    def localFileNamesBase(self):
-        utils.abstract()
-
     def sourceVersion(self):
         """ return the current revision or version of the source directory,
             return True in case it is not applicable and give out nothing """

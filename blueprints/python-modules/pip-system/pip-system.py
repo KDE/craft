@@ -38,4 +38,5 @@ class Package(PipPackageBase):
                 return True
         if not utils.system([sys.executable, get_pip, "--user"]):
             return False
+        return True
 

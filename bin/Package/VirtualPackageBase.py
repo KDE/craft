@@ -37,9 +37,6 @@ class VirtualPackageBase(SourceComponentPackageBase):
     def repositoryUrlCount(self):
         return 0
 
-    def localFileNamesBase(self):
-        return []
-
     def sourceVersion(self):
         return ""
 

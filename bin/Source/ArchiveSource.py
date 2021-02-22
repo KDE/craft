@@ -101,24 +101,16 @@ class ArchiveSource(SourceBase):
 
     def localFileNames(self):
         if self.subinfo.archiveName() == [""]:
-            return self.localFileNamesBase()
+            urls = self.subinfo.targets[self.buildTarget]
+            urls = urls if isinstance(urls, list) else [urls]
+            return [os.path.basename(url) for url in urls ]
         if isinstance(self.subinfo.archiveName(), (tuple, list)):
             return self.subinfo.archiveName()
         return [self.subinfo.archiveName()]
 
 
     def localFilePath(self):
-        return [os.path.join(self.__downloadDir, f) for f in self.localFileNamesBase()]
-
-    def localFileNamesBase(self):
-        """ collect local filenames """
-        CraftCore.log.debug("ArchiveSource.localFileNamesBase called")
-
-        filenames = []
-        urls = self.subinfo.targets[self.buildTarget]
-        for url in urls if isinstance(urls, list) else [urls]:
-            filenames.append(os.path.basename(url))
-        return filenames
+        return [self.__downloadDir / f for f in self.localFileNames()]
 
     def __checkFilesPresent(self, filenames):
         def isFileValid(path):
