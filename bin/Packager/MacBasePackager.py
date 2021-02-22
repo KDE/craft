@@ -147,10 +147,6 @@ class MacBasePackager( CollectionPackagerBase ):
             if found_bad_dylib:
                 CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
                 return False
-            dottedDirs = glob.glob(str(appPath / "Contents/Resources/qml/**/*.*") )
-            for p in [""]:
-                if not CodeSign.signMacApp(p):
-                    return False
             return CodeSign.signMacApp(appPath)
 
 class MacDylibBundler(object):
