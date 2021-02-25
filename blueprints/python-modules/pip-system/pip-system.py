@@ -12,11 +12,10 @@ import sys
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.4", "3.5"]:
+        for ver in ["3.5"]:
             self.targets[ver] = f"https://bootstrap.pypa.io/3.5/get-pip.py"
             self.archiveNames[ver] = f"get-pip-{ver}.py"
         self.targetDigests["3.5"] = (['311afebb7cdd310eb3a3a6bb6fffef53d84493db98c7cebf4008a18d3418c8be'], CraftHash.HashAlgorithm.SHA256)
-        self.targetDigests["3.4"] = (['564fabc2fbabd9085a71f4a5e43dbf06d5ccea9ab833e260f30ee38e8ce63a69'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "3.5"
 
     def setDependencies(self):
