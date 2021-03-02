@@ -47,6 +47,7 @@ class PackageWin(BinaryPackageBase):
                 files.append('libgcc_s_seh-1.dll')
                 srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
+            redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
                     if CraftCore.compiler.isMSVC2019():
@@ -58,8 +59,8 @@ class PackageWin(BinaryPackageBase):
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
                     else:
-                        CraftCore.log.error((r"Could not find Microsoft Visual Studio {0}.\n" +
-                                             r"VCTOOLSREDISTDIR does not exist, and likely should point to '*\Microsoft Visual Studio\{0}\Community\VC\Redist\MSVC\xx.xx.xxxxx'.").format(flavor))
+                        CraftCore.log.error(f"Could not find Microsoft Visual Studio {flavor}.\n"
+                                            f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'.")
                 elif CraftCore.compiler.isMSVC2015():
                     if "VCINSTALLDIR" in os.environ:
                         redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
