@@ -1,8 +1,6 @@
 import info
 import glob
 
-from pathlib import Path
-
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
@@ -60,13 +58,7 @@ class PackageWin(BinaryPackageBase):
                         raise Exception("Unknown compiler")
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
-
-                    elif "VSINSTALLDIR" in os.environ:
-                        redistDir = Path(os.environ["VSINSTALLDIR"]) / "VC/Redist/MSVC"
-                        # any dir starting with a number
-                        redistDir = sorted(redistDir.glob("[0-9]*"))[-1]
-                        CraftCore.log.warning(f"Failed to detect VCTOOLSREDISTDIR, guess best match: {redistDir}")
-                    if not redistDir:
+                    else:
                         CraftCore.log.error(f"Could not find Microsoft Visual Studio {flavor}.\n"
                                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'.")
                 elif CraftCore.compiler.isMSVC2015():
