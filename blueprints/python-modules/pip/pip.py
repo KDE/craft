@@ -11,7 +11,7 @@ from Utils import CraftHash
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["3.5"]:
-            self.targets[ver] = f"https://bootstrap.pypa.io/pip/3.5/get-pip.py"
+            self.targets[ver] = f"https://bootstrap.pypa.io/pip/{ver}/get-pip.py"
             self.archiveNames[ver] = f"get-pip-{ver}.py"
         self.targetDigests["3.5"] = (['311afebb7cdd310eb3a3a6bb6fffef53d84493db98c7cebf4008a18d3418c8be'], CraftHash.HashAlgorithm.SHA256)
         self.defaultTarget = "3.5"
