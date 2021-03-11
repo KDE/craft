@@ -249,7 +249,7 @@ class MacDylibBundler(object):
                     CraftCore.log.error("%s: failed to fix absolute library id name for", fileToFix)
                     return False
             lib = Path(CraftCore.standardDirs.craftRoot()) / "lib"
-            utils.system(["install_name_tool", "-delete_rpath", lib, fileToFix], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            utils.system(["install_name_tool", "-delete_rpath", lib, fileToFix], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, acceptableExitCodes=[0,1])
         return True
 
     def bundleLibraryDependencies(self, fileToFix: Path) -> bool:
