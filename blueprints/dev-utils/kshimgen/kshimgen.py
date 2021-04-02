@@ -5,6 +5,7 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.options.dynamic.setDefault("buildType", "Release")
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"

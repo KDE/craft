@@ -765,7 +765,12 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
     if env:
         command.append("--env")
         command += [f"{k}={v}" for k,v in env.items()]
-    return system(command + ["--"] + args)
+
+    if CraftCore.compiler.isAndroid:
+        os.symlink(target, shim)
+        return True
+    else:
+        return system(command + ["--"] + args)
 
 class ProgressBar(object):
     def __init__(self, initialProgess=0):
