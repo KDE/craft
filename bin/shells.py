@@ -131,6 +131,21 @@ class BashShell(object):
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
+            if CraftCore.compiler.isAndroid:
+                toolchainPath = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
+                utils.system(["python3",
+                              os.path.join(os.environ.get("ANDROID_NDK_ROOT"), "build/tools/make_standalone_toolchain.py"),
+                              "--install-dir", toolchainPath,
+                              "--arch", CraftCore.compiler.architecture,
+                              "--api", CraftCore.compiler.androidApiLevel()])
+                self._environment["PATH"] = os.path.join(toolchainPath, "bin") + ":" + os.environ["PATH"]
+                self._environment["AR"] = "ar"
+                self._environment["AS"] = "clang"
+                self._environment["CC"] = "clang"
+                self._environment["CXX"] = "clang++"
+                self._environment["LD" ] = "ld"
+                self._environment["STRIP"] = "strip"
+                self._environment["RANLIB"] = "ranlib"
 
 
             self._environment["CFLAGS"] = os.environ.get("CFLAGS", "").replace("$", "$$") + cflags
