@@ -38,6 +38,7 @@ class CraftCompiler(object):
         Linux       = 0x1 << 1
         MacOS       = 0x1 << 2
         FreeBSD     = 0x1 << 3
+        Android     = 0x1 << 4
 
         Unix        = Linux | MacOS | FreeBSD
         All         = ~0
@@ -48,6 +49,7 @@ class CraftCompiler(object):
         NotFreeBSD   = ~FreeBSD
         NotWindows   = Unix
         NotUnix      = ~Unix
+        NotAndroid   = ~Android
 
         @classmethod
         def fromString(cls, name):
@@ -108,6 +110,14 @@ class CraftCompiler(object):
         self._MSVCToolset = None
         if self.isMSVC():
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
+
+        if self.isAndroid:
+            self._architecture = self._abi
+            if self._architecture == "arm":
+                self._abi = "armeabi-v7a"
+            elif self._architecture == "arm64":
+                self._abi = "arm64-v8a"
+            self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
 
     def __str__(self):
         return "-".join(self.signature)
@@ -172,6 +182,10 @@ class CraftCompiler(object):
     @property
     def isFreeBSD(self) -> bool:
         return self.platform == CraftCompiler.Platforms.FreeBSD
+
+    @property
+    def isAndroid(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.Android
 
     @property
     def isUnix(self) -> bool:
@@ -302,6 +316,9 @@ class CraftCompiler(object):
         if c not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
         return versions[c]
+
+    def androidApiLevel(self):
+        return self._apiLevel
 
 if __name__ == '__main__':
     print("Testing Compiler.py")
