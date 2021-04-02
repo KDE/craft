@@ -331,6 +331,11 @@ class SetupHelper(object):
                 self.prependEnvVar("PATH", os.path.join(CraftCore.settings.get("QtSDK", "Path"), "Tools",
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
+    def _setupAndroid(self):
+        self._setupUnix()
+        self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture)
+        self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.abi)
+
     def setupEnvironment(self):
         originaleEnv = CaseInsensitiveDict(os.environ)
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
@@ -359,6 +364,8 @@ class SetupHelper(object):
             self._setupWin()
         elif OsUtils.isMac():
             self._setupMac()
+        elif CraftCore.compiler.isAndroid:
+            self._setupAndroid()
         else:
             self._setupUnix()
 

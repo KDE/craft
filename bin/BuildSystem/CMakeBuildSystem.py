@@ -65,6 +65,13 @@ class CMakeBuildSystem(BuildSystemBase):
         elif CraftCore.compiler.isLinux:
             # use the same lib dir on all distributions
             options += ["-DCMAKE_INSTALL_LIBDIR=lib"]
+        elif CraftCore.compiler.isAndroid:
+            nativeToolingRoot = CraftCore.settings.get("General", "KF5HostToolingRoot", "/opt/nativetooling")
+            nativeToolingCMake = CraftCore.settings.get("General", "KF5HostToolingCMakePath", "/opt/nativetooling/lib/x86_64-linux-gnu/cmake/")
+            additionalFindRoots = ";".join(filter(None, [CraftCore.settings.get("General", "AndroidAdditionalFindRootPath", ""), craftRoot]))
+            options += [f"-DCMAKE_TOOLCHAIN_FILE={nativeToolingRoot}/share/ECM/toolchain/Android.cmake",
+                        f"-DECM_ADDITIONAL_FIND_ROOT_PATH='{additionalFindRoots}'",
+                        f"-DKF5_HOST_TOOLING={nativeToolingCMake}"]
 
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")

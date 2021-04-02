@@ -30,6 +30,13 @@ ABI = windows-msvc2015_64-cl
 
 ## Minimum supported Android API level (default: 21)
 AndroidAPI = 21
+## Path in which the host tooling is installed for Android builds
+KF5HostToolingRoot = /opt/nativetooling
+## Path to the CMake config files of the KF5 host tooling
+KF5HostToolingCMakePath = /opt/nativetooling/lib/x86_64-linux-gnu/cmake/
+## Additional find root paths when building for Android
+## for example for using a pre-built Qt from the SDK
+#AndroidAdditionalFindRootPath = /opt/Qt
 
 ## This option can be used to enable a notification backend.
 ## As soon as the buildprocess of a project has finished a notification will be displayed.
