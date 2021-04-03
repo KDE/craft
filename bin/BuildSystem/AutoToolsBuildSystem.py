@@ -11,6 +11,7 @@ from Utils.Arguments import Arguments
 import os
 import glob
 import re
+import stat
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
@@ -55,6 +56,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         autogen = self.sourceDir() / "autogen.sh"
         if self.subinfo.options.configure.bootstrap and autogen.exists():
+            mode = os.stat(autogen).st_mode
+            if mode & stat.S_IEXEC == 0:
+                os.chmod(autogen, mode | stat.S_IEXEC)
             self.shell.execute(self.sourceDir(), autogen)
         elif self.subinfo.options.configure.autoreconf:
             includesArgs = Arguments()
