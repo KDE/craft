@@ -1,6 +1,7 @@
-#
-# copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
-#
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2009 Ralf Habacker <ralf.habacker@freenet.de>
+# SPDX-FileCopyrightText: 2020 Nicolas Fella <nicolas.fella@gmx.de>
+# SPDX-FileCopyrightText: 2021 Volker Krause <vkrause@kde.org>
 
 """@package provides cmake build system"""
 
@@ -36,6 +37,27 @@ class CMakeBuildSystem(BuildSystemBase):
             return "Unix Makefiles"
         else:
             CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
+
+    def __autodetectAndroidApkTargets(self):
+        """Android APK parameter auto-detection,
+           see https://invent.kde.org/sysadmin/ci-tooling/-/blob/master/system-images/android/sdk/get-apk-args.py"""
+        if not CraftCore.compiler.isAndroid or len(self.androidApkTargets) > 0:
+            return
+
+        import glob
+        from xml.etree import ElementTree
+        files = glob.iglob(f"{self.sourceDir()}/**/AndroidManifest.xml*", recursive=True)
+        for file in files:
+            if "3rdparty" in file or "examples" in file or "tests" in file:
+                continue
+            tree = ElementTree.parse(file)
+            prefix = '{http://schemas.android.com/apk/res/android}'
+            for md in tree.findall("application/activity/meta-data"):
+                if md.attrib[prefix + 'name'] == 'android.app.lib_name':
+                    targetName = md.attrib[prefix + 'value']
+                    if not targetName in self.androidApkTargets:
+                        self.androidApkTargets.add(targetName)
+                        self.androidApkDirs.add(os.path.dirname(file))
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
@@ -76,6 +98,7 @@ class CMakeBuildSystem(BuildSystemBase):
                         f"-DKF5_HOST_TOOLING={nativeToolingCMake}",
                         f"-DANDROID_APK_OUTPUT_DIR={self.packageDestinationDir()}",
                         f"-DANDROID_FASTLANE_METADATA_OUTPUT_DIR={self.packageDestinationDir()}"]
+            self.__autodetectAndroidApkTargets()
             if len(self.androidApkTargets) > 0:
                 options += [f"-DQTANDROID_EXPORTED_TARGET={';'.join(self.androidApkTargets)}",
                             f"-DANDROID_APK_DIR={';'.join(self.androidApkDirs)}"]
@@ -149,6 +172,7 @@ class CMakeBuildSystem(BuildSystemBase):
         return PostInstallRoutines.updateSharedMimeInfo(self)
 
     def createPackage(self):
+        self.__autodetectAndroidApkTargets()
         if CraftCore.compiler.isAndroid and len(self.androidApkTargets) > 0:
             self.enterBuildDir()
             command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
