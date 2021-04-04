@@ -7,6 +7,9 @@ from Package.CMakePackageBase import *
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+
     def setTargets(self):
         """ """
         self.svnTargets['master'] = "https://github.com/martine/ninja.git"
