@@ -20,6 +20,8 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, "cmake")
         self.supportsNinja = True
+        self.androidApkTargets = set()
+        self.androidApkDirs = set()
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
@@ -71,7 +73,12 @@ class CMakeBuildSystem(BuildSystemBase):
             additionalFindRoots = ";".join(filter(None, [CraftCore.settings.get("General", "AndroidAdditionalFindRootPath", ""), craftRoot]))
             options += [f"-DCMAKE_TOOLCHAIN_FILE={nativeToolingRoot}/share/ECM/toolchain/Android.cmake",
                         f"-DECM_ADDITIONAL_FIND_ROOT_PATH='{additionalFindRoots}'",
-                        f"-DKF5_HOST_TOOLING={nativeToolingCMake}"]
+                        f"-DKF5_HOST_TOOLING={nativeToolingCMake}",
+                        f"-DANDROID_APK_OUTPUT_DIR={self.packageDestinationDir()}",
+                        f"-DANDROID_FASTLANE_METADATA_OUTPUT_DIR={self.packageDestinationDir()}"]
+            if len(self.androidApkTargets) > 0:
+                options += [f"-DQTANDROID_EXPORTED_TARGET={';'.join(self.androidApkTargets)}",
+                            f"-DANDROID_APK_DIR={';'.join(self.androidApkDirs)}"]
 
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
@@ -140,3 +147,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if not super().internalPostQmerge():
             return False
         return PostInstallRoutines.updateSharedMimeInfo(self)
+
+    def createPackage(self):
+        if CraftCore.compiler.isAndroid and len(self.androidApkTargets) > 0:
+            self.enterBuildDir()
+            command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
+            return utils.system(command)
