@@ -6,11 +6,10 @@ class subinfo( info.infoclass ):
         for ver in ["2.4.6"]:
             self.targets[ ver ] = f"https://ftp.gnu.org/gnu/libtool/libtool-{ver}.tar.xz"
             self.targetInstSrc[ ver ] = f"libtool-{ver}"
-            self.targetInstallPath[ver] = "dev-utils"
 
         self.targetDigests["2.4.6"] = (['7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f'], CraftHash.HashAlgorithm.SHA256)
         self.description = "GNU libtool is a generic library support script."
-        self.patchLevel["2.4.6"] = 1
+        self.patchLevel["2.4.6"] = 2
         self.defaultTarget = "2.4.6"
 
     def setDependencies( self ):
@@ -25,8 +24,8 @@ class Package( AutoToolsPackageBase ):
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 
     def postInstall(self):
-        return self.patchInstallPrefix([os.path.join(self.imageDir(), x) for x in [f"dev-utils/bin/libtool",
-                                                                                   f"dev-utils/bin/libtoolize"]],
+        return self.patchInstallPrefix([os.path.join(self.installDir(), x) for x in [f"bin/libtool",
+                                                                                   f"bin/libtoolize"]],
                                        self.subinfo.buildPrefix,
                                        CraftCore.standardDirs.craftRoot())
 

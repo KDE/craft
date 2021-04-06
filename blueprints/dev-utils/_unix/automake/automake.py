@@ -3,14 +3,14 @@ import info
 
 class subinfo( info.infoclass ):
     def setTargets( self ):
-        for ver in ["1.16.1"]:
+        for ver in ["1.16.1", "1.16.3"]:
             self.targets[ ver ] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ ver ] = f"automake-{ver}"
-            self.targetInstallPath[ver] = "dev-utils"
 
         self.targetDigests["1.16.1"] = (['5d05bb38a23fd3312b10aea93840feec685bdf4a41146e78882848165d3ae921'], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["1.16.3"] =  (['ff2bf7656c4d1c6fdda3b8bebb21f09153a736bcba169aaf65eab25fa113bf3a'], CraftHash.HashAlgorithm.SHA256)
         self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
-        self.defaultTarget = "1.16.1"
+        self.defaultTarget = "1.16.3"
 
     def setDependencies( self ):
         self.runtimeDependencies["virtual/base"] = None

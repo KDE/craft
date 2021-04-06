@@ -279,7 +279,7 @@ class SetupHelper(object):
         if CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
             self.prependEnvVar("LDFLAGS", "-Wl,-rpath,'$ORIGIN/../lib'", sep=" ")
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
+        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
 
     def _setupMac(self):
         #self.prependEnvVar("DYLD_LIBRARY_PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib"))

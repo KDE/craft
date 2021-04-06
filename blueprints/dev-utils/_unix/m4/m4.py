@@ -6,7 +6,6 @@ class subinfo( info.infoclass ):
         for ver in ["1.4.18"]:
             self.targets[ ver ] = f"https://ftp.gnu.org/gnu/m4/m4-{ver}.tar.xz"
             self.targetInstSrc[ ver ] = f"m4-{ver}"
-            self.targetInstallPath[ver] = "dev-utils"
 
         self.targetDigests["1.4.18"] = (['f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07'], CraftHash.HashAlgorithm.SHA256)
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
@@ -15,7 +14,7 @@ class subinfo( info.infoclass ):
         self.patchToApply["1.4.18"] = [("m4-1.4.18-20190506.diff", 1),
                                        ("m4-1.4.18-glibc-change-work-around.patch", 1) # http://git.openembedded.org/openembedded-core/plain/meta/recipes-devtools/m4/m4/m4-1.4.18-glibc-change-work-around.patch
                                        ]
-        self.patchLevel["1.4.18"] = 1
+        self.patchLevel["1.4.18"] = 2
 
 from Package.AutoToolsPackageBase import *
 
