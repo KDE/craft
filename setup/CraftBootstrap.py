@@ -209,7 +209,7 @@ def setUp(args):
     print(f"Craft will be installed to: {args.prefix}")
     abi = getABI(args)
 
-    useANSIColor = CraftBootstrap.promptForChoice("Do you want to enable the support for colored logs",
+    useANSIColor = CraftBootstrap.promptForChoice("Do you want to enable the support for colored logs?",
                                                 [("Yes", True), ("No", False)],
                                                         default="Yes", returnDefaultWithoutPrompt=args.use_defaults)
     if useANSIColor:
