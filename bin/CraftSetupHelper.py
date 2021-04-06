@@ -414,6 +414,8 @@ class SetupHelper(object):
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin"))
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin"))
 
+        # don't propagate a possibly set mkspec from the outside
+        self.addEnvVar("QMAKESPEC", "")
 
 
 
