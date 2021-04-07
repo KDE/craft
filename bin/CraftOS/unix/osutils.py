@@ -77,8 +77,8 @@ class LockFile(CraftOS.OsUtilsBase.LockFileBase):
                 fcntl.flock(self.__lockFile, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 self._locked = True
                 break
-            except IOError:
-                CraftCore.log.info(f"{self.__lockFileName} is locked waiting")
+            except IOError as e:
+                CraftCore.log.info(f"{self.__lockFileName} is locked waiting: {e}")
                 time.sleep(10)
 
 
