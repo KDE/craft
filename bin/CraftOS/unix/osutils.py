@@ -73,7 +73,7 @@ class LockFile(CraftOS.OsUtilsBase.LockFileBase):
         while True:
             try:
                 if not self.__lockFile:
-                    self.__lockFile = open(self.__lockFileName, 'w')
+                    self.__lockFile = os.open(self.__lockFileName, os.O_WRONLY | os.O_CREAT, 0o777)
                 fcntl.flock(self.__lockFile, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 self._locked = True
                 break
@@ -87,5 +87,5 @@ class LockFile(CraftOS.OsUtilsBase.LockFileBase):
             fcntl.flock(self.__lockFile, fcntl.LOCK_UN)
             self._locked = False
         if self.__lockFile:
-            self.__lockFile.close()
+            os.close(self.__lockFile)
             self.__lockFile = None
