@@ -286,7 +286,7 @@ class SetupHelper(object):
         # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
         self.prependEnvVar("LDFLAGS", f"-Wl,-rpath,{os.path.join(CraftCore.standardDirs.craftRoot(), 'lib')}", sep=" ")
         self.prependEnvVar("BISON_PKGDATADIR", os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"))
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin", "m4"))
+        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
         self.addEnvVar("MACOSX_DEPLOYMENT_TARGET", CraftCore.settings.get("General", "MacDeploymentTarget", "10.13"))
         try:
             dbusInstalled = bool(CraftCore.installdb.isInstalled("libs/dbus"))
