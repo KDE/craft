@@ -98,15 +98,6 @@ class MacBasePackager( CollectionPackagerBase ):
             if not dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns"):
                 return False
 
-            macdeployqt_multiple_executables_command = ["macdeployqt", appPath, "-always-overwrite", "-verbose=1"]
-            for binary in binaries:
-                macdeployqt_multiple_executables_command.append(f"-executable={binary}")
-            if "qmldirs" in self.defines.keys() and isinstance(self.defines["qmldirs"], list):
-                for qmldir in self.defines["qmldirs"]:
-                    macdeployqt_multiple_executables_command.append(f"-qmldir={qmldir}")
-            if not utils.system(macdeployqt_multiple_executables_command):
-                return False
-
             # macdeployqt might just have added some explicitly blacklisted files
             blackList = Path(self.packageDir(), "mac_blacklist.txt")
             if blackList.exists():
@@ -278,9 +269,8 @@ class MacDylibBundler(object):
             if path.startswith("@executable_path/"):
                 continue  # already fixed
             if path.startswith("@rpath/"):
-                # CraftCore.log.info("%s: can't handle @rpath library dep of yet: '%s'", fileToFix, path)
-                CraftCore.log.debug("%s: can't handle @rpath library dep of yet: '%s'", fileToFix, path)
-                # TODO: run otool -l and verify that we pick the right file?
+                if not self._updateLibraryReference(fileToFix, path, "@executable_path/../Frameworks/" + path[len("@rpath/"):]):
+                    return False
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
             elif path.startswith("/"):
