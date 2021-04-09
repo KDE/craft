@@ -953,7 +953,7 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
         with os.scandir(path) as scan:
             for filePath in scan:
                 if not allowBadSymlinks and filePath.is_symlink():
-                    if Path(root) not in Path(filePath.path).resolve().parents:
+                    if Path(root).resolve() not in Path(filePath.path).resolve().parents:
                         CraftCore.log.debug(f"filterDirectoryContent: skipping {filePath.path}, it is not located under {root}")
                         continue
                 if filePath.is_dir(follow_symlinks=False):
