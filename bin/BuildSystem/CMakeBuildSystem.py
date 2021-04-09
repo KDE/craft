@@ -41,7 +41,7 @@ class CMakeBuildSystem(BuildSystemBase):
     def __autodetectAndroidApkTargets(self):
         """Android APK parameter auto-detection,
            see https://invent.kde.org/sysadmin/ci-tooling/-/blob/master/system-images/android/sdk/get-apk-args.py"""
-        if not CraftCore.compiler.isAndroid or len(self.androidApkTargets) > 0:
+        if not CraftCore.compiler.isAndroid or self.androidApkTargets == None or len(self.androidApkTargets) > 0:
             return
 
         import glob
@@ -99,7 +99,7 @@ class CMakeBuildSystem(BuildSystemBase):
                         f"-DANDROID_APK_OUTPUT_DIR={self.packageDestinationDir()}",
                         f"-DANDROID_FASTLANE_METADATA_OUTPUT_DIR={self.packageDestinationDir()}"]
             self.__autodetectAndroidApkTargets()
-            if len(self.androidApkTargets) > 0:
+            if self.androidApkTargets != None and len(self.androidApkTargets) > 0:
                 options += [f"-DQTANDROID_EXPORTED_TARGET={';'.join(self.androidApkTargets)}",
                             f"-DANDROID_APK_DIR={';'.join(self.androidApkDirs)}"]
             if self.buildType() == "Release" or self.buildType() == "MinSizeRel":
@@ -175,7 +175,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def createPackage(self):
         self.__autodetectAndroidApkTargets()
-        if CraftCore.compiler.isAndroid and len(self.androidApkTargets) > 0:
+        if CraftCore.compiler.isAndroid and self.androidApkTargets != None and len(self.androidApkTargets) > 0:
             self.enterBuildDir()
             command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
             return utils.system(command)
