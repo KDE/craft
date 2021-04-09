@@ -37,7 +37,7 @@ class CraftDebug(object):
 
             if logfileName != "0":
                 self._fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at", maxBytes=10000000,
-                                                               backupCount=20)
+                                                               backupCount=50)
                 self._fileHandler.doRollover()
                 self._fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
                 self._log.addHandler(self._fileHandler)
