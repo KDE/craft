@@ -73,71 +73,29 @@ class MacBasePackager( CollectionPackagerBase ):
                     return False
 
         dylibbundler = MacDylibBundler(appPath)
-        with utils.ScopedEnv({'DYLD_FALLBACK_LIBRARY_PATH': targetLibdir + ":" + os.path.join(CraftStandardDirs.craftRoot(), "lib")}):
-            CraftCore.log.info("Bundling main binary dependencies...")
-            mainBinary = Path(appPath, "Contents", "MacOS", defines['appname'])
-            if not dylibbundler.bundleLibraryDependencies(mainBinary):
+        CraftCore.log.info("Bundling main binary dependencies...")
+        binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents"),
+                                                        whitelist=lambda x, root: utils.isBinary(x.path),
+                                                        blacklist=lambda x, root: True))
+
+        for binary in binaries:
+            CraftCore.log.info(f"Bundling dependencies for {binary}...")
+            binaryPath = Path(binary)
+            if not dylibbundler.bundleLibraryDependencies(binaryPath):
                 return False
 
-            binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents", "MacOS"),
-                                                         whitelist=lambda x, root: utils.isBinary(x.path) and x.name != defines["appname"],
-                                                         blacklist=lambda x, root: True))
-
-            for binary in binaries:
-                CraftCore.log.info(f"Bundling dependencies for {binary}...")
-                binaryPath = Path(binary)
-                if not dylibbundler.bundleLibraryDependencies(binaryPath):
-                    return False
-
-            # Fix up the library dependencies of files in Contents/Frameworks/
-            CraftCore.log.info("Bundling library dependencies...")
-            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks"):
-                return False
-            CraftCore.log.info("Bundling plugin dependencies...")
-            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns"):
-                return False
-
-            # macdeployqt might just have added some explicitly blacklisted files
-            blackList = Path(self.packageDir(), "mac_blacklist.txt")
-            if blackList.exists():
-                pattern = [self.read_blacklist(str(blackList))]
-                # use it as whitelist as we want only matches, ignore all others
-                matches = utils.filterDirectoryContent(appPath, whitelist=lambda x, root: utils.regexFileFilter(x, root, pattern), blacklist=lambda x, root:True)
-                for f in matches:
-                    CraftCore.log.info(f"Remove blacklisted file: {f}")
-                    utils.deleteFile(f)
-
-            # macdeployqt adds some more plugins so we fix the plugins after calling macdeployqt
-            dylibbundler.checkedLibs = set()  # ensure we check all libs again (but
-            # we should not need to make any changes)
-            CraftCore.log.info("Fixing plugin dependencies after macdeployqt...")
-            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/PlugIns"):
-                return False
-            CraftCore.log.info("Fixing library dependencies after macdeployqt...")
-            if not dylibbundler.fixupAndBundleLibsRecursively("Contents/Frameworks"):
-                return False
-
-            # Finally sanity check that we don't depend on absolute paths from the builder
-            CraftCore.log.info("Checking for absolute library paths in package...")
-            found_bad_dylib = False  # Don't exit immeditately so that we log all the bad libraries before failing:
-            if not dylibbundler.areLibraryDepsOkay(mainBinary):
+        # Finally sanity check that we don't depend on absolute paths from the builder
+        CraftCore.log.info("Checking for absolute library paths in package...")
+        found_bad_dylib = False  # Don't exit immeditately so that we log all the bad libraries before failing:
+        for binary in binaries:
+            binaryPath = Path(binary)
+            if not dylibbundler.areLibraryDepsOkay(binaryPath):
                 found_bad_dylib = True
-                CraftCore.log.error("Found bad library dependency in main binary %s", mainBinary)
-            for binary in binaries:
-                binaryPath = Path(binary)
-                if not dylibbundler.areLibraryDepsOkay(binaryPath):
-                    found_bad_dylib = True
-                    CraftCore.log.error("Found bad library dependency in binary %s", binaryPath)
-            if not dylibbundler.checkLibraryDepsRecursively("Contents/Frameworks"):
-                CraftCore.log.error("Found bad library dependency in bundled libraries")
-                found_bad_dylib = True
-            if not dylibbundler.checkLibraryDepsRecursively("Contents/PlugIns"):
-                CraftCore.log.error("Found bad library dependency in bundled plugins")
-                found_bad_dylib = True
-            if found_bad_dylib:
-                CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
-                return False
-            return CodeSign.signMacApp(appPath)
+                CraftCore.log.error("Found bad library dependency in binary %s", binaryPath)
+        if found_bad_dylib:
+            CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
+            return False
+        return CodeSign.signMacApp(appPath)
 
     def _addQtConf(self, appFolder : Path):
         parser = configparser.ConfigParser()
@@ -157,13 +115,15 @@ class MacDylibBundler(object):
 
     def _addLibToAppImage(self, libPath: Path) -> bool:
         assert libPath.is_absolute(), libPath
-        libBasename = libPath.name
-        targetPath = Path(self.appPath, "Contents/Frameworks/", libBasename)
-        if targetPath.exists() and targetPath in self.checkedLibs:
+        if libPath in self.checkedLibs:
             return True
+        if not libPath.exists():
+            CraftCore.log.error("Library dependency '%s' does not exist", libPath)
+            return False
+
         # Handle symlinks (such as libgit2.27.dylib -> libgit2.0.27.4.dylib):
         if libPath.is_symlink():
-            linkTarget = os.readlink(str(libPath))
+            linkTarget = os.readlink(libPath)
             CraftCore.log.info("Library dependency %s is a symlink to '%s'", libPath, linkTarget)
             if os.path.isabs(linkTarget):
                 CraftCore.log.error("%s: Cannot handle absolute symlinks: '%s'", libPath, linkTarget)
@@ -175,44 +135,23 @@ class MacDylibBundler(object):
                 CraftCore.log.error("%s: Cannot handle symlinks to other directories: '%s' (%s vs %s)",
                                     libPath, linkTarget, libPath.resolve().parent, libPath.parent.resolve())
                 return False
-
-            # copy the symlink and add the real file:
-            utils.copyFile(str(libPath), str(targetPath), linkOnly=False)
-            CraftCore.log.info("Added symlink '%s' (%s) to bundle -> %s", libPath,
-                               os.readlink(str(targetPath)), targetPath)
-            self.checkedLibs.add(targetPath)
-            symlinkTarget = libPath.with_name(os.path.basename(linkTarget))
-            CraftCore.log.info("Processing symlink target '%s'", symlinkTarget)
-            if not self._addLibToAppImage(symlinkTarget):
-                self.checkedLibs.remove(targetPath)
-                return False
             # If the symlink target was processed, the symlink itself is also fine
             return True
 
-        if not libPath.exists():
-            CraftCore.log.error("Library dependency '%s' does not exist", libPath)
-            return False
         CraftCore.log.debug("Handling library dependency '%s'", libPath)
-        if not targetPath.exists():
-            utils.copyFile(str(libPath), str(targetPath), linkOnly=False)
-            CraftCore.log.info("Added library dependency '%s' to bundle -> %s", libPath, targetPath)
 
-        if not self._fixupLibraryId(targetPath):
+        if not self._fixupLibraryId(libPath):
             return False
-        for path in utils.getLibraryDeps(str(targetPath)):
+        for path in utils.getLibraryDeps(libPath):
             # check there aren't any references to the original location:
             if path == str(libPath):
-                CraftCore.log.error("%s: failed to fix reference to original location for '%s'", targetPath, path)
+                CraftCore.log.error("%s: failed to fix reference to original location for '%s'", libPath, path)
                 return False
 
-        if not self.bundleLibraryDependencies(targetPath):
-            CraftCore.log.error("%s: UNKNOWN ERROR adding '%s' into bundle", targetPath, libPath)
+        if not self.bundleLibraryDependencies(libPath):
+            CraftCore.log.error(f"UNKNOWN ERROR adding '{libPath}' into bundle")
             return False
-        if not os.path.exists(targetPath):
-            CraftCore.log.error("%s: Library dependency '%s' doesn't exist after copying... Symlink error?",
-                                targetPath, libPath)
-            return False
-        self.checkedLibs.add(targetPath)
+        self.checkedLibs.add(libPath)
         return True
 
     @staticmethod
@@ -317,23 +256,6 @@ class MacDylibBundler(object):
                 return False
         return True
 
-    def fixupAndBundleLibsRecursively(self, subdir: str):
-        """Remove absolute references and budle all depedencies for all dylibs under :p subdir"""
-        assert not subdir.startswith("/"), "Must be a relative path"
-        for dirpath, dirs, files in os.walk(os.path.join(self.appPath, subdir)):
-            for filename in files:
-                fullpath = Path(dirpath, filename)
-                if fullpath.is_symlink():
-                    continue  # No need to update symlinks since we will process the target eventually.
-                if (filename.endswith(".so")
-                        or filename.endswith(".dylib")
-                        or ".so." in filename
-                        or (f"{fullpath.name}.framework" in str(fullpath) and utils.isBinary(str(fullpath)))):
-                    if not self.bundleLibraryDependencies(fullpath):
-                        CraftCore.log.info("Failed to bundle dependencies for '%s'", os.path.join(dirpath, filename))
-                        return False
-        return True
-
     def areLibraryDepsOkay(self, fullPath: Path):
         CraftCore.log.debug("Checking library dependencies of %s", fullPath)
         found_bad_lib = False
@@ -357,26 +279,6 @@ class MacDylibBundler(object):
                 CraftCore.log.error("ERROR: %s has bad dependency: %s", relativePath, dep)
             found_bad_lib = True
         return not found_bad_lib
-
-    def checkLibraryDepsRecursively(self, subdir: str):
-        """Check that all  absolute references and budle all depedencies for all dylibs under :p subdir"""
-        assert not subdir.startswith("/"), "Must be a relative path"
-        foundError = False
-        for dirpath, dirs, files in os.walk(os.path.join(self.appPath, subdir)):
-            for filename in files:
-                fullpath = Path(dirpath, filename)
-                if fullpath.is_symlink() and not fullpath.exists():
-                    CraftCore.log.error("Found broken symlink '%s' (%s)", fullpath,
-                                        os.readlink(str(fullpath)))
-                    foundError = True
-                    continue
-
-                if filename.endswith(".so") or filename.endswith(".dylib") or ".so." in filename:
-                    if not self.areLibraryDepsOkay(fullpath):
-                        CraftCore.log.error("Found library dependency error in '%s'", fullpath)
-                        foundError = True
-        return not foundError
-
 
 if __name__ == '__main__':
     print("Testing MacDMGPackager.py")
