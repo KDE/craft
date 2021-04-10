@@ -125,8 +125,11 @@ if($args.Length -ne 0)
 {
     craft --run @args
 } else {
-    (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup") |
-    foreach {
+    $env2 = (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup")
+    Get-ChildItem env: | ForEach-Object {
+        Remove-Item ("ENV:{0}" -f ${_}.Name)
+    }
+    foreach($_ in $env2) {
         if ($_ -match "=") {
             $v = $_.split("=", 2)
             set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"

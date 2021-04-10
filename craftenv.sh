@@ -43,6 +43,17 @@ if [[ -n "$PS1" ]]; then
 fi
 
 CRAFT_ENV=$(${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup)
+function unset_env() {
+    local lines=($(env | awk -F= '{print $1}'))
+    local i
+    for (( i=0; i<${#lines[@]}; i++ )) ; do
+        local line=${lines[$i]}
+        if [[ $line == "PATH" ]] ; then
+            continue
+        fi
+        unset "$line" || true
+    done
+}
 function export_lines() {
     local lines=($(echo ${1} | sed 's/\n/ /g'))
     local i
@@ -53,6 +64,7 @@ function export_lines() {
         fi
     done
 }
+unset_env
 export_lines "$CRAFT_ENV"
 
 craft() {

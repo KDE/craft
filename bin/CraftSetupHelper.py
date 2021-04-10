@@ -140,6 +140,10 @@ class SetupHelper(object):
     def addEnvVar(self, key, val):
         os.environ[key] = str(val)
 
+    def removeEnvVar(self, key):
+        if key in os.environ:
+            del os.environ[key]
+
     def addDefaultEnvVar(self, key, val):
         if not key in os.environ:
             os.environ[key] = val
@@ -338,6 +342,10 @@ class SetupHelper(object):
 
     def setupEnvironment(self):
         originaleEnv = CaseInsensitiveDict(os.environ)
+
+        # don't propagate a possibly set mkspec from the outside
+        self.removeEnvVar("QMAKESPEC")
+
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
@@ -413,9 +421,6 @@ class SetupHelper(object):
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin"))
         self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin"))
-
-        # don't propagate a possibly set mkspec from the outside
-        self.addEnvVar("QMAKESPEC", "")
 
 
 
