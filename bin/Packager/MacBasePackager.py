@@ -1,16 +1,14 @@
 from Packager.CollectionPackagerBase import *
-from Blueprints.CraftPackageObject import CraftPackageObject
-from Utils import CraftHash, CodeSign
+from Utils import CodeSign
+
+import configparser
 from pathlib import Path
-import contextlib
 import io
 import subprocess
-import stat
 import glob
 
 
 class MacBasePackager( CollectionPackagerBase ):
-
     @InitGuard.init_once
     def __init__(self, whitelists, blacklists):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
@@ -64,6 +62,7 @@ class MacBasePackager( CollectionPackagerBase ):
             (archive / "lib/libexec", appPath / "Contents/MacOS"),
             (archive / "lib", targetLibdir),
         ]
+        self._addQtConf(appPath)
 
         if archive not in appPath.parents:
             moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
@@ -139,6 +138,15 @@ class MacBasePackager( CollectionPackagerBase ):
                 CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
                 return False
             return CodeSign.signMacApp(appPath)
+
+    def _addQtConf(self, appFolder : Path):
+        parser = configparser.ConfigParser()
+        parser.optionxform = str
+        parser.add_section("Paths")
+        parser.set("Paths", "Imports", "Resources/qml")
+        parser.set("Paths", "Qml2Imports", "Resources/qml")
+        with open(appFolder / "Contents/Resources/qt.conf", "w", encoding="UTF-8") as conf:
+            parser.write(conf)
 
 class MacDylibBundler(object):
     """ Bundle all .dylib files that are not provided by the system with the .app """
