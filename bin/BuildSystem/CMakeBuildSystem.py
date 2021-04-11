@@ -79,6 +79,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
             options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
+            options.append("-DKDE_L10N_SYNC_TRANSLATIONS=ON")
 
         if CraftCore.compiler.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
