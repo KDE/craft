@@ -179,3 +179,4 @@ class CMakeBuildSystem(BuildSystemBase):
             self.enterBuildDir()
             command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
             return utils.system(command)
+        return super().createPackage()
