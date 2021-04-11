@@ -336,7 +336,6 @@ class SetupHelper(object):
                                                       compilerMap.get(compilerName, compilerName), "bin"))
 
     def _setupAndroid(self):
-        self._setupUnix()
         self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture)
         self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.abi)
 
