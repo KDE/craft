@@ -220,32 +220,10 @@ class MacDylibBundler(object):
                     return False
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
-            elif path.startswith("/"):
-                if not path.startswith(str(CraftStandardDirs.craftRoot())):
-                    CraftCore.log.error("%s: reference to absolute library path outside craftroot: %s",
-                                          fileToFix, path)
-                    return False
-                # file installed by craft -> bundle it into the .app if it doesn't exist yet
-                if not self._addLibToAppImage(Path(path)):
-                    CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{path}' into bundle")
-                    return False
-                if not self._updateLibraryReference(fileToFix, path):
-                    return False
-            elif "/" not in path and path.startswith("lib"):
-                # library reference without absolute path -> try to find the library
-                # First check if it exists in Contents/Frameworks already
-                guessedPath = Path(self.appPath, "Frameworks", path)
-                if guessedPath.exists():
-                    CraftCore.log.info("%s: relative library dependency is alreayd bundled: %s", fileToFix, guessedPath)
-                else:
-                    guessedPath = Path(CraftStandardDirs.craftRoot(), "lib", path)
-                    if not guessedPath.exists():
-                        CraftCore.log.error("%s: Could not find library dependency '%s' in craftroot", fileToFix, path)
-                        return False
-                CraftCore.log.debug("%s: Found relative library reference %s in '%s'", fileToFix, path, guessedPath)
-                if not self._addLibToAppImage(guessedPath):
-                    CraftCore.log.error("%s: Failed to add library dependency '%s' into bundle", fileToFix,
-                                        guessedPath)
+            elif path.startswith(str(CraftStandardDirs.craftRoot() / "lib")):
+                guessedPath = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), os.path.join(self.appPath, "Contents/Frameworks"))
+                if not self._addLibToAppImage(Path(guessedPath)):
+                    CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
                     return False
                 if not self._updateLibraryReference(fileToFix, path):
                     return False
@@ -297,6 +275,4 @@ if __name__ == '__main__':
         utils.system(["ls", "-laR", td])
         if not bundler.areLibraryDepsOkay(Path(target)):
             print("Error")
-        if not bundler.checkLibraryDepsRecursively("Contents/Frameworks"):
-            print("Error 2")
         # utils.system(["find", td, "-type", "f", "-execdir", "otool", "-L", "{}", ";"])
