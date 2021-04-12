@@ -10,6 +10,7 @@ from CraftStandardDirs import CraftStandardDirs
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__(self):
         QMakeBuildSystem.__init__(self)
+        self.subinfo.options.dynamic.registerOption("featureArguments", "", permanent=False)
 
 
     def _qtCoreEnv(self):
@@ -20,8 +21,14 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
         return env
 
     def configure(self, configureDefines=""):
+        # not using  QMakeBuildSystem.configure here due to the special way of passing feature arguments
+        # for Qt's configure system in modules other than qtbase
+        self.enterBuildDir()
+        args = ["qmake", "-makefile", self.configureSourceDir(), self.configureOptions(configureDefines)]
+        if self.subinfo.options.dynamic.featureArguments:
+            args += ["--", self.subinfo.options.dynamic.featureArguments]
         with utils.ScopedEnv(self._qtCoreEnv()):
-            return super().configure(configureDefines)
+            return utils.system(Arguments(args))
 
     def make(self):
         with utils.ScopedEnv(self._qtCoreEnv()):
