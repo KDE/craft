@@ -88,7 +88,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += [f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE", "-DAPPLE_SUPPRESS_X11_WARNING=ON"]
         elif CraftCore.compiler.isLinux:
             # use the same lib dir on all distributions
-            options += ["-DCMAKE_INSTALL_LIBDIR=lib"]
+            options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
         elif CraftCore.compiler.isAndroid:
             nativeToolingRoot = CraftCore.settings.get("General", "KF5HostToolingRoot", "/opt/nativetooling")
             nativeToolingCMake = CraftCore.settings.get("General", "KF5HostToolingCMakePath", "/opt/nativetooling/lib/x86_64-linux-gnu/cmake/")
