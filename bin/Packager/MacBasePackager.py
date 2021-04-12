@@ -220,18 +220,21 @@ class MacDylibBundler(object):
                     return False
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
-            elif path.startswith(str(CraftStandardDirs.craftRoot() / "lib")):
-                guessedPath = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), os.path.join(self.appPath, "Contents/Frameworks"))
+            elif path.startswith("@loader_path/"):
+                CraftCore.log.debug(f"{fileToFix}: Accept '{path}' into.")
+            else:
+                if path.startswith(str(CraftStandardDirs.craftRoot() / "lib")):
+                    guessedPath = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), os.path.join(self.appPath, "Contents/Frameworks"))
+                elif not path.startswith("/"):
+                    guessedPath = os.path.join(self.appPath, "Contents/Frameworks", path)
+                else:
+                    CraftCore.log.error("%s: don't know how to handle otool -L output: '%s'", fileToFix, path)
+                    return False
                 if not self._addLibToAppImage(Path(guessedPath)):
                     CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
                     return False
                 if not self._updateLibraryReference(fileToFix, path):
                     return False
-            elif path.startswith("@loader_path/"):
-                CraftCore.log.debug(f"{fileToFix}: Accept '{path}' into.")
-            else:
-                CraftCore.log.error("%s: don't know how to handle otool -L output: '%s'", fileToFix, path)
-                return False
         return True
 
     def areLibraryDepsOkay(self, fullPath: Path):
