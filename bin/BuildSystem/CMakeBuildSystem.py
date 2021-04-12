@@ -153,7 +153,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         with utils.ScopedEnv({"DESTDIR" : self.installDir()}):
             command = Arguments.formatCommand([self.makeProgram], self.makeOptions(self.subinfo.options.install.args))
-            return (utils.system(" ".join(command)) and
+            return (utils.system(command) and
                     self._fixInstallPrefix())
 
     def unittest(self):
