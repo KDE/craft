@@ -48,10 +48,13 @@ function unset_env() {
     local i
     for (( i=0; i<${#lines[@]}; i++ )) ; do
         local line=${lines[$i]}
-        if [[ $line == "PATH" ]] ; then
+        if [[ "${line}" == "" ]] ; then
             continue
         fi
-        unset "$line" || true
+        if [[ "${line}" == "PATH" ]] ; then
+            continue
+        fi
+        unset "${line}" || true
     done
 }
 function export_lines() {
@@ -59,8 +62,8 @@ function export_lines() {
     local i
     for (( i=0; i<${#lines[@]}; i++ )) ; do
         local line=${lines[$i]}
-        if [[ "$line"  =~ "=" ]] && [[ $line != _=* ]] ; then
-            export "$line" || true
+        if [[ "${line}"  =~ "=" ]] && [[ $line != _=* ]] ; then
+            export "${line}" || true
         fi
     done
 }
