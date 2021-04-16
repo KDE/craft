@@ -61,28 +61,29 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + " " + self.shell.environment["LDFLAGS"]
         self.shell.environment["MAKE"] = self.makeProgram
 
-        autogen = self.sourceDir() / "autogen.sh"
-        if self.subinfo.options.configure.bootstrap and autogen.exists():
-            mode = os.stat(autogen).st_mode
-            if mode & stat.S_IEXEC == 0:
-                os.chmod(autogen, mode | stat.S_IEXEC)
-            self.shell.execute(self.sourceDir(), autogen)
-        elif self.subinfo.options.configure.autoreconf:
-            includesArgs = Arguments()
-            if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
-                includes = []
-                dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
-                if CraftCore.compiler.isWindows:
-                    # on Windows data location lies outside of the autotools prefix (msys)
-                    dataDirs.append(CraftCore.standardDirs.locations.data)
-                for i in dataDirs:
-                    aclocalDir = i / "aclocal"
-                    if aclocalDir.is_dir():
-                        includes += [f"-I{self.shell.toNativePath(aclocalDir)}"]
-                includesArgs += includes
-            self.shell.execute(self.sourceDir(), "autoreconf", Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs)
-
         with utils.ScopedEnv({"CLICOLOR_FORCE": None}):
+            autogen = self.sourceDir() / "autogen.sh"
+            if self.subinfo.options.configure.bootstrap and autogen.exists():
+                mode = os.stat(autogen).st_mode
+                if mode & stat.S_IEXEC == 0:
+                    os.chmod(autogen, mode | stat.S_IEXEC)
+                self.shell.execute(self.sourceDir(), autogen)
+            elif self.subinfo.options.configure.autoreconf:
+                includesArgs = Arguments()
+                if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
+                    includes = []
+                    dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
+                    if CraftCore.compiler.isWindows:
+                        # on Windows data location lies outside of the autotools prefix (msys)
+                        dataDirs.append(CraftCore.standardDirs.locations.data)
+                    for i in dataDirs:
+                        aclocalDir = i / "aclocal"
+                        if aclocalDir.is_dir():
+                            includes += [f"-I{self.shell.toNativePath(aclocalDir)}"]
+                    includesArgs += includes
+                if not self.shell.execute(self.sourceDir(), "autoreconf", Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs):
+                    return False
+
             return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
 
 
