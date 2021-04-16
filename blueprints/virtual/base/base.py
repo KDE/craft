@@ -35,7 +35,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/sed"] = None
         self.buildDependencies["dev-utils/automake"] = None
         self.buildDependencies["dev-utils/libtool"] = None
-        self.buildDependencies["dev-utils/gtk-doc"] = None
 
         if CraftCore.compiler.isMacOS:
             self.buildDependencies["dev-utils/packagesdev"] = None
