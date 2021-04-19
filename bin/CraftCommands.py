@@ -223,7 +223,7 @@ def unShelve(shelve, args):
             settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
-        if info.patchlvl:
+        if info.patchLevel:
             settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
     if not __recurseCraft(["--options", "virtual.ignored=True"], ["craft"]):
