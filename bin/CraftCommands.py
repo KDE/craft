@@ -203,7 +203,7 @@ def unShelve(shelve, args):
         blueprintRepositories = CraftCore.settings._parseList(parser["General"].get("blueprintRepositories", ""))
     for repo in blueprintRepositories:
         addBlueprintsRepository(repo)
-    Info = namedtuple("Info", "version revision")
+    Info = namedtuple("Info", "version revision patchLevel")
     packages = {} # type: Info
     if listVersion == 1:
         for sections in parser.keys():
@@ -213,7 +213,7 @@ def unShelve(shelve, args):
         for p, s in parser.items():
             if p in {"General", "DEFAULT"}:
                 continue
-            packages[p] = Info(s.get("version", None), s.get("revision", None))
+            packages[p] = Info(s.get("version", None), s.get("revision", None), s.get("patchLevel", None))
 
     settings = UserOptions.instance().settings
     for p, info in packages.items():
@@ -223,6 +223,8 @@ def unShelve(shelve, args):
             settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
+        if info.patchlvl:
+            settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
     if not __recurseCraft(["--options", "virtual.ignored=True"], ["craft"]):
         return False
