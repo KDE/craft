@@ -208,7 +208,7 @@ def unShelve(shelve, args):
     if listVersion == 1:
         for sections in parser.keys():
             for packageName in parser[sections]:
-                packages[packageName] = Info(parser[sections].get(packageName, None), None)
+                packages[packageName] = Info(parser[sections].get(packageName, None), None, None)
     elif listVersion == 2:
         for p, s in parser.items():
             if p in {"General", "DEFAULT"}:
