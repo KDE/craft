@@ -281,9 +281,10 @@ class CollectionPackagerBase(PackagerBase):
             symbolSuffix = ".sym"
         if CraftCore.compiler.isLinux:
             # todo unify sym name with Qt
-            symbolPattern = re.compile(r".*(\{0}|\.debug)$".format(symbolSuffix))
+            symbolPattern = r".*(\{0}|\.debug)$".format(symbolSuffix)
         else:
-            symbolPattern = re.compile(r".*\{0}$".format(symbolSuffix))
+            symbolPattern = r".*\{0}$".format(symbolSuffix)
+        symbolPattern = re.compile(symbolPattern, re.IGNORECASE)
 
         if not seperateSymbolFiles:
             self.blacklist.append(symbolPattern)

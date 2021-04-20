@@ -964,10 +964,10 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                 if filePath.is_dir(follow_symlinks=False):
                     # handle .app folders and dsym as files
                     if CraftCore.compiler.isMacOS:
-                        suffixes = {".dSYM"}
+                        suffixes = {".dsym"}
                         if handleAppBundleAsFile:
                             suffixes.update({".app", ".framework"})
-                        if Path(filePath.path).suffix not in suffixes:
+                        if Path(filePath.path).suffix.lower() not in suffixes:
                             dirs.append(filePath.path)
                             continue
                     else:
