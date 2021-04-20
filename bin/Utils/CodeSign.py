@@ -141,49 +141,62 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
         utils.ScopedEnv.__exit__(self, exc_type, exc_value, trback)
         LockFile.__exit__(self, exc_type, exc_value, trback)
 
+def __signMacApp(appPath : Path, scope : _MacSignScope):
+    CraftCore.log.info(f"Sign {appPath}")
+    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+    bundlePattern = re.compile(r".*(\.app|\.framework)$", re.IGNORECASE)
+    for bun in utils.filterDirectoryContent(appPath,
+                                            whitelist=lambda x, root: bundlePattern.match(x.path),
+                                            blacklist=lambda x, root: True,
+                                            handleAppBundleAsFile = True):
+        if not __signMacApp(Path(bun), scope):
+            return False
+
+    # all files in the bundle
+    bundeFilter = lambda x, root: not Path(x.path).is_symlink() and not bundlePattern.match(x.path)
+
+    filter = bundeFilter
+    # asume framkeworks to be less messy
+    if str(appPath).endswith(".framework"):
+        filter = lambda x, root: bundeFilter(x, root) and utils.isBinary(x.path)
+    binaries = list(utils.filterDirectoryContent(appPath,
+                                                whitelist=lambda x, root: filter(x, root),
+                                                blacklist=lambda x, root: True,
+                                                handleAppBundleAsFile = True))
+
+    mainApp = appPath / "Contents/MacOS" / appPath.name.split(".")[0]
+    if str(mainApp) in binaries:
+        binaries.remove(str(mainApp))
+    signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
+    for command in utils.limitCommandLineLength(signCommand, binaries):
+        if not utils.system(command):
+            return False
+    if not utils.system(signCommand + [appPath]):
+        return False
+
+    ## Verify signature
+    if not utils.system(["codesign", "--display", "--verbose", appPath]):
+        return False
+
+    if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
+        return False
+
+    # TODO: this step might require notarisation
+    utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
+
+    ## Validate that the key used for signing the binary matches the expected TeamIdentifier
+    ## needed to pass the SocketApi through the sandbox
+    #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
+            #return False
+
+    return True
+
 def signMacApp(appPath : Path):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
     with _MacSignScope() as scope:
-        devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-
-        # TODO: bundles embeded in bundles
-        # all files in the bundle, (no nested content)
-        binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents"),
-                                                        whitelist=lambda x, root: True,
-                                                        blacklist=lambda x, root: True,
-                                                        handleAppBundleAsFile = True))
-
-        mainApp = appPath / "Contents/MacOS"  / appPath.name.split(".")[0]
-        signBunldeSeparately = False
-        if str(mainApp) in binaries:
-            signBunldeSeparately = True
-            binaries.remove(str(mainApp))
-        signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
-        for command in utils.limitCommandLineLength(signCommand, binaries):
-            if not utils.system(command):
-                return False
-        if signBunldeSeparately:
-            if not utils.system(signCommand + [appPath]):
-                return False
-
-        ## Verify signature
-        if not utils.system(["codesign", "--display", "--verbose", appPath]):
-            return False
-
-        if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
-            return False
-
-        # TODO: this step might require notarisation
-        utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
-
-        ## Validate that the key used for signing the binary matches the expected TeamIdentifier
-        ## needed to pass the SocketApi through the sandbox
-        #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
-                #return False
-
-        return True
+        return __signMacApp(appPath, scope)
 
 def signMacPackage(packagePath : str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
