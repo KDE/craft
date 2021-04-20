@@ -24,6 +24,7 @@
 
 import os
 from pathlib import Path
+import re
 import subprocess
 import secrets
 
@@ -140,22 +141,38 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
         utils.ScopedEnv.__exit__(self, exc_type, exc_value, trback)
         LockFile.__exit__(self, exc_type, exc_value, trback)
 
-def signMacApp(appPath : str):
+def signMacApp(appPath : Path):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
     with _MacSignScope() as scope:
         devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
 
-        # Recursively sign app
-        if not utils.system(["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--deep", appPath]):
-            return False
+        # TODO: bundles embeded in bundles
+        # all files in the bundle, (no nested content)
+        binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents"),
+                                                        whitelist=lambda x, root: True,
+                                                        blacklist=lambda x, root: True,
+                                                        handleAppBundleAsFile = True))
+
+        mainApp = appPath / "Contents/MacOS"  / appPath.name.split(".")[0]
+        signBunldeSeparately = False
+        if str(mainApp) in binaries:
+            signBunldeSeparately = True
+            binaries.remove(str(mainApp))
+        signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
+        for command in utils.limitCommandLineLength(signCommand, binaries):
+            if not utils.system(command):
+                return False
+        if signBunldeSeparately:
+            if not utils.system(signCommand + [appPath]):
+                return False
 
         ## Verify signature
         if not utils.system(["codesign", "--display", "--verbose", appPath]):
             return False
 
-        if not utils.system(["codesign", "--verify", "--verbose", "--strict", appPath]):
+        if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
             return False
 
         # TODO: this step might require notarisation
