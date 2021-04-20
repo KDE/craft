@@ -57,12 +57,16 @@ class DesktopEntry(PackagerBase):
             if targetIcon and not utils.copyFile(os.path.join(targetBundle, "Contents/Resources", targetIcon), os.path.join(targetShimBundle, "Contents/Resources", targetIcon), linkOnly=False):
                 return False
         elif CraftCore.compiler.isWindows:
-            for shortcut in  self.defines["shortcuts"]:
-                shim = Path(CraftCore.standardDirs.craftRoot()) / "wrapper" / shortcut["name"]
-                target = Path(CraftCore.standardDirs.craftRoot()) / shortcut["target"]
-                if not utils.createShim(shim, sys.executable, [os.path.join(CraftCore.standardDirs.craftBin(), "craft.py"), "--run-detached", target]):
+            shortcuts = defines["shortcuts"]
+            if "executable" in defines:
+                shortcuts.append({"name": defines["productname"], "target": defines["executable"]})
+                del defines["executable"]
+            for shortcut in shortcuts:
+                shim = CraftCore.standardDirs.craftRoot() / "wrapper" / shortcut["name"]
+                target = CraftCore.standardDirs.craftRoot() / shortcut["target"]
+                if not utils.createShim(shim, sys.executable, [CraftCore.standardDirs.craftBin() / "craft.py", "--run-detached", target], guiApp=True):
                     return False
-                craftName = Path(CraftCore.standardDirs.craftRoot()).name
+                craftName = CraftCore.standardDirs.craftRoot().name
                 if not utils.installShortcut(f"{craftName}/{shortcut['name']} {craftName}", shim, target.parent,
                                              os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
                                              shortcut.get("desciption", f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}")):
