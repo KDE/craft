@@ -183,12 +183,6 @@ def __signMacApp(appPath : Path, scope : _MacSignScope):
 
     # TODO: this step might require notarisation
     utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
-
-    ## Validate that the key used for signing the binary matches the expected TeamIdentifier
-    ## needed to pass the SocketApi through the sandbox
-    #if not utils.system("codesign -dv %s 2>&1 | grep 'TeamIdentifier=%s'" % (self.appPath, teamIdentifierFromConfig)):
-            #return False
-
     return True
 
 def signMacApp(appPath : Path):
