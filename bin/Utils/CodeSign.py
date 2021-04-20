@@ -164,18 +164,12 @@ def __signMacApp(appPath : Path, scope : _MacSignScope):
                                                 blacklist=lambda x, root: True,
                                                 handleAppBundleAsFile = True))
 
-    delayedSigning = []
-    # delay signing of the app until the rest is signed
     mainApp = appPath / "Contents/MacOS" / appPath.name.split(".")[0]
     if str(mainApp) in binaries:
-        delayedSigning.append(mainApp)
         binaries.remove(str(mainApp))
     signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
     for command in utils.limitCommandLineLength(signCommand, binaries):
         if not utils.system(command):
-            return False
-    for f in delayedSigning:
-        if not utils.system(signCommand + [f]):
             return False
     if not utils.system(signCommand + [appPath]):
         return False
