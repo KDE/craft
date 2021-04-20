@@ -861,8 +861,14 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
     return True
 
 def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
-    # the actual limit is hard to get in python so lets just use a working random size
-    SIZE = 1024 * 4
+    if CraftCore.compiler.isWindows:
+        # https://docs.microsoft.com/en-US/troubleshoot/windows-client/shell-experience/command-line-string-limitation
+        SIZE = 8191
+    else:
+        code, result = CraftCore.cache.getCommandOutput("getconf", "ARG_MAX")
+        if code != 0:
+            return False
+        SIZE = int(result.strip())
     out = []
     commandSize = sum(map(len, command))
     if commandSize >= SIZE:
