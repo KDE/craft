@@ -466,11 +466,11 @@ class SetupHelper(object):
     def printEnv(self):
         self.setupEnvironment()
         for key, val in os.environ.items():
+            if key.startswith("BASH_FUNC_"):
+                continue
             if "\n" in val:
                 log(f"Not adding ${key} to environment since it contains "
                      "a newline character and that breaks craftenv.sh")
-                continue
-            if key.startswith("BASH_FUNC_"):
                 continue
             # weird protected env vars
             if key in {"PROFILEREAD"}:

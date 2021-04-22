@@ -44,7 +44,7 @@ fi
 
 CRAFT_ENV=$(${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup)
 function unset_env() {
-    local lines=($(env | awk -F= '{print $1}'))
+    local lines=($(env | awk -F= '/\w+=/{print $1}'))
     local i
     for (( i=0; i<${#lines[@]}; i++ )) ; do
         local line=${lines[$i]}
