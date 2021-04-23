@@ -59,7 +59,7 @@ class PipBuildSystem(BuildSystemBase):
             command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed"]
             if not self.venvDir(ver).exists():
                 command += ["--user"]
-            if self.subinfo.svnTarget():
+            if self.subinfo.svnTarget() or self.subinfo.target():
                 command += ["-e", self.sourceDir()]
             else:
                 command += [self.pipPackageName]
