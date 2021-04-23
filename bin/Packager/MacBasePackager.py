@@ -33,8 +33,8 @@ class MacBasePackager( CollectionPackagerBase ):
                                             blacklist=lambda x, root: True):
             rubbish = []
             framework = Path(framework)
-            rubbish += glob.glob(str(framework / "*.prl"))
-            rubbish += glob.glob(str(framework / "Headers"))
+            rubbish += framework.rglob("*.prl")
+            rubbish += framework.rglob("Headers")
             for r in rubbish:
                 r = Path(r)
                 if r.is_symlink():
