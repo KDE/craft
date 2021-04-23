@@ -145,6 +145,7 @@ def __signMacApp(appPath : Path, scope : _MacSignScope):
     CraftCore.log.info(f"Sign {appPath}")
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
     bundlePattern = re.compile(r".*(\.app|\.framework)$", re.IGNORECASE)
+    # get all bundles, as we specify handleAppBundleAsFile we will not yet get nested bundles
     for bun in utils.filterDirectoryContent(appPath,
                                             whitelist=lambda x, root: bundlePattern.match(x.path),
                                             blacklist=lambda x, root: True,
@@ -154,10 +155,13 @@ def __signMacApp(appPath : Path, scope : _MacSignScope):
 
     # all files in the bundle
     bundeFilter = lambda x, root: not Path(x.path).is_symlink() and not bundlePattern.match(x.path)
-
     filter = bundeFilter
-    # asume framkeworks to be less messy
-    if str(appPath).endswith(".framework"):
+
+    # we can only sign non binary files in Resources, else they get stored in the
+    # extended attributes and might get lost during deployment
+    # TODO: allow for dmg?
+    # https://github.com/packagesdev/packages/issues/65
+    if "Contents/Resources" not in str(appPath):
         filter = lambda x, root: bundeFilter(x, root) and utils.isBinary(x.path)
     binaries = list(utils.filterDirectoryContent(appPath,
                                                 whitelist=lambda x, root: filter(x, root),
@@ -167,11 +171,11 @@ def __signMacApp(appPath : Path, scope : _MacSignScope):
     mainApp = appPath / "Contents/MacOS" / appPath.name.split(".")[0]
     if str(mainApp) in binaries:
         binaries.remove(str(mainApp))
-    signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
+    signCommand = ["codesign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--force", "--preserve-metadata=identifier,entitlements", "--options", "runtime", "--verbose=99", "--timestamp"]
     for command in utils.limitCommandLineLength(signCommand, binaries):
         if not utils.system(command):
             return False
-    if not utils.system(signCommand + [appPath]):
+    if not utils.system(signCommand + ["--deep", appPath]):
         return False
 
     ## Verify signature
@@ -203,7 +207,7 @@ def signMacPackage(packagePath : str):
 
         if packagePath.name.endswith(".dmg"):
             # sign dmg
-            if not utils.system(["codesign", "--force", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", packagePath]):
+            if not utils.system(["codesign", "--force", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Application: {devID}", "--timestamp", packagePath]):
                 return False
 
             # TODO: this step would require notarisation
@@ -212,7 +216,7 @@ def signMacPackage(packagePath : str):
         else:
             # sign pkg
             packagePathTmp = f"{packagePath}.sign"
-            if not utils.system(["productsign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Installer: {devID}", packagePath, packagePathTmp]):
+            if not utils.system(["productsign", "--keychain", scope.loginKeychain, "--sign", f"Developer ID Installer: {devID}", "--timestamp", packagePath, packagePathTmp]):
                 return False
 
             utils.moveFile(packagePathTmp, packagePath)
