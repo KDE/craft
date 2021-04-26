@@ -51,6 +51,7 @@ class MesonBuildSystem(BuildSystemBase):
         return Arguments([defines,
                              "--prefix", CraftCore.standardDirs.craftRoot(),
                              "--libdir", "lib",
+                             "--datadir", CraftCore.standardDirs.locations.data,
                              "--buildtype", buildType,
                              "--cmake-prefix-path", CraftCore.standardDirs.craftRoot(),
                              self.buildDir(),
