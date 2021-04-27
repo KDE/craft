@@ -57,7 +57,7 @@ class DesktopEntry(PackagerBase):
             if targetIcon and not utils.copyFile(os.path.join(targetBundle, "Contents/Resources", targetIcon), os.path.join(targetShimBundle, "Contents/Resources", targetIcon), linkOnly=False):
                 return False
         elif CraftCore.compiler.isWindows:
-            shortcuts = defines["shortcuts"]
+            shortcuts = defines["shortcuts"] or []
             if "executable" in defines:
                 shortcuts.append({"name": defines["productname"], "target": defines["executable"]})
                 del defines["executable"]
