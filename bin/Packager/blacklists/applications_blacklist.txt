@@ -21,48 +21,46 @@ lib/charset\.alias
 share/ECM/.*
 
 # multiple docs
-bin/data/man/.*
-doc/.*
-share/man/.*
+(bin/data|share)/man/.*
 man/.*
-share/xml/.*
-share/locale/.*
+doc/.*
+
+(bin/data|share)/glib-2.0/.*
+(bin/data|share)/gettext/.*
+(bin/data|share)/gettext-0.19.8/.*
+(bin/data|share)/gdb/.*
+(bin/data|share)/info/.*
+(bin/data|share)/emacs/.*
+(bin/data|share)/aclocal/.*
+(bin/data|share)/bash-completion/.*
+
+lib/gettext/.*
+lib/metatypes/.*
 
 # docbook stuff
-bin/data/kf5/kdoctools/.*
-bin/data/xml/.*
+(bin/data|share)/kf5/kdoctools/.*
+(bin/data|share)/xml/.*
 
 # other documentation (we prefer the online documentation atm)
-bin/data/doc/.*
-share/doc/.*
+(bin/data|share)/doc/.*
 
 # cmake stuff
-share/apps/cmake/.*
+(bin/data|share)/apps/cmake/.*
 
 # unrelated
-share/dbus-1/services/.*
-share/pkgconfig/.*
+.*/pkgconfig/.*
 
 # cleanup breeze stuff
-share/wallpapers/.*
-bin/data/icons/breeze
-bin/data/icons/breeze-dark
+(bin/data|share)/wallpapers/.*
 
-# cut the big oxygen icons: this can lead to errors though if used!!!!
-share/icons/oxygen/64x64/.*
-share/icons/oxygen/128x128/.*
-share/icons/oxygen/256x256/.*
 
 # doubled qt dlls
-lib/[^/]*\.dll
 # more qt leftovers
 phrasebooks/.*
 mkspecs/.*
 
-.*\.framework(/.*)*/Headers(/.*)*
-
 # unneeded stuff from bin\
-bin/qml\.app/*
+bin/qml\.app
 bin/qt\.conf
 bin/syncqt\.pl
 bin/moc.*
@@ -105,3 +103,4 @@ bin/xmlpatterns(\.exe)?
 bin/xmlpatternsvalidator(\.exe)?
 bin/qvkgen(\.exe)?
 bin/windeployqt(\.exe)?
+lib/.*\.sh
