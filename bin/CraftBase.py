@@ -182,8 +182,7 @@ class CraftBase(object):
                 os.environ.get("DRONE_BUILD_NUMBER") or
                 "")
 
-
-    def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
+    def formatVersion(self, includeRevision, includeTimeStamp) -> str:
         buildVersion = self.buildNumber()
 
         version = []
@@ -197,9 +196,10 @@ class CraftBase(object):
         if includeTimeStamp:
             version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
-        version = version.replace("/", "_")
+        return version.replace("/", "_")
 
-        return f"{self.package.name}-{version}-{CraftCore.compiler}{pkgSuffix}"
+    def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
+        return f"{self.package.name}-{self.formatVersion(includeRevision=includeRevision, includeTimeStamp=includeTimeStamp)}-{CraftCore.compiler}{pkgSuffix}"
 
     def binaryArchiveName(self, pkgSuffix="", fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
                           includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
