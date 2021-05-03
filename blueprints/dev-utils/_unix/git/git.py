@@ -46,8 +46,17 @@ class Package(BinaryPackageBase):
         env = None
         if CraftCore.compiler.isLinux:
             env = {"LD_LIBRARY_PATH": ""}
+
+        gitPath = ""
+        for path in ["/usr/local/bin/git", "/usr/bin/git"]:
+            if os.path.isfile(path):
+                gitPath = path
+
+        if gitPath == "":
+            return False
+
         return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git"),
-                                "/usr/bin/git", env=env, useAbsolutePath=True)
+                                gitPath, env=env, useAbsolutePath=True)
 
     def postQmerge(self):
         CraftCore.cache.clear()
