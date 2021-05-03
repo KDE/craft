@@ -125,6 +125,7 @@ class AppxPackager(CollectionPackagerBase):
         else:
             version[2] = 0
         # part 4 must be 0 for the store
+        # we ignore the patch level, build number ensures increasing version numbers
         version[3] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
