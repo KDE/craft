@@ -22,6 +22,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+from Blueprints.CraftPackageObject import BlueprintException
 import re
 
 from Blueprints.CraftPackageObject import *
@@ -61,7 +62,7 @@ class VersionInfo(object):
                 filePath = self.package.filePath
                 while True:
                     if filePath in CraftPackageObject.rootDirectories():
-                        break
+                        raise BlueprintException("setDefaultValues() called without providing a version.ini", self.package)
                     ini = filePath / "version.ini"
                     if ini.exists():
                         self._fileName = ini
