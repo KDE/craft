@@ -58,15 +58,15 @@ class VersionInfo(object):
     def data(self):
         if not self._data:
             if not self._fileName:
-                filePath = OsUtils.toUnixPath(self.package.filePath)
+                filePath = self.package.filePath
                 while True:
                     if filePath in CraftPackageObject.rootDirectories():
                         break
-                    ini = OsUtils.toUnixPath(os.path.join(filePath, "version.ini"))
-                    if os.path.exists(ini):
+                    ini = filePath / "version.ini"
+                    if ini.exists():
                         self._fileName = ini
                         break
-                    filePath = os.path.dirname(filePath)
+                    filePath = filePath.parent
             if not self._fileName:
                 self._data = VersionInfo.VersionInfoData()
             else:

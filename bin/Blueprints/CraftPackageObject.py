@@ -36,7 +36,7 @@ from CraftOS.osutils import OsUtils
 
 
 class CategoryPackageObject(object):
-    def __init__(self, localPath : str):
+    def __init__(self, blueprintRoot, localPath : str):
         self.localPath = Path(localPath)
         self.description = ""
         self.webpage = ""
@@ -51,7 +51,11 @@ class CategoryPackageObject(object):
         self.runtimeDependencies = []
         self.buildDependencies = []
 
+        # TODO: cache or fix handling of actual parent vs mounted parent
+        # /dev-utils vs craft-blueprints-kde/dev-utils
         self._ini = self.localPath / "info.ini"
+        while not self._ini.exists() and self._ini.parent.parent != blueprintRoot.parent:
+            self._ini = self._ini.parent.parent / "info.ini"
         if self._ini.exists():
             self.valid = True
             info = configparser.ConfigParser()
@@ -170,10 +174,10 @@ class CraftPackageObject(object):
         return package
 
     @staticmethod
-    def _expandChildren(path, parent, blueprintRoot):
+    def _expandChildren(path, parent, blueprintRoot : Path):
         if path:
-            path = utils.normalisePath(path)
-            name = path.rsplit("/", 1)[-1]
+            path = Path(path)
+            name = path.name
             if name in parent.children:
                 package = parent.children[name]
             else:
@@ -186,13 +190,7 @@ class CraftPackageObject(object):
             raise Exception("Unreachable")
 
         if not package.categoryInfo:
-            package.categoryInfo = CategoryPackageObject(path)
-            if not package.categoryInfo.valid and package.parent:
-                if Path(blueprintRoot) in package.parent.categoryInfo._ini.parents:
-                    # we actually need a copy
-                    package.categoryInfo = copy.copy(package.parent.categoryInfo) # type: CategoryPackageObject
-                    if not package.categoryInfo.valid:
-                        package.categoryInfo = CategoryPackageObject(blueprintRoot)
+            package.categoryInfo = CategoryPackageObject(blueprintRoot, path)
 
         for f in os.listdir(path):
             fPath = os.path.abspath(os.path.join(path, f))
@@ -236,15 +234,15 @@ class CraftPackageObject(object):
     def rootDirectories():
         # this function should return all currently set blueprint directories
         if not CraftPackageObject.__rootDirectories:
-            rootDirs = {utils.normalisePath(CraftStandardDirs.craftRepositoryDir())}
+            rootDirs = {CraftStandardDirs.craftRepositoryDir()}
             if ("Blueprints", "Locations") in CraftCore.settings:
                 for path in CraftCore.settings.getList("Blueprints", "Locations"):
-                    rootDirs.add(utils.normalisePath(path))
+                    rootDirs.add(Path(path))
             if os.path.isdir(CraftStandardDirs.blueprintRoot()):
                 for f in os.listdir(CraftStandardDirs.blueprintRoot()):
                     if CraftPackageObject._isDirIgnored(f):
                         continue
-                    rootDirs.add(utils.normalisePath(os.path.join(CraftStandardDirs.blueprintRoot(), f)))
+                    rootDirs.add(Path(CraftStandardDirs.blueprintRoot() / f))
             CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
             CraftPackageObject.__rootDirectories = list(rootDirs)
         return CraftPackageObject.__rootDirectories
@@ -285,10 +283,10 @@ class CraftPackageObject(object):
             CraftPackageObject.__rootPackage = root = CraftPackageObject()
             root.name = "/"
             for blueprintRoot in CraftPackageObject.rootDirectories():
-                if not os.path.isdir(blueprintRoot):
+                if not blueprintRoot.is_dir():
                     CraftCore.log.warning(f"{blueprintRoot} does not exist")
                     continue
-                blueprintRoot = utils.normalisePath(os.path.abspath(blueprintRoot))
+                blueprintRoot = blueprintRoot.absolute()
                 # create a dummy package to load its children
                 child = CraftPackageObject._expandChildren(None, root, blueprintRoot)
                 root.children.update(child.children)
