@@ -27,6 +27,7 @@ import configparser
 import importlib
 import os
 import re
+from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
@@ -36,7 +37,7 @@ from CraftOS.osutils import OsUtils
 
 class CategoryPackageObject(object):
     def __init__(self, localPath : str):
-        self.localPath = localPath
+        self.localPath = Path(localPath)
         self.description = ""
         self.webpage = ""
         self.displayName = ""
@@ -50,11 +51,11 @@ class CategoryPackageObject(object):
         self.runtimeDependencies = []
         self.buildDependencies = []
 
-        ini = os.path.join(self.localPath, "info.ini")
-        if os.path.exists(ini):
+        self._ini = self.localPath / "info.ini"
+        if self._ini.exists():
             self.valid = True
             info = configparser.ConfigParser()
-            info.read(ini)
+            info.read(self._ini)
             general = info["General"]
             self.displayName = general.get("displayName", "")
             self.description = general.get("description", "")
@@ -118,7 +119,6 @@ class CraftPackageObject(object):
         self._version = None
         self._instance = None
         self.__path = None
-        self.__blueprintRoot = None
 
     @property
     def parent(self):
@@ -184,14 +184,13 @@ class CraftPackageObject(object):
             package = parent
         else:
             raise Exception("Unreachable")
-        package.__blueprintRoot = blueprintRoot
 
         if not package.categoryInfo:
             package.categoryInfo = CategoryPackageObject(path)
             if not package.categoryInfo.valid and package.parent:
-                if package.parent.__blueprintRoot == package.__blueprintRoot:
+                if Path(blueprintRoot) in package.parent.categoryInfo._ini.parents:
                     # we actually need a copy
-                    package.categoryInfo = copy.copy(package.parent.categoryInfo)
+                    package.categoryInfo = copy.copy(package.parent.categoryInfo) # type: CategoryPackageObject
                     if not package.categoryInfo.valid:
                         package.categoryInfo = CategoryPackageObject(blueprintRoot)
 
