@@ -118,13 +118,14 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("additional_xmlns", "")
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
-        # part 4 must be 0 for the store
         version += [0] * (4-len(version))
         version[1] = version[1] * 100 + version[2]
         if self.buildNumber():
             version[2] = self.buildNumber()
         else:
             version[2] = 0
+        # part 4 must be 0 for the store
+        version[3] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
