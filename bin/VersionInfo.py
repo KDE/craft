@@ -22,8 +22,8 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-from Blueprints.CraftPackageObject import BlueprintException
 import re
+from pathlib import Path
 
 from Blueprints.CraftPackageObject import *
 from CraftConfig import *
@@ -51,7 +51,7 @@ class VersionInfo(object):
         else:
             raise Exception()
 
-        self._fileName = fileName
+        self._fileName = Path(fileName) if fileName else None
         self._data = None
         self.__include = None
 
@@ -90,10 +90,10 @@ class VersionInfo(object):
     def _include(self):
         if not self.__include:
             if "include" in self.data.info:
-                includePath = self.data.info["include"]
-                if not os.path.isabs(includePath):
-                    includePath = os.path.join(os.path.dirname(self._fileName), includePath)
-                self.__include = VersionInfo(subinfo=self.subinfo, package=self.package, fileName=OsUtils.toUnixPath(includePath))
+                includePath = Path(self.data.info["include"])
+                if not includePath.is_absolute():
+                    includePath = self._fileName.parent / includePath
+                self.__include = VersionInfo(subinfo=self.subinfo, package=self.package, fileName=includePath)
         return self.__include
 
     def tags(self):
