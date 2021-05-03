@@ -47,7 +47,7 @@ class CraftCompiler(object):
         NotLinux     = ~Linux
         NotMacOS     = ~MacOS
         NotFreeBSD   = ~FreeBSD
-        NotWindows   = Unix | Android
+        NotWindows   = ~Windows
         NotUnix      = ~Unix
         NotAndroid   = ~Android
 
