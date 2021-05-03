@@ -237,12 +237,12 @@ class CraftPackageObject(object):
             rootDirs = {CraftStandardDirs.craftRepositoryDir()}
             if ("Blueprints", "Locations") in CraftCore.settings:
                 for path in CraftCore.settings.getList("Blueprints", "Locations"):
-                    rootDirs.add(Path(path))
+                    rootDirs.add(Path(path).resolve())
             if os.path.isdir(CraftStandardDirs.blueprintRoot()):
                 for f in os.listdir(CraftStandardDirs.blueprintRoot()):
                     if CraftPackageObject._isDirIgnored(f):
                         continue
-                    rootDirs.add(Path(CraftStandardDirs.blueprintRoot() / f))
+                    rootDirs.add((CraftStandardDirs.blueprintRoot() / f).resolve())
             CraftCore.log.debug(f"Craft BlueprintLocations: {rootDirs}")
             CraftPackageObject.__rootDirectories = list(rootDirs)
         return CraftPackageObject.__rootDirectories
