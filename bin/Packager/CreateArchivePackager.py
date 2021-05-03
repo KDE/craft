@@ -13,8 +13,5 @@ class CreateArchivePackager(CollectionPackagerBase):
         """ create a package """
         CraftCore.log.debug("packaging using the CreateArchivePackager")
 
-        self.internalCreatePackage()
-
-        CraftCore.log.info(f"Archive created in {self.archiveDir()}")
-
-        return True
+        defines = self.setDefaults(self.defines)
+        return self.internalCreatePackage(defines, seperateSymbolFiles=True)

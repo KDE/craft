@@ -317,6 +317,7 @@ class CollectionPackagerBase(PackagerBase):
             CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
             def binaryFilter(x):
                 if CraftCore.compiler.isMacOS:
+                    # TODO:
                     if Path(x.path).suffix in {".framework", ".app"}:
                         return True
                 return utils.isBinary(x.path)
