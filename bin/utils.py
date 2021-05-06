@@ -910,7 +910,7 @@ def isBinary(fileName : str) -> bool:
             return False
         if fileName.suffix in {".so", ".dylib"}:
             return True
-        elif isExecuatable(fileName):
+        else:
             if CraftCore.compiler.isMacOS:
                 signature = MACH_O_64
             elif CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD or CraftCore.compiler.isAndroid:
