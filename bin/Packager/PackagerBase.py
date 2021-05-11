@@ -95,7 +95,7 @@ class PackagerBase(CraftBase):
     def archiveExtension(self):
         extension = "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
         if extension == ".7z" and CraftCore.compiler.isUnix:
-            if self.package.path == "dev-utils/7zip" or not CraftCore.cache.findApplication("7za"):
+            if not CraftCore.installdb.isInstalled("dev-utils/7zip"):
                 extension = ".tar.xz"
             else:
                 extension = ".tar.7z"
