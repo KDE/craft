@@ -16,8 +16,10 @@ class subinfo( info.infoclass ):
                                        ]
         self.patchLevel["1.4.18"] = 2
 
-from Package.AutoToolsPackageBase import *
+    def setDependencies( self ):
+        self.buildDependencies["dev-utils/7zip"] = None
 
+from Package.AutoToolsPackageBase import *
 class Package( AutoToolsPackageBase ):
     def __init__( self ):
         AutoToolsPackageBase.__init__( self )
