@@ -226,11 +226,14 @@ def unShelve(shelve, args):
         if info.patchLevel:
             settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
-    if not __recurseCraft(["--options", "virtual.ignored=True"], ["craft"]):
-        return False
+    opt = []
     if args.probe:
-        return True
-    return __recurseCraft([], list(packages.keys()))
+        opt.append("-p")
+    if args.verbose:
+        opt.append("-" + "v" * args.verbose)
+    if not __recurseCraft(["--options", "virtual.ignored=True"] + opt, ["craft"]):
+        return False
+    return __recurseCraft(opt, list(packages.keys()))
 
 def shelve(target : str):
     target = Path(target)
