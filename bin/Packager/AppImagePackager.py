@@ -36,4 +36,7 @@ class AppImagePackager(CollectionPackagerBase):
         env["OUTPUT"] = defines["setupname"]
         env["VERSION"] = self.formatVersion(includeRevision=True, includeTimeStamp=False)
         with utils.ScopedEnv(env):
-            return utils.system(["linuxdeploy-x86_64.AppImage", "--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]], cwd=self.packageDestinationDir())
+            args = ["--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]]
+            if CraftCore.debug.verbose() > 0:
+                args += ["-v0"]
+            return utils.system(["linuxdeploy-x86_64.AppImage"] + args, cwd=self.packageDestinationDir())
