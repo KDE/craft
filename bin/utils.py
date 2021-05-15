@@ -1065,7 +1065,7 @@ def strip(fileName):
         else:
             symFile = Path(f"{fileName}.dSYM")
     else:
-        symFile = Path(f"{fileName}.sym")
+        symFile = Path(f"{fileName}.debug")
 
     if not isBundle and symFile.exists():
         return True

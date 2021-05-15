@@ -278,10 +278,10 @@ class CollectionPackagerBase(PackagerBase):
         elif CraftCore.compiler.isMSVC():
             symbolSuffix = ".pdb"
         else:
-            symbolSuffix = ".sym"
+            symbolSuffix = ".debug"
         if CraftCore.compiler.isLinux:
-            # todo unify sym name with Qt
-            symbolPattern = r".*(\{0}|\.debug)$".format(symbolSuffix)
+            # the files where previously called .sym .debug is how qt calls it
+            symbolPattern = r".*(\{0}|\.sym)$".format(symbolSuffix)
         else:
             symbolPattern = r".*\{0}$".format(symbolSuffix)
         symbolPattern = re.compile(symbolPattern, re.IGNORECASE)
