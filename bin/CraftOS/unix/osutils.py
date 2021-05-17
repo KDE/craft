@@ -59,7 +59,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def detectDocker() -> bool:
         if OsUtils.InDocker is None:
             with open("/proc/self/cgroup", "rt") as f:
-                OsUtils.InDocker = f.readline().split("/",1)[-1] == "docker"
+                OsUtils.InDocker = f.readline().split("/",1)[-1].startswith("docker")
         return OsUtils.InDocker
 
 class LockFile(CraftOS.OsUtilsBase.LockFileBase):
