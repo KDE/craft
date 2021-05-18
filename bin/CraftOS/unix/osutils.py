@@ -61,7 +61,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         if OsUtils.InDocker is None:
             if Path("/.dockerenv").exists():
                 OsUtils.InDocker = True
-            if not OsUtils.InDocker is None:
+            if OsUtils.InDocker is None:
                 with open("/proc/self/cgroup", "rt") as f:
                     lines = f.read()
                     # a false positive should not really hurt...
