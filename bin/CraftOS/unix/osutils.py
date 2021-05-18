@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 import time
+from pathlib import Path
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -58,11 +59,14 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def detectDocker() -> bool:
         if OsUtils.InDocker is None:
-            with open("/proc/self/cgroup", "rt") as f:
-                line = f.readline()
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                    CraftCore.log.info(f"detectDocker:{line}")
-                OsUtils.InDocker = line.split("/",1)[-1].startswith("docker")
+            if Path("/.dockerenv").exists():
+                OsUtils.InDocker = True
+            if not OsUtils.InDocker is None:
+                with open("/proc/self/cgroup", "rt") as f:
+                    lines = f.read()
+                    # a false positive should not really hurt...
+                    OsUtils.InDocker = ":/docker/" in lines
+                    CraftCore.log.info(f"detectDocker: {OsUtils.InDocker} {lines}")
         return OsUtils.InDocker
 
 class LockFile(CraftOS.OsUtilsBase.LockFileBase):
