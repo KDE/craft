@@ -77,6 +77,8 @@ class BuildSystemBase(CraftBase):
                 return "mingw32-make"
             else:
                 CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
+        elif OsUtils.isFreeBSD():
+            return "gmake"
         elif OsUtils.isUnix():
             return "make"
 
