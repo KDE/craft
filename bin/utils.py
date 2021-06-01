@@ -906,7 +906,10 @@ def isBinary(fileName : str) -> bool:
         if fileName.suffix in {".dll", ".exe"}:
             return True
     else:
-        if CraftCore.compiler.isMacOS and ".dSYM/" in str(fileName):
+        if CraftCore.compiler.isMacOS:
+            if ".dSYM/" in str(fileName):
+                return False
+        elif fileName.suffix == ".debug":
             return False
         if fileName.suffix in {".so", ".dylib"}:
             return True
