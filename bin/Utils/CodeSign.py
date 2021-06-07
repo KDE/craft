@@ -107,7 +107,7 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
 
             def importCert(cert, pwKey):
                 pw  = CraftChoicePrompt.promptForPassword(message=f"Enter the password for certificate: {Path(cert).name}", key=pwKey)
-                return utils.system(["security", "import", cert, "-k", self.loginKeychain, "-P", pw, "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"], stdout=subprocess.DEVNULL, secret=[password])
+                return utils.system(["security", "import", cert, "-k", self.loginKeychain, "-P", pw, "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"], stdout=subprocess.DEVNULL, secret=[password, pw])
 
             if self.certFileApplication:
                 if not importCert(self.certFileApplication, "MAC_CERTIFICATE_APPLICATION_PASSWORD"):
