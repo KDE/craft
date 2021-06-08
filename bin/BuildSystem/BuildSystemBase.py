@@ -239,7 +239,7 @@ class BuildSystemBase(CraftBase):
             oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
         files = utils.filterDirectoryContent(self.installDir(),
-                                             whitelist=lambda x, root: Path(x).suffix in BuildSystemBase.PatchableFile,
+                                             whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
                                              blacklist=lambda x, root: True)
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):

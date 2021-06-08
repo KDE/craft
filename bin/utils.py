@@ -892,26 +892,28 @@ def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
 def isExecuatable(fileName : Path):
     fileName = Path(fileName)
     if CraftCore.compiler.isWindows:
-        return fileName.suffix.upper() in os.environ["PATHEXT"]
+        return fileName.suffix.upper() in os.environ["PATHEXT"].split(";")
     return os.access(fileName, os.X_OK)
 
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
-    fileName = Path(fileName)
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
     ELF = b"\x7F\x45\x4C\x46"
+
+    fileName = Path(fileName)
+    suffix = fileName.suffix.lower()
     if fileName.is_symlink() or fileName.is_dir():
         return False
     if CraftCore.compiler.isWindows:
-        if fileName.suffix in {".dll", ".exe"}:
+        if suffix in {".dll", ".exe"}:
             return True
     else:
         if CraftCore.compiler.isMacOS:
             if ".dSYM/" in str(fileName):
                 return False
-        elif fileName.suffix == ".debug":
+        elif suffix == ".debug":
             return False
-        if fileName.suffix in {".so", ".dylib"}:
+        if suffix in {".so", ".dylib"}:
             return True
         else:
             if CraftCore.compiler.isMacOS:
@@ -920,10 +922,19 @@ def isBinary(fileName : str) -> bool:
                 signature = ELF
             else:
                 raise Exception("Unsupported platform")
-            with open(fileName, "rb") as f:
+            with fileName.open("rb") as f:
                 return f.read(len(signature)) == signature
     return False
 
+def isScript(fileName : str):
+    fileName = Path(fileName)
+    if isExecuatable(fileName):
+        if CraftCore.compiler.isWindows and not fileName.suffix.lower() == ".exe":
+            return True
+        signature = "#!"
+        with fileName.open("rb") as f:
+            return f.read(len(signature)) == signature
+    return False
 
 def getLibraryDeps(path):
     deps = []
