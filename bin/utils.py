@@ -928,6 +928,8 @@ def isBinary(fileName : str) -> bool:
 
 def isScript(fileName : str):
     fileName = Path(fileName)
+    if fileName.is_symlink() or fileName.is_dir():
+        return False
     if isExecuatable(fileName):
         if CraftCore.compiler.isWindows and not fileName.suffix.lower() == ".exe":
             return True
