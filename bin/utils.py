@@ -931,7 +931,7 @@ def isScript(fileName : str):
     if isExecuatable(fileName):
         if CraftCore.compiler.isWindows and not fileName.suffix.lower() == ".exe":
             return True
-        signature = "#!"
+        signature = b"#!"
         with fileName.open("rb") as f:
             return f.read(len(signature)) == signature
     return False
