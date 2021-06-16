@@ -223,8 +223,12 @@ class MacDylibBundler(object):
             elif path.startswith("@loader_path/"):
                 CraftCore.log.debug(f"{fileToFix}: Accept '{path}' into.")
             else:
+                guessedNewRef = None
                 if path.startswith(str(CraftStandardDirs.craftRoot() / "lib")):
                     guessedPath = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), os.path.join(self.appPath, "Contents/Frameworks"))
+                    # Update possible new ref for deps in framework
+                    if "{}.framework".format(os.path.basename(guessedPath)) in guessedPath:
+                        guessedNewRef = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), "@executable_path/../Frameworks/")
                 elif not path.startswith("/"):
                     guessedPath = os.path.join(self.appPath, "Contents/Frameworks", path)
                 else:
@@ -233,7 +237,7 @@ class MacDylibBundler(object):
                 if not self._addLibToAppImage(Path(guessedPath)):
                     CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
                     return False
-                if not self._updateLibraryReference(fileToFix, path):
+                if not self._updateLibraryReference(fileToFix, path, guessedNewRef):
                     return False
         return True
 
