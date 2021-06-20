@@ -279,9 +279,12 @@ class CollectionPackagerBase(PackagerBase):
             symbolSuffix = ".pdb"
         else:
             symbolSuffix = ".debug"
-        if CraftCore.compiler.isLinux:
-            # the files where previously called .sym .debug is how qt calls it
+        if CraftCore.compiler.isGCCLike() and not CraftCore.compiler.isMacOS:
+            # the files where previously called .sym, .debug is how qt calls it
             symbolPattern = r".*(\{0}|\.sym)$".format(symbolSuffix)
+        elif CraftCore.compiler.isMSVC():
+            # also filter mingw symbols
+            symbolPattern = r".*(\{0}|\.sym|\.debug)$".format(symbolSuffix)
         else:
             symbolPattern = r".*\{0}$".format(symbolSuffix)
         symbolPattern = re.compile(symbolPattern, re.IGNORECASE)
