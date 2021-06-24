@@ -30,12 +30,10 @@ import tarfile
 symlinks = []
 CraftRoot = Path(__file__).parent.parent.parent
 
-tar = tarfile.open(fileobj=sys.stdin.buffer, mode="r|")
-
-# as we are working on a stream, we can't seek, delay the resolution util the end
-tar.makelink = lambda tarinfo, targetpath: symlinks.append((tarinfo.linkname, targetpath, 0))
-tar.extractall(sys.argv[1])
-tar.close()
+with tarfile.open(fileobj=sys.stdin.buffer, mode="r|") as tar:
+    # as we are working on a stream, we can't seek, delay the resolution util the end
+    tar.makelink = lambda tarinfo, targetpath: symlinks.append((tarinfo.linkname, targetpath, 0))
+    tar.extractall(sys.argv[1])
 
 def hardlink(src : Path, dest : Path, count : int):
     if count >= 100:
