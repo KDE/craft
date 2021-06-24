@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["2018.12", "master"]:
+        for ver in ["dev", "master"]:
             self.svnTargets[ver] = f"https://invent.kde.org/packaging/craft.git|{ver}|"
             self.targetUpdatedRepoUrl[ver] = (["git://anongit.kde.org/craft", "https://invent.kde.org/kde/craft.git"], "https://invent.kde.org/packaging/craft.git")
         self.defaultTarget = "master"
