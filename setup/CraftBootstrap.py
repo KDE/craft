@@ -45,8 +45,12 @@ class CraftBootstrap(object):
         return CraftBootstrap.isUnix() and platform.system() == 'Darwin'
 
     @staticmethod
+    def isAndroid():
+        return 'ANDROID_SDK_ROOT' in os.environ
+
+    @staticmethod
     def isLinux():
-        return CraftBootstrap.isUnix() and platform.system() == 'Linux'
+        return CraftBootstrap.isUnix() and platform.system() == 'Linux' and not CraftBootstrap.isAndroid()
 
     @staticmethod
     def printProgress(percent):
@@ -175,6 +179,11 @@ def getABI(args):
                                                         ], "Microsoft Visual Studio 2019", returnDefaultWithoutPrompt=args.use_defaults)
         abi += f"_64"
 
+    elif CraftBootstrap.isAndroid():
+        platform = "android"
+        compiler = "clang"
+        abi = CraftBootstrap.promptForChoice("Select target architecture",
+                                             ["arm", "arm64", "x86", "x86_64"], returnDefaultWithoutPrompt=args.use_defaults)
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
             platform = "macos"
