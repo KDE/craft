@@ -78,7 +78,7 @@ class AppxPackager(CollectionPackagerBase):
           <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" />
         </desktop:Extension>"""
 
-    Aliases = r"""<uap3:Extension Category="windows.appExecutionAlias" Executable="@{executable}" EntryPoint="Windows.FullTrustApplication">
+    Aliases = r"""<uap3:Extension Category="windows.appExecutionAlias" Executable="@{alias_executable}" EntryPoint="Windows.FullTrustApplication">
           <uap3:AppExecutionAlias>
             <desktop:ExecutionAlias Alias="@{alias}" />
           </uap3:AppExecutionAlias>
@@ -147,6 +147,7 @@ class AppxPackager(CollectionPackagerBase):
                 defines["alias"] += CraftCore.compiler.executableSuffix
             defines["extensions"] += AppxPackager.Aliases
             defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
+            defines.setdefault("alias_executable", self.defines["executable"] if "executable" in self.defines else self.defines["shortcuts"][0]["target"])
 
         extensions = defines["extensions"]
         if extensions:
