@@ -19,6 +19,7 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self):
         PipPackageBase.__init__(self)
+        self.pipPackageName = "pip"
 
     def make(self):
         for ver, python in self._pythons:
