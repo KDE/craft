@@ -255,6 +255,10 @@ def setUp(args):
     else:
         boot.setSettignsValue("Compile", "MakeProgram", "make")
 
+    if CraftBootstrap.isAndroid():
+        # default to MinSizeRel on Android, as that's what we have cached there
+        boot.setSettignsValue("Compile", "BuildType", "MinSizeRel")
+
     boot.writeSettings()
 
     cmd = []
