@@ -24,6 +24,6 @@ class Package(PipPackageBase):
                     if not utils.system([python, "-m", "virtualenv", self.venvDir(ver)]):
                         return False
                 else:
-                    if not utils.system([python, "-m", "venv", "--without-pip", self.venvDir(ver)]):
+                    if not utils.system([python, "-m", "venv", self.venvDir(ver)]):
                         return False
         return True
