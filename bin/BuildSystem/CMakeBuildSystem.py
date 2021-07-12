@@ -163,15 +163,14 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def unittest(self):
         """running cmake based unittests"""
-
         self.enterBuildDir()
-
-        command = ["ctest", "--output-on-failure", "--timeout", "300", "-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
-        if CraftCore.debug.verbose() == 1:
-            command += ["-V"]
-        elif CraftCore.debug.verbose() > 1:
-            command += ["-VV"]
-        return utils.system(command)
+        with utils.ScopedEnv({"QT_FORCE_STDERR_LOGGING": 1, "QT_ASSUME_STDERR_HAS_CONSOLE": 1}):
+            command = ["ctest", "--output-on-failure", "--timeout", "300", "-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
+            if CraftCore.debug.verbose() == 1:
+                command += ["-V"]
+            elif CraftCore.debug.verbose() > 1:
+                command += ["-VV"]
+            return utils.system(command)
 
     def internalPostQmerge(self):
         if not super().internalPostQmerge():
