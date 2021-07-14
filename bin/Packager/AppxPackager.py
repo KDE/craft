@@ -40,6 +40,7 @@ class AppxPackager(CollectionPackagerBase):
          xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
          xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
          xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
          @{additional_xmlns}
     """
     Extensions = r"""
@@ -105,7 +106,7 @@ class AppxPackager(CollectionPackagerBase):
         if "file_types" in defines:
             CraftCore.log.info("The package will support the following file types:")
             CraftCore.log.info(defines["file_types"])
-            defines["file_types"] = "\n".join([f"""<uap:FileType>{t}</uap:FileType>""" for t in set(defines["file_types"])])
+            defines["file_types"] = "\n".join([f"""<uap:FileType>{t}</uap:FileType>""" if t != "*" else f"""<uap10:FileType>{t}</uap10:FileType>""" for t in set(defines["file_types"])])
             defines.setdefault("extensions", AppxPackager.Extensions)
         else:
             defines.setdefault("file_types", "")
