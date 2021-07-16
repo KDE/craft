@@ -209,6 +209,8 @@ class UserOptions(object):
         try:
             if valA is None:
                 return valB
+            if hasattr(valA, "fromSetting"):
+                return valA.fromSetting(valB)
             _type = valA if callable(valA) else type(valA)
             if _type == type(valB):
                 return valB
@@ -272,7 +274,10 @@ class UserOptions(object):
                 del _instance.settings[self._package.path]
         else:
             value = self._convert(_instance.registeredOptions[package.path][key].value, value)
-            settings[key] = str(value)
+            if hasattr(value, "toSetting"):
+                settings[key] = value.toSetting()
+            else:
+                settings[key] = str(value)
             setattr(self, key, value)
         return True
 

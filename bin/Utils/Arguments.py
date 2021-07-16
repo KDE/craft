@@ -1,4 +1,5 @@
 
+from CraftCore import CraftCore
 import subprocess
 
 class Arguments(object):
@@ -13,6 +14,13 @@ class Arguments(object):
     def __setLegacy(self):
         if self.__legacyString is None:
             self.__legacyString = subprocess.list2cmdline([str(x) for x in self.__args])
+
+    def toSetting(self):
+        return ";".join(self.get())
+
+    @staticmethod
+    def fromSetting(data : str):
+        return Arguments(CraftCore.settings._parseList(data))
 
     def append(self, other):
         if not other:
