@@ -283,7 +283,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
                 pass
-            elif isinstance(stdout, io.StringIO):
+            elif isinstance(stdout, io.StringIO) or "IORedirector" in stdout.__class__.__name__:
                 stdout.write(line.decode("UTF-8"))
             else:
                 stdout.write(line)
