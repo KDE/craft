@@ -3,6 +3,9 @@ from Package.MaybeVirtualPackageBase import *
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD
+
     def setTargets(self):
         for ver in ["1900"]:
             self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/7z{ver}-extra.zip"
