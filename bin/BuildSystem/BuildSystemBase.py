@@ -189,10 +189,11 @@ class BuildSystemBase(CraftBase):
         oldPaths = [Path(x).as_posix() for x in oldPaths]
         newValue = Path(newPath).as_posix().encode()
         for fileName in files:
-            if not os.path.exists(fileName):
+            fileName = Path(fileName)
+            if not fileName.exists():
                 CraftCore.log.warning(f"File {fileName} not found.")
                 return False
-            with open(fileName, "rb") as f:
+            with fileName.open("rb") as f:
                 content = f.read()
             dirty = False
             for oldPath in oldPaths:
@@ -214,7 +215,7 @@ class BuildSystemBase(CraftBase):
                         CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
             if dirty:
                 with utils.makeTemporaryWritable(fileName):
-                    with open(fileName, "wb") as f:
+                    with fileName.open("wb") as f:
                         f.write(content)
         return True
 
