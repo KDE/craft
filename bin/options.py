@@ -56,7 +56,7 @@ class UserOptions(object):
 ##     [libs]
 ##     ignored = True
 ##
-##     [lib/qt5]
+##     [libs/qt5]
 ##     version = 5.9.3
 ##     ignored = False
 ##     withMySQL = True
