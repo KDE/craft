@@ -10,8 +10,9 @@ from Utils.Arguments import Arguments
 
 import os
 import glob
-import re
 import stat
+
+from pathlib import Path
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
@@ -61,7 +62,16 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + " " + self.shell.environment["LDFLAGS"]
         self.shell.environment["MAKE"] = self.makeProgram
 
-        with utils.ScopedEnv({"CLICOLOR_FORCE": None}):
+        env = {"CLICOLOR_FORCE": None}
+        if self.supportsCCACHE:
+            cxx = CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            if CraftCore.compiler.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            if cxx.exists():
+                env["CXX"] = cxx
+                env["CC"] = cxx.parent / Path(os.environ["CC"]).name
+
+        with utils.ScopedEnv(env):
             autogen = self.sourceDir() / "autogen.sh"
             if self.subinfo.options.configure.bootstrap and autogen.exists():
                 mode = os.stat(autogen).st_mode
@@ -135,6 +145,3 @@ class AutoToolsBuildSystem(BuildSystemBase):
             options += [f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"]
         options += self.platform
         return options
-
-    def ccacheOptions(self):
-        return [f"CC=ccache {os.environ['CC']}", f"CXX=ccache {os.environ['CXX']}"]
