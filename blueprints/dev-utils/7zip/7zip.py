@@ -31,6 +31,9 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "2103"
 
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/kshimgen"] = None
+
 from Package.BinaryPackageBase import *
 
 
