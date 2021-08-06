@@ -176,7 +176,7 @@ def compress(archive : Path, source : str) -> bool:
     if os.path.isfile(archive):
         deleteFile(archive)
 
-    if not CraftCore.cache.findApplication("7za") and archive.suffx == ".zip":
+    if not CraftCore.cache.findApplication("7za") and archive.suffix == ".zip":
         return shutil.make_archive(archive.with_suffix(""), "zip", source)
 
     if CraftCore.compiler.isUnix and archive.endswith(".tar.xz"):
