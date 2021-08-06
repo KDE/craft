@@ -179,7 +179,7 @@ def compress(archive : Path, source : str) -> bool:
     if not CraftCore.cache.findApplication("7za") and archive.suffix == ".zip":
         return shutil.make_archive(archive.with_suffix(""), "zip", source)
 
-    if CraftCore.compiler.isUnix and archive.endswith(".tar.xz"):
+    if CraftCore.compiler.isUnix and archive.suffixes == [".tar", ".xz"]:
         return __xz(archive, source)
     else:
         return __7z(archive, source)
