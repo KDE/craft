@@ -103,7 +103,7 @@ class PackagerBase(CraftBase):
 
     def _createArchive(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
         archiveName = Path(destDir) / archiveName
-        if archiveName.suffix() == ".7z" and not CraftCore.cache.findApplication("7za"):
+        if archiveName.suffix == ".7z" and not CraftCore.cache.findApplication("7za"):
             if CraftCore.compiler.isUnix:
                 archiveName = archiveName.with_suffix(".xz")
             else:
