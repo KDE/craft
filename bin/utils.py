@@ -137,10 +137,10 @@ def un7zip(fileName, destdir, flag=None):
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     return system(command,  **kw)
 
-def compress(archive : str, source : str) -> bool:
+def compress(archive : Path, source : str) -> bool:
+    archive = Path(archive)
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     def __7z(archive, source):
-        archive = Path(archive)
         app = CraftCore.cache.findApplication("7za")
         kw = {}
         flags = []
@@ -175,6 +175,10 @@ def compress(archive : str, source : str) -> bool:
     createDir(os.path.dirname(archive))
     if os.path.isfile(archive):
         deleteFile(archive)
+
+    if not CraftCore.cache.findApplication("7za") and archive.suffx == ".zip":
+        return shutil.make_archive(archive.with_suffix(""), "zip", source)
+
     if CraftCore.compiler.isUnix and archive.endswith(".tar.xz"):
         return __xz(archive, source)
     else:
