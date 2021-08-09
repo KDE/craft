@@ -147,7 +147,7 @@ class AppxPackager(CollectionPackagerBase):
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
         if "additional_desktop_extensions" in defines:
-            defines["additional_desktop_extensions"] += AppxPackager.AdditionalDesktopExtensions
+            defines["extensions"] += AppxPackager.AdditionalDesktopExtensions
 
         if "alias" in defines:
             if not defines["alias"].endswith(CraftCore.compiler.executableSuffix):
