@@ -40,12 +40,6 @@ class subinfo(info.infoclass):
 
         self.defaultTarget = "3.19.2"
 
-    def setDependencies(self):
-        # needed for the extraction on windows
-        # on unix 7z depends on cmake...
-        if CraftCore.compiler.isWindows:
-            self.buildDependencies["dev-utils/7zip"] = None
-
 from Package.BinaryPackageBase import *
 
 class Package(BinaryPackageBase):

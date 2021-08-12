@@ -4,7 +4,7 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD and CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
         for ver in ["1900"]:
@@ -30,6 +30,9 @@ class subinfo(info.infoclass):
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "2103"
+
+    def setDependencies(self):
+        self.buildDependencies["dev-utils/kshimgen"] = None
 
 from Package.BinaryPackageBase import *
 

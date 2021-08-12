@@ -28,6 +28,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/cmake-base"] = None
+        self.buildDependencies["dev-utils/mingw-w64"] = None
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
