@@ -8,6 +8,7 @@ class AppImagePackager(CollectionPackagerBase):
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
+        defines["version"] = self.formatVersion(includeRevision=True, includeTimeStamp=False)
         return defines
 
     def createPackage( self ):
@@ -40,7 +41,7 @@ class AppImagePackager(CollectionPackagerBase):
         if OsUtils.detectDocker():
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
         env["OUTPUT"] = defines["setupname"]
-        env["VERSION"] = self.formatVersion(includeRevision=True, includeTimeStamp=False)
+        env["VERSION"] = defines["version"]
         with utils.ScopedEnv(env):
             args = ["--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]]
             if CraftCore.debug.verbose() > 0:
