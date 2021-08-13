@@ -8,7 +8,6 @@ class AppImagePackager(CollectionPackagerBase):
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
-        defines["version"] = self.formatVersion(includeRevision=True, includeTimeStamp=False)
         return defines
 
     def createPackage( self ):
