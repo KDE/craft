@@ -66,7 +66,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
                     lines = f.read()
                     # a false positive should not really hurt...
                     OsUtils.InDocker = ":/docker/" in lines
-                    CraftCore.log.info(f"detectDocker: {OsUtils.InDocker} {lines}")
+                    CraftCore.log.debug(f"detectDocker: {OsUtils.InDocker} {lines}")
         return OsUtils.InDocker
 
 class LockFile(CraftOS.OsUtilsBase.LockFileBase):
