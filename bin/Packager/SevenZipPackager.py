@@ -44,6 +44,14 @@ class SevenZipPackager(PackagerBase):
     def __init__(self):
         PackagerBase.__init__(self)
 
+    def _addQtConf(self, appFolder : Path):
+        parser = configparser.ConfigParser()
+        parser.optionxform = str
+        parser.add_section("Paths")
+        parser.set("Paths", "Translations", "../translations")
+        with open(appFolder / "bin/qt.conf", "w", encoding="UTF-8") as conf:
+            parser.write(conf)
+
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""
         cacheMode = CraftCore.settings.getboolean("Packager", "CreateCache", False)
@@ -53,6 +61,8 @@ class SevenZipPackager(PackagerBase):
             dstpath = self.cacheLocation()
         else:
             dstpath = self.packageDestinationDir()
+
+        self._addQtConf(self.imageDir())
 
         if not self._createArchive(self.binaryArchiveName(fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
             return False
