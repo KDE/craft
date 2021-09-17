@@ -4,7 +4,7 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD and CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
         for ver in ["1900"]:

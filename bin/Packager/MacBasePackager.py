@@ -103,7 +103,9 @@ class MacBasePackager( CollectionPackagerBase ):
         parser.add_section("Paths")
         parser.set("Paths", "Imports", "Resources/qml")
         parser.set("Paths", "Qml2Imports", "Resources/qml")
-        with open(appFolder / "Contents/Resources/qt.conf", "w", encoding="UTF-8") as conf:
+        configFile = appFolder / "Contents/Resources/qt.conf"
+        utils.createDir(configFile.parent)
+        with configFile.open("w", encoding="UTF-8") as conf:
             parser.write(conf)
 
 class MacDylibBundler(object):

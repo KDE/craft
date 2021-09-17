@@ -62,10 +62,6 @@ class AppxPackager(CollectionPackagerBase):
           <desktop:StartupTask TaskId="@{craft_id}" Enabled="true" DisplayName="@{display_name}" />
         </desktop:Extension>"""
 
-    AdditionalDesktopExtensions = r"""
-        @{additional_desktop_extensions}
-    """
-
     # https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/send-local-toast-desktop
     # TODO: get the correct CLSID from snoretoast
     SnoreToast = r"""
@@ -146,8 +142,6 @@ class AppxPackager(CollectionPackagerBase):
             defines["extensions"] += AppxPackager.SnoreToast
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
-        if "additional_desktop_extensions" in defines:
-            defines["extensions"] += AppxPackager.AdditionalDesktopExtensions
 
         if "alias" in defines:
             if not defines["alias"].endswith(CraftCore.compiler.executableSuffix):
@@ -167,6 +161,12 @@ class AppxPackager(CollectionPackagerBase):
 
         if capabilities:
             defines["capabilities"] = f"<Capabilities>{capabilities}</Capabilities>"
+
+        defines.setdefault("desktop_extensions", "")
+        desktop_extensions = defines["desktop_extensions"]
+
+        if desktop_extensions:
+            defines["desktop_extensions"] = f"<Extensions>{desktop_extensions}</Extensions>"
 
         defines.setdefault("xml_namespaces", AppxPackager.XMLNamespaces)
         xml_namespaces = defines["xml_namespaces"]
