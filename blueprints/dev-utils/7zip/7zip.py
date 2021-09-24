@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
                     self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{ver}/7z{ver}-{'mac' if CraftCore.compiler.isMacOS else 'linux'}{suffix}.tar.xz"
                 self.targetDigestUrls[ver] =  self.targets[ver] + ".sha256"
             else:
-                self.targets[ver] =  "https://github.com/fmoc/prebuilt-7z/releases/download/continuous/7z-21.03.tar.gz"
+                self.targets[ver] =  "https://github.com/fmoc/prebuilt-7z/releases/download/continuous/prebuilt-7z-21.03-x86_64.tar.gz"
 
 
         self.targetDigests["1900"] =  (['c946aa64d8a83176d44959bd84b27f42d254c4050ff7e408c22f682193481b95'], CraftHash.HashAlgorithm.SHA256)
