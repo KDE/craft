@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
             self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
 
         for ver in ["2103"]:
+            self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
             if not self.options.dynamic.useCentosBasedBuild:
-                self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
                 if CraftCore.compiler.isWindows:
                     self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{ver}/7z{ver}-extra.zip"
                     self.targetInstSrc[ver] = f"7z{ver}-extra"
