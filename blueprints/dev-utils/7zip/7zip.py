@@ -48,11 +48,17 @@ class Package(BinaryPackageBase):
         self.subinfo.options.package.disableBinaryCache = True
         self.subinfo.shelveAble = False
 
+    def unpack(self):
+        if not super().unpack():
+            return False
+        if self.subinfo.options.dynamic.useCentosBasedBuild:
+            print(self.localFilePath()[0])
+            return utils.deleteFile(self.localFilePath()[0])
+        return True
+
     def postInstall(self):
         if self.subinfo.buildTarget == "1900":
             return True
-        if self.subinfo.options.dynamic.useCentosBasedBuild:
-            return utils.createShim(self.imageDir() / f"dev-utils/bin/7za" , self.installDir() / "7z")
         return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}" , self.installDir() /  ("7za.exe" if CraftCore.compiler.isWindows else "7zz"))
 
     def postQmerge(self):
