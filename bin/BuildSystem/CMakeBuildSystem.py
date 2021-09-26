@@ -69,7 +69,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     BuildSystemBase.configureOptions(self),
                     f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
                     f"-DCMAKE_PREFIX_PATH={craftRoot}",
-                    f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include"
+                    f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
                 ]
 
         if self.buildType() is not None:
