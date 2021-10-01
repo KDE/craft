@@ -52,7 +52,6 @@ class Package(BinaryPackageBase):
         if not super().unpack():
             return False
         if self.subinfo.options.dynamic.useCentosBasedBuild:
-            print(self.localFilePath()[0])
             return utils.deleteFile(self.localFilePath()[0])
         return True
 
