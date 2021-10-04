@@ -103,6 +103,7 @@ class MacBasePackager( CollectionPackagerBase ):
         parser.add_section("Paths")
         parser.set("Paths", "Imports", "Resources/qml")
         parser.set("Paths", "Qml2Imports", "Resources/qml")
+        parser.set("Paths", "Translations", "Resources/Translations")
         configFile = appFolder / "Contents/Resources/qt.conf"
         utils.createDir(configFile.parent)
         with configFile.open("w", encoding="UTF-8") as conf:

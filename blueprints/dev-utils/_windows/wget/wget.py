@@ -2,6 +2,10 @@ import info
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        # ssl issues...
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NoPlatform
+
     def setTargets(self):
         fileNames = {"1.19.4":"wget-1.19.4_curl-7.58_aria2-1.33.1_dwnl.7z",
                   "1.19.2":"wget-1.19.2_curl-7.56.1_aria2-1.33_dwnl_rev2.7z",

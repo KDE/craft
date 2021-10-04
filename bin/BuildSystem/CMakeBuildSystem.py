@@ -68,7 +68,9 @@ class CMakeBuildSystem(BuildSystemBase):
                     "-DBUILD_SHARED_LIBS={shared}".format(shared="OFF" if self.subinfo.options.buildStatic else "ON"),
                     BuildSystemBase.configureOptions(self),
                     f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
-                    f"-DCMAKE_PREFIX_PATH={craftRoot}"
+                    f"-DCMAKE_PREFIX_PATH={craftRoot}",
+                    f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
+                    f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
                 ]
 
         if self.buildType() is not None:
