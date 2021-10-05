@@ -1,4 +1,3 @@
-
 #    this file sets some environment variables that are needed
 #    for finding programs and libraries etc.
 #    by Hannah von Reth <vonreth@kde.org>
@@ -10,7 +9,7 @@ cls
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
-[version]$minPythonVersion = 3.6
+[version]$minPythonVersion = '3.6'
 
 function findPython([string] $name)
 {
