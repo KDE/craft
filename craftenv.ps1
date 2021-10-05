@@ -23,6 +23,8 @@ function findPython([string] $name)
     } else {
         if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
             $env:CRAFT_PYTHON=$py.Source
+        } elseif ((& $py --version) -match 'Python (?<version>[\d.]+)' -and [version]$Matches['version'] -ge $minPythonVersion) {
+            $env:CRAFT_PYTHON=$py.Source
         }
     }
 }
