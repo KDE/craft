@@ -68,8 +68,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if CraftCore.compiler.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
-                env["CXX"] = cxx
-                env["CC"] = cxx.parent / Path(os.environ["CC"]).name
+                env["CXX"] = OsUtils.toMSysPath(cxx)
+                env["CC"] = OsUtils.toMSysPath(cxx.parent / Path(os.environ["CC"]).name)
 
         with utils.ScopedEnv(env):
             autogen = self.sourceDir() / "autogen.sh"
