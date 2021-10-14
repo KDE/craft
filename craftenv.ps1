@@ -20,10 +20,12 @@ function findPython([string] $name)
     if ($PSVersionTable.Platform -eq "Unix") {
         $env:CRAFT_PYTHON = $py.Source
     } else {
-        if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
-            $env:CRAFT_PYTHON=$py.Source
-        } elseif ((& $py --version) -match 'Python (?<version>[\d.]+)' -and [version]$Matches['version'] -ge $minPythonVersion) {
-            $env:CRAFT_PYTHON=$py.Source
+        if ($py) {
+            if (($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+                $env:CRAFT_PYTHON=$py.Source
+            } elseif ((& $py --version) -match 'Python (?<version>[\d.]+)' -and [version]$Matches['version'] -ge $minPythonVersion) {
+                $env:CRAFT_PYTHON=$py.Source
+            }
         }
     }
 }
