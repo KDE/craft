@@ -1,6 +1,7 @@
 import shutil
 
 from BuildSystem.BuildSystemBase import *
+from utils import ScopedEnv
 
 
 class PipBuildSystem(BuildSystemBase):
@@ -54,17 +55,23 @@ class PipBuildSystem(BuildSystemBase):
         return True
 
     def install(self):
-        ok = True
-        for ver, python in self._pythons:
-            command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed"]
-            if not self.venvDir(ver).exists():
-                command += ["--user"]
-            if self.subinfo.svnTarget():
-                command += ["-e", self.sourceDir()]
-            else:
-                command += [self.pipPackageName]
-            ok = ok and utils.system(command)
-        return ok
+        env  = {}
+        if CraftCore.compiler.isMSVC():
+            env.update({
+                "LIB" : f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
+                "INCLUDE" : f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}"})
+        with ScopedEnv(env):
+            ok = True
+            for ver, python in self._pythons:
+                command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed"]
+                if not self.venvDir(ver).exists():
+                    command += ["--user"]
+                if self.subinfo.svnTarget():
+                    command += ["-e", self.sourceDir()]
+                else:
+                    command += [self.pipPackageName]
+                ok = ok and utils.system(command)
+            return ok
 
     def runTest(self):
         return False
