@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 from pathlib import Path
+import uuid
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -41,6 +42,18 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
                 else:
                     msg += str(error)
                 CraftCore.log.error(msg)
+                if error == 5:
+                    tmp = f"{path}-{uuid.uuid1().hex}.craft_delete"
+                    MOVEFILE_DELAY_UNTIL_REBOOT = 0x4
+                    MOVEFILE_WRITE_THROUGH = 0x8
+                    ret = ctypes.windll.kernel32.MoveFileExW(str(path), tmp, MOVEFILE_WRITE_THROUGH)
+                    error = ctypes.windll.kernel32.GetLastError()
+                    CraftCore.log.error(f"MoveFileExW1 {error}")
+                    ret = ctypes.windll.kernel32.MoveFileExW(tmp, 0, MOVEFILE_DELAY_UNTIL_REBOOT)
+                    if not ret:
+                        error = ctypes.windll.kernel32.GetLastError()
+                        CraftCore.log.error(f"MoveFileExW {error}")
+                        return False
                 return False
         return True
 
