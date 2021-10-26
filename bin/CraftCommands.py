@@ -227,10 +227,14 @@ def unShelve(shelve, args):
             settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
     opt = []
-    if args.probe:
-        opt.append("-p")
-    if args.verbose:
-        opt.append("-" + "v" * args.verbose)
+    skip = False
+    for o in sys.argv[1:]:
+        if not skip:
+            if o in {"--list-file", "--unshelve"}:
+                skip = True
+                continue
+            opt.append(o)
+        skip = False
     if not __recurseCraft(["--options", "virtual.ignored=True"] + opt, ["craft"]):
         return False
     return __recurseCraft(opt, list(packages.keys()))
