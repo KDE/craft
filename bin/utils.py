@@ -785,6 +785,8 @@ class ProgressBar(object):
 
     def print(self, progress : int, force : bool=False):
         progress = int(progress)
+        progress = max(0, progress)
+        progress = min(100, progress)
         if not force and not os.isatty(sys.stderr.fileno()):
             return
         if self._lastValue == progress:

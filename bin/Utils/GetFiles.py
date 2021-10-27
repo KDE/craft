@@ -74,24 +74,22 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
         return utils.system([powershell, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command",
                        f"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")"])
     else:
-        def dlProgress(count, blockSize, totalSize):
-            if totalSize != -1:
-                percent = int(count * blockSize * 100 / totalSize)
-                utils.printProgress(percent)
-            else:
-                sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-                sys.stdout.flush()
+        dest = os.path.join(destdir, filename)
+        CraftCore.log.info(f"Downloading: {url} to {dest}")
+        with utils.ProgressBar() as progress:
+            def dlProgress(count, blockSize, totalSize):
+                if totalSize != -1:
+                    progress.print(int(count * blockSize * 100 / totalSize))
+                else:
+                    sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
+                    sys.stdout.flush()
 
-        try:
-            urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
-                                       reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
-        except Exception as e:
-            CraftCore.log.warning(e)
-            return False
-
-    if CraftCore.debug.verbose() >= 0:
-        sys.stdout.write("\n")
-        sys.stdout.flush()
+            try:
+                urllib.request.urlretrieve(url, filename=dest,
+                                        reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
+            except Exception as e:
+                CraftCore.log.warning(e)
+                return False
     return True
 
 
