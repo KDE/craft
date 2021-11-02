@@ -23,7 +23,6 @@ class CraftDebug(object):
     @staticmethod
     def __rotator(source, dest):
         with open(source, "rb") as sf:
-            print(source, dest)
             with gzip.open(dest, "wb") as df:
                 shutil.copyfileobj(sf, df)
         os.remove(source)
