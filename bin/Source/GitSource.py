@@ -223,14 +223,15 @@ class GitSource(VersionSystemSourceBase):
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
-        sourcedir = self.checkoutDir(index)
+        chkDir  = Path(self.checkoutDir(index))
+        # shorten the path to the dir containing the src on Windows
+        sourcedir = CraftShortPath(chkDir.parent).shortPath / chkDir.name
 
         if self.subinfo.hasTargetSourcePath():
-            sourcedir = os.path.join(sourcedir, self.subinfo.targetSourcePath())
+            sourcedir = sourcedir / self.subinfo.targetSourcePath()
 
         CraftCore.log.debug("using sourcedir: %s" % sourcedir)
-        parent, child = os.path.split(sourcedir)
-        return Path(CraftShortPath(parent).shortPath) / child
+        return sourcedir
 
     def getUrls(self):
         """print the url where to clone from and the branch/tag/hash"""
