@@ -235,7 +235,7 @@ def unShelve(shelve, args):
                 continue
             opt.append(o)
         skip = False
-    if not __recurseCraft(["--options", "virtual.ignored=True"] + opt, ["craft"]):
+    if not __recurseCraft(["--options", "virtual.ignored=True", "--update"] + opt, ["craft"]):
         return False
     return __recurseCraft(opt, list(packages.keys()))
 
