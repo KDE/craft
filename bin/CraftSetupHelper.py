@@ -202,15 +202,18 @@ class SetupHelper(object):
         args = architectures[architecture]
         path = ""
         # we prefer newer compiler that provide legacy toolchains
-        if version and version < 16:
-            # are we using msvc2017 with "VC++ 2015.3 v14.00 (v140) toolset for desktop"
-            component = "Microsoft.VisualStudio.Component.VC."
-            if version == 14:
-                component += str(CraftCore.compiler.getMsvcPlatformToolset())
+        if version:
+            if version == 16:
+                # todo find a more generic id
+                component = "Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64"
             else:
-                component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
+                component = "Microsoft.VisualStudio.Component.VC."
+                if version == 14:
+                    component += str(CraftCore.compiler.getMsvcPlatformToolset())
+                else:
+                    component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
-            for v in [16, 15]:
+            for v in [17, 16, 15]:
                 path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component], native=native)
                 if path:
                     if not toolset:
