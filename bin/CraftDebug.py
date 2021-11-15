@@ -1,4 +1,5 @@
 import functools
+import gzip
 import inspect
 import logging
 import logging.handlers
@@ -18,6 +19,14 @@ except:
 
 
 class CraftDebug(object):
+    # compress the logs
+    @staticmethod
+    def __rotator(source, dest):
+        with open(source, "rb") as sf:
+            with gzip.open(dest, "wb") as df:
+                shutil.copyfileobj(sf, df)
+        os.remove(source)
+
     def __init__(self):
         self.seenDeprecatedFunctions = set()
 
@@ -36,8 +45,12 @@ class CraftDebug(object):
                 logfileName = os.environ["CRAFT_LOG_FILE"]
 
             if logfileName != "0":
-                self._fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at", maxBytes=10000000,
-                                                               backupCount=50)
+                self._fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at",
+                        maxBytes=100000000, # 100mb uncompressed
+                        backupCount=50 # 50 compressed gz files
+                )
+                self._fileHandler.rotator = CraftDebug.__rotator
+                self._fileHandler.namer = lambda x: f"{x}.gz"
                 self._fileHandler.doRollover()
                 self._fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
                 self._log.addHandler(self._fileHandler)

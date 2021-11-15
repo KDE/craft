@@ -1,4 +1,3 @@
-
 #    this file sets some environment variables that are needed
 #    for finding programs and libraries etc.
 #    by Hannah von Reth <vonreth@kde.org>
@@ -10,7 +9,7 @@ cls
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
-[version]$minPythonVersion = 3.6
+[version]$minPythonVersion = '3.6'
 
 function findPython([string] $name)
 {
@@ -18,10 +17,10 @@ function findPython([string] $name)
         return
     }
     $py = (Get-Command $name -ErrorAction SilentlyContinue)
-    if ($PSVersionTable.Platform -eq "Unix") {
-        $env:CRAFT_PYTHON = $py.Source
-    } else {
-        if ($py -and ($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+    if ($py) {
+        if (($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+            $env:CRAFT_PYTHON=$py.Source
+        } elseif ((& $py --version) -match 'Python (?<version>[\d.]+)' -and [version]$Matches['version'] -ge $minPythonVersion) {
             $env:CRAFT_PYTHON=$py.Source
         }
     }
@@ -66,6 +65,7 @@ if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"
     findPython("{0}/python" -f $settings["Paths"]["Python"])
 }
 
+findPython("python3.10")
 findPython("python3.9")
 findPython("python3.8")
 findPython("python3.7")

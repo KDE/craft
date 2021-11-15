@@ -12,7 +12,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from collections import MutableMapping, OrderedDict
+from collections import OrderedDict
+from collections.abc import MutableMapping
 
 # https://raw.githubusercontent.com/kennethreitz/requests/v2.21.0/requests/structures.py
 class CaseInsensitiveDict(MutableMapping):

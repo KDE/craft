@@ -103,6 +103,7 @@ def un7zip(fileName, destdir, flag=None):
     progressFlags = []
     type = []
     app = CraftCore.cache.findApplication("7za")
+    env = {}
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2",  "-bsp1"]
         kw["stderr"] = subprocess.PIPE
@@ -124,6 +125,8 @@ def un7zip(fileName, destdir, flag=None):
             if progressFlags:
                 progressFlags = ["-bsp0"]
             command = [sys.executable, "-u", Path(__file__).parent / "untar.py", destdir]
+            # don't fail on non printable log messages
+            env["PYTHONIOENCODING"] = ":replace"
             # we don't have progress, diesplay error messages
             if "stderr" in kw:
                 del kw["stderr"]
@@ -135,7 +138,8 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    return system(command,  **kw)
+    with ScopedEnv(env):
+        return system(command,  **kw)
 
 def compress(archive : Path, source : str) -> bool:
     archive = Path(archive)
@@ -785,6 +789,8 @@ class ProgressBar(object):
 
     def print(self, progress : int, force : bool=False):
         progress = int(progress)
+        progress = max(0, progress)
+        progress = min(100, progress)
         if not force and not os.isatty(sys.stderr.fileno()):
             return
         if self._lastValue == progress:
