@@ -25,6 +25,7 @@
 
 ### fetch functions
 
+from genericpath import exists
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 import utils
@@ -32,6 +33,7 @@ from shells import Powershell
 
 import io
 import os
+from pathlib import Path
 import urllib
 import subprocess
 import sys
@@ -57,20 +59,25 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
     elif pUrl.scheme == "minio":
         return minioGet(pUrl.netloc + pUrl.path, destdir, filename)
 
-    # curl and wget basically only work when we have a cert store on windows
-    if not CraftCore.compiler.isWindows or os.path.exists(os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")):
-        if not CraftCore.settings.getboolean("General", "NoWget"):
-            if CraftCore.cache.findApplication("wget"):
-                return wgetFile(url, destdir, filename, quiet)
+    absFilename = Path(destdir) / filename
+    # try the other methods as fallback if we are bootstrapping
+    bootStrapping = not (CraftCore.standardDirs.etcDir() / "cacert.pem").exists()
+    if not CraftCore.settings.getboolean("General", "NoWget"):
+        if CraftCore.cache.findApplication("wget"):
+            if not wgetFile(url, destdir, filename, quiet) and not bootStrapping:
+                return False
 
-        if CraftCore.cache.findApplication("curl"):
-            return curlFile(url, destdir, filename, quiet)
+    if CraftCore.cache.findApplication("curl"):
+        if not curlFile(url, destdir, filename, quiet) and not bootStrapping:
+            return False
 
-    if os.path.exists(os.path.join(destdir, filename)):
+    if bootStrapping and absFilename.exists():
+        os.remove(absFilename)
+
+    if absFilename.exists():
         return True
 
-    filename = os.path.join(destdir, filename)
-    CraftCore.log.info(f"Downloading: {url} to {filename}")
+    CraftCore.log.info(f"Downloading: {url} to {absFilename}")
     with utils.ProgressBar() as progress:
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
@@ -80,13 +87,13 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
                 sys.stdout.flush()
 
         try:
-            urllib.request.urlretrieve(url, filename=filename,
+            urllib.request.urlretrieve(url, filename=absFilename,
                                     reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
         except Exception as e:
             CraftCore.log.warning(e)
             powershell =  Powershell()
             if powershell.pwsh:
-                return powershell.execute([f"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile(\"{url}\", \"{filename}\")"])
+                return powershell.execute([f"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile(\"{url}\", \"{absFilename}\")"])
             return False
     return True
 
