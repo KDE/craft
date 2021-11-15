@@ -64,11 +64,15 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
     bootStrapping = not (CraftCore.standardDirs.etcDir() / "cacert.pem").exists()
     if not CraftCore.settings.getboolean("General", "NoWget"):
         if CraftCore.cache.findApplication("wget"):
-            if not wgetFile(url, destdir, filename, quiet) and not bootStrapping:
+            if wgetFile(url, destdir, filename, quiet):
+                return True
+            if not bootStrapping:
                 return False
 
     if CraftCore.cache.findApplication("curl"):
-        if not curlFile(url, destdir, filename, quiet) and not bootStrapping:
+        if curlFile(url, destdir, filename, quiet):
+            return True
+        if not bootStrapping:
             return False
 
     if bootStrapping and absFilename.exists():
