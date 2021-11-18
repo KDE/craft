@@ -5,7 +5,7 @@ from Package.MaybeVirtualPackageBase import *
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
-        self.options.dynamic.registerOption("useCentosBasedBuild", False)
+        self.options.dynamic.registerOption("useCentosBasedBuild", CraftCore.compiler.isLinux)
 
     def setTargets(self):
         for ver in ["1900"]:
