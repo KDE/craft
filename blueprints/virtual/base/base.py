@@ -37,7 +37,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/libtool"] = None
 
         if CraftCore.compiler.isMacOS:
-            self.buildDependencies["dev-utils/packagesdev"] = None
             self.buildDependencies["dev-utils/create-dmg"] = None
 
         if CraftCore.compiler.isMSVC() or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
