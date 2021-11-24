@@ -50,7 +50,9 @@ class UserOptions(object):
 #     buildTests: [True|False]
 #     buildStatic: [True|False]
 #     # arguments passed to the configure step
-#     args: str
+#     args: [str]
+#     # special args passed to qmake
+#     featureArguments:  [str]
 #
 # Example:
 ##     [libs]
@@ -133,7 +135,8 @@ class UserOptions(object):
         _register("buildStatic",bool,   permanent=False)
 
         _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False, compatible=True) # cachability already handled by cache behaviour
-        _register("args",       "",     permanent=False)
+        _register("args",       Arguments(),     permanent=False)
+        _register("featureArguments",Arguments(),     permanent=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
@@ -209,7 +212,7 @@ class UserOptions(object):
         try:
             if valA is None:
                 return valB
-            if hasattr(valA, "fromSetting"):
+            if  isinstance(valB, str) and hasattr(valA, "fromSetting"):
                 return valA.fromSetting(valB)
             _type = valA if callable(valA) else type(valA)
             if _type == type(valB):
@@ -315,10 +318,8 @@ class UserOptions(object):
         package = self._package
         if key not in _instance.registeredOptions[package.path]:
             raise BlueprintException(f"Failed to set default for unregistered option: [{package}]{key}.", package)
-            return False
-
         settings = _instance.initPackage(self)
-        _instance.registeredOptions[package.path][key].value = default
+        _instance.registeredOptions[package.path][key].value = self._convert(_instance.registeredOptions[package.path][key].value, default)
         if key not in settings:
             settings[key] = str(default)
             setattr(self, key, default)

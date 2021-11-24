@@ -10,8 +10,6 @@ from CraftStandardDirs import CraftStandardDirs
 class Qt5CoreBuildSystem(QMakeBuildSystem):
     def __init__(self):
         QMakeBuildSystem.__init__(self)
-        self.subinfo.options.dynamic.registerOption("featureArguments", Arguments(), permanent=False)
-
 
     def _qtCoreEnv(self):
         env = {}
