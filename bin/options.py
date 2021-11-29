@@ -397,7 +397,7 @@ class OptionsConfigure(OptionsBase):
         ## with this option additional arguments could be added to the configure commmand line
         self.args = Arguments(dynamic.args)
         ## with this option additional arguments could be added to the configure commmand line (for static builds)
-        self.staticArgs = ""
+        self.staticArgs = Arguments()
         ## set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of
