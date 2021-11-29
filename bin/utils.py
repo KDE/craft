@@ -639,7 +639,7 @@ def moveDir(srcdir, destdir):
 
 def moveFile(src, dest):
     """move file from src to dest"""
-    CraftCore.log.info(f"move file from {src} to {dest}")
+    CraftCore.log.debug(f"move file from {src} to {dest}")
     try:
         shutil.move(src, dest, copy_function=lambda src, dest, *kw : shutil.copy2(src, dest, *kw, follow_symlinks=False))
     except Exception as e:
