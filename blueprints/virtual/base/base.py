@@ -11,19 +11,14 @@ class subinfo(info.infoclass):
         # The order is important
         self.buildDependencies["core/cacert"] = None
 
-        # on windows we need 7zip early
-        if CraftCore.compiler.isWindows:
-            self.buildDependencies["dev-utils/7zip"] = None
+        self.buildDependencies["dev-utils/7zip-base"] = None
 
-        self.buildDependencies["dev-utils/wget"] = None
         self.buildDependencies["dev-utils/mingw-w64"] = None
         self.buildDependencies["dev-utils/cmake-base"] = None
         self.buildDependencies["dev-utils/kshimgen"] = None
+        self.buildDependencies["dev-utils/7zip"] = None
         self.buildDependencies["dev-utils/cmake"] = None
-
-        # on unix we need cmake to bootstrap 7zip
-        if not CraftCore.compiler.isWindows:
-            self.buildDependencies["dev-utils/7zip"] = None
+        self.buildDependencies["dev-utils/wget"] = None
 
         self.buildDependencies["dev-utils/git"] = None
         self.buildDependencies["python-modules/pip-system"] = None

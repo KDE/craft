@@ -49,6 +49,15 @@ from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
 
+def __locate7z():
+    app = CraftCore.cache.findApplication("7za")
+    if app:
+        return app
+    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / "7za.exe" if CraftCore.compiler.isWindows else "7zz"
+    if appPath.exists():
+        return appPath
+    return None
+
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -81,11 +90,11 @@ def unpackFile(downloaddir, filename, workdir):
         CraftCore.log.warning("Please enable Windows 10 development mode to enable support for symlinks.\n"
                               "This will enable faster extractions.\n"
                               "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
-    if CraftCore.cache.findApplication("7za"):
+    if __locate7z():
         # we use tar on linux not 7z, don't use tar on windows as it skips symlinks
         # test it with breeze-icons
         if (not OsUtils.isWin()
-                or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
+                or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion(__locate7z(), versionCommand="-version") >= "16")
                 or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
             return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     try:
@@ -102,7 +111,7 @@ def un7zip(fileName, destdir, flag=None):
     kw = {}
     progressFlags = []
     type = []
-    app = CraftCore.cache.findApplication("7za")
+    app = __locate7z()
     env = {}
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2",  "-bsp1"]
@@ -145,7 +154,7 @@ def compress(archive : Path, source : str) -> bool:
     archive = Path(archive)
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     def __7z(archive, source):
-        app = CraftCore.cache.findApplication("7za")
+        app = __locate7z()
         kw = {}
         flags = []
         if archive.suffix in {".appxsym", ".appxupload"}:
@@ -180,7 +189,7 @@ def compress(archive : Path, source : str) -> bool:
     if os.path.isfile(archive):
         deleteFile(archive)
 
-    if not CraftCore.cache.findApplication("7za") and archive.suffix == ".zip":
+    if not __locate7z() and archive.suffix == ".zip":
         return shutil.make_archive(archive.with_suffix(""), "zip", source)
 
     if CraftCore.compiler.isUnix and archive.suffixes[-2:] == [".tar", ".xz"]:
