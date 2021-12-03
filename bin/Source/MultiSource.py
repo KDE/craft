@@ -15,21 +15,26 @@ class MultiSource(SourceBase):
     def __init__(self):
         SourceBase.__init__(self)
         CraftCore.debug.trace("MultiSource __init__")
+        self.__sourceClass = None
 
-        self._sourceClass = None
-        if self.subinfo.hasSvnTarget():
-            url = self.subinfo.svnTarget()
-            sourceType = utils.getVCSType(url)
-            if sourceType == "svn":
-                self._sourceClass = SvnSource
-            elif sourceType == "git":
-                self._sourceClass = GitSource
-        elif self.subinfo.hasTarget():
-            self._sourceClass = ArchiveSource
+    @property
+    def _sourceClass(self):
+        # don't access those during the construction but only on demand
+        if not self.__sourceClass:
+            if self.subinfo.hasSvnTarget():
+                url = self.subinfo.svnTarget()
+                sourceType = utils.getVCSType(url)
+                if sourceType == "svn":
+                    self.__sourceClass = SvnSource
+                elif sourceType == "git":
+                    self.__sourceClass = GitSource
+            elif self.subinfo.hasTarget():
+                self.__sourceClass = ArchiveSource
 
-        if self._sourceClass:
-            self.__class__.__bases__ += (self._sourceClass,)
-            self._sourceClass.__init__(self)
+            if self.__sourceClass:
+                self.__class__.__bases__ += (self.__sourceClass,)
+                self.__sourceClass.__init__(self)
+        return self.__sourceClass
 
     # todo: find a more general way to publish all members
     def fetch(self):
