@@ -181,7 +181,10 @@ class UserOptions(object):
         for key, value in self.dump().items():
             # ignore flags that have no influence on the archive
             if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
-                if key not in other:
+                if key not in other :
+                    # a new key but is empty, False is a new value and needs to be handled
+                    if not value and value != False:
+                        continue
                     CraftCore.log.info(f"Config is not compatible: {key} is a new option")
                     return False
                 elif key == "buildType":
