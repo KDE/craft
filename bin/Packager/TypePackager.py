@@ -34,6 +34,7 @@ from Packager.QtIFPackager import *
 from Packager.AppxPackager import *
 from Packager.DesktopEntry import *
 from Packager.AppImagePackager import *
+from Packager.CMakeApkPackager import *
 
 
 class TypePackager(PackagerBase):
@@ -56,6 +57,8 @@ The packager used can be decided at runtime
                 packager = MacDMGPackager
             elif CraftCore.compiler.isLinux:
                 packager = AppImagePackager
+            elif CraftCore.compiler.isAndroid:
+                packager = CMakeApkPackager
             else:
                 packager = SevenZipPackager
 
