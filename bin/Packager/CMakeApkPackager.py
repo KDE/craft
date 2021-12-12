@@ -3,6 +3,8 @@ import os
 from Packager.PackagerBase import PackagerBase
 from CraftCore import *
 from CraftBase import InitGuard
+from Utils.Arguments import Arguments
+
 
 import glob
 from xml.etree import ElementTree
