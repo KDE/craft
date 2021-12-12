@@ -4,6 +4,7 @@ from Packager.PackagerBase import PackagerBase
 from CraftCore import *
 from CraftBase import InitGuard
 from Utils.Arguments import Arguments
+import utils
 
 
 import glob
