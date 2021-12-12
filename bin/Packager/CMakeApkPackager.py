@@ -1,17 +1,16 @@
 import os
 
-from Packager import PackagerBase
+from Packager.PackagerBase import PackagerBase
 from CraftCore import *
-from Package import PackageBase
-from bin.CraftBase import InitGuard.InitGuard
+from CraftBase import InitGuard
 
 import glob
 from xml.etree import ElementTree
 
 class CMakeApkPackager(PackagerBase):
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self):
+        PackagerBase.__init__(self)
         self.__androidApkTargets = set()
         self.__androidApkDirs = set()
 
