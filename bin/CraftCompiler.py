@@ -246,6 +246,9 @@ class CraftCompiler(object):
     def isMSVC2019(self):
         return self.abi.startswith("msvc2019")
 
+    def isMSVC2022(self):
+        return self.abi.startswith("msvc2022")
+
     def isIntel(self):
         return self.compiler == "intel"
 
@@ -296,7 +299,8 @@ class CraftCompiler(object):
             "msvc2013": 12,
             "msvc2015": 14,
             "msvc2017": 15,
-            "msvc2019": 16
+            "msvc2019": 16,
+            "msvc2022": 17
         }
         c = self.abi.split("_")[0]
         if c not in versions:
@@ -310,7 +314,8 @@ class CraftCompiler(object):
             "msvc2013": 120,
             "msvc2015": 140,
             "msvc2017": 141,
-            "msvc2019": 142
+            "msvc2019": 142,
+            "msvc2022": 143
         }
         c = self.abi.split("_")[0]
         if c not in versions:
