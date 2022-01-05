@@ -41,6 +41,12 @@ class AppImagePackager(CollectionPackagerBase):
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
         env["OUTPUT"] = defines["setupname"]
         env["VERSION"] = defines["version"]
+
+        # create symlinks, because the libexec dir is not correctly found in the AppImages
+        if (archiveDir / "usr/lib/libexec/kf5/kioslave5").exists():
+            utils.system(["ln", "-s", archiveDir / "usr/lib/libexec/kf5/kioslave5", archiveDir/"usr/bin/"], cwd=self.packageDestinationDir())
+            utils.system(["ln", "-s", archiveDir / "usr/lib/libexec/kf5/kioexec", archiveDir/"usr/bin/"], cwd=self.packageDestinationDir())
+
         with utils.ScopedEnv(env):
             args = ["--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]]
             if CraftCore.debug.verbose() > 0:
