@@ -78,6 +78,9 @@ class BoostBuildSystem(BuildSystemBase):
             elif CraftVersion(self.buildTarget) < CraftVersion("1.70.0") and CraftCore.compiler.isMSVC2019():
                 # pretend to be 2017
                 toolset += f"msvc-{platform[:2]}.1"
+            elif CraftVersion(self.buildTarget) < CraftVersion("1.78.0") and CraftCore.compiler.isMSVC2022():
+                # pretend to be 2019
+                toolset += f"msvc-{platform[:2]}.2"
             else:
                 toolset += f"msvc-{platform[:2]}.{platform[2:]}"
         options += [toolset]

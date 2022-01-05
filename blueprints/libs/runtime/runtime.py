@@ -50,7 +50,9 @@ class PackageWin(BinaryPackageBase):
             redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
-                    if CraftCore.compiler.isMSVC2019():
+                    if CraftCore.compiler.isMSVC2022():
+                        flavor="2022"
+                    elif CraftCore.compiler.isMSVC2019():
                         flavor="2019"
                     elif CraftCore.compiler.isMSVC2017():
                         flavor="2017"
