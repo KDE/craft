@@ -78,6 +78,9 @@ class BashShell(object):
             if OsUtils.isWin():
                 def convertPath(path : str):
                     return ":".join([str(self.toNativePath(p)) for p in path.split(os.path.pathsep)])
+
+                if OsUtils.supportsSymlinks():
+                    self._environment["MSYS"] = "winsymlinks:nativestrict"
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.isMinGW():
                     gcc = shutil.which("gcc")
@@ -176,13 +179,16 @@ class BashShell(object):
 
     def execute(self, path, cmd, args="", **kwargs):
         # try to locate the command
+        bashArgs = []
+        if "bashArguments" in kwargs:
+            bashArgs = kwargs.pop("bashArguments")
         if CraftCore.compiler.isWindows:
             tmp = CraftCore.cache.findApplication(cmd)
             if tmp:
                 cmd = tmp
-            command = Arguments([self._findBash(), "-c", str(Arguments([self.toNativePath(cmd), args]))])
+            command = Arguments([self._findBash()] +  bashArgs + ["-c", str(Arguments([self.toNativePath(cmd), args]))])
         else:
-            command = Arguments([cmd, args])
+            command = Arguments(bashArgs + [cmd, args])
         env = dict(os.environ)
         env.update(self.environment)
         env.update(kwargs.get("env", {}))

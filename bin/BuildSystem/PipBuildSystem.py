@@ -68,6 +68,8 @@ class PipBuildSystem(BuildSystemBase):
                     command += ["--user"]
                 if self.subinfo.svnTarget():
                     command += ["-e", self.sourceDir()]
+                elif self.subinfo.hasTarget():
+                    command += ["-e", self.sourceDir()]
                 else:
                     command += [self.pipPackageName]
                 ok = ok and utils.system(command)

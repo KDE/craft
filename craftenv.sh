@@ -22,9 +22,9 @@ else
     fi
     # check if python3 is at least version 3.6:
     python_version=$(python3 --version)
-    # sort and use . as separator and then check if the --version output is sorted later
+    # sort -V knows how to compare version numbers
     # Note: this is just a sanity check. craft.py should check sys.version
-    comparison=$(printf '%s\nPython 3.6.0\n' "$python_version" | sort -t.)
+    comparison=$(printf '%s\nPython 3.6.0\n' "$python_version" | sort -V)
     if [ "$(echo "${comparison}" | head -n1)" != "Python 3.6.0" ]; then
         echo "Found Python3 version ${python_version} is too old. Need at least 3.6"
         exit 1
