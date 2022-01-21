@@ -26,7 +26,8 @@ ABI = windows-msvc2015_64-cl
 ## 10.13 https://github.com/qt/qtbase/blob/5.14/mkspecs/common/macx.conf#L8
 ## 10.12 https://github.com/qt/qtbase/blob/5.13/mkspecs/common/macx.conf#L8
 ## 10.12 https://github.com/qt/qtbase/blob/5.12/mkspecs/common/macx.conf#L8
-#MacDeploymentTarget = 10.13
+## As projects start to require c++17 we are now requiring 10.15 
+#MacDeploymentTarget = 10.15
 
 ## Minimum supported Android API level (default: 21)
 AndroidAPI = 21
