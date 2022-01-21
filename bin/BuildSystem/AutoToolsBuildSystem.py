@@ -140,7 +140,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(self.installPrefix())
-        options += [f"--prefix={prefix}"]
+        options += [f"--prefix={prefix}", f"--libdir={prefix}/lib"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += [f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"]
         options += self.platform
