@@ -1120,9 +1120,7 @@ def redact(input : str , secrests : {str}):
         return input
     elif isinstance(input, list):
         out = []
-        for s in input:
-            if s in secrests:
-                out.append("***")
-            else:
-                out.append(s)
+        for var in input:
+            for s in secrests:
+                out.append(var.replace(s, "***"))
         return out
