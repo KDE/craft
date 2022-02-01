@@ -755,7 +755,8 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env=None) -> bool:
+# kw is forwareded to system
+def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env=None, **kw) -> bool:
     if not useAbsolutePath and os.path.isabs(target):
         target = os.path.relpath(target, os.path.dirname(shim))
     createDir(os.path.dirname(shim))
@@ -773,12 +774,11 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
     if env:
         command.append("--env")
         command += [f"{k}={v}" for k,v in env.items()]
-
     if CraftCore.compiler.isAndroid:
         os.symlink(target, shim)
         return True
     else:
-        return system(command + ["--"] + args)
+        return system(command + ["--"] + args, **kw)
 
 class ProgressBar(object):
     def __init__(self, initialProgess=0):
