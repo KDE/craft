@@ -24,6 +24,12 @@ class AppImagePackager(CollectionPackagerBase):
         if etc.exists():
             if not utils.moveFile(etc, archiveDir / "etc"):
                 return False
+        defines["runenv"] += [
+            # XDG_DATA_DIRS: to make QStandardPaths::GenericDataLocation look in the Appimage paths too.
+            # Eg. necessary to make switching languages for KDE (with KConfigWidgets) applications work.
+            'XDG_DATA_DIRS=$this_dir/usr/share/:$XDG_DATA_DIRS',
+            'QT_PLUGIN_PATH=$this_dir/usr/plugins/',
+            'PATH=$this_dir/usr/bin:$this_dir/usr/lib:$PATH']
         if "runenv" in defines:
             if not utils.createDir(archiveDir / "apprun-hooks"):
                 return False
