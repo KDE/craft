@@ -908,11 +908,19 @@ def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
         out.append(command + tmp)
     return out
 
-def isExecuatable(fileName : Path):
+# includeShellScripts, on windows this will also check for shell scripts
+def isExecuatable(fileName : Path, includeShellScripts=False):
     fileName = Path(fileName)
     if CraftCore.compiler.isWindows:
-        return fileName.suffix.upper() in os.environ["PATHEXT"].split(";")
-    return os.access(fileName, os.X_OK)
+        if fileName.suffix.upper() in os.environ["PATHEXT"].split(";"):
+            return True
+        if includeShellScripts:
+            signature = b"#!"
+            with fileName.open("rb") as f:
+                return f.read(len(signature)) == signature
+    else:
+        return os.access(fileName, os.X_OK)
+    return False
 
 def isBinary(fileName : str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
