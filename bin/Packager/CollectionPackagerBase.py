@@ -108,7 +108,7 @@ class CollectionPackagerBase(PackagerBase):
 
     def addExecutableFilter(self, pattern : str):
         # TODO: move to parent?
-        self.addBlacklistFilter(lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern, re.IGNORECASE)]) and utils.isExecuatable(fileName))
+        self.addBlacklistFilter(lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern, re.IGNORECASE)]) and utils.isExecuatable(fileName, includeShellScripts=True))
 
     def addWhitelistFilter(self, x):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
