@@ -8,12 +8,12 @@ class AppImagePackager(CollectionPackagerBase):
     def setDefaults(self, defines: {str:str}) -> {str:str}:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
-        defines["runenv"] = [
+        defines.setdefault("runenv",[
             # XDG_DATA_DIRS: to make QStandardPaths::GenericDataLocation look in the Appimage paths too.
             # Eg. necessary to make switching languages for KDE (with KConfigWidgets) applications work.
             'XDG_DATA_DIRS=$this_dir/usr/share/:$XDG_DATA_DIRS',
             'QT_PLUGIN_PATH=$this_dir/usr/plugins/',
-            'PATH=$this_dir/usr/bin:$this_dir/usr/lib:$PATH']
+            'PATH=$this_dir/usr/bin:$this_dir/usr/lib:$PATH'])
         return defines
 
     def createPackage( self ):
