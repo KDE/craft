@@ -33,6 +33,8 @@ param(
 
 Write-Host "Installing shortcut to: '$Script:name'"
 
+New-Item -ItemType Directory -ErrorAction SilentlyContinue -Path (Split-Path -parent $Script:name)
+
 $Shell = New-Object -ComObject ("WScript.Shell")
 $ShortCut = $Shell.CreateShortcut($Script:name)
 $ShortCut.TargetPath="$Script:path"
