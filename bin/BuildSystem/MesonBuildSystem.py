@@ -47,7 +47,7 @@ class MesonBuildSystem(BuildSystemBase):
 
     
     def configureOptions(self, defines=""):
-        buildType = {"Release": "release", "RelWithDebInfo": "debugoptimized", "Debug" : "debug"}.get(self.buildType())
+        buildType = {"Release": "release", "RelWithDebInfo": "debugoptimized", "MinSizeRel": "minsize", "Debug" : "debug"}.get(self.buildType())
         return Arguments([defines,
                              "--prefix", CraftCore.standardDirs.craftRoot(),
                              "--libdir", "lib",
