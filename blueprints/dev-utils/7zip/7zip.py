@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"7z{ver}-extra"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
 
-        for ver in ["21.03", "21.06"]:
+        for ver in ["21.03", "21.06", "21.07"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
             if not self.options.dynamic.useCentosBasedBuild:
@@ -35,7 +35,7 @@ class subinfo(info.infoclass):
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
-        self.defaultTarget = "21.06"
+        self.defaultTarget = "21.07"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/kshimgen"] = None
