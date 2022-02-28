@@ -3,6 +3,7 @@ from Utils import CodeSign
 
 import configparser
 from pathlib import Path
+from typing import Set
 import io
 import subprocess
 import glob
@@ -12,6 +13,7 @@ class MacBasePackager( CollectionPackagerBase ):
     @InitGuard.init_once
     def __init__(self, whitelists, blacklists):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
+        self.externalLibs = {}
 
     def internalCreatePackage(self, defines, seperateSymbolFiles=False, packageSymbols=False):
         """ create a package """
@@ -72,7 +74,7 @@ class MacBasePackager( CollectionPackagerBase ):
                 if not utils.mergeTree(src, dest):
                     return False
 
-        dylibbundler = MacDylibBundler(appPath)
+        dylibbundler = MacDylibBundler(appPath, self.externalLibs)
         CraftCore.log.info("Bundling main binary dependencies...")
         binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents"),
                                                         whitelist=lambda x, root: utils.isBinary(x.path),
@@ -111,10 +113,11 @@ class MacBasePackager( CollectionPackagerBase ):
 
 class MacDylibBundler(object):
     """ Bundle all .dylib files that are not provided by the system with the .app """
-    def __init__(self, appPath: str):
+    def __init__(self, appPath: str, externalLibs: Set[str]):
         # Avoid processing the same file more than once
         self.checkedLibs = set()
         self.appPath = appPath
+        self.externalLibs = externalLibs
 
     def _addLibToAppImage(self, libPath: Path) -> bool:
         assert libPath.is_absolute(), libPath
@@ -216,6 +219,9 @@ class MacDylibBundler(object):
                 CraftCore.log.debug("%s: ignoring library name id %s in %s", fileToFix, path,
                                     os.path.relpath(str(fileToFix), self.appPath))
                 continue
+            if path in self.externalLibs:
+                CraftCore.log.debug("%s: allowing dependency on external library '%s'", fileToFix, path)
+                continue
             if path.startswith("@executable_path/"):
                 continue  # already fixed
             if path.startswith("@rpath/"):
@@ -256,7 +262,7 @@ class MacDylibBundler(object):
             if dep.startswith("@rpath") or dep.startswith("@executable_path") or dep.startswith("@loader_path"):
                 continue
             # Also allow /System/Library/Frameworks/ and /usr/lib:
-            if dep.startswith("/usr/lib/") or dep.startswith("/System/Library/Frameworks/"):
+            if dep.startswith("/usr/lib/") or dep.startswith("/System/Library/Frameworks/") or path in self.externalLibs:
                 continue
             if dep.startswith(CraftStandardDirs.craftRoot()):
                 CraftCore.log.error("ERROR: %s references absolute library path from craftroot: %s", relativePath,
