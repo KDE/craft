@@ -163,6 +163,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if user_facing_tool_links.exists():
             with user_facing_tool_links.open("rt") as links:
                 for line in links:
+                    line = line.strip()
+                    if not line:
+                        continue
                     src, dest = line.split()
                     src = Path(src).relative_to(CraftCore.standardDirs.craftRoot()).with_suffix(CraftCore.compiler.executableSuffix)
                     if not utils.createShim(self.installDir() / dest,  self.installDir() / src):
