@@ -119,10 +119,23 @@ class CraftPackageObject(object):
         self.filePath = ""
         self.children = {}
         self.source = None
+        self._pattern = None
         self.categoryInfo = None # type:CategoryPackageObject
         self._version = None
         self._instance = None
         self.__path = None
+
+
+    @property
+    def pattern(self):
+        if not self.source:
+            raise BlueprintException(f"{self.source} dos not provide a Pattern", self)
+        if not self.isCategory():
+            raise BlueprintException(f"Only a catergory can provide a Pattern", self)
+        # load the module
+        self.instance
+        if self._pattern:
+            return self._pattern
 
     @property
     def parent(self):
@@ -216,8 +229,6 @@ class CraftPackageObject(object):
                     raise BlueprintException(f"Recipes must match the name of the directory: {fPath}", package)
                 package.source = fPath
                 CraftPackageObject._allLeaves[package.path] = package
-        if package.children and package.source:
-            raise BlueprintException(f"{package} has has children but also a recipe {package.source}!", package)
 
         if path != blueprintRoot:
             if not package.source and not package.children:
@@ -305,8 +316,13 @@ class CraftPackageObject(object):
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
             if not mod is None:
                 mod.CRAFT_CURRENT_MODULE = self
-                pack = mod.Package()
-                self._instance = pack
+                if hasattr(mod, "Package"):
+                    if self.children:
+                        raise BlueprintException(f"{self} is a category and may only provide a Pattern not a Package!", self)
+                    pack = mod.Package()
+                    self._instance = pack
+                else:
+                    self._pattern = mod.Pattern
             else:
                 raise BlueprintException("Failed to find package", self)
         return self._instance
@@ -325,7 +341,7 @@ class CraftPackageObject(object):
         return self.instance.subinfo
 
     def isCategory(self):
-        return not self.source
+        return bool(self.children)
 
     def isIgnored(self):
         if self.categoryInfo and not self.categoryInfo.isActive:
@@ -363,7 +379,6 @@ class CraftPackageObject(object):
             recipes.append(p)
             recipes.extend(p.allChildren())
         return recipes
-
 
 class BlueprintException(Exception):
     def __init__(self, message, package, exception=None):
