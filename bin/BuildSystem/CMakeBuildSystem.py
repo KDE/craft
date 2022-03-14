@@ -156,4 +156,3 @@ class CMakeBuildSystem(BuildSystemBase):
         if not super().internalPostQmerge():
             return False
         return PostInstallRoutines.updateSharedMimeInfo(self)
-

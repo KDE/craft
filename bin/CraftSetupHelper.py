@@ -396,7 +396,8 @@ class SetupHelper(object):
                                               os.path.join(CraftCore.standardDirs.craftRoot(), "lib64", "plugins"),
                                               os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
                                                            "plugins"),
-                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugin")
+                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugin"),
+                                              CraftCore.standardDirs.craftRoot() / "lib/qt6/plugins"
                                               ])
 
         self.prependEnvVar("QML2_IMPORT_PATH", [os.path.join(CraftCore.standardDirs.craftRoot(), "qml"),
