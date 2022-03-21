@@ -34,8 +34,11 @@ class BashShell(object):
     @property
     def environment(self):
         if not self._environment:
-            mergeroot = self.toNativePath(CraftCore.standardDirs.craftRoot())
+            if OsUtils.isWin():
+                def convertPath(path : str):
+                    return ":".join([str(self.toNativePath(p)) for p in path.split(os.path.pathsep)])
 
+            mergeroot = self.toNativePath(CraftCore.standardDirs.craftRoot())
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
 
@@ -58,6 +61,9 @@ class BashShell(object):
                 #ldflags = f" -Wl,-no_weak_imports {ldflags}"
 
             if CraftCore.compiler.isMSVC():
+                self._environment["INCLUDE"] = f"{mergeroot}/include:{convertPath(os.environ['INCLUDE'])}"
+                self._environment["LIB"] = f"{mergeroot}/lib:{convertPath(os.environ['LIB'])}"
+
                 # based on Windows-MSVC.cmake
                 if self.buildType == "Release":
                     cflags += " -MD -O2 -Ob2 -DNDEBUG "
@@ -76,9 +82,6 @@ class BashShell(object):
                     cflags += " -O0 -g3 "
 
             if OsUtils.isWin():
-                def convertPath(path : str):
-                    return ":".join([str(self.toNativePath(p)) for p in path.split(os.path.pathsep)])
-
                 if OsUtils.supportsSymlinks():
                     self._environment["MSYS"] = "winsymlinks:nativestrict"
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
@@ -116,10 +119,13 @@ class BashShell(object):
                     self._environment["LD"] = "link -nologo"
                     self._environment["CC"] = f"{clWrapper} {cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
-                    self._environment["CPP"] = f"{cl} -nologo -EP"
+                    self._environment["CPP"] = f"{cl} -nologo -E"
                     self._environment["CXXCPP"] = self._environment["CPP"]
                     self._environment["NM"] = "dumpbin -symbols"
-                    self._environment["RC"] = f"windres -O COFF --target={'pe-i386' if CraftCore.compiler.isX86() else 'pe-x86-64'} --preprocessor='cl -nologo -EP -DRC_INVOKED -DWINAPI_FAMILY=0'"
+
+                    windresArg = " --preprocessor-arg=".join(["", "-nologo", "-EP", "-DRC_INVOKED", "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP"])
+                    self._environment["WINDRES"] = f"windres --target={'pe-i386' if CraftCore.compiler.isX86() else 'pe-x86-64'} --preprocessor=cl {windresArg}"
+                    self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"
                     self._environment["RANLIB"] = ":"
@@ -127,7 +133,7 @@ class BashShell(object):
                     self._environment["FC"] = "no"
 
                     cflags += (" -GR -W3 -EHsc"  # dynamic and exceptions enabled
-                               " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS"
+                               " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_WIN32_WINN=_WIN32_WINNT_WIN7"
                                " -wd4005"  # don't warn on redefine
                                " -wd4996"  # The POSIX name for this item is deprecated.
                                )
