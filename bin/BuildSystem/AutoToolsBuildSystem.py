@@ -125,7 +125,18 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not utils.deleteFile(laFile):
                 return False
 
-        return self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix()))
+        if not self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix())):
+            return False
+        if CraftCore.compiler.isMSVC():
+            # libtool produces intl.dll.lib while we expect intl.lib
+            lib = glob.glob(os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True)
+            for src in lib:
+                src = Path(src)
+                dest = src.with_suffix("").with_suffix(".lib")
+                if not dest.exists():
+                    if not utils.moveFile(src, dest):
+                        return False
+        return True
 
     def unittest(self):
         """running unittests"""
