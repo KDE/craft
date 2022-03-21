@@ -213,6 +213,11 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+    def ansiFix():
+        if needsAnsiFix:
+            # a bug in cygwin msys removes the ansi flag, set it again
+            ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+            ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
 
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
@@ -292,10 +297,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         for line in proc.stdout:
             if isinstance(stdout, io.TextIOWrapper):
                 if CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
-                    if needsAnsiFix:
-                        # a bug in cygwin msys removes the ansi flag, set it again
-                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
-                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
+                    ansiFix()
                     stdout.buffer.write(line)
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
@@ -316,6 +318,9 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
     proc.communicate()
     proc.wait()
+
+    # if there was no output
+    ansiFix()
 
     if acceptableExitCodes is None:
         ok = proc.returncode == 0
