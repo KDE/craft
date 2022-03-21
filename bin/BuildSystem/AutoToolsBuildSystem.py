@@ -100,28 +100,23 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def make(self, dummyBuildType=None):
         """Using the *make program"""
         self.enterBuildDir()
-
-        command = self.makeProgram
-        args = self.makeOptions(self.subinfo.options.make.args)
-
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.buildDir(), self.makeProgram, "clean"):
                 return False
-        return self.shell.execute(self.buildDir(), command, args)
+        return self.shell.execute(self.buildDir(), self.makeProgram,  self.makeOptions(self.subinfo.options.make.args))
 
     def install(self):
         """Using *make install"""
         self.cleanImage()
         self.enterBuildDir()
 
-        command = self.makeProgram
         args = self.makeOptions(self.subinfo.options.install.args)
 
         destDir = self.shell.toNativePath(self.installDir())
         args += [f"DESTDIR={destDir}"]
         with utils.ScopedEnv({"DESTDIR" : destDir}):
-            if not self.shell.execute(self.buildDir(), command, args):
+            if not self.shell.execute(self.buildDir(), self.makeProgram, args):
                 return False
 
         # la files aren't relocatable and until now we lived good without them
@@ -134,7 +129,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def unittest(self):
         """running unittests"""
-        return self.shell.execute(self.buildDir(), self.makeProgram, "check")
+        return self.shell.execute(self.buildDir(), self.makeProgram, self.makeOptions("check"))
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
