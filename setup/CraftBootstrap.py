@@ -184,7 +184,7 @@ def getABI(args):
         platform = "android"
         compiler = "clang"
         abi = CraftBootstrap.promptForChoice("Select target architecture",
-                                             ["arm", "arm64", "x86", "x86_64"], returnDefaultWithoutPrompt=args.use_defaults)
+                                             ["arm", "arm64", "x86", "x86_64"], "arm64", returnDefaultWithoutPrompt=args.use_defaults)
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
             platform = "macos"
