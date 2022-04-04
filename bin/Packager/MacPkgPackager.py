@@ -26,11 +26,7 @@ class MacPkgPackager( MacBasePackager ):
 
     def createPackage(self):
         """ create a package """
-        CraftCore.log.debug("packaging using the MacDMGPackager")
-        if not CraftCore.cache.findApplication("packagesutil"):
-            CraftCore.log.critical("Craft requires dev-utils/packagesdev to create a package, please install dev-utils/packagesdev\n"
-                                    "\t'craft dev-utils/packagesdev'")
-            return False
+        CraftCore.log.debug("packaging using the MacPkgPackager")
 
         defines = self.setDefaults(self.defines)
         if not "pkgproj" in defines:
