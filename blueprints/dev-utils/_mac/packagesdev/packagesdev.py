@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
+        self.buildDependencies["libs/libxml2"] = None
 
 
 from Package.MakeFilePackageBase import *
