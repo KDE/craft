@@ -60,9 +60,6 @@ class PipBuildSystem(BuildSystemBase):
             env.update({
                 "LIB" : f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
                 "INCLUDE" : f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}"})
-        elif CraftCore.compiler.isLinux:
-            env["LD_LIBRARY_PATH"] = None
-        
         with ScopedEnv(env):
             ok = True
             for ver, python in self._pythons:
