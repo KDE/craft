@@ -26,6 +26,7 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/7zip"] = None
 
         self.buildDependencies["dev-utils/git"] = None
+        self.buildDependencies["dev-utils/tar"] = None
         self.buildDependencies["python-modules/pip-system"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
         self.buildDependencies["python-modules/pip"] = None
