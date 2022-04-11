@@ -81,8 +81,8 @@ class CMakeBuildSystem(BuildSystemBase):
             # should we detect the apk targets
             if hasattr(self, "androidApkDirs"):
                 if self.androidApkTargets:
-                    options += [f"-DQTANDROID_EXPORTED_TARGET={';'.join(self.androidApkTargets)}",
-                                f"-DANDROID_APK_DIR={';'.join(self.androidApkDirs)}"]
+                    options += [f"-DQTANDROID_EXPORTED_TARGET='{';'.join(self.androidApkTargets)}'",
+                                f"-DANDROID_APK_DIR='{';'.join(self.androidApkDirs)}'"]
                 if self.buildType() == "Release" or self.buildType() == "MinSizeRel":
                     options += ["-DANDROIDDEPLOYQT_EXTRA_ARGS=--release"]
 
