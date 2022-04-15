@@ -35,9 +35,9 @@ from Blueprints.CraftVersion import CraftVersion
 
 class InnoSetupPackager(PortablePackager):
     """
-Packager for Nullsoft scriptable install system
+Packager for InnoSetup installer
 
-This Packager generates a nsis installer (an executable which contains all files)
+This Packager generates an InnoSetup installer (an executable which contains all files)
 from the image directories of craft. This way you can be sure to have a clean
 installer.
 
@@ -45,9 +45,9 @@ In your package, you can add regexp whitelists and blacklists (see example files
 for the fileformat). The files for both white- and blacklists, must be given already
 in the constructor.
 
-You can override the .nsi default script and you will get the following defines
-given into the nsis generator via commandline if you do not override the attributes
-of the same name in the dictionary self.defines:
+The following paramters all to tune the generated installer:
+scriptname:     Set this to use an entirely custom .iss-template (note: for custom replacements
+                add your own defines into self.defines).
 setupname:      PACKAGENAME-setup-BUILDTARGET.exe
                 PACKAGENAME is the name of the package
 srcdir:         is set to the image directory, where all files from the image directories
@@ -61,7 +61,7 @@ shortcuts:      Array of dict ("name", "target", "icon", "parameter", "descripti
                 of shortcuts to create.
 file_types:     Array of file extensions (".xyz"). The installer will offer to associate
                 these with the app.
-You can add your own defines into self.defines as well.
+registry_keys:  Array of dict ("name", "value") of custom registry keys to add on installation.
 """
 
     @InitGuard.init_once
