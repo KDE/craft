@@ -56,7 +56,11 @@ company:        sets the company name used for the registry key of the installer
                 value is "KDE".
 productname:    contains the capitalized PACKAGENAME and the buildTarget of the current package
 executable:     executable is defined empty by default, but it is used to add a link into the
-                start menu.
+                start menu. Either this, or at least one shortcut neeeds to be set.
+shortcuts:      Array of dict ("name", "target", "icon", "parameter", "description", "workingDirectory")
+                of shortcuts to create.
+file_types:     Array of file extensions (".xyz"). The installer will offer to associate
+                these with the app.
 You can add your own defines into self.defines as well.
 """
 
@@ -69,6 +73,8 @@ You can add your own defines into self.defines as well.
     def setDefaults(self, defines) -> {}:
         defines = super().setDefaults(defines)
         defines.setdefault("srcdir", self.archiveDir())# deprecated
+        defines.setdefault("registry_keys", [])
+        defines.setdefault("file_types", [])  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
 
         if not self.scriptname:
             self.scriptname = os.path.join(os.path.dirname(__file__), "InnoSetupTemplate.iss")
@@ -105,11 +111,41 @@ You can add your own defines into self.defines as well.
         if "executable" in defines:
             shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
             del defines["executable"]
+        else:
+            # Needed below
+            # This will error out, if neither executable, nor any shortcuts have been set, but that is certainly an error, anyway
+            defines["executable"] = defines["shortcuts"][0]["target"]
 
         for short in defines["shortcuts"]:
             shortcuts.append(self._createShortcut(**short))
         if shortcuts:
             defines["shortcuts"] = "".join(shortcuts)
+
+        tasks = []
+        registry_keys = []
+        for key in defines["registry_keys"]:
+            registry_keys.append(f"""Root: HKA; Subkey: ; ValueType: string; ValueName: "{key["name"]}"; ValueData: "{key["value"]}" """)
+        for ftype in defines["file_types"]:
+            ftype_id = self.subinfo.displayName + ftype
+            ftype_id = ftype_id.replace(".", "_")
+            tasks.append(f"""Name: "{ftype_id}"; Description: "{{cm:AssocFileExtension,{self.subinfo.displayName},{ftype}}}";""")
+
+            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype}\\OpenWithProgids"; ValueType: string; ValueName: "{ftype_id}"; ValueData: ""; Flags: uninsdeletevalue ; Tasks: {ftype_id}""")
+            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}"; ValueType: string; ValueName: ""; ValueData: "{ftype} file"; Flags: uninsdeletekey ; Tasks: {ftype_id}""")
+            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}""")
+            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: \"""{{app}}\\{defines["executable"]}"" ""%1""\" ; Tasks: {ftype_id}""")
+            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\Applications\\{os.path.basename(defines["executable"])}\\SupportedTypes"; ValueType: string; ValueName: "{ftype}"; ValueData: "" ; Tasks: {ftype_id}""")
+        if registry_keys:
+            defines["registry"] = "[Registry]\n" + "\n".join(registry_keys)
+            defines["associations"] = "ChangesAssociations=yes"
+        else:
+            defines["registry"] = ""
+            defines["associations"] = ""
+
+        if tasks:
+            defines["tasks"] = "[TASKS]\n" + "\n".join(tasks)
+        else:
+            defines["tasks"] = ""
 
         CraftCore.debug.new_line()
         CraftCore.log.debug(f"generating installer {defines['setupname']}")
