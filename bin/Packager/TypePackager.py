@@ -28,6 +28,7 @@ from Packager.MacDMGPackager import MacDMGPackager
 from Packager.MacPkgPackager import MacPkgPackager
 from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
+from Packager.InnoSetupPackager import *
 from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
 from Packager.QtIFPackager import *
