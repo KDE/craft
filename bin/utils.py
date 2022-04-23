@@ -53,7 +53,7 @@ def __locate7z():
     app = CraftCore.cache.findApplication("7za")
     if app:
         return app
-    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / "7za.exe" if CraftCore.compiler.isWindows else "7zz"
+    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
     if appPath.exists():
         return appPath
     return None
