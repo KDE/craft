@@ -448,6 +448,9 @@ class OptionsConfigure(OptionsBase):
         # whether to not pass --datarootdir configure
         self.noDataRootDir = False
 
+        # whether to not pass --libdir configure
+        self.noLibDir = False
+
 
 ## options for the make action
 class OptionsMake(OptionsBase):
