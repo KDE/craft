@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
         ver = str(CraftCore.compiler.getVersion())
-        self.patchLevel[ver] = 1
+        self.patchLevel[ver] = 2
         self.targets[ver] = ""
         self.description = "The compiler runtime package"
         self.defaultTarget = ver
@@ -39,13 +39,8 @@ class PackageWin(BinaryPackageBase):
 
         files = []
         if CraftCore.compiler.isMinGW():
-            files = ['libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll']
-            if CraftCore.compiler.isMinGW_W32():
-                files.append('libgcc_s_sjlj-1.dll')
-                srcdir = os.path.join(self.rootdir, "mingw", "bin")
-            elif CraftCore.compiler.isMinGW_W64():
-                files.append('libgcc_s_seh-1.dll')
-                srcdir = os.path.join(self.rootdir, "mingw64", "bin")
+            files = ['libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll', 'libgcc_s_seh-1.dll', 'libssp-0.dll']
+            srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
             redistDir = None
             if self.buildType() != "Debug":
