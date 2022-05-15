@@ -110,9 +110,8 @@ registry_keys:  Array of dict ("name", "value") of custom registry keys to add o
         shortcuts = []
         if "executable" in defines:
             shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
-            del defines["executable"]
         else:
-            # Needed below
+            # Needed below, for registering file associations
             # This will error out, if neither executable, nor any shortcuts have been set, but that is certainly an error, anyway
             defines["executable"] = defines["shortcuts"][0]["target"]
 
