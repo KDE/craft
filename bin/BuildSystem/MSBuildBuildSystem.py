@@ -31,7 +31,7 @@ class MSBuildBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "msbuild")
         self.msbuildTargets = ["Rebuild"]
-        self.buildTypes = {"Release" : "Release", "RelWithDebInfo" : "Release", "Debug" : "Debug" }
+        self.buildTypes = {"Release" : "Release", "RelWithDebInfo" : "Release", "MinSizeRel" : "Release", "Debug" : "Debug" }
 
     def configure(self, defines=""):
         return True
