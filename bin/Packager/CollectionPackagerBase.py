@@ -366,7 +366,7 @@ class CollectionPackagerBase(PackagerBase):
 
             if packageSymbols and os.listdir(self.archiveDebugDir()):
                 dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
-                if CraftCore.compiler.isMacOS:
+                if not CraftCore.compiler.isWindows:
                     dbgName = dbgName.with_suffix(".tar.7z")
                 if dbgName.exists():
                     dbgName.unlink()
