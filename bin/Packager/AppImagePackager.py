@@ -42,11 +42,15 @@ class AppImagePackager(CollectionPackagerBase):
         if len(desktopFiles) != 1:
             CraftCore.log.error("Failed to find the .desktop file")
             return False
-        env = {"ARCH": "x86_64", "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu"}
+        env = {
+            "ARCH": "x86_64",
+            "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu",
+            "OUTPUT": defines["setupname"],
+            "VERSION": defines["version"],
+            "NO_STRIP": "1" # our binaries are already stripped
+        }
         if OsUtils.detectDocker():
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
-        env["OUTPUT"] = defines["setupname"]
-        env["VERSION"] = defines["version"]
         with utils.ScopedEnv(env):
             args = ["--appdir", self.archiveDir(), "--plugin=qt", "--output=appimage", "--desktop-file", desktopFiles[0]]
             if CraftCore.debug.verbose() > 0:
