@@ -129,10 +129,10 @@ def curlFile(url, destdir, filename, quiet):
                     if loc:
                         CraftCore.log.info(f"Downloaded from: {loc[-1]}")
                 return True
-        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
+        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar", helpCommand="--help all"):
             command += ["--progress-bar"]
-            CraftCore.log.info(f"curl {url}")
-            return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+        CraftCore.log.info(f"curl {url}")
+        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     command += ["-v"]
     return utils.system(command)
 
