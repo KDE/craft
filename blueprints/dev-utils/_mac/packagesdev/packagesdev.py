@@ -3,6 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def registerOptions(self):
+        self.options.dynamic.setDefault("buildType", "Release")
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
