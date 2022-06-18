@@ -795,11 +795,23 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
         return system(command + ["--"] + args, **kw)
 
 class ProgressBar(object):
-    def __init__(self, initialProgess=0):
+    # singelton for use  with multiprocessing callbacks
+    instance = None
+
+    def __init__(self, initialProgess=0, maxVal = 0):
         self._lastValue = None
         self._initialProgress = initialProgess
         # don't try experiemtns on old terminals
         self._legacyMode = not CraftCore.settings.getboolean("General", "AllowAnsiColor")
+        self._maxVal = maxVal
+        self._current = 0
+        if ProgressBar.instance:
+            raise Exception("There must be only one progress bar at a time")
+        ProgressBar.instance = self
+    
+    def update(self):
+        self._current += 1
+        self.print(self._current / self._maxVal * 100)
 
     def print(self, progress : int, force : bool=False):
         progress = int(progress)
@@ -830,6 +842,7 @@ class ProgressBar(object):
     def __exit__(self, exc_type, exc_value, trback):
         self.print(100, True)
         CraftCore.debug.new_line()
+        ProgressBar.instance = None
 
 class ScopedEnv(object):
     def __init__(self, env):

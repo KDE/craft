@@ -4,7 +4,11 @@
 # SPDX-FileCopyrightText: 2021 Volker Krause <vkrause@kde.org>
 
 """@package provides cmake build system"""
-
+import collections
+from distutils.log import warn
+import json
+from multiprocessing.pool import ThreadPool
+from unicodedata import category
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
@@ -48,6 +52,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     f"-DCMAKE_PREFIX_PATH={craftRoot}",
                     f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
                     f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
+                    f"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
                 ]
 
         if self.buildType() is not None:
@@ -156,3 +161,71 @@ class CMakeBuildSystem(BuildSystemBase):
         if not super().internalPostQmerge():
             return False
         return PostInstallRoutines.updateSharedMimeInfo(self)
+
+
+    def clazy(self):
+        sources = []
+        with io.StringIO() as tmp:
+            if not utils.system(["git", "ls-files", "*.cpp"], cwd=self.sourceDir(), stdout=tmp):
+                return False
+            sources = [self.sourceDir() / s for s in tmp.getvalue().strip().split("\n")]
+        #sources = ["E:/_/40b10b15/owncloud-client/src/cmd/cmd.cpp"]
+        #sources = ["E:/_/40b10b15/owncloud-client/src/3rdparty/qtsingleapplication/qtsingleapplication.cpp"]
+        
+        categoryPattern = re.compile(r"\[-W(.*?)\]")
+        endPattern = re.compile(r"warning:[\S \n]*?\^", re.MULTILINE) if CraftCore.compiler.isWindows else re.compile(r"^(/)", re.MULTILINE)
+        buildDir = self.buildDir()
+        def run_clazy(source):
+            out = []
+            # gcc like
+            # "--extra-arg=-fdiagnostics-format=json"
+            # https://www.rowleydownload.co.uk/arm/documentation/gnu/gcc/Diagnostic-Message-Formatting-Options.html
+            result = subprocess.run(["clazy-standalone", "-checks=install-event-filter,qmap-with-pointer-key,level0", "-p", f"{buildDir}/compile_commands.json", source], cwd=buildDir, capture_output=True, encoding="UTF-8")
+            utils.ProgressBar.instance.update()
+            if result.returncode == 0:
+                text = result.stderr.strip()
+                if text:            
+                    # raw output for debugging
+                    #out.append((str(source), text))
+                    pos = 0
+                    warnings = []
+                    for match in endPattern.finditer(text):
+                        end = match.span()[1]
+                        warnings.append(text[pos:end])
+                        pos = end
+
+                    print(text[pos:])
+                    
+                    for w in warnings:
+                        category = categoryPattern.findall(w)
+                        if not category:
+                            out.append(("error", [str(source), w, text]))
+                        else:
+                            out.append((category[-1], w))
+            return out
+
+        warnings = collections.defaultdict(list)
+        with utils.ProgressBar(maxVal=len(sources)):
+            result = []
+            if True:
+                with ThreadPool(multiprocessing.cpu_count()) as pool:
+                    r = pool.map_async(run_clazy, sources)
+                    pool.close()
+                    pool.join()
+                result = r.get()
+            else:
+                for s in sources:
+                    result.append(run_clazy(s))
+            
+            for r in result:
+                for  c, v in r:
+                    if v is not None:
+                        warnings[c].append(v)
+
+        if "error" in warnings:
+            CraftCore.log.warning("Some output could not properly be parsed")
+        outFile = self.packageDestinationDir() / f"{self.package.name}-clazy.json"
+        with open(outFile, "wt") as out:
+            json.dump(warnings, out, sort_keys=True, indent=2)
+        return outFile
+
