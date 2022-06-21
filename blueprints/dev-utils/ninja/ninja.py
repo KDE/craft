@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
         """ """
         self.svnTargets['master'] = "https://github.com/martine/ninja.git"
 
-        for ver in ["1.10.0", "1.10.2"]:
+        for ver in ["1.10.0", "1.10.2", "1.11.0"]:
             self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"ninja-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"ninja-{ver}"
@@ -25,7 +25,7 @@ class subinfo(info.infoclass):
         self.patchToApply["1.10.0"] = [("34d1bf2f1dcc138f7cb3a54daf771931cd799785.patch", 1)]
         self.patchLevel["1.10.0"] = 1
 
-        self.defaultTarget = "1.10.2"
+        self.defaultTarget = "1.11.0"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/mingw-w64"] = None
