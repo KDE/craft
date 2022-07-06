@@ -5,7 +5,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.21.2-18"]:
             self.targets[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-macos-64-clang.tar.7z"
-            #self.targetDigestUrls[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-macos-64-clang.tar.7z.sha256"
+            self.targetDigestUrls[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-macos-64-clang.tar.7z.sha256"
             self.targetInstallPath[ver] = "dev-utils/wget"
         self.defaultTarget = "1.21.2-18"
 
