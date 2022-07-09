@@ -109,7 +109,6 @@ class UserOptions(object):
                 except Exception as e:
                     CraftCore.log.warning(f"Failed so save {instance.path}: {e}")
 
-
     @staticmethod
     def instance():
         if not UserOptions.UserOptionsSingleton._instance:
@@ -125,18 +124,18 @@ class UserOptions(object):
         _convert = self._convert
 
         # cachability is handled by the version comparison
-        _register("version",    str,    permanent=False, compatible=True)
-        _register("patchLevel", int,    permanent=False,  compatible=True)
+        _register("version",    str,    persist=False, compatible=True)
+        _register("patchLevel", int,    persist=False,  compatible=True)
 
-        _register("branch",     str,    permanent=False)
-        _register("revision",   str,    permanent=False)
-        _register("ignored",    bool,   permanent=False, compatible=True)
-        _register("buildTests", True,   permanent=False, compatible=True)
-        _register("buildStatic",bool,   permanent=False)
+        _register("branch",     str,    persist=False)
+        _register("revision",   str,    persist=False)
+        _register("ignored",    bool,   persist=False, compatible=True)
+        _register("buildTests", True,   persist=False, compatible=True)
+        _register("buildStatic",bool,   persist=False)
 
-        _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    permanent=False, compatible=True) # cachability already handled by cache behaviour
-        _register("args",       Arguments(),     permanent=False)
-        _register("featureArguments",Arguments(),     permanent=False)
+        _register("buildType",  CraftCore.settings.get("Compile", "BuildType"),    persist=False, compatible=True) # cachability already handled by cache behaviour
+        _register("args",       Arguments(), persist=False)
+        _register("featureArguments",Arguments(), persist=False)
 
         settings = UserOptions.instance().settings
         if settings.has_section(package.path):
@@ -174,6 +173,9 @@ class UserOptions(object):
                     tmp.append(key.encode())
                     tmp.append(bytes(atr, "UTF-8") if isinstance(atr, str) else bytes([atr]))
         return zlib.adler32(b"".join(tmp))
+
+    def __isUserSet(self, key):
+        return key in UserOptions.instance().initPackage(self)
 
     def compatible(self, other: collections.OrderedDict, hash=None) -> bool:
         if not other and hash:
@@ -229,7 +231,12 @@ class UserOptions(object):
 
     @staticmethod
     def setOptions(optionsIn):
-        packageOptions = UserOptions.instance().packageOptions
+        """
+        set temporary options from string
+        craft global options in the form of [Section]Key=Value
+        package options in the from of libs/libpng.Key=Value
+        the options are not persisted
+        """
         sectionRe = re.compile(r"\[([^\[\]]+)\](.*)")
         for o in optionsIn:
             key, value = o.split("=", 1)
@@ -242,22 +249,24 @@ class UserOptions(object):
                 CraftCore.settings.set(section, key, value)
             else:
                 package, key = key.split(".", 1)
-                if CraftPackageObject.get(package):
-                    if package not in packageOptions:
-                         packageOptions[package] = {}
+                packageObject = CraftPackageObject.get(package)
+                if packageObject:
+                    UserOptions.addPackageOption(packageObject, key, value)
                     CraftCore.log.info(f"setOptions: BlueprintSettings.ini [{package}]{key} = {value}")
-                    packageOptions[package][key] = value
                 else:
                     raise BlueprintNotFoundException(package, f"Package {package} not found, failed to set option {key} = {value}")
 
     @staticmethod
     def addPackageOption(package : CraftPackageObject, key : str, value : str) -> None:
+        """
+        Set non persistant options on a package
+        """
         if package.path not in UserOptions.instance().packageOptions:
             UserOptions.instance().packageOptions[package.path] = {}
         UserOptions.instance().packageOptions[package.path][key] = value
 
 
-    def setOption(self, key, value) -> bool:
+    def setOption(self, key, value, persist : bool = True) -> bool:
         _instance = UserOptions.instance()  # type: UserOptions.UserOptionsSingleton
         package = self._package
         if package.path not in _instance.registeredOptions:# actually that can only happen if package is invalid
@@ -274,20 +283,22 @@ class UserOptions(object):
         settings = _instance.initPackage(self)
         if value == "":
             if key in settings:
-                del settings[key]
+                if persist:
+                    del settings[key]
                 delattr(self, key)
             if not settings.keys():
                 del _instance.settings[self._package.path]
         else:
             value = self._convert(_instance.registeredOptions[package.path][key].value, value)
-            if hasattr(value, "toSetting"):
-                settings[key] = value.toSetting()
-            else:
-                settings[key] = str(value)
+            if persist:
+                if hasattr(value, "toSetting"):
+                    settings[key] = value.toSetting()
+                else:
+                    settings[key] = str(value)
             setattr(self, key, value)
         return True
 
-    def registerOption(self, key : str, default, permanent=True, compatible=False) -> bool:
+    def registerOption(self, key : str, default, persist : bool=True, compatible : bool=False) -> bool:
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
@@ -296,7 +307,7 @@ class UserOptions(object):
             raise BlueprintException(f"Failed to register option:\n[{package}]\n{key}={default}\nThe setting {key} is already registered.", package)
             return False
         _instance.registeredOptions[package.path][key] = RegisteredOption(default, compatible)
-        if permanent:
+        if persist:
             settings = _instance.initPackage(self)
             if key and key not in settings:
                 settings[key] = str(default)
@@ -321,13 +332,9 @@ class UserOptions(object):
         package = self._package
         if key not in _instance.registeredOptions[package.path]:
             raise BlueprintException(f"Failed to set default for unregistered option: [{package}]{key}.", package)
-        settings = _instance.initPackage(self)
-        _instance.registeredOptions[package.path][key].value = self._convert(_instance.registeredOptions[package.path][key].value, default)
-        if key not in settings:
-            settings[key] = str(default)
-            setattr(self, key, default)
+        if not self.__isUserSet(key):
+            return self.setOption(key, default, persist=False)
         return True
-
 
     def __getattribute__(self, name):
         if name.startswith("_"):
