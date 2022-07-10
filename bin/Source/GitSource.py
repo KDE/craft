@@ -192,11 +192,17 @@ class GitSource(VersionSystemSourceBase):
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
         CraftCore.debug.trace('GitSource ')
-        if fileName:
-            patchfile = os.path.join(self.packageDir(), fileName)
-            return self.__git('apply', ['--ignore-space-change',
+        patchfile = self.packageDir() / fileName
+        if os.path.isdir(patchfile):
+            # apply a whole dir of patches
+            out = True
+            with os.scandir(patchfile) as scan:
+                for patch in scan:
+                    if patch.is_file() and not patch.name.startswith("."):
+                        out = self.applyPatch(patchfile / patch, patchdepth=patchdepth) and out
+            return out
+        return self.__git('apply', ['--ignore-space-change',
                               '-p', str(patchdepth), patchfile], logCommand=True)
-        return True
 
     def createPatch(self):
         """create patch file from git source into the related package dir.
