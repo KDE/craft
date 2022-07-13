@@ -48,6 +48,7 @@ class CMakeBuildSystem(BuildSystemBase):
                     f"-DCMAKE_PREFIX_PATH={craftRoot}",
                     f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
                     f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
+                    f"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
                 ]
 
         if self.buildType() is not None:
