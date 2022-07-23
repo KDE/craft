@@ -13,6 +13,7 @@ class AppImagePackager(CollectionPackagerBase):
             # Eg. necessary to make switching languages for KDE (with KConfigWidgets) applications work.
             'XDG_DATA_DIRS=$this_dir/usr/share/:$XDG_DATA_DIRS',
             'QT_PLUGIN_PATH=$this_dir/usr/plugins/',
+            'FONTCONFIG_PATH=`if [ -d /etc/fonts ]; then echo "/etc/fonts"; else echo "${APPDIR}/etc/fonts"; fi`',
             'PATH=$this_dir/usr/bin:$this_dir/usr/lib:$PATH'])
         return defines
 
@@ -28,7 +29,7 @@ class AppImagePackager(CollectionPackagerBase):
             return False
         etc = archiveDir / "usr/etc"
         if etc.exists():
-            if not utils.moveFile(etc, archiveDir / "etc"):
+            if not utils.createSymlink(etc, archiveDir / "etc", useAbsolutePath=False, targetIsDirectory=True):
                 return False
         if "runenv" in defines:
             if not utils.createDir(archiveDir / "apprun-hooks"):
