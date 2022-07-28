@@ -203,7 +203,7 @@ class infoclass(object):
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
             return out if type(out) == list else [out]
-        return [("", "")]
+        return []
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
