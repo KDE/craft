@@ -24,7 +24,10 @@ class subinfo(info.infoclass):
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
-        self.defaultTarget = "22.01"
+        if CraftCore.compiler.isMacOS:
+            self.defaultTarget = "21.07"
+        else:
+            self.defaultTarget = "22.01"
 
 from Package.BinaryPackageBase import *
 
