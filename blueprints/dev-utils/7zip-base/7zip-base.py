@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["21.03", "21.06", "21.07"]:
+        for ver in ["21.03", "21.06", "21.07", "22.01"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
             if CraftCore.compiler.isWindows:
@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
-        self.defaultTarget = "21.07"
+        self.defaultTarget = "22.01"
 
 from Package.BinaryPackageBase import *
 
