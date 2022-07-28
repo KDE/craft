@@ -308,6 +308,7 @@ class SetupHelper(object):
                 SetupHelper._getOutput(["launchctl", "load", "-Fw", serviceAgent])
 
     def _setupWin(self):
+        self.addEnvVar("PYTHONUTF8", "1")
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
