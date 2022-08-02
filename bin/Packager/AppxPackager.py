@@ -138,7 +138,7 @@ class AppxPackager(CollectionPackagerBase):
 
         self._setupFileTypes(defines)
 
-        if (Path(self.archiveDir()) /"bin/snoretoast.exe").exists():
+        if "dev-utils/snoretoast" in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
             defines["extensions"] += AppxPackager.SnoreToast
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
