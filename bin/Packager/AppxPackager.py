@@ -69,14 +69,14 @@ class AppxPackager(CollectionPackagerBase):
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="bin\snoretoast.exe" DisplayName="SnoreToast activator">
-              <com:Class Id="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" DisplayName="Toast activator"/>
+              <com:Class Id="@{SNORETOAST_CALLBACK_GUID}" DisplayName="Toast activator"/>
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
 
         <!--Specify which CLSID to activate when toast clicked-->
         <desktop:Extension Category="windows.toastNotificationActivation">
-          <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" />
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="@{SNORETOAST_CALLBACK_GUID}" />
         </desktop:Extension>"""
 
     Aliases = r"""<uap3:Extension Category="windows.appExecutionAlias" Executable="@{alias_executable}" EntryPoint="Windows.FullTrustApplication">
@@ -139,6 +139,15 @@ class AppxPackager(CollectionPackagerBase):
         self._setupFileTypes(defines)
 
         if "dev-utils/snoretoast" in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
+            # versions < 0.9 did not print the clsi, use the one from 0.8
+            clsid = "eb1fdd5b-8f70-4b5a-b230-998a2dc19303"
+            result = subprocess.run(["snoretoast.exe", "-v"], capture_output=True, encoding="UTF-8")
+            if result.returncode == 0:
+                clsidPattern = re.compile(r"\{(.*?)\}")
+                clsids = clsidPattern.findall(result.stderr)
+                if clsids:
+                    clsid = clsids[0]
+            defines["SNORETOAST_CALLBACK_GUID"] = clsid
             defines["extensions"] += AppxPackager.SnoreToast
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
