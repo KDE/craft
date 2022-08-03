@@ -159,9 +159,8 @@ You can add your own defines into self.defines as well.
 
         uninstallDirs = set()
         uninstallFiles = ["\\uninstall.exe", f"\\{defines['iconname']}"]
-        prefixLength = len(self.archiveDir())
         for f in utils.filterDirectoryContent(self.archiveDir()):
-            f = Path(f[prefixLength:])
+            f =  Path(f).relative_to(self.archiveDir())
             uninstallFiles.append(f)
             d = f.parent
             while d not in uninstallDirs:
