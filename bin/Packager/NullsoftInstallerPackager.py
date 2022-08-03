@@ -25,11 +25,16 @@
 # SUCH DAMAGE.
 
 import os
+from pathlib import Path
 
-from Utils import CraftHash, CodeSign
-from Packager.CollectionPackagerBase import *
-from Packager.PortablePackager import *
+import utils
 from Blueprints.CraftVersion import CraftVersion
+from CraftBase import InitGuard
+from CraftCore import *
+from CraftOS.osutils import OsUtils
+from Utils import CodeSign, CraftHash
+
+from Packager.PortablePackager import PortablePackager
 
 
 class NullsoftInstallerPackager(PortablePackager):
@@ -75,7 +80,7 @@ You can add your own defines into self.defines as well.
         self.nsisExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines) -> {}:
+    def setDefaults(self, defines) -> dict:
         defines = super().setDefaults(defines)
         defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
         defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.isX64() else "")
@@ -85,6 +90,7 @@ You can add your own defines into self.defines as well.
         defines.setdefault("un_sections", "")
         defines.setdefault("sections_page", "")
         defines.setdefault("preInstallHook", "")
+        defines.setdefault("SnoreToastExe", "$INSTDIR\\bin\\SnoreToast.exe")
 
 
         if not self.scriptname:
@@ -107,11 +113,15 @@ You can add your own defines into self.defines as well.
             return False
         return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
-    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None) -> str:
+    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None, appId=None) -> str:
         if workingDirectory is None:
             workingDirectory = "%USERPROFILE%"
-
-        return f"""SetOutPath "{workingDirectory}"\nCreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n"""
+        out = 'SetOutPath "{workingDirectory}"\n'
+        if appId:
+            out += f'!insertmacro SnoreShortcut "$SMPROGRAMS\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{appId}"\n'
+        else:
+            out += f'CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n'
+        return out
 
     def folderSize(self, path):
         total = 0
