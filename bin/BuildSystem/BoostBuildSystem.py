@@ -8,6 +8,7 @@ from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
+from CraftCompiler import CraftCompiler
 
 
 class BoostBuildSystem(BuildSystemBase):
@@ -53,7 +54,7 @@ class BoostBuildSystem(BuildSystemBase):
         else:
             options += ["link=static",
                         "runtime-link=shared"]
-        if CraftCore.compiler.isX64():
+        if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
             options += ["address-model=64", "architecture=x86"]
         else:
             options += ["address-model=32", "architecture=x86"]

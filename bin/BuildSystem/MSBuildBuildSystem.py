@@ -25,6 +25,7 @@
 import glob
 
 from BuildSystem.BuildSystemBase import *
+from CraftCompiler import CraftCompiler
 
 
 class MSBuildBuildSystem(BuildSystemBase):
@@ -44,7 +45,7 @@ class MSBuildBuildSystem(BuildSystemBase):
             self.enterSourceDir()
             msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
             buildType =self.buildTypes[self.buildType()]
-            if CraftCore.compiler.isX86():
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
                 platform = " /p:Platform=win32"
             else:
                 platform = ""

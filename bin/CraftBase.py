@@ -77,10 +77,6 @@ class CraftBase(object):
         """return currently selected build type"""
         return self.subinfo.options.dynamic.buildType
 
-    def buildArchitecture(self):
-        """return the target CPU architecture"""
-        CraftCore.compiler.architecture()
-
     def imageDirPattern(self):
         """return base directory name for package related image directory"""
         return f"image-{self.buildType()}-{self.buildTarget}"

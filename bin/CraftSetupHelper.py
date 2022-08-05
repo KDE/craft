@@ -27,13 +27,12 @@ import collections
 import os
 import platform
 import shutil
-import subprocess
 import sqlite3
+import subprocess
 import sys
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-
 from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
 # The minimum python version for craft please edit here
@@ -195,9 +194,9 @@ class SetupHelper(object):
     @staticmethod
     def getMSVCEnv(version : int=0, architecture="x86", toolset=None, native=True) -> str:
         if native:
-            architectures = {"x86": "amd64_x86", "x64": "amd64"}
+            architectures = {CraftCore.compiler.Architecture.x86_32: "amd64_x86", CraftCore.compiler.Architecture.x86_64: "amd64"}
         else:
-            architectures = {"x86": "x86", "x64": "x86_amd64"}
+            architectures = {CraftCore.compiler.Architecture.x86_32: "x86", CraftCore.compiler.Architecture.x86_64: "x86_amd64"}
 
         args = architectures[architecture]
         path = ""
@@ -314,10 +313,7 @@ class SetupHelper(object):
 
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if CraftCore.compiler.isX86():
-                    self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw", "bin"))
-                else:
-                    self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"))
+                self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"))
             else:
                 compilerName = CraftCore.settings.get("QtSDK", "Compiler")
                 compilerMap = {"mingw53_32": "mingw530_32"}
@@ -330,10 +326,7 @@ class SetupHelper(object):
 
         if CraftCore.compiler.isMinGW():
             if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if CraftCore.compiler.isX86():
-                    self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw", "bin"))
-                else:
-                    self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"))
+                self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"))
             else:
                 compilerName = CraftCore.settings.get("QtSDK", "Compiler")
                 compilerMap = {"mingw53_32": "mingw530_32"}
@@ -441,7 +434,7 @@ class SetupHelper(object):
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            if not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+            if not CraftCore.compiler.isNative() and CraftCore.compiler.architecture ==CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")

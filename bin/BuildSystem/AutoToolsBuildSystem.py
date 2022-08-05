@@ -7,6 +7,7 @@ from CraftOS.osutils import OsUtils
 from shells import BashShell
 import utils
 from Utils.Arguments import Arguments
+from CraftCompiler import CraftCompiler
 
 import os
 import glob
@@ -20,17 +21,17 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
         self.platform = ""# hope for auto detection
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
-            if CraftCore.compiler.isX86():
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
                 self.platform = Arguments(["--host=i686-w64-mingw32", "--build=i686-w64-mingw32", "--target=i686-w64-mingw32"])
             else:
                 self.platform = Arguments(["--host=x86_64-w64-mingw32", "--build=x86_64-w64-mingw32", "--target=x86_64-w64-mingw32"])
         elif CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == "arm":
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
                 self.platform = Arguments(["--host=arm-linux-androideabi"])
-            elif CraftCore.compiler.architecture == "arm64":
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
                 self.platform = Arguments([f"--host={CraftCore.compiler.architecture}-linux-android"])

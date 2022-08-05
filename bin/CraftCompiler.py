@@ -32,6 +32,22 @@ from CraftDebug import deprecated
 
 
 class CraftCompiler(object):
+    class Architecture(IntFlag):
+        x86     = 0x1 << 0
+        x86_32  = 0x1 << 1 & x86
+        x86_64  = 0x1 << 2 & x86
+        arm     = 0x1 << 3
+        arm32   = 0x1 << 4 & arm
+        arm64   = 0x1 << 5 & arm
+        arm64e  = 0x1 << 6 & arm64 # Apple
+        # TODO:...
+
+        @classmethod
+        def fromString(cls, name):
+            if not hasattr(cls, "__sting_map"):
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+            return cls.__sting_map[name.lower()]
+
     class Platforms(IntFlag):
         NoPlatform  = 0
         Windows     = 0x1 << 0
@@ -76,27 +92,7 @@ class CraftCompiler(object):
 
 
     def __init__(self):
-        compiler = CraftCore.settings.get("General", "KDECOMPILER", "")
-        if compiler != "":
-            arch = "32" if CraftCore.settings.get("General", "Architecture") == "x86" else "64"
-            if compiler.startswith("msvc"):
-                split = ["windows", f"{compiler}_{arch}", "cl"]
-            elif compiler.startswith("mingw"):
-                split = ["windows", f"mingw_{arch}", "gcc"]
-            elif compiler.startswith("linux"):
-                split = ["linux", "gcc"]
-            elif compiler.startswith("mac"):
-                split = ["macos", "clang"]
-            if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-                print(f"Your using the old compiler setting\n"
-                      f"\t[General]\n"
-                      f"\tKDECOMPILER={compiler}\n"
-                      f"please update your settings to\n"
-                      f"\t[General]\n"
-                      f"\tABI=" + "-".join(split),
-                      file=sys.stderr)
-        else:
-            split = CraftCore.settings.get("General", "ABI").split("-")
+        split = CraftCore.settings.get("General", "ABI").split("-")
         if len(split) != 3:
             raise Exception("Invalid compiler: " + CraftCore.settings.get("General", "ABI"))
 
@@ -105,19 +101,28 @@ class CraftCompiler(object):
         self._compiler = CraftCompiler.Compiler.fromString(compiler)
         self._platform = CraftCompiler.Platforms.fromString(platform)
 
-        self._architecture = "x86" if self._abi.endswith("32") else "x64"
-
         self._MSVCToolset = None
         if self.isMSVC():
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
 
         if self.isAndroid:
-            self._architecture = self._abi
-            if self._architecture == "arm":
+            self._architecture = self._architecture = CraftCompiler.Architecture.fromString(arch)
+            if self.architecture == CraftCompiler.Architecture.arm:
                 self._abi = "armeabi-v7a"
-            elif self._architecture == "arm64":
+            elif self.architecture == CraftCompiler.Architecture.arm64:
                 self._abi = "arm64-v8a"
             self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
+        else:
+            arch = self._abi.split("_", 1)[-1]
+            if arch == "32":
+                # legacy
+                self._architecture = CraftCompiler.Architecture.x86_32
+            elif arch == "64":
+                # legacy
+                self._architecture = CraftCompiler.Architecture.x86_64
+            else:
+                self._architecture = CraftCompiler.Architecture.fromString(arch)
+
 
     def __str__(self):
         return "-".join(self.signature)
@@ -139,7 +144,7 @@ class CraftCompiler(object):
         return self._compiler
 
     @property
-    def architecture(self):
+    def architecture(self) -> Architecture:
         return self._architecture
 
     @property
@@ -147,25 +152,12 @@ class CraftCompiler(object):
         return self._MSVCToolset
 
     @property
-    def gnuArchitecture(self):
-        return "x86" if self.isX86() else "x86_64"
-
-    @property
-    def bits(self):
-        return "64" if self.isX64() else "32"
-
-    def _getGCCTarget(self):
-        _, result = CraftCore.cache.getCommandOutput("gcc", "-dumpmachine")
-        if result:
-            result = result.strip()
-            CraftCore.log.debug(f"GCC Target Processor: {result}")
-        else:
-            # if no mingw is installed return mingw-w32 it is part of base
-            if self.isX64():
-                result = "x86_64-w64-mingw32"
-            else:
-                result = "i686-w64-mingw32"
-        return result
+    def bits(self) -> str:
+        if self.architecture in {CraftCompiler.Architecture.x86_64, CraftCompiler.Architecture.arm64}:
+            return "64"
+        if self.architecture in {CraftCompiler.Architecture.x86_32, CraftCompiler.Architecture.arm32}:
+            return "32"
+        raise Exception("Unsupported architecture")
 
     @property
     def isWindows(self) -> bool:
@@ -198,12 +190,6 @@ class CraftCompiler(object):
     def isNative(self):
         return CraftCore.settings.getboolean("General", "Native", True)
 
-    def isX64(self):
-        return self.architecture == "x64"
-
-    def isX86(self):
-        return self.architecture == "x86"
-
     def isGCC(self) -> bool:
         return self.compiler == CraftCompiler.Compiler.GCC
 
@@ -220,10 +206,10 @@ class CraftCompiler(object):
         return self.abi.startswith("mingw")
 
     def isMinGW_W32(self):
-        return self.isMinGW() and self.isX86()
+        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32
 
     def isMinGW_W64(self):
-        return self.isMinGW() and self.isX64()
+        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64
 
     def isMSVC(self):
         return self.abi.startswith("msvc")
@@ -333,5 +319,3 @@ if __name__ == '__main__':
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
     if CraftCore.compiler.isGCCLike():
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
-        if CraftCore.compiler.isGCC():
-            print("Compiler Target: %s" % CraftCore.compiler._getGCCTarget())

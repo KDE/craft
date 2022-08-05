@@ -33,6 +33,7 @@ from CraftBase import InitGuard
 from CraftCore import *
 from CraftOS.osutils import OsUtils
 from Utils import CodeSign, CraftHash
+from CraftCompiler import CraftCompiler
 
 from Packager.PortablePackager import PortablePackager
 
@@ -82,8 +83,8 @@ You can add your own defines into self.defines as well.
 
     def setDefaults(self, defines) -> dict:
         defines = super().setDefaults(defines)
-        defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES")
-        defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.isX64() else "")
+        defines.setdefault("defaultinstdir", "$PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "$PROGRAMFILES")
+        defines.setdefault("multiuser_use_programfiles64", "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "")
         defines.setdefault("srcdir", self.archiveDir())# deprecated
         defines.setdefault("registry_hook", "")
         defines.setdefault("sections", "")
@@ -139,9 +140,9 @@ You can add your own defines into self.defines as well.
         defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".exe"))
         sevenZPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
         if sevenZPath.exists():
-            defines["7za"] = sevenZPath /"7za.exe" if CraftCore.compiler.isX64() else sevenZPath / "7za_32.exe"
+            defines["7za"] = sevenZPath /"7za.exe" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else sevenZPath / "7za_32.exe"
         else: # legacy
-            defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.isX64() else CraftCore.cache.findApplication("7za_32")
+            defines["7za"] = CraftCore.cache.findApplication("7za") if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else CraftCore.cache.findApplication("7za_32")
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
         defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(defines["dataPath"])) / 1000))
         defines["estimated_size"] = str(int(int(os.path.getsize(defines["dataPath"])) / 1000))

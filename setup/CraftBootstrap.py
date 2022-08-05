@@ -178,13 +178,13 @@ def getABI(args):
                                                         ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
                                                         #("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
                                                         ], "Microsoft Visual Studio 2019", returnDefaultWithoutPrompt=args.use_defaults)
-        abi += f"_64"
+        abi += f"_x86_64"
 
     elif CraftBootstrap.isAndroid():
         platform = "android"
         compiler = "clang"
         abi = CraftBootstrap.promptForChoice("Select target architecture",
-                                             ["arm", "arm64", "x86", "x86_64"], "arm64", returnDefaultWithoutPrompt=args.use_defaults)
+                                             ["arm32", "arm64", "x86_32", "x86_64"], "arm64", returnDefaultWithoutPrompt=args.use_defaults)
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
             platform = "macos"
@@ -196,7 +196,7 @@ def getABI(args):
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice("Select compiler",
                                                       ["gcc", "clang"], returnDefaultWithoutPrompt=args.use_defaults)
-        abi = "64"
+        abi = "x86_64"
 
     return f"{platform}-{abi}-{compiler}"
 

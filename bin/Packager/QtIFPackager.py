@@ -33,6 +33,7 @@ from Utils import CraftHash
 from Blueprints.CraftVersion import *
 from Package.VirtualPackageBase import VirtualPackageBase
 from CraftOS.osutils import OsUtils
+from CraftCompiler import CraftCompiler
 
 class QtIFPackager(SevenZipPackager):
   # Generate packages that can be used by the qt installer framework
@@ -48,7 +49,7 @@ class QtIFPackager(SevenZipPackager):
         self.__packageDir = os.path.join(self.packageDestinationDir(), "qtif")
         self.__sdkMode = OsUtils.isWin() and CraftCore.settings.getboolean("QtSDK", "Enabled", False)
         if self.__sdkMode:
-            win = "win32" if CraftCore.compiler.isX86() else "win64"
+            win = "win32" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32 else "win64"
             self.__imagePrefix = os.path.join(CraftCore.settings.get("QtSDK", "Version"), CraftCore.settings.get("QtSDK", "Compiler"))
             self.__depPrefix = f"{self.__rootPackage}.{CraftCore.settings.get('QtSDK', 'Version').replace('.', '')}.{win}_{CraftCore.settings.get('QtSDK', 'Compiler')}"
         else:
