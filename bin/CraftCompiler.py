@@ -34,12 +34,12 @@ from CraftDebug import deprecated
 class CraftCompiler(object):
     class Architecture(IntFlag):
         x86     = 0x1 << 0
-        x86_32  = 0x1 << 1 & x86
-        x86_64  = 0x1 << 2 & x86
+        x86_32  = 0x1 << 1 | x86
+        x86_64  = 0x1 << 2 | x86
         arm     = 0x1 << 3
-        arm32   = 0x1 << 4 & arm
-        arm64   = 0x1 << 5 & arm
-        arm64e  = 0x1 << 6 & arm64 # Apple
+        arm32   = 0x1 << 4 | arm
+        arm64   = 0x1 << 5 | arm
+        arm64e  = 0x1 << 6 | arm64 # Apple
         # TODO:...
 
         @classmethod
