@@ -267,6 +267,12 @@ def main(timer):
 
 
 if __name__ == '__main__':
+    if CraftCore.compiler.isMacOS:
+        # run craft with arch x86_64 when cross compiling
+        if (CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64 and
+            CraftCore.compiler.hostArchitecture != CraftCore.compiler.Architecture.x86_64):
+            exit(subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv))
+
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
         CraftTitleUpdater.instance = CraftTitleUpdater()
