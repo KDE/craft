@@ -24,6 +24,7 @@
 
 import re
 from enum import unique, IntFlag
+import platform
 
 import utils
 from CraftConfig import *
@@ -146,6 +147,20 @@ class CraftCompiler(object):
     @property
     def architecture(self) -> Architecture:
         return self._architecture
+
+    @property
+    def hostArchitecture(self) -> Architecture:
+        arch_map = {
+            "i386": CraftCompiler.Architecture.x86_32,
+            "amd64": CraftCompiler.Architecture.x86_64,
+            "x86_64": CraftCompiler.Architecture.x86_64,
+            "arm64": CraftCompiler.Architecture.arm64,
+            }
+        out = arch_map.get(platform.machine().lower())
+        if not out:
+            print("Unsupported host platform:", platform.machine())
+            exit(1)
+        return out
 
     @property
     def msvcToolset(self):
@@ -316,6 +331,8 @@ if __name__ == '__main__':
     print(f"Configured compiler (ABI): {CraftCore.compiler}")
     print("Version: %s" % CraftCore.compiler.getVersionWithName())
     print("Compiler Name: %s" % CraftCore.compiler.getCompilerName())
+    print("Architecture: %s" % CraftCore.compiler.architecture)
+    print("HostArchitecture: %s" % CraftCore.compiler.hostArchitecture)
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
     if CraftCore.compiler.isGCCLike():
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
