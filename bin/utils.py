@@ -1123,7 +1123,8 @@ def strip(fileName):
 
     if CraftCore.compiler.isMacOS:
         return (system(["dsymutil", fileName, "-o", symFile]) and
-                system(["strip", "-x", "-S", fileName]))
+                system(["strip", "-x", "-S", fileName]) and
+                system(["codesign", "-f", "-s", "-", fileName]))
     else:
         return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
                 system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
