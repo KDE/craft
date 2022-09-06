@@ -130,7 +130,7 @@ class CraftCompiler(object):
 
     @property
     def signature(self):
-        return self.platform.name.lower(), self.abi, self.compiler.name.lower()
+        return self.platform.name.lower(), self.compiler.name.lower(), self.architecture.name.lower()
 
     @property
     def platform(self) -> Platforms:
