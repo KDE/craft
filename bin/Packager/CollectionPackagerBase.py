@@ -319,7 +319,7 @@ class CollectionPackagerBase(PackagerBase):
             # Qt expects translations directory below bin, on the target system
             translationsPath = os.path.join(archiveDir, "translations")
             if os.path.isdir(translationsPath):
-                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations"))
+                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations")):
                     return False
 
         if not self.preArchive():
