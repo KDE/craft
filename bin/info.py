@@ -11,6 +11,7 @@ import VersionInfo
 from Utils import CraftHash, CraftManifest
 from options import *
 from CraftDebug import deprecated
+from typing import *
 
 
 @unique
@@ -139,7 +140,7 @@ class infoclass(object):
             return self.targets[self.buildTarget]
         return ""
 
-    def archiveName(self) -> [str]:
+    def archiveName(self) -> List[str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
@@ -197,7 +198,7 @@ class infoclass(object):
         """return state for having patches for the recent target"""
         return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
-    def patchesToApply(self) -> [tuple]:
+    def patchesToApply(self) -> List[tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
@@ -208,7 +209,7 @@ class infoclass(object):
         """return state if target has digest(s) for the recent build target"""
         return self.buildTarget in self.targetDigests
 
-    def targetDigest(self) -> tuple[list[str], CraftHash.HashAlgorithm]:
+    def targetDigest(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
             out = self.targetDigests[self.buildTarget]
@@ -223,7 +224,7 @@ class infoclass(object):
         """return state if target has digest url(s) for the recent build target"""
         return self.buildTarget in self.targetDigestUrls
 
-    def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
+    def targetDigestUrl(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]
