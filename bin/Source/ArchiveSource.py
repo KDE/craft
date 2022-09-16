@@ -222,7 +222,7 @@ class ArchiveSource(SourceBase):
         if not self.checkDigest(3):
             return False
 
-        binEndings = (".exe", ".bat", ".msi")
+        binEndings = (".exe", ".bat", ".msi", ".AppImage")
         for filename in filenames:
             if filename.endswith(binEndings):
                 filePath = os.path.abspath(os.path.join(self.__downloadDir, filename))

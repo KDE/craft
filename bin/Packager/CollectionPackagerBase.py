@@ -305,13 +305,22 @@ class CollectionPackagerBase(PackagerBase):
                 CraftCore.log.critical("image directory %s does not exist!" % directory)
                 return False
 
+        pathsToMoveToBinPath = []
         if self.subinfo.options.package.movePluginsToBin:
-            # Qt expects plugins and qml files below bin, on the target sytsem
-            binPath = os.path.join(archiveDir, "bin")
-            for path in [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]:
-                if os.path.isdir(path):
-                    if not utils.mergeTree(path, binPath):
-                        return False
+            # Qt expects plugins and qml files below bin, on the target system
+            pathsToMoveToBinPath += [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]
+        binPath = os.path.join(archiveDir, "bin")
+        for path in pathsToMoveToBinPath:
+            if os.path.isdir(path):
+                if not utils.mergeTree(path, binPath):
+                    return False
+
+        if self.subinfo.options.package.moveTranslationsToBin:
+            # Qt expects translations directory below bin, on the target system
+            translationsPath = os.path.join(archiveDir, "translations")
+            if os.path.isdir(translationsPath):
+                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations")):
+                    return False
 
         if not self.preArchive():
             return False
