@@ -65,7 +65,7 @@ class PackageWin(BinaryPackageBase):
                         CraftCore.log.error("Could not find Microsoft Visual Studio 2015.\n" +
                                             r"VCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'.")
                 if redistDir:
-                    files = glob.glob(os.path.join(redistDir, CraftCore.compiler.architecture, "**/*.dll"), recursive=True)
+                    files = glob.glob(os.path.join(redistDir, f"x{CraftCore.compiler.bits}", "**/*.dll"), recursive=True)
                 else:
                     CraftCore.log.error("Unsupported Compiler")
                     return False
