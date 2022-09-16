@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         for ver in ["3.23.3"]:
             majorMinorStr = '.'.join(ver.split('.')[0:2])
             if CraftCore.compiler.isWindows:
-                self.targets[ver] = f"https://cmake.org/files/v{ver}/cmake-{ver}-windows-x86_64.zip"
+                self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-windows-x86_64.zip"
                 self.targetInstSrc[ver] = f"cmake-{ver}-windows-x86_64"
             elif CraftCore.compiler.isMacOS:
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-macos-universal.tar.gz"
