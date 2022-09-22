@@ -200,7 +200,7 @@ def main(timer):
     # command to run by craft, let remove it.
     if args.run:
         run = list(filter(lambda entry: not entry.startswith("-psn"), args.run))
-        useShell = True
+        useShell = len(run) == 1
         if CraftCore.compiler.isMacOS:
             useShell = not '.app' in run[1] if run[0].endswith("open") else not '.app' in run[0]
         return utils.system(run, shell=useShell)
