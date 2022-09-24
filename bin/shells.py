@@ -121,7 +121,7 @@ class BashShell(object):
                     self._environment["CXX"] = self._environment["CC"]
                     self._environment["CPP"] = f"{cl} -nologo -E"
                     self._environment["CXXCPP"] = self._environment["CPP"]
-                    self._environment["NM"] = "dumpbin -symbols"
+                    self._environment["NM"] = "dumpbin -nologo -symbols"
 
                     windresArg = " --preprocessor-arg=".join(["", "-nologo", "-EP", "-DRC_INVOKED", "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP"])
                     self._environment["WINDRES"] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
