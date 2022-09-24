@@ -152,6 +152,7 @@ def main(timer):
                      ("print-installed", {"help":"This will show a list of all packages that are installed currently."}),
                      ("upgrade", {"help":"Update all installed packages"}),
                      ("print-files", {"help":"Print the files installed by the package and exit"}),
+                     ("print-file-conflicts", {"help":"Print all files that are installed by multiple blueprints"}),
                      ("clean-unused", {"help":"Clean unused files of all packages"}),
                      ], key=lambda x: x[0] if isinstance(x, tuple) else x):
         if isinstance(x, tuple):
@@ -248,6 +249,8 @@ def main(timer):
 
         if action == "print-installed":
             InstallDB.printInstalled()
+        if action == "print-file-conflicts":
+            CraftCommands.getFileConflicts()
         elif action == "search-file":
             InstallDB.printPackagesForFileSearch(tempArgs.search_file)
         elif action == "set":

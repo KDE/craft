@@ -240,6 +240,13 @@ class InstallDB(object):
             CraftCore.log.error(f"Database corruption: Found multiple packages for {package}")
         return out
 
+    def getFileConflicts(self):
+        cursor = self.connection.cursor()
+        cmd = ('SELECT packageList.packagePath, a.filename FROM fileList a '
+        'JOIN(SELECT filename, packageId, COUNT(*) FROM fileList GROUP BY filename HAVING COUNT(*) > 1) b ON a.filename = b.filename '
+        'INNER JOIN packageList ON packageList.packageId = a.packageId ORDER BY a.filename')
+        cursor.execute(cmd)
+        return cursor.fetchall()
 
     def _prepareDatabase(self):
         """ prepare a new database and add the required table layout """

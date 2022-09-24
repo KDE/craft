@@ -363,6 +363,8 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         return createArchiveCache(package)
     elif action == "print-files":
         return printFiles(directTargets)
+    elif action == "print-file-conflicts":
+        return printFileConflicts()
     elif args.resolve_deps or action in ["all", "install-deps", "update"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
@@ -501,6 +503,15 @@ def printFiles(packages):
                 CraftCore.log.info(file[0])
     return True
 
+def getFileConflicts():
+    conflicts = CraftCore.installdb.getFileConflicts()
+    mapped = collections.defaultdict(list)
+    for file in conflicts:
+        mapped[file[1]].append(file[0])
+    CraftCore.log.info("File, Packages")
+    for k,v in mapped.items():
+        CraftCore.log.info(f"{k}:\t{', '.join(v)}")
+    return True
 
 def createArchiveCache(packages : CraftPackageObject):
     from Source.ArchiveSource import ArchiveSource
