@@ -12,30 +12,17 @@ class QMakeBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "qmake")
         self._platform = None
-        self._qtVer = None
 
     @property
     def __qtBase(self):
         return CraftPackageObject.get("libs/qt5/qtbase").instance
 
     @property
-    def qtVer(self):
-        if not self._qtVer:
-            self._qtVer = CraftVersion(self.__qtBase.subinfo.buildTarget if self.__qtBase.subinfo.buildTarget != "dev" else "5.9999")
-        return self._qtVer
-
-    @property
     def platform(self):
         if not self._platform:
             if OsUtils.isWin():
                 if CraftCore.compiler.isMSVC():
-                    if self.qtVer < CraftVersion("5.8"):
-                        if CraftCore.compiler.isMSVC2017():
-                            _compiler = "msvc2015"
-                        else:
-                            _compiler = CraftCore.compiler.abi.split("_")[0]
-                    else:
-                        _compiler = "msvc"
+                    _compiler = "msvc"
                     if CraftCore.compiler.isClang():
                         self._platform = f"win32-clang-{_compiler}"
                     else:
