@@ -55,17 +55,19 @@ class MesonBuildSystem(BuildSystemBase):
                              "--buildtype", buildType,
                              "--cmake-prefix-path", CraftCore.standardDirs.craftRoot(),
                              self.buildDir(),
+                             self.sourceDir(),
                              "-Ddefault_library=shared",
                              BuildSystemBase.configureOptions(self)
         ])
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            return utils.system(Arguments(["meson", self.configureOptions(defines)]), cwd=self.sourceDir())
+            return utils.system(Arguments(["meson", self.configureOptions(defines)]))
 
     def make(self):
         with utils.ScopedEnv(self.__env()):
-            return utils.system(Arguments(["meson", "compile", self.makeOptions(self.subinfo.options.make.args)]), cwd=self.buildDir())
+            # cwd should not be the build dir as it might confuse the dependencie resolution
+            return utils.system(Arguments(["meson", "compile", "-C", self.buildDir(), self.makeOptions(self.subinfo.options.make.args)]), cwd=CraftCore.standardDirs.craftRoot())
 
     def install(self):
         """install the target"""
