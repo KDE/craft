@@ -410,6 +410,8 @@ class SetupHelper(object):
                                                 ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
+        # force unit tests to not crop the log
+        self.addEnvVar("QTEST_MAX_WARNINGS", 0)
 
         if CraftCore.settings.getboolean("General", "UseSandboxConfig", True):
             self.setXDG()
