@@ -6,11 +6,12 @@
 import atexit
 import configparser
 import os
-import re
 import shutil
 import sys
 
+
 from CraftCore import CraftCore
+
 class CraftConfig(object):
     __CraftBin = None
 
@@ -148,11 +149,7 @@ class CraftConfig(object):
 
     @staticmethod
     def _parseList(s : str) -> [str]:
-        # list elements are separated by ; and can be escaped with \
-        sperator = re.compile(r"(?<!\\);")
-        # after we split the string we need to remove one layer of escapes
-        escape = re.compile(r"\\{1}")
-        return [escape.sub("", v.strip()) for v in sperator.split(s) if v]
+        return [v.strip() for v in s.split(";") if v]
 
     def getList(self, group, key, default=None):
         return CraftConfig._parseList(self.get(group, key, default))
