@@ -213,11 +213,7 @@ class CraftBase(object):
 
     @staticmethod
     def cacheVersion():
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
-            version = CraftCore.settings.get("QtSDK", "Version")
-            return f"QtSDK_{version}"
-        else:
-            return CraftCore.settings.get("Packager", "CacheVersion")
+        return CraftCore.settings.get("Packager", "CacheVersion")
 
     def cacheLocation(self, baseDir=None) -> str:
         if not baseDir:

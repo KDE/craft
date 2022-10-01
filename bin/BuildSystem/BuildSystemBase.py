@@ -163,15 +163,6 @@ class BuildSystemBase(CraftBase):
             if not utils.mergeTree(badPrefix, self.installDir()):
                 return False
 
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
-                                 CraftCore.settings.get("QtSDK", "Version"),
-                                 CraftCore.settings.get("QtSDK", "Compiler"))
-            path = self.installDir() / stripPath(qtDir)
-            if path.exists() and not os.path.samefile(self.installDir(), path):
-                if not utils.mergeTree(path, self.installDir()):
-                    return False
-
         if stripPath(prefix):
             oldPrefix = self.installDir() / Path(stripPath(prefix)).parts[0]
             if oldPrefix.exists():

@@ -76,7 +76,6 @@ class PackagerLists(object):
 
 
 class CollectionPackagerBase(PackagerBase):
-    reMsvcDebugRt = re.compile(r"VCRUNTIME.*D\.DLL", re.IGNORECASE)
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -94,13 +93,6 @@ class CollectionPackagerBase(PackagerBase):
         self._blacklist = []
         self._blacklist_filters = set()
         self.scriptname = None
-
-        self.__deployQtSdk = (OsUtils.isWin() and
-                             CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
-                             CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True))
-        self.__qtSdkDir = OsUtils.toNativePath(os.path.join(CraftCore.settings.get("QtSDK", "Path"),
-                                                            CraftCore.settings.get("QtSDK", "Version"),
-                                                            CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
 
     def addBlacklistFilter(self, x):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
@@ -143,14 +135,6 @@ class CollectionPackagerBase(PackagerBase):
                     self._blacklist.append(self.read_blacklist(entry))
         return self._blacklist
 
-    def __imageDirPattern(self, package, buildTarget):
-        """ return base directory name for package related image directory """
-        directory = "image"
-
-        if package.subinfo.options.useBuildType == True:
-            directory += '-' + package.buildType()
-        directory += '-' + buildTarget
-        return directory
 
     def __getImageDirectories(self):
         """ return the image directories where the files are stored """
@@ -166,10 +150,6 @@ class CollectionPackagerBase(PackagerBase):
             imageDirs.append((x.instance.imageDir(), x.subinfo.options.package.disableStriping))
             # this loop collects the files from all image directories
             CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
-
-        if self.__deployQtSdk:
-            imageDirs.append((self.__qtSdkDir, False))
-
         return imageDirs
 
     def read_whitelist(self, fname : str) -> re:
@@ -211,28 +191,6 @@ class CollectionPackagerBase(PackagerBase):
                 return True
         return False
 
-    def _filterQtBuildType(self, filename):
-        if not self.__deployQtSdk:
-            return True
-        filename = OsUtils.toNativePath(filename)
-        if self.__qtSdkDir not in filename:
-            return True
-
-        if utils.isBinary(filename):
-            if not CraftCore.cache.findApplication("dependencies"):
-                raise BlueprintException("Deploying a QtSdk depends on dev-util/dependencies", CraftPackageObject.get("dev-util/dependencies"))
-            _, imports = CraftCore.cache.getCommandOutput("dependencies", f"-imports {filename}")
-            rt = CollectionPackagerBase.reMsvcDebugRt.findall(imports)
-            out = False
-            if self.buildType() == "Debug":
-                out = rt is not []
-            else:
-                out = not rt
-            if not out:
-                CraftCore.log.debug(f"Skipp {filename} as it has the wrong build type: {rt}")
-            return out
-        return True
-
     def copyFiles(self, srcDir, destDir) -> bool:
         """
             Copy the binaries for the Package from srcDir to the imageDir
@@ -248,8 +206,6 @@ class CollectionPackagerBase(PackagerBase):
             doSign = os.path.samefile(srcDir, self.imageDir())
 
         for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
-            if not self._filterQtBuildType(entry):
-                continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
             if os.path.isfile(entry) or os.path.islink(entry):
                 if not utils.copyFile(entry, entry_target, linkOnly=False):

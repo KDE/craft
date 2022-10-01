@@ -39,11 +39,6 @@ class subinfo(info.infoclass):
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-utils/ninja"] = None
 
-        # needed by CollectionPackagerBase
-        if (CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
-                CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True)):
-            self.buildDependencies["dev-utils/dependencies"] = None
-
         self.buildDependencies["craft/craft-blueprints-kde"] = None
         self.buildDependencies["craft/craft-core"] = None
         self.runtimeDependencies["libs/runtime"] = None

@@ -16,16 +16,3 @@ class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePacka
         Qt5CoreBuildSystem.__init__(self)
         TypePackager.__init__(self)
 
-
-class Qt5CoreSdkPackageBase(MaybeVirtualPackageBase):
-    def __init__(self, condition=True, classA=Qt5CorePackageBase):
-        sdkNotEnabled = not CraftCore.settings.getboolean("QtSDK", "Enabled", False)
-        MaybeVirtualPackageBase.__init__(self, condition and sdkNotEnabled, classA=classA)
-
-        if not sdkNotEnabled:
-            # override the install method
-            def install():
-                CraftCore.log.info(f"Skip installation of {self} as [QtSdk]Enabled=True")
-                return self.baseClass.install(self)
-
-            setattr(self, "install", install)

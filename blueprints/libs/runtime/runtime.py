@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class PackageWin(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
@@ -74,11 +74,3 @@ class PackageWin(BinaryPackageBase):
                 f = os.path.join(srcdir, f)
             utils.copyFile(f, os.path.join(destdir, os.path.basename(f)), linkOnly=False)
         return True
-
-
-from Package.Qt5CorePackageBase import *
-
-
-class Package(Qt5CoreSdkPackageBase):
-    def __init__(self):
-        Qt5CoreSdkPackageBase.__init__(self, condition=OsUtils.isWin(), classA=PackageWin)

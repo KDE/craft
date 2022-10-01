@@ -31,7 +31,6 @@ from Packager.NullsoftInstallerPackager import *
 from Packager.InnoSetupPackager import *
 from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
-from Packager.QtIFPackager import *
 from Packager.AppxPackager import *
 from Packager.DesktopEntry import *
 from Packager.AppImagePackager import *
