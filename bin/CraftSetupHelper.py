@@ -386,20 +386,18 @@ class SetupHelper(object):
                     PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep)))
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH.keys()))
 
-        self.prependEnvVar("QT_PLUGIN_PATH", [os.path.join(CraftCore.standardDirs.craftRoot(), "plugins"),
-                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugins"),
-                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib64", "plugins"),
-                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
-                                                           "plugins"),
-                                              os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugin"),
+        self.prependEnvVar("QT_PLUGIN_PATH", [CraftCore.standardDirs.craftRoot() / "plugins",
+                                              CraftCore.standardDirs.craftRoot() / "lib/plugins",
+                                              CraftCore.standardDirs.craftRoot() / "lib64/plugins",
+                                              CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/plugins",
+                                              CraftCore.standardDirs.craftRoot() / "lib/plugin",
                                               CraftCore.standardDirs.craftRoot() / "lib/qt6/plugins"
                                               ])
 
-        self.prependEnvVar("QML2_IMPORT_PATH", [os.path.join(CraftCore.standardDirs.craftRoot(), "qml"),
-                                                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "qml"),
-                                                os.path.join(CraftCore.standardDirs.craftRoot(), "lib64", "qml"),
-                                                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu",
-                                                             "qml")
+        self.prependEnvVar("QML2_IMPORT_PATH", [CraftCore.standardDirs.craftRoot() / "qml",
+                                                CraftCore.standardDirs.craftRoot() / "lib/qml",
+                                                CraftCore.standardDirs.craftRoot() / "lib64/qml",
+                                                CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/qml"
                                                 ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
