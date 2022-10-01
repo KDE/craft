@@ -79,7 +79,7 @@ class CraftBase(object):
 
     def imageDirPattern(self):
         """return base directory name for package related image directory"""
-        return f"image-{self.buildType()}-{self.buildTarget}"
+        return f"image-{self.buildType()}-{self.buildTarget.replace('/', '_')}"
 
     def sourceDir(self, dummyIndex=0) -> Path:
         utils.abstract()
