@@ -397,7 +397,8 @@ class SetupHelper(object):
         self.prependEnvVar("QML2_IMPORT_PATH", [CraftCore.standardDirs.craftRoot() / "qml",
                                                 CraftCore.standardDirs.craftRoot() / "lib/qml",
                                                 CraftCore.standardDirs.craftRoot() / "lib64/qml",
-                                                CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/qml"
+                                                CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/qml",
+                                                CraftCore.standardDirs.craftRoot() / "lib/qt6/qml"
                                                 ])
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
         self.prependEnvVar("QT_DATA_DIRS", CraftCore.standardDirs.locations.data)
