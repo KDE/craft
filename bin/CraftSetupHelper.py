@@ -192,7 +192,7 @@ class SetupHelper(object):
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
-    def getMSVCEnv(version : int=0, architecture="x86", toolset=None, native=True) -> str:
+    def getMSVCEnv(version : int=0, architecture=CraftCore.compiler.Architecture.x86_64, toolset=None, native=True) -> str:
         if native:
             architectures = {CraftCore.compiler.Architecture.x86_32: "amd64_x86", CraftCore.compiler.Architecture.x86_64: "amd64"}
         else:
