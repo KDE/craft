@@ -145,7 +145,7 @@ class BashShell(object):
                 utils.system(["python3",
                               os.path.join(os.environ.get("ANDROID_NDK_ROOT"), "build/tools/make_standalone_toolchain.py"),
                               "--install-dir", toolchainPath,
-                              "--arch", CraftCore.compiler.architecture,
+                              "--arch", CraftCore.compiler.architecture.name,
                               "--api", CraftCore.compiler.androidApiLevel()])
                 self._environment["PATH"] = os.path.join(toolchainPath, "bin") + ":" + os.environ["PATH"]
                 self._environment["AR"] = "ar"
