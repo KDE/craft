@@ -107,7 +107,7 @@ class CraftCompiler(object):
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
 
         if self.isAndroid:
-            self._architecture = self._architecture = CraftCompiler.Architecture.fromString(arch)
+            self._architecture = CraftCompiler.Architecture.fromString(self._abi)
             if self.architecture == CraftCompiler.Architecture.arm:
                 self._abi = "armeabi-v7a"
             elif self.architecture == CraftCompiler.Architecture.arm64:
