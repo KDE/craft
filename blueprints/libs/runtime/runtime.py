@@ -70,14 +70,6 @@ class Package(BinaryPackageBase):
                             f"Could not find Microsoft Visual Studio {flavor}.\n"
                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
                         )
-                elif CraftCore.compiler.isMSVC2015():
-                    if "VCINSTALLDIR" in os.environ:
-                        redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
-                    else:
-                        CraftCore.log.error(
-                            "Could not find Microsoft Visual Studio 2015.\n"
-                            + r"VCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'."
-                        )
                 if redistDir:
                     files = glob.glob(
                         os.path.join(

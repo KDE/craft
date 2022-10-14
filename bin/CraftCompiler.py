@@ -241,18 +241,6 @@ class CraftCompiler(object):
     def isMSVC(self):
         return self.abi.startswith("msvc")
 
-    def isMSVC2010(self):
-        return self.abi.startswith("msvc2010")
-
-    def isMSVC2012(self):
-        return self.abi.startswith("msvc2012")
-
-    def isMSVC2013(self):
-        return self.abi.startswith("msvc2013")
-
-    def isMSVC2015(self):
-        return self.abi.startswith("msvc2015")
-
     def isMSVC2017(self):
         return self.abi.startswith("msvc2017")
 
@@ -294,10 +282,6 @@ class CraftCompiler(object):
         if not self.isMSVC():
             return self.getVersion()
         versions = {
-            "msvc2010": 10,
-            "msvc2012": 11,
-            "msvc2013": 12,
-            "msvc2015": 14,
             "msvc2017": 15,
             "msvc2019": 16,
             "msvc2022": 17,
@@ -309,10 +293,6 @@ class CraftCompiler(object):
 
     def getMsvcPlatformToolset(self):
         versions = {
-            "msvc2010": 100,
-            "msvc2012": 110,
-            "msvc2013": 120,
-            "msvc2015": 140,
             "msvc2017": 141,
             "msvc2019": 142,
             "msvc2022": 143,

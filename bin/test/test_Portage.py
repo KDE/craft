@@ -26,7 +26,7 @@ class TestAPI(CraftBlueprintTest):
         self.blueprintTest("windows-mingw_64-gcc")
 
     def test_msvc2015_x86(self):
-        self.blueprintTest("windows-msvc2015_86-cl")
+        self.blueprintTest("windows-msvc2019_86-cl")
 
     def test_msvc2015_x64(self):
-        self.blueprintTest("windows-msvc2015_64-cl")
+        self.blueprintTest("windows-msvc2019_64-cl")
